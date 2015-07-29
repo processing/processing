@@ -46,13 +46,16 @@
 # Note that this path must exist already otherwise it won't see
 # the sketchbook folder, and will instead assume the sketchbook
 # has gone missing, and that it should instead use the default.
-#sketchbook.path=
+# In 3.0, the location has changed.
+#sketchbook.path.three=
+
+welcome.show = true
+welcome.seen = false
 
 # By default, no sketches currently open
-last.sketch.count=0
-
+last.sketch.count = 0
 # true if you want sketches to re-open when you next run processing
-last.sketch.restore=true
+last.sketch.restore = true
 
 # by default, contributions are moved to backup folders when
 # they are removed or replaced. The locations of the backup

@@ -32,6 +32,7 @@ import processing.app.Preferences;
 import processing.app.RunnerListener;
 import processing.app.Sketch;
 import processing.app.SketchException;
+import processing.app.Util;
 import processing.app.contrib.ModeContribution;
 import processing.core.PApplet;
 import processing.mode.java.runner.Runner;
@@ -142,13 +143,13 @@ public class Commander implements RunnerListener {
         embedJava = false;
 
       } else if (arg.startsWith(platformArg)) {
-        complainAndQuit("The --platform option has been removed from Processing 2.1.", false);
-//        String platformStr = arg.substring(platformArg.length());
-//        platform = Base.getPlatformIndex(platformStr);
-//        if (platform == -1) {
-//          complainAndQuit(platformStr + " should instead be " +
-//                          "'windows', 'macosx', or 'linux'.", true);
-//        }
+//        complainAndQuit("The --platform option has been removed from Processing 2.1.", false);
+        String platformStr = arg.substring(platformArg.length());
+        platform = Base.getPlatformIndex(platformStr);
+        if (platform == -1) {
+          complainAndQuit(platformStr + " should instead be " +
+                          "'windows', 'macosx', or 'linux'.", true);
+        }
 
       } else if (arg.startsWith(bitsArg)) {
         complainAndQuit("The --bits option has been removed from Processing 2.1.", false);
@@ -208,7 +209,7 @@ public class Commander implements RunnerListener {
       outputFolder = new File(outputPath);
       if (outputFolder.exists()) {
         if (force) {
-          Base.removeDir(outputFolder);
+          Util.removeDir(outputFolder);
         } else {
           complainAndQuit("The output folder already exists. " +
                           "Use --force to remove it.", false);
@@ -377,8 +378,8 @@ public class Commander implements RunnerListener {
     out.println();
     out.println("--export             Export an application.");
     out.println("--no-java            Do not embed Java. Use at your own risk!");
-//    out.println("--platform           Specify the platform (export to application only).");
-//    out.println("                     Should be one of 'windows', 'macosx', or 'linux'.");
+    out.println("--platform           Specify the platform (export to application only).");
+    out.println("                     Should be one of 'windows', 'macosx', or 'linux'.");
 //    out.println("--bits               Must be specified if libraries are used that are");
 //    out.println("                     32- or 64-bit specific such as the OpenGL library.");
 //    out.println("                     Otherwise specify 0 or leave it out.");

@@ -159,7 +159,7 @@ public class Archiver implements Tool {
         ZipEntry entry = new ZipEntry(nowfar);
         entry.setTime(sub.lastModified());
         zos.putNextEntry(entry);
-        zos.write(Base.loadBytesRaw(sub));
+        zos.write(Util.loadBytesRaw(sub));
         zos.closeEntry();
       }
     }

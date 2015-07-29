@@ -46,8 +46,8 @@ public class Compiler {
     importSuggestions.put("Frame", "java.awt.Frame");
     importSuggestions.put("Iterator", "java.util.Iterator");
   }
-  
-  
+
+
   /**
    * Compile with ECJ. See http://j.mp/8paifz for documentation.
    *
@@ -74,7 +74,7 @@ public class Compiler {
     };
     //PApplet.println(baseCommand);
 
-    String[] sourceFiles = Base.listFiles(build.getSrcFolder(), false, ".java");
+    String[] sourceFiles = Util.listFiles(build.getSrcFolder(), false, ".java");
     String[] command = PApplet.concat(baseCommand, sourceFiles);
     //PApplet.println(command);
 
@@ -96,13 +96,13 @@ public class Compiler {
       PrintWriter writer = new PrintWriter(internalWriter);
 
       //result = com.sun.tools.javac.Main.compile(command, writer);
-      
+
       PrintWriter outWriter = new PrintWriter(System.out);
-      
+
       // Version that's not dynamically loaded
       //CompilationProgress progress = null;
       //success = BatchCompiler.compile(command, outWriter, writer, progress);
-      
+
       // Version that *is* dynamically loaded. First gets the mode class loader
       // so that it can grab the compiler JAR files from it.
       ClassLoader loader = build.mode.getClassLoader();
@@ -114,13 +114,13 @@ public class Compiler {
         Class<?>[] compileArgs =
           new Class<?>[] { String[].class, PrintWriter.class, PrintWriter.class, progressClass };
         Method compileMethod = batchClass.getMethod("compile", compileArgs);
-        success = (Boolean) 
+        success = (Boolean)
           compileMethod.invoke(null, new Object[] { command, outWriter, writer, null });
       } catch (Exception e) {
         e.printStackTrace();
         throw new SketchException("Unknown error inside the compiler.");
       }
-      
+
       // Close out the stream for good measure
       writer.flush();
       writer.close();
@@ -207,7 +207,7 @@ public class Compiler {
           } else {
             exception.setMessage("Cannot find a class or type " +
                                  "named \u201C" + what + "\u201D");
-            
+
             String suggestion = importSuggestions.get(what);
             if (suggestion != null) {
               System.err.println("You may need to add \"import " + suggestion + ";\" to the top of your sketch.");

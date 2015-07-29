@@ -1,0 +1,89 @@
+<html>
+  <head>
+    <title> Welcome to Processing 3 </title>    
+    <style type="text/css">
+
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        padding: 20px;
+        /* Use the Processing font */
+        font-family: "Source Sans Pro";
+      }
+
+      h1 {
+        margin-bottom: 0;
+        font-size: 16px;
+      }
+
+      p {
+        margin-bottom: 0;
+        font-size: 11px;
+        line-height: 12px;
+      }
+
+      table {
+        margin-top: 10px;
+        margin-bottom: 0;
+      }
+
+      p.inset, table.inset {
+        padding: 10px;
+        background-color: rgb(224, 253, 251); 
+      }
+
+      a {
+        color: #2c7bb5;
+        text-decoration: none;
+      }
+
+      #startButton {
+        margin-left: 50px;
+      }
+
+    </style>
+  </head>
+  <body>    
+
+    <!-- action needs to exist (even though blank), otherwise causes NPE -->
+    <form action="">
+
+      <h1>Welcome to Processing 3</h1>
+      
+      <p>
+        <a href="https://github.com/processing/processing/wiki/Changes-in-3.0">Read about what&rsquo;s new in 3.0 &rarr;</a>
+      </p>
+
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris convallis porta dui, eget iaculis velit ornare at. 
+      </p>
+      
+      <p class="inset">
+        Quisque eu ultrices erat. Curabitur vel vulputate turpis. Morbi efficitur feugiat augue eget euismod. Fusce vehicula velit libero. Praesent urna dolor, tincidunt ut massa a, rhoncus blandit justo.
+      </p>
+      
+      <p>
+        Curabitur laoreet vestibulum nibh, egestas semper eros viverra nec. Praesent luctus enim commodo mauris ultricies, non efficitur justo vestibulum.
+      </p>
+      
+      <table>
+        <tr>
+          <td>
+            <input type="checkbox" name="show_each_time" checked />
+          </td>
+          <td>
+            Show this welcome<br/>message each time
+          </td>
+          <td>
+            <input id="startButton" type="submit" value="Get Started" />
+          </td>
+        </tr>
+      </table>
+
+    </form>
+
+  </body>
+</html>

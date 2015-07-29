@@ -32,6 +32,8 @@ X   https://github.com/processing/processing/issues/3310
 X   broken since 3.0a7, but not in 3.0a5
 o pixelDensity(BEST)? (messes with pixels, but for most sketches, helpful)
 X   nixed by Casey for now
+X displayDensity() not functioning properly
+X   https://github.com/processing/processing/issues/3436
 X surface.setXxx() handling
 X   https://github.com/processing/processing/issues/3388
 X   setResizable, setVisible, setTitle
@@ -46,6 +48,10 @@ X   https://github.com/processing/processing/issues/3413
 X SVG briefly broken for Java2D
 X   https://github.com/processing/processing/issues/3417
 X change how font metrics are pulled to fix text width issues
+X check alpha when image extension is "unknown"
+X   https://github.com/processing/processing/issues/3442
+X add support for more Image types (BGR) with PImage(java.awt.Image) constructor
+X move Java2D and JavaFX classes to their own packages
 
 threading headaches
 X sketch not always showing with empty draw()
@@ -86,13 +92,19 @@ X   https://github.com/processing/processing/issues/2617
 X Text is half size in PGraphicsRetina2D
 X   https://github.com/processing/processing/issues/2738
 
-andres
+andres/opengl
 X ortho function is broken
 X   https://github.com/processing/processing/issues/1278
 X errors with loading SVGs in P3D/P2D
 X   https://github.com/processing/processing/issues/3379
 X sketch window briefly appears on top left corner when using OpenGL
 X   https://github.com/processing/processing/issues/3308
+X add attrib() method
+X   https://github.com/processing/processing/issues/2963
+X   andres needs input on how the api works
+o   assign this to DXF as well?
+X beginShape(POINTS) don't show up in P2D
+X   https://github.com/processing/processing/issues/3029
 
 contribs
 X Fix NullPointerException in DepthSorter
@@ -128,8 +140,9 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 beta
-X move Java2D and JavaFX classes to their own packages
-_   make notes about this in the README
+_ make notes about Java2D and JavaFX packages in the README
+_ move AWT image loading into PImageAWT
+_   look into how GL and FX will handle from there
 _ run only the necessary pieces on the EDT
 _   in part because FX doesn't even use the EDT
 _   re-check the Linux frame visibility stuff
@@ -175,10 +188,6 @@ _   https://www.linkedin.com/pulse/oracle-just-removed-javafx-support-arm-jan-sn
 
 opengl
 _ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
-_ add attrib() method
-_   https://github.com/processing/processing/issues/2963
-_   andres needs input on how the api works
-_   assign this to DXF as well?
 _ window loses focus after maximizing
 _   https://github.com/processing/processing/issues/3339
 
@@ -271,6 +280,7 @@ _   need to change to iterate through display rectangles
 _   may be related to full-screen bug filed recently
 _ closing a sketch window manually (not hitting Stop) not killing sketch
 _   at least with the Java2D renderer
+_ don't override the window icon w/ p5 logo if already set
 
 
 retina/hidpi

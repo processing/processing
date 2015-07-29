@@ -109,6 +109,7 @@ import org.jsoup.select.Elements;
 import processing.app.Base;
 import processing.app.Library;
 import processing.app.SketchCode;
+import processing.app.Util;
 import processing.app.syntax.JEditTextArea;
 import processing.app.ui.Toolkit;
 import processing.mode.java.JavaEditor;
@@ -304,8 +305,9 @@ public class ASTGenerator {
   protected void loadJars() {
     factory = new ClassPathFactory();
 
-    StringBuilder tehPath = new StringBuilder(System
-                                              .getProperty("java.class.path"));
+    StringBuilder tehPath =
+      new StringBuilder(System.getProperty("java.class.path"));
+
     // Starting with JDK 1.7, no longer using Apple's Java, so
     // rt.jar has the same path on all OSes
     tehPath.append(File.pathSeparatorChar
@@ -837,7 +839,7 @@ public class ASTGenerator {
           if (codeIndex > 0)
             for (int i = 0; i < codeIndex; i++) {
               SketchCode sc = editor.getSketch().getCode(i);
-              int len = Base.countLines(sc.getProgram()) + 1;
+              int len = Util.countLines(sc.getProgram()) + 1;
               lineNumber += len;
             }
 
@@ -1636,7 +1638,7 @@ public class ASTGenerator {
       if (codeIndex > 0) {
         for (int i = 0; i < codeIndex; i++) {
           SketchCode sc = editor.getSketch().getCode(i);
-          int len = Base.countLines(sc.getProgram()) + 1;
+          int len = Util.countLines(sc.getProgram()) + 1;
           pdeLineNumber += len;
         }
       }
@@ -2386,7 +2388,7 @@ public class ASTGenerator {
     if (codeIndex > 0)
       for (int i = 0; i < codeIndex; i++) {
         SketchCode sc = editor.getSketch().getCode(i);
-        int len = Base.countLines(sc.getProgram()) + 1;
+        int len = Util.countLines(sc.getProgram()) + 1;
         javaLineNumber += len;
       }
     return javaLineNumber;
@@ -3327,8 +3329,7 @@ public class ASTGenerator {
       File codeFolder = editor.getSketch().getCodeFolder();
       // get a list of .jar files in the "code" folder
       // (class files in subfolders should also be picked up)
-      ClassPath cp = factory.createFromPath(Base
-                                            .contentsToClassPath(codeFolder));
+      ClassPath cp = factory.createFromPath(Util.contentsToClassPath(codeFolder));
       resources = cp.findResources("", regf);
       for (String res : resources) {
         candidates.add(res);
@@ -3393,8 +3394,8 @@ public class ASTGenerator {
       File codeFolder = editor.getSketch().getCodeFolder();
       // get a list of .jar files in the "code" folder
       // (class files in subfolders should also be picked up)
-      ClassPath cp = factory.createFromPath(Base
-                                            .contentsToClassPath(codeFolder));
+      ClassPath cp =
+        factory.createFromPath(Util.contentsToClassPath(codeFolder));
       resources = cp.findResources("", regf);
       for (String res : resources) {
         candidates.add(res);

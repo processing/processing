@@ -46,6 +46,11 @@ public class ToolContribution extends LocalContribution implements Tool {
     } catch (VerifyError ve) {  // incompatible
       // avoid the excessive error spew that happens here
 
+    } catch (NoClassDefFoundError ncdfe) {
+      if (ncdfe.getMessage().contains("processing/app/Editor")) {
+        System.err.println("The Editor class has moved to the processing.app.ui package in Processing 3");
+      }
+
     } catch (Throwable e) {  // unknown error
       e.printStackTrace();
     }
@@ -105,7 +110,7 @@ public class ToolContribution extends LocalContribution implements Tool {
 //  }
 
 
-  static public ArrayList<ToolContribution> loadAll(File toolsFolder) {
+  static public List<ToolContribution> loadAll(File toolsFolder) {
     File[] list = ContributionType.TOOL.listCandidates(toolsFolder);
     ArrayList<ToolContribution> outgoing = new ArrayList<ToolContribution>();
     // If toolsFolder does not exist or is inaccessible (stranger things have

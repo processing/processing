@@ -36,8 +36,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
 
-import processing.app.Base;
 import processing.app.SketchCode;
+import processing.app.Util;
 import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.ErrorMarker;
 import processing.mode.java.pdex.Problem;
@@ -165,7 +165,7 @@ public class ErrorColumn extends JPanel {
         int totalLines = 0, currentTab = editor.getSketch()
             .getCurrentCodeIndex();
         try {
-          totalLines = Base.countLines(sc.getDocument()
+          totalLines = Util.countLines(sc.getDocument()
               .getText(0, sc.getDocument().getLength())) + 1;
         } catch (BadLocationException e) {
           e.printStackTrace();

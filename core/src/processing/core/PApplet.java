@@ -5294,7 +5294,8 @@ public class PApplet implements PConstants {
           }
 
           // if it's a .gif image, test to see if it has transparency
-          if (extension.equals("gif") || extension.equals("png")) {
+          if (extension.equals("gif") || extension.equals("png") ||
+              extension.equals("unknown")) {
             image.checkAlpha();
           }
 
@@ -6336,6 +6337,7 @@ public class PApplet implements PConstants {
         if (platform == MACOSX && useNativeSelect != false) {
           FileDialog fileDialog =
             new FileDialog(parentFrame, prompt, FileDialog.LOAD);
+          fileDialog.setDirectory(defaultSelection.getAbsolutePath());
           System.setProperty("apple.awt.fileDialogForDirectories", "true");
           fileDialog.setVisible(true);
           System.setProperty("apple.awt.fileDialogForDirectories", "false");
@@ -10648,6 +10650,24 @@ public class PApplet implements PConstants {
   public void normal(float nx, float ny, float nz) {
     if (recorder != null) recorder.normal(nx, ny, nz);
     g.normal(nx, ny, nz);
+  }
+
+
+  public void attribPosition(String name, float x, float y, float z) {
+    if (recorder != null) recorder.attribPosition(name, x, y, z);
+    g.attribPosition(name, x, y, z);
+  }
+
+
+  public void attribNormal(String name, float nx, float ny, float nz) {
+    if (recorder != null) recorder.attribNormal(name, nx, ny, nz);
+    g.attribNormal(name, nx, ny, nz);
+  }
+
+
+  public void attribColor(String name, int color) {
+    if (recorder != null) recorder.attribColor(name, color);
+    g.attribColor(name, color);
   }
 
 

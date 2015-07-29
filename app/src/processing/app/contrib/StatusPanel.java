@@ -21,15 +21,16 @@
 */
 package processing.app.contrib;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JTextPane;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
@@ -41,21 +42,24 @@ import processing.app.Base;
 
 class StatusPanel extends JPanel {
 
-  final int BUTTON_WIDTH = 20;
+  final int BUTTON_WIDTH = 150;
 
   JTextPane label;
   JButton installButton;
-  JProgressBar installProgressBar;
+  JPanel progressBarPanel;
   JLabel updateLabel;
   JButton updateButton;
   JButton removeButton;
+  GroupLayout layout;
 
   ContributionListing contributionListing = ContributionListing.getInstance();
-  ContributionManagerDialog contributionManagerDialog;
+  ContributionTab contributionTab;
 
-  public StatusPanel(int width, ContributionManagerDialog contributionManagerDialog) {
-    final int BUTTON_WIDTH = 150;
-    this.contributionManagerDialog  = contributionManagerDialog;
+  public StatusPanel(int width, final ContributionTab contributionTab) {
+    super();
+    setBackground(Color.WHITE);
+    setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
+    this.contributionTab  = contributionTab;
     label = new JTextPane();
     label.setEditable(false);
     label.setOpaque(false);
@@ -72,36 +76,52 @@ class StatusPanel extends JPanel {
       }
     });
     installButton = new JButton("Install");
+    installButton.setContentAreaFilled(false);
+    installButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     installButton.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel
-          .getSelectedPanel().install();
+        ContributionPanel currentPanel = contributionTab.contributionListPanel
+          .getSelectedPanel();
+        currentPanel.install();
+        StatusPanel.this.update(currentPanel);
       }
     });
-    installProgressBar = new JProgressBar();
-    updateLabel = new JLabel("  ");
+    progressBarPanel = new JPanel();
+    progressBarPanel.setLayout(new BorderLayout());
+    progressBarPanel.setOpaque(false);
+    updateLabel = new JLabel(" ");
     updateButton = new JButton("Update");
+    updateButton.setContentAreaFilled(false);
+    updateButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     updateButton.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel.getSelectedPanel().update();
+        ContributionPanel currentPanel = contributionTab.contributionListPanel
+          .getSelectedPanel();
+        currentPanel.update();
+        StatusPanel.this.update(currentPanel);
       }
     });
 
     removeButton = new JButton("Remove");
+    removeButton.setContentAreaFilled(false);
+    removeButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     removeButton.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        StatusPanel.this.contributionManagerDialog.getActiveTab().contributionListPanel.getSelectedPanel().remove();
+        ContributionPanel currentPanel = contributionTab.contributionListPanel
+          .getSelectedPanel();
+        currentPanel.remove();
+        StatusPanel.this.update(currentPanel);
       }
     });
 
     int labelWidth = width != 0 ? width * 3 / 4 : GroupLayout.PREFERRED_SIZE;
-    GroupLayout layout = new GroupLayout(this);
+    layout = new GroupLayout(this);
     this.setLayout(layout);
 
     layout.setAutoCreateContainerGaps(true);
@@ -115,7 +135,7 @@ class StatusPanel extends JPanel {
       .addGroup(layout
                   .createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(installButton, BUTTON_WIDTH, BUTTON_WIDTH,
-                                BUTTON_WIDTH).addComponent(installProgressBar)
+                                BUTTON_WIDTH).addComponent(progressBarPanel)
                   .addComponent(updateLabel).addComponent(updateButton)
                   .addComponent(removeButton)));
 
@@ -126,14 +146,14 @@ class StatusPanel extends JPanel {
                   .createSequentialGroup()
                   .addComponent(installButton)
                   .addGroup(layout.createParallelGroup()
-                              .addComponent(installProgressBar)
+                              .addComponent(progressBarPanel)
                               .addComponent(updateLabel))
                   .addComponent(updateButton).addComponent(removeButton)));
 
     layout
-      .linkSize(SwingConstants.HORIZONTAL, installButton, installProgressBar, updateButton, removeButton);
+      .linkSize(SwingConstants.HORIZONTAL, installButton, progressBarPanel, updateButton, removeButton);
 
-    installProgressBar.setVisible(false);
+    progressBarPanel.setVisible(false);
     updateLabel.setVisible(false);
 
     installButton.setEnabled(false);
@@ -141,7 +161,13 @@ class StatusPanel extends JPanel {
     removeButton.setEnabled(false);
 
     layout.setHonorsVisibility(updateLabel, false); // Makes the label take up space even though not visible
+    
+    validate();
 
+  }
+
+  public StatusPanel() {
+    // TODO Auto-generated constructor stub
   }
 
   void setMessage(String message) {
@@ -158,15 +184,19 @@ class StatusPanel extends JPanel {
   }
 
   void clear() {
-    label.setText(null);
-    label.repaint();
+    if (label != null) {
+      label.setText(null);
+      label.repaint();
+    }
   }
 
   public void update(ContributionPanel panel) {
 
+    progressBarPanel.removeAll();
+
     label.setText(panel.description.toString());
 
-    updateButton.setEnabled(!contributionListing.hasListDownloadFailed()
+    updateButton.setEnabled(contributionListing.hasDownloadedLatestList()
       && (contributionListing.hasUpdates(panel.getContrib()) && !panel
         .getContrib().isUpdateFlagged()));
 
@@ -191,7 +221,7 @@ class StatusPanel extends JPanel {
       updateButton.setText("Update");
     }
 
-    installButton.setEnabled(!panel.getContrib().isInstalled() && !contributionListing.hasListDownloadFailed());
+    installButton.setEnabled(!panel.getContrib().isInstalled() && contributionListing.hasDownloadedLatestList());
 
 
     if(installButton.isEnabled()){
@@ -200,10 +230,13 @@ class StatusPanel extends JPanel {
       updateLabel.setText(currentVersion + " installed");
     }
 
-    updateLabel.setVisible(true);
-
     removeButton.setEnabled(panel.getContrib().isInstalled());
-
+    progressBarPanel.add(panel.installProgressBar);
+    if (panel.installProgressBar.isEnabled()) {
+      progressBarPanel.setVisible(true);
+      updateLabel.setVisible(false);
+      progressBarPanel.repaint();
+    }
   }
 }
 

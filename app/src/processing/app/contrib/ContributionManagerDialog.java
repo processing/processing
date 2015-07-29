@@ -21,6 +21,7 @@
  */
 package processing.app.contrib;
 
+import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -29,17 +30,20 @@ import java.net.SocketTimeoutException;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import processing.app.*;
 import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
 /**
- * 
+ *
  * @author akarshit
- * 
+ *
  * This class is the main Contribution Manager Dialog.
- * It contains all the contributions tab and the upadate tab.
+ * It contains all the contributions tab and the update tab.
  *
  */
 public class ContributionManagerDialog {
@@ -49,27 +53,28 @@ public class ContributionManagerDialog {
   JTabbedPane tabbedPane;
   String title;
   JButton restartButton;
-  StatusPanel statusPanel;
+
 
   // the calling editor, so updates can be applied
   Editor editor;
-  
+
   //The tabs
   ContributionTab toolsContributionTab;
   ContributionTab librariesContributionTab;
   ContributionTab examplesContributionTab;
   ContributionTab modesContributionTab;
-  ContributionTab updatesContributionTab;
-  
-  ContributionListing contributionListing = ContributionListing.getInstance(); 
+  UpdateContributionTab updatesContributionTab;
+  JLabel numberLabel;
+
+  ContributionListing contributionListing = ContributionListing.getInstance();
 
   public ContributionManagerDialog() {
-    statusPanel = new StatusPanel(450,this);
-    toolsContributionTab = new ContributionTab(ContributionType.TOOL, statusPanel, this);
-    librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, statusPanel, this);
-    modesContributionTab = new ContributionTab(ContributionType.MODE, statusPanel, this);
-    examplesContributionTab = new ContributionTab(ContributionType.EXAMPLES, statusPanel, this);
-    updatesContributionTab = new ContributionTab(null, statusPanel, this);
+    numberLabel = new JLabel(Toolkit.getLibIcon("manager/notification.png"), SwingConstants.CENTER);
+    toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
+    librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
+    modesContributionTab = new ContributionTab(ContributionType.MODE, this);
+    examplesContributionTab = new ContributionTab(ContributionType.EXAMPLES, this);
+    updatesContributionTab = new UpdateContributionTab(null, this);
   }
 
   public boolean hasUpdates() {
@@ -107,42 +112,87 @@ public class ContributionManagerDialog {
       tabbedPane.setSelectedIndex(index); //done before as downloadAndUpdateContributionListing() requires the current selected tab
       downloadAndUpdateContributionListing(editor.getBase());
     }
-    tabbedPane.setSelectedIndex(index); 
+    tabbedPane.setSelectedIndex(index);
     dialog.setVisible(true);
   }
 
   public void makeFrame(final Editor editor) {
     dialog = new JFrame(title);
+    String[] tabTitles = { "Tools","Libraries","Modes","Examples","Updates"};
     tabbedPane = new JTabbedPane();
 
-    toolsContributionTab.showFrame(editor);
+    makeAndShowTab(false, true);
 
     tabbedPane.addTab("Tools", null, toolsContributionTab.panel, "Tools");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-    librariesContributionTab.showFrame(editor);
     tabbedPane.addTab("Libraries", null, librariesContributionTab.panel,
                       "Libraries");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-    modesContributionTab.showFrame(editor);
     tabbedPane.addTab("Modes", null, modesContributionTab.panel, "Modes");
     tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-    examplesContributionTab.showFrame(editor);
     tabbedPane.addTab("Examples", null, examplesContributionTab.panel,
                       "Examples");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
-    updatesContributionTab.showFrame(editor);
     tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
-    
-    GroupLayout layout = new GroupLayout(dialog.getContentPane());
-    dialog.getContentPane().setLayout(layout);
-    
-    layout.setHorizontalGroup(layout.createParallelGroup().addComponent(tabbedPane).addComponent(statusPanel));
-    layout.setVerticalGroup(layout.createSequentialGroup().addComponent(tabbedPane).addComponent(statusPanel));
+    tabbedPane.setUI(new SpacedTabbedPaneUI());
+    tabbedPane.setBackground(Color.WHITE);
+    tabbedPane.setOpaque(true);
+    tabbedPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+
+
+    JPanel updateTabPanel = new JPanel(true);
+    JLabel updateTabLabel = new JLabel("Update");
+    numberLabel.setVerticalTextPosition(SwingConstants.CENTER);
+    numberLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+    updateTabPanel.setOpaque(false);
+    updateTabPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
+      .createMatteBorder(0, 2, 0, 0, Color.BLACK), BorderFactory
+      .createEmptyBorder(4, 4, 4, 4)));
+    tabbedPane.setTabComponentAt(4, updateTabPanel);
+
+    JLabel tabLabels[] = new JLabel[4];
+    for(int i = 0 ; i < tabLabels.length;i++){
+      tabLabels[i] = new JLabel(tabTitles[i]);
+      tabLabels[i]
+        .setBorder(BorderFactory.createCompoundBorder(BorderFactory
+          .createMatteBorder(0, (i == 0 ? 0 : 2), 0, (i == 3 ? 2 : 0),
+                             Color.BLACK), BorderFactory
+          .createEmptyBorder(4, 4, 4, 4)));
+      tabbedPane.setTabComponentAt(i, tabLabels[i]);
+    }
+
+    GroupLayout tabLayout = new GroupLayout(updateTabPanel);
+    tabLayout.setAutoCreateGaps(true);
+    updateTabPanel.setLayout(tabLayout);
+    tabLayout.setHorizontalGroup(tabLayout
+      .createSequentialGroup()
+      .addComponent(numberLabel)
+                  .addComponent(updateTabLabel));
+    tabLayout.setVerticalGroup(tabLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+     .addComponent(numberLabel)
+      .addComponent(updateTabLabel));
+
+    tabbedPane.addChangeListener(new ChangeListener() {
+
+      @Override
+      public void stateChanged(ChangeEvent e) {
+//        // When the tab is changed update status to the current selected panel
+//        ContributionPanel currentPanel = getActiveTab().contributionListPanel
+//          .getSelectedPanel();
+//        if (currentPanel != null) {
+//          getActiveTab().contributionListPanel.setSelectedPanel(currentPanel);
+//        }
+      }
+    });
+
+
+//    tabbedPane.setSize(450, 400);
+    setLayout();
 
     restartButton = new JButton(Language.text("contrib.restart"));
     restartButton.setVisible(false);
@@ -197,6 +247,67 @@ public class ContributionManagerDialog {
     dialog.setLocationRelativeTo(null);
   }
 
+  public class SpacedTabbedPaneUI extends BasicTabbedPaneUI {
+
+
+    @Override
+    protected void installDefaults() {
+      UIManager.put("TabbedPane.selected", Color.WHITE);
+      super.installDefaults();
+      highlight = Color.WHITE;
+      lightHighlight = Color.WHITE;
+      shadow = Color.WHITE;
+      darkShadow = Color.WHITE;
+      focus = Color.LIGHT_GRAY;
+      tabInsets = new Insets(0, 0, 0, 0);
+      contentBorderInsets = new Insets(0, 0, 0, 0);
+      tabAreaInsets = new Insets(0, 0, 0, 0);
+      selectedTabPadInsets = new Insets(0, 0, 0, 0);
+    }
+
+    @Override
+    protected LayoutManager createLayoutManager() {
+      return new BasicTabbedPaneUI.TabbedPaneLayout() {
+
+        @Override
+        public void addLayoutComponent(String name, Component comp) {
+          // TODO Auto-generated method stub
+          super.addLayoutComponent(name, comp);
+        }
+        @Override
+        protected void calculateTabRects(int tabPlacement, int tabCount) {
+          super.calculateTabRects(tabPlacement, tabCount);
+          for (int i = 0; i < rects.length; i++) {
+            rects[i].y -= 10;
+            rects[i].height += 15;
+            if (i == 4) {
+              rects[i].x = tabbedPane.getWidth() - rects[i].width - 2;
+            }
+          }
+        }
+      };
+    }
+  }
+
+  private void setLayout() {
+    GroupLayout layout = new GroupLayout(dialog.getContentPane());
+    dialog.getContentPane().setLayout(layout);
+    dialog.setResizable(true);
+    layout.setAutoCreateContainerGaps(true);
+    layout.setHorizontalGroup(layout.createParallelGroup()
+                              .addComponent(tabbedPane));
+    layout.setVerticalGroup(layout
+      .createParallelGroup()
+      .addComponent(tabbedPane));
+    layout.setHonorsVisibility(tabbedPane, true);
+    dialog.getContentPane().setBackground(Color.WHITE);
+    dialog.validate();
+    dialog.repaint();
+  }
+
+
+
+
   /**
    * Close the window after an OK or Cancel.
    */
@@ -207,7 +318,7 @@ public class ContributionManagerDialog {
 
 /*  *//**
    * Creates and arranges the Swing components in the dialog.
-   * 
+   *
    * @param panel1
    *//*
   private void createComponents(JPanel panel1) {
@@ -474,11 +585,10 @@ public class ContributionManagerDialog {
   }
 */
   protected void downloadAndUpdateContributionListing(Base base) {
-    
+
     //activeTab is required now but should be removed
     //as there is only one instance of contribListing and it should be present in this class
     final ContributionTab activeTab = getActiveTab();
-    activeTab.retryConnectingButton.setEnabled(false);
     activeTab.statusPanel.setMessage(Language
       .text("contrib.status.downloading_list"));
     activeTab.contribListing.downloadAvailableList(base, new ContribProgressBar(
@@ -507,7 +617,6 @@ public class ContributionManagerDialog {
         activeTab.updateContributionListing();
         activeTab.updateCategoryChooser();
 
-        activeTab.retryConnectingButton.setEnabled(true);
 
         if (error) {
           if (exception instanceof SocketTimeoutException) {
@@ -518,22 +627,32 @@ public class ContributionManagerDialog {
               .text("contrib.errors.list_download"));
           }
           exception.printStackTrace();
-          activeTab.retryConnectingButton.setVisible(true);
-
+          makeAndShowTab(true,false);
         } else {
+          makeAndShowTab(false, false);
           activeTab.statusPanel.setMessage(Language.text("contrib.status.done"));
-          activeTab.retryConnectingButton.setVisible(false);
         }
       }
+
+
+
     });
   }
 
+  void makeAndShowTab(boolean activateErrorPanel, boolean isLoading) {
+    toolsContributionTab.showFrame(editor, activateErrorPanel, isLoading);
+    librariesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
+    modesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
+    examplesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
+    updatesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
+  }
+
   /**
-   * 
+   *
    * @return the currently selected tab
    */
   public ContributionTab getActiveTab() {
-    
+
     switch (tabbedPane.getSelectedIndex()) {
     case 0:
       return toolsContributionTab;
@@ -546,7 +665,7 @@ public class ContributionManagerDialog {
     default:
       return updatesContributionTab;
     }
-    
+
   }
 
 /*
@@ -643,9 +762,5 @@ public class ContributionManagerDialog {
 
   public boolean hasAlreadyBeenOpened() {
     return dialog != null;
-  }
-
-  public void updateStatusPanel(ContributionPanel contributionPanel) {
-      statusPanel.update(contributionPanel);
   }
 }

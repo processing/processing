@@ -28,6 +28,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import processing.app.Base;
 import processing.app.Library;
+import processing.app.Util;
 import processing.core.PApplet;
 import processing.data.StringDict;
 
@@ -486,6 +487,9 @@ public class ContributionListing {
 
   String getLatestVersion(Contribution contribution) {
     Contribution newestContrib = getAvailableContribution(contribution);
+    if(newestContrib == null){
+      return null;
+    }
     String latestVersion = newestContrib.getPrettyVersion();
     if (latestVersion != null && !latestVersion.isEmpty()) {
       if (latestVersion.toLowerCase().startsWith("build")) // For Python mode
@@ -567,9 +571,7 @@ public class ContributionListing {
           }
 
           String[] contribLines = PApplet.subset(lines, start, end-start);
-
-          StringDict contribParams = Base.readSettings(file.getName(), contribLines);
-
+          StringDict contribParams = Util.readSettings(file.getName(), contribLines);
           outgoing.add(new AvailableContribution(contribType, contribParams));
           start = end + 1;
         }

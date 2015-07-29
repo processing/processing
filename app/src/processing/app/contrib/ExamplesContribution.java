@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import processing.app.Base;
+import processing.app.Util;
 import processing.core.PApplet;
 import processing.data.StringDict;
 import processing.data.StringList;
@@ -55,7 +56,7 @@ public class ExamplesContribution extends LocalContribution {
       new File(exampleFolder, EXAMPLES.getPropertiesName());
     if (propertiesFile.exists()) {
       StringList compatibleList =
-        parseModeList(Base.readSettings(propertiesFile));
+        parseModeList(Util.readSettings(propertiesFile));
       if (compatibleList.size() == 0) {
         return true;  // if no mode specified, just include everywhere
       }

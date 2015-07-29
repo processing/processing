@@ -164,6 +164,21 @@ public class ErrorMessageSimplifier {
       }
       break;
 
+    case IProblem.UndefinedConstructor:
+      if (args.length == 2) {
+        String constructorName = args[0];
+        // For messages such as "contructor sketch_name.ClassXYZ() is undefined", change
+        // constructor name to "ClassXYZ()". See #3434
+        if (constructorName.contains(".")) {
+          // arg[0] contains sketch name twice: sketch_150705a.sketch_150705a.Thing
+          constructorName = constructorName.substring(constructorName.indexOf('.') + 1);
+          constructorName = constructorName.substring(constructorName.indexOf('.') + 1);
+        }
+        String constructorArgs = removePackagePrefixes(args[args.length - 1]);
+        result = Language.interpolate("editor.status.undefined_constructor", constructorName, constructorArgs);
+      }
+      break;
+
     case IProblem.UndefinedMethod:
       if (args.length > 2) {
         String methodName = args[args.length - 2];

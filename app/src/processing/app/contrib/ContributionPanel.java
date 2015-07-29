@@ -98,7 +98,7 @@ class ContributionPanel extends JPanel {
   private JTextPane descriptionPane;
   private JLabel notificationLabel;
   private JButton updateButton;
-  private JProgressBar installProgressBar;
+  JProgressBar installProgressBar;
   private JButton installRemoveButton;
   private JPopupMenu contextMenu;
   private JMenuItem openFolder;
@@ -113,7 +113,6 @@ class ContributionPanel extends JPanel {
   private boolean isRemoveInProgress;
   
   StringBuilder description;
-
 
   ContributionPanel(ContributionListPanel contributionListPanel) {
     listPanel = contributionListPanel;
@@ -316,7 +315,7 @@ class ContributionPanel extends JPanel {
 
     JPanel barPane = new JPanel();
     barPane.setOpaque(false);
-    barPane.add(installProgressBar);
+//    barPane.add(installProgressBar);
 
     JPanel buttonPane = new JPanel();
     buttonPane.setOpaque(false);
@@ -373,7 +372,7 @@ class ContributionPanel extends JPanel {
       JPanel barPane = new JPanel();
       barPane.setOpaque(false);
       barPane.setInheritsPopupMenu(true);
-      barPane.add(installProgressBar);
+//      barPane.add(installProgressBar);
       rightPane.add(barPane);
 
       if (isUpdateInProgress)
@@ -387,7 +386,7 @@ class ContributionPanel extends JPanel {
       JPanel barPane = new JPanel();
       barPane.setOpaque(false);
       barPane.setInheritsPopupMenu(true);
-      barPane.add(installProgressBar);
+//      barPane.add(installProgressBar);
 
       JPanel buttonPane = new JPanel();
       buttonPane.setOpaque(false);

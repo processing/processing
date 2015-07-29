@@ -221,12 +221,12 @@ public class JavaBuild {
       // get a list of .jar files in the "code" folder
       // (class files in subfolders should also be picked up)
       String codeFolderClassPath =
-        Base.contentsToClassPath(codeFolder);
+        Util.contentsToClassPath(codeFolder);
       // append the jar files in the code folder to the class path
       classPath += File.pathSeparator + codeFolderClassPath;
       // get list of packages found in those jars
       codeFolderPackages =
-        Base.packageListFromClassPath(codeFolderClassPath);
+        Util.packageListFromClassPath(codeFolderClassPath);
 
     } else {
       javaLibraryPath = "";
@@ -520,7 +520,7 @@ public class JavaBuild {
             }
             File packageFolder = new File(srcFolder, packageMatch[0].replace('.', '/'));
             packageFolder.mkdirs();
-            Base.saveFile(javaCode, new File(packageFolder, filename));
+            Util.saveFile(javaCode, new File(packageFolder, filename));
           }
 
         } catch (IOException e) {
@@ -897,7 +897,7 @@ public class JavaBuild {
 
       File macosFolder = new File(contentsFolder, "MacOS");
       macosFolder.mkdirs();
-      Base.copyFile(new File(contentsOrig, "MacOS/Processing"),
+      Util.copyFile(new File(contentsOrig, "MacOS/Processing"),
                     new File(contentsFolder, "MacOS/" + sketch.getName()));
 
       File pkgInfo = new File(contentsFolder, "PkgInfo");
@@ -908,14 +908,14 @@ public class JavaBuild {
 
       // Use faster(?) native copy here (also to do sym links)
       if (embedJava) {
-        Base.copyDirNative(new File(contentsOrig, "PlugIns"),
+        Util.copyDirNative(new File(contentsOrig, "PlugIns"),
                            new File(contentsFolder, "PlugIns"));
       }
 
       File resourcesFolder = new File(contentsFolder, "Resources");
-      Base.copyDir(new File(contentsOrig, "Resources/en.lproj"),
+      Util.copyDir(new File(contentsOrig, "Resources/en.lproj"),
                    new File(resourcesFolder, "en.lproj"));
-      Base.copyFile(mode.getContentFile("application/sketch.icns"),
+      Util.copyFile(mode.getContentFile("application/sketch.icns"),
                     new File(resourcesFolder, "sketch.icns"));
 
       /*
@@ -944,12 +944,12 @@ public class JavaBuild {
       */
     } else if (exportPlatform == PConstants.LINUX) {
       if (embedJava) {
-        Base.copyDirNative(Base.getJavaHome(), new File(destFolder, "java"));
+        Util.copyDirNative(Base.getJavaHome(), new File(destFolder, "java"));
       }
 
     } else if (exportPlatform == PConstants.WINDOWS) {
       if (embedJava) {
-        Base.copyDir(Base.getJavaHome(), new File(destFolder, "java"));
+        Util.copyDir(Base.getJavaHome(), new File(destFolder, "java"));
       }
     }
 
@@ -1022,15 +1022,15 @@ public class JavaBuild {
     // 'data' folder next to 'lib'.
     if (sketch.hasDataFolder()) {
       if (exportPlatform == PConstants.MACOSX) {
-        Base.copyDir(sketch.getDataFolder(),  new File(jarFolder, "data"));
+        Util.copyDir(sketch.getDataFolder(),  new File(jarFolder, "data"));
       } else {
-        Base.copyDir(sketch.getDataFolder(),  new File(destFolder, "data"));
+        Util.copyDir(sketch.getDataFolder(),  new File(destFolder, "data"));
       }
     }
 
     // add the contents of the code folder to the jar
     if (sketch.hasCodeFolder()) {
-      String includes = Base.contentsToClassPath(sketch.getCodeFolder());
+      String includes = Util.contentsToClassPath(sketch.getCodeFolder());
       // Use tokens to get rid of extra blanks, which causes huge exports
       String[] codeList = PApplet.splitTokens(includes, File.pathSeparator);
       for (int i = 0; i < codeList.length; i++) {
@@ -1038,7 +1038,7 @@ public class JavaBuild {
             codeList[i].toLowerCase().endsWith(".zip")) {
           File exportFile = new File(codeList[i]);
           String exportFilename = exportFile.getName();
-          Base.copyFile(exportFile, new File(jarFolder, exportFilename));
+          Util.copyFile(exportFile, new File(jarFolder, exportFilename));
           jarListVector.add(exportFilename);
         } else {
 //          cp += codeList[i] + File.pathSeparator;
@@ -1064,17 +1064,17 @@ public class JavaBuild {
                              "a big fat lie and does not exist.");
 
         } else if (exportFile.isDirectory()) {
-          Base.copyDir(exportFile, new File(jarFolder, exportName));
+          Util.copyDir(exportFile, new File(jarFolder, exportName));
 
         } else if (exportName.toLowerCase().endsWith(".zip") ||
                    exportName.toLowerCase().endsWith(".jar")) {
-          Base.copyFile(exportFile, new File(jarFolder, exportName));
+          Util.copyFile(exportFile, new File(jarFolder, exportName));
           jarListVector.add(exportName);
 
         } else {
           // Starting with 2.0a2 put extra export files (DLLs, plugins folder,
           // anything else for libraries) inside lib or Contents/Resources/Java
-          Base.copyFile(exportFile, new File(jarFolder, exportName));
+          Util.copyFile(exportFile, new File(jarFolder, exportName));
         }
       }
     }
@@ -1306,7 +1306,7 @@ public class JavaBuild {
     String preprocFilename = sketch.getName() + ".java";
     File preprocFile = new File(srcFolder, preprocFilename);
     if (preprocFile.exists()) {
-      Base.copyFile(preprocFile, new File(sourceFolder, preprocFilename));
+      Util.copyFile(preprocFile, new File(sourceFolder, preprocFilename));
     } else {
       System.err.println("Could not copy source file: " + preprocFile.getAbsolutePath());
     }
@@ -1422,7 +1422,7 @@ public class JavaBuild {
 
   protected void addDataFolder(ZipOutputStream zos) throws IOException {
     if (sketch.hasDataFolder()) {
-      String[] dataFiles = Base.listFiles(sketch.getDataFolder(), false);
+      String[] dataFiles = Util.listFiles(sketch.getDataFolder(), false);
       int offset = sketch.getFolder().getAbsolutePath().length() + 1;
       for (String path : dataFiles) {
         if (Base.isWindows()) {

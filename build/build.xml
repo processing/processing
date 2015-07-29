@@ -43,8 +43,8 @@
   -->
   <!-- Switching to 8 because updates for 7 end April 2015 -->
   <property name="jdk.version" value="8" />
-  <property name="jdk.update" value="45" />
-  <property name="jdk.build" value="14" />
+  <property name="jdk.update" value="51" />
+  <property name="jdk.build" value="16" />
   <property name="jdk.short" value="${jdk.version}u${jdk.update}" />
   <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />
 
@@ -99,7 +99,7 @@
     <include name="bin/klist.exe" />
     <include name="bin/ktab.exe" />
 
-    <!--<include name="bin/keytool" />--> <!-- needed for Android -->
+    <include name="bin/keytool" /> <!-- needed for Android -->
     <include name="bin/orbd" />
     <include name="bin/policytool" />
     <include name="bin/rmid" />
@@ -114,7 +114,7 @@
   </fileset>
 
   <fileset dir="linux/work/java" id="jre-optional-linux">
-    <!--<include name="bin/keytool" />--> <!-- needed for Android -->
+    <include name="bin/keytool" /> <!-- needed for Android -->
 
     <include name="lib/ext/dnsns.jar" />
 
@@ -202,21 +202,33 @@
     <available file="${jre.tgz.path}" property="jre.tgz.downloaded" />
   </target>
 
-  <target name="jre-download" depends="jre-check" unless="jre.tgz.downloaded">
+  <target name="downloader-setup">
     <!-- make sure we're built -->
     <subant buildpath="jre" target="dist" />
 
-    <!-- our special JRE downloader task -->
+    <!-- define our special JRE downloader task -->
     <taskdef name="downloader" 
 	     classname="Downloader"
 	     classpath="jre/downloader.jar" />
+  </target>
 
+  <target name="jre-download" depends="jre-check, downloader-setup"
+          unless="jre.tgz.downloaded">
     <downloader version="${jdk.version}" 
                 update="${jdk.update}" 
                 build="${jdk.build}" 
                 jdk="false" 
                 flavor="${jre.downloader}"
                 path="${jre.tgz.path}" />    
+  </target>
+
+  <target name="download-jdk-macosx" depends="downloader-setup">
+    <downloader version="${jdk.version}" 
+                update="${jdk.update}" 
+                build="${jdk.build}" 
+                jdk="true" 
+                flavor="macosx-x64.dmg"
+                path="${env.HOME}/Desktop/jdk-${jdk.short}.dmg" />
   </target>
 
   <!-- code signing hack, turns on code signing during dist -->
@@ -231,7 +243,7 @@
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
   <fail if="macosx" unless="macosx_jdk_found"
-        message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
+        message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again.${line.separator}Or... type 'ant download-jdk-macosx' to download it to your Desktop." />
   <!--
   <fail if="linux" unless="java_tools_found" 
         message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
@@ -546,6 +558,18 @@
         <string>true</string>
 -->
     </bundleapp>
+
+    <!-- Temporary fix until new appbundler is included again after solving 
+      https://github.com/processing/processing/issues/3359
+      https://github.com/processing/processing/issues/3360
+      The 'keytool' file is deleted by our appbundler. Add it back so that
+	  Android signing works properly. (Not modifying our appbundler since
+	  most of the time that appbundler is used, keytool isn't needed). 
+	  Also, because Ant's copy task does not retain file permissions on Unix systems, 
+	  we need to use <exec executable="cp" ... > instead -->
+    <exec executable="cp">
+      <arg line="${jdk.path.macosx}/Contents/Home/bin/keytool macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/bin"/>
+    </exec>
 
     <!-- Replace libjli.dylib symlink with actual file. 
          Deals with code signing issues on OS X 10.9.5+ -->

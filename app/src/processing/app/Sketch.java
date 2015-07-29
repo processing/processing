@@ -652,7 +652,7 @@ public class Sketch {
         // to do a save on the handleNew()
 
         // delete the entire sketch
-        Base.removeDir(folder);
+        Util.removeDir(folder);
 
         // get the changes into the sketchbook menu
         //sketchbook.rebuildMenus();
@@ -898,7 +898,7 @@ public class Sketch {
     // if the new folder already exists, then first remove its contents before
     // copying everything over (user will have already been warned).
     if (newFolder.exists()) {
-      Base.removeDir(newFolder);
+      Util.removeDir(newFolder);
     }
     // in fact, you can't do this on Windows because the file dialog
     // will instead put you inside the folder, but it happens on OS X a lot.
@@ -1148,7 +1148,7 @@ public class Sketch {
     // https://github.com/processing/processing/issues/3383
     if (!sourceFile.equals(destFile)) {
       try {
-        Base.copyFile(sourceFile, destFile);
+        Util.copyFile(sourceFile, destFile);
 
       } catch (IOException e) {
         Base.showWarning(Language.text("add_file.messages.error_adding"),
