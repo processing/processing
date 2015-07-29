@@ -266,6 +266,11 @@ public class PShapeSVG extends PShape {
 
       opacity = parent.opacity;
     }
+
+    // The rect and ellipse modes are set to CORNER since it is the expected
+    // mode for svg shapes.
+    rectMode = CORNER;
+    ellipseMode = CORNER;
   }
 
 

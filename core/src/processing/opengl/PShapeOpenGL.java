@@ -395,10 +395,8 @@ public class PShapeOpenGL extends PShape {
     curveDetail = pg.curveDetail;
     curveTightness = pg.curveTightness;
 
-    // The rect and ellipse modes are set to CORNER since it is the expected
-    // mode for svg shapes.
-    rectMode = CORNER;
-    ellipseMode = CORNER;
+    rectMode = pg.rectMode;
+    ellipseMode = pg.ellipseMode;
 
     normalX = normalY = 0;
     normalZ = 1;
