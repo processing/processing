@@ -3,6 +3,7 @@ X Welcome screen completely broken/looking for debug files
 X   https://github.com/processing/processing/issues/3474
 X Add message that says it's safe to ignore the tools.jar warning
 X add new lower console/errors icons
+X dist needs to do a git pull on processing-docs
 _ don't show display warning when display 1 doesn't exist
 
 _ can't install processing-java into /usr/bin with El Capitan
@@ -104,7 +105,6 @@ _   not really part of the 'build' anymore
 _ break out Mode options to their own panels in prefs
 _   Mode should just provide a panel for their prefs
 _ make examples pull/build automatic during dist
-_ dist needs to do a git pull on processing-docs
 _ make reference build process part of dist
 _   https://github.com/processing/processing-docs/issues/85
 _   separate ant target, but only require them for dist

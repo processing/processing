@@ -300,6 +300,11 @@
     <available file="${examples.dir}" property="examples.exist" />
     <fail unless="examples.exist" message="To do a distribution, the processing-docs repo must be checked out at the same level as the processing repo." />
 
+    <!-- do a git pull in the docs repo so that it is up to date -->
+    <exec executable="git" dir="${examples.dir}">
+      <arg line="pull" />
+    </exec>
+
     <antcall target="${platform}-dist" />
   </target>
 
