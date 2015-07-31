@@ -90,9 +90,19 @@ public class Runner implements MessageConsumer {
 
     // Make sure all the imported libraries will actually run with this setup.
     int bits = Base.getNativeBits();
+    String arch = Base.getNativeArch();
+    String variant;
+    if (bits == 32 && arch.equals("arm")) {
+      // assume armv6hf for now
+      variant = "armv6hf";
+    } else {
+      // 32 or 64
+      variant = Integer.toString(bits);
+    }
+
     for (Library library : build.getImportedLibraries()) {
-      if (!library.supportsArch(PApplet.platform, bits)) {
-        sketchErr.println(library.getName() + " does not run in " + bits + "-bit mode.");
+      if (!library.supportsArch(PApplet.platform, variant)) {
+        sketchErr.println(library.getName() + " does not run on this architecture: " + variant);
         int opposite = (bits == 32) ? 64 : 32;
         if (Base.isMacOS()) {
           //if (library.supportsArch(PConstants.MACOSX, opposite)) {  // should always be true
