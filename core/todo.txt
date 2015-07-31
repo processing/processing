@@ -7,6 +7,15 @@ X   https://github.com/processing/processing/issues/3519
 X fix problem with JAR loading inside createInputRaw()
 o   https://github.com/processing/processing/pull/3514
 
+jakub
+X Remove size() from setup() when copying to settings()
+X   https://github.com/processing/processing/pull/3517
+X Remove mode parameters from createShape(), fixes parameter collision issues
+X   https://github.com/processing/processing/pull/3516
+X radius for rect not working on PShape
+X   https://github.com/processing/processing/issues/2646
+X bug in arc with createShape 
+X   https://github.com/processing/processing/issues/3018
 
 opengl
 X ArrayIndexOutOfBoundsException error when enabling depth sorting in P3D
