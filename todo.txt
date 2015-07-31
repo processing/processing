@@ -26,6 +26,8 @@ X   https://github.com/processing/processing/pull/3489
 X include mode imports when rewriting .properties file
 X   https://github.com/processing/processing/pull/3499
 X   https://github.com/processing/processing/issues/3492
+X Assortment of patches from my arm-3.0 branch
+X   https://github.com/processing/processing/pull/3522
 
 
 beta
