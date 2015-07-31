@@ -4,6 +4,8 @@ X tweak implementation of PVector.heading()
 X   https://github.com/processing/processing/issues/3511
 X make PFont.size protected again
 X   https://github.com/processing/processing/issues/3519
+X fix problem with JAR loading inside createInputRaw()
+o   https://github.com/processing/processing/pull/3514
 
 
 opengl

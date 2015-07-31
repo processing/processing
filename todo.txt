@@ -5,6 +5,9 @@ X Add message that says it's safe to ignore the tools.jar warning
 X add new lower console/errors icons
 _ don't show display warning when display 1 doesn't exist
 
+_ can't install processing-java into /usr/bin with El Capitan
+_   https://github.com/processing/processing/issues/3497
+
 fixed earlier
 X font fixes for Georgia in the examples
 X contribs listed multiple times
@@ -21,7 +24,7 @@ X   https://github.com/processing/processing/issues/3481
 X   https://github.com/processing/processing/pull/3489
 X include mode imports when rewriting .properties file
 X   https://github.com/processing/processing/pull/3499
-_   https://github.com/processing/processing/issues/3492
+X   https://github.com/processing/processing/issues/3492
 
 
 beta
