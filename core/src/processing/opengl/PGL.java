@@ -79,7 +79,7 @@ public abstract class PGL {
    * See the code and comments involving this constant in
    * PGraphicsOpenGL.endDraw().
    */
-  protected static boolean SAVE_SURFACE_TO_PIXELS_HACK = false;
+  protected static boolean SAVE_SURFACE_TO_PIXELS_HACK = true;
 
   /** Enables/disables mipmap use. */
   protected static boolean MIPMAPS_ENABLED = true;
