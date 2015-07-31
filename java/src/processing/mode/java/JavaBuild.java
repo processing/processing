@@ -257,8 +257,7 @@ public class JavaBuild {
       return null;
     }
     //System.out.format("size() is '%s'%n", info[0]);
-
-    /*
+    
     // Remove the size() statement (will be added back by writeFooter())
     if (sizeInfo != null) {
       String sizeStatement = sizeInfo.getStatement();
@@ -267,7 +266,6 @@ public class JavaBuild {
         bigCode.delete(index, index + sizeStatement.length());
       }
     }
-    */
 
     PreprocessorResult result;
     try {
