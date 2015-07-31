@@ -1789,20 +1789,20 @@ public class PGraphics extends PImage implements PConstants {
       return createShapePrimitive(kind, p);
 
     } else if (kind == RECT) {
-      if (len != 4 && len != 5 && len != 8 && len != 9) {
+      if (len != 4 && len != 5 && len != 8) {
         throw new IllegalArgumentException("Wrong number of parameters for createShape(RECT), see the reference");
       }
       return createShapePrimitive(kind, p);
 
     } else if (kind == ELLIPSE) {
-      if (len != 4 && len != 5) {
-        throw new IllegalArgumentException("Use createShape(ELLIPSE, x, y, w, h) or createShape(ELLIPSE, x, y, w, h, mode)");
+      if (len != 4) {
+        throw new IllegalArgumentException("Use createShape(ELLIPSE, x, y, w, h)");
       }
       return createShapePrimitive(kind, p);
 
     } else if (kind == ARC) {
       if (len != 6 && len != 7) {
-        throw new IllegalArgumentException("Use createShape(ARC, x, y, w, h, start, stop)");
+        throw new IllegalArgumentException("Use createShape(ARC, x, y, w, h, start, stop) or createShape(ARC, x, y, w, h, start, stop, arcMode)");
       }
       return createShapePrimitive(kind, p);
 

@@ -395,10 +395,8 @@ public class PShapeOpenGL extends PShape {
     curveDetail = pg.curveDetail;
     curveTightness = pg.curveTightness;
 
-    // The rect and ellipse modes are set to CORNER since it is the expected
-    // mode for svg shapes.
-    rectMode = CORNER;
-    ellipseMode = CORNER;
+    rectMode = pg.rectMode;
+    ellipseMode = pg.ellipseMode;
 
     normalX = normalY = 0;
     normalZ = 1;
@@ -3131,11 +3129,15 @@ public class PShapeOpenGL extends PShape {
       b = params[1];
       c = params[2];
       d = params[3];
-      if (params.length == 5) {
-        mode = (int)(params[4]);
-      }
       rounded = false;
-    } else if (params.length == 8 || params.length == 9) {
+      if (params.length == 5) {
+        tl = params[4];
+        tr = params[4];
+        br = params[4];
+        bl = params[4];
+        rounded = true;
+      }
+    } else if (params.length == 8) {
       a = params[0];
       b = params[1];
       c = params[2];
@@ -3144,9 +3146,6 @@ public class PShapeOpenGL extends PShape {
       tr = params[5];
       br = params[6];
       bl = params[7];
-      if (params.length == 9) {
-        mode = (int)(params[8]);
-      }
       rounded = true;
     }
 
@@ -3212,9 +3211,6 @@ public class PShapeOpenGL extends PShape {
       b = params[1];
       c = params[2];
       d = params[3];
-      if (params.length == 5) {
-        mode = (int)(params[4]);
-      }
     }
 
     float x = a;
@@ -3259,6 +3255,7 @@ public class PShapeOpenGL extends PShape {
     float a = 0, b = 0, c = 0, d = 0;
     float start = 0, stop = 0;
     int mode = ellipseMode;
+    int arcMode = 0;
 
     if (6 <= params.length) {
       a = params[0];
@@ -3268,7 +3265,7 @@ public class PShapeOpenGL extends PShape {
       start = params[4];
       stop = params[5];
       if (params.length == 7) {
-        mode = (int)(params[6]);
+        arcMode = (int)(params[6]);
       }
     }
 
@@ -3303,13 +3300,13 @@ public class PShapeOpenGL extends PShape {
         }
 
         if (stop - start > TWO_PI) {
-          start = 0;
-          stop = TWO_PI;
+          // don't change start, it is visible in PIE mode
+          stop = start + TWO_PI;
         }
         inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                           ambientColor, specularColor, emissiveColor, shininess);
         inGeo.setNormal(normalX, normalY, normalZ);
-        inGeo.addArc(x, y, w, h, start, stop, fill, stroke, mode);
+        inGeo.addArc(x, y, w, h, start, stop, fill, stroke, arcMode);
         tessellator.tessellateTriangleFan();
       }
     }
