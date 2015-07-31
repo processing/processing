@@ -85,8 +85,7 @@ public class PFont implements PConstants {
   /**
    * The original size of the font when it was first created
    */
-  //protected int size;
-  private int size;
+  protected int size;
 
   /** Default density set to 1 for backwards compatibility with loadFont(). */
   protected int density = 1;

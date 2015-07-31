@@ -1,5 +1,9 @@
 0239 core
 X add getSurface() method ('surface' is protected in PApplet)
+X tweak implementation of PVector.heading()
+X   https://github.com/processing/processing/issues/3511
+X make PFont.size protected again
+X   https://github.com/processing/processing/issues/3519
 
 
 opengl
@@ -14,7 +18,11 @@ X   https://github.com/processing/processing/issues/2937
 X JOGL window size is now set properly
 X   https://github.com/processing/processing/pull/3493
 X   https://github.com/processing/processing/issues/3223
-
+X more sorter work
+X   https://github.com/processing/processing/pull/3507
+X Depth sorting wrong when drawing inside setup(), P3D
+X   can no longer be reproduced
+X   https://github.com/processing/processing/issues/2483
 
 docs
 _ note that full screen and present are now different
