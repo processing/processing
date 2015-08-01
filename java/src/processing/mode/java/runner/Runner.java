@@ -668,7 +668,7 @@ public class Runner implements MessageConsumer {
       listener.statusError("A library used by this sketch is not installed properly.");
       err.println("A library relies on native code that's not available.");
       err.println("Or only works properly when the sketch is run as a " +
-        ((Base.getNativeBits() == 32) ? "64-bit " : "32-bit ") + " application.");
+        ((Base.getNativeBits() == 32) ? "64-bit" : "32-bit") + " application.");
 
     } else if (exceptionClass.equals("java.lang.StackOverflowError")) {
       listener.statusError("StackOverflowError: This sketch is attempting too much recursion.");
