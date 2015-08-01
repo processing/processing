@@ -670,6 +670,9 @@ public class Runner implements MessageConsumer {
       }
     } else if (exceptionClass.equals("java.lang.UnsatisfiedLinkError")) {
       listener.statusError("A library used by this sketch is not installed properly.");
+      if (PApplet.platform == PConstants.LINUX) {
+        System.out.println(message);
+      }
       err.println("A library relies on native code that's not available.");
       err.println("Or only works properly when the sketch is run as a " +
         ((Platform.getNativeBits() == 32) ? "64-bit" : "32-bit") + " application.");
