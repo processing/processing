@@ -37,6 +37,7 @@
     <!-- there is currently no JRE available -->
     <property name="jre.download.jdk" value="true" />
     <property name="jre.downloader" value="linux-arm-vfp-hflt.tar.gz" />
+    <property name="linux.dist" value="linux/processing-${version}-linux-armv6hf.tgz" />
   </target>
 
   <!-- Require Java 8 everywhere. -->
