@@ -1110,6 +1110,15 @@ public class PGraphics extends PImage implements PConstants {
    * hint(DISABLE_OPENGL_ERROR_REPORT) - Speeds up the P3D renderer setting
    * by not checking for errors while running. Undo with hint(ENABLE_OPENGL_ERROR_REPORT).
    * <br/> <br/>
+   * hint(ENABLE_DEPTH_READING) - Depth and stencil buffers in P2D/P3D will be
+   * downsampled to make PGL#getDepthValue, PGL#getStencilValue and PGL#readPixels
+   * work with multisampling. Enabling this introduces some overhead, so if you
+   * experience bad performance, disable multisampling with noSmooth() instead.
+   * This hint is not intended to be enabled and disabled repeatedely, so call this
+   * once in setup() or after creating your PGraphics2D/3D. You can restore the
+   * default with hint(DISABLE_DEPTH_READING) if you don't plan to read depth from
+   * this PGraphics anymore.
+   * <br/> <br/>
    * As of release 0149, unhint() has been removed in favor of adding
    * additional ENABLE/DISABLE constants to reset the default behavior. This
    * prevents the double negatives, and also reinforces which hints can be

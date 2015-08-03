@@ -34,6 +34,7 @@ import java.nio.ShortBuffer;
 import java.util.Arrays;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 
 
@@ -151,6 +152,9 @@ public abstract class PGL {
 
   protected IntBuffer glMultiFbo;
   protected IntBuffer glMultiColor;
+  protected IntBuffer glMultiDepthStencil;
+  protected IntBuffer glMultiDepth;
+  protected IntBuffer glMultiStencil;
 
   protected int fboWidth, fboHeight;
   protected int backTex, frontTex;
@@ -286,6 +290,11 @@ public abstract class PGL {
     "if using any of the built-in OpenGL renderers. If you are using a contributed " +
     "library, contact the library's developers.";
 
+  protected static final String DEPTH_READING_NOT_ENABLED_ERROR =
+    "Reading depth and stencil values from this multisampled buffer is not enabled. " +
+    "You can enable it by calling hint(ENABLE_DEPTH_READING) once. " +
+    "If your sketch becomes too slow, disable multisampling with noSmooth() instead.";
+
   // ........................................................
 
   // Constants
@@ -344,6 +353,9 @@ public abstract class PGL {
 
       glMultiFbo = allocateIntBuffer(1);
       glMultiColor = allocateIntBuffer(1);
+      glMultiDepthStencil = allocateIntBuffer(1);
+      glMultiDepth = allocateIntBuffer(1);
+      glMultiStencil = allocateIntBuffer(1);
 
       fboLayerCreated = false;
       fboLayerInUse = false;
@@ -399,6 +411,9 @@ public abstract class PGL {
 
       deleteFramebuffers(1, glMultiFbo);
       deleteRenderbuffers(1, glMultiColor);
+      deleteRenderbuffers(1, glMultiDepthStencil);
+      deleteRenderbuffers(1, glMultiDepth);
+      deleteRenderbuffers(1, glMultiStencil);
     }
 
     fboLayerCreated = false;
@@ -534,9 +549,13 @@ public abstract class PGL {
     if (1 < numSamples) {
       bindFramebufferImpl(READ_FRAMEBUFFER, glMultiFbo.get(0));
       bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+      int mask = COLOR_BUFFER_BIT;
+      if (pg.getHint(PConstants.ENABLE_DEPTH_READING)) {
+        mask |= DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT;
+      }
       blitFramebuffer(0, 0, fboWidth, fboHeight,
                       0, 0, fboWidth, fboHeight,
-                      COLOR_BUFFER_BIT, NEAREST);
+                      mask, NEAREST);
     }
   }
 
@@ -776,6 +795,13 @@ public abstract class PGL {
     framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0, TEXTURE_2D,
                          glColorTex.get(backTex), 0);
 
+    if (!multisample || pg.getHint(PConstants.ENABLE_DEPTH_READING)) {
+      // If not multisampled, this is the only depth and stencil buffer.
+      // If multisampled and depth reading enabled, these are going to
+      // hold downsampled depth and stencil buffers.
+      createDepthAndStencilBuffer(false, depthBits, stencilBits, packed);
+    }
+
     if (multisample) {
       // Creating multisampled FBO
       genFramebuffers(1, glMultiFbo);
@@ -788,9 +814,10 @@ public abstract class PGL {
                                      RGBA8, fboWidth, fboHeight);
       framebufferRenderbuffer(FRAMEBUFFER, COLOR_ATTACHMENT0,
                               RENDERBUFFER, glMultiColor.get(0));
-    }
 
-    createDepthAndStencilBuffer(multisample, depthBits, stencilBits, packed);
+      // Creating multisampled depth and stencil buffers
+      createDepthAndStencilBuffer(true, depthBits, stencilBits, packed);
+    }
 
     validateFramebuffer();
 
@@ -815,8 +842,10 @@ public abstract class PGL {
     // Creating depth and stencil buffers
     if (packed && depthBits == 24 && stencilBits == 8) {
       // packed depth+stencil buffer
-      genRenderbuffers(1, glDepthStencil);
-      bindRenderbuffer(RENDERBUFFER, glDepthStencil.get(0));
+      IntBuffer depthStencilBuf =
+          multisample ? glMultiDepthStencil : glDepthStencil;
+      genRenderbuffers(1, depthStencilBuf);
+      bindRenderbuffer(RENDERBUFFER, depthStencilBuf.get(0));
       if (multisample) {
         renderbufferStorageMultisample(RENDERBUFFER, numSamples,
                                        DEPTH24_STENCIL8, fboWidth, fboHeight);
@@ -825,9 +854,9 @@ public abstract class PGL {
                             fboWidth, fboHeight);
       }
       framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT, RENDERBUFFER,
-                              glDepthStencil.get(0));
+                              depthStencilBuf.get(0));
       framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT, RENDERBUFFER,
-                              glDepthStencil.get(0));
+                              depthStencilBuf.get(0));
     } else {
       // separate depth and stencil buffers
       if (0 < depthBits) {
@@ -840,8 +869,9 @@ public abstract class PGL {
           depthComponent = DEPTH_COMPONENT16;
         }
 
-        genRenderbuffers(1, glDepth);
-        bindRenderbuffer(RENDERBUFFER, glDepth.get(0));
+        IntBuffer depthBuf = multisample ? glMultiDepth : glDepth;
+        genRenderbuffers(1, depthBuf);
+        bindRenderbuffer(RENDERBUFFER, depthBuf.get(0));
         if (multisample) {
           renderbufferStorageMultisample(RENDERBUFFER, numSamples,
                                          depthComponent, fboWidth, fboHeight);
@@ -850,7 +880,7 @@ public abstract class PGL {
                               fboWidth, fboHeight);
         }
         framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT,
-                                RENDERBUFFER, glDepth.get(0));
+                                RENDERBUFFER, depthBuf.get(0));
       }
 
       if (0 < stencilBits) {
@@ -863,8 +893,9 @@ public abstract class PGL {
           stencilIndex = STENCIL_INDEX1;
         }
 
-        genRenderbuffers(1, glStencil);
-        bindRenderbuffer(RENDERBUFFER, glStencil.get(0));
+        IntBuffer stencilBuf = multisample ? glMultiStencil : glStencil;
+        genRenderbuffers(1, stencilBuf);
+        bindRenderbuffer(RENDERBUFFER, stencilBuf.get(0));
         if (multisample) {
           renderbufferStorageMultisample(RENDERBUFFER, numSamples,
                                          stencilIndex, fboWidth, fboHeight);
@@ -873,7 +904,7 @@ public abstract class PGL {
                               fboWidth, fboHeight);
         }
         framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT,
-                                RENDERBUFFER, glStencil.get(0));
+                                RENDERBUFFER, stencilBuf.get(0));
       }
     }
   }
@@ -2685,11 +2716,18 @@ public abstract class PGL {
   // to glReadPixels() should be done in readPixelsImpl().
 
   public void readPixels(int x, int y, int width, int height, int format, int type, Buffer buffer){
-    boolean pgCall = format != STENCIL_INDEX &&
-                     format != DEPTH_COMPONENT && format != DEPTH_STENCIL;
-    if (pgCall) pg.beginReadPixels();
+    boolean multisampled = isMultisampled();
+    boolean depthReadingEnabled = pg.getHint(PConstants.ENABLE_DEPTH_READING);
+    boolean depthRequested = format == STENCIL_INDEX || format == DEPTH_COMPONENT || format == DEPTH_STENCIL;
+
+    if (multisampled && depthRequested && !depthReadingEnabled) {
+      PGraphics.showWarning(DEPTH_READING_NOT_ENABLED_ERROR);
+      return;
+    }
+
+    pg.beginReadPixels();
     readPixelsImpl(x, y, width, height, format, type, buffer);
-    if (pgCall) pg.endReadPixels();
+    pg.endReadPixels();
   }
 
   protected abstract void readPixelsImpl(int x, int y, int width, int height, int format, int type, Buffer buffer);
