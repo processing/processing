@@ -142,13 +142,16 @@ public abstract class PGL {
   protected boolean firstFrame = true;
   public int reqNumSamples;
   protected int numSamples;
+
   protected IntBuffer glColorFbo;
-  protected IntBuffer glMultiFbo;
-  protected IntBuffer glColorBuf;
   protected IntBuffer glColorTex;
   protected IntBuffer glDepthStencil;
   protected IntBuffer glDepth;
   protected IntBuffer glStencil;
+
+  protected IntBuffer glMultiFbo;
+  protected IntBuffer glColorBuf;
+
   protected int fboWidth, fboHeight;
   protected int backTex, frontTex;
 
@@ -333,13 +336,14 @@ public abstract class PGL {
   public PGL(PGraphicsOpenGL pg) {
     this.pg = pg;
     if (glColorTex == null) {
-      glColorTex = allocateIntBuffer(2);
       glColorFbo = allocateIntBuffer(1);
-      glMultiFbo = allocateIntBuffer(1);
-      glColorBuf = allocateIntBuffer(1);
+      glColorTex = allocateIntBuffer(2);
       glDepthStencil = allocateIntBuffer(1);
       glDepth = allocateIntBuffer(1);
       glStencil = allocateIntBuffer(1);
+
+      glMultiFbo = allocateIntBuffer(1);
+      glColorBuf = allocateIntBuffer(1);
 
       fboLayerCreated = false;
       fboLayerInUse = false;
@@ -387,13 +391,14 @@ public abstract class PGL {
 
   protected void deleteSurface() {
     if (threadIsCurrent() && fboLayerCreated) {
-      deleteTextures(2, glColorTex);
       deleteFramebuffers(1, glColorFbo);
-      deleteFramebuffers(1, glMultiFbo);
-      deleteRenderbuffers(1, glColorBuf);
+      deleteTextures(2, glColorTex);
       deleteRenderbuffers(1, glDepthStencil);
       deleteRenderbuffers(1, glDepth);
       deleteRenderbuffers(1, glStencil);
+
+      deleteFramebuffers(1, glMultiFbo);
+      deleteRenderbuffers(1, glColorBuf);
     }
 
     fboLayerCreated = false;
