@@ -150,7 +150,7 @@ public abstract class PGL {
   protected IntBuffer glStencil;
 
   protected IntBuffer glMultiFbo;
-  protected IntBuffer glColorBuf;
+  protected IntBuffer glMultiColor;
 
   protected int fboWidth, fboHeight;
   protected int backTex, frontTex;
@@ -343,7 +343,7 @@ public abstract class PGL {
       glStencil = allocateIntBuffer(1);
 
       glMultiFbo = allocateIntBuffer(1);
-      glColorBuf = allocateIntBuffer(1);
+      glMultiColor = allocateIntBuffer(1);
 
       fboLayerCreated = false;
       fboLayerInUse = false;
@@ -398,7 +398,7 @@ public abstract class PGL {
       deleteRenderbuffers(1, glStencil);
 
       deleteFramebuffers(1, glMultiFbo);
-      deleteRenderbuffers(1, glColorBuf);
+      deleteRenderbuffers(1, glMultiColor);
     }
 
     fboLayerCreated = false;
@@ -782,12 +782,12 @@ public abstract class PGL {
       bindFramebufferImpl(FRAMEBUFFER, glMultiFbo.get(0));
 
       // color render buffer...
-      genRenderbuffers(1, glColorBuf);
-      bindRenderbuffer(RENDERBUFFER, glColorBuf.get(0));
+      genRenderbuffers(1, glMultiColor);
+      bindRenderbuffer(RENDERBUFFER, glMultiColor.get(0));
       renderbufferStorageMultisample(RENDERBUFFER, numSamples,
                                      RGBA8, fboWidth, fboHeight);
       framebufferRenderbuffer(FRAMEBUFFER, COLOR_ATTACHMENT0,
-                              RENDERBUFFER, glColorBuf.get(0));
+                              RENDERBUFFER, glMultiColor.get(0));
     }
 
     createDepthAndStencilBuffer(multisample, depthBits, stencilBits, packed);
