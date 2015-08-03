@@ -10343,7 +10343,7 @@ public class PApplet implements PConstants {
    * ( end auto-generated )
    *
    * @webref output:files
-   * @param renderer for example, PDF
+   * @param renderer PDF or SVG
    * @param filename filename for output
    * @see PApplet#endRecord()
    */
