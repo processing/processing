@@ -6,6 +6,8 @@ X make PFont.size protected again
 X   https://github.com/processing/processing/issues/3519
 X fix problem with JAR loading inside createInputRaw()
 o   https://github.com/processing/processing/pull/3514
+_ are we clear on sketchPath() for OS X?
+_   working dir (user.dir?) returns home dir, not app dir in Oracle Java
 
 jakub
 X Remove size() from setup() when copying to settings()
@@ -19,6 +21,8 @@ X   https://github.com/processing/processing/issues/3018
 X OpenGL sketch flickers when draw() is missing or empty
 X   https://github.com/processing/processing/issues/3473
 X   https://github.com/processing/processing/pull/3521
+X size() errors
+X   https://github.com/processing/processing/issues/3483
 
 opengl
 X ArrayIndexOutOfBoundsException error when enabling depth sorting in P3D
@@ -45,8 +49,6 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 beta
-_ size() errors
-_   https://github.com/processing/processing/issues/3483
 _ make notes about Java2D and JavaFX packages in the README
 _ move AWT image loading into PImageAWT
 _   look into how GL and FX will handle from there

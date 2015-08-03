@@ -6,9 +6,6 @@ X add new lower console/errors icons
 X dist needs to do a git pull on processing-docs
 _ don't show display warning when display 1 doesn't exist
 
-_ can't install processing-java into /usr/bin with El Capitan
-_   https://github.com/processing/processing/issues/3497
-
 fixed earlier
 X font fixes for Georgia in the examples
 X contribs listed multiple times
@@ -84,6 +81,10 @@ _ recent menu gets huge with other p5 versions on osx
 
 
 pde/build
+_ can't install processing-java into /usr/bin with El Capitan
+_   https://github.com/processing/processing/issues/3497
+_ Foundation library examples should appear under "Core" or "Foundation"
+_   https://github.com/processing/processing/issues/3524
 _ Cannot find "processing.core" library. Line 12 in tab sketch_150704a
 _ dim out the Run button if there are compile errors detected
 _   the AST checker has better error message handling for those cases

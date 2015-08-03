@@ -56,6 +56,11 @@ And now, for something completely different.
 
 Any code that uses `javax.media.opengl` in imports should replace that `com.jogamp.opengl`. I guess the JOGL folks are fully on their own w/o Oracle/Sun support. 
 
+### NEWT 
+
+NEWT was written by the JOGL guys so that they could avoid AWT altogether. The outdated/outmoded AWT makes a lot of assumptions that make implementation of GL a mess and causes performance trouble. This is a big part of the rendering changes that I’ve been making in 3—that we’re moving away from AWT as much as possible so that we don’t have performance problems. In the GL case, AWT causes some stuttering and lowered frame rates. We can get rid of those by dropping Applet, Component, and Canvas, and switching to NEWT’s windowing mechanism.
+
+
 ### JOGL vs LWJGL
 
 During the alpha 6, 7, and 8 release process we did some juggling with what OpenGL library we should use. 
@@ -74,14 +79,26 @@ It looks like LWJGL3 will be a nice game-centric platform (full screen, affordan
 LWJGL and JOGL are both great projects and we're thankful for all the work that they put in, and our own experience with Processing means that we couldn't be more sympathetic to the difficulty they face in maintaining their cross-platform, cross-chipset, cross-everything code. Like Processing, both projects are open source and created by volunteers who give their work away for free. We're enormously appreciative of their efforts.
 
 
-## `sketchRenderer()` is required
+## `settings()` is required
 Prior to Processing 3, dark magic was used to make the `size()` command work. This was done to hide an enormous amount of complexity from users. Over time, the hacks involved became untenable or just unsustainable. The process was like this:
 * The default renderer would be initialized offscreen and unused
 * `setup()` would run, and if the renderer changed, the sketch would throw an exception causing things to restart (re-calling the `setup()` method)
 * The previous step gave fits to any other variants of Processing (like Python or Ruby or Scala)
 * We had a tricky, stuttery situation where some things would happen automatically, other things would be delayed slightly
 In the Android version of Processing, these methods weren't possible, so we enhanced the preprocessor to parse the `size()` command used in the sketch and create methods called `sketchWidth()` and `sketchHeight()` and so on, that returned the values found in `setup()`. 
-In Processing 3, these have moved to the desktop version of Processing as well. That means that when using Processing without the PDE (i.e. from Eclipse), it's necessary to implement these methods as well. 
+In Processing 3, we're moving in a different direction. A new method called `settings()` has been introduced. When running inside the PDE, commands like `size()`, `fullScreen()`, `pixelDensity()`, and `smooth()` are all moved to the `settings()` method, which is called once, before `setup()`. Those are the only methods that can be called inside `settings()`. When outside the PDE (i.e. using Eclipse), you'll need to move those methods to `settings()` yourself. 
+
+
+## JavaFX 
+
+Similarly to the NEWT situation in JOGL described above, we’ve hit the upper bound of what we can do on performance in Java2D as well. The graphics engineers from the Java team seem to have all moved to JavaFX for the last few years, perhaps because AWT is a dead end. So… I’ve started doing the JavaFX port so that we can drop even more of the AWT code.
+
+JavaFX provides significantly better performance on recent (last couple years) hardware. Performance is drastically better than Java2D on retina displays. It makes heavy use of OpenGL, so on machines that have mediocre GL performance (integrated graphics, ultralight laptops, that sort of thing), it may even be slower than Java2D. But those situations are growing more rare, especially for our target audience.
+
+We hope to make JavaFX the default renderer instead of Java2D. With any luck, we'd like to do this before 3.0 final is released.
+
+
+## More AWT Removal
 
 
 ## The Mess
