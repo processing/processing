@@ -2716,7 +2716,7 @@ public abstract class PGL {
   // to glReadPixels() should be done in readPixelsImpl().
 
   public void readPixels(int x, int y, int width, int height, int format, int type, Buffer buffer){
-    boolean multisampled = isMultisampled();
+    boolean multisampled = isMultisampled() || pg.offscreenMultisample;
     boolean depthReadingEnabled = pg.getHint(PConstants.ENABLE_DEPTH_READING);
     boolean depthRequested = format == STENCIL_INDEX || format == DEPTH_COMPONENT || format == DEPTH_STENCIL;
 
