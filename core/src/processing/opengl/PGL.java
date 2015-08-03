@@ -785,6 +785,28 @@ public abstract class PGL {
                               RENDERBUFFER, glColorBuf.get(0));
     }
 
+    createDepthAndStencilBuffer(multisample, depthBits, stencilBits, packed);
+
+    validateFramebuffer();
+
+    // Clear all buffers.
+    clearDepth(1);
+    clearStencil(0);
+    int argb = pg.backgroundColor;
+    float a = ((argb >> 24) & 0xff) / 255.0f;
+    float r = ((argb >> 16) & 0xff) / 255.0f;
+    float g = ((argb >> 8) & 0xff) / 255.0f;
+    float b = ((argb) & 0xff) / 255.0f;
+    clearColor(r, g, b, a);
+    clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
+
+    bindFramebufferImpl(FRAMEBUFFER, 0);
+
+    fboLayerCreated = true;
+  }
+
+  private void createDepthAndStencilBuffer(boolean multisample, int depthBits,
+                                           int stencilBits, boolean packed) {
     // Creating depth and stencil buffers
     if (packed && depthBits == 24 && stencilBits == 8) {
       // packed depth+stencil buffer
@@ -849,23 +871,6 @@ public abstract class PGL {
                                 RENDERBUFFER, glStencil.get(0));
       }
     }
-
-    validateFramebuffer();
-
-    // Clear all buffers.
-    clearDepth(1);
-    clearStencil(0);
-    int argb = pg.backgroundColor;
-    float a = ((argb >> 24) & 0xff) / 255.0f;
-    float r = ((argb >> 16) & 0xff) / 255.0f;
-    float g = ((argb >> 8) & 0xff) / 255.0f;
-    float b = ((argb) & 0xff) / 255.0f;
-    clearColor(r, g, b, a);
-    clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
-
-    bindFramebufferImpl(FRAMEBUFFER, 0);
-
-    fboLayerCreated = true;
   }
 
 
