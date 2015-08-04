@@ -115,6 +115,9 @@ public class PShape implements PConstants {
   static public final String NO_VERTICES_ERROR =
     "getVertexCount() only works with PATH or GEOMETRY shapes";
 
+  public static final String NOT_A_SIMPLE_VERTEX =
+      "%1$s can not be called on quadratic or bezier vertices";
+
   // boundary box of this shape
   //protected float x;
   //protected float y;
