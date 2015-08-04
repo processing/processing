@@ -283,7 +283,7 @@ public class Commander implements RunnerListener {
             if (build != null) {
 
                 String variant;
-                if (platform == PConstants.LINUX && platformBits == 32 && Base.getNativeArch() == "arm") {
+                if (platform == PConstants.LINUX && platformBits == 32 && Base.getNativeArch().equals("arm")) {
                   // assume armv6hf
                   variant = "armv6hf";
                 } else {
