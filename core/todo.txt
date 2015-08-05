@@ -40,6 +40,15 @@ X   https://github.com/processing/processing/pull/3507
 X   https://github.com/processing/processing/pull/3477
 X   https://github.com/processing/processing/pull/3410
 X   https://github.com/processing/processing/pull/3372
+o rect() with stroke outline renders 1px wider and taller in P2D
+X   behavior is correct, explanation provided
+X   https://github.com/processing/processing/issues/2065
+X setVertex() not working in P3D and P2D
+X   https://github.com/processing/processing/issues/3022
+X   https://github.com/processing/processing/pull/3528
+X add hint(ENABLE_DEPTH_READING) to handle stencil/depth buffers
+X   https://github.com/processing/processing/pull/3527
+X   https://github.com/processing/processing/issues/2771
 
 opengl
 X ArrayIndexOutOfBoundsException error when enabling depth sorting in P3D
