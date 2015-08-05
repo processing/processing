@@ -357,7 +357,8 @@ public class PdePreprocessor {
     if (sizeContents != null) {
       StringList args = breakCommas(sizeContents[1]);
       SurfaceInfo info = new SurfaceInfo();
-      info.statement = sizeContents[0];
+//      info.statement = sizeContents[0];
+      info.addStatement(sizeContents[0]);
       info.width = args.get(0).trim();
       info.height = args.get(1).trim();
       info.renderer = (args.size() >= 3) ? args.get(2).trim() : null;
@@ -384,9 +385,7 @@ public class PdePreprocessor {
         throw new SketchException("Please fix the size() line to continue.", false);
       }
 
-      if (extraStatements.size() != 0) {
-        info.statement += extraStatements.join(" ");
-      }
+      info.addStatements(extraStatements);
       info.checkEmpty();
       return info;
       //return new String[] { contents[0], width, height, renderer, path };
@@ -395,7 +394,8 @@ public class PdePreprocessor {
     //contents = PApplet.match(searchArea, FULL_SCREEN_CONTENTS_REGEX);
     if (fullContents != null) {
       SurfaceInfo info = new SurfaceInfo();
-      info.statement = fullContents[0];
+//      info.statement = fullContents[0];
+      info.addStatement(fullContents[0]);
       StringList args = breakCommas(fullContents[1]);
       if (args.size() > 0) {  // might have no args
         String args0 = args.get(0).trim();
@@ -416,9 +416,10 @@ public class PdePreprocessor {
       }
       info.width = "displayWidth";
       info.height = "displayHeight";
-      if (extraStatements.size() != 0) {
-        info.statement += extraStatements.join(" ");
-      }
+//      if (extraStatements.size() != 0) {
+//        info.statement += extraStatements.join(" ");
+//      }
+      info.addStatements(extraStatements);
       info.checkEmpty();
       return info;
     }
@@ -427,7 +428,8 @@ public class PdePreprocessor {
     // need to pull out the noSmooth() and smooth(N) methods.
     if (extraStatements.size() != 0) {
       SurfaceInfo info = new SurfaceInfo();
-      info.statement = extraStatements.join(" ");
+//      info.statement = extraStatements.join(" ");
+      info.addStatements(extraStatements);
       return info;
     }
 
@@ -1094,10 +1096,10 @@ public class PdePreprocessor {
     }
 
     if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
-      // doesn't remove the oriiginal size() method, but calling size()
+      // doesn't remove the original size() method, but calling size()
       // again in setup() is harmless.
-      if (!hasMethod("settings") && sizeInfo.statement != null) {
-        out.println(indent + "public void settings() { " + sizeInfo.statement + " }");
+      if (!hasMethod("settings") && sizeInfo.hasSettings()) {
+        out.println(indent + "public void settings() { " + sizeInfo.getSettings() + " }");
 //        out.println(indent + "public void settings() {");
 //        out.println(indent + indent + sizeStatement);
 //        out.println(indent + "}");

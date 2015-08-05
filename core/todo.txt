@@ -8,6 +8,7 @@ X fix problem with JAR loading inside createInputRaw()
 o   https://github.com/processing/processing/pull/3514
 _ are we clear on sketchPath() for OS X?
 _   working dir (user.dir?) returns home dir, not app dir in Oracle Java
+_   could add -Dapp.root=$APP_ROOT and get via System.getProperty("app.root")
 
 jakub
 X Remove size() from setup() when copying to settings()
@@ -23,6 +24,22 @@ X   https://github.com/processing/processing/issues/3473
 X   https://github.com/processing/processing/pull/3521
 X size() errors
 X   https://github.com/processing/processing/issues/3483
+X improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
+X   https://github.com/processing/processing/issues/90
+X   also for begin/endRaw: 
+X     https://github.com/processing/processing/issues/2235
+X   polygon z-order depth sorting with alpha in opengl
+X   complete the implementation of hint() with proper implementation
+X   gl alpha on images when flipped around backwards
+X     will sorting based on depth help this? also ask simon for ideas
+X   need to merge sorting/drawing of lines and triangles
+X     lines will occlude tris and vice versa
+X     will need to split each based on the other
+X     sort issues will affect both
+X   https://github.com/processing/processing/pull/3507
+X   https://github.com/processing/processing/pull/3477
+X   https://github.com/processing/processing/pull/3410
+X   https://github.com/processing/processing/pull/3372
 
 opengl
 X ArrayIndexOutOfBoundsException error when enabling depth sorting in P3D
@@ -41,6 +58,7 @@ X   https://github.com/processing/processing/pull/3507
 X Depth sorting wrong when drawing inside setup(), P3D
 X   can no longer be reproduced
 X   https://github.com/processing/processing/issues/2483
+
 
 docs
 _ note that full screen and present are now different
@@ -82,6 +100,7 @@ _   or is Canvas specific to the PGraphics, and we get another Context2D?
 _   http://docs.oracle.com/javafx/2/api/javafx/scene/canvas/Canvas.html
 _ loadPixels() (also 2x)
 _ text and fonts?
+_   maybe helpful: https://wiki.openjdk.java.net/display/OpenJFX/Font+Setup
 _ updatePixels()
 _ save() and saveFrame()
 _ get() and set()
@@ -623,18 +642,6 @@ _   Disabling Aero scheme sometimes prevents the problem
 _   Updating graphics drivers may prevent the problem 
 _ ellipse scaling method isn't great
 _   http://code.google.com/p/processing/issues/detail?id=87
-_ improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
-_   https://github.com/processing/processing/issues/90
-_   for begin/endRaw: https://github.com/processing/processing/issues/2235
-_   http://code.google.com/p/processing/issues/detail?id=51
-_   polygon z-order depth sorting with alpha in opengl
-_   complete the implementation of hint() with proper implementation
-_   gl alpha on images when flipped around backwards
-_     will sorting based on depth help this? also ask simon for ideas
-_   need to merge sorting/drawing of lines and triangles
-_     lines will occlude tris and vice versa
-_     will need to split each based on the other
-_     sort issues will affect both
 _ Stroking a rect() leaves off the upper right pixel
 _   http://code.google.com/p/processing/issues/detail?id=67
 _ Signature issue on contributed libraries affects unrelated opengl sketches

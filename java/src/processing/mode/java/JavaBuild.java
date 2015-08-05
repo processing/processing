@@ -257,13 +257,22 @@ public class JavaBuild {
       return null;
     }
     //System.out.format("size() is '%s'%n", info[0]);
-    
-    // Remove the size() statement (will be added back by writeFooter())
+
+    // Remove the entries being moved to settings(). They will be re-inserted
+    // by writeFooter() when it emits the settings() method.
     if (sizeInfo != null) {
-      String sizeStatement = sizeInfo.getStatement();
-      if (sizeStatement != null) {
-        int index = bigCode.indexOf(sizeStatement);
-        bigCode.delete(index, index + sizeStatement.length());
+//      String sizeStatement = sizeInfo.getStatement();
+      for (String stmt : sizeInfo.getStatements()) {
+//      if (sizeStatement != null) {
+        //System.out.format("size stmt is '%s'%n", sizeStatement);
+        int index = bigCode.indexOf(stmt);
+        if (index != -1) {
+          bigCode.delete(index, index + stmt.length());
+        } else {
+          // TODO remove once we hit final; but prevent an exception like in
+          // https://github.com/processing/processing/issues/3531
+          System.err.format("Error removing '%s' from the code.", stmt);
+        }
       }
     }
 

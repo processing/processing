@@ -25,10 +25,12 @@ package processing.mode.java.preproc;
 
 import processing.app.Base;
 import processing.core.PApplet;
+import processing.data.StringList;
 
 
 public class SurfaceInfo {
-  String statement;
+//  String statement;
+  StringList statements;
   String width;
   String height;
   String renderer;
@@ -101,7 +103,42 @@ public class SurfaceInfo {
   }
 
 
-  public String getStatement() {
-    return statement;
+//  public String getStatements() {
+//    return statements.join(" ");
+//  }
+
+
+  public StringList getStatements() {
+    return statements;
+  }
+
+
+  /**
+   * Add an item that will be moved from size() into the settings() method.
+   * This needs to be the exact version of the statement so that it can be
+   * matched against and removed from the size() method in the code.
+   */
+  public void addStatement(String stmt) {
+    if (statements == null) {
+      statements = new StringList();
+    }
+    statements.append(stmt);
+  }
+
+
+  public void addStatements(StringList list) {
+    statements.append(list);
+  }
+
+
+  /** @return true if there's code to be inserted for a settings() method. */
+  public boolean hasSettings() {
+    return statements != null;
+  }
+
+
+  /** @return the contents of the settings() method to be inserted */
+  public String getSettings() {
+    return statements.join(" ");
   }
 }

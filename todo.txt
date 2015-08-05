@@ -4,7 +4,8 @@ X   https://github.com/processing/processing/issues/3474
 X Add message that says it's safe to ignore the tools.jar warning
 X add new lower console/errors icons
 X dist needs to do a git pull on processing-docs
-_ don't show display warning when display 1 doesn't exist
+X StringIndexOutOfBoundsException while preprocessing
+X   https://github.com/processing/processing/issues/3531
 
 fixed earlier
 X font fixes for Georgia in the examples
@@ -28,6 +29,7 @@ X   https://github.com/processing/processing/pull/3522
 
 
 beta
+_ don't show display warning when display 1 doesn't exist
 _ try to get images working in welcome screen
 _   https://github.com/processing/processing/blob/master/build/shared/lib/welcome/sketchbook.html#L60
 _   https://github.com/processing/processing/issues/3494
@@ -39,11 +41,11 @@ _ Contribution Manager design is really rough
 _   https://github.com/processing/processing/issues/3464
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
+_ fix the red for the console/error stuff
+_   also the sidebar, the squiggly line beneath code, and the status bar
 
 
 gui
-_ fix the red for the console/error stuff
-_   also the sidebar, the squiggly line beneath code, and the status bar
 _ show hover text with 'debug'
 _ inquire about updated document icon
 _ don't show breakpoints when debugger is off
@@ -133,6 +135,7 @@ _ add last revision used / max revision used settings?
 
 crashing
 _ fix appbundler problems due to rollback
+_   appbundler is no longer being developed by Oracle, switch to "packager"
 _   this re-introduces two bugs (serial export and scrolling)
 _   and any other changes later than 16 November 2015:
 _   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
