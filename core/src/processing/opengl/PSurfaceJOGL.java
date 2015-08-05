@@ -127,40 +127,65 @@ public class PSurfaceJOGL implements PSurface {
 
     monitors = new ArrayList<MonitorDevice>();
     GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    GraphicsDevice[] devices = environment.getScreenDevices();
-    for (GraphicsDevice device: devices) {
-      String did = device.getIDstring();
-      String[] parts = did.split("Display");
-      String id1 = "";
-      if (1 < parts.length) {
-        id1 = parts[1].trim();
-      }
-      MonitorDevice monitor = null;
-      for (int i = 0; i < screen.getMonitorDevices().size(); i++) {
-        MonitorDevice mon = screen.getMonitorDevices().get(i);
-        String mid = String.valueOf(mon.getId());
-        if (id1.equals(mid)) {
-//          System.out.println("Monitor " + monitor.getId() + " ************");
-//          System.out.println(monitor.toString());
-//          System.out.println(monitor.getViewportInWindowUnits());
-//          System.out.println(monitor.getViewport());
-          monitor = mon;
-          break;
+    GraphicsDevice[] awtDevices = environment.getScreenDevices();
+    List<MonitorDevice> newtDevices = screen.getMonitorDevices();
+
+    // AWT and NEWT name devices in different ways, depending on the platform,
+    // and also appear to order them in different ways. The following code
+    // tries to address the differences.
+    if (PApplet.platform == PConstants.LINUX) {
+      for (GraphicsDevice device: awtDevices) {
+        String did = device.getIDstring();
+        String[] parts = did.split("\\.");
+        String id1 = "";
+        if (1 < parts.length) {
+          id1 = parts[1].trim();
         }
-      }
-      if (monitor == null) {
-        // Didn't find a matching monitor, try using less stringent id check
-        for (int i = 0; i < screen.getMonitorDevices().size(); i++) {
-          MonitorDevice mon = screen.getMonitorDevices().get(i);
-          String mid = String.valueOf(mon.getId());
-          if (-1 < did.indexOf(mid)) {
+        MonitorDevice monitor = null;
+        int id0 = newtDevices.size() > 0 ? newtDevices.get(0).getId() : 0;
+        for (int i = 0; i < newtDevices.size(); i++) {
+          MonitorDevice mon = newtDevices.get(i);
+          String mid = String.valueOf(mon.getId() - id0);
+          if (id1.equals(mid)) {
             monitor = mon;
             break;
           }
         }
+        if (monitor != null) {
+          monitors.add(monitor);
+        }
       }
-      if (monitor != null) {
-        monitors.add(monitor);
+    } else { // All the other platforms...
+      for (GraphicsDevice device: awtDevices) {
+        String did = device.getIDstring();
+        String[] parts = did.split("Display");
+        String id1 = "";
+        if (1 < parts.length) {
+          id1 = parts[1].trim();
+        }
+        MonitorDevice monitor = null;
+        for (int i = 0; i < newtDevices.size(); i++) {
+          MonitorDevice mon = newtDevices.get(i);
+          String mid = String.valueOf(mon.getId());
+          if (id1.equals(mid)) {
+            monitor = mon;
+            break;
+          }
+        }
+        if (monitor == null) {
+          // Didn't find a matching monitor, try using less stringent id check
+          for (int i = 0; i < newtDevices.size(); i++) {
+            MonitorDevice mon = newtDevices.get(i);
+            String mid = String.valueOf(mon.getId());
+            if (-1 < did.indexOf(mid)) {
+              monitor = mon;
+              break;
+            }
+          }
+        }
+        if (monitor != null) {
+          monitors.add(monitor);
+        }
       }
     }
   }
