@@ -6,6 +6,8 @@ X add new lower console/errors icons
 X dist needs to do a git pull on processing-docs
 X StringIndexOutOfBoundsException while preprocessing
 X   https://github.com/processing/processing/issues/3531
+X Run/Stop/Debug buttons do not fire if the mouse moves during the click
+X   https://github.com/processing/processing/issues/3529
 
 fixed earlier
 X font fixes for Georgia in the examples

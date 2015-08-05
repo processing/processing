@@ -6,6 +6,7 @@ X make PFont.size protected again
 X   https://github.com/processing/processing/issues/3519
 X fix problem with JAR loading inside createInputRaw()
 o   https://github.com/processing/processing/pull/3514
+
 _ are we clear on sketchPath() for OS X?
 _   working dir (user.dir?) returns home dir, not app dir in Oracle Java
 _   could add -Dapp.root=$APP_ROOT and get via System.getProperty("app.root")
