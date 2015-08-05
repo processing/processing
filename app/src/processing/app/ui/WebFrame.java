@@ -24,7 +24,11 @@ package processing.app.ui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -38,21 +42,40 @@ import processing.data.StringDict;
 public class WebFrame extends JFrame {
   JEditorPane editorPane;
   HTMLEditorKit editorKit;
+//  int contentHeight;
+  boolean ready;
 
 
-  public WebFrame(File file, int width) {
+  public WebFrame(File file, int width) throws IOException {
     //setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 
-    String content = "Could not load " + file.getAbsolutePath();
-    if (file != null) {
-      String[] lines = PApplet.loadStrings(file);
-      content = PApplet.join(lines, "\n");
-    }
+//    String content = "Could not load " + file.getAbsolutePath();
+//    if (file != null) {
+//      String[] lines = PApplet.loadStrings(file);
+//      content = PApplet.join(lines, "\n");
+//    }
 
-    int high = getContentHeight(width, content);
-    editorPane = new JEditorPane("text/html", content);
+    // Need to use the URL version so that relative paths work for images
+    // https://github.com/processing/processing/issues/3494
+    URL fileUrl = file.toURI().toURL();  //.toExternalForm();
+//    int high = getContentHeight(width, content);
+    requestContentHeight(width, fileUrl);
+
+//    while (contentHeight == 0) {
+//      try {
+//        Thread.sleep(2);
+//      } catch (InterruptedException ie) { }
+//    }
+
+//    int high = getContentHeight(width, content);
+//    editorPane = new JEditorPane("text/html", content);
+    editorPane = new JEditorPane();
+    editorPane.setPage(fileUrl);
     editorPane.setEditable(false);
-    editorPane.setPreferredSize(new Dimension(width, high));
+    // set height to something generic
+    editorPane.setPreferredSize(new Dimension(width, width));
+//    editorPane.setPreferredSize(new Dimension(width, high));
+//    editorPane.setPreferredSize(new Dimension(width, contentHeight));
     getContentPane().add(editorPane);
 
     Toolkit.registerWindowCloseKeys(getRootPane(), new ActionListener() {
@@ -94,8 +117,8 @@ public class WebFrame extends JFrame {
         }
       }
     });
-    pack();
-    setLocationRelativeTo(null);
+//    pack();
+//    setLocationRelativeTo(null);
     //setVisible(true);
   }
 
@@ -109,6 +132,23 @@ public class WebFrame extends JFrame {
     //textPane.setEditorKit(kit);  // nukes everything
   }
   */
+
+
+  public void setVisible(final boolean visible) {
+    new Thread(new Runnable() {
+      public void run() {
+        while (!ready) {
+          try {
+            Thread.sleep(5);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+        }
+//          System.out.println("setting visible");
+        WebFrame.super.setVisible(visible);
+      }
+    }).start();
+  }
 
 
   public void handleClose() {
@@ -130,10 +170,41 @@ public class WebFrame extends JFrame {
   }
 
 
-  // Why this doesn't work inline above is beyoned me
+  /*
+  // Why this doesn't work inline above is beyond me
   static int getContentHeight(int width, String content) {
     JEditorPane dummy = new JEditorPane("text/html", content);
     dummy.setSize(width, Short.MAX_VALUE);
     return dummy.getPreferredSize().height;
+  }
+  */
+
+
+  // Unlike the static version above that uses an (already loaded) String for
+  // the content, using setPage() makes things run asynchronously, causing
+  // getContentHeight() to fail because it returns zero. Instead we make
+  // things 10x more complicated so that images will work.
+  void requestContentHeight(final int width, final URL url) {
+    new Thread(new Runnable() {
+      public void run() {
+        final JEditorPane dummy = new JEditorPane();
+        dummy.addPropertyChangeListener("page", new PropertyChangeListener() {
+          @Override
+          public void propertyChange(PropertyChangeEvent evt) {
+            int high = dummy.getPreferredSize().height;
+            editorPane.setPreferredSize(new Dimension(width, high));
+            pack();
+            setLocationRelativeTo(null);
+            ready = true;
+          }
+        });
+        try {
+          dummy.setPage(url);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        dummy.setSize(width, Short.MAX_VALUE);
+      }
+    }).start();
   }
 }

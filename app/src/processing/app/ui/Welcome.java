@@ -23,6 +23,7 @@ package processing.app.ui;
 
 import java.awt.EventQueue;
 import java.io.File;
+import java.io.IOException;
 
 import processing.app.Base;
 import processing.app.Language;
@@ -35,7 +36,7 @@ public class Welcome extends WebFrame {
   Base base;
 
 
-  public Welcome(Base base, boolean sketchbook) {
+  public Welcome(Base base, boolean sketchbook) throws IOException {
     super(getIndexFile(sketchbook), 400);
     this.base = base;
     //addStyle("#new_sketchbook { background-color: rgb(0, 255, 0); }");
@@ -116,11 +117,15 @@ public class Welcome extends WebFrame {
 
     EventQueue.invokeLater(new Runnable() {
       public void run() {
-        new Welcome(null, true) {
-          public void handleClose() {
-            System.exit(0);
-          }
-        };
+        try {
+          new Welcome(null, true) {
+            public void handleClose() {
+              System.exit(0);
+            }
+          };
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
       }
     });
   }

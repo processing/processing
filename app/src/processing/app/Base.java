@@ -242,7 +242,13 @@ public class Base {
           final boolean prompt = sketchbookPrompt;
           EventQueue.invokeLater(new Runnable() {
             public void run() {
-              new Welcome(base, prompt);
+              try {
+                new Welcome(base, prompt);
+              } catch (IOException e) {
+                Base.showBadnessTrace("Unwelcoming",
+                                      "Please report this error to\n" +
+                                      "https://github.com/processing/processing/issues", e, false);
+              }
             }
           });
         }

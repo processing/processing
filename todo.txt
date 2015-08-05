@@ -8,6 +8,13 @@ X StringIndexOutOfBoundsException while preprocessing
 X   https://github.com/processing/processing/issues/3531
 X Run/Stop/Debug buttons do not fire if the mouse moves during the click
 X   https://github.com/processing/processing/issues/3529
+X 2.x Modes, Tools, and Libraries will need to be updated for 3.x
+X   https://github.com/processing/processing/issues/3080
+X   wrote basic documentation
+o write text for non-sketchbook version of welcome screen
+X try to get images working in welcome screen
+X   https://github.com/processing/processing/blob/master/build/shared/lib/welcome/sketchbook.html#L60
+X   https://github.com/processing/processing/issues/3494
 
 fixed earlier
 X font fixes for Georgia in the examples
@@ -18,6 +25,8 @@ X   https://github.com/processing/processing/issues/3353
 contribs
 X Fix contribution compatibility check
 X   https://github.com/processing/processing/pull/3479
+X Update spanish translation
+X   https://github.com/processing/processing/pull/3480
 
 gsoc
 X CM updates dialog box doesn't open CM
@@ -28,15 +37,13 @@ X   https://github.com/processing/processing/pull/3499
 X   https://github.com/processing/processing/issues/3492
 X Assortment of patches from my arm-3.0 branch
 X   https://github.com/processing/processing/pull/3522
+X Adding ellipses only when text is long
+X   https://github.com/processing/processing/pull/3470
 
 
 beta
 _ don't show display warning when display 1 doesn't exist
-_ try to get images working in welcome screen
-_   https://github.com/processing/processing/blob/master/build/shared/lib/welcome/sketchbook.html#L60
-_   https://github.com/processing/processing/issues/3494
 _ write notes about changes with Toolkit and Util, and packages
-_ write text for non-sketchbook version of welcome screen
 _ CM ongoing notes and questions
 _   https://github.com/processing/processing/issues/3440
 _ Contribution Manager design is really rough
@@ -178,8 +185,6 @@ _   https://github.com/processing/processing/issues/1898
 _ search the source for 'applet' references (i.e. SVG docs)
 _ update list of option JRE files
 _   https://github.com/processing/processing/issues/3288
-_ 2.x Modes, Tools, and Libraries will need to be updated for 3.x
-_   https://github.com/processing/processing/issues/3080
 
 
 sketchbook
