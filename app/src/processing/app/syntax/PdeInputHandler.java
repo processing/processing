@@ -193,6 +193,7 @@ public class PdeInputHandler extends DefaultInputHandler {
     // non-ASCII chars, and there are no menu mnemonics to speak of
     if (!Base.isMacOS()) {
       if ((event.getModifiers() & InputEvent.ALT_MASK) != 0 &&
+          (event.getModifiers() & InputEvent.CTRL_MASK) == 0 &&
           event.getKeyChar() != KeyEvent.VK_UNDEFINED) {
         // This is probably a menu mnemonic, don't pass it through.
         // If it's an alt-NNNN sequence, those only work on the keypad
