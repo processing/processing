@@ -353,7 +353,13 @@ public class JavaEditor extends Editor {
     item = new JMenuItem("Welcome to Processing 3");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        new Welcome(base, Preferences.getSketchbookPath().equals(Preferences.getOldSketchbookPath()));
+        try {
+          new Welcome(base, Preferences.getSketchbookPath().equals(Preferences.getOldSketchbookPath()));
+        } catch (IOException ioe) {
+          Base.showWarning("Unwelcome Error",
+                           "Please report this error to\n" +
+                           "https://github.com/processing/processing/issues", ioe);
+        }
       }
     });
     menu.add(item);
