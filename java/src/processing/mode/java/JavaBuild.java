@@ -260,7 +260,7 @@ public class JavaBuild {
 
     // Remove the entries being moved to settings(). They will be re-inserted
     // by writeFooter() when it emits the settings() method.
-    if (sizeInfo != null) {
+    if (sizeInfo != null && sizeInfo.hasSettings()) {
 //      String sizeStatement = sizeInfo.getStatement();
       for (String stmt : sizeInfo.getStatements()) {
 //      if (sizeStatement != null) {
