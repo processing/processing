@@ -455,6 +455,10 @@ public class ContributionListing {
 
 
   /**
+   * TODO This needs to be called when the listing loads, and also whenever
+   * the contribs list has been updated (for whatever reason). In addition,
+   * the caller (presumably Base) should update all Editor windows with the
+   * correct information on the number of items available.
    * @return The number of contributions that have available updates.
    */
   int countUpdates(Base base) {
