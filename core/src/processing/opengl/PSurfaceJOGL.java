@@ -136,7 +136,7 @@ public class PSurfaceJOGL implements PSurface {
     if (PApplet.platform == PConstants.LINUX) {
       for (GraphicsDevice device: awtDevices) {
         String did = device.getIDstring();
-        String[] parts = did.split(":");
+        String[] parts = did.split("\\.");
         String id1 = "";
         if (1 < parts.length) {
           id1 = parts[1].trim();
