@@ -93,9 +93,11 @@ public class ContributionTab {
   }
 
 
+  /*
   public boolean hasUpdates() {
     return contribListing.hasUpdates();
   }
+  */
 
 
   public boolean hasUpdates(Base base) {

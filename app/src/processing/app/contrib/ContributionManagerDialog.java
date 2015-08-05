@@ -39,12 +39,8 @@ import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
 /**
- *
- * @author akarshit
- *
  * This class is the main Contribution Manager Dialog.
  * It contains all the contributions tab and the update tab.
- *
  */
 public class ContributionManagerDialog {
   static final String ANY_CATEGORY = Language.text("contrib.all");
@@ -78,12 +74,14 @@ public class ContributionManagerDialog {
   }
 
 
+  /*
   public boolean hasUpdates() {
     return toolsContributionTab.hasUpdates()
       || librariesContributionTab.hasUpdates()
       || examplesContributionTab.hasUpdates()
       || modesContributionTab.hasUpdates();
   }
+  */
 
 
   public boolean hasUpdates(Base base) {

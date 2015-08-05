@@ -6,10 +6,8 @@ X make PFont.size protected again
 X   https://github.com/processing/processing/issues/3519
 X fix problem with JAR loading inside createInputRaw()
 o   https://github.com/processing/processing/pull/3514
-
-_ are we clear on sketchPath() for OS X?
-_   working dir (user.dir?) returns home dir, not app dir in Oracle Java
-_   could add -Dapp.root=$APP_ROOT and get via System.getProperty("app.root")
+X remove 'contrib updates available' dialog box for now
+X   new version coming soon in the UI
 
 opengl
 X Remove size() from setup() when copying to settings()
@@ -69,6 +67,7 @@ X   https://github.com/processing/processing/issues/2483
 X Device parsing on Linux is incorrect
 X   https://github.com/processing/processing/issues/3532
 
+
 docs
 _ note that full screen and present are now different
 _   on Export to Application, this has an impact
@@ -88,6 +87,9 @@ _   use the BufferStrategy directly from the Frame object?
 _     might fix performance issues w/ Presentation mode
 _ sketch placement (window insets) not properly set on Linux
 _   https://github.com/processing/processing/issues/2063
+_ are we clear on sketchPath() for OS X?
+_   working dir (user.dir?) returns home dir, not app dir in Oracle Java
+_   could add -Dapp.root=$APP_ROOT and get via System.getProperty("app.root")
 
 
 javafx
