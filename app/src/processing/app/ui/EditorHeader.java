@@ -518,7 +518,7 @@ public class EditorHeader extends JComponent {
       }
     };
     mapKey = "editor.header.delete";
-    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.SHORTCUT_ALT_KEY_MASK);
+    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.SHORTCUT_SHIFT_KEY_MASK);
     inputMap.put(keyStroke, mapKey);
     actionMap.put(mapKey, action);
     item.addActionListener(action);
