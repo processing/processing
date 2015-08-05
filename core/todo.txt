@@ -11,7 +11,7 @@ _ are we clear on sketchPath() for OS X?
 _   working dir (user.dir?) returns home dir, not app dir in Oracle Java
 _   could add -Dapp.root=$APP_ROOT and get via System.getProperty("app.root")
 
-jakub
+opengl
 X Remove size() from setup() when copying to settings()
 X   https://github.com/processing/processing/pull/3517
 X Remove mode parameters from createShape(), fixes parameter collision issues
@@ -50,8 +50,6 @@ X   https://github.com/processing/processing/pull/3528
 X add hint(ENABLE_DEPTH_READING) to handle stencil/depth buffers
 X   https://github.com/processing/processing/pull/3527
 X   https://github.com/processing/processing/issues/2771
-
-opengl
 X ArrayIndexOutOfBoundsException error when enabling depth sorting in P3D
 X   https://github.com/processing/processing/pull/3477
 X   https://github.com/processing/processing/issues/3476
@@ -68,7 +66,8 @@ X   https://github.com/processing/processing/pull/3507
 X Depth sorting wrong when drawing inside setup(), P3D
 X   can no longer be reproduced
 X   https://github.com/processing/processing/issues/2483
-
+X Device parsing on Linux is incorrect
+X   https://github.com/processing/processing/issues/3532
 
 docs
 _ note that full screen and present are now different

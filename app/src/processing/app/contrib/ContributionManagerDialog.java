@@ -54,7 +54,6 @@ public class ContributionManagerDialog {
   String title;
   JButton restartButton;
 
-
   // the calling editor, so updates can be applied
   Editor editor;
 
@@ -68,6 +67,7 @@ public class ContributionManagerDialog {
 
   ContributionListing contributionListing = ContributionListing.getInstance();
 
+
   public ContributionManagerDialog() {
     numberLabel = new JLabel(Toolkit.getLibIcon("manager/notification.png"), SwingConstants.CENTER);
     toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
@@ -77,6 +77,7 @@ public class ContributionManagerDialog {
     updatesContributionTab = new UpdateContributionTab(null, this);
   }
 
+
   public boolean hasUpdates() {
     return toolsContributionTab.hasUpdates()
       || librariesContributionTab.hasUpdates()
@@ -84,12 +85,14 @@ public class ContributionManagerDialog {
       || modesContributionTab.hasUpdates();
   }
 
+
   public boolean hasUpdates(Base base) {
     return toolsContributionTab.hasUpdates(base)
       || modesContributionTab.hasUpdates(base)
       || librariesContributionTab.hasUpdates(base)
       || examplesContributionTab.hasUpdates(base);
   }
+
 
   public void showFrame(final Editor editor, ContributionType contributionType) {
     this.editor = editor;
@@ -115,6 +118,7 @@ public class ContributionManagerDialog {
     tabbedPane.setSelectedIndex(index);
     dialog.setVisible(true);
   }
+
 
   public void makeFrame(final Editor editor) {
     dialog = new JFrame(title);
@@ -247,9 +251,11 @@ public class ContributionManagerDialog {
     dialog.setLocationRelativeTo(null);
   }
 
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   public class SpacedTabbedPaneUI extends BasicTabbedPaneUI {
-
-
     @Override
     protected void installDefaults() {
       UIManager.put("TabbedPane.selected", Color.WHITE);
@@ -289,23 +295,22 @@ public class ContributionManagerDialog {
     }
   }
 
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   private void setLayout() {
     GroupLayout layout = new GroupLayout(dialog.getContentPane());
     dialog.getContentPane().setLayout(layout);
     dialog.setResizable(true);
     layout.setAutoCreateContainerGaps(true);
-    layout.setHorizontalGroup(layout.createParallelGroup()
-                              .addComponent(tabbedPane));
-    layout.setVerticalGroup(layout
-      .createParallelGroup()
-      .addComponent(tabbedPane));
+    layout.setHorizontalGroup(layout.createParallelGroup().addComponent(tabbedPane));
+    layout.setVerticalGroup(layout.createParallelGroup().addComponent(tabbedPane));
     layout.setHonorsVisibility(tabbedPane, true);
     dialog.getContentPane().setBackground(Color.WHITE);
     dialog.validate();
     dialog.repaint();
   }
-
-
 
 
   /**
@@ -315,6 +320,7 @@ public class ContributionManagerDialog {
     dialog.dispose();
     editor = null;
   }
+
 
 /*  *//**
    * Creates and arranges the Swing components in the dialog.
@@ -508,6 +514,8 @@ public class ContributionManagerDialog {
     }
   }
 */
+
+
   private void registerDisposeListeners() {
     dialog.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -532,6 +540,7 @@ public class ContributionManagerDialog {
       }
     });
   }
+
 
   /*protected void filterLibraries(String category, List<String> filters) {
     List<Contribution> filteredLibraries = contribListing
@@ -584,8 +593,9 @@ public class ContributionManagerDialog {
     }
   }
 */
-  protected void downloadAndUpdateContributionListing(Base base) {
 
+
+  protected void downloadAndUpdateContributionListing(Base base) {
     //activeTab is required now but should be removed
     //as there is only one instance of contribListing and it should be present in this class
     final ContributionTab activeTab = getActiveTab();
@@ -633,11 +643,9 @@ public class ContributionManagerDialog {
           activeTab.statusPanel.setMessage(Language.text("contrib.status.done"));
         }
       }
-
-
-
     });
   }
+
 
   void makeAndShowTab(boolean activateErrorPanel, boolean isLoading) {
     toolsContributionTab.showFrame(editor, activateErrorPanel, isLoading);
@@ -647,12 +655,12 @@ public class ContributionManagerDialog {
     updatesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
   }
 
+
   /**
    *
    * @return the currently selected tab
    */
   public ContributionTab getActiveTab() {
-
     switch (tabbedPane.getSelectedIndex()) {
     case 0:
       return toolsContributionTab;
@@ -665,8 +673,8 @@ public class ContributionManagerDialog {
     default:
       return updatesContributionTab;
     }
-
   }
+
 
 /*
   protected void setFilterText(String filter) {
@@ -759,6 +767,7 @@ public class ContributionManagerDialog {
       }
     }
   }*/
+
 
   public boolean hasAlreadyBeenOpened() {
     return dialog != null;
