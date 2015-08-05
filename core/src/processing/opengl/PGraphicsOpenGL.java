@@ -5499,8 +5499,6 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   @Override
   public void lights() {
-    enableLighting();
-
     // reset number of lights
     lightCount = 0;
 
@@ -5677,18 +5675,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void enableLighting() {
-    if (!lights) {
-      flush(); // Flushing non-lit geometry.
-      lights = true;
-    }
+    lights = true;
+    flush();
   }
 
 
   protected void disableLighting() {
-    if (lights) {
-      flush(); // Flushing lit geometry.
-      lights = false;
-    }
+    lights = false;
+    flush();
   }
 
 
@@ -5701,7 +5695,7 @@ public class PGraphicsOpenGL extends PGraphics {
     lightPosition[4 * num + 2] =
       x*modelview.m20 + y*modelview.m21 + z*modelview.m22 + modelview.m23;
 
-    // Used to inicate if the light is directional or not.
+    // Used to indicate if the light is directional or not.
     lightPosition[4 * num + 3] = dir ? 1: 0;
   }
 
