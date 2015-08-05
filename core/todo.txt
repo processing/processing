@@ -8,6 +8,7 @@ X fix problem with JAR loading inside createInputRaw()
 o   https://github.com/processing/processing/pull/3514
 X remove 'contrib updates available' dialog box for now
 X   new version coming soon in the UI
+X make notes about Java2D and JavaFX packages in the README
 
 opengl
 X Remove size() from setup() when copying to settings()
@@ -66,6 +67,8 @@ X   can no longer be reproduced
 X   https://github.com/processing/processing/issues/2483
 X Device parsing on Linux is incorrect
 X   https://github.com/processing/processing/issues/3532
+o don't show display warning when display 1 doesn't exist
+X   apparently this was an OpenGL bug (#3532)
 
 
 docs
@@ -75,7 +78,6 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 beta
-_ make notes about Java2D and JavaFX packages in the README
 _ move AWT image loading into PImageAWT
 _   look into how GL and FX will handle from there
 _ run only the necessary pieces on the EDT

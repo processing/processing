@@ -42,7 +42,6 @@ X   https://github.com/processing/processing/pull/3470
 
 
 beta
-_ don't show display warning when display 1 doesn't exist
 _ write notes about changes with Toolkit and Util, and packages
 _ CM ongoing notes and questions
 _   https://github.com/processing/processing/issues/3440
