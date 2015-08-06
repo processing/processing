@@ -62,6 +62,7 @@ public class Welcome extends WebFrame {
                            this, this);
     }
 
+    // If un-checked, the key won't be in the dict, so null will be passed
     boolean keepShowing = "on".equals(dict.get("show_each_time", null));
     Preferences.setBoolean("welcome.show", keepShowing);
     Preferences.save();
