@@ -47,6 +47,8 @@ X   https://github.com/processing/processing/pull/3372
 o rect() with stroke outline renders 1px wider and taller in P2D
 X   behavior is correct, explanation provided
 X   https://github.com/processing/processing/issues/2065
+X   sort out edge + 1 issue on stroke/fill for rectangles
+X   http://code.google.com/p/processing/issues/detail?id=509
 X setVertex() not working in P3D and P2D
 X   https://github.com/processing/processing/issues/3022
 X   https://github.com/processing/processing/pull/3528
@@ -85,6 +87,7 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 3.0 final
+_ move blending calculations from PImage into PGraphics
 _ move AWT image loading into PImageAWT
 _   look into how GL and FX will handle from there
 _ run only the necessary pieces on the EDT
@@ -310,8 +313,6 @@ _   decision: add error messages where possible
 _   idea: set frameCount to -1 when setup not run yet?
 _     then set frameCount to 0 when setup() starts?
 _ need to clean up the hints in the reference/source
-_ sort out edge + 1 issue on stroke/fill for rectangles
-_   http://code.google.com/p/processing/issues/detail?id=509
 _ exactly how should pixel filling work with single pixel strokes?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1025 (no gcode)
 _ y2 position of rectangles not same as y2 position of lines

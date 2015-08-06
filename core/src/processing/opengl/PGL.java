@@ -550,7 +550,7 @@ public abstract class PGL {
       bindFramebufferImpl(READ_FRAMEBUFFER, glMultiFbo.get(0));
       bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
       int mask = COLOR_BUFFER_BIT;
-      if (pg.getHint(PConstants.ENABLE_DEPTH_READING)) {
+      if (pg.getHint(PConstants.ENABLE_BUFFER_READING)) {
         mask |= DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT;
       }
       blitFramebuffer(0, 0, fboWidth, fboHeight,
@@ -795,7 +795,7 @@ public abstract class PGL {
     framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0, TEXTURE_2D,
                          glColorTex.get(backTex), 0);
 
-    if (!multisample || pg.getHint(PConstants.ENABLE_DEPTH_READING)) {
+    if (!multisample || pg.getHint(PConstants.ENABLE_BUFFER_READING)) {
       // If not multisampled, this is the only depth and stencil buffer.
       // If multisampled and depth reading enabled, these are going to
       // hold downsampled depth and stencil buffers.
@@ -2717,7 +2717,7 @@ public abstract class PGL {
 
   public void readPixels(int x, int y, int width, int height, int format, int type, Buffer buffer){
     boolean multisampled = isMultisampled() || pg.offscreenMultisample;
-    boolean depthReadingEnabled = pg.getHint(PConstants.ENABLE_DEPTH_READING);
+    boolean depthReadingEnabled = pg.getHint(PConstants.ENABLE_BUFFER_READING);
     boolean depthRequested = format == STENCIL_INDEX || format == DEPTH_COMPONENT || format == DEPTH_STENCIL;
 
     if (multisampled && depthRequested && !depthReadingEnabled) {

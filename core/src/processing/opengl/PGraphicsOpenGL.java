@@ -2236,7 +2236,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (offscreenMultisample) {
           // Making sure the offscreen FBO is up-to-date
           int mask = PGL.COLOR_BUFFER_BIT;
-          if (hints[ENABLE_DEPTH_READING]) {
+          if (hints[ENABLE_BUFFER_READING]) {
             mask |= PGL.DEPTH_BUFFER_BIT | PGL.STENCIL_BUFFER_BIT;
           }
           multisampleFramebuffer.copy(offscreenFramebuffer, mask);
@@ -2479,9 +2479,9 @@ public class PGraphicsOpenGL extends PGraphics {
         flush();
         isDepthSortingEnabled = false;
       }
-    } else if (which == ENABLE_DEPTH_READING) {
+    } else if (which == ENABLE_BUFFER_READING) {
       restartPGL();
-    } else if (which == DISABLE_DEPTH_READING) {
+    } else if (which == DISABLE_BUFFER_READING) {
       restartPGL();
     }
   }
@@ -6908,7 +6908,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // The offscreen framebuffer where the multisampled image is finally drawn
       // to. If depth reading is disabled it doesn't need depth and stencil buffers
       // since they are part of the multisampled framebuffer.
-      if (hints[ENABLE_DEPTH_READING]) {
+      if (hints[ENABLE_BUFFER_READING]) {
         offscreenFramebuffer =
           new FrameBuffer(this, texture.glWidth, texture.glHeight, 1, 1,
                           depthBits, stencilBits, packed, false);

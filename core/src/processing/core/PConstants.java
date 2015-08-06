@@ -514,8 +514,8 @@ public interface PConstants {
   static final int ENABLE_STROKE_PURE         =  9;
   static final int DISABLE_STROKE_PURE        = -9;
 
-  static final int ENABLE_DEPTH_READING       =  10;
-  static final int DISABLE_DEPTH_READING      = -10;
+  static final int ENABLE_BUFFER_READING       =  10;
+  static final int DISABLE_BUFFER_READING      = -10;
 
   static final int HINT_COUNT                 =  11;
 }

@@ -19,6 +19,7 @@ X update to launch4j 3.8
 X inquire about updated document icon
 X fix frame title for web frame (welcome window title disappeared)
 X fix the red for the console/error stuff and the status bar
+X write notes about changes with Toolkit and Util, and packages
 
 fixed earlier
 X font fixes for Georgia in the examples
@@ -57,9 +58,6 @@ X Assortment of patches from my arm-3.0 branch
 X   https://github.com/processing/processing/pull/3522
 X Adding ellipses only when text is long
 X   https://github.com/processing/processing/pull/3470
-
-beta
-_ write notes about changes with Toolkit and Util, and packages
 
 
 3.0 final
