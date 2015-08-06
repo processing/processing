@@ -270,6 +270,13 @@ public class Sketch {
         SketchCode temp = code[who];
         code[who] = code[i];
         code[i] = temp;
+
+        // We also need to update the current tab
+        if (currentIndex == i) {
+          currentIndex = who;
+        } else if (currentIndex == who) {
+          currentIndex = i;
+        }
       }
     }
   }
