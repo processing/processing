@@ -13,8 +13,8 @@ an author of these, see the notes in the link above. We're also planning some
 sort of online Q & A / office hours / talk to Ben about what's changed session
 to help folks along. We want to help, we just need to find the time.
 
-For those into the nitty gritty, here are the details of what's changed 
-since 3.0 alpha 11:
+And for those into the nitty gritty, or who enjoy lame jokes about esoteric 
+technical details, the detailed changes since 3.0 alpha 11 are below.
 
 
 [ bug fixes ] 
@@ -148,30 +148,26 @@ since 3.0 alpha 11:
   https://github.com/processing/processing/pull/3527
   https://github.com/processing/processing/issues/2771
 
-X ArrayIndexOutOfBoundsException error when enabling depth sorting in P3D
-X   https://github.com/processing/processing/pull/3477
-X   https://github.com/processing/processing/issues/3476
-X Fix curves - properly this time
-X   https://github.com/processing/processing/pull/3501
-X Remove duplicate curve vertex
-X   https://github.com/processing/processing/pull/3496
-X   https://github.com/processing/processing/issues/2937
-X JOGL window size is now set properly
-X   https://github.com/processing/processing/pull/3493
-X   https://github.com/processing/processing/issues/3223
-X more sorter work
-X   https://github.com/processing/processing/pull/3507
-X Depth sorting wrong when drawing inside setup(), P3D
-X   can no longer be reproduced
-X   https://github.com/processing/processing/issues/2483
-X Device parsing on Linux is incorrect
-X   https://github.com/processing/processing/issues/3532
-o don't show display warning when display 1 doesn't exist
-X   apparently this was an OpenGL bug (#3532)
-X flush geometry when lighting changes 
-X   otherwise lights apply to the entire scene
-X   https://github.com/processing/processing/issues/3533
++ ArrayIndexOutOfBoundsException error when enabling depth sorting in P3D
+  https://github.com/processing/processing/pull/3477
+  https://github.com/processing/processing/issues/3476
 
++ Fix curves - properly this time
+  https://github.com/processing/processing/pull/3501
+
++ Remove duplicate curve vertex
+  https://github.com/processing/processing/pull/3496
+  https://github.com/processing/processing/issues/2937
+
++ JOGL window size is now set properly
+  https://github.com/processing/processing/pull/3493
+  https://github.com/processing/processing/issues/3223
+
++ Device parsing on Linux is incorrect, causing "display 1 doesn't exist" msg
+  https://github.com/processing/processing/issues/3532
+
++ Flush geometry when lighting changes, otherwise lights apply to entire scene
+  https://github.com/processing/processing/issues/3533
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
