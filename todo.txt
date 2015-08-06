@@ -60,6 +60,7 @@ _   https://code.google.com/p/processing/adminAdvanced
 _   https://github.com/processing/
 
 beta
+_ set title of welcome window
 _ fix the red for the console/error stuff
 _   also the sidebar, the squiggly line beneath code, and the status bar
 _ write notes about changes with Toolkit and Util, and packages

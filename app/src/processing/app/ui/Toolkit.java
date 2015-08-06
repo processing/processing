@@ -891,8 +891,9 @@ public class Toolkit {
    * the Preferences window, and can be used by HTMLEditorKit for WebFrame).
    */
   static private Font createFont(String filename, int size) throws IOException, FontFormatException {
-    //File fontFile = new File(System.getProperty("java.home"), "lib/fonts/" + filename);
-    File fontFile = new File(Base.getJavaHome(), "lib/fonts/" + filename);
+    // Can't use Base.getJavaHome(), because if we're not using our local JRE,
+    // we likely have bigger problems with how things are running.
+    File fontFile = new File(System.getProperty("java.home"), "lib/fonts/" + filename);
     if (!fontFile.exists()) {
       // if we're debugging from Eclipse, grab it from the work folder (user.dir is /app)
       fontFile = new File(System.getProperty("user.dir"), "../build/shared/lib/fonts/" + filename);
@@ -902,13 +903,27 @@ public class Toolkit {
       fontFile = new File(System.getProperty("user.dir"), "../../shared/lib/fonts/" + filename);
     }
     if (!fontFile.exists()) {
-      Base.showError("Font Sadness", "Could not find required fonts", null);
+      String msg = "Could not find required fonts. ";
+      if (hasNonAsciiChars(System.getProperty("java.home"))) {
+        msg += "Trying moving Processing to a location with only ASCII characters in the path.";
+      } else {
+        msg += "Please reinstall Processing from the original location.";
+      }
+      Base.showError("Font Sadness", msg, null);
     }
 
     BufferedInputStream input = new BufferedInputStream(new FileInputStream(fontFile));
     Font font = Font.createFont(Font.TRUETYPE_FONT, input);
     input.close();
     return font.deriveFont((float) size);
+  }
+
+
+  static private final boolean hasNonAsciiChars(String what) {
+    for (char c : what.toCharArray()) {
+      if (c < 32 || c > 127) return true;
+    }
+    return false;
   }
 
 
