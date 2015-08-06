@@ -36,7 +36,9 @@ import processing.app.Mode;
  */
 public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   static final int HIGH = 28;
-  static final int GUI_SMALL = 6;
+  static final int LEFT_MARGIN = Editor.LEFT_GUTTER;
+  static final int RIGHT_MARGIN = 20;
+
 
   Color[] bgcolor;
   Color[] fgcolor;
@@ -214,14 +216,14 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     // https://github.com/processing/processing/issues/3265
     if (message != null) {
       g.setFont(font); // needs to be set each time on osx
-      g.drawString(message, GUI_SMALL, (sizeH + ascent) / 2);
+      g.drawString(message, LEFT_MARGIN, (sizeH + ascent) / 2);
     }
 
     if (indeterminate) {
       //int x = cancelButton.getX();
       //int w = cancelButton.getWidth();
       int w = Toolkit.BUTTON_WIDTH;
-      int x = getWidth() - GUI_SMALL - w;
+      int x = getWidth() - RIGHT_MARGIN - w;
       int y = getHeight() / 3;
       int h = getHeight() / 3;
       g.setColor(new Color(0x80000000, true));

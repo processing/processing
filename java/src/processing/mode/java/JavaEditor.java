@@ -234,6 +234,7 @@ public class JavaEditor extends Editor {
     // errorTableScrollPane.setBorder(new EmptyBorder(2, 2, 2, 2));
 //    errorTableScrollPane.setBorder(new EtchedBorder());
     errorTableScrollPane.setBorder(BorderFactory.createEmptyBorder());
+//    errorTableScrollPane.setBorder(new EmptyBorder(0, Editor.LEFT_GUTTER, 0, 0));
     errorTableScrollPane.setViewportView(errorTable);
 
 //    // Adding toggle console button
