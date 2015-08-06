@@ -10,6 +10,10 @@ X remove 'contrib updates available' dialog box for now
 X   new version coming soon in the UI
 X make notes about Java2D and JavaFX packages in the README
 
+fixed earlier
+X Cannot use this version of rotate() on a PMatrix2D with PShape.rotateX()
+X   https://github.com/processing/processing/issues/1342
+
 opengl
 X Remove size() from setup() when copying to settings()
 X   https://github.com/processing/processing/pull/3517
@@ -80,7 +84,7 @@ _   on Export to Application, this has an impact
 _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
-beta
+3.0 final
 _ move AWT image loading into PImageAWT
 _   look into how GL and FX will handle from there
 _ run only the necessary pieces on the EDT

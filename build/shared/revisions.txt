@@ -1,3 +1,21 @@
+PROCSSING 3.0b1 (REV 0239) - 6 August 2015
+
+This is the big one! The first beta, which will now be the default download
+on the site. That means we think this is the best release of Processing that's
+currently available, and that nearly everyone should be using it. It doesn't
+mean we've worked out all the bugs just yet, but hey, who has?
+
+A still-in-progress rundown of the changes in Processing 3 is here:
+https://github.com/processing/processing/wiki/Changes-in-3.0
+
+For those into the nitty gritty, here are the details of what's changed 
+since 3.0 alpha 11:
+
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.0a11 (REV 0238) - 16 July 2015
 
 Hopefully the last release before we go to beta. 
