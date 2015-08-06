@@ -16,6 +16,8 @@ X try to get images working in welcome screen
 X   https://github.com/processing/processing/blob/master/build/shared/lib/welcome/sketchbook.html#L60
 X   https://github.com/processing/processing/issues/3494
 X update to launch4j 3.8
+X inquire about updated document icon
+X fix frame title for web frame (welcome window title disappeared)
 
 fixed earlier
 X font fixes for Georgia in the examples
@@ -55,12 +57,7 @@ X   https://github.com/processing/processing/pull/3522
 X Adding ellipses only when text is long
 X   https://github.com/processing/processing/pull/3470
 
-_ re-close the google code stuff (goes read-only on 8/25)
-_   https://code.google.com/p/processing/adminAdvanced
-_   https://github.com/processing/
-
 beta
-_ set title of welcome window
 _ fix the red for the console/error stuff
 _   also the sidebar, the squiggly line beneath code, and the status bar
 _ write notes about changes with Toolkit and Util, and packages
@@ -81,7 +78,6 @@ _   https://github.com/processing/processing/issues/2953
 
 gui
 _ show hover text with 'debug'
-_ inquire about updated document icon
 _ don't show breakpoints when debugger is off
 _   https://github.com/processing/processing/issues/3093
 _ no setting breakpoints when debugger is off
@@ -117,6 +113,8 @@ _ recent menu gets huge with other p5 versions on osx
 
 
 pde/build
+_ move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
+_   need to make the list abstract, also "scroll to line" feature
 _ can't install processing-java into /usr/bin with El Capitan
 _   https://github.com/processing/processing/issues/3497
 _ Foundation library examples should appear under "Core" or "Foundation"

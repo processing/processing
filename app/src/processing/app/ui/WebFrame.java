@@ -47,35 +47,27 @@ public class WebFrame extends JFrame {
 
 
   public WebFrame(File file, int width) throws IOException {
-    //setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-
-//    String content = "Could not load " + file.getAbsolutePath();
-//    if (file != null) {
-//      String[] lines = PApplet.loadStrings(file);
-//      content = PApplet.join(lines, "\n");
-//    }
-
     // Need to use the URL version so that relative paths work for images
     // https://github.com/processing/processing/issues/3494
     URL fileUrl = file.toURI().toURL();  //.toExternalForm();
-//    int high = getContentHeight(width, content);
     requestContentHeight(width, fileUrl);
 
-//    while (contentHeight == 0) {
-//      try {
-//        Thread.sleep(2);
-//      } catch (InterruptedException ie) { }
-//    }
-
-//    int high = getContentHeight(width, content);
-//    editorPane = new JEditorPane("text/html", content);
     editorPane = new JEditorPane();
+
+    // Title cannot be set until the page has loaded
+    editorPane.addPropertyChangeListener("page", new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent evt) {
+        Object title = editorPane.getDocument().getProperty("title");
+        if (title instanceof String) {
+          setTitle((String) title);
+        }
+      }
+    });
+
     editorPane.setPage(fileUrl);
     editorPane.setEditable(false);
     // set height to something generic
     editorPane.setPreferredSize(new Dimension(width, width));
-//    editorPane.setPreferredSize(new Dimension(width, high));
-//    editorPane.setPreferredSize(new Dimension(width, contentHeight));
     getContentPane().add(editorPane);
 
     Toolkit.registerWindowCloseKeys(getRootPane(), new ActionListener() {
@@ -87,11 +79,6 @@ public class WebFrame extends JFrame {
 
     editorKit = (HTMLEditorKit) editorPane.getEditorKit();
     editorKit.setAutoFormSubmission(false);
-
-    Object title = editorPane.getDocument().getProperty("title");
-    if (title instanceof String) {
-      setTitle((String) title);
-    }
 
     editorPane.addHyperlinkListener(new HyperlinkListener() {
       @Override
@@ -119,9 +106,6 @@ public class WebFrame extends JFrame {
         }
       }
     });
-//    pack();
-//    setLocationRelativeTo(null);
-    //setVisible(true);
   }
 
 
@@ -146,7 +130,6 @@ public class WebFrame extends JFrame {
             e.printStackTrace();
           }
         }
-//          System.out.println("setting visible");
         WebFrame.super.setVisible(visible);
       }
     }).start();
