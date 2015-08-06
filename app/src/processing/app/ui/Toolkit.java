@@ -904,10 +904,13 @@ public class Toolkit {
     }
     if (!fontFile.exists()) {
       String msg = "Could not find required fonts. ";
-      if (hasNonAsciiChars(System.getProperty("java.home"))) {
+      // This gets the JAVA_HOME for the *local* copy of the JRE installed with
+      // Processing. If it's not using the local JRE, it may be because of this
+      // launch4j bug: https://github.com/processing/processing/issues/3543
+      if (hasNonAsciiChars(Base.getJavaHome().getAbsolutePath())) {
         msg += "Trying moving Processing to a location with only ASCII characters in the path.";
       } else {
-        msg += "Please reinstall Processing from the original location.";
+        msg += "Please reinstall Processing.";
       }
       Base.showError("Font Sadness", msg, null);
     }
