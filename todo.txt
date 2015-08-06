@@ -1,63 +1,4 @@
-0239
-X Welcome screen completely broken/looking for debug files
-X   https://github.com/processing/processing/issues/3474
-X Add message that says it's safe to ignore the tools.jar warning
-X add new lower console/errors icons
-X dist needs to do a git pull on processing-docs
-X StringIndexOutOfBoundsException while preprocessing
-X   https://github.com/processing/processing/issues/3531
-X Run/Stop/Debug buttons do not fire if the mouse moves during the click
-X   https://github.com/processing/processing/issues/3529
-X 2.x Modes, Tools, and Libraries will need to be updated for 3.x
-X   https://github.com/processing/processing/issues/3080
-X   wrote basic documentation
-o write text for non-sketchbook version of welcome screen
-X try to get images working in welcome screen
-X   https://github.com/processing/processing/blob/master/build/shared/lib/welcome/sketchbook.html#L60
-X   https://github.com/processing/processing/issues/3494
-X update to launch4j 3.8
-X inquire about updated document icon
-X fix frame title for web frame (welcome window title disappeared)
-X fix the red for the console/error stuff and the status bar
-X write notes about changes with Toolkit and Util, and packages
-
-fixed earlier
-X font fixes for Georgia in the examples
-X contribs listed multiple times
-X   because they're listed multiple times in contribs.txt
-X   https://github.com/processing/processing/issues/3353
-
-contribs
-X Fix contribution compatibility check
-X   https://github.com/processing/processing/pull/3479
-X Update Spanish translation
-X   https://github.com/processing/processing/pull/3480
-X Fix bug with tab sorting when adding new tabs
-X   https://github.com/processing/processing/pull/3540
-X   https://github.com/processing/processing/issues/3099
-
-jakub
-X Do not filter Ctrl+Alt+? out as menu mnemonics
-X   https://github.com/processing/processing/issues/3536
-X   https://github.com/processing/processing/pull/3537
-X Fix delete tab shortcut in toolbar popup
-X   https://github.com/processing/processing/pull/3535
-X Deleted tab still present in tab menu
-X   https://github.com/processing/processing/issues/3534
-X   https://github.com/processing/processing/pull/3542
-X   https://github.com/processing/processing/pull/3541
-
-gsoc
-X CM updates dialog box doesn't open CM
-X   https://github.com/processing/processing/issues/3481
-X   https://github.com/processing/processing/pull/3489
-X include mode imports when rewriting .properties file
-X   https://github.com/processing/processing/pull/3499
-X   https://github.com/processing/processing/issues/3492
-X Assortment of patches from my arm-3.0 branch
-X   https://github.com/processing/processing/pull/3522
-X Adding ellipses only when text is long
-X   https://github.com/processing/processing/pull/3470
+0240 (3.0b2)
 
 
 3.0 final
@@ -111,6 +52,7 @@ _ recent menu gets huge with other p5 versions on osx
 
 
 pde/build
+_ ignore-tools in build.xml not being called for some reason
 _ move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
 _   need to make the list abstract, also "scroll to line" feature
 _ can't install processing-java into /usr/bin with El Capitan
