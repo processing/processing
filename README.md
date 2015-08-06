@@ -10,7 +10,7 @@ If it's a documentation, web site, or examples problem, take that up with folks 
 There are also separate locations for [Android Mode](https://github.com/processing/processing-android/issues), or the [Video](https://github.com/processing/processing-video/issues) and [Sound](https://github.com/processing/processing-sound/issues) libraries. 
 The [processing.js](http://processingjs.org) project is not affiliated with us, but you can find their issue tracker [here](https://github.com/processing-js/processing-js/issues).
 
-__processing-bugs is a liar__ 
+__That processing-bugs fella is a liar.__ 
 The issues list has been imported from Google Code, so there are many spurious references 
 amongst them since the numbering changed. Basically, any time you see references to 
 changes made by [processing-bugs](https://github.com/processing-bugs), it may be somewhat suspect.
