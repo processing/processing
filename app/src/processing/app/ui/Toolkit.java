@@ -888,11 +888,11 @@ public class Toolkit {
    * Get a font from the JRE lib/fonts folder. Our default fonts are also
    * installed there so that the monospace (and others) can be used by other
    * font listing calls (i.e. it appears in the list of monospace fonts in
-   * the Preferences window).
+   * the Preferences window, and can be used by HTMLEditorKit for WebFrame).
    */
   static private Font createFont(String filename, int size) throws IOException, FontFormatException {
-    //InputStream is = Base.getLibStream("fonts/" + filename);
-    File fontFile = new File(System.getProperty("java.home"), "lib/fonts/" + filename);
+    //File fontFile = new File(System.getProperty("java.home"), "lib/fonts/" + filename);
+    File fontFile = new File(Base.getJavaHome(), "lib/fonts/" + filename);
     if (!fontFile.exists()) {
       // if we're debugging from Eclipse, grab it from the work folder (user.dir is /app)
       fontFile = new File(System.getProperty("user.dir"), "../build/shared/lib/fonts/" + filename);

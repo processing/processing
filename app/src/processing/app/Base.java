@@ -2148,7 +2148,8 @@ public class Base {
 
   /**
    * Get reference to a file adjacent to the executable on Windows and Linux,
-   * or inside Contents/Resources/Java on Mac OS X.
+   * or inside Contents/Resources/Java on Mac OS X. This will return the local
+   * JRE location, *whether or not it is the active JRE*.
    */
   static public File getContentFile(String name) {
     if (processingRoot == null) {
