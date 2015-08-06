@@ -678,7 +678,7 @@ public class Sketch {
         setCurrentCode(0);
 
         // update the tabs
-        editor.repaintHeader();
+        editor.rebuildHeader();
       }
     }
   }
