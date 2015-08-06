@@ -1,6 +1,24 @@
 0240 (3.0b2)
 
 
+cleaning/earlier
+o library.properties and tool.properties should reflect supported modes
+o   http://code.google.com/p/processing/issues/detail?id=1050
+X   marked as WONTFIX in 2012
+X re/move things from Google Code downloads
+X   https://code.google.com/p/support/wiki/DownloadsFAQ
+o mismatched square brackets generate bizarre and/or misleading error messages
+X   http://code.google.com/p/processing/issues/detail?id=355
+X   marked as WONTFIX in 2011
+o using a keyword as a variable name gives unhelpful error message
+o   http://code.google.com/p/processing/issues/detail?id=54
+o   https://github.com/processing/processing/issues/93
+o   https://github.com/processing/processing/issues/2779
+X sketches should only write to the console of their editor window
+X   http://code.google.com/p/processing/issues/detail?id=114
+X   https://github.com/processing/processing/issues/153
+
+
 3.0 final
 _ launch4j doesn't work from folders with non-native charsets
 _   anything in CP1252 on an English Windows system is fine
@@ -203,8 +221,6 @@ _   also should recognize the user's home dir
 _ possibility of libraries folder inside a particular sketch?
 _ display "1" is not correct in 2.1.2
 _   https://github.com/processing/processing/issues/2502
-_ re/move things from Google Code downloads
-_   https://code.google.com/p/support/wiki/DownloadsFAQ
 _ add font fixes to the rest of the API
 _   https://github.com/processing/processing/commit/eaff673d173b2d27f276cf5c59e3abf6c0fab86b
 _   g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
@@ -421,7 +437,7 @@ _ two-tiered dialogs for everything - use big font/little font style throughout
 _   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
-_   http://code.google.com/p/processing/issues/detail?id=7
+_   https://github.com/processing/processing/issues/46
 _ add "don't warn me about this" for sketch renaming
 _   make sure renamed version doesn't exist already
 _ prompt user before nuking applet or application folders
@@ -440,6 +456,9 @@ _     http://www.javalobby.org/java/forums/t19012.html
 
 PDE / Compiler & Preprocessor
 
+_ Parsing generic fails when package is specified (also problem with Map.Entry)
+_   https://github.com/processing/processing/issues/918
+
 medium (bugs/features)
 _ incorporate new preproc
 _   https://github.com/fjenett/processing-preprocessor-antlr4
@@ -452,8 +471,6 @@ _   or get the updated ANTLR, which likely would support it
 _ omitting a semicolon shows the error on the line after it
 _ npe if library is removed before compile
 _   always check library folders to make sure they're still valid
-_ mismatched square brackets generate bizarre and/or misleading error messages
-_   http://code.google.com/p/processing/issues/detail?id=355
 _ with additional .pde files, don't allow static mode in front tab
 _   e.g. no setup()/draw() block
 _ don't allow "for (blah; blah; blah) ;"
@@ -468,20 +485,17 @@ _ link out to further documentation (e.g. AIOOBE, NPE)
 
 low (common errors around reserved names/class naming)
 _ Saving sketch with the same name as a class or primitive breaks sketch
-_   http://code.google.com/p/processing/issues/detail?id=157
+_   https://github.com/processing/processing/issues/196
 _ don't allow people to override methods like paint() 
 _   make them final? just improve the error messages?
-_   http://code.google.com/p/processing/issues/detail?id=1020
 _   https://github.com/processing/processing/issues/1058
 _ Processing chokes if a sketch defines a class with same name as the sketch
 _   https://github.com/processing/processing/issues/196
 _ don't allow goofy case versions of reserved words
 _   keypressed should maybe throw an error
-_   http://code.google.com/p/processing/issues/detail?id=5
-_ using a keyword as a variable name gives unhelpful error message
-_   http://code.google.com/p/processing/issues/detail?id=54
+_   https://github.com/processing/processing/issues/44
 _ "unexpected token" on anonymous instance of parameterized Comparator
-_   http://code.google.com/p/processing/issues/detail?id=494
+_   https://github.com/processing/processing/issues/533
 
 
 PDE / Editor
@@ -527,15 +541,12 @@ _   or wait for mac handlers to register an open event
 _   can also cause problems with opening multiple copies of same sketch
 _ after fixing name of sketch, ensure sketch of that name does not exist
 _ add auto-save to the editor
-_   http://code.google.com/p/processing/issues/detail?id=92
+_   https://github.com/processing/processing/issues/131
 _ option to just print all code in project
-_   http://code.google.com/p/processing/issues/detail?id=11
 _   https://github.com/processing/processing/issues/50
 _   or option to export all the code as colored html?
 _ implement better method of showing curly brace closure
-_   http://code.google.com/p/processing/issues/detail?id=55
-_ sketches should only write to the console of their editor window
-_   http://code.google.com/p/processing/issues/detail?id=114
+_   https://github.com/processing/processing/issues/94
 _ problems with file/print
 _   http://code.google.com/p/processing/issues/detail?id=174
 _ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
@@ -644,14 +655,12 @@ _     i.e. even if not specified, the stuff will be in the classpath
 _   need to make classpath code be less promiscuous
 _   the order of adding libraries to classpath should be opposite
 _     the important local libraries should be first in cp, user contrib later
-_   http://code.google.com/p/processing/issues/detail?id=56
+_   https://github.com/processing/processing/issues/95
 _ changing the sketchbook folder will make libraries show up
 _   but it won't reload the library mapping table
 _ make sure there aren't library jar files named the same thing 
 _   i.e. if one library has db.jar, then that's gonna kill another db.jar
 _   when the files are copied over
-_ library.properties and tool.properties should reflect supported modes
-_   http://code.google.com/p/processing/issues/detail?id=1050
 _ versioning info 
 _   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/versioning.html
 _ java.ext.dirs for /System/Library/Java/Extensions

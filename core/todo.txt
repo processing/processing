@@ -1,6 +1,18 @@
 0240 core (beta 2)
 
 
+cleaning/fixed earlier
+X splice() throws ClassCastException when used with objects like PVector 
+X   http://code.google.com/p/processing/issues/detail?id=1407
+X   https://github.com/processing/processing/issues/1445
+o Semitransparent rect drawn over image not rendered correctly
+o   http://code.google.com/p/processing/issues/detail?id=182
+X   https://github.com/processing/processing/issues/221
+X text() wraps words differently depending on whether space seen or not
+X   http://code.google.com/p/processing/issues/detail?id=439
+X   https://github.com/processing/processing/issues/478
+
+
 docs
 _ note that full screen and present are now different
 _   on Export to Application, this has an impact
@@ -211,7 +223,6 @@ _ add version of math functions that use doubles?
 _   what other methods should work with doubles? all math functions?
 _   seems like internal (mostly static) things, but not graphics api
 _ new PGraphics(... OutputStream) 
-X   http://code.google.com/p/processing/issues/detail?id=246
 _   https://github.com/processing/processing/issues/285
 _   already added for PDF, just need to work out the API
 _ if save() returns boolean, does saveFrame()?
@@ -256,14 +267,13 @@ _ wrap exceptions with die() and warn() methods
 _   this way, people can make use of exceptions if they would rather
 _   or shut them off if they don't want to 
 _   also need to explain exception handling in general
-_   http://code.google.com/p/processing/issues/detail?id=183
+X   http://code.google.com/p/processing/issues/detail?id=183
+_   https://github.com/processing/processing/issues/222
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
 _ finish adding loadStrings(BufferedReader)
 _   decide if we want to keep this (and/or others?)
 _   port to android
 _ deprecate the older splice() etc API inside PApplet?
-_ splice() throws ClassCastException when used with objects like PVector 
-_   http://code.google.com/p/processing/issues/detail?id=1407
 _ add notes about the new shader setup
 _ add reference/docs for urlEncode() and urlDecode()
 _ verify (and document) public access members of PApplet
@@ -375,21 +385,17 @@ _     maybe a hack where a new menubar is added?
 
 CORE / PFont and text()
 
-_ text() wraps words differently depending on whether space seen or not
-_   http://code.google.com/p/processing/issues/detail?id=439
 _ remove subsetting stuff from PFont?
 _   or use hint(ENABLE_FONT_SUBSETTING)? 
 _ what's the difference with ascent on loadFont vs. createFont?
 _ svg fonts
 _   would be nifty if we could convert on the fly to ttf for speed...
-X   http://code.google.com/p/processing/issues/detail?id=748
 _   https://github.com/processing/processing/issues/787
 _ font rotation (native font problem?) with natives?
-X   http://code.google.com/p/processing/issues/detail?id=692
 _   https://github.com/processing/processing/issues/731
 _ text position is quantized in JAVA2D
 _   text placement is ugly, seems like fractional metrics problem
-_   http://code.google.com/p/processing/issues/detail?id=99
+_   https://github.com/processing/processing/issues/138
 _ text(char c) with char 0 and undefined should print nothing
 _   perhaps also DEL or other nonprintables?
 _   book example 25-03
@@ -453,12 +459,9 @@ _ deprecate the blend() function
 _ implement unified means to specify smoothing level for image scaling
 _   http://code.google.com/p/processing/issues/detail?id=165
 _ blend() and copy() are not pixel accurate for copy/scale
-_   http://code.google.com/p/processing/issues/detail?id=285
+_   https://github.com/processing/processing/issues/324
 _ accuracy problems make alpha channel go to FE with image.copy()
-_   http://code.google.com/p/processing/issues/detail?id=219
-
-_ Semitransparent rect drawn over image not rendered correctly
-_   http://code.google.com/p/processing/issues/detail?id=182
+_   https://github.com/processing/processing/issues/258
 
 
 CORE / PShape
