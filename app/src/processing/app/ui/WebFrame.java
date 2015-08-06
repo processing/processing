@@ -98,15 +98,17 @@ public class WebFrame extends JFrame {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         //System.out.println(e);
         if (e instanceof FormSubmitEvent) {
-          //System.out.println("got submit event");
           String result = ((FormSubmitEvent) e).getData();
           StringDict dict = new StringDict();
-          String[] pairs = result.split("&");
-          for (String pair : pairs) {
-            String[] pieces = pair.split("=");
-            String attr = PApplet.urlDecode(pieces[0]);
-            String valu = PApplet.urlDecode(pieces[1]);
-            dict.set(attr, valu);
+          if (result.trim().length() != 0) {
+            String[] pairs = result.split("&");
+            for (String pair : pairs) {
+              System.out.println("pair is " + pair);
+              String[] pieces = pair.split("=");
+              String attr = PApplet.urlDecode(pieces[0]);
+              String valu = PApplet.urlDecode(pieces[1]);
+              dict.set(attr, valu);
+            }
           }
           //dict.print();
           handleSubmit(dict);
@@ -159,7 +161,7 @@ public class WebFrame extends JFrame {
   /**
    * Override this to do something interesting when a form is submitted.
    * To keep things simple, this doesn't allow for multiple params with the
-   * same name.
+   * same name. If no params submitted, the Dict will be empty (not null).
    */
   public void handleSubmit(StringDict dict) {
   }
