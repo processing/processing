@@ -69,6 +69,9 @@ X Device parsing on Linux is incorrect
 X   https://github.com/processing/processing/issues/3532
 o don't show display warning when display 1 doesn't exist
 X   apparently this was an OpenGL bug (#3532)
+X flush geometry when lighting changes 
+X   otherwise lights apply to the entire scene
+X   https://github.com/processing/processing/issues/3533
 
 
 docs

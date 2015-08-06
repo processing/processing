@@ -15,6 +15,7 @@ o write text for non-sketchbook version of welcome screen
 X try to get images working in welcome screen
 X   https://github.com/processing/processing/blob/master/build/shared/lib/welcome/sketchbook.html#L60
 X   https://github.com/processing/processing/issues/3494
+X update to launch4j 3.8
 
 fixed earlier
 X font fixes for Georgia in the examples
@@ -25,8 +26,22 @@ X   https://github.com/processing/processing/issues/3353
 contribs
 X Fix contribution compatibility check
 X   https://github.com/processing/processing/pull/3479
-X Update spanish translation
+X Update Spanish translation
 X   https://github.com/processing/processing/pull/3480
+X Fix bug with tab sorting when adding new tabs
+X   https://github.com/processing/processing/pull/3540
+X   https://github.com/processing/processing/issues/3099
+
+jakub
+X Do not filter Ctrl+Alt+? out as menu mnemonics
+X   https://github.com/processing/processing/issues/3536
+X   https://github.com/processing/processing/pull/3537
+X Fix delete tab shortcut in toolbar popup
+X   https://github.com/processing/processing/pull/3535
+X Deleted tab still present in tab menu
+X   https://github.com/processing/processing/issues/3534
+X   https://github.com/processing/processing/pull/3542
+X   https://github.com/processing/processing/pull/3541
 
 gsoc
 X CM updates dialog box doesn't open CM
@@ -40,17 +55,27 @@ X   https://github.com/processing/processing/pull/3522
 X Adding ellipses only when text is long
 X   https://github.com/processing/processing/pull/3470
 
+_ re-close the google code stuff (goes read-only on 8/25)
+_   https://code.google.com/p/processing/adminAdvanced
+_   https://github.com/processing/
 
 beta
+_ fix the red for the console/error stuff
+_   also the sidebar, the squiggly line beneath code, and the status bar
 _ write notes about changes with Toolkit and Util, and packages
+
+
+3.0 final
+_ launch4j doesn't work from folders with non-native charsets
+_   anything in CP1252 on an English Windows system is fine
+_   but anything else reports "font sadness" b/c it's using the system JRE
+_   https://github.com/processing/processing/issues/3543
 _ CM ongoing notes and questions
 _   https://github.com/processing/processing/issues/3440
 _ Contribution Manager design is really rough
 _   https://github.com/processing/processing/issues/3464
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
-_ fix the red for the console/error stuff
-_   also the sidebar, the squiggly line beneath code, and the status bar
 
 
 gui
@@ -224,9 +249,13 @@ _   https://github.com/processing/processing/issues/2698
 _   might be something with libraries (native or otherwise)
 
 
-medium
 _ Determine shortcut for Export vs Use Selection for Find
 _   https://github.com/processing/processing/issues/2985
+_ Determine new keyboard shortcut for Step Out
+_   https://github.com/processing/processing/issues/3538
+
+
+medium
 _ remove toolbar menu references and code to rebuild
 _ fix single instance server on OS X to load double-clicked files
 _   when run from Eclipse, the single instance thing punts
