@@ -101,9 +101,6 @@ public class Base {
   static String nativeArch;
   static {
     nativeArch = System.getProperty("os.arch");
-    if (nativeArch == null) {
-      nativeArch = "";
-    }
   }
 
   static private boolean commandLine;
@@ -1549,6 +1546,9 @@ public class Base {
   }
 
   static public String getNativeArch() {
+    if (nativeArch == null) {
+      throw new RuntimeException("os.arch is not set");
+    }
     return nativeArch;
   }
 
