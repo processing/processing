@@ -422,6 +422,11 @@ public class PSurfaceAWT extends PSurfaceNone {
     sketchHeight = sketch.sketchHeight();
 
     boolean fullScreen = sketch.sketchFullScreen();
+    // Removing the section below because sometimes people want to do the
+    // full screen size in a window, and it also breaks insideSettings().
+    // With 3.x, fullScreen() is so easy, that it's just better that way.
+    // https://github.com/processing/processing/issues/3545
+    /*
     // Sketch has already requested to be the same as the screen's
     // width and height, so let's roll with full screen mode.
     if (screenRect.width == sketchWidth &&
@@ -429,6 +434,7 @@ public class PSurfaceAWT extends PSurfaceNone {
       fullScreen = true;
       sketch.fullScreen();  // won't change the renderer
     }
+    */
 
     if (fullScreen || spanDisplays) {
       sketchWidth = screenRect.width;

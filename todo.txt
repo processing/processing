@@ -1,4 +1,7 @@
 0240 (3.0b2)
+_ if no platforms selected in export, will still say "done exporting!"
+_   maybe if none selected, should default select the current platform
+_   why are none selected in the first place? not getting saved?
 
 
 3.0 final

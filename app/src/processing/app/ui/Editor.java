@@ -2985,6 +2985,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
       if (mess.startsWith(illString)) {
         mess = mess.substring(illString.length());
       }
+      // This is confusing and common with the size() and fullScreen() changes
+      String illState = "IllegalStateException: ";
+      if (mess.startsWith(illState)) {
+        mess = mess.substring(illState.length());
+      }
       statusError(mess);
     }
 //    e.printStackTrace();
