@@ -30,17 +30,29 @@ One downside of these changes is that you'll no longer be able to just drop a Pr
 
 Making it a generic `Component`, however, means that we cannot improve performance, due to the cross-platform mess of Java's outdated (and somewhat unsuspported) AWT. 
 
-In 3.0 alpha 6 and 7, a `getCanvas()` or `getComponent()` method provided a way to get an object to be embedded, but as we prepare for alpha 8, it looks like we'll have to move in another direction. At the present time, it looks like it'll be necessary to create a separate `PComponent` or `PCanvas` class that can be used, but it's not clear how that will work. 
+In 3.0 alpha 6, the `getCanvas()` method (called`getComponent()` in alpha 7) provided a way to get an object to be embedded, but it looks like we'll have to move in another direction. At the present time, it looks like it'll be necessary to create a separate `PComponent` or `PCanvas` class that can be used, but it's not clear how that will work. We'll have this sorted out by the final release of 3.0. 
 
 This is one of many unfortunate tradeoffs I'm trying to sort through as we try to remove significant barriers to performance caused by the design of Java's AWT, while also supporting features (like embedding) that we've spent so much time supporting in the past.
 
 
+#### `settings()` is required
+Prior to Processing 3, dark magic was used to make the `size()` command work. This was done to hide an enormous amount of complexity from users. Over time, the hacks involved became untenable or just unsustainable. The process was like this:
+* The default renderer would be initialized offscreen and unused
+* `setup()` would run, and if the renderer changed, the sketch would throw an exception causing things to restart (re-calling the `setup()` method)
+* The previous step gave fits to any other variants of Processing (like Python or Ruby or Scala)
+
+We had a tricky, stuttery situation where some things would happen automatically, other things would be delayed slightly. 
+In the Android version of Processing, these methods weren't possible, so we enhanced the preprocessor to parse the `size()` command used in the sketch and create methods called `sketchWidth()` and `sketchHeight()` and so on, that returned the values found in `setup()`. 
+
+In Processing 3, we've moved in a different direction. A new method called `settings()` has been introduced. When running inside the PDE, commands like `size()`, `fullScreen()`, `pixelDensity()`, and `smooth()` are all moved to the `settings()` method, which is called once, before `setup()`. Those are the only methods that can be called inside `settings()`. When outside the PDE (i.e. using Eclipse), you'll need to move those methods to `settings()` yourself. 
+
+
 #### Offscreen rendering
-* createGraphics() will create a buffer that's not resizable. `PGraphics.setSize()` is called in `PApplet.makeGraphics()`, and that's the end of the story. No `Surface.setSize()` calls are involved as in a normal rendering situation.
+createGraphics() will create a buffer that's not resizable. `PGraphics.setSize()` is called in `PApplet.makeGraphics()`, and that's the end of the story. No `Surface.setSize()` calls are involved as in a normal rendering situation.
 
 
 #### Retina/HiDPI/2x drawing and displays
-* Documentation changes [here](https://github.com/processing/processing-docs/issues/170)
+Documentation is on its way, see [here](https://github.com/processing/processing-docs/issues/170)
 
 
 #### The Event Dispatch Thread
@@ -79,16 +91,6 @@ It looks like LWJGL3 will be a nice game-centric platform (full screen, affordan
 LWJGL and JOGL are both great projects and we're thankful for all the work that they put in, and our own experience with Processing means that we couldn't be more sympathetic to the difficulty they face in maintaining their cross-platform, cross-chipset, cross-everything code. Like Processing, both projects are open source and created by volunteers who give their work away for free. We're enormously appreciative of their efforts.
 
 
-## `settings()` is required
-Prior to Processing 3, dark magic was used to make the `size()` command work. This was done to hide an enormous amount of complexity from users. Over time, the hacks involved became untenable or just unsustainable. The process was like this:
-* The default renderer would be initialized offscreen and unused
-* `setup()` would run, and if the renderer changed, the sketch would throw an exception causing things to restart (re-calling the `setup()` method)
-* The previous step gave fits to any other variants of Processing (like Python or Ruby or Scala)
-* We had a tricky, stuttery situation where some things would happen automatically, other things would be delayed slightly
-In the Android version of Processing, these methods weren't possible, so we enhanced the preprocessor to parse the `size()` command used in the sketch and create methods called `sketchWidth()` and `sketchHeight()` and so on, that returned the values found in `setup()`. 
-In Processing 3, we're moving in a different direction. A new method called `settings()` has been introduced. When running inside the PDE, commands like `size()`, `fullScreen()`, `pixelDensity()`, and `smooth()` are all moved to the `settings()` method, which is called once, before `setup()`. Those are the only methods that can be called inside `settings()`. When outside the PDE (i.e. using Eclipse), you'll need to move those methods to `settings()` yourself. 
-
-
 ## JavaFX 
 
 Similarly to the NEWT situation in JOGL described above, we’ve hit the upper bound of what we can do on performance in Java2D as well. The graphics engineers from the Java team seem to have all moved to JavaFX for the last few years, perhaps because AWT is a dead end. So… I’ve started doing the JavaFX port so that we can drop even more of the AWT code.
@@ -98,13 +100,13 @@ JavaFX provides significantly better performance on recent (last couple years) h
 We hope to make JavaFX the default renderer instead of Java2D. With any luck, we'd like to do this before 3.0 final is released.
 
 
-## More AWT Removal
+## Whither AWT
 
-Run away from the AWT. All of our focus is on the OpenGL and JavaFX rendering engines, neither of which use AWT. 
+Run away from the AWT. All of our focus is on the OpenGL and JavaFX rendering engines, neither of which use AWT. Even the (currently) default `PGraphicsJava2D` renderer will be de-emphasized (though not removed) in the final 3.0. 
 
-***
+* * * 
 
-## The Mess
+# The Mess
 
 The rest of this document are my notes while I'm making changes.
 
