@@ -1,56 +1,6 @@
 0240 core (beta 2)
 
 
-cleaning/fixed earlier
-X splice() throws ClassCastException when used with objects like PVector 
-X   http://code.google.com/p/processing/issues/detail?id=1407
-X   https://github.com/processing/processing/issues/1445
-o Semitransparent rect drawn over image not rendered correctly
-o   http://code.google.com/p/processing/issues/detail?id=182
-X   https://github.com/processing/processing/issues/221
-X text() wraps words differently depending on whether space seen or not
-X   http://code.google.com/p/processing/issues/detail?id=439
-X   https://github.com/processing/processing/issues/478
-o make sure rendering is happening on the EDT
-o   (hopefully fixes flicker issues)
-o   change PApplet.java javadoc to reflect the change
-o   Update http://wiki.processing.org/w/Troubleshooting#Flicker
-X   http://code.google.com/p/processing/issues/detail?id=775
-X look into using BufferStrategy again to improve performance
-X   there are more improvements to be made ala issue #729
-o thread() causes weird flickering
-X   http://code.google.com/p/processing/issues/detail?id=742
-o stop() not getting called
-o   http://code.google.com/p/processing/issues/detail?id=43
-o   major problem for libraries
-o   and start() is supposedly called by the applet viewer
-o   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
-o   need to track this stuff down a bit
-X   closed with work from Lonnen, but still some issues around this
-X createShape() not yet implemented for Java2D
-X   http://code.google.com/p/processing/issues/detail?id=1400
-X   https://github.com/processing/processing/issues/1438
-o load PShape from a string object
-X   http://code.google.com/p/processing/issues/detail?id=277
-X ortho() issues
-X   http://code.google.com/p/processing/issues/detail?id=1240
-X   https://github.com/processing/processing/issues/1278
-X hint(DISABLE_PERSPECTIVE_CORRECTED_STROKE)
-X implement textMode(SHAPE) with OPENGL
-X   https://github.com/processing/processing/issues/777
-X   http://code.google.com/p/processing/issues/detail?id=738
-X implement setImpl() instead of set() inside PGraphicsOpenGL
-X   http://code.google.com/p/processing/issues/detail?id=121
-X   https://github.com/processing/processing/issues/160
-X first few frames of OpenGL sketches on Windows run slowly
-X   http://code.google.com/p/processing/issues/detail?id=107
-X   https://github.com/processing/processing/issues/146
-X Signature issue on contributed libraries affects unrelated opengl sketches
-X   http://code.google.com/p/processing/issues/detail?id=261
-X OpenGL noSmooth() problems
-X   http://code.google.com/p/processing/issues/detail?id=328
-
-
 docs
 _ note that full screen and present are now different
 _   on Export to Application, this has an impact
@@ -361,6 +311,7 @@ _   notify ddf when pause/resume implemented
 _ stop() not called in 1.5
 _   https://github.com/processing/processing/issues/675
 _   noticed that dispose() is getting called. stop() isn't.
+_   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
 _ static mode sketches seem to break ESC... noLoop() problem?
 _   need to find another way to get ESC on static mode
 _   b/c static mode sketches *do* finish because they have no draw()
@@ -570,39 +521,14 @@ _ why is initPrimarySurface() public?
 _ why is setFramerate() public? (also should be setFrameRate or just frameRate)
 _ where did hintEnabled() come from?
 _ remove 'params' from createImage (is it on loadImage too?)
-_ OS X slow with FSEM enabled
-_   http://code.google.com/p/processing/issues/detail?id=737
-_ get() with OPENGL is grabbing the wrong coords
-_   http://code.google.com/p/processing/issues/detail?id=191
-_ deal with issue of single pixel seam at the edge of textures
-_   should vertexTexture() divide by width/height or width-1/height-1?
-_   http://code.google.com/p/processing/issues/detail?id=76
-_ lousy graphics cards cause background to flicker if background() not used
-_   http://code.google.com/p/processing/issues/detail?id=146
-_   OPENGL sketches flicker w/ Vista when background() not used inside draw()
-_   Disabling Aero scheme sometimes prevents the problem
-_   Updating graphics drivers may prevent the problem 
-_ ellipse scaling method isn't great
-_   http://code.google.com/p/processing/issues/detail?id=87
-_ Stroking a rect() leaves off the upper right pixel
-_   http://code.google.com/p/processing/issues/detail?id=67
-_ Signature issue on contributed libraries affects unrelated opengl sketches
-_   http://code.google.com/p/processing/issues/detail?id=261
 _ remove matrixMode(), add a projection() method
-_ opengl applet problems with tabs - needs to handle stop() and start() 
-_   http://code.google.com/p/processing/issues/detail?id=196
-_   stop() called between tabs/pages, start() may be called again
-_   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
-_   really, stop() should just call noLoop() (and start re-enable if done)
-_     and on android, start/stop can be used to save state information
-_   need to fix opengl applets so that we can safely kill P3D
 _ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
 _   libraries have to do a lot of casting
 _ opengl isn't drawing rectangles out to raw properly with fonts
 _   when not in textMode(SHAPE) should have rects
 _ InvScreenX, Y, Z to convert screen (mouse) coordinates to model coordinates
 _   https://github.com/processing/processing/issues/1609
-X   https://code.google.com/p/processing/issues/detail?id=1571
+
 
 CORE / Mac OS X
 
@@ -616,7 +542,6 @@ CORE / Events
 
 _ Implement a way to disable automatic key repeat
 _   https://github.com/processing/processing/issues/1622
-X   https://code.google.com/p/processing/issues/detail?id=1584
 _ touch events.. can't do MouseEvent et al with Android
 _   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
 _   http://www.html5rocks.com/en/mobile/touch.html
