@@ -5675,14 +5675,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void enableLighting() {
-    lights = true;
     flush();
+    lights = true;
   }
 
 
   protected void disableLighting() {
-    lights = false;
     flush();
+    lights = false;
   }
 
 
