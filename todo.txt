@@ -21,6 +21,25 @@ X verify (and document) public access members of PApplet
 X   http://code.google.com/p/processing/issues/detail?id=83
 X remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
 X   move Java-specific InputHandler to its own subclass
+X key command for prev/next tab works, but not menu
+X   menu options are actually disabled because of inconsistency
+X   http://code.google.com/p/processing/issues/detail?id=140
+X   https://github.com/processing/processing/issues/179
+X make standard editor input prompt available to other tools/modes
+X   http://code.google.com/p/processing/issues/detail?id=746
+X   https://github.com/processing/processing/issues/785
+o "Standard Examples" dialog box off screen if Processing IDE maximised
+o   http://code.google.com/p/processing/issues/detail?id=928
+X   https://github.com/processing/processing/issues/966
+X excessive CPU usage of PDE after using library manager
+X   confirmed to still be a problem with b5/6
+X   https://github.com/processing/processing/issues/1074
+o need a proper means to handle command keys for tools (?)
+X   http://code.google.com/p/processing/issues/detail?id=44
+X   https://github.com/processing/processing/issues/83
+o handle native code for tools menu (?)
+o   http://code.google.com/p/processing/issues/detail?id=109
+X   https://github.com/processing/processing/issues/148
 
 
 3.0 final
@@ -572,17 +591,8 @@ _ EditorToolbar has two TODO items for open menu handling
 
 PDE / Editor Header
 
-_ key command for prev/next tab works, but not menu
-_   menu options are actually disabled because of inconsistency
-_   http://code.google.com/p/processing/issues/detail?id=140
 _ ctrl/ctrl-shift-n sometimes stops working
-_   http://code.google.com/p/processing/issues/detail?id=149
-
-
-PDE / Editor Status
-
-_ make standard editor input prompt available to other tools/modes
-_   http://code.google.com/p/processing/issues/detail?id=746
+_   https://github.com/processing/processing/issues/188
 
 
 PDE / Export
@@ -609,13 +619,11 @@ PDE / Find & Replace
 
 PDE / Examples
 
-_ "Standard Examples" dialog box off screen if Processing IDE maximised
-_   http://code.google.com/p/processing/issues/detail?id=928
 _ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
 _   mark examples as untitled (rather than read-only)
 _   maybe even pull these directly from the zip file?
 _ load examples from zip files
-_   http://code.google.com/p/processing/issues/detail?id=143
+_   https://github.com/processing/processing/issues/182
 _ don't make examples read-only
 _   just do them from psk filess
 _ disallow add file to sketch, export, export application
@@ -734,10 +742,6 @@ _   https://github.com/processing/processing/pull/3328
 _ wheel mouse is super jumpy 
 _   something about unit increment in ContributionListPanel
 _ arrow keys up/down move scroll bar, not selection
-_ excessive CPU usage of PDE after using library manager
-_   confirmed to still be a problem with b5/6
-_   https://github.com/processing/processing/issues/1074
-X   http://code.google.com/p/processing/issues/detail?id=1036
 _ fonts/etc need to be set in one place where they can be edited
 _   move styling to separate constants that are more accessible
 
@@ -775,7 +779,7 @@ PDE / Sketch & Sketchbook
 
 _ Large number of files in sketchbook folder can cause slow startup 
 _   and/or errors with launch4j
-_   http://code.google.com/p/processing/issues/detail?id=1152
+_   https://github.com/processing/processing/issues/1190
 _ error that sketch is read-only can't be canceled
 _   hitting cancel (or ESC?) still brings up the save dialog
 _ ArticulatePrint-070103a.pde from ArticulatePrint-070103a loads ok
@@ -786,7 +790,7 @@ _ show progress dialog during export and save
 _ hitting ESC on "create this, move file, continue" opened anyway
 _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
-_   http://code.google.com/p/processing/issues/detail?id=34
+_   https://github.com/processing/processing/issues/73
 _   maybe just open from a zip file, since psk doesn't help anything
 _   also have a means of importing sketches
 
@@ -803,10 +807,6 @@ TOOLS / General
 _ create default tools folder (just like libraries)
 _ for tools, maybe don't run on event thread? (makes the gui hang)
 _   but instead, things that affect gui need to be called w/ invokeLater?
-_ need a proper means to handle command keys for tools (?)
-_   http://code.google.com/p/processing/issues/detail?id=44
-_ handle native code for tools menu (?)
-_   http://code.google.com/p/processing/issues/detail?id=109
 
 
 TOOLS / Ideas 
@@ -882,7 +882,7 @@ _ add additional caveats about incompletion to javadoc
 _ drag and drop
 _   including the number of items added to sketch would be especially nice
 _ implement automatic update
-_   http://code.google.com/p/processing/issues/detail?id=61
+_   https://github.com/processing/processing/issues/100
 _ need .pde document icons
 _ need .psk file icon
 _ need exported application icons
@@ -901,9 +901,6 @@ _ different name for 'lib' folder because of libraries folder?
 _   avoid some confusion for when describing the libraries folder to users
 _ add proper copyright and license information for all included projects
 _   https://github.com/processing/processing/issues/224
-_   http://code.google.com/p/processing/issues/detail?id=185
-_   list of license issues
-_   http://code.google.com/p/processing/issues/detail?id=575
 _ write up guidelines for modes
 _   i.e. don't mess with Sketch menu, put it in the mode menu
 _ p5 assets need to be licensed differently from the source
@@ -943,7 +940,7 @@ _   or that it's gonna need to parse and say "update command line?"
 _ look into LCD rendering problems w/ Java (see if Lion still a problem)
 _   fonts were showing up with very different fatness
 _ cut/copy/paste while saving a sketch on goes to the editor, not save dialog
-_   http://code.google.com/p/processing/issues/detail?id=997
+_   https://github.com/processing/processing/issues/1035
 _   problem with focus traversal and native windows on OS X
 _   using JFileChooser fixes the problem (but is ugly)
 _ we're breaking some mac human interface guidelines
