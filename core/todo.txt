@@ -27,6 +27,28 @@ o   and start() is supposedly called by the applet viewer
 o   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
 o   need to track this stuff down a bit
 X   closed with work from Lonnen, but still some issues around this
+X createShape() not yet implemented for Java2D
+X   http://code.google.com/p/processing/issues/detail?id=1400
+X   https://github.com/processing/processing/issues/1438
+o load PShape from a string object
+X   http://code.google.com/p/processing/issues/detail?id=277
+X ortho() issues
+X   http://code.google.com/p/processing/issues/detail?id=1240
+X   https://github.com/processing/processing/issues/1278
+X hint(DISABLE_PERSPECTIVE_CORRECTED_STROKE)
+X implement textMode(SHAPE) with OPENGL
+X   https://github.com/processing/processing/issues/777
+X   http://code.google.com/p/processing/issues/detail?id=738
+X implement setImpl() instead of set() inside PGraphicsOpenGL
+X   http://code.google.com/p/processing/issues/detail?id=121
+X   https://github.com/processing/processing/issues/160
+X first few frames of OpenGL sketches on Windows run slowly
+X   http://code.google.com/p/processing/issues/detail?id=107
+X   https://github.com/processing/processing/issues/146
+X Signature issue on contributed libraries affects unrelated opengl sketches
+X   http://code.google.com/p/processing/issues/detail?id=261
+X OpenGL noSmooth() problems
+X   http://code.google.com/p/processing/issues/detail?id=328
 
 
 docs
@@ -444,14 +466,14 @@ _   would using a BufferedImage work better?
 _   is the image actually a BufferedImage so PixelGrabber is a waste?
 
 _ fix blue-channel bias on blend()
-_   http://code.google.com/p/processing/issues/detail?id=475
+_   https://github.com/processing/processing/issues/514
 _ improve blend() accuracy when using ADD
-_   http://code.google.com/p/processing/issues/detail?id=133
+_   https://github.com/processing/processing/issues/172
 _   includes code for a slow but more accurate mode
 _ deprecate the blend() function
 
 _ implement unified means to specify smoothing level for image scaling
-_   http://code.google.com/p/processing/issues/detail?id=165
+_   https://github.com/processing/processing/issues/204
 _ blend() and copy() are not pixel accurate for copy/scale
 _   https://github.com/processing/processing/issues/324
 _ accuracy problems make alpha channel go to FE with image.copy()
@@ -466,8 +488,6 @@ _ PShape should be cached as well
 _ major surgery to put loadShape() back into PApplet/PGraphics
 _   then have the OpenGL or Java2D versions as cached objects
 _ PShape s = createShape(); / s.beginShape(QUADS);
-_ createShape() not yet implemented for Java2D
-_   http://code.google.com/p/processing/issues/detail?id=1400
 _ keeping these public for now
 _   get/setNormal
 _   get/setTextureUV
@@ -513,12 +533,10 @@ _ for PShape, need to be able to set the origin (flash people)
 CORE / PShapeSVG
 
 _ implement support for SVG gradients from Inkscape
-_   http://code.google.com/p/processing/issues/detail?id=1142
+_   https://github.com/processing/processing/issues/1180
 _ need to handle <!ENTITY tags in XML for SVG documents
 _   get entity tags working in xml library for SVG
 _ cover the svg changes in a future release
-_ load PShape from a string object
-_   http://code.google.com/p/processing/issues/detail?id=277
 _ breaking up classes / figure out how to handle fonts subclass
 _ when using get(), reset the bounds for the objects
 _   otherwise it's always relative to the original document
@@ -535,7 +553,6 @@ _   also curveto with multiple sets of points is ignored
 _ document somehow.. svg viewer will be discontinued
 _   http://www.adobe.com/svg/eol.html
 _ PShape getVertex() not implemented properly for SVG files
-X   https://code.google.com/p/processing/issues/detail?id=1558
 _   https://github.com/processing/processing/issues/1596
 
 
@@ -547,26 +564,12 @@ _   maybe screenVec()? or screenXYZ()?
 
 CORE / OpenGL (Andres)
 
-_ ortho() issues
-_   http://code.google.com/p/processing/issues/detail?id=1240
-_ hint(DISABLE_PERSPECTIVE_CORRECTED_STROKE)
 _ textureWrap(CLAMP / REPEAT)
-_ implement setImpl() instead of set() inside PGraphicsOpenGL
-_   http://code.google.com/p/processing/issues/detail?id=121
-_ first few frames of OpenGL sketches on Windows run slowly
-_   http://code.google.com/p/processing/issues/detail?id=107
-_ implement textMode(SHAPE) with OPENGL
-_   https://github.com/processing/processing/issues/777
-X   http://code.google.com/p/processing/issues/detail?id=738
-_ Signature issue on contributed libraries affects unrelated opengl sketches
-_   http://code.google.com/p/processing/issues/detail?id=261
 _ simple NPE in OpenGL causes really large, not useful, stack trace
 _ why is initPrimarySurface() public?
 _ why is setFramerate() public? (also should be setFrameRate or just frameRate)
 _ where did hintEnabled() come from?
 _ remove 'params' from createImage (is it on loadImage too?)
-_ OpenGL noSmooth() problems
-_   http://code.google.com/p/processing/issues/detail?id=328
 _ OS X slow with FSEM enabled
 _   http://code.google.com/p/processing/issues/detail?id=737
 _ get() with OPENGL is grabbing the wrong coords
