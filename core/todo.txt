@@ -3,6 +3,15 @@ X make size(displayWidth, displayHeight) still run in a window
 X   prevents "fullScreen() cannot be used here" message on startup
 X   https://github.com/processing/processing/issues/3545
 
+fixed earlier
+X blend() and copy() are not pixel accurate for copy/scale
+X   https://github.com/processing/processing/issues/324
+X   Jakub: fixed somewhere between 0179 and 0184
+
+andres/jakub
+X toggling between noLights and PointLight in draw() behaving strangely
+X   https://github.com/processing/processing/issues/3546
+
 
 docs
 _ note that full screen and present are now different
@@ -428,8 +437,6 @@ _ deprecate the blend() function
 
 _ implement unified means to specify smoothing level for image scaling
 _   https://github.com/processing/processing/issues/204
-_ blend() and copy() are not pixel accurate for copy/scale
-_   https://github.com/processing/processing/issues/324
 _ accuracy problems make alpha channel go to FE with image.copy()
 _   https://github.com/processing/processing/issues/258
 

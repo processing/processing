@@ -15,6 +15,9 @@ _ Contribution Manager design is really rough
 _   https://github.com/processing/processing/issues/3464
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
+_ processing-java isn't working in OSX 10.11 El Capitan
+_   https://github.com/processing/processing/issues/3497
+_   probably have to add the script/Processing.app location to user's path
 
 
 gui
