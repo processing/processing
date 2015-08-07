@@ -1,23 +1,23 @@
-## Major destruction of `core` has started for Processing 3.
+## There are significant changes to `core` in Processing 3.
 
 
 #### What?
-We're removing `Applet` as the base class for `PApplet` and redoing the entire rendering and threading model for Processing sketches.
+We've removed `Applet` as the base class for `PApplet` and have redone the entire rendering and threading model for Processing sketches.
 
 
 #### Why?
-1. The changes will improve performance--greatly, in some cases--and reduce flicker and quirkiness in others. Using AWT objects like `Applet` (which subclasses `Component`) cause (sometimes major) performance restrictions or other visual glitches like flicker. 
-2. The code to mitigate the issues from #1 is very difficult to debug and make work properly across the many platforms we support (Macs, Macs with retina displays, Windows 7, Windows 8, 32- and 64-bit machines, Linux who-knows-what, and so on)
-3. The design of `core` is 13 years old, and the graphics features available (OpenGL, VolatileImage, BufferStrategy, etc) have changed drastically since then. I've papered over these changes and done my best to keep performance on-pace so that we don't break a lot of old code (or libraries), but now is the time for a clean break.
-4. With the death of applets, keeping the Applet base class is anachronistic. However, we're keeping the name `PApplet` because with any luck, these changes will only require a recompile of any sketch (or library) code. 
+1. The changes improve performance--greatly, in some cases--and reduce flicker and quirkiness in others. Using AWT objects like `Applet` (which subclasses `Component`) cause (sometimes major) performance restrictions or other visual glitches like flicker. 
+2. Without making these changes, the code to mitigate the issues from #1 is very difficult to debug and make work properly across the many platforms we support: Macs, Macs with retina displays, Windows 7, Windows 8, 32- and 64-bit machines, Linux who-knows-what, and so on.
+3. The design of `core` is 13 years old, and the graphics features available (OpenGL, `VolatileImage`, `BufferStrategy`, etc) have changed drastically since then. I've papered over these changes and done my best to keep performance on-pace so that we don't break a lot of old code (or libraries), but now is the time for a clean break.
+4. With the death of applets, keeping the `Applet` base class is anachronistic (in addition to hindering performance). However, we're keeping the name `PApplet` because with any luck, these changes will only require a recompile of any sketch (or library) code. 
 
 
 #### What else?
-1. A new `PSurface` object has been added that acts as the layer between `PApplet` and `PGraphics`. It will handle interaction with the OS (creation of a window, placement on screen, getting events) as well as the animation thread (because OpenGL's animation thread is very different from an AWT animation thread).
-2. Many deprecated functions (notably, the pre-2.0 only method registration mechanism used by libraries) are being removed. (Not a final decision.) 
+1. A new `PSurface` object has been added that acts as the layer between `PApplet` and `PGraphics`. It handles interaction with the OS (creation of a window, placement on screen, getting mouse and key events) as well as the animation thread (because OpenGL's animation thread is very different from an AWT animation thread).
+2. Many deprecated functions (notably, the pre-2.0 only method registration mechanism used by libraries) have been removed.
 3. Undocumented features (such as the `image` object in `PGraphics`) may disappear and break code from advanced users.
-4. We're working to add the ability to span multiple screens in "full screen" mode.
-5. In 3.0a2 we introduced a change on OS X to use Apple's "official" full screen mode. With this comes a dorky animation and the inability to span multiple screens. We've rolled that back.
+4. We've added the ability to span multiple screens in "full screen" mode.
+5. In 3.0a2 we changed the OS X version to use Apple's "official" full screen mode. With this came a dorky animation and the inability to span multiple screens. We've rolled that back because of the latter, though the former was also a consideration.
 
 
 #### But what about...? 
@@ -100,6 +100,9 @@ We hope to make JavaFX the default renderer instead of Java2D. With any luck, we
 
 ## More AWT Removal
 
+Run away from the AWT. All of our focus is on the OpenGL and JavaFX rendering engines, neither of which use AWT. 
+
+***
 
 ## The Mess
 
