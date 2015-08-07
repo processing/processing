@@ -5499,6 +5499,8 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   @Override
   public void lights() {
+    enableLighting();
+
     // reset number of lights
     lightCount = 0;
 
