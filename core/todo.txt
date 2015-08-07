@@ -11,6 +11,22 @@ X   https://github.com/processing/processing/issues/221
 X text() wraps words differently depending on whether space seen or not
 X   http://code.google.com/p/processing/issues/detail?id=439
 X   https://github.com/processing/processing/issues/478
+o make sure rendering is happening on the EDT
+o   (hopefully fixes flicker issues)
+o   change PApplet.java javadoc to reflect the change
+o   Update http://wiki.processing.org/w/Troubleshooting#Flicker
+X   http://code.google.com/p/processing/issues/detail?id=775
+X look into using BufferStrategy again to improve performance
+X   there are more improvements to be made ala issue #729
+o thread() causes weird flickering
+X   http://code.google.com/p/processing/issues/detail?id=742
+o stop() not getting called
+o   http://code.google.com/p/processing/issues/detail?id=43
+o   major problem for libraries
+o   and start() is supposedly called by the applet viewer
+o   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
+o   need to track this stuff down a bit
+X   closed with work from Lonnen, but still some issues around this
 
 
 docs
@@ -267,7 +283,6 @@ _ wrap exceptions with die() and warn() methods
 _   this way, people can make use of exceptions if they would rather
 _   or shut them off if they don't want to 
 _   also need to explain exception handling in general
-X   http://code.google.com/p/processing/issues/detail?id=183
 _   https://github.com/processing/processing/issues/222
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
 _ finish adding loadStrings(BufferedReader)
@@ -276,8 +291,6 @@ _   port to android
 _ deprecate the older splice() etc API inside PApplet?
 _ add notes about the new shader setup
 _ add reference/docs for urlEncode() and urlDecode()
-_ verify (and document) public access members of PApplet
-_   http://code.google.com/p/processing/issues/detail?id=83
 _ add explanation to the reference about using beginRecord() with fonts
 _   pdf.textMode(SHAPE)
 _   also set the font *after* the record has started
@@ -313,15 +326,6 @@ _   volatile images
 _   http://www.javalobby.org/forums/thread.jspa?threadID=16840&tstart=0
 _   http://www.javalobby.org/forums/thread.jspa?threadID=16867&tstart=0
 _   http://www.gamedev.net/page/resources/_/technical/general-programming/java-games-active-rendering-r2418
-_ look into using BufferStrategy again to improve performance
-_   there are more improvements to be made ala issue #729
-_ make sure rendering is happening on the EDT
-_   (hopefully fixes flicker issues)
-_   change PApplet.java javadoc to reflect the change
-_   Update http://wiki.processing.org/w/Troubleshooting#Flicker
-_   http://code.google.com/p/processing/issues/detail?id=775
-_ thread() causes weird flickering
-_   http://code.google.com/p/processing/issues/detail?id=742
 
 
 CORE / stop() 
@@ -333,8 +337,8 @@ _   move that stuff to destroy()
 _ pause()/resume() need to work on the desktop side as well
 _   notify ddf when pause/resume implemented
 _ stop() not called in 1.5
-_   http://code.google.com/p/processing/issues/detail?id=636
-_   In reply to c#1, I noticed that dispose() is getting called. stop() isn't.
+_   https://github.com/processing/processing/issues/675
+_   noticed that dispose() is getting called. stop() isn't.
 _ static mode sketches seem to break ESC... noLoop() problem?
 _   need to find another way to get ESC on static mode
 _   b/c static mode sketches *do* finish because they have no draw()
@@ -354,14 +358,7 @@ _   does stop() unwind the thread, or does the thread unwind call stop?
 _   browser will call start() and stop() methods
 _ need to figure out start/stop signals coming from the browser
 _   is it dispose/destroy? 
-_ stop() not getting called
-_   http://code.google.com/p/processing/issues/detail?id=43
-_   major problem for libraries
-_   and start() is supposedly called by the applet viewer
-_   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
-_   need to track this stuff down a bit
 _ when closing a sketch via the close box, make sure stop() getting called
-X   found a problem for release 0133
 _   test to see if it's working
 _ what's up with stop() vs exit()?
 _   need to get this straightened for p5 (i.e. bc has this problem)
@@ -370,11 +367,8 @@ _   i.e. problem with main calling itself multiple times in Alpheus
 _   if exit() (or stop) is called, then System.exit() gets called,
 _   even though the main() wants to keep going
 _ hitting ESC in a running noLoop()ed sketch won't close the sketch?
-o   work through serial examples
 _ noloop ref even says that redraw will be called on resize, make sure it is
 _ focus not coming through, ESC no longer working(?)
-_ stop() not called in 1.5 when closing the sketch window
-_   http://code.google.com/p/processing/issues/detail?id=636
 _ hitting cmd-q when an applet is running quits p5 (on macosx)
 _   but cmd-q when running externally is ok because it just quits
 _   is there a way to catch cmd-q when running a sketch? 
@@ -438,7 +432,7 @@ _   https://github.com/processing/processing/issues/2096
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
-_   http://code.google.com/p/processing/issues/detail?id=60
+_   https://github.com/processing/processing/issues/99
 _ loadPixels() implementation needs to be in PApplet, not PGraphics
 _ this is a tricky thing to implement because of how OpenGL is handled
 
@@ -502,7 +496,7 @@ _   better lockout inside beginShape() to keep other things from happening
 _   don't allow you to draw stroked items unless stroke() is called
 _   don't allow beginShape() if shape is already set
 _     (otherwise will cause some very strange errors)
-_   http://code.google.com/p/processing/issues/detail?id=135
+_   https://github.com/processing/processing/issues/174
 _ make determination on shape(x,y,z,w,h,d) or no
 _ PShape API to handle internal vertex stuff
 _   add deconstruct() method for paths

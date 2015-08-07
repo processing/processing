@@ -17,6 +17,10 @@ o   https://github.com/processing/processing/issues/2779
 X sketches should only write to the console of their editor window
 X   http://code.google.com/p/processing/issues/detail?id=114
 X   https://github.com/processing/processing/issues/153
+X verify (and document) public access members of PApplet
+X   http://code.google.com/p/processing/issues/detail?id=83
+X remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
+X   move Java-specific InputHandler to its own subclass
 
 
 3.0 final
@@ -548,9 +552,7 @@ _   or option to export all the code as colored html?
 _ implement better method of showing curly brace closure
 _   https://github.com/processing/processing/issues/94
 _ problems with file/print
-_   http://code.google.com/p/processing/issues/detail?id=174
-_ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
-_   move Java-specific InputHandler to its own subclass
+_   https://github.com/processing/processing/issues/213
 _ setModified() getting called on Windows (probably Linux) for key cmds
 
 
@@ -564,7 +566,7 @@ _   check 'finished' via objectreference?
 _ show compiling/startup animation after clicking run
 _   or maybe show an animation for starting up
 _   rather than post-compile
-_   http://code.google.com/p/processing/issues/detail?id=97
+_   https://github.com/processing/processing/issues/136
 _ EditorToolbar has two TODO items for open menu handling
 
 
