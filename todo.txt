@@ -40,6 +40,34 @@ X   https://github.com/processing/processing/issues/83
 o handle native code for tools menu (?)
 o   http://code.google.com/p/processing/issues/detail?id=109
 X   https://github.com/processing/processing/issues/148
+X Horizontal two finger scroll doesn't work in OS X
+X   also applies to horizontal scrolling on the mouse
+X   http://code.google.com/p/processing/issues/detail?id=141
+X   https://github.com/processing/processing/issues/180
+X window menu
+X   http://code.google.com/p/processing/issues/detail?id=545
+X   https://github.com/processing/processing/issues/584
+o restoring sketches
+o   save window positions on quit, and restore them (w/ a preference?)
+o     new windows use same mode and dimensions as topmost window
+o   saved window position problematic with multiple monitors
+o     http://code.google.com/p/processing/issues/detail?id=27
+X   Closing the last window doesn't cause PDE to save it's position/contents/etc
+X     http://code.google.com/p/processing/issues/detail?id=103
+X     https://github.com/processing/processing/issues/142
+X   not remembering window size/placement preferences
+X     http://code.google.com/p/processing/issues/detail?id=103
+X     https://github.com/processing/processing/issues/142
+o saved window positions.. if displays has changed, becomes a problem
+o   record the display that it was on?
+o     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
+o   make sure the application is within the bounds of the current display?
+o   (from 0, 0 to width, height)
+o   messy since some displays have negative coords
+X   http://code.google.com/p/processing/issues/detail?id=27
+o Resurrect the Eclipse plug-in project
+X   http://code.google.com/p/processing/issues/detail?id=1031
+X   https://github.com/processing/processing/issues/1069
 
 
 3.0 final
@@ -952,11 +980,8 @@ _ put stdout/stderr into ~/Library/Logs
 _   and have a .log extension so it can be browsed properly
 _   need to make sure that it's ok to write to logs dir..
 _      probably being removed from future OS X versions
-_ Horizontal two finger scroll doesn't work in OS X
-_   also applies to horizontal scrolling on the mouse
-_   http://code.google.com/p/processing/issues/detail?id=141
 _ Exiting a sketch with Command-Q or File > Quit doesn't call stop() on OS X
-_   http://code.google.com/p/processing/issues/detail?id=147
+_   https://github.com/processing/processing/issues/186
 _ investigate the sandboxing situation on OS X
 _   http://developer.apple.com/library/mac/#documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/EnablingAppSandbox.html#//apple_ref/doc/uid/TP40011195-CH4-SW1
 most sandbox violations are triggered by attempts to read/write to the
@@ -1024,30 +1049,10 @@ _   con: people love it, most of the books use it heavily
 _ add === for String.equals()
 _   might be problematic since it might be opposite the javascript meaning
 _   jer: it's a decent time to start talking abt references/vars
-_ window menu
-_   http://code.google.com/p/processing/issues/detail?id=545
-_ restoring sketches
-_   save window positions on quit, and restore them (w/ a preference?)
-_     new windows use same mode and dimensions as topmost window
-_   saved window position problematic with multiple monitors
-_     http://code.google.com/p/processing/issues/detail?id=27
-_   Closing the last window doesn't cause PDE to save it's position/contents/etc
-_     http://code.google.com/p/processing/issues/detail?id=103
-_   not remembering window size/placement preferences
-_     http://code.google.com/p/processing/issues/detail?id=103
-_   Blank sketch opened even if opening an existing sketch by double-clicking
-_     http://code.google.com/p/processing/issues/detail?id=179
-_   changing number of screens between run causes things to show up off-screen
-_     so when running, check to make sure that things are out of the area
-_   saved window positions.. if displays has changed, becomes a problem
-_     record the display that it was on?
-_       GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
-_     make sure the application is within the bounds of the current display?
-_     (from 0, 0 to width, height)
-_     messy since some displays have negative coords
-_     http://code.google.com/p/processing/issues/detail?id=27
-_ Resurrect the Eclipse plug-in project
-_   http://code.google.com/p/processing/issues/detail?id=1031
+_ Blank sketch opened even if opening an existing sketch by double-clicking
+_   https://github.com/processing/processing/issues/218
+_ changing number of screens between run causes things to show up off-screen
+_   so when running, check to make sure that things are out of the area
 _ improve the speed of file copying
 _   use FileChannels, see FileInputStream.getChannel(), 
 _   and use transferFrom() or transferTo().)
