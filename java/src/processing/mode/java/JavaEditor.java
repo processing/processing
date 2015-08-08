@@ -1096,6 +1096,20 @@ public class JavaEditor extends Editor {
    * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=157">Bug 157</A>
    */
   protected boolean handleExportCheckModified() {
+    if (sketch.isReadOnly()) {
+      // if the files are read-only, need to first do a "save as".
+      Base.showMessage(Language.text("export.messages.is_read_only"),
+                       Language.text("export.messages.is_read_only.description"));
+      return false;
+    }
+
+    // don't allow if untitled
+    if (sketch.isUntitled()) {
+      Base.showMessage(Language.text("export.messages.cannot_export"),
+                       Language.text("export.messages.cannot_export.description"));
+      return false;
+    }
+
     if (sketch.isModified()) {
       Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
       int result = JOptionPane.showOptionDialog(this,

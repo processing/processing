@@ -5,8 +5,7 @@ X create sketchbook subfolders on startup
 X   https://github.com/processing/processing/issues/3548
 X save export settings to preferences
 X disable Export button when no platforms selected
-_ export allowed with untitled sketches
-_   also with examples?
+X prevent Export with examples and untitled/unsaved sketches
 
 
 earlier/cleaning
