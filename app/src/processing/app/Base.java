@@ -1759,12 +1759,7 @@ public class Base {
         sketchbookFolder.mkdirs();
       }
     }
-
-    getSketchbookLibrariesFolder().mkdir();
-    getSketchbookToolsFolder().mkdir();
-    getSketchbookModesFolder().mkdir();
-    getSketchbookExamplesFolder().mkdir();
-//    System.err.println("sketchbook: " + sketchbookFolder);
+    makeSketchbookSubfolders();
   }
 
 
@@ -1772,6 +1767,18 @@ public class Base {
     sketchbookFolder = folder;
     Preferences.setSketchbookPath(folder.getAbsolutePath());
     rebuildSketchbookMenus();
+    makeSketchbookSubfolders();
+  }
+
+
+  /**
+   * Create the libraries, modes, tools, examples folders in the sketchbook.
+   */
+  static protected void makeSketchbookSubfolders() {
+    getSketchbookLibrariesFolder().mkdirs();
+    getSketchbookToolsFolder().mkdirs();
+    getSketchbookModesFolder().mkdirs();
+    getSketchbookExamplesFolder().mkdirs();
   }
 
 

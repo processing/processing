@@ -1,6 +1,9 @@
 0240 (3.0b2)
 X make download-jdk-macosx target work properly
 X remove "pair is" debug messages
+X create sketchbook subfolders on startup
+X   https://github.com/processing/processing/issues/3548
+
 
 _ if no platforms selected in export, will still say "done exporting!"
 _   maybe if none selected, should default select the current platform
