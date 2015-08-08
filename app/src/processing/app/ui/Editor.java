@@ -1007,7 +1007,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
           }
           // https://github.com/processing/processing/issues/3457
           String selection = getSelectedText();
-          if (selection != null && selection.length() != 0) {
+          if (selection != null && selection.length() != 0 &&
+              !selection.contains("\n")) {
             find.setFindText(selection);
           }
           find.setVisible(true);
