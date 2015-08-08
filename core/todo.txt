@@ -4,6 +4,8 @@ X   prevents "fullScreen() cannot be used here" message on startup
 X   https://github.com/processing/processing/issues/3545
 X throw an error when using methods that require sketchPath outside setup()
 X   https://github.com/processing/processing/issues/3433
+X cursor(CROSS) breaks when using surface.setTitle()
+X   https://github.com/processing/processing/issues/3472
 
 fixed earlier
 X blend() and copy() are not pixel accurate for copy/scale
@@ -80,6 +82,8 @@ opengl
 _ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
 _ window loses focus after maximizing
 _   https://github.com/processing/processing/issues/3339
+_ Implement standard cursor types in OpenGL
+_   https://github.com/processing/processing/issues/3554
 
 
 opengl questions

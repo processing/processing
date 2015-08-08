@@ -975,11 +975,12 @@ public class PSurfaceJOGL implements PSurface {
     return def;
   }
 
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   public void setCursor(int kind) {
-    System.err.println("Cursor types not supported in OpenGL, provide your cursor image");
+    PGraphics.showWarning("Cursor types not yet supported in OpenGL, provide your cursor image");
   }
 
 

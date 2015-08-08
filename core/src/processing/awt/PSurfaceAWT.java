@@ -552,6 +552,12 @@ public class PSurfaceAWT extends PSurfaceNone {
   @Override
   public void setTitle(String title) {
     frame.setTitle(title);
+    // Workaround for apparent Java bug?
+    // https://github.com/processing/processing/issues/3472
+    if (cursorVisible) {
+      hideCursor();
+      showCursor();
+    }
   }
 
 
