@@ -1862,8 +1862,8 @@ public class PImage implements PConstants, Cloneable {
     loadPixels();
     if (src == this) {
       if (intersect(sx, sy, sx2, sy2, dx, dy, dx2, dy2)) {
-        blit_resize(get(sx, sy, sx2 - sx, sy2 - sy),
-                    0, 0, sx2 - sx - 1, sy2 - sy - 1,
+        blit_resize(get(sx, sy, sw, sh),
+                    0, 0, sw, sh,
                     pixels, pixelWidth, pixelHeight, dx, dy, dx2, dy2, mode);
       } else {
         // same as below, except skip the loadPixels() because it'd be redundant
