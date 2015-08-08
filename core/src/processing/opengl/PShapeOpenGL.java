@@ -1708,17 +1708,17 @@ public class PShapeOpenGL extends PShape {
       return;
     }
 
-    if (vertexCodes[index] != VERTEX) {
-      PGraphics.showWarning(NOT_A_SIMPLE_VERTEX, "setVertex()");
-      return;
-    }
-
     // TODO: in certain cases (kind = TRIANGLE, etc) the correspondence between
     // input and tessellated vertices is 1-1, so in those cases re-tessellation
     // wouldn't be necessary. But in order to reasonable take care of that
     // situation, we would need a complete rethinking of the rendering architecture
     // in Processing :-)
     if (family == PATH) {
+      if (vertexCodes != null && vertexCodeCount > 0 &&
+          vertexCodes[index] != VERTEX) {
+        PGraphics.showWarning(NOT_A_SIMPLE_VERTEX, "setVertex()");
+        return;
+      }
       vertices[index][X] = x;
       vertices[index][Y] = y;
       if (is3D) vertices[index][Z] = z;
