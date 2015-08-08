@@ -6,6 +6,7 @@ X   https://github.com/processing/processing/issues/3548
 X Cannot find "processing.core" library. Line 12 in tab sketch_150704a
 X   also happens with "import to com.jogamp.opengl.GL2"
 X   https://github.com/processing/processing/issues/3547
+X clean up the advanced opengl wiki page
 
 export
 X save export settings to preferences
@@ -80,6 +81,7 @@ pde/build
 _ ignore-tools in build.xml not being called for some reason
 _ move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
 _   need to make the list abstract, also "scroll to line" feature
+_   fix up the UI, oy
 _ can't install processing-java into /usr/bin with El Capitan
 _   https://github.com/processing/processing/issues/3497
 _ Foundation library examples should appear under "Core" or "Foundation"

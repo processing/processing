@@ -1005,7 +1005,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
           if (find == null) {
             find = new FindReplace(Editor.this);
           }
-          //new FindReplace(Editor.this).show();
+          // https://github.com/processing/processing/issues/3457
+          String selection = getSelectedText();
+          if (selection != null && selection.length() != 0) {
+            find.setFindText(selection);
+          }
           find.setVisible(true);
         }
       });
@@ -1020,8 +1024,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     editMenuUpdatable.add(action);
     menu.add(item);
 
-    // For Arduino and Mac, this should be command-E, but that currently conflicts with Export Applet
-    //item = Toolkit.newJMenuItemAlt(Language.text("menu.edit.use_selection_for_find"), 'F');
     item = Toolkit.newJMenuItem(action = new SelectionForFindAction(), 'E');
     editMenuUpdatable.add(action);
     menu.add(item);
