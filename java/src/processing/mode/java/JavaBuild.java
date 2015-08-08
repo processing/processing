@@ -792,7 +792,7 @@ public class JavaBuild {
       boolean embedJava = (platform == PApplet.platform) &&
         Preferences.getBoolean("export.application.embed_java");
 
-      if (Preferences.getBoolean("export.application.platform." + platformName)) {
+      if (Preferences.getBoolean(JavaEditor.EXPORT_PREFIX + platformName)) {
         if (Library.hasMultipleArch(platform, importedLibraries)) {
           // export the 32-bit version
           folder = new File(sketch.getFolder(), "application." + platformName + "32");

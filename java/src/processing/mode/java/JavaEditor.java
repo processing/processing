@@ -676,8 +676,26 @@ public class JavaEditor extends Editor {
   }
 
 
-//  JPanel presentColorPanel;
-//  JTextField presentColorPanel;
+  // Can't be .windows because that'll be stripped off as a per-platform pref
+  static final String EXPORT_PREFIX = "export.application.platform_";
+  static final String EXPORT_MACOSX = EXPORT_PREFIX + "macosx";
+  static final String EXPORT_WINDOWS = EXPORT_PREFIX + "windows";
+  static final String EXPORT_LINUX = EXPORT_PREFIX + "linux";
+
+  final JButton exportButton = new JButton(Language.text("prompt.export"));
+  final JButton cancelButton = new JButton(Language.text("prompt.cancel"));
+
+  final JCheckBox windowsButton = new JCheckBox("Windows");
+  final JCheckBox macosxButton = new JCheckBox("Mac OS X");
+  final JCheckBox linuxButton = new JCheckBox("Linux");
+
+
+  protected void updateExportButton() {
+    exportButton.setEnabled(windowsButton.isSelected() ||
+                            macosxButton.isSelected() ||
+                            linuxButton.isSelected());
+  }
+
 
   protected boolean exportApplicationPrompt() throws IOException, SketchException {
     JPanel panel = new JPanel();
@@ -704,25 +722,28 @@ public class JavaEditor extends Editor {
 //                        label2.getPreferredSize().width);
     panel.add(Box.createVerticalStrut(12));
 
-    final JCheckBox windowsButton = new JCheckBox("Windows");
-    //windowsButton.setMnemonic(KeyEvent.VK_W);
-    windowsButton.setSelected(Preferences.getBoolean("export.application.platform.windows"));
+//    final JCheckBox windowsButton = new JCheckBox("Windows");
+//    final JCheckBox macosxButton = new JCheckBox("Mac OS X");
+//    final JCheckBox linuxButton = new JCheckBox("Linux");
+
+    windowsButton.setSelected(Preferences.getBoolean(EXPORT_WINDOWS));
     windowsButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        Preferences.setBoolean("export.application.platform.windows", windowsButton.isSelected());
+        Preferences.setBoolean(EXPORT_WINDOWS, windowsButton.isSelected());
+        updateExportButton();
       }
     });
 
     // Only possible to export OS X applications on OS X
     if (!Base.isMacOS()) {
       // Make sure they don't have a previous 'true' setting for this
-      Preferences.setBoolean("export.application.platform.macosx", false);
+      Preferences.setBoolean(EXPORT_MACOSX, false);
     }
-    final JCheckBox macosxButton = new JCheckBox("Mac OS X");
-    macosxButton.setSelected(Preferences.getBoolean("export.application.platform.macosx"));
+    macosxButton.setSelected(Preferences.getBoolean(EXPORT_MACOSX));
     macosxButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        Preferences.setBoolean("export.application.platform.macosx", macosxButton.isSelected());
+        Preferences.setBoolean(EXPORT_MACOSX, macosxButton.isSelected());
+        updateExportButton();
       }
     });
     if (!Base.isMacOS()) {
@@ -730,14 +751,15 @@ public class JavaEditor extends Editor {
       macosxButton.setToolTipText(Language.text("export.tooltip.macosx"));
     }
 
-    final JCheckBox linuxButton = new JCheckBox("Linux");
-    //linuxButton.setMnemonic(KeyEvent.VK_L);
-    linuxButton.setSelected(Preferences.getBoolean("export.application.platform.linux"));
+    linuxButton.setSelected(Preferences.getBoolean(EXPORT_LINUX));
     linuxButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        Preferences.setBoolean("export.application.platform.linux", linuxButton.isSelected());
+        Preferences.setBoolean(EXPORT_LINUX, linuxButton.isSelected());
+        updateExportButton();
       }
     });
+
+    updateExportButton();  // do the initial enable/disable based on prefs.txt
 
     JPanel platformPanel = new JPanel();
     //platformPanel.setLayout(new BoxLayout(platformPanel, BoxLayout.X_AXIS));
@@ -953,26 +975,34 @@ public class JavaEditor extends Editor {
 
       panel.add(signPanel);
     }
-    //System.out.println(panel.getPreferredSize());
-//    panel.setMinimumSize(new Dimension(316, 461));
-//    panel.setPreferredSize(new Dimension(316, 461));
-//    panel.setMaximumSize(new Dimension(316, 461));
 
     //
 
-    String[] options = { Language.text("prompt.export"), Language.text("prompt.cancel") };
+    //String[] options = { Language.text("prompt.export"), Language.text("prompt.cancel") };
+    final JButton[] options = { exportButton, cancelButton };
 
     final JOptionPane optionPane = new JOptionPane(panel,
                                                    JOptionPane.PLAIN_MESSAGE,
                                                    JOptionPane.YES_NO_OPTION,
                                                    null,
                                                    options,
-                                                   options[0]);
+                                                   exportButton); //options[0]);
 
 
     final JDialog dialog = new JDialog(this, Language.text("export"), true);
     dialog.setContentPane(optionPane);
-//    System.out.println(optionPane.getLayout());
+
+    exportButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        optionPane.setValue(exportButton);
+      }
+    });
+
+    cancelButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        optionPane.setValue(cancelButton);
+      }
+    });
 
     optionPane.addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent e) {
@@ -998,52 +1028,16 @@ public class JavaEditor extends Editor {
                        bounds.y + (bounds.height - dialog.getSize().height) / 2);
     dialog.setVisible(true);
 
-    //System.out.println(panel.getSize());
-
     Object value = optionPane.getValue();
-    if (value.equals(options[0])) {
+    if (value.equals(exportButton)) {
       return jmode.handleExportApplication(sketch);
-    } else if (value.equals(options[1]) || value.equals(Integer.valueOf(-1))) {
+    } else if (value.equals(cancelButton) || value.equals(Integer.valueOf(-1))) {
       // closed window by hitting Cancel or ESC
       statusNotice(Language.text("export.notice.exporting.cancel"));
     }
     return false;
   }
 
-  /*
-  Color bgcolor = Preferences.getColor("run.present.bgcolor");
-  final ColorChooser c = new ColorChooser(JavaEditor.this, true, bgcolor,
-                                          "Select", new ActionListener() {
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      Preferences.setColor("run.present.bgcolor", c.getColor());
-    }
-  });
-  */
-
-  /*
-  class ColorListener implements ActionListener {
-    ColorChooser chooser;
-    String prefName;
-
-    public ColorListener(String prefName) {
-      this.prefName = prefName;
-      Color color = Preferences.getColor(prefName);
-      chooser = new ColorChooser(JavaEditor.this, true, color, "Select", this);
-      chooser.show();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      Color color = chooser.getColor();
-      Preferences.setColor(prefName, color);
-//      presentColorPanel.setBackground(color);
-      presentColorPanel.repaint();
-      chooser.hide();
-    }
-  }
-  */
 
   class ColorPreference extends JPanel implements ActionListener {
     ColorChooser chooser;

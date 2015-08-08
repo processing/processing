@@ -3,6 +3,24 @@ X make download-jdk-macosx target work properly
 X remove "pair is" debug messages
 X create sketchbook subfolders on startup
 X   https://github.com/processing/processing/issues/3548
+X save export settings to preferences
+X disable Export button when no platforms selected
+_ export allowed with untitled sketches
+_   also with examples?
+
+
+earlier/cleaning
+X CM ongoing notes and questions
+X   https://github.com/processing/processing/issues/3440
+X Contribution Manager design is really rough
+X   https://github.com/processing/processing/issues/3464
+
+
+known issues
+_ launch4j doesn't work from folders with non-native charsets
+_   anything in CP1252 on an English Windows system is fine
+_   but anything else reports "font sadness" b/c it's using the system JRE
+_   https://github.com/processing/processing/issues/3543
 
 
 _ if no platforms selected in export, will still say "done exporting!"
@@ -11,14 +29,8 @@ _   why are none selected in the first place? not getting saved?
 
 
 3.0 final
-_ launch4j doesn't work from folders with non-native charsets
-_   anything in CP1252 on an English Windows system is fine
-_   but anything else reports "font sadness" b/c it's using the system JRE
-_   https://github.com/processing/processing/issues/3543
-_ CM ongoing notes and questions
-_   https://github.com/processing/processing/issues/3440
-_ Contribution Manager design is really rough
-_   https://github.com/processing/processing/issues/3464
+_ Contributions Manager UI design
+_   https://github.com/processing/processing/issues/3482
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
 _ processing-java isn't working in OSX 10.11 El Capitan
