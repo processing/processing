@@ -21,6 +21,8 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 3.0 final
 _ move blending calculations from PImage into PGraphics
+_   tricky because that means moving blend_resize() as well
+_   and should that live in PGraphics or be its own class or ??
 _ move AWT image loading into PImageAWT
 _   look into how GL and FX will handle from there
 _ run only the necessary pieces on the EDT
