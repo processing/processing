@@ -7,6 +7,10 @@ X Cannot find "processing.core" library. Line 12 in tab sketch_150704a
 X   also happens with "import to com.jogamp.opengl.GL2"
 X   https://github.com/processing/processing/issues/3547
 X clean up the advanced opengl wiki page
+X Initialize the Find dialog with the current selection
+X   https://github.com/processing/processing/issues/3457
+X Links in error bar are not selectable nor clickable
+X   https://github.com/processing/processing/issues/3471
 
 export
 X save export settings to preferences
