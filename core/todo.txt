@@ -2,6 +2,8 @@
 X make size(displayWidth, displayHeight) still run in a window
 X   prevents "fullScreen() cannot be used here" message on startup
 X   https://github.com/processing/processing/issues/3545
+X throw an error when using methods that require sketchPath outside setup()
+X   https://github.com/processing/processing/issues/3433
 
 fixed earlier
 X blend() and copy() are not pixel accurate for copy/scale

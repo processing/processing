@@ -6652,6 +6652,11 @@ public class PApplet implements PConstants {
   public InputStream createInputRaw(String filename) {
     if (filename == null) return null;
 
+    if (sketchPath == null) {
+      System.err.println("The sketch path is not set.");
+      throw new RuntimeException("Files must be loaded inside setup() or after it has been called.");
+    }
+
     if (filename.length() == 0) {
       // an error will be called by the parent function
       //System.err.println("The filename passed to openStream() was empty.");
@@ -10076,7 +10081,11 @@ public class PApplet implements PConstants {
         Class<?> c =
           Thread.currentThread().getContextClassLoader().loadClass(name);
         sketch = (PApplet) c.newInstance();
+      } catch (RuntimeException re) {
+        // Don't re-package runtime exceptions
+        throw re;
       } catch (Exception e) {
+        // Package non-runtime exceptions so we can throw them freely
         throw new RuntimeException(e);
       }
     }
