@@ -195,7 +195,7 @@ public class ASTNodeWrapper {
     }
    
     int pdeoffsets[] = getPDECodeOffsets(ecs);
-    String pdeCode = ecs.getPDECodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
+    String pdeCode = ecs.getPdeCodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
     int vals[] = createOffsetMapping(ecs, pdeCode,nodeOffset - altStartPos,nodeLength);
     if (vals != null)
       return new int[] {
@@ -635,7 +635,7 @@ public class ASTNodeWrapper {
    */
   public int[][] getOffsetMapping(ErrorCheckerService ecs){
     int pdeoffsets[] = getPDECodeOffsets(ecs);
-    String pdeCode = ecs.getPDECodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
+    String pdeCode = ecs.getPdeCodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
     return getOffsetMapping(ecs, pdeCode);
   }
  

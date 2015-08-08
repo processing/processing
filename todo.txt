@@ -3,10 +3,17 @@ X make download-jdk-macosx target work properly
 X remove "pair is" debug messages
 X create sketchbook subfolders on startup
 X   https://github.com/processing/processing/issues/3548
+X Cannot find "processing.core" library. Line 12 in tab sketch_150704a
+X   also happens with "import to com.jogamp.opengl.GL2"
+X   https://github.com/processing/processing/issues/3547
+
+export
 X save export settings to preferences
 X disable Export button when no platforms selected
 X prevent Export with examples and untitled/unsaved sketches
-
+X if no platforms selected in export, will still say "done exporting!"
+X   maybe if none selected, should default select the current platform
+X   why are none selected in the first place? not getting saved?
 
 earlier/cleaning
 X CM ongoing notes and questions
@@ -20,11 +27,6 @@ _ launch4j doesn't work from folders with non-native charsets
 _   anything in CP1252 on an English Windows system is fine
 _   but anything else reports "font sadness" b/c it's using the system JRE
 _   https://github.com/processing/processing/issues/3543
-
-
-_ if no platforms selected in export, will still say "done exporting!"
-_   maybe if none selected, should default select the current platform
-_   why are none selected in the first place? not getting saved?
 
 
 3.0 final
@@ -82,7 +84,6 @@ _ can't install processing-java into /usr/bin with El Capitan
 _   https://github.com/processing/processing/issues/3497
 _ Foundation library examples should appear under "Core" or "Foundation"
 _   https://github.com/processing/processing/issues/3524
-_ Cannot find "processing.core" library. Line 12 in tab sketch_150704a
 _ dim out the Run button if there are compile errors detected
 _   the AST checker has better error message handling for those cases
 _   and hitting Run replaces the useful error with something weird

@@ -54,7 +54,7 @@ public abstract class Mode {
   protected File folder;
 
   protected TokenMarker tokenMarker;
-  protected HashMap<String, String> keywordToReference =
+  protected Map<String, String> keywordToReference =
     new HashMap<String, String>();
 
   protected Settings theme;
@@ -62,8 +62,7 @@ public abstract class Mode {
 //  protected Tool formatter;
 
   // maps imported packages to their library folder
-//  protected HashMap<String, Library> importToLibraryTable;
-  protected HashMap<String, ArrayList<Library>> importToLibraryTable;
+  protected Map<String, ArrayList<Library>> importToLibraryTable;
 
   // these menus are shared so that they needn't be rebuilt for all windows
   // each time a sketch is created, renamed, or moved.
@@ -321,6 +320,11 @@ public abstract class Mode {
     // reset the table mapping imports to libraries
     importToLibraryTable = new HashMap<String, ArrayList<Library>>();
 
+    Library core = getCoreLibrary();
+    if (core != null) {
+      core.addPackageList(importToLibraryTable);
+    }
+
     coreLibraries = Library.list(librariesFolder);
     for (Library lib : coreLibraries) {
       lib.addPackageList(importToLibraryTable);
@@ -342,7 +346,7 @@ public abstract class Mode {
 
 
   public Library getLibrary(String pkgName) throws SketchException {
-    ArrayList<Library> libraries = importToLibraryTable.get(pkgName);
+    List<Library> libraries = importToLibraryTable.get(pkgName);
     if (libraries == null) {
       return null;
 

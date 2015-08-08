@@ -256,7 +256,7 @@ public class Library extends LocalContribution {
    * @param importToLibraryTable mapping from package names to Library objects
    */
 //  public void addPackageList(HashMap<String,Library> importToLibraryTable) {
-  public void addPackageList(HashMap<String,ArrayList<Library>> importToLibraryTable) {
+  public void addPackageList(Map<String, ArrayList<Library>> importToLibraryTable) {
 //    PApplet.println(packages);
     for (String pkg : packageList) {
 //          pw.println(pkg + "\t" + libraryFolder.getAbsolutePath());

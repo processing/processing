@@ -1210,7 +1210,7 @@ public class ASTGenerator {
     int res[] = errorCheckerService
         .calculateTabIndexAndLineNumber(javaLineNumber);
     if (res != null) {
-      return errorCheckerService.getPDECodeAtLine(res[0], res[1]);
+      return errorCheckerService.getPdeCodeAtLine(res[0], res[1]);
     }
     return null;
   }
@@ -1657,7 +1657,7 @@ public class ASTGenerator {
 
     // Obtain correspondin java code at that line, match offsets
     if (lineNode != null) {
-      String pdeCodeLine = errorCheckerService.getPDECodeAtLine(editor
+      String pdeCodeLine = errorCheckerService.getPdeCodeAtLine(editor
           .getSketch().getCurrentCodeIndex(), lineNumber);
       String javaCodeLine = getJavaSourceCodeLine(pdeLineNumber);
 
@@ -3301,15 +3301,13 @@ public class ASTGenerator {
     }
 
     log("Looking for class " + className);
-    RegExpResourceFilter regf = new RegExpResourceFilter(
-                                                         Pattern.compile(".*"),
-                                                         Pattern
-                                                             .compile(className
-                                                                          + ".class",
-                                                                      Pattern.CASE_INSENSITIVE));
-    String[] resources = classPath
-        .findResources("", regf);
-    ArrayList<String> candidates = new ArrayList<String>();
+    RegExpResourceFilter regf =
+      new RegExpResourceFilter(Pattern.compile(".*"),
+                               Pattern.compile(className + ".class",
+                                               Pattern.CASE_INSENSITIVE));
+    // TODO once saw NPE here...possible for classPath to be null? [fry 150808]
+    String[] resources = classPath.findResources("", regf);
+    List<String> candidates = new ArrayList<String>();
     for (String res : resources) {
       candidates.add(res);
     }
