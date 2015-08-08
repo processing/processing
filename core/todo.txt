@@ -6,6 +6,9 @@ X throw an error when using methods that require sketchPath outside setup()
 X   https://github.com/processing/processing/issues/3433
 X cursor(CROSS) breaks when using surface.setTitle()
 X   https://github.com/processing/processing/issues/3472
+X Fix null pointer exception in setVertex
+X   https://github.com/processing/processing/pull/3553
+X   https://github.com/processing/processing/issues/3550
 
 fixed earlier
 X blend() and copy() are not pixel accurate for copy/scale
@@ -16,6 +19,7 @@ andres/jakub
 X toggling between noLights and PointLight in draw() behaving strangely
 X   https://github.com/processing/processing/issues/3546
 
+_ implement strip(), lstrip(), rstrip?
 
 docs
 _ note that full screen and present are now different

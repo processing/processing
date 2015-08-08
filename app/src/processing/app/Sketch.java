@@ -70,6 +70,7 @@ public class Sketch {
 
   private SketchCode current;
   private int currentIndex;
+
   /**
    * Number of sketchCode objects (tabs) in the current sketch. Note that this
    * will be the same as code.length, because the getCode() method returns
@@ -82,28 +83,6 @@ public class Sketch {
 
   /** Moved out of Editor and into here for cleaner access. */
   private boolean untitled;
-
-//  /** Class path determined during build. */
-//  private String classPath;
-//
-//  /**
-//   * This is *not* the "Processing" libraries path, this is the Java libraries
-//   * path, as in java.library.path=BlahBlah, which identifies search paths for
-//   * DLLs or JNILIBs. (It's Java's LD_LIBRARY_PATH, for you UNIX fans.)
-//   */
-//  private String javaLibraryPath;
-//
-//  /**
-//   * List of library folders, set up in the preprocess() method.
-//   */
-//  private ArrayList<Library> importedLibraries;
-//  //private ArrayList<File> importedLibraries;
-
-  /**
-   * Most recent, default build path. This will contain the .java files that
-   * have been preprocessed, as well as any .class files that were compiled.
-   */
-//  private File buildFolder;
 
 
   /**
@@ -336,10 +315,10 @@ public class Sketch {
     // TODO maybe just popup a text area?
     renamingCode = true;
     String prompt = (currentIndex == 0) ?
-      Language.text("editor.sketch.rename.description") : Language.text("editor.tab.rename.description");
+      Language.text("editor.sketch.rename.description") :
+      Language.text("editor.tab.rename.description");
     String oldName = (current.isExtension(mode.getDefaultExtension())) ?
       current.getPrettyName() : current.getFileName();
-    // editor.status.edit(prompt, oldName);
     promptForTabName(prompt + ":", oldName);
   }
 
@@ -788,8 +767,10 @@ public class Sketch {
       if (!saveAs()) return false;
     }
 
-    for (int i = 0; i < codeCount; i++) {
-      if (code[i].isModified()) code[i].save();
+    for (SketchCode sc : code) {
+      if (sc.isModified()) {
+        sc.save();
+      }
     }
     calcModified();
     return true;
