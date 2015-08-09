@@ -31,11 +31,8 @@ import processing.app.Language;
 
 abstract public class Contribution {
   static final String IMPORTS_PROPERTY = "imports";
-//  static final String CATEGORIES_PROPERTY = "category";
   static final String CATEGORIES_PROPERTY = "categories";
-  //static final String MODES_PROPERTY = "compatibleModesList";
   static final String MODES_PROPERTY = "modes";
-  //static final String AUTHORS_PROPERTY = "authorList";
   static final String AUTHORS_PROPERTY = "authors";
 
   static final String SPECIAL_CATEGORY = "Starred";

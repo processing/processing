@@ -661,7 +661,6 @@ public abstract class Mode {
     DefaultMutableTreeNode root = new DefaultMutableTreeNode("Examples");
 
     try {
-
       File[] examples = getExampleCategoryFolders();
 
       for (File subFolder : examples) {
@@ -706,7 +705,7 @@ public abstract class Mode {
 
     DefaultMutableTreeNode contributedExamplesNode =
       buildContributedExamplesTrees();
-    if(contributedExamplesNode.getChildCount() > 0){
+    if (contributedExamplesNode.getChildCount() > 0) {
       root.add(contributedExamplesNode);
     }
 
@@ -721,27 +720,28 @@ public abstract class Mode {
     try {
       File[] subfolders =
         ContributionType.EXAMPLES.listCandidates(examplesContribFolder);
-      if (subfolders == null) {
-        subfolders = new File[0]; //empty array
-      }
-      for (File sub : subfolders) {
-        if (!ExamplesContribution.isCompatible(base, sub))
-          continue;
-        DefaultMutableTreeNode subNode =
-          new DefaultMutableTreeNode(sub.getName());
-        if (base.addSketches(subNode, sub)) {
-          contribExamplesNode.add(subNode);
-          int exampleNodeNumber = -1;
-          for (int y = 0; y < subNode.getChildCount(); y++)
-            if (subNode.getChildAt(y).toString().equals("examples"))
-              exampleNodeNumber = y;
-          if (exampleNodeNumber == -1)
-            continue;
-          TreeNode exampleNode = subNode.getChildAt(exampleNodeNumber);
-          subNode.remove(exampleNodeNumber);
-          int count = exampleNode.getChildCount();
-          for (int x = 0; x < count; x++) {
-            subNode.add((DefaultMutableTreeNode) exampleNode.getChildAt(0));
+      if (subfolders != null) {
+        for (File sub : subfolders) {
+          if (ExamplesContribution.isCompatible(base, sub)) {
+            DefaultMutableTreeNode subNode =
+              new DefaultMutableTreeNode(sub.getName());
+            if (base.addSketches(subNode, sub)) {
+              contribExamplesNode.add(subNode);
+              int exampleNodeNumber = -1;
+              for (int y = 0; y < subNode.getChildCount(); y++) {
+                if (subNode.getChildAt(y).toString().equals("examples")) {
+                  exampleNodeNumber = y;
+                }
+              }
+              if (exampleNodeNumber != -1) {
+                TreeNode exampleNode = subNode.getChildAt(exampleNodeNumber);
+                subNode.remove(exampleNodeNumber);
+                int count = exampleNode.getChildCount();
+                for (int x = 0; x < count; x++) {
+                  subNode.add((DefaultMutableTreeNode) exampleNode.getChildAt(0));
+                }
+              }
+            }
           }
         }
       }

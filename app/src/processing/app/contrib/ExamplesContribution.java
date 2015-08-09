@@ -33,6 +33,13 @@ public class ExamplesContribution extends LocalContribution {
 
   static private StringList parseModeList(StringDict properties) {
     String unparsedModes = properties.get(MODES_PROPERTY);
+
+    // Workaround for 3.0 alpha/beta bug for 3.0b2
+    if ("null".equals(unparsedModes)) {
+      properties.remove(MODES_PROPERTY);
+      unparsedModes = null;
+    }
+
     StringList outgoing = new StringList();
     if (unparsedModes != null) {
       outgoing.append(PApplet.trim(PApplet.split(unparsedModes, ',')));
@@ -51,14 +58,15 @@ public class ExamplesContribution extends LocalContribution {
    *         active editor
    */
   static public boolean isCompatible(Base base, File exampleFolder) {
-    String currentIdentifier = base.getActiveEditor().getMode().getIdentifier();
+    String currentIdentifier =
+      base.getActiveEditor().getMode().getIdentifier();
     File propertiesFile =
       new File(exampleFolder, EXAMPLES.getPropertiesName());
     if (propertiesFile.exists()) {
       StringList compatibleList =
         parseModeList(Util.readSettings(propertiesFile));
       if (compatibleList.size() == 0) {
-        return true;  // if no mode specified, just include everywhere
+        return true;  // if no mode specified, assume compatible everywhere
       }
       for (String c : compatibleList) {
         if (c.equals(currentIdentifier)) {

@@ -12,6 +12,8 @@ X Initialize the Find dialog with the current selection
 X   https://github.com/processing/processing/issues/3457
 X Links in error bar are not selectable nor clickable
 X   https://github.com/processing/processing/issues/3471
+X Show contributed examples in the Examples window
+X   https://github.com/processing/processing/issues/3420
 
 export
 X save export settings to preferences
