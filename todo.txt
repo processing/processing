@@ -38,8 +38,8 @@ _ fix red in sidebar, the squiggly line beneath code
 _ show hover text with 'debug'
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
-_ don't show breakpoints when debugger is off
-_   https://github.com/processing/processing/issues/3093
+X don't show breakpoints when debugger is off
+X   https://github.com/processing/processing/issues/3093
 _ no setting breakpoints when debugger is off
 _   https://github.com/processing/processing/issues/3306
 _ make breakpoints more prominent
