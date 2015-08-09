@@ -7042,9 +7042,15 @@ public class PGraphicsOpenGL extends PGraphics {
     if (smooth < 1) {
       pgl.disable(PGL.MULTISAMPLE);
     } else {
-      pgl.enable(PGL.MULTISAMPLE);
+      // work around runtime exceptions in Broadcom's VC IV driver
+      if (false == OPENGL_RENDERER.equals("VideoCore IV HW")) {
+        pgl.enable(PGL.MULTISAMPLE);
+      }
     }
-    pgl.disable(PGL.POLYGON_SMOOTH);
+    // work around runtime exceptions in Broadcom's VC IV driver
+    if (false == OPENGL_RENDERER.equals("VideoCore IV HW")) {
+      pgl.disable(PGL.POLYGON_SMOOTH);
+    }
 
     if (sized) {
 //      reapplySettings();
@@ -7154,12 +7160,25 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.getIntegerv(PGL.MAX_TEXTURE_SIZE, intBuffer);
     maxTextureSize = intBuffer.get(0);
 
-    pgl.getIntegerv(PGL.MAX_SAMPLES, intBuffer);
-    maxSamples = intBuffer.get(0);
+    // work around runtime exceptions in Broadcom's VC IV driver
+    if (false == OPENGL_RENDERER.equals("VideoCore IV HW")) {
+      pgl.getIntegerv(PGL.MAX_SAMPLES, intBuffer);
+      maxSamples = intBuffer.get(0);
+    }
 
     if (anisoSamplingSupported) {
       pgl.getFloatv(PGL.MAX_TEXTURE_MAX_ANISOTROPY, floatBuffer);
       maxAnisoAmount = floatBuffer.get(0);
+    }
+
+    // overwrite the default shaders with vendor specific versions
+    // if needed
+    if (OPENGL_RENDERER.equals("VideoCore IV HW") ||    // Broadcom's binary driver for Raspberry Pi
+      OPENGL_RENDERER.equals("Gallium 0.4 on VC4")) {   // Mesa driver for same hardware
+        defLightShaderVertURL =
+          PGraphicsOpenGL.class.getResource("/processing/opengl/shaders/LightVert-vc4.glsl");
+        defTexlightShaderVertURL =
+          PGraphicsOpenGL.class.getResource("/processing/opengl/shaders/TexLightVert-vc4.glsl");
     }
 
     glParamsRead = true;

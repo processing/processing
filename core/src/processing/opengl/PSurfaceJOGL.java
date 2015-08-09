@@ -195,7 +195,8 @@ public class PSurfaceJOGL implements PSurface {
     if (profile == null) {
       if (PJOGL.profile == 2) {
         try {
-          profile = GLProfile.getGL2ES1();
+          // request at least GL2 or GLES2
+          profile = GLProfile.getGL2ES2();
         } catch (GLException ex) {
           profile = GLProfile.getMaxFixedFunc(true);
         }

@@ -21,6 +21,7 @@ X   https://github.com/processing/processing/issues/3546
 X NPE in Planets demo
 X   https://github.com/processing/processing/issues/3551
 
+_ implement strip(), lstrip(), rstrip?
 
 opengl
 _ `focused` variable always false in P2D/P3D

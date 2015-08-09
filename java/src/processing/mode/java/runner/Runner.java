@@ -90,9 +90,11 @@ public class Runner implements MessageConsumer {
 
     // Make sure all the imported libraries will actually run with this setup.
     int bits = Base.getNativeBits();
+    String variant = Base.getVariant();
+
     for (Library library : build.getImportedLibraries()) {
-      if (!library.supportsArch(PApplet.platform, bits)) {
-        sketchErr.println(library.getName() + " does not run in " + bits + "-bit mode.");
+      if (!library.supportsArch(PApplet.platform, variant)) {
+        sketchErr.println(library.getName() + " does not run on this architecture: " + variant);
         int opposite = (bits == 32) ? 64 : 32;
         if (Base.isMacOS()) {
           //if (library.supportsArch(PConstants.MACOSX, opposite)) {  // should always be true
@@ -668,7 +670,7 @@ public class Runner implements MessageConsumer {
       listener.statusError("A library used by this sketch is not installed properly.");
       err.println("A library relies on native code that's not available.");
       err.println("Or only works properly when the sketch is run as a " +
-        ((Base.getNativeBits() == 32) ? "64-bit " : "32-bit ") + " application.");
+        ((Base.getNativeBits() == 32) ? "64-bit" : "32-bit") + " application.");
 
     } else if (exceptionClass.equals("java.lang.StackOverflowError")) {
       listener.statusError("StackOverflowError: This sketch is attempting too much recursion.");
