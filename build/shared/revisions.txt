@@ -1,4 +1,71 @@
-PROCSSING 3.0b1 (REV 0239) - 6 August 2015
+PROCESSING 3.0b2 (REV 0240) - 9 August 2015
+
+[ bug fixes ]
+
++ Add library fails with "Could not write to temporary directory"
+  https://github.com/processing/processing/issues/3548
+
++ Cannot find "processing.core" library. Line 12 in tab sketch_150704a"
+  also happens with "import to com.jogamp.opengl.GL2"
+  https://github.com/processing/processing/issues/3547
+  Code still ran properly, but looked like errors in the editor.
+
++ Remove "pair is" debug messages from Welcome screen
+
++ Save Export to Application settings between uses
+  
++ Fix NullPointerException in setVertex()
+  https://github.com/processing/processing/pull/3553
+  https://github.com/processing/processing/issues/3550
+
++ Toggling between noLights and PointLight in draw() behaving strangely
+  https://github.com/processing/processing/issues/3546
+  
++ NullPointerException in Planets demo
+  https://github.com/processing/processing/issues/3551
+
+
+[ changes and improvements ]
+
++ Make size(displayWidth, displayHeight) still run in a window.
+  Fixes "fullScreen() cannot be used here" message on startup.
+  https://github.com/processing/processing/issues/3545
+
++ Initialize the Find dialog with the current selection
+  https://github.com/processing/processing/issues/3457
+
++ Disable Export button when no platforms selected. In previous releases,
+  it would report "done exporting!" but nothing had actually happened.
+
++ Prevent Export with examples and untitled/unsaved sketches
+  
++ Links in error bar are not selectable nor clickable
+  https://github.com/processing/processing/issues/3471
+
+
+[ internal/development fixes ]
+
++ Building: make the download-jdk-macosx target work properly
+
++ Clean up the advanced OpenGL wiki page
+
++ Throw an error when using methods that require sketchPath outside setup()
+  https://github.com/processing/processing/issues/3433
+  
++ cursor(CROSS) breaks when using surface.setTitle()
+  https://github.com/processing/processing/issues/3472
+
+
+[ fixed earlier ]
+
++ blend() and copy() are not pixel accurate for copy/scale
+  https://github.com/processing/processing/issues/324
+  Fixed somewhere between 0179 and 0184
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+PROCESSING 3.0b1 (REV 0239) - 6 August 2015
 
 This is the big one! The first beta, which will now be the default download
 on the site. That means we think this is the best release of Processing that's

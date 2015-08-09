@@ -1,7 +1,8 @@
 0240 (3.0b2)
 X make download-jdk-macosx target work properly
 X remove "pair is" debug messages
-X create sketchbook subfolders on startup
+X add library fails with "Could not write to temporary directory"
+X   create sketchbook subfolders on startup
 X   https://github.com/processing/processing/issues/3548
 X Cannot find "processing.core" library. Line 12 in tab sketch_150704a
 X   also happens with "import to com.jogamp.opengl.GL2"
