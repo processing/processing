@@ -1,25 +1,4 @@
-0240 core (3.0b2)
-X make size(displayWidth, displayHeight) still run in a window
-X   prevents "fullScreen() cannot be used here" message on startup
-X   https://github.com/processing/processing/issues/3545
-X throw an error when using methods that require sketchPath outside setup()
-X   https://github.com/processing/processing/issues/3433
-X cursor(CROSS) breaks when using surface.setTitle()
-X   https://github.com/processing/processing/issues/3472
-X Fix null pointer exception in setVertex
-X   https://github.com/processing/processing/pull/3553
-X   https://github.com/processing/processing/issues/3550
-
-fixed earlier
-X blend() and copy() are not pixel accurate for copy/scale
-X   https://github.com/processing/processing/issues/324
-X   Jakub: fixed somewhere between 0179 and 0184
-
-andres/jakub
-X toggling between noLights and PointLight in draw() behaving strangely
-X   https://github.com/processing/processing/issues/3546
-X NPE in Planets demo
-X   https://github.com/processing/processing/issues/3551
+0241 core (3.0b3)
 
 
 opengl

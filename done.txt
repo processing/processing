@@ -1,5 +1,38 @@
+0240 (3.0b2)
+X make download-jdk-macosx target work properly
+X remove "pair is" debug messages
+X add library fails with "Could not write to temporary directory"
+X   create sketchbook subfolders on startup
+X   https://github.com/processing/processing/issues/3548
+X Cannot find "processing.core" library. Line 12 in tab sketch_150704a
+X   also happens with "import to com.jogamp.opengl.GL2"
+X   https://github.com/processing/processing/issues/3547
+X clean up the advanced opengl wiki page
+X Initialize the Find dialog with the current selection
+X   https://github.com/processing/processing/issues/3457
+X Links in error bar are not selectable nor clickable
+X   https://github.com/processing/processing/issues/3471
+X Show contributed examples in the Examples window
+X   https://github.com/processing/processing/issues/3420
+
+export
+X save export settings to preferences
+X disable Export button when no platforms selected
+X prevent Export with examples and untitled/unsaved sketches
+X if no platforms selected in export, will still say "done exporting!"
+X   maybe if none selected, should default select the current platform
+X   why are none selected in the first place? not getting saved?
+
+contribs
+X code runs in Run but not in Tweak
+X   https://github.com/processing/processing/issues/3562
+X   https://github.com/processing/processing/pull/3563
 
 cleaning/earlier
+X CM ongoing notes and questions
+X   https://github.com/processing/processing/issues/3440
+X Contribution Manager design is really rough
+X   https://github.com/processing/processing/issues/3464
 o library.properties and tool.properties should reflect supported modes
 o   http://code.google.com/p/processing/issues/detail?id=1050
 X   marked as WONTFIX in 2012
