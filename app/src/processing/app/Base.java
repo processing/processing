@@ -98,6 +98,11 @@ public class Base {
     }
   }
 
+  static String nativeArch;
+  static {
+    nativeArch = System.getProperty("os.arch");
+  }
+
   static private boolean commandLine;
 
   // A single instance of the preferences window
@@ -1544,6 +1549,13 @@ public class Base {
    */
   static public int getNativeBits() {
     return nativeBits;
+  }
+
+  static public String getNativeArch() {
+    if (nativeArch == null) {
+      throw new RuntimeException("os.arch is not set");
+    }
+    return nativeArch;
   }
 
 

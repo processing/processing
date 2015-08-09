@@ -35,6 +35,7 @@ import processing.app.SketchException;
 import processing.app.Util;
 import processing.app.contrib.ModeContribution;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.mode.java.runner.Runner;
 
 
@@ -280,14 +281,16 @@ public class Commander implements RunnerListener {
             JavaBuild build = new JavaBuild(sketch);
             build.build(true);
             if (build != null) {
-//              if (platformBits == 0) {
-//                platformBits = Base.getNativeBits();
-//              }
-//              if (platformBits == 0 &&
-//                Library.hasMultipleArch(platform, build.getImportedLibraries())) {
-//                complainAndQuit("This sketch can be exported for 32- or 64-bit, please specify one.", true);
-//              }
-              success = build.exportApplication(outputFolder, platform, platformBits, embedJava);
+
+                String variant;
+                if (platform == PConstants.LINUX && platformBits == 32 && Base.getNativeArch().equals("arm")) {
+                  // assume armv6hf
+                  variant = "armv6hf";
+                } else {
+                  variant = Integer.toString(platformBits);
+                }
+
+              success = build.exportApplication(outputFolder, platform, variant, embedJava);
             }
           }
         }
