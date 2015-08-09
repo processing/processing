@@ -2898,8 +2898,8 @@ public class JavaEditor extends Editor {
       return false;
     }
 
-    int setupEndPos = SketchParser.getSetupEnd(baseCode[0]);
-    if (setupEndPos < 0) {
+    int afterSizePos = SketchParser.getAfterSizePos(baseCode[0]);
+    if (afterSizePos < 0) {
       return false;
     }
 
@@ -2992,12 +2992,14 @@ public class JavaEditor extends Editor {
 
     // add call to our initAllVars and initOSC functions
     // from the setup() function.
-    String addToSetup = "\n"+
-      " tweakmode_initAllVars();\n"+
-      " tweakmode_initCommunication();\n\n";
+    String addToSetup = "\n\n\n"+
+      "  /* TWEAKMODE */\n"+
+      "    tweakmode_initAllVars();\n"+
+      "    tweakmode_initCommunication();\n"+
+      "  /* TWEAKMODE */\n\n";
 
-    setupEndPos = SketchParser.getSetupEnd(c);
-    c = replaceString(c, setupEndPos, setupEndPos, addToSetup);
+    afterSizePos = SketchParser.getAfterSizePos(c);
+    c = replaceString(c, afterSizePos, afterSizePos, addToSetup);
 
     // Server code defines a class, so it should go later in the sketch
     String serverCode =
