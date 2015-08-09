@@ -1663,7 +1663,7 @@ public class JavaEditor extends Editor {
   }
 
 
-  protected boolean isDebuggerEnabled() {
+  public boolean isDebuggerEnabled() {
     //return enableDebug.isSelected();
     return debugEnabled;
   }
@@ -2199,37 +2199,18 @@ public class JavaEditor extends Editor {
 
 
   public void toggleDebug() {
-//    enableDebug.setSelected(!enableDebug.isSelected());
     debugEnabled = !debugEnabled;
-//    updateDebugToggle();
-//  }
-//
-//
-//  public void updateDebugToggle() {
-//    final boolean enabled = isDebuggerEnabled();
+
     rebuildToolbar();
+    repaint();  // show/hide breakpoints in the gutter
 
     if (debugEnabled) {
       debugItem.setText(Language.text("menu.debug.disable"));
     } else {
       debugItem.setText(Language.text("menu.debug.enable"));
     }
-
-//    // Hide the variable inspector if it's currently visible
-//    if (!debugEnabled && inspector.isVisible()) {
-//      toggleVariableInspector();
-//    }
     inspector.setVisible(debugEnabled);
 
-    /*
-    if (enabled) {
-      inspector.setFocusableWindowState(false); // to not get focus when set visible
-      inspector.setVisible(true);
-      inspector.setFocusableWindowState(true); // allow to get focus again
-    } else {
-      inspector.setVisible(false);
-    }
-    */
     for (Component item : debugMenu.getMenuComponents()) {
       if (item instanceof JMenuItem && item != debugItem) {
         ((JMenuItem) item).setEnabled(debugEnabled);

@@ -76,26 +76,23 @@ public class JavaTextAreaPainter extends TextAreaPainter
   protected Font gutterTextFont;
   protected Color gutterTextColor;
   protected Color gutterLineHighlightColor;
-//  protected Color gutterTempColor;
 
   public static class ErrorLineCoord {
-	public int xStart;
-	public int xEnd;
-	public int yStart;
-	public int yEnd;
-	public Problem problem;
+    public int xStart;
+    public int xEnd;
+    public int yStart;
+    public int yEnd;
+    public Problem problem;
 
-	public ErrorLineCoord(int xStart, int xEnd, int yStart, int yEnd, Problem problem) {
-	  this.xStart = xStart;
-	  this.xEnd = xEnd;
-	  this.yStart = yStart;
-	  this.yEnd = yEnd;
-	  this.problem = problem;
+    public ErrorLineCoord(int xStart, int xEnd, int yStart, int yEnd, Problem problem) {
+      this.xStart = xStart;
+      this.xEnd = xEnd;
+      this.yStart = yStart;
+      this.yEnd = yEnd;
+      this.problem = problem;
     }
   }
   public List<ErrorLineCoord> errorLineCoords = new ArrayList<>();
-
-//  static int ctrlMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
 
   public JavaTextAreaPainter(JavaTextArea textArea, TextAreaDefaults defaults) {
@@ -271,7 +268,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
     }
     gfx.fillRect(0, y, Editor.LEFT_GUTTER, fm.getHeight());
 
-    String text = getTextArea().getGutterText(line);
+    String text = null;
+    if (getEditor().isDebuggerEnabled()) {
+      text = getTextArea().getGutterText(line);
+    }
     // if no special text for a breakpoint, just show the line number
     if (text == null) {
       text = String.valueOf(line + 1);
@@ -293,6 +293,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
   }
 
 
+  /*
   // Failed attempt to switch line numbers to old-style figures
   String makeOSF(String what) {
     char[] c = what.toCharArray();
@@ -301,81 +302,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     }
     return new String(c);
   }
-
-
-//  /**
-//   * Paint the gutter background (solid color).
-//   *
-//   * @param gfx
-//   *          the graphics context
-//   * @param line
-//   *          0-based line number
-//   * @param x
-//   *          horizontal position
-//   */
-//  protected void paintGutterBg(Graphics gfx, int line, int x) {
-//    gfx.setColor(getTextArea().gutterBgColor);
-//    gfx.setColor(Color.ORANGE);
-//    int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
-//    gfx.fillRect(0, y, Editor.LEFT_GUTTER, fm.getHeight());
-//  }
-
-
-//  /**
-//   * Paint the vertical gutter separator line.
-//   *
-//   * @param gfx
-//   *          the graphics context
-//   * @param line
-//   *          0-based line number
-//   * @param x
-//   *          horizontal position
-//   */
-//  protected void paintGutterLine(Graphics gfx, int line, int x) {
-//    int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
-//    gfx.setColor(getTextArea().gutterLineColor);
-//    gfx.setColor(Color.GREEN);
-//    gfx.drawLine(Editor.LEFT_GUTTER, y,
-//                 Editor.LEFT_GUTTER, y + fm.getHeight());
-//  }
-
-
-//  /**
-//   * Paint the gutter text.
-//   *
-//   * @param gfx
-//   *          the graphics context
-//   * @param line
-//   *          0-based line number
-//   * @param x
-//   *          horizontal position
-//   */
-//  protected void paintGutterText(Graphics gfx, int line, int x) {
-//    String text = getTextArea().getGutterText(line);
-//    if (text == null) {
-//      return;
-//    }
-//
-//    gfx.setFont(getFont());
-//    Color textColor = getTextArea().getGutterTextColor(line);
-//    if (textColor == null) {
-//      gfx.setColor(getForeground());
-//    } else {
-//      gfx.setColor(textColor);
-//    }
-//    int y = textArea.lineToY(line) + fm.getHeight();
-//
-//    // draw 4 times to make it appear bold, displaced 1px to the right, to the bottom and bottom right.
-//    //int len = text.length() > ta.gutterChars ? ta.gutterChars : text.length();
-//    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-//                             Editor.GUTTER_MARGIN, y, gfx, this, 0);
-//    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-//                             Editor.GUTTER_MARGIN + 1, y, gfx, this, 0);
-//    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-//                             Editor.GUTTER_MARGIN, y + 1, gfx, this, 0);
-//    Utilities.drawTabbedText(new Segment(text.toCharArray(), 0, text.length()),
-//                             Editor.GUTTER_MARGIN + 1, y + 1, gfx, this, 0);
-//  }
+  */
 
 
   /**
