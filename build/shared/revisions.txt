@@ -1,9 +1,20 @@
 PROCESSING 3.0b2 (REV 0240) - 9 August 2015
 
+Several delicious bug fixes to repair things that cropped up in the first
+beta release. Please keep the reports & code coming and help us get to 3.0.
+
+
 [ bug fixes ]
 
-+ Add library fails with "Could not write to temporary directory"
++ "Add Library..." fails with "Could not write to temporary directory"
   https://github.com/processing/processing/issues/3548
+
++ Make size(displayWidth, displayHeight) still run in a window.
+  Fixes "fullScreen() cannot be used here" message on startup.
+  https://github.com/processing/processing/issues/3545
+  In the past we were auto-detecting if it was the screen size, 
+  and switching to full screen mode. But that's now removed because
+  fullScreen() is so easy, and full screen may not be wanted.
 
 + Cannot find "processing.core" library. Line 12 in tab sketch_150704a"
   also happens with "import to com.jogamp.opengl.GL2"
@@ -24,12 +35,15 @@ PROCESSING 3.0b2 (REV 0240) - 9 August 2015
 + NullPointerException in Planets demo
   https://github.com/processing/processing/issues/3551
 
++ Late breaking fix to repair Tweak mode
+  https://github.com/processing/processing/issues/3562
+  https://github.com/processing/processing/pull/3563
+
 
 [ changes and improvements ]
 
-+ Make size(displayWidth, displayHeight) still run in a window.
-  Fixes "fullScreen() cannot be used here" message on startup.
-  https://github.com/processing/processing/issues/3545
++ Show contributed examples in the Examples window
+  https://github.com/processing/processing/issues/3420
 
 + Initialize the Find dialog with the current selection
   https://github.com/processing/processing/issues/3457
@@ -47,10 +61,10 @@ PROCESSING 3.0b2 (REV 0240) - 9 August 2015
 
 + Building: make the download-jdk-macosx target work properly
 
-+ Clean up the advanced OpenGL wiki page
-
 + Throw an error when using methods that require sketchPath outside setup()
   https://github.com/processing/processing/issues/3433
+
++ Cleaned up the advanced OpenGL wiki page
   
 + cursor(CROSS) breaks when using surface.setTitle()
   https://github.com/processing/processing/issues/3472
@@ -61,6 +75,7 @@ PROCESSING 3.0b2 (REV 0240) - 9 August 2015
 + blend() and copy() are not pixel accurate for copy/scale
   https://github.com/processing/processing/issues/324
   Fixed somewhere between 0179 and 0184
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 

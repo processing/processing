@@ -23,6 +23,11 @@ X if no platforms selected in export, will still say "done exporting!"
 X   maybe if none selected, should default select the current platform
 X   why are none selected in the first place? not getting saved?
 
+contribs
+X code runs in Run but not in Tweak
+X   https://github.com/processing/processing/issues/3562
+X   https://github.com/processing/processing/pull/3563
+
 earlier/cleaning
 X CM ongoing notes and questions
 X   https://github.com/processing/processing/issues/3440
@@ -48,6 +53,8 @@ _   probably have to add the script/Processing.app location to user's path
 
 
 gui
+_ another round of ARM patches
+_   https://github.com/processing/processing/pull/3555
 _ fix red in sidebar, the squiggly line beneath code
 _ show hover text with 'debug'
 _ show number of updates available in the footer
