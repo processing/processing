@@ -115,16 +115,21 @@ public class JavaTextAreaPainter extends TextAreaPainter
       long lastTime;  // OS X seems to be firing multiple mouse events
 
       public void mousePressed(MouseEvent event) {
-        long thisTime = event.getWhen();
-        if (thisTime - lastTime > 100) {
-          if (event.getX() < Editor.LEFT_GUTTER) {
-            int offset = getTextArea().xyToOffset(event.getX(), event.getY());
-            if (offset >= 0) {
-              int lineIndex = getTextArea().getLineOfOffset(offset);
-              getEditor().toggleBreakpoint(lineIndex);
+        JavaEditor javaEditor = getEditor();
+        // Don't toggle breakpoints when the debugger isn't enabled
+        // https://github.com/processing/processing/issues/3306
+        if (javaEditor.isDebuggerEnabled()) {
+          long thisTime = event.getWhen();
+          if (thisTime - lastTime > 100) {
+            if (event.getX() < Editor.LEFT_GUTTER) {
+              int offset = getTextArea().xyToOffset(event.getX(), event.getY());
+              if (offset >= 0) {
+                int lineIndex = getTextArea().getLineOfOffset(offset);
+                javaEditor.toggleBreakpoint(lineIndex);
+              }
             }
+            lastTime = thisTime;
           }
-          lastTime = thisTime;
         }
       }
     });
