@@ -417,9 +417,7 @@ public class Library extends LocalContribution {
   }
 
 
-//  static boolean hasMultipleArch(String platformName, ArrayList<LibraryFolder> libraries) {
-//    int platform = Base.getPlatformIndex(platformName);
-  static public boolean hasMultipleArch(int platform, ArrayList<Library> libraries) {
+  static public boolean hasMultipleArch(int platform, List<Library> libraries) {
     for (Library library : libraries) {
       if (library.hasMultipleArch(platform)) {
         return true;
@@ -427,12 +425,6 @@ public class Library extends LocalContribution {
     }
     return false;
   }
-
-
-  // for sorting
-//  public int compareTo(Object o) {
-//    return prettyName.compareTo(((LibraryFolder) o).prettyName);
-//  }}
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -450,12 +442,6 @@ public class Library extends LocalContribution {
 
   static public List<File> discover(File folder) {
     List<File> libraries = new ArrayList<File>();
-//    discover(folder, libraries);
-//    return libraries;
-//  }
-//
-//
-//  static void discover(File folder, List<File> libraries) {
     String[] folderNames = folder.list(junkFolderFilter);
 
     // if a bad folder or something like that, this might come back null
@@ -493,12 +479,6 @@ public class Library extends LocalContribution {
 
   static public List<Library> list(File folder) {
     List<Library> libraries = new ArrayList<Library>();
-//    list(folder, libraries);
-//    return libraries;
-//  }
-//
-//
-//  static void list(File folder, List<Library> libraries) {
     List<File> librariesFolders = new ArrayList<File>();
     librariesFolders.addAll(discover(folder));
 
@@ -515,10 +495,7 @@ public class Library extends LocalContribution {
         File subfolder = new File(folder, subfolderName);
 
         if (!librariesFolders.contains(subfolder)) {
-//          ArrayList<File> discoveredLibFolders = new ArrayList<File>();
-//          discover(subfolder, discoveredLibFolders);
           List<File> discoveredLibFolders = discover(subfolder);
-
           for (File discoveredFolder : discoveredLibFolders) {
             libraries.add(new Library(discoveredFolder, subfolderName));
           }
