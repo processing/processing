@@ -2129,7 +2129,7 @@ public class Base {
                         JOptionPane.QUESTION_MESSAGE);
 
       String[] options = new String[] {
-          "Yes", "No"
+        "Yes", "No"
       };
       pane.setOptions(options);
 

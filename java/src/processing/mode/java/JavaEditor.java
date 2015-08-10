@@ -2689,49 +2689,32 @@ public class JavaEditor extends Editor {
   TweakClient tweakClient;
 
 
-  protected void startInteractiveMode() {
-    getJavaTextArea().startInteractiveMode();
+  protected void startTweakMode() {
+    getJavaTextArea().startTweakMode();
   }
 
 
-  //public void stopInteractiveMode(ArrayList<Handle> handles[]) {
-  protected void stopInteractiveMode(List<List<Handle>> handles) {
+  protected void stopTweakMode(List<List<Handle>> handles) {
     tweakClient.shutdown();
-    getJavaTextArea().stopInteractiveMode();
+    getJavaTextArea().stopTweakMode();
 
     // remove space from the code (before and after)
     //removeSpacesFromCode();
 
     // check which tabs were modified
-    boolean modified = false;
-    boolean[] modifiedTabs = getModifiedTabs(handles);
-    for (boolean mod : modifiedTabs) {
-      if (mod) {
-        modified = true;
-        break;
-      }
-    }
+    boolean[] tweakedTabs = getTweakedTabs(handles);
+    boolean modified = anythingTrue(tweakedTabs);
 
     if (modified) {
       // ask to keep the values
-      int ret =
-        Base.showYesNoQuestion(this, Language.text("tweak_mode"),
-                               Language.text("tweak_mode.keep_changes.line1"),
-                               Language.text("tweak_mode.keep_changes.line2"));
-      if (ret == 1) {
-        // NO! don't keep changes
-        loadSavedCode();
-        // update the painter to draw the saved (old) code
-        textarea.invalidate();
-
-      } else {
-        // YES! keep changes
-        // the new values are already present, just make sure the user can save the modified tabs
-        for (int i=0; i<sketch.getCodeCount(); i++) {
-          if (modifiedTabs[i]) {
+      if (Base.showYesNoQuestion(this, Language.text("tweak_mode"),
+                                 Language.text("tweak_mode.keep_changes.line1"),
+                                 Language.text("tweak_mode.keep_changes.line2")) == JOptionPane.YES_OPTION) {
+        for (int i = 0; i < sketch.getCodeCount(); i++) {
+          if (tweakedTabs[i]) {
             sketch.getCode(i).setModified(true);
-          }
-          else {
+
+          } else {
             // load the saved code of tabs that didn't change
             // (there might be formatting changes that should not be saved)
             sketch.getCode(i).setProgram(sketch.getCode(i).getSavedProgram());
@@ -2756,6 +2739,11 @@ public class JavaEditor extends Editor {
         // repaint the editor header (show the modified tabs)
         header.repaint();
         textarea.invalidate();
+
+      } else {  // no or canceled = don't keep changes
+        loadSavedCode();
+        // update the painter to draw the saved (old) code
+        textarea.invalidate();
       }
     } else {
       // number values were not modified but we need to load the saved code
@@ -2766,23 +2754,31 @@ public class JavaEditor extends Editor {
   }
 
 
+  static private boolean anythingTrue(boolean[] list) {
+    for (boolean b : list) {
+      if (b) return true;
+    }
+    return false;
+  }
+
+
   protected void updateInterface(List<List<Handle>> handles,
                               List<List<ColorControlBox>> colorBoxes) {
     getJavaTextArea().updateInterface(handles, colorBoxes);
   }
 
 
-  static private boolean[] getModifiedTabs(List<List<Handle>> handles) {
-    boolean[] modifiedTabs = new boolean[handles.size()];
+  static private boolean[] getTweakedTabs(List<List<Handle>> handles) {
+    boolean[] outgoing = new boolean[handles.size()];
 
     for (int i = 0; i < handles.size(); i++) {
       for (Handle h : handles.get(i)) {
         if (h.valueChanged()) {
-          modifiedTabs[i] = true;
+          outgoing[i] = true;
         }
       }
     }
-    return modifiedTabs;
+    return outgoing;
   }
 
 

@@ -143,7 +143,7 @@ public class JavaTextArea extends JEditTextArea {
     prevMMotionListeners = painter.getMouseMotionListeners();
     prevKeyListeners = editor.getKeyListeners();
 
-    interactiveMode = false;
+    tweakMode = false;
     addPrevListeners();
   }
 
@@ -856,14 +856,18 @@ public class JavaTextArea extends JEditTextArea {
   }
 
 
-  // TweakMode code
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  // TWEAK MODE
+
 
   // save input listeners to stop/start text edit
   ComponentListener[] prevCompListeners;
   MouseListener[] prevMouseListeners;
   MouseMotionListener[] prevMMotionListeners;
   KeyListener[] prevKeyListeners;
-  boolean interactiveMode;
+  boolean tweakMode;
+
 
   /* remove all standard interaction listeners */
   public void removeAllListeners() {
@@ -887,33 +891,30 @@ public class JavaTextArea extends JEditTextArea {
   }
 
 
-  public void startInteractiveMode() {
+  public void startTweakMode() {
     // ignore if we are already in interactiveMode
-    if (interactiveMode) return;
-
-    removeAllListeners();
-
-    // add our private interaction listeners
-    getCustomPainter().startInterativeMode();
-    this.editable = false;
-    this.caretBlinks = false;
-    this.setCaretVisible(false);
-    interactiveMode = true;
+    if (!tweakMode) {
+      removeAllListeners();
+      getCustomPainter().startTweakMode();
+      this.editable = false;
+      this.caretBlinks = false;
+      this.setCaretVisible(false);
+      tweakMode = true;
+    }
   }
 
 
-  public void stopInteractiveMode() {
+  public void stopTweakMode() {
     // ignore if we are not in interactive mode
-    if (!interactiveMode) return;
-
-    removeAllListeners();
-    addPrevListeners();
-
-    getCustomPainter().stopInteractiveMode();
-    this.editable = true;
-    this.caretBlinks = true;
-    this.setCaretVisible(true);
-    interactiveMode = false;
+    if (tweakMode) {
+      removeAllListeners();
+      addPrevListeners();
+      getCustomPainter().stopTweakMode();
+      editable = true;
+      caretBlinks = true;
+      setCaretVisible(true);
+      tweakMode = false;
+    }
   }
 
 

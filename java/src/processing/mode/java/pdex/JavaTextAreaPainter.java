@@ -143,7 +143,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     });
 
     // TweakMode code
-    interactiveMode = false;
+    tweakMode = false;
     cursorType = Cursor.DEFAULT_CURSOR;
   }
 
@@ -577,9 +577,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
   // TweakMode code
 	protected int horizontalAdjustment = 0;
 
-	public boolean interactiveMode = false;
-//	public ArrayList<Handle> handles[];
-//	public ArrayList<ColorControlBox> colorBoxes[];
+	public boolean tweakMode = false;
 	public List<List<Handle>> handles;
 	public List<List<ColorControlBox>> colorBoxes;
 
@@ -588,22 +586,19 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 	int cursorType;
 	BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-
-	// Create a new blank cursor.
-	Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-	    cursorImg, new Point(0, 0), "blank cursor");
+	Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
 
 
 	@Override
 	synchronized public void paint(Graphics gfx) {
 		super.paint(gfx);
 
-		if (interactiveMode && handles != null) {
+		if (tweakMode && handles != null) {
 			int currentTab = getCurrentCodeIndex();
 			// enable anti-aliasing
 			Graphics2D g2d = (Graphics2D)gfx;
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                				RenderingHints.VALUE_ANTIALIAS_ON);
+                				   RenderingHints.VALUE_ANTIALIAS_ON);
 
 			for (Handle n : handles.get(currentTab)) {
 				// update n position and width, and draw it
@@ -628,22 +623,23 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	}
 
 
-	protected void startInterativeMode() {
+	protected void startTweakMode() {
 	  addMouseListener(this);
 	  addMouseMotionListener(this);
-	  interactiveMode = true;
+	  tweakMode = true;
 	  setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		repaint();
 	}
 
 
-	protected void stopInteractiveMode() {
-		interactiveMode = false;
+	protected void stopTweakMode() {
+		tweakMode = false;
 
 		if (colorSelector != null) {
-			// close color selector
 			colorSelector.hide();
-			colorSelector.frame.dispatchEvent(new WindowEvent(colorSelector.frame, WindowEvent.WINDOW_CLOSING));
+			WindowEvent windowEvent =
+			  new WindowEvent(colorSelector.frame, WindowEvent.WINDOW_CLOSING);
+			colorSelector.frame.dispatchEvent(windowEvent);
 		}
 
 		setCursor(new Cursor(Cursor.TEXT_CURSOR));
@@ -651,9 +647,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	}
 
 
-	// Update the interface
-	//public void updateInterface(ArrayList<Handle> handles[], ArrayList<ColorControlBox> colorBoxes[]) {
-	protected void updateInterface(List<List<Handle>> handles, List<List<ColorControlBox>> colorBoxes) {
+	protected void updateInterface(List<List<Handle>> handles,
+	                               List<List<ColorControlBox>> colorBoxes) {
 		this.handles = handles;
 		this.colorBoxes = colorBoxes;
 
@@ -835,13 +830,13 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 				colorSelector = new ColorSelector(box);
 				colorSelector.frame.addWindowListener(new WindowAdapter() {
-				        public void windowClosing(WindowEvent e) {
-				        	colorSelector.frame.setVisible(false);
-				        	colorSelector = null;
-				        }
-				      });
-				colorSelector.show(this.getLocationOnScreen().x + e.getX() + 30,
-						this.getLocationOnScreen().y + e.getY() - 130);
+				  public void windowClosing(WindowEvent e) {
+				    colorSelector.frame.setVisible(false);
+				    colorSelector = null;
+				  }
+				});
+				colorSelector.show(getLocationOnScreen().x + e.getX() + 30,
+				                   getLocationOnScreen().y + e.getY() - 130);
 			}
 		}
 	}
@@ -894,33 +889,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
   }
 
 
-//	private int getGutterMargins() {
-//	  return ((JavaTextArea) textArea).getGutterMargins();
-//	}
-
-
-//	private int getGutterWidth() {
-//	  return ((JavaTextArea) textArea).getGutterWidth();
-//	}
-
-
 	private JavaTextArea getTextArea() {
 	  return (JavaTextArea) textArea;
 	}
-
-
-//	private Color getGutterBgColor() {
-//    return ((JavaTextArea) textArea).gutterBgColor;
-//  }
-
-
-//	private boolean isDebugToolbarEnabled() {
-//	  AtomicBoolean enabled = getEditor().debugToolbarEnabled;
-//	  return (enabled != null && enabled.get());
-//	}
-
-
-//	private boolean hasJavaTabs() {
-//	  return getEditor().hasJavaTabs();
-//	}
 }
