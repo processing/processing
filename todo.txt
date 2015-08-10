@@ -1,4 +1,8 @@
 0241 (3.0b3)
+X don't show breakpoints when debugger is off
+X   https://github.com/processing/processing/issues/3093
+X no setting breakpoints when debugger is off
+X   https://github.com/processing/processing/issues/3306
 _ 'examples' shows as a folder in the sketchbook window
 
 cleaning/earlier
@@ -38,10 +42,6 @@ _ fix red in sidebar, the squiggly line beneath code
 _ show hover text with 'debug'
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
-X don't show breakpoints when debugger is off
-X   https://github.com/processing/processing/issues/3093
-_ no setting breakpoints when debugger is off
-_   https://github.com/processing/processing/issues/3306
 _ make breakpoints more prominent
 _   https://github.com/processing/processing/issues/3307
 _ import suggestions box needs design review
