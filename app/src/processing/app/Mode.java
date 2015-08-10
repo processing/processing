@@ -38,7 +38,6 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.*;
 
-import processing.app.contrib.Contribution;
 import processing.app.contrib.ContributionType;
 import processing.app.contrib.ExamplesContribution;
 import processing.app.syntax.*;

@@ -6,6 +6,8 @@ X   https://github.com/processing/processing/issues/3306
 X 'examples' shows as a folder in the sketchbook window
 X Foundation library examples should appear under "Core" or "Foundation"
 X   https://github.com/processing/processing/issues/3524
+X Use ctrl-pageup/down on Linux for prev/next tab
+X   https://github.com/processing/processing/issues/3416
 
 cleaning/earlier
 X move to launch4j 3.7 http://launch4j.sourceforge.net/
