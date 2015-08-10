@@ -2416,7 +2416,7 @@ public class PImage implements PConstants, Cloneable {
   private void filter_new_scanline() {
     sX = srcXOffset;
     fracV = srcYOffset & PREC_MAXVAL;
-    ifV = PREC_MAXVAL - fracV;
+    ifV = PREC_MAXVAL - fracV + 1;
     v1 = (srcYOffset >> PRECISIONB) * iw;
     v2 = low((srcYOffset >> PRECISIONB) + 1, ih1) * iw;
   }
@@ -2424,11 +2424,11 @@ public class PImage implements PConstants, Cloneable {
 
   private int filter_bilinear() {
     fracU = sX & PREC_MAXVAL;
-    ifU = PREC_MAXVAL - fracU;
+    ifU = PREC_MAXVAL - fracU + 1;
     ul = (ifU * ifV) >> PRECISIONB;
-    ll = (ifU * fracV) >> PRECISIONB;
-    ur = (fracU * ifV) >> PRECISIONB;
-    lr = (fracU * fracV) >> PRECISIONB;
+    ll = ifU - ul;
+    ur = ifV - ul;
+    lr = PREC_MAXVAL + 1 - ul - ll - ur;
     u1 = (sX >> PRECISIONB);
     u2 = low(u1 + 1, iw1);
 
