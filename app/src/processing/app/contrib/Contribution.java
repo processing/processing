@@ -42,6 +42,8 @@ abstract public class Contribution {
                   "I/O", "Math", "Simulation", "Sound", SPECIAL_CATEGORY,
                   "Typography", "Utilities", "Video & Vision", "Other");
 
+  static final String FOUNDATION_AUTHOR = "The Processing Foundation";
+
   protected StringList categories;  // "Sound", "Typography"
   protected String name;            // "pdf" or "PDF Export"
   protected String authors;         // [Ben Fry](http://benfry.com)
@@ -221,7 +223,7 @@ abstract public class Contribution {
    */
   boolean isSpecial() {
     if (authors != null &&
-        authors.contains("The Processing Foundation")) {
+        authors.contains(FOUNDATION_AUTHOR)) {
       return true;
     }
 
@@ -231,6 +233,11 @@ abstract public class Contribution {
     }
 
     return false;
+  }
+
+
+  public boolean isFoundation() {
+    return FOUNDATION_AUTHOR.equals(authors);
   }
 
 

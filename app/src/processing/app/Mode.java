@@ -38,6 +38,7 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.*;
 
+import processing.app.contrib.Contribution;
 import processing.app.contrib.ContributionType;
 import processing.app.contrib.ExamplesContribution;
 import processing.app.syntax.*;
@@ -326,16 +327,38 @@ public abstract class Mode {
     }
 
     coreLibraries = Library.list(librariesFolder);
+    File contribLibrariesFolder = Base.getSketchbookLibrariesFolder();
+    contribLibraries = Library.list(contribLibrariesFolder);
+
+    // Check to see if video and sound are installed and move them
+    // from the contributed list to the core list.
+    List<Library> foundationLibraries = new ArrayList<>();
+    for (Library lib : contribLibraries) {
+      if (lib.isFoundation()) {
+        foundationLibraries.add(lib);
+      }
+    }
+    coreLibraries.addAll(foundationLibraries);
+    contribLibraries.removeAll(foundationLibraries);
+
+    /*
+    File sketchbookLibs = Base.getSketchbookLibrariesFolder();
+    File videoFolder = new File(sketchbookLibs, "video");
+    if (videoFolder.exists()) {
+      coreLibraries.add(new Library(videoFolder));
+    }
+    File soundFolder = new File(sketchbookLibs, "sound");
+    if (soundFolder.exists()) {
+      coreLibraries.add(new Library(soundFolder));
+    }
+    */
+
     for (Library lib : coreLibraries) {
       lib.addPackageList(importToLibraryTable);
     }
 
-    File contribLibrariesFolder = Base.getSketchbookLibrariesFolder();
-    if (contribLibrariesFolder != null) {
-      contribLibraries = Library.list(contribLibrariesFolder);
-      for (Library lib : contribLibraries) {
-        lib.addPackageList(importToLibraryTable);
-      }
+    for (Library lib : contribLibraries) {
+      lib.addPackageList(importToLibraryTable);
     }
   }
 

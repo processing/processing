@@ -4,6 +4,8 @@ X   https://github.com/processing/processing/issues/3093
 X no setting breakpoints when debugger is off
 X   https://github.com/processing/processing/issues/3306
 X 'examples' shows as a folder in the sketchbook window
+X Foundation library examples should appear under "Core" or "Foundation"
+X   https://github.com/processing/processing/issues/3524
 
 cleaning/earlier
 X move to launch4j 3.7 http://launch4j.sourceforge.net/
@@ -18,6 +20,7 @@ _   but anything else reports "font sadness" b/c it's using the system JRE
 _   https://github.com/processing/processing/issues/3543
 _   move to javapackager or another option?
 _   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-application
+_ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
 3.0 final
@@ -46,11 +49,12 @@ _ make breakpoints more prominent
 _   https://github.com/processing/processing/issues/3307
 _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407
+_ Fix placement and visual design when showing error on hover
+_   https://github.com/processing/processing/issues/3173
 _ distinguish errors and warnings
 _   https://github.com/processing/processing/issues/3406
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
-_ mouse events (i.e. toggle breakpoint) seem to be firing twice
 _ tiny trail of dots when moving the selection bar up/down on retina
 _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
@@ -70,17 +74,15 @@ _ update EditorButton rollover label when pressing shift or alt
 _ disable the debug toggle menu while running
 _   otherwise could run in one mode, then try to stop in another
 _ recent menu gets huge with other p5 versions on osx
+_ move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
+_   need to make the list abstract, also "scroll to line" feature
+_   fix up the UI, oy
 
 
 pde/build
 _ ignore-tools in build.xml not being called for some reason
-_ move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
-_   need to make the list abstract, also "scroll to line" feature
-_   fix up the UI, oy
 _ can't install processing-java into /usr/bin with El Capitan
 _   https://github.com/processing/processing/issues/3497
-_ Foundation library examples should appear under "Core" or "Foundation"
-_   https://github.com/processing/processing/issues/3524
 _ dim out the Run button if there are compile errors detected
 _   the AST checker has better error message handling for those cases
 _   and hitting Run replaces the useful error with something weird
