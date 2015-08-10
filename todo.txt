@@ -3,7 +3,7 @@ X don't show breakpoints when debugger is off
 X   https://github.com/processing/processing/issues/3093
 X no setting breakpoints when debugger is off
 X   https://github.com/processing/processing/issues/3306
-_ 'examples' shows as a folder in the sketchbook window
+X 'examples' shows as a folder in the sketchbook window
 
 cleaning/earlier
 X move to launch4j 3.7 http://launch4j.sourceforge.net/

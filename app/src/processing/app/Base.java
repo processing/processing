@@ -1344,14 +1344,24 @@ public class Base {
   }
 
 
-  protected boolean addSketches(DefaultMutableTreeNode node, File folder) throws IOException {
+  protected boolean addSketches(DefaultMutableTreeNode node,
+                                File folder,
+                                boolean examples) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) {
       return false;
     }
 
+    // Don't look inside the 'libraries' folders in the sketchbook
     if (folder.getName().equals("libraries")) {
-      return false;  // let's not go there
+      return false;
+    }
+
+    // When building the sketchbook, don't show the contributed 'examples'
+    // like it's a subfolder. But when loading examples, allow the folder
+    // to be named 'examples'.
+    if (!examples && folder.getName().equals("examples")) {
+      return false;
     }
 
     String[] fileList = folder.list();
@@ -1363,34 +1373,11 @@ public class Base {
     // Alphabetize the list, since it's not always alpha order
     Arrays.sort(fileList, String.CASE_INSENSITIVE_ORDER);
 
-//    ActionListener listener = new ActionListener() {
-//        public void actionPerformed(ActionEvent e) {
-//          String path = e.getActionCommand();
-//          if (new File(path).exists()) {
-//            handleOpen(path);
-//          } else {
-//            showWarning("Sketch Disappeared",
-//                        "The selected sketch no longer exists.\n" +
-//                        "You may need to restart Processing to update\n" +
-//                        "the sketchbook menu.", null);
-//          }
-//        }
-//    };
-    // offers no speed improvement
-    //menu.addActionListener(listener);
-
     boolean found = false;
     for (String name : fileList) {
-      //Skip hidden files
-      if (name.charAt(0) == '.') {
+      if (name.charAt(0) == '.') {  // Skip hidden files
         continue;
       }
-
-//      JTree tree = null;
-//      TreePath[] a = tree.getSelectionPaths();
-//      for (TreePath path : a) {
-//        Object[] o = path.getPath();
-//      }
 
       File subfolder = new File(folder, name);
       if (subfolder.isDirectory()) {
@@ -1406,7 +1393,7 @@ public class Base {
           // not a sketch folder, but maybe a subfolder containing sketches
           DefaultMutableTreeNode subnode = new DefaultMutableTreeNode(name);
           // needs to be separate var otherwise would set ifound to false
-          boolean anything = addSketches(subnode, subfolder);
+          boolean anything = addSketches(subnode, subfolder, examples);
           if (anything) {
             node.add(subnode);
             found = true;

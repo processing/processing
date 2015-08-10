@@ -661,11 +661,13 @@ public abstract class Mode {
     DefaultMutableTreeNode root = new DefaultMutableTreeNode("Examples");
 
     try {
+      // Get the list of Mode-specific examples, in the order the Mode wants
+      // to present them (i.e. Basics, then Topics, then Demos...)
       File[] examples = getExampleCategoryFolders();
 
       for (File subFolder : examples) {
         DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(subFolder.getName());
-        if (base.addSketches(subNode, subFolder)) {
+        if (base.addSketches(subNode, subFolder, true)) {
           root.add(subNode);
         }
       }
@@ -677,11 +679,12 @@ public abstract class Mode {
       for (Library lib : coreLibraries) {
         if (lib.hasExamples()) {
           DefaultMutableTreeNode libNode = new DefaultMutableTreeNode(lib.getName());
-          if (base.addSketches(libNode, lib.getExamplesFolder()))
+          if (base.addSketches(libNode, lib.getExamplesFolder(), true)) {
             foundationLibraries.add(libNode);
+          }
         }
       }
-      if(foundationLibraries.getChildCount() > 0) {
+      if (foundationLibraries.getChildCount() > 0) {
         root.add(foundationLibraries);
       }
 
@@ -692,11 +695,11 @@ public abstract class Mode {
         if (lib.hasExamples()) {
             DefaultMutableTreeNode libNode =
               new DefaultMutableTreeNode(lib.getName());
-            base.addSketches(libNode, lib.getExamplesFolder());
+            base.addSketches(libNode, lib.getExamplesFolder(), true);
           contributedLibExamples.add(libNode);
         }
       }
-      if(contributedLibExamples.getChildCount() > 0){
+      if (contributedLibExamples.getChildCount() > 0) {
         root.add(contributedLibExamples);
       }
     } catch (IOException e) {
@@ -725,7 +728,7 @@ public abstract class Mode {
           if (ExamplesContribution.isCompatible(base, sub)) {
             DefaultMutableTreeNode subNode =
               new DefaultMutableTreeNode(sub.getName());
-            if (base.addSketches(subNode, sub)) {
+            if (base.addSketches(subNode, sub, true)) {
               contribExamplesNode.add(subNode);
               int exampleNodeNumber = -1;
               for (int y = 0; y < subNode.getChildCount(); y++) {
@@ -1010,7 +1013,7 @@ public abstract class Mode {
     DefaultMutableTreeNode sbNode =
       new DefaultMutableTreeNode(Language.text("sketchbook.tree"));
     try {
-      base.addSketches(sbNode, Base.getSketchbookFolder());
+      base.addSketches(sbNode, Base.getSketchbookFolder(), false);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -1064,16 +1067,17 @@ public abstract class Mode {
       });
 
       tree.addKeyListener(new KeyAdapter() {
+        // ESC doesn't fire keyTyped(), so we have to catch it on keyPressed
         public void keyPressed(KeyEvent e) {
-          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) { // doesn't fire keyTyped()
+          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             sketchbookFrame.setVisible(false);
           }
         }
 
         public void keyTyped(KeyEvent e) {
           if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
-              .getLastSelectedPathComponent();
+            DefaultMutableTreeNode node =
+              (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
             if (node != null && node.isLeaf()) {
               SketchReference sketch = (SketchReference) node.getUserObject();
               base.handleOpen(sketch.getPath());
