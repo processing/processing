@@ -22,15 +22,21 @@ X   https://github.com/processing/processing/issues/3314
 _ Invalid code signature on OS X
 _   https://github.com/processing/processing/issues/3575
 
-cleaning/earlier
-X move to launch4j 3.7 http://launch4j.sourceforge.net/
-X   actually upgraded to 3.8
-X make examples pull/build automatic during dist
-
 gsoc 
 X Breakpoints don't 'jump' after hitting Enter on blank line
 X   https://github.com/processing/processing/issues/3552
 X   https://github.com/processing/processing/pull/3571
+
+cleaning/earlier
+X move to launch4j 3.7 http://launch4j.sourceforge.net/
+X   actually upgraded to 3.8
+X make examples pull/build automatic during dist
+X dialog box icon is fuzzy on OS X retina machines
+X   https://github.com/processing/processing/issues/2117
+o solution might be our own dialog boxes
+X ctrl/ctrl-shift-n sometimes stops working
+X   https://github.com/processing/processing/issues/188
+X   believed to be fixed in the last few months
 
 
 known issues
@@ -75,6 +81,7 @@ _ distinguish errors and warnings
 _   https://github.com/processing/processing/issues/3406
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
+_ see notes in the 'dialogs' section below, implement our own option panes?
 _ tiny trail of dots when moving the selection bar up/down on retina
 _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
@@ -445,9 +452,6 @@ PDE - Processing Development Environment
 
 PDE / Dialogs
 
-_ dialog box icon is fuzzy on OS X retina machines
-_   https://github.com/processing/processing/issues/2117
-_ solution might be our own dialog boxes
 _ two-tiered dialogs for everything - use big font/little font style throughout
 _   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
 _ option to suppress warning dialogs
@@ -579,12 +583,6 @@ _   or maybe show an animation for starting up
 _   rather than post-compile
 _   https://github.com/processing/processing/issues/136
 _ EditorToolbar has two TODO items for open menu handling
-
-
-PDE / Editor Header
-
-_ ctrl/ctrl-shift-n sometimes stops working
-_   https://github.com/processing/processing/issues/188
 
 
 PDE / Export

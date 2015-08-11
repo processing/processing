@@ -719,12 +719,16 @@ public class PSurfaceJOGL implements PSurface {
     public void windowGainedFocus(com.jogamp.newt.event.WindowEvent arg0) {
 //      pg.parent.focusGained(null);
 //      System.err.println("gain focus");
+      sketch.focused = true;
+      sketch.focusGained();
     }
 
     @Override
     public void windowLostFocus(com.jogamp.newt.event.WindowEvent arg0) {
 //      pg.parent.focusLost(null);
 //      System.err.println("lost focus");
+      sketch.focused = false;
+      sketch.focusLost();
     }
 
     @Override

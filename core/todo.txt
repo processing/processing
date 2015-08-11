@@ -1,4 +1,6 @@
 0241 core (3.0b3)
+X `focused` variable always false in P2D/P3D
+X   https://github.com/processing/processing/issues/3564
 
 
 opengl
@@ -6,8 +8,6 @@ X IndexOutOfBoundsException with pixelDensity(2) and P2D
 X   https://github.com/processing/processing/issues/3568
 X Shaders output to bottom left corner rather than full window in 3.0b2
 X   https://github.com/processing/processing/issues/3572
-_ `focused` variable always false in P2D/P3D
-_   https://github.com/processing/processing/issues/3564
 _ Use PBOs for async texture copy
 _   https://github.com/processing/processing/issues/3569
 _ filter(PShader) broken in HiDPI mode
