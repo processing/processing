@@ -98,6 +98,8 @@ public class Base {
     }
   }
 
+  static String nativeArch = System.getProperty("os.arch");
+
   static private boolean commandLine;
 
   // A single instance of the preferences window
@@ -1543,6 +1545,30 @@ public class Base {
     return nativeBits;
   }
 
+  /**
+   * Return the value of the os.arch propery
+   */
+  static public String getNativeArch() {
+    return nativeArch;
+  }
+
+  /*
+   * Return a string that identifies the variant of a platform
+   * e.g. "32" or "64" on Intel
+   */
+  static public String getVariant() {
+    return getVariant(PApplet.platform, getNativeArch(), getNativeBits());
+  }
+
+  static public String getVariant(int platform, String arch, int bits) {
+    if (platform == PConstants.LINUX && bits == 32 && "arm".equals(Base.getNativeArch())) {
+      // assume armv6hf for now
+      return "armv6hf";
+    } else {
+      // 32 or 64
+      return Integer.toString(bits);
+    }
+  }
 
   /*
   static public String getPlatformName() {
