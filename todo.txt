@@ -12,13 +12,11 @@ X Library names not showing up correctly ("pdf" instead of "PDF Export")
 X   https://github.com/processing/processing/issues/3574
 X Contributed examples not using the 'name' field from their properties file
 X   seen in Dan's contrib examples
-X Include name of sketch when asking user “Save sketch before closing?”
+X Include name of sketch when asking user "Save sketch before closing?"
 X   do i18n changes for OS X and other platforms
 X   https://github.com/processing/processing/issues/3418
 X name for contributed examples
 X   https://github.com/processing/processing/issues/3573
-X show a warning when map() prints a bad value
-X   https://github.com/processing/processing/issues/3314
 o Invalid code signature on OS X
 X   https://github.com/processing/processing/issues/3575
 X   cannot reproduce

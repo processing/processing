@@ -1,3 +1,61 @@
+PROCESSING 3.0b3 (REV 0241) - 11 August 2015
+
+You get a beta! YOU get a beta! *YOU* get a beta! Everybody gets a beta!
+
+
+[ bug fixes & changes ] 
+
++ Prevent 'examples' from showing as a folder in the sketchbook window
+  (instead only show it in the Examples window)
+
++ Don't show breakpoints when debugger is off
+  https://github.com/processing/processing/issues/3093
+
++ No setting breakpoints when debugger is off
+  https://github.com/processing/processing/issues/3306
+
++ Foundation library examples should appear under "Core" or "Foundation"
+  https://github.com/processing/processing/issues/3524
+
++ Use ctrl-pageup/down on Linux for prev/next tab
+  https://github.com/processing/processing/issues/3416
+
++ Library names not showing up correctly ("pdf" instead of "PDF Export")
+  https://github.com/processing/processing/issues/3574
+
++ Contributed Examples were using their folder name, not the 'name' field 
+  from their properties file when shown in the Examples window.
+
++ Include name of sketch when asking user "Save sketch before closing?"
+  Did i18n changes for OS X and other platforms, though some languages
+  will need additional updates to be compatible.
+  https://github.com/processing/processing/issues/3418
+
++ Modify naming of contributed examples
+  https://github.com/processing/processing/issues/3573
+
++ Show a warning when map() prints a bad value
+  https://github.com/processing/processing/issues/3314
+
++ Implement a nf(float) function to support the changes in map()
+
++ Breakpoints don't 'jump' after hitting Enter on blank line
+  https://github.com/processing/processing/issues/3552
+  https://github.com/processing/processing/pull/3571
+
++ Implement focusGained(), focusLost(), and 'focused' variable in P2D/P3D
+  https://github.com/processing/processing/issues/3564
+
++ IndexOutOfBoundsException with pixelDensity(2) and P2D
+  https://github.com/processing/processing/issues/3568
+
++ Shaders output to bottom left corner rather than full window in 3.0b2
+  https://github.com/processing/processing/issues/3572
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.0b2 (REV 0240) - 9 August 2015
 
 Several delicious bug fixes to repair things that cropped up in the first

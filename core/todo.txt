@@ -1,13 +1,18 @@
 0241 core (3.0b3)
 X `focused` variable always false in P2D/P3D
 X   https://github.com/processing/processing/issues/3564
-
+X implement a nf(float) function to support the changes in map()
+X show a warning when map() prints a bad value
+X   https://github.com/processing/processing/issues/3314
 
 opengl
 X IndexOutOfBoundsException with pixelDensity(2) and P2D
 X   https://github.com/processing/processing/issues/3568
 X Shaders output to bottom left corner rather than full window in 3.0b2
 X   https://github.com/processing/processing/issues/3572
+
+
+opengl
 _ Use PBOs for async texture copy
 _   https://github.com/processing/processing/issues/3569
 _ filter(PShader) broken in HiDPI mode
