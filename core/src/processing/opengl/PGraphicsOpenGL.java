@@ -5991,7 +5991,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void drawPixels(int x, int y, int w, int h) {
     int f = (int)getPixelScale();
-    int len = f * w * h;
+    int len = f * w * f * h;
     if (nativePixels == null || nativePixels.length < len) {
       nativePixels = new int[len];
       nativePixelBuffer = PGL.allocateIntBuffer(nativePixels);
