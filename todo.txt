@@ -10,8 +10,8 @@ X Use ctrl-pageup/down on Linux for prev/next tab
 X   https://github.com/processing/processing/issues/3416
 _ Library names not showing up correctly ("pdf" instead of "PDF Export")
 _   https://github.com/processing/processing/issues/3574
-_ Contributed examples not using the 'name' field from their properties file
-_   seen in Dan's contrib examples
+X Contributed examples not using the 'name' field from their properties file
+X   seen in Dan's contrib examples
 _ Invalid code signature on OS X
 _   https://github.com/processing/processing/issues/3575
 
