@@ -1352,17 +1352,27 @@ public class Base {
       return false;
     }
 
+    final String folderName = folder.getName();
+
     // Don't look inside the 'libraries' folders in the sketchbook
-    if (folder.getName().equals("libraries")) {
+    if (folderName.equals("libraries")) {
       return false;
     }
 
     // When building the sketchbook, don't show the contributed 'examples'
     // like it's a subfolder. But when loading examples, allow the folder
     // to be named 'examples'.
-    if (!examples && folder.getName().equals("examples")) {
+    if (!examples && folderName.equals("examples")) {
       return false;
     }
+
+//    // Conversely, when looking for examples, ignore the other folders
+//    // (to avoid going through hoops with the tree node setup).
+//    if (examples && !folderName.equals("examples")) {
+//      return false;
+//    }
+//    // Doesn't quite work because the parent will be 'examples', and we want
+//    // to walk inside that, but the folder itself will have a different name
 
     String[] fileList = folder.list();
     // If a bad folder or unreadable or whatever, this will come back null

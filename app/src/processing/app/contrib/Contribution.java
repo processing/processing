@@ -21,6 +21,7 @@
 */
 package processing.app.contrib;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,6 +29,8 @@ import processing.core.PApplet;
 import processing.data.StringDict;
 import processing.data.StringList;
 import processing.app.Language;
+import processing.app.Util;
+
 
 abstract public class Contribution {
   static final String IMPORTS_PROPERTY = "imports";
@@ -240,6 +243,20 @@ abstract public class Contribution {
     return FOUNDATION_AUTHOR.equals(authors);
   }
 
+
+  public StringDict loadProperties(File contribFolder) {
+    return loadProperties(contribFolder, getType());
+  }
+
+
+  static public StringDict loadProperties(File contribFolder,
+                                          ContributionType type) {
+    File propertiesFile = new File(contribFolder, type.getPropertiesName());
+    if (propertiesFile.exists()) {
+      return Util.readSettings(propertiesFile);
+    }
+    return null;
+  }
 
   /**
    * @return a single element list with "Unknown" as the category.

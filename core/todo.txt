@@ -4,6 +4,10 @@
 opengl
 _ `focused` variable always false in P2D/P3D
 _   https://github.com/processing/processing/issues/3564
+_ Use PBOs for async texture copy
+_   https://github.com/processing/processing/issues/3569
+_ filter(PShader) broken in HiDPI mode
+_   https://github.com/processing/processing/issues/3577
 
 _ implement strip(), lstrip(), rstrip?
 

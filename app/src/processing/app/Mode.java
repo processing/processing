@@ -38,6 +38,7 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.*;
 
+import processing.app.contrib.Contribution;
 import processing.app.contrib.ContributionType;
 import processing.app.contrib.ExamplesContribution;
 import processing.app.syntax.*;
@@ -46,6 +47,7 @@ import processing.app.ui.EditorState;
 import processing.app.ui.Toolkit;
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.data.StringDict;
 
 
 public abstract class Mode {
@@ -747,24 +749,38 @@ public abstract class Mode {
         ContributionType.EXAMPLES.listCandidates(examplesContribFolder);
       if (subfolders != null) {
         for (File sub : subfolders) {
-          if (ExamplesContribution.isCompatible(base, sub)) {
-            DefaultMutableTreeNode subNode =
-              new DefaultMutableTreeNode(sub.getName());
-            if (base.addSketches(subNode, sub, true)) {
-              contribExamplesNode.add(subNode);
-              int exampleNodeNumber = -1;
-              for (int y = 0; y < subNode.getChildCount(); y++) {
-                if (subNode.getChildAt(y).toString().equals("examples")) {
-                  exampleNodeNumber = y;
+          StringDict props =
+            Contribution.loadProperties(sub, ContributionType.EXAMPLES);
+          if (props != null) {
+            if (ExamplesContribution.isCompatible(base, props)) {
+              DefaultMutableTreeNode subNode =
+                new DefaultMutableTreeNode(props.get("name"));
+              if (base.addSketches(subNode, sub, true)) {
+                contribExamplesNode.add(subNode);
+
+                // TODO there has to be a simpler way of handling this along
+                // with addSketches() as well [fry 150811]
+                int exampleNodeNumber = -1;
+                // The contrib may have other items besides the examples folder
+                for (int i = 0; i < subNode.getChildCount(); i++) {
+                  if (subNode.getChildAt(i).toString().equals("examples")) {
+                    exampleNodeNumber = i;
+                  }
                 }
-              }
-              if (exampleNodeNumber != -1) {
-                TreeNode exampleNode = subNode.getChildAt(exampleNodeNumber);
-                subNode.remove(exampleNodeNumber);
-                int count = exampleNode.getChildCount();
-                for (int x = 0; x < count; x++) {
-                  subNode.add((DefaultMutableTreeNode) exampleNode.getChildAt(0));
+                if (exampleNodeNumber != -1) {
+                  TreeNode exampleNode = subNode.getChildAt(exampleNodeNumber);
+                  subNode.remove(exampleNodeNumber);
+                  int count = exampleNode.getChildCount();
+                  for (int j = 0; j < count; j++) {
+                    subNode.add((DefaultMutableTreeNode) exampleNode.getChildAt(0));
+                  }
                 }
+
+//                if (subNode.getChildCount() != 1) {
+//                  System.err.println("more children than expected when one is enough");
+//                }
+//                TreeNode exampleNode = subNode.getChildAt(0);
+//                subNode.add((DefaultMutableTreeNode) exampleNode.getChildAt(0));
               }
             }
           }

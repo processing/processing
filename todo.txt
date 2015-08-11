@@ -8,11 +8,22 @@ X Foundation library examples should appear under "Core" or "Foundation"
 X   https://github.com/processing/processing/issues/3524
 X Use ctrl-pageup/down on Linux for prev/next tab
 X   https://github.com/processing/processing/issues/3416
+_ Library names not showing up correctly ("pdf" instead of "PDF Export")
+_   https://github.com/processing/processing/issues/3574
+_ Contributed examples not using the 'name' field from their properties file
+_   seen in Dan's contrib examples
+_ Invalid code signature on OS X
+_   https://github.com/processing/processing/issues/3575
 
 cleaning/earlier
 X move to launch4j 3.7 http://launch4j.sourceforge.net/
 X   actually upgraded to 3.8
 X make examples pull/build automatic during dist
+
+gsoc 
+X Breakpoints don't 'jump' after hitting Enter on blank line
+X   https://github.com/processing/processing/issues/3552
+X   https://github.com/processing/processing/pull/3571
 
 
 known issues
