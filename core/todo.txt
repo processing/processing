@@ -13,8 +13,6 @@ _   https://github.com/processing/processing/issues/3569
 _ filter(PShader) broken in HiDPI mode
 _   https://github.com/processing/processing/issues/3577
 
-_ implement strip(), lstrip(), rstrip?
-
 docs
 _ note that full screen and present are now different
 _   on Export to Application, this has an impact
@@ -134,6 +132,7 @@ _   w/ this example: https://github.com/processing/processing/issues/2423
 
 
 data
+_ implement strip(), lstrip(), rstrip?
 _ handling of 'missing' values in Table needs serious work
 _   if missing int is zero, can't just remove those values from saving a table
 _   but for NaN values, it's a necessity

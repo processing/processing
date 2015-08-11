@@ -19,8 +19,9 @@ X name for contributed examples
 X   https://github.com/processing/processing/issues/3573
 X show a warning when map() prints a bad value
 X   https://github.com/processing/processing/issues/3314
-_ Invalid code signature on OS X
-_   https://github.com/processing/processing/issues/3575
+o Invalid code signature on OS X
+X   https://github.com/processing/processing/issues/3575
+X   cannot reproduce
 
 gsoc 
 X Breakpoints don't 'jump' after hitting Enter on blank line
@@ -96,6 +97,8 @@ _ how are we going to handle fonts for other languages?
 _   two new fonts have been added, other languages will need more
 _   need a decent sans with with Unicode coverage
 _   i.e. https://github.com/processing/processing/pull/3025
+_ Non-western language hint text for toolbar buttons not correctly displayed
+_   https://github.com/processing/processing/issues/2886
 _ deactivate step, continue, stop when not running?
 _ update EditorButton rollover label when pressing shift or alt
 _ disable the debug toggle menu while running
@@ -104,6 +107,10 @@ _ recent menu gets huge with other p5 versions on osx
 _ move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
 _   need to make the list abstract, also "scroll to line" feature
 _   fix up the UI, oy
+_ show compiling/startup animation after clicking run
+_   or maybe show an animation for starting up
+_   rather than post-compile
+_   https://github.com/processing/processing/issues/136
 
 
 pde/build
@@ -578,10 +585,6 @@ _   does it unhighlight after compile or runtime errors?
 _   also when using draw() instead of loop()
 _     applet needs to notify runner that it has terminated
 _   check 'finished' via objectreference?
-_ show compiling/startup animation after clicking run
-_   or maybe show an animation for starting up
-_   rather than post-compile
-_   https://github.com/processing/processing/issues/136
 _ EditorToolbar has two TODO items for open menu handling
 
 

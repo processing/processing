@@ -675,6 +675,15 @@
       <arg value="Developer ID Application" />
       <arg value="Processing.app" />
     </exec>
+
+    <!-- Verify that the signature will pass Gatekeeper checks 
+         https://developer.apple.com/library/mac/technotes/tn2206 -->
+    <exec executable="/usr/bin/codesign" dir="macosx/work">
+      <arg value="--verify" />
+      <arg value="--deep" />
+      <arg value="--verbose=2" />
+      <arg value="Processing.app" />
+    </exec>
   </target>
 
   <target name="macosx-dist" if="macosx" 
