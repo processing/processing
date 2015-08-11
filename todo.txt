@@ -15,6 +15,8 @@ X   seen in Dan's contrib examples
 X Include name of sketch when asking user “Save sketch before closing?”
 X   do i18n changes for OS X and other platforms
 X   https://github.com/processing/processing/issues/3418
+X name for contributed examples
+X   https://github.com/processing/processing/issues/3573
 _ Invalid code signature on OS X
 _   https://github.com/processing/processing/issues/3575
 

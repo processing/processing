@@ -1344,9 +1344,9 @@ public class Base {
   }
 
 
-  protected boolean addSketches(DefaultMutableTreeNode node,
-                                File folder,
-                                boolean examples) throws IOException {
+  public boolean addSketches(DefaultMutableTreeNode node,
+                             File folder,
+                             boolean examples) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) {
       return false;
