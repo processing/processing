@@ -17,6 +17,8 @@ X   do i18n changes for OS X and other platforms
 X   https://github.com/processing/processing/issues/3418
 X name for contributed examples
 X   https://github.com/processing/processing/issues/3573
+X show a warning when map() prints a bad value
+X   https://github.com/processing/processing/issues/3314
 _ Invalid code signature on OS X
 _   https://github.com/processing/processing/issues/3575
 
