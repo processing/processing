@@ -12,6 +12,9 @@ X Library names not showing up correctly ("pdf" instead of "PDF Export")
 X   https://github.com/processing/processing/issues/3574
 X Contributed examples not using the 'name' field from their properties file
 X   seen in Dan's contrib examples
+X Include name of sketch when asking user “Save sketch before closing?”
+X   do i18n changes for OS X and other platforms
+X   https://github.com/processing/processing/issues/3418
 _ Invalid code signature on OS X
 _   https://github.com/processing/processing/issues/3575
 
