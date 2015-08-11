@@ -4802,7 +4802,16 @@ public class PApplet implements PConstants {
   static public final float map(float value,
                                 float start1, float stop1,
                                 float start2, float stop2) {
-    return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+    float outgoing =
+      start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+    if (!Float.isFinite(outgoing)) {
+      final String msg =
+        String.format("map(%s, %s, %s, %s, %s) called, " +
+                      "which returns NaN or infinity",
+                      nf(value), nf(start1), nf(stop1), nf(start2), nf(stop2));
+      PGraphics.showWarning(msg);
+    }
+    return outgoing;
   }
 
 
@@ -9194,6 +9203,24 @@ public class PApplet implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // INT NUMBER FORMATTING
+
+
+  static public String nf(float num) {
+    int inum = (int) num;
+    if (num == inum) {
+      return str(inum);
+    }
+    return str(num);
+  }
+
+
+  static public String[] nf(float[] num) {
+    String[] outgoing = new String[num.length];
+    for (int i = 0; i < num.length; i++) {
+      outgoing[i] = nf(num[i]);
+    }
+    return outgoing;
+  }
 
 
   /**
