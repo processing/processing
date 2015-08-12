@@ -1,4 +1,10 @@
 0242 (3.0b4)
+X Fix NullPointerException with some sketches that have no size() command
+X   https://github.com/processing/processing/issues/3585
+
+gsoc
+X Second round of arm patches (v5)
+X   https://github.com/processing/processing/pull/3583
 
 
 known issues
@@ -8,6 +14,8 @@ _   but anything else reports "font sadness" b/c it's using the system JRE
 _   https://github.com/processing/processing/issues/3543
 _   move to javapackager or another option?
 _   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-application
+_ P2D and P3D windows behave strangely when larger than the screen size
+_   https://github.com/processing/processing/issues/3401
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 

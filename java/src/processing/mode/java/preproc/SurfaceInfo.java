@@ -29,8 +29,8 @@ import processing.data.StringList;
 
 
 public class SurfaceInfo {
-//  String statement;
-  StringList statements;
+  StringList statements = new StringList();
+
   String width;
   String height;
   String renderer;
@@ -119,9 +119,6 @@ public class SurfaceInfo {
    * matched against and removed from the size() method in the code.
    */
   public void addStatement(String stmt) {
-    if (statements == null) {
-      statements = new StringList();
-    }
     statements.append(stmt);
   }
 
@@ -133,7 +130,7 @@ public class SurfaceInfo {
 
   /** @return true if there's code to be inserted for a settings() method. */
   public boolean hasSettings() {
-    return statements != null;
+    return statements.size() != 0;
   }
 
 

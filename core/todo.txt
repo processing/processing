@@ -2,6 +2,8 @@
 
 
 opengl
+X filter(PShader) broken in HDPI mode
+X   https://github.com/processing/processing/issues/3577
 _ Use PBOs for async texture copy
 _   https://github.com/processing/processing/issues/3569
 _ filter(PShader) broken in HiDPI mode
