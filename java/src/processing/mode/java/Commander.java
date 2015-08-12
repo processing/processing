@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2012-15 The Processing Foundation
   Copyright (c) 2008-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -35,7 +36,6 @@ import processing.app.SketchException;
 import processing.app.Util;
 import processing.app.contrib.ModeContribution;
 import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.mode.java.runner.Runner;
 
 
@@ -96,8 +96,7 @@ public class Commander implements RunnerListener {
     boolean force = false;  // replace that no good output folder
 //    String preferencesPath = null;
     int platform = PApplet.platform; // default to this platform
-//    int platformBits = 0;
-    int platformBits = Base.getNativeBits();
+//    int platformBits = Base.getNativeBits();
     int task = HELP;
     boolean embedJava = true;
 
@@ -153,7 +152,7 @@ public class Commander implements RunnerListener {
         }
 
       } else if (arg.startsWith(bitsArg)) {
-        complainAndQuit("The --bits option has been removed from Processing 2.1.", false);
+        complainAndQuit("The --bits option has been removed.", false);
 //        String bitsStr = arg.substring(bitsArg.length());
 //        if (bitsStr.equals("32")) {
 //          platformBits = 32;
