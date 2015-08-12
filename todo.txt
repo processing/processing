@@ -3,10 +3,16 @@ X Fix NullPointerException with some sketches that have no size() command
 X   https://github.com/processing/processing/issues/3585
 X Invalid OS X code signature
 X   https://github.com/processing/processing/issues/3575
+_ canceling the "create folder, move sketch, and continue?" will cause crash
+_   throws an NPE and then forces a quit
 
 gsoc
 X Second round of arm patches (v5)
 X   https://github.com/processing/processing/pull/3583
+
+earlier
+X closing the color selector makes things freeze (only Linux and Windows?)
+X   https://github.com/processing/processing/issues/2381
 
 
 known issues
@@ -189,8 +195,6 @@ _ disable the Export button if no platforms selected on Export to Application
 help me
 _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
-_ closing the color selector makes things freeze (only Linux and Windows?)
-_   https://github.com/processing/processing/issues/2381
 _ problems with non-US keyboards and some shortcuts
 _   https://github.com/processing/processing/issues/2199
 _ clean up 'ant doc' target to remove warnings

@@ -1,13 +1,15 @@
 0242 core (3.0b4)
 
+earlier
+X are we clear on sketchPath() for OS X?
+X   working dir (user.dir?) returns home dir, not app dir in Oracle Java
+X   could add -Dapp.root=$APP_ROOT and get via System.getProperty("app.root")
+X   https://github.com/processing/processing/issues/2181
 
 opengl
 X filter(PShader) broken in HDPI mode
 X   https://github.com/processing/processing/issues/3577
-_ Use PBOs for async texture copy
-_   https://github.com/processing/processing/issues/3569
-_ filter(PShader) broken in HiDPI mode
-_   https://github.com/processing/processing/issues/3577
+
 
 docs
 _ note that full screen and present are now different
@@ -30,9 +32,6 @@ _   use the BufferStrategy directly from the Frame object?
 _     might fix performance issues w/ Presentation mode
 _ sketch placement (window insets) not properly set on Linux
 _   https://github.com/processing/processing/issues/2063
-_ are we clear on sketchPath() for OS X?
-_   working dir (user.dir?) returns home dir, not app dir in Oracle Java
-_   could add -Dapp.root=$APP_ROOT and get via System.getProperty("app.root")
 
 
 javafx
@@ -71,6 +70,10 @@ _   https://www.linkedin.com/pulse/oracle-just-removed-javafx-support-arm-jan-sn
 
 
 opengl
+_ Use PBOs for async texture copy
+_   https://github.com/processing/processing/issues/3569
+_ filter(PShader) broken in HiDPI mode
+_   https://github.com/processing/processing/issues/3577
 _ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
 _ window loses focus after maximizing
 _   https://github.com/processing/processing/issues/3339
