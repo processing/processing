@@ -1027,8 +1027,10 @@ public abstract class PGL {
    */
   public void drawTexture(int target, int id, int width, int height,
                           int X0, int Y0, int X1, int Y1) {
+    // If a texture is drawing on a viewport of the same size as its resolution,
+    // the pixel factor is 1:1, so we override the surface's pixel factor.
     drawTexture(target, id, width, height,
-                0, 0, width, height,
+                0, 0, width, height, 1,
                 X0, Y0, X1, Y1,
                 X0, Y0, X1, Y1);
   }
@@ -1038,17 +1040,29 @@ public abstract class PGL {
    * Not an approved function, this will change or be removed in the future.
    */
   public void drawTexture(int target, int id,int texW, int texH,
-                          int viewX, int viewY, int scrW, int scrH,
+                          int viewX, int viewY, int viewW, int viewH,
+                          int texX0, int texY0, int texX1, int texY1,
+                          int scrX0, int scrY0, int scrX1, int scrY1) {
+    int viewF = (int)pg.getPixelScale();
+    drawTexture(target, id, texW, texH,
+                viewX, viewY, viewW, viewH, viewF,
+                texX0, texY0, texX1, texY1,
+                scrX0, scrY0, scrX1, scrY1);
+  }
+
+
+  public void drawTexture(int target, int id,int texW, int texH,
+                          int viewX, int viewY, int viewW, int viewH, int viewF,
                           int texX0, int texY0, int texX1, int texY1,
                           int scrX0, int scrY0, int scrX1, int scrY1) {
     if (target == TEXTURE_2D) {
       drawTexture2D(id, texW, texH,
-                    viewX, viewY, scrW, scrH,
+                    viewX, viewY, viewW, viewH, viewF,
                     texX0, texY0, texX1, texY1,
                     scrX0, scrY0, scrX1, scrY1);
     } else if (target == TEXTURE_RECTANGLE) {
       drawTextureRect(id, texW, texH,
-                      viewX, viewY, scrW, scrH,
+                      viewX, viewY, viewW, viewH, viewF,
                       texX0, texY0, texX1, texY1,
                       scrX0, scrY0, scrX1, scrY1);
     }
@@ -1089,7 +1103,7 @@ public abstract class PGL {
 
 
   protected void drawTexture2D(int id, int texW, int texH,
-                               int viewX, int viewY, int scrW, int scrH,
+                               int viewX, int viewY, int viewW, int viewH, int viewF,
                                int texX0, int texY0, int texX1, int texY1,
                                int scrX0, int scrY0, int scrX1, int scrY1) {
     PGL ppgl = initTex2DShader();
@@ -1109,7 +1123,7 @@ public abstract class PGL {
       // Making sure that the viewport matches the provided screen dimensions
       viewBuffer.rewind();
       getIntegerv(VIEWPORT, viewBuffer);
-      viewport(viewX, viewY, scrW, scrH);
+      viewportImpl(viewF * viewX, viewF * viewY, viewF * viewW, viewF * viewH);
 
       useProgram(ppgl.tex2DShaderProgram);
 
@@ -1119,23 +1133,23 @@ public abstract class PGL {
       // Vertex coordinates of the textured quad are specified
       // in normalized screen space (-1, 1):
       // Corner 1
-      texCoords[ 0] = 2 * (float)scrX0 / scrW - 1;
-      texCoords[ 1] = 2 * (float)scrY0 / scrH - 1;
+      texCoords[ 0] = 2 * (float)scrX0 / viewW - 1;
+      texCoords[ 1] = 2 * (float)scrY0 / viewH - 1;
       texCoords[ 2] = (float)texX0 / texW;
       texCoords[ 3] = (float)texY0 / texH;
       // Corner 2
-      texCoords[ 4] = 2 * (float)scrX1 / scrW - 1;
-      texCoords[ 5] = 2 * (float)scrY0 / scrH - 1;
+      texCoords[ 4] = 2 * (float)scrX1 / viewW - 1;
+      texCoords[ 5] = 2 * (float)scrY0 / viewH - 1;
       texCoords[ 6] = (float)texX1 / texW;
       texCoords[ 7] = (float)texY0 / texH;
       // Corner 3
-      texCoords[ 8] = 2 * (float)scrX0 / scrW - 1;
-      texCoords[ 9] = 2 * (float)scrY1 / scrH - 1;
+      texCoords[ 8] = 2 * (float)scrX0 / viewW - 1;
+      texCoords[ 9] = 2 * (float)scrY1 / viewH - 1;
       texCoords[10] = (float)texX0 / texW;
       texCoords[11] = (float)texY1 / texH;
       // Corner 4
-      texCoords[12] = 2 * (float)scrX1 / scrW - 1;
-      texCoords[13] = 2 * (float)scrY1 / scrH - 1;
+      texCoords[12] = 2 * (float)scrX1 / viewW - 1;
+      texCoords[13] = 2 * (float)scrY1 / viewH - 1;
       texCoords[14] = (float)texX1 / texW;
       texCoords[15] = (float)texY1 / texH;
 
@@ -1179,8 +1193,8 @@ public abstract class PGL {
       }
       depthMask(depthMask);
 
-      viewport(viewBuffer.get(0), viewBuffer.get(1),
-               viewBuffer.get(2), viewBuffer.get(3));
+      viewportImpl(viewBuffer.get(0), viewBuffer.get(1),
+                   viewBuffer.get(2), viewBuffer.get(3));
     }
   }
 
@@ -1216,7 +1230,7 @@ public abstract class PGL {
 
 
   protected void drawTextureRect(int id, int texW, int texH,
-                                 int viewX, int viewY, int scrW, int scrH,
+                                 int viewX, int viewY, int viewW, int viewH, int viewF,
                                  int texX0, int texY0, int texX1, int texY1,
                                  int scrX0, int scrY0, int scrX1, int scrY1) {
     PGL ppgl = initTexRectShader();
@@ -1240,7 +1254,7 @@ public abstract class PGL {
       // Making sure that the viewport matches the provided screen dimensions
       viewBuffer.rewind();
       getIntegerv(VIEWPORT, viewBuffer);
-      viewport(viewX, viewY, scrW, scrH);
+      viewportImpl(viewF * viewX, viewF * viewY, viewF * viewW, viewF * viewH);
 
       useProgram(ppgl.texRectShaderProgram);
 
@@ -1250,23 +1264,23 @@ public abstract class PGL {
       // Vertex coordinates of the textured quad are specified
       // in normalized screen space (-1, 1):
       // Corner 1
-      texCoords[ 0] = 2 * (float)scrX0 / scrW - 1;
-      texCoords[ 1] = 2 * (float)scrY0 / scrH - 1;
+      texCoords[ 0] = 2 * (float)scrX0 / viewW - 1;
+      texCoords[ 1] = 2 * (float)scrY0 / viewH - 1;
       texCoords[ 2] = texX0;
       texCoords[ 3] = texY0;
       // Corner 2
-      texCoords[ 4] = 2 * (float)scrX1 / scrW - 1;
-      texCoords[ 5] = 2 * (float)scrY0 / scrH - 1;
+      texCoords[ 4] = 2 * (float)scrX1 / viewW - 1;
+      texCoords[ 5] = 2 * (float)scrY0 / viewH - 1;
       texCoords[ 6] = texX1;
       texCoords[ 7] = texY0;
       // Corner 3
-      texCoords[ 8] = 2 * (float)scrX0 / scrW - 1;
-      texCoords[ 9] = 2 * (float)scrY1 / scrH - 1;
+      texCoords[ 8] = 2 * (float)scrX0 / viewW - 1;
+      texCoords[ 9] = 2 * (float)scrY1 / viewH - 1;
       texCoords[10] = texX0;
       texCoords[11] = texY1;
       // Corner 4
-      texCoords[12] = 2 * (float)scrX1 / scrW - 1;
-      texCoords[13] = 2 * (float)scrY1 / scrH - 1;
+      texCoords[12] = 2 * (float)scrX1 / viewW - 1;
+      texCoords[13] = 2 * (float)scrY1 / viewH - 1;
       texCoords[14] = texX1;
       texCoords[15] = texY1;
 
@@ -1310,8 +1324,8 @@ public abstract class PGL {
       }
       depthMask(depthMask);
 
-      viewport(viewBuffer.get(0), viewBuffer.get(1),
-               viewBuffer.get(2), viewBuffer.get(3));
+      viewportImpl(viewBuffer.get(0), viewBuffer.get(1),
+                   viewBuffer.get(2), viewBuffer.get(3));
     }
   }
 
@@ -2706,6 +2720,7 @@ public abstract class PGL {
 
   public abstract void depthRangef(float n, float f);
   public abstract void viewport(int x, int y, int w, int h);
+  protected abstract void viewportImpl(int x, int y, int w, int h);
 
   //////////////////////////////////////////////////////////////////////////////
 
