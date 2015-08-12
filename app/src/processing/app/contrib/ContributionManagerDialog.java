@@ -44,7 +44,10 @@ import processing.app.ui.Toolkit;
  */
 public class ContributionManagerDialog {
   static final String ANY_CATEGORY = Language.text("contrib.all");
-
+  static final int TAB_WIDTH = 100;
+  static final int TAB_HEIGHT = 34;
+  static final int AUTHOR_WIDTH = 150;
+  static final int STATUS_WIDTH = 60; 
   JFrame dialog;
   JTabbedPane tabbedPane;
   String title;
@@ -62,6 +65,12 @@ public class ContributionManagerDialog {
   JLabel numberLabel;
 
   ContributionListing contributionListing = ContributionListing.getInstance();
+
+  private JLabel[] tabLabels;
+
+  private JPanel updateTabPanel;
+
+  private JLabel updateTabLabel;
 
 
   public ContributionManagerDialog() {
@@ -112,6 +121,13 @@ public class ContributionManagerDialog {
       makeFrame(editor);
       tabbedPane.setSelectedIndex(index); //done before as downloadAndUpdateContributionListing() requires the current selected tab
       downloadAndUpdateContributionListing(editor.getBase());
+      if(index != 4){
+        tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setBackground(Color.WHITE);
+        tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setForeground(Color.BLACK);
+      }else{
+        updateTabPanel.setBackground(Color.WHITE);
+        updateTabLabel.setForeground(Color.BLACK);
+      }
     }
     tabbedPane.setSelectedIndex(index);
     dialog.setVisible(true);
@@ -120,7 +136,6 @@ public class ContributionManagerDialog {
 
   public void makeFrame(final Editor editor) {
     dialog = new JFrame(title);
-    String[] tabTitles = { "Tools","Libraries","Modes","Examples","Updates"};
     tabbedPane = new JTabbedPane();
 
     makeAndShowTab(false, true);
@@ -142,47 +157,30 @@ public class ContributionManagerDialog {
     tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
     tabbedPane.setUI(new SpacedTabbedPaneUI());
-    tabbedPane.setBackground(Color.WHITE);
+    tabbedPane.setBackground(new Color(0x132638));
     tabbedPane.setOpaque(true);
-    tabbedPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+//    tabbedPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
-
-    JPanel updateTabPanel = new JPanel(true);
-    JLabel updateTabLabel = new JLabel("Update");
-    numberLabel.setVerticalTextPosition(SwingConstants.CENTER);
-    numberLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-    updateTabPanel.setOpaque(false);
-    updateTabPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
-      .createMatteBorder(0, 2, 0, 0, Color.BLACK), BorderFactory
-      .createEmptyBorder(4, 4, 4, 4)));
-    tabbedPane.setTabComponentAt(4, updateTabPanel);
-
-    JLabel tabLabels[] = new JLabel[4];
-    for(int i = 0 ; i < tabLabels.length;i++){
-      tabLabels[i] = new JLabel(tabTitles[i]);
-      tabLabels[i]
-        .setBorder(BorderFactory.createCompoundBorder(BorderFactory
-          .createMatteBorder(0, (i == 0 ? 0 : 2), 0, (i == 3 ? 2 : 0),
-                             Color.BLACK), BorderFactory
-          .createEmptyBorder(4, 4, 4, 4)));
-      tabbedPane.setTabComponentAt(i, tabLabels[i]);
-    }
-
-    GroupLayout tabLayout = new GroupLayout(updateTabPanel);
-    tabLayout.setAutoCreateGaps(true);
-    updateTabPanel.setLayout(tabLayout);
-    tabLayout.setHorizontalGroup(tabLayout
-      .createSequentialGroup()
-      .addComponent(numberLabel)
-                  .addComponent(updateTabLabel));
-    tabLayout.setVerticalGroup(tabLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-     .addComponent(numberLabel)
-      .addComponent(updateTabLabel));
+    makeAndSetTabComponents();
 
     tabbedPane.addChangeListener(new ChangeListener() {
 
       @Override
       public void stateChanged(ChangeEvent e) {
+        for(int i = 0 ; i < 4; i++){
+          tabLabels[i].setBackground(new Color(0x2d4251));
+          tabLabels[i].setForeground(Color.WHITE);
+        }
+        updateTabPanel.setBackground(new Color(0x2d4251));
+        updateTabLabel.setForeground(Color.WHITE);
+        int currentIndex = tabbedPane.getSelectedIndex();
+        if(currentIndex != 4){
+          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setBackground(Color.WHITE);
+          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setForeground(Color.BLACK);
+        }else{
+          updateTabPanel.setBackground(Color.WHITE);
+          updateTabLabel.setForeground(Color.BLACK);
+        }
 //        // When the tab is changed update status to the current selected panel
 //        ContributionPanel currentPanel = getActiveTab().contributionListPanel
 //          .getSelectedPanel();
@@ -249,6 +247,57 @@ public class ContributionManagerDialog {
     dialog.setLocationRelativeTo(null);
   }
 
+              
+  private void makeAndSetTabComponents() {
+    
+    String[] tabTitles = { "Tools","Libraries","Modes","Examples","Updates"};
+    tabLabels = new JLabel[4];
+    
+    for(int i = 0 ; i < 4; i++){
+      tabLabels[i] = new JLabel(tabTitles[i]);
+      tabLabels[i].setForeground(Color.WHITE);
+      tabLabels[i].setBackground(new Color(0x2d4251));
+      tabLabels[i].setOpaque(true);
+      tabLabels[i].setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
+      tabLabels[i].setPreferredSize(new Dimension(TAB_WIDTH, TAB_HEIGHT));
+      tabLabels[i].setHorizontalAlignment(SwingConstants.CENTER);
+      tabbedPane.setTabComponentAt(i, tabLabels[i]);
+    }
+    
+    updateTabPanel = new JPanel(true);
+    updateTabLabel = new JLabel("Updates");
+    numberLabel.setVerticalTextPosition(SwingConstants.CENTER);
+    numberLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+    updateTabPanel.setOpaque(true);
+    updateTabPanel.setBackground(new Color(0x2d4251));
+    updateTabLabel.setForeground(Color.WHITE);
+    updateTabPanel.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
+    updateTabPanel.setPreferredSize(new Dimension(TAB_WIDTH, TAB_HEIGHT));
+//    updateTabPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
+//      .createMatteBorder(0, 2, 0, 0, Color.BLACK), BorderFactory
+//      .createEmptyBorder(4, 4, 4, 4)));
+    tabbedPane.setTabComponentAt(4, updateTabPanel);
+
+//    JLabel tabLabels[] = new JLabel[4];
+//    for(int i = 0 ; i < tabLabels.length;i++){
+//      tabLabels[i] = new JLabel(tabTitles[i]);
+//      tabLabels[i]
+//        .setBorder(BorderFactory.createCompoundBorder(BorderFactory
+//          .createMatteBorder(0, (i == 0 ? 0 : 2), 0, (i == 3 ? 2 : 0),
+//                             Color.BLACK), BorderFactory
+//          .createEmptyBorder(4, 4, 4, 4)));
+//      tabbedPane.setTabComponentAt(i, tabLabels[i]);
+//    }
+
+    GroupLayout tabLayout = new GroupLayout(updateTabPanel);
+    tabLayout.setAutoCreateGaps(true);
+    updateTabPanel.setLayout(tabLayout);
+    tabLayout.setHorizontalGroup(tabLayout.createSequentialGroup()
+      .addComponent(updateTabLabel).addComponent(numberLabel));
+    tabLayout.setVerticalGroup(tabLayout
+      .createParallelGroup(GroupLayout.Alignment.CENTER)
+      .addComponent(numberLabel).addComponent(updateTabLabel));
+  }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -256,17 +305,46 @@ public class ContributionManagerDialog {
   public class SpacedTabbedPaneUI extends BasicTabbedPaneUI {
     @Override
     protected void installDefaults() {
-      UIManager.put("TabbedPane.selected", Color.WHITE);
+      UIManager.put("TabbedPane.selected", Color.BLACK);
+      UIManager.put("TabbedPane.tabsOverlapBorder" , true);
       super.installDefaults();
-      highlight = Color.WHITE;
-      lightHighlight = Color.WHITE;
-      shadow = Color.WHITE;
-      darkShadow = Color.WHITE;
-      focus = Color.LIGHT_GRAY;
+      highlight = Color.RED;
+      lightHighlight = Color.GRAY;
+      shadow = Color.GREEN;
+      darkShadow = Color.BLACK;
+      focus = Color.YELLOW;
       tabInsets = new Insets(0, 0, 0, 0);
       contentBorderInsets = new Insets(0, 0, 0, 0);
       tabAreaInsets = new Insets(0, 0, 0, 0);
       selectedTabPadInsets = new Insets(0, 0, 0, 0);
+    }
+//    @Override
+//    protected int getTabLabelShiftX(int tabPlacement, int tabIndex,
+//                                    boolean isSelected) {
+//      return 0;
+//    }
+//    @Override
+//    protected int getTabLabelShiftY(int tabPlacement, int tabIndex,
+//                                    boolean isSelected) {
+//      return 3;
+//    }
+    @Override
+    protected void paintTabBackground(Graphics g, int tabPlacement,
+                                      int tabIndex, int x, int y, int w, int h,
+                                      boolean isSelected) {
+      return;
+    }
+    @Override
+    protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex,
+                                  int x, int y, int w, int h, boolean isSelected) {
+      return;
+    }
+    @Override
+    protected void paintFocusIndicator(Graphics g, int tabPlacement,
+                                       Rectangle[] rects, int tabIndex,
+                                       Rectangle iconRect, Rectangle textRect,
+                                       boolean isSelected) {
+      return;
     }
 
     @Override
@@ -281,13 +359,11 @@ public class ContributionManagerDialog {
         @Override
         protected void calculateTabRects(int tabPlacement, int tabCount) {
           super.calculateTabRects(tabPlacement, tabCount);
-          for (int i = 0; i < rects.length; i++) {
-            rects[i].y -= 10;
-            rects[i].height += 15;
-            if (i == 4) {
-              rects[i].x = tabbedPane.getWidth() - rects[i].width - 2;
-            }
-          }
+          rects[0].x -= 2;
+          rects[1].x -= 1;
+          rects[2].x -= 1;
+          rects[3].x -= 1;
+          rects[4].x = tabbedPane.getWidth() - rects[4].width + 1;
         }
       };
     }
@@ -305,7 +381,8 @@ public class ContributionManagerDialog {
     layout.setHorizontalGroup(layout.createParallelGroup().addComponent(tabbedPane));
     layout.setVerticalGroup(layout.createParallelGroup().addComponent(tabbedPane));
     layout.setHonorsVisibility(tabbedPane, true);
-    dialog.getContentPane().setBackground(Color.WHITE);
+    //TODO set color here
+    dialog.getContentPane().setBackground(new Color(0x132638));
     dialog.validate();
     dialog.repaint();
   }

@@ -74,7 +74,7 @@ public class UpdateContributionTab extends ContributionTab {
     layout.setHonorsVisibility(contributionListPanel, false);
 
     panel.setBackground(Color.WHITE);
-    panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+//    panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
   }
 
@@ -108,8 +108,8 @@ public class UpdateContributionTab extends ContributionTab {
                 TableCellRenderer renderer, int row, int column) {
           Component c = super.prepareRenderer(renderer, row, column);
           String title = (String) getValueAt(row, 1);
-          if (title.equals("<html><i>Library</i></html>") || title.equals("Tools")
-            || title.equals("Modes") || title.equals("Examples")) {
+          if (title.equals("<html><i>Library</i></html>") || title.equals("<html><i>Tools</i></html>")
+            || title.equals("<html><i>Modes</i></html>") || title.equals("<html><i>Examples</i></html>")) {
             ((JComponent) c).setBorder(BorderFactory
               .createMatteBorder(row == 0 ? 0 : 2, 0, 2, 0, Color.BLACK));
           }
@@ -119,7 +119,8 @@ public class UpdateContributionTab extends ContributionTab {
         public void changeSelection(int rowIndex, int columnIndex,
                                     boolean toggle, boolean extend) {
           String title = (String) getValueAt(rowIndex, 1);
-          if(title.equals("<html><i>Library</i></html>")){
+          if(title.equals(title.equals("<html><i>Library</i></html>") || title.equals("<html><i>Tools</i></html>")
+                          || title.equals("<html><i>Modes</i></html>") || title.equals("<html><i>Examples</i></html>"))){
             return;
           }
           super.changeSelection(rowIndex, columnIndex, toggle, extend);
@@ -157,8 +158,8 @@ public class UpdateContributionTab extends ContributionTab {
             setForeground(tableHeader.getForeground());
           }
           setIcon(getIcon(table, column));
-          setBackground(Color.WHITE);
-          setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, Color.BLACK));
+          setBackground(Color.LIGHT_GRAY);
+//          setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, Color.BLACK));
           return this;
         }
       });
@@ -280,10 +281,9 @@ public class UpdateContributionTab extends ContributionTab {
     public UpdateStatusPanel(int width, final ContributionTab contributionTab) {
       super();
       updateButton = new JButton("Update All");
-      updateButton.setContentAreaFilled(false);
-      updateButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
+//      updateButton.setContentAreaFilled(false);
+//      updateButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
       updateButton.addActionListener(new ActionListener() {
-
         @Override
         public void actionPerformed(ActionEvent e) {
           // TODO Auto-generated method stub
@@ -292,8 +292,8 @@ public class UpdateContributionTab extends ContributionTab {
           }
         }
       });
-      this.setBackground(Color.WHITE);
-      this.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
+      this.setBackground(Color.LIGHT_GRAY);
+//      this.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
       layout = new GroupLayout(this);
       this.setLayout(layout);
 

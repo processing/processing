@@ -28,6 +28,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -38,6 +40,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import processing.app.Base;
+import processing.app.ui.Toolkit;
 
 
 class StatusPanel extends JPanel {
@@ -51,15 +54,19 @@ class StatusPanel extends JPanel {
   JButton updateButton;
   JButton removeButton;
   GroupLayout layout;
+  JLabel iconLabel;
 
   ContributionListing contributionListing = ContributionListing.getInstance();
   ContributionTab contributionTab;
 
   public StatusPanel(int width, final ContributionTab contributionTab) {
     super();
-    setBackground(Color.WHITE);
-    setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
+    setBackground(Color.LIGHT_GRAY);
+//    setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
     this.contributionTab  = contributionTab;
+    
+    iconLabel = new JLabel();
+    
     label = new JTextPane();
     label.setEditable(false);
     label.setOpaque(false);
@@ -75,9 +82,10 @@ class StatusPanel extends JPanel {
         }
       }
     });
-    installButton = new JButton("Install");
-    installButton.setContentAreaFilled(false);
-    installButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
+    installButton = new JButton("Install", Toolkit.getLibIcon("manager/update.png"));
+    installButton.setHorizontalAlignment(SwingConstants.LEFT);
+//    installButton.setContentAreaFilled(false);
+//    installButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     installButton.addActionListener(new ActionListener() {
 
       @Override
@@ -92,9 +100,11 @@ class StatusPanel extends JPanel {
     progressBarPanel.setLayout(new BorderLayout());
     progressBarPanel.setOpaque(false);
     updateLabel = new JLabel(" ");
-    updateButton = new JButton("Update");
-    updateButton.setContentAreaFilled(false);
-    updateButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
+    updateButton = new JButton("Update", Toolkit.getLibIcon("manager/update.png"));
+    updateButton.setHorizontalAlignment(SwingConstants.LEFT);
+//    updateButton.setAlignmentX(SwingConstants.LEFT);
+//    updateButton.setContentAreaFilled(false);
+//    updateButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     updateButton.addActionListener(new ActionListener() {
 
       @Override
@@ -106,9 +116,10 @@ class StatusPanel extends JPanel {
       }
     });
 
-    removeButton = new JButton("Remove");
-    removeButton.setContentAreaFilled(false);
-    removeButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
+    removeButton = new JButton("Remove", Toolkit.getLibIcon("manager/remove.png"));
+    removeButton.setHorizontalAlignment(SwingConstants.LEFT);
+//    removeButton.setContentAreaFilled(false);
+//    removeButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     removeButton.addActionListener(new ActionListener() {
 
       @Override
@@ -129,6 +140,8 @@ class StatusPanel extends JPanel {
 
     layout.setHorizontalGroup(layout
       .createSequentialGroup()
+      .addComponent(iconLabel, 50, 50, 50)
+      .addGap(0)
       .addComponent(label, labelWidth, labelWidth, labelWidth)
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
@@ -140,7 +153,8 @@ class StatusPanel extends JPanel {
                   .addComponent(removeButton)));
 
     layout.setVerticalGroup(layout
-      .createParallelGroup()
+      .createParallelGroup(GroupLayout.Alignment.LEADING)
+      .addComponent(iconLabel)
       .addComponent(label)
       .addGroup(layout
                   .createSequentialGroup()
@@ -198,6 +212,12 @@ class StatusPanel extends JPanel {
 
     progressBarPanel.removeAll();
 
+    if (panel.getContrib().isSpecial()) {
+      Icon contribIcon = new ImageIcon(Toolkit.getLibImage("/icons/pde-48.png"));
+      iconLabel.setIcon(contribIcon);
+    } else {
+      iconLabel.setIcon(null);
+    }
     label.setText(panel.description.toString());
 
     updateButton.setEnabled(contributionListing.hasDownloadedLatestList()

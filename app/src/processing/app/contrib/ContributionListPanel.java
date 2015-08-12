@@ -103,7 +103,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           return c;
       }
     };
-    String[] colName = { "Status", "Name", "Author" };
+    // There is a space before Status
+    String[] colName = { " Status", "Name", "Author" };
     dtm.setColumnIdentifiers(colName);
     JScrollPane scrollPane = new JScrollPane(table);
     table.setFillsViewportHeight(true);
@@ -113,6 +114,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     table.setRowMargin(6);
     table.getColumnModel().setColumnMargin(-1);
     table.getColumnModel().getColumn(0).setMaxWidth(60);
+    table.getColumnModel().getColumn(2).setMinWidth(ContributionManagerDialog.AUTHOR_WIDTH);
+    table.getColumnModel().getColumn(2).setMaxWidth(ContributionManagerDialog.AUTHOR_WIDTH);
     table.setShowGrid(false);
     table.setColumnSelectionAllowed(false);
     table.setCellSelectionEnabled(false);
@@ -190,10 +193,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         setForeground(tableHeader.getForeground());
       }
       setIcon(getIcon(table, column));
-      setBackground(Color.WHITE);
-      setBorder(BorderFactory.createCompoundBorder(BorderFactory
-        .createMatteBorder(2, 0, 2, 0, Color.BLACK), BorderFactory
-        .createEmptyBorder(0, (column == 2 ? 17 : 0), 0, 0)));
+      //TODO: put correct Color here 
+      setBackground(Color.LIGHT_GRAY);
+      setBorder(null);
       return this;
     }
 

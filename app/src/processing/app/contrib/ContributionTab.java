@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -203,20 +202,24 @@ public class ContributionTab {
                   .addComponent(filterLabel)
                   .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                   .addComponent(filterField)
-                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+//                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                   .addComponent(categoryChooser,
-                                categoryChooser.getPreferredSize().width + 20,
-                                categoryChooser.getPreferredSize().width + 20,
-                                categoryChooser.getPreferredSize().width + 20)
+                                ContributionManagerDialog.AUTHOR_WIDTH,
+                                ContributionManagerDialog.AUTHOR_WIDTH,
+                                ContributionManagerDialog.AUTHOR_WIDTH)
                   .addContainerGap()).addComponent(loaderLabel)
       .addComponent(contributionListPanel).addComponent(errorPanel)
       .addComponent(statusPanel));
 
     layout.setVerticalGroup(layout
       .createSequentialGroup()
+      .addContainerGap()
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(filterLabel).addComponent(categoryChooser)
                   .addComponent(filterField))
+      .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)           
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(loaderLabel)
                   .addComponent(contributionListPanel))
@@ -227,7 +230,7 @@ public class ContributionTab {
     layout.setHonorsVisibility(contributionListPanel, false);
 
     panel.setBackground(Color.WHITE);
-    panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+    panel.setBorder(null);
  }
 
 
@@ -264,7 +267,7 @@ public class ContributionTab {
     layout.setAutoCreateGaps(true);
     layout.setAutoCreateContainerGaps(true);
     errorPanel.setLayout(layout);
-    errorPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
+//    errorPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
     errorMessage = new JTextPane();
     errorMessage.setEditable(false);
     errorMessage.setContentType("text/html");
@@ -290,8 +293,8 @@ public class ContributionTab {
       }
     });
     tryAgainButton = new JButton("Try Again");
-    tryAgainButton.setContentAreaFilled(false);
-    tryAgainButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
+//    tryAgainButton.setContentAreaFilled(false);
+//    tryAgainButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     tryAgainButton.addActionListener(new ActionListener() {
 
       @Override
