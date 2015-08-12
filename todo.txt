@@ -1,6 +1,8 @@
 0242 (3.0b4)
 X Fix NullPointerException with some sketches that have no size() command
 X   https://github.com/processing/processing/issues/3585
+X Invalid OS X code signature
+X   https://github.com/processing/processing/issues/3575
 
 gsoc
 X Second round of arm patches (v5)
@@ -432,6 +434,7 @@ _ two-tiered dialogs for everything - use big font/little font style throughout
 _   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
+_   also the "some features will be disabled" with .java tabs
 _   https://github.com/processing/processing/issues/46
 _ add "don't warn me about this" for sketch renaming
 _   make sure renamed version doesn't exist already
