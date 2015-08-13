@@ -26,7 +26,10 @@ X Comment/Uncomment should ignore leading whitespace
 X   https://github.com/processing/processing/issues/1961
 X Export unsaved sketch > agree to save prompt > export doesn't finish
 X   https://github.com/processing/processing/issues/2724
-
+X Add disconnectEvent() to Server 
+X   https://github.com/processing/processing/issues/2133
+X False positive for mixing active/static mode in Tweak Mode 3.0 alpha 5
+X   https://github.com/processing/processing/issues/3140
 
 known issues
 _ launch4j doesn't work from folders with non-native charsets
