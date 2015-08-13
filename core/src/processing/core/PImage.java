@@ -1967,8 +1967,8 @@ public class PImage implements PConstants, Cloneable {
       destY1 = 0;
     }
 
-    destW = low(destW, screenW - destX1);
-    destH = low(destH, screenH - destY1);
+    destW = min(destW, screenW - destX1);
+    destH = min(destH, screenH - destY1);
 
     int destOffset = destY1 * screenW + destX1;
     srcBuffer = img.pixels;
@@ -2418,7 +2418,7 @@ public class PImage implements PConstants, Cloneable {
     fracV = srcYOffset & PREC_MAXVAL;
     ifV = PREC_MAXVAL - fracV + 1;
     v1 = (srcYOffset >> PRECISIONB) * iw;
-    v2 = low((srcYOffset >> PRECISIONB) + 1, ih1) * iw;
+    v2 = min((srcYOffset >> PRECISIONB) + 1, ih1) * iw;
   }
 
 
@@ -2430,7 +2430,7 @@ public class PImage implements PConstants, Cloneable {
     ur = ifV - ul;
     lr = PREC_MAXVAL + 1 - ul - ll - ur;
     u1 = (sX >> PRECISIONB);
-    u2 = low(u1 + 1, iw1);
+    u2 = min(u1 + 1, iw1);
 
     // get color values of the 4 neighbouring texels
     cUL = srcBuffer[v1 + u1];
@@ -2464,12 +2464,12 @@ public class PImage implements PConstants, Cloneable {
   // internal blending methods
 
 
-  private static int low(int a, int b) {
+  private static int min(int a, int b) {
     return (a < b) ? a : b;
   }
 
 
-  private static int high(int a, int b) {
+  private static int max(int a, int b) {
     return (a > b) ? a : b;
   }
 
@@ -2578,7 +2578,7 @@ int testFunction(int dst, int src) {
     int s_a = a + (a >= 0x7F ? 1 : 0);
     int d_a = 0x100 - s_a;
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
+    return min((dst >>> 24) + a, 0xFF) << 24 |
         ((dst & RB_MASK) * d_a + (src & RB_MASK) * s_a) >>> 8 & RB_MASK |
         ((dst & GN_MASK) * d_a + (src & GN_MASK) * s_a) >>> 8 & GN_MASK;
   }
@@ -2596,10 +2596,10 @@ int testFunction(int dst, int src) {
     int rb = (dst & RB_MASK) + ((src & RB_MASK) * s_a >>> 8 & RB_MASK);
     int gn = (dst & GN_MASK) + ((src & GN_MASK) * s_a >>> 8);
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
-        low(rb & 0xFFFF0000, RED_MASK)   |
-        low(gn & 0x00FFFF00, GREEN_MASK) |
-        low(rb & 0x0000FFFF, BLUE_MASK);
+    return min((dst >>> 24) + a, 0xFF) << 24 |
+        min(rb & 0xFFFF0000, RED_MASK)   |
+        min(gn & 0x00FFFF00, GREEN_MASK) |
+        min(rb & 0x0000FFFF, BLUE_MASK);
   }
 
 
@@ -2615,10 +2615,10 @@ int testFunction(int dst, int src) {
     int rb = ((src & RB_MASK)    * s_a >>> 8);
     int gn = ((src & GREEN_MASK) * s_a >>> 8);
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
-        high((dst & RED_MASK) - (rb & RED_MASK), 0) |
-        high((dst & GREEN_MASK) - (gn & GREEN_MASK), 0) |
-        high((dst & BLUE_MASK) - (rb & BLUE_MASK), 0);
+    return min((dst >>> 24) + a, 0xFF) << 24 |
+        max((dst & RED_MASK)   - (rb & RED_MASK), 0) |
+        max((dst & GREEN_MASK) - (gn & GREEN_MASK), 0) |
+        max((dst & BLUE_MASK)  - (rb & BLUE_MASK), 0);
   }
 
 
@@ -2632,11 +2632,11 @@ int testFunction(int dst, int src) {
     int s_a = a + (a >= 0x7F ? 1 : 0);
     int d_a = 0x100 - s_a;
 
-    int rb = high(src & RED_MASK,   dst & RED_MASK) |
-             high(src & BLUE_MASK,  dst & BLUE_MASK);
-    int gn = high(src & GREEN_MASK, dst & GREEN_MASK);
+    int rb = max(src & RED_MASK,   dst & RED_MASK) |
+             max(src & BLUE_MASK,  dst & BLUE_MASK);
+    int gn = max(src & GREEN_MASK, dst & GREEN_MASK);
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
+    return min((dst >>> 24) + a, 0xFF) << 24 |
         ((dst & RB_MASK) * d_a + rb * s_a) >>> 8 & RB_MASK |
         ((dst & GN_MASK) * d_a + gn * s_a) >>> 8 & GN_MASK;
   }
@@ -2652,11 +2652,11 @@ int testFunction(int dst, int src) {
     int s_a = a + (a >= 0x7F ? 1 : 0);
     int d_a = 0x100 - s_a;
 
-    int rb = low(src & RED_MASK,   dst & RED_MASK) |
-             low(src & BLUE_MASK,  dst & BLUE_MASK);
-    int gn = low(src & GREEN_MASK, dst & GREEN_MASK);
+    int rb = min(src & RED_MASK,   dst & RED_MASK) |
+             min(src & BLUE_MASK,  dst & BLUE_MASK);
+    int gn = min(src & GREEN_MASK, dst & GREEN_MASK);
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
+    return min((dst >>> 24) + a, 0xFF) << 24 |
         ((dst & RB_MASK) * d_a + rb * s_a) >>> 8 & RB_MASK |
         ((dst & GN_MASK) * d_a + gn * s_a) >>> 8 & GN_MASK;
   }
@@ -2680,7 +2680,7 @@ int testFunction(int dst, int src) {
              (b < 0 ? -b : b);
     int gn = (g < 0 ? -g : g);
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
+    return min((dst >>> 24) + a, 0xFF) << 24 |
         ((dst & RB_MASK) * d_a + rb * s_a) >>> 8 & RB_MASK |
         ((dst & GN_MASK) * d_a + gn * s_a) >>> 8 & GN_MASK;
   }
@@ -2712,7 +2712,7 @@ int testFunction(int dst, int src) {
     int gn_sub = s_gn * (d_gn + (d_gn >= 0x7F00 ? 0x100 : 0))
         >>> 15 & 0x0001FF00;
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
+    return min((dst >>> 24) + a, 0xFF) << 24 |
         (d_rb * d_a + (d_rb + (src & RB_MASK) - rb_sub) * s_a) >>> 8 & RB_MASK |
         (d_gn * d_a + (d_gn + s_gn            - gn_sub) * s_a) >>> 8 & GN_MASK;
   }
@@ -2741,7 +2741,7 @@ int testFunction(int dst, int src) {
         (src & GREEN_MASK) * (d_gn + 0x100)
         >>> 16 & GN_MASK;
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
+    return min((dst >>> 24) + a, 0xFF) << 24 |
         ((dst & RB_MASK) * d_a + rb * s_a) >>> 8 & RB_MASK |
         (d_gn            * d_a + gn * s_a) >>> 8 & GN_MASK;
   }
@@ -2773,7 +2773,7 @@ int testFunction(int dst, int src) {
     int gn_sub = s_gn * (d_gn + 0x100)
         >>> 16 & GN_MASK;
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
+    return min((dst >>> 24) + a, 0xFF) << 24 |
         (d_rb * d_a + (d_rb + (src & RB_MASK) - rb_sub) * s_a) >>> 8 & RB_MASK |
         (d_gn * d_a + (d_gn + s_gn            - gn_sub) * s_a) >>> 8 & GN_MASK;
   }
@@ -2808,7 +2808,7 @@ int testFunction(int dst, int src) {
         d_b * (s_b + 1) >>> 7 :
         (0xFF00 - ((0x100 - s_b) * (BLUE_MASK - d_b) << 1)) >>> 8;
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
+    return min((dst >>> 24) + a, 0xFF) << 24 |
         ((dst & RB_MASK) * d_a + ((r | b) & RB_MASK) * s_a) >>> 8 & RB_MASK |
         ((dst & GN_MASK) * d_a + (g       & GN_MASK) * s_a) >>> 8 & GN_MASK;
   }
@@ -2845,7 +2845,7 @@ int testFunction(int dst, int src) {
         s_b * (d_b + 1) >>> 7 :
         (0xFF00 - ((0x100 - d_b) * (BLUE_MASK - s_b) << 1)) >>> 8;
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
+    return min((dst >>> 24) + a, 0xFF) << 24 |
         ((dst & RB_MASK) * d_a + ((r | b) & RB_MASK) * s_a) >>> 8 & RB_MASK |
         ((dst & GN_MASK) * d_a + (g       & GN_MASK) * s_a) >>> 8 & GN_MASK;
   }
@@ -2882,7 +2882,7 @@ int testFunction(int dst, int src) {
     int b = (s_b1 * d_b << 9) + 0xFF * d_b1 * (d_b1 + 1) -
         ((s_b1 * d_b1 * d_b1) << 1) >>> 16;
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
+    return min((dst >>> 24) + a, 0xFF) << 24 |
         ((dst & RB_MASK) * d_a + (r | b) * s_a) >>> 8 & RB_MASK |
         ((dst & GN_MASK) * d_a + g       * s_a) >>> 8 & GN_MASK;
   }
@@ -2908,7 +2908,7 @@ int testFunction(int dst, int src) {
     int gn =
         (g > 0xFF00 ? 0x00FF00 : (g & GREEN_MASK));
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
+    return min((dst >>> 24) + a, 0xFF) << 24 |
         ((dst & RB_MASK) * d_a + rb * s_a) >>> 8 & RB_MASK |
         ((dst & GN_MASK) * d_a + gn * s_a) >>> 8 & GN_MASK;
   }
@@ -2934,7 +2934,7 @@ int testFunction(int dst, int src) {
     int gn = GN_MASK -
         (g > 0xFF00 ? 0x00FF00 : (g & GREEN_MASK));
 
-    return low((dst >>> 24) + a, 0xFF) << 24 |
+    return min((dst >>> 24) + a, 0xFF) << 24 |
         ((dst & RB_MASK) * d_a + rb * s_a) >>> 8 & RB_MASK |
         ((dst & GN_MASK) * d_a + gn * s_a) >>> 8 & GN_MASK;
   }
