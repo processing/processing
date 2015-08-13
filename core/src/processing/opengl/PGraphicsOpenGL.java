@@ -1999,8 +1999,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void beginDraw() {
-    report("top beginDraw()");
-
     if (primaryGraphics) {
       if (!initialized) {
         initPrimary();
@@ -2010,6 +2008,10 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.getGL(getPrimaryPGL());
       getPrimaryPG().setCurrentPG(this);
     }
+
+    // This has to go after the surface initialization, otherwise offscreen
+    // surfaces will have a null gl object.
+    report("top beginDraw()");
 
     if (!checkGLThread()) {
       return;
