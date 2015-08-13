@@ -65,48 +65,13 @@ public class Base {
   static public boolean DEBUG = false;
 //  static public boolean DEBUG = true;
 
-  static HashMap<Integer, String> platformNames =
-    new HashMap<Integer, String>();
-  static {
-    platformNames.put(PConstants.WINDOWS, "windows"); //$NON-NLS-1$
-    platformNames.put(PConstants.MACOSX, "macosx"); //$NON-NLS-1$
-    platformNames.put(PConstants.LINUX, "linux"); //$NON-NLS-1$
-  }
-
-  static HashMap<String, Integer> platformIndices = new HashMap<String, Integer>();
-  static {
-    platformIndices.put("windows", PConstants.WINDOWS); //$NON-NLS-1$
-    platformIndices.put("macosx", PConstants.MACOSX); //$NON-NLS-1$
-    platformIndices.put("linux", PConstants.LINUX); //$NON-NLS-1$
-  }
-//  static Platform platform;
-
-  /** How many bits this machine is */
-  static int nativeBits;
-  static {
-    nativeBits = 32;  // perhaps start with 32
-    String bits = System.getProperty("sun.arch.data.model"); //$NON-NLS-1$
-    if (bits != null) {
-      if (bits.equals("64")) { //$NON-NLS-1$
-        nativeBits = 64;
-      }
-    } else {
-      // if some other strange vm, maybe try this instead
-      if (System.getProperty("java.vm.name").contains("64")) { //$NON-NLS-1$ //$NON-NLS-2$
-        nativeBits = 64;
-      }
-    }
-  }
-
-  static String nativeArch = System.getProperty("os.arch");
-
   static private boolean commandLine;
 
   // A single instance of the preferences window
   PreferencesFrame preferencesFrame;
 
   // A single instance of the library manager window
-  ContributionManagerDialog contributionManagerFrame;
+//  ContributionManagerDialog contributionManagerFrame;
 
   // Location for untitled items
   static File untitledFolder;
@@ -127,8 +92,8 @@ public class Base {
   /** The built-in modes. coreModes[0] will be considered the 'default'. */
   private Mode[] coreModes;
 
-  protected ArrayList<ModeContribution> modeContribs;
-  protected ArrayList<ExamplesContribution> exampleContribs;
+  protected List<ModeContribution> modeContribs;
+  protected List<ExamplesContribution> exampleContribs;
 
   private JMenu sketchbookMenu;
 
@@ -160,7 +125,7 @@ public class Base {
 
   static private void createAndShowGUI(String[] args) {
     try {
-      File versionFile = getContentFile("lib/version.txt"); //$NON-NLS-1$
+      File versionFile = Platform.getContentFile("lib/version.txt");
       if (versionFile.exists()) {
         String version = PApplet.loadStrings(versionFile)[0];
         if (!version.equals(VERSION_NAME)) {
@@ -172,7 +137,7 @@ public class Base {
       e.printStackTrace();
     }
 
-    initPlatform();
+    Platform.init();
 
     // Use native popups so they don't look so crappy on OS X
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
@@ -270,6 +235,24 @@ public class Base {
   }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static public int getRevision() {
+    return REVISION;
+  }
+
+
+  /**
+   * Return the version name, something like 1.5 or 2.0b8 or 0213 if it's not
+   * a release version.
+   */
+  static public String getVersionName() {
+    return VERSION_NAME;
+  }
+
+
+
   public static void setCommandLine() {
     commandLine = true;
   }
@@ -280,63 +263,21 @@ public class Base {
   }
 
 
-  static public void initPlatform() {
-    try {
-      Class<?> platformClass = Class.forName("processing.app.Platform"); //$NON-NLS-1$
-      if (Base.isMacOS()) {
-        platformClass = Class.forName("processing.app.platform.MacPlatform"); //$NON-NLS-1$
-      } else if (Base.isWindows()) {
-        platformClass = Class.forName("processing.app.platform.WindowsPlatform"); //$NON-NLS-1$
-      } else if (Base.isLinux()) {
-        platformClass = Class.forName("processing.app.platform.LinuxPlatform"); //$NON-NLS-1$
-      }
-      platform = (Platform) platformClass.newInstance();
-    } catch (Exception e) {
-      Base.showError("Problem Setting the Platform",
-                     "An unknown error occurred while trying to load\n" +
-                     "platform-specific code for your machine.", e);
-    }
-  }
-
-
-  /*
-  public static void initRequirements() {
-    try {
-      Class.forName("com.sun.jdi.VirtualMachine"); //$NON-NLS-1$
-    } catch (ClassNotFoundException cnfe) {
-      //String cp = System.getProperty("java.class.path").replace(File.pathSeparatorChar, '\n');
-//      String cp = System.getProperty("sun.boot.class.path").replace(File.pathSeparatorChar, '\n');
-
-      Base.openURL("http://wiki.processing.org/w/Supported_Platforms");
-//      Base.showError("Please install JDK 1.6 or later",
-//                     "Processing requires a full JDK (not just a JRE)\n" +
-//                     "to run. Please install JDK 1.6 or later.\n" +
-//                     "More information can be found on the Wiki." +
-//                     "\n\nJAVA_HOME is currently\n" +
-//                     System.getProperty("java.home") + "\n" +
-//                     "And the CLASSPATH contains\n" + cp, cnfe);
-      Base.showError("Missing required files",
-                     "Processing requires a JRE with tools.jar (or a\n" +
-                     "full JDK) installed in (or linked to) a folder\n" +
-                     "named “java” next to the Processing application.\n" +
-                     "More information can be found on the Wiki.", cnfe);
-    }
-  }
-  */
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   // TODO should this be public to suggest override for Arduino and others?
-  private String getDefaultModeIdentifier() {
+  String getDefaultModeIdentifier() {
     //return "processing.mode.java.pdex.ExperimentalMode";
     return "processing.mode.java.JavaMode";
   }
 
 
   // TODO same as above... make public?
-  private void buildCoreModes() {
+  void buildCoreModes() {
     Mode javaMode =
-      ModeContribution.load(this, getContentFile("modes/java"), //$NON-NLS-1$
-                            getDefaultModeIdentifier()).getMode(); //$NON-NLS-1$
+      ModeContribution.load(this, Platform.getContentFile("modes/java"),
+                            getDefaultModeIdentifier()).getMode();
 
     // PDE X calls getModeList() while it's loading, so coreModes must be set
     coreModes = new Mode[] { javaMode };
@@ -389,6 +330,9 @@ public class Base {
   }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   public Base(String[] args) throws Exception {
     ContributionManager.cleanup(this);
     buildCoreModes();
@@ -417,14 +361,14 @@ public class Base {
       }
     }
 
-    contributionManagerFrame = new ContributionManagerDialog();
+    //contributionManagerFrame = new ContributionManagerDialog();
 
     // Make sure ThinkDifferent has library examples too
     nextMode.rebuildLibraryList();
 
     // Put this after loading the examples, so that building the default file
     // menu works on Mac OS X (since it needs examplesFolder to be set).
-    platform.init(this);
+    Platform.initBase(this);
 
 //    toolsFolder = getContentFile("tools");
 
@@ -439,7 +383,7 @@ public class Base {
       // being passed in with 8.3 syntax, which makes the sketch loader code
       // unhappy, since the sketch folder naming doesn't match up correctly.
       // http://dev.processing.org/bugs/show_bug.cgi?id=1089
-      if (isWindows()) {
+      if (Platform.isWindows()) {
         try {
           File file = new File(args[i]);
           path = file.getCanonicalPath();
@@ -1035,7 +979,7 @@ public class Base {
       // untitled sketch, just give up and let the user quit.
 //      if (Preferences.getBoolean("sketchbook.closing_last_window_quits") ||
 //          (editor.untitled && !editor.getSketch().isModified())) {
-      if (Base.isMacOS()) {
+      if (Platform.isMacOS()) {
         // If the central menubar isn't supported on this OS X JVM,
         // we have to do the old behavior. Yuck!
         if (defaultFileMenu == null) {
@@ -1122,7 +1066,7 @@ public class Base {
       // Save out the current prefs state
       Preferences.save();
 
-      if (!Base.isMacOS()) {
+      if (!Platform.isMacOS()) {
         // If this was fired from the menu or an AppleEvent (the Finder),
         // then Mac OS X will send the terminate signal itself.
         System.exit(0);
@@ -1156,7 +1100,7 @@ public class Base {
   }
 
 
-  // .................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
@@ -1347,8 +1291,7 @@ public class Base {
   }
 
 
-  public boolean addSketches(DefaultMutableTreeNode node,
-                             File folder,
+  public boolean addSketches(DefaultMutableTreeNode node, File folder,
                              boolean examples) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) {
@@ -1435,15 +1378,7 @@ public class Base {
   }
 
 
-  // .................................................................
-
-
-//  /**
-//   * Show the About box.
-//   */
-//  static public void handleAbout() {
-//    new About(activeEditor);
-//  }
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
@@ -1454,213 +1389,6 @@ public class Base {
       preferencesFrame = new PreferencesFrame(this);
     }
     preferencesFrame.showFrame();
-  }
-
-
-  /**
-   * Show the library installer window.
-   */
-  public void handleOpenLibraryManager() {
-    contributionManagerFrame.showFrame(activeEditor,ContributionType.LIBRARY);
-  }
-
-
-  /**
-   * Show the tool installer window.
-   */
-  public void handleOpenToolManager() {
-    contributionManagerFrame.showFrame(activeEditor,ContributionType.TOOL);
-  }
-
-
-  /**
-   * Show the mode installer window.
-   */
-  public void handleOpenModeManager() {
-    contributionManagerFrame.showFrame(activeEditor,ContributionType.MODE);
-  }
-
-
-  /**
-   * Show the examples installer window.
-   */
-  public void handleOpenExampleManager() {
-    contributionManagerFrame.showFrame(activeEditor,ContributionType.EXAMPLES);
-  }
-
-
-  public void handleShowUpdates() {
-    contributionManagerFrame.showFrame(activeEditor,null);
-  }
-
-
-  // ...................................................................
-
-
-  static public int getRevision() {
-    return REVISION;
-  }
-
-
-  /**
-   * Return the version name, something like 1.5 or 2.0b8 or 0213 if it's not
-   * a release version.
-   */
-  static public String getVersionName() {
-    return VERSION_NAME;
-  }
-
-
-  //...................................................................
-
-
-  static public Platform getPlatform() {
-    return platform;
-  }
-
-
-  static public String getPlatformName() {
-    return PConstants.platformNames[PApplet.platform];
-  }
-
-
-  // Because the Oracle JDK is 64-bit only, we lose this ability, feature,
-  // edge case, headache.
-//  /**
-//   * Return whether sketches will run as 32- or 64-bits. On Linux and Windows,
-//   * this is the bit depth of the machine, while on OS X it's determined by the
-//   * setting from preferences, since both 32- and 64-bit are supported.
-//   */
-//  static public int getNativeBits() {
-//    if (Base.isMacOS()) {
-//      return Preferences.getInteger("run.options.bits"); //$NON-NLS-1$
-//    }
-//    return nativeBits;
-//  }
-
-  /**
-   * Return whether sketches will run as 32- or 64-bits based
-   * on the JVM that's in use.
-   */
-  static public int getNativeBits() {
-    return nativeBits;
-  }
-
-  /**
-   * Return the value of the os.arch propery
-   */
-  static public String getNativeArch() {
-    return nativeArch;
-  }
-
-  /*
-   * Return a string that identifies the variant of a platform
-   * e.g. "32" or "64" on Intel
-   */
-  static public String getVariant() {
-    return getVariant(PApplet.platform, getNativeArch(), getNativeBits());
-  }
-
-  static public String getVariant(int platform, String arch, int bits) {
-    if (platform == PConstants.LINUX && bits == 32 && "arm".equals(Base.getNativeArch())) {
-      // assume armv6hf for now
-      return "armv6hf";
-    } else {
-      // 32 or 64
-      return Integer.toString(bits);
-    }
-  }
-
-  /*
-  static public String getPlatformName() {
-    String osname = System.getProperty("os.name");
-
-    if (osname.indexOf("Mac") != -1) {
-      return "macosx";
-
-    } else if (osname.indexOf("Windows") != -1) {
-      return "windows";
-
-    } else if (osname.equals("Linux")) {  // true for the ibm vm
-      return "linux";
-
-    } else {
-      return "other";
-    }
-  }
-  */
-
-
-  /**
-   * Map a platform constant to its name.
-   * @param which PConstants.WINDOWS, PConstants.MACOSX, PConstants.LINUX
-   * @return one of "windows", "macosx", or "linux"
-   */
-  static public String getPlatformName(int which) {
-    return platformNames.get(which);
-  }
-
-
-  static public int getPlatformIndex(String what) {
-    Integer entry = platformIndices.get(what);
-    return (entry == null) ? -1 : entry.intValue();
-  }
-
-
-  // These were changed to no longer rely on PApplet and PConstants because
-  // of conflicts that could happen with older versions of core.jar, where
-  // the MACOSX constant would instead read as the LINUX constant.
-
-
-  /**
-   * returns true if Processing is running on a Mac OS X machine.
-   */
-  static public boolean isMacOS() {
-    //return PApplet.platform == PConstants.MACOSX;
-    return System.getProperty("os.name").indexOf("Mac") != -1; //$NON-NLS-1$ //$NON-NLS-2$
-  }
-
-
-  /*
-  static private Boolean usableOracleJava;
-
-  // Make sure this is Oracle Java 7u40 or later. This is temporary.
-  static public boolean isUsableOracleJava() {
-    if (usableOracleJava == null) {
-      usableOracleJava = false;
-
-      if (Base.isMacOS() &&
-          System.getProperty("java.vendor").contains("Oracle")) {
-        String version = System.getProperty("java.version");  // 1.7.0_40
-        String[] m = PApplet.match(version, "1.(\\d).*_(\\d+)");
-
-        if (m != null &&
-          PApplet.parseInt(m[1]) >= 7 &&
-          PApplet.parseInt(m[2]) >= 40) {
-          usableOracleJava = true;
-        }
-      }
-    }
-    return usableOracleJava;
-  }
-  */
-
-
-  /**
-   * returns true if running on windows.
-   */
-  static public boolean isWindows() {
-    //return PApplet.platform == PConstants.WINDOWS;
-    return System.getProperty("os.name").indexOf("Windows") != -1; //$NON-NLS-1$ //$NON-NLS-2$
-  }
-
-
-  /**
-   * true if running on linux.
-   */
-  static public boolean isLinux() {
-    //return PApplet.platform == PConstants.LINUX;
-    return System.getProperty("os.name").indexOf("Linux") != -1; //$NON-NLS-1$ //$NON-NLS-2$
   }
 
 
@@ -1675,18 +1403,12 @@ public class Base {
   static public File getSettingsFolder() {
     File settingsFolder = null;
 
-//    String preferencesPath = Preferences.get("settings.path"); //$NON-NLS-1$
-//    if (preferencesPath != null) {
-//      settingsFolder = new File(preferencesPath);
-//
-//    } else {
     try {
-      settingsFolder = platform.getSettingsFolder();
+      settingsFolder = Platform.getSettingsFolder();
     } catch (Exception e) {
       showError("Problem getting the settings folder",
                 "Error getting the Processing the settings folder.", e);
     }
-//    }
 
     // create the folder if it doesn't exist already
     if (!settingsFolder.exists()) {
@@ -1709,25 +1431,6 @@ public class Base {
   static public File getSettingsFile(String filename) {
     return new File(getSettingsFolder(), filename);
   }
-
-
-  /*
-  static public File getBuildFolder() {
-    if (buildFolder == null) {
-      String buildPath = Preferences.get("build.path");
-      if (buildPath != null) {
-        buildFolder = new File(buildPath);
-
-      } else {
-        //File folder = new File(getTempFolder(), "build");
-        //if (!folder.exists()) folder.mkdirs();
-        buildFolder = createTempFolder("build");
-        buildFolder.deleteOnExit();
-      }
-    }
-    return buildFolder;
-  }
-  */
 
 
   /**
@@ -1754,7 +1457,7 @@ public class Base {
 
 
   static public File getToolsFolder() {
-    return getContentFile("tools");
+    return Platform.getContentFile("tools");
   }
 
 
@@ -1834,7 +1537,7 @@ public class Base {
   static protected File getDefaultSketchbookFolder() {
     File sketchbookFolder = null;
     try {
-      sketchbookFolder = platform.getDefaultSketchbookFolder();
+      sketchbookFolder = Platform.getDefaultSketchbookFolder();
     } catch (Exception e) { }
 
     if (sketchbookFolder == null) {
@@ -1858,54 +1561,7 @@ public class Base {
   }
 
 
-  // .................................................................
-
-
-  /**
-   * Implements the cross-platform headache of opening URLs.
-   *
-   * For 2.0a8 and later, this requires the parameter to be an actual URL,
-   * meaning that you can't send it a file:// path without a prefix. It also
-   * just calls into Platform, which now uses java.awt.Desktop (where
-   * possible, meaning not on Linux) now that we're requiring Java 6.
-   * As it happens the URL must also be properly URL-encoded.
-   */
-  static public void openURL(String url) {
-    try {
-      platform.openURL(url);
-
-    } catch (Exception e) {
-      showWarning("Problem Opening URL",
-                  "Could not open the URL\n" + url, e);
-    }
-  }
-
-
-  /**
-   * Used to determine whether to disable the "Show Sketch Folder" option.
-   * @return true If a means of opening a folder is known to be available.
-   */
-  static public boolean openFolderAvailable() {
-    return platform.openFolderAvailable();
-  }
-
-
-  /**
-   * Implements the other cross-platform headache of opening
-   * a folder in the machine's native file browser.
-   */
-  static public void openFolder(File file) {
-    try {
-      platform.openFolder(file);
-
-    } catch (Exception e) {
-      showWarning("Problem Opening Folder",
-                  "Could not open the folder\n" + file.getAbsolutePath(), e);
-    }
-  }
-
-
-  // .................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
@@ -1964,7 +1620,7 @@ public class Base {
     } else {
 //      JOptionPane.showMessageDialog(new Frame(), message,
 //                                    title, JOptionPane.WARNING_MESSAGE);
-      if (!Base.isMacOS()) {
+      if (!Platform.isMacOS()) {
         JOptionPane.showMessageDialog(new JFrame(),
                                       "<html><body>" +
                                       "<b>" + primary + "</b>" +
@@ -2069,7 +1725,7 @@ public class Base {
   // incomplete
   static public int showYesNoCancelQuestion(Editor editor, String title,
                                             String primary, String secondary) {
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       int result =
         JOptionPane.showConfirmDialog(null, primary + "\n" + secondary, title,
                                       JOptionPane.YES_NO_CANCEL_OPTION,
@@ -2132,7 +1788,7 @@ public class Base {
 
   static public int showYesNoQuestion(Frame editor, String title,
                                       String primary, String secondary) {
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       return JOptionPane.showConfirmDialog(editor,
                                            "<html><body>" +
                                            "<b>" + primary + "</b>" +
@@ -2175,87 +1831,11 @@ public class Base {
   }
 
 
-  static protected File processingRoot;
-
-  /**
-   * Get reference to a file adjacent to the executable on Windows and Linux,
-   * or inside Contents/Resources/Java on Mac OS X. This will return the local
-   * JRE location, *whether or not it is the active JRE*.
-   */
-  static public File getContentFile(String name) {
-    if (processingRoot == null) {
-      // Get the path to the .jar file that contains Base.class
-      String path = Base.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-      // Path may have URL encoding, so remove it
-      String decodedPath = PApplet.urlDecode(path);
-
-      if (decodedPath.contains("/app/bin")) {  // This means we're in Eclipse
-        if (Base.isMacOS()) {
-          processingRoot =
-            new File(path, "../../build/macosx/work/Processing.app/Contents/Java");
-        } else if (Base.isWindows()) {
-          processingRoot =  new File(path, "../../build/windows/work");
-        } else if (Base.isLinux()) {
-          processingRoot =  new File(path, "../../build/linux/work");
-        }
-      } else {
-        // The .jar file will be in the lib folder
-        File jarFolder = new File(decodedPath).getParentFile();
-        if (jarFolder.getName().equals("lib")) {
-          // The main Processing installation directory.
-          // This works for Windows, Linux, and Apple's Java 6 on OS X.
-          processingRoot = jarFolder.getParentFile();
-        } else if (Base.isMacOS()) {
-          // This works for Java 8 on OS X. We don't have things inside a 'lib'
-          // folder on OS X. Adding it caused more problems than it was worth.
-          processingRoot = jarFolder;
-        }
-        if (processingRoot == null || !processingRoot.exists()) {
-          // Try working directory instead (user.dir, different from user.home)
-          System.err.println("Could not find lib folder via " +
-            jarFolder.getAbsolutePath() +
-            ", switching to user.dir");
-          processingRoot = new File(System.getProperty("user.dir"));
-        }
-      }
-    }
-    return new File(processingRoot, name);
-  }
-
-
-  static public File getJavaHome() {
-    if (isMacOS()) {
-      //return "Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/bin/java";
-      File[] plugins = getContentFile("../PlugIns").listFiles(new FilenameFilter() {
-        public boolean accept(File dir, String name) {
-          return dir.isDirectory() &&
-            name.endsWith(".jdk") && !name.startsWith(".");
-        }
-      });
-      return new File(plugins[0], "Contents/Home/jre");
-    }
-    // On all other platforms, it's the 'java' folder adjacent to Processing
-    return getContentFile("java");
-  }
-
-
-  /** Get the path to the embedded Java executable. */
-  static public String getJavaPath() {
-    String javaPath = "bin/java" + (isWindows() ? ".exe" : "");
-    File javaFile = new File(getJavaHome(), javaPath);
-    try {
-      return javaFile.getCanonicalPath();
-    } catch (IOException e) {
-      return javaFile.getAbsolutePath();
-    }
-  }
-
-
   /**
    * Return a File from inside the Processing 'lib' folder.
    */
   static public File getLibFile(String filename) throws IOException {
-    return new File(getContentFile("lib"), filename);
+    return new File(Platform.getContentFile("lib"), filename);
   }
 
 
@@ -2265,9 +1845,6 @@ public class Base {
   static public InputStream getLibStream(String filename) throws IOException {
     return new FileInputStream(getLibFile(filename));
   }
-
-
-  // Note: getLibImage() has moved to Toolkit
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .

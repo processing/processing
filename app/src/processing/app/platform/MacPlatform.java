@@ -29,13 +29,13 @@ import java.io.IOException;
 import com.apple.eio.FileManager;
 
 import processing.app.Base;
-import processing.app.platform.Platform;
+import processing.app.platform.DefaultPlatform;
 
 
 /**
  * Platform handler for Mac OS X.
  */
-public class MacPlatform extends Platform {
+public class MacPlatform extends DefaultPlatform {
 
   // Removing for 2.0b8 because Quaqua doesn't have OS X 10.8 version.
   /*
@@ -61,8 +61,8 @@ public class MacPlatform extends Platform {
     }
   }
 
-  public void init(Base base) {
-    super.init(base);
+  public void initBase(Base base) {
+    super.initBase(base);
     System.setProperty("apple.laf.useScreenMenuBar", "true");
     ThinkDifferent.init(base);
     /*

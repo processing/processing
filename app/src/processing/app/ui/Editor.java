@@ -27,12 +27,14 @@ import processing.app.Base;
 import processing.app.Formatter;
 import processing.app.Language;
 import processing.app.Mode;
+import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.RunnerListener;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.SketchException;
 import processing.app.Util;
+import processing.app.contrib.ContributionManager;
 import processing.app.contrib.ToolContribution;
 import processing.app.syntax.*;
 import processing.app.tools.*;
@@ -591,7 +593,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     JMenuItem addLib = new JMenuItem(Language.text("toolbar.add_mode"));
     addLib.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.handleOpenModeManager();
+        ContributionManager.openModeManager(Editor.this);
       }
     });
     modeMenu.add(addLib);
@@ -854,7 +856,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // Mac OS X already has its own preferences and quit menu.
     // That's right! Think different, b*tches!
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       fileMenu.addSeparator();
 
       item = Toolkit.newJMenuItem(Language.text("menu.file.preferences"), ',');
@@ -898,7 +900,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // Gotta follow them interface guidelines
     // http://code.google.com/p/processing/issues/detail?id=363
-    if (Base.isWindows()) {
+    if (Platform.isWindows()) {
       redoItem = Toolkit.newJMenuItem(redoAction = new RedoAction(), 'Y');
     } else {  // Linux and OS X
       redoItem = Toolkit.newJMenuItemShift(redoAction = new RedoAction(), 'Z');
@@ -1073,11 +1075,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
     item = Toolkit.newJMenuItem(Language.text("menu.sketch.show_sketch_folder"), 'K');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Base.openFolder(sketch.getFolder());
+          Platform.openFolder(sketch.getFolder());
         }
       });
     sketchMenu.add(item);
-    item.setEnabled(Base.openFolderAvailable());
+    item.setEnabled(Platform.openFolderAvailable());
 
     item = new JMenuItem(Language.text("menu.sketch.add_file"));
     item.addActionListener(new ActionListener() {
@@ -1180,7 +1182,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     JMenuItem item = new JMenuItem(Language.text("menu.tools.add_tool"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.handleOpenToolManager();
+        ContributionManager.openToolManager(Editor.this);
       }
     });
     toolsMenu.add(item);
@@ -1359,7 +1361,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     addToolMenuItem(menu, "processing.app.tools.ColorSelector");
     addToolMenuItem(menu, "processing.app.tools.Archiver");
 
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       addToolMenuItem(menu, "processing.app.tools.InstallCommander");
     }
 
@@ -1445,14 +1447,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
 
     // Prepend with file:// and also encode spaces & other characters
-    Base.openURL(file.toURI().toString());
+    Platform.openURL(file.toURI().toString());
   }
 
 
   static public void showChanges() {
     // http://code.google.com/p/processing/issues/detail?id=1520
     if (!Base.isCommandLine()) {
-      Base.openURL("http://wiki.processing.org/w/Changes");
+      Platform.openURL("https://github.com/processing/processing/wiki/Changes");
     }
   }
 
@@ -2535,7 +2537,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // With Java 7u40 on OS X, need to bring the window forward.
     toFront();
 
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       String prompt =
         Language.interpolate("close.unsaved_changes", sketch.getName());
       int result =

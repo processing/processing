@@ -34,7 +34,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.html.*;
 
-import processing.app.Base;
+import processing.app.Platform;
 import processing.core.PApplet;
 import processing.data.StringDict;
 
@@ -151,7 +151,7 @@ public class WebFrame extends JFrame {
 
 
   public void handleLink(String link) {
-    Base.openURL(link);
+    Platform.openURL(link);
   }
 
 

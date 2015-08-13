@@ -163,7 +163,7 @@ public class JEditTextArea extends JComponent
 
             // inertia scrolling on OS X will fire several shift-wheel events
             // that are negative values.. this makes the scrolling area jump.
-            boolean isHorizontal = Base.isMacOS() && e.isShiftDown();
+            boolean isHorizontal = Platform.isMacOS() && e.isShiftDown();
             if (isHorizontal) {
               horizontal.setValue(horizontal.getValue() + scrollAmount);
             }else{
@@ -2434,7 +2434,7 @@ public class JEditTextArea extends JComponent
       // As a result, better to just check for BUTTON3 now, indicating that
       // isPopupTrigger() is going to fire on the release anyway.
       boolean windowsRightClick =
-        Base.isWindows() && (event.getButton() == MouseEvent.BUTTON3);
+        Platform.isWindows() && (event.getButton() == MouseEvent.BUTTON3);
       if ((event.isPopupTrigger() || windowsRightClick) && (popup != null)) {
 //      // Windows fires the popup trigger on release (see mouseReleased() below)(
 //      if (!Base.isWindows()) {

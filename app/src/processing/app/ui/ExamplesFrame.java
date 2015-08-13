@@ -59,9 +59,11 @@ import processing.app.Base;
 import processing.app.Language;
 import processing.app.Library;
 import processing.app.Mode;
+import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.SketchReference;
 import processing.app.contrib.Contribution;
+import processing.app.contrib.ContributionManager;
 import processing.app.contrib.ContributionType;
 import processing.app.contrib.ExamplesContribution;
 import processing.core.PApplet;
@@ -106,7 +108,7 @@ public class ExamplesFrame extends JFrame {
     addExamplesButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        base.handleOpenExampleManager();
+        ContributionManager.openExampleManager(base.getActiveEditor());
       }
     });
 
@@ -175,7 +177,7 @@ public class ExamplesFrame extends JFrame {
     });
 
     tree.setBorder(new EmptyBorder(0, 5, 5, 5));
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       tree.setToggleClickCount(2);
     } else {
       tree.setToggleClickCount(1);

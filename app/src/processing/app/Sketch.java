@@ -728,7 +728,7 @@ public class Sketch {
     }
     editor.repaintHeader();
 
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       // http://developer.apple.com/qa/qa2001/qa1146.html
       Object modifiedParam = modified ? Boolean.TRUE : Boolean.FALSE;
       // https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html#WINDOW_DOCUMENTMODIFIED

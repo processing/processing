@@ -34,6 +34,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.tree.*;
 
+import processing.app.contrib.ContributionManager;
 import processing.app.syntax.*;
 import processing.app.ui.Editor;
 import processing.app.ui.EditorException;
@@ -192,7 +193,7 @@ public abstract class Mode {
   public void setupGUI() {
     try {
       // First load the default theme data for the whole PDE.
-      theme = new Settings(Base.getContentFile("lib/theme.txt"));
+      theme = new Settings(Platform.getContentFile("lib/theme.txt"));
 
       // The mode-specific theme.txt file should only contain additions,
       // and in extremely rare cases, it might override entries from the
@@ -414,7 +415,7 @@ public abstract class Mode {
     item = new JMenuItem(Language.text("examples.add_examples"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.handleOpenExampleManager();
+        ContributionManager.openExampleManager(base.getActiveEditor());
       }
     });
     toolbarMenu.add(item);
@@ -490,7 +491,7 @@ public abstract class Mode {
     JMenuItem addLib = new JMenuItem(Language.text("menu.library.add_library"));
     addLib.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.handleOpenLibraryManager();
+        ContributionManager.openLibraryManager(base.getActiveEditor());
       }
     });
     importMenu.add(addLib);
@@ -556,76 +557,6 @@ public abstract class Mode {
       }
     }
   }
-
-
-  /*
-  public JMenu getExamplesMenu() {
-    if (examplesMenu == null) {
-      rebuildExamplesMenu();
-    }
-    return examplesMenu;
-  }
-
-
-  public void rebuildExamplesMenu() {
-    if (examplesMenu == null) {
-      examplesMenu = new JMenu("Examples");
-    }
-    rebuildExamplesMenu(examplesMenu, false);
-  }
-
-
-  public void rebuildExamplesMenu(JMenu menu, boolean replace) {
-    try {
-      // break down the examples folder for examples
-      File[] subfolders = getExampleCategoryFolders();
-
-      for (File sub : subfolders) {
-        Base.addDisabledItem(menu, sub.getName());
-//        JMenuItem categoryItem = new JMenuItem(sub.getName());
-//        categoryItem.setEnabled(false);
-//        menu.add(categoryItem);
-        base.addSketches(menu, sub, replace);
-        menu.addSeparator();
-      }
-
-//      if (coreLibraries == null) {
-//        rebuildLibraryList();
-//      }
-
-      // get library examples
-      Base.addDisabledItem(menu, "Libraries");
-      for (Library lib : coreLibraries) {
-        if (lib.hasExamples()) {
-          JMenu libMenu = new JMenu(lib.getName());
-          base.addSketches(libMenu, lib.getExamplesFolder(), replace);
-          menu.add(libMenu);
-        }
-      }
-
-      // get contrib library examples
-      boolean any = false;
-      for (Library lib : contribLibraries) {
-        if (lib.hasExamples()) {
-          any = true;
-        }
-      }
-      if (any) {
-        menu.addSeparator();
-        Base.addDisabledItem(menu, "Contributed");
-        for (Library lib : contribLibraries) {
-          if (lib.hasExamples()) {
-            JMenu libMenu = new JMenu(lib.getName());
-            base.addSketches(libMenu, lib.getExamplesFolder(), replace);
-            menu.add(libMenu);
-          }
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-  */
 
 
   /**

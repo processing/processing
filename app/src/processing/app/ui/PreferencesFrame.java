@@ -34,6 +34,7 @@ import javax.swing.event.*;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.ui.ColorChooser;
 import processing.core.*;
@@ -94,7 +95,7 @@ public class PreferencesFrame {
 
     pain.setLayout(layout);
 
-    final int BORDER = Base.isMacOS() ? 20 : 13;
+    final int BORDER = Platform.isMacOS() ? 20 : 13;
 
     JLabel sketchbookLocationLabel, restartProcessingLabel;
     JButton browseButton; //, button2;
@@ -340,7 +341,7 @@ public class PreferencesFrame {
     final JLabel clickable = preferencePathLabel;
     preferencePathLabel.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
-          Base.openFolder(Base.getSettingsFolder());
+          Platform.openFolder(Base.getSettingsFolder());
         }
 
         // Light this up in blue like a hyperlink
@@ -486,7 +487,7 @@ public class PreferencesFrame {
       .addGap(BORDER)
       );
 
-    if (Base.isWindows()){
+    if (Platform.isWindows()){
       autoAssociateBox.setVisible(true);
     }
     // closing the window is same as hitting cancel button

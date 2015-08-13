@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Platform;
 import processing.app.ui.Editor;
 import processing.core.PApplet;
 import processing.data.StringList;
@@ -82,7 +83,7 @@ public class InstallCommander implements Tool {
       PrintWriter writer = PApplet.createWriter(file);
       writer.println("#!/bin/sh");
 
-      String javaRoot = Base.getContentFile(".").getCanonicalPath();
+      String javaRoot = Platform.getContentFile(".").getCanonicalPath();
 
       StringList jarList = new StringList();
       addJarList(jarList, new File(javaRoot));
@@ -91,7 +92,7 @@ public class InstallCommander implements Tool {
       String classPath = jarList.join(":").replaceAll(javaRoot + "\\/?", "");
 
       writer.println("cd \"" + javaRoot + "\" && " +
-                     Base.getJavaPath() +
+                     Platform.getJavaPath() +
                      " -Djna.nosys=true" +
       		           " -cp \"" + classPath + "\"" +
       		           " processing.mode.java.Commander \"$@\"");

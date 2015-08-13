@@ -164,7 +164,7 @@ public class Util {
    * https://github.com/processing/processing/issues/3455
    */
   static public void saveFile(String str, File file) throws IOException {
-    if (Base.isWindows()) {
+    if (Platform.isWindows()) {
       String[] lines = str.split("\\r?\\n");
       str = PApplet.join(lines, "\r\n");
     }
@@ -236,7 +236,7 @@ public class Util {
   static public void copyDirNative(File sourceDir,
                                    File targetDir) throws IOException {
     Process process = null;
-    if (Base.isMacOS() || Base.isLinux()) {
+    if (Platform.isMacOS() || Platform.isLinux()) {
       process = Runtime.getRuntime().exec(new String[] {
         "cp", "-a", sourceDir.getAbsolutePath(), targetDir.getAbsolutePath()
       });

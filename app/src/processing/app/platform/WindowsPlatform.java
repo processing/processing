@@ -37,7 +37,7 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 
 import processing.app.Base;
 import processing.app.Preferences;
-import processing.app.platform.Platform;
+import processing.app.platform.DefaultPlatform;
 import processing.app.platform.WindowsRegistry.REGISTRY_ROOT_KEY;
 import processing.core.PApplet;
 
@@ -45,7 +45,7 @@ import processing.core.PApplet;
 /**
  * Platform-specific glue for Windows.
  */
-public class WindowsPlatform extends Platform {
+public class WindowsPlatform extends DefaultPlatform {
 
   static final String APP_NAME = "Processing";
   static final String REG_OPEN_COMMAND =
@@ -54,8 +54,8 @@ public class WindowsPlatform extends Platform {
   static final String REG_DOC = APP_NAME + ".Document";
 
 
-  public void init(Base base) {
-    super.init(base);
+  public void initBase(Base base) {
+    super.initBase(base);
     checkAssociations();
     //checkQuickTime();
     checkPath();

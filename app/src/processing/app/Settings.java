@@ -37,31 +37,31 @@ import processing.core.*;
  * and to make way for future ability to customize.
  */
 public class Settings {
-  /** 
-   * Copy of the defaults in case the user mangles a preference. 
+  /**
+   * Copy of the defaults in case the user mangles a preference.
    * It's necessary to keep a copy of the defaults around, because the user may
-   * have replaced a setting on their own. In the past, we used to load the 
+   * have replaced a setting on their own. In the past, we used to load the
    * defaults, then replace those with what was in the user's preferences file.
-   * Problem is, if something like a font entry in the user's file no longer 
+   * Problem is, if something like a font entry in the user's file no longer
    * parses properly, we need to be able to get back to a clean version of that
    * setting so we can recover.
    */
   HashMap<String,String> defaults;
-  
+
   /** Table of attributes/values. */
   HashMap<String,String> table = new HashMap<String,String>();;
-  
+
   /** Associated file for this settings data. */
   File file;
 
 
   public Settings(File file) throws IOException {
     this.file = file;
-    
+
     if (file.exists()) {
       load();
     }
-    
+
     // clone the hash table
     defaults = (HashMap<String,String>) table.clone();
   }
@@ -71,7 +71,7 @@ public class Settings {
     load(file);
   }
 
-  
+
   public void load(File additions) {
     String[] lines = PApplet.loadStrings(additions);
     for (String line : lines) {
@@ -88,7 +88,7 @@ public class Settings {
     }
 
     // check for platform-specific properties in the defaults
-    String platformExt = "." + Base.getPlatformName();
+    String platformExt = "." + Platform.getName();
     int platformExtLength = platformExt.length();
     for (String key : table.keySet()) {
       if (key.endsWith(platformExt)) {
@@ -177,7 +177,7 @@ public class Settings {
   }
 
 
-  // identical version found in Preferences.java 
+  // identical version found in Preferences.java
   public Font getFont(String attr) {
     try {
       boolean replace = false;
@@ -205,7 +205,7 @@ public class Settings {
         style |= Font.ITALIC;
       }
       int size = PApplet.parseInt(pieces[2], 12);
-      
+
       // replace bad font with the default from lib/preferences.txt
       if (replace) {
         set(attr, value);
@@ -223,9 +223,9 @@ public class Settings {
       }
 
     } catch (Exception e) {
-      // Adding try/catch block because this may be where 
-      // a lot of startup crashes are happening. 
-      Base.log("Error with font " + get(attr) + " for attribute " + attr); 
+      // Adding try/catch block because this may be where
+      // a lot of startup crashes are happening.
+      Base.log("Error with font " + get(attr) + " for attribute " + attr);
     }
     return new Font("Dialog", Font.PLAIN, 12);
   }

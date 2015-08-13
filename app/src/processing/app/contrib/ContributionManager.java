@@ -687,4 +687,48 @@ public class ContributionManager {
       LocalContribution.clearRestartFlags(folder);
     }
   }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static ContributionManagerDialog contributionManagerFrame =
+    new ContributionManagerDialog();
+
+
+  /**
+   * Show the library installer window.
+   */
+  static public void openLibraryManager(Editor editor) {
+    contributionManagerFrame.showFrame(editor, ContributionType.LIBRARY);
+  }
+
+
+  /**
+   * Show the tool installer window.
+   */
+  static public void openToolManager(Editor editor) {
+    contributionManagerFrame.showFrame(editor, ContributionType.TOOL);
+  }
+
+
+  /**
+   * Show the mode installer window.
+   */
+  static public void openModeManager(Editor editor) {
+    contributionManagerFrame.showFrame(editor, ContributionType.MODE);
+  }
+
+
+  /**
+   * Show the examples installer window.
+   */
+  static public void openExampleManager(Editor editor) {
+    contributionManagerFrame.showFrame(editor, ContributionType.EXAMPLES);
+  }
+
+
+  static public void openUpdates(Editor editor) {
+    contributionManagerFrame.showFrame(editor, null);
+  }
 }

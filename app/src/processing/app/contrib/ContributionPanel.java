@@ -42,6 +42,7 @@ import javax.swing.text.html.StyleSheet;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Platform;
 import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
@@ -111,7 +112,7 @@ class ContributionPanel extends JPanel {
   boolean isUpdateInProgress;
   private boolean isInstallInProgress;
   private boolean isRemoveInProgress;
-  
+
   StringBuilder description;
 
   ContributionPanel(ContributionListPanel contributionListPanel) {
@@ -125,7 +126,7 @@ class ContributionPanel extends JPanel {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           if (enableHyperlinks) {
             if (e.getURL() != null) {
-              Base.openURL(e.getURL().toString());
+              Platform.openURL(e.getURL().toString());
             }
           }
         }
@@ -174,7 +175,7 @@ class ContributionPanel extends JPanel {
       public void actionPerformed(ActionEvent e) {
         if (contrib instanceof LocalContribution) {
           File folder = ((LocalContribution) contrib).getFolder();
-          Base.openFolder(folder);
+          Platform.openFolder(folder);
         }
       }
     });
@@ -884,7 +885,7 @@ class ContributionPanel extends JPanel {
       String url = ad.link;
       installContribution(ad, url);
     }
-    
+
   }
 
 
@@ -945,6 +946,6 @@ class ContributionPanel extends JPanel {
       LocalContribution localContrib = (LocalContribution) contrib;
       localContrib.removeContribution(contributionTab.editor, monitor, contributionTab.statusPanel);
     }
-    
+
   }
 }

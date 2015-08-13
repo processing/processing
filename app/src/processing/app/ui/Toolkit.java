@@ -68,6 +68,7 @@ import javax.swing.KeyStroke;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Platform;
 import processing.app.Preferences;
 
 
@@ -226,7 +227,7 @@ public class Toolkit {
    *          A menu, a list of menus or an array of menu items to set mnemonics for.
    */
   static public void setMenuMnemonics(JMenuItem... menu) {
-    if (Base.isMacOS()) return;
+    if (Platform.isMacOS()) return;
     if (menu.length == 0) return;
 
     // The English is http://techbase.kde.org/Projects/Usability/HIG/Keyboard_Accelerators,
@@ -472,7 +473,7 @@ public class Toolkit {
    * @since 3.0a6
    */
   static public ImageIcon getLibIcon(String filename) {
-    File file = Base.getContentFile("lib/" + filename);
+    File file = Platform.getContentFile("lib/" + filename);
     if (!file.exists()) {
 //      System.err.println("does not exist: " + file);
       return null;
@@ -498,7 +499,7 @@ public class Toolkit {
    * window, not the window icon for the dock or cmd-tab.
    */
   static public void setIcon(Window window) {
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       if (iconImages == null) {
         iconImages = new ArrayList<Image>();
         final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
@@ -672,7 +673,7 @@ public class Toolkit {
   // A 5-minute search didn't turn up any such event in the Java API.
   // Also, should we use the Toolkit associated with the editor window?
   static private boolean checkRetina() {
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
       GraphicsDevice device = env.getDefaultScreenDevice();
 
@@ -907,7 +908,7 @@ public class Toolkit {
       // This gets the JAVA_HOME for the *local* copy of the JRE installed with
       // Processing. If it's not using the local JRE, it may be because of this
       // launch4j bug: https://github.com/processing/processing/issues/3543
-      if (hasNonAsciiChars(Base.getJavaHome().getAbsolutePath())) {
+      if (hasNonAsciiChars(Platform.getJavaHome().getAbsolutePath())) {
         msg += "Trying moving Processing\n" +
           "to a location with only ASCII characters in the path.";
       } else {

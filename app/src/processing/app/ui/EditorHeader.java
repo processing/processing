@@ -34,6 +34,7 @@ import javax.swing.*;
 import processing.app.Base;
 import processing.app.Language;
 import processing.app.Mode;
+import processing.app.Platform;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 
@@ -473,7 +474,7 @@ public class EditorHeader extends JComponent {
       @Override
       public void actionPerformed(ActionEvent e) {
         Sketch sketch = editor.getSketch();
-        if (!Base.isMacOS() &&  // ok on OS X
+        if (!Platform.isMacOS() &&  // ok on OS X
             editor.base.getEditors().size() == 1 &&  // mmm! accessor
             sketch.getCurrentCodeIndex() == 0) {
             Base.showWarning(Language.text("editor.header.delete.warning.title"),
@@ -495,7 +496,7 @@ public class EditorHeader extends JComponent {
     //  KeyEvent.VK_LEFT and VK_RIGHT will make Windows beep
 
     final String prevTab = Language.text("editor.header.previous_tab");
-    if (Base.isLinux()) {
+    if (Platform.isLinux()) {
       item = Toolkit.newJMenuItem(prevTab, KeyEvent.VK_PAGE_UP);
     } else {
       item = Toolkit.newJMenuItemAlt(prevTab, KeyEvent.VK_LEFT);
@@ -507,7 +508,7 @@ public class EditorHeader extends JComponent {
       }
     };
     mapKey = "editor.header.previous_tab";
-    if (Base.isLinux()) {
+    if (Platform.isLinux()) {
       keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, Toolkit.SHORTCUT_KEY_MASK);
     } else {
       keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
@@ -518,7 +519,7 @@ public class EditorHeader extends JComponent {
     menu.add(item);
 
     final String nextTab = Language.text("editor.header.next_tab");
-    if (Base.isLinux()) {
+    if (Platform.isLinux()) {
       item = Toolkit.newJMenuItem(nextTab, KeyEvent.VK_PAGE_DOWN);
     } else {
       item = Toolkit.newJMenuItemAlt(nextTab, KeyEvent.VK_RIGHT);
@@ -530,7 +531,7 @@ public class EditorHeader extends JComponent {
       }
     };
     mapKey = "editor.header.next_tab";
-    if (Base.isLinux()) {
+    if (Platform.isLinux()) {
       keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, Toolkit.SHORTCUT_KEY_MASK);
     } else {
       keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);

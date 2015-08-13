@@ -27,13 +27,13 @@ import java.awt.Toolkit;
 
 import processing.app.Base;
 import processing.app.Preferences;
-import processing.app.platform.Platform;
+import processing.app.platform.DefaultPlatform;
 
 
-public class LinuxPlatform extends Platform {
+public class LinuxPlatform extends DefaultPlatform {
 
-  public void init(Base base) {
-    super.init(base);
+  public void initBase(Base base) {
+    super.initBase(base);
 
     String javaVendor = System.getProperty("java.vendor");
     String javaVM = System.getProperty("java.vm.name");

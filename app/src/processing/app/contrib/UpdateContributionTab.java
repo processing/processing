@@ -26,6 +26,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
 import processing.app.Base;
+import processing.app.Platform;
 import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
@@ -86,7 +87,7 @@ public class UpdateContributionTab extends ContributionTab {
       super.filter = filter;
       setOpaque(true);
 
-      if (Base.isLinux()) {
+      if (Platform.isLinux()) {
         // Because of a bug with GNOME, getColor returns the wrong value for
         // List.background. We'll just assume its white. The number of people
         // using Linux and an inverted color theme should be small enough.

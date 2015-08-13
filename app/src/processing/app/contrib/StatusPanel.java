@@ -37,7 +37,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import processing.app.Base;
+import processing.app.Platform;
 
 
 class StatusPanel extends JPanel {
@@ -70,7 +70,7 @@ class StatusPanel extends JPanel {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           if (e.getURL() != null) {
-            Base.openURL(e.getURL().toString());
+            Platform.openURL(e.getURL().toString());
           }
         }
       }
@@ -161,7 +161,7 @@ class StatusPanel extends JPanel {
     removeButton.setEnabled(false);
 
     layout.setHonorsVisibility(updateLabel, false); // Makes the label take up space even though not visible
-    
+
     validate();
 
   }
