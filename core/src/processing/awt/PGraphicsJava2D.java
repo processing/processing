@@ -1027,14 +1027,11 @@ public class PGraphicsJava2D extends PGraphics {
       int[] srcPixels = new int[width];
       int[] dstPixels = new int[width];
 
-      // Java won't set the high bits when RGB, returns 0 for alpha
-      int alphaFiller = (dstIn.getNumBands() == 3) ? (0xFF << 24) : 0x00;
-
       for (int y = 0; y < height; y++) {
         src.getDataElements(0, y, width, 1, srcPixels);
         dstIn.getDataElements(0, y, width, 1, dstPixels);
         for (int x = 0; x < width; x++) {
-          dstPixels[x] = blendColor(alphaFiller | dstPixels[x], srcPixels[x], mode);
+          dstPixels[x] = blendColor(dstPixels[x], srcPixels[x], mode);
         }
         dstOut.setDataElements(0, y, width, 1, dstPixels);
       }
