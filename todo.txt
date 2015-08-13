@@ -3,8 +3,10 @@ X Fix NullPointerException with some sketches that have no size() command
 X   https://github.com/processing/processing/issues/3585
 X Invalid OS X code signature
 X   https://github.com/processing/processing/issues/3575
-_ canceling the "create folder, move sketch, and continue?" will cause crash
-_   throws an NPE and then forces a quit
+X canceling "create folder, move sketch, and continue?" will cause crash
+X   throws an NPE and then forces a quit
+X   https://github.com/processing/processing/issues/3586
+X   also showError() there shouldn't die if other Java windows open
 
 gsoc
 X Second round of arm patches (v5)
@@ -13,6 +15,10 @@ X   https://github.com/processing/processing/pull/3583
 earlier
 X closing the color selector makes things freeze (only Linux and Windows?)
 X   https://github.com/processing/processing/issues/2381
+X Comment/Uncomment should ignore leading whitespace
+X   https://github.com/processing/processing/issues/1961
+X Export unsaved sketch > agree to save prompt > export doesn't finish
+X   https://github.com/processing/processing/issues/2724
 
 
 known issues
@@ -28,8 +34,8 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
 3.0 final
-_ more ARM patches
-_   https://github.com/processing/processing/pull/3566
+_ move Platform into its own class?
+_   https://github.com/processing/processing/issues/2765
 _ Contributions Manager UI design
 _   https://github.com/processing/processing/issues/3482
 _ Ready to add contributed example packages?

@@ -1,10 +1,14 @@
 0242 core (3.0b4)
+X dataPath() not working when app is not run from app dir on Linux
+X   https://github.com/processing/processing/issues/2195
 
 earlier
 X are we clear on sketchPath() for OS X?
 X   working dir (user.dir?) returns home dir, not app dir in Oracle Java
 X   could add -Dapp.root=$APP_ROOT and get via System.getProperty("app.root")
 X   https://github.com/processing/processing/issues/2181
+X textWidth() incorrect with default (JAVA2D) renderer and default font
+X   https://github.com/processing/processing/issues/2175
 
 opengl
 X filter(PShader) broken in HDPI mode
@@ -151,8 +155,6 @@ _   the table pointer version will be speedy and allow chaining
 
 
 high
-_ dataPath() not working when app is not run from app dir on Linux
-_   https://github.com/processing/processing/issues/2195
 _ point() rendering differently in 2.0.3 and 2.1
 _   https://github.com/processing/processing/issues/2278
 _   internally, we probably have to call set() if it's a 1 pixel point
@@ -368,14 +370,17 @@ _     maybe a hack where a new menubar is added?
 
 CORE / PFont and text()
 
+_ font rotation (native font problem?) with natives?
+_   https://github.com/processing/processing/issues/731
+_ Text rotation, placement and font metrics incorrect when scaled
+_   https://github.com/processing/processing/issues/2167
+
 _ remove subsetting stuff from PFont?
 _   or use hint(ENABLE_FONT_SUBSETTING)? 
 _ what's the difference with ascent on loadFont vs. createFont?
 _ svg fonts
 _   would be nifty if we could convert on the fly to ttf for speed...
 _   https://github.com/processing/processing/issues/787
-_ font rotation (native font problem?) with natives?
-_   https://github.com/processing/processing/issues/731
 _ text position is quantized in JAVA2D
 _   text placement is ugly, seems like fractional metrics problem
 _   https://github.com/processing/processing/issues/138

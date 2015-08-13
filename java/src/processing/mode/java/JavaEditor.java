@@ -34,6 +34,7 @@ import processing.app.syntax.PdeTextAreaDefaults;
 import processing.app.ui.About;
 import processing.app.ui.ColorChooser;
 import processing.app.ui.Editor;
+import processing.app.ui.EditorException;
 import processing.app.ui.EditorFooter;
 import processing.app.ui.EditorHeader;
 import processing.app.ui.EditorState;
@@ -68,6 +69,7 @@ public class JavaEditor extends Editor {
   protected Color currentLineColor;
   protected Color breakpointMarkerColor;
   protected Color currentLineMarkerColor;
+
   protected List<LineHighlight> breakpointedLines =
     new ArrayList<LineHighlight>();
   protected LineHighlight currentLine; // where the debugger is suspended
@@ -103,7 +105,8 @@ public class JavaEditor extends Editor {
   protected ErrorCheckerService errorCheckerService;
 
 
-  protected JavaEditor(Base base, String path, EditorState state, Mode mode) {
+  protected JavaEditor(Base base, String path, EditorState state,
+                       Mode mode) throws EditorException {
     super(base, path, state, mode);
 
     jmode = (JavaMode) mode;
@@ -1675,31 +1678,24 @@ public class JavaEditor extends Editor {
   }
 
 
-  /**
-   * Event handler called when loading another sketch in this editor. Clears
-   * breakpoints of previous sketch.
-   *
-   * @param path
-   * @return true if a sketch was opened, false if aborted
-   */
-  @Override
-  protected boolean handleOpenInternal(String path) {
-    // log("handleOpenInternal, path: " + path);
-    boolean didOpen = super.handleOpenInternal(path);
-    if (didOpen && debugger != null) {
-      // should already been stopped (open calls handleStop)
-      debugger.clearBreakpoints();
-      clearBreakpointedLines(); // force clear breakpoint highlights
-      variableInspector().reset(); // clear contents of variable inspector
-    }
-    //if(didOpen){
-    // autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval); // this is used instead of loadAutosaver(), temp measure
-    // loadAutoSaver();
-    // viewingAutosaveBackup = autosaver.isAutoSaveBackup();
-    // log("handleOpenInternal, viewing autosave? " + viewingAutosaveBackup);
-    //}
-    return didOpen;
-  }
+  // handleOpenInternal() only called by the Editor constructor, meaning that
+  // this code is all useless. All these things will be in their default state.
+//  /**
+//   * Event handler called when loading another sketch in this editor.
+//   * Clears breakpoints of previous sketch.
+//   * @return true if a sketch was opened, false if aborted
+//   */
+//  @Override
+//  protected void handleOpenInternal(String path) throws EditorException {
+//    super.handleOpenInternal(path);
+//
+//    // should already been stopped (open calls handleStop)
+//    if (debugger != null) {
+//      debugger.clearBreakpoints();
+//    }
+//    clearBreakpointedLines();
+//    variableInspector().reset();
+//  }
 
 
   /**

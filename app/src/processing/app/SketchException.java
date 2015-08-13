@@ -28,33 +28,35 @@ package processing.app;
  * An exception with a line number attached that occurs
  * during either pre-processing, compile, or run time.
  */
-public class SketchException extends Exception /*RuntimeException*/ {
+public class SketchException extends Exception {
   protected String message;
   protected int codeIndex;
   protected int codeLine;
   protected int codeColumn;
   protected boolean showStackTrace;
 
-  
+
   public SketchException(String message) {
     this(message, true);
   }
+
 
   public SketchException(String message, boolean showStackTrace) {
     this(message, -1, -1, -1, showStackTrace);
   }
 
+
   public SketchException(String message, int file, int line) {
     this(message, file, line, -1, true);
   }
 
-  
+
   public SketchException(String message, int file, int line, int column) {
     this(message, file, line, column, true);
   }
-  
-  
-  public SketchException(String message, int file, int line, int column, 
+
+
+  public SketchException(String message, int file, int line, int column,
                          boolean showStackTrace) {
     this.message = message;
     this.codeIndex = file;
@@ -62,71 +64,71 @@ public class SketchException extends Exception /*RuntimeException*/ {
     this.codeColumn = column;
     this.showStackTrace = showStackTrace;
   }
-  
-  
-  /** 
-   * Override getMessage() in Throwable, so that I can set 
+
+
+  /**
+   * Override getMessage() in Throwable, so that I can set
    * the message text outside the constructor.
    */
   public String getMessage() {
     return message;
   }
-  
-  
+
+
   public void setMessage(String message) {
     this.message = message;
   }
-  
-  
+
+
   public int getCodeIndex() {
     return codeIndex;
   }
-  
-  
+
+
   public void setCodeIndex(int index) {
     codeIndex = index;
   }
-  
-  
+
+
   public boolean hasCodeIndex() {
     return codeIndex != -1;
   }
-  
-  
+
+
   public int getCodeLine() {
     return codeLine;
   }
-  
-  
+
+
   public void setCodeLine(int line) {
     this.codeLine = line;
   }
-  
-  
+
+
   public boolean hasCodeLine() {
     return codeLine != -1;
   }
-  
-  
+
+
   public void setCodeColumn(int column) {
     this.codeColumn = column;
   }
-  
-  
+
+
   public int getCodeColumn() {
     return codeColumn;
   }
 
-  
+
   public void showStackTrace() {
     showStackTrace = true;
   }
-  
-  
+
+
   public void hideStackTrace() {
     showStackTrace = false;
   }
-  
+
 
   /**
    * Nix the java.lang crap out of an exception message

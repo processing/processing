@@ -814,9 +814,8 @@ public class Base {
   }
 
 
-//  protected Editor handleOpen(String path, int[] location) {
-//  protected Editor handleOpen(String path, Rectangle bounds, int divider) {
-  protected Editor handleOpen(String path, boolean untitled, EditorState state) {
+  protected Editor handleOpen(String path, boolean untitled,
+                              EditorState state) {
     try {
       // System.err.println("entering handleOpen " + path);
 
@@ -856,54 +855,56 @@ public class Base {
         nextMode = mode;
       }
 
-//    Editor.State state = new Editor.State(editors);
-      Editor editor = null;
       try {
-        editor = nextMode.createEditor(this, path, state);
+        Editor editor = nextMode.createEditor(this, path, state);
 
+        // opened successfully, let's go to work
+        editor.getSketch().setUntitled(untitled);
+        editors.add(editor);
+        handleRecent(editor);
+
+        // now that we're ready, show the window
+        // (don't do earlier, cuz we might move it based on a window being closed)
+        editor.setVisible(true);
+
+        return editor;
+
+      } catch (EditorException ee) {
+        if (!ee.getMessage().equals("")) {  // blank if the user canceled
+          Base.showWarning("Error opening sketch", ee.getMessage(), ee);
+        }
       } catch (NoSuchMethodError nsme) {
         Base.showWarning("Mode out of date",
                          nextMode.getTitle() + " is not compatible with this version of Processing.\n" +
                          "Try updating the Mode or contact its author for a new version.", nsme);
       } catch (Throwable t) {
-        showBadnessTrace("Mode Problems",
-                         "A nasty error occurred while trying to use " + nextMode.getTitle() + ".\n" +
-                         "It may not be compatible with this version of Processing.\n" +
-                         "Try updating the Mode or contact its author for a new version.", t, false);
-      }
-      if (editor == null) {
-        // if the bad mode is the default mode, don't go into an infinite loop
-        // trying to recreate a window with the default mode.
-        Mode defaultMode = getDefaultMode();
-        if (nextMode == defaultMode) {
-          Base.showError("Editor Problems",
-                         "An error occurred while trying to change modes.\n" +
-                         "We'll have to quit for now because it's an\n" +
-                         "unfortunate bit of indigestion with the default Mode.",
-                         null);
+        if (nextMode.equals(getDefaultMode())) {
+          showBadnessTrace("Serious Problem",
+                           "An unexpected, unknown, and unrecoverable error occurred\n" +
+                           "while opening a new editor window. Please report this.", t, true);
         } else {
-          editor = defaultMode.createEditor(this, path, state);
+          showBadnessTrace("Mode Problems",
+                           "A nasty error occurred while trying to use " + nextMode.getTitle() + ".\n" +
+                           "It may not be compatible with this version of Processing.\n" +
+                           "Try updating the Mode or contact its author for a new version.", t, false);
         }
       }
-
-      // Make sure that the sketch actually loaded
-      Sketch sketch = editor.getSketch();
-      if (sketch == null) {
-        return null;  // Just walk away quietly
-      }
-
-      sketch.setUntitled(untitled);
-      editors.add(editor);
-      handleRecent(editor);
-
-      // now that we're ready, show the window
-      // (don't do earlier, cuz we might move it based on a window being closed)
-      editor.setVisible(true);
-
-      return editor;
-
-//    } catch (NoSuchMethodError nsme) {
-//      Base.showWarning(title, message);
+      /*
+        if (editors.isEmpty()) {
+          // if the bad mode is the default mode, don't go into an infinite loop
+          // trying to recreate a window with the default mode.
+          Mode defaultMode = getDefaultMode();
+          if (nextMode == defaultMode) {
+            Base.showError("Editor Problems",
+                           "An error occurred while trying to change modes.\n" +
+                           "We'll have to quit for now because it's an\n" +
+                           "unfortunate bit of indigestion with the default Mode.",
+                           null);
+          } else {
+            editor = defaultMode.createEditor(this, path, state);
+          }
+        }
+      */
 
     } catch (Throwable t) {
       showBadnessTrace("Terrible News",
@@ -911,8 +912,8 @@ public class Base {
                        "trying to create a new editor window.", t,
                        nextMode == getDefaultMode());  // quit if default
       nextMode = getDefaultMode();
-      return null;
     }
+    return null;
   }
 
 

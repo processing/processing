@@ -33,6 +33,7 @@ import javax.swing.ImageIcon;
 
 import processing.app.*;
 import processing.app.ui.Editor;
+import processing.app.ui.EditorException;
 import processing.app.ui.EditorState;
 import processing.mode.java.runner.Runner;
 import processing.mode.java.tweak.SketchParser;
@@ -40,7 +41,8 @@ import processing.mode.java.tweak.SketchParser;
 
 public class JavaMode extends Mode {
 
-  public Editor createEditor(Base base, String path, EditorState state) {
+  public Editor createEditor(Base base, String path,
+                             EditorState state) throws EditorException {
     return new JavaEditor(base, path, state, this);
   }
 
@@ -52,6 +54,7 @@ public class JavaMode extends Mode {
     loadPreferences();
     loadIcons();
   }
+
 
   /**
    * Needed by code completion panel. See {@link processing.mode.java.pdex.CompletionPanel}

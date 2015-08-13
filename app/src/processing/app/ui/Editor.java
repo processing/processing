@@ -151,7 +151,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
 //  protected Editor(final Base base, String path, int[] location, final Mode mode) {
-  protected Editor(final Base base, String path, EditorState state, final Mode mode) {
+  protected Editor(final Base base, String path, final EditorState state,
+                   final Mode mode) throws EditorException {
     super("Processing", state.checkConfig());
     this.base = base;
     this.state = state;
@@ -366,10 +367,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
 
     // Open the document that was passed in
-    boolean loaded = handleOpenInternal(path);
-    if (!loaded) {
-      sketch = null;
-    }
+    handleOpenInternal(path);
 
     // Add a window listener to watch for changes to the files in the sketch
     addWindowFocusListener(new ChangeDetector(this));
@@ -2612,28 +2610,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   /**
-   * Open a sketch from a particular path, but don't check to save changes.
-   * Used by Sketch.saveAs() to re-open a sketch after the "Save As"
-   */
-//  protected void handleOpenUnchecked(String path, int codeIndex,
-//                                     int selStart, int selStop, int scrollPos) {
-//    internalCloseRunner();
-//    handleOpenInternal(path);
-//    // Replacing a document that may be untitled. If this is an actual
-//    // untitled document, then editor.untitled will be set by Base.
-//    untitled = false;
-//
-//    sketch.setCurrentCode(codeIndex);
-//    textarea.select(selStart, selStop);
-//    textarea.setScrollPosition(scrollPos);
-//  }
-
-
-  /**
    * Second stage of open, occurs after having checked to see if the
    * modifications (if any) to the previous sketch need to be saved.
+   * Because this method is called in Editor's constructor, a subclass
+   * shouldn't rely on any of its variables being initialized already.
    */
-  protected boolean handleOpenInternal(String path) {
+  protected void handleOpenInternal(String path) throws EditorException {
     // check to make sure that this .pde file is
     // in a folder of the same name
     final File file = new File(path);
@@ -2649,13 +2631,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
       // but open the file with the default extension instead.
       path = altFile.getAbsolutePath();
     } else if (!mode.canEdit(file)) {
-      final String modeName = (mode.getTitle().equals("Java")) ? "Processing"
-        : mode.getTitle();
-      Base
-        .showWarning("Bad file selected", modeName
-          + " can only open its own sketches\nand other files ending in "
-          + mode.getDefaultExtension(), null);
-      return false;
+      final String modeName = mode.getTitle().equals("Java") ?
+        "Processing" : (mode.getTitle() + " Mode");
+      throw new EditorException(modeName + " can only open its own sketches\n" +
+                                "and other files ending in " +
+                                mode.getDefaultExtension());
     } else {
       final String properParent =
         file.getName().substring(0, file.getName().lastIndexOf('.'));
@@ -2679,16 +2659,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
         // create properly named folder
         File properFolder = new File(file.getParent(), properParent);
         if (properFolder.exists()) {
-          Base.showWarning("Error",
-                           "A folder named \"" + properParent + "\" " +
-                           "already exists. Can't open sketch.", null);
-          return false;
+          throw new EditorException("A folder named \"" + properParent + "\" " +
+                                    "already exists. Can't open sketch.");
         }
         if (!properFolder.mkdirs()) {
-          //throw new IOException("Couldn't create sketch folder");
-          Base.showWarning("Error",
-                           "Could not create the sketch folder.", null);
-          return false;
+          throw new EditorException("Could not create the sketch folder.");
         }
         // copy the sketch inside
         File properPdeFile = new File(properFolder, file.getName());
@@ -2696,8 +2671,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         try {
           Util.copyFile(origPdeFile, properPdeFile);
         } catch (IOException e) {
-          Base.showWarning("Error", "Could not copy to a proper location.", e);
-          return false;
+          throw new EditorException("Could not copy to a proper location.", e);
         }
 
         // remove the original file, so user doesn't get confused
@@ -2706,16 +2680,17 @@ public abstract class Editor extends JFrame implements RunnerListener {
         // update with the new path
         path = properPdeFile.getAbsolutePath();
 
-      } else if (result == JOptionPane.NO_OPTION) {
-        return false;
+      } else {  //if (result == JOptionPane.NO_OPTION) {
+        // Catch all other cases, including Cancel or ESC
+        //return false;
+        throw new EditorException();
       }
     }
 
     try {
       sketch = new Sketch(path, this);
     } catch (IOException e) {
-      Base.showWarning("Error", "Could not create the sketch.", e);
-      return false;
+      throw new EditorException("Could not create the sketch.", e);
     }
 
     header.rebuild();
@@ -2727,15 +2702,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // (in case there's a crash or something that can't be recovered)
     // TODO this probably need not be here because of the Recent menu, right?
     Preferences.save();
-
-    // opening was successful
-    return true;
-
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//      statusError(e);
-//      return false;
-//    }
   }
 
   /**

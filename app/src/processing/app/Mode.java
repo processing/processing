@@ -36,6 +36,7 @@ import javax.swing.tree.*;
 
 import processing.app.syntax.*;
 import processing.app.ui.Editor;
+import processing.app.ui.EditorException;
 import processing.app.ui.EditorState;
 import processing.app.ui.ExamplesFrame;
 import processing.app.ui.SketchbookFrame;
@@ -215,38 +216,6 @@ public abstract class Mode {
   }
 
 
-  /*
-  protected void loadBackground() {
-    String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
-    backgroundImage = loadImage("theme/mode" + suffix);
-    if (backgroundImage == null) {
-      // If the image wasn't available, try the other resolution.
-      // i.e. we don't (currently) have low-res versions of mode.png,
-      // so this will grab the 2x version and scale it when drawn.
-      suffix = !Toolkit.highResDisplay() ? "-2x.png" : ".png";
-      backgroundImage = loadImage("theme/mode" + suffix);
-    }
-  }
-
-
-  public void drawBackground(Graphics g, int offset) {
-    if (backgroundImage != null) {
-      if (!Toolkit.highResDisplay()) {
-        // Image might be downsampled from a 2x version. If so, we need nice
-        // anti-aliasing for the very geometric images we're using.
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                            RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                            RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-      }
-      g.drawImage(backgroundImage, 0, -offset,
-                  BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
-    }
-  }
-  */
-
-
   public File getContentFile(String path) {
     return new File(folder, path);
   }
@@ -280,8 +249,8 @@ public abstract class Mode {
   /**
    * Create a new editor associated with this mode.
    */
-  abstract public Editor createEditor(Base base, String path, EditorState state);
-  //abstract public Editor createEditor(Base base, String path, int[] location);
+  abstract public Editor createEditor(Base base, String path,
+                                      EditorState state) throws EditorException;
 
 
   /**
