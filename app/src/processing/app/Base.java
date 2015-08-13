@@ -238,14 +238,16 @@ public class Base {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /**
+   * @return the current revision number, safe to be used for update checks
+   */
   static public int getRevision() {
     return REVISION;
   }
 
 
   /**
-   * Return the version name, something like 1.5 or 2.0b8 or 0213 if it's not
-   * a release version.
+   * @return something like 2.2.1 or 3.0b4 (or 0213 if it's not a release)
    */
   static public String getVersionName() {
     return VERSION_NAME;
@@ -260,73 +262,6 @@ public class Base {
 
   static public boolean isCommandLine() {
     return commandLine;
-  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  // TODO should this be public to suggest override for Arduino and others?
-  String getDefaultModeIdentifier() {
-    //return "processing.mode.java.pdex.ExperimentalMode";
-    return "processing.mode.java.JavaMode";
-  }
-
-
-  // TODO same as above... make public?
-  void buildCoreModes() {
-    Mode javaMode =
-      ModeContribution.load(this, Platform.getContentFile("modes/java"),
-                            getDefaultModeIdentifier()).getMode();
-
-    // PDE X calls getModeList() while it's loading, so coreModes must be set
-    coreModes = new Mode[] { javaMode };
-
-    /*
-    Mode pdexMode =
-      ModeContribution.load(this, getContentFile("modes/ExperimentalMode"), //$NON-NLS-1$
-                            "processing.mode.experimental.ExperimentalMode").getMode(); //$NON-NLS-1$
-
-    // Safe to remove the old Java mode here?
-    //coreModes = new Mode[] { pdexMode };
-    coreModes = new Mode[] { pdexMode, javaMode };
-    */
-  }
-
-
-  /**
-   * Instantiates and adds new contributed modes to the contribModes list.
-   * Checks for duplicates so the same mode isn't instantiates twice. Does not
-   * remove modes because modes can't be removed once they are instantiated.
-   */
-  void rebuildContribModes() {
-    if (modeContribs == null) {
-      modeContribs = new ArrayList<ModeContribution>();
-    }
-    ModeContribution.loadMissing(this);
-
-//    ArrayList<ModeContribution> newContribs =
-//      ModeContribution.loadAll(getSketchbookModesFolder());
-//    for (ModeContribution contrib : newContribs) {
-//      if (!contribModes.contains(contrib)) {
-//        if (contrib.instantiateModeClass(this)) {
-//          contribModes.add(contrib);
-//        }
-//      }
-//    }
-  }
-
-
-  /**
-   * Instantiates and adds new contributed modes to the contribModes list.
-   * Checks for duplicates so the same mode isn't instantiates twice. Does not
-   * remove modes because modes can't be removed once they are instantiated.
-   */
-  void rebuildContribExamples() {
-    if (exampleContribs == null) {
-      exampleContribs = new ArrayList<ExamplesContribution>();
-    }
-    ExamplesContribution.loadMissing(this);
   }
 
 
@@ -412,6 +347,55 @@ public class Base {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  void buildCoreModes() {
+    Mode javaMode =
+      ModeContribution.load(this, Platform.getContentFile("modes/java"),
+                            getDefaultModeIdentifier()).getMode();
+
+    // PDE X calls getModeList() while it's loading, so coreModes must be set
+    coreModes = new Mode[] { javaMode };
+
+    /*
+    Mode pdexMode =
+      ModeContribution.load(this, getContentFile("modes/ExperimentalMode"), //$NON-NLS-1$
+                            "processing.mode.experimental.ExperimentalMode").getMode(); //$NON-NLS-1$
+
+    // Safe to remove the old Java mode here?
+    //coreModes = new Mode[] { pdexMode };
+    coreModes = new Mode[] { pdexMode, javaMode };
+    */
+  }
+
+
+  /**
+   * Instantiates and adds new contributed modes to the contribModes list.
+   * Checks for duplicates so the same mode isn't instantiates twice. Does not
+   * remove modes because modes can't be removed once they are instantiated.
+   */
+  void rebuildContribModes() {
+    if (modeContribs == null) {
+      modeContribs = new ArrayList<ModeContribution>();
+    }
+    ModeContribution.loadMissing(this);
+  }
+
+
+  /**
+   * Instantiates and adds new contributed modes to the contribModes list.
+   * Checks for duplicates so the same mode isn't instantiates twice. Does not
+   * remove modes because modes can't be removed once they are instantiated.
+   */
+  void rebuildContribExamples() {
+    if (exampleContribs == null) {
+      exampleContribs = new ArrayList<ExamplesContribution>();
+    }
+    ExamplesContribution.loadMissing(this);
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   /** Returns the front most, active editor window. */
   public Editor getActiveEditor() {
     return activeEditor;
@@ -424,40 +408,23 @@ public class Base {
   }
 
 
-  /**
-   * The call has already checked to make sure this sketch is not modified,
-   * now change the mode.
-   */
-  public void changeMode(Mode mode) {
-    if (activeEditor.getMode() != mode) {
-      Sketch sketch = activeEditor.getSketch();
-      nextMode = mode;
+  // Because of variations in native windowing systems, no guarantees about
+  // changes to the focused and active Windows can be made. Developers must
+  // never assume that this Window is the focused or active Window until this
+  // Window receives a WINDOW_GAINED_FOCUS or WINDOW_ACTIVATED event.
+  public void handleActivated(Editor whichEditor) {
+    activeEditor = whichEditor;
 
-      if (sketch.isUntitled()) {
-        // If no changes have been made, just close and start fresh.
-        // (Otherwise the editor would lose its 'untitled' status.)
-        handleClose(activeEditor, true);
-        handleNew();
+    // set the current window to be the console that's getting output
+    EditorConsole.setEditor(activeEditor);
 
-      } else {
-        // If the current editor contains file extensions that the new mode can handle, then
-        // write a sketch.properties file with the new mode specified, and reopen.
-        boolean newModeCanHandleCurrentSource = true;
-        for (final SketchCode code: sketch.getCode()) {
-          if (!mode.validExtension(code.getExtension())) {
-            newModeCanHandleCurrentSource = false;
-            break;
-          }
-        }
-        if (newModeCanHandleCurrentSource) {
-          final File props = new File(sketch.getCodeFolder(), "sketch.properties");
-          saveModeSettings(props, nextMode);
-          handleClose(activeEditor, true);
-          handleOpen(sketch.getMainFilePath());
-        }
-      }
-    }
+    // make this the next mode to be loaded
+    nextMode = whichEditor.getMode();
+    Preferences.set("mode.last", nextMode.getIdentifier()); //$NON-NLS-1$
   }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   public List<ModeContribution> getModeContribs() {
@@ -536,19 +503,168 @@ public class Base {
   }
 
 
-  // Because of variations in native windowing systems, no guarantees about
-  // changes to the focused and active Windows can be made. Developers must
-  // never assume that this Window is the focused or active Window until this
-  // Window receives a WINDOW_GAINED_FOCUS or WINDOW_ACTIVATED event.
-  public void handleActivated(Editor whichEditor) {
-    activeEditor = whichEditor;
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-    // set the current window to be the console that's getting output
-    EditorConsole.setEditor(activeEditor);
 
-    // make this the next mode to be loaded
-    nextMode = whichEditor.getMode();
-    Preferences.set("mode.last", nextMode.getIdentifier()); //$NON-NLS-1$
+  /**
+   * Create or modify a sketch.proprties file to specify the given Mode.
+   */
+  private void saveModeSettings(final File sketchProps, final Mode mode) {
+    try {
+      final Settings settings = new Settings(sketchProps);
+      settings.set("mode", mode.getTitle());
+      settings.set("mode.id", mode.getIdentifier());
+      settings.save();
+    } catch (IOException e) {
+      System.err.println("While creating " + sketchProps + ": " + e.getMessage());
+    }
+  }
+
+
+  String getDefaultModeIdentifier() {
+    return "processing.mode.java.JavaMode";
+  }
+
+
+  public Mode getDefaultMode() {
+    return coreModes[0];
+  }
+
+
+  /** Used by ThinkDifferent so that it can have a Sketchbook menu. */
+  public Mode getNextMode() {
+    return nextMode;
+  }
+
+
+  /**
+   * The call has already checked to make sure this sketch is not modified,
+   * now change the mode.
+   */
+  public void changeMode(Mode mode) {
+    if (activeEditor.getMode() != mode) {
+      Sketch sketch = activeEditor.getSketch();
+      nextMode = mode;
+
+      if (sketch.isUntitled()) {
+        // If no changes have been made, just close and start fresh.
+        // (Otherwise the editor would lose its 'untitled' status.)
+        handleClose(activeEditor, true);
+        handleNew();
+
+      } else {
+        // If the current editor contains file extensions that the new mode can handle, then
+        // write a sketch.properties file with the new mode specified, and reopen.
+        boolean newModeCanHandleCurrentSource = true;
+        for (final SketchCode code: sketch.getCode()) {
+          if (!mode.validExtension(code.getExtension())) {
+            newModeCanHandleCurrentSource = false;
+            break;
+          }
+        }
+        if (newModeCanHandleCurrentSource) {
+          final File props = new File(sketch.getCodeFolder(), "sketch.properties");
+          saveModeSettings(props, nextMode);
+          handleClose(activeEditor, true);
+          handleOpen(sketch.getMainFilePath());
+        }
+      }
+    }
+  }
+
+
+  private static class ModeInfo {
+    public final String title;
+    public final String id;
+
+    public ModeInfo(String id, String title) {
+      this.id = id;
+      this.title = title;
+    }
+  }
+
+
+  private static ModeInfo modeInfoFor(final File sketch) {
+    final File sketchFolder = sketch.getParentFile();
+    final File sketchProps = new File(sketchFolder, "sketch.properties");
+    if (!sketchProps.exists()) {
+      return null;
+    }
+    try {
+      final Settings settings = new Settings(sketchProps);
+      final String title = settings.get("mode");
+      final String id = settings.get("mode.id");
+      if (title == null || id == null) {
+        return null;
+      }
+      return new ModeInfo(id, title);
+    } catch (IOException e) {
+      System.err.println("While trying to read " + sketchProps + ": "
+        + e.getMessage());
+    }
+    return null;
+  }
+
+
+  private Mode promptForMode(final File sketch, final ModeInfo preferredMode) {
+    final String extension =
+      sketch.getName().substring(sketch.getName().lastIndexOf('.') + 1);
+    final List<Mode> possibleModes = new ArrayList<Mode>();
+    for (final Mode mode : getModeList()) {
+      if (mode.canEdit(sketch)) {
+        possibleModes.add(mode);
+      }
+    }
+    if (possibleModes.size() == 1 &&
+        possibleModes.get(0).getIdentifier().equals(getDefaultModeIdentifier())) {
+      // If default mode can open it, then do so without prompting.
+      return possibleModes.get(0);
+    }
+    if (possibleModes.size() == 0) {
+      if (preferredMode == null) {
+        Base.showWarning("Modeless Dialog",
+                         "I don't know how to open a sketch with the \""
+                         + extension
+                         + "\"\nfile extension. You'll have to install a different"
+                         + "\nProcessing mode for that.");
+      } else {
+        Base.showWarning("Modeless Dialog", "You'll have to install "
+          + preferredMode.title + " Mode " + "\nin order to open that sketch.");
+      }
+      return null;
+    }
+    final Mode[] modes = possibleModes.toArray(new Mode[possibleModes.size()]);
+    final String message = preferredMode == null ?
+      (nextMode.getTitle() + " Mode can't open ." + extension + " files, " +
+       "but you have one or more modes\ninstalled that can. " +
+       "Would you like to try one?") :
+      ("That's a " + preferredMode.title + " Mode sketch, " +
+       "but you don't have " + preferredMode.title + " installed.\n" +
+       "Would you like to try a different mode for opening a " +
+       "." + extension + " sketch?");
+    return (Mode) JOptionPane.showInputDialog(null, message, "Choose Wisely",
+                                              JOptionPane.QUESTION_MESSAGE,
+                                              null, modes, modes[0]);
+  }
+
+
+  private Mode selectMode(final File sketch) {
+    final ModeInfo modeInfo = modeInfoFor(sketch);
+    final Mode specifiedMode = modeInfo == null ? null : findMode(modeInfo.id);
+    if (specifiedMode != null) {
+      return specifiedMode;
+    }
+    return promptForMode(sketch, modeInfo);
+  }
+
+
+  protected Mode findMode(String id) {
+    for (Mode mode : getModeList()) {
+      if (mode.getIdentifier().equals(id)) {
+        return mode;
+      }
+    }
+    return null;
   }
 
 
@@ -640,29 +756,6 @@ public class Base {
                        "A strange and unexplainable error occurred\n" +
                        "while trying to create a new sketch.", e);
     }
-  }
-
-  // Create or modify a sketch.proprties file to specify the given Mode.
-  private void saveModeSettings(final File sketchProps, final Mode mode) {
-    try {
-      final Settings settings = new Settings(sketchProps);
-      settings.set("mode", mode.getTitle());
-      settings.set("mode.id", mode.getIdentifier());
-      settings.save();
-    } catch (IOException e) {
-      System.err.println("While creating " + sketchProps + ": " + e.getMessage());
-    }
-  }
-
-
-  public Mode getDefaultMode() {
-    return coreModes[0];
-  }
-
-
-  /** Used by ThinkDifferent so that it can have a Sketchbook menu. */
-  public Mode getNextMode() {
-    return nextMode;
   }
 
 
@@ -861,99 +954,7 @@ public class Base {
   }
 
 
-  private static class ModeInfo {
-    public final String title;
-    public final String id;
-
-    public ModeInfo(String id, String title) {
-      this.id = id;
-      this.title = title;
-    }
-  }
-
-
-  private static ModeInfo modeInfoFor(final File sketch) {
-    final File sketchFolder = sketch.getParentFile();
-    final File sketchProps = new File(sketchFolder, "sketch.properties");
-    if (!sketchProps.exists()) {
-      return null;
-    }
-    try {
-      final Settings settings = new Settings(sketchProps);
-      final String title = settings.get("mode");
-      final String id = settings.get("mode.id");
-      if (title == null || id == null) {
-        return null;
-      }
-      return new ModeInfo(id, title);
-    } catch (IOException e) {
-      System.err.println("While trying to read " + sketchProps + ": "
-        + e.getMessage());
-    }
-    return null;
-  }
-
-
-  private Mode promptForMode(final File sketch, final ModeInfo preferredMode) {
-    final String extension =
-      sketch.getName().substring(sketch.getName().lastIndexOf('.') + 1);
-    final List<Mode> possibleModes = new ArrayList<Mode>();
-    for (final Mode mode : getModeList()) {
-      if (mode.canEdit(sketch)) {
-        possibleModes.add(mode);
-      }
-    }
-    if (possibleModes.size() == 1 &&
-        possibleModes.get(0).getIdentifier().equals(getDefaultModeIdentifier())) {
-      // If default mode can open it, then do so without prompting.
-      return possibleModes.get(0);
-    }
-    if (possibleModes.size() == 0) {
-      if (preferredMode == null) {
-        Base.showWarning("Modeless Dialog",
-                         "I don't know how to open a sketch with the \""
-                         + extension
-                         + "\"\nfile extension. You'll have to install a different"
-                         + "\nProcessing mode for that.");
-      } else {
-        Base.showWarning("Modeless Dialog", "You'll have to install "
-          + preferredMode.title + " Mode " + "\nin order to open that sketch.");
-      }
-      return null;
-    }
-    final Mode[] modes = possibleModes.toArray(new Mode[possibleModes.size()]);
-    final String message = preferredMode == null ?
-      (nextMode.getTitle() + " Mode can't open ." + extension + " files, " +
-       "but you have one or more modes\ninstalled that can. " +
-       "Would you like to try one?") :
-      ("That's a " + preferredMode.title + " Mode sketch, " +
-       "but you don't have " + preferredMode.title + " installed.\n" +
-       "Would you like to try a different mode for opening a " +
-       "." + extension + " sketch?");
-    return (Mode) JOptionPane.showInputDialog(null, message, "Choose Wisely",
-                                              JOptionPane.QUESTION_MESSAGE,
-                                              null, modes, modes[0]);
-  }
-
-
-  private Mode selectMode(final File sketch) {
-    final ModeInfo modeInfo = modeInfoFor(sketch);
-    final Mode specifiedMode = modeInfo == null ? null : findMode(modeInfo.id);
-    if (specifiedMode != null) {
-      return specifiedMode;
-    }
-    return promptForMode(sketch, modeInfo);
-  }
-
-
-  protected Mode findMode(String id) {
-    for (Mode mode : getModeList()) {
-      if (mode.getIdentifier().equals(id)) {
-        return mode;
-      }
-    }
-    return null;
-  }
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
@@ -1108,8 +1109,6 @@ public class Base {
    * to prevent the interface from locking up until the menus are done.
    */
   protected void rebuildSketchbookMenusAsync() {
-    //System.out.println("async enter");
-    //new Exception().printStackTrace();
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         rebuildSketchbookMenus();
@@ -1129,9 +1128,7 @@ public class Base {
    * (and the examples window) are rebuilt.
    */
   protected void rebuildSketchbookMenus() {
-    // rebuildSketchbookMenu(); // no need to rebuild sketchbook post 3.0
     for (Mode mode : getModeList()) {
-      //mode.rebuildLibraryList();
       mode.rebuildImportMenu();  // calls rebuildLibraryList
       mode.rebuildToolbarMenu();
       mode.rebuildExamplesFrame();
@@ -1141,21 +1138,8 @@ public class Base {
 
 
   protected void rebuildSketchbookMenu() {
-//      System.err.println("sketchbook: " + sketchbookFolder);
     sketchbookMenu.removeAll();
     populateSketchbookMenu(sketchbookMenu);
-//    boolean found = false;
-//    try {
-//      found = addSketches(sketchbookMenu, sketchbookFolder, false);
-//    } catch (IOException e) {
-//      Base.showWarning("Sketchbook Menu Error",
-//                       "An error occurred while trying to list the sketchbook.", e);
-//    }
-//    if (!found) {
-//      JMenuItem empty = new JMenuItem("(empty)");
-//      empty.setEnabled(false);
-//      sketchbookMenu.add(empty);
-//    }
   }
 
 
@@ -1190,8 +1174,8 @@ public class Base {
   }
 
 
-  public void handleRecentRename(Editor editor,String oldPath){
-    recent.handleRename(editor,oldPath);
+  public void handleRecentRename(Editor editor, String oldPath) {
+    recent.handleRename(editor, oldPath);
   }
 
 
