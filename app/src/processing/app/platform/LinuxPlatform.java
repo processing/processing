@@ -26,8 +26,8 @@ import java.io.File;
 import java.awt.Toolkit;
 
 import processing.app.Base;
-import processing.app.Platform;
 import processing.app.Preferences;
+import processing.app.platform.Platform;
 
 
 public class LinuxPlatform extends Platform {

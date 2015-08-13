@@ -29,7 +29,7 @@ import java.io.IOException;
 import com.apple.eio.FileManager;
 
 import processing.app.Base;
-import processing.app.Platform;
+import processing.app.platform.Platform;
 
 
 /**
@@ -93,8 +93,8 @@ public class MacPlatform extends Platform {
     }
     */
   }
-  
-  
+
+
   public File getSettingsFolder() throws Exception {
     return new File(getLibraryFolder(), "Processing");
   }
@@ -115,10 +115,10 @@ public class MacPlatform extends Platform {
     }
     */
   }
-  
 
-//  /** 
-//   * Moves the specified File object (which might be a file or folder) 
+
+//  /**
+//   * Moves the specified File object (which might be a file or folder)
 //   * to the trash.
 //   */
 //  public boolean deleteFile(File file) throws IOException {

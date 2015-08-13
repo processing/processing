@@ -79,7 +79,7 @@ public class Base {
     platformIndices.put("macosx", PConstants.MACOSX); //$NON-NLS-1$
     platformIndices.put("linux", PConstants.LINUX); //$NON-NLS-1$
   }
-  static Platform platform;
+//  static Platform platform;
 
   /** How many bits this machine is */
   static int nativeBits;
@@ -192,7 +192,7 @@ public class Base {
     if (!SingleInstance.alreadyRunning(args)) {
       // Set the look and feel before opening the window
       try {
-        platform.setLookAndFeel();
+        Platform.setLookAndFeel();
       } catch (Exception e) {
         loge("Could not set the Look & Feel", e); //$NON-NLS-1$
       }
