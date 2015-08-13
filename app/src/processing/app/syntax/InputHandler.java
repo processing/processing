@@ -92,6 +92,14 @@ public abstract class InputHandler extends KeyAdapter
 
         private static Map<String, ActionListener> actions;
 
+        private static final Map<String, String> bracketsAndQuotesMap = new HashMap<String, String>(){
+                {put("(", ")");}
+                {put("{", "}");}
+                {put("[", "]");}
+                {put("\"", "\"");}
+                {put("\'", "\'");}
+        };
+
         static
         {
                 actions = new HashMap<String, ActionListener>();
@@ -1157,12 +1165,33 @@ public abstract class InputHandler extends KeyAdapter
                                 StringBuilder sb = new StringBuilder();
                                 for(int i = 0; i < repeatCount; i++)
                                         sb.append(str);
-                                textArea.overwriteSetSelectedText(sb.toString());
+                                if (hasBracketsAndQuotes(str)) {
+                                        matchBracketsAndQuotes(str, evt, textArea, sb);
+                                } else {
+                                        textArea.overwriteSetSelectedText(sb.toString());
+                                }
                         }
                         else
                         {
                                 textArea.getToolkit().beep();
                         }
+                }
+
+                public void matchBracketsAndQuotes(String str, ActionEvent evt,
+                                                  JEditTextArea textArea, StringBuilder sb)
+                {
+                        sb.append(bracketsAndQuotesMap.get(str));
+                        textArea.overwriteSetSelectedText(sb.toString());
+                        InputHandler.PREV_CHAR.actionPerformed(evt);
+                }
+
+                public boolean hasBracketsAndQuotes(String str){
+                        for (String bracketsAndQuotes : bracketsAndQuotesMap.keySet())
+                        {
+                                if (str.equals(bracketsAndQuotes))
+                                        return true;
+                        }
+                        return false;
                 }
         }
         
