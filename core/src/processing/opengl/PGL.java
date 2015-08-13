@@ -569,8 +569,6 @@ public abstract class PGL {
     if (needFBOLayer(clear0)) {
       if (!fboLayerCreated) createFBOLayer();
 
-//      System.err.println("Using FBO layer");
-
       bindFramebufferImpl(FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(backTex), 0);
@@ -755,8 +753,6 @@ public abstract class PGL {
   private void createFBOLayer() {
     String ext = getString(EXTENSIONS);
     float scale = pg.getPixelScale();
-
-    System.err.println("creating fbo layer");
 
     if (-1 < ext.indexOf("texture_non_power_of_two")) {
       fboWidth = (int)(scale * pg.width);
