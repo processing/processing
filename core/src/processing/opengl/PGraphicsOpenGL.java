@@ -1999,25 +1999,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void beginDraw() {
-    if (primaryGraphics) {
-//      if (initialized) {
-//        if (sized) pgl.reinitSurface();
-//        if (parent.canDraw()) pgl.requestDraw();
-//      } else {
-//        initPrimary();
-//      }
+    report("top beginDraw()");
 
+    if (primaryGraphics) {
       if (!initialized) {
         initPrimary();
       }
-
       setCurrentPG(this);
     } else {
       pgl.getGL(getPrimaryPGL());
       getPrimaryPG().setCurrentPG(this);
     }
-
-    report("top beginDraw()");
 
     if (!checkGLThread()) {
       return;
@@ -6879,7 +6871,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void endOnscreenDraw() {
-    pgl.endDraw(clearColorBuffer0, parent.sketchWindowColor());
+    pgl.endDraw(clearColorBuffer, parent.sketchWindowColor());
   }
 
 

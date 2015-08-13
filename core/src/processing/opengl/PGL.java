@@ -80,7 +80,7 @@ public abstract class PGL {
    * See the code and comments involving this constant in
    * PGraphicsOpenGL.endDraw().
    */
-  protected static boolean SAVE_SURFACE_TO_PIXELS_HACK = true;
+  protected static boolean SAVE_SURFACE_TO_PIXELS_HACK = false;
 
   /** Enables/disables mipmap use. */
   protected static boolean MIPMAPS_ENABLED = true;
@@ -625,7 +625,7 @@ public abstract class PGL {
 
 
   IntBuffer labelTex;
-  protected void endDraw(boolean clear0, int windowColor) {
+  protected void endDraw(boolean clear, int windowColor) {
     if (fboLayerInUse) {
       syncBackTexture();
 
@@ -705,6 +705,8 @@ public abstract class PGL {
       int temp = frontTex;
       frontTex = backTex;
       backTex = temp;
+    } else if (!clear && pg.parent.frameCount == 1) {
+      requestFBOLayer();
     }
   }
 
@@ -753,6 +755,8 @@ public abstract class PGL {
   private void createFBOLayer() {
     String ext = getString(EXTENSIONS);
     float scale = pg.getPixelScale();
+
+    System.err.println("creating fbo layer");
 
     if (-1 < ext.indexOf("texture_non_power_of_two")) {
       fboWidth = (int)(scale * pg.width);
