@@ -2473,324 +2473,470 @@ public class PImage implements PConstants, Cloneable {
     return (a > b) ? a : b;
   }
 
-  // davbol - added peg helper, equiv to constrain(n,0,255)
-  private static int peg(int n) {
-    return (n < 0) ? 0 : ((n > 255) ? 255 : n);
-  }
-
-  private static int mix(int a, int b, int f) {
-    return a + (((b - a) * f) >> 8);
-  }
-
-
 
   /////////////////////////////////////////////////////////////
 
-  // BLEND MODE IMPLEMENTIONS
+  // BLEND MODE IMPLEMENTATIONS
 
+  /*
+   * Jakub Valtar
+   *
+   * All modes use SRC alpha to interpolate between DST and the result of
+   * the operation:
+   *
+   * R = (1 - SRC_ALPHA) * DST + SRC_ALPHA * <RESULT OF THE OPERATION>
+   *
+   * Comments above each mode only specify the formula of its operation.
+   *
+   * These implementations treat alpha 127 (=255/2) as a perfect 50 % mix.
+   *
+   * One alpha value between 126 and 127 is intentionally left out,
+   * so the step 126 -> 127 is twice as big compared to other steps.
+   * This is because our colors are in 0..255 range, but we divide
+   * by right shifting 8 places (=256) which is much faster than
+   * (correct) float division by 255.0f. The missing value was placed
+   * between 126 and 127, because limits of the range (near 0 and 255) and
+   * the middle value (127) have to blend correctly.
+   *
+   * Below you will often see RED and BLUE channels (RB) manipulated together
+   * and GREEN channel (GN) manipulated separately. It is sometimes possible
+   * because the operation won't use more than 16 bits, so we process the RED
+   * channel in the upper 16 bits and BLUE channel in the lower 16 bits. This
+   * decreases the number of operations per pixel and thus makes things faster.
+   *
+   * Some of the modes are hand tweaked (various +1s etc.) to be more accurate
+   * and to produce correct values in extremes. Below is a sketch you can use
+   * to check any blending function for
+   *
+   * 1) Discrepancies between color channels:
+   *    - highlighted by the offending color
+   * 2) Behavior at extremes (set colorCount to 256):
+   *    - values of all corners are printed to the console
+   * 3) Rounding errors:
+   *    - set colorCount to lower value to better see color bands
+   *
 
-  private static int blend_blend(int a, int b) {
-    int f = (b & ALPHA_MASK) >>> 24;
+// use powers of 2 in range 2..256
+// to better see color bands
+final int colorCount = 256;
 
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            mix(a & RED_MASK, b & RED_MASK, f) & RED_MASK |
-            mix(a & GREEN_MASK, b & GREEN_MASK, f) & GREEN_MASK |
-            mix(a & BLUE_MASK, b & BLUE_MASK, f));
+final int blockSize = 3;
+
+void settings() {
+  size(blockSize * 256, blockSize * 256);
+}
+
+void setup() { }
+
+void draw() {
+  noStroke();
+  colorMode(RGB, colorCount-1);
+  int alpha = (mouseX / blockSize) << 24;
+  int r, g, b, r2, g2, b2 = 0;
+  for (int x = 0; x <= 0xFF; x++) {
+    for (int y = 0; y <= 0xFF; y++) {
+      int dst = (x << 16) | (x << 8) | x;
+      int src = (y << 16) | (y << 8) | y | alpha;
+      int result = testFunction(dst, src);
+      r = r2 = (result >> 16 & 0xFF);
+      g = g2 = (result >>  8 & 0xFF);
+      b = b2 = (result >>  0 & 0xFF);
+      if (r != g && r != b) r2 = (128 + r2) % 255;
+      if (g != r && g != b) g2 = (128 + g2) % 255;
+      if (b != r && b != g) b2 = (128 + b2) % 255;
+      fill(r2 % colorCount, g2 % colorCount, b2 % colorCount);
+      rect(x * blockSize, y * blockSize, blockSize, blockSize);
+    }
+  }
+  println(
+    "alpha:", mouseX/blockSize,
+    "TL:", hex(get(0, 0)),
+    "TR:", hex(get(width-1, 0)),
+    "BR:", hex(get(width-1, height-1)),
+    "BL:", hex(get(0, height-1)));
+}
+
+int testFunction(int dst, int src) {
+  // your function here
+  return dst;
+}
+
+   *
+   *
+   */
+
+  private static final int RB_MASK = 0x00FF00FF;
+  private static final int GN_MASK = 0x0000FF00;
+
+  /**
+   * Blend
+   * O = S
+   */
+  private static int blend_blend(int dst, int src) {
+    int a = src >>> 24;
+
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+    int d_a = 0x100 - s_a;
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        ((dst & RB_MASK) * d_a + (src & RB_MASK) * s_a) >>> 8 & RB_MASK |
+        ((dst & GN_MASK) * d_a + (src & GN_MASK) * s_a) >>> 8 & GN_MASK;
   }
 
 
   /**
-   * additive blend with clipping
+   * Add
+   * O = MIN(D + S, 1)
    */
-  private static int blend_add_pin(int a, int b) {
-    int f = (b & ALPHA_MASK) >>> 24;
+  private static int blend_add_pin(int dst, int src) {
+    int a = src >>> 24;
 
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            low(((a & RED_MASK) +
-                 ((b & RED_MASK) >> 8) * f), RED_MASK) & RED_MASK |
-            low(((a & GREEN_MASK) +
-                 ((b & GREEN_MASK) >> 8) * f), GREEN_MASK) & GREEN_MASK |
-            low((a & BLUE_MASK) +
-                (((b & BLUE_MASK) * f) >> 8), BLUE_MASK));
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+
+    int rb = (dst & RB_MASK) + ((src & RB_MASK) * s_a >>> 8 & RB_MASK);
+    int gn = (dst & GN_MASK) + ((src & GN_MASK) * s_a >>> 8);
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        low(rb & 0xFFFF0000, RED_MASK)   |
+        low(gn & 0x00FFFF00, GREEN_MASK) |
+        low(rb & 0x0000FFFF, BLUE_MASK);
   }
 
 
   /**
-   * subtractive blend with clipping
+   * Subtract
+   * O = MAX(0, D - S)
    */
-  private static int blend_sub_pin(int a, int b) {
-    int f = (b & ALPHA_MASK) >>> 24;
+  private static int blend_sub_pin(int dst, int src) {
+    int a = src >>> 24;
 
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            high(((a & RED_MASK) - ((b & RED_MASK) >> 8) * f),
-                 GREEN_MASK) & RED_MASK |
-            high(((a & GREEN_MASK) - ((b & GREEN_MASK) >> 8) * f),
-                 BLUE_MASK) & GREEN_MASK |
-            high((a & BLUE_MASK) - (((b & BLUE_MASK) * f) >> 8), 0));
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+
+    int rb = ((src & RB_MASK)    * s_a >>> 8);
+    int gn = ((src & GREEN_MASK) * s_a >>> 8);
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        high((dst & RED_MASK) - (rb & RED_MASK), 0) |
+        high((dst & GREEN_MASK) - (gn & GREEN_MASK), 0) |
+        high((dst & BLUE_MASK) - (rb & BLUE_MASK), 0);
   }
 
 
   /**
-   * only returns the blended lightest colour
+   * Lightest
+   * O = MAX(D, S)
    */
-  private static int blend_lightest(int a, int b) {
-    int f = (b & ALPHA_MASK) >>> 24;
+  private static int blend_lightest(int dst, int src) {
+    int a = src >>> 24;
 
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            high(a & RED_MASK, ((b & RED_MASK) >> 8) * f) & RED_MASK |
-            high(a & GREEN_MASK, ((b & GREEN_MASK) >> 8) * f) & GREEN_MASK |
-            high(a & BLUE_MASK, ((b & BLUE_MASK) * f) >> 8));
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+    int d_a = 0x100 - s_a;
+
+    int rb = high(src & RED_MASK,   dst & RED_MASK) |
+             high(src & BLUE_MASK,  dst & BLUE_MASK);
+    int gn = high(src & GREEN_MASK, dst & GREEN_MASK);
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        ((dst & RB_MASK) * d_a + rb * s_a) >>> 8 & RB_MASK |
+        ((dst & GN_MASK) * d_a + gn * s_a) >>> 8 & GN_MASK;
   }
 
 
   /**
-   * only returns the blended darkest colour
+   * Darkest
+   * O = MIN(D, S)
    */
-  private static int blend_darkest(int a, int b) {
-    int f = (b & ALPHA_MASK) >>> 24;
+  private static int blend_darkest(int dst, int src) {
+    int a = src >>> 24;
 
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            mix(a & RED_MASK,
-                low(a & RED_MASK,
-                    ((b & RED_MASK) >> 8) * f), f) & RED_MASK |
-            mix(a & GREEN_MASK,
-                low(a & GREEN_MASK,
-                    ((b & GREEN_MASK) >> 8) * f), f) & GREEN_MASK |
-            mix(a & BLUE_MASK,
-                low(a & BLUE_MASK,
-                    ((b & BLUE_MASK) * f) >> 8), f));
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+    int d_a = 0x100 - s_a;
+
+    int rb = low(src & RED_MASK,   dst & RED_MASK) |
+             low(src & BLUE_MASK,  dst & BLUE_MASK);
+    int gn = low(src & GREEN_MASK, dst & GREEN_MASK);
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        ((dst & RB_MASK) * d_a + rb * s_a) >>> 8 & RB_MASK |
+        ((dst & GN_MASK) * d_a + gn * s_a) >>> 8 & GN_MASK;
   }
 
 
   /**
-   * returns the absolute value of the difference of the input colors
-   * C = |A - B|
+   * Difference
+   * O = ABS(D - S)
    */
-  private static int blend_difference(int a, int b) {
-    // setup (this portion will always be the same)
-    int f = (b & ALPHA_MASK) >>> 24;
-    int ar = (a & RED_MASK) >> 16;
-    int ag = (a & GREEN_MASK) >> 8;
-    int ab = (a & BLUE_MASK);
-    int br = (b & RED_MASK) >> 16;
-    int bg = (b & GREEN_MASK) >> 8;
-    int bb = (b & BLUE_MASK);
-    // formula:
-    int cr = (ar > br) ? (ar-br) : (br-ar);
-    int cg = (ag > bg) ? (ag-bg) : (bg-ag);
-    int cb = (ab > bb) ? (ab-bb) : (bb-ab);
-    // alpha blend (this portion will always be the same)
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
-            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
-            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  private static int blend_difference(int dst, int src) {
+    int a = src >>> 24;
+
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+    int d_a = 0x100 - s_a;
+
+    int r = (dst & RED_MASK)   - (src & RED_MASK);
+    int b = (dst & BLUE_MASK)  - (src & BLUE_MASK);
+    int g = (dst & GREEN_MASK) - (src & GREEN_MASK);
+
+    int rb = (r < 0 ? -r : r) |
+             (b < 0 ? -b : b);
+    int gn = (g < 0 ? -g : g);
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        ((dst & RB_MASK) * d_a + rb * s_a) >>> 8 & RB_MASK |
+        ((dst & GN_MASK) * d_a + gn * s_a) >>> 8 & GN_MASK;
   }
 
 
   /**
-   * Cousin of difference, algorithm used here is based on a Lingo version
-   * found here: http://www.mediamacros.com/item/item-1006687616/
-   * (Not yet verified to be correct).
+   * Exclusion
+   * O = (1 - S)D + S(1 - D)
+   * O = D + S - 2DS
    */
-  private static int blend_exclusion(int a, int b) {
-    // setup (this portion will always be the same)
-    int f = (b & ALPHA_MASK) >>> 24;
-    int ar = (a & RED_MASK) >> 16;
-    int ag = (a & GREEN_MASK) >> 8;
-    int ab = (a & BLUE_MASK);
-    int br = (b & RED_MASK) >> 16;
-    int bg = (b & GREEN_MASK) >> 8;
-    int bb = (b & BLUE_MASK);
-    // formula:
-    int cr = ar + br - ((ar * br) >> 7);
-    int cg = ag + bg - ((ag * bg) >> 7);
-    int cb = ab + bb - ((ab * bb) >> 7);
-    // alpha blend (this portion will always be the same)
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
-            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
-            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  private static int blend_exclusion(int dst, int src) {
+    int a = src >>> 24;
+
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+    int d_a = 0x100 - s_a;
+
+    int d_rb = dst & RB_MASK;
+    int d_gn = dst & GN_MASK;
+
+    int s_gn = src & GN_MASK;
+
+    int f_r = (dst & RED_MASK) >> 16;
+    int f_b = (dst & BLUE_MASK);
+
+    int rb_sub =
+        ((src & RED_MASK) * (f_r + (f_r >= 0x7F ? 1 : 0)) |
+        (src & BLUE_MASK) * (f_b + (f_b >= 0x7F ? 1 : 0)))
+        >>> 7 & 0x01FF01FF;
+    int gn_sub = s_gn * (d_gn + (d_gn >= 0x7F00 ? 0x100 : 0))
+        >>> 15 & 0x0001FF00;
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        (d_rb * d_a + (d_rb + (src & RB_MASK) - rb_sub) * s_a) >>> 8 & RB_MASK |
+        (d_gn * d_a + (d_gn + s_gn            - gn_sub) * s_a) >>> 8 & GN_MASK;
+  }
+
+
+  /*
+   * Multiply
+   * O = DS
+   */
+  private static int blend_multiply(int dst, int src) {
+    int a = src >>> 24;
+
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+    int d_a = 0x100 - s_a;
+
+    int d_gn = dst & GN_MASK;
+
+    int f_r = (dst & RED_MASK) >> 16;
+    int f_b = (dst & BLUE_MASK);
+
+    int rb =
+        ((src & RED_MASK)  * (f_r + 1) |
+        (src & BLUE_MASK)  * (f_b + 1))
+        >>>  8 & RB_MASK;
+    int gn =
+        (src & GREEN_MASK) * (d_gn + 0x100)
+        >>> 16 & GN_MASK;
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        ((dst & RB_MASK) * d_a + rb * s_a) >>> 8 & RB_MASK |
+        (d_gn            * d_a + gn * s_a) >>> 8 & GN_MASK;
   }
 
 
   /**
-   * returns the product of the input colors
-   * C = A * B
+   * Screen
+   * O = 1 - (1 - D)(1 - S)
+   * O = D + S - DS
    */
-  private static int blend_multiply(int a, int b) {
-    // setup (this portion will always be the same)
-    int f = (b & ALPHA_MASK) >>> 24;
-    int ar = (a & RED_MASK) >> 16;
-    int ag = (a & GREEN_MASK) >> 8;
-    int ab = (a & BLUE_MASK);
-    int br = (b & RED_MASK) >> 16;
-    int bg = (b & GREEN_MASK) >> 8;
-    int bb = (b & BLUE_MASK);
-    // formula:
-    int cr = (ar * br) >> 8;
-    int cg = (ag * bg) >> 8;
-    int cb = (ab * bb) >> 8;
-    // alpha blend (this portion will always be the same)
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
-            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
-            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  private static int blend_screen(int dst, int src) {
+    int a = src >>> 24;
+
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+    int d_a = 0x100 - s_a;
+
+    int d_rb = dst & RB_MASK;
+    int d_gn = dst & GN_MASK;
+
+    int s_gn = src & GN_MASK;
+
+    int f_r = (dst & RED_MASK) >> 16;
+    int f_b = (dst & BLUE_MASK);
+
+    int rb_sub =
+        ((src & RED_MASK) * (f_r + 1) |
+        (src & BLUE_MASK) * (f_b + 1))
+        >>>  8 & RB_MASK;
+    int gn_sub = s_gn * (d_gn + 0x100)
+        >>> 16 & GN_MASK;
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        (d_rb * d_a + (d_rb + (src & RB_MASK) - rb_sub) * s_a) >>> 8 & RB_MASK |
+        (d_gn * d_a + (d_gn + s_gn            - gn_sub) * s_a) >>> 8 & GN_MASK;
   }
 
 
   /**
-   * returns the inverse of the product of the inverses of the input colors
-   * (the inverse of multiply).  C = 1 - (1-A) * (1-B)
+   * Overlay
+   * O = 2 * MULTIPLY(D, S) = 2DS                   for D < 0.5
+   * O = 2 * SCREEN(D, S) - 1 = 2(S + D - DS) - 1   otherwise
    */
-  private static int blend_screen(int a, int b) {
-    // setup (this portion will always be the same)
-    int f = (b & ALPHA_MASK) >>> 24;
-    int ar = (a & RED_MASK) >> 16;
-    int ag = (a & GREEN_MASK) >> 8;
-    int ab = (a & BLUE_MASK);
-    int br = (b & RED_MASK) >> 16;
-    int bg = (b & GREEN_MASK) >> 8;
-    int bb = (b & BLUE_MASK);
-    // formula:
-    int cr = 255 - (((255 - ar) * (255 - br)) >> 8);
-    int cg = 255 - (((255 - ag) * (255 - bg)) >> 8);
-    int cb = 255 - (((255 - ab) * (255 - bb)) >> 8);
-    // alpha blend (this portion will always be the same)
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
-            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
-            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  private static int blend_overlay(int dst, int src) {
+    int a = src >>> 24;
+
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+    int d_a = 0x100 - s_a;
+
+    int d_r = dst & RED_MASK;
+    int d_g = dst & GREEN_MASK;
+    int d_b = dst & BLUE_MASK;
+
+    int s_r = src & RED_MASK;
+    int s_g = src & GREEN_MASK;
+    int s_b = src & BLUE_MASK;
+
+    int r = (d_r < 0x800000) ?
+        d_r * ((s_r >>> 16) + 1) >>> 7 :
+        0xFF0000 - ((0x100 - (s_r >>> 16)) * (RED_MASK - d_r) >>> 7);
+    int g = (d_g < 0x8000) ?
+        d_g * (s_g + 0x100) >>> 15 :
+        (0xFF00 - ((0x10000 - s_g) * (GREEN_MASK - d_g) >>> 15));
+    int b = (d_b < 0x80) ?
+        d_b * (s_b + 1) >>> 7 :
+        (0xFF00 - ((0x100 - s_b) * (BLUE_MASK - d_b) << 1)) >>> 8;
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        ((dst & RB_MASK) * d_a + ((r | b) & RB_MASK) * s_a) >>> 8 & RB_MASK |
+        ((dst & GN_MASK) * d_a + (g       & GN_MASK) * s_a) >>> 8 & GN_MASK;
   }
 
 
   /**
-   * returns either multiply or screen for darker or lighter values of A
-   * (the inverse of hard light)
-   * C =
-   *   A < 0.5 : 2 * A * B
-   *   A >=0.5 : 1 - (2 * (255-A) * (255-B))
+   * Hard Light
+   * O = OVERLAY(S, D)
+   *
+   * O = 2 * MULTIPLY(D, S) = 2DS                   for S < 0.5
+   * O = 2 * SCREEN(D, S) - 1 = 2(S + D - DS) - 1   otherwise
    */
-  private static int blend_overlay(int a, int b) {
-    // setup (this portion will always be the same)
-    int f = (b & ALPHA_MASK) >>> 24;
-    int ar = (a & RED_MASK) >> 16;
-    int ag = (a & GREEN_MASK) >> 8;
-    int ab = (a & BLUE_MASK);
-    int br = (b & RED_MASK) >> 16;
-    int bg = (b & GREEN_MASK) >> 8;
-    int bb = (b & BLUE_MASK);
-    // formula:
-    int cr = (ar < 128) ? ((ar*br)>>7) : (255-(((255-ar)*(255-br))>>7));
-    int cg = (ag < 128) ? ((ag*bg)>>7) : (255-(((255-ag)*(255-bg))>>7));
-    int cb = (ab < 128) ? ((ab*bb)>>7) : (255-(((255-ab)*(255-bb))>>7));
-    // alpha blend (this portion will always be the same)
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
-            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
-            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  private static int blend_hard_light(int dst, int src) {
+    int a = src >>> 24;
+
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+    int d_a = 0x100 - s_a;
+
+    int d_r = dst & RED_MASK;
+    int d_g = dst & GREEN_MASK;
+    int d_b = dst & BLUE_MASK;
+
+    int s_r = src & RED_MASK;
+    int s_g = src & GREEN_MASK;
+    int s_b = src & BLUE_MASK;
+
+    int r = (s_r < 0x800000) ?
+        s_r * ((d_r >>> 16) + 1) >>> 7 :
+        0xFF0000 - ((0x100 - (d_r >>> 16)) * (RED_MASK - s_r) >>> 7);
+    int g = (s_g < 0x8000) ?
+        s_g * (d_g + 0x100) >>> 15 :
+        (0xFF00 - ((0x10000 - d_g) * (GREEN_MASK - s_g) >>> 15));
+    int b = (s_b < 0x80) ?
+        s_b * (d_b + 1) >>> 7 :
+        (0xFF00 - ((0x100 - d_b) * (BLUE_MASK - s_b) << 1)) >>> 8;
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        ((dst & RB_MASK) * d_a + ((r | b) & RB_MASK) * s_a) >>> 8 & RB_MASK |
+        ((dst & GN_MASK) * d_a + (g       & GN_MASK) * s_a) >>> 8 & GN_MASK;
   }
 
 
   /**
-   * returns either multiply or screen for darker or lighter values of B
-   * (the inverse of overlay)
-   * C =
-   *   B < 0.5 : 2 * A * B
-   *   B >=0.5 : 1 - (2 * (255-A) * (255-B))
+   * Soft Light (Pegtop)
+   * O = (1 - D) * MULTIPLY(D, S) + D * SCREEN(D, S)
+   * O = (1 - D) * DS + D * (1 - (1 - D)(1 - S))
+   * O = 2DS + DD - 2DDS
    */
-   private static int blend_hard_light(int a, int b) {
-    // setup (this portion will always be the same)
-    int f = (b & ALPHA_MASK) >>> 24;
-    int ar = (a & RED_MASK) >> 16;
-    int ag = (a & GREEN_MASK) >> 8;
-    int ab = (a & BLUE_MASK);
-    int br = (b & RED_MASK) >> 16;
-    int bg = (b & GREEN_MASK) >> 8;
-    int bb = (b & BLUE_MASK);
-    // formula:
-    int cr = (br < 128) ? ((ar*br)>>7) : (255-(((255-ar)*(255-br))>>7));
-    int cg = (bg < 128) ? ((ag*bg)>>7) : (255-(((255-ag)*(255-bg))>>7));
-    int cb = (bb < 128) ? ((ab*bb)>>7) : (255-(((255-ab)*(255-bb))>>7));
-    // alpha blend (this portion will always be the same)
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
-            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
-            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  private static int blend_soft_light(int dst, int src) {
+    int a = src >>> 24;
+
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+    int d_a = 0x100 - s_a;
+
+    int d_r = dst & RED_MASK;
+    int d_g = dst & GREEN_MASK;
+    int d_b = dst & BLUE_MASK;
+
+    int s_r1 = src & RED_MASK >> 16;
+    int s_g1 = src & GREEN_MASK >> 8;
+    int s_b1 = src & BLUE_MASK;
+
+    int d_r1 = (d_r >> 16) + (s_r1 < 7F ? 1 : 0);
+    int d_g1 = (d_g >> 8)  + (s_g1 < 7F ? 1 : 0);
+    int d_b1 = d_b         + (s_b1 < 7F ? 1 : 0);
+
+    int r = (s_r1 * d_r >> 7) + 0xFF * d_r1 * (d_r1 + 1) -
+        ((s_r1 * d_r1 * d_r1) << 1) & RED_MASK;
+    int g = (s_g1 * d_g << 1) + 0xFF * d_g1 * (d_g1 + 1) -
+        ((s_g1 * d_g1 * d_g1) << 1) >>> 8 & GREEN_MASK;
+    int b = (s_b1 * d_b << 9) + 0xFF * d_b1 * (d_b1 + 1) -
+        ((s_b1 * d_b1 * d_b1) << 1) >>> 16;
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        ((dst & RB_MASK) * d_a + (r | b) * s_a) >>> 8 & RB_MASK |
+        ((dst & GN_MASK) * d_a + g       * s_a) >>> 8 & GN_MASK;
   }
 
 
   /**
-   * returns the inverse multiply plus screen, which simplifies to
-   * C = 2AB + A^2 - 2A^2B
+   * Dodge
+   * O = D / (1 - S)
    */
-  private static int blend_soft_light(int a, int b) {
-    // setup (this portion will always be the same)
-    int f = (b & ALPHA_MASK) >>> 24;
-    int ar = (a & RED_MASK) >> 16;
-    int ag = (a & GREEN_MASK) >> 8;
-    int ab = (a & BLUE_MASK);
-    int br = (b & RED_MASK) >> 16;
-    int bg = (b & GREEN_MASK) >> 8;
-    int bb = (b & BLUE_MASK);
-    // formula:
-    int cr = ((ar*br)>>7) + ((ar*ar)>>8) - ((ar*ar*br)>>15);
-    int cg = ((ag*bg)>>7) + ((ag*ag)>>8) - ((ag*ag*bg)>>15);
-    int cb = ((ab*bb)>>7) + ((ab*ab)>>8) - ((ab*ab*bb)>>15);
-    // alpha blend (this portion will always be the same)
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
-            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
-            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+  private static int blend_dodge(int dst, int src) {
+    int a = src >>> 24;
+
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+    int d_a = 0x100 - s_a;
+
+    int r = (dst & RED_MASK)          / (256 - ((src & RED_MASK) >> 16));
+    int g = ((dst & GREEN_MASK) << 8) / (256 - ((src & GREEN_MASK) >> 8));
+    int b = ((dst & BLUE_MASK)  << 8) / (256 - (src & BLUE_MASK));
+
+    int rb =
+        (r > 0xFF00 ? 0xFF0000 : ((r << 8) & RED_MASK)) |
+        (b > 0x00FF ? 0x0000FF : b);
+    int gn =
+        (g > 0xFF00 ? 0x00FF00 : (g & GREEN_MASK));
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        ((dst & RB_MASK) * d_a + rb * s_a) >>> 8 & RB_MASK |
+        ((dst & GN_MASK) * d_a + gn * s_a) >>> 8 & GN_MASK;
   }
 
 
   /**
-   * Returns the first (underlay) color divided by the inverse of
-   * the second (overlay) color. C = A / (255-B)
+   * Burn
+   * O = 1 - (1 - A) / B
    */
-  private static int blend_dodge(int a, int b) {
-    // setup (this portion will always be the same)
-    int f = (b & ALPHA_MASK) >>> 24;
-    int ar = (a & RED_MASK) >> 16;
-    int ag = (a & GREEN_MASK) >> 8;
-    int ab = (a & BLUE_MASK);
-    int br = (b & RED_MASK) >> 16;
-    int bg = (b & GREEN_MASK) >> 8;
-    int bb = (b & BLUE_MASK);
-    // formula:
-    int cr = (br==255) ? 255 : peg((ar << 8) / (255 - br)); // division requires pre-peg()-ing
-    int cg = (bg==255) ? 255 : peg((ag << 8) / (255 - bg)); // "
-    int cb = (bb==255) ? 255 : peg((ab << 8) / (255 - bb)); // "
-    // alpha blend (this portion will always be the same)
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
-            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
-            (peg(ab + (((cb - ab) * f) >> 8)) ) );
-  }
+  private static int blend_burn(int dst, int src) {
+    int a = src >>> 24;
 
+    int s_a = a + (a >= 0x7F ? 1 : 0);
+    int d_a = 0x100 - s_a;
 
-  /**
-   * returns the inverse of the inverse of the first (underlay) color
-   * divided by the second (overlay) color. C = 255 - (255-A) / B
-   */
-  private static int blend_burn(int a, int b) {
-    // setup (this portion will always be the same)
-    int f = (b & ALPHA_MASK) >>> 24;
-    int ar = (a & RED_MASK) >> 16;
-    int ag = (a & GREEN_MASK) >> 8;
-    int ab = (a & BLUE_MASK);
-    int br = (b & RED_MASK) >> 16;
-    int bg = (b & GREEN_MASK) >> 8;
-    int bb = (b & BLUE_MASK);
-    // formula:
-    int cr = (br==0) ? 0 : 255 - peg(((255 - ar) << 8) / br); // division requires pre-peg()-ing
-    int cg = (bg==0) ? 0 : 255 - peg(((255 - ag) << 8) / bg); // "
-    int cb = (bb==0) ? 0 : 255 - peg(((255 - ab) << 8) / bb); // "
-    // alpha blend (this portion will always be the same)
-    return (low(((a & ALPHA_MASK) >>> 24) + f, 0xff) << 24 |
-            (peg(ar + (((cr - ar) * f) >> 8)) << 16) |
-            (peg(ag + (((cg - ag) * f) >> 8)) << 8) |
-            (peg(ab + (((cb - ab) * f) >> 8)) ) );
+    int r = ((0xFF0000 - (dst & RED_MASK)))        / (1 + (src & RED_MASK >> 16));
+    int g = ((0x00FF00 - (dst & GREEN_MASK)) << 8) / (1 + (src & GREEN_MASK >> 8));
+    int b = ((0x0000FF - (dst & BLUE_MASK))  << 8) / (1 + (src & BLUE_MASK));
+
+    int rb = RB_MASK -
+        (r > 0xFF00 ? 0xFF0000 : ((r << 8) & RED_MASK)) -
+        (b > 0x00FF ? 0x0000FF : b);
+    int gn = GN_MASK -
+        (g > 0xFF00 ? 0x00FF00 : (g & GREEN_MASK));
+
+    return low((dst >>> 24) + a, 0xFF) << 24 |
+        ((dst & RB_MASK) * d_a + rb * s_a) >>> 8 & RB_MASK |
+        ((dst & GN_MASK) * d_a + gn * s_a) >>> 8 & GN_MASK;
   }
 
 
