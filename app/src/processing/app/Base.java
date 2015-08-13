@@ -97,7 +97,7 @@ public class Base {
 
   private JMenu sketchbookMenu;
 
-  private Recent recent;
+//  private Recent recent;
 
   // Used by handleOpen(), this saves the chooser to remember the directory.
   // Doesn't appear to be necessary with the AWT native file dialog.
@@ -277,7 +277,8 @@ public class Base {
     // Needs to happen after the sketchbook folder has been located.
     // Also relies on the modes to be loaded so it knows what can be
     // marked as an example.
-    recent = new Recent(this);
+//    recent = new Recent(this);
+    Recent.init(this);
 
     String lastModeIdentifier = Preferences.get("mode.last"); //$NON-NLS-1$
     if (lastModeIdentifier == null) {
@@ -870,7 +871,7 @@ public class Base {
           if (tab.getFile().equals(file)) {
             editor.toFront();
             // move back to the top of the recent list
-            handleRecent(editor);
+            Recent.handle(editor);
             return editor;
           }
         }
@@ -898,7 +899,7 @@ public class Base {
         // opened successfully, let's go to work
         editor.getSketch().setUntitled(untitled);
         editors.add(editor);
-        handleRecent(editor);
+        Recent.handle(editor);
 
         // now that we're ready, show the window
         // (don't do earlier, cuz we might move it based on a window being closed)
@@ -1034,7 +1035,7 @@ public class Base {
       } else {  // on OS X, update the default file menu
         editor.setVisible(false);
         editor.dispose();
-        defaultFileMenu.insert(getRecentMenu(), 2);
+        defaultFileMenu.insert(Recent.getMenu(), 2);
         activeEditor = null;
         editors.remove(editor);
       }
@@ -1159,6 +1160,7 @@ public class Base {
   }
 
 
+  /*
   public JMenu getRecentMenu() {
     return recent.getMenu();
   }
@@ -1179,13 +1181,12 @@ public class Base {
   }
 
 
-  /**
-   * Called before a sketch is renamed so that its old name is
-   * no longer in the menu.
-   */
+  // Called before a sketch is renamed so that its old name is
+  // no longer in the menu.
   public void removeRecent(Editor editor) {
     recent.remove(editor);
   }
+  */
 
 
   /**

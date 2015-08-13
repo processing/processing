@@ -182,7 +182,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
         public void windowActivated(WindowEvent e) {
           base.handleActivated(Editor.this);
-          fileMenu.insert(base.getRecentMenu(), 2);
+          fileMenu.insert(Recent.getMenu(), 2);
           Toolkit.setMenuMnemsInside(fileMenu);
 
           //sketchMenu.insert(mode.getImportMenu(), 5);
@@ -193,7 +193,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
 
         public void windowDeactivated(WindowEvent e) {
-          fileMenu.remove(base.getRecentMenu());
+          fileMenu.remove(Recent.getMenu());
 //          JMenu importMenu = mode.getImportMenu();
 //          importIndex = sketchMenu.getComponentZOrder(mode.getImportMenu());
 //          sketchMenu.remove(mode.getImportMenu());
@@ -462,14 +462,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  public void removeRecent() {
-    base.removeRecent(this);
-  }
-
-
-  public void addRecent() {
-    base.handleRecent(this);
-  }
+//  public void removeRecent() {
+//    Recent.remove(this);
+//  }
+//
+//
+//  public void addRecent() {
+//    Recent.handle(this);
+//  }
 
 
   /**

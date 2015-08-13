@@ -25,6 +25,7 @@ package processing.app;
 
 import processing.app.ui.Editor;
 import processing.app.ui.ProgressFrame;
+import processing.app.ui.Recent;
 import processing.app.ui.Toolkit;
 import processing.core.*;
 
@@ -952,7 +953,7 @@ public class Sketch {
     // the Recent menu so that it's not sticking around after the rename.
     // If untitled, it won't be in the menu, so there's no point.
     if (!isUntitled()) {
-      editor.removeRecent();
+      Recent.remove(editor);
     }
 
     // save the main tab with its new name
@@ -965,7 +966,7 @@ public class Sketch {
     setUntitled(false);
 
     // Add this sketch back using the new name
-    editor.addRecent();
+    Recent.handle(editor);
 
     // let Editor know that the save was successful
     return true;
@@ -997,7 +998,7 @@ public class Sketch {
 //    System.out.println("modified is now " + modified);
     editor.updateTitle();
     editor.getBase().rebuildSketchbookMenus();
-    editor.getBase().handleRecentRename(editor,oldPath);
+    Recent.handleRename(editor, oldPath);
 //    editor.header.rebuild();
   }
 

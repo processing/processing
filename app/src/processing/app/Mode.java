@@ -40,6 +40,7 @@ import processing.app.ui.Editor;
 import processing.app.ui.EditorException;
 import processing.app.ui.EditorState;
 import processing.app.ui.ExamplesFrame;
+import processing.app.ui.Recent;
 import processing.app.ui.SketchbookFrame;
 import processing.app.ui.Toolkit;
 import processing.core.PApplet;
@@ -374,13 +375,13 @@ public abstract class Mode {
     if (toolbarMenu == null) {
       rebuildToolbarMenu();
     } else {
-      toolbarMenu.insert(base.getToolbarRecentMenu(), 1);
+      toolbarMenu.insert(Recent.getToolbarMenu(), 1);
     }
   }
 
 
   public void removeToolbarRecentMenu() {
-    toolbarMenu.remove(base.getToolbarRecentMenu());
+    toolbarMenu.remove(Recent.getToolbarMenu());
   }
 
 
