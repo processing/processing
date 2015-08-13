@@ -14,6 +14,10 @@ X   https://github.com/processing/processing/issues/2181
 X textWidth() incorrect with default (JAVA2D) renderer and default font
 X   https://github.com/processing/processing/issues/2175
 
+jakub
+X Remove alpha filler (hopefully no regression here)
+X   https://github.com/processing/processing/pull/3523
+
 opengl
 X filter(PShader) broken in HDPI mode
 X   https://github.com/processing/processing/issues/3577

@@ -39,13 +39,13 @@ public abstract class InputHandler extends KeyAdapter
          * this property is not set.
          */
         public static final String SMART_HOME_END_PROPERTY = "InputHandler.homeEnd";
-        
+
         /**
          * If this PDE property is set to Boolean.TRUE, the home/end keys will
          * go to the first/last non-whitespace character of the line. If already at
          * the that character, the keypress will move the cursor to the actual
          * start/end of the line.
-         * 
+         *
          * SMART_HOME_END_PROPERTY takes precedence over this property.
          */
         public static final String CONTEXT_AWARE_HOME_END = "editor.keys.home_and_end_travel_smart";
@@ -601,7 +601,7 @@ public abstract class InputHandler extends KeyAdapter
                         int caret = textArea.getCaretPosition();
 
                         int caretLine = textArea.getCaretLine();
-                        
+
                         int lastOfLine = textArea.getLineStopOffset(caretLine) - 1;
                         int lastNonWhiteSpaceOfLine = textArea.getLineStopNonWhiteSpaceOffset(caretLine) - 1;
                         int lastVisibleLine = textArea.getFirstLine()
@@ -684,7 +684,7 @@ public abstract class InputHandler extends KeyAdapter
                         int firstLine = textArea.getFirstLine();
 
                         int caretLine = textArea.getCaretLine();
-                        
+
                         int firstOfLine = textArea.getLineStartOffset(caretLine);
                         int firstNonWhiteSpaceOfLine = textArea.getLineStartNonWhiteSpaceOffset(caretLine);
                         int firstVisibleLine = (firstLine == 0 ? 0 :
@@ -874,13 +874,13 @@ public abstract class InputHandler extends KeyAdapter
 
                         // Can't page down if there's nothing to visit
                         // https://github.com/processing/processing/issues/2990
-                        if (lineCount > visibleLines) {                        
+                        if (lineCount > visibleLines) {
                           firstLine += visibleLines;  // page down
                           if (firstLine + visibleLines >= lineCount - 1) {
-                            // back up to the latest line we can go to 
+                            // back up to the latest line we can go to
                             firstLine = lineCount - visibleLines;
                           }
-                        
+
 
                           textArea.setFirstLine(firstLine);
 
@@ -889,7 +889,7 @@ public abstract class InputHandler extends KeyAdapter
                             textArea.select(textArea.getMarkPosition(),caret);
                           else
                             textArea.setCaretPosition(caret);
-                        }                        
+                        }
                 }
         }
 
@@ -1122,8 +1122,8 @@ public abstract class InputHandler extends KeyAdapter
                                 !textArea.isSelectionRectangular());
                 }
         }
-        
-        
+
+
         public static class clipboard_cut implements ActionListener
         {
                 public void actionPerformed(ActionEvent evt)
@@ -1132,7 +1132,7 @@ public abstract class InputHandler extends KeyAdapter
                 }
         }
 
-        
+
         public static class clipboard_copy implements ActionListener
         {
                 public void actionPerformed(ActionEvent evt)
@@ -1140,8 +1140,8 @@ public abstract class InputHandler extends KeyAdapter
                         getTextArea(evt).copy();
                 }
         }
-        
-        
+
+
         public static class clipboard_paste implements ActionListener
         {
                 public void actionPerformed(ActionEvent evt)
@@ -1165,7 +1165,7 @@ public abstract class InputHandler extends KeyAdapter
                                 StringBuilder sb = new StringBuilder();
                                 for(int i = 0; i < repeatCount; i++)
                                         sb.append(str);
-                                if (hasBracketsAndQuotes(str)) {
+                                if (Preferences.getBoolean("editor.completion.auto_close") && hasBracketsAndQuotes(str)) {
                                         matchBracketsAndQuotes(str, evt, textArea, sb);
                                 } else {
                                         textArea.overwriteSetSelectedText(sb.toString());
@@ -1194,8 +1194,8 @@ public abstract class InputHandler extends KeyAdapter
                         return false;
                 }
         }
-        
-        
+
+
         /**
          * Locates the start of the word at the specified position.
          * Moved from TextUtilities.java [fry 121210].
