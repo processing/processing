@@ -4716,15 +4716,34 @@ public class PGraphics extends PImage implements PConstants {
             // If this is the first word on the line, and its width is greater
             // than the width of the text box, then break the word where at the
             // max width, and send the rest of the word to the next line.
-            do {
+            if (index - wordStart < 25) {
+              do {
+                index--;
+                if (index == wordStart) {
+                  // Not a single char will fit on this line. screw 'em.
+                  return false;
+                }
+                wordWidth = textWidthImpl(buffer, wordStart, index);
+              } while (wordWidth > boxWidth);
+            } else {
+              // This word is more than 25 characters long, might be faster to
+              // start from the beginning of the text rather than shaving from
+              // the end of it, which is super slow if it's 1000s of letters.
+              // https://github.com/processing/processing/issues/211
+              int lastIndex = index;
+              index = wordStart + 1;
+              // walk to the right while things fit
+              while ((wordWidth = textWidthImpl(buffer, wordStart, index)) < boxWidth) {
+                index++;
+                if (index > lastIndex) {  // Unreachable?
+                  break;
+                }
+              }
               index--;
               if (index == wordStart) {
-                // Not a single char will fit on this line. screw 'em.
-                //System.out.println("screw you");
-                return false; //Float.NaN;
+                return false;  // nothing fits
               }
-              wordWidth = textWidthImpl(buffer, wordStart, index);
-            } while (wordWidth > boxWidth);
+            }
 
             //textLineImpl(buffer, lineStart, index, x, y);
             textSentenceBreak(lineStart, index);
