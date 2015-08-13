@@ -4683,6 +4683,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Emit a sentence of text, defined as a chunk of text without any newlines.
    * @param stop non-inclusive, the end of the text in question
+   * @return false if cannot fit
    */
   protected boolean textSentence(char[] buffer, int start, int stop,
                                  float boxWidth, float spaceWidth) {
@@ -4696,6 +4697,10 @@ public class PGraphics extends PImage implements PConstants {
     while (index <= stop) {
       // boundary of a word or end of this sentence
       if ((buffer[index] == ' ') || (index == stop)) {
+//        System.out.println((index == stop) + " " + wordStart + " " + index);
+        if (wordStart == index) {  // end of line, nothing is fitting
+          return false;
+        }
         float wordWidth = textWidthImpl(buffer, wordStart, index);
 
         if (runningX + wordWidth >= boxWidth) {

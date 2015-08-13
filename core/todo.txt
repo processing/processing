@@ -2,6 +2,7 @@
 X dataPath() not working when app is not run from app dir on Linux
 X   https://github.com/processing/processing/issues/2195
 
+
 earlier
 X are we clear on sketchPath() for OS X?
 X   working dir (user.dir?) returns home dir, not app dir in Oracle Java
