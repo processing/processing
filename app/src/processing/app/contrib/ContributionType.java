@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 import processing.app.Base;
 import processing.app.Library;
+import processing.app.Util;
 import processing.app.ui.Editor;
 
 public enum ContributionType {
@@ -84,7 +85,7 @@ public enum ContributionType {
 
 
   public File createTempFolder() throws IOException {
-    return Base.createTempFolder(toString(), "tmp", getSketchbookFolder());
+    return Util.createTempFolder(toString(), "tmp", getSketchbookFolder());
   }
 
 

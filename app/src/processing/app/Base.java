@@ -189,7 +189,7 @@ public class Base {
 
       // Create a location for untitled sketches
       try {
-        untitledFolder = Base.createTempFolder("untitled", "sketches", null);
+        untitledFolder = Util.createTempFolder("untitled", "sketches", null);
         untitledFolder.deleteOnExit();
       } catch (IOException e) {
         Base.showError("Trouble without a name",
@@ -1381,6 +1381,22 @@ public class Base {
 
 
   /**
+   * Return a File from inside the Processing 'lib' folder.
+   */
+  static public File getLibFile(String filename) throws IOException {
+    return new File(Platform.getContentFile("lib"), filename);
+  }
+
+
+  /**
+   * Return an InputStream for a file inside the Processing lib folder.
+   */
+  static public InputStream getLibStream(String filename) throws IOException {
+    return new FileInputStream(getLibFile(filename));
+  }
+
+
+  /**
    * Get the directory that can store settings. (Library on OS X, App Data or
    * something similar on Windows, a dot folder on Linux.) Removed this as a
    * preference for 3.0a3 because we need this to be stable.
@@ -1415,29 +1431,6 @@ public class Base {
    */
   static public File getSettingsFile(String filename) {
     return new File(getSettingsFolder(), filename);
-  }
-
-
-  /**
-   * Create a temporary folder by using the createTempFile() mechanism,
-   * deleting the file it creates, and making a folder using the location
-   * that was provided.
-   *
-   * Unlike createTempFile(), there is no minimum size for prefix. If
-   * prefix is less than 3 characters, the remaining characters will be
-   * filled with underscores
-   */
-  static public File createTempFolder(String prefix, String suffix, File directory) throws IOException {
-    int fillChars = 3 - prefix.length();
-    for (int i = 0; i < fillChars; i++) {
-      prefix += '_';
-    }
-    File folder = File.createTempFile(prefix, suffix, directory);
-    // Now delete that file and create a folder in its place
-    folder.delete();
-    folder.mkdirs();
-    // And send the folder back to your friends
-    return folder;
   }
 
 
@@ -1813,22 +1806,6 @@ public class Base {
         return JOptionPane.CLOSED_OPTION;
       }
     }
-  }
-
-
-  /**
-   * Return a File from inside the Processing 'lib' folder.
-   */
-  static public File getLibFile(String filename) throws IOException {
-    return new File(Platform.getContentFile("lib"), filename);
-  }
-
-
-  /**
-   * Return an InputStream for a file inside the Processing lib folder.
-   */
-  static public InputStream getLibStream(String filename) throws IOException {
-    return new FileInputStream(getLibFile(filename));
   }
 
 

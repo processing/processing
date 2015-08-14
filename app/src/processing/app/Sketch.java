@@ -1233,14 +1233,8 @@ public class Sketch {
    */
   public File makeTempFolder() {
     try {
-      File buildFolder = Base.createTempFolder(name, "temp", null);
-//      if (buildFolder.mkdirs()) {
-      return buildFolder;
+      return Util.createTempFolder(name, "temp", null);
 
-//      } else {
-//        Base.showWarning("Build folder bad",
-//                         "Could not create a place to build the sketch.", null);
-//      }
     } catch (IOException e) {
       Base.showWarning(Language.text("temp_dir.messages.bad_build_folder"),
                        Language.text("temp_dir.messages.bad_build_folder.description"),
