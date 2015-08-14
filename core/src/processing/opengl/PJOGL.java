@@ -1174,7 +1174,6 @@ public class PJOGL extends PGL {
 
   @Override
   protected void enableTexturing(int target) {
-    if (profile == 2) enable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = true;
     } else if (target == TEXTURE_RECTANGLE) {
@@ -1185,7 +1184,6 @@ public class PJOGL extends PGL {
 
   @Override
   protected void disableTexturing(int target) {
-    if (profile == 2) disable(target);
     if (target == TEXTURE_2D) {
       texturingTargets[0] = false;
     } else if (target == TEXTURE_RECTANGLE) {
