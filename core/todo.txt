@@ -19,6 +19,15 @@ X   https://github.com/processing/processing/issues/2175
 jakub
 X Remove alpha filler (hopefully no regression here)
 X   https://github.com/processing/processing/pull/3523
+X accuracy problems make alpha channel go to FE with image.copy()
+X   https://github.com/processing/processing/issues/258
+X fix blue-channel bias on blend()
+X   https://github.com/processing/processing/issues/514
+X improve blend() accuracy when using ADD
+X   https://github.com/processing/processing/issues/172
+X   includes code for a slow but more accurate mode
+X huge Java2D blending patch
+X   https://github.com/processing/processing/pull/3592
 
 opengl
 X filter(PShader) broken in HDPI mode
@@ -447,17 +456,10 @@ _ figure out why 1024x768 image takes 3.5 seconds to load
 _   would using a BufferedImage work better?
 _   is the image actually a BufferedImage so PixelGrabber is a waste?
 
-_ fix blue-channel bias on blend()
-_   https://github.com/processing/processing/issues/514
-_ improve blend() accuracy when using ADD
-_   https://github.com/processing/processing/issues/172
-_   includes code for a slow but more accurate mode
 _ deprecate the blend() function
 
 _ implement unified means to specify smoothing level for image scaling
 _   https://github.com/processing/processing/issues/204
-_ accuracy problems make alpha channel go to FE with image.copy()
-_   https://github.com/processing/processing/issues/258
 
 
 CORE / PShape
