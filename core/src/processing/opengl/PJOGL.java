@@ -53,6 +53,7 @@ import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
@@ -1241,9 +1242,9 @@ public class PJOGL extends PGL {
 
   @Override
   protected String[] loadVertexShader(String filename, int version) {
-    if (2 < profile && version < 150) {
+    if (PApplet.platform == PConstants.MACOSX) {
       String[] fragSrc0 = pg.parent.loadStrings(filename);
-      return convertFragmentSource(fragSrc0, version, 150);
+      return preprocessFragmentSource(fragSrc0, 130);
     } else {
       return pg.parent.loadStrings(filename);
     }
@@ -1252,9 +1253,9 @@ public class PJOGL extends PGL {
 
   @Override
   protected String[] loadFragmentShader(String filename, int version) {
-    if (2 < profile && version < 150) {
+    if (PApplet.platform == PConstants.MACOSX) {
       String[] vertSrc0 = pg.parent.loadStrings(filename);
-      return convertVertexSource(vertSrc0, version, 150);
+      return preprocessVertexSource(vertSrc0, 130);
     } else {
       return pg.parent.loadStrings(filename);
     }
@@ -1264,9 +1265,9 @@ public class PJOGL extends PGL {
   @Override
   protected String[] loadFragmentShader(URL url, int version) {
     try {
-      if (2 < profile && version < 150) {
+      if (PApplet.platform == PConstants.MACOSX) {
         String[] fragSrc0 = PApplet.loadStrings(url.openStream());
-        return convertFragmentSource(fragSrc0, version, 150);
+        return preprocessFragmentSource(fragSrc0, 130);
       } else {
         return PApplet.loadStrings(url.openStream());
       }
@@ -1280,9 +1281,9 @@ public class PJOGL extends PGL {
   @Override
   protected String[] loadVertexShader(URL url, int version) {
     try {
-      if (2 < profile && version < 150) {
+      if (PApplet.platform == PConstants.MACOSX) {
         String[] vertSrc0 = PApplet.loadStrings(url.openStream());
-        return convertVertexSource(vertSrc0, version, 150);
+        return preprocessVertexSource(vertSrc0, 130);
       } else {
         return PApplet.loadStrings(url.openStream());
       }
