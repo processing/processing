@@ -459,18 +459,10 @@ public abstract class PGL {
   }
 
 
-  protected int getDepthBits()  {
-    intBuffer.rewind();
-    getIntegerv(DEPTH_BITS, intBuffer);
-    return intBuffer.get(0);
-  }
+  abstract protected int getDepthBits();
 
 
-  protected int getStencilBits()  {
-    intBuffer.rewind();
-    getIntegerv(STENCIL_BITS, intBuffer);
-    return intBuffer.get(0);
-  }
+  abstract protected int getStencilBits();
 
 
   protected boolean getDepthTest() {
@@ -1674,44 +1666,77 @@ public abstract class PGL {
   }
 
 
-  protected static String[] convertFragmentSource(String[] fragSrc0,
-                                                  int version0, int version1) {
-    if (version0 == 120 && version1 == 150) {
-      String[] fragSrc = new String[fragSrc0.length + 2];
-      fragSrc[0] = "#version 150";
+  protected static String[] preprocessFragmentSource(String[] fragSrc0,
+                                                     int version) {
+    if (version >= 130) {
+      // We need to replace 'texture' uniform by 'texMap' uniform and
+      // 'textureXXX()' functions by 'texture()' functions. Order of these
+      // replacements is important to prevent collisions between these two.
+      String[] search = new String[] {
+          "varying", "attibute",
+          "texture",
+          "texMap2D", "texMap3D", "texMap2DRect",
+          "texMapCube", "gl_FragColor"
+      };
+      String[] replace = new String[] {
+          "in", "in",
+          "texMap",
+          "texture", "texture", "texture", "texture",
+          "fragColor"
+      };
+
+      String[] fragSrc = preprocessShaderSource(fragSrc0, search, replace, 2);
+      fragSrc[0] = "#version " + version;
       fragSrc[1] = "out vec4 fragColor;";
-      for (int i = 0; i < fragSrc0.length; i++) {
-        String line = fragSrc0[i];
-        line = line.replace("varying", "in");
-        line = line.replace("attribute", "in");
-        line = line.replace("gl_FragColor", "fragColor");
-        line = line.replace("texture", "texMap");
-        line = line.replace("texMap2D(", "texture(");
-        line = line.replace("texMap2DRect(", "texture(");
-        fragSrc[i + 2] = line;
-      }
+
       return fragSrc;
     }
     return fragSrc0;
   }
 
+  protected static String[] preprocessVertexSource(String[] vertSrc0,
+                                                   int version) {
+    if (version >= 130) {
+      // We need to replace 'texture' uniform by 'texMap' uniform and
+      // 'textureXXX()' functions by 'texture()' functions. Order of these
+      // replacements is important to prevent collisions between these two.
+      String[] search = new String[] {
+          "varying", "attibute",
+          "texture",
+          "texMap2D", "texMap3D", "texMap2DRect", "texMapCube"
+      };
+      String[] replace = new String[] {
+          "out", "in",
+          "texMap",
+          "texture", "texture", "texture", "texture"
+      };
 
+      String[] vertSrc = preprocessShaderSource(vertSrc0, search, replace, 1);
+      vertSrc[0] = "#version " + version;
 
-  protected static String[] convertVertexSource(String[] vertSrc0,
-                                                int version0, int version1) {
-    if (version0 == 120 && version1 == 150) {
-      String[] vertSrc = new String[vertSrc0.length + 1];
-      vertSrc[0] = "#version 150";
-      for (int i = 0; i < vertSrc0.length; i++) {
-        String line = vertSrc0[i];
-        line = line.replace("attribute", "in");
-        line = line.replace("varying", "out");
-        vertSrc[i + 1] = line;
-      }
       return vertSrc;
     }
     return vertSrc0;
   }
+
+  protected static String[] preprocessShaderSource(String[] src0,
+                                                   String[] search,
+                                                   String[] replace,
+                                                   int offset) {
+    String[] src = new String[src0.length+offset];
+    for (int i = 0; i < src0.length; i++) {
+      String line = src0[i];
+      if (line.contains("#version")) {
+        line = "";
+      }
+      for (int j = 0; j < search.length; j++) {
+        line = line.replace(search[j], replace[j]);
+      }
+      src[i+offset] = line;
+    }
+    return src;
+  }
+
 
   protected int createShader(int shaderType, String source) {
     int shader = createShader(shaderType);
