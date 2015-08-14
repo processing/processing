@@ -137,10 +137,10 @@ public class CompletionPanel {
   private void loadIcons() {
     if (classIcon == null) {
       Mode mode = editor.getMode();
-      classIcon = mode.loadIcon("theme/completion/icon_class_obj.png");
-      methodIcon = mode.loadIcon("theme/completion/icon_methpub_obj.png");
-      fieldIcon = mode.loadIcon("theme/completion/icon_field_protected_obj.png");
-      localVarIcon = mode.loadIcon("theme/completion/icon_field_default_obj.png");
+      classIcon = mode.loadIcon("theme/completion/class_obj.png");
+      methodIcon = mode.loadIcon("theme/completion/methpub_obj.png");
+      fieldIcon = mode.loadIcon("theme/completion/field_protected_obj.png");
+      localVarIcon = mode.loadIcon("theme/completion/field_default_obj.png");
     }
   }
 
