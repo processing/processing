@@ -19,12 +19,11 @@
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 package processing.app.contrib;
 
 import java.awt.Color;
-import java.awt.ComponentOrientation;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.*;
 import java.util.*;
@@ -220,7 +219,7 @@ public class ContributionTab {
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(categoryChooser)
                   .addComponent(filterField))
-      .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)           
+      .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(loaderLabel)
                   .addComponent(contributionListPanel))
@@ -229,7 +228,7 @@ public class ContributionTab {
                     GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE));
     layout.linkSize(SwingConstants.VERTICAL, categoryChooser, filterField);
     layout.setHonorsVisibility(contributionListPanel, false);
-    
+
     panel.setBackground(Color.WHITE);
     panel.setBorder(null);
  }
@@ -314,9 +313,9 @@ public class ContributionTab {
       .addGroup(layout
                   .createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(errorMessage)
-                  .addComponent(tryAgainButton, statusPanel.BUTTON_WIDTH,
-                                statusPanel.BUTTON_WIDTH,
-                                statusPanel.BUTTON_WIDTH))
+                  .addComponent(tryAgainButton, StatusPanel.BUTTON_WIDTH,
+                                StatusPanel.BUTTON_WIDTH,
+                                StatusPanel.BUTTON_WIDTH))
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
       .addComponent(closeButton));
@@ -426,16 +425,16 @@ public class ContributionTab {
     public FilterField () {
 
       super("");
-      
+
       filterLabel = new JLabel("Filter");
       filterLabel.setFont(Toolkit.getSansFont(14, Font.PLAIN));
       filterLabel.setOpaque(false);
-      
+
       setFont(Toolkit.getSansFont(14, Font.PLAIN));
       searchIcon = Toolkit.getLibIcon("manager/search.png");
       setOpaque(false);
       setBorder(BorderFactory.createMatteBorder(0, 33, 0, 0, searchIcon));
-      
+
       GroupLayout fl = new GroupLayout(this);
       setLayout(fl);
       fl.setHorizontalGroup(fl.createSequentialGroup().addComponent(filterLabel));
@@ -445,7 +444,7 @@ public class ContributionTab {
                           .addComponent(filterLabel)
                           .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                                            GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE));
-      
+
       filters = new ArrayList<String>();
 
       addFocusListener(new FocusListener() {

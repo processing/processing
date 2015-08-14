@@ -26,7 +26,6 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.net.SocketTimeoutException;
 import java.util.*;
 
 import javax.swing.*;
@@ -38,6 +37,7 @@ import processing.app.*;
 import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
+
 /**
  * This class is the main Contribution Manager Dialog.
  * It contains all the contributions tab and the update tab.
@@ -47,9 +47,9 @@ public class ContributionManagerDialog {
   static final int TAB_WIDTH = 100;
   static final int TAB_HEIGHT = 34;
   static final int AUTHOR_WIDTH = 240;
-  static final int STATUS_WIDTH = 60; 
+  static final int STATUS_WIDTH = 60;
   static final int FILTER_WIDTH = 180;
-  
+
   JFrame dialog;
   JTabbedPane tabbedPane;
   String title;
@@ -249,12 +249,12 @@ public class ContributionManagerDialog {
     dialog.setLocationRelativeTo(null);
   }
 
-              
+
   private void makeAndSetTabComponents() {
-    
+
     String[] tabTitles = { "Tools","Libraries","Modes","Examples","Updates"};
     tabLabels = new JLabel[4];
-    
+
     for(int i = 0 ; i < 4; i++){
       final int temp = i;
       tabLabels[i] = new JLabel(tabTitles[i]){
@@ -266,7 +266,7 @@ public class ContributionManagerDialog {
                                           temp == 3 ? 6 : 0,
                                           0, 0));
           super.paintComponent(g);
-          
+
         }
       };
       tabLabels[i].setForeground(Color.WHITE);
@@ -278,7 +278,7 @@ public class ContributionManagerDialog {
       tabLabels[i].setFont(Toolkit.getSansFont(14, Font.BOLD));
       tabbedPane.setTabComponentAt(i, tabLabels[i]);
     }
-    
+
     updateTabPanel = new JPanel(){
       @Override
       protected void paintComponent(Graphics g) {
@@ -288,7 +288,7 @@ public class ContributionManagerDialog {
                                         6,
                                         0, 0));
         super.paintComponent(g);
-        
+
       }
     };;
     updateTabLabel = new JLabel("Updates");

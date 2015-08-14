@@ -22,19 +22,15 @@ import javax.swing.JTable;
 import javax.swing.LayoutStyle;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 
 import processing.app.Base;
-import processing.app.contrib.ContributionListPanel.MyColumnHeaderRenderer;
-import processing.app.Platform;
 import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
+
 
 public class UpdateContributionTab extends ContributionTab {
 
@@ -174,7 +170,7 @@ public class UpdateContributionTab extends ContributionTab {
           return this;
         }
       });
-      
+
 
       GroupLayout layout = new GroupLayout(this);
       layout.setHorizontalGroup(layout.createParallelGroup().addComponent(scrollPane));
@@ -217,7 +213,7 @@ public class UpdateContributionTab extends ContributionTab {
       });
 
     }
-    
+
     class StatusRendere extends DefaultTableCellRenderer {
       @Override
       public Component getTableCellRendererComponent(JTable table,
@@ -335,7 +331,7 @@ public class UpdateContributionTab extends ContributionTab {
         .addComponent(updateButton));
       updateButton.setVisible(true);
     }
-    
+
     @Override
     public void update(ContributionPanel panel) {
       if (contributionListPanel.getNoOfRows() > 0) {

@@ -27,7 +27,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -40,14 +39,12 @@ import javax.swing.SwingConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import processing.app.Base;
 import processing.app.ui.Toolkit;
 import processing.app.Platform;
 
 
 class StatusPanel extends JPanel {
-
-  final int BUTTON_WIDTH = 150;
+  static final int BUTTON_WIDTH = 150;
 
   JTextPane label;
   JButton installButton;
@@ -66,9 +63,9 @@ class StatusPanel extends JPanel {
     setBackground(new Color(0xebebeb));
 //    setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
     this.contributionTab  = contributionTab;
-    
+
     iconLabel = new JLabel();
-    
+
     label = new JTextPane();
     label.setEditable(false);
     label.setOpaque(false);
