@@ -786,7 +786,7 @@ public class JavaBuild {
 
     File folder = null;
     for (String platformName : PConstants.platformNames) {
-      int platform = Base.getPlatformIndex(platformName);
+      int platform = Platform.getIndex(platformName);
 
       // Can only embed Java on the native platform
       boolean embedJava = (platform == PApplet.platform) &&
@@ -796,18 +796,18 @@ public class JavaBuild {
         if (Library.hasMultipleArch(platform, importedLibraries)) {
           // export the 32-bit version
           folder = new File(sketch.getFolder(), "application." + platformName + "32");
-          if (!exportApplication(folder, platform, "32", embedJava && Base.getNativeBits() == 32 && "x86".equals(Base.getNativeArch()))) {
+          if (!exportApplication(folder, platform, "32", embedJava && Platform.getNativeBits() == 32 && "x86".equals(Platform.getNativeArch()))) {
             return false;
           }
           // export the 64-bit version
           folder = new File(sketch.getFolder(), "application." + platformName + "64");
-          if (!exportApplication(folder, platform, "64", embedJava && Base.getNativeBits() == 64 && "x86".equals(Base.getNativeArch()))) {
+          if (!exportApplication(folder, platform, "64", embedJava && Platform.getNativeBits() == 64 && "x86".equals(Platform.getNativeArch()))) {
             return false;
           }
           if (platform == PConstants.LINUX) {
             // export the armv6hf version as well
             folder = new File(sketch.getFolder(), "application.linux-armv6hf");
-            if (!exportApplication(folder, platform, "armv6hf", embedJava && Base.getNativeBits() == 32 && "arm".equals(Base.getNativeArch()))) {
+            if (!exportApplication(folder, platform, "armv6hf", embedJava && Platform.getNativeBits() == 32 && "arm".equals(Platform.getNativeArch()))) {
               return false;
             }
           }
@@ -891,10 +891,10 @@ public class JavaBuild {
     if (exportPlatform == PConstants.MACOSX) {
       dotAppFolder = new File(destFolder, sketch.getName() + ".app");
 
-      File contentsOrig = new File(Base.getJavaHome(), "../../../../..");
+      File contentsOrig = new File(Platform.getJavaHome(), "../../../../..");
 
       if (embedJava) {
-        File jdkFolder = new File(Base.getJavaHome(), "../../..");
+        File jdkFolder = new File(Platform.getJavaHome(), "../../..");
         String jdkFolderName = jdkFolder.getCanonicalFile().getName();
         jvmRuntime = "<key>JVMRuntime</key>\n    <string>" + jdkFolderName + "</string>";
         jdkPath = new File(dotAppFolder, "Contents/PlugIns/" + jdkFolderName).getAbsolutePath();
@@ -958,12 +958,12 @@ public class JavaBuild {
       */
     } else if (exportPlatform == PConstants.LINUX) {
       if (embedJava) {
-        Util.copyDirNative(Base.getJavaHome(), new File(destFolder, "java"));
+        Util.copyDirNative(Platform.getJavaHome(), new File(destFolder, "java"));
       }
 
     } else if (exportPlatform == PConstants.WINDOWS) {
       if (embedJava) {
-        Util.copyDir(Base.getJavaHome(), new File(destFolder, "java"));
+        Util.copyDir(Platform.getJavaHome(), new File(destFolder, "java"));
       }
     }
 
@@ -1183,7 +1183,7 @@ public class JavaBuild {
       pw.close();
 
       // attempt to code sign if the Xcode tools appear to be installed
-      if (Base.isMacOS() && new File("/usr/bin/codesign_allocate").exists()) {
+      if (Platform.isMacOS() && new File("/usr/bin/codesign_allocate").exists()) {
         if (embedJava) {
           ProcessHelper.ffs("codesign", "--force", "--sign", "-", jdkPath);
         }
@@ -1297,7 +1297,7 @@ public class JavaBuild {
 
       String shellPath = shellScript.getAbsolutePath();
       // will work on osx or *nix, but just dies on windows, oh well..
-      if (!Base.isWindows()) {
+      if (!Platform.isWindows()) {
         Runtime.getRuntime().exec(new String[] { "chmod", "+x", shellPath });
       }
     }
@@ -1439,7 +1439,7 @@ public class JavaBuild {
       String[] dataFiles = Util.listFiles(sketch.getDataFolder(), false);
       int offset = sketch.getFolder().getAbsolutePath().length() + 1;
       for (String path : dataFiles) {
-        if (Base.isWindows()) {
+        if (Platform.isWindows()) {
           path = path.replace('\\', '/');
         }
         //File dataFile = new File(dataFiles[i]);

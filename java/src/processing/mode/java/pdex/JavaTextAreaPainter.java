@@ -48,6 +48,7 @@ import javax.swing.text.Segment;
 import javax.swing.text.Utilities;
 
 import processing.app.Base;
+import processing.app.Platform;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
 import processing.app.syntax.TextAreaDefaults;
@@ -102,7 +103,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
       public void mouseClicked(MouseEvent evt) {
         if (!getEditor().hasJavaTabs()) { // Ctrl + Click disabled for java tabs
           if (evt.getButton() == MouseEvent.BUTTON1) {
-            if ((evt.isControlDown() && !Base.isMacOS()) || evt.isMetaDown()) {
+            if ((evt.isControlDown() && !Platform.isMacOS()) || evt.isMetaDown()) {
               handleCtrlClick(evt);
             }
           }

@@ -89,14 +89,14 @@ public class Runner implements MessageConsumer {
     }
 
     // Make sure all the imported libraries will actually run with this setup.
-    int bits = Base.getNativeBits();
-    String variant = Base.getVariant();
+    int bits = Platform.getNativeBits();
+    String variant = Platform.getVariant();
 
     for (Library library : build.getImportedLibraries()) {
       if (!library.supportsArch(PApplet.platform, variant)) {
         sketchErr.println(library.getName() + " does not run on this architecture: " + variant);
         int opposite = (bits == 32) ? 64 : 32;
-        if (Base.isMacOS()) {
+        if (Platform.isMacOS()) {
           //if (library.supportsArch(PConstants.MACOSX, opposite)) {  // should always be true
           throw new SketchException("To use " + library.getName() + ", " +
                                     "switch to " + opposite + "-bit mode in Preferences.");
@@ -167,7 +167,7 @@ public class Runner implements MessageConsumer {
     String jdwpArg = "-agentlib:jdwp=transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
 
     // Everyone works the same under Java 7 (also on OS X)
-    String[] commandArgs = new String[] { Base.getJavaPath(), jdwpArg };
+    String[] commandArgs = new String[] { Platform.getJavaPath(), jdwpArg };
 
     commandArgs = PApplet.concat(commandArgs, vmParams);
     commandArgs = PApplet.concat(commandArgs, sketchParams);
@@ -256,7 +256,7 @@ public class Runner implements MessageConsumer {
       params.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
     }
 
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       params.add("-Xdock:name=" + build.getSketchClassName());
 //      params.add("-Dcom.apple.mrj.application.apple.menu.about.name=" +
 //                 sketch.getMainClassName());
@@ -670,7 +670,7 @@ public class Runner implements MessageConsumer {
       listener.statusError("A library used by this sketch is not installed properly.");
       err.println("A library relies on native code that's not available.");
       err.println("Or only works properly when the sketch is run as a " +
-        ((Base.getNativeBits() == 32) ? "64-bit" : "32-bit") + " application.");
+        ((Platform.getNativeBits() == 32) ? "64-bit" : "32-bit") + " application.");
 
     } else if (exceptionClass.equals("java.lang.StackOverflowError")) {
       listener.statusError("StackOverflowError: This sketch is attempting too much recursion.");

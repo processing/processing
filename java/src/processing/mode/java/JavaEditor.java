@@ -344,7 +344,7 @@ public class JavaEditor extends Editor {
     JMenuItem item;
 
     // macosx already has its own about menu
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       item = new JMenuItem(Language.text("menu.help.about"));
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -497,7 +497,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.getting_started"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.getting_started.url"));
+        Platform.openURL(Language.text("menu.help.getting_started.url"));
       }
     });
     menu.add(item);
@@ -505,7 +505,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.troubleshooting"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.troubleshooting.url"));
+        Platform.openURL(Language.text("menu.help.troubleshooting.url"));
       }
     });
     menu.add(item);
@@ -513,7 +513,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.faq"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.faq.url"));
+        Platform.openURL(Language.text("menu.help.faq.url"));
       }
     });
     menu.add(item);
@@ -521,7 +521,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.foundation"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.foundation.url"));
+        Platform.openURL(Language.text("menu.help.foundation.url"));
       }
     });
     menu.add(item);
@@ -529,7 +529,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.visit"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.visit.url"));
+        Platform.openURL(Language.text("menu.help.visit.url"));
       }
     });
     menu.add(item);
@@ -664,7 +664,7 @@ public class JavaEditor extends Editor {
       statusNotice(Language.text("export.notice.exporting"));
       try {
         if (exportApplicationPrompt()) {
-          Base.openFolder(sketch.getFolder());
+          Platform.openFolder(sketch.getFolder());
           statusNotice(Language.text("export.notice.exporting.done"));
         } else {
           // error message will already be visible
@@ -738,7 +738,7 @@ public class JavaEditor extends Editor {
     });
 
     // Only possible to export OS X applications on OS X
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       // Make sure they don't have a previous 'true' setting for this
       Preferences.setBoolean(EXPORT_MACOSX, false);
     }
@@ -749,7 +749,7 @@ public class JavaEditor extends Editor {
         updateExportButton();
       }
     });
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       macosxButton.setEnabled(false);
       macosxButton.setToolTipText(Language.text("export.tooltip.macosx"));
     }
@@ -866,12 +866,12 @@ public class JavaEditor extends Editor {
     embedPanel.setLayout(new BoxLayout(embedPanel, BoxLayout.Y_AXIS));
 
     String platformName = null;
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       platformName = "Mac OS X";
-    } else if (Base.isWindows()) {
-      platformName = "Windows (" + Base.getNativeBits() + "-bit)";
-    } else if (Base.isLinux()) {
-      platformName = "Linux (" + Base.getNativeBits() + "-bit)";
+    } else if (Platform.isWindows()) {
+      platformName = "Windows (" + Platform.getNativeBits() + "-bit)";
+    } else if (Platform.isLinux()) {
+      platformName = "Linux (" + Platform.getNativeBits() + "-bit)";
     }
 
     boolean embed = Preferences.getBoolean("export.application.embed_java");
@@ -893,7 +893,7 @@ public class JavaEditor extends Editor {
     final JLabel warningLabel = new JLabel(embed ? embedWarning : nopeWarning);
     warningLabel.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent event) {
-        Base.openURL("http://java.com/download");
+        Platform.openURL("http://java.com/download");
       }
     });
     warningLabel.setBorder(new EmptyBorder(3, 13 + indent, 3, 13));
@@ -921,7 +921,7 @@ public class JavaEditor extends Editor {
 
     //
 
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       JPanel signPanel = new JPanel();
       signPanel.setLayout(new BoxLayout(signPanel, BoxLayout.Y_AXIS));
       signPanel.setBorder(new TitledBorder(Language.text("export.code_signing")));
@@ -972,7 +972,7 @@ public class JavaEditor extends Editor {
 
       area.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent event) {
-          Base.openURL("https://developer.apple.com/developer-id/");
+          Platform.openURL("https://developer.apple.com/developer-id/");
         }
       });
 

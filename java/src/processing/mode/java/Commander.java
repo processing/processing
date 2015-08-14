@@ -29,6 +29,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
 import processing.app.Base;
+import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.RunnerListener;
 import processing.app.Sketch;
@@ -77,7 +78,7 @@ public class Commander implements RunnerListener {
     // Do this early so that error messages go to the console
     Base.setCommandLine();
     // init the platform so that prefs and other native code is ready to go
-    Base.initPlatform();
+    Platform.init();
     // make sure a full JDK is installed
     //Base.initRequirements();
 
@@ -145,7 +146,7 @@ public class Commander implements RunnerListener {
       } else if (arg.startsWith(platformArg)) {
 //        complainAndQuit("The --platform option has been removed from Processing 2.1.", false);
         String platformStr = arg.substring(platformArg.length());
-        platform = Base.getPlatformIndex(platformStr);
+        platform = Platform.getIndex(platformStr);
         if (platform == -1) {
           complainAndQuit(platformStr + " should instead be " +
                           "'windows', 'macosx', or 'linux'.", true);
@@ -249,7 +250,7 @@ public class Commander implements RunnerListener {
 //      JavaMode javaMode =
 //        new JavaMode(null, Base.getContentFile("modes/java"));
       JavaMode javaMode = (JavaMode)
-        ModeContribution.load(null, Base.getContentFile("modes/java"),
+        ModeContribution.load(null, Platform.getContentFile("modes/java"),
                               "processing.mode.java.JavaMode").getMode();
       try {
         sketch = new Sketch(pdePath, javaMode);
@@ -280,8 +281,7 @@ public class Commander implements RunnerListener {
             JavaBuild build = new JavaBuild(sketch);
             build.build(true);
             if (build != null) {
-
-              String variant = Base.getVariant();
+              String variant = Platform.getVariant();
               success = build.exportApplication(outputFolder, platform, variant, embedJava);
             }
           }

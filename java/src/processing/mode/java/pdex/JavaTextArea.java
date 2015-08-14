@@ -37,6 +37,7 @@ import javax.swing.SwingWorker;
 
 import processing.app.Base;
 import processing.app.Mode;
+import processing.app.Platform;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.app.syntax.TextAreaDefaults;
@@ -234,7 +235,7 @@ public class JavaTextArea extends JEditTextArea {
       if (evt.getID() == KeyEvent.KEY_TYPED) {
         processCompletionKeys(evt);
 
-      } else if (Base.isMacOS() && evt.getID() == KeyEvent.KEY_RELEASED) {
+      } else if (Platform.isMacOS() && evt.getID() == KeyEvent.KEY_RELEASED) {
         processControlSpace(evt);
       }
     }
@@ -279,7 +280,7 @@ public class JavaTextArea extends JEditTextArea {
         Base.log("Typing: " + fetchPhrase(event));
       }
     } else if (keyChar == ' ') { // Trigger on Ctrl-Space
-      if (!Base.isMacOS() && JavaMode.codeCompletionsEnabled &&
+      if (!Platform.isMacOS() && JavaMode.codeCompletionsEnabled &&
           (event.isControlDown() || event.isMetaDown())) {
         SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
           protected Object doInBackground() throws Exception {

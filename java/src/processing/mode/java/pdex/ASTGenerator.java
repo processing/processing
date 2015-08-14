@@ -108,6 +108,7 @@ import org.jsoup.select.Elements;
 
 import processing.app.Base;
 import processing.app.Library;
+import processing.app.Platform;
 import processing.app.SketchCode;
 import processing.app.Util;
 import processing.app.syntax.JEditTextArea;
@@ -326,7 +327,7 @@ public class ASTGenerator {
     classPath = factory.createFromPath(tehPath.toString());
     log("Classpath created " + (classPath != null));
     log("Sketch classpath jars loaded.");
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       File f = new File(System.getProperty("java.home") + File.separator + "bundle"
           + File.separator + "Classes" + File.separator + "classes.jar");
       log(f.getAbsolutePath() + " | classes.jar found?"
