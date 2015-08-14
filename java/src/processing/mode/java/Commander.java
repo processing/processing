@@ -385,9 +385,10 @@ public class Commander implements RunnerListener {
 //    out.println("                     32- or 64-bit specific such as the OpenGL library.");
 //    out.println("                     Otherwise specify 0 or leave it out.");
 
-    out.println("The --build, --run, --present, or --export must be the final parameter.");
-    out.println("Additional arguments will be passed to the sketch itself and available");
-    out.println("in the sketch's 'args' field. To pass options understood by PApplet.main(),");
+    out.println("The --build, --run, --present, or --export will be the final parameter");
+    out.println("passed to Processing. Arguments passed following one of those four will");
+    out.println("be passed through to the sketch itself, and therefore available to the");
+    out.println("sketch via the 'args' field. To pass options understood by PApplet.main(),");
     out.println("write a custom main() method so that the preprocessor does not add one.");
     out.println("https://github.com/processing/processing/wiki/Command-Line");
 
