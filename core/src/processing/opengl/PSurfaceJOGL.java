@@ -195,7 +195,11 @@ public class PSurfaceJOGL implements PSurface {
     if (profile == null) {
       if (PJOGL.profile == 2) {
         try {
-          profile = GLProfile.getGL2ES2();
+          if (PApplet.platform == PConstants.MACOSX) {
+            profile = GLProfile.getMaxProgrammableCore(true);
+          } else {
+            profile = GLProfile.getGL2ES2();
+          }
         } catch (GLException ex) {
           profile = GLProfile.getMaxProgrammable(true);
         }
