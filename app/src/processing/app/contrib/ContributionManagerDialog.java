@@ -46,8 +46,10 @@ public class ContributionManagerDialog {
   static final String ANY_CATEGORY = Language.text("contrib.all");
   static final int TAB_WIDTH = 100;
   static final int TAB_HEIGHT = 34;
-  static final int AUTHOR_WIDTH = 150;
+  static final int AUTHOR_WIDTH = 240;
   static final int STATUS_WIDTH = 60; 
+  static final int FILTER_WIDTH = 180;
+  
   JFrame dialog;
   JTabbedPane tabbedPane;
   String title;
@@ -122,10 +124,10 @@ public class ContributionManagerDialog {
       tabbedPane.setSelectedIndex(index); //done before as downloadAndUpdateContributionListing() requires the current selected tab
       downloadAndUpdateContributionListing(editor.getBase());
       if(index != 4){
-        tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setBackground(Color.WHITE);
+        tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setBackground(new Color(0xe0fffd));
         tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setForeground(Color.BLACK);
       }else{
-        updateTabPanel.setBackground(Color.WHITE);
+        updateTabPanel.setBackground(new Color(0xe0fffd));
         updateTabLabel.setForeground(Color.BLACK);
       }
     }
@@ -175,10 +177,10 @@ public class ContributionManagerDialog {
         updateTabLabel.setForeground(Color.WHITE);
         int currentIndex = tabbedPane.getSelectedIndex();
         if(currentIndex != 4){
-          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setBackground(Color.WHITE);
+          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setBackground(new Color(0xe0fffd));
           tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setForeground(Color.BLACK);
         }else{
-          updateTabPanel.setBackground(Color.WHITE);
+          updateTabPanel.setBackground(new Color(0xe0fffd));
           updateTabLabel.setForeground(Color.BLACK);
         }
 //        // When the tab is changed update status to the current selected panel
@@ -254,20 +256,47 @@ public class ContributionManagerDialog {
     tabLabels = new JLabel[4];
     
     for(int i = 0 ; i < 4; i++){
-      tabLabels[i] = new JLabel(tabTitles[i]);
+      final int temp = i;
+      tabLabels[i] = new JLabel(tabTitles[i]){
+        @Override
+        protected void paintComponent(Graphics g) {
+          g.setClip(Toolkit.createRoundRect(0, 0,
+                                          getWidth(), getHeight(),
+                                          temp == 0 ? 6 : 0,
+                                          temp == 3 ? 6 : 0,
+                                          0, 0));
+          super.paintComponent(g);
+          
+        }
+      };
       tabLabels[i].setForeground(Color.WHITE);
       tabLabels[i].setBackground(new Color(0x2d4251));
       tabLabels[i].setOpaque(true);
       tabLabels[i].setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
       tabLabels[i].setPreferredSize(new Dimension(TAB_WIDTH, TAB_HEIGHT));
       tabLabels[i].setHorizontalAlignment(SwingConstants.CENTER);
+      tabLabels[i].setFont(Toolkit.getSansFont(14, Font.BOLD));
       tabbedPane.setTabComponentAt(i, tabLabels[i]);
     }
     
-    updateTabPanel = new JPanel(true);
+    updateTabPanel = new JPanel(){
+      @Override
+      protected void paintComponent(Graphics g) {
+        g.setClip(Toolkit.createRoundRect(0, 0,
+                                        getWidth(), getHeight(),
+                                        6,
+                                        6,
+                                        0, 0));
+        super.paintComponent(g);
+        
+      }
+    };;
     updateTabLabel = new JLabel("Updates");
+    updateTabLabel.setFont(Toolkit.getSansFont(14, Font.BOLD));
     numberLabel.setVerticalTextPosition(SwingConstants.CENTER);
     numberLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+    numberLabel.setFont(Toolkit.getSansFont(14, Font.BOLD));
+    numberLabel.setForeground(Color.WHITE);
     updateTabPanel.setOpaque(true);
     updateTabPanel.setBackground(new Color(0x2d4251));
     updateTabLabel.setForeground(Color.WHITE);
@@ -292,8 +321,16 @@ public class ContributionManagerDialog {
     GroupLayout tabLayout = new GroupLayout(updateTabPanel);
     tabLayout.setAutoCreateGaps(true);
     updateTabPanel.setLayout(tabLayout);
-    tabLayout.setHorizontalGroup(tabLayout.createSequentialGroup()
-      .addComponent(updateTabLabel).addComponent(numberLabel));
+    tabLayout.setHorizontalGroup(tabLayout
+      .createSequentialGroup()
+
+      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+      .addComponent(updateTabLabel)
+      .addComponent(numberLabel)
+
+      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE));
     tabLayout.setVerticalGroup(tabLayout
       .createParallelGroup(GroupLayout.Alignment.CENTER)
       .addComponent(numberLabel).addComponent(updateTabLabel));
@@ -303,16 +340,18 @@ public class ContributionManagerDialog {
 
 
   public class SpacedTabbedPaneUI extends BasicTabbedPaneUI {
+    protected Color hazAlfa(int fila) {
+      int alfa = 0;
+      if (fila >= 0) {
+          alfa = 50 + (fila > 7 ? 70 : 10 * fila);
+      }
+      return new Color(0, 0, 0, alfa);
+  }
     @Override
     protected void installDefaults() {
       UIManager.put("TabbedPane.selected", Color.BLACK);
       UIManager.put("TabbedPane.tabsOverlapBorder" , true);
       super.installDefaults();
-      highlight = Color.RED;
-      lightHighlight = Color.GRAY;
-      shadow = Color.GREEN;
-      darkShadow = Color.BLACK;
-      focus = Color.YELLOW;
       tabInsets = new Insets(0, 0, 0, 0);
       contentBorderInsets = new Insets(0, 0, 0, 0);
       tabAreaInsets = new Insets(0, 0, 0, 0);
@@ -327,6 +366,17 @@ public class ContributionManagerDialog {
 //    protected int getTabLabelShiftY(int tabPlacement, int tabIndex,
 //                                    boolean isSelected) {
 //      return 3;
+//    }
+//    @Override
+//    protected void paintTab(Graphics g, int tabPlacement,
+//                            Rectangle[] rects, int tabIndex,
+//                            Rectangle iconRect, Rectangle textRect) {
+//      Graphics2D g2 = (Graphics2D) g;
+//      g2.fill(Toolkit.createRoundRect(rects[tabIndex].x, rects[tabIndex].y,
+//                                      rects[tabIndex].x + rects[tabIndex].width, rects[tabIndex].y + rects[tabIndex].height,
+//                                      6,
+//                                      6,
+//                                      0, 0));
 //    }
     @Override
     protected void paintTabBackground(Graphics g, int tabPlacement,
@@ -704,18 +754,10 @@ public class ContributionManagerDialog {
 
 
         if (error) {
-          if (exception instanceof SocketTimeoutException) {
-            activeTab.statusPanel.setErrorMessage(Language
-              .text("contrib.errors.list_download.timeout"));
-          } else {
-            activeTab.statusPanel.setErrorMessage(Language
-              .text("contrib.errors.list_download"));
-          }
           exception.printStackTrace();
           makeAndShowTab(true,false);
         } else {
           makeAndShowTab(false, false);
-          activeTab.statusPanel.setMessage(Language.text("contrib.status.done"));
         }
       }
     });

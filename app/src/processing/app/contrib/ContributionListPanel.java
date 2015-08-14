@@ -58,6 +58,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   protected ContributionListing contribListing = ContributionListing.getInstance();
   protected JTable table;
   DefaultTableModel dtm;
+  Font myFont;
 
   public ContributionListPanel() {
     // TODO Auto-generated constructor stub
@@ -72,15 +73,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
     setLayout(new GridBagLayout());
     setOpaque(true);
-
-    if (Base.isLinux()) {
-      // Because of a bug with GNOME, getColor returns the wrong value for
-      // List.background. We'll just assume its white. The number of people
-      // using Linux and an inverted color theme should be small enough.
-      setBackground(Color.white);
-    } else {
-      setBackground(UIManager.getColor("List.background"));
-    }
+    setBackground(Color.WHITE);
 
     panelByContribution = new TreeMap<Contribution, ContributionPanel>(contribListing.getComparator());
 
@@ -96,13 +89,17 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
               TableCellRenderer renderer, int row, int column) {
           Component c = super.prepareRenderer(renderer, row, column);
           if (isRowSelected(row)) {
-              c.setBackground(Color.blue);
+              c.setBackground(new Color(0xe0fffd));
           } else {
               c.setBackground(Color.white);
           }
           return c;
       }
     };
+
+    myFont = Toolkit.getSansFont(14, Font.PLAIN);
+    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(myFont);
+    
     // There is a space before Status
     String[] colName = { " Status", "Name", "Author" };
     dtm.setColumnIdentifiers(colName);
@@ -110,9 +107,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     table.setFillsViewportHeight(true);
 //    table.setBorder();
     table.setDefaultRenderer(Contribution.class, new StatusRendere());
-    table.setRowHeight(30);
+    table.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+    table.setRowHeight(28);
     table.setRowMargin(6);
-    table.getColumnModel().setColumnMargin(-1);
+    table.getColumnModel().setColumnMargin(0);
     table.getColumnModel().getColumn(0).setMaxWidth(60);
     table.getColumnModel().getColumn(2).setMinWidth(ContributionManagerDialog.AUTHOR_WIDTH);
     table.getColumnModel().getColumn(2).setMaxWidth(ContributionManagerDialog.AUTHOR_WIDTH);
@@ -193,8 +191,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         setForeground(tableHeader.getForeground());
       }
       setIcon(getIcon(table, column));
-      //TODO: put correct Color here 
-      setBackground(Color.LIGHT_GRAY);
+      if (column % 2 == 0) {
+        setBackground(new Color(0xdfdfdf));
+      } else {
+        setBackground(new Color(0xebebeb));
+      }
       setBorder(null);
       return this;
     }
@@ -257,6 +258,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       if (column == 0) {
         Icon icon = null;
         label.setBorder(BorderFactory.createEmptyBorder(2, 17, 0, 0));
+        label.setFont(Toolkit.getSansFont(14, Font.PLAIN));
         if (contribution.isInstalled()) {
           icon = Toolkit.getLibIcon("manager/up-to-date.png");
           if (contribListing.hasUpdates(contribution)) {
@@ -268,7 +270,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         }
         label.setIcon(icon);
         if (isSelected) {
-          label.setBackground(Color.BLUE);
+          label.setBackground(new Color(0xe0fffd));
         }
         label.setOpaque(true);
 //        return table.getDefaultRenderer(Icon.class).getTableCellRendererComponent(table, icon, isSelected, false, row, column);
@@ -277,13 +279,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         FontMetrics fontMetrics = table.getFontMetrics(table.getFont());
         int colSize = table.getColumnModel().getColumn(1).getWidth();
         String sentence = contribution.getSentence();
-        int currentWidth = table.getFontMetrics(table.getFont().deriveFont(Font.BOLD)).stringWidth(contribution.getName());
-        int ellipsesWidth = fontMetrics.stringWidth("  ...");
-        String name = "<html><body><b>" + contribution.getName() + "</b>";
+        int currentWidth = table.getFontMetrics(table.getFont().deriveFont(Font.BOLD)).stringWidth(contribution.getName() + " | ");
+        int ellipsesWidth = fontMetrics.stringWidth("...");
+        String name = "<html><body><b>" + contribution.getName();
         if (sentence == null) {
-          label.setText(name + "</body></html>");
+          label.setText(name + "</b></body></html>");
         } else {
-          sentence = " - " + sentence;
+          sentence = " | </b>" + sentence;
           currentWidth += ellipsesWidth;
           int i = 0;
           for (i = 0; i < sentence.length(); i++) {
@@ -294,7 +296,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           }
           // Adding ellipses only if text doesn't fits into the column
           if(i != sentence.length()){
-            label.setText(name + sentence.substring(0, i) + " ...</body></html>");
+            label.setText(name + sentence.substring(0, i) + "...</body></html>");
           }else {
             label.setText(name + sentence + "</body></html>");
           }
@@ -303,8 +305,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           label.setForeground(Color.LIGHT_GRAY);
         }
         if (table.isRowSelected(row)) {
-          label.setBackground(Color.BLUE);
+          label.setBackground(new Color(0xe0fffd));
         }
+        label.setFont(myFont);
         label.setOpaque(true);
       } else {
         label = new JLabel(
@@ -332,10 +335,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         label.setHorizontalAlignment(SwingConstants.LEFT);
         if(!contribution.isCompatible(Base.getRevision())){
           label.setForeground(Color.LIGHT_GRAY);
+        }else{
+          label.setForeground(Color.BLACK);
         }
         if (table.isRowSelected(row)) {
-          label.setBackground(Color.BLUE);
+          label.setBackground(new Color(0xe0fffd));
         }
+        label.setFont(Toolkit.getSansFont(14, Font.BOLD));
         label.setOpaque(true);
       }
       return label;
@@ -378,11 +384,15 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     c.anchor = GridBagConstraints.NORTH;
     add(status, c);*/
 //    System.out.println(dtm.getDataVector());
+    int row = table.getSelectedRow();
     dtm.getDataVector().removeAllElements();
     dtm.fireTableDataChanged();
     for (Contribution entry : contributionsSet) {
       ((MyTableModel) table.getModel()).addRow(new Object[] {
         entry, entry, entry });
+    }
+    if (row >= 0) {
+      table.setRowSelectionInterval(row, row);
     }
 
   }
@@ -404,13 +414,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
               updateColors();  // XXX this is the place
             }
           }
-          // To make the scroll shift to the first element
-          // http://stackoverflow.com/questions/19400239/scrolling-to-the-top-jpanel-inside-a-jscrollpane
-          EventQueue.invokeLater(new Runnable() {
-            public void run() {
-              scrollRectToVisible(new Rectangle(0, 0, 1, 1));
-            }
-          });
         }
       });
     }

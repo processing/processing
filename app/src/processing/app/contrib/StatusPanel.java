@@ -23,6 +23,7 @@ package processing.app.contrib;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -61,7 +62,7 @@ class StatusPanel extends JPanel {
 
   public StatusPanel(int width, final ContributionTab contributionTab) {
     super();
-    setBackground(Color.LIGHT_GRAY);
+    setBackground(new Color(0xebebeb));
 //    setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
     this.contributionTab  = contributionTab;
     
@@ -71,6 +72,7 @@ class StatusPanel extends JPanel {
     label.setEditable(false);
     label.setOpaque(false);
     label.setContentType("text/html");
+    label.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     label.addHyperlinkListener(new HyperlinkListener() {
 
       @Override
@@ -82,7 +84,8 @@ class StatusPanel extends JPanel {
         }
       }
     });
-    installButton = new JButton("Install", Toolkit.getLibIcon("manager/update.png"));
+    installButton = new JButton("Install", Toolkit.getLibIcon("manager/install.png"));
+    installButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     installButton.setHorizontalAlignment(SwingConstants.LEFT);
 //    installButton.setContentAreaFilled(false);
 //    installButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
@@ -100,7 +103,9 @@ class StatusPanel extends JPanel {
     progressBarPanel.setLayout(new BorderLayout());
     progressBarPanel.setOpaque(false);
     updateLabel = new JLabel(" ");
+    updateLabel.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     updateButton = new JButton("Update", Toolkit.getLibIcon("manager/update.png"));
+    updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     updateButton.setHorizontalAlignment(SwingConstants.LEFT);
 //    updateButton.setAlignmentX(SwingConstants.LEFT);
 //    updateButton.setContentAreaFilled(false);
@@ -117,6 +122,7 @@ class StatusPanel extends JPanel {
     });
 
     removeButton = new JButton("Remove", Toolkit.getLibIcon("manager/remove.png"));
+    removeButton.setFont(Toolkit.getSansFont(14, Font.BOLD));
     removeButton.setHorizontalAlignment(SwingConstants.LEFT);
 //    removeButton.setContentAreaFilled(false);
 //    removeButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
@@ -186,7 +192,6 @@ class StatusPanel extends JPanel {
 
   void setMessage(String message) {
     if (label != null) {
-      label.setForeground(Color.BLACK);
       label.setText(message);
       label.repaint();
     }
@@ -194,8 +199,6 @@ class StatusPanel extends JPanel {
 
   void setErrorMessage(String message) {
     if (label != null) {
-      //setForeground(Color.RED);
-      label.setForeground(new Color(160, 0, 0));
       label.setText(message);
       label.repaint();
     }

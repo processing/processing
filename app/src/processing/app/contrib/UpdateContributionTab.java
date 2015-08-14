@@ -2,6 +2,7 @@ package processing.app.contrib;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Comparator;
@@ -20,12 +21,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.LayoutStyle;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import processing.app.Base;
+import processing.app.contrib.ContributionListPanel.MyColumnHeaderRenderer;
 import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
@@ -85,22 +91,22 @@ public class UpdateContributionTab extends ContributionTab {
       super.contributionTab = contributionTab;
       super.filter = filter;
       setOpaque(true);
-
-      if (Base.isLinux()) {
-        // Because of a bug with GNOME, getColor returns the wrong value for
-        // List.background. We'll just assume its white. The number of people
-        // using Linux and an inverted color theme should be small enough.
-        setBackground(Color.white);
-      } else {
-        setBackground(UIManager.getColor("List.background"));
-      }
+      setBackground(Color.WHITE);
 
 //      statusPlaceholder = new JPanel();
 //      statusPlaceholder.setVisible(false);
 //      status = new StatusPanel(null);
 
       String[] colName = { "", "Name", "Author", "Installed", "Update To" };
-      dtm = new MyTableModel();
+      dtm = new MyTableModel(){
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+          if (columnIndex == 0) {
+            return Icon.class;
+          }
+          return String.class;
+        }
+      };
       dtm.setColumnIdentifiers(colName);
       table = new JTable(dtm){
         @Override
@@ -119,8 +125,8 @@ public class UpdateContributionTab extends ContributionTab {
         public void changeSelection(int rowIndex, int columnIndex,
                                     boolean toggle, boolean extend) {
           String title = (String) getValueAt(rowIndex, 1);
-          if(title.equals(title.equals("<html><i>Library</i></html>") || title.equals("<html><i>Tools</i></html>")
-                          || title.equals("<html><i>Modes</i></html>") || title.equals("<html><i>Examples</i></html>"))){
+          if(title.equals("<html><i>Library</i></html>") || title.equals("<html><i>Tools</i></html>")
+                          || title.equals("<html><i>Modes</i></html>") || title.equals("<html><i>Examples</i></html>")){
             return;
           }
           super.changeSelection(rowIndex, columnIndex, toggle, extend);
@@ -135,6 +141,9 @@ public class UpdateContributionTab extends ContributionTab {
       };
       JScrollPane scrollPane = new JScrollPane(table);
       table.setFillsViewportHeight(true);
+      table.setSelectionBackground(new Color(0xe0fffd));
+      table.setSelectionForeground(table.getForeground());
+      table.setFont(Toolkit.getSansFont(14, Font.PLAIN));
       table.setRowHeight(30);
       table.setRowMargin(6);
       table.getColumnModel().setColumnMargin(-1);
@@ -144,6 +153,7 @@ public class UpdateContributionTab extends ContributionTab {
       table.setRowSelectionAllowed(true);
       table.setAutoCreateColumnsFromModel(true);
       table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      table.setDefaultRenderer(String.class, new StatusRendere());
       table.getTableHeader().setDefaultRenderer(new MyColumnHeaderRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table,
@@ -158,11 +168,12 @@ public class UpdateContributionTab extends ContributionTab {
             setForeground(tableHeader.getForeground());
           }
           setIcon(getIcon(table, column));
-          setBackground(Color.LIGHT_GRAY);
+          setBackground(new Color(0xebebeb));
 //          setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, Color.BLACK));
           return this;
         }
       });
+      
 
       GroupLayout layout = new GroupLayout(this);
       layout.setHorizontalGroup(layout.createParallelGroup().addComponent(scrollPane));
@@ -205,6 +216,18 @@ public class UpdateContributionTab extends ContributionTab {
       });
 
     }
+    
+    class StatusRendere extends DefaultTableCellRenderer {
+      @Override
+      public Component getTableCellRendererComponent(JTable table,
+                                                     Object value,
+                                                     boolean isSelected,
+                                                     boolean hasFocus, int row,
+                                                     int column) {
+        return super.getTableCellRendererComponent(table, value, isSelected, false,
+                                                   row, column);
+      }
+    }
   //
 //    @Override
 //    public void contributionAdded(Contribution contribution) {
@@ -246,12 +269,12 @@ public class UpdateContributionTab extends ContributionTab {
         }
         Icon icon = null;
         if (entry.isInstalled()) {
-          icon = Toolkit.getLibIcon("icons/installedAndUptodate.png");
+          icon = Toolkit.getLibIcon("manager/up-to-date.png");
           if (contribListing.hasUpdates(entry)) {
-            icon = Toolkit.getLibIcon("icons/installedNeedsUpdate.png");
+            icon = Toolkit.getLibIcon("manager/update-available.png");
           }
           if (!entry.isCompatible(Base.getRevision())) {
-            icon = Toolkit.getLibIcon("icons/installedIncompatible.png");
+            icon = Toolkit.getLibIcon("manager/incompatible.png");
           }
         }
         dtm
@@ -280,7 +303,9 @@ public class UpdateContributionTab extends ContributionTab {
   public class UpdateStatusPanel extends StatusPanel {
     public UpdateStatusPanel(int width, final ContributionTab contributionTab) {
       super();
-      updateButton = new JButton("Update All");
+      updateButton = new JButton("Update All", Toolkit.getLibIcon("manager/update.png"));
+      updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+      updateButton.setHorizontalAlignment(SwingConstants.LEFT);
 //      updateButton.setContentAreaFilled(false);
 //      updateButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
       updateButton.addActionListener(new ActionListener() {
@@ -292,7 +317,7 @@ public class UpdateContributionTab extends ContributionTab {
           }
         }
       });
-      this.setBackground(Color.LIGHT_GRAY);
+      this.setBackground(new Color(0xe0fffd));
 //      this.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
       layout = new GroupLayout(this);
       this.setLayout(layout);
@@ -309,9 +334,14 @@ public class UpdateContributionTab extends ContributionTab {
         .addComponent(updateButton));
       updateButton.setVisible(true);
     }
+    
     @Override
     public void update(ContributionPanel panel) {
-
+      if (contributionListPanel.getNoOfRows() > 0) {
+        updateButton.setEnabled(true);
+      } else {
+        updateButton.setEnabled(false);
+      }
     }
   }
 }

@@ -22,7 +22,10 @@
 package processing.app.contrib;
 
 import java.awt.Color;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.*;
 import java.util.*;
 
@@ -48,7 +51,6 @@ public class ContributionTab {
   ContributionListPanel contributionListPanel;
   StatusPanel statusPanel;
   FilterField filterField;
-  JLabel filterLabel;
   JButton restartButton;
   JLabel categoryLabel;
   JLabel loaderLabel;
@@ -138,8 +140,6 @@ public class ContributionTab {
       loaderLabel = new JLabel(Toolkit.getLibIcon("manager/loader.gif"));
       loaderLabel.setOpaque(false);
       loaderLabel.setBackground(Color.WHITE);
-      filterLabel = new JLabel("Filter");
-      filterLabel.setOpaque(false);
     }
 
     /*restartButton = new JButton(Language.text("contrib.restart"));
@@ -198,17 +198,18 @@ public class ContributionTab {
       .createParallelGroup(GroupLayout.Alignment.CENTER)
       .addGroup(layout
                   .createSequentialGroup()
-                  .addContainerGap()
-                  .addComponent(filterLabel)
-                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                  .addComponent(filterField)
+                  .addGap(ContributionManagerDialog.STATUS_WIDTH)
+                  .addComponent(filterField,
+                                ContributionManagerDialog.FILTER_WIDTH,
+                                ContributionManagerDialog.FILTER_WIDTH,
+                                ContributionManagerDialog.FILTER_WIDTH)
 //                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                   .addComponent(categoryChooser,
-                                ContributionManagerDialog.AUTHOR_WIDTH,
-                                ContributionManagerDialog.AUTHOR_WIDTH,
-                                ContributionManagerDialog.AUTHOR_WIDTH)
+                                ContributionManagerDialog.AUTHOR_WIDTH - 10,
+                                ContributionManagerDialog.AUTHOR_WIDTH - 10,
+                                ContributionManagerDialog.AUTHOR_WIDTH - 10)
                   .addContainerGap()).addComponent(loaderLabel)
       .addComponent(contributionListPanel).addComponent(errorPanel)
       .addComponent(statusPanel));
@@ -217,7 +218,7 @@ public class ContributionTab {
       .createSequentialGroup()
       .addContainerGap()
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                  .addComponent(filterLabel).addComponent(categoryChooser)
+                  .addComponent(categoryChooser)
                   .addComponent(filterField))
       .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)           
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -228,7 +229,7 @@ public class ContributionTab {
                     GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE));
     layout.linkSize(SwingConstants.VERTICAL, categoryChooser, filterField);
     layout.setHonorsVisibility(contributionListPanel, false);
-
+    
     panel.setBackground(Color.WHITE);
     panel.setBorder(null);
  }
@@ -242,6 +243,7 @@ public class ContributionTab {
 
       categoryChooser = new JComboBox<String>();
       categoryChooser.setMaximumRowCount(20);
+      categoryChooser.setFont(Toolkit.getSansFont(14, Font.PLAIN));
 
       updateCategoryChooser();
 
@@ -274,6 +276,7 @@ public class ContributionTab {
     errorMessage.setText("<html><body>Could not connect to the Processing server.<br>"
       + "Contributions cannot be installed or updated without an Internet connection.<br>"
       + "Please verify your network connection again, then try connecting again.</body></html>");
+    errorMessage.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     errorMessage.setMaximumSize(new Dimension(550, 50));
     errorMessage.setOpaque(false);
 
@@ -293,6 +296,7 @@ public class ContributionTab {
       }
     });
     tryAgainButton = new JButton("Try Again");
+    tryAgainButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
 //    tryAgainButton.setContentAreaFilled(false);
 //    tryAgainButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     tryAgainButton.addActionListener(new ActionListener() {
@@ -417,24 +421,44 @@ public class ContributionTab {
   class FilterField extends JTextField {
     Icon searchIcon;
     List<String> filters;
+    JLabel filterLabel;
 
     public FilterField () {
 
       super("");
+      
+      filterLabel = new JLabel("Filter");
+      filterLabel.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+      filterLabel.setOpaque(false);
+      
+      setFont(Toolkit.getSansFont(14, Font.PLAIN));
       searchIcon = Toolkit.getLibIcon("manager/search.png");
       setOpaque(false);
-
+      setBorder(BorderFactory.createMatteBorder(0, 33, 0, 0, searchIcon));
+      
+      GroupLayout fl = new GroupLayout(this);
+      setLayout(fl);
+      fl.setHorizontalGroup(fl.createSequentialGroup().addComponent(filterLabel));
+      fl.setVerticalGroup(fl.createSequentialGroup()
+                          .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                                           GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                          .addComponent(filterLabel)
+                          .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                                           GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE));
+      
       filters = new ArrayList<String>();
 
       addFocusListener(new FocusListener() {
         public void focusLost(FocusEvent focusEvent) {
           if (getText().isEmpty()) {
             setBorder(BorderFactory.createMatteBorder(0, 33, 0, 0, searchIcon));
+            filterLabel.setVisible(true);
           }
         }
 
         public void focusGained(FocusEvent focusEvent) {
           setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 0));
+          filterLabel.setVisible(false);
         }
       });
 
