@@ -32,6 +32,7 @@ import javax.swing.table.TableRowSorter;
 
 import processing.app.Base;
 import processing.app.contrib.ContributionListPanel.MyColumnHeaderRenderer;
+import processing.app.Platform;
 import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 

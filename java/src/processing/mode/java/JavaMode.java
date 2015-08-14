@@ -22,17 +22,20 @@
 
 package processing.mode.java;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.ImageIcon;
-
 import processing.app.*;
 import processing.app.ui.Editor;
+import processing.app.ui.EditorException;
 import processing.app.ui.EditorState;
 import processing.mode.java.runner.Runner;
 import processing.mode.java.tweak.SketchParser;
@@ -40,7 +43,8 @@ import processing.mode.java.tweak.SketchParser;
 
 public class JavaMode extends Mode {
 
-  public Editor createEditor(Base base, String path, EditorState state) {
+  public Editor createEditor(Base base, String path,
+                             EditorState state) throws EditorException {
     return new JavaEditor(base, path, state, this);
   }
 
@@ -50,17 +54,6 @@ public class JavaMode extends Mode {
 
     initLogger();
     loadPreferences();
-    loadIcons();
-  }
-
-  /**
-   * Needed by code completion panel. See {@link processing.mode.java.pdex.CompletionPanel}
-   */
-  private void loadIcons(){
-    classIcon = loadIcon("theme/icon_class_obj.png");
-    methodIcon = loadIcon("theme/icon_methpub_obj.png");
-    fieldIcon = loadIcon("theme/icon_field_protected_obj.png");
-    localVarIcon = loadIcon("theme/icon_field_default_obj.png");
   }
 
 
@@ -104,7 +97,7 @@ public class JavaMode extends Mode {
 
   public Library getCoreLibrary() {
     if (coreLibrary == null) {
-      File coreFolder = Base.getContentFile("core");
+      File coreFolder = Platform.getContentFile("core");
       coreLibrary = new Library(coreFolder);
 //      try {
 //        coreLibrary = getLibrary("processing.core");
@@ -156,7 +149,12 @@ public class JavaMode extends Mode {
       final Runner runtime = new Runner(build, listener);
       new Thread(new Runnable() {
         public void run() {
-          runtime.launch(present);  // this blocks until finished
+          // these block until finished
+          if (present) {
+            runtime.present(null);
+          } else {
+            runtime.launch(null);
+          }
         }
       }).start();
       return runtime;
@@ -173,8 +171,8 @@ public class JavaMode extends Mode {
 
     if (isSketchModified(sketch)) {
       editor.deactivateRun();
-      Base.showMessage(Language.text("menu.file.save"),
-                       Language.text("tweak_mode.save_before_tweak"));
+      Messages.showMessage(Language.text("menu.file.save"),
+                           Language.text("tweak_mode.save_before_tweak"));
       return null;
     }
 
@@ -204,21 +202,26 @@ public class JavaMode extends Mode {
     if (appletClassName != null) {
       final Runner runtime = new Runner(build, listener);
       new Thread(new Runnable() {
-          public void run() {
-            runtime.launch(present);  // this blocks until finished
-            // next lines are executed when the sketch quits
-            if (launchInteractive) {
-                editor.initEditorCode(parser.allHandles, false);
-                editor.stopInteractiveMode(parser.allHandles);
-            }
+        public void run() {
+          // these block until finished
+          if (present) {
+            runtime.present(null);
+          } else {
+            runtime.launch(null);
           }
-        }).start();
+          // next lines are executed when the sketch quits
+          if (launchInteractive) {
+            editor.initEditorCode(parser.allHandles, false);
+            editor.stopTweakMode(parser.allHandles);
+          }
+        }
+      }).start();
 
       if (launchInteractive) {
         // replace editor code with baseCode
         editor.initEditorCode(parser.allHandles, false);
         editor.updateInterface(parser.allHandles, parser.colorBoxes);
-        editor.startInteractiveMode();
+        editor.startTweakMode();
       }
       return runtime;
     }
@@ -333,17 +336,18 @@ public class JavaMode extends Mode {
   static public final String prefAutoSavePrompt = "pdex.autoSave.promptDisplay";
   static public final String prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault";
   static public final String prefImportSuggestEnabled = "pdex.importSuggestEnabled";
+  static public final String suggestionsFileName = "suggestions.txt";
 
   static volatile public boolean enableTweak = false;
 
-  static public ImageIcon classIcon;
-  static public ImageIcon fieldIcon;
-  static public ImageIcon methodIcon;
-  static public ImageIcon localVarIcon;
-
+  /**
+   * Stores the white list/black list of allowed/blacklisted imports. These are defined in
+   * suggestions.txt in java mode folder.
+   */
+  static public final HashMap<String, HashSet<String>> suggestionsMap = new HashMap<>();
 
   public void loadPreferences() {
-    Base.log("Load PDEX prefs");
+    Messages.log("Load PDEX prefs");
     ensurePrefsExist();
     errorCheckEnabled = Preferences.getBoolean(prefErrorCheck);
     warningsEnabled = Preferences.getBoolean(prefWarnings);
@@ -357,11 +361,12 @@ public class JavaMode extends Mode {
     defaultAutoSaveEnabled = Preferences.getBoolean(prefDefaultAutoSave);
     ccTriggerEnabled = Preferences.getBoolean(prefCCTriggerEnabled);
     importSuggestEnabled = Preferences.getBoolean(prefImportSuggestEnabled);
+    loadSuggestionsMap();
   }
 
 
   public void savePreferences() {
-    Base.log("Saving PDEX prefs");
+    Messages.log("Saving PDEX prefs");
     Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
     Preferences.setBoolean(prefWarnings, warningsEnabled);
     Preferences.setBoolean(prefCodeCompletionEnabled, codeCompletionsEnabled);
@@ -374,6 +379,47 @@ public class JavaMode extends Mode {
     Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
     Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
     Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
+  }
+
+  public void loadSuggestionsMap() {
+    File suggestionsListFile = new File(getFolder() + File.separator
+        + suggestionsFileName);
+    if (!suggestionsListFile.exists()) {
+      Messages.loge("Suggestions file not found! "
+          + suggestionsListFile.getAbsolutePath());
+      return;
+    }
+
+    try {
+      BufferedReader br = new BufferedReader(
+                                             new FileReader(suggestionsListFile));
+      while (true) {
+        String line = br.readLine();
+        if (line == null) {
+          break;
+        }
+        line = line.trim();
+        if (line.startsWith("#")) {
+          continue;
+        } else {
+          if (line.contains("=")) {
+            String key = line.split("=")[0];
+            String val = line.split("=")[1];
+            if (suggestionsMap.containsKey(key)) {
+              suggestionsMap.get(key).add(val);
+            } else {
+              HashSet<String> set = new HashSet<>();
+              set.add(val);
+              suggestionsMap.put(key, set);
+            }
+          }
+        }
+      }
+      br.close();
+    } catch (IOException e) {
+      Messages.loge("IOException while reading suggestions file:"
+          + suggestionsListFile.getAbsolutePath());
+    }
   }
 
 

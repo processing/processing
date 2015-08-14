@@ -32,6 +32,7 @@ import javax.swing.text.*;
 
 import processing.app.Base;
 import processing.app.Mode;
+import processing.app.Platform;
 import processing.app.Preferences;
 import processing.core.PApplet;
 
@@ -151,7 +152,7 @@ public class EditorConsole extends JScrollPane {
 
     // to fix ugliness.. normally macosx java 1.3 puts an
     // ugly white border around this object, so turn it off.
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       setBorder(null);
     }
 

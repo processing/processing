@@ -30,8 +30,8 @@ import javax.swing.GroupLayout.Group;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
-import processing.app.Base;
 import processing.app.Language;
+import processing.app.Platform;
 import processing.app.Sketch;
 
 
@@ -39,13 +39,9 @@ import processing.app.Sketch;
  * Find & Replace window for the Processing editor.
  */
 public class FindReplace extends JFrame {
-
-  static final int BORDER = Base.isMacOS() ? 20 : 13;
-//  static final int SMALL = 6;
-//  12 is correct for Mac, other numbers may be required for other platforms
-//  static final int BUTTON_GAP = 12;
-
   Editor editor;
+
+  static final int BORDER = Platform.isMacOS() ? 20 : 13;
 
   JTextField findField;
   JTextField replaceField;
@@ -122,7 +118,7 @@ public class FindReplace extends JFrame {
     findButton = new JButton(Language.text("find.btn.find"));
 
     // ordering is different on mac versus pc
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       buttonsHorizontalGroup.addComponent(replaceAllButton)
         .addComponent(replaceButton)
         .addComponent(replaceAndFindButton)

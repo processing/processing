@@ -107,7 +107,7 @@ public abstract class LocalContribution extends Contribution {
       }
 
     } else {
-      Base.log("No properties file at " + propertiesFile.getAbsolutePath());
+      Messages.log("No properties file at " + propertiesFile.getAbsolutePath());
       // We'll need this to be set at a minimum.
       name = folder.getName();
       categories = unknownCategoryList();
@@ -134,7 +134,7 @@ public abstract class LocalContribution extends Contribution {
   public String initLoader(String className) throws Exception {
     File modeDirectory = new File(folder, getTypeName());
     if (modeDirectory.exists()) {
-      Base.log("checking mode folder regarding " + className);
+      Messages.log("checking mode folder regarding " + className);
       // If no class name specified, search the main <modename>.jar for the
       // full name package and mode name.
       if (className == null) {
@@ -157,12 +157,12 @@ public abstract class LocalContribution extends Contribution {
       if (archives != null && archives.length > 0) {
         URL[] urlList = new URL[archives.length];
         for (int j = 0; j < urlList.length; j++) {
-          Base.log("Found archive " + archives[j] + " for " + getName());
+          Messages.log("Found archive " + archives[j] + " for " + getName());
           urlList[j] = archives[j].toURI().toURL();
         }
 //        loader = new URLClassLoader(urlList, Thread.currentThread().getContextClassLoader());
         loader = new URLClassLoader(urlList);
-        Base.log("loading above JARs with loader " + loader);
+        Messages.log("loading above JARs with loader " + loader);
 //        System.out.println("listing classes for loader " + loader);
 //        listClasses(loader);
       }
@@ -269,7 +269,7 @@ public abstract class LocalContribution extends Contribution {
             boolean doBackup = Preferences.getBoolean("contribution.backup.on_install");
             if (confirmReplace) {
               if (doBackup) {
-                result = Base.showYesNoQuestion(editor, "Replace",
+                result = Messages.showYesNoQuestion(editor, "Replace",
                        "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
                        "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
                        "has been found in your sketchbook. Clicking “Yes”<br>"+
@@ -279,7 +279,7 @@ public abstract class LocalContribution extends Contribution {
                   return null;
                 }
               } else {
-                result = Base.showYesNoQuestion(editor, "Replace",
+                result = Messages.showYesNoQuestion(editor, "Replace",
                        "Replace pre-existing \"" + oldContrib.getName() + "\" library?",
                        "A pre-existing copy of the \"" + oldContrib.getName() + "\" library<br>"+
                        "has been found in your sketchbook. Clicking “Yes”<br>"+
@@ -417,13 +417,13 @@ public abstract class LocalContribution extends Contribution {
           break;
         }
       }
-      if (!isModeActive)
+      if (!isModeActive) {
         m.clearClassLoader(editor.getBase());
-      else {
+      } else {
         pm.cancel();
-        Base.showMessage("Mode Manager",
-                         "Please save your Sketch and change the Mode of all Editor\nwindows that have "
-                           + this.name + " as the active Mode.");
+        Messages.showMessage("Mode Manager",
+                             "Please save your Sketch and change the Mode of all Editor\n" +
+                             "windows that have " + name + " as the active Mode.");
         return;
       }
     }

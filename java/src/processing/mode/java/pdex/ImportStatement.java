@@ -63,7 +63,9 @@ public class ImportStatement {
 	  if(ret.startsWith("import "))
 	    ret = ret.substring(7);
 	  if(ret.endsWith(";"))
-	    ret = ret.substring(0, ret.length() - 1);	  
+	    ret = ret.substring(0, ret.length() - 1).trim();
+	  if(ret.endsWith(".*"))
+	    ret = ret.substring(0, ret.length() - 2);
 	  return ret;
 	}
 

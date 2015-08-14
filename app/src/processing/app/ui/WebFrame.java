@@ -34,7 +34,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.html.*;
 
-import processing.app.Base;
+import processing.app.Platform;
 import processing.core.PApplet;
 import processing.data.StringDict;
 
@@ -90,7 +90,7 @@ public class WebFrame extends JFrame {
           if (result.trim().length() != 0) {
             String[] pairs = result.split("&");
             for (String pair : pairs) {
-              System.out.println("pair is " + pair);
+              //System.out.println("pair is " + pair);
               String[] pieces = pair.split("=");
               String attr = PApplet.urlDecode(pieces[0]);
               String valu = PApplet.urlDecode(pieces[1]);
@@ -151,7 +151,7 @@ public class WebFrame extends JFrame {
 
 
   public void handleLink(String link) {
-    Base.openURL(link);
+    Platform.openURL(link);
   }
 
 

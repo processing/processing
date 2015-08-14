@@ -17,7 +17,7 @@ changes made by [processing-bugs](https://github.com/processing-bugs), it may be
 Over time this will clean itself up as bugs are fixed and new issues are added from within Github.
 Help speed this process along by helping us!
 
-__Please help!__
+__Please help.__
 The instructions for building the source [are here](https://github.com/processing/processing/wiki/Build-Instructions). 
 Please help us fix problems, and if you're submitting code, following the [style guidelines](https://github.com/processing/processing/wiki/Style-Guidelines) helps save us a lot of time.
 

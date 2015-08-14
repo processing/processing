@@ -4802,7 +4802,24 @@ public class PApplet implements PConstants {
   static public final float map(float value,
                                 float start1, float stop1,
                                 float start2, float stop2) {
-    return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+    float outgoing =
+      start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+    String badness = null;
+    if (outgoing != outgoing) {
+      badness = "NaN (not a number)";
+
+    } else if (outgoing == Float.NEGATIVE_INFINITY ||
+               outgoing == Float.POSITIVE_INFINITY) {
+      badness = "infinity";
+    }
+    if (badness != null) {
+      final String msg =
+        String.format("map(%s, %s, %s, %s, %s) called, which returns %s",
+                      nf(value), nf(start1), nf(stop1),
+                      nf(start2), nf(stop2), badness);
+      PGraphics.showWarning(msg);
+    }
+    return outgoing;
   }
 
 
@@ -6652,6 +6669,11 @@ public class PApplet implements PConstants {
   public InputStream createInputRaw(String filename) {
     if (filename == null) return null;
 
+    if (sketchPath == null) {
+      System.err.println("The sketch path is not set.");
+      throw new RuntimeException("Files must be loaded inside setup() or after it has been called.");
+    }
+
     if (filename.length() == 0) {
       // an error will be called by the parent function
       //System.err.println("The filename passed to openStream() was empty.");
@@ -7323,17 +7345,25 @@ public class PApplet implements PConstants {
     try {
       folder = System.getProperty("user.dir");
 
+      String jarPath =
+        PApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+      // The jarPath from above will be URL encoded (%20 for spaces)
+      jarPath = urlDecode(jarPath);
+
       // Workaround for bug in Java for OS X from Oracle (7u51)
       // https://github.com/processing/processing/issues/2181
       if (platform == MACOSX) {
-        String jarPath =
-          PApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        // The jarPath from above will be URL encoded (%20 for spaces)
-        jarPath = urlDecode(jarPath);
         if (jarPath.contains("Contents/Java/")) {
           String appPath = jarPath.substring(0, jarPath.indexOf(".app") + 4);
           File containingFolder = new File(appPath).getParentFile();
           folder = containingFolder.getAbsolutePath();
+        }
+      } else {
+        // Working directory may not be set properly, try some options
+        // https://github.com/processing/processing/issues/2195
+        if (jarPath.contains("/lib/")) {
+          // Windows or Linux, back up a directory to get the executable
+          folder = new File(jarPath, "../..").getCanonicalPath();
         }
       }
     } catch (Exception e) {
@@ -7441,20 +7471,18 @@ public class PApplet implements PConstants {
 
 
   /**
-   * Return a full path to an item in the data folder.
+   * <b>This function almost certainly does not do the thing you want it to.</b>
+   * The data path is handled differently on each platform, and should not be
+   * considered a location to write files. It should also not be assumed that
+   * this location can be read from or listed. This function is used internally
+   * as a possible location for reading files. It's still "public" as a
+   * holdover from earlier code.
    * <p>
-   * This is only available with applications, not applets or Android.
-   * On Windows and Linux, this is simply the data folder, which is located
-   * in the same directory as the EXE file and lib folders. On Mac OS X, this
-   * is a path to the data folder buried inside Contents/Java.
-   * For the latter point, that also means that the data folder should not be
-   * considered writable. Use sketchPath() for now, or inputPath() and
-   * outputPath() once they're available in the 2.0 release.
-   * <p>
-   * dataPath() is not supported with applets because applets have their data
-   * folder wrapped into the JAR file. To read data from the data folder that
-   * works with an applet, you should use other methods such as createInput(),
-   * createReader(), or loadStrings().
+   * Libraries should use createInput() to get an InputStream or createOutput()
+   * to get an OutputStream. sketchPath() can be used to get a location
+   * relative to the sketch. Again, <b>do not</b> use this to get relative
+   * locations of files. You'll be disappointed when your app runs on different
+   * platforms.
    */
   public String dataPath(String where) {
     return dataFile(where).getAbsolutePath();
@@ -7481,7 +7509,12 @@ public class PApplet implements PConstants {
       return new File(dataFolder, where);
     }
     // Windows, Linux, or when not using a Mac OS X .app file
-    return new File(sketchPath + File.separator + "data" + File.separator + where);
+    File workingDirItem =
+      new File(sketchPath + File.separator + "data" + File.separator + where);
+//    if (workingDirItem.exists()) {
+    return workingDirItem;
+//    }
+//    // In some cases, the current working directory won't be set properly.
   }
 
 
@@ -9191,6 +9224,24 @@ public class PApplet implements PConstants {
   // INT NUMBER FORMATTING
 
 
+  static public String nf(float num) {
+    int inum = (int) num;
+    if (num == inum) {
+      return str(inum);
+    }
+    return str(num);
+  }
+
+
+  static public String[] nf(float[] num) {
+    String[] outgoing = new String[num.length];
+    for (int i = 0; i < num.length; i++) {
+      outgoing[i] = nf(num[i]);
+    }
+    return outgoing;
+  }
+
+
   /**
    * Integer number formatter.
    */
@@ -10076,7 +10127,11 @@ public class PApplet implements PConstants {
         Class<?> c =
           Thread.currentThread().getContextClassLoader().loadClass(name);
         sketch = (PApplet) c.newInstance();
+      } catch (RuntimeException re) {
+        // Don't re-package runtime exceptions
+        throw re;
       } catch (Exception e) {
+        // Package non-runtime exceptions so we can throw them freely
         throw new RuntimeException(e);
       }
     }

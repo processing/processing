@@ -34,6 +34,8 @@ import javax.swing.event.*;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Messages;
+import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.ui.ColorChooser;
 import processing.core.*;
@@ -94,7 +96,7 @@ public class PreferencesFrame {
 
     pain.setLayout(layout);
 
-    final int BORDER = Base.isMacOS() ? 20 : 13;
+    final int BORDER = Platform.isMacOS() ? 20 : 13;
 
     JLabel sketchbookLocationLabel, restartProcessingLabel;
     JButton browseButton; //, button2;
@@ -340,7 +342,7 @@ public class PreferencesFrame {
     final JLabel clickable = preferencePathLabel;
     preferencePathLabel.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
-          Base.openFolder(Base.getSettingsFolder());
+          Platform.openFolder(Base.getSettingsFolder());
         }
 
         // Light this up in blue like a hyperlink
@@ -486,7 +488,7 @@ public class PreferencesFrame {
       .addGap(BORDER)
       );
 
-    if (Base.isWindows()){
+    if (Platform.isWindows()){
       autoAssociateBox.setVisible(true);
     }
     // closing the window is same as hitting cancel button
@@ -623,7 +625,7 @@ public class PreferencesFrame {
       Preferences.set("editor.font.size", String.valueOf(selection));
 
     } catch (NumberFormatException e) {
-      Base.log("Ignoring invalid font size " + fontSizeField); //$NON-NLS-1$
+      Messages.log("Ignoring invalid font size " + fontSizeField); //$NON-NLS-1$
       fontSizeField.setSelectedItem(Preferences.getInteger("editor.font.size"));
     }
 
@@ -636,7 +638,7 @@ public class PreferencesFrame {
       Preferences.set("console.font.size", String.valueOf(selection));
 
     } catch (NumberFormatException e) {
-      Base.log("Ignoring invalid font size " + consoleFontSizeField); //$NON-NLS-1$
+      Messages.log("Ignoring invalid font size " + consoleFontSizeField); //$NON-NLS-1$
       consoleFontSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
     }
 

@@ -26,13 +26,16 @@ package processing.app.ui;
 import processing.app.Base;
 import processing.app.Formatter;
 import processing.app.Language;
+import processing.app.Messages;
 import processing.app.Mode;
+import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.RunnerListener;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.SketchException;
 import processing.app.Util;
+import processing.app.contrib.ContributionManager;
 import processing.app.contrib.ToolContribution;
 import processing.app.syntax.*;
 import processing.app.tools.*;
@@ -151,7 +154,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
 //  protected Editor(final Base base, String path, int[] location, final Mode mode) {
-  protected Editor(final Base base, String path, EditorState state, final Mode mode) {
+  protected Editor(final Base base, String path, final EditorState state,
+                   final Mode mode) throws EditorException {
     super("Processing", state.checkConfig());
     this.base = base;
     this.state = state;
@@ -179,7 +183,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
         public void windowActivated(WindowEvent e) {
           base.handleActivated(Editor.this);
-          fileMenu.insert(base.getRecentMenu(), 2);
+          fileMenu.insert(Recent.getMenu(), 2);
           Toolkit.setMenuMnemsInside(fileMenu);
 
           //sketchMenu.insert(mode.getImportMenu(), 5);
@@ -190,7 +194,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
 
         public void windowDeactivated(WindowEvent e) {
-          fileMenu.remove(base.getRecentMenu());
+          fileMenu.remove(Recent.getMenu());
 //          JMenu importMenu = mode.getImportMenu();
 //          importIndex = sketchMenu.getComponentZOrder(mode.getImportMenu());
 //          sketchMenu.remove(mode.getImportMenu());
@@ -366,10 +370,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
 
     // Open the document that was passed in
-    boolean loaded = handleOpenInternal(path);
-    if (!loaded) {
-      sketch = null;
-    }
+    handleOpenInternal(path);
 
     // Add a window listener to watch for changes to the files in the sketch
     addWindowFocusListener(new ChangeDetector(this));
@@ -462,14 +463,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  public void removeRecent() {
-    base.removeRecent(this);
-  }
-
-
-  public void addRecent() {
-    base.handleRecent(this);
-  }
+//  public void removeRecent() {
+//    Recent.remove(this);
+//  }
+//
+//
+//  public void addRecent() {
+//    Recent.handle(this);
+//  }
 
 
   /**
@@ -524,8 +525,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
           }
         }
       } catch (Exception e) {
-        Base.showWarning("Drag & Drop Problem",
-                         "An error occurred while trying to add files to the sketch.", e);
+        Messages.showWarning("Drag & Drop Problem",
+                             "An error occurred while trying to add files to the sketch.", e);
         return false;
       }
       statusNotice(Language.pluralize("editor.status.drag_and_drop.files_added", successful));
@@ -564,9 +565,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
           if (!sketch.isModified()) {
             base.changeMode(m);
           } else {
-            Base.showWarning("Save",
-                             "Please save the sketch before changing the mode.",
-                             null);
+            Messages.showWarning("Save",
+                                 "Please save the sketch before changing the mode.");
 
             // Re-select the old checkbox, because it was automatically
             // updated by Java, even though the Mode could not be changed.
@@ -593,7 +593,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     JMenuItem addLib = new JMenuItem(Language.text("toolbar.add_mode"));
     addLib.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.handleOpenModeManager();
+        ContributionManager.openModeManager(Editor.this);
       }
     });
     modeMenu.add(addLib);
@@ -856,7 +856,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // Mac OS X already has its own preferences and quit menu.
     // That's right! Think different, b*tches!
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       fileMenu.addSeparator();
 
       item = Toolkit.newJMenuItem(Language.text("menu.file.preferences"), ',');
@@ -900,7 +900,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // Gotta follow them interface guidelines
     // http://code.google.com/p/processing/issues/detail?id=363
-    if (Base.isWindows()) {
+    if (Platform.isWindows()) {
       redoItem = Toolkit.newJMenuItem(redoAction = new RedoAction(), 'Y');
     } else {  // Linux and OS X
       redoItem = Toolkit.newJMenuItemShift(redoAction = new RedoAction(), 'Z');
@@ -1005,7 +1005,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
           if (find == null) {
             find = new FindReplace(Editor.this);
           }
-          //new FindReplace(Editor.this).show();
+          // https://github.com/processing/processing/issues/3457
+          String selection = getSelectedText();
+          if (selection != null && selection.length() != 0 &&
+              !selection.contains("\n")) {
+            find.setFindText(selection);
+          }
           find.setVisible(true);
         }
       });
@@ -1020,8 +1025,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     editMenuUpdatable.add(action);
     menu.add(item);
 
-    // For Arduino and Mac, this should be command-E, but that currently conflicts with Export Applet
-    //item = Toolkit.newJMenuItemAlt(Language.text("menu.edit.use_selection_for_find"), 'F');
     item = Toolkit.newJMenuItem(action = new SelectionForFindAction(), 'E');
     editMenuUpdatable.add(action);
     menu.add(item);
@@ -1072,11 +1075,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
     item = Toolkit.newJMenuItem(Language.text("menu.sketch.show_sketch_folder"), 'K');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Base.openFolder(sketch.getFolder());
+          Platform.openFolder(sketch.getFolder());
         }
       });
     sketchMenu.add(item);
-    item.setEnabled(Base.openFolderAvailable());
+    item.setEnabled(Platform.openFolderAvailable());
 
     item = new JMenuItem(Language.text("menu.sketch.add_file"));
     item.addActionListener(new ActionListener() {
@@ -1179,7 +1182,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     JMenuItem item = new JMenuItem(Language.text("menu.tools.add_tool"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.handleOpenToolManager();
+        ContributionManager.openToolManager(Editor.this);
       }
     });
     toolsMenu.add(item);
@@ -1243,7 +1246,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           statusError("\"" + tool.getMenuTitle() + "\" is not" +
                       "compatible with this version of Processing");
           //nsme.printStackTrace();
-          Base.loge("Incompatible tool found during tool.run()", nsme);
+          Messages.loge("Incompatible tool found during tool.run()", nsme);
           item.setEnabled(false);
 
         } catch (Exception ex) {
@@ -1281,13 +1284,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
         System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
                            "compatible with this version of Processing");
         System.err.println("The " + nsme.getMessage() + " method no longer exists.");
-        Base.loge("Incompatible Tool found during tool.init()", nsme);
+        Messages.loge("Incompatible Tool found during tool.init()", nsme);
 
       } catch (NoClassDefFoundError ncdfe) {
         System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
                            "compatible with this version of Processing");
         System.err.println("The " + ncdfe.getMessage() + " class is no longer available.");
-        Base.loge("Incompatible Tool found during tool.init()", ncdfe);
+        Messages.loge("Incompatible Tool found during tool.init()", ncdfe);
 
       } catch (AbstractMethodError ame) {
         System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
@@ -1358,7 +1361,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     addToolMenuItem(menu, "processing.app.tools.ColorSelector");
     addToolMenuItem(menu, "processing.app.tools.Archiver");
 
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       addToolMenuItem(menu, "processing.app.tools.InstallCommander");
     }
 
@@ -1444,14 +1447,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
 
     // Prepend with file:// and also encode spaces & other characters
-    Base.openURL(file.toURI().toString());
+    Platform.openURL(file.toURI().toString());
   }
 
 
   static public void showChanges() {
     // http://code.google.com/p/processing/issues/detail?id=1520
     if (!Base.isCommandLine()) {
-      Base.openURL("http://wiki.processing.org/w/Changes");
+      Platform.openURL("https://github.com/processing/processing/wiki/Changes");
     }
   }
 
@@ -2534,10 +2537,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // With Java 7u40 on OS X, need to bring the window forward.
     toFront();
 
-    String prompt = Language.text("close.unsaved_changes") + " " +
-      sketch.getName() + "?  ";
-
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
+      String prompt =
+        Language.interpolate("close.unsaved_changes", sketch.getName());
       int result =
         JOptionPane.showConfirmDialog(this, prompt,
                                       Language.text("menu.file.close"),
@@ -2575,7 +2577,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
                         "b { font: 13pt \"Lucida Grande\" }"+
                         "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
                         "</style> </head>" +
-                        "<b>" + Language.text("save.title") + "</b>" +
+                        "<b>" + Language.interpolate("save.title", sketch.getName()) + "</b>" +
                         "<p>" + Language.text("save.hint") + "</p>",
                         JOptionPane.QUESTION_MESSAGE);
 
@@ -2610,28 +2612,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   /**
-   * Open a sketch from a particular path, but don't check to save changes.
-   * Used by Sketch.saveAs() to re-open a sketch after the "Save As"
-   */
-//  protected void handleOpenUnchecked(String path, int codeIndex,
-//                                     int selStart, int selStop, int scrollPos) {
-//    internalCloseRunner();
-//    handleOpenInternal(path);
-//    // Replacing a document that may be untitled. If this is an actual
-//    // untitled document, then editor.untitled will be set by Base.
-//    untitled = false;
-//
-//    sketch.setCurrentCode(codeIndex);
-//    textarea.select(selStart, selStop);
-//    textarea.setScrollPosition(scrollPos);
-//  }
-
-
-  /**
    * Second stage of open, occurs after having checked to see if the
    * modifications (if any) to the previous sketch need to be saved.
+   * Because this method is called in Editor's constructor, a subclass
+   * shouldn't rely on any of its variables being initialized already.
    */
-  protected boolean handleOpenInternal(String path) {
+  protected void handleOpenInternal(String path) throws EditorException {
     // check to make sure that this .pde file is
     // in a folder of the same name
     final File file = new File(path);
@@ -2647,13 +2633,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
       // but open the file with the default extension instead.
       path = altFile.getAbsolutePath();
     } else if (!mode.canEdit(file)) {
-      final String modeName = (mode.getTitle().equals("Java")) ? "Processing"
-        : mode.getTitle();
-      Base
-        .showWarning("Bad file selected", modeName
-          + " can only open its own sketches\nand other files ending in "
-          + mode.getDefaultExtension(), null);
-      return false;
+      final String modeName = mode.getTitle().equals("Java") ?
+        "Processing" : (mode.getTitle() + " Mode");
+      throw new EditorException(modeName + " can only open its own sketches\n" +
+                                "and other files ending in " +
+                                mode.getDefaultExtension());
     } else {
       final String properParent =
         file.getName().substring(0, file.getName().lastIndexOf('.'));
@@ -2677,16 +2661,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
         // create properly named folder
         File properFolder = new File(file.getParent(), properParent);
         if (properFolder.exists()) {
-          Base.showWarning("Error",
-                           "A folder named \"" + properParent + "\" " +
-                           "already exists. Can't open sketch.", null);
-          return false;
+          throw new EditorException("A folder named \"" + properParent + "\" " +
+                                    "already exists. Can't open sketch.");
         }
         if (!properFolder.mkdirs()) {
-          //throw new IOException("Couldn't create sketch folder");
-          Base.showWarning("Error",
-                           "Could not create the sketch folder.", null);
-          return false;
+          throw new EditorException("Could not create the sketch folder.");
         }
         // copy the sketch inside
         File properPdeFile = new File(properFolder, file.getName());
@@ -2694,8 +2673,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         try {
           Util.copyFile(origPdeFile, properPdeFile);
         } catch (IOException e) {
-          Base.showWarning("Error", "Could not copy to a proper location.", e);
-          return false;
+          throw new EditorException("Could not copy to a proper location.", e);
         }
 
         // remove the original file, so user doesn't get confused
@@ -2704,16 +2682,17 @@ public abstract class Editor extends JFrame implements RunnerListener {
         // update with the new path
         path = properPdeFile.getAbsolutePath();
 
-      } else if (result == JOptionPane.NO_OPTION) {
-        return false;
+      } else {  //if (result == JOptionPane.NO_OPTION) {
+        // Catch all other cases, including Cancel or ESC
+        //return false;
+        throw new EditorException();
       }
     }
 
     try {
       sketch = new Sketch(path, this);
     } catch (IOException e) {
-      Base.showWarning("Error", "Could not create the sketch.", e);
-      return false;
+      throw new EditorException("Could not create the sketch.", e);
     }
 
     header.rebuild();
@@ -2725,15 +2704,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // (in case there's a crash or something that can't be recovered)
     // TODO this probably need not be here because of the Recent menu, right?
     Preferences.save();
-
-    // opening was successful
-    return true;
-
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//      statusError(e);
-//      return false;
-//    }
   }
 
   /**

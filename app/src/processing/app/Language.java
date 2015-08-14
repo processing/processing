@@ -148,7 +148,7 @@ public class Language {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    Base.getPlatform().saveLanguage(language);
+    Platform.saveLanguage(language);
   }
 
 

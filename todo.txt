@@ -1,41 +1,91 @@
-0240 (3.0b2)
-_ if no platforms selected in export, will still say "done exporting!"
-_   maybe if none selected, should default select the current platform
-_   why are none selected in the first place? not getting saved?
+0242 (3.0b4)
+X Fix NullPointerException with some sketches that have no size() command
+X   https://github.com/processing/processing/issues/3585
+X Invalid OS X code signature
+X   https://github.com/processing/processing/issues/3575
+X canceling "create folder, move sketch, and continue?" will cause crash
+X   throws an NPE and then forces a quit
+X   https://github.com/processing/processing/issues/3586
+X   also showError() there shouldn't die if other Java windows open
+X move Platform into its own class, also Messages and others
+X   https://github.com/processing/processing/issues/2765
+X Pass command line arguments to sketches
+X   https://github.com/processing/processing/issues/2552
+
+api changes
+X Make fields and functions in PdeKeywords protected
+X   https://github.com/processing/processing/issues/2383
+X Added "EditorException", which is thrown when loading bad sketches
+X   createEditor() now throws this when something goes wrong
+X   rather than handleOpenInternal() returning false (and being ignored)
+X Base.openURL() -> Platform.openURL()
+X Base.showXxxx() -> Messages.showXxxx()
+X Base.log() -> Messages.log()
+
+gsoc
+X Second round of arm patches (v5)
+X   https://github.com/processing/processing/pull/3583
+
+earlier
+X closing the color selector makes things freeze (only Linux and Windows?)
+X   https://github.com/processing/processing/issues/2381
+X Comment/Uncomment should ignore leading whitespace
+X   https://github.com/processing/processing/issues/1961
+X Export unsaved sketch > agree to save prompt > export doesn't finish
+X   https://github.com/processing/processing/issues/2724
+X Add disconnectEvent() to Server 
+X   https://github.com/processing/processing/issues/2133
+X False positive for mixing active/static mode in Tweak Mode 3.0 alpha 5
+X   https://github.com/processing/processing/issues/3140
+X Determine shortcut for Export vs Use Selection for Find
+X   https://github.com/processing/processing/issues/2985
+X PDE erroneously detects changes in non-sketch files
+X   https://github.com/processing/processing/issues/2759
 
 
-3.0 final
+known issues
 _ launch4j doesn't work from folders with non-native charsets
 _   anything in CP1252 on an English Windows system is fine
 _   but anything else reports "font sadness" b/c it's using the system JRE
 _   https://github.com/processing/processing/issues/3543
-_ CM ongoing notes and questions
-_   https://github.com/processing/processing/issues/3440
-_ Contribution Manager design is really rough
-_   https://github.com/processing/processing/issues/3464
+_   move to javapackager or another option?
+_   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-application
+_ P2D and P3D windows behave strangely when larger than the screen size
+_   https://github.com/processing/processing/issues/3401
+_ mouse events (i.e. toggle breakpoint) seem to be firing twice
+
+
+3.0 final
+_ Contributions Manager UI design
+_   https://github.com/processing/processing/issues/3482
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
 _ processing-java isn't working in OSX 10.11 El Capitan
 _   https://github.com/processing/processing/issues/3497
 _   probably have to add the script/Processing.app location to user's path
+_ move processing-java inside the Java Mode? 
+_   make a Tool that installs it for all platforms, not just OS X
+_   not really part of the 'build' anymore
+_ should Platform be a static instance?
+_   lots of platform stuff in base, but might be better handled elsewhere
 
 
 gui
 _ fix red in sidebar, the squiggly line beneath code
 _ show hover text with 'debug'
-_ don't show breakpoints when debugger is off
-_   https://github.com/processing/processing/issues/3093
-_ no setting breakpoints when debugger is off
-_   https://github.com/processing/processing/issues/3306
+_ show number of updates available in the footer
+_   https://github.com/processing/processing/issues/3518
 _ make breakpoints more prominent
 _   https://github.com/processing/processing/issues/3307
 _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407
+_ Fix placement and visual design when showing error on hover
+_   https://github.com/processing/processing/issues/3173
 _ distinguish errors and warnings
 _   https://github.com/processing/processing/issues/3406
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
-_ mouse events (i.e. toggle breakpoint) seem to be firing twice
+_ see notes in the 'dialogs' section below, implement our own option panes?
 _ tiny trail of dots when moving the selection bar up/down on retina
 _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
@@ -50,22 +100,26 @@ _ how are we going to handle fonts for other languages?
 _   two new fonts have been added, other languages will need more
 _   need a decent sans with with Unicode coverage
 _   i.e. https://github.com/processing/processing/pull/3025
+_ Non-western language hint text for toolbar buttons not correctly displayed
+_   https://github.com/processing/processing/issues/2886
 _ deactivate step, continue, stop when not running?
 _ update EditorButton rollover label when pressing shift or alt
 _ disable the debug toggle menu while running
 _   otherwise could run in one mode, then try to stop in another
 _ recent menu gets huge with other p5 versions on osx
+_ move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
+_   need to make the list abstract, also "scroll to line" feature
+_   fix up the UI, oy
+_ show compiling/startup animation after clicking run
+_   or maybe show an animation for starting up
+_   rather than post-compile
+_   https://github.com/processing/processing/issues/136
 
 
 pde/build
 _ ignore-tools in build.xml not being called for some reason
-_ move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
-_   need to make the list abstract, also "scroll to line" feature
 _ can't install processing-java into /usr/bin with El Capitan
 _   https://github.com/processing/processing/issues/3497
-_ Foundation library examples should appear under "Core" or "Foundation"
-_   https://github.com/processing/processing/issues/3524
-_ Cannot find "processing.core" library. Line 12 in tab sketch_150704a
 _ dim out the Run button if there are compile errors detected
 _   the AST checker has better error message handling for those cases
 _   and hitting Run replaces the useful error with something weird
@@ -81,19 +135,9 @@ _   sketchbook window too?
 _ 'ant clean' not removing old versions created by dist
 _ continue clearing out ProgressFrame
 _   also hook up the statusNotice() when done
-_ move to launch4j 3.7 http://launch4j.sourceforge.net/
-_ move processing-java inside the Java Mode? 
-_   make a Tool that installs it for all platforms, not just OS X
-_   not really part of the 'build' anymore
 _ break out Mode options to their own panels in prefs
 _   Mode should just provide a panel for their prefs
-_ make examples pull/build automatic during dist
-_ make reference build process part of dist
-_   https://github.com/processing/processing-docs/issues/85
-_   separate ant target, but only require them for dist
-_   as separate targets, folks can build explicitly if they'd like
-_   processing-docs/java_generate/ReferenceGenerator/processingrefBuild.sh
-_   remove reference.zip from main repo
+_ make the build fail it git pull on processing-docs fails
 _ move the language stuff to the settings folder
 _   that way people can modify and test w/o recompiling
 _   https://github.com/processing/processing/issues/2938
@@ -177,8 +221,6 @@ _ disable the Export button if no platforms selected on Export to Application
 help me
 _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
-_ closing the color selector makes things freeze (only Linux and Windows?)
-_   https://github.com/processing/processing/issues/2381
 _ problems with non-US keyboards and some shortcuts
 _   https://github.com/processing/processing/issues/2199
 _ clean up 'ant doc' target to remove warnings
@@ -418,13 +460,11 @@ PDE - Processing Development Environment
 
 PDE / Dialogs
 
-_ dialog box icon is fuzzy on OS X retina machines
-_   https://github.com/processing/processing/issues/2117
-_ solution might be our own dialog boxes
 _ two-tiered dialogs for everything - use big font/little font style throughout
 _   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
+_   also the "some features will be disabled" with .java tabs
 _   https://github.com/processing/processing/issues/46
 _ add "don't warn me about this" for sketch renaming
 _   make sure renamed version doesn't exist already
@@ -547,17 +587,7 @@ _   does it unhighlight after compile or runtime errors?
 _   also when using draw() instead of loop()
 _     applet needs to notify runner that it has terminated
 _   check 'finished' via objectreference?
-_ show compiling/startup animation after clicking run
-_   or maybe show an animation for starting up
-_   rather than post-compile
-_   https://github.com/processing/processing/issues/136
 _ EditorToolbar has two TODO items for open menu handling
-
-
-PDE / Editor Header
-
-_ ctrl/ctrl-shift-n sometimes stops working
-_   https://github.com/processing/processing/issues/188
 
 
 PDE / Export
@@ -974,6 +1004,12 @@ FUTURE
 
 Notes for some indefinite later release...
 
+_ make reference build process part of dist
+_   https://github.com/processing/processing-docs/issues/85
+_   separate ant target, but only require them for dist
+_   as separate targets, folks can build explicitly if they'd like
+_   processing-docs/java_generate/ReferenceGenerator/processingrefBuild.sh
+_   remove reference.zip from main repo
 _ using svg images for res-indep icons/gui
 _   http://stackoverflow.com/questions/2495501/swing-batik-create-an-imageicon-from-an-svg-file
 _ nurbs or other architecture stuff

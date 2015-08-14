@@ -31,9 +31,10 @@ import java.util.Arrays;
 
 import javax.swing.*;
 
-import processing.app.Base;
 import processing.app.Language;
+import processing.app.Messages;
 import processing.app.Mode;
+import processing.app.Platform;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 
@@ -435,43 +436,15 @@ public class EditorHeader extends JComponent {
       */
     }
     JMenuItem item;
-    InputMap inputMap = editor.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-    ActionMap actionMap = editor.getRootPane().getActionMap();
+    final JRootPane rootPane = editor.getRootPane();
+    InputMap inputMap =
+      rootPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    ActionMap actionMap = rootPane.getActionMap();
+
     Action action;
     String mapKey;
     KeyStroke keyStroke;
 
-    // maybe this shouldn't have a command key anyways..
-    // since we're not trying to make this a full ide..
-    //item = Editor.newJMenuItem("New", 'T');
-
-    /*
-    item = Editor.newJMenuItem("Previous", KeyEvent.VK_PAGE_UP);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          System.out.println("prev");
-        }
-      });
-    if (editor.sketch != null) {
-      item.setEnabled(editor.sketch.codeCount > 1);
-    }
-    menu.add(item);
-
-    item = Editor.newJMenuItem("Next", KeyEvent.VK_PAGE_DOWN);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          System.out.println("ext");
-        }
-      });
-    if (editor.sketch != null) {
-      item.setEnabled(editor.sketch.codeCount > 1);
-    }
-    menu.add(item);
-
-    menu.addSeparator();
-    */
-
-    //item = new JMenuItem("New Tab");
     item = Toolkit.newJMenuItemShift(Language.text("editor.header.new_tab"), KeyEvent.VK_N);
     action = new AbstractAction() {
       @Override
@@ -491,12 +464,6 @@ public class EditorHeader extends JComponent {
       @Override
       public void actionPerformed(ActionEvent e) {
         editor.getSketch().handleRenameCode();
-        /*
-        // this is already being called by nameCode(), the second stage of rename
-        if (editor.sketch.current == editor.sketch.code[0]) {
-          editor.sketchbook.rebuildMenus();
-        }
-        */
       }
     };
     item.addActionListener(action);
@@ -507,11 +474,11 @@ public class EditorHeader extends JComponent {
       @Override
       public void actionPerformed(ActionEvent e) {
         Sketch sketch = editor.getSketch();
-        if (!Base.isMacOS() &&  // ok on OS X
+        if (!Platform.isMacOS() &&  // ok on OS X
             editor.base.getEditors().size() == 1 &&  // mmm! accessor
             sketch.getCurrentCodeIndex() == 0) {
-            Base.showWarning(Language.text("editor.header.delete.warning.title"),
-                             Language.text("editor.header.delete.warning.text"), null);
+            Messages.showWarning(Language.text("editor.header.delete.warning.title"),
+                                 Language.text("editor.header.delete.warning.text"));
         } else {
           editor.getSketch().handleDeleteCode();
         }
@@ -527,33 +494,48 @@ public class EditorHeader extends JComponent {
     menu.addSeparator();
 
     //  KeyEvent.VK_LEFT and VK_RIGHT will make Windows beep
-    item = Toolkit.newJMenuItemAlt(Language.text("editor.header.previous_tab"), KeyEvent.VK_LEFT);
+
+    final String prevTab = Language.text("editor.header.previous_tab");
+    if (Platform.isLinux()) {
+      item = Toolkit.newJMenuItem(prevTab, KeyEvent.VK_PAGE_UP);
+    } else {
+      item = Toolkit.newJMenuItemAlt(prevTab, KeyEvent.VK_LEFT);
+    }
     action = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-//        Sketch sketch = editor.getSketch();
-//        sketch.setCurrentCode(sketch.getCurrentCodeIndex() - 1);
         editor.getSketch().handlePrevCode();
       }
     };
     mapKey = "editor.header.previous_tab";
-    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
+    if (Platform.isLinux()) {
+      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, Toolkit.SHORTCUT_KEY_MASK);
+    } else {
+      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
+    }
     inputMap.put(keyStroke, mapKey);
     actionMap.put(mapKey, action);
     item.addActionListener(action);
     menu.add(item);
 
-    item = Toolkit.newJMenuItemAlt(Language.text("editor.header.next_tab"), KeyEvent.VK_RIGHT);
+    final String nextTab = Language.text("editor.header.next_tab");
+    if (Platform.isLinux()) {
+      item = Toolkit.newJMenuItem(nextTab, KeyEvent.VK_PAGE_DOWN);
+    } else {
+      item = Toolkit.newJMenuItemAlt(nextTab, KeyEvent.VK_RIGHT);
+    }
     action = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-//        Sketch sketch = editor.getSketch();
-//        sketch.setCurrentCode(sketch.getCurrentCodeIndex() + 1);
         editor.getSketch().handleNextCode();
       }
     };
     mapKey = "editor.header.next_tab";
-    keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
+    if (Platform.isLinux()) {
+      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, Toolkit.SHORTCUT_KEY_MASK);
+    } else {
+      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
+    }
     inputMap.put(keyStroke, mapKey);
     actionMap.put(mapKey, action);
     item.addActionListener(action);

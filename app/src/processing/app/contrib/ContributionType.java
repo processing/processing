@@ -28,6 +28,8 @@ import java.util.ArrayList;
 
 import processing.app.Base;
 import processing.app.Library;
+import processing.app.Messages;
+import processing.app.Util;
 import processing.app.ui.Editor;
 
 public enum ContributionType {
@@ -84,7 +86,7 @@ public enum ContributionType {
 
 
   public File createTempFolder() throws IOException {
-    return Base.createTempFolder(toString(), "tmp", getSketchbookFolder());
+    return Util.createTempFolder(toString(), "tmp", getSketchbookFolder());
   }
 
 
@@ -175,7 +177,7 @@ public enum ContributionType {
       return null;
 
     } else if (folders.length > 1) {
-      Base.log("More than one " + toString() + " found inside " + folder.getAbsolutePath());
+      Messages.log("More than one " + toString() + " found inside " + folder.getAbsolutePath());
     }
     return folders[0];
   }

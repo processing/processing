@@ -195,7 +195,13 @@ public class PSurfaceJOGL implements PSurface {
     if (profile == null) {
       if (PJOGL.profile == 2) {
         try {
-          profile = GLProfile.getGL2ES1();
+          if ("arm".equals(System.getProperty("os.arch"))) {
+            // request at least GL2 or GLES2
+            profile = GLProfile.getGL2ES2();
+          } else {
+            // stay compatible with previous versions for now
+            profile = GLProfile.getGL2ES1();
+          }
         } catch (GLException ex) {
           profile = GLProfile.getMaxFixedFunc(true);
         }
@@ -719,12 +725,16 @@ public class PSurfaceJOGL implements PSurface {
     public void windowGainedFocus(com.jogamp.newt.event.WindowEvent arg0) {
 //      pg.parent.focusGained(null);
 //      System.err.println("gain focus");
+      sketch.focused = true;
+      sketch.focusGained();
     }
 
     @Override
     public void windowLostFocus(com.jogamp.newt.event.WindowEvent arg0) {
 //      pg.parent.focusLost(null);
 //      System.err.println("lost focus");
+      sketch.focused = false;
+      sketch.focusLost();
     }
 
     @Override
@@ -975,11 +985,12 @@ public class PSurfaceJOGL implements PSurface {
     return def;
   }
 
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   public void setCursor(int kind) {
-    System.err.println("Cursor types not supported in OpenGL, provide your cursor image");
+    PGraphics.showWarning("Cursor types not yet supported in OpenGL, provide your cursor image");
   }
 
 

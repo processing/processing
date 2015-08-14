@@ -207,7 +207,7 @@ public class ContributionManagerDialog {
         while (iter.hasNext()) {
           Editor ed = iter.next();
           if (ed.getSketch().isModified()) {
-            int option = Base.showYesNoQuestion(editor, title, Language
+            int option = Messages.showYesNoQuestion(editor, title, Language
               .text("contrib.unsaved_changes"), Language
               .text("contrib.unsaved_changes.prompt"));
 
@@ -724,8 +724,6 @@ public class ContributionManagerDialog {
     //activeTab is required now but should be removed
     //as there is only one instance of contribListing and it should be present in this class
     final ContributionTab activeTab = getActiveTab();
-    activeTab.statusPanel.setMessage(Language
-      .text("contrib.status.downloading_list"));
     activeTab.contribListing.downloadAvailableList(base, new ContribProgressBar(
       activeTab.progressBar) {
 
@@ -741,9 +739,6 @@ public class ContributionManagerDialog {
         super.setProgress(value);
 //        int percent = 100 * value / this.max;
         progressBar.setValue(value);
-        progressBar.setStringPainted(true);
-        activeTab.statusPanel.setMessage(Language
-          .text("contrib.status.downloading_list"));
       }
 
       @Override

@@ -26,6 +26,7 @@ import java.io.*;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Platform;
 import processing.app.Util;
 import processing.core.PApplet;
 import processing.data.StringDict;
@@ -184,7 +185,7 @@ public class AvailableContribution extends Contribution {
         System.gc();
 
 
-        if (Base.isWindows()) {
+        if (Platform.isWindows()) {
           // we'll even give it a second to finish up ... because file ops are
           // just that flaky on Windows.
           try {
@@ -239,8 +240,9 @@ public class AvailableContribution extends Contribution {
       StringDict properties = Util.readSettings(propFile);
 
       String name = properties.get("name");
-      if (name == null || name.isEmpty())
+      if (name == null || name.isEmpty()) {
         name = getName();
+      }
 
       String category;
       StringList categoryList = parseCategories(properties);
@@ -248,15 +250,6 @@ public class AvailableContribution extends Contribution {
           categoryList.get(0).equals(UNKNOWN_CATEGORY)) {
         category = getCategoryStr();
       } else {
-        /*
-        StringBuilder sb = new StringBuilder();
-        for (String cat : categories) {
-          sb.append(cat);
-          sb.append(',');
-        }
-        sb.deleteCharAt(sb.length() - 1);
-        category = sb.toString();
-        */
         category = categoryList.join(",");
       }
 
@@ -299,7 +292,6 @@ public class AvailableContribution extends Contribution {
         prettyVersion = getPrettyVersion();
 
       String compatibleContribsList = null;
-
       if (getType() == ContributionType.EXAMPLES) {
         compatibleContribsList = properties.get(MODES_PROPERTY);
       }
@@ -352,7 +344,9 @@ public class AvailableContribution extends Contribution {
           writer.println("imports=" + importsList.join(","));
         }
         if (getType() == ContributionType.EXAMPLES) {
-          writer.println(MODES_PROPERTY + "=" + compatibleContribsList);
+          if (compatibleContribsList != null) {
+            writer.println(MODES_PROPERTY + "=" + compatibleContribsList);
+          }
         }
 
         writer.flush();

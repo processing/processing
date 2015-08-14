@@ -37,6 +37,7 @@
     <!-- there is currently no JRE available -->
     <property name="jre.download.jdk" value="true" />
     <property name="jre.downloader" value="linux-arm-vfp-hflt.tar.gz" />
+    <property name="linux.dist" value="linux/processing-${version}-linux-armv6hf.tgz" />
   </target>
 
   <!-- Require Java 8 everywhere. -->
@@ -256,8 +257,6 @@
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
-  <fail if="macosx" unless="macosx_jdk_found"
-        message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again.${line.separator}Or... type 'ant download-jdk-macosx' to download it to your Desktop." />
   <!--
   <fail if="linux" unless="java_tools_found" 
         message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
@@ -293,6 +292,11 @@
   </fileset>
 
   <target name="build" description="Build Processing.">
+    <!-- Require that a JDK be installed, but call this on build, so that
+         the download-jdk-macosx target can be called. -->
+    <fail if="macosx" unless="macosx_jdk_found"
+          message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again.${line.separator}Or... type 'ant download-jdk-macosx' to download it to your Desktop." />
+
     <antcall target="${platform}-build" />
   </target>
 
@@ -670,6 +674,15 @@
       <arg value="--force" />
       <arg value="--sign" />
       <arg value="Developer ID Application" />
+      <arg value="Processing.app" />
+    </exec>
+
+    <!-- Verify that the signature will pass Gatekeeper checks 
+         https://developer.apple.com/library/mac/technotes/tn2206 -->
+    <exec executable="/usr/bin/codesign" dir="macosx/work">
+      <arg value="--verify" />
+      <arg value="--deep" />
+      <arg value="--verbose=2" />
       <arg value="Processing.app" />
     </exec>
   </target>

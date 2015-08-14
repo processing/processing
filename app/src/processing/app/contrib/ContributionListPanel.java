@@ -33,6 +33,7 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 
 import processing.app.Base;
+import processing.app.Platform;
 import processing.app.ui.Toolkit;
 
 
@@ -533,7 +534,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         } else {
           Border border = null;
           if (panel.isVisible()) {
-            if (Base.isMacOS()) {
+            if (Platform.isMacOS()) {
               if (count % 2 == 1) {
                 border = UIManager.getBorder("List.oddRowBackgroundPainter");
               } else {

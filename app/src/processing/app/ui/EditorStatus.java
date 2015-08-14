@@ -24,11 +24,15 @@
 package processing.app.ui;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import processing.app.Mode;
+import processing.app.Platform;
+import processing.core.PApplet;
 
 
 /**
@@ -58,6 +62,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
   int mode;
   String message;
+  String url;
 
   Font font;
   FontMetrics metrics;
@@ -82,6 +87,29 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     this.editor = editor;
     empty();
     updateMode();
+
+    addMouseListener(new MouseAdapter() {
+      public void mouseEntered(MouseEvent e) {
+        if (url != null) {
+          setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
+      }
+
+      public void mousePressed(MouseEvent e) {
+        if (url != null) {
+          Platform.openURL(url);
+        }
+      }
+    });
+  }
+
+
+  static String findURL(String message) {
+    String[] m = PApplet.match(message, "http\\S+");
+    if (m != null) {
+      return m[0];
+    }
+    return null;
   }
 
 
@@ -107,6 +135,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   public void empty() {
     mode = NOTICE;
     message = NO_MESSAGE;
+    url = null;
     repaint();
   }
 
@@ -114,6 +143,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   public void notice(String message) {
     mode = NOTICE;
     this.message = message;
+    url = findURL(message);
     repaint();
   }
 
@@ -126,6 +156,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   public void error(String message) {
     mode = ERR;
     this.message = message;
+    url = findURL(message);
     repaint();
   }
 

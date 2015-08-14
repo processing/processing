@@ -21,6 +21,7 @@
 */
 package processing.app.contrib;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,14 +29,13 @@ import processing.core.PApplet;
 import processing.data.StringDict;
 import processing.data.StringList;
 import processing.app.Language;
+import processing.app.Util;
+
 
 abstract public class Contribution {
   static final String IMPORTS_PROPERTY = "imports";
-//  static final String CATEGORIES_PROPERTY = "category";
   static final String CATEGORIES_PROPERTY = "categories";
-  //static final String MODES_PROPERTY = "compatibleModesList";
   static final String MODES_PROPERTY = "modes";
-  //static final String AUTHORS_PROPERTY = "authorList";
   static final String AUTHORS_PROPERTY = "authors";
 
   static final String SPECIAL_CATEGORY = "Starred";
@@ -44,6 +44,8 @@ abstract public class Contribution {
     Arrays.asList("3D", "Animation", "Data", "Geometry", "GUI", "Hardware",
                   "I/O", "Math", "Simulation", "Sound", SPECIAL_CATEGORY,
                   "Typography", "Utilities", "Video & Vision", "Other");
+
+  static final String FOUNDATION_AUTHOR = "The Processing Foundation";
 
   protected StringList categories;  // "Sound", "Typography"
   protected String name;            // "pdf" or "PDF Export"
@@ -224,7 +226,7 @@ abstract public class Contribution {
    */
   boolean isSpecial() {
     if (authors != null &&
-        authors.contains("The Processing Foundation")) {
+        authors.contains(FOUNDATION_AUTHOR)) {
       return true;
     }
 
@@ -236,6 +238,25 @@ abstract public class Contribution {
     return false;
   }
 
+
+  public boolean isFoundation() {
+    return FOUNDATION_AUTHOR.equals(authors);
+  }
+
+
+  public StringDict loadProperties(File contribFolder) {
+    return loadProperties(contribFolder, getType());
+  }
+
+
+  static public StringDict loadProperties(File contribFolder,
+                                          ContributionType type) {
+    File propertiesFile = new File(contribFolder, type.getPropertiesName());
+    if (propertiesFile.exists()) {
+      return Util.readSettings(propertiesFile);
+    }
+    return null;
+  }
 
   /**
    * @return a single element list with "Unknown" as the category.

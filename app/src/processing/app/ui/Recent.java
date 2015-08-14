@@ -21,20 +21,28 @@
 
 package processing.app.ui;
 
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import processing.app.Base;
 import processing.app.Language;
 import processing.app.Library;
+import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.Preferences;
 import processing.core.PApplet;
 
+
+// TODO this isn't pretty... probably better to do an internal instance fancy thing
 
 // dealing with renaming
 //   before sketch save/rename, remove it from the recent list
@@ -45,20 +53,17 @@ public class Recent {
   static final String FILENAME = "recent.txt";
   static final String VERSION = "2";
 
-  Base base;
-  File file;
-  /** How many recent sketches to remember. */
-  int remember;
-  ArrayList<Record> records;
+  static Base base;
+  static File file;
+  static List<Record> records;
   /** actual menu used in the primary menu bar */
-  JMenu mainMenu;
+  static JMenu mainMenu;
   /** copy of the menu to use in the toolbar */
-  JMenu toolbarMenu;
+  static JMenu toolbarMenu;
 
 
-  public Recent(Base base) {
-    this.base = base;
-    remember = Preferences.getInteger("recent.count");
+  static public void init(Base b) {
+    base = b;
     file = Base.getSettingsFile(FILENAME);
     mainMenu = new JMenu(Language.text("menu.file.recent"));
     toolbarMenu = new JMenu(Language.text("menu.file.open"));
@@ -71,7 +76,7 @@ public class Recent {
   }
 
 
-  protected void load() throws IOException {
+  static protected void load() throws IOException {
     records = new ArrayList<Record>();
     if (file.exists()) {
       BufferedReader reader = PApplet.createReader(file);
@@ -86,7 +91,7 @@ public class Recent {
           if (new File(line).exists()) {  // don't add ghost entries
             records.add(new Record(line));
           } else {
-            Base.log(this, "ghost file: " + line);
+            Messages.log("ghost file: " + line);
           }
         }
       }
@@ -97,7 +102,7 @@ public class Recent {
   }
 
 
-  protected void save() {
+  static protected void save() {
     PrintWriter writer = PApplet.createWriter(file);
     writer.println(VERSION);
     for (Record record : records) {
@@ -112,17 +117,17 @@ public class Recent {
   }
 
 
-  public JMenu getMenu() {
+  static public JMenu getMenu() {
     return mainMenu;
   }
 
 
-  public JMenu getToolbarMenu() {
+  static public JMenu getToolbarMenu() {
     return toolbarMenu;
   }
 
 
-  private void updateMenu(JMenu menu) {
+  static private void updateMenu(JMenu menu) {
     menu.removeAll();
     String sketchbookPath = Base.getSketchbookFolder().getAbsolutePath();
     for (Record rec : records) {
@@ -131,7 +136,8 @@ public class Recent {
   }
 
 
-  private void updateMenuRecord(JMenu menu, final Record rec, String sketchbookPath) {
+  static private void updateMenuRecord(JMenu menu, final Record rec,
+                                       String sketchbookPath) {
     try {
       String recPath = new File(rec.getPath()).getParent();
       String purtyPath = null;
@@ -231,7 +237,7 @@ public class Recent {
   }
 
 
-  synchronized public void remove(Editor editor) {
+  synchronized static public void remove(Editor editor) {
     int index = findRecord(editor.getSketch().getMainFilePath());
     if (index != -1) {
       records.remove(index);
@@ -278,12 +284,12 @@ public class Recent {
    * entry on the Recent queue. If the sketch is already in the list, it is
    * first removed so it doesn't show up multiple times.
    */
-  synchronized public void handle(Editor editor) {
+  synchronized static public void append(Editor editor) {
     if (!editor.getSketch().isUntitled()) {
       // If this sketch is already in the menu, remove it
       remove(editor);
 
-      if (records.size() == remember) {
+      if (records.size() == Preferences.getInteger("recent.count")) {
         records.remove(0);  // remove the first entry
       }
 
@@ -298,22 +304,22 @@ public class Recent {
     }
   }
 
-//handles renaming done within  processing
-  synchronized public void handleRename(Editor editor,String oldPath){
-      if (records.size() == remember) {
-        records.remove(0);  // remove the first entry
-      }
-      int index = findRecord(oldPath);
-      //check if record exists
-      if (index != -1) {
-        records.remove(index);
-      }
-      records.add(new Record(editor));
-      save();
+
+  synchronized static public void rename(Editor editor, String oldPath) {
+    if (records.size() == Preferences.getInteger("recent.count")) {
+      records.remove(0);  // remove the first entry
+    }
+    int index = findRecord(oldPath);
+    //check if record exists
+    if (index != -1) {
+      records.remove(index);
+    }
+    records.add(new Record(editor));
+    save();
   }
 
 
-  int findRecord(String path) {
+  static int findRecord(String path) {
     for (int i = 0; i < records.size(); i++) {
       if (path.equals(records.get(i).path)) {
         return i;

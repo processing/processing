@@ -45,6 +45,7 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import processing.app.Base;
+import processing.app.Messages;
 
 
 /**
@@ -57,16 +58,16 @@ public class ASTNodeWrapper {
   private String label;
   private int lineNumber;
 
-  
+
   /*
    * TODO: Every ASTNode object in ASTGenerator.codetree is stored as a
    * ASTNodeWrapper instance. So how resource heavy would it be to store a
    * pointer to ECS in every instance of ASTNodeWrapper? Currently I will rather
    * pass an ECS pointer in the argument when I need to access a method which
-   * requires a method defined in ECS, i.e, only on demand.  
+   * requires a method defined in ECS, i.e, only on demand.
    * Bad design choice for ECS methods? IDK, yet.
    */
-  
+
   public ASTNodeWrapper(ASTNode node) {
     if (node == null){
       return;
@@ -79,7 +80,7 @@ public class ASTNodeWrapper {
     label += " | Line " + lineNumber;
     //apiLevel = 0;
   }
-  
+
   public ASTNodeWrapper(ASTNode node, String label){
     if (node == null){
       return;
@@ -91,7 +92,7 @@ public class ASTNodeWrapper {
       label = getNodeAsString(node);
       if (label == null)
         label = node.toString();
-      
+
       label += " | Line " + lineNumber;
     }
     lineNumber = getLineNumber(node);
@@ -106,7 +107,7 @@ public class ASTNodeWrapper {
   public int[] getJavaCodeOffsets(ErrorCheckerService ecs) {
     int nodeOffset = Node.getStartPosition(), nodeLength = Node
         .getLength();
-    Base.log("0.nodeOffset " + nodeOffset);
+    Messages.log("0.nodeOffset " + nodeOffset);
     ASTNode thisNode = Node;
     while (thisNode.getParent() != null) {
       if (getLineNumber(thisNode.getParent()) == lineNumber) {
@@ -117,64 +118,64 @@ public class ASTNodeWrapper {
     }
     /*
      *  There's an edge case here - multiple statements in a single line.
-     *  After identifying the statement with the line number, I'll have to 
+     *  After identifying the statement with the line number, I'll have to
      *  look at previous tree nodes in the same level for same line number.
      *  The correct line start offset would be the line start offset of
      *  the first node with this line number.
-     *  
-     *  Using linear search for now. P.S: Eclipse AST iterators are messy. 
+     *
+     *  Using linear search for now. P.S: Eclipse AST iterators are messy.
      *  TODO: binary search might improve speed by 0.001%?
      */
-    
+
     int altStartPos = thisNode.getStartPosition();
-    Base.log("1.Altspos " + altStartPos);
+    Messages.log("1.Altspos " + altStartPos);
     thisNode = thisNode.getParent();
     Javadoc jd = null;
-    
-    /* 
+
+    /*
      * There's another case that needs to be handled. If a TD, MD or FD
      * contains javadoc comments(multi or single line) the starting position
      * of the javadoc is treated as the beginning of the declaration by the AST parser.
      * But that's clearly not what we need. The true decl begins after the javadoc ends.
      * So this offset needs to be found carefully and stored in altStartPos
-     * 
+     *
      */
     if (thisNode instanceof TypeDeclaration) {
       jd = ((TypeDeclaration) thisNode).getJavadoc();
       altStartPos = getJavadocOffset((TypeDeclaration) thisNode);
-      Base.log("Has t jdoc " + ((TypeDeclaration) thisNode).getJavadoc());
+      Messages.log("Has t jdoc " + ((TypeDeclaration) thisNode).getJavadoc());
     } else if (thisNode instanceof MethodDeclaration) {
       altStartPos = getJavadocOffset((MethodDeclaration) thisNode);
       jd = ((MethodDeclaration) thisNode).getJavadoc();
-      Base.log("Has m jdoc " + jd);
+      Messages.log("Has m jdoc " + jd);
     } else if (thisNode instanceof FieldDeclaration) {
       FieldDeclaration fd = ((FieldDeclaration) thisNode);
       jd = fd.getJavadoc();
-      Base.log("Has f jdoc " + fd.getJavadoc());
+      Messages.log("Has f jdoc " + fd.getJavadoc());
       altStartPos = getJavadocOffset(fd);
       //nodeOffset = ((VariableDeclarationFragment)(fd.fragments().get(0))).getName().getStartPosition();
-    } 
-    
+    }
+
     if (jd == null) {
-      Base.log("Visiting children of node " + getNodeAsString(thisNode));
+      Messages.log("Visiting children of node " + getNodeAsString(thisNode));
       @SuppressWarnings("unchecked")
-      Iterator<StructuralPropertyDescriptor> it = 
+      Iterator<StructuralPropertyDescriptor> it =
           thisNode.structuralPropertiesForType().iterator();
       boolean flag = true;
       while (it.hasNext()) {
         StructuralPropertyDescriptor prop = it.next();
         if (prop.isChildListProperty()) {
           @SuppressWarnings("unchecked")
-          List<ASTNode> nodelist = (List<ASTNode>) 
+          List<ASTNode> nodelist = (List<ASTNode>)
             thisNode.getStructuralProperty(prop);
-          Base.log("prop " + prop);
+          Messages.log("prop " + prop);
           for (ASTNode cnode : nodelist) {
-            Base.log("Visiting node " + getNodeAsString(cnode));
+            Messages.log("Visiting node " + getNodeAsString(cnode));
             if (getLineNumber(cnode) == lineNumber) {
               if (flag) {
                 altStartPos = cnode.getStartPosition();
                 // log("multi...");
-  
+
                 flag = false;
               } else {
                 if (cnode == Node) {
@@ -184,33 +185,33 @@ public class ASTNodeWrapper {
                 // We've located the first node in the line.
                 // Now normalize offsets till Node
                 //altStartPos += normalizeOffsets(cnode);
-                
+
               }
-              
+
             }
           }
         }
       }
-      Base.log("Altspos " + altStartPos);
+      Messages.log("Altspos " + altStartPos);
     }
-   
+
     int pdeoffsets[] = getPDECodeOffsets(ecs);
-    String pdeCode = ecs.getPDECodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
+    String pdeCode = ecs.getPdeCodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
     int vals[] = createOffsetMapping(ecs, pdeCode,nodeOffset - altStartPos,nodeLength);
     if (vals != null)
       return new int[] {
         lineNumber, nodeOffset + vals[0] - altStartPos, vals[1] };
     else {// no offset mapping needed
-      Base.log("joff[1] = " + (nodeOffset - altStartPos));
+      Messages.log("joff[1] = " + (nodeOffset - altStartPos));
       return new int[] { lineNumber, nodeOffset - altStartPos, nodeLength };
     }
   }
-  
+
   /**
    * When FD has javadoc attached, the beginning of FD is marked as the
    * start of the javadoc. This kind of screws things when trying to locate
    * the exact name of the FD. So, offset compensations...
-   * 
+   *
    * @param fd
    * @return
    */
@@ -218,30 +219,30 @@ public class ASTNodeWrapper {
     @SuppressWarnings("unchecked")
     List<ASTNode> list = fd.modifiers();
     SimpleName sn = (SimpleName) getNode();
-    
+
     Type tp = fd.getType();
     int lineNum = getLineNumber(sn);
-    Base.log("SN "+sn + ", " + lineNum);
+    Messages.log("SN "+sn + ", " + lineNum);
     for (ASTNode astNode : list) {
       if(getLineNumber(astNode) == lineNum) {
-        Base.log("first node in that line " + astNode);
-        Base.log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
+        Messages.log("first node in that line " + astNode);
+        Messages.log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
         return (astNode.getStartPosition());
       }
     }
     if(getLineNumber(fd.getType()) == lineNum) {
-      Base.log("first node in that line " + tp);
-      Base.log("diff " + (sn.getStartPosition() - tp.getStartPosition()));
+      Messages.log("first node in that line " + tp);
+      Messages.log("diff " + (sn.getStartPosition() - tp.getStartPosition()));
       return (tp.getStartPosition());
     }
-    return 0;   
+    return 0;
   }
 
   /**
    * When MD has javadoc attached, the beginning of FD is marked as the
    * start of the javadoc. This kind of screws things when trying to locate
    * the exact name of the MD. So, offset compensations...
-   * 
+   *
    * @param md
    * @return
    */
@@ -250,33 +251,33 @@ public class ASTNodeWrapper {
     List<ASTNode> list = md.modifiers();
     SimpleName sn = (SimpleName) getNode();
     int lineNum = getLineNumber(sn);
-    Base.log("SN " + sn + ", " + lineNum);
-    
+    Messages.log("SN " + sn + ", " + lineNum);
+
     for (ASTNode astNode : list) {
       if (getLineNumber(astNode) == lineNum) {
-        Base.log("first node in that line " + astNode);
-        Base.log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
+        Messages.log("first node in that line " + astNode);
+        Messages.log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
         return (astNode.getStartPosition());
       }
     }
-    
+
     if (!md.isConstructor()) {
       Type tp = md.getReturnType2();
       if (getLineNumber(tp) == lineNum) {
-        Base.log("first node in that line " + tp);
-        Base.log("diff " + (sn.getStartPosition() - tp.getStartPosition()));
+        Messages.log("first node in that line " + tp);
+        Messages.log("diff " + (sn.getStartPosition() - tp.getStartPosition()));
         return (tp.getStartPosition());
       }
     }
-    
+
     return 0;
   }
-  
+
   /**
    * When TD has javadoc attached, the beginning of FD is marked as the
    * start of the javadoc. This kind of screws things when trying to locate
    * the exact name of the TD. So, offset compensations...
-   * 
+   *
    * @param td
    * @return
    */
@@ -285,26 +286,26 @@ public class ASTNodeWrapper {
     @SuppressWarnings("unchecked")
     List<ASTNode> list = td.modifiers();
     SimpleName sn = (SimpleName) getNode();
-    
+
     int lineNum = getLineNumber(sn);
-    Base.log("SN "+sn + ", " + lineNum);
+    Messages.log("SN "+sn + ", " + lineNum);
     for (ASTNode astNode : list) {
       if (getLineNumber(astNode) == lineNum) {
-        Base.log("first node in that line " + astNode);
-        Base.log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
+        Messages.log("first node in that line " + astNode);
+        Messages.log("diff " + (sn.getStartPosition() - astNode.getStartPosition()));
         return (astNode.getStartPosition());
       }
     }
-    
+
     if (td.getJavadoc() != null){
-      Base.log("diff "
+      Messages.log("diff "
           + (td.getJavadoc().getStartPosition() + td.getJavadoc().getLength() + 1));
       return (td.getJavadoc().getStartPosition() + td.getJavadoc().getLength() + 1);
     }
-    Base.log("getJavadocOffset(TypeDeclaration td) "+sn + ", found nothing. Meh.");
+    Messages.log("getJavadocOffset(TypeDeclaration td) "+sn + ", found nothing. Meh.");
     return 0;
   }
-  
+
   /**
    * Finds the difference in pde and java code offsets
    * @param source
@@ -313,7 +314,7 @@ public class ASTNodeWrapper {
    * @return int[0] - difference in start offset, int[1] - node length
    */
   private int[] createOffsetMapping(ErrorCheckerService ecs, String source, int inpOffset, int nodeLen) {
-   
+
     int ret[][] = getOffsetMapping(ecs, source);
     if(ret == null){
       // no offset mapping needed
@@ -335,7 +336,7 @@ public class ASTNodeWrapper {
       pi++;
     int startoffDif = pi - pj;
     int stopindex = javaCodeMap[pj + nodeLen - 1];
-    Base.log(startIndex + "SI,St" + stopindex + "sod " + startoffDif);
+    Messages.log(startIndex + "SI,St" + stopindex + "sod " + startoffDif);
 
     // count till stopindex
     while (pdeCodeMap[pi] < stopindex && pi < pdeCodeMap.length) {
@@ -345,27 +346,27 @@ public class ASTNodeWrapper {
 
 //    log("PDE maps from " + pdeeCodeMap[pi]);
 
-    Base.log("pde len " + count);
+    Messages.log("pde len " + count);
     return new int[] { startoffDif, count };
   }
-  
+
   /**
    * Generates offset mapping between java and pde code
-   * 
+   *
    * @param source
    * @return int[0] - java code offsets, int[1] = pde code offsets
    */
   public int[][] getOffsetMapping(ErrorCheckerService ecs, String source){
-    
+
     /*
      * This is some tricky shiz. So detailed explanation follows:
-     * 
+     *
      * The main issue here is that pde enhancements like color vars, # literals
      * and int() type casting deviate from standard java. But I need to exact
      * index matching for pde and java versions of snippets.For ex:
-     * "color col = #ffaadd;" <-PDE version 
+     * "color col = #ffaadd;" <-PDE version
      * "int col = 0xffffaadd;" <-Converted to Java
-     * 
+     *
      * For exact index mapping, I need to know at which indices either is
      * deviating from the other and by what amount. Turns out, it isn't quite
      * easy.(1) First I take the pde version of the code as an argument(pde
@@ -378,25 +379,25 @@ public class ASTNodeWrapper {
      * separate arrays) which allows me to look it up for matching any index
      * between pde or java version of the snippet. This also lets me find out
      * any difference in length between both versions.
-     * 
+     *
      * Keep in mind though, dark magic was involved in creating the final lookup
      * table.
-     * 
+     *
      * TODO: This is a work in progress. There may be more bugs here in hiding.
      */
-        
-    Base.log("Src:" + source);
-    // Instead of converting pde into java, how can I simply extract the same source 
+
+    Messages.log("Src:" + source);
+    // Instead of converting pde into java, how can I simply extract the same source
     // from the java code? Think. TODO
     String sourceAlt = new String(source);
     String sourceJava = ecs.astGenerator.getJavaSourceCodeLine(lineNumber);
     TreeMap<Integer, Integer> offsetmap = new TreeMap<Integer, Integer>();
 
     if(sourceJava.trim().startsWith("public") && !source.startsWith("public")){
-      offsetmap.put(0,6); 
+      offsetmap.put(0,6);
       //TODO: This is a temp fix. You GOTTA rewrite offset matching
     }
-    // Find all #[web color] 
+    // Find all #[web color]
     // Should be 6 digits only.
     final String webColorRegexp = "#{1}[A-F|a-f|0-9]{6}\\W";
     Pattern webPattern = Pattern.compile(webColorRegexp);
@@ -437,9 +438,9 @@ public class ASTNodeWrapper {
           + Character.toUpperCase(dataType.charAt(0)) + dataType.substring(1)
           + "(");
 
-    } 
+    }
     if(offsetmap.isEmpty()){
-      Base.log("No offset matching needed.");
+      Messages.log("No offset matching needed.");
       return null;
     }
     // replace with 0xff[webcolor] and others
@@ -454,11 +455,11 @@ public class ASTNodeWrapper {
 
     colorMatcher = colorPattern.matcher(sourceAlt);
     sourceAlt = colorMatcher.replaceAll("int");
-    
-    Base.log("From direct source: ");
+
+    Messages.log("From direct source: ");
 //    sourceAlt = sourceJava;
-    Base.log(sourceAlt);
-    
+    Messages.log(sourceAlt);
+
 
     // Create code map. Beware! Dark magic ahead.
     int javaCodeMap[] = new int[source.length() * 2];
@@ -473,7 +474,7 @@ public class ASTNodeWrapper {
         pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
       }
 
-      Base.log(key + ":" + offsetmap.get(key));
+      Messages.log(key + ":" + offsetmap.get(key));
 
       int kval = offsetmap.get(key);
       if (kval > 0) {
@@ -497,8 +498,8 @@ public class ASTNodeWrapper {
           }
         }
       }
-      
-      // after each adjustment, the key values need to keep 
+
+      // after each adjustment, the key values need to keep
       // up with changed offset
       keySum += kval;
     }
@@ -514,7 +515,7 @@ public class ASTNodeWrapper {
       pdeCodeMap[pj] = pdeCodeMap[pj - 1] + 1;
       pj++;
     }
-    
+
     if (Base.DEBUG) {
       // debug o/p
       for (int i = 0; i < pdeCodeMap.length; i++) {
@@ -532,8 +533,8 @@ public class ASTNodeWrapper {
     }
     return new int[][] { javaCodeMap, pdeCodeMap };
   }
-  
-  
+
+
   /**
    * Highlight the ASTNode in the editor, if it's of type
    * SimpleName
@@ -542,7 +543,7 @@ public class ASTNodeWrapper {
    */
   public boolean highlightNode(ASTGenerator astGenerator){
     if (!(Node instanceof SimpleName)) {
-      return false; 
+      return false;
     }
     SimpleName nodeName = (SimpleName) Node;
     try {
@@ -555,31 +556,31 @@ public class ASTNodeWrapper {
       Element lineElement = javaSource.getDefaultRootElement()
           .getElement(javaLineNumber-1);
       if(lineElement == null) {
-        Base.log(lineNumber + " line element null while highlighting " + nodeName);
+        Messages.log(lineNumber + " line element null while highlighting " + nodeName);
         return false;
       }
-      
+
       String javaLine = javaSource.getText(lineElement.getStartOffset(),
                                            lineElement.getEndOffset()
                                                - lineElement.getStartOffset());
       astGenerator.editor.getSketch().setCurrentCode(pdeOffs[0]);
       String pdeLine = astGenerator.editor.getLineText(pdeOffs[1]);
       String lookingFor = nodeName.toString();
-      Base.log(lookingFor + ", " + nodeName.getStartPosition());
-      Base.log(javaLineNumber +" JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
+      Messages.log(lookingFor + ", " + nodeName.getStartPosition());
+      Messages.log(javaLineNumber +" JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
           + lineElement.getEndOffset());
-      Base.log(pdeOffs[1] + " PL " + pdeLine);
+      Messages.log(pdeOffs[1] + " PL " + pdeLine);
       if (!javaLine.contains(lookingFor) || !pdeLine.contains(lookingFor)) {
-        Base.loge("Logical error in highLightNode(). Please file a bug report.");
+        Messages.loge("Logical error in highLightNode(). Please file a bug report.");
         return false;
       }
-      
+
       OffsetMatcher ofm = new OffsetMatcher(pdeLine, javaLine);
       int highlightStart = ofm.getPdeOffForJavaOff(nodeName.getStartPosition()
                                   - lineElement.getStartOffset(),
                               nodeName.getLength());
       if (highlightStart == -1) {
-        Base.loge("Logical error in highLightNode() during offset matching. " +
+        Messages.loge("Logical error in highLightNode() during offset matching. " +
         		"Please file a bug report.");
         return false;
       }
@@ -612,35 +613,35 @@ public class ASTNodeWrapper {
         }
       }
       log("pde lso " + (index - lookingFor.length()));
-      
+
       int lso = astGenerator.editor.ta.getLineStartOffset(pdeOffs[1]);
       astGenerator.editor.setSelection(lso + index - lookingFor.length(), lso
           + index);
       */
       return true;
-      
+
     } catch (BadLocationException e) {
-      Base.loge("BLE in highLightNode() for " + nodeName);
+      Messages.loge("BLE in highLightNode() for " + nodeName);
       e.printStackTrace();
     }
     return false;
   }
-  
+
   /**
    * Gets offset mapping between java and pde code
-   * int[0][x] stores the java code offset and 
-   * int[1][x] is the corresponding offset in pde code  
+   * int[0][x] stores the java code offset and
+   * int[1][x] is the corresponding offset in pde code
    * @param ecs
    * @return int[0] - java code offset, int[1] - pde code offset
    */
   public int[][] getOffsetMapping(ErrorCheckerService ecs){
     int pdeoffsets[] = getPDECodeOffsets(ecs);
-    String pdeCode = ecs.getPDECodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
+    String pdeCode = ecs.getPdeCodeAtLine(pdeoffsets[0],pdeoffsets[1] - 1).trim();
     return getOffsetMapping(ecs, pdeCode);
   }
- 
+
   /**
-   * 
+   *
    * @param ecs
    *          - ErrorCheckerService instance
    * @return int[0] - tab number, int[1] - line number in the int[0] tab, int[2]
@@ -650,11 +651,11 @@ public class ASTNodeWrapper {
   public int[] getPDECodeOffsets(ErrorCheckerService ecs) {
     return ecs.JavaToPdeOffsets(lineNumber + 1, Node.getStartPosition());
   }
-  
+
   public int getPDECodeOffsetForSN(ASTGenerator astGen){
     if (Node instanceof SimpleName) {
       Element lineElement = astGen.getJavaSourceCodeElement(lineNumber);
-      Base.log("Line element off " + lineElement.getStartOffset());
+      Messages.log("Line element off " + lineElement.getStartOffset());
       OffsetMatcher ofm = new OffsetMatcher(astGen.getPDESourceCodeLine(lineNumber),
                                             astGen.getJavaSourceCodeLine(lineNumber));
       //log("");
@@ -684,7 +685,7 @@ public class ASTNodeWrapper {
   public int getLineNumber() {
     return lineNumber;
   }
-  
+
   /**
    * Applies pde enhancements to code.
    * TODO: Code reuse happening here. :\
@@ -692,10 +693,10 @@ public class ASTNodeWrapper {
    * @return
    */
   public static String getJavaCode(String source){
-    Base.log("Src:" + source);
+    Messages.log("Src:" + source);
     String sourceAlt = new String(source);
 
-    // Find all #[web color] 
+    // Find all #[web color]
     // Should be 6 digits only.
     final String webColorRegexp = "#{1}[A-F|a-f|0-9]{6}\\W";
     Pattern webPattern = Pattern.compile(webColorRegexp);
@@ -747,7 +748,7 @@ public class ASTNodeWrapper {
     colorMatcher = colorPattern.matcher(sourceAlt);
     sourceAlt = colorMatcher.replaceAll("int");
 
-    Base.log("Converted:"+sourceAlt);
+    Messages.log("Converted:"+sourceAlt);
     return sourceAlt;
   }
 
@@ -755,7 +756,7 @@ public class ASTNodeWrapper {
     return ((CompilationUnit) node.getRoot()).getLineNumber(node
         .getStartPosition());
   }
-  
+
   /*private static int getLineNumber2(ASTNode thisNode) {
     int jdocOffset = 0; Javadoc jd = null;
     if(thisNode instanceof TypeDeclaration){
@@ -767,7 +768,7 @@ public class ASTNodeWrapper {
     } else if(thisNode instanceof FieldDeclaration){
       jd = ((FieldDeclaration)thisNode).getJavadoc();
       log("Has f jdoc " + ((FieldDeclaration)thisNode).getJavadoc());
-    } 
+    }
     if(jd != null){
       jdocOffset = 1+jd.getLength();
     }

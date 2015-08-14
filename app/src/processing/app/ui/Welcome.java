@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Platform;
 import processing.app.Preferences;
 import processing.core.PApplet;
 import processing.data.StringDict;
@@ -99,7 +100,7 @@ public class Welcome extends WebFrame {
     }
     // processing/build/macosx/work/Processing.app/Contents/Java
     // version for Scott to use for OS X debugging
-    htmlFile = Base.getContentFile("../../../../../shared/lib/" + filename);
+    htmlFile = Platform.getContentFile("../../../../../shared/lib/" + filename);
     if (htmlFile.exists()) {
       return htmlFile;
     }
@@ -114,7 +115,7 @@ public class Welcome extends WebFrame {
 
 
   static public void main(String[] args) {
-    Base.initPlatform();
+    Platform.init();
 
     EventQueue.invokeLater(new Runnable() {
       public void run() {

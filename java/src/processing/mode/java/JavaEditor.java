@@ -34,6 +34,7 @@ import processing.app.syntax.PdeTextAreaDefaults;
 import processing.app.ui.About;
 import processing.app.ui.ColorChooser;
 import processing.app.ui.Editor;
+import processing.app.ui.EditorException;
 import processing.app.ui.EditorFooter;
 import processing.app.ui.EditorHeader;
 import processing.app.ui.EditorState;
@@ -68,6 +69,7 @@ public class JavaEditor extends Editor {
   protected Color currentLineColor;
   protected Color breakpointMarkerColor;
   protected Color currentLineMarkerColor;
+
   protected List<LineHighlight> breakpointedLines =
     new ArrayList<LineHighlight>();
   protected LineHighlight currentLine; // where the debugger is suspended
@@ -103,7 +105,8 @@ public class JavaEditor extends Editor {
   protected ErrorCheckerService errorCheckerService;
 
 
-  protected JavaEditor(Base base, String path, EditorState state, Mode mode) {
+  protected JavaEditor(Base base, String path, EditorState state,
+                       Mode mode) throws EditorException {
     super(base, path, state, mode);
 
     jmode = (JavaMode) mode;
@@ -341,7 +344,7 @@ public class JavaEditor extends Editor {
     JMenuItem item;
 
     // macosx already has its own about menu
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       item = new JMenuItem(Language.text("menu.help.about"));
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -357,9 +360,9 @@ public class JavaEditor extends Editor {
         try {
           new Welcome(base, Preferences.getSketchbookPath().equals(Preferences.getOldSketchbookPath()));
         } catch (IOException ioe) {
-          Base.showWarning("Unwelcome Error",
-                           "Please report this error to\n" +
-                           "https://github.com/processing/processing/issues", ioe);
+          Messages.showWarning("Unwelcome Error",
+                               "Please report this error to\n" +
+                               "https://github.com/processing/processing/issues", ioe);
         }
       }
     });
@@ -494,7 +497,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.getting_started"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.getting_started.url"));
+        Platform.openURL(Language.text("menu.help.getting_started.url"));
       }
     });
     menu.add(item);
@@ -502,7 +505,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.troubleshooting"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.troubleshooting.url"));
+        Platform.openURL(Language.text("menu.help.troubleshooting.url"));
       }
     });
     menu.add(item);
@@ -510,7 +513,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.faq"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.faq.url"));
+        Platform.openURL(Language.text("menu.help.faq.url"));
       }
     });
     menu.add(item);
@@ -518,7 +521,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.foundation"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.foundation.url"));
+        Platform.openURL(Language.text("menu.help.foundation.url"));
       }
     });
     menu.add(item);
@@ -526,7 +529,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.visit"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.visit.url"));
+        Platform.openURL(Language.text("menu.help.visit.url"));
       }
     });
     menu.add(item);
@@ -661,7 +664,7 @@ public class JavaEditor extends Editor {
       statusNotice(Language.text("export.notice.exporting"));
       try {
         if (exportApplicationPrompt()) {
-          Base.openFolder(sketch.getFolder());
+          Platform.openFolder(sketch.getFolder());
           statusNotice(Language.text("export.notice.exporting.done"));
         } else {
           // error message will already be visible
@@ -676,8 +679,26 @@ public class JavaEditor extends Editor {
   }
 
 
-//  JPanel presentColorPanel;
-//  JTextField presentColorPanel;
+  // Can't be .windows because that'll be stripped off as a per-platform pref
+  static final String EXPORT_PREFIX = "export.application.platform_";
+  static final String EXPORT_MACOSX = EXPORT_PREFIX + "macosx";
+  static final String EXPORT_WINDOWS = EXPORT_PREFIX + "windows";
+  static final String EXPORT_LINUX = EXPORT_PREFIX + "linux";
+
+  final JButton exportButton = new JButton(Language.text("prompt.export"));
+  final JButton cancelButton = new JButton(Language.text("prompt.cancel"));
+
+  final JCheckBox windowsButton = new JCheckBox("Windows");
+  final JCheckBox macosxButton = new JCheckBox("Mac OS X");
+  final JCheckBox linuxButton = new JCheckBox("Linux");
+
+
+  protected void updateExportButton() {
+    exportButton.setEnabled(windowsButton.isSelected() ||
+                            macosxButton.isSelected() ||
+                            linuxButton.isSelected());
+  }
+
 
   protected boolean exportApplicationPrompt() throws IOException, SketchException {
     JPanel panel = new JPanel();
@@ -704,40 +725,44 @@ public class JavaEditor extends Editor {
 //                        label2.getPreferredSize().width);
     panel.add(Box.createVerticalStrut(12));
 
-    final JCheckBox windowsButton = new JCheckBox("Windows");
-    //windowsButton.setMnemonic(KeyEvent.VK_W);
-    windowsButton.setSelected(Preferences.getBoolean("export.application.platform.windows"));
+//    final JCheckBox windowsButton = new JCheckBox("Windows");
+//    final JCheckBox macosxButton = new JCheckBox("Mac OS X");
+//    final JCheckBox linuxButton = new JCheckBox("Linux");
+
+    windowsButton.setSelected(Preferences.getBoolean(EXPORT_WINDOWS));
     windowsButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        Preferences.setBoolean("export.application.platform.windows", windowsButton.isSelected());
+        Preferences.setBoolean(EXPORT_WINDOWS, windowsButton.isSelected());
+        updateExportButton();
       }
     });
 
     // Only possible to export OS X applications on OS X
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       // Make sure they don't have a previous 'true' setting for this
-      Preferences.setBoolean("export.application.platform.macosx", false);
+      Preferences.setBoolean(EXPORT_MACOSX, false);
     }
-    final JCheckBox macosxButton = new JCheckBox("Mac OS X");
-    macosxButton.setSelected(Preferences.getBoolean("export.application.platform.macosx"));
+    macosxButton.setSelected(Preferences.getBoolean(EXPORT_MACOSX));
     macosxButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        Preferences.setBoolean("export.application.platform.macosx", macosxButton.isSelected());
+        Preferences.setBoolean(EXPORT_MACOSX, macosxButton.isSelected());
+        updateExportButton();
       }
     });
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       macosxButton.setEnabled(false);
       macosxButton.setToolTipText(Language.text("export.tooltip.macosx"));
     }
 
-    final JCheckBox linuxButton = new JCheckBox("Linux");
-    //linuxButton.setMnemonic(KeyEvent.VK_L);
-    linuxButton.setSelected(Preferences.getBoolean("export.application.platform.linux"));
+    linuxButton.setSelected(Preferences.getBoolean(EXPORT_LINUX));
     linuxButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        Preferences.setBoolean("export.application.platform.linux", linuxButton.isSelected());
+        Preferences.setBoolean(EXPORT_LINUX, linuxButton.isSelected());
+        updateExportButton();
       }
     });
+
+    updateExportButton();  // do the initial enable/disable based on prefs.txt
 
     JPanel platformPanel = new JPanel();
     //platformPanel.setLayout(new BoxLayout(platformPanel, BoxLayout.X_AXIS));
@@ -841,12 +866,12 @@ public class JavaEditor extends Editor {
     embedPanel.setLayout(new BoxLayout(embedPanel, BoxLayout.Y_AXIS));
 
     String platformName = null;
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       platformName = "Mac OS X";
-    } else if (Base.isWindows()) {
-      platformName = "Windows (" + Base.getNativeBits() + "-bit)";
-    } else if (Base.isLinux()) {
-      platformName = "Linux (" + Base.getNativeBits() + "-bit)";
+    } else if (Platform.isWindows()) {
+      platformName = "Windows (" + Platform.getNativeBits() + "-bit)";
+    } else if (Platform.isLinux()) {
+      platformName = "Linux (" + Platform.getNativeBits() + "-bit)";
     }
 
     boolean embed = Preferences.getBoolean("export.application.embed_java");
@@ -868,7 +893,7 @@ public class JavaEditor extends Editor {
     final JLabel warningLabel = new JLabel(embed ? embedWarning : nopeWarning);
     warningLabel.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent event) {
-        Base.openURL("http://java.com/download");
+        Platform.openURL("http://java.com/download");
       }
     });
     warningLabel.setBorder(new EmptyBorder(3, 13 + indent, 3, 13));
@@ -896,7 +921,7 @@ public class JavaEditor extends Editor {
 
     //
 
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       JPanel signPanel = new JPanel();
       signPanel.setLayout(new BoxLayout(signPanel, BoxLayout.Y_AXIS));
       signPanel.setBorder(new TitledBorder(Language.text("export.code_signing")));
@@ -947,32 +972,40 @@ public class JavaEditor extends Editor {
 
       area.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent event) {
-          Base.openURL("https://developer.apple.com/developer-id/");
+          Platform.openURL("https://developer.apple.com/developer-id/");
         }
       });
 
       panel.add(signPanel);
     }
-    //System.out.println(panel.getPreferredSize());
-//    panel.setMinimumSize(new Dimension(316, 461));
-//    panel.setPreferredSize(new Dimension(316, 461));
-//    panel.setMaximumSize(new Dimension(316, 461));
 
     //
 
-    String[] options = { Language.text("prompt.export"), Language.text("prompt.cancel") };
+    //String[] options = { Language.text("prompt.export"), Language.text("prompt.cancel") };
+    final JButton[] options = { exportButton, cancelButton };
 
     final JOptionPane optionPane = new JOptionPane(panel,
                                                    JOptionPane.PLAIN_MESSAGE,
                                                    JOptionPane.YES_NO_OPTION,
                                                    null,
                                                    options,
-                                                   options[0]);
+                                                   exportButton); //options[0]);
 
 
     final JDialog dialog = new JDialog(this, Language.text("export"), true);
     dialog.setContentPane(optionPane);
-//    System.out.println(optionPane.getLayout());
+
+    exportButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        optionPane.setValue(exportButton);
+      }
+    });
+
+    cancelButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        optionPane.setValue(cancelButton);
+      }
+    });
 
     optionPane.addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent e) {
@@ -998,52 +1031,16 @@ public class JavaEditor extends Editor {
                        bounds.y + (bounds.height - dialog.getSize().height) / 2);
     dialog.setVisible(true);
 
-    //System.out.println(panel.getSize());
-
     Object value = optionPane.getValue();
-    if (value.equals(options[0])) {
+    if (value.equals(exportButton)) {
       return jmode.handleExportApplication(sketch);
-    } else if (value.equals(options[1]) || value.equals(Integer.valueOf(-1))) {
+    } else if (value.equals(cancelButton) || value.equals(Integer.valueOf(-1))) {
       // closed window by hitting Cancel or ESC
       statusNotice(Language.text("export.notice.exporting.cancel"));
     }
     return false;
   }
 
-  /*
-  Color bgcolor = Preferences.getColor("run.present.bgcolor");
-  final ColorChooser c = new ColorChooser(JavaEditor.this, true, bgcolor,
-                                          "Select", new ActionListener() {
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      Preferences.setColor("run.present.bgcolor", c.getColor());
-    }
-  });
-  */
-
-  /*
-  class ColorListener implements ActionListener {
-    ColorChooser chooser;
-    String prefName;
-
-    public ColorListener(String prefName) {
-      this.prefName = prefName;
-      Color color = Preferences.getColor(prefName);
-      chooser = new ColorChooser(JavaEditor.this, true, color, "Select", this);
-      chooser.show();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      Color color = chooser.getColor();
-      Preferences.setColor(prefName, color);
-//      presentColorPanel.setBackground(color);
-      presentColorPanel.repaint();
-      chooser.hide();
-    }
-  }
-  */
 
   class ColorPreference extends JPanel implements ActionListener {
     ColorChooser chooser;
@@ -1102,6 +1099,20 @@ public class JavaEditor extends Editor {
    * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=157">Bug 157</A>
    */
   protected boolean handleExportCheckModified() {
+    if (sketch.isReadOnly()) {
+      // if the files are read-only, need to first do a "save as".
+      Messages.showMessage(Language.text("export.messages.is_read_only"),
+                           Language.text("export.messages.is_read_only.description"));
+      return false;
+    }
+
+    // don't allow if untitled
+    if (sketch.isUntitled()) {
+      Messages.showMessage(Language.text("export.messages.cannot_export"),
+                           Language.text("export.messages.cannot_export.description"));
+      return false;
+    }
+
     if (sketch.isModified()) {
       Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
       int result = JOptionPane.showOptionDialog(this,
@@ -1655,7 +1666,7 @@ public class JavaEditor extends Editor {
   }
 
 
-  protected boolean isDebuggerEnabled() {
+  public boolean isDebuggerEnabled() {
     //return enableDebug.isSelected();
     return debugEnabled;
   }
@@ -1667,31 +1678,24 @@ public class JavaEditor extends Editor {
   }
 
 
-  /**
-   * Event handler called when loading another sketch in this editor. Clears
-   * breakpoints of previous sketch.
-   *
-   * @param path
-   * @return true if a sketch was opened, false if aborted
-   */
-  @Override
-  protected boolean handleOpenInternal(String path) {
-    // log("handleOpenInternal, path: " + path);
-    boolean didOpen = super.handleOpenInternal(path);
-    if (didOpen && debugger != null) {
-      // should already been stopped (open calls handleStop)
-      debugger.clearBreakpoints();
-      clearBreakpointedLines(); // force clear breakpoint highlights
-      variableInspector().reset(); // clear contents of variable inspector
-    }
-    //if(didOpen){
-    // autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval); // this is used instead of loadAutosaver(), temp measure
-    // loadAutoSaver();
-    // viewingAutosaveBackup = autosaver.isAutoSaveBackup();
-    // log("handleOpenInternal, viewing autosave? " + viewingAutosaveBackup);
-    //}
-    return didOpen;
-  }
+  // handleOpenInternal() only called by the Editor constructor, meaning that
+  // this code is all useless. All these things will be in their default state.
+//  /**
+//   * Event handler called when loading another sketch in this editor.
+//   * Clears breakpoints of previous sketch.
+//   * @return true if a sketch was opened, false if aborted
+//   */
+//  @Override
+//  protected void handleOpenInternal(String path) throws EditorException {
+//    super.handleOpenInternal(path);
+//
+//    // should already been stopped (open calls handleStop)
+//    if (debugger != null) {
+//      debugger.clearBreakpoints();
+//    }
+//    clearBreakpointedLines();
+//    variableInspector().reset();
+//  }
 
 
   /**
@@ -1749,7 +1753,7 @@ public class JavaEditor extends Editor {
       // this method gets called twice when saving sketch for the first time
       // once with new name and another with old(causing NPE). Keep an eye out
       // for potential issues. See #2675. TODO:
-      Base.loge("Illegal tab name to addBreakpointComments() " + tabFilename);
+      Messages.loge("Illegal tab name to addBreakpointComments() " + tabFilename);
       return;
     }
     List<LineBreakpoint> bps = debugger.getBreakpoints(tab.getFileName());
@@ -1984,7 +1988,7 @@ public class JavaEditor extends Editor {
             for (AvailableContribution ac : installLibsHeaders) {
               libList.append("\n  • " + ac.getName());
             }
-            int option = Base.showYesNoQuestion(this,
+            int option = Messages.showYesNoQuestion(this,
                 Language.text("contrib.import.dialog.title"),
                 Language.text("contrib.import.dialog.primary_text"),
                 libList.toString());
@@ -2191,37 +2195,18 @@ public class JavaEditor extends Editor {
 
 
   public void toggleDebug() {
-//    enableDebug.setSelected(!enableDebug.isSelected());
     debugEnabled = !debugEnabled;
-//    updateDebugToggle();
-//  }
-//
-//
-//  public void updateDebugToggle() {
-//    final boolean enabled = isDebuggerEnabled();
+
     rebuildToolbar();
+    repaint();  // show/hide breakpoints in the gutter
 
     if (debugEnabled) {
       debugItem.setText(Language.text("menu.debug.disable"));
     } else {
       debugItem.setText(Language.text("menu.debug.enable"));
     }
-
-//    // Hide the variable inspector if it's currently visible
-//    if (!debugEnabled && inspector.isVisible()) {
-//      toggleVariableInspector();
-//    }
     inspector.setVisible(debugEnabled);
 
-    /*
-    if (enabled) {
-      inspector.setFocusableWindowState(false); // to not get focus when set visible
-      inspector.setVisible(true);
-      inspector.setFocusableWindowState(true); // allow to get focus again
-    } else {
-      inspector.setVisible(false);
-    }
-    */
     for (Component item : debugMenu.getMenuComponents()) {
       if (item instanceof JMenuItem && item != debugItem) {
         ((JMenuItem) item).setEnabled(debugEnabled);
@@ -2639,14 +2624,14 @@ public class JavaEditor extends Editor {
 
   /** Handle refactor operation */
   private void handleRefactor() {
-    Base.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
+    Messages.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
     errorCheckerService.getASTGenerator().handleRefactor();
   }
 
 
   /** Handle show usage operation */
   private void handleShowUsage() {
-    Base.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
+    Messages.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
     errorCheckerService.getASTGenerator().handleShowUsage();
   }
 
@@ -2682,7 +2667,7 @@ public class JavaEditor extends Editor {
     super.applyPreferences();
     if (jmode != null) {
       jmode.loadPreferences();
-      Base.log("Applying prefs");
+      Messages.log("Applying prefs");
       // trigger it once to refresh UI
       errorCheckerService.runManualErrorCheck();
     }
@@ -2700,49 +2685,32 @@ public class JavaEditor extends Editor {
   TweakClient tweakClient;
 
 
-  protected void startInteractiveMode() {
-    getJavaTextArea().startInteractiveMode();
+  protected void startTweakMode() {
+    getJavaTextArea().startTweakMode();
   }
 
 
-  //public void stopInteractiveMode(ArrayList<Handle> handles[]) {
-  protected void stopInteractiveMode(List<List<Handle>> handles) {
+  protected void stopTweakMode(List<List<Handle>> handles) {
     tweakClient.shutdown();
-    getJavaTextArea().stopInteractiveMode();
+    getJavaTextArea().stopTweakMode();
 
     // remove space from the code (before and after)
     //removeSpacesFromCode();
 
     // check which tabs were modified
-    boolean modified = false;
-    boolean[] modifiedTabs = getModifiedTabs(handles);
-    for (boolean mod : modifiedTabs) {
-      if (mod) {
-        modified = true;
-        break;
-      }
-    }
+    boolean[] tweakedTabs = getTweakedTabs(handles);
+    boolean modified = anythingTrue(tweakedTabs);
 
     if (modified) {
       // ask to keep the values
-      int ret =
-        Base.showYesNoQuestion(this, Language.text("tweak_mode"),
-                               Language.text("tweak_mode.keep_changes.line1"),
-                               Language.text("tweak_mode.keep_changes.line2"));
-      if (ret == 1) {
-        // NO! don't keep changes
-        loadSavedCode();
-        // update the painter to draw the saved (old) code
-        textarea.invalidate();
-
-      } else {
-        // YES! keep changes
-        // the new values are already present, just make sure the user can save the modified tabs
-        for (int i=0; i<sketch.getCodeCount(); i++) {
-          if (modifiedTabs[i]) {
+      if (Messages.showYesNoQuestion(this, Language.text("tweak_mode"),
+                                     Language.text("tweak_mode.keep_changes.line1"),
+                                     Language.text("tweak_mode.keep_changes.line2")) == JOptionPane.YES_OPTION) {
+        for (int i = 0; i < sketch.getCodeCount(); i++) {
+          if (tweakedTabs[i]) {
             sketch.getCode(i).setModified(true);
-          }
-          else {
+
+          } else {
             // load the saved code of tabs that didn't change
             // (there might be formatting changes that should not be saved)
             sketch.getCode(i).setProgram(sketch.getCode(i).getSavedProgram());
@@ -2761,11 +2729,16 @@ public class JavaEditor extends Editor {
         try {
           sketch.save();
         } catch (IOException e) {
-          Base.showWarning("Error", "Could not save the modified sketch.", e);
+          Messages.showWarning("Error", "Could not save the modified sketch.", e);
         }
 
         // repaint the editor header (show the modified tabs)
         header.repaint();
+        textarea.invalidate();
+
+      } else {  // no or canceled = don't keep changes
+        loadSavedCode();
+        // update the painter to draw the saved (old) code
         textarea.invalidate();
       }
     } else {
@@ -2777,23 +2750,31 @@ public class JavaEditor extends Editor {
   }
 
 
+  static private boolean anythingTrue(boolean[] list) {
+    for (boolean b : list) {
+      if (b) return true;
+    }
+    return false;
+  }
+
+
   protected void updateInterface(List<List<Handle>> handles,
                               List<List<ColorControlBox>> colorBoxes) {
     getJavaTextArea().updateInterface(handles, colorBoxes);
   }
 
 
-  static private boolean[] getModifiedTabs(List<List<Handle>> handles) {
-    boolean[] modifiedTabs = new boolean[handles.size()];
+  static private boolean[] getTweakedTabs(List<List<Handle>> handles) {
+    boolean[] outgoing = new boolean[handles.size()];
 
     for (int i = 0; i < handles.size(); i++) {
       for (Handle h : handles.get(i)) {
         if (h.valueChanged()) {
-          modifiedTabs[i] = true;
+          outgoing[i] = true;
         }
       }
     }
-    return modifiedTabs;
+    return outgoing;
   }
 
 
@@ -2890,8 +2871,8 @@ public class JavaEditor extends Editor {
       return false;
     }
 
-    int setupEndPos = SketchParser.getSetupEnd(baseCode[0]);
-    if (setupEndPos < 0) {
+    int afterSizePos = SketchParser.getAfterSizePos(baseCode[0]);
+    if (afterSizePos < 0) {
       return false;
     }
 
@@ -2984,12 +2965,14 @@ public class JavaEditor extends Editor {
 
     // add call to our initAllVars and initOSC functions
     // from the setup() function.
-    String addToSetup = "\n"+
-      " tweakmode_initAllVars();\n"+
-      " tweakmode_initCommunication();\n\n";
+    String addToSetup = "\n\n\n"+
+      "  /* TWEAKMODE */\n"+
+      "    tweakmode_initAllVars();\n"+
+      "    tweakmode_initCommunication();\n"+
+      "  /* TWEAKMODE */\n\n";
 
-    setupEndPos = SketchParser.getSetupEnd(c);
-    c = replaceString(c, setupEndPos, setupEndPos, addToSetup);
+    afterSizePos = SketchParser.getAfterSizePos(c);
+    c = replaceString(c, afterSizePos, afterSizePos, addToSetup);
 
     // Server code defines a class, so it should go later in the sketch
     String serverCode =

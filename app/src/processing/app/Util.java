@@ -148,7 +148,8 @@ public class Util {
 
 
   /**
-   * Grab the contents of a file as a string.
+   * Grab the contents of a file as a string. Connects lines with \n,
+   * even if the input file used \r\n.
    */
   static public String loadFile(File file) throws IOException {
     String[] contents = PApplet.loadStrings(file);
@@ -158,9 +159,15 @@ public class Util {
 
 
   /**
-   * Spew the contents of a String object out to a file.
+   * Spew the contents of a String object out to a file. As of 3.0 beta 2,
+   * this will replace and write \r\n for newlines on Windows.
+   * https://github.com/processing/processing/issues/3455
    */
   static public void saveFile(String str, File file) throws IOException {
+    if (Platform.isWindows()) {
+      String[] lines = str.split("\\r?\\n");
+      str = PApplet.join(lines, "\r\n");
+    }
     File temp = File.createTempFile(file.getName(), null, file.getParentFile());
     try {
       // fix from cjwant to prevent symlinks from being destroyed.
@@ -185,7 +192,7 @@ public class Util {
       boolean result = file.delete();
       if (!result) {
         throw new IOException("Could not remove old version of " +
-          file.getAbsolutePath());
+                              file.getAbsolutePath());
       }
     }
     boolean result = temp.renameTo(file);
@@ -193,6 +200,30 @@ public class Util {
       throw new IOException("Could not replace " + file.getAbsolutePath() +
                             " with " + temp.getAbsolutePath());
     }
+  }
+
+
+  /**
+   * Create a temporary folder by using the createTempFile() mechanism,
+   * deleting the file it creates, and making a folder using the location
+   * that was provided.
+   *
+   * Unlike createTempFile(), there is no minimum size for prefix. If
+   * prefix is less than 3 characters, the remaining characters will be
+   * filled with underscores
+   */
+  static public File createTempFolder(String prefix, String suffix,
+                                      File directory) throws IOException {
+    int fillChars = 3 - prefix.length();
+    for (int i = 0; i < fillChars; i++) {
+      prefix += '_';
+    }
+    File folder = File.createTempFile(prefix, suffix, directory);
+    // Now delete that file and create a folder in its place
+    folder.delete();
+    folder.mkdirs();
+    // And send the folder back to your friends
+    return folder;
   }
 
 
@@ -229,7 +260,7 @@ public class Util {
   static public void copyDirNative(File sourceDir,
                                    File targetDir) throws IOException {
     Process process = null;
-    if (Base.isMacOS() || Base.isLinux()) {
+    if (Platform.isMacOS() || Platform.isLinux()) {
       process = Runtime.getRuntime().exec(new String[] {
         "cp", "-a", sourceDir.getAbsolutePath(), targetDir.getAbsolutePath()
       });
