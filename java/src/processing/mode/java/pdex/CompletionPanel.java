@@ -117,6 +117,8 @@ public class CompletionPanel {
     } else {
       this.subWord = subWord;
     }
+
+    loadIcons();
     popupMenu = new JPopupMenu();
     popupMenu.removeAll();
     popupMenu.setOpaque(false);
@@ -131,7 +133,6 @@ public class CompletionPanel {
     textarea.requestFocusInWindow();
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0) + location.y);
     //log("Suggestion shown: " + System.currentTimeMillis());
-    loadIcons();
   }
 
 
