@@ -1689,6 +1689,8 @@ public abstract class PGL {
       fragSrc[0] = "#version " + version;
       fragSrc[1] = "out vec4 fragColor;";
 
+      PApplet.printArray(fragSrc);
+
       return fragSrc;
     }
     return fragSrc0;
@@ -1713,6 +1715,8 @@ public abstract class PGL {
 
       String[] vertSrc = preprocessShaderSource(vertSrc0, search, replace, 1);
       vertSrc[0] = "#version " + version;
+
+      PApplet.printArray(vertSrc);
 
       return vertSrc;
     }
