@@ -461,13 +461,27 @@ class ContributionPanel extends JPanel {
     } else {
       description.append("<a href=\"" + contrib.getUrl() + "\">" + contrib.getName() + "</a>");
     }
-    description.append("</b>");
+    description.append("</b> ");
+    
+    String version = contrib.getPrettyVersion();
+
+    // TODO this has no place here, we shouldn't be cleaning up contrib
+    // information in the f*king GUI.
+    if (version != null && !version.isEmpty()) {
+      if (version.toLowerCase().startsWith("build")) // For Python mode
+        description.append(version.substring(5, version.indexOf(',')).trim());
+      else if (version.toLowerCase().startsWith("v")) // For ketai library
+        description.append(version);
+      else
+        description.append(version);
+    }
+    description.append(" <br/>");
+    
     String authorList = contrib.getAuthorList();
     if (authorList != null && !authorList.isEmpty()) {
-      description.append(" by ");
       description.append(toHtmlLinks(contrib.getAuthorList()));
     }
-    description.append("<br/>");
+    description.append("<br/><br/>");
 
     if (contrib.isDeletionFlagged()) {
       description.append(REMOVE_RESTART_MESSAGE);
@@ -484,21 +498,6 @@ class ContributionPanel extends JPanel {
         sentence = toHtmlLinks(sentence);
       }
       description.append(sentence);
-    }
-
-    String version = contrib.getPrettyVersion();
-
-    // TODO this has no place here, we shouldn't be cleaning up contrib
-    // information in the f*king GUI.
-    if (version != null && !version.isEmpty()) {
-      description.append("<br/>");
-      if (version.toLowerCase().startsWith("build")) // For Python mode
-        description.append("v"
-            + version.substring(5, version.indexOf(',')).trim());
-      else if (version.toLowerCase().startsWith("v")) // For ketai library
-        description.append(version);
-      else
-        description.append("v" + version);
     }
 
     long lastUpdatedUTC = contrib.getLastUpdated();
