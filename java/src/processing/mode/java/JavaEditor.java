@@ -354,7 +354,7 @@ public class JavaEditor extends Editor {
       menu.add(item);
     }
 
-    item = new JMenuItem("Welcome to Processing 3");
+    item = new JMenuItem(Language.text("menu.help.welcome"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         try {
