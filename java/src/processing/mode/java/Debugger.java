@@ -216,7 +216,7 @@ public class Debugger implements VMEventListener {
 
         log(Level.INFO, "launching debuggee runtime");
         runtime = new Runner(build, editor);
-        VirtualMachine vm = runtime.launchDebug(); // non-blocking
+        VirtualMachine vm = runtime.debug(null); // non-blocking
         if (vm == null) {
           log(Level.SEVERE, "error 37: launch failed");
         }

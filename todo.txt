@@ -9,6 +9,8 @@ X   https://github.com/processing/processing/issues/3586
 X   also showError() there shouldn't die if other Java windows open
 X move Platform into its own class, also Messages and others
 X   https://github.com/processing/processing/issues/2765
+X Pass command line arguments to sketches
+X   https://github.com/processing/processing/issues/2552
 
 api changes
 X Make fields and functions in PdeKeywords protected
@@ -35,6 +37,10 @@ X Add disconnectEvent() to Server
 X   https://github.com/processing/processing/issues/2133
 X False positive for mixing active/static mode in Tweak Mode 3.0 alpha 5
 X   https://github.com/processing/processing/issues/3140
+X Determine shortcut for Export vs Use Selection for Find
+X   https://github.com/processing/processing/issues/2985
+X PDE erroneously detects changes in non-sketch files
+X   https://github.com/processing/processing/issues/2759
 
 
 known issues

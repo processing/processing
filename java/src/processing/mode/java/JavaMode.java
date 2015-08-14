@@ -149,7 +149,12 @@ public class JavaMode extends Mode {
       final Runner runtime = new Runner(build, listener);
       new Thread(new Runnable() {
         public void run() {
-          runtime.launch(present);  // this blocks until finished
+          // these block until finished
+          if (present) {
+            runtime.present(null);
+          } else {
+            runtime.launch(null);
+          }
         }
       }).start();
       return runtime;
@@ -197,15 +202,20 @@ public class JavaMode extends Mode {
     if (appletClassName != null) {
       final Runner runtime = new Runner(build, listener);
       new Thread(new Runnable() {
-          public void run() {
-            runtime.launch(present);  // this blocks until finished
-            // next lines are executed when the sketch quits
-            if (launchInteractive) {
-                editor.initEditorCode(parser.allHandles, false);
-                editor.stopTweakMode(parser.allHandles);
-            }
+        public void run() {
+          // these block until finished
+          if (present) {
+            runtime.present(null);
+          } else {
+            runtime.launch(null);
           }
-        }).start();
+          // next lines are executed when the sketch quits
+          if (launchInteractive) {
+            editor.initEditorCode(parser.allHandles, false);
+            editor.stopTweakMode(parser.allHandles);
+          }
+        }
+      }).start();
 
       if (launchInteractive) {
         // replace editor code with baseCode

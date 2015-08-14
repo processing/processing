@@ -112,10 +112,10 @@ public class Commander implements RunnerListener {
       System.exit(1);
     }
 
-//    File preferencesFile = Base.getSettingsFile("preferences.txt");
-//    System.out.println("Preferences file at " + preferencesFile.getAbsolutePath());
-
+    int argOffset = 0;
     for (String arg : args) {
+      argOffset++;
+
       if (arg.length() == 0) {
         // ignore it, just the crappy shell script
 
@@ -127,18 +127,19 @@ public class Commander implements RunnerListener {
 
       } else if (arg.equals(buildArg)) {
         task = BUILD;
+        break;
 
       } else if (arg.equals(runArg)) {
         task = RUN;
+        break;
 
       } else if (arg.equals(presentArg)) {
         task = PRESENT;
-
-//      } else if (arg.equals(exportAppletArg)) {
-//        task = EXPORT_APPLET;
+        break;
 
       } else if (arg.equals(exportApplicationArg)) {
         task = EXPORT;
+        break;
 
       } else if (arg.equals(noJavaArg)) {
         embedJava = false;
@@ -189,6 +190,7 @@ public class Commander implements RunnerListener {
         complainAndQuit("I don't know anything about " + arg + ".", true);
       }
     }
+    String[] sketchArgs = PApplet.subset(args, argOffset);
 
 //    if ((outputPath == null) &&
 //        (task == PREPROCESS || task == BUILD ||
@@ -268,7 +270,11 @@ public class Commander implements RunnerListener {
             success = true;
             if (task == RUN || task == PRESENT) {
               Runner runner = new Runner(build, this);
-              runner.launch(task == PRESENT);
+              if (task == PRESENT) {
+                runner.present(sketchArgs);
+              } else {
+                runner.launch(sketchArgs);
+              }
             }
           } else {
             success = false;
@@ -369,7 +375,7 @@ public class Commander implements RunnerListener {
     out.println();
     out.println("--build              Preprocess and compile a sketch into .class files.");
     out.println("--run                Preprocess, compile, and run a sketch.");
-    out.println("--present            Preprocess, compile, and run a sketch full screen.");
+    out.println("--present            Preprocess, compile, and run a sketch in presentation mode.");
     out.println();
     out.println("--export             Export an application.");
     out.println("--no-java            Do not embed Java. Use at your own risk!");
@@ -378,6 +384,13 @@ public class Commander implements RunnerListener {
 //    out.println("--bits               Must be specified if libraries are used that are");
 //    out.println("                     32- or 64-bit specific such as the OpenGL library.");
 //    out.println("                     Otherwise specify 0 or leave it out.");
+
+    out.println("The --build, --run, --present, or --export must be the final parameter.");
+    out.println("Additional arguments will be passed to the sketch itself and available");
+    out.println("in the sketch's 'args' field. To pass options understood by PApplet.main(),");
+    out.println("write a custom main() method so that the preprocessor does not add one.");
+    out.println("https://github.com/processing/processing/wiki/Command-Line");
+
     out.println();
   }
 

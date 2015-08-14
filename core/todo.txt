@@ -15,6 +15,9 @@ X   could add -Dapp.root=$APP_ROOT and get via System.getProperty("app.root")
 X   https://github.com/processing/processing/issues/2181
 X textWidth() incorrect with default (JAVA2D) renderer and default font
 X   https://github.com/processing/processing/issues/2175
+X Error on size() when using FX2D due to stage inset issues
+X   https://github.com/processing/processing/issues/3412
+X   probably fixes w/ size() removal change
 
 jakub
 X Remove alpha filler (hopefully no regression here)
@@ -58,8 +61,6 @@ _   https://github.com/processing/processing/issues/2063
 
 
 javafx
-_ Error on size() when using FX2D due to stage inset issues
-_   https://github.com/processing/processing/issues/3412
 _ static mode sketches (draw once and halt w/o closing window)
 _ fix display handling, line up the device order with AWT
 _   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html
