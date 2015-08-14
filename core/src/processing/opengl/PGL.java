@@ -459,18 +459,10 @@ public abstract class PGL {
   }
 
 
-  protected int getDepthBits()  {
-    intBuffer.rewind();
-    getIntegerv(DEPTH_BITS, intBuffer);
-    return intBuffer.get(0);
-  }
+  abstract protected int getDepthBits();
 
 
-  protected int getStencilBits()  {
-    intBuffer.rewind();
-    getIntegerv(STENCIL_BITS, intBuffer);
-    return intBuffer.get(0);
-  }
+  abstract protected int getStencilBits();
 
 
   protected boolean getDepthTest() {

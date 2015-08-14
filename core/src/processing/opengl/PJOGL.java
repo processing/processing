@@ -500,7 +500,7 @@ public class PJOGL extends PGL {
   protected boolean isFBOBacked() {
     return super.isFBOBacked() || capabilities.isFBO();
   }
-
+*/
 
   @Override
   protected int getDepthBits() {
@@ -512,7 +512,7 @@ public class PJOGL extends PGL {
   protected int getStencilBits() {
     return capabilities.getStencilBits();
   }
-
+/*
 
   @Override
   protected Texture wrapBackTexture(Texture texture) {
