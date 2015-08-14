@@ -401,13 +401,14 @@ public class JavaMode extends Mode {
             if (suggestionsMap.containsKey(key)) {
               suggestionsMap.get(key).add(val);
             } else {
-              HashSet<String> al = new HashSet<>();
-              al.add(val);
-              suggestionsMap.put(key, al);
+              HashSet<String> set = new HashSet<>();
+              set.add(val);
+              suggestionsMap.put(key, set);
             }
           }
         }
       }
+      br.close();
     } catch (IOException e) {
       Messages.loge("IOException while reading suggestions file:"
           + suggestionsListFile.getAbsolutePath());
