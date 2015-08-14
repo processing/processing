@@ -7,6 +7,8 @@ X canceling "create folder, move sketch, and continue?" will cause crash
 X   throws an NPE and then forces a quit
 X   https://github.com/processing/processing/issues/3586
 X   also showError() there shouldn't die if other Java windows open
+_ move Platform into its own class?
+_   https://github.com/processing/processing/issues/2765
 
 api changes
 X Make fields and functions in PdeKeywords protected
@@ -45,8 +47,6 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
 3.0 final
-_ move Platform into its own class?
-_   https://github.com/processing/processing/issues/2765
 _ Contributions Manager UI design
 _   https://github.com/processing/processing/issues/3482
 _ Ready to add contributed example packages?
