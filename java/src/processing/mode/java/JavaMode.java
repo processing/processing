@@ -22,8 +22,15 @@
 
 package processing.mode.java;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -322,9 +329,15 @@ public class JavaMode extends Mode {
   static public final String prefAutoSavePrompt = "pdex.autoSave.promptDisplay";
   static public final String prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault";
   static public final String prefImportSuggestEnabled = "pdex.importSuggestEnabled";
+  static public final String suggestionsFileName = "suggestions.txt";
 
   static volatile public boolean enableTweak = false;
 
+  /**
+   * Stores the white list/black list of allowed/blacklisted imports. These are defined in
+   * suggestions.txt in java mode folder.
+   */
+  static public final HashMap<String, HashSet<String>> suggestionsMap = new HashMap<>();
 
   public void loadPreferences() {
     Messages.log("Load PDEX prefs");
@@ -341,6 +354,7 @@ public class JavaMode extends Mode {
     defaultAutoSaveEnabled = Preferences.getBoolean(prefDefaultAutoSave);
     ccTriggerEnabled = Preferences.getBoolean(prefCCTriggerEnabled);
     importSuggestEnabled = Preferences.getBoolean(prefImportSuggestEnabled);
+    loadSuggestionsMap();
   }
 
 
@@ -358,6 +372,46 @@ public class JavaMode extends Mode {
     Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
     Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
     Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
+  }
+
+  public void loadSuggestionsMap() {
+    File suggestionsListFile = new File(getFolder() + File.separator
+        + suggestionsFileName);
+    if (!suggestionsListFile.exists()) {
+      Messages.loge("Suggestions file not found! "
+          + suggestionsListFile.getAbsolutePath());
+      return;
+    }
+
+    try {
+      BufferedReader br = new BufferedReader(
+                                             new FileReader(suggestionsListFile));
+      while (true) {
+        String line = br.readLine();
+        if (line == null) {
+          break;
+        }
+        line = line.trim();
+        if (line.startsWith("#")) {
+          continue;
+        } else {
+          if (line.contains("=")) {
+            String key = line.split("=")[0];
+            String val = line.split("=")[1];
+            if (suggestionsMap.containsKey(key)) {
+              suggestionsMap.get(key).add(val);
+            } else {
+              HashSet<String> al = new HashSet<>();
+              al.add(val);
+              suggestionsMap.put(key, al);
+            }
+          }
+        }
+      }
+    } catch (IOException e) {
+      Messages.loge("IOException while reading suggestions file:"
+          + suggestionsListFile.getAbsolutePath());
+    }
   }
 
 

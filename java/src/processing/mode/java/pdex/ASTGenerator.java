@@ -74,6 +74,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 
+import org.apache.tools.ant.taskdefs.Java;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -953,13 +954,14 @@ public class ASTGenerator {
                                                             Pattern.compile(word2 + "[a-zA-Z_0-9]*.class",
                                                                             Pattern.CASE_INSENSITIVE));
             String[] resources = classPath.findResources("", regExpResourceFilter);
+
             for (String matchedClass2 : resources) {
               matchedClass2 = matchedClass2.replace('/', '.'); //package name
               String matchedClass = matchedClass2.substring(0, matchedClass2.length() - 6);
               int d = matchedClass.lastIndexOf('.');
-              if (ignorableImport(matchedClass2,matchedClass.substring(d + 1)))
+              if (ignorableImport(matchedClass,matchedClass.substring(d + 1))) {
                 continue;
-
+              }
               matchedClass = matchedClass.substring(d + 1); //class name
               candidates
                   .add(new CompletionCandidate(matchedClass, "<html>"
@@ -3507,22 +3509,34 @@ public class ASTGenerator {
     }
   }
 
-  public static final String ignoredImports[] = {
-    "com.oracle.", "sun.", "sunw.", "com.sun.", "javax.", "sunw.", "org.ietf.",
-    "org.jcp.", "org.omg.", "org.w3c.", "org.xml.", "org.eclipse.", "com.ibm.",
-    "org.netbeans.", "org.jsoup.", "org.junit.", "org.apache.", "antlr." };
-  public static final String allowedImports[] = {"java.lang.", "java.util.", "java.io.",
-    "java.math.", "processing.core.", "processing.data.", "processing.event.", "processing.opengl."};
-  protected boolean ignorableImport(String impName, String className) {
-    //TODO: Trie man.
+  protected boolean ignorableImport(String impName, String fullClassName) {
     for (ImportStatement impS : errorCheckerService.getProgramImports()) {
-      if(impName.startsWith(impS.getPackageName()))
+      if (impName.toLowerCase().startsWith(impS.getPackageName().toLowerCase())) {
         return false;
+      }
     }
-    for (String impS : allowedImports) {
-      if(impName.startsWith(impS) && className.indexOf('.') == -1)
+    if (JavaMode.suggestionsMap == null
+        || JavaMode.suggestionsMap.keySet().size() == 0) {
+      log("SuggestionsMap is null or empty, won't be able to trim class names");
+      return true;
+    }
+    final String processingInclude = "include.processing";
+    final String processingExclude = "exclude.processing";
+    final String jdkInclude = "include.jdk";
+
+    if (impName.startsWith("processing")) {
+      if (JavaMode.suggestionsMap.get(processingInclude).contains(impName)) {
         return false;
+      } else if (JavaMode.suggestionsMap.get(processingExclude)
+          .contains(impName)) {
+        return true;
+      }
+    } else if (impName.startsWith("java")) {
+      if (JavaMode.suggestionsMap.get(jdkInclude).contains(impName)) {
+        return false;
+      }
     }
+
     return true;
   }
 
