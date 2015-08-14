@@ -966,7 +966,7 @@ public class Sketch {
     setUntitled(false);
 
     // Add this sketch back using the new name
-    Recent.handle(editor);
+    Recent.append(editor);
 
     // let Editor know that the save was successful
     return true;
@@ -998,7 +998,7 @@ public class Sketch {
 //    System.out.println("modified is now " + modified);
     editor.updateTitle();
     editor.getBase().rebuildSketchbookMenus();
-    Recent.handleRename(editor, oldPath);
+    Recent.rename(editor, oldPath);
 //    editor.header.rebuild();
   }
 

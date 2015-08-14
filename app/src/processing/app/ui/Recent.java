@@ -21,12 +21,17 @@
 
 package processing.app.ui;
 
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import processing.app.Base;
 import processing.app.Language;
@@ -128,7 +133,8 @@ public class Recent {
   }
 
 
-  static private void updateMenuRecord(JMenu menu, final Record rec, String sketchbookPath) {
+  static private void updateMenuRecord(JMenu menu, final Record rec,
+                                       String sketchbookPath) {
     try {
       String recPath = new File(rec.getPath()).getParent();
       String purtyPath = null;
@@ -275,7 +281,7 @@ public class Recent {
    * entry on the Recent queue. If the sketch is already in the list, it is
    * first removed so it doesn't show up multiple times.
    */
-  synchronized static public void handle(Editor editor) {
+  synchronized static public void append(Editor editor) {
     if (!editor.getSketch().isUntitled()) {
       // If this sketch is already in the menu, remove it
       remove(editor);
@@ -295,18 +301,18 @@ public class Recent {
     }
   }
 
-//handles renaming done within  processing
-  synchronized static public void handleRename(Editor editor,String oldPath){
-      if (records.size() == Preferences.getInteger("recent.count")) {
-        records.remove(0);  // remove the first entry
-      }
-      int index = findRecord(oldPath);
-      //check if record exists
-      if (index != -1) {
-        records.remove(index);
-      }
-      records.add(new Record(editor));
-      save();
+
+  synchronized static public void rename(Editor editor, String oldPath) {
+    if (records.size() == Preferences.getInteger("recent.count")) {
+      records.remove(0);  // remove the first entry
+    }
+    int index = findRecord(oldPath);
+    //check if record exists
+    if (index != -1) {
+      records.remove(index);
+    }
+    records.add(new Record(editor));
+    save();
   }
 
 

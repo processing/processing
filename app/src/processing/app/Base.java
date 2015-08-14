@@ -871,7 +871,7 @@ public class Base {
           if (tab.getFile().equals(file)) {
             editor.toFront();
             // move back to the top of the recent list
-            Recent.handle(editor);
+            Recent.append(editor);
             return editor;
           }
         }
@@ -899,7 +899,7 @@ public class Base {
         // opened successfully, let's go to work
         editor.getSketch().setUntitled(untitled);
         editors.add(editor);
-        Recent.handle(editor);
+        Recent.append(editor);
 
         // now that we're ready, show the window
         // (don't do earlier, cuz we might move it based on a window being closed)
