@@ -7,8 +7,8 @@ X canceling "create folder, move sketch, and continue?" will cause crash
 X   throws an NPE and then forces a quit
 X   https://github.com/processing/processing/issues/3586
 X   also showError() there shouldn't die if other Java windows open
-_ move Platform into its own class?
-_   https://github.com/processing/processing/issues/2765
+X move Platform into its own class, also Messages and others
+X   https://github.com/processing/processing/issues/2765
 
 api changes
 X Make fields and functions in PdeKeywords protected
@@ -16,7 +16,9 @@ X   https://github.com/processing/processing/issues/2383
 X Added "EditorException", which is thrown when loading bad sketches
 X   createEditor() now throws this when something goes wrong
 X   rather than handleOpenInternal() returning false (and being ignored)
-_ Base.openURL() -> Platform.openURL()
+X Base.openURL() -> Platform.openURL()
+X Base.showXxxx() -> Messages.showXxxx()
+X Base.log() -> Messages.log()
 
 gsoc
 X Second round of arm patches (v5)
