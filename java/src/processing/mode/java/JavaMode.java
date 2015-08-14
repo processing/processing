@@ -162,8 +162,8 @@ public class JavaMode extends Mode {
 
     if (isSketchModified(sketch)) {
       editor.deactivateRun();
-      Base.showMessage(Language.text("menu.file.save"),
-                       Language.text("tweak_mode.save_before_tweak"));
+      Messages.showMessage(Language.text("menu.file.save"),
+                           Language.text("tweak_mode.save_before_tweak"));
       return null;
     }
 
@@ -327,7 +327,7 @@ public class JavaMode extends Mode {
 
 
   public void loadPreferences() {
-    Base.log("Load PDEX prefs");
+    Messages.log("Load PDEX prefs");
     ensurePrefsExist();
     errorCheckEnabled = Preferences.getBoolean(prefErrorCheck);
     warningsEnabled = Preferences.getBoolean(prefWarnings);
@@ -345,7 +345,7 @@ public class JavaMode extends Mode {
 
 
   public void savePreferences() {
-    Base.log("Saving PDEX prefs");
+    Messages.log("Saving PDEX prefs");
     Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
     Preferences.setBoolean(prefWarnings, warningsEnabled);
     Preferences.setBoolean(prefCodeCompletionEnabled, codeCompletionsEnabled);

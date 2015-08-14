@@ -35,7 +35,7 @@ import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingWorker;
 
-import processing.app.Base;
+import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.Platform;
 import processing.app.syntax.JEditTextArea;
@@ -173,7 +173,7 @@ public class JavaTextArea extends JEditTextArea {
     if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
       if (suggestion != null){
         if (suggestion.isVisible()){
-          Base.log("esc key");
+          Messages.log("esc key");
           hideSuggestion();
           evt.consume();
           return;
@@ -216,12 +216,12 @@ public class JavaTextArea extends JEditTextArea {
           }
         break;
       case KeyEvent.VK_BACK_SPACE:
-        Base.log("BK Key");
+        Messages.log("BK Key");
         break;
       case KeyEvent.VK_SPACE:
         if (suggestion != null) {
           if (suggestion.isVisible()) {
-            Base.log("Space bar, hide completion list");
+            Messages.log("Space bar, hide completion list");
             suggestion.setInvisible();
           }
         }
@@ -250,8 +250,8 @@ public class JavaTextArea extends JEditTextArea {
         protected Object doInBackground() throws Exception {
           // Provide completions only if it's enabled
           if (JavaMode.codeCompletionsEnabled) {
-            Base.log("[KeyEvent]" + KeyEvent.getKeyText(event.getKeyCode()) + "  |Prediction started");
-            Base.log("Typing: " + fetchPhrase(event));
+            Messages.log("[KeyEvent]" + KeyEvent.getKeyText(event.getKeyCode()) + "  |Prediction started");
+            Messages.log("Typing: " + fetchPhrase(event));
           }
           return null;
         }
@@ -276,8 +276,8 @@ public class JavaTextArea extends JEditTextArea {
 
     if (keyChar == '.') {
       if (JavaMode.codeCompletionsEnabled) {
-        Base.log("[KeyEvent]" + KeyEvent.getKeyText(event.getKeyCode()) + "  |Prediction started");
-        Base.log("Typing: " + fetchPhrase(event));
+        Messages.log("[KeyEvent]" + KeyEvent.getKeyText(event.getKeyCode()) + "  |Prediction started");
+        Messages.log("Typing: " + fetchPhrase(event));
       }
     } else if (keyChar == ' ') { // Trigger on Ctrl-Space
       if (!Platform.isMacOS() && JavaMode.codeCompletionsEnabled &&
@@ -287,8 +287,8 @@ public class JavaTextArea extends JEditTextArea {
             // Provide completions only if it's enabled
             if (JavaMode.codeCompletionsEnabled) {
               getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
-              Base.log("[KeyEvent]" + event.getKeyChar() + "  |Prediction started");
-              Base.log("Typing: " + fetchPhrase(event));
+              Messages.log("[KeyEvent]" + event.getKeyChar() + "  |Prediction started");
+              Messages.log("Typing: " + fetchPhrase(event));
             }
             return null;
           }
@@ -312,8 +312,8 @@ public class JavaTextArea extends JEditTextArea {
         // Provide completions only if it's enabled
         if (JavaMode.codeCompletionsEnabled &&
             (JavaMode.ccTriggerEnabled || suggestion.isVisible())) {
-          Base.log("[KeyEvent]" + evt.getKeyChar() + "  |Prediction started");
-          Base.log("Typing: " + fetchPhrase(evt));
+          Messages.log("[KeyEvent]" + evt.getKeyChar() + "  |Prediction started");
+          Messages.log("Typing: " + fetchPhrase(evt));
         }
         return null;
       }
@@ -327,7 +327,7 @@ public class JavaTextArea extends JEditTextArea {
    * @param evt - the MouseEvent which triggered this method
    */
   private String fetchPhrase(MouseEvent evt) {
-    Base.log("--handle Mouse Right Click--");
+    Messages.log("--handle Mouse Right Click--");
     int off = xyToOffset(evt.getX(), evt.getY());
     if (off < 0)
       return null;
@@ -342,7 +342,7 @@ public class JavaTextArea extends JEditTextArea {
     else {
       int x = xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
       int xLS = off - getLineStartNonWhiteSpaceOffset(line);
-      Base.log("x=" + x);
+      Messages.log("x=" + x);
       if (x < 0 || x >= s.length())
         return null;
       String word = s.charAt(x) + "";
@@ -382,7 +382,7 @@ public class JavaTextArea extends JEditTextArea {
       if (Character.isDigit(word.charAt(0))) {
         return null;
       }
-      Base.log("Mouse click, word: " + word.trim());
+      Messages.log("Mouse click, word: " + word.trim());
       editor.getErrorChecker().getASTGenerator().setLastClickedWord(line, word, xLS);
       return word.trim();
     }
@@ -396,14 +396,14 @@ public class JavaTextArea extends JEditTextArea {
    */
   public String fetchPhrase(KeyEvent evt) {
     int off = getCaretPosition();
-    Base.log("off " + off);
+    Messages.log("off " + off);
     if (off < 0)
       return null;
     int line = getCaretLine();
     if (line < 0)
       return null;
     String s = getLineText(line);
-    Base.log("  line " + line);
+    Messages.log("  line " + line);
 
     //log2(s + " len " + s.length());
 
@@ -414,7 +414,7 @@ public class JavaTextArea extends JEditTextArea {
       return null; //TODO: Does this check cause problems? Verify.
     }
 
-    Base.log("  x char: " + s.charAt(x));
+    Messages.log("  x char: " + s.charAt(x));
 
     if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_'
         || s.charAt(x) == '(' || s.charAt(x) == '.')) {
@@ -821,7 +821,7 @@ public class JavaTextArea extends JEditTextArea {
     hideSuggestion();
 
     if (listModel.size() == 0) {
-      Base.log("TextArea: No suggestions to show.");
+      Messages.log("TextArea: No suggestions to show.");
 
     } else {
       int position = getCaretPosition();

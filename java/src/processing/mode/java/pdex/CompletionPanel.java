@@ -50,6 +50,7 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.text.BadLocationException;
 
 import processing.app.Base;
+import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.syntax.JEditTextArea;
 import processing.mode.java.JavaEditor;
@@ -361,7 +362,7 @@ public class CompletionPanel {
           }
         }
 
-        Base.loge(subWord + " <= subword, Inserting suggestion=> "
+        Messages.loge(subWord + " <= subword, Inserting suggestion=> "
             + selectedSuggestion + " Current sub: " + currentSubword);
         if (currentSubword.length() > 0) {
           textarea.getDocument().remove(insertionPosition - currentSubwordLen,
@@ -382,7 +383,7 @@ public class CompletionPanel {
           }
         }
 
-        Base.log("Suggestion inserted: " + System.currentTimeMillis());
+        Messages.log("Suggestion inserted: " + System.currentTimeMillis());
         if (completionList.getSelectedValue().getLabel().contains("...")) {
           // log("No hide");
           // Why not hide it? Coz this is the case of
@@ -568,11 +569,11 @@ public class CompletionPanel {
           break;
 
         default:
-          Base.log("(CustomListRenderer)Unknown CompletionCandidate type " + cc.getType());
+          Messages.log("(CustomListRenderer)Unknown CompletionCandidate type " + cc.getType());
           break;
         }
       } else {
-        Base.log("(CustomListRenderer)Unknown CompletionCandidate object " + value);
+        Messages.log("(CustomListRenderer)Unknown CompletionCandidate object " + value);
       }
       return label;
     }

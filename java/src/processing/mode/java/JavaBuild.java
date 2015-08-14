@@ -778,9 +778,9 @@ public class JavaBuild {
     // if name != exportSketchName, then that's weirdness
     // BUG unfortunately, that can also be a bug in the preproc :(
     if (!sketch.getName().equals(foundName)) {
-      Base.showWarning("Error during export",
-                       "Sketch name is " + sketch.getName() + " but the sketch\n" +
-                       "name in the code was " + foundName, null);
+      Messages.showWarning("Error during export",
+                           "Sketch name is " + sketch.getName() + " but the sketch\n" +
+                           "name in the code was " + foundName, null);
       return false;
     }
 
@@ -862,11 +862,11 @@ public class JavaBuild {
     for (Library library : importedLibraries) {
       if (!library.supportsArch(exportPlatform, exportVariant)) {
         String pn = PConstants.platformNames[exportPlatform];
-        Base.showWarning("Quibbles 'n Bits",
-                         "The application." + pn + exportVariant +
-                         " folder will not be created\n" +
-                         "because no " + exportVariant + " version of " +
-                         library.getName() + " is available for " + pn, null);
+        Messages.showWarning("Quibbles 'n Bits",
+                             "The application." + pn + exportVariant +
+                             " folder will not be created\n" +
+                             "because no " + exportVariant + " version of " +
+                             library.getName() + " is available for " + pn, null);
         return true;  // don't cancel all exports for this, just move along
       }
     }

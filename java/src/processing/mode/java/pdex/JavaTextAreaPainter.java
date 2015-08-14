@@ -47,7 +47,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Segment;
 import javax.swing.text.Utilities;
 
-import processing.app.Base;
+import processing.app.Messages;
 import processing.app.Platform;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
@@ -155,7 +155,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 
   void handleCtrlClick(MouseEvent evt) {
-    Base.log("--handleCtrlClick--");
+    Messages.log("--handleCtrlClick--");
     int off = textArea.xyToOffset(evt.getX(), evt.getY());
     if (off < 0)
       return;
@@ -169,7 +169,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
       return;
     else {
       int x = textArea.xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
-      Base.log("x="+x);
+      Messages.log("x="+x);
       int xLS = off - textArea.getLineStartNonWhiteSpaceOffset(line);
       if (x < 0 || x >= s.length())
         return;
@@ -210,7 +210,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
       if (Character.isDigit(word.charAt(0)))
         return;
 
-      Base.log(getEditor().getErrorChecker().mainClassOffset + line + "|" + line + "| offset " + xLS + word + " <= \n");
+      Messages.log(getEditor().getErrorChecker().mainClassOffset + line + "|" + line + "| offset " + xLS + word + " <= \n");
       getEditor().getErrorChecker().getASTGenerator().scrollToDeclaration(line, word, xLS);
     }
   }
@@ -245,7 +245,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
       super.paintLine(gfx, line, x + Editor.LEFT_GUTTER, tokenMarker);
 
     } catch (Exception e) {
-      Base.log(e.getMessage());
+      Messages.log(e.getMessage());
     }
 
     // formerly only when in debug mode

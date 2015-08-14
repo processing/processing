@@ -106,8 +106,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import processing.app.Base;
 import processing.app.Library;
+import processing.app.Messages;
 import processing.app.Platform;
 import processing.app.SketchCode;
 import processing.app.Util;
@@ -243,7 +243,7 @@ public class ASTGenerator {
                                               .types().get(0)));
     //log("Total CU " + compilationUnit.types().size());
     if(compilationUnit.types() == null || compilationUnit.types().isEmpty()){
-      Base.loge("No CU found!");
+      Messages.loge("No CU found!");
     }
     visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
     SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
@@ -869,7 +869,7 @@ public class ASTGenerator {
         ASTNode testnode = parser.createAST(null);
         //Base.loge("PREDICTION PARSER PROBLEMS: " + parser);
         // Find closest ASTNode of the document to this word
-        Base.loge("Typed: " + word2 + "|" + " temp Node type: " + testnode.getClass().getSimpleName());
+        Messages.loge("Typed: " + word2 + "|" + " temp Node type: " + testnode.getClass().getSimpleName());
         if(testnode instanceof MethodInvocation){
           MethodInvocation mi = (MethodInvocation)testnode;
           log(mi.getName() + "," + mi.getExpression() + "," + mi.typeArguments().size());
@@ -882,7 +882,7 @@ public class ASTGenerator {
           // Make sure nearestNode is not NULL if couldn't find a closeset node
           nearestNode = (ASTNode) errorCheckerService.getLastCorrectCU().types().get(0);
         }
-        Base.loge(lineNumber + " Nearest ASTNode to PRED "
+        Messages.loge(lineNumber + " Nearest ASTNode to PRED "
             + getNodeAsString(nearestNode));
 
         candidates = new ArrayList<CompletionCandidate>();
@@ -890,7 +890,7 @@ public class ASTGenerator {
         // Determine the expression typed
 
         if (testnode instanceof SimpleName && !noCompare) {
-          Base.loge("One word expression " + getNodeAsString(testnode));
+          Messages.loge("One word expression " + getNodeAsString(testnode));
           //==> Simple one word exprssion - so is just an identifier
 
           // Bottom up traversal of the AST to look for possible definitions at
@@ -974,7 +974,7 @@ public class ASTGenerator {
 
           // ==> Complex expression of type blah.blah2().doIt,etc
           // Have to resolve it by carefully traversing AST of testNode
-          Base.loge("Complex expression " + getNodeAsString(testnode));
+          Messages.loge("Complex expression " + getNodeAsString(testnode));
           log("candidates empty");
           ASTNode childExpr = getChildExpression(testnode);
           log("Parent expression : " + getParentExpression(testnode));
@@ -1236,7 +1236,7 @@ public class ASTGenerator {
                                                - lineElement.getStartOffset());
       return javaLine;
     } catch (BadLocationException e) {
-      Base.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
+      Messages.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
     }
     return null;
   }
@@ -1263,7 +1263,7 @@ public class ASTGenerator {
 //                                               - lineElement.getStartOffset());
       return lineElement;
     } catch (BadLocationException e) {
-      Base.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
+      Messages.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
     }
     return null;
   }
@@ -1744,7 +1744,7 @@ public class ASTGenerator {
       ASTNodeWrapper declWrap = new ASTNodeWrapper(simpName2, nodeLabel);
       //errorCheckerService.highlightNode(declWrap);
       if (!declWrap.highlightNode(this)) {
-        Base.loge("Highlighting failed.");
+        Messages.loge("Highlighting failed.");
       }
     }
 
@@ -1859,7 +1859,7 @@ public class ASTGenerator {
 
       @Override
       public void valueChanged(TreeSelectionEvent e) {
-        Base.log(e.toString());
+        Messages.log(e.toString());
         SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           @Override
@@ -2159,8 +2159,7 @@ public class ASTGenerator {
     if(wnode.getNode() == null){
       return null;
     }
-    Base.loge("Gonna find all occurrences of "
-        + getNodeAsString(wnode.getNode()));
+    Messages.loge("Gonna find all occurrences of " + getNodeAsString(wnode.getNode()));
 
     //If wnode is a constructor, find the TD instead.
     if (wnode.getNodeType() == ASTNode.METHOD_DECLARATION) {
@@ -2176,7 +2175,7 @@ public class ASTGenerator {
       if(node != null && node instanceof TypeDeclaration){
         TypeDeclaration td = (TypeDeclaration) node;
         if(td.getName().toString().equals(md.getName().toString())){
-          Base.loge("Renaming constructor of " + getNodeAsString(td));
+          Messages.loge("Renaming constructor of " + getNodeAsString(td));
           wnode = new ASTNodeWrapper(td);
         }
       }
@@ -2414,7 +2413,7 @@ public class ASTGenerator {
         }
         log("Visiting: " + getNodeAsString(node));
         ASTNode decl2 = findDeclaration(sn);
-        Base.loge("It's decl: " + getNodeAsString(decl2));
+        Messages.loge("It's decl: " + getNodeAsString(decl2));
         log("But we need: "+getNodeAsString(decl));
         for (ASTNode astNode : nodesToBeMatched) {
           if(astNode.equals(decl2)){
@@ -3714,7 +3713,7 @@ public class ASTGenerator {
 
 
   static private void log(Object object) {
-    Base.log(object == null ? "null" : object.toString());
+    Messages.log(object == null ? "null" : object.toString());
   }
 
 

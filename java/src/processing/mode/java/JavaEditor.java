@@ -360,9 +360,9 @@ public class JavaEditor extends Editor {
         try {
           new Welcome(base, Preferences.getSketchbookPath().equals(Preferences.getOldSketchbookPath()));
         } catch (IOException ioe) {
-          Base.showWarning("Unwelcome Error",
-                           "Please report this error to\n" +
-                           "https://github.com/processing/processing/issues", ioe);
+          Messages.showWarning("Unwelcome Error",
+                               "Please report this error to\n" +
+                               "https://github.com/processing/processing/issues", ioe);
         }
       }
     });
@@ -1101,15 +1101,15 @@ public class JavaEditor extends Editor {
   protected boolean handleExportCheckModified() {
     if (sketch.isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage(Language.text("export.messages.is_read_only"),
-                       Language.text("export.messages.is_read_only.description"));
+      Messages.showMessage(Language.text("export.messages.is_read_only"),
+                           Language.text("export.messages.is_read_only.description"));
       return false;
     }
 
     // don't allow if untitled
     if (sketch.isUntitled()) {
-      Base.showMessage(Language.text("export.messages.cannot_export"),
-                       Language.text("export.messages.cannot_export.description"));
+      Messages.showMessage(Language.text("export.messages.cannot_export"),
+                           Language.text("export.messages.cannot_export.description"));
       return false;
     }
 
@@ -1753,7 +1753,7 @@ public class JavaEditor extends Editor {
       // this method gets called twice when saving sketch for the first time
       // once with new name and another with old(causing NPE). Keep an eye out
       // for potential issues. See #2675. TODO:
-      Base.loge("Illegal tab name to addBreakpointComments() " + tabFilename);
+      Messages.loge("Illegal tab name to addBreakpointComments() " + tabFilename);
       return;
     }
     List<LineBreakpoint> bps = debugger.getBreakpoints(tab.getFileName());
@@ -1988,7 +1988,7 @@ public class JavaEditor extends Editor {
             for (AvailableContribution ac : installLibsHeaders) {
               libList.append("\n  • " + ac.getName());
             }
-            int option = Base.showYesNoQuestion(this,
+            int option = Messages.showYesNoQuestion(this,
                 Language.text("contrib.import.dialog.title"),
                 Language.text("contrib.import.dialog.primary_text"),
                 libList.toString());
@@ -2624,14 +2624,14 @@ public class JavaEditor extends Editor {
 
   /** Handle refactor operation */
   private void handleRefactor() {
-    Base.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
+    Messages.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
     errorCheckerService.getASTGenerator().handleRefactor();
   }
 
 
   /** Handle show usage operation */
   private void handleShowUsage() {
-    Base.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
+    Messages.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
     errorCheckerService.getASTGenerator().handleShowUsage();
   }
 
@@ -2667,7 +2667,7 @@ public class JavaEditor extends Editor {
     super.applyPreferences();
     if (jmode != null) {
       jmode.loadPreferences();
-      Base.log("Applying prefs");
+      Messages.log("Applying prefs");
       // trigger it once to refresh UI
       errorCheckerService.runManualErrorCheck();
     }
@@ -2703,9 +2703,9 @@ public class JavaEditor extends Editor {
 
     if (modified) {
       // ask to keep the values
-      if (Base.showYesNoQuestion(this, Language.text("tweak_mode"),
-                                 Language.text("tweak_mode.keep_changes.line1"),
-                                 Language.text("tweak_mode.keep_changes.line2")) == JOptionPane.YES_OPTION) {
+      if (Messages.showYesNoQuestion(this, Language.text("tweak_mode"),
+                                     Language.text("tweak_mode.keep_changes.line1"),
+                                     Language.text("tweak_mode.keep_changes.line2")) == JOptionPane.YES_OPTION) {
         for (int i = 0; i < sketch.getCodeCount(); i++) {
           if (tweakedTabs[i]) {
             sketch.getCode(i).setModified(true);
@@ -2729,7 +2729,7 @@ public class JavaEditor extends Editor {
         try {
           sketch.save();
         } catch (IOException e) {
-          Base.showWarning("Error", "Could not save the modified sketch.", e);
+          Messages.showWarning("Error", "Could not save the modified sketch.", e);
         }
 
         // repaint the editor header (show the modified tabs)
