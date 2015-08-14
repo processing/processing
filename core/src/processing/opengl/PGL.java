@@ -1673,7 +1673,7 @@ public abstract class PGL {
       // 'textureXXX()' functions by 'texture()' functions. Order of these
       // replacements is important to prevent collisions between these two.
       String[] search = new String[] {
-          "varying", "attibute",
+          "varying", "attribute",
           "texture",
           "texMap2D", "texMap3D", "texMap2DRect",
           "texMapCube", "gl_FragColor"
@@ -1701,7 +1701,7 @@ public abstract class PGL {
       // 'textureXXX()' functions by 'texture()' functions. Order of these
       // replacements is important to prevent collisions between these two.
       String[] search = new String[] {
-          "varying", "attibute",
+          "varying", "attribute",
           "texture",
           "texMap2D", "texMap3D", "texMap2DRect", "texMapCube"
       };
