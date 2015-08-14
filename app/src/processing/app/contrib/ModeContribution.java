@@ -24,6 +24,7 @@ package processing.app.contrib;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ public class ModeContribution extends LocalContribution {
       Messages.log(ig.getMessage());
 
     } catch (Throwable err) {
+      System.out.println("err is " + err);
       // Throwable to catch Exceptions or UnsupportedClassVersionError et al
       if (searchName == null) {
         //err.printStackTrace(System.out);
@@ -137,10 +139,13 @@ public class ModeContribution extends LocalContribution {
             contribModes.add(new ModeContribution(base, folder, null));
           } catch (NoSuchMethodError nsme) {
             System.err.println(folder.getName() + " is not compatible with this version of Processing");
-//            System.err.println(nsme.getMessage());
           } catch (NoClassDefFoundError ncdfe) {
             System.err.println(folder.getName() + " is not compatible with this version of Processing");
-//            System.err.println(ncdfe.getMessage());
+          } catch (InvocationTargetException ite) {
+            System.err.println(folder.getName() + " could not be loaded and may not compatible with this version of Processing");
+//            Throwable cause = ite.getCause();
+//            if (cause != null) {
+//            }
           } catch (IgnorableException ig) {
             Messages.log(ig.getMessage());
           } catch (Throwable e) {
