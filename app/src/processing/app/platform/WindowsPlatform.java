@@ -36,6 +36,7 @@ import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 
 import processing.app.Base;
+import processing.app.Messages;
 import processing.app.Preferences;
 import processing.app.platform.DefaultPlatform;
 import processing.app.platform.WindowsRegistry.REGISTRY_ROOT_KEY;
@@ -215,7 +216,7 @@ public class WindowsPlatform extends DefaultPlatform {
       // hooray!
 
     } else {
-      Base.log("Could not associate files, turning off auto-associate pref.");
+      Messages.log("Could not associate files, turning off auto-associate pref.");
       Preferences.setBoolean("platform.auto_file_type_associations", false);
     }
   }

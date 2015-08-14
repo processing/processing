@@ -120,8 +120,8 @@ public abstract class Mode {
         loadKeywords(file);
       }
     } catch (IOException e) {
-      Base.showWarning("Problem loading keywords",
-                       "Could not load keywords file for " + getTitle() + " mode.", e);
+      Messages.showWarning("Problem loading keywords",
+                           "Could not load keywords file for " + getTitle() + " mode.", e);
     }
   }
 
@@ -212,8 +212,8 @@ public abstract class Mode {
 //      loadBackground();
 
     } catch (IOException e) {
-      Base.showError("Problem loading theme.txt",
-                     "Could not load theme.txt, please re-install Processing", e);
+      Messages.showError("Problem loading theme.txt",
+                         "Could not load theme.txt, please re-install Processing", e);
     }
   }
 
@@ -347,7 +347,7 @@ public abstract class Mode {
         secondary += "<b>" + library.getName() + "</b> (" + location + ")<br>";
       }
       secondary += "Extra libraries need to be removed before this sketch can be used.";
-      Base.showWarningTiered("Duplicate Library Problem", primary, secondary, null);
+      Messages.showWarningTiered("Duplicate Library Problem", primary, secondary, null);
       throw new SketchException("Duplicate libraries found for " + pkgName + ".");
 
     } else {

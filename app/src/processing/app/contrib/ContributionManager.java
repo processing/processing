@@ -30,6 +30,7 @@ import javax.swing.SwingWorker;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Messages;
 import processing.app.Util;
 import processing.app.ui.Editor;
 import processing.core.PApplet;
@@ -661,18 +662,17 @@ public class ContributionManager {
 
   static private void installOnStartUp(final Base base, final AvailableContribution availableContrib) {
     if (availableContrib.link == null) {
-      Base.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
-                       Language.text("contrib.unsupported_operating_system"));
-      return;
-    }
-    try {
-      URL downloadUrl = new URL(availableContrib.link);
+      Messages.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
+                           Language.text("contrib.unsupported_operating_system"));
+    } else {
+      try {
+        URL downloadUrl = new URL(availableContrib.link);
+        ContributionManager.downloadAndInstallOnStartup(base, downloadUrl, availableContrib);
 
-      ContributionManager.downloadAndInstallOnStartup(base, downloadUrl, availableContrib);
-
-    } catch (MalformedURLException e) {
-      Base.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
-                       Language.text("contrib.errors.malformed_url"), e);
+      } catch (MalformedURLException e) {
+        Messages.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
+                             Language.text("contrib.errors.malformed_url"), e);
+      }
     }
   }
 

@@ -480,7 +480,7 @@ public class Library extends LocalContribution {
                 + "\" cannot be used.\n"
                 + "Library names must contain only basic letters and numbers.\n"
                 + "(ASCII only and no spaces, and it cannot start with a number)";
-            Base.showMessage("Ignoring bad library name", mess);
+            Messages.showMessage("Ignoring bad library name", mess);
             continue;
           }
         }

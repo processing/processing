@@ -207,7 +207,7 @@ public class ContributionManagerDialog {
         while (iter.hasNext()) {
           Editor ed = iter.next();
           if (ed.getSketch().isModified()) {
-            int option = Base.showYesNoQuestion(editor, title, Language
+            int option = Messages.showYesNoQuestion(editor, title, Language
               .text("contrib.unsaved_changes"), Language
               .text("contrib.unsaved_changes.prompt"));
 

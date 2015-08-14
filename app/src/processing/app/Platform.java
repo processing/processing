@@ -29,6 +29,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.platform.FileUtils;
+
 import processing.app.platform.DefaultPlatform;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -70,7 +74,7 @@ public class Platform {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
+
 
   static public void init() {
     try {
@@ -84,9 +88,9 @@ public class Platform {
       }
       inst = (DefaultPlatform) platformClass.newInstance();
     } catch (Exception e) {
-      Base.showError("Problem Setting the Platform",
-                     "An unknown error occurred while trying to load\n" +
-                     "platform-specific code for your machine.", e);
+      Messages.showError("Problem Setting the Platform",
+                         "An unknown error occurred while trying to load\n" +
+                         "platform-specific code for your machine.", e);
     }
   }
 
@@ -145,7 +149,7 @@ public class Platform {
       inst.openURL(url);
 
     } catch (Exception e) {
-      Base.showWarning("Problem Opening URL",
+      Messages.showWarning("Problem Opening URL",
                        "Could not open the URL\n" + url, e);
     }
   }
@@ -169,8 +173,8 @@ public class Platform {
       inst.openFolder(file);
 
     } catch (Exception e) {
-      Base.showWarning("Problem Opening Folder",
-                       "Could not open the folder\n" + file.getAbsolutePath(), e);
+      Messages.showWarning("Problem Opening Folder",
+                           "Could not open the folder\n" + file.getAbsolutePath(), e);
     }
   }
 
@@ -267,8 +271,8 @@ public class Platform {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
-  
+
+
   static protected File processingRoot;
 
   /**
@@ -342,5 +346,62 @@ public class Platform {
     } catch (IOException e) {
       return javaFile.getAbsolutePath();
     }
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  /**
+   * Attempts to move to the Trash on OS X, or the Recycle Bin on Windows.
+   * Also tries to find a suitable Trash location on Linux.
+   * If not possible, just deletes the file or folder instead.
+   * @param file the folder or file to be removed/deleted
+   * @return true if the folder was successfully removed
+   * @throws IOException
+   */
+  static public boolean deleteFile(File file) throws IOException {
+    FileUtils fu = FileUtils.getInstance();
+    if (fu.hasTrash()) {
+      fu.moveToTrash(new File[] { file });
+      return true;
+
+    } else if (file.isDirectory()) {
+      Util.removeDir(file);
+      return true;
+
+    } else {
+      return file.delete();
+    }
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public interface CLibrary extends Library {
+    CLibrary INSTANCE = (CLibrary)Native.loadLibrary("c", CLibrary.class);
+    int setenv(String name, String value, int overwrite);
+    String getenv(String name);
+    int unsetenv(String name);
+    int putenv(String string);
+  }
+
+
+  static public void setenv(String variable, String value) {
+    CLibrary clib = CLibrary.INSTANCE;
+    clib.setenv(variable, value, 1);
+  }
+
+
+  static public String getenv(String variable) {
+    CLibrary clib = CLibrary.INSTANCE;
+    return clib.getenv(variable);
+  }
+
+
+  public int unsetenv(String variable) {
+    CLibrary clib = CLibrary.INSTANCE;
+    return clib.unsetenv(variable);
   }
 }

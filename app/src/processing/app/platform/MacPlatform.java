@@ -29,6 +29,7 @@ import java.io.IOException;
 import com.apple.eio.FileManager;
 
 import processing.app.Base;
+import processing.app.Messages;
 import processing.app.platform.DefaultPlatform;
 
 
@@ -57,7 +58,7 @@ public class MacPlatform extends DefaultPlatform {
     try {
       Runtime.getRuntime().exec(cmdarray);
     } catch (IOException e) {
-      Base.log("Error saving platform language: " + e.getMessage());
+      Messages.log("Error saving platform language: " + e.getMessage());
     }
   }
 

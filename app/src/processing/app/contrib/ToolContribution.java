@@ -27,6 +27,7 @@ import java.net.URLClassLoader;
 import java.util.*;
 
 import processing.app.Base;
+import processing.app.Messages;
 //import processing.app.Base;
 import processing.app.tools.Tool;
 import processing.app.ui.Editor;
@@ -41,7 +42,7 @@ public class ToolContribution extends LocalContribution implements Tool {
     try {
       return new ToolContribution(folder);
     } catch (IgnorableException ig) {
-      Base.log(ig.getMessage());
+      Messages.log(ig.getMessage());
 
     } catch (VerifyError ve) {  // incompatible
       // avoid the excessive error spew that happens here

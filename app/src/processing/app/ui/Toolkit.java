@@ -66,8 +66,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
-import processing.app.Base;
 import processing.app.Language;
+import processing.app.Messages;
 import processing.app.Platform;
 import processing.app.Preferences;
 
@@ -828,7 +828,7 @@ public class Toolkit {
           }
         }
       } catch (Exception e) {
-        Base.loge("Could not load mono font", e);
+        Messages.loge("Could not load mono font", e);
         monoFont = new Font("Monospaced", Font.PLAIN, size);
         monoBoldFont = new Font("Monospaced", Font.BOLD, size);
       }
@@ -864,7 +864,7 @@ public class Toolkit {
           }
         }
       } catch (Exception e) {
-        Base.loge("Could not load sans font", e);
+        Messages.loge("Could not load sans font", e);
         sansFont = new Font("SansSerif", Font.PLAIN, size);
         sansBoldFont = new Font("SansSerif", Font.BOLD, size);
       }
@@ -914,7 +914,7 @@ public class Toolkit {
       } else {
         msg += "Please reinstall Processing.";
       }
-      Base.showError("Font Sadness", msg, null);
+      Messages.showError("Font Sadness", msg, null);
     }
 
     BufferedInputStream input = new BufferedInputStream(new FileInputStream(fontFile));

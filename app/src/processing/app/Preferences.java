@@ -67,7 +67,7 @@ public class Preferences {
       // replacing the file after doing a search for "preferences.txt".
       load(Base.getLibStream(DEFAULTS_FILE));
     } catch (Exception e) {
-      Base.showError(null, "Could not read default settings.\n" +
+      Messages.showError(null, "Could not read default settings.\n" +
                            "You'll need to reinstall Processing.", e);
     }
 
@@ -109,11 +109,11 @@ public class Preferences {
         load(new FileInputStream(preferencesFile));
 
       } catch (Exception ex) {
-        Base.showError("Error reading preferences",
-                       "Error reading the preferences file. " +
-                       "Please delete (or move)\n" +
-                       preferencesFile.getAbsolutePath() +
-                       " and restart Processing.", ex);
+        Messages.showError("Error reading preferences",
+                           "Error reading the preferences file. " +
+                           "Please delete (or move)\n" +
+                           preferencesFile.getAbsolutePath() +
+                           " and restart Processing.", ex);
       }
     }
 
@@ -385,7 +385,7 @@ public class Preferences {
     } catch (Exception e) {
       // Adding try/catch block because this may be where
       // a lot of startup crashes are happening.
-      Base.log("Error with font " + get(attr) + " for attribute " + attr);
+      Messages.log("Error with font " + get(attr) + " for attribute " + attr);
     }
     return new Font("Dialog", Font.PLAIN, 12);
   }

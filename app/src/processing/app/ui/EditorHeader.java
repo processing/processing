@@ -31,8 +31,8 @@ import java.util.Arrays;
 
 import javax.swing.*;
 
-import processing.app.Base;
 import processing.app.Language;
+import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.Platform;
 import processing.app.Sketch;
@@ -477,8 +477,8 @@ public class EditorHeader extends JComponent {
         if (!Platform.isMacOS() &&  // ok on OS X
             editor.base.getEditors().size() == 1 &&  // mmm! accessor
             sketch.getCurrentCodeIndex() == 0) {
-            Base.showWarning(Language.text("editor.header.delete.warning.title"),
-                             Language.text("editor.header.delete.warning.text"), null);
+            Messages.showWarning(Language.text("editor.header.delete.warning.title"),
+                                 Language.text("editor.header.delete.warning.text"));
         } else {
           editor.getSketch().handleDeleteCode();
         }

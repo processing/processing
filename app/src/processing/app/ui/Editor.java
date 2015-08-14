@@ -26,6 +26,7 @@ package processing.app.ui;
 import processing.app.Base;
 import processing.app.Formatter;
 import processing.app.Language;
+import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.Platform;
 import processing.app.Preferences;
@@ -524,8 +525,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
           }
         }
       } catch (Exception e) {
-        Base.showWarning("Drag & Drop Problem",
-                         "An error occurred while trying to add files to the sketch.", e);
+        Messages.showWarning("Drag & Drop Problem",
+                             "An error occurred while trying to add files to the sketch.", e);
         return false;
       }
       statusNotice(Language.pluralize("editor.status.drag_and_drop.files_added", successful));
@@ -564,9 +565,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
           if (!sketch.isModified()) {
             base.changeMode(m);
           } else {
-            Base.showWarning("Save",
-                             "Please save the sketch before changing the mode.",
-                             null);
+            Messages.showWarning("Save",
+                                 "Please save the sketch before changing the mode.");
 
             // Re-select the old checkbox, because it was automatically
             // updated by Java, even though the Mode could not be changed.
@@ -1246,7 +1246,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           statusError("\"" + tool.getMenuTitle() + "\" is not" +
                       "compatible with this version of Processing");
           //nsme.printStackTrace();
-          Base.loge("Incompatible tool found during tool.run()", nsme);
+          Messages.loge("Incompatible tool found during tool.run()", nsme);
           item.setEnabled(false);
 
         } catch (Exception ex) {
@@ -1284,13 +1284,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
         System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
                            "compatible with this version of Processing");
         System.err.println("The " + nsme.getMessage() + " method no longer exists.");
-        Base.loge("Incompatible Tool found during tool.init()", nsme);
+        Messages.loge("Incompatible Tool found during tool.init()", nsme);
 
       } catch (NoClassDefFoundError ncdfe) {
         System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
                            "compatible with this version of Processing");
         System.err.println("The " + ncdfe.getMessage() + " class is no longer available.");
-        Base.loge("Incompatible Tool found during tool.init()", ncdfe);
+        Messages.loge("Incompatible Tool found during tool.init()", ncdfe);
 
       } catch (AbstractMethodError ame) {
         System.err.println("\"" + tool.getMenuTitle() + "\" is not " +

@@ -25,18 +25,12 @@ package processing.app.platform;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 
 import javax.swing.UIManager;
 
 import processing.app.Base;
 import processing.app.Preferences;
-import processing.app.Util;
-
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-import com.sun.jna.platform.FileUtils;
 
 
 /**
@@ -125,59 +119,5 @@ public class DefaultPlatform {
 
   public void openFolder(File file) throws Exception {
     Desktop.getDesktop().open(file);
-  }
-
-
-  /**
-   * Attempts to move to the Trash on OS X, or the Recycle Bin on Windows.
-   * Also tries to find a suitable Trash location on Linux.
-   * If not possible, just deletes the file or folder instead.
-   * @param file the folder or file to be removed/deleted
-   * @return true if the folder was successfully removed
-   * @throws IOException
-   */
-  final public boolean deleteFile(File file) throws IOException {
-    FileUtils fu = FileUtils.getInstance();
-    if (fu.hasTrash()) {
-      fu.moveToTrash(new File[] { file });
-      return true;
-
-    } else if (file.isDirectory()) {
-      Util.removeDir(file);
-      return true;
-
-    } else {
-      return file.delete();
-    }
-  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  public interface CLibrary extends Library {
-    CLibrary INSTANCE = (CLibrary)Native.loadLibrary("c", CLibrary.class);
-    int setenv(String name, String value, int overwrite);
-    String getenv(String name);
-    int unsetenv(String name);
-    int putenv(String string);
-  }
-
-
-  public void setenv(String variable, String value) {
-    CLibrary clib = CLibrary.INSTANCE;
-    clib.setenv(variable, value, 1);
-  }
-
-
-  public String getenv(String variable) {
-    CLibrary clib = CLibrary.INSTANCE;
-    return clib.getenv(variable);
-  }
-
-
-  public int unsetenv(String variable) {
-    CLibrary clib = CLibrary.INSTANCE;
-    return clib.unsetenv(variable);
   }
 }

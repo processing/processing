@@ -36,10 +36,13 @@ import javax.swing.JMenuItem;
 import processing.app.Base;
 import processing.app.Language;
 import processing.app.Library;
+import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.Preferences;
 import processing.core.PApplet;
 
+
+// TODO this isn't pretty... probably better to do an internal instance fancy thing
 
 // dealing with renaming
 //   before sketch save/rename, remove it from the recent list
@@ -88,7 +91,7 @@ public class Recent {
           if (new File(line).exists()) {  // don't add ghost entries
             records.add(new Record(line));
           } else {
-            Base.log("ghost file: " + line);
+            Messages.log("ghost file: " + line);
           }
         }
       }

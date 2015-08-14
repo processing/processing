@@ -34,6 +34,7 @@ import javax.swing.event.*;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Messages;
 import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.ui.ColorChooser;
@@ -624,7 +625,7 @@ public class PreferencesFrame {
       Preferences.set("editor.font.size", String.valueOf(selection));
 
     } catch (NumberFormatException e) {
-      Base.log("Ignoring invalid font size " + fontSizeField); //$NON-NLS-1$
+      Messages.log("Ignoring invalid font size " + fontSizeField); //$NON-NLS-1$
       fontSizeField.setSelectedItem(Preferences.getInteger("editor.font.size"));
     }
 
@@ -637,7 +638,7 @@ public class PreferencesFrame {
       Preferences.set("console.font.size", String.valueOf(selection));
 
     } catch (NumberFormatException e) {
-      Base.log("Ignoring invalid font size " + consoleFontSizeField); //$NON-NLS-1$
+      Messages.log("Ignoring invalid font size " + consoleFontSizeField); //$NON-NLS-1$
       consoleFontSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
     }
 
