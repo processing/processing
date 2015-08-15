@@ -17,6 +17,7 @@ https://github.com/processing/processing/issues/new
 Meanwhile, Jakub Valtar is holed up at Fathom in Boston, fixing all of
 the bugs. See "your contributions are funding graphics fixes," below.
 
+
 [ bug fixes ] 
 
 + Fix NullPointerException with some sketches that have no size() command
@@ -84,6 +85,10 @@ the bugs. See "your contributions are funding graphics fixes," below.
 + Deactivate install button when incompatible
   https://github.com/processing/processing/issues/3603
   https://github.com/processing/processing/pull/3611
+
++ CM "Updates" badge appears even when there are no updates
+  https://github.com/processing/processing/issues/3597
+  https://github.com/processing/processing/pull/3625
 
 
 [ fixed earlier, spring cleaning ]

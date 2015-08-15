@@ -42,6 +42,11 @@ X filter(PShader) broken in HDPI mode
 X   https://github.com/processing/processing/issues/3577
 
 
+known issues
+_ P2D and P3D windows behave strangely when larger than the screen size
+_   https://github.com/processing/processing/issues/3401
+
+
 docs
 _ note that full screen and present are now different
 _   on Export to Application, this has an impact

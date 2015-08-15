@@ -11,14 +11,10 @@ X move Platform into its own class, also Messages and others
 X   https://github.com/processing/processing/issues/2765
 X Pass command line arguments to sketches
 X   https://github.com/processing/processing/issues/2552
-_ JNA errors on startup when run from an account w/ non-ASCII characters
-_   set jna.tmpdir (or java.io.tmpdir) to another location
-_   https://github.com/twall/jna/issues/124
-_   https://github.com/twall/jna/issues/238
 _ 'handleTweak' variable implemented strangely
-_ ctrl+r not restarting sketch when debug is enabled
-_   hitting Run while a sketch is running should restart the sketch
-_   https://github.com/processing/processing/issues/3623
+X ctrl+r not restarting sketch when debug is enabled
+X   hitting Run while a sketch is running should restart the sketch
+X   https://github.com/processing/processing/issues/3623
 
 api changes
 X Make fields and functions in PdeKeywords protected
@@ -45,6 +41,9 @@ X   https://github.com/processing/processing/pull/3607
 X Deactivate install button when incompatible
 X   https://github.com/processing/processing/issues/3603
 X   https://github.com/processing/processing/pull/3611
+X CM "Updates" badge appears even when there are no updates
+X   https://github.com/processing/processing/issues/3597
+X   https://github.com/processing/processing/pull/3625
 
 earlier
 X closing the color selector makes things freeze (only Linux and Windows?)
@@ -70,9 +69,19 @@ _   but anything else reports "font sadness" b/c it's using the system JRE
 _   https://github.com/processing/processing/issues/3543
 _   move to javapackager or another option?
 _   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-application
-_ P2D and P3D windows behave strangely when larger than the screen size
-_   https://github.com/processing/processing/issues/3401
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
+_ JNA errors on startup when run from an account w/ non-ASCII characters
+_   set jna.tmpdir (or java.io.tmpdir) to another location
+_   https://github.com/twall/jna/issues/124
+_   https://github.com/twall/jna/issues/238
+_   Sun says they won't fix: user locale and system locale probably different:
+_   https://bugs.openjdk.java.net/browse/JDK-8017274
+_   https://bugs.openjdk.java.net/browse/JDK-4958170
+_   https://github.com/twall/jna/blob/master/test/com/sun/jna/JNALoadTest.java
+_   http://happygiraffe.net/blog/2009/09/24/java-platform-encoding/
+_   fix: get sun.jnu.encoding and make sure the user name is supported in it?
+_     and if not, put up a warning for the user?
+_   http://www.oracle.com/us/technologies/java/locale-140624.html
 
 
 3.0 final
@@ -139,8 +148,6 @@ _   https://github.com/processing/processing/issues/3619
 
 
 pde/build
-_ ctrl+r not restarting sketch when debug is enabled
-_   https://github.com/processing/processing/issues/3623
 _ ignore-tools in build.xml not being called for some reason
 _ can't install processing-java into /usr/bin with El Capitan
 _   https://github.com/processing/processing/issues/3497

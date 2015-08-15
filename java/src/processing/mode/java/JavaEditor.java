@@ -325,11 +325,12 @@ public class JavaEditor extends Editor {
     });
 
     JMenuItem tweakItem = Toolkit.newJMenuItemShift(Language.text("menu.sketch.tweak"), 'T');
-      tweakItem.setSelected(JavaMode.enableTweak);
+//      tweakItem.setSelected(JavaMode.enableTweak);
       tweakItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          JavaMode.enableTweak = true;
-          handleRun();
+//          JavaMode.enableTweak = true;
+//          handleRun();
+          handleTweak();
         }
       });
 
@@ -1157,7 +1158,8 @@ public class JavaEditor extends Editor {
           prepareRun();
           try {
             toolbar.activateRun();
-            runtime = jmode.handleRun(sketch, JavaEditor.this);
+            //runtime = jmode.handleRun(sketch, JavaEditor.this);
+            runtime = jmode.handleLaunch(sketch, JavaEditor.this, false);
           } catch (Exception e) {
             statusError(e);
           }
@@ -1172,9 +1174,25 @@ public class JavaEditor extends Editor {
       public void run() {
         prepareRun();
         try {
+          toolbar.activateRun();
+          //runtime = jmode.handlePresent(sketch, JavaEditor.this);
+          runtime = jmode.handleLaunch(sketch, JavaEditor.this, true);
+        } catch (Exception e) {
+          statusError(e);
+        }
+      }
+    }).start();
+  }
+
+
+  public void handleTweak() {
+    new Thread(new Runnable() {
+      public void run() {
+        prepareRun();
+        try {
 //          toolbar.activate(JavaToolbar.RUN);
           toolbar.activateRun();
-          runtime = jmode.handlePresent(sketch, JavaEditor.this);
+          runtime = jmode.handleTweak(sketch, JavaEditor.this);
         } catch (Exception e) {
           statusError(e);
         }
@@ -1965,6 +1983,7 @@ public class JavaEditor extends Editor {
     autoSave();
     super.prepareRun();
     downloadImports();
+    errorCheckerService.quickErrorCheck();
   }
 
 
