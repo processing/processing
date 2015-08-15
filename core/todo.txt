@@ -35,6 +35,7 @@ X Remove support for fixed-function pipeline
 X   https://github.com/processing/processing/issues/3505
 X   https://github.com/processing/processing/pull/3604
 X   https://github.com/processing/processing/pull/3605
+X   https://github.com/processing/processing/pull/3606
 
 opengl
 X filter(PShader) broken in HDPI mode

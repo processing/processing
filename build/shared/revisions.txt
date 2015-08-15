@@ -1,4 +1,4 @@
-PROCESSING 3.0b4 (REV 0242) - 14 August 2015
+PROCESSING 3.0b4 (REV 0242) - 17 August 2015
 
 Fixes for several long-standing bugs, plus some internal changes 
 to make the code slightly more usable by contributors. 
@@ -16,7 +16,6 @@ https://github.com/processing/processing/issues/new
 
 Meanwhile, Jakub Valtar is holed up at Fathom in Boston, fixing all of
 the bugs. See "your contributions are funding graphics fixes," below.
-
 
 [ bug fixes ] 
 
@@ -41,7 +40,7 @@ the bugs. See "your contributions are funding graphics fixes," below.
 + improve speed of text(x, y, w, h) when using large strings with no spaces
   https://github.com/processing/processing/issues/211
 
-+ filter(PShader) broken in HDPI mode
++ filter(PShader) was broken in HDPI mode
   https://github.com/processing/processing/issues/3577
 
 
@@ -63,11 +62,28 @@ the bugs. See "your contributions are funding graphics fixes," below.
 + Implement add(x, y) and sub(x, y) in PVector
   https://github.com/processing/processing/issues/3593
 
+
+[ google summer of code ]
+
 + Second round of arm patches (v5)
   https://github.com/processing/processing/pull/3583
 
++ Third bunch of arm patches
+  https://github.com/processing/processing/pull/3622
+
 + Contribution Manager GUI updates
   https://github.com/processing/processing/pull/3596
+  
++ Sorting CM by the author name inplemented
+  https://github.com/processing/processing/pull/3615
+  
++ CM needs minimum window size enforced
+  https://github.com/processing/processing/issues/3600
+  https://github.com/processing/processing/pull/3607
+
++ Deactivate install button when incompatible
+  https://github.com/processing/processing/issues/3603
+  https://github.com/processing/processing/pull/3611
 
 
 [ fixed earlier, spring cleaning ]
@@ -124,6 +140,7 @@ the bugs. See "your contributions are funding graphics fixes," below.
   https://github.com/processing/processing/issues/3505
   https://github.com/processing/processing/pull/3604
   https://github.com/processing/processing/pull/3605
+  https://github.com/processing/processing/pull/3606
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .

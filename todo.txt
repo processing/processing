@@ -11,6 +11,14 @@ X move Platform into its own class, also Messages and others
 X   https://github.com/processing/processing/issues/2765
 X Pass command line arguments to sketches
 X   https://github.com/processing/processing/issues/2552
+_ JNA errors on startup when run from an account w/ non-ASCII characters
+_   set jna.tmpdir (or java.io.tmpdir) to another location
+_   https://github.com/twall/jna/issues/124
+_   https://github.com/twall/jna/issues/238
+_ 'handleTweak' variable implemented strangely
+_ ctrl+r not restarting sketch when debug is enabled
+_   hitting Run while a sketch is running should restart the sketch
+_   https://github.com/processing/processing/issues/3623
 
 api changes
 X Make fields and functions in PdeKeywords protected
@@ -25,8 +33,18 @@ X Base.showXxxx() and Base.log() have moved to Messages.showXxxx()
 gsoc
 X Second round of arm patches (v5)
 X   https://github.com/processing/processing/pull/3583
+X Third bunch of arm patches
+X   https://github.com/processing/processing/pull/3622
 X Contribution Manager GUI updates
 X   https://github.com/processing/processing/pull/3596
+X Sorting by author name inplemented
+X   https://github.com/processing/processing/pull/3615
+X CM needs minimum window size enforced
+X   https://github.com/processing/processing/issues/3600
+X   https://github.com/processing/processing/pull/3607
+X Deactivate install button when incompatible
+X   https://github.com/processing/processing/issues/3603
+X   https://github.com/processing/processing/pull/3611
 
 earlier
 X closing the color selector makes things freeze (only Linux and Windows?)
@@ -116,9 +134,13 @@ _ show compiling/startup animation after clicking run
 _   or maybe show an animation for starting up
 _   rather than post-compile
 _   https://github.com/processing/processing/issues/136
+_ Error/warning location visualisation not updating when editor resizes
+_   https://github.com/processing/processing/issues/3619
 
 
 pde/build
+_ ctrl+r not restarting sketch when debug is enabled
+_   https://github.com/processing/processing/issues/3623
 _ ignore-tools in build.xml not being called for some reason
 _ can't install processing-java into /usr/bin with El Capitan
 _   https://github.com/processing/processing/issues/3497
