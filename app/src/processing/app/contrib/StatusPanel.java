@@ -40,6 +40,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import processing.app.ui.Toolkit;
+import processing.app.Base;
 import processing.app.Platform;
 
 
