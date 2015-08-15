@@ -696,7 +696,7 @@ public abstract class PGL {
       frontTex = backTex;
       backTex = temp;
     } else if (!clear && pg.parent.frameCount == 1) {
-      requestFBOLayer();
+      //requestFBOLayer();
     }
   }
 
