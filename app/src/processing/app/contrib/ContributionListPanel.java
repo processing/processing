@@ -144,8 +144,37 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           .compareTo(getAuthorNameWithoutMarkup(o2.getAuthorList()));
       }
     });
-    sorter.setSortable(0, false);
-    sorter.setSortable(2, true);
+    sorter.setComparator(0, new Comparator<Contribution>() {
+
+      @Override
+      public int compare(Contribution o1, Contribution o2) {
+        int pos1 = 0;
+        if (o1.isInstalled()) {
+          pos1 = 1;
+          if (contribListing.hasUpdates(o1)) {
+            pos1 = 2;
+          }
+          if (!o1.isCompatible(Base.getRevision())) {
+            pos1 = 3;
+          }
+        } else {
+          pos1 = 4;
+        }
+        int pos2 = 0;
+        if (o2.isInstalled()) {
+          pos2 = 1;
+          if (contribListing.hasUpdates(o2)) {
+            pos2 = 2;
+          }
+          if (!o2.isCompatible(Base.getRevision())) {
+            pos2 = 3;
+          }
+        } else {
+          pos2 = 4;
+        }
+        return pos1 - pos2;
+      }
+    });
     table.getTableHeader().setDefaultRenderer(new MyColumnHeaderRenderer());
 
     GroupLayout layout = new GroupLayout(this);
