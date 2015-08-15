@@ -335,6 +335,8 @@ public class ContributionManagerDialog {
     tabLayout.setVerticalGroup(tabLayout
       .createParallelGroup(GroupLayout.Alignment.CENTER)
       .addComponent(numberLabel).addComponent(updateTabLabel));
+    
+    numberLabel.setVisible(false);
   }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
