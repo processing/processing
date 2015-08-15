@@ -59,7 +59,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   protected ContributionListing contribListing = ContributionListing.getInstance();
   protected JTable table;
   DefaultTableModel dtm;
-  Font myFont;
 
   public ContributionListPanel() {
     // TODO Auto-generated constructor stub
@@ -97,9 +96,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           return c;
       }
     };
-
-    myFont = Toolkit.getSansFont(14, Font.PLAIN);
-    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(myFont);
     
     // There is a space before Status
     String[] colName = { " Status", "Name", "Author" };
@@ -308,7 +304,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         if (table.isRowSelected(row)) {
           label.setBackground(new Color(0xe0fffd));
         }
-        label.setFont(myFont);
+        label.setFont(ContributionManagerDialog.myFont);
         label.setOpaque(true);
       } else {
         label = new JLabel(
