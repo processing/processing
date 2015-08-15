@@ -59,6 +59,7 @@ public class Runner implements MessageConsumer {
 
   // Running remote VM
   protected VirtualMachine vm;
+  protected boolean vmReturnedError;
 
   // Thread transferring remote error stream to our error stream
   protected Thread errThread = null;
@@ -127,6 +128,14 @@ public class Runner implements MessageConsumer {
       generateTrace();
     }
     return vm;
+  }
+
+
+  /**
+   * Whether the last invocation of launchJava() was successful or not
+   */
+  public boolean vmReturnedError() {
+    return vmReturnedError;
   }
 
 
@@ -408,6 +417,7 @@ public class Runner implements MessageConsumer {
     new Thread(new Runnable() {
       public void run() {
 //        PApplet.println("java starting");
+        vmReturnedError = false;
         process = PApplet.exec(args);
         try {
 //          PApplet.println("java waiting");
@@ -445,6 +455,7 @@ public class Runner implements MessageConsumer {
             // changing this to separate editor and listener [091124]
             //if (editor != null) {
             listener.statusError("Could not run the sketch.");
+            vmReturnedError = true;
             //}
 //            return null;
           }

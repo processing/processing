@@ -275,6 +275,7 @@ public class Commander implements RunnerListener {
               } else {
                 runner.launch(sketchArgs);
               }
+              success = !runner.vmReturnedError();
             }
           } else {
             success = false;
