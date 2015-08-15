@@ -136,8 +136,45 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
     table.setRowSorter(sorter);
     sorter.setComparator(1, contribListing.getComparator());
-    sorter.setSortable(0, false);
-    sorter.setSortable(2, false);
+    sorter.setComparator(2, new Comparator<Contribution>() {
+
+      @Override
+      public int compare(Contribution o1, Contribution o2) {
+        return getAuthorNameWithoutMarkup(o1.getAuthorList())
+          .compareTo(getAuthorNameWithoutMarkup(o2.getAuthorList()));
+      }
+    });
+    sorter.setComparator(0, new Comparator<Contribution>() {
+
+      @Override
+      public int compare(Contribution o1, Contribution o2) {
+        int pos1 = 0;
+        if (o1.isInstalled()) {
+          pos1 = 1;
+          if (contribListing.hasUpdates(o1)) {
+            pos1 = 2;
+          }
+          if (!o1.isCompatible(Base.getRevision())) {
+            pos1 = 3;
+          }
+        } else {
+          pos1 = 4;
+        }
+        int pos2 = 0;
+        if (o2.isInstalled()) {
+          pos2 = 1;
+          if (contribListing.hasUpdates(o2)) {
+            pos2 = 2;
+          }
+          if (!o2.isCompatible(Base.getRevision())) {
+            pos2 = 3;
+          }
+        } else {
+          pos2 = 4;
+        }
+        return pos1 - pos2;
+      }
+    });
     table.getTableHeader().setDefaultRenderer(new MyColumnHeaderRenderer());
 
     GroupLayout layout = new GroupLayout(this);
@@ -314,24 +351,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         label = new JLabel(
                            contribution.isSpecial() ? Toolkit
                              .getLibIcon("icons/pde-16.png") : null);
-        StringBuilder name = new StringBuilder("");
         String authorList = contribution.getAuthorList();
-        if (authorList != null) {
-          for (int i = 0; i < authorList.length(); i++) {
-
-            if (authorList.charAt(i) == '[' || authorList.charAt(i) == ']') {
-              continue;
-            }
-            if (authorList.charAt(i) == '(') {
-              i++;
-              while (authorList.charAt(i) != ')') {
-                i++;
-              }
-            } else {
-              name.append(authorList.charAt(i));
-            }
-          }
-        }
+        String name = getAuthorNameWithoutMarkup(authorList);
         label.setText(name.toString());
         label.setHorizontalAlignment(SwingConstants.LEFT);
         if(!contribution.isCompatible(Base.getRevision())){
@@ -347,7 +368,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       }
       return label;
     }
-
   }
   private class MyTableModel extends DefaultTableModel{
     MyTableModel() {
@@ -361,6 +381,27 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     public Class<?> getColumnClass(int columnIndex) {
       return Contribution.class;
     }
+  }
+  
+  String getAuthorNameWithoutMarkup(String authorList) {
+    StringBuilder name = new StringBuilder("");
+    if (authorList != null) {
+      for (int i = 0; i < authorList.length(); i++) {
+
+        if (authorList.charAt(i) == '[' || authorList.charAt(i) == ']') {
+          continue;
+        }
+        if (authorList.charAt(i) == '(') {
+          i++;
+          while (authorList.charAt(i) != ')') {
+            i++;
+          }
+        } else {
+          name.append(authorList.charAt(i));
+        }
+      }
+    }
+    return name.toString();
   }
 
   void updatePanelOrdering(Set<Contribution> contributionsSet) {
