@@ -235,8 +235,13 @@ public class UpdateContributionTab extends ContributionTab {
   //
     @Override
     void updatePanelOrdering(Set<Contribution> contributionsSet) {
+      if(getNoOfRows() == 0){
+        contributionTab.contributionManagerDialog.numberLabel.setVisible(false);
+      }else{
       contributionTab.contributionManagerDialog.numberLabel.setText(Integer
         .toString(panelByContribution.size()));
+      contributionTab.contributionManagerDialog.numberLabel.setVisible(true);
+      }
       dtm.getDataVector().removeAllElements();
       dtm.fireTableDataChanged();
       ContributionType temp = null;
