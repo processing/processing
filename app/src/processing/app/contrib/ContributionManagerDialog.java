@@ -138,6 +138,7 @@ public class ContributionManagerDialog {
 
   public void makeFrame(final Editor editor) {
     dialog = new JFrame(title);
+    dialog.setMinimumSize(new Dimension(750, 500));
     tabbedPane = new JTabbedPane();
 
     makeAndShowTab(false, true);
