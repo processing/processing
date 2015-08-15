@@ -1142,6 +1142,11 @@ public class JavaEditor extends Editor {
 
   public void handleRun() {
     if (isDebuggerEnabled()) {
+      // Hitting Run while a sketch is running should restart the sketch
+      // https://github.com/processing/processing/issues/3623
+      if (debugger.isStarted()) {
+        debugger.stopDebug();
+      }
       // Don't start the sketch paused, continue until a breakpoint or error
       // https://github.com/processing/processing/issues/3096
       debugger.continueDebug();
