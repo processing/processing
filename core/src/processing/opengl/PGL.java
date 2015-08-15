@@ -1668,7 +1668,16 @@ public abstract class PGL {
 
   protected static String[] preprocessFragmentSource(String[] fragSrc0,
                                                      int version) {
-    if (version >= 130) {
+    String[] fragSrc;
+
+    if (version < 130) {
+      String[] search = { };
+      String[] replace = { };
+      int offset = 1;
+
+      fragSrc = preprocessShaderSource(fragSrc0, search, replace, offset);
+      fragSrc[0] = "#version " + version;
+    } else {
       // We need to replace 'texture' uniform by 'texMap' uniform and
       // 'textureXXX()' functions by 'texture()' functions. Order of these
       // replacements is important to prevent collisions between these two.
@@ -1684,19 +1693,28 @@ public abstract class PGL {
           "texture", "texture", "texture", "texture",
           "fragColor"
       };
+      int offset = 2;
 
-      String[] fragSrc = preprocessShaderSource(fragSrc0, search, replace, 2);
+      fragSrc = preprocessShaderSource(fragSrc0, search, replace, offset);
       fragSrc[0] = "#version " + version;
       fragSrc[1] = "out vec4 fragColor;";
-
-      return fragSrc;
     }
-    return fragSrc0;
+
+    return fragSrc;
   }
 
   protected static String[] preprocessVertexSource(String[] vertSrc0,
                                                    int version) {
-    if (version >= 130) {
+    String[] vertSrc;
+
+    if (version < 130) {
+      String[] search = { };
+      String[] replace = { };
+      int offset = 1;
+
+      vertSrc = preprocessShaderSource(vertSrc0, search, replace, offset);
+      vertSrc[0] = "#version " + version;
+    } else {
       // We need to replace 'texture' uniform by 'texMap' uniform and
       // 'textureXXX()' functions by 'texture()' functions. Order of these
       // replacements is important to prevent collisions between these two.
@@ -1710,13 +1728,13 @@ public abstract class PGL {
           "texMap",
           "texture", "texture", "texture", "texture"
       };
+      int offset = 1;
 
-      String[] vertSrc = preprocessShaderSource(vertSrc0, search, replace, 1);
+      vertSrc = preprocessShaderSource(vertSrc0, search, replace, offset);
       vertSrc[0] = "#version " + version;
-
-      return vertSrc;
     }
-    return vertSrc0;
+
+    return vertSrc;
   }
 
   protected static String[] preprocessShaderSource(String[] src0,

@@ -37,6 +37,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import com.jogamp.common.util.VersionNumber;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES1;
@@ -1238,37 +1239,30 @@ public class PJOGL extends PGL {
   }
 
 
+  private static int getGLSLVersion(GLContext context) {
+    VersionNumber vn = context.getGLSLVersionNumber();
+    return vn.getMajor() * 100 + vn.getMinor();
+  }
+
   @Override
   protected String[] loadVertexShader(String filename, int version) {
-    if (PApplet.platform == PConstants.MACOSX) {
-      String[] fragSrc0 = pg.parent.loadStrings(filename);
-      return preprocessFragmentSource(fragSrc0, 130);
-    } else {
-      return pg.parent.loadStrings(filename);
-    }
+    String[] fragSrc0 = pg.parent.loadStrings(filename);
+    return preprocessFragmentSource(fragSrc0, getGLSLVersion(context));
   }
 
 
   @Override
   protected String[] loadFragmentShader(String filename, int version) {
-    if (PApplet.platform == PConstants.MACOSX) {
-      String[] vertSrc0 = pg.parent.loadStrings(filename);
-      return preprocessVertexSource(vertSrc0, 130);
-    } else {
-      return pg.parent.loadStrings(filename);
-    }
+    String[] vertSrc0 = pg.parent.loadStrings(filename);
+    return preprocessVertexSource(vertSrc0, getGLSLVersion(context));
   }
 
 
   @Override
   protected String[] loadFragmentShader(URL url, int version) {
     try {
-      if (PApplet.platform == PConstants.MACOSX) {
-        String[] fragSrc0 = PApplet.loadStrings(url.openStream());
-        return preprocessFragmentSource(fragSrc0, 130);
-      } else {
-        return PApplet.loadStrings(url.openStream());
-      }
+      String[] fragSrc0 = PApplet.loadStrings(url.openStream());
+      return preprocessFragmentSource(fragSrc0, getGLSLVersion(context));
     } catch (IOException e) {
       PGraphics.showException("Cannot load fragment shader " + url.getFile());
     }
@@ -1279,12 +1273,8 @@ public class PJOGL extends PGL {
   @Override
   protected String[] loadVertexShader(URL url, int version) {
     try {
-      if (PApplet.platform == PConstants.MACOSX) {
-        String[] vertSrc0 = PApplet.loadStrings(url.openStream());
-        return preprocessVertexSource(vertSrc0, 130);
-      } else {
-        return PApplet.loadStrings(url.openStream());
-      }
+      String[] vertSrc0 = PApplet.loadStrings(url.openStream());
+      return preprocessVertexSource(vertSrc0, getGLSLVersion(context));
     } catch (IOException e) {
       PGraphics.showException("Cannot load vertex shader " + url.getFile());
     }
