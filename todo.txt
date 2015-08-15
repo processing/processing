@@ -11,10 +11,12 @@ X move Platform into its own class, also Messages and others
 X   https://github.com/processing/processing/issues/2765
 X Pass command line arguments to sketches
 X   https://github.com/processing/processing/issues/2552
-_ 'handleTweak' variable implemented strangely
+X 'handleTweak' variable implemented strangely
 X ctrl+r not restarting sketch when debug is enabled
 X   hitting Run while a sketch is running should restart the sketch
 X   https://github.com/processing/processing/issues/3623
+X should Platform be a static instance?
+X   lots of platform stuff in base, but might be better handled elsewhere
 
 api changes
 X Make fields and functions in PdeKeywords protected
@@ -61,6 +63,25 @@ X   https://github.com/processing/processing/issues/2985
 X PDE erroneously detects changes in non-sketch files
 X   https://github.com/processing/processing/issues/2759
 
+more cleaning
+X make sure "PDF Export" is showing for the library name
+X we've lost arrow keys to expand items in the examples window
+X   sketchbook window too?
+X 'ant clean' not removing old versions created by dist
+o add span screens pref (near the display pref)
+o   add checkbox for spans to export dialog
+X   use fullScreen(SPAN) instead
+o default display set to a second, then gets confused when monitor doesn't exist
+o   is this not resetting the preference?
+X   https://github.com/processing/processing/issues/1457
+o add last revision used / max revision used settings?
+o move the language stuff to the settings folder
+o   that way people can modify and test w/o recompiling
+X   https://github.com/processing/processing/issues/2938
+o   how was this resolved? just implemented overrides?
+X   instead, working from the sketchbook folder
+X   write docs about it
+
 
 known issues
 _ launch4j doesn't work from folders with non-native charsets
@@ -92,11 +113,9 @@ _   https://github.com/processing/processing/issues/2953
 _ processing-java isn't working in OSX 10.11 El Capitan
 _   https://github.com/processing/processing/issues/3497
 _   probably have to add the script/Processing.app location to user's path
-_ move processing-java inside the Java Mode? 
+_   move processing-java inside the Java Mode? 
 _   make a Tool that installs it for all platforms, not just OS X
 _   not really part of the 'build' anymore
-_ should Platform be a static instance?
-_   lots of platform stuff in base, but might be better handled elsewhere
 
 
 gui
@@ -160,30 +179,16 @@ _   https://github.com/processing/processing/issues/3311
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
 _   because it's in the other ClassLoader, can no longer rely on it
 _ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
-_ make sure "PDF Export" is showing for the library name
-_ we've lost arrow keys to expand items in the examples window
-_   sketchbook window too?
-_ 'ant clean' not removing old versions created by dist
 _ continue clearing out ProgressFrame
 _   also hook up the statusNotice() when done
-_ break out Mode options to their own panels in prefs
+_ break out Mode-specific options to their own panels in prefs
 _   Mode should just provide a panel for their prefs
-_ make the build fail it git pull on processing-docs fails
-_ move the language stuff to the settings folder
-_   that way people can modify and test w/o recompiling
-_   https://github.com/processing/processing/issues/2938
-_   how was this resolved? just implemented overrides?
-_ add span screens pref (near the display pref)
-_   add checkbox for spans to export dialog
+_ make the build fail if git pull on processing-docs fails
 _ remove "save before running" message
 _ pass through the source to update licenses
 _   add Processing Foundation as 2012-15
 _   update license info to state gplv2 not v3
 _   run through that online license checker
-_ default display set to a second, then gets confused when monitor doesn't exist
-_   is this not resetting the preference?
-_   https://github.com/processing/processing/issues/1457
-_ add last revision used / max revision used settings?
 
 
 crashing

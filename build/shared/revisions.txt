@@ -44,6 +44,10 @@ the bugs. See "your contributions are funding graphics fixes," below.
 + filter(PShader) was broken in HDPI mode
   https://github.com/processing/processing/issues/3577
 
++ Ctrl+R (Cmd+R) not restarting sketch when debug is enabled.
+  Hitting Run while a sketch is running should restart the sketch.
+  https://github.com/processing/processing/issues/3623
+
 
 [ api/implementation changes ] 
 
