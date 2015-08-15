@@ -246,8 +246,9 @@ class StatusPanel extends JPanel {
       updateButton.setText("Update");
     }
 
-    installButton.setEnabled(!panel.getContrib().isInstalled() && contributionListing.hasDownloadedLatestList());
-
+    installButton.setEnabled(!panel.getContrib().isInstalled()
+      && contributionListing.hasDownloadedLatestList()
+      && panel.getContrib().isCompatible(Base.getRevision()));
 
     if(installButton.isEnabled()){
       updateLabel.setText(currentVersion + " available");
