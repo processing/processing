@@ -1240,7 +1240,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected String[] loadVertexShader(String filename, int version) {
-    if (PApplet.platform == PConstants.WINDOWS) {
+    if (PApplet.platform == PConstants.MACOSX) {
       String[] fragSrc0 = pg.parent.loadStrings(filename);
       return preprocessFragmentSource(fragSrc0, 130);
     } else {
@@ -1251,7 +1251,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected String[] loadFragmentShader(String filename, int version) {
-    if (PApplet.platform == PConstants.WINDOWS) {
+    if (PApplet.platform == PConstants.MACOSX) {
       String[] vertSrc0 = pg.parent.loadStrings(filename);
       return preprocessVertexSource(vertSrc0, 130);
     } else {
@@ -1263,7 +1263,7 @@ public class PJOGL extends PGL {
   @Override
   protected String[] loadFragmentShader(URL url, int version) {
     try {
-      if (PApplet.platform == PConstants.WINDOWS) {
+      if (PApplet.platform == PConstants.MACOSX) {
         String[] fragSrc0 = PApplet.loadStrings(url.openStream());
         return preprocessFragmentSource(fragSrc0, 130);
       } else {
@@ -1279,7 +1279,7 @@ public class PJOGL extends PGL {
   @Override
   protected String[] loadVertexShader(URL url, int version) {
     try {
-      if (PApplet.platform == PConstants.WINDOWS) {
+      if (PApplet.platform == PConstants.MACOSX) {
         String[] vertSrc0 = PApplet.loadStrings(url.openStream());
         return preprocessVertexSource(vertSrc0, 130);
       } else {
