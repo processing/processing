@@ -31,6 +31,10 @@ X   https://github.com/processing/processing/issues/172
 X   includes code for a slow but more accurate mode
 X huge Java2D blending patch
 X   https://github.com/processing/processing/pull/3592
+X Remove support for fixed-function pipeline
+X   https://github.com/processing/processing/issues/3505
+X   https://github.com/processing/processing/pull/3604
+X   https://github.com/processing/processing/pull/3605
 
 opengl
 X filter(PShader) broken in HDPI mode

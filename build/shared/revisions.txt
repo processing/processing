@@ -1,3 +1,134 @@
+PROCESSING 3.0b4 (REV 0242) - 14 August 2015
+
+Fixes for several long-standing bugs, plus some internal changes 
+to make the code slightly more usable by contributors. 
+
+For Tool and Mode developers, several functions have moved out of 
+processing.app.Base and into the Messages and Platform classes.
+For instance, Base.isWindows() has moved to Platform.isWindows()
+(seems almost logical, right?) We're not keeping deprecated versions
+of these functions around since we're breaking other things in 3.0.
+
+Library/Mode/Tool authors, there's a section for you at the end of
+this page: https://github.com/processing/processing/wiki/Changes-in-3.0
+If there's anything that's not covered properly, please file an issue:
+https://github.com/processing/processing/issues/new
+
+Meanwhile, Jakub Valtar is holed up at Fathom in Boston, fixing all of
+the bugs. See "your contributions are funding graphics fixes," below.
+
+
+[ bug fixes ] 
+
++ Fix NullPointerException with some sketches that have no size() command
+  https://github.com/processing/processing/issues/3585
+
++ Fix reports of invalid OS X code signature on some machines
+  https://github.com/processing/processing/issues/3575
+
++ Canceling "create folder, move sketch, and continue?" will cause crash
+  https://github.com/processing/processing/issues/3586
+
++ Move Platform into its own class, also Messages and others
+  https://github.com/processing/processing/issues/2765
+
++ dataPath() not working when app is not run from app dir on Linux
+  https://github.com/processing/processing/issues/2195
+
++ "Zero length string passed to TextLayout constructor" message
+  https://github.com/processing/processing/issues/3487
+
++ improve speed of text(x, y, w, h) when using large strings with no spaces
+  https://github.com/processing/processing/issues/211
+
++ filter(PShader) broken in HDPI mode
+  https://github.com/processing/processing/issues/3577
+
+
+[ api/implementation changes ] 
+
++ Several platform-oriented features have moved to Platform
+  i.e. Platform.isWindows(), Platform.openURL(), Platform.getJavaPath()
+
++ Base.showXxxx() and Base.log() have moved to Messages.showXxxx()
+
++ Make fields and functions in PdeKeywords protected
+  https://github.com/processing/processing/issues/2383
+
++ Added "EditorException", which is thrown when loading bad sketches
+
++ Pass command line arguments to sketches with processing-java
+  https://github.com/processing/processing/issues/2552
+
++ Implement add(x, y) and sub(x, y) in PVector
+  https://github.com/processing/processing/issues/3593
+
++ Second round of arm patches (v5)
+  https://github.com/processing/processing/pull/3583
+
++ Contribution Manager GUI updates
+  https://github.com/processing/processing/pull/3596
+
+
+[ fixed earlier, spring cleaning ]
+
++ Closing the color selector makes things freeze (only Linux and Windows?)
+  https://github.com/processing/processing/issues/2381
+
++ Comment/Uncomment should ignore leading whitespace
+  https://github.com/processing/processing/issues/1961
+
++ Export unsaved sketch > agree to save prompt > export doesn't finish
+  https://github.com/processing/processing/issues/2724
+
++ Add disconnectEvent() to Server 
+  https://github.com/processing/processing/issues/2133
+
++ False positive for mixing active/static mode in Tweak Mode 3.0 alpha 5
+  https://github.com/processing/processing/issues/3140
+
++ Determine shortcut for Export vs Use Selection for Find
+  https://github.com/processing/processing/issues/2985
+
++ PDE erroneously detects changes in non-sketch files
+  https://github.com/processing/processing/issues/2759
+
++ Proper handling of sketchPath() for OS X in exported apps
+  https://github.com/processing/processing/issues/2181
+
++ textWidth() incorrect with default (JAVA2D) renderer and default font
+  https://github.com/processing/processing/issues/2175
+
++ Error on size() when using FX2D due to stage inset issues
+  https://github.com/processing/processing/issues/3412
+
+
+[ your contributions are funding graphics fixes ]
+
++ Remove alpha filler (hopefully no regression here)
+  https://github.com/processing/processing/pull/3523
+
++ Accuracy problems make alpha channel go to FE with image.copy()
+  https://github.com/processing/processing/issues/258
+
++ Fix blue-channel bias on blend()
+  https://github.com/processing/processing/issues/514
+
++ Improve blend() accuracy when using ADD
+  https://github.com/processing/processing/issues/172
+
++ Huge Java2D blending patch
+  https://github.com/processing/processing/pull/3592
+
++ Remove support for fixed-function pipeline
+  https://github.com/processing/processing/issues/3505
+  https://github.com/processing/processing/pull/3604
+  https://github.com/processing/processing/pull/3605
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.0b3 (REV 0241) - 11 August 2015
 
 You get a beta! YOU get a beta! *YOU* get a beta! Everybody gets a beta!
