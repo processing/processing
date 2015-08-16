@@ -61,16 +61,8 @@ import ch.randelshofer.media.quicktime.QuickTimeWriter;
  * Ben Fry 2011-09-06, updated 2013-10-09
  */
 public class MovieMaker extends JFrame implements Tool {
-//  private JFileChooser imageFolderChooser;
-//  private JFileChooser soundFileChooser;
-//  private JFileChooser movieFileChooser;
   private Preferences prefs;
 
-//  private Editor editor;
-
-//MovieMaker m = new MovieMaker();
-//m.setVisible(true);
-//m.pack();
 
   public String getMenuTitle() {
     return Language.text("movie_maker");
@@ -78,35 +70,12 @@ public class MovieMaker extends JFrame implements Tool {
 
 
   public void run() {
-//    System.out.println("calling run() for MovieMaker " + EventQueue.isDispatchThread());
     setVisible(true);
   }
 
 
-//  public void run() {
-//    String classPath =
-//      getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-//    System.out.println("cp is " + classPath);
-//    try {
-//      String[] cmd = new String[] {
-//        "java", "-cp", classPath, "processing.app.tools.MovieMaker"
-//      };
-//      Runtime.getRuntime().exec(cmd);
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
-//  }
-
-
   public void init(Editor editor) {
-//    System.out.println("calling init for MovieMaker " + EventQueue.isDispatchThread());
-//    this.editor = editor;
     initComponents(editor == null);
-
-//    String version = getClass().getPackage().getImplementationVersion();
-//    if (version != null) {
-//      setTitle(getTitle() + " " + version);
-//    }
 
     ((JComponent) getContentPane()).setBorder(new EmptyBorder(12, 18, 18, 18));
     imageFolderField.setTransferHandler(new FileTextFieldTransferHandler(JFileChooser.DIRECTORIES_ONLY));
@@ -122,9 +91,6 @@ public class MovieMaker extends JFrame implements Tool {
       heightField,
       heightLabel,
       originalSizeCheckBox,
-//      noPreparationRadio,
-//      fastStartCompressedRadio,
-//      fastStartRadio
     };
     for (JComponent c : smallComponents) {
       c.putClientProperty("JComponent.sizeVariant", "small");
@@ -561,34 +527,6 @@ public class MovieMaker extends JFrame implements Tool {
     prefs.putInt("movie.compression", compressionBox.getSelectedIndex());
     prefs.putBoolean("movie.originalSize", originalSizeCheckBox.isSelected());
 
-
-    // ---------------------------------
-    // Choose an output file
-    // ---------------------------------
-    /*
-    if (movieFileChooser == null) {
-      movieFileChooser = new JFileChooser();
-      if (prefs.get("movie.outputFile", null) != null) {
-        movieFileChooser.setSelectedFile(new File(prefs.get("movie.outputFile", null)));
-      } else {
-        if (imageFolderField.getText().length() > 0) {
-          movieFileChooser.setCurrentDirectory(new File(imageFolderField.getText()).getParentFile());
-        } else if (soundFileField.getText().length() > 0) {
-          movieFileChooser.setCurrentDirectory(new File(soundFileField.getText()).getParentFile());
-        }
-      }
-    }
-    if (JFileChooser.APPROVE_OPTION != movieFileChooser.showSaveDialog(this)) {
-      return;
-    }
-
-    final File movieFile = movieFileChooser.getSelectedFile().getPath().toLowerCase().endsWith(".mov")//
-    ? movieFileChooser.getSelectedFile()
-        : new File(movieFileChooser.getSelectedFile().getPath() + ".mov");
-    prefs.put("movie.outputFile", movieFile.getPath());
-    createMovieButton.setEnabled(false);
-    */
-
     final boolean originalSize = originalSizeCheckBox.isSelected();
 
     // ---------------------------------
@@ -599,7 +537,6 @@ public class MovieMaker extends JFrame implements Tool {
       @Override
       protected Object doInBackground() {
         try {
-
           // Read image files
           File[] imgFiles = null;
           if (imageFolder != null) {
@@ -607,7 +544,8 @@ public class MovieMaker extends JFrame implements Tool {
               FileSystemView fsv = FileSystemView.getFileSystemView();
 
               public boolean accept(File f) {
-                return f.isFile() && !fsv.isHiddenFile(f) && !f.getName().equals("Thumbs.db");
+                return f.isFile() && !fsv.isHiddenFile(f) &&
+                  !f.getName().equals("Thumbs.db");
               }
             });
             if (imgFiles == null || imgFiles.length == 0) {
@@ -617,23 +555,14 @@ public class MovieMaker extends JFrame implements Tool {
           }
 
           // Get the width and height if we're preserving size.
-          // Nullify bad Files so we don't get errors twice.
           if (originalSize) {
-            for (int i = 0; true; ++i) {
+            Dimension d = findSize(imgFiles);
+            if (d == null) {
               // No images at all? No video then.
-              if (i >= imgFiles.length) {
-                throw new RuntimeException(Language.text("movie_maker.error.no_images_found"));
-              }
-
-              BufferedImage temp = readImage(imgFiles[i]);
-              if (temp == null) {
-                imgFiles[i] = null;
-              } else {
-                width = temp.getWidth();
-                height = temp.getHeight();
-                break;
-              }
+              throw new RuntimeException(Language.text("movie_maker.error.no_images_found"));
             }
+            width = d.width;
+            height = d.height;
           }
 
           // Delete movie file if it already exists.
@@ -653,6 +582,19 @@ public class MovieMaker extends JFrame implements Tool {
         } catch (Throwable t) {
           return t;
         }
+      }
+
+      Dimension findSize(File[] imgFiles) {
+        for (int i = 0; i < imgFiles.length; i++) {
+          BufferedImage temp = readImage(imgFiles[i]);
+          if (temp != null) {
+            return new Dimension(temp.getWidth(), temp.getHeight());
+          } else {
+            // Nullify bad Files so we don't get errors twice.
+            imgFiles[i] = null;
+          }
+        }
+        return null;
       }
 
       @Override
@@ -681,18 +623,14 @@ public class MovieMaker extends JFrame implements Tool {
 
 
   /**
-   * Read an image from a file. ImageIcon doesn't don't do well with some file
-   * types, so we use ImageIO. ImageIO doesn't handle TGA files created by
-   * Processing, so this calls our own loadImageTGA().
+   * Read an image from a file. ImageIcon doesn't don't do well with some
+   * file types, so we use ImageIO. ImageIO doesn't handle TGA files
+   * created by Processing, so this calls our own loadImageTGA().
    * <br> Prints errors itself.
    * @return null on error; image only if okay.
    */
   private BufferedImage readImage(File file) {
     try {
-      // Make sure that we're using a ClassLoader that's aware of the ImageIO jar
-      //Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-      //BufferedImage image = ImageIO.read(file);
-      // rewritten to switch back to the default loader
       Thread current = Thread.currentThread();
       ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
       current.setContextClassLoader(getClass().getClassLoader());
@@ -701,7 +639,7 @@ public class MovieMaker extends JFrame implements Tool {
       try {
         image = ImageIO.read(file);
       } catch (IOException e) {
-        System.err.println(Language.interpolate("movie_maker.error.cant_read",
+        System.err.println(Language.interpolate("movie_maker.error.cannot_read",
               file.getAbsolutePath()));
         return null;
       }
@@ -725,27 +663,23 @@ public class MovieMaker extends JFrame implements Tool {
           try {
             return loadImageTGA(file);
           } catch (IOException e) {
-            System.err.println(Language.interpolate("movie_maker.error.cant_read",
-                  file.getAbsolutePath()));
+            cannotRead(file);
             return null;
           }
 
         } else if (pathLower.endsWith(".tif") || pathLower.endsWith(".tiff")) {
-          System.err.println(Language.interpolate("movie_maker.error.cant_read",
-                file.getAbsolutePath()) + " " +
-                Language.text("movie_maker.error.avoid_tiff"));
+          cannotRead(file);
+          System.err.println(Language.text("movie_maker.error.avoid_tiff"));
           return null;
 
         } else {
-          System.err.println(Language.interpolate("movie_maker.error.cant_read",
-                file.getAbsolutePath()));
+          cannotRead(file);
           return null;
         }
 
       } else {
         if (image.getWidth() <= 0 || image.getHeight() <= 0) {
-          System.err.println(Language.interpolate("movie_maker.error.cant_read_maybe_bad",
-                file.getAbsolutePath()));
+          System.err.println(Language.interpolate("movie_maker.error.cannot_read_maybe_bad", file.getAbsolutePath()));
           return null;
         }
       }
@@ -753,9 +687,16 @@ public class MovieMaker extends JFrame implements Tool {
 
     // Catch-all is sometimes needed.
     } catch (RuntimeException e) {
-      System.err.println(Language.interpolate("movie_maker.error.cant_read", file.getAbsolutePath()));
+      cannotRead(file);
       return null;
     }
+  }
+
+
+  private void cannotRead(File file) {
+    String path = file.getAbsolutePath();
+    String msg = Language.interpolate("movie_maker.error.cannot_read", path);
+    System.err.println(msg);
   }
 
 
