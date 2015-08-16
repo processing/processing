@@ -46,6 +46,15 @@ X   https://github.com/processing/processing/pull/3611
 X CM "Updates" badge appears even when there are no updates
 X   https://github.com/processing/processing/issues/3597
 X   https://github.com/processing/processing/pull/3625
+X Ignore accented characters when filtering in the CM
+X   https://github.com/processing/processing/issues/3627
+X   https://github.com/processing/processing/pull/3633
+X CM: Enable arrow keys for navigating list
+X   https://github.com/processing/processing/issues/3610
+X   https://github.com/processing/processing/pull/3631
+X CM filter input glitchy
+X   https://github.com/processing/processing/issues/3612
+X   https://github.com/processing/processing/pull/3630
 
 earlier
 X closing the color selector makes things freeze (only Linux and Windows?)

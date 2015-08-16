@@ -94,6 +94,18 @@ the bugs. See "your contributions are funding graphics fixes," below.
   https://github.com/processing/processing/issues/3597
   https://github.com/processing/processing/pull/3625
 
++ Ignore accented characters when filtering in the CM
+  https://github.com/processing/processing/issues/3627
+  https://github.com/processing/processing/pull/3633
+
++ Enable arrow keys for navigating lists in the CM
+  https://github.com/processing/processing/issues/3610
+  https://github.com/processing/processing/pull/3631
+
++ CM filter input glitchy
+  https://github.com/processing/processing/issues/3612
+  https://github.com/processing/processing/pull/3630
+
 
 [ fixed earlier, spring cleaning ]
 
@@ -133,6 +145,9 @@ the bugs. See "your contributions are funding graphics fixes," below.
 + Remove alpha filler (hopefully no regression here)
   https://github.com/processing/processing/pull/3523
 
++ Huge Java2D blending patch
+  https://github.com/processing/processing/pull/3592
+
 + Accuracy problems make alpha channel go to FE with image.copy()
   https://github.com/processing/processing/issues/258
 
@@ -142,14 +157,12 @@ the bugs. See "your contributions are funding graphics fixes," below.
 + Improve blend() accuracy when using ADD
   https://github.com/processing/processing/issues/172
 
-+ Huge Java2D blending patch
-  https://github.com/processing/processing/pull/3592
-
-+ Remove support for fixed-function pipeline
++ Upgrade OpenGL (remove support for fixed-function pipeline)
   https://github.com/processing/processing/issues/3505
   https://github.com/processing/processing/pull/3604
   https://github.com/processing/processing/pull/3605
   https://github.com/processing/processing/pull/3606
+  https://github.com/processing/processing/pull/3628
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
