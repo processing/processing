@@ -129,6 +129,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           if (table.getSelectedRow() != -1) {
             setSelectedPanel(panelByContribution.get(table.getValueAt(table
               .getSelectedRow(), 0)));
+            table.requestFocusInWindow();
           }
         }
       });
@@ -426,17 +427,18 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     c.anchor = GridBagConstraints.NORTH;
     add(status, c);*/
 //    System.out.println(dtm.getDataVector());
-    int row = table.getSelectedRow();
     dtm.getDataVector().removeAllElements();
     dtm.fireTableDataChanged();
+    int rowCount = 0;
     for (Contribution entry : contributionsSet) {
       ((MyTableModel) table.getModel()).addRow(new Object[] {
         entry, entry, entry });
+      if (selectedPanel != null && entry.getName()
+        .equals(selectedPanel.getContrib().getName())) {
+        table.setRowSelectionInterval(rowCount, rowCount);
+      }
+      rowCount++;
     }
-    if (row >= 0) {
-      table.setRowSelectionInterval(row, row);
-    }
-
   }
 
 
