@@ -263,7 +263,6 @@ class StatusPanel extends JPanel {
     updateLabel.setVisible(true);
     progressBarPanel.setVisible(false);
     if (panel.isUpdateInProgress || panel.isInstallInProgress || panel.isRemoveInProgress) {
-      System.out.println("wrong");
       progressBarPanel.setVisible(true);
       updateLabel.setVisible(false);
       progressBarPanel.repaint();
