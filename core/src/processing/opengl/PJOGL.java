@@ -37,6 +37,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import com.jogamp.common.util.VersionNumber;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES1;
@@ -1237,38 +1238,56 @@ public class PJOGL extends PGL {
     return ((Font) font).deriveFont(size);
   }
 
+  @Override
+  protected int getGLSLVersion() {
+    VersionNumber vn = context.getGLSLVersionNumber();
+    return vn.getMajor() * 100 + vn.getMinor();
+  }
+
 
   @Override
-  protected String[] loadVertexShader(String filename, int version) {
-    if (PApplet.platform == PConstants.MACOSX) {
-      String[] fragSrc0 = pg.parent.loadStrings(filename);
-      return preprocessFragmentSource(fragSrc0, 130);
-    } else {
-      return pg.parent.loadStrings(filename);
-    }
+  protected String[] loadVertexShader(String filename) {
+    return loadVertexShader(filename, getGLSLVersion());
+  }
+
+
+  @Override
+  protected String[] loadFragmentShader(String filename) {
+    return loadFragmentShader(filename, getGLSLVersion());
+  }
+
+
+  @Override
+  protected String[] loadVertexShader(URL url) {
+    return loadVertexShader(url, getGLSLVersion());
+  }
+
+
+  @Override
+  protected String[] loadFragmentShader(URL url) {
+    return loadFragmentShader(url, getGLSLVersion());
   }
 
 
   @Override
   protected String[] loadFragmentShader(String filename, int version) {
-    if (PApplet.platform == PConstants.MACOSX) {
-      String[] vertSrc0 = pg.parent.loadStrings(filename);
-      return preprocessVertexSource(vertSrc0, 130);
-    } else {
-      return pg.parent.loadStrings(filename);
-    }
+    String[] fragSrc0 = pg.parent.loadStrings(filename);
+    return preprocessFragmentSource(fragSrc0, version);
+  }
+
+
+  @Override
+  protected String[] loadVertexShader(String filename, int version) {
+    String[] vertSrc0 = pg.parent.loadStrings(filename);
+    return preprocessVertexSource(vertSrc0, version);
   }
 
 
   @Override
   protected String[] loadFragmentShader(URL url, int version) {
     try {
-      if (PApplet.platform == PConstants.MACOSX) {
-        String[] fragSrc0 = PApplet.loadStrings(url.openStream());
-        return preprocessFragmentSource(fragSrc0, 130);
-      } else {
-        return PApplet.loadStrings(url.openStream());
-      }
+      String[] fragSrc0 = PApplet.loadStrings(url.openStream());
+      return preprocessFragmentSource(fragSrc0, version);
     } catch (IOException e) {
       PGraphics.showException("Cannot load fragment shader " + url.getFile());
     }
@@ -1279,12 +1298,8 @@ public class PJOGL extends PGL {
   @Override
   protected String[] loadVertexShader(URL url, int version) {
     try {
-      if (PApplet.platform == PConstants.MACOSX) {
-        String[] vertSrc0 = PApplet.loadStrings(url.openStream());
-        return preprocessVertexSource(vertSrc0, 130);
-      } else {
-        return PApplet.loadStrings(url.openStream());
-      }
+      String[] vertSrc0 = PApplet.loadStrings(url.openStream());
+      return preprocessVertexSource(vertSrc0, version);
     } catch (IOException e) {
       PGraphics.showException("Cannot load vertex shader " + url.getFile());
     }
