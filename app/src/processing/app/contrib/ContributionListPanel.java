@@ -62,7 +62,6 @@ public class ContributionListPanel extends JPanel implements ContributionChangeL
   protected JTable table;
   DefaultTableModel dtm;
   JScrollPane scrollPane;
-  Font myFont;
 
   public ContributionListPanel() {
     // TODO Auto-generated constructor stub
