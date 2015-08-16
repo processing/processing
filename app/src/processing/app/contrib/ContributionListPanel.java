@@ -129,6 +129,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           if (table.getSelectedRow() != -1) {
             setSelectedPanel(panelByContribution.get(table.getValueAt(table
               .getSelectedRow(), 0)));
+            table.requestFocusInWindow();
           }
         }
       });
