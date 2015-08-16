@@ -23,6 +23,7 @@ package processing.app.contrib;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -106,6 +107,8 @@ class StatusPanel extends JPanel {
     progressBarPanel.setOpaque(false);
     updateLabel = new JLabel(" ");
     updateLabel.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+    updateLabel.setMaximumSize(new Dimension(BUTTON_WIDTH, 100));
+    updateLabel.setHorizontalAlignment(SwingConstants.CENTER);
     updateButton = new JButton("Update", Toolkit.getLibIcon("manager/update.png"));
     updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     updateButton.setHorizontalAlignment(SwingConstants.LEFT);
