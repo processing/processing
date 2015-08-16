@@ -1238,8 +1238,8 @@ public class PJOGL extends PGL {
     return ((Font) font).deriveFont(size);
   }
 
-
-  private static int getGLSLVersion(GLContext context) {
+  @Override
+  protected int getGLSLVersion() {
     VersionNumber vn = context.getGLSLVersionNumber();
     return vn.getMajor() * 100 + vn.getMinor();
   }
@@ -1247,25 +1247,25 @@ public class PJOGL extends PGL {
 
   @Override
   protected String[] loadVertexShader(String filename) {
-    return loadVertexShader(filename, getGLSLVersion(context));
+    return loadVertexShader(filename, getGLSLVersion());
   }
 
 
   @Override
   protected String[] loadFragmentShader(String filename) {
-    return loadFragmentShader(filename, getGLSLVersion(context));
+    return loadFragmentShader(filename, getGLSLVersion());
   }
 
 
   @Override
   protected String[] loadVertexShader(URL url) {
-    return loadVertexShader(url, getGLSLVersion(context));
+    return loadVertexShader(url, getGLSLVersion());
   }
 
 
   @Override
   protected String[] loadFragmentShader(URL url) {
-    return loadFragmentShader(url, getGLSLVersion(context));
+    return loadFragmentShader(url, getGLSLVersion());
   }
 
 

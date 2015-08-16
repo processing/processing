@@ -1065,8 +1065,10 @@ public abstract class PGL {
     PGL ppgl = primaryPGL ? this : pg.getPrimaryPGL();
 
     if (!ppgl.loadedTex2DShader || ppgl.tex2DShaderContext != ppgl.glContext) {
-      String vertSource = PApplet.join(texVertShaderSource, "\n");
-      String fragSource = PApplet.join(tex2DFragShaderSource, "\n");
+      String[] preprocVertSrc = preprocessVertexSource(texVertShaderSource, getGLSLVersion());
+      String vertSource = PApplet.join(preprocVertSrc, "\n");
+      String[] preprocFragSrc = preprocessFragmentSource(tex2DFragShaderSource, getGLSLVersion());
+      String fragSource = PApplet.join(preprocFragSrc, "\n");
       ppgl.tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
       ppgl.tex2DFragShader = createShader(FRAGMENT_SHADER, fragSource);
       if (0 < ppgl.tex2DVertShader && 0 < ppgl.tex2DFragShader) {
@@ -1195,8 +1197,10 @@ public abstract class PGL {
     PGL ppgl = primaryPGL ? this : pg.getPrimaryPGL();
 
     if (!ppgl.loadedTexRectShader || ppgl.texRectShaderContext != ppgl.glContext) {
-      String vertSource = PApplet.join(texVertShaderSource, "\n");
-      String fragSource = PApplet.join(texRectFragShaderSource, "\n");
+      String[] preprocVertSrc = preprocessVertexSource(texVertShaderSource, getGLSLVersion());
+      String vertSource = PApplet.join(preprocVertSrc, "\n");
+      String[] preprocFragSrc = preprocessFragmentSource(texRectFragShaderSource, getGLSLVersion());
+      String fragSource = PApplet.join(preprocFragSrc, "\n");
       ppgl.texRectVertShader = createShader(VERTEX_SHADER, vertSource);
       ppgl.texRectFragShader = createShader(FRAGMENT_SHADER, fragSource);
       if (0 < ppgl.texRectVertShader && 0 < ppgl.texRectFragShader) {
@@ -1613,6 +1617,11 @@ public abstract class PGL {
       int n = 2 * (quality / 2);
       return n;
     }
+  }
+
+
+  protected int getGLSLVersion() {
+    return 120;
   }
 
 
