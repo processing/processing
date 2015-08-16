@@ -226,14 +226,9 @@ class StatusPanel extends JPanel {
       && (contributionListing.hasUpdates(panel.getContrib()) && !panel
         .getContrib().isUpdateFlagged()));
 
-<<<<<<< HEAD
     String latestVersion = contributionListing.getLatestVersion(panel
       .getContrib());
     String currentVersion = panel.getContrib().getPrettyVersionShort();
-=======
-    String latestVersion = contributionListing.getLatestVersion(panel.getContrib());
-    String currentVersion = panel.getContrib().getPrettyVersion();
->>>>>>> parent of 843774c... Possible sets the font correctly
 
     if(latestVersion != null){
       latestVersion = "Update to " + latestVersion;
@@ -241,15 +236,9 @@ class StatusPanel extends JPanel {
       latestVersion = "Update";
     }
 
-<<<<<<< HEAD
     if (currentVersion != null) {
       currentVersion = "v" + currentVersion;
     } else {
-=======
-    if(currentVersion != null){
-      currentVersion = "Version " + currentVersion;
-    }else{
->>>>>>> parent of 843774c... Possible sets the font correctly
       currentVersion = "";
     }
 
