@@ -107,7 +107,6 @@ class StatusPanel extends JPanel {
     progressBarPanel.setOpaque(false);
     updateLabel = new JLabel(" ");
     updateLabel.setFont(Toolkit.getSansFont(14, Font.PLAIN));
-    updateLabel.setMaximumSize(new Dimension(BUTTON_WIDTH, 100));
     updateLabel.setHorizontalAlignment(SwingConstants.CENTER);
     updateButton = new JButton("Update", Toolkit.getLibIcon("manager/update.png"));
     updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
@@ -160,7 +159,7 @@ class StatusPanel extends JPanel {
                   .createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(installButton, BUTTON_WIDTH, BUTTON_WIDTH,
                                 BUTTON_WIDTH).addComponent(progressBarPanel)
-                  .addComponent(updateLabel).addComponent(updateButton)
+                  .addComponent(updateLabel, BUTTON_WIDTH, BUTTON_WIDTH, BUTTON_WIDTH).addComponent(updateButton)
                   .addComponent(removeButton)));
 
     layout.setVerticalGroup(layout
