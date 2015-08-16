@@ -111,8 +111,8 @@ class ContributionPanel extends JPanel {
   private ActionListener undoActionListener;
 
   boolean isUpdateInProgress;
-  private boolean isInstallInProgress;
-  private boolean isRemoveInProgress;
+  boolean isInstallInProgress;
+  boolean isRemoveInProgress;
 
   StringBuilder description;
 
@@ -465,16 +465,7 @@ class ContributionPanel extends JPanel {
     
     String version = contrib.getPrettyVersion();
 
-    // TODO this has no place here, we shouldn't be cleaning up contrib
-    // information in the f*king GUI.
-    if (version != null && !version.isEmpty()) {
-      if (version.toLowerCase().startsWith("build")) // For Python mode
-        description.append(version.substring(5, version.indexOf(',')).trim());
-      else if (version.toLowerCase().startsWith("v")) // For ketai library
-        description.append(version);
-      else
-        description.append(version);
-    }
+    description.append(contrib.getPrettyVersionShort());
     description.append(" <br/>");
     
     String authorList = contrib.getAuthorList();
