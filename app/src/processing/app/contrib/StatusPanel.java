@@ -174,7 +174,7 @@ class StatusPanel extends JPanel {
                     updateButton, removeButton);
 
     progressBarPanel.setVisible(false);
-    updateLabel.setVisible(true);
+    updateLabel.setVisible(false);
 
     installButton.setEnabled(false);
     updateButton.setEnabled(false);
@@ -229,7 +229,7 @@ class StatusPanel extends JPanel {
 
     String latestVersion = contributionListing.getLatestVersion(panel
       .getContrib());
-    String currentVersion = panel.getContrib().getPrettyVersionShort();
+    String currentVersion = panel.getContrib().getPrettyVersion();
 
     if (latestVersion != null) {
       latestVersion = "Update to " + latestVersion;
@@ -238,7 +238,7 @@ class StatusPanel extends JPanel {
     }
 
     if (currentVersion != null) {
-      currentVersion = "v" + currentVersion;
+      currentVersion = "Version " + currentVersion;
     } else {
       currentVersion = "";
     }
@@ -261,10 +261,7 @@ class StatusPanel extends JPanel {
 
     removeButton.setEnabled(panel.getContrib().isInstalled());
     progressBarPanel.add(panel.installProgressBar);
-    updateLabel.setVisible(true);
-    progressBarPanel.setVisible(false);
-    if (panel.isUpdateInProgress || panel.isInstallInProgress || panel.isRemoveInProgress) {
-      System.out.println("wrong");
+    if (panel.installProgressBar.isEnabled()) {
       progressBarPanel.setVisible(true);
       updateLabel.setVisible(false);
       progressBarPanel.repaint();
