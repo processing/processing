@@ -158,7 +158,7 @@ abstract public class Contribution {
   }
 
 
-  // "1.0.2" or a long string like "Build 0124 12:12:12 random"
+  // "1.0.2"
   public String getPrettyVersion() {
     return prettyVersion;
   }
@@ -320,24 +320,5 @@ abstract public class Contribution {
     // Converts Other to other, I/O to i_o, Video & Vision to video_vision
     String cleaned = cat.replaceAll("[\\W]+", "_").toLowerCase();
     return Language.text("contrib.category." + cleaned);
-  }
-  
-  String getPrettyVersionShort() {
-
-    String latestVersion = this.getPrettyVersion();
-    if (latestVersion != null && !latestVersion.isEmpty()) {
-      if (latestVersion.endsWith("alpla")) {
-        return latestVersion.replaceAll("alpla", "a");
-      } else if (latestVersion.toLowerCase().startsWith("build")) { // For Python mode
-        return (latestVersion.substring(5, latestVersion.indexOf(',')).trim());
-      } else if (latestVersion.toLowerCase().startsWith("v")) { // For ketai library
-        return latestVersion.substring(1, latestVersion.length());
-      } else if (latestVersion.indexOf(' ') != -1) {
-        return latestVersion.substring(0, latestVersion.indexOf(' '));
-      } else {
-        return latestVersion;
-      }
-    } else
-      return null;
   }
 }
