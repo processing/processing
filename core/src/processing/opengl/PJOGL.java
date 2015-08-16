@@ -1244,17 +1244,42 @@ public class PJOGL extends PGL {
     return vn.getMajor() * 100 + vn.getMinor();
   }
 
+
+  @Override
+  protected String[] loadVertexShader(String filename) {
+    return loadVertexShader(filename, getGLSLVersion(context));
+  }
+
+
+  @Override
+  protected String[] loadFragmentShader(String filename) {
+    return loadFragmentShader(filename, getGLSLVersion(context));
+  }
+
+
+  @Override
+  protected String[] loadVertexShader(URL url) {
+    return loadVertexShader(url, getGLSLVersion(context));
+  }
+
+
+  @Override
+  protected String[] loadFragmentShader(URL url) {
+    return loadFragmentShader(url, getGLSLVersion(context));
+  }
+
+
   @Override
   protected String[] loadVertexShader(String filename, int version) {
     String[] fragSrc0 = pg.parent.loadStrings(filename);
-    return preprocessFragmentSource(fragSrc0, getGLSLVersion(context));
+    return preprocessFragmentSource(fragSrc0, version);
   }
 
 
   @Override
   protected String[] loadFragmentShader(String filename, int version) {
     String[] vertSrc0 = pg.parent.loadStrings(filename);
-    return preprocessVertexSource(vertSrc0, getGLSLVersion(context));
+    return preprocessVertexSource(vertSrc0, version);
   }
 
 
@@ -1262,7 +1287,7 @@ public class PJOGL extends PGL {
   protected String[] loadFragmentShader(URL url, int version) {
     try {
       String[] fragSrc0 = PApplet.loadStrings(url.openStream());
-      return preprocessFragmentSource(fragSrc0, getGLSLVersion(context));
+      return preprocessFragmentSource(fragSrc0, version);
     } catch (IOException e) {
       PGraphics.showException("Cannot load fragment shader " + url.getFile());
     }
@@ -1274,7 +1299,7 @@ public class PJOGL extends PGL {
   protected String[] loadVertexShader(URL url, int version) {
     try {
       String[] vertSrc0 = PApplet.loadStrings(url.openStream());
-      return preprocessVertexSource(vertSrc0, getGLSLVersion(context));
+      return preprocessVertexSource(vertSrc0, version);
     } catch (IOException e) {
       PGraphics.showException("Cannot load vertex shader " + url.getFile());
     }
