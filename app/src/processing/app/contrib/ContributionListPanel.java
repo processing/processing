@@ -24,18 +24,14 @@ package processing.app.contrib;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
-import java.util.Map.Entry;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.border.Border;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.Lister.Pack;
 
 import processing.app.Base;
-import processing.app.Platform;
 import processing.app.ui.Toolkit;
 
 
