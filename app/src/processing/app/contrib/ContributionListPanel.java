@@ -32,6 +32,8 @@ import javax.swing.border.Border;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.Lister.Pack;
+
 import processing.app.Base;
 import processing.app.Platform;
 import processing.app.ui.Toolkit;
@@ -42,7 +44,7 @@ import processing.app.ui.Toolkit;
 // necessary in the first place, however; seems like odd behavior.
 // It also allows the description text in the panels to wrap properly.
 
-public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
+public class ContributionListPanel extends JPanel implements ContributionChangeListener {
 
   ContributionTab contributionTab;
   TreeMap<Contribution, ContributionPanel> panelByContribution;
@@ -69,6 +71,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     super();
     this.contributionTab = contributionTab;
     this.filter = filter;
+    
 
 //    contribListing = ContributionListing.getInstance();
 
@@ -453,7 +456,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
               newPanel.setContribution(contribution);
               add(newPanel);
               updatePanelOrdering(panelByContribution.keySet());
-              updateColors();  // XXX this is the place
+//              updateColors();  // XXX this is the place
             }
           }
         }
@@ -473,7 +476,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           }
         }
         updatePanelOrdering(panelByContribution.keySet());
-        updateColors();
+//        updateColors();
         updateUI();
       }
     });
@@ -546,7 +549,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       }
       contributionPanel.setSelected(true);
 
-      updateColors();
+//      updateColors();
       requestFocusInWindow();
     }
   }
@@ -557,9 +560,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   }
 
 
-  /**
+ /* *//**
    * Updates the colors of all library panels that are visible.
-   */
+   *//*
   protected void updateColors() {
     int count = 0;
     synchronized (panelByContribution) {
@@ -607,9 +610,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   }
 
 
-  /**
+  *//**
    * Amount to scroll to reveal a new page of items
-   */
+   *//*
   public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
     if (orientation == SwingConstants.VERTICAL) {
       int blockAmount = visibleRect.height;
@@ -626,9 +629,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   }
 
 
-  /**
+  *//**
    * Amount to scroll to reveal the rest of something we are on or a new item
-   */
+   *//*
   public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
     if (orientation == SwingConstants.VERTICAL) {
       int lastHeight = 0, height = 0;
@@ -675,7 +678,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   public boolean getScrollableTracksViewportWidth() {
     return true;
   }
-
+*/
 
   public int getNoOfRows() {
     return panelByContribution.size();

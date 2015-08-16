@@ -253,7 +253,7 @@ public class ContributionTab {
             category = null;
           }
           filterLibraries(category, filterField.filters);
-          contributionListPanel.updateColors();
+//          contributionListPanel.updateColors();
         }
       });
 
@@ -485,7 +485,7 @@ public class ContributionTab {
       filters = Arrays.asList(filter.split(" "));
       filterLibraries(category, filters);
 
-      contributionListPanel.updateColors();
+//      contributionListPanel.updateColors();
     }
 
   }

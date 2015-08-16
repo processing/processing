@@ -519,18 +519,7 @@ public class ContributionListing {
     if(newestContrib == null){
       return null;
     }
-    String latestVersion = newestContrib.getPrettyVersion();
-    if (latestVersion != null && !latestVersion.isEmpty()) {
-      if (latestVersion.toLowerCase().startsWith("build")) // For Python mode
-        return ("v" + latestVersion.substring(5, latestVersion.indexOf(','))
-            .trim());
-      else if (latestVersion.toLowerCase().startsWith("v")) // For ketai library
-        return latestVersion;
-      else
-        return ("v" + latestVersion);
-    }
-    else
-      return null;
+    return newestContrib.getPrettyVersionShort();
   }
 
 
