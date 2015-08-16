@@ -61,6 +61,7 @@ public class ContributionListPanel extends JPanel implements ContributionChangeL
   protected ContributionListing contribListing = ContributionListing.getInstance();
   protected JTable table;
   DefaultTableModel dtm;
+  Font myFont;
 
   public ContributionListPanel() {
     // TODO Auto-generated constructor stub
@@ -99,6 +100,9 @@ public class ContributionListPanel extends JPanel implements ContributionChangeL
           return c;
       }
     };
+
+    myFont = Toolkit.getSansFont(14, Font.PLAIN);
+    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(myFont);
     
     // There is a space before Status
     String[] colName = { " Status", "Name", "Author" };
@@ -307,7 +311,7 @@ public class ContributionListPanel extends JPanel implements ContributionChangeL
         if (table.isRowSelected(row)) {
           label.setBackground(new Color(0xe0fffd));
         }
-        label.setFont(ContributionManagerDialog.myFont);
+        label.setFont(myFont);
         label.setOpaque(true);
       } else {
         label = new JLabel(

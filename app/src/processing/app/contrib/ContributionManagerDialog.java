@@ -74,12 +74,8 @@ public class ContributionManagerDialog {
 
   private JLabel updateTabLabel;
 
-  static Font myFont;
-
 
   public ContributionManagerDialog() {
-    myFont = Toolkit.getSansFont(14, Font.PLAIN);
-    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(myFont);
     numberLabel = new JLabel(Toolkit.getLibIcon("manager/notification.png"), SwingConstants.CENTER);
     toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
     librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
