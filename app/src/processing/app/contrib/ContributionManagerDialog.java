@@ -261,7 +261,7 @@ public class ContributionManagerDialog {
         @Override
         protected void paintComponent(Graphics g) {
           g.setClip(Toolkit.createRoundRect(0, 0,
-                                          getWidth(), getHeight(),
+                                          getWidth(), getHeight()- 2,
                                           temp == 0 ? 6 : 0,
                                           temp == 3 ? 6 : 0,
                                           0, 0));
@@ -283,7 +283,7 @@ public class ContributionManagerDialog {
       @Override
       protected void paintComponent(Graphics g) {
         g.setClip(Toolkit.createRoundRect(0, 0,
-                                        getWidth(), getHeight(),
+                                        getWidth(), getHeight() - 2,
                                         6,
                                         6,
                                         0, 0));

@@ -25,6 +25,7 @@ package processing.app.contrib;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.*;
 import java.util.*;
 
@@ -135,7 +136,15 @@ public class ContributionTab {
       progressBar = new JProgressBar();
       progressBar.setVisible(false);
       createComponents();
-      panel = new JPanel(false);
+      panel = new JPanel(false){
+        @Override
+        protected void paintComponent(Graphics g) {
+          super.paintComponent(g);
+          g.setColor(new Color(0xe0fffd));
+          g.fillRect(getX(), panel.getY() - ContributionManagerDialog.TAB_HEIGHT - 2 , panel.getWidth(), 2);
+
+        }
+      };
       loaderLabel = new JLabel(Toolkit.getLibIcon("manager/loader.gif"));
       loaderLabel.setOpaque(false);
       loaderLabel.setBackground(Color.WHITE);
