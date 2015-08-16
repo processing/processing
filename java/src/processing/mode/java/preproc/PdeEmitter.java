@@ -374,12 +374,15 @@ public class PdeEmitter implements PdeTokenTypes {
       }
       break;
 
-    // DOT always has exactly two children.
+    // DOT
     case DOT:
       print(child1);
       out.print(".");
       dumpHiddenAfter(ast);
       print(child2);
+      if (child3 != null) {
+        print(child3);
+      }
       break;
 
     case MODIFIERS:
