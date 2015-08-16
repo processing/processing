@@ -1270,14 +1270,14 @@ public class PJOGL extends PGL {
 
 
   @Override
-  protected String[] loadVertexShader(String filename, int version) {
+  protected String[] loadFragmentShader(String filename, int version) {
     String[] fragSrc0 = pg.parent.loadStrings(filename);
     return preprocessFragmentSource(fragSrc0, version);
   }
 
 
   @Override
-  protected String[] loadFragmentShader(String filename, int version) {
+  protected String[] loadVertexShader(String filename, int version) {
     String[] vertSrc0 = pg.parent.loadStrings(filename);
     return preprocessVertexSource(vertSrc0, version);
   }
