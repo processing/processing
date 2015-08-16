@@ -38,6 +38,7 @@ import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.html.HTMLDocument;
 
 import processing.app.ui.Toolkit;
 import processing.app.Base;
@@ -57,6 +58,8 @@ class StatusPanel extends JPanel {
   ContributionListing contributionListing = ContributionListing.getInstance();
   ContributionTab contributionTab;
 
+  private String bodyRule;
+
   public StatusPanel(int width, final ContributionTab contributionTab) {
     super();
     setBackground(new Color(0xebebeb));
@@ -69,7 +72,8 @@ class StatusPanel extends JPanel {
     label.setEditable(false);
     label.setOpaque(false);
     label.setContentType("text/html");
-    label.setFont(ContributionManagerDialog.myFont);
+    bodyRule = "body { font-family: " + ContributionManagerDialog.myFont.getFamily() + "; " +
+            "font-size: " + ContributionManagerDialog.myFont.getSize() + "pt; }";
     label.addHyperlinkListener(new HyperlinkListener() {
 
       @Override
@@ -222,6 +226,7 @@ class StatusPanel extends JPanel {
       iconLabel.setIcon(null);
     }
     label.setText(panel.description.toString());
+    ((HTMLDocument)label.getDocument()).getStyleSheet().addRule(bodyRule);
 
     updateButton.setEnabled(contributionListing.hasDownloadedLatestList()
       && (contributionListing.hasUpdates(panel.getContrib()) && !panel
