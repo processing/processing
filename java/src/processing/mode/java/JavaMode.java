@@ -265,7 +265,6 @@ public class JavaMode extends Mode {
   }
 
 
-  @Override
   public String getSearchPath() {
     return System.getProperty("java.class.path") +
       File.pathSeparatorChar + System.getProperty("java.home") +
