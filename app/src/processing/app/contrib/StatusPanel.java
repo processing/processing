@@ -18,7 +18,7 @@
   You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 package processing.app.contrib;
 
 import java.awt.BorderLayout;
@@ -38,11 +38,11 @@ import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.html.HTMLDocument;
 
 import processing.app.ui.Toolkit;
 import processing.app.Base;
 import processing.app.Platform;
-
 
 class StatusPanel extends JPanel {
   static final int BUTTON_WIDTH = 150;
@@ -55,15 +55,16 @@ class StatusPanel extends JPanel {
   JButton removeButton;
   GroupLayout layout;
   JLabel iconLabel;
-
   ContributionListing contributionListing = ContributionListing.getInstance();
   ContributionTab contributionTab;
+
+  private String bodyRule;
 
   public StatusPanel(int width, final ContributionTab contributionTab) {
     super();
     setBackground(new Color(0xebebeb));
 //    setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
-    this.contributionTab  = contributionTab;
+    this.contributionTab = contributionTab;
 
     iconLabel = new JLabel();
 
@@ -71,7 +72,8 @@ class StatusPanel extends JPanel {
     label.setEditable(false);
     label.setOpaque(false);
     label.setContentType("text/html");
-    label.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+    bodyRule = "body { font-family: " + ContributionManagerDialog.myFont.getFamily() + "; " +
+            "font-size: " + ContributionManagerDialog.myFont.getSize() + "pt; }";
     label.addHyperlinkListener(new HyperlinkListener() {
 
       @Override
@@ -83,7 +85,8 @@ class StatusPanel extends JPanel {
         }
       }
     });
-    installButton = new JButton("Install", Toolkit.getLibIcon("manager/install.png"));
+    installButton = new JButton("Install",
+                                Toolkit.getLibIcon("manager/install.png"));
     installButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     installButton.setHorizontalAlignment(SwingConstants.LEFT);
 //    installButton.setContentAreaFilled(false);
@@ -103,7 +106,8 @@ class StatusPanel extends JPanel {
     progressBarPanel.setOpaque(false);
     updateLabel = new JLabel(" ");
     updateLabel.setFont(Toolkit.getSansFont(14, Font.PLAIN));
-    updateButton = new JButton("Update", Toolkit.getLibIcon("manager/update.png"));
+    updateButton = new JButton("Update",
+                               Toolkit.getLibIcon("manager/update.png"));
     updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     updateButton.setHorizontalAlignment(SwingConstants.LEFT);
 //    updateButton.setAlignmentX(SwingConstants.LEFT);
@@ -120,7 +124,8 @@ class StatusPanel extends JPanel {
       }
     });
 
-    removeButton = new JButton("Remove", Toolkit.getLibIcon("manager/remove.png"));
+    removeButton = new JButton("Remove",
+                               Toolkit.getLibIcon("manager/remove.png"));
     removeButton.setFont(Toolkit.getSansFont(14, Font.BOLD));
     removeButton.setHorizontalAlignment(SwingConstants.LEFT);
 //    removeButton.setContentAreaFilled(false);
@@ -169,8 +174,8 @@ class StatusPanel extends JPanel {
                               .addComponent(updateLabel))
                   .addComponent(updateButton).addComponent(removeButton)));
 
-    layout
-      .linkSize(SwingConstants.HORIZONTAL, installButton, progressBarPanel, updateButton, removeButton);
+    layout.linkSize(SwingConstants.HORIZONTAL, installButton, progressBarPanel,
+                    updateButton, removeButton);
 
     progressBarPanel.setVisible(false);
     updateLabel.setVisible(false);
@@ -221,29 +226,31 @@ class StatusPanel extends JPanel {
       iconLabel.setIcon(null);
     }
     label.setText(panel.description.toString());
+    ((HTMLDocument)label.getDocument()).getStyleSheet().addRule(bodyRule);
 
     updateButton.setEnabled(contributionListing.hasDownloadedLatestList()
       && (contributionListing.hasUpdates(panel.getContrib()) && !panel
         .getContrib().isUpdateFlagged()));
 
-    String latestVersion = contributionListing.getLatestVersion(panel.getContrib());
+    String latestVersion = contributionListing.getLatestVersion(panel
+      .getContrib());
     String currentVersion = panel.getContrib().getPrettyVersion();
 
-    if(latestVersion != null){
+    if (latestVersion != null) {
       latestVersion = "Update to " + latestVersion;
-    }else{
+    } else {
       latestVersion = "Update";
     }
 
-    if(currentVersion != null){
+    if (currentVersion != null) {
       currentVersion = "Version " + currentVersion;
-    }else{
+    } else {
       currentVersion = "";
     }
 
-    if(updateButton.isEnabled()){
+    if (updateButton.isEnabled()) {
       updateButton.setText(latestVersion);
-    }else{
+    } else {
       updateButton.setText("Update");
     }
 
@@ -251,9 +258,9 @@ class StatusPanel extends JPanel {
       && contributionListing.hasDownloadedLatestList()
       && panel.getContrib().isCompatible(Base.getRevision()));
 
-    if(installButton.isEnabled()){
+    if (installButton.isEnabled()) {
       updateLabel.setText(currentVersion + " available");
-    }else{
+    } else {
       updateLabel.setText(currentVersion + " installed");
     }
 
@@ -266,13 +273,10 @@ class StatusPanel extends JPanel {
     }
   }
 }
-
-
 /*
 interface ErrorWidget {
   void setErrorMessage(String msg);
 }
-
 
 class StatusPanel extends JPanel implements ErrorWidget {
   String errorMessage;
