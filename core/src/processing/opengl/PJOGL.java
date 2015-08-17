@@ -54,7 +54,6 @@ import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;

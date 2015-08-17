@@ -37,6 +37,8 @@ X   https://github.com/processing/processing/pull/3604
 X   https://github.com/processing/processing/pull/3605
 X   https://github.com/processing/processing/pull/3606
 X   https://github.com/processing/processing/pull/3628
+X Improve OpenGL extensions checks
+X   https://github.com/processing/processing/pull/3646
 
 opengl
 X filter(PShader) broken in HDPI mode
