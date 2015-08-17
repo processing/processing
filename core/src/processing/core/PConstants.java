@@ -517,8 +517,8 @@ public interface PConstants {
   static final int ENABLE_BUFFER_READING      =  10;
   static final int DISABLE_BUFFER_READING     = -10;
 
-  static final int DISABLE_KEY_AUTO_REPEAT     =  11;
-  static final int ENABLE_KEY_AUTO_REPEAT    = -11;
+  static final int DISABLE_KEY_AUTO_REPEAT    =  11;
+  static final int ENABLE_KEY_AUTO_REPEAT     = -11;
 
   static final int HINT_COUNT                 =  12;
 }
