@@ -263,19 +263,13 @@ public class JavaMode extends Mode {
     JavaBuild build = new JavaBuild(sketch);
     return build.exportApplication();
   }
-  
-  
+
+
   @Override
   public String getSearchPath() {
-    StringBuilder tehPath =  new StringBuilder(System.getProperty("java.class.path"));
-
-    // Starting with JDK 1.7, no longer using Apple's Java, so
-    // rt.jar has the same path on all OSes
-    tehPath.append(File.pathSeparatorChar
-               + System.getProperty("java.home") + File.separator + "lib"
-               + File.separator + "rt.jar");
-  
-    return tehPath.toString();
+    return System.getProperty("java.class.path") +
+      File.pathSeparatorChar + System.getProperty("java.home") +
+      File.separator + "lib" + File.separator + "rt.jar";
   }
 
 

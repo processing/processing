@@ -306,7 +306,11 @@ public class ASTGenerator {
   protected void loadJars() {
     factory = new ClassPathFactory();
 
-    StringBuilder tehPath = new StringBuilder(editor.getMode().getSearchPath());
+    StringBuilder tehPath = new StringBuilder();
+    String modeClassPath = editor.getMode().getSearchPath();
+    if (modeClassPath != null) {
+      tehPath.append(modeClassPath);
+    }
 
     if (errorCheckerService.classpathJars != null) {
       synchronized (errorCheckerService.classpathJars) {

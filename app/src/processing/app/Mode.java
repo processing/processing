@@ -938,7 +938,7 @@ public abstract class Mode {
 
 
   public String getSearchPath() {
-    return "";
+    return null;
   }
 
 
