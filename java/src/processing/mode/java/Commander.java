@@ -386,6 +386,7 @@ public class Commander implements RunnerListener {
 //    out.println("                     32- or 64-bit specific such as the OpenGL library.");
 //    out.println("                     Otherwise specify 0 or leave it out.");
 
+    out.println();
     out.println("The --build, --run, --present, or --export will be the final parameter");
     out.println("passed to Processing. Arguments passed following one of those four will");
     out.println("be passed through to the sketch itself, and therefore available to the");
