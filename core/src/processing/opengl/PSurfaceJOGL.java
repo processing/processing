@@ -924,7 +924,8 @@ public class PSurfaceJOGL implements PSurface {
     KeyEvent ke = new KeyEvent(nativeEvent, nativeEvent.getWhen(),
                                peAction, peModifiers,
                                keyChar,
-                               keyCode);
+                               keyCode,
+                               nativeEvent.isAutoRepeat());
 
     sketch.postEvent(ke);
 
@@ -935,7 +936,8 @@ public class PSurfaceJOGL implements PSurface {
         KeyEvent tke = new KeyEvent(nativeEvent, nativeEvent.getWhen(),
                                     KeyEvent.TYPE, peModifiers,
                                     keyChar,
-                                    0);
+                                    keyCode,
+                                    nativeEvent.isAutoRepeat());
 
         sketch.postEvent(tke);
       }
