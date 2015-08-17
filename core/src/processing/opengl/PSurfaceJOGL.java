@@ -927,6 +927,19 @@ public class PSurfaceJOGL implements PSurface {
                                keyCode);
 
     sketch.postEvent(ke);
+
+    if (!isPCodedKey(code) && !isHackyKey(code)) {
+      if (peAction == KeyEvent.PRESS) {
+        // Create key typed event
+        // TODO: combine dead keys with the following key
+        KeyEvent tke = new KeyEvent(nativeEvent, nativeEvent.getWhen(),
+                                    KeyEvent.TYPE, peModifiers,
+                                    keyChar,
+                                    0);
+
+        sketch.postEvent(tke);
+      }
+    }
   }
 
   private static boolean isPCodedKey(short code) {
