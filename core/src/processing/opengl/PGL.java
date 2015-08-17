@@ -743,10 +743,9 @@ public abstract class PGL {
 
 
   private void createFBOLayer() {
-    String ext = getString(EXTENSIONS);
     float scale = pg.getPixelScale();
 
-    if (-1 < ext.indexOf("texture_non_power_of_two")) {
+    if (hasNpotTexSupport()) {
       fboWidth = (int)(scale * pg.width);
       fboHeight = (int)(scale * pg.height);
     } else {
@@ -755,14 +754,14 @@ public abstract class PGL {
     }
 
     int maxs = maxSamples();
-    if (-1 < ext.indexOf("_framebuffer_multisample") && 1 < maxs) {
+    if (hasFboMultisampleSupport() && 1 < maxs) {
       numSamples = PApplet.min(reqNumSamples, maxs);
     } else {
       numSamples = 1;
     }
     boolean multisample = 1 < numSamples;
 
-    boolean packed = ext.indexOf("packed_depth_stencil") != -1;
+    boolean packed = hasPackedDepthStencilSupport();
     int depthBits = PApplet.min(REQUESTED_DEPTH_BITS, getDepthBits());
     int stencilBits = PApplet.min(REQUESTED_STENCIL_BITS, getStencilBits());
 
