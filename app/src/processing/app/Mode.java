@@ -936,6 +936,12 @@ public abstract class Mode {
 //    base.handleNewReplace();
 //  }
 
+
+  public String getSearchPath() {
+    return "";
+  }
+
+
   @Override
   public String toString() {
     return getTitle();
