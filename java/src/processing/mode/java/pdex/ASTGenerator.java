@@ -306,14 +306,7 @@ public class ASTGenerator {
   protected void loadJars() {
     factory = new ClassPathFactory();
 
-    StringBuilder tehPath =
-      new StringBuilder(System.getProperty("java.class.path"));
-
-    // Starting with JDK 1.7, no longer using Apple's Java, so
-    // rt.jar has the same path on all OSes
-    tehPath.append(File.pathSeparatorChar
-                   + System.getProperty("java.home") + File.separator + "lib"
-                   + File.separator + "rt.jar" + File.pathSeparatorChar);
+    StringBuilder tehPath = new StringBuilder(editor.getMode().getSearchPath());
 
     if (errorCheckerService.classpathJars != null) {
       synchronized (errorCheckerService.classpathJars) {
