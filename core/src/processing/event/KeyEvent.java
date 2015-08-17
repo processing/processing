@@ -31,6 +31,8 @@ public class KeyEvent extends Event {
   char key;
   int keyCode;
 
+  boolean isAutoRepeat;
+
 
   public KeyEvent(Object nativeObject,
                   long millis, int action, int modifiers,
@@ -41,6 +43,16 @@ public class KeyEvent extends Event {
     this.keyCode = keyCode;
   }
 
+  public KeyEvent(Object nativeObject,
+                  long millis, int action, int modifiers,
+                  char key, int keyCode, boolean isAutoRepeat) {
+    super(nativeObject, millis, action, modifiers);
+    this.flavor = KEY;
+    this.key = key;
+    this.keyCode = keyCode;
+    this.isAutoRepeat = isAutoRepeat;
+  }
+
 
   public char getKey() {
     return key;
@@ -49,5 +61,10 @@ public class KeyEvent extends Event {
 
   public int getKeyCode() {
     return keyCode;
+  }
+
+
+  public boolean isAutoRepeat() {
+    return isAutoRepeat;
   }
 }
