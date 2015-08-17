@@ -63,6 +63,8 @@ X   https://github.com/processing/processing/pull/3630
 X Set font correctly in Contribution Manager dialog
 X   https://github.com/processing/processing/issues/3601
 X   https://github.com/processing/processing/pull/3626
+X Add method to JavaMode for search path
+X   https://github.com/processing/processing/pull/3648
 
 earlier
 X closing the color selector makes things freeze (only Linux and Windows?)

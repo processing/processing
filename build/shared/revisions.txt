@@ -67,6 +67,9 @@ the bugs. See "your contributions are funding graphics fixes," below.
 + Implement add(x, y) and sub(x, y) in PVector
   https://github.com/processing/processing/issues/3593
 
++ Add method to JavaMode for search path
+  https://github.com/processing/processing/pull/3648
+
 
 [ google summer of code ]
 

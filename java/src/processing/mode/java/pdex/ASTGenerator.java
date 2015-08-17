@@ -306,34 +306,34 @@ public class ASTGenerator {
   protected void loadJars() {
     factory = new ClassPathFactory();
 
-    StringBuilder tehPath = new StringBuilder();
-    String modeClassPath = editor.getMode().getSearchPath();
+    StringBuilder path = new StringBuilder();
+    String modeClassPath = ((JavaMode) editor.getMode()).getSearchPath();
     if (modeClassPath != null) {
-      tehPath.append(modeClassPath);
+      path.append(modeClassPath);
     }
 
     if (errorCheckerService.classpathJars != null) {
       synchronized (errorCheckerService.classpathJars) {
         for (URL jarPath : errorCheckerService.classpathJars) {
           //log(jarPath.getPath());
-          tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
+          path.append(jarPath.getPath() + File.pathSeparatorChar);
         }
       }
     }
 
-    classPath = factory.createFromPath(tehPath.toString());
+    classPath = factory.createFromPath(path.toString());
     log("Classpath created " + (classPath != null));
     log("Sketch classpath jars loaded.");
     if (Platform.isMacOS()) {
-      File f = new File(System.getProperty("java.home") + File.separator + "bundle"
-          + File.separator + "Classes" + File.separator + "classes.jar");
-      log(f.getAbsolutePath() + " | classes.jar found?"
-          + f.exists());
+      File f = new File(System.getProperty("java.home") +
+                        File.separator + "bundle" +
+                        File.separator + "Classes" +
+                        File.separator + "classes.jar");
+      log(f.getAbsolutePath() + " | classes.jar found?" + f.exists());
     } else {
-      File f = new File(System.getProperty("java.home") + File.separator
-                        + "lib" + File.separator + "rt.jar" + File.separator);
-      log(f.getAbsolutePath() + " | rt.jar found?"
-          + f.exists());
+      File f = new File(System.getProperty("java.home") + File.separator +
+                        "lib" + File.separator + "rt.jar" + File.separator);
+      log(f.getAbsolutePath() + " | rt.jar found?" + f.exists());
     }
   }
 
@@ -3523,8 +3523,7 @@ public class ASTGenerator {
     if (impName.startsWith("processing")) {
       if (JavaMode.suggestionsMap.get(processingInclude).contains(impName)) {
         return false;
-      } else if (JavaMode.suggestionsMap.get(processingExclude)
-          .contains(impName)) {
+      } else if (JavaMode.suggestionsMap.get(processingExclude).contains(impName)) {
         return true;
       }
     } else if (impName.startsWith("java")) {

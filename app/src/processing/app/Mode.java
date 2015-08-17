@@ -937,9 +937,10 @@ public abstract class Mode {
 //  }
 
 
-  public String getSearchPath() {
-    return null;
-  }
+  // this is Java-specific, so keeping it in JavaMode
+//  public String getSearchPath() {
+//    return null;
+//  }
 
 
   @Override
