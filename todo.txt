@@ -1,5 +1,7 @@
 0243 (3.0b5)
-
+X processing-java isn't working in OS X 10.11 El Capitan
+X   https://github.com/processing/processing/issues/3497
+o   probably have to add the script/Processing.app location to user's path
 
 earlier
 X modify build to insert these after antlr run:
@@ -34,12 +36,6 @@ _ Contributions Manager UI design
 _   https://github.com/processing/processing/issues/3482
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
-_ processing-java isn't working in OS X 10.11 El Capitan
-_   https://github.com/processing/processing/issues/3497
-_   probably have to add the script/Processing.app location to user's path
-_   move processing-java inside the Java Mode? 
-_   make a Tool that installs it for all platforms, not just OS X
-_   not really part of the 'build' anymore
 _ sketch modified externally with FAT32 volumes on OS X
 _   https://github.com/processing/processing/issues/3387
 
@@ -822,6 +818,9 @@ How the environment gets packed up, downloaded, and installed.
 
 DIST / General 
 
+_ move processing-java inside the Java Mode? 
+_   make a Tool that installs it for all platforms, not just OS X
+_   not really part of the 'build' anymore
 _ line ending issues
 _   doesn't really help on Windows since we use Cygwin
 _     but it would be helpful for people not using it (ant/other LF issues)
