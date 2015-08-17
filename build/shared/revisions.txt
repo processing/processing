@@ -106,6 +106,10 @@ the bugs. See "your contributions are funding graphics fixes," below.
   https://github.com/processing/processing/issues/3612
   https://github.com/processing/processing/pull/3630
 
++ Set font correctly in Contribution Manager dialog
+  https://github.com/processing/processing/issues/3601
+  https://github.com/processing/processing/pull/3626
+
 
 [ fixed earlier, spring cleaning ]
 
@@ -163,6 +167,9 @@ the bugs. See "your contributions are funding graphics fixes," below.
   https://github.com/processing/processing/pull/3605
   https://github.com/processing/processing/pull/3606
   https://github.com/processing/processing/pull/3628
+
++ Improve OpenGL extensions checks on OS X
+  https://github.com/processing/processing/pull/3646
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .

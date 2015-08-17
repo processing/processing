@@ -18,6 +18,11 @@ X   https://github.com/processing/processing/issues/3623
 X should Platform be a static instance?
 X   lots of platform stuff in base, but might be better handled elsewhere
 
+jakub
+X Parsing generic fails when package is specified (also problem with Map.Entry)
+X   https://github.com/processing/processing/issues/918
+X   https://github.com/processing/processing/pull/3638
+
 api changes
 X Make fields and functions in PdeKeywords protected
 X   https://github.com/processing/processing/issues/2383
@@ -55,6 +60,9 @@ X   https://github.com/processing/processing/pull/3631
 X CM filter input glitchy
 X   https://github.com/processing/processing/issues/3612
 X   https://github.com/processing/processing/pull/3630
+X Set font correctly in Contribution Manager dialog
+X   https://github.com/processing/processing/issues/3601
+X   https://github.com/processing/processing/pull/3626
 
 earlier
 X closing the color selector makes things freeze (only Linux and Windows?)
@@ -119,7 +127,7 @@ _ Contributions Manager UI design
 _   https://github.com/processing/processing/issues/3482
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
-_ processing-java isn't working in OSX 10.11 El Capitan
+_ processing-java isn't working in OS X 10.11 El Capitan
 _   https://github.com/processing/processing/issues/3497
 _   probably have to add the script/Processing.app location to user's path
 _   move processing-java inside the Java Mode? 
@@ -129,7 +137,9 @@ _   not really part of the 'build' anymore
 
 gui
 _ fix red in sidebar, the squiggly line beneath code
-_ show hover text with 'debug'
+_ Error/warning location visualisation not updating when editor resizes
+_   https://github.com/processing/processing/issues/3619
+_ show hover text when the mouse is over the 'debug' button
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
 _ make breakpoints more prominent
@@ -148,17 +158,6 @@ _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
 _   iTunes has no rollover state but has a 'down' state
 _     swaps to stop after release
-_ fonts are still really ugly (on non-retina)
-_   may need to drop use of Source Sans
-_   what do these do, and are we doing it already?
-_   System.setProperty("awt.useSystemAAFontSettings","on");
-_   System.setProperty("swing.aatext", "true");
-_ how are we going to handle fonts for other languages? 
-_   two new fonts have been added, other languages will need more
-_   need a decent sans with with Unicode coverage
-_   i.e. https://github.com/processing/processing/pull/3025
-_ Non-western language hint text for toolbar buttons not correctly displayed
-_   https://github.com/processing/processing/issues/2886
 _ deactivate step, continue, stop when not running?
 _ update EditorButton rollover label when pressing shift or alt
 _ disable the debug toggle menu while running
@@ -171,8 +170,20 @@ _ show compiling/startup animation after clicking run
 _   or maybe show an animation for starting up
 _   rather than post-compile
 _   https://github.com/processing/processing/issues/136
-_ Error/warning location visualisation not updating when editor resizes
-_   https://github.com/processing/processing/issues/3619
+
+
+fonts
+_ fonts are still really ugly (on non-retina)
+_   may need to drop use of Source Sans
+_   what do these do, and are we doing it already?
+_   System.setProperty("awt.useSystemAAFontSettings","on");
+_   System.setProperty("swing.aatext", "true");
+_ how are we going to handle fonts for other languages? 
+_   two new fonts have been added, other languages will need more
+_   need a decent sans with with Unicode coverage
+_   i.e. https://github.com/processing/processing/pull/3025
+_ Non-western language hint text for toolbar buttons not correctly displayed
+_   https://github.com/processing/processing/issues/2886
 
 
 pde/build
@@ -528,9 +539,6 @@ _     http://www.javalobby.org/java/forums/t19012.html
 
 
 PDE / Compiler & Preprocessor
-
-_ Parsing generic fails when package is specified (also problem with Map.Entry)
-_   https://github.com/processing/processing/issues/918
 
 medium (bugs/features)
 _ incorporate new preproc

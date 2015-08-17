@@ -79,7 +79,7 @@ public class ContributionManagerDialog {
 
   public ContributionManagerDialog() {
     myFont = Toolkit.getSansFont(14, Font.PLAIN);
-    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(myFont);
+//    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(myFont);
     numberLabel = new JLabel(Toolkit.getLibIcon("manager/notification.png"), SwingConstants.CENTER);
     toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
     librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
@@ -107,7 +107,7 @@ public class ContributionManagerDialog {
   }
 
 
-  public void showFrame(final Editor editor, ContributionType contributionType) {
+  public void showFrame(Editor editor, ContributionType contributionType) {
     this.editor = editor;
 
     //Calculating index to switch to the required tab
@@ -125,12 +125,16 @@ public class ContributionManagerDialog {
     }
     if (dialog == null) {
       makeFrame(editor);
-      tabbedPane.setSelectedIndex(index); //done before as downloadAndUpdateContributionListing() requires the current selected tab
+      // done before as downloadAndUpdateContributionListing()
+      // requires the current selected tab
+      tabbedPane.setSelectedIndex(index);
       downloadAndUpdateContributionListing(editor.getBase());
-      if(index != 4){
-        tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setBackground(new Color(0xe0fffd));
-        tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setForeground(Color.BLACK);
-      }else{
+      if (index != 4) {
+        Component selected =
+          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex());
+        selected.setBackground(new Color(0xe0fffd));
+        selected.setForeground(Color.BLACK);
+      } else {
         updateTabPanel.setBackground(new Color(0xe0fffd));
         updateTabLabel.setForeground(Color.BLACK);
       }
@@ -256,8 +260,9 @@ public class ContributionManagerDialog {
 
 
   private void makeAndSetTabComponents() {
-
-    String[] tabTitles = { "Tools","Libraries","Modes","Examples","Updates"};
+    final String[] tabTitles = {
+      "Tools", "Libraries", "Modes", "Examples", "Updates"
+    };
     tabLabels = new JLabel[4];
 
     for(int i = 0 ; i < 4; i++){
@@ -266,12 +271,11 @@ public class ContributionManagerDialog {
         @Override
         protected void paintComponent(Graphics g) {
           g.setClip(Toolkit.createRoundRect(0, 0,
-                                          getWidth(), getHeight(),
-                                          temp == 0 ? 6 : 0,
-                                          temp == 3 ? 6 : 0,
-                                          0, 0));
+                                            getWidth(), getHeight(),
+                                            temp == 0 ? 6 : 0,
+                                            temp == 3 ? 6 : 0,
+                                            0, 0));
           super.paintComponent(g);
-
         }
       };
       tabLabels[i].setForeground(Color.WHITE);
@@ -284,16 +288,12 @@ public class ContributionManagerDialog {
       tabbedPane.setTabComponentAt(i, tabLabels[i]);
     }
 
-    updateTabPanel = new JPanel(){
+    updateTabPanel = new JPanel() {
       @Override
       protected void paintComponent(Graphics g) {
-        g.setClip(Toolkit.createRoundRect(0, 0,
-                                        getWidth(), getHeight(),
-                                        6,
-                                        6,
-                                        0, 0));
+        g.setClip(Toolkit.createRoundRect(0, 0, getWidth(), getHeight(),
+                                          6, 6, 0, 0));
         super.paintComponent(g);
-
       }
     };;
     updateTabLabel = new JLabel("Updates");
@@ -328,20 +328,19 @@ public class ContributionManagerDialog {
     updateTabPanel.setLayout(tabLayout);
     tabLayout.setHorizontalGroup(tabLayout
       .createSequentialGroup()
-
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
       .addComponent(updateTabLabel)
       .addComponent(numberLabel)
-
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE));
     tabLayout.setVerticalGroup(tabLayout
       .createParallelGroup(GroupLayout.Alignment.CENTER)
       .addComponent(numberLabel).addComponent(updateTabLabel));
-    
+
     numberLabel.setVisible(false);
   }
+
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -353,7 +352,9 @@ public class ContributionManagerDialog {
           alfa = 50 + (fila > 7 ? 70 : 10 * fila);
       }
       return new Color(0, 0, 0, alfa);
-  }
+    }
+
+
     @Override
     protected void installDefaults() {
       UIManager.put("TabbedPane.selected", Color.BLACK);
