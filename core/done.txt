@@ -1,3 +1,50 @@
+0242 core (3.0b4)
+X dataPath() not working when app is not run from app dir on Linux
+X   https://github.com/processing/processing/issues/2195
+X Zero length string passed to TextLayout constructor
+X   https://github.com/processing/processing/issues/3487
+X improve speed of text(x, y, w, h) when using large strings with no spaces
+X   https://github.com/processing/processing/issues/211
+X implement add(x, y) and sub(x, y) in PVector
+X   https://github.com/processing/processing/issues/3593
+
+earlier
+X are we clear on sketchPath() for OS X?
+X   working dir (user.dir?) returns home dir, not app dir in Oracle Java
+X   could add -Dapp.root=$APP_ROOT and get via System.getProperty("app.root")
+X   https://github.com/processing/processing/issues/2181
+X textWidth() incorrect with default (JAVA2D) renderer and default font
+X   https://github.com/processing/processing/issues/2175
+X Error on size() when using FX2D due to stage inset issues
+X   https://github.com/processing/processing/issues/3412
+X   probably fixes w/ size() removal change
+
+jakub
+X Remove alpha filler (hopefully no regression here)
+X   https://github.com/processing/processing/pull/3523
+X accuracy problems make alpha channel go to FE with image.copy()
+X   https://github.com/processing/processing/issues/258
+X fix blue-channel bias on blend()
+X   https://github.com/processing/processing/issues/514
+X improve blend() accuracy when using ADD
+X   https://github.com/processing/processing/issues/172
+X   includes code for a slow but more accurate mode
+X huge Java2D blending patch
+X   https://github.com/processing/processing/pull/3592
+X Remove support for fixed-function pipeline
+X   https://github.com/processing/processing/issues/3505
+X   https://github.com/processing/processing/pull/3604
+X   https://github.com/processing/processing/pull/3605
+X   https://github.com/processing/processing/pull/3606
+X   https://github.com/processing/processing/pull/3628
+X Improve OpenGL extensions checks
+X   https://github.com/processing/processing/pull/3646
+
+opengl
+X filter(PShader) broken in HDPI mode
+X   https://github.com/processing/processing/issues/3577
+
+
 0241 core (3.0b3)
 X `focused` variable always false in P2D/P3D
 X   https://github.com/processing/processing/issues/3564
