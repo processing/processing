@@ -39,6 +39,8 @@ X   https://github.com/processing/processing/pull/3606
 X   https://github.com/processing/processing/pull/3628
 X Improve OpenGL extensions checks
 X   https://github.com/processing/processing/pull/3646
+X P2D/P3D broken after recent profile changes
+X   https://github.com/processing/processing/issues/3617
 
 opengl
 X filter(PShader) broken in HDPI mode
