@@ -1144,10 +1144,10 @@ public class PGraphics extends PImage implements PConstants {
       showWarning("hint(ENABLE_NATIVE_FONTS) no longer supported. " +
                   "Use createFont() instead.");
     }
-    if (which == ENABLE_KEY_AUTO_REPEAT) {
-      parent.isKeyAutoRepeatEnabled = true;
-    } else if (which == DISABLE_KEY_AUTO_REPEAT) {
-      parent.isKeyAutoRepeatEnabled = false;
+    if (which == ENABLE_KEY_REPEAT) {
+      parent.keyRepeatEnabled = true;
+    } else if (which == DISABLE_KEY_REPEAT) {
+      parent.keyRepeatEnabled = false;
     }
     if (which > 0) {
       hints[which] = true;

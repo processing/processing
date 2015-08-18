@@ -1,5 +1,10 @@
 0243 core (3.0b5)
 
+jakub
+X keyTyped() not firing with P2D and P3D
+X   https://github.com/processing/processing/issues/3582
+X   https://github.com/processing/processing/pull/3652
+
 
 known issues
 _ P2D and P3D windows behave strangely when larger than the screen size

@@ -372,9 +372,9 @@ public class PApplet implements PConstants {
   public int pixelHeight;
 
   /**
-   * Keeps track of ENABLE_KEY_AUTO_REPEAT hint
+   * Keeps track of ENABLE_KEY_REPEAT hint
    */
-  protected boolean isKeyAutoRepeatEnabled = false;
+  protected boolean keyRepeatEnabled = false;
 
   /**
    * ( begin auto-generated from mouseX.xml )
@@ -2918,7 +2918,7 @@ public class PApplet implements PConstants {
   protected void handleKeyEvent(KeyEvent event) {
 
     // Get rid of auto-repeating keys if desired and supported
-    if (!isKeyAutoRepeatEnabled && event.isAutoRepeat()) return;
+    if (!keyRepeatEnabled && event.isAutoRepeat()) return;
 
     keyEvent = event;
     key = event.getKey();
