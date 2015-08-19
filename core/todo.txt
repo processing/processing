@@ -1,5 +1,5 @@
 0243 core (3.0b5)
-X selectFolder broken (gives NullPointerException)
+X NullPointerException in selectFolder() on OS X
 X   https://github.com/processing/processing/issues/3661
 
 cleaning

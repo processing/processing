@@ -3,6 +3,15 @@ X processing-java isn't working in OS X 10.11 El Capitan
 X   https://github.com/processing/processing/issues/3497
 o   probably have to add the script/Processing.app location to user's path
 
+contribs
+X Undo does not move to the correct location in the editor window
+X   https://github.com/processing/processing/issues/707
+X   https://github.com/processing/processing/pull/3660
+
+gsoc
+_ Foundation libraries disapear from CM after restart
+_   https://github.com/processing/processing/issues/3659
+
 earlier
 X modify build to insert these after antlr run:
 X   @SuppressWarnings({"unused", "cast"})
@@ -487,8 +496,6 @@ _   https://github.com/processing/processing/issues/533
 
 PDE / Editor
 
-_ [help] Undo does not move to the correct location in the editor window
-_   https://github.com/processing/processing/issues/707
 _ clean up /tmp folders used during build
 _   https://github.com/processing/processing/issues/1896
 _ 'recent' menu doesn't respect examples folder of other p5 versions
