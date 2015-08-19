@@ -3288,21 +3288,27 @@ public class ASTGenerator {
     return null;
   }
 
-  public String[] getSuggestImports(final String className){
-    if(ignoredImportSuggestions == null) {
+  public String[] getSuggestImports(final String className) {
+    if (classPath == null) {
+      return null;
+    }
+
+    if (ignoredImportSuggestions == null) {
       ignoredImportSuggestions = new TreeSet<String>();
     } else {
-      if(ignoredImportSuggestions.contains(className)) {
+      if (ignoredImportSuggestions.contains(className)) {
         log("Ignoring import suggestions for " + className);
         return null;
       }
     }
 
     log("Looking for class " + className);
-    RegExpResourceFilter regf =
-      new RegExpResourceFilter(Pattern.compile(".*"),
-                               Pattern.compile(className + ".class",
-                                               Pattern.CASE_INSENSITIVE));
+    RegExpResourceFilter regf = new RegExpResourceFilter(
+                                                         Pattern.compile(".*"),
+                                                         Pattern
+                                                             .compile(className
+                                                                          + ".class",
+                                                                      Pattern.CASE_INSENSITIVE));
     // TODO once saw NPE here...possible for classPath to be null? [fry 150808]
     String[] resources = classPath.findResources("", regf);
     List<String> candidates = new ArrayList<String>();
@@ -3325,7 +3331,8 @@ public class ASTGenerator {
       File codeFolder = editor.getSketch().getCodeFolder();
       // get a list of .jar files in the "code" folder
       // (class files in subfolders should also be picked up)
-      ClassPath cp = factory.createFromPath(Util.contentsToClassPath(codeFolder));
+      ClassPath cp = factory.createFromPath(Util
+          .contentsToClassPath(codeFolder));
       resources = cp.findResources("", regf);
       for (String res : resources) {
         candidates.add(res);
@@ -3346,6 +3353,7 @@ public class ASTGenerator {
 
     return resources;
   }
+
   protected JFrame frmImportSuggest;
   private TreeSet<String> ignoredImportSuggestions;
 
