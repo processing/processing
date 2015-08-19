@@ -188,7 +188,7 @@ public class ContributionTab {
 
     });*/
 
-    int catChooserWidth = ContributionManagerDialog.AUTHOR_WIDTH + contributionListPanel.scrollPane.getVerticalScrollBar().getPreferredSize().width - 10;
+    int scrollBarWidth = contributionListPanel.scrollPane.getVerticalScrollBar().getPreferredSize().width;
 
     GroupLayout layout = new GroupLayout(panel);
     panel.setLayout(layout);
@@ -207,10 +207,10 @@ public class ContributionTab {
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                   .addComponent(categoryChooser,
-                                catChooserWidth,
-                                catChooserWidth,
-                                catChooserWidth)
-                  .addContainerGap()).addComponent(loaderLabel)
+                                ContributionManagerDialog.AUTHOR_WIDTH,
+                                ContributionManagerDialog.AUTHOR_WIDTH,
+                                ContributionManagerDialog.AUTHOR_WIDTH)
+                  .addGap(scrollBarWidth)).addComponent(loaderLabel)
       .addComponent(contributionListPanel).addComponent(errorPanel)
       .addComponent(statusPanel));
 
