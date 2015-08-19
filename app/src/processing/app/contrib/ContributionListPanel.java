@@ -96,7 +96,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           return c;
       }
     };
-    
+
     // There is a space before Status
     String[] colName = { " Status", "Name", "Author" };
     dtm.setColumnIdentifiers(colName);
@@ -345,9 +345,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         label.setFont(ContributionManagerDialog.myFont);
         label.setOpaque(true);
       } else {
-        label = new JLabel(
-                           contribution.isSpecial() ? Toolkit
-                             .getLibIcon("icons/pde-16.png") : null);
+        if (contribution.isSpecial()) {
+          label = new JLabel(Toolkit.getLibIcon("icons/foundation-16.png"));
+        } else {
+          label = new JLabel();
+        }
         String authorList = contribution.getAuthorList();
         String name = getAuthorNameWithoutMarkup(authorList);
         label.setText(name.toString());
@@ -379,7 +381,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       return Contribution.class;
     }
   }
-  
+
   String getAuthorNameWithoutMarkup(String authorList) {
     StringBuilder name = new StringBuilder("");
     if (authorList != null) {

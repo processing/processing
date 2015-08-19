@@ -68,9 +68,9 @@ public class ContributionManager {
       if (post == null) {
         conn.setRequestMethod("GET");
         conn.connect();
+
       } else {
         post = gzipEncode(post);
-
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setRequestProperty("Content-Encoding", "gzip");
@@ -597,8 +597,8 @@ public class ContributionManager {
   static private void updateFlagged(Base base, File root) throws Exception {
     File[] markedForUpdate = root.listFiles(new FileFilter() {
       public boolean accept(File folder) {
-        return (folder.isDirectory() && LocalContribution
-          .isUpdateFlagged(folder));
+        return (folder.isDirectory() &&
+                LocalContribution.isUpdateFlagged(folder));
       }
     });
 
