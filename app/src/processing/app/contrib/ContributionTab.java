@@ -373,6 +373,7 @@ public class ContributionTab {
 
       List<Library> libraries =
         new ArrayList<Library>(editor.getMode().contribLibraries);
+      libraries.addAll(editor.getMode().coreLibraries);
       contributions.addAll(libraries);
 
       //ArrayList<ToolContribution> tools = editor.contribTools;
