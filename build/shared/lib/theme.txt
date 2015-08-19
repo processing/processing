@@ -22,13 +22,13 @@ header.tab.unselected.color = #2d4251
 
 # LOWER TABS
 footer.text.font = processing.sans,bold,12
-footer.text.selected.color = #ffffff
-footer.text.unselected.color = #000000
+footer.text.selected.color = #e0fffd
+footer.text.unselected.color = #95adb0
 footer.tab.arrow.color = #ffffff
 footer.gradient.top = #132638
 footer.gradient.bottom = #122535
-footer.tab.selected.color = #3D5362
-footer.tab.unselected.color = #2d4251
+footer.tab.selected.color = #2d4251
+footer.tab.unselected.color = #1f3241
 # updates orange #eb7f15
 
 # CONSOLE
