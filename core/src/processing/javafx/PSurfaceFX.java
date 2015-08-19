@@ -22,14 +22,6 @@
 
 package processing.javafx;
 
-//import java.awt.event.FocusEvent;
-//import java.awt.event.FocusListener;
-//import java.awt.event.KeyListener;
-//import java.awt.event.MouseListener;
-//import java.awt.event.MouseMotionListener;
-//import java.awt.event.MouseWheelEvent;
-//import java.awt.event.MouseWheelListener;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,6 +45,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+
 import processing.core.*;
 
 
