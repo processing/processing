@@ -55,12 +55,12 @@ public class EditorFooter extends Box {
   // amount of extra space between individual tabs
   static final int TAB_BETWEEN = 2;
   // amount of margin on the left/right for the text on the tab
-  static final int MARGIN = 10;
+  static final int MARGIN = 14;
 
   static final int ICON_WIDTH = 16;
   static final int ICON_HEIGHT = 16;
   static final int ICON_TOP = 7;
-  static final int ICON_MARGIN = 8;
+  static final int ICON_MARGIN = 7;
 
   Color[] textColor = new Color[2];
   Color[] tabColor = new Color[2];

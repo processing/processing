@@ -136,6 +136,7 @@ public class JavaTextArea extends JEditTextArea {
     gutterLineColor = mode.getColor("gutter.linecolor"); //, gutterLineColor);
     gutterPadding = mode.getInteger("gutter.padding");
     breakpointMarker = mode.getString("breakpoint.marker");  //, breakpointMarker);
+//    breakpointMarker = "\u2666";
     currentLineMarker = mode.getString("currentline.marker"); //, currentLineMarker);
 
     // TweakMode code
