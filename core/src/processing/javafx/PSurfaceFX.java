@@ -40,6 +40,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Scene;
@@ -51,7 +52,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
 import javafx.util.Duration;
 import processing.core.*;
 
@@ -70,24 +70,25 @@ public class PSurfaceFX implements PSurface {
     canvas = new ResizableCanvas();
     fx.context = canvas.getGraphicsContext2D();
 
-    { // set up main drawing loop
-      KeyFrame keyFrame = new KeyFrame(Duration.millis(1000), e -> {
+    // set up main drawing loop
+    KeyFrame keyFrame = new KeyFrame(Duration.millis(1000),
+                                     new EventHandler<ActionEvent>() {
+      public void handle(ActionEvent event) {
         sketch.handleDraw();
         if (sketch.exitCalled()) {
-          //sketch.exitActual();  // just calls System.exit()
           Platform.exit();  // version for safe JavaFX shutdown
         }
-      });
-      animation = new Timeline(keyFrame);
-      animation.setCycleCount(Timeline.INDEFINITE);
+      }
+    });
+    animation = new Timeline(keyFrame);
+    animation.setCycleCount(Animation.INDEFINITE);
 
-      // key frame has duration of 1 second, so the rate of the animation
-      // should be set to frames per second
+    // key frame has duration of 1 second, so the rate of the animation
+    // should be set to frames per second
 
-      // setting rate to negative so that event fires at the start of
-      // the key frame and first frame is drawn immediately
-      animation.setRate(-60);
-    }
+    // setting rate to negative so that event fires at the start of
+    // the key frame and first frame is drawn immediately
+    animation.setRate(-60);
   }
 
 
