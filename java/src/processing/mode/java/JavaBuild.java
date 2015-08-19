@@ -1338,11 +1338,13 @@ public class JavaBuild {
 
   static protected boolean isXcodeInstalled() {
     if (xcodeInstalled == null) {
+      // http://stackoverflow.com/questions/15371925
       Process p = PApplet.launch("xcode-select", "-p");
       int result = -1;
       try {
         result = p.waitFor();
       } catch (InterruptedException e) { }
+      // returns 0 if installed, 2 if not (-1 if exception)
       xcodeInstalled = (result == 0);
     }
     return xcodeInstalled;

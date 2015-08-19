@@ -14,11 +14,40 @@ gsoc
 X Foundation libraries disapear from CM after restart
 X   https://github.com/processing/processing/issues/3659
 X   https://github.com/processing/processing/pull/3663
+X CM scrolls to bottom of window after updating the list
+o   https://github.com/processing/processing/issues/3248
+o   https://github.com/processing/processing/pull/3328
+X   no longer issue in the new release
+X CM blue bar missing
+X   https://github.com/processing/processing/issues/3599
+X   https://github.com/processing/processing/pull/3636
+X CM: Category dropdown alignment
+X   https://github.com/processing/processing/pull/3666
+_   https://github.com/processing/processing/issues/3644
 
-earlier
+cleaning
 X modify build to insert these after antlr run:
 X   @SuppressWarnings({"unused", "cast"})
 X   or get the updated ANTLR, which likely would support it
+o scrollable stack trace
+o   http://www.javalobby.org/java/forums/t19012.html
+
+cleaning/libraries
+o different name for 'lib' folder because of libraries folder?
+o   avoid some confusion for when describing the libraries folder to users
+X could have library developers update compatability note
+X   so they would need to test library and say "compatible with 0110"
+X   before it would automatically update or show as an update
+o need an "install library" option to deal with urls..
+X need better platform designation setup for libs
+X library installation should use the sketchbook folder, not the p5 folder
+o   actually enforce this, give users a warning about other libs
+o versioning info 
+o   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/versioning.html
+X changing the sketchbook folder will make libraries show up
+o   but it won't reload the library mapping table
+o set DYLD_LIBRARY_PATH to include .dylib and other framework stuff
+o   java.library.path will only handle .jnilib stuff
 
 
 known issues
@@ -44,6 +73,9 @@ _   http://www.oracle.com/us/technologies/java/locale-140624.html
 
 
 3.0 final
+_ prompt to install Xcode coming up on Export to Application
+_   http://stackoverflow.com/questions/15371925/how-to-check-if-command-line-tools-is-installed
+_   "xcode-select -p" returns 0 if they exist (and the dir) or 2 if they don't
 _ Contributions Manager UI design
 _   https://github.com/processing/processing/issues/3482
 _ Ready to add contributed example packages?
@@ -454,13 +486,11 @@ _   along with a "don't ask me later"
 _ use macosx dialogs for all of the editor stuff
 _   see about doing the same on windows, linux?
 _   the others seem to respond ok to the lucida grande since they use defaults
-_   vista style dialogs
-_     http://msdn.microsoft.com/en-us/library/bb328626.aspx
-_   confirmation dialogs (save and don't save.. who'd a thunk it)
-_     http://msdn.microsoft.com/en-us/library/aa511273.aspx
-_     http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
-_   scrollable stack trace
-_     http://www.javalobby.org/java/forums/t19012.html
+_ vista style dialogs
+_   http://msdn.microsoft.com/en-us/library/bb328626.aspx
+_ confirmation dialogs (save and don't save.. who'd a thunk it)
+_   http://msdn.microsoft.com/en-us/library/aa511273.aspx
+_   http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
 
 
 PDE / Compiler & Preprocessor
@@ -582,9 +612,6 @@ _ exporting application copies .java files
 _   .java files are copied to the root folder as well as the source folder
 
 
-PDE / Find & Replace
-
-
 PDE / Examples
 
 _ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
@@ -627,20 +654,16 @@ _   altho prolly only when it's actually different (md5hash it?)
 _   this seems to be causing a lot of trouble with recent releases
 _   (opengl changes and whatnot)
 _ jar files like the bad aiexport plugin will cause serious problems
+_   https://github.com/processing/processing/issues/95
 _   need to ignore processing.core classes showing up in other jar files
 _   tougher than it looks, because it all depends on what java wants to use
 _     i.e. even if not specified, the stuff will be in the classpath
 _   need to make classpath code be less promiscuous
 _   the order of adding libraries to classpath should be opposite
 _     the important local libraries should be first in cp, user contrib later
-_   https://github.com/processing/processing/issues/95
-_ changing the sketchbook folder will make libraries show up
-_   but it won't reload the library mapping table
 _ make sure there aren't library jar files named the same thing 
 _   i.e. if one library has db.jar, then that's gonna kill another db.jar
 _   when the files are copied over
-_ versioning info 
-_   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/versioning.html
 _ java.ext.dirs for /System/Library/Java/Extensions
 _   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/spec.html
 _   can set java.ext.dirs to something else 
@@ -649,17 +672,8 @@ _ native lib stuff, use native.txt in lib folder, then:
 _   String osName = System.getProperty("os.name");
 _   String osArch = System.getProperty("os.arch");
 _   http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
-_ need better platform designation setup for libs
-_ library installation should use the sketchbook folder, not the p5 folder
-_   actually enforce this, give users a warning about other libs
-_ set DYLD_LIBRARY_PATH to include .dylib and other framework stuff
-_   java.library.path will only handle .jnilib stuff
 _ need better error messages for broken api / library troubles
 _   e.g. ocd is broken in 0125 because of method signature changes
-_ could have library developers update compatability note
-_   so they would need to test library and say "compatible with 0110"
-_   before it would automatically update or show as an update
-_ need an "install library" option to deal with urls..
 
 
 PDE / Manager
@@ -704,9 +718,6 @@ _ font size for "Downloading" on progress bar is too large
 _   but changing the size breaks the vertical centering
 _ highlight color seems to be incorrect?
 _ after installing, the item in the manager list doesn't change color
-_ scrolls to bottom of window after updating the list
-_   https://github.com/processing/processing/issues/3248
-_   https://github.com/processing/processing/pull/3328
 _ wheel mouse is super jumpy 
 _   something about unit increment in ContributionListPanel
 _ arrow keys up/down move scroll bar, not selection
@@ -868,8 +879,6 @@ _ about box
 _   bring up information about gpl, lgpl, and ibmpl
 _   jedit syntax is under mit license
 _     http://www.opensource.org/licenses/mit-license.php
-_ different name for 'lib' folder because of libraries folder?
-_   avoid some confusion for when describing the libraries folder to users
 _ add proper copyright and license information for all included projects
 _   https://github.com/processing/processing/issues/224
 _ write up guidelines for modes

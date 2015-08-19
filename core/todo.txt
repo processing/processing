@@ -18,6 +18,7 @@ X rect() sizing in JavaFX
 X   https://github.com/processing/processing/pull/3656
 X FX - Proper sketch sizing
 X   https://github.com/processing/processing/pull/3658
+X implement frameRate()
 
 
 known issues
@@ -74,7 +75,6 @@ _   https://github.com/processing/processing/issues/3274
 _ getNative() in PImage problematic because it gives back a BufferedImage
 _   move loadImage() into PGraphics, with AWT version the default?
 _   or pass createImage() through to renderer?
-_ implement frameRate()
 _ implement external messages (moving the window)
 _ implement PSurfaceFX.setIcon()
 _ javafx not supported with ARM (so we're screwed on raspberry pi)
