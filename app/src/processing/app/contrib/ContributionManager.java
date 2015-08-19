@@ -428,11 +428,8 @@ public class ContributionManager {
   }
 
 
-  static public void refreshInstalled(Editor e) {
-
-    Iterator<Editor> iter = e.getBase().getEditors().iterator();
-    while (iter.hasNext()) {
-      Editor ed = iter.next();
+  static void refreshInstalled(Editor e) {
+    for (Editor ed : e.getBase().getEditors()) {
       ed.getMode().rebuildImportMenu();
       ed.getMode().rebuildExamplesFrame();
       ed.rebuildToolMenu();
@@ -498,7 +495,6 @@ public class ContributionManager {
    * Also updates all entries previously marked for update.
    */
   static public void cleanup(final Base base) throws Exception {
-
     deleteTemp(Base.getSketchbookModesFolder());
     deleteTemp(Base.getSketchbookToolsFolder());
 
@@ -526,8 +522,6 @@ public class ContributionManager {
     };
     s.execute();
 
-
-
     clearRestartFlags(Base.getSketchbookModesFolder());
     clearRestartFlags(Base.getSketchbookToolsFolder());
   }
@@ -541,32 +535,23 @@ public class ContributionManager {
    * @param root
    */
   static private void deleteTemp(File root) {
-
-    LinkedList<File> deleteList = new LinkedList<File>();
-
-    for (File f : root.listFiles())
-      if (f.getName().matches(root.getName().substring(0, 4) + "\\d*" + "tmp"))
-        deleteList.add(f);
-
-    Iterator<File> folderIter = deleteList.iterator();
-
-    while (folderIter.hasNext()) {
-      Util.removeDir(folderIter.next());
+    String pattern = root.getName().substring(0, 4) + "\\d*" + "tmp";
+    for (File f : root.listFiles()) {
+      if (f.getName().matches(pattern)) {
+        Util.removeDir(f);
+      }
     }
   }
 
 
   /**
    * Deletes all the modes/tools/libs that are flagged for removal.
-   *
-   * @param root
-   * @throws Exception
    */
   static private void deleteFlagged(File root) throws Exception {
     File[] markedForDeletion = root.listFiles(new FileFilter() {
       public boolean accept(File folder) {
-        return (folder.isDirectory() && LocalContribution
-          .isDeletionFlagged(folder));
+        return (folder.isDirectory() &&
+                LocalContribution.isDeletionFlagged(folder));
       }
     });
     for (File folder : markedForDeletion) {
@@ -586,19 +571,16 @@ public class ContributionManager {
   static private void installPreviouslyFailed(Base base, File root) throws Exception {
     File[] installList = root.listFiles(new FileFilter() {
       public boolean accept(File folder) {
-        return (folder.isFile());
+        return folder.isFile();
       }
     });
 
     for (File file : installList) {
-      Iterator<AvailableContribution> iter = listing.advertisedContributions.iterator();
-      while (iter.hasNext()) {
-        AvailableContribution availableContrib = iter.next();
-        if (file.getName().equals(availableContrib.getName())) {
+      for (AvailableContribution contrib : listing.advertisedContributions) {
+        if (file.getName().equals(contrib.getName())) {
           file.delete();
-          installOnStartUp(base, availableContrib);
-          listing
-            .replaceContribution(availableContrib, availableContrib);
+          installOnStartUp(base, contrib);
+          listing.replaceContribution(contrib, contrib);
         }
       }
     }
