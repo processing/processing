@@ -1186,7 +1186,7 @@ public class JavaBuild {
       pw.close();
 
       // attempt to code sign if the Xcode tools appear to be installed
-      if (Platform.isMacOS() && new File("/usr/bin/codesign_allocate").exists()) {
+      if (Platform.isMacOS() && isXcodeInstalled()) {
         if (embedJava) {
           ProcessHelper.ffs("codesign", "--force", "--sign", "-", jdkPath);
         }
@@ -1331,6 +1331,21 @@ public class JavaBuild {
 
     /// goodbye
     return true;
+  }
+
+
+  static Boolean xcodeInstalled;
+
+  static protected boolean isXcodeInstalled() {
+    if (xcodeInstalled == null) {
+      Process p = PApplet.launch("xcode-select", "-p");
+      int result = -1;
+      try {
+        result = p.waitFor();
+      } catch (InterruptedException e) { }
+      xcodeInstalled = (result == 0);
+    }
+    return xcodeInstalled;
   }
 
 
