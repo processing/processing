@@ -23,8 +23,10 @@ package processing.app.contrib;
 
 import java.io.*;
 import java.net.*;
+import java.text.Normalizer;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 
 import processing.app.Base;
 import processing.app.Library;
@@ -284,13 +286,18 @@ public class ContributionListing {
 
     filter = ".*" + filter.toLowerCase() + ".*";
 
-    return contrib.getAuthorList() != null && contrib.getAuthorList().toLowerCase().matches(filter)
-        || contrib.getSentence() != null && contrib.getSentence().toLowerCase().matches(filter)
-        || contrib.getParagraph() != null && contrib.getParagraph().toLowerCase().matches(filter)
+    return contrib.getAuthorList() != null && deAccent(contrib.getAuthorList().toLowerCase()).matches(filter)
+        || contrib.getSentence() != null && deAccent(contrib.getSentence().toLowerCase()).matches(filter)
+        || contrib.getParagraph() != null && deAccent(contrib.getParagraph().toLowerCase()).matches(filter)
         || contrib.hasCategory(filter)
-        || contrib.getName() != null && contrib.getName().toLowerCase().matches(filter);
+        || contrib.getName() != null && deAccent(contrib.getName().toLowerCase()).matches(filter);
   }
 
+  public String deAccent(String str) {
+    String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
+    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+    return pattern.matcher(nfdNormalizedString).replaceAll("");
+  }
 
   private boolean isProperty(String property) {
     return property.startsWith("updat") || property.startsWith("upgrad")

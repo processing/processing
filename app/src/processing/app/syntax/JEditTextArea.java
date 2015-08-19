@@ -1913,6 +1913,16 @@ public class JEditTextArea extends JComponent
       } catch (Exception e) {
         getToolkit().beep();
         System.err.println("Clipboard does not contain a string");
+        DataFlavor[] flavors = clipboard.getAvailableDataFlavors();
+        for (DataFlavor f : flavors) {
+          try {
+            Object o = clipboard.getContents(this).getTransferData(f);
+            System.out.println(f + " = " + o);
+          } catch (Exception ex) {
+            ex.printStackTrace();
+          }
+        }
+
       }
     }
   }

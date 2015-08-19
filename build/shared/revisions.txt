@@ -1,4 +1,4 @@
-PROCESSING 3.0b4 (REV 0242) - 14 August 2015
+PROCESSING 3.0b4 (REV 0242) - 17 August 2015
 
 Fixes for several long-standing bugs, plus some internal changes 
 to make the code slightly more usable by contributors. 
@@ -41,8 +41,12 @@ the bugs. See "your contributions are funding graphics fixes," below.
 + improve speed of text(x, y, w, h) when using large strings with no spaces
   https://github.com/processing/processing/issues/211
 
-+ filter(PShader) broken in HDPI mode
++ filter(PShader) was broken in HDPI mode
   https://github.com/processing/processing/issues/3577
+
++ Ctrl+R (Cmd+R) not restarting sketch when debug is enabled.
+  Hitting Run while a sketch is running should restart the sketch.
+  https://github.com/processing/processing/issues/3623
 
 
 [ api/implementation changes ] 
@@ -63,11 +67,51 @@ the bugs. See "your contributions are funding graphics fixes," below.
 + Implement add(x, y) and sub(x, y) in PVector
   https://github.com/processing/processing/issues/3593
 
++ Add method to JavaMode for search path
+  https://github.com/processing/processing/pull/3648
+
+
+[ google summer of code ]
+
 + Second round of arm patches (v5)
   https://github.com/processing/processing/pull/3583
 
++ Third bunch of arm patches
+  https://github.com/processing/processing/pull/3622
+
 + Contribution Manager GUI updates
   https://github.com/processing/processing/pull/3596
+  
++ Sorting CM by the author name inplemented
+  https://github.com/processing/processing/pull/3615
+  
++ CM needs minimum window size enforced
+  https://github.com/processing/processing/issues/3600
+  https://github.com/processing/processing/pull/3607
+
++ Deactivate install button when incompatible
+  https://github.com/processing/processing/issues/3603
+  https://github.com/processing/processing/pull/3611
+
++ CM "Updates" badge appears even when there are no updates
+  https://github.com/processing/processing/issues/3597
+  https://github.com/processing/processing/pull/3625
+
++ Ignore accented characters when filtering in the CM
+  https://github.com/processing/processing/issues/3627
+  https://github.com/processing/processing/pull/3633
+
++ Enable arrow keys for navigating lists in the CM
+  https://github.com/processing/processing/issues/3610
+  https://github.com/processing/processing/pull/3631
+
++ CM filter input glitchy
+  https://github.com/processing/processing/issues/3612
+  https://github.com/processing/processing/pull/3630
+
++ Set font correctly in Contribution Manager dialog
+  https://github.com/processing/processing/issues/3601
+  https://github.com/processing/processing/pull/3626
 
 
 [ fixed earlier, spring cleaning ]
@@ -108,6 +152,9 @@ the bugs. See "your contributions are funding graphics fixes," below.
 + Remove alpha filler (hopefully no regression here)
   https://github.com/processing/processing/pull/3523
 
++ Huge Java2D blending patch
+  https://github.com/processing/processing/pull/3592
+
 + Accuracy problems make alpha channel go to FE with image.copy()
   https://github.com/processing/processing/issues/258
 
@@ -117,13 +164,15 @@ the bugs. See "your contributions are funding graphics fixes," below.
 + Improve blend() accuracy when using ADD
   https://github.com/processing/processing/issues/172
 
-+ Huge Java2D blending patch
-  https://github.com/processing/processing/pull/3592
-
-+ Remove support for fixed-function pipeline
++ Upgrade OpenGL (remove support for fixed-function pipeline)
   https://github.com/processing/processing/issues/3505
   https://github.com/processing/processing/pull/3604
   https://github.com/processing/processing/pull/3605
+  https://github.com/processing/processing/pull/3606
+  https://github.com/processing/processing/pull/3628
+
++ Improve OpenGL extensions checks on OS X
+  https://github.com/processing/processing/pull/3646
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .

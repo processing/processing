@@ -743,10 +743,9 @@ public abstract class PGL {
 
 
   private void createFBOLayer() {
-    String ext = getString(EXTENSIONS);
     float scale = pg.getPixelScale();
 
-    if (-1 < ext.indexOf("texture_non_power_of_two")) {
+    if (hasNpotTexSupport()) {
       fboWidth = (int)(scale * pg.width);
       fboHeight = (int)(scale * pg.height);
     } else {
@@ -755,14 +754,14 @@ public abstract class PGL {
     }
 
     int maxs = maxSamples();
-    if (-1 < ext.indexOf("_framebuffer_multisample") && 1 < maxs) {
+    if (hasFboMultisampleSupport() && 1 < maxs) {
       numSamples = PApplet.min(reqNumSamples, maxs);
     } else {
       numSamples = 1;
     }
     boolean multisample = 1 < numSamples;
 
-    boolean packed = ext.indexOf("packed_depth_stencil") != -1;
+    boolean packed = hasPackedDepthStencilSupport();
     int depthBits = PApplet.min(REQUESTED_DEPTH_BITS, getDepthBits());
     int stencilBits = PApplet.min(REQUESTED_STENCIL_BITS, getStencilBits());
 
@@ -1065,8 +1064,10 @@ public abstract class PGL {
     PGL ppgl = primaryPGL ? this : pg.getPrimaryPGL();
 
     if (!ppgl.loadedTex2DShader || ppgl.tex2DShaderContext != ppgl.glContext) {
-      String vertSource = PApplet.join(texVertShaderSource, "\n");
-      String fragSource = PApplet.join(tex2DFragShaderSource, "\n");
+      String[] preprocVertSrc = preprocessVertexSource(texVertShaderSource, getGLSLVersion());
+      String vertSource = PApplet.join(preprocVertSrc, "\n");
+      String[] preprocFragSrc = preprocessFragmentSource(tex2DFragShaderSource, getGLSLVersion());
+      String fragSource = PApplet.join(preprocFragSrc, "\n");
       ppgl.tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
       ppgl.tex2DFragShader = createShader(FRAGMENT_SHADER, fragSource);
       if (0 < ppgl.tex2DVertShader && 0 < ppgl.tex2DFragShader) {
@@ -1195,8 +1196,10 @@ public abstract class PGL {
     PGL ppgl = primaryPGL ? this : pg.getPrimaryPGL();
 
     if (!ppgl.loadedTexRectShader || ppgl.texRectShaderContext != ppgl.glContext) {
-      String vertSource = PApplet.join(texVertShaderSource, "\n");
-      String fragSource = PApplet.join(texRectFragShaderSource, "\n");
+      String[] preprocVertSrc = preprocessVertexSource(texVertShaderSource, getGLSLVersion());
+      String vertSource = PApplet.join(preprocVertSrc, "\n");
+      String[] preprocFragSrc = preprocessFragmentSource(texRectFragShaderSource, getGLSLVersion());
+      String fragSource = PApplet.join(preprocFragSrc, "\n");
       ppgl.texRectVertShader = createShader(VERTEX_SHADER, vertSource);
       ppgl.texRectFragShader = createShader(FRAGMENT_SHADER, fragSource);
       if (0 < ppgl.texRectVertShader && 0 < ppgl.texRectFragShader) {
@@ -1616,6 +1619,11 @@ public abstract class PGL {
   }
 
 
+  protected int getGLSLVersion() {
+    return 120;
+  }
+
+
   protected String[] loadVertexShader(String filename) {
     return pg.parent.loadStrings(filename);
   }
@@ -1668,7 +1676,16 @@ public abstract class PGL {
 
   protected static String[] preprocessFragmentSource(String[] fragSrc0,
                                                      int version) {
-    if (version >= 130) {
+    String[] fragSrc;
+
+    if (version < 130) {
+      String[] search = { };
+      String[] replace = { };
+      int offset = 1;
+
+      fragSrc = preprocessShaderSource(fragSrc0, search, replace, offset);
+      fragSrc[0] = "#version " + version;
+    } else {
       // We need to replace 'texture' uniform by 'texMap' uniform and
       // 'textureXXX()' functions by 'texture()' functions. Order of these
       // replacements is important to prevent collisions between these two.
@@ -1684,21 +1701,28 @@ public abstract class PGL {
           "texture", "texture", "texture", "texture",
           "fragColor"
       };
+      int offset = 2;
 
-      String[] fragSrc = preprocessShaderSource(fragSrc0, search, replace, 2);
+      fragSrc = preprocessShaderSource(fragSrc0, search, replace, offset);
       fragSrc[0] = "#version " + version;
       fragSrc[1] = "out vec4 fragColor;";
-
-      PApplet.printArray(fragSrc);
-
-      return fragSrc;
     }
-    return fragSrc0;
+
+    return fragSrc;
   }
 
   protected static String[] preprocessVertexSource(String[] vertSrc0,
                                                    int version) {
-    if (version >= 130) {
+    String[] vertSrc;
+
+    if (version < 130) {
+      String[] search = { };
+      String[] replace = { };
+      int offset = 1;
+
+      vertSrc = preprocessShaderSource(vertSrc0, search, replace, offset);
+      vertSrc[0] = "#version " + version;
+    } else {
       // We need to replace 'texture' uniform by 'texMap' uniform and
       // 'textureXXX()' functions by 'texture()' functions. Order of these
       // replacements is important to prevent collisions between these two.
@@ -1712,15 +1736,13 @@ public abstract class PGL {
           "texMap",
           "texture", "texture", "texture", "texture"
       };
+      int offset = 1;
 
-      String[] vertSrc = preprocessShaderSource(vertSrc0, search, replace, 1);
+      vertSrc = preprocessShaderSource(vertSrc0, search, replace, offset);
       vertSrc[0] = "#version " + version;
-
-      PApplet.printArray(vertSrc);
-
-      return vertSrc;
     }
-    return vertSrc0;
+
+    return vertSrc;
   }
 
   protected static String[] preprocessShaderSource(String[] src0,

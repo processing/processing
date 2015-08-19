@@ -102,8 +102,11 @@ public class InstallCommander implements Tool {
       String sourcePath = file.getAbsolutePath();
 
       if (result == JOptionPane.YES_OPTION) {
-        String targetPath = "/usr/bin/processing-java";
-        String shellScript = "/bin/mv " + sourcePath + " " + targetPath;
+        // Moving to /usr/local/bin instead of /usr/bin for compatibility
+        // with OS X 10.11 and its "System Integrity Protection"
+        // https://github.com/processing/processing/issues/3497
+        String targetPath = "/usr/local/bin/processing-java";
+        String shellScript = "/bin/mkdir -p /usr/local/bin && /bin/mv " + sourcePath + " " + targetPath;
         String appleScript =
           "do shell script \"" + shellScript + "\" with administrator privileges";
         PApplet.exec(new String[] { "osascript", "-e", appleScript });

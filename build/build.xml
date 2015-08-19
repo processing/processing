@@ -679,12 +679,15 @@
 
     <!-- Verify that the signature will pass Gatekeeper checks 
          https://developer.apple.com/library/mac/technotes/tn2206 -->
+    <!--
     <exec executable="/usr/bin/codesign" dir="macosx/work">
-      <arg value="--verify" />
-      <arg value="--deep" />
-      <arg value="--verbose=2" />
+      <arg value="- -verify" />
+      <arg value="- -deep" />
+      <arg value="- -verbose=2" />
       <arg value="Processing.app" />
     </exec>
+    -->
+    <!-- Disabling since it's a lot of gunk but not that useful. -->
   </target>
 
   <target name="macosx-dist" if="macosx" 
