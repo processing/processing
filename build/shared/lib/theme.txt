@@ -9,7 +9,7 @@ status.edit.fgcolor = #000000
 status.edit.bgcolor = #cc9900
 status.font = processing.sans,plain,13
 
-# TABS
+# HEADER TABS
 # Settings for the tab area at the top.
 header.text.font = processing.sans,bold,14
 header.text.selected.color = #000000
@@ -19,8 +19,9 @@ header.gradient.top = #132638
 header.gradient.bottom = #122535
 header.tab.selected.color = #e0fffd
 header.tab.unselected.color = #2d4251
+header.tab.modified.color = #ef8115
 
-# LOWER TABS
+# FOOTER TABS
 footer.text.font = processing.sans,bold,12
 footer.text.selected.color = #e0fffd
 footer.text.unselected.color = #95adb0
