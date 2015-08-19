@@ -38,11 +38,7 @@ import processing.data.StringDict;
 
 
 public class ContributionManager {
-  static public final ContributionListing contribListing;
-
-  static {
-    contribListing = ContributionListing.getInstance();
-  }
+  static final ContributionListing listing = ContributionListing.getInstance();
 
 
   /**
@@ -178,7 +174,7 @@ public class ContributionManager {
                 ad.install(editor.getBase(), contribZip, false, status);
 
               if (contribution != null) {
-                contribListing.replaceContribution(ad, contribution);
+                listing.replaceContribution(ad, contribution);
                 if (contribution.getType() == ContributionType.MODE) {
                   List<ModeContribution> contribModes = editor.getBase().getModeContribs();
                   if (!contribModes.contains(contribution)) {
@@ -263,7 +259,7 @@ public class ContributionManager {
                                                         false, null);
 
             if (contribution != null) {
-              contribListing.replaceContribution(ad, contribution);
+              listing.replaceContribution(ad, contribution);
               if (contribution.getType() == ContributionType.MODE) {
                 List<ModeContribution> contribModes = base.getModeContribs();
                 if (contribModes != null && !contribModes.contains(contribution)) {
@@ -396,7 +392,7 @@ public class ContributionManager {
                                                         false, null);
 
             if (contribution != null) {
-              contribListing.replaceContribution(ad, contribution);
+              listing.replaceContribution(ad, contribution);
               if (base.getActiveEditor() != null) {
                 refreshInstalled(base.getActiveEditor());
               }
@@ -595,13 +591,13 @@ public class ContributionManager {
     });
 
     for (File file : installList) {
-      Iterator<AvailableContribution> iter = contribListing.advertisedContributions.iterator();
+      Iterator<AvailableContribution> iter = listing.advertisedContributions.iterator();
       while (iter.hasNext()) {
         AvailableContribution availableContrib = iter.next();
         if (file.getName().equals(availableContrib.getName())) {
           file.delete();
           installOnStartUp(base, availableContrib);
-          contribListing
+          listing
             .replaceContribution(availableContrib, availableContrib);
         }
       }
@@ -643,7 +639,7 @@ public class ContributionManager {
       Util.removeDir(folder);
     }
 
-    Iterator<AvailableContribution> iter = contribListing.advertisedContributions.iterator();
+    Iterator<AvailableContribution> iter = listing.advertisedContributions.iterator();
     while (iter.hasNext()) {
       AvailableContribution availableContribs = iter.next();
       if (updateContribsNames.contains(availableContribs.getName())) {
@@ -655,7 +651,7 @@ public class ContributionManager {
     while (iter2.hasNext()) {
       AvailableContribution contribToUpdate = iter2.next();
       installOnStartUp(base, contribToUpdate);
-      contribListing.replaceContribution(contribToUpdate, contribToUpdate);
+      listing.replaceContribution(contribToUpdate, contribToUpdate);
     }
   }
 
