@@ -2,6 +2,8 @@
 X processing-java isn't working in OS X 10.11 El Capitan
 X   https://github.com/processing/processing/issues/3497
 o   probably have to add the script/Processing.app location to user's path
+X line selected for errors is off by one or two
+X   https://github.com/processing/processing/issues/3654
 
 contribs
 X Undo does not move to the correct location in the editor window

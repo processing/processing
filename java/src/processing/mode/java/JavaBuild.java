@@ -263,11 +263,14 @@ public class JavaBuild {
     if (sizeInfo != null && sizeInfo.hasSettings()) {
 //      String sizeStatement = sizeInfo.getStatement();
       for (String stmt : sizeInfo.getStatements()) {
-//      if (sizeStatement != null) {
         //System.out.format("size stmt is '%s'%n", sizeStatement);
+        // Don't remove newlines (and while you're at it, just keep spaces)
+        // https://github.com/processing/processing/issues/3654
+        stmt = stmt.trim();
         int index = bigCode.indexOf(stmt);
         if (index != -1) {
           bigCode.delete(index, index + stmt.length());
+          System.out.println("code now " + bigCode);
         } else {
           // TODO remove once we hit final; but prevent an exception like in
           // https://github.com/processing/processing/issues/3531
