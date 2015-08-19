@@ -112,8 +112,8 @@ public class Base {
             createAndShowGUI(args);
           } catch (Throwable t) {
             Messages.showTrace("It was not meant to be",
-                                      "A serious problem happened during startup. Please report:\n" +
-                                      "http://github.com/processing/processing/issues/new", t, true);
+                               "A serious problem happened during startup. Please report:\n" +
+                               "http://github.com/processing/processing/issues/new", t, true);
           }
         }
     });
