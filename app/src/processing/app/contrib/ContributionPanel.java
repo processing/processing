@@ -42,6 +42,8 @@ import javax.swing.text.html.StyleSheet;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Messages;
+import processing.app.Platform;
 import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
@@ -111,7 +113,7 @@ class ContributionPanel extends JPanel {
   boolean isUpdateInProgress;
   private boolean isInstallInProgress;
   private boolean isRemoveInProgress;
-  
+
   StringBuilder description;
 
   ContributionPanel(ContributionListPanel contributionListPanel) {
@@ -125,7 +127,7 @@ class ContributionPanel extends JPanel {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           if (enableHyperlinks) {
             if (e.getURL() != null) {
-              Base.openURL(e.getURL().toString());
+              Platform.openURL(e.getURL().toString());
             }
           }
         }
@@ -174,7 +176,7 @@ class ContributionPanel extends JPanel {
       public void actionPerformed(ActionEvent e) {
         if (contrib instanceof LocalContribution) {
           File folder = ((LocalContribution) contrib).getFolder();
-          Base.openFolder(folder);
+          Platform.openFolder(folder);
         }
       }
     });
@@ -445,8 +447,8 @@ class ContributionPanel extends JPanel {
     this.contrib = contrib;
 
     if (contrib.isSpecial()) {
-      ImageIcon processingIcon = Toolkit.getLibIcon("icons/pde-48.png");
-      JLabel iconLabel = new JLabel(processingIcon);
+      JLabel iconLabel =
+        new JLabel(Toolkit.getLibIcon("icons/foundation-32.png"));  // was 48?
       iconLabel.setBorder(new EmptyBorder(4, 7, 7, 7));
       iconLabel.setVerticalAlignment(SwingConstants.TOP);
       add(iconLabel, BorderLayout.WEST);
@@ -459,13 +461,27 @@ class ContributionPanel extends JPanel {
     } else {
       description.append("<a href=\"" + contrib.getUrl() + "\">" + contrib.getName() + "</a>");
     }
-    description.append("</b>");
+    description.append("</b> ");
+
+    String version = contrib.getPrettyVersion();
+
+    // TODO this has no place here, we shouldn't be cleaning up contrib
+    // information in the f*king GUI.
+    if (version != null && !version.isEmpty()) {
+      if (version.toLowerCase().startsWith("build")) // For Python mode
+        description.append(version.substring(5, version.indexOf(',')).trim());
+      else if (version.toLowerCase().startsWith("v")) // For ketai library
+        description.append(version);
+      else
+        description.append(version);
+    }
+    description.append(" <br/>");
+
     String authorList = contrib.getAuthorList();
     if (authorList != null && !authorList.isEmpty()) {
-      description.append(" by ");
       description.append(toHtmlLinks(contrib.getAuthorList()));
     }
-    description.append("<br/>");
+    description.append("<br/><br/>");
 
     if (contrib.isDeletionFlagged()) {
       description.append(REMOVE_RESTART_MESSAGE);
@@ -482,21 +498,6 @@ class ContributionPanel extends JPanel {
         sentence = toHtmlLinks(sentence);
       }
       description.append(sentence);
-    }
-
-    String version = contrib.getPrettyVersion();
-
-    // TODO this has no place here, we shouldn't be cleaning up contrib
-    // information in the f*king GUI.
-    if (version != null && !version.isEmpty()) {
-      description.append("<br/>");
-      if (version.toLowerCase().startsWith("build")) // For Python mode
-        description.append("v"
-            + version.substring(5, version.indexOf(',')).trim());
-      else if (version.toLowerCase().startsWith("v")) // For ketai library
-        description.append(version);
-      else
-        description.append("v" + version);
     }
 
     long lastUpdatedUTC = contrib.getLastUpdated();
@@ -634,8 +635,8 @@ class ContributionPanel extends JPanel {
                                              listPanel.contributionTab.statusPanel);
 
     } catch (MalformedURLException e) {
-      Base.showWarning(Language.text("contrib.errors.install_failed"),
-                       Language.text("contrib.errors.malformed_url"), e);
+      Messages.showWarning(Language.text("contrib.errors.install_failed"),
+                           Language.text("contrib.errors.malformed_url"), e);
       // not sure why we'd re-enable the button if it had an error...
 //      installRemoveButton.setEnabled(true);
     }
@@ -884,7 +885,7 @@ class ContributionPanel extends JPanel {
       String url = ad.link;
       installContribution(ad, url);
     }
-    
+
   }
 
 
@@ -945,6 +946,6 @@ class ContributionPanel extends JPanel {
       LocalContribution localContrib = (LocalContribution) contrib;
       localContrib.removeContribution(contributionTab.editor, monitor, contributionTab.statusPanel);
     }
-    
+
   }
 }

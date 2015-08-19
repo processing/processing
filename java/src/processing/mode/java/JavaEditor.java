@@ -34,6 +34,7 @@ import processing.app.syntax.PdeTextAreaDefaults;
 import processing.app.ui.About;
 import processing.app.ui.ColorChooser;
 import processing.app.ui.Editor;
+import processing.app.ui.EditorException;
 import processing.app.ui.EditorFooter;
 import processing.app.ui.EditorHeader;
 import processing.app.ui.EditorState;
@@ -68,6 +69,7 @@ public class JavaEditor extends Editor {
   protected Color currentLineColor;
   protected Color breakpointMarkerColor;
   protected Color currentLineMarkerColor;
+
   protected List<LineHighlight> breakpointedLines =
     new ArrayList<LineHighlight>();
   protected LineHighlight currentLine; // where the debugger is suspended
@@ -103,7 +105,8 @@ public class JavaEditor extends Editor {
   protected ErrorCheckerService errorCheckerService;
 
 
-  protected JavaEditor(Base base, String path, EditorState state, Mode mode) {
+  protected JavaEditor(Base base, String path, EditorState state,
+                       Mode mode) throws EditorException {
     super(base, path, state, mode);
 
     jmode = (JavaMode) mode;
@@ -322,11 +325,12 @@ public class JavaEditor extends Editor {
     });
 
     JMenuItem tweakItem = Toolkit.newJMenuItemShift(Language.text("menu.sketch.tweak"), 'T');
-      tweakItem.setSelected(JavaMode.enableTweak);
+//      tweakItem.setSelected(JavaMode.enableTweak);
       tweakItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          JavaMode.enableTweak = true;
-          handleRun();
+//          JavaMode.enableTweak = true;
+//          handleRun();
+          handleTweak();
         }
       });
 
@@ -341,7 +345,7 @@ public class JavaEditor extends Editor {
     JMenuItem item;
 
     // macosx already has its own about menu
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       item = new JMenuItem(Language.text("menu.help.about"));
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -357,9 +361,9 @@ public class JavaEditor extends Editor {
         try {
           new Welcome(base, Preferences.getSketchbookPath().equals(Preferences.getOldSketchbookPath()));
         } catch (IOException ioe) {
-          Base.showWarning("Unwelcome Error",
-                           "Please report this error to\n" +
-                           "https://github.com/processing/processing/issues", ioe);
+          Messages.showWarning("Unwelcome Error",
+                               "Please report this error to\n" +
+                               "https://github.com/processing/processing/issues", ioe);
         }
       }
     });
@@ -494,7 +498,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.getting_started"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.getting_started.url"));
+        Platform.openURL(Language.text("menu.help.getting_started.url"));
       }
     });
     menu.add(item);
@@ -502,7 +506,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.troubleshooting"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.troubleshooting.url"));
+        Platform.openURL(Language.text("menu.help.troubleshooting.url"));
       }
     });
     menu.add(item);
@@ -510,7 +514,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.faq"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.faq.url"));
+        Platform.openURL(Language.text("menu.help.faq.url"));
       }
     });
     menu.add(item);
@@ -518,7 +522,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.foundation"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.foundation.url"));
+        Platform.openURL(Language.text("menu.help.foundation.url"));
       }
     });
     menu.add(item);
@@ -526,7 +530,7 @@ public class JavaEditor extends Editor {
     item = new JMenuItem(Language.text("menu.help.visit"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Base.openURL(Language.text("menu.help.visit.url"));
+        Platform.openURL(Language.text("menu.help.visit.url"));
       }
     });
     menu.add(item);
@@ -661,7 +665,7 @@ public class JavaEditor extends Editor {
       statusNotice(Language.text("export.notice.exporting"));
       try {
         if (exportApplicationPrompt()) {
-          Base.openFolder(sketch.getFolder());
+          Platform.openFolder(sketch.getFolder());
           statusNotice(Language.text("export.notice.exporting.done"));
         } else {
           // error message will already be visible
@@ -735,7 +739,7 @@ public class JavaEditor extends Editor {
     });
 
     // Only possible to export OS X applications on OS X
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       // Make sure they don't have a previous 'true' setting for this
       Preferences.setBoolean(EXPORT_MACOSX, false);
     }
@@ -746,7 +750,7 @@ public class JavaEditor extends Editor {
         updateExportButton();
       }
     });
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       macosxButton.setEnabled(false);
       macosxButton.setToolTipText(Language.text("export.tooltip.macosx"));
     }
@@ -863,12 +867,12 @@ public class JavaEditor extends Editor {
     embedPanel.setLayout(new BoxLayout(embedPanel, BoxLayout.Y_AXIS));
 
     String platformName = null;
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       platformName = "Mac OS X";
-    } else if (Base.isWindows()) {
-      platformName = "Windows (" + Base.getNativeBits() + "-bit)";
-    } else if (Base.isLinux()) {
-      platformName = "Linux (" + Base.getNativeBits() + "-bit)";
+    } else if (Platform.isWindows()) {
+      platformName = "Windows (" + Platform.getNativeBits() + "-bit)";
+    } else if (Platform.isLinux()) {
+      platformName = "Linux (" + Platform.getNativeBits() + "-bit)";
     }
 
     boolean embed = Preferences.getBoolean("export.application.embed_java");
@@ -890,7 +894,7 @@ public class JavaEditor extends Editor {
     final JLabel warningLabel = new JLabel(embed ? embedWarning : nopeWarning);
     warningLabel.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent event) {
-        Base.openURL("http://java.com/download");
+        Platform.openURL("http://java.com/download");
       }
     });
     warningLabel.setBorder(new EmptyBorder(3, 13 + indent, 3, 13));
@@ -918,7 +922,7 @@ public class JavaEditor extends Editor {
 
     //
 
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       JPanel signPanel = new JPanel();
       signPanel.setLayout(new BoxLayout(signPanel, BoxLayout.Y_AXIS));
       signPanel.setBorder(new TitledBorder(Language.text("export.code_signing")));
@@ -969,7 +973,7 @@ public class JavaEditor extends Editor {
 
       area.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent event) {
-          Base.openURL("https://developer.apple.com/developer-id/");
+          Platform.openURL("https://developer.apple.com/developer-id/");
         }
       });
 
@@ -1098,15 +1102,15 @@ public class JavaEditor extends Editor {
   protected boolean handleExportCheckModified() {
     if (sketch.isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage(Language.text("export.messages.is_read_only"),
-                       Language.text("export.messages.is_read_only.description"));
+      Messages.showMessage(Language.text("export.messages.is_read_only"),
+                           Language.text("export.messages.is_read_only.description"));
       return false;
     }
 
     // don't allow if untitled
     if (sketch.isUntitled()) {
-      Base.showMessage(Language.text("export.messages.cannot_export"),
-                       Language.text("export.messages.cannot_export.description"));
+      Messages.showMessage(Language.text("export.messages.cannot_export"),
+                           Language.text("export.messages.cannot_export.description"));
       return false;
     }
 
@@ -1139,6 +1143,11 @@ public class JavaEditor extends Editor {
 
   public void handleRun() {
     if (isDebuggerEnabled()) {
+      // Hitting Run while a sketch is running should restart the sketch
+      // https://github.com/processing/processing/issues/3623
+      if (debugger.isStarted()) {
+        debugger.stopDebug();
+      }
       // Don't start the sketch paused, continue until a breakpoint or error
       // https://github.com/processing/processing/issues/3096
       debugger.continueDebug();
@@ -1149,7 +1158,8 @@ public class JavaEditor extends Editor {
           prepareRun();
           try {
             toolbar.activateRun();
-            runtime = jmode.handleRun(sketch, JavaEditor.this);
+            //runtime = jmode.handleRun(sketch, JavaEditor.this);
+            runtime = jmode.handleLaunch(sketch, JavaEditor.this, false);
           } catch (Exception e) {
             statusError(e);
           }
@@ -1164,9 +1174,25 @@ public class JavaEditor extends Editor {
       public void run() {
         prepareRun();
         try {
+          toolbar.activateRun();
+          //runtime = jmode.handlePresent(sketch, JavaEditor.this);
+          runtime = jmode.handleLaunch(sketch, JavaEditor.this, true);
+        } catch (Exception e) {
+          statusError(e);
+        }
+      }
+    }).start();
+  }
+
+
+  public void handleTweak() {
+    new Thread(new Runnable() {
+      public void run() {
+        prepareRun();
+        try {
 //          toolbar.activate(JavaToolbar.RUN);
           toolbar.activateRun();
-          runtime = jmode.handlePresent(sketch, JavaEditor.this);
+          runtime = jmode.handleTweak(sketch, JavaEditor.this);
         } catch (Exception e) {
           statusError(e);
         }
@@ -1675,31 +1701,24 @@ public class JavaEditor extends Editor {
   }
 
 
-  /**
-   * Event handler called when loading another sketch in this editor. Clears
-   * breakpoints of previous sketch.
-   *
-   * @param path
-   * @return true if a sketch was opened, false if aborted
-   */
-  @Override
-  protected boolean handleOpenInternal(String path) {
-    // log("handleOpenInternal, path: " + path);
-    boolean didOpen = super.handleOpenInternal(path);
-    if (didOpen && debugger != null) {
-      // should already been stopped (open calls handleStop)
-      debugger.clearBreakpoints();
-      clearBreakpointedLines(); // force clear breakpoint highlights
-      variableInspector().reset(); // clear contents of variable inspector
-    }
-    //if(didOpen){
-    // autosaver = new AutoSaveUtil(this, ExperimentalMode.autoSaveInterval); // this is used instead of loadAutosaver(), temp measure
-    // loadAutoSaver();
-    // viewingAutosaveBackup = autosaver.isAutoSaveBackup();
-    // log("handleOpenInternal, viewing autosave? " + viewingAutosaveBackup);
-    //}
-    return didOpen;
-  }
+  // handleOpenInternal() only called by the Editor constructor, meaning that
+  // this code is all useless. All these things will be in their default state.
+//  /**
+//   * Event handler called when loading another sketch in this editor.
+//   * Clears breakpoints of previous sketch.
+//   * @return true if a sketch was opened, false if aborted
+//   */
+//  @Override
+//  protected void handleOpenInternal(String path) throws EditorException {
+//    super.handleOpenInternal(path);
+//
+//    // should already been stopped (open calls handleStop)
+//    if (debugger != null) {
+//      debugger.clearBreakpoints();
+//    }
+//    clearBreakpointedLines();
+//    variableInspector().reset();
+//  }
 
 
   /**
@@ -1757,7 +1776,7 @@ public class JavaEditor extends Editor {
       // this method gets called twice when saving sketch for the first time
       // once with new name and another with old(causing NPE). Keep an eye out
       // for potential issues. See #2675. TODO:
-      Base.loge("Illegal tab name to addBreakpointComments() " + tabFilename);
+      Messages.loge("Illegal tab name to addBreakpointComments() " + tabFilename);
       return;
     }
     List<LineBreakpoint> bps = debugger.getBreakpoints(tab.getFileName());
@@ -1964,6 +1983,7 @@ public class JavaEditor extends Editor {
     autoSave();
     super.prepareRun();
     downloadImports();
+    errorCheckerService.quickErrorCheck();
   }
 
 
@@ -1992,7 +2012,7 @@ public class JavaEditor extends Editor {
             for (AvailableContribution ac : installLibsHeaders) {
               libList.append("\n  • " + ac.getName());
             }
-            int option = Base.showYesNoQuestion(this,
+            int option = Messages.showYesNoQuestion(this,
                 Language.text("contrib.import.dialog.title"),
                 Language.text("contrib.import.dialog.primary_text"),
                 libList.toString());
@@ -2628,14 +2648,14 @@ public class JavaEditor extends Editor {
 
   /** Handle refactor operation */
   private void handleRefactor() {
-    Base.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
+    Messages.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
     errorCheckerService.getASTGenerator().handleRefactor();
   }
 
 
   /** Handle show usage operation */
   private void handleShowUsage() {
-    Base.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
+    Messages.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
     errorCheckerService.getASTGenerator().handleShowUsage();
   }
 
@@ -2671,7 +2691,7 @@ public class JavaEditor extends Editor {
     super.applyPreferences();
     if (jmode != null) {
       jmode.loadPreferences();
-      Base.log("Applying prefs");
+      Messages.log("Applying prefs");
       // trigger it once to refresh UI
       errorCheckerService.runManualErrorCheck();
     }
@@ -2707,9 +2727,9 @@ public class JavaEditor extends Editor {
 
     if (modified) {
       // ask to keep the values
-      if (Base.showYesNoQuestion(this, Language.text("tweak_mode"),
-                                 Language.text("tweak_mode.keep_changes.line1"),
-                                 Language.text("tweak_mode.keep_changes.line2")) == JOptionPane.YES_OPTION) {
+      if (Messages.showYesNoQuestion(this, Language.text("tweak_mode"),
+                                     Language.text("tweak_mode.keep_changes.line1"),
+                                     Language.text("tweak_mode.keep_changes.line2")) == JOptionPane.YES_OPTION) {
         for (int i = 0; i < sketch.getCodeCount(); i++) {
           if (tweakedTabs[i]) {
             sketch.getCode(i).setModified(true);
@@ -2733,7 +2753,7 @@ public class JavaEditor extends Editor {
         try {
           sketch.save();
         } catch (IOException e) {
-          Base.showWarning("Error", "Could not save the modified sketch.", e);
+          Messages.showWarning("Error", "Could not save the modified sketch.", e);
         }
 
         // repaint the editor header (show the modified tabs)

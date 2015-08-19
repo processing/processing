@@ -31,6 +31,7 @@ import java.util.Random;
 
 import javax.swing.JOptionPane;
 
+import processing.app.contrib.ContributionManager;
 import processing.core.PApplet;
 
 
@@ -155,7 +156,7 @@ public class UpdateCheck {
                                               options,
                                               options[0]);
     if (result == JOptionPane.YES_OPTION) {
-      Base.openURL(DOWNLOAD_URL);
+      Platform.openURL(DOWNLOAD_URL);
       return true;
     }
 
@@ -164,9 +165,12 @@ public class UpdateCheck {
 
 
   protected boolean promptToOpenContributionManager() {
-    String contributionPrompt = Language.text("update_check.updates_available.contributions");
+    String contributionPrompt =
+      Language.text("update_check.updates_available.contributions");
 
-    Object[] options = { Language.text("prompt.yes"), Language.text("prompt.no") };
+    Object[] options = {
+      Language.text("prompt.yes"), Language.text("prompt.no")
+    };
     int result = JOptionPane.showOptionDialog(base.activeEditor,
                                               contributionPrompt,
                                               Language.text("update_check"),
@@ -176,7 +180,7 @@ public class UpdateCheck {
                                               options,
                                               options[0]);
     if (result == JOptionPane.YES_OPTION) {
-      base.handleShowUpdates();
+      ContributionManager.openUpdates(base.getActiveEditor());
       return true;
     }
 

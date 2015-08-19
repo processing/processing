@@ -64,8 +64,8 @@
   -->
   <!-- Switching to 8 because updates for 7 ended April 2015 -->
   <property name="jdk.version" value="8" />
-  <property name="jdk.update" value="51" />
-  <property name="jdk.build" value="16" />
+  <property name="jdk.update" value="60" />
+  <property name="jdk.build" value="27" />
   <property name="jdk.short" value="${jdk.version}u${jdk.update}" />
   <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />
 
@@ -292,11 +292,6 @@
   </fileset>
 
   <target name="build" description="Build Processing.">
-    <!-- Require that a JDK be installed, but call this on build, so that
-         the download-jdk-macosx target can be called. -->
-    <fail if="macosx" unless="macosx_jdk_found"
-          message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again.${line.separator}Or... type 'ant download-jdk-macosx' to download it to your Desktop." />
-
     <antcall target="${platform}-build" />
   </target>
 
@@ -484,6 +479,12 @@
   </target>
   
   <target name="macosx-build" if="macosx" depends="revision-check, macosx-check-os, subprojects-build" description="Build Mac OS X version">
+
+    <!-- Require that a JDK be installed, but call this on build, so that
+         the download-jdk-macosx target can be called. -->
+    <fail unless="macosx_jdk_found"
+          message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again.${line.separator}Or... type 'ant download-jdk-macosx' to download it to your Desktop." />
+
     <mkdir dir="macosx/work" />
     
     <!-- app bundler for OS X and Java 1.7 -->
@@ -583,13 +584,13 @@
     </bundleapp>
 
     <!-- Temporary fix until new appbundler is included again after solving 
-      https://github.com/processing/processing/issues/3359
-      https://github.com/processing/processing/issues/3360
-      The 'keytool' file is deleted by our appbundler. Add it back so that
-	  Android signing works properly. (Not modifying our appbundler since
-	  most of the time that appbundler is used, keytool isn't needed). 
-	  Also, because Ant's copy task does not retain file permissions on Unix systems, 
-	  we need to use <exec executable="cp" ... > instead -->
+         https://github.com/processing/processing/issues/3359
+         https://github.com/processing/processing/issues/3360
+         The 'keytool' file is deleted by our appbundler. Add it back so that
+	 Android signing works properly. (Not modifying our appbundler since
+	 most of the time that appbundler is used, keytool isn't needed). 
+	 Also, because Ant's copy task does not retain file permissions on 
+	 Unix systems, we need to use <exec executable="cp" ... > instead -->
     <exec executable="cp">
       <arg line="${jdk.path.macosx}/Contents/Home/bin/keytool macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/bin"/>
     </exec>
@@ -679,12 +680,15 @@
 
     <!-- Verify that the signature will pass Gatekeeper checks 
          https://developer.apple.com/library/mac/technotes/tn2206 -->
+    <!--
     <exec executable="/usr/bin/codesign" dir="macosx/work">
-      <arg value="--verify" />
-      <arg value="--deep" />
-      <arg value="--verbose=2" />
+      <arg value="- -verify" />
+      <arg value="- -deep" />
+      <arg value="- -verbose=2" />
       <arg value="Processing.app" />
     </exec>
+    -->
+    <!-- Disabling since it's a lot of gunk but not that useful. -->
   </target>
 
   <target name="macosx-dist" if="macosx" 

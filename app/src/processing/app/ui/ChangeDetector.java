@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JOptionPane;
 
-import processing.app.Base;
+import processing.app.Messages;
 import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.SketchCode;
@@ -184,7 +184,7 @@ public class ChangeDetector implements WindowFocusListener {
     EventQueue.invokeLater(new Runnable() {
       @Override
       public void run() {
-        Base.showError(title, message, e);
+        Messages.showError(title, message, e);
       }
     });
   }
@@ -194,7 +194,7 @@ public class ChangeDetector implements WindowFocusListener {
     EventQueue.invokeLater(new Runnable() {
       @Override
       public void run() {
-        Base.showWarning(title, message);
+        Messages.showWarning(title, message);
       }
     });
   }
@@ -209,7 +209,7 @@ public class ChangeDetector implements WindowFocusListener {
       EventQueue.invokeAndWait(new Runnable() {
         @Override
         public void run() {
-          result[0] = Base.showYesNoQuestion(editor, title, message1, message2);
+          result[0] = Messages.showYesNoQuestion(editor, title, message1, message2);
         }
       });
     } catch (InvocationTargetException e) {

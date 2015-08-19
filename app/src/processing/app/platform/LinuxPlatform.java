@@ -26,27 +26,28 @@ import java.io.File;
 import java.awt.Toolkit;
 
 import processing.app.Base;
-import processing.app.Platform;
+import processing.app.Messages;
 import processing.app.Preferences;
+import processing.app.platform.DefaultPlatform;
 
 
-public class LinuxPlatform extends Platform {
+public class LinuxPlatform extends DefaultPlatform {
 
-  public void init(Base base) {
-    super.init(base);
+  public void initBase(Base base) {
+    super.initBase(base);
 
     String javaVendor = System.getProperty("java.vendor");
     String javaVM = System.getProperty("java.vm.name");
     if (javaVendor == null ||
         (!javaVendor.contains("Sun") && !javaVendor.contains("Oracle")) ||
         javaVM == null || !javaVM.contains("Java")) {
-      Base.showWarning("Not fond of this Java VM",
-        "Processing requires Java 7 from Sun (i.e. the sun-java-jdk\n" +
-        "package on Ubuntu). Other versions such as OpenJDK, IcedTea,\n" +
-        "and GCJ are strongly discouraged. Among other things, you're\n" +
-        "likely to run into problems with sketch window size and\n" +
-        "placement. For more background, please read the wiki:\n" +
-        "https://github.com/processing/processing/wiki/Supported-Platforms#Linux", null);
+      Messages.showWarning("Not fond of this Java VM",
+                           "Processing requires Java 8 from Sun (i.e. the sun-java-jdk\n" +
+                           "package on Ubuntu). Other versions such as OpenJDK, IcedTea,\n" +
+                           "and GCJ are strongly discouraged. Among other things, you're\n" +
+                           "likely to run into problems with sketch window size and\n" +
+                           "placement. For more background, please read the wiki:\n" +
+                           "https://github.com/processing/processing/wiki/Supported-Platforms#Linux", null);
     }
 
     // Set x11 WM_CLASS property which is used as the application

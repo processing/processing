@@ -23,14 +23,14 @@
 
 package processing.mode.java.preproc;
 
-import processing.app.Base;
+import processing.app.Messages;
 import processing.core.PApplet;
 import processing.data.StringList;
 
 
 public class SurfaceInfo {
-//  String statement;
-  StringList statements;
+  StringList statements = new StringList();
+
   String width;
   String height;
   String renderer;
@@ -51,7 +51,7 @@ public class SurfaceInfo {
         "The screenWidth and screenHeight variables are named\n" +
         "displayWidth and displayHeight in Processing 3.\n" +
         "Or you can use the fullScreen() method instead of size().";
-      Base.showWarning("Time for a quick update", message, null);
+      Messages.showWarning("Time for a quick update", message, null);
       return true;
     }
     if (width.equals("screen.width") ||
@@ -62,7 +62,7 @@ public class SurfaceInfo {
         "The screen.width and screen.height variables are named\n" +
         "displayWidth and displayHeight in Processing 3.\n" +
         "Or you can use the fullScreen() method instead of size().";
-      Base.showWarning("Time for a quick update", message, null);
+      Messages.showWarning("Time for a quick update", message, null);
       return true;
     }
     return false;
@@ -119,9 +119,6 @@ public class SurfaceInfo {
    * matched against and removed from the size() method in the code.
    */
   public void addStatement(String stmt) {
-    if (statements == null) {
-      statements = new StringList();
-    }
     statements.append(stmt);
   }
 
@@ -133,7 +130,7 @@ public class SurfaceInfo {
 
   /** @return true if there's code to be inserted for a settings() method. */
   public boolean hasSettings() {
-    return statements != null;
+    return statements.size() != 0;
   }
 
 

@@ -46,24 +46,25 @@ import processing.app.Sketch;
  */
 public class EditorFooter extends Box {
   // height of this tab bar
-  static final int HIGH = 29;
+  static final int HIGH = 32;
 
   static final int CURVE_RADIUS = 6;
 
-  static final int TAB_TOP = 0;
-  static final int TAB_BOTTOM = 23;
+  static final int TAB_TOP = 2;
+  static final int TAB_BOTTOM = 29;
   // amount of extra space between individual tabs
-  static final int TAB_BETWEEN = 3;
+  static final int TAB_BETWEEN = 2;
   // amount of margin on the left/right for the text on the tab
-  static final int MARGIN = 16;
+  static final int MARGIN = 14;
 
-  static final int ICON_WIDTH = 14;
-  static final int ICON_HEIGHT = 13;
-  static final int ICON_TOP = 5;
+  static final int ICON_WIDTH = 16;
+  static final int ICON_HEIGHT = 16;
+  static final int ICON_TOP = 7;
+  static final int ICON_MARGIN = 7;
 
   Color[] textColor = new Color[2];
   Color[] tabColor = new Color[2];
-  Color errorColor;
+//  Color errorColor;
 
   Editor editor;
 
@@ -157,7 +158,7 @@ public class EditorFooter extends Box {
     tabColor[SELECTED] = mode.getColor("footer.tab.selected.color");
     tabColor[UNSELECTED] = mode.getColor("footer.tab.unselected.color");
 
-    errorColor = mode.getColor("status.error.bgcolor");
+//    errorColor = mode.getColor("status.error.bgcolor");
 
     gradient = mode.makeGradient("footer", 400, HIGH);
   }
@@ -222,7 +223,11 @@ public class EditorFooter extends Box {
       }
 
       Graphics2D g2 = Toolkit.prepareGraphics(g);
-      g.drawImage(gradient, 0, 0, imageW, imageH, this);
+
+      g.setColor(tabColor[SELECTED]);
+      g.fillRect(0, 0, imageW, 2);
+
+      g.drawImage(gradient, 0, 2, imageW, imageH, this);
 
       // reset all tab positions
       for (Tab tab : tabs) {
@@ -363,7 +368,7 @@ public class EditorFooter extends Box {
     int getTextLeft() {
       int links = left;
       if (enabledIcon != null) {
-        links += ICON_WIDTH;
+        links += ICON_WIDTH + ICON_MARGIN;
       }
       return links + ((right - links) - textWidth) / 2;
     }
@@ -375,9 +380,9 @@ public class EditorFooter extends Box {
     void draw(Graphics g) {
       int state = isCurrent() ? SELECTED : UNSELECTED;
       g.setColor(tabColor[state]);
-      if (notification) {
-        g.setColor(errorColor);
-      }
+//      if (notification) {
+//        g.setColor(errorColor);
+//      }
 
       Graphics2D g2 = (Graphics2D) g;
       g2.fill(Toolkit.createRoundRect(left, TAB_TOP, right, TAB_BOTTOM, 0, 0,
@@ -385,13 +390,13 @@ public class EditorFooter extends Box {
                                       isFirst() ? CURVE_RADIUS : 0));
 
       if (hasIcon()) {
-        Image icon = isCurrent() ? selectedIcon : enabledIcon;
+        Image icon = (isCurrent() || notification) ? selectedIcon : enabledIcon;
         g.drawImage(icon, left + MARGIN, ICON_TOP, ICON_WIDTH, ICON_HEIGHT, null);
       }
 
       int textLeft = getTextLeft();
       if (notification && state == UNSELECTED) {
-        g.setColor(Color.LIGHT_GRAY);
+        g.setColor(textColor[SELECTED]);
       } else {
         g.setColor(textColor[state]);
       }

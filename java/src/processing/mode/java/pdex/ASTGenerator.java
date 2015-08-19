@@ -106,8 +106,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import processing.app.Base;
 import processing.app.Library;
+import processing.app.Messages;
+import processing.app.Platform;
 import processing.app.SketchCode;
 import processing.app.Util;
 import processing.app.syntax.JEditTextArea;
@@ -227,8 +228,8 @@ public class ASTGenerator {
 
       Map<String, String> options = JavaCore.getOptions();
 
-      JavaCore.setComplianceOptions(JavaCore.VERSION_1_6, options);
-      options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
+      JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
+      options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
       parser.setCompilerOptions(options);
       compilationUnit = (CompilationUnit) parser.createAST(null);
     } else {
@@ -242,7 +243,7 @@ public class ASTGenerator {
                                               .types().get(0)));
     //log("Total CU " + compilationUnit.types().size());
     if(compilationUnit.types() == null || compilationUnit.types().isEmpty()){
-      Base.loge("No CU found!");
+      Messages.loge("No CU found!");
     }
     visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
     SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
@@ -305,37 +306,34 @@ public class ASTGenerator {
   protected void loadJars() {
     factory = new ClassPathFactory();
 
-    StringBuilder tehPath =
-      new StringBuilder(System.getProperty("java.class.path"));
-
-    // Starting with JDK 1.7, no longer using Apple's Java, so
-    // rt.jar has the same path on all OSes
-    tehPath.append(File.pathSeparatorChar
-                   + System.getProperty("java.home") + File.separator + "lib"
-                   + File.separator + "rt.jar" + File.pathSeparatorChar);
+    StringBuilder path = new StringBuilder();
+    String modeClassPath = ((JavaMode) editor.getMode()).getSearchPath();
+    if (modeClassPath != null) {
+      path.append(modeClassPath);
+    }
 
     if (errorCheckerService.classpathJars != null) {
       synchronized (errorCheckerService.classpathJars) {
         for (URL jarPath : errorCheckerService.classpathJars) {
           //log(jarPath.getPath());
-          tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
+          path.append(jarPath.getPath() + File.pathSeparatorChar);
         }
       }
     }
 
-    classPath = factory.createFromPath(tehPath.toString());
+    classPath = factory.createFromPath(path.toString());
     log("Classpath created " + (classPath != null));
     log("Sketch classpath jars loaded.");
-    if (Base.isMacOS()) {
-      File f = new File(System.getProperty("java.home") + File.separator + "bundle"
-          + File.separator + "Classes" + File.separator + "classes.jar");
-      log(f.getAbsolutePath() + " | classes.jar found?"
-          + f.exists());
+    if (Platform.isMacOS()) {
+      File f = new File(System.getProperty("java.home") +
+                        File.separator + "bundle" +
+                        File.separator + "Classes" +
+                        File.separator + "classes.jar");
+      log(f.getAbsolutePath() + " | classes.jar found?" + f.exists());
     } else {
-      File f = new File(System.getProperty("java.home") + File.separator
-                        + "lib" + File.separator + "rt.jar" + File.separator);
-      log(f.getAbsolutePath() + " | rt.jar found?"
-          + f.exists());
+      File f = new File(System.getProperty("java.home") + File.separator +
+                        "lib" + File.separator + "rt.jar" + File.separator);
+      log(f.getAbsolutePath() + " | rt.jar found?" + f.exists());
     }
   }
 
@@ -868,7 +866,7 @@ public class ASTGenerator {
         ASTNode testnode = parser.createAST(null);
         //Base.loge("PREDICTION PARSER PROBLEMS: " + parser);
         // Find closest ASTNode of the document to this word
-        Base.loge("Typed: " + word2 + "|" + " temp Node type: " + testnode.getClass().getSimpleName());
+        Messages.loge("Typed: " + word2 + "|" + " temp Node type: " + testnode.getClass().getSimpleName());
         if(testnode instanceof MethodInvocation){
           MethodInvocation mi = (MethodInvocation)testnode;
           log(mi.getName() + "," + mi.getExpression() + "," + mi.typeArguments().size());
@@ -881,7 +879,7 @@ public class ASTGenerator {
           // Make sure nearestNode is not NULL if couldn't find a closeset node
           nearestNode = (ASTNode) errorCheckerService.getLastCorrectCU().types().get(0);
         }
-        Base.loge(lineNumber + " Nearest ASTNode to PRED "
+        Messages.loge(lineNumber + " Nearest ASTNode to PRED "
             + getNodeAsString(nearestNode));
 
         candidates = new ArrayList<CompletionCandidate>();
@@ -889,7 +887,7 @@ public class ASTGenerator {
         // Determine the expression typed
 
         if (testnode instanceof SimpleName && !noCompare) {
-          Base.loge("One word expression " + getNodeAsString(testnode));
+          Messages.loge("One word expression " + getNodeAsString(testnode));
           //==> Simple one word exprssion - so is just an identifier
 
           // Bottom up traversal of the AST to look for possible definitions at
@@ -952,13 +950,14 @@ public class ASTGenerator {
                                                             Pattern.compile(word2 + "[a-zA-Z_0-9]*.class",
                                                                             Pattern.CASE_INSENSITIVE));
             String[] resources = classPath.findResources("", regExpResourceFilter);
+
             for (String matchedClass2 : resources) {
               matchedClass2 = matchedClass2.replace('/', '.'); //package name
               String matchedClass = matchedClass2.substring(0, matchedClass2.length() - 6);
               int d = matchedClass.lastIndexOf('.');
-              if (ignorableImport(matchedClass2,matchedClass.substring(d + 1)))
+              if (ignorableImport(matchedClass,matchedClass.substring(d + 1))) {
                 continue;
-
+              }
               matchedClass = matchedClass.substring(d + 1); //class name
               candidates
                   .add(new CompletionCandidate(matchedClass, "<html>"
@@ -973,7 +972,7 @@ public class ASTGenerator {
 
           // ==> Complex expression of type blah.blah2().doIt,etc
           // Have to resolve it by carefully traversing AST of testNode
-          Base.loge("Complex expression " + getNodeAsString(testnode));
+          Messages.loge("Complex expression " + getNodeAsString(testnode));
           log("candidates empty");
           ASTNode childExpr = getChildExpression(testnode);
           log("Parent expression : " + getParentExpression(testnode));
@@ -1235,7 +1234,7 @@ public class ASTGenerator {
                                                - lineElement.getStartOffset());
       return javaLine;
     } catch (BadLocationException e) {
-      Base.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
+      Messages.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
     }
     return null;
   }
@@ -1262,7 +1261,7 @@ public class ASTGenerator {
 //                                               - lineElement.getStartOffset());
       return lineElement;
     } catch (BadLocationException e) {
-      Base.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
+      Messages.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
     }
     return null;
   }
@@ -1743,7 +1742,7 @@ public class ASTGenerator {
       ASTNodeWrapper declWrap = new ASTNodeWrapper(simpName2, nodeLabel);
       //errorCheckerService.highlightNode(declWrap);
       if (!declWrap.highlightNode(this)) {
-        Base.loge("Highlighting failed.");
+        Messages.loge("Highlighting failed.");
       }
     }
 
@@ -1858,7 +1857,7 @@ public class ASTGenerator {
 
       @Override
       public void valueChanged(TreeSelectionEvent e) {
-        Base.log(e.toString());
+        Messages.log(e.toString());
         SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           @Override
@@ -2158,8 +2157,7 @@ public class ASTGenerator {
     if(wnode.getNode() == null){
       return null;
     }
-    Base.loge("Gonna find all occurrences of "
-        + getNodeAsString(wnode.getNode()));
+    Messages.loge("Gonna find all occurrences of " + getNodeAsString(wnode.getNode()));
 
     //If wnode is a constructor, find the TD instead.
     if (wnode.getNodeType() == ASTNode.METHOD_DECLARATION) {
@@ -2175,7 +2173,7 @@ public class ASTGenerator {
       if(node != null && node instanceof TypeDeclaration){
         TypeDeclaration td = (TypeDeclaration) node;
         if(td.getName().toString().equals(md.getName().toString())){
-          Base.loge("Renaming constructor of " + getNodeAsString(td));
+          Messages.loge("Renaming constructor of " + getNodeAsString(td));
           wnode = new ASTNodeWrapper(td);
         }
       }
@@ -2413,7 +2411,7 @@ public class ASTGenerator {
         }
         log("Visiting: " + getNodeAsString(node));
         ASTNode decl2 = findDeclaration(sn);
-        Base.loge("It's decl: " + getNodeAsString(decl2));
+        Messages.loge("It's decl: " + getNodeAsString(decl2));
         log("But we need: "+getNodeAsString(decl));
         for (ASTNode astNode : nodesToBeMatched) {
           if(astNode.equals(decl2)){
@@ -3290,21 +3288,24 @@ public class ASTGenerator {
     return null;
   }
 
-  public String[] getSuggestImports(final String className){
-    if(ignoredImportSuggestions == null) {
+  public String[] getSuggestImports(final String className) {
+    if (classPath == null) {
+      return null;
+    }
+
+    if (ignoredImportSuggestions == null) {
       ignoredImportSuggestions = new TreeSet<String>();
     } else {
-      if(ignoredImportSuggestions.contains(className)) {
+      if (ignoredImportSuggestions.contains(className)) {
         log("Ignoring import suggestions for " + className);
         return null;
       }
     }
 
     log("Looking for class " + className);
-    RegExpResourceFilter regf =
-      new RegExpResourceFilter(Pattern.compile(".*"),
-                               Pattern.compile(className + ".class",
-                                               Pattern.CASE_INSENSITIVE));
+    RegExpResourceFilter regf = new RegExpResourceFilter(Pattern.compile(".*"),
+                                                         Pattern.compile(className + ".class",
+                                                                      Pattern.CASE_INSENSITIVE));
     // TODO once saw NPE here...possible for classPath to be null? [fry 150808]
     String[] resources = classPath.findResources("", regf);
     List<String> candidates = new ArrayList<String>();
@@ -3348,6 +3349,7 @@ public class ASTGenerator {
 
     return resources;
   }
+
   protected JFrame frmImportSuggest;
   private TreeSet<String> ignoredImportSuggestions;
 
@@ -3507,22 +3509,33 @@ public class ASTGenerator {
     }
   }
 
-  public static final String ignoredImports[] = {
-    "com.oracle.", "sun.", "sunw.", "com.sun.", "javax.", "sunw.", "org.ietf.",
-    "org.jcp.", "org.omg.", "org.w3c.", "org.xml.", "org.eclipse.", "com.ibm.",
-    "org.netbeans.", "org.jsoup.", "org.junit.", "org.apache.", "antlr." };
-  public static final String allowedImports[] = {"java.lang.", "java.util.", "java.io.",
-    "java.math.", "processing.core.", "processing.data.", "processing.event.", "processing.opengl."};
-  protected boolean ignorableImport(String impName, String className) {
-    //TODO: Trie man.
+  protected boolean ignorableImport(String impName, String fullClassName) {
     for (ImportStatement impS : errorCheckerService.getProgramImports()) {
-      if(impName.startsWith(impS.getPackageName()))
+      if (impName.toLowerCase().startsWith(impS.getPackageName().toLowerCase())) {
         return false;
+      }
     }
-    for (String impS : allowedImports) {
-      if(impName.startsWith(impS) && className.indexOf('.') == -1)
+    if (JavaMode.suggestionsMap == null
+        || JavaMode.suggestionsMap.keySet().size() == 0) {
+      log("SuggestionsMap is null or empty, won't be able to trim class names");
+      return true;
+    }
+    final String processingInclude = "include.processing";
+    final String processingExclude = "exclude.processing";
+    final String jdkInclude = "include.jdk";
+
+    if (impName.startsWith("processing")) {
+      if (JavaMode.suggestionsMap.get(processingInclude).contains(impName)) {
         return false;
+      } else if (JavaMode.suggestionsMap.get(processingExclude).contains(impName)) {
+        return true;
+      }
+    } else if (impName.startsWith("java")) {
+      if (JavaMode.suggestionsMap.get(jdkInclude).contains(impName)) {
+        return false;
+      }
     }
+
     return true;
   }
 
@@ -3713,7 +3726,7 @@ public class ASTGenerator {
 
 
   static private void log(Object object) {
-    Base.log(object == null ? "null" : object.toString());
+    Messages.log(object == null ? "null" : object.toString());
   }
 
 

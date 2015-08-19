@@ -34,8 +34,8 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 
-import processing.app.Base;
 import processing.app.Language;
+import processing.app.Messages;
 import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 import processing.mode.java.JavaEditor;
@@ -78,7 +78,7 @@ public class XQErrorTable extends JTable {
 				  int row = ((XQErrorTable) e.getSource()).getSelectedRow();
 					editor.getErrorChecker().scrollToErrorLine(row);
 				} catch (Exception e1) {
-					Base.log("Exception XQErrorTable mouseReleased " +  e);
+					Messages.log("Exception XQErrorTable mouseReleased " +  e);
 				}
 			}
 		});
@@ -225,7 +225,7 @@ public class XQErrorTable extends JTable {
         if (classList.getSelectedValue() != null) {
           try {
             String t = classList.getSelectedValue().trim();
-            Base.log(t);
+            Messages.log(t);
             int x = t.indexOf('(');
             String impString = "import " + t.substring(x + 1, t.indexOf(')')) + ";\n";
             int ct = editor.getSketch().getCurrentCodeIndex();
@@ -233,7 +233,7 @@ public class XQErrorTable extends JTable {
             editor.getTextArea().getDocument().insertString(0, impString, null);
             editor.getSketch().setCurrentCode(ct);
           } catch (BadLocationException ble) {
-            Base.log("Failed to insert import");
+            Messages.log("Failed to insert import");
             ble.printStackTrace();
           }
         }

@@ -74,7 +74,7 @@ public class SingleInstance {
               Socket s = ss.accept();  // blocks (sleeps) until connection
               final BufferedReader reader = PApplet.createReader(s.getInputStream());
               String receivedKey = reader.readLine();
-              Base.log(this, "key is " + key + ", received is " + receivedKey);
+              Messages.log(this, "key is " + key + ", received is " + receivedKey);
 //              Base.log(this, "platform base is " + platform.base);
 
 //              if (platform.base != null) {
@@ -82,20 +82,20 @@ public class SingleInstance {
                 SwingUtilities.invokeLater(new Runnable() {
                   public void run() {
                     try {
-                      Base.log(this, "about to read line");
+                      Messages.log(this, "about to read line");
                       String path = reader.readLine();
                       if (path == null) {
                         // Because an attempt was made to launch the PDE again,
                         // throw the user a bone by at least opening a new
                         // Untitled window for them.
-                        Base.log(this, "opening new empty sketch");
+                        Messages.log(this, "opening new empty sketch");
 //                        platform.base.handleNew();
                         base.handleNew();
 
                       } else {
                         // loop through the sketches that were passed in
                         do {
-                          Base.log(this, "calling open with " + path);
+                          Messages.log(this, "calling open with " + path);
 //                        platform.base.handleOpen(filename);
                           base.handleOpen(path);
                           path = reader.readLine();
@@ -107,18 +107,18 @@ public class SingleInstance {
                   }
                 });
               } else {
-                Base.log(this, "keys do not match");
+                Messages.log(this, "keys do not match");
               }
 //              }
             } catch (IOException e) {
-              Base.loge("SingleInstance error while listening", e);
+              Messages.loge("SingleInstance error while listening", e);
             }
           }
         }
       }, "SingleInstance Server").start();
 
     } catch (IOException e) {
-      Base.loge("Could not create single instance server.", e);
+      Messages.loge("Could not create single instance server.", e);
     }
   }
 

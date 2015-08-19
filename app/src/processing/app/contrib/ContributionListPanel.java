@@ -33,6 +33,7 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 
 import processing.app.Base;
+import processing.app.Platform;
 import processing.app.ui.Toolkit;
 
 
@@ -58,6 +59,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   protected ContributionListing contribListing = ContributionListing.getInstance();
   protected JTable table;
   DefaultTableModel dtm;
+  JScrollPane scrollPane;
+  Font myFont;
 
   public ContributionListPanel() {
     // TODO Auto-generated constructor stub
@@ -72,15 +75,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
     setLayout(new GridBagLayout());
     setOpaque(true);
-
-    if (Base.isLinux()) {
-      // Because of a bug with GNOME, getColor returns the wrong value for
-      // List.background. We'll just assume its white. The number of people
-      // using Linux and an inverted color theme should be small enough.
-      setBackground(Color.white);
-    } else {
-      setBackground(UIManager.getColor("List.background"));
-    }
+    setBackground(Color.WHITE);
 
     panelByContribution = new TreeMap<Contribution, ContributionPanel>(contribListing.getComparator());
 
@@ -96,23 +91,29 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
               TableCellRenderer renderer, int row, int column) {
           Component c = super.prepareRenderer(renderer, row, column);
           if (isRowSelected(row)) {
-              c.setBackground(Color.blue);
+              c.setBackground(new Color(0xe0fffd));
           } else {
               c.setBackground(Color.white);
           }
           return c;
       }
     };
-    String[] colName = { "Status", "Name", "Author" };
+
+    // There is a space before Status
+    String[] colName = { " Status", "Name", "Author" };
     dtm.setColumnIdentifiers(colName);
-    JScrollPane scrollPane = new JScrollPane(table);
+    scrollPane = new JScrollPane(table);
+    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     table.setFillsViewportHeight(true);
 //    table.setBorder();
     table.setDefaultRenderer(Contribution.class, new StatusRendere());
-    table.setRowHeight(30);
+    table.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+    table.setRowHeight(28);
     table.setRowMargin(6);
-    table.getColumnModel().setColumnMargin(-1);
+    table.getColumnModel().setColumnMargin(0);
     table.getColumnModel().getColumn(0).setMaxWidth(60);
+    table.getColumnModel().getColumn(2).setMinWidth(ContributionManagerDialog.AUTHOR_WIDTH);
+    table.getColumnModel().getColumn(2).setMaxWidth(ContributionManagerDialog.AUTHOR_WIDTH);
     table.setShowGrid(false);
     table.setColumnSelectionAllowed(false);
     table.setCellSelectionEnabled(false);
@@ -127,6 +128,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           if (table.getSelectedRow() != -1) {
             setSelectedPanel(panelByContribution.get(table.getValueAt(table
               .getSelectedRow(), 0)));
+            table.requestFocusInWindow();
           }
         }
       });
@@ -134,8 +136,45 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
     table.setRowSorter(sorter);
     sorter.setComparator(1, contribListing.getComparator());
-    sorter.setSortable(0, false);
-    sorter.setSortable(2, false);
+    sorter.setComparator(2, new Comparator<Contribution>() {
+
+      @Override
+      public int compare(Contribution o1, Contribution o2) {
+        return getAuthorNameWithoutMarkup(o1.getAuthorList())
+          .compareTo(getAuthorNameWithoutMarkup(o2.getAuthorList()));
+      }
+    });
+    sorter.setComparator(0, new Comparator<Contribution>() {
+
+      @Override
+      public int compare(Contribution o1, Contribution o2) {
+        int pos1 = 0;
+        if (o1.isInstalled()) {
+          pos1 = 1;
+          if (contribListing.hasUpdates(o1)) {
+            pos1 = 2;
+          }
+          if (!o1.isCompatible(Base.getRevision())) {
+            pos1 = 3;
+          }
+        } else {
+          pos1 = 4;
+        }
+        int pos2 = 0;
+        if (o2.isInstalled()) {
+          pos2 = 1;
+          if (contribListing.hasUpdates(o2)) {
+            pos2 = 2;
+          }
+          if (!o2.isCompatible(Base.getRevision())) {
+            pos2 = 3;
+          }
+        } else {
+          pos2 = 4;
+        }
+        return pos1 - pos2;
+      }
+    });
     table.getTableHeader().setDefaultRenderer(new MyColumnHeaderRenderer());
 
     GroupLayout layout = new GroupLayout(this);
@@ -190,10 +229,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         setForeground(tableHeader.getForeground());
       }
       setIcon(getIcon(table, column));
-      setBackground(Color.WHITE);
-      setBorder(BorderFactory.createCompoundBorder(BorderFactory
-        .createMatteBorder(2, 0, 2, 0, Color.BLACK), BorderFactory
-        .createEmptyBorder(0, (column == 2 ? 17 : 0), 0, 0)));
+      if (column % 2 == 0) {
+        setBackground(new Color(0xdfdfdf));
+      } else {
+        setBackground(new Color(0xebebeb));
+      }
+      setBorder(null);
       return this;
     }
 
@@ -255,6 +296,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       if (column == 0) {
         Icon icon = null;
         label.setBorder(BorderFactory.createEmptyBorder(2, 17, 0, 0));
+        label.setFont(Toolkit.getSansFont(14, Font.PLAIN));
         if (contribution.isInstalled()) {
           icon = Toolkit.getLibIcon("manager/up-to-date.png");
           if (contribListing.hasUpdates(contribution)) {
@@ -266,7 +308,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         }
         label.setIcon(icon);
         if (isSelected) {
-          label.setBackground(Color.BLUE);
+          label.setBackground(new Color(0xe0fffd));
         }
         label.setOpaque(true);
 //        return table.getDefaultRenderer(Icon.class).getTableCellRendererComponent(table, icon, isSelected, false, row, column);
@@ -275,13 +317,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         FontMetrics fontMetrics = table.getFontMetrics(table.getFont());
         int colSize = table.getColumnModel().getColumn(1).getWidth();
         String sentence = contribution.getSentence();
-        int currentWidth = table.getFontMetrics(table.getFont().deriveFont(Font.BOLD)).stringWidth(contribution.getName());
-        int ellipsesWidth = fontMetrics.stringWidth("  ...");
-        String name = "<html><body><b>" + contribution.getName() + "</b>";
+        int currentWidth = table.getFontMetrics(table.getFont().deriveFont(Font.BOLD)).stringWidth(contribution.getName() + " | ");
+        int ellipsesWidth = fontMetrics.stringWidth("...");
+        String name = "<html><body><b>" + contribution.getName();
         if (sentence == null) {
-          label.setText(name + "</body></html>");
+          label.setText(name + "</b></body></html>");
         } else {
-          sentence = " - " + sentence;
+          sentence = " | </b>" + sentence;
           currentWidth += ellipsesWidth;
           int i = 0;
           for (i = 0; i < sentence.length(); i++) {
@@ -292,7 +334,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           }
           // Adding ellipses only if text doesn't fits into the column
           if(i != sentence.length()){
-            label.setText(name + sentence.substring(0, i) + " ...</body></html>");
+            label.setText(name + sentence.substring(0, i) + "...</body></html>");
           }else {
             label.setText(name + sentence + "</body></html>");
           }
@@ -301,44 +343,33 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           label.setForeground(Color.LIGHT_GRAY);
         }
         if (table.isRowSelected(row)) {
-          label.setBackground(Color.BLUE);
+          label.setBackground(new Color(0xe0fffd));
         }
+        label.setFont(ContributionManagerDialog.myFont);
         label.setOpaque(true);
       } else {
-        label = new JLabel(
-                           contribution.isSpecial() ? Toolkit
-                             .getLibIcon("icons/pde-16.png") : null);
-        StringBuilder name = new StringBuilder("");
-        String authorList = contribution.getAuthorList();
-        if (authorList != null) {
-          for (int i = 0; i < authorList.length(); i++) {
-
-            if (authorList.charAt(i) == '[' || authorList.charAt(i) == ']') {
-              continue;
-            }
-            if (authorList.charAt(i) == '(') {
-              i++;
-              while (authorList.charAt(i) != ')') {
-                i++;
-              }
-            } else {
-              name.append(authorList.charAt(i));
-            }
-          }
+        if (contribution.isSpecial()) {
+          label = new JLabel(Toolkit.getLibIcon("icons/foundation-16.png"));
+        } else {
+          label = new JLabel();
         }
+        String authorList = contribution.getAuthorList();
+        String name = getAuthorNameWithoutMarkup(authorList);
         label.setText(name.toString());
         label.setHorizontalAlignment(SwingConstants.LEFT);
         if(!contribution.isCompatible(Base.getRevision())){
           label.setForeground(Color.LIGHT_GRAY);
+        }else{
+          label.setForeground(Color.BLACK);
         }
         if (table.isRowSelected(row)) {
-          label.setBackground(Color.BLUE);
+          label.setBackground(new Color(0xe0fffd));
         }
+        label.setFont(Toolkit.getSansFont(14, Font.BOLD));
         label.setOpaque(true);
       }
       return label;
     }
-
   }
   private class MyTableModel extends DefaultTableModel{
     MyTableModel() {
@@ -352,6 +383,27 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     public Class<?> getColumnClass(int columnIndex) {
       return Contribution.class;
     }
+  }
+
+  String getAuthorNameWithoutMarkup(String authorList) {
+    StringBuilder name = new StringBuilder("");
+    if (authorList != null) {
+      for (int i = 0; i < authorList.length(); i++) {
+
+        if (authorList.charAt(i) == '[' || authorList.charAt(i) == ']') {
+          continue;
+        }
+        if (authorList.charAt(i) == '(') {
+          i++;
+          while (authorList.charAt(i) != ')') {
+            i++;
+          }
+        } else {
+          name.append(authorList.charAt(i));
+        }
+      }
+    }
+    return name.toString();
   }
 
   void updatePanelOrdering(Set<Contribution> contributionsSet) {
@@ -378,11 +430,16 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 //    System.out.println(dtm.getDataVector());
     dtm.getDataVector().removeAllElements();
     dtm.fireTableDataChanged();
+    int rowCount = 0;
     for (Contribution entry : contributionsSet) {
       ((MyTableModel) table.getModel()).addRow(new Object[] {
         entry, entry, entry });
+      if (selectedPanel != null && entry.getName()
+        .equals(selectedPanel.getContrib().getName())) {
+        table.setRowSelectionInterval(rowCount, rowCount);
+      }
+      rowCount++;
     }
-
   }
 
 
@@ -402,13 +459,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
               updateColors();  // XXX this is the place
             }
           }
-          // To make the scroll shift to the first element
-          // http://stackoverflow.com/questions/19400239/scrolling-to-the-top-jpanel-inside-a-jscrollpane
-          EventQueue.invokeLater(new Runnable() {
-            public void run() {
-              scrollRectToVisible(new Rectangle(0, 0, 1, 1));
-            }
-          });
         }
       });
     }
@@ -528,7 +578,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         } else {
           Border border = null;
           if (panel.isVisible()) {
-            if (Base.isMacOS()) {
+            if (Platform.isMacOS()) {
               if (count % 2 == 1) {
                 border = UIManager.getBorder("List.oddRowBackgroundPainter");
               } else {

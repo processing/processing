@@ -30,8 +30,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
-import processing.app.Base;
 import processing.app.Mode;
+import processing.app.Platform;
 import processing.core.PApplet;
 
 
@@ -97,7 +97,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
       public void mousePressed(MouseEvent e) {
         if (url != null) {
-          Base.openURL(url);
+          Platform.openURL(url);
         }
       }
     });

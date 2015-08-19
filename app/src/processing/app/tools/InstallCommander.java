@@ -28,8 +28,9 @@ import java.io.PrintWriter;
 
 import javax.swing.JOptionPane;
 
-import processing.app.Base;
 import processing.app.Language;
+import processing.app.Messages;
+import processing.app.Platform;
 import processing.app.ui.Editor;
 import processing.core.PApplet;
 import processing.data.StringList;
@@ -82,7 +83,7 @@ public class InstallCommander implements Tool {
       PrintWriter writer = PApplet.createWriter(file);
       writer.println("#!/bin/sh");
 
-      String javaRoot = Base.getContentFile(".").getCanonicalPath();
+      String javaRoot = Platform.getContentFile(".").getCanonicalPath();
 
       StringList jarList = new StringList();
       addJarList(jarList, new File(javaRoot));
@@ -91,7 +92,7 @@ public class InstallCommander implements Tool {
       String classPath = jarList.join(":").replaceAll(javaRoot + "\\/?", "");
 
       writer.println("cd \"" + javaRoot + "\" && " +
-                     Base.getJavaPath() +
+                     Platform.getJavaPath() +
                      " -Djna.nosys=true" +
       		           " -cp \"" + classPath + "\"" +
       		           " processing.mode.java.Commander \"$@\"");
@@ -101,8 +102,11 @@ public class InstallCommander implements Tool {
       String sourcePath = file.getAbsolutePath();
 
       if (result == JOptionPane.YES_OPTION) {
-        String targetPath = "/usr/bin/processing-java";
-        String shellScript = "/bin/mv " + sourcePath + " " + targetPath;
+        // Moving to /usr/local/bin instead of /usr/bin for compatibility
+        // with OS X 10.11 and its "System Integrity Protection"
+        // https://github.com/processing/processing/issues/3497
+        String targetPath = "/usr/local/bin/processing-java";
+        String shellScript = "/bin/mkdir -p /usr/local/bin && /bin/mv " + sourcePath + " " + targetPath;
         String appleScript =
           "do shell script \"" + shellScript + "\" with administrator privileges";
         PApplet.exec(new String[] { "osascript", "-e", appleScript });
@@ -111,10 +115,10 @@ public class InstallCommander implements Tool {
         File targetFile = new File(System.getProperty("user.home"), "processing-java");
         String targetPath = targetFile.getAbsolutePath();
         if (targetFile.exists()) {
-          Base.showWarning("File Already Exists",
-                           "The processing-java program already exists at:\n" +
-                           targetPath + "\n" +
-                           "Please remove it and try again.", null);
+          Messages.showWarning("File Already Exists",
+                               "The processing-java program already exists at:\n" +
+                               targetPath + "\n" +
+                               "Please remove it and try again.");
         } else {
           PApplet.exec(new String[] { "mv", sourcePath, targetPath });
         }
@@ -122,8 +126,8 @@ public class InstallCommander implements Tool {
       editor.statusNotice("Finished.");
 
     } catch (IOException e) {
-      Base.showWarning("Error while installing",
-                       "An error occurred and the tools were not installed.", e);
+      Messages.showWarning("Error while installing",
+                           "An error occurred and the tools were not installed.", e);
     }
   }
 

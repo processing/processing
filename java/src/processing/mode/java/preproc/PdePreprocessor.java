@@ -32,7 +32,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import processing.app.Base;
+import processing.app.Messages;
 import processing.app.Preferences;
 import processing.app.SketchException;
 import processing.core.PApplet;
@@ -40,8 +40,10 @@ import processing.data.StringList;
 import processing.mode.java.preproc.PdeLexer;
 import processing.mode.java.preproc.PdeRecognizer;
 import processing.mode.java.preproc.PdeTokenTypes;
+
 import antlr.*;
 import antlr.collections.AST;
+
 
 /**
  * Class that orchestrates preprocessing p5 syntax into straight Java.
@@ -379,7 +381,7 @@ public class PdePreprocessor {
           "The size of this sketch could not be determined from your code.\n" +
           "Use only numbers (not variables) for the size() command.\n" +
           "Read the size() reference for more details.";
-        Base.showWarning("Could not find sketch size", message, null);
+        Messages.showWarning("Could not find sketch size", message, null);
 //        new Exception().printStackTrace(System.out);
 //        return null;
         throw new SketchException("Please fix the size() line to continue.", false);

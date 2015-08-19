@@ -26,6 +26,7 @@ import processing.app.*;
 import processing.app.exec.StreamRedirectThread;
 import processing.app.ui.Editor;
 import processing.core.*;
+import processing.data.StringList;
 import processing.mode.java.JavaBuild;
 
 import java.awt.GraphicsDevice;
@@ -58,6 +59,7 @@ public class Runner implements MessageConsumer {
 
   // Running remote VM
   protected VirtualMachine vm;
+  protected boolean vmReturnedError;
 
   // Thread transferring remote error stream to our error stream
   protected Thread errThread = null;
@@ -89,14 +91,14 @@ public class Runner implements MessageConsumer {
     }
 
     // Make sure all the imported libraries will actually run with this setup.
-    int bits = Base.getNativeBits();
-    String variant = Base.getVariant();
+    int bits = Platform.getNativeBits();
+    String variant = Platform.getVariant();
 
     for (Library library : build.getImportedLibraries()) {
       if (!library.supportsArch(PApplet.platform, variant)) {
         sketchErr.println(library.getName() + " does not run on this architecture: " + variant);
         int opposite = (bits == 32) ? 64 : 32;
-        if (Base.isMacOS()) {
+        if (Platform.isMacOS()) {
           //if (library.supportsArch(PConstants.MACOSX, opposite)) {  // should always be true
           throw new SketchException("To use " + library.getName() + ", " +
                                     "switch to " + opposite + "-bit mode in Preferences.");
@@ -113,10 +115,27 @@ public class Runner implements MessageConsumer {
   }
 
 
-  public void launch(boolean presenting) {
-    if (launchVirtualMachine(presenting)) {
+  public VirtualMachine launch(String[] args) {
+    if (launchVirtualMachine(false, args)) {
       generateTrace();
     }
+    return vm;
+  }
+
+
+  public VirtualMachine present(String[] args) {
+    if (launchVirtualMachine(true, args)) {
+      generateTrace();
+    }
+    return vm;
+  }
+
+
+  /**
+   * Whether the last invocation of launchJava() was successful or not
+   */
+  public boolean vmReturnedError() {
+    return vmReturnedError;
   }
 
 
@@ -124,8 +143,8 @@ public class Runner implements MessageConsumer {
    * Simple non-blocking launch of the virtual machine. VM starts suspended.
    * @return debuggee VM or null on failure
    */
-  public VirtualMachine launchDebug() {
-    if (launchVirtualMachine(false)) {  // will return null on failure
+  public VirtualMachine debug(String[] args) {
+    if (launchVirtualMachine(false, args)) {  // will return null on failure
       redirectStreams(vm);
     }
     return vm;
@@ -153,9 +172,9 @@ public class Runner implements MessageConsumer {
   }
 
 
-  public boolean launchVirtualMachine(boolean presenting) {
-    String[] vmParams = getMachineParams();
-    String[] sketchParams = getSketchParams(presenting);
+  public boolean launchVirtualMachine(boolean present, String[] args) {
+    StringList vmParams = getMachineParams();
+    StringList sketchParams = getSketchParams(present, args);
 //    PApplet.printArray(sketchParams);
     int port = 8000 + (int) (Math.random() * 1000);
     String portStr = String.valueOf(port);
@@ -167,13 +186,13 @@ public class Runner implements MessageConsumer {
     String jdwpArg = "-agentlib:jdwp=transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
 
     // Everyone works the same under Java 7 (also on OS X)
-    String[] commandArgs = new String[] { Base.getJavaPath(), jdwpArg };
+    StringList commandArgs = new StringList();
+    commandArgs.append(Platform.getJavaPath());
+    commandArgs.append(jdwpArg);
 
-    commandArgs = PApplet.concat(commandArgs, vmParams);
-    commandArgs = PApplet.concat(commandArgs, sketchParams);
-//  PApplet.println(commandArgs);
-//  commandArg.setValue(commandArgs);
-    launchJava(commandArgs);
+    commandArgs.append(vmParams);
+    commandArgs.append(sketchParams);
+    launchJava(commandArgs.array());
 
     AttachingConnector connector = (AttachingConnector)
       findConnector("com.sun.jdi.SocketAttach");
@@ -228,8 +247,8 @@ public class Runner implements MessageConsumer {
   }
 
 
-  protected String[] getMachineParams() {
-    ArrayList<String> params = new ArrayList<String>();
+  protected StringList getMachineParams() {
+    StringList params = new StringList();
 
     //params.add("-Xint"); // interpreted mode
     //params.add("-Xprof");  // profiler
@@ -244,7 +263,7 @@ public class Runner implements MessageConsumer {
       for (int i = 0; i < pieces.length; i++) {
         String p = pieces[i].trim();
         if (p.length() > 0) {
-          params.add(p);
+          params.append(p);
         }
       }
     }
@@ -252,65 +271,45 @@ public class Runner implements MessageConsumer {
 //    params.add("-Djava.ext.dirs=nuffing");
 
     if (Preferences.getBoolean("run.options.memory")) {
-      params.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
-      params.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
+      params.append("-Xms" + Preferences.get("run.options.memory.initial") + "m");
+      params.append("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
     }
 
-    if (Base.isMacOS()) {
-      params.add("-Xdock:name=" + build.getSketchClassName());
+    if (Platform.isMacOS()) {
+      params.append("-Xdock:name=" + build.getSketchClassName());
 //      params.add("-Dcom.apple.mrj.application.apple.menu.about.name=" +
 //                 sketch.getMainClassName());
     }
     // sketch.libraryPath might be ""
     // librariesClassPath will always have sep char prepended
-    params.add("-Djava.library.path=" +
-               build.getJavaLibraryPath() +
-               File.pathSeparator +
-               System.getProperty("java.library.path"));
+    params.append("-Djava.library.path=" +
+                  build.getJavaLibraryPath() +
+                  File.pathSeparator +
+                  System.getProperty("java.library.path"));
 
-    params.add("-cp");
-    params.add(build.getClassPath());
-//    params.add(sketch.getClassPath() +
-//        File.pathSeparator +
-//        Base.librariesClassPath);
+    params.append("-cp");
+    params.append(build.getClassPath());
 
     // enable assertions
     // http://dev.processing.org/bugs/show_bug.cgi?id=1188
-    params.add("-ea");
+    params.append("-ea");
     //PApplet.println(PApplet.split(sketch.classPath, ':'));
 
-    String outgoing[] = new String[params.size()];
-    params.toArray(outgoing);
-
-//    PApplet.println(outgoing);
-//    PApplet.println(PApplet.split(outgoing[0], ":"));
-//    PApplet.println();
-//    PApplet.println("class path");
-//    PApplet.println(PApplet.split(outgoing[2], ":"));
-
-    return outgoing;
-    //return (String[]) params.toArray();
-
-//  System.out.println("sketch class path");
-//  PApplet.println(PApplet.split(sketch.classPath, ';'));
-//  System.out.println();
-//  System.out.println("libraries class path");
-//  PApplet.println(PApplet.split(Base.librariesClassPath, ';'));
-//  System.out.println();
+    return params;
   }
 
 
-  protected String[] getSketchParams(boolean presenting) {
-    ArrayList<String> params = new ArrayList<String>();
+  protected StringList getSketchParams(boolean present, String[] args) {
+    StringList params = new StringList();
 
     // It's dangerous to add your own main() to your code,
     // but if you've done it, we'll respect your right to hang yourself.
     // http://processing.org/bugs/bugzilla/1446.html
     if (build.getFoundMain()) {
-      params.add(build.getSketchClassName());
+      params.append(build.getSketchClassName());
 
     } else {
-      params.add("processing.core.PApplet");
+      params.append("processing.core.PApplet");
 
       // get the stored device index (starts at 1)
       int runDisplay = Preferences.getInteger("run.display");
@@ -366,8 +365,8 @@ public class Runner implements MessageConsumer {
             // If sketches are to be shown on the same display as the editor,
             // provide the editor location so the sketch's main() can place it.
             Point editorLocation = editor.getLocation();
-            params.add(PApplet.ARGS_EDITOR_LOCATION + "=" +
-                       editorLocation.x + "," + editorLocation.y);
+            params.append(PApplet.ARGS_EDITOR_LOCATION + "=" +
+                          editorLocation.x + "," + editorLocation.y);
           } else {
             // The sketch's main() will set a location centered on the new
             // display. It has to happen in main() because the width/height
@@ -379,37 +378,38 @@ public class Runner implements MessageConsumer {
 //            params.add(PApplet.ARGS_LOCATION + "=" + runX + "," + runY);
           }
         } else {
-          params.add(PApplet.ARGS_LOCATION + "=" +
-                     windowLocation.x + "," + windowLocation.y);
+          params.append(PApplet.ARGS_LOCATION + "=" +
+                        windowLocation.x + "," + windowLocation.y);
         }
-        params.add(PApplet.ARGS_EXTERNAL);
+        params.append(PApplet.ARGS_EXTERNAL);
       }
 
-      params.add(PApplet.ARGS_DISPLAY + "=" + runDisplay);
+      params.append(PApplet.ARGS_DISPLAY + "=" + runDisplay);
 
 
-      if (presenting) {
-        params.add(PApplet.ARGS_PRESENT);
+      if (present) {
+        params.append(PApplet.ARGS_PRESENT);
 //        if (Preferences.getBoolean("run.present.exclusive")) {
 //          params.add(PApplet.ARGS_EXCLUSIVE);
 //        }
-        params.add(PApplet.ARGS_STOP_COLOR + "=" +
-                   Preferences.get("run.present.stop.color"));
-        params.add(PApplet.ARGS_WINDOW_COLOR + "=" +
-                   Preferences.get("run.present.bgcolor"));
+        params.append(PApplet.ARGS_STOP_COLOR + "=" +
+                      Preferences.get("run.present.stop.color"));
+        params.append(PApplet.ARGS_WINDOW_COLOR + "=" +
+                      Preferences.get("run.present.bgcolor"));
       }
 
       // There was a PDE X hack that put this after the class name, but it was
       // removed for 3.0a6 because it would break the args passed to sketches.
-      params.add(PApplet.ARGS_SKETCH_FOLDER + "=" + build.getSketchPath());
+      params.append(PApplet.ARGS_SKETCH_FOLDER + "=" + build.getSketchPath());
 
-      params.add(build.getSketchClassName());
+      params.append(build.getSketchClassName());
     }
-
-//    String outgoing[] = new String[params.size()];
-//    params.toArray(outgoing);
-//    return outgoing;
-    return params.toArray(new String[0]);
+    // Add command-line arguments to be given to the sketch itself
+    if (args != null) {
+      params.append(args);
+    }
+    // Pass back the whole list
+    return params;
   }
 
 
@@ -417,6 +417,7 @@ public class Runner implements MessageConsumer {
     new Thread(new Runnable() {
       public void run() {
 //        PApplet.println("java starting");
+        vmReturnedError = false;
         process = PApplet.exec(args);
         try {
 //          PApplet.println("java waiting");
@@ -433,9 +434,9 @@ public class Runner implements MessageConsumer {
 
             if (errorStrings != null && errorStrings.length > 1) {
               if (errorStrings[0].indexOf("Invalid maximum heap size") != -1) {
-                Base.showWarning("Way Too High",
-                                 "Please lower the value for \u201Cmaximum available memory\u201D in the\n" +
-                                 "Preferences window. For more information, read Help \u2192 Troubleshooting.", null);
+                Messages.showWarning("Way Too High",
+                                     "Please lower the value for \u201Cmaximum available memory\u201D in the\n" +
+                                     "Preferences window. For more information, read Help \u2192 Troubleshooting.", null);
               } else {
                 for (String err : errorStrings) {
                   sketchErr.println(err);
@@ -454,6 +455,7 @@ public class Runner implements MessageConsumer {
             // changing this to separate editor and listener [091124]
             //if (editor != null) {
             listener.statusError("Could not run the sketch.");
+            vmReturnedError = true;
             //}
 //            return null;
           }
@@ -595,9 +597,9 @@ public class Runner implements MessageConsumer {
         return connector;
       }
     }
-    Base.showError("Compiler Error",
-                   "findConnector() failed to find " +
-                    connectorName + " inside Runner", null);
+    Messages.showError("Compiler Error",
+                       "findConnector() failed to find " +
+                       connectorName + " inside Runner", null);
     return null; // Not reachable
   }
 
@@ -668,9 +670,12 @@ public class Runner implements MessageConsumer {
       }
     } else if (exceptionClass.equals("java.lang.UnsatisfiedLinkError")) {
       listener.statusError("A library used by this sketch is not installed properly.");
+      if (PApplet.platform == PConstants.LINUX) {
+        err.println(message);
+      }
       err.println("A library relies on native code that's not available.");
       err.println("Or only works properly when the sketch is run as a " +
-        ((Base.getNativeBits() == 32) ? "64-bit" : "32-bit") + " application.");
+        ((Platform.getNativeBits() == 32) ? "64-bit" : "32-bit") + " application.");
 
     } else if (exceptionClass.equals("java.lang.StackOverflowError")) {
       listener.statusError("StackOverflowError: This sketch is attempting too much recursion.");

@@ -142,7 +142,7 @@ public class Library extends LocalContribution {
 
     // for the host platform, need to figure out what's available
     File nativeLibraryFolder = libraryFolder;
-    String hostPlatform = Base.getPlatformName();
+    String hostPlatform = Platform.getName();
 //    System.out.println("1 native lib folder now " + nativeLibraryFolder);
     // see if there's a 'windows', 'macosx', or 'linux' folder
     File hostLibrary = new File(libraryFolder, hostPlatform);
@@ -152,7 +152,8 @@ public class Library extends LocalContribution {
 //    System.out.println("2 native lib folder now " + nativeLibraryFolder);
     // check for bit-specific version, e.g. on windows, check if there
     // is a window32 or windows64 folder (on windows)
-    hostLibrary = new File(libraryFolder, hostPlatform + Base.getNativeBits());
+    hostLibrary =
+      new File(libraryFolder, hostPlatform + Platform.getNativeBits());
     if (hostLibrary.exists()) {
       nativeLibraryFolder = hostLibrary;
     }
@@ -479,7 +480,7 @@ public class Library extends LocalContribution {
                 + "\" cannot be used.\n"
                 + "Library names must contain only basic letters and numbers.\n"
                 + "(ASCII only and no spaces, and it cannot start with a number)";
-            Base.showMessage("Ignoring bad library name", mess);
+            Messages.showMessage("Ignoring bad library name", mess);
             continue;
           }
         }

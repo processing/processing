@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import processing.app.Base;
+import processing.app.Messages;
 import processing.mode.java.Debugger;
 
 import com.sun.jdi.AbsentInformationException;
@@ -220,13 +220,13 @@ public class LineBreakpoint implements ClassLoadListener {
     @Override
     public void classLoaded(ReferenceType theClass) {
         // check if our class is being loaded
-        Base.log("Class Loaded: " + theClass.name());
+        Messages.log("Class Loaded: " + theClass.name());
         if (theClass.name().equals(className())) {
             this.theClass = theClass;
             attach();
         }
         for (ReferenceType ct : theClass.nestedTypes()) {
-          Base.log("Nested " + ct.name());
+          Messages.log("Nested " + ct.name());
         }
     }
 }

@@ -36,8 +36,9 @@ import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 
 import processing.app.Base;
-import processing.app.Platform;
+import processing.app.Messages;
 import processing.app.Preferences;
+import processing.app.platform.DefaultPlatform;
 import processing.app.platform.WindowsRegistry.REGISTRY_ROOT_KEY;
 import processing.core.PApplet;
 
@@ -45,7 +46,7 @@ import processing.core.PApplet;
 /**
  * Platform-specific glue for Windows.
  */
-public class WindowsPlatform extends Platform {
+public class WindowsPlatform extends DefaultPlatform {
 
   static final String APP_NAME = "Processing";
   static final String REG_OPEN_COMMAND =
@@ -54,8 +55,8 @@ public class WindowsPlatform extends Platform {
   static final String REG_DOC = APP_NAME + ".Document";
 
 
-  public void init(Base base) {
-    super.init(base);
+  public void initBase(Base base) {
+    super.initBase(base);
     checkAssociations();
     //checkQuickTime();
     checkPath();
@@ -215,7 +216,7 @@ public class WindowsPlatform extends Platform {
       // hooray!
 
     } else {
-      Base.log("Could not associate files, turning off auto-associate pref.");
+      Messages.log("Could not associate files, turning off auto-associate pref.");
       Preferences.setBoolean("platform.auto_file_type_associations", false);
     }
   }
@@ -500,7 +501,46 @@ public class WindowsPlatform extends Platform {
   // Code partially thanks to Richard Quirk from:
   // http://quirkygba.blogspot.com/2009/11/setting-environment-variables-in-java.html
 
-  static WinLibC clib = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
+  static WinLibC clib;
+
+
+  static WinLibC getLibC() {
+    if (clib == null) {
+      try {
+        clib = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
+      } catch (UnsatisfiedLinkError ule) {
+        // Might be a problem with file encoding, use a default directory
+        // https://github.com/processing/processing/issues/3624
+        File ctmp = new File("C:\\TEMP");  // kick it old school
+        if (ctmp.exists() || ctmp.mkdirs()) {
+          try {
+            File jnaTmp = File.createTempFile("processing", "jna", ctmp);
+            if (jnaTmp.mkdirs()) {
+              jnaTmp.deleteOnExit();  // clean up when we're done
+              System.setProperty("jna.tmpdir", jnaTmp.getAbsolutePath());
+              try {
+                clib = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
+              } catch (UnsatisfiedLinkError ulf) {
+                Messages.showTrace("No luck with JNA",
+                                   "After several attempts, JNA could not be loaded. Please report:\n" +
+                                   "http://github.com/processing/processing/issues/new", ulf, true);
+              }
+            }
+          } catch (IOException e) {
+            Messages.showTrace("Could not create temp directory",
+                               "JNA could not be loaded properly. Please report:\n" +
+                               "http://github.com/processing/processing/issues/new", e, true);
+          }
+        } else {
+          Messages.showError("Could not create temp directory",
+                             "JNA could not be loaded into C:\\TEMP. Please report:\n" +
+                             "http://github.com/processing/processing/issues/new", null);
+        }
+      }
+    }
+    return clib;
+  }
+
 
   public interface WinLibC extends Library {
     //WinLibC INSTANCE = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
@@ -511,7 +551,7 @@ public class WindowsPlatform extends Platform {
 
   public void setenv(String variable, String value) {
     //WinLibC clib = WinLibC.INSTANCE;
-    clib._putenv(variable + "=" + value);
+    getLibC()._putenv(variable + "=" + value);
   }
 
 
@@ -524,7 +564,7 @@ public class WindowsPlatform extends Platform {
     //WinLibC clib = WinLibC.INSTANCE;
     //clib._putenv(variable + "=");
     //return 0;
-    return clib._putenv(variable + "=");
+    return getLibC()._putenv(variable + "=");
   }
 
 

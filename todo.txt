@@ -1,4 +1,53 @@
-0242 (3.0b4)
+0243 (3.0b5)
+X processing-java isn't working in OS X 10.11 El Capitan
+X   https://github.com/processing/processing/issues/3497
+o   probably have to add the script/Processing.app location to user's path
+X line selected for errors is off by one or two
+X   https://github.com/processing/processing/issues/3654
+
+contribs
+X Undo does not move to the correct location in the editor window
+X   https://github.com/processing/processing/issues/707
+X   https://github.com/processing/processing/pull/3660
+
+gsoc
+X Foundation libraries disapear from CM after restart
+X   https://github.com/processing/processing/issues/3659
+X   https://github.com/processing/processing/pull/3663
+X CM scrolls to bottom of window after updating the list
+o   https://github.com/processing/processing/issues/3248
+o   https://github.com/processing/processing/pull/3328
+X   no longer issue in the new release
+X CM blue bar missing
+X   https://github.com/processing/processing/issues/3599
+X   https://github.com/processing/processing/pull/3636
+X CM: Category dropdown alignment
+X   https://github.com/processing/processing/pull/3666
+_   https://github.com/processing/processing/issues/3644
+
+cleaning
+X modify build to insert these after antlr run:
+X   @SuppressWarnings({"unused", "cast"})
+X   or get the updated ANTLR, which likely would support it
+o scrollable stack trace
+o   http://www.javalobby.org/java/forums/t19012.html
+
+cleaning/libraries
+o different name for 'lib' folder because of libraries folder?
+o   avoid some confusion for when describing the libraries folder to users
+X could have library developers update compatability note
+X   so they would need to test library and say "compatible with 0110"
+X   before it would automatically update or show as an update
+o need an "install library" option to deal with urls..
+X need better platform designation setup for libs
+X library installation should use the sketchbook folder, not the p5 folder
+o   actually enforce this, give users a warning about other libs
+o versioning info 
+o   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/versioning.html
+X changing the sketchbook folder will make libraries show up
+o   but it won't reload the library mapping table
+o set DYLD_LIBRARY_PATH to include .dylib and other framework stuff
+o   java.library.path will only handle .jnilib stuff
 
 
 known issues
@@ -9,28 +58,45 @@ _   https://github.com/processing/processing/issues/3543
 _   move to javapackager or another option?
 _   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-application
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
+_ JNA errors on startup when run from an account w/ non-ASCII characters
+_   set jna.tmpdir (or java.io.tmpdir) to another location
+_   https://github.com/twall/jna/issues/124
+_   https://github.com/twall/jna/issues/238
+_   Sun says they won't fix: user locale and system locale probably different:
+_   https://bugs.openjdk.java.net/browse/JDK-8017274
+_   https://bugs.openjdk.java.net/browse/JDK-4958170
+_   https://github.com/twall/jna/blob/master/test/com/sun/jna/JNALoadTest.java
+_   http://happygiraffe.net/blog/2009/09/24/java-platform-encoding/
+_   fix: get sun.jnu.encoding and make sure the user name is supported in it?
+_     and if not, put up a warning for the user?
+_   http://www.oracle.com/us/technologies/java/locale-140624.html
 
 
 3.0 final
-_ more ARM patches
-_   https://github.com/processing/processing/pull/3566
+_ prompt to install Xcode coming up on Export to Application
+_   http://stackoverflow.com/questions/15371925/how-to-check-if-command-line-tools-is-installed
+_   "xcode-select -p" returns 0 if they exist (and the dir) or 2 if they don't
 _ Contributions Manager UI design
 _   https://github.com/processing/processing/issues/3482
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
-_ processing-java isn't working in OSX 10.11 El Capitan
-_   https://github.com/processing/processing/issues/3497
-_   probably have to add the script/Processing.app location to user's path
-_ move processing-java inside the Java Mode? 
-_   make a Tool that installs it for all platforms, not just OS X
-_   not really part of the 'build' anymore
-_ should Platform be a static instance?
-_   lots of platform stuff in base, but might be better handled elsewhere
+_ sketch modified externally with FAT32 volumes on OS X
+_   https://github.com/processing/processing/issues/3387
+_ also appearing with encrypted volumes?
+_   also an un-ending loop caused by it
+_   https://github.com/processing/processing/issues/3650
+_ add this to the preferences?
 
 
 gui
+_ replace about screen (1x and 2x versions)
+_   change 'alpha' to correct name
+_   also change the revision in the "about processing" dialog
+_   https://github.com/processing/processing/issues/3665
 _ fix red in sidebar, the squiggly line beneath code
-_ show hover text with 'debug'
+_ Error/warning location visualisation not updating when editor resizes
+_   https://github.com/processing/processing/issues/3619
+_ show hover text when the mouse is over the 'debug' button
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
 _ make breakpoints more prominent
@@ -49,17 +115,6 @@ _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
 _   iTunes has no rollover state but has a 'down' state
 _     swaps to stop after release
-_ fonts are still really ugly (on non-retina)
-_   may need to drop use of Source Sans
-_   what do these do, and are we doing it already?
-_   System.setProperty("awt.useSystemAAFontSettings","on");
-_   System.setProperty("swing.aatext", "true");
-_ how are we going to handle fonts for other languages? 
-_   two new fonts have been added, other languages will need more
-_   need a decent sans with with Unicode coverage
-_   i.e. https://github.com/processing/processing/pull/3025
-_ Non-western language hint text for toolbar buttons not correctly displayed
-_   https://github.com/processing/processing/issues/2886
 _ deactivate step, continue, stop when not running?
 _ update EditorButton rollover label when pressing shift or alt
 _ disable the debug toggle menu while running
@@ -72,6 +127,20 @@ _ show compiling/startup animation after clicking run
 _   or maybe show an animation for starting up
 _   rather than post-compile
 _   https://github.com/processing/processing/issues/136
+
+
+fonts
+_ fonts are still really ugly (on non-retina)
+_   may need to drop use of Source Sans
+_   what do these do, and are we doing it already?
+_   System.setProperty("awt.useSystemAAFontSettings","on");
+_   System.setProperty("swing.aatext", "true");
+_ how are we going to handle fonts for other languages? 
+_   two new fonts have been added, other languages will need more
+_   need a decent sans with with Unicode coverage
+_   i.e. https://github.com/processing/processing/pull/3025
+_ Non-western language hint text for toolbar buttons not correctly displayed
+_   https://github.com/processing/processing/issues/2886
 
 
 pde/build
@@ -87,30 +156,16 @@ _   https://github.com/processing/processing/issues/3311
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
 _   because it's in the other ClassLoader, can no longer rely on it
 _ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
-_ make sure "PDF Export" is showing for the library name
-_ we've lost arrow keys to expand items in the examples window
-_   sketchbook window too?
-_ 'ant clean' not removing old versions created by dist
 _ continue clearing out ProgressFrame
 _   also hook up the statusNotice() when done
-_ break out Mode options to their own panels in prefs
+_ break out Mode-specific options to their own panels in prefs
 _   Mode should just provide a panel for their prefs
-_ make the build fail it git pull on processing-docs fails
-_ move the language stuff to the settings folder
-_   that way people can modify and test w/o recompiling
-_   https://github.com/processing/processing/issues/2938
-_   how was this resolved? just implemented overrides?
-_ add span screens pref (near the display pref)
-_   add checkbox for spans to export dialog
+_ make the build fail if git pull on processing-docs fails
 _ remove "save before running" message
 _ pass through the source to update licenses
 _   add Processing Foundation as 2012-15
 _   update license info to state gplv2 not v3
 _   run through that online license checker
-_ default display set to a second, then gets confused when monitor doesn't exist
-_   is this not resetting the preference?
-_   https://github.com/processing/processing/issues/1457
-_ add last revision used / max revision used settings?
 
 
 crashing
@@ -179,8 +234,6 @@ _ disable the Export button if no platforms selected on Export to Application
 help me
 _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
-_ closing the color selector makes things freeze (only Linux and Windows?)
-_   https://github.com/processing/processing/issues/2381
 _ problems with non-US keyboards and some shortcuts
 _   https://github.com/processing/processing/issues/2199
 _ clean up 'ant doc' target to remove warnings
@@ -424,6 +477,7 @@ _ two-tiered dialogs for everything - use big font/little font style throughout
 _   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
+_   also the "some features will be disabled" with .java tabs
 _   https://github.com/processing/processing/issues/46
 _ add "don't warn me about this" for sketch renaming
 _   make sure renamed version doesn't exist already
@@ -432,19 +486,14 @@ _   along with a "don't ask me later"
 _ use macosx dialogs for all of the editor stuff
 _   see about doing the same on windows, linux?
 _   the others seem to respond ok to the lucida grande since they use defaults
-_   vista style dialogs
-_     http://msdn.microsoft.com/en-us/library/bb328626.aspx
-_   confirmation dialogs (save and don't save.. who'd a thunk it)
-_     http://msdn.microsoft.com/en-us/library/aa511273.aspx
-_     http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
-_   scrollable stack trace
-_     http://www.javalobby.org/java/forums/t19012.html
+_ vista style dialogs
+_   http://msdn.microsoft.com/en-us/library/bb328626.aspx
+_ confirmation dialogs (save and don't save.. who'd a thunk it)
+_   http://msdn.microsoft.com/en-us/library/aa511273.aspx
+_   http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
 
 
 PDE / Compiler & Preprocessor
-
-_ Parsing generic fails when package is specified (also problem with Map.Entry)
-_   https://github.com/processing/processing/issues/918
 
 medium (bugs/features)
 _ incorporate new preproc
@@ -452,9 +501,6 @@ _   https://github.com/fjenett/processing-preprocessor-antlr4
 _   https://github.com/processing/processing/issues/3055
 _ update grammar for ANTLR
 _   https://github.com/processing/processing/issues/3054
-_ modify build to insert these after antlr run:
-_   @SuppressWarnings({"unused", "cast"})
-_   or get the updated ANTLR, which likely would support it
 _ omitting a semicolon shows the error on the line after it
 _ npe if library is removed before compile
 _   always check library folders to make sure they're still valid
@@ -487,8 +533,6 @@ _   https://github.com/processing/processing/issues/533
 
 PDE / Editor
 
-_ [help] Undo does not move to the correct location in the editor window
-_   https://github.com/processing/processing/issues/707
 _ clean up /tmp folders used during build
 _   https://github.com/processing/processing/issues/1896
 _ 'recent' menu doesn't respect examples folder of other p5 versions
@@ -568,9 +612,6 @@ _ exporting application copies .java files
 _   .java files are copied to the root folder as well as the source folder
 
 
-PDE / Find & Replace
-
-
 PDE / Examples
 
 _ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
@@ -613,20 +654,16 @@ _   altho prolly only when it's actually different (md5hash it?)
 _   this seems to be causing a lot of trouble with recent releases
 _   (opengl changes and whatnot)
 _ jar files like the bad aiexport plugin will cause serious problems
+_   https://github.com/processing/processing/issues/95
 _   need to ignore processing.core classes showing up in other jar files
 _   tougher than it looks, because it all depends on what java wants to use
 _     i.e. even if not specified, the stuff will be in the classpath
 _   need to make classpath code be less promiscuous
 _   the order of adding libraries to classpath should be opposite
 _     the important local libraries should be first in cp, user contrib later
-_   https://github.com/processing/processing/issues/95
-_ changing the sketchbook folder will make libraries show up
-_   but it won't reload the library mapping table
 _ make sure there aren't library jar files named the same thing 
 _   i.e. if one library has db.jar, then that's gonna kill another db.jar
 _   when the files are copied over
-_ versioning info 
-_   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/versioning.html
 _ java.ext.dirs for /System/Library/Java/Extensions
 _   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/spec.html
 _   can set java.ext.dirs to something else 
@@ -635,17 +672,8 @@ _ native lib stuff, use native.txt in lib folder, then:
 _   String osName = System.getProperty("os.name");
 _   String osArch = System.getProperty("os.arch");
 _   http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
-_ need better platform designation setup for libs
-_ library installation should use the sketchbook folder, not the p5 folder
-_   actually enforce this, give users a warning about other libs
-_ set DYLD_LIBRARY_PATH to include .dylib and other framework stuff
-_   java.library.path will only handle .jnilib stuff
 _ need better error messages for broken api / library troubles
 _   e.g. ocd is broken in 0125 because of method signature changes
-_ could have library developers update compatability note
-_   so they would need to test library and say "compatible with 0110"
-_   before it would automatically update or show as an update
-_ need an "install library" option to deal with urls..
 
 
 PDE / Manager
@@ -690,9 +718,6 @@ _ font size for "Downloading" on progress bar is too large
 _   but changing the size breaks the vertical centering
 _ highlight color seems to be incorrect?
 _ after installing, the item in the manager list doesn't change color
-_ scrolls to bottom of window after updating the list
-_   https://github.com/processing/processing/issues/3248
-_   https://github.com/processing/processing/pull/3328
 _ wheel mouse is super jumpy 
 _   something about unit increment in ContributionListPanel
 _ arrow keys up/down move scroll bar, not selection
@@ -822,6 +847,9 @@ How the environment gets packed up, downloaded, and installed.
 
 DIST / General 
 
+_ move processing-java inside the Java Mode? 
+_   make a Tool that installs it for all platforms, not just OS X
+_   not really part of the 'build' anymore
 _ line ending issues
 _   doesn't really help on Windows since we use Cygwin
 _     but it would be helpful for people not using it (ant/other LF issues)
@@ -851,8 +879,6 @@ _ about box
 _   bring up information about gpl, lgpl, and ibmpl
 _   jedit syntax is under mit license
 _     http://www.opensource.org/licenses/mit-license.php
-_ different name for 'lib' folder because of libraries folder?
-_   avoid some confusion for when describing the libraries folder to users
 _ add proper copyright and license information for all included projects
 _   https://github.com/processing/processing/issues/224
 _ write up guidelines for modes

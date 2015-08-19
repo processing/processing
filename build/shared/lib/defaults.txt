@@ -148,6 +148,9 @@ editor.input_method_support = false
 editor.tabs.expand = true
 editor.tabs.size = 2
 
+# Set to true to automatically close [ { ( " and '
+editor.completion.auto_close = false
+
 # automatically indent each line
 editor.indent = true
 

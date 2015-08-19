@@ -1,11 +1,30 @@
-0242 core (3.0b4)
+0243 core (3.0b5)
+X NullPointerException in selectFolder() on OS X
+X   https://github.com/processing/processing/issues/3661
+
+cleaning
+X How do images behave when pixelDensity(2) is set?
+X   https://github.com/processing/processing/issues/3364
+X retina sketches slow to start
+X   https://github.com/processing/processing/issues/2357
+X zero alpha values still a problem with retina renderer
+X   https://github.com/processing/processing/issues/2030
+
+jakub
+X keyTyped() not firing with P2D and P3D
+X   https://github.com/processing/processing/issues/3582
+X   https://github.com/processing/processing/pull/3652
+X rect() sizing in JavaFX
+X   https://github.com/processing/processing/pull/3656
+X FX - Proper sketch sizing
+X   https://github.com/processing/processing/pull/3658
+X implement frameRate()
 
 
-opengl
-_ Use PBOs for async texture copy
-_   https://github.com/processing/processing/issues/3569
-_ filter(PShader) broken in HiDPI mode
-_   https://github.com/processing/processing/issues/3577
+known issues
+_ P2D and P3D windows behave strangely when larger than the screen size
+_   https://github.com/processing/processing/issues/3401
+
 
 docs
 _ note that full screen and present are now different
@@ -28,14 +47,9 @@ _   use the BufferStrategy directly from the Frame object?
 _     might fix performance issues w/ Presentation mode
 _ sketch placement (window insets) not properly set on Linux
 _   https://github.com/processing/processing/issues/2063
-_ are we clear on sketchPath() for OS X?
-_   working dir (user.dir?) returns home dir, not app dir in Oracle Java
-_   could add -Dapp.root=$APP_ROOT and get via System.getProperty("app.root")
 
 
 javafx
-_ Error on size() when using FX2D due to stage inset issues
-_   https://github.com/processing/processing/issues/3412
 _ static mode sketches (draw once and halt w/o closing window)
 _ fix display handling, line up the device order with AWT
 _   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html
@@ -61,7 +75,6 @@ _   https://github.com/processing/processing/issues/3274
 _ getNative() in PImage problematic because it gives back a BufferedImage
 _   move loadImage() into PGraphics, with AWT version the default?
 _   or pass createImage() through to renderer?
-_ implement frameRate()
 _ implement external messages (moving the window)
 _ implement PSurfaceFX.setIcon()
 _ javafx not supported with ARM (so we're screwed on raspberry pi)
@@ -69,6 +82,10 @@ _   https://www.linkedin.com/pulse/oracle-just-removed-javafx-support-arm-jan-sn
 
 
 opengl
+_ Use PBOs for async texture copy
+_   https://github.com/processing/processing/issues/3569
+_ filter(PShader) broken in HiDPI mode
+_   https://github.com/processing/processing/issues/3577
 _ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
 _ window loses focus after maximizing
 _   https://github.com/processing/processing/issues/3339
@@ -146,8 +163,6 @@ _   the table pointer version will be speedy and allow chaining
 
 
 high
-_ dataPath() not working when app is not run from app dir on Linux
-_   https://github.com/processing/processing/issues/2195
 _ point() rendering differently in 2.0.3 and 2.1
 _   https://github.com/processing/processing/issues/2278
 _   internally, we probably have to call set() if it's a 1 pixel point
@@ -169,14 +184,8 @@ _ don't override the window icon w/ p5 logo if already set
 
 
 retina/hidpi
-_ How do images behave when pixelDensity(2) is set?
-_   https://github.com/processing/processing/issues/3364
 _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
-_ retina sketches slow to start
-_   https://github.com/processing/processing/issues/2357
-_ zero alpha values still a problem with retina renderer
-_   https://github.com/processing/processing/issues/2030
 
 
 decisions/misc
@@ -363,14 +372,17 @@ _     maybe a hack where a new menubar is added?
 
 CORE / PFont and text()
 
+_ font rotation (native font problem?) with natives?
+_   https://github.com/processing/processing/issues/731
+_ Text rotation, placement and font metrics incorrect when scaled
+_   https://github.com/processing/processing/issues/2167
+
 _ remove subsetting stuff from PFont?
 _   or use hint(ENABLE_FONT_SUBSETTING)? 
 _ what's the difference with ascent on loadFont vs. createFont?
 _ svg fonts
 _   would be nifty if we could convert on the fly to ttf for speed...
 _   https://github.com/processing/processing/issues/787
-_ font rotation (native font problem?) with natives?
-_   https://github.com/processing/processing/issues/731
 _ text position is quantized in JAVA2D
 _   text placement is ugly, seems like fractional metrics problem
 _   https://github.com/processing/processing/issues/138
@@ -427,17 +439,10 @@ _ figure out why 1024x768 image takes 3.5 seconds to load
 _   would using a BufferedImage work better?
 _   is the image actually a BufferedImage so PixelGrabber is a waste?
 
-_ fix blue-channel bias on blend()
-_   https://github.com/processing/processing/issues/514
-_ improve blend() accuracy when using ADD
-_   https://github.com/processing/processing/issues/172
-_   includes code for a slow but more accurate mode
 _ deprecate the blend() function
 
 _ implement unified means to specify smoothing level for image scaling
 _   https://github.com/processing/processing/issues/204
-_ accuracy problems make alpha channel go to FE with image.copy()
-_   https://github.com/processing/processing/issues/258
 
 
 CORE / PShape

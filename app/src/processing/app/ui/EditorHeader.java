@@ -31,9 +31,10 @@ import java.util.Arrays;
 
 import javax.swing.*;
 
-import processing.app.Base;
 import processing.app.Language;
+import processing.app.Messages;
 import processing.app.Mode;
+import processing.app.Platform;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 
@@ -152,7 +153,8 @@ public class EditorHeader extends JComponent {
     tabColor[UNSELECTED] = mode.getColor("header.tab.unselected.color");
 
     arrowColor = mode.getColor("header.tab.arrow.color");
-    modifiedColor = mode.getColor("editor.selection.color");
+    //modifiedColor = mode.getColor("editor.selection.color");
+    modifiedColor = mode.getColor("header.tab.modified.color");
 
     gradient = mode.makeGradient("header", 400, HIGH);
   }
@@ -357,7 +359,8 @@ public class EditorHeader extends JComponent {
         if (code.isModified()) {
           g.setColor(modifiedColor);
           //g.drawLine(tab.left + NOTCH, top, tab.right - NOTCH, top);
-          g.drawLine(tab.left + (i == 0 ? CURVE_RADIUS : 0), TAB_TOP, tab.right-1, TAB_TOP);
+          //g.drawLine(tab.left + (i == 0 ? CURVE_RADIUS : 0), TAB_TOP, tab.right-1, TAB_TOP);
+          g.drawLine(tab.right, TAB_TOP, tab.right, TAB_BOTTOM);
         }
       }
 
@@ -473,11 +476,11 @@ public class EditorHeader extends JComponent {
       @Override
       public void actionPerformed(ActionEvent e) {
         Sketch sketch = editor.getSketch();
-        if (!Base.isMacOS() &&  // ok on OS X
+        if (!Platform.isMacOS() &&  // ok on OS X
             editor.base.getEditors().size() == 1 &&  // mmm! accessor
             sketch.getCurrentCodeIndex() == 0) {
-            Base.showWarning(Language.text("editor.header.delete.warning.title"),
-                             Language.text("editor.header.delete.warning.text"), null);
+            Messages.showWarning(Language.text("editor.header.delete.warning.title"),
+                                 Language.text("editor.header.delete.warning.text"));
         } else {
           editor.getSketch().handleDeleteCode();
         }
@@ -495,7 +498,7 @@ public class EditorHeader extends JComponent {
     //  KeyEvent.VK_LEFT and VK_RIGHT will make Windows beep
 
     final String prevTab = Language.text("editor.header.previous_tab");
-    if (Base.isLinux()) {
+    if (Platform.isLinux()) {
       item = Toolkit.newJMenuItem(prevTab, KeyEvent.VK_PAGE_UP);
     } else {
       item = Toolkit.newJMenuItemAlt(prevTab, KeyEvent.VK_LEFT);
@@ -507,7 +510,7 @@ public class EditorHeader extends JComponent {
       }
     };
     mapKey = "editor.header.previous_tab";
-    if (Base.isLinux()) {
+    if (Platform.isLinux()) {
       keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, Toolkit.SHORTCUT_KEY_MASK);
     } else {
       keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
@@ -518,7 +521,7 @@ public class EditorHeader extends JComponent {
     menu.add(item);
 
     final String nextTab = Language.text("editor.header.next_tab");
-    if (Base.isLinux()) {
+    if (Platform.isLinux()) {
       item = Toolkit.newJMenuItem(nextTab, KeyEvent.VK_PAGE_DOWN);
     } else {
       item = Toolkit.newJMenuItemAlt(nextTab, KeyEvent.VK_RIGHT);
@@ -530,7 +533,7 @@ public class EditorHeader extends JComponent {
       }
     };
     mapKey = "editor.header.next_tab";
-    if (Base.isLinux()) {
+    if (Platform.isLinux()) {
       keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, Toolkit.SHORTCUT_KEY_MASK);
     } else {
       keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);

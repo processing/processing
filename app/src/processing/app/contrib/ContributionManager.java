@@ -30,6 +30,7 @@ import javax.swing.SwingWorker;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Messages;
 import processing.app.Util;
 import processing.app.ui.Editor;
 import processing.core.PApplet;
@@ -37,11 +38,7 @@ import processing.data.StringDict;
 
 
 public class ContributionManager {
-  static public final ContributionListing contribListing;
-
-  static {
-    contribListing = ContributionListing.getInstance();
-  }
+  static final ContributionListing listing = ContributionListing.getInstance();
 
 
   /**
@@ -71,9 +68,9 @@ public class ContributionManager {
       if (post == null) {
         conn.setRequestMethod("GET");
         conn.connect();
+
       } else {
         post = gzipEncode(post);
-
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setRequestProperty("Content-Encoding", "gzip");
@@ -177,7 +174,7 @@ public class ContributionManager {
                 ad.install(editor.getBase(), contribZip, false, status);
 
               if (contribution != null) {
-                contribListing.replaceContribution(ad, contribution);
+                listing.replaceContribution(ad, contribution);
                 if (contribution.getType() == ContributionType.MODE) {
                   List<ModeContribution> contribModes = editor.getBase().getModeContribs();
                   if (!contribModes.contains(contribution)) {
@@ -262,7 +259,7 @@ public class ContributionManager {
                                                         false, null);
 
             if (contribution != null) {
-              contribListing.replaceContribution(ad, contribution);
+              listing.replaceContribution(ad, contribution);
               if (contribution.getType() == ContributionType.MODE) {
                 List<ModeContribution> contribModes = base.getModeContribs();
                 if (contribModes != null && !contribModes.contains(contribution)) {
@@ -395,7 +392,7 @@ public class ContributionManager {
                                                         false, null);
 
             if (contribution != null) {
-              contribListing.replaceContribution(ad, contribution);
+              listing.replaceContribution(ad, contribution);
               if (base.getActiveEditor() != null) {
                 refreshInstalled(base.getActiveEditor());
               }
@@ -431,11 +428,8 @@ public class ContributionManager {
   }
 
 
-  static public void refreshInstalled(Editor e) {
-
-    Iterator<Editor> iter = e.getBase().getEditors().iterator();
-    while (iter.hasNext()) {
-      Editor ed = iter.next();
+  static void refreshInstalled(Editor e) {
+    for (Editor ed : e.getBase().getEditors()) {
       ed.getMode().rebuildImportMenu();
       ed.getMode().rebuildExamplesFrame();
       ed.rebuildToolMenu();
@@ -501,7 +495,6 @@ public class ContributionManager {
    * Also updates all entries previously marked for update.
    */
   static public void cleanup(final Base base) throws Exception {
-
     deleteTemp(Base.getSketchbookModesFolder());
     deleteTemp(Base.getSketchbookToolsFolder());
 
@@ -529,8 +522,6 @@ public class ContributionManager {
     };
     s.execute();
 
-
-
     clearRestartFlags(Base.getSketchbookModesFolder());
     clearRestartFlags(Base.getSketchbookToolsFolder());
   }
@@ -544,32 +535,23 @@ public class ContributionManager {
    * @param root
    */
   static private void deleteTemp(File root) {
-
-    LinkedList<File> deleteList = new LinkedList<File>();
-
-    for (File f : root.listFiles())
-      if (f.getName().matches(root.getName().substring(0, 4) + "\\d*" + "tmp"))
-        deleteList.add(f);
-
-    Iterator<File> folderIter = deleteList.iterator();
-
-    while (folderIter.hasNext()) {
-      Util.removeDir(folderIter.next());
+    String pattern = root.getName().substring(0, 4) + "\\d*" + "tmp";
+    for (File f : root.listFiles()) {
+      if (f.getName().matches(pattern)) {
+        Util.removeDir(f);
+      }
     }
   }
 
 
   /**
    * Deletes all the modes/tools/libs that are flagged for removal.
-   *
-   * @param root
-   * @throws Exception
    */
   static private void deleteFlagged(File root) throws Exception {
     File[] markedForDeletion = root.listFiles(new FileFilter() {
       public boolean accept(File folder) {
-        return (folder.isDirectory() && LocalContribution
-          .isDeletionFlagged(folder));
+        return (folder.isDirectory() &&
+                LocalContribution.isDeletionFlagged(folder));
       }
     });
     for (File folder : markedForDeletion) {
@@ -589,19 +571,16 @@ public class ContributionManager {
   static private void installPreviouslyFailed(Base base, File root) throws Exception {
     File[] installList = root.listFiles(new FileFilter() {
       public boolean accept(File folder) {
-        return (folder.isFile());
+        return folder.isFile();
       }
     });
 
     for (File file : installList) {
-      Iterator<AvailableContribution> iter = contribListing.advertisedContributions.iterator();
-      while (iter.hasNext()) {
-        AvailableContribution availableContrib = iter.next();
-        if (file.getName().equals(availableContrib.getName())) {
+      for (AvailableContribution contrib : listing.advertisedContributions) {
+        if (file.getName().equals(contrib.getName())) {
           file.delete();
-          installOnStartUp(base, availableContrib);
-          contribListing
-            .replaceContribution(availableContrib, availableContrib);
+          installOnStartUp(base, contrib);
+          listing.replaceContribution(contrib, contrib);
         }
       }
     }
@@ -618,8 +597,8 @@ public class ContributionManager {
   static private void updateFlagged(Base base, File root) throws Exception {
     File[] markedForUpdate = root.listFiles(new FileFilter() {
       public boolean accept(File folder) {
-        return (folder.isDirectory() && LocalContribution
-          .isUpdateFlagged(folder));
+        return (folder.isDirectory() &&
+                LocalContribution.isUpdateFlagged(folder));
       }
     });
 
@@ -642,7 +621,7 @@ public class ContributionManager {
       Util.removeDir(folder);
     }
 
-    Iterator<AvailableContribution> iter = contribListing.advertisedContributions.iterator();
+    Iterator<AvailableContribution> iter = listing.advertisedContributions.iterator();
     while (iter.hasNext()) {
       AvailableContribution availableContribs = iter.next();
       if (updateContribsNames.contains(availableContribs.getName())) {
@@ -654,25 +633,24 @@ public class ContributionManager {
     while (iter2.hasNext()) {
       AvailableContribution contribToUpdate = iter2.next();
       installOnStartUp(base, contribToUpdate);
-      contribListing.replaceContribution(contribToUpdate, contribToUpdate);
+      listing.replaceContribution(contribToUpdate, contribToUpdate);
     }
   }
 
 
   static private void installOnStartUp(final Base base, final AvailableContribution availableContrib) {
     if (availableContrib.link == null) {
-      Base.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
-                       Language.text("contrib.unsupported_operating_system"));
-      return;
-    }
-    try {
-      URL downloadUrl = new URL(availableContrib.link);
+      Messages.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
+                           Language.text("contrib.unsupported_operating_system"));
+    } else {
+      try {
+        URL downloadUrl = new URL(availableContrib.link);
+        ContributionManager.downloadAndInstallOnStartup(base, downloadUrl, availableContrib);
 
-      ContributionManager.downloadAndInstallOnStartup(base, downloadUrl, availableContrib);
-
-    } catch (MalformedURLException e) {
-      Base.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
-                       Language.text("contrib.errors.malformed_url"), e);
+      } catch (MalformedURLException e) {
+        Messages.showWarning(Language.interpolate("contrib.errors.update_on_restart_failed", availableContrib.getName()),
+                             Language.text("contrib.errors.malformed_url"), e);
+      }
     }
   }
 
@@ -686,5 +664,49 @@ public class ContributionManager {
     for (File folder : folderList) {
       LocalContribution.clearRestartFlags(folder);
     }
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static ContributionManagerDialog contributionManagerFrame =
+    new ContributionManagerDialog();
+
+
+  /**
+   * Show the library installer window.
+   */
+  static public void openLibraryManager(Editor editor) {
+    contributionManagerFrame.showFrame(editor, ContributionType.LIBRARY);
+  }
+
+
+  /**
+   * Show the tool installer window.
+   */
+  static public void openToolManager(Editor editor) {
+    contributionManagerFrame.showFrame(editor, ContributionType.TOOL);
+  }
+
+
+  /**
+   * Show the mode installer window.
+   */
+  static public void openModeManager(Editor editor) {
+    contributionManagerFrame.showFrame(editor, ContributionType.MODE);
+  }
+
+
+  /**
+   * Show the examples installer window.
+   */
+  static public void openExampleManager(Editor editor) {
+    contributionManagerFrame.showFrame(editor, ContributionType.EXAMPLES);
+  }
+
+
+  static public void openUpdates(Editor editor) {
+    contributionManagerFrame.showFrame(editor, null);
   }
 }

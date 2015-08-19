@@ -28,7 +28,7 @@ package processing.app.syntax;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
-import processing.app.Base;
+import processing.app.Platform;
 import processing.app.Preferences;
 
 
@@ -42,7 +42,7 @@ public class PdeInputHandler extends DefaultInputHandler {
   public PdeInputHandler() {
     // Use option on mac for text edit controls that are ctrl on Windows/Linux.
     // (i.e. ctrl-left/right is option-left/right on OS X)
-    String mod = Base.isMacOS() ? "A" : "C";
+    String mod = Platform.isMacOS() ? "A" : "C";
 
     // right now, ctrl-up/down is select up/down, but mod should be
     // used instead, because the mac expects it to be option(alt)
@@ -104,7 +104,7 @@ public class PdeInputHandler extends DefaultInputHandler {
       addKeyBinding("CS+END", InputHandler.SELECT_DOC_END);
     }
 
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       // Additional OS X key bindings added for 0215.
       // Also note that two more are added above and marked 0215.
       // http://code.google.com/p/processing/issues/detail?id=1354
@@ -146,7 +146,7 @@ public class PdeInputHandler extends DefaultInputHandler {
       // control-Y  paste text previously deleted with control-K
     }
 
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       addKeyBinding("M+LEFT", InputHandler.HOME);
       addKeyBinding("M+RIGHT", InputHandler.END);
       addKeyBinding("MS+LEFT", InputHandler.SELECT_HOME); // 0122
@@ -191,7 +191,7 @@ public class PdeInputHandler extends DefaultInputHandler {
   protected boolean isMnemonic(KeyEvent event) {
     // Don't do this on OS X, because alt (the option key) is used for
     // non-ASCII chars, and there are no menu mnemonics to speak of
-    if (!Base.isMacOS()) {
+    if (!Platform.isMacOS()) {
       if ((event.getModifiers() & InputEvent.ALT_MASK) != 0 &&
           (event.getModifiers() & InputEvent.CTRL_MASK) == 0 &&
           event.getKeyChar() != KeyEvent.VK_UNDEFINED) {

@@ -80,7 +80,7 @@ public abstract class PGL {
    * See the code and comments involving this constant in
    * PGraphicsOpenGL.endDraw().
    */
-  protected static boolean SAVE_SURFACE_TO_PIXELS_HACK = true;
+  protected static boolean SAVE_SURFACE_TO_PIXELS_HACK = false;
 
   /** Enables/disables mipmap use. */
   protected static boolean MIPMAPS_ENABLED = true;
@@ -459,18 +459,10 @@ public abstract class PGL {
   }
 
 
-  protected int getDepthBits()  {
-    intBuffer.rewind();
-    getIntegerv(DEPTH_BITS, intBuffer);
-    return intBuffer.get(0);
-  }
+  abstract protected int getDepthBits();
 
 
-  protected int getStencilBits()  {
-    intBuffer.rewind();
-    getIntegerv(STENCIL_BITS, intBuffer);
-    return intBuffer.get(0);
-  }
+  abstract protected int getStencilBits();
 
 
   protected boolean getDepthTest() {
@@ -569,8 +561,6 @@ public abstract class PGL {
     if (needFBOLayer(clear0)) {
       if (!fboLayerCreated) createFBOLayer();
 
-//      System.err.println("Using FBO layer");
-
       bindFramebufferImpl(FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(backTex), 0);
@@ -625,7 +615,7 @@ public abstract class PGL {
 
 
   IntBuffer labelTex;
-  protected void endDraw(boolean clear0, int windowColor) {
+  protected void endDraw(boolean clear, int windowColor) {
     if (fboLayerInUse) {
       syncBackTexture();
 
@@ -705,6 +695,8 @@ public abstract class PGL {
       int temp = frontTex;
       frontTex = backTex;
       backTex = temp;
+    } else if (!clear && pg.parent.frameCount == 1) {
+      //requestFBOLayer();
     }
   }
 
@@ -751,10 +743,9 @@ public abstract class PGL {
 
 
   private void createFBOLayer() {
-    String ext = getString(EXTENSIONS);
     float scale = pg.getPixelScale();
 
-    if (-1 < ext.indexOf("texture_non_power_of_two")) {
+    if (hasNpotTexSupport()) {
       fboWidth = (int)(scale * pg.width);
       fboHeight = (int)(scale * pg.height);
     } else {
@@ -763,14 +754,14 @@ public abstract class PGL {
     }
 
     int maxs = maxSamples();
-    if (-1 < ext.indexOf("_framebuffer_multisample") && 1 < maxs) {
+    if (hasFboMultisampleSupport() && 1 < maxs) {
       numSamples = PApplet.min(reqNumSamples, maxs);
     } else {
       numSamples = 1;
     }
     boolean multisample = 1 < numSamples;
 
-    boolean packed = ext.indexOf("packed_depth_stencil") != -1;
+    boolean packed = hasPackedDepthStencilSupport();
     int depthBits = PApplet.min(REQUESTED_DEPTH_BITS, getDepthBits());
     int stencilBits = PApplet.min(REQUESTED_STENCIL_BITS, getStencilBits());
 
@@ -1073,8 +1064,10 @@ public abstract class PGL {
     PGL ppgl = primaryPGL ? this : pg.getPrimaryPGL();
 
     if (!ppgl.loadedTex2DShader || ppgl.tex2DShaderContext != ppgl.glContext) {
-      String vertSource = PApplet.join(texVertShaderSource, "\n");
-      String fragSource = PApplet.join(tex2DFragShaderSource, "\n");
+      String[] preprocVertSrc = preprocessVertexSource(texVertShaderSource, getGLSLVersion());
+      String vertSource = PApplet.join(preprocVertSrc, "\n");
+      String[] preprocFragSrc = preprocessFragmentSource(tex2DFragShaderSource, getGLSLVersion());
+      String fragSource = PApplet.join(preprocFragSrc, "\n");
       ppgl.tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
       ppgl.tex2DFragShader = createShader(FRAGMENT_SHADER, fragSource);
       if (0 < ppgl.tex2DVertShader && 0 < ppgl.tex2DFragShader) {
@@ -1203,8 +1196,10 @@ public abstract class PGL {
     PGL ppgl = primaryPGL ? this : pg.getPrimaryPGL();
 
     if (!ppgl.loadedTexRectShader || ppgl.texRectShaderContext != ppgl.glContext) {
-      String vertSource = PApplet.join(texVertShaderSource, "\n");
-      String fragSource = PApplet.join(texRectFragShaderSource, "\n");
+      String[] preprocVertSrc = preprocessVertexSource(texVertShaderSource, getGLSLVersion());
+      String vertSource = PApplet.join(preprocVertSrc, "\n");
+      String[] preprocFragSrc = preprocessFragmentSource(texRectFragShaderSource, getGLSLVersion());
+      String fragSource = PApplet.join(preprocFragSrc, "\n");
       ppgl.texRectVertShader = createShader(VERTEX_SHADER, vertSource);
       ppgl.texRectFragShader = createShader(FRAGMENT_SHADER, fragSource);
       if (0 < ppgl.texRectVertShader && 0 < ppgl.texRectFragShader) {
@@ -1624,6 +1619,11 @@ public abstract class PGL {
   }
 
 
+  protected int getGLSLVersion() {
+    return 120;
+  }
+
+
   protected String[] loadVertexShader(String filename) {
     return pg.parent.loadStrings(filename);
   }
@@ -1674,44 +1674,95 @@ public abstract class PGL {
   }
 
 
-  protected static String[] convertFragmentSource(String[] fragSrc0,
-                                                  int version0, int version1) {
-    if (version0 == 120 && version1 == 150) {
-      String[] fragSrc = new String[fragSrc0.length + 2];
-      fragSrc[0] = "#version 150";
+  protected static String[] preprocessFragmentSource(String[] fragSrc0,
+                                                     int version) {
+    String[] fragSrc;
+
+    if (version < 130) {
+      String[] search = { };
+      String[] replace = { };
+      int offset = 1;
+
+      fragSrc = preprocessShaderSource(fragSrc0, search, replace, offset);
+      fragSrc[0] = "#version " + version;
+    } else {
+      // We need to replace 'texture' uniform by 'texMap' uniform and
+      // 'textureXXX()' functions by 'texture()' functions. Order of these
+      // replacements is important to prevent collisions between these two.
+      String[] search = new String[] {
+          "varying", "attribute",
+          "texture",
+          "texMap2D", "texMap3D", "texMap2DRect",
+          "texMapCube", "gl_FragColor"
+      };
+      String[] replace = new String[] {
+          "in", "in",
+          "texMap",
+          "texture", "texture", "texture", "texture",
+          "fragColor"
+      };
+      int offset = 2;
+
+      fragSrc = preprocessShaderSource(fragSrc0, search, replace, offset);
+      fragSrc[0] = "#version " + version;
       fragSrc[1] = "out vec4 fragColor;";
-      for (int i = 0; i < fragSrc0.length; i++) {
-        String line = fragSrc0[i];
-        line = line.replace("varying", "in");
-        line = line.replace("attribute", "in");
-        line = line.replace("gl_FragColor", "fragColor");
-        line = line.replace("texture", "texMap");
-        line = line.replace("texMap2D(", "texture(");
-        line = line.replace("texMap2DRect(", "texture(");
-        fragSrc[i + 2] = line;
-      }
-      return fragSrc;
     }
-    return fragSrc0;
+
+    return fragSrc;
   }
 
+  protected static String[] preprocessVertexSource(String[] vertSrc0,
+                                                   int version) {
+    String[] vertSrc;
 
+    if (version < 130) {
+      String[] search = { };
+      String[] replace = { };
+      int offset = 1;
 
-  protected static String[] convertVertexSource(String[] vertSrc0,
-                                                int version0, int version1) {
-    if (version0 == 120 && version1 == 150) {
-      String[] vertSrc = new String[vertSrc0.length + 1];
-      vertSrc[0] = "#version 150";
-      for (int i = 0; i < vertSrc0.length; i++) {
-        String line = vertSrc0[i];
-        line = line.replace("attribute", "in");
-        line = line.replace("varying", "out");
-        vertSrc[i + 1] = line;
-      }
-      return vertSrc;
+      vertSrc = preprocessShaderSource(vertSrc0, search, replace, offset);
+      vertSrc[0] = "#version " + version;
+    } else {
+      // We need to replace 'texture' uniform by 'texMap' uniform and
+      // 'textureXXX()' functions by 'texture()' functions. Order of these
+      // replacements is important to prevent collisions between these two.
+      String[] search = new String[] {
+          "varying", "attribute",
+          "texture",
+          "texMap2D", "texMap3D", "texMap2DRect", "texMapCube"
+      };
+      String[] replace = new String[] {
+          "out", "in",
+          "texMap",
+          "texture", "texture", "texture", "texture"
+      };
+      int offset = 1;
+
+      vertSrc = preprocessShaderSource(vertSrc0, search, replace, offset);
+      vertSrc[0] = "#version " + version;
     }
-    return vertSrc0;
+
+    return vertSrc;
   }
+
+  protected static String[] preprocessShaderSource(String[] src0,
+                                                   String[] search,
+                                                   String[] replace,
+                                                   int offset) {
+    String[] src = new String[src0.length+offset];
+    for (int i = 0; i < src0.length; i++) {
+      String line = src0[i];
+      if (line.contains("#version")) {
+        line = "";
+      }
+      for (int j = 0; j < search.length; j++) {
+        line = line.replace(search[j], replace[j]);
+      }
+      src[i+offset] = line;
+    }
+    return src;
+  }
+
 
   protected int createShader(int shaderType, String source) {
     int shader = createShader(shaderType);

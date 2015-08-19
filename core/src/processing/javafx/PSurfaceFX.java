@@ -22,22 +22,17 @@
 
 package processing.javafx;
 
-//import java.awt.event.FocusEvent;
-//import java.awt.event.FocusListener;
-//import java.awt.event.KeyListener;
-//import java.awt.event.MouseListener;
-//import java.awt.event.MouseMotionListener;
-//import java.awt.event.MouseWheelEvent;
-//import java.awt.event.MouseWheelListener;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import javafx.animation.AnimationTimer;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Scene;
@@ -49,6 +44,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 import processing.core.*;
 
@@ -60,13 +56,32 @@ public class PSurfaceFX implements PSurface {
   Stage stage;
   Canvas canvas;
 
-  AnimationTimer timer;
-
+  final Animation animation;
 
   public PSurfaceFX(PGraphicsFX2D graphics) {
     fx = graphics;
     canvas = new ResizableCanvas();
     fx.context = canvas.getGraphicsContext2D();
+
+    // set up main drawing loop
+    KeyFrame keyFrame = new KeyFrame(Duration.millis(1000),
+                                     new EventHandler<ActionEvent>() {
+      public void handle(ActionEvent event) {
+        sketch.handleDraw();
+        if (sketch.exitCalled()) {
+          Platform.exit();  // version for safe JavaFX shutdown
+        }
+      }
+    });
+    animation = new Timeline(keyFrame);
+    animation.setCycleCount(Animation.INDEFINITE);
+
+    // key frame has duration of 1 second, so the rate of the animation
+    // should be set to frames per second
+
+    // setting rate to negative so that event fires at the start of
+    // the key frame and first frame is drawn immediately
+    animation.setRate(-60);
   }
 
 
@@ -187,7 +202,6 @@ public class PSurfaceFX implements PSurface {
 
     @Override
     public void start(final Stage stage) {
-      surface.stage = stage;
 //      if (title != null) {
 //        stage.setTitle(title);
 //      }
@@ -198,9 +212,17 @@ public class PSurfaceFX implements PSurface {
       canvas.widthProperty().bind(stackPane.widthProperty());
       canvas.heightProperty().bind(stackPane.heightProperty());
 
+      PApplet sketch = surface.sketch;
+      int width = sketch.sketchWidth();
+      int height = sketch.sketchHeight();
+
       //stage.setScene(new Scene(new Group(canvas)));
-      stage.setScene(new Scene(stackPane));
+      stage.setScene(new Scene(stackPane, width, height));
       //stage.show();  // move to setVisible(true)?
+
+      // initFrame in different thread is waiting for
+      // the stage, assign it only when it is all set up
+      surface.stage = stage;
     }
   }
 
@@ -225,7 +247,6 @@ public class PSurfaceFX implements PSurface {
         Thread.sleep(5);
       } catch (InterruptedException e) { }
     }
-    setSize(sketch.sketchWidth(), sketch.sketchHeight());
   }
 
 
@@ -410,8 +431,11 @@ public class PSurfaceFX implements PSurface {
 
   public void setSize(int width, int height) {
     //System.out.format("%s.setSize(%d, %d)%n", getClass().getSimpleName(), width, height);
-    stage.setWidth(width);
-    stage.setHeight(height);
+    Scene scene = stage.getScene();
+    double decorH = stage.getWidth() - scene.getWidth();
+    double decorV = stage.getHeight() - scene.getHeight();
+    stage.setWidth(width + decorH);
+    stage.setHeight(height + decorV);
     fx.setSize(width, height);
   }
 
@@ -428,8 +452,9 @@ public class PSurfaceFX implements PSurface {
 
 
   public void setFrameRate(float fps) {
-    // TODO Auto-generated method stub
-
+    // setting rate to negative so that event fires at the start of
+    // the key frame and first frame is drawn immediately
+    if (fps > 0) animation.setRate(-fps);
   }
 
 
@@ -464,44 +489,28 @@ public class PSurfaceFX implements PSurface {
 
 
   public void startThread() {
-    if (timer == null) {
-      timer = new AnimationTimer() {
-
-        @Override
-        public void handle(long now) {
-          //System.out.println("handle(" + now + ") calling handleDraw()");
-          sketch.handleDraw();
-
-          if (sketch.exitCalled()) {
-            //sketch.exitActual();  // just calls System.exit()
-            Platform.exit();  // version for safe JavaFX shutdown
-          }
-        }
-      };
-      timer.start();
-    }
+    animation.play();
   }
 
 
   public void pauseThread() {
-    // TODO Auto-generated method stub
+    animation.pause();
   }
 
 
   public void resumeThread() {
-    // TODO Auto-generated method stub
+    animation.play();
   }
 
 
   public boolean stopThread() {
-    // TODO Auto-generated method stub
-    return false;
+    animation.stop();
+    return true;
   }
 
 
   public boolean isStopped() {
-    // TODO Auto-generated method stub
-    return false;
+    return animation.getStatus() == Animation.Status.STOPPED;
   }
 
 
@@ -699,7 +708,12 @@ public class PSurfaceFX implements PSurface {
     long when = System.currentTimeMillis();
     KeyCode kc = fxEvent.getCode();
     // Are they f*ing serious?
-    char key = kc.impl_getChar().charAt(0);
+    char key;
+    if (et == KeyEvent.KEY_TYPED) {
+      key = fxEvent.getCharacter().charAt(0);
+    } else {
+      key = kc.impl_getChar().charAt(0);
+    }
     int keyCode = kc.impl_getCode();
     sketch.postEvent(new processing.event.KeyEvent(fxEvent, when,
                                                    action, modifiers,

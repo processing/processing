@@ -1119,6 +1119,11 @@ public class PGraphics extends PImage implements PConstants {
    * hint(DISABLE_DEPTH_READING) if you don't plan to read depth from
    * this PGraphics anymore.
    * <br/> <br/>
+   * hint(ENABLE_KEY_AUTO_REPEAT) - Auto-repeating key events are discarded
+   * by default (works only in P2D/P3D); use this hint to get all the key events
+   * (including auto-repeated). Call hint(DISABLE_KEY_AUTO_REPEAT) to get events
+   * only when the key goes physically up or down.
+   * <br/> <br/>
    * As of release 0149, unhint() has been removed in favor of adding
    * additional ENABLE/DISABLE constants to reset the default behavior. This
    * prevents the double negatives, and also reinforces which hints can be
@@ -1138,6 +1143,11 @@ public class PGraphics extends PImage implements PConstants {
         which == DISABLE_NATIVE_FONTS) {
       showWarning("hint(ENABLE_NATIVE_FONTS) no longer supported. " +
                   "Use createFont() instead.");
+    }
+    if (which == ENABLE_KEY_REPEAT) {
+      parent.keyRepeatEnabled = true;
+    } else if (which == DISABLE_KEY_REPEAT) {
+      parent.keyRepeatEnabled = false;
     }
     if (which > 0) {
       hints[which] = true;
@@ -4683,6 +4693,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Emit a sentence of text, defined as a chunk of text without any newlines.
    * @param stop non-inclusive, the end of the text in question
+   * @return false if cannot fit
    */
   protected boolean textSentence(char[] buffer, int start, int stop,
                                  float boxWidth, float spaceWidth) {
@@ -4696,6 +4707,10 @@ public class PGraphics extends PImage implements PConstants {
     while (index <= stop) {
       // boundary of a word or end of this sentence
       if ((buffer[index] == ' ') || (index == stop)) {
+//        System.out.println((index == stop) + " " + wordStart + " " + index);
+        if (wordStart == index) {  // end of line, nothing is fitting
+          return false;
+        }
         float wordWidth = textWidthImpl(buffer, wordStart, index);
 
         if (runningX + wordWidth >= boxWidth) {
@@ -4711,15 +4726,34 @@ public class PGraphics extends PImage implements PConstants {
             // If this is the first word on the line, and its width is greater
             // than the width of the text box, then break the word where at the
             // max width, and send the rest of the word to the next line.
-            do {
+            if (index - wordStart < 25) {
+              do {
+                index--;
+                if (index == wordStart) {
+                  // Not a single char will fit on this line. screw 'em.
+                  return false;
+                }
+                wordWidth = textWidthImpl(buffer, wordStart, index);
+              } while (wordWidth > boxWidth);
+            } else {
+              // This word is more than 25 characters long, might be faster to
+              // start from the beginning of the text rather than shaving from
+              // the end of it, which is super slow if it's 1000s of letters.
+              // https://github.com/processing/processing/issues/211
+              int lastIndex = index;
+              index = wordStart + 1;
+              // walk to the right while things fit
+              while ((wordWidth = textWidthImpl(buffer, wordStart, index)) < boxWidth) {
+                index++;
+                if (index > lastIndex) {  // Unreachable?
+                  break;
+                }
+              }
               index--;
               if (index == wordStart) {
-                // Not a single char will fit on this line. screw 'em.
-                //System.out.println("screw you");
-                return false; //Float.NaN;
+                return false;  // nothing fits
               }
-              wordWidth = textWidthImpl(buffer, wordStart, index);
-            } while (wordWidth > boxWidth);
+            }
 
             //textLineImpl(buffer, lineStart, index, x, y);
             textSentenceBreak(lineStart, index);

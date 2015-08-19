@@ -50,7 +50,8 @@ varying vec4 vertTexCoord;
 
 const float zero_float = 0.0;
 const float one_float = 1.0;
-const vec3 zero_vec3 = vec3(0);
+const vec3 zero_vec3 = vec3(0.0);
+const vec3 minus_one_vec3 = vec3(0.0-1.0);
 
 float falloffFactor(vec3 lightPos, vec3 vertPos, vec3 coeff) {
   vec3 lpv = lightPos - vertPos;
@@ -62,7 +63,7 @@ float falloffFactor(vec3 lightPos, vec3 vertPos, vec3 coeff) {
 
 float spotFactor(vec3 lightPos, vec3 vertPos, vec3 lightNorm, float minCos, float spotExp) {
   vec3 lpv = normalize(lightPos - vertPos);
-  vec3 nln = -one_float * lightNorm;
+  vec3 nln = minus_one_vec3 * lightNorm;
   float spotCos = dot(nln, lpv);
   return spotCos <= minCos ? zero_float : pow(spotCos, spotExp);
 }
@@ -86,7 +87,7 @@ void main() {
   
   // Normal vector in eye coordinates
   vec3 ecNormal = normalize(normalMatrix * normal);
-  vec3 ecNormalInv = ecNormal * -one_float;
+  vec3 ecNormalInv = ecNormal * minus_one_vec3;
   
   // Light calculations
   vec3 totalAmbient = vec3(0, 0, 0);
@@ -111,7 +112,7 @@ void main() {
       
     if (isDir) {
       falloff = one_float;
-      lightDir = -one_float * lightNormal[i];
+      lightDir = minus_one_vec3 * lightNormal[i];
     } else {
       falloff = falloffFactor(lightPos, ecVertex, lightFalloff[i]);  
       lightDir = normalize(lightPos - ecVertex);

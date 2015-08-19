@@ -42,6 +42,7 @@ import javax.swing.tree.TreeSelectionModel;
 import processing.app.Base;
 import processing.app.Language;
 import processing.app.Mode;
+import processing.app.Platform;
 import processing.app.SketchReference;
 
 
@@ -107,7 +108,7 @@ public class SketchbookFrame extends JFrame {
     });
 
     tree.setBorder(new EmptyBorder(5, 5, 5, 5));
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       tree.setToggleClickCount(2);
     } else {
       tree.setToggleClickCount(1);

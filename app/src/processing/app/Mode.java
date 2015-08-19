@@ -34,10 +34,13 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.tree.*;
 
+import processing.app.contrib.ContributionManager;
 import processing.app.syntax.*;
 import processing.app.ui.Editor;
+import processing.app.ui.EditorException;
 import processing.app.ui.EditorState;
 import processing.app.ui.ExamplesFrame;
+import processing.app.ui.Recent;
 import processing.app.ui.SketchbookFrame;
 import processing.app.ui.Toolkit;
 import processing.core.PApplet;
@@ -117,8 +120,8 @@ public abstract class Mode {
         loadKeywords(file);
       }
     } catch (IOException e) {
-      Base.showWarning("Problem loading keywords",
-                       "Could not load keywords file for " + getTitle() + " mode.", e);
+      Messages.showWarning("Problem loading keywords",
+                           "Could not load keywords file for " + getTitle() + " mode.", e);
     }
   }
 
@@ -191,7 +194,7 @@ public abstract class Mode {
   public void setupGUI() {
     try {
       // First load the default theme data for the whole PDE.
-      theme = new Settings(Base.getContentFile("lib/theme.txt"));
+      theme = new Settings(Platform.getContentFile("lib/theme.txt"));
 
       // The mode-specific theme.txt file should only contain additions,
       // and in extremely rare cases, it might override entries from the
@@ -209,42 +212,10 @@ public abstract class Mode {
 //      loadBackground();
 
     } catch (IOException e) {
-      Base.showError("Problem loading theme.txt",
-                     "Could not load theme.txt, please re-install Processing", e);
+      Messages.showError("Problem loading theme.txt",
+                         "Could not load theme.txt, please re-install Processing", e);
     }
   }
-
-
-  /*
-  protected void loadBackground() {
-    String suffix = Toolkit.highResDisplay() ? "-2x.png" : ".png";
-    backgroundImage = loadImage("theme/mode" + suffix);
-    if (backgroundImage == null) {
-      // If the image wasn't available, try the other resolution.
-      // i.e. we don't (currently) have low-res versions of mode.png,
-      // so this will grab the 2x version and scale it when drawn.
-      suffix = !Toolkit.highResDisplay() ? "-2x.png" : ".png";
-      backgroundImage = loadImage("theme/mode" + suffix);
-    }
-  }
-
-
-  public void drawBackground(Graphics g, int offset) {
-    if (backgroundImage != null) {
-      if (!Toolkit.highResDisplay()) {
-        // Image might be downsampled from a 2x version. If so, we need nice
-        // anti-aliasing for the very geometric images we're using.
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                            RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                            RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-      }
-      g.drawImage(backgroundImage, 0, -offset,
-                  BACKGROUND_WIDTH, BACKGROUND_HEIGHT, null);
-    }
-  }
-  */
 
 
   public File getContentFile(String path) {
@@ -280,8 +251,8 @@ public abstract class Mode {
   /**
    * Create a new editor associated with this mode.
    */
-  abstract public Editor createEditor(Base base, String path, EditorState state);
-  //abstract public Editor createEditor(Base base, String path, int[] location);
+  abstract public Editor createEditor(Base base, String path,
+                                      EditorState state) throws EditorException;
 
 
   /**
@@ -376,7 +347,7 @@ public abstract class Mode {
         secondary += "<b>" + library.getName() + "</b> (" + location + ")<br>";
       }
       secondary += "Extra libraries need to be removed before this sketch can be used.";
-      Base.showWarningTiered("Duplicate Library Problem", primary, secondary, null);
+      Messages.showWarningTiered("Duplicate Library Problem", primary, secondary, null);
       throw new SketchException("Duplicate libraries found for " + pkgName + ".");
 
     } else {
@@ -404,13 +375,13 @@ public abstract class Mode {
     if (toolbarMenu == null) {
       rebuildToolbarMenu();
     } else {
-      toolbarMenu.insert(base.getToolbarRecentMenu(), 1);
+      toolbarMenu.insert(Recent.getToolbarMenu(), 1);
     }
   }
 
 
   public void removeToolbarRecentMenu() {
-    toolbarMenu.remove(base.getToolbarRecentMenu());
+    toolbarMenu.remove(Recent.getToolbarMenu());
   }
 
 
@@ -445,7 +416,7 @@ public abstract class Mode {
     item = new JMenuItem(Language.text("examples.add_examples"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.handleOpenExampleManager();
+        ContributionManager.openExampleManager(base.getActiveEditor());
       }
     });
     toolbarMenu.add(item);
@@ -521,7 +492,7 @@ public abstract class Mode {
     JMenuItem addLib = new JMenuItem(Language.text("menu.library.add_library"));
     addLib.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.handleOpenLibraryManager();
+        ContributionManager.openLibraryManager(base.getActiveEditor());
       }
     });
     importMenu.add(addLib);
@@ -587,76 +558,6 @@ public abstract class Mode {
       }
     }
   }
-
-
-  /*
-  public JMenu getExamplesMenu() {
-    if (examplesMenu == null) {
-      rebuildExamplesMenu();
-    }
-    return examplesMenu;
-  }
-
-
-  public void rebuildExamplesMenu() {
-    if (examplesMenu == null) {
-      examplesMenu = new JMenu("Examples");
-    }
-    rebuildExamplesMenu(examplesMenu, false);
-  }
-
-
-  public void rebuildExamplesMenu(JMenu menu, boolean replace) {
-    try {
-      // break down the examples folder for examples
-      File[] subfolders = getExampleCategoryFolders();
-
-      for (File sub : subfolders) {
-        Base.addDisabledItem(menu, sub.getName());
-//        JMenuItem categoryItem = new JMenuItem(sub.getName());
-//        categoryItem.setEnabled(false);
-//        menu.add(categoryItem);
-        base.addSketches(menu, sub, replace);
-        menu.addSeparator();
-      }
-
-//      if (coreLibraries == null) {
-//        rebuildLibraryList();
-//      }
-
-      // get library examples
-      Base.addDisabledItem(menu, "Libraries");
-      for (Library lib : coreLibraries) {
-        if (lib.hasExamples()) {
-          JMenu libMenu = new JMenu(lib.getName());
-          base.addSketches(libMenu, lib.getExamplesFolder(), replace);
-          menu.add(libMenu);
-        }
-      }
-
-      // get contrib library examples
-      boolean any = false;
-      for (Library lib : contribLibraries) {
-        if (lib.hasExamples()) {
-          any = true;
-        }
-      }
-      if (any) {
-        menu.addSeparator();
-        Base.addDisabledItem(menu, "Contributed");
-        for (Library lib : contribLibraries) {
-          if (lib.hasExamples()) {
-            JMenu libMenu = new JMenu(lib.getName());
-            base.addSketches(libMenu, lib.getExamplesFolder(), replace);
-            menu.add(libMenu);
-          }
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-  */
 
 
   /**
@@ -1034,6 +935,13 @@ public abstract class Mode {
 //  public void handleNewReplace() {
 //    base.handleNewReplace();
 //  }
+
+
+  // this is Java-specific, so keeping it in JavaMode
+//  public String getSearchPath() {
+//    return null;
+//  }
+
 
   @Override
   public String toString() {

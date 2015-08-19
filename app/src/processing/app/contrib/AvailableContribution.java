@@ -26,6 +26,7 @@ import java.io.*;
 
 import processing.app.Base;
 import processing.app.Language;
+import processing.app.Platform;
 import processing.app.Util;
 import processing.core.PApplet;
 import processing.data.StringDict;
@@ -184,7 +185,7 @@ public class AvailableContribution extends Contribution {
         System.gc();
 
 
-        if (Base.isWindows()) {
+        if (Platform.isWindows()) {
           // we'll even give it a second to finish up ... because file ops are
           // just that flaky on Windows.
           try {
