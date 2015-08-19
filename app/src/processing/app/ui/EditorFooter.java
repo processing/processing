@@ -395,7 +395,7 @@ public class EditorFooter extends Box {
 
       int textLeft = getTextLeft();
       if (notification && state == UNSELECTED) {
-        g.setColor(Color.LIGHT_GRAY);
+        g.setColor(textColor[SELECTED]);
       } else {
         g.setColor(textColor[state]);
       }
