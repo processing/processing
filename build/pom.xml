@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.processing</groupId>
     <artifactId>processing-complete</artifactId>
-    <version>3.0a11</version>
+    <version>3.0b3</version>
     <packaging>pom</packaging>
 
 
@@ -165,7 +165,7 @@
                 <!--https://maven.apache.org/plugins/maven-javadoc-plugin/examples/tag-configuration.html-->
                 <configuration>
                     <additionalparam>-Xdoclint:none</additionalparam>
-<!--                    <tags>
+                    <!--                    <tags>
                         <tag>
                             <name>webref</name>
                             todo tag for all places 
@@ -205,6 +205,22 @@
             </plugin>
             
         
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <executions>
+                    <execution>
+                        <id>default-clean</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
