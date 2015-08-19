@@ -292,11 +292,6 @@
   </fileset>
 
   <target name="build" description="Build Processing.">
-    <!-- Require that a JDK be installed, but call this on build, so that
-         the download-jdk-macosx target can be called. -->
-    <fail if="macosx" unless="macosx_jdk_found"
-          message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again.${line.separator}Or... type 'ant download-jdk-macosx' to download it to your Desktop." />
-
     <antcall target="${platform}-build" />
   </target>
 
@@ -484,6 +479,12 @@
   </target>
   
   <target name="macosx-build" if="macosx" depends="revision-check, macosx-check-os, subprojects-build" description="Build Mac OS X version">
+
+    <!-- Require that a JDK be installed, but call this on build, so that
+         the download-jdk-macosx target can be called. -->
+    <fail unless="macosx_jdk_found"
+          message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again.${line.separator}Or... type 'ant download-jdk-macosx' to download it to your Desktop." />
+
     <mkdir dir="macosx/work" />
     
     <!-- app bundler for OS X and Java 1.7 -->
