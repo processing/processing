@@ -60,6 +60,7 @@ public class EditorFooter extends Box {
   static final int ICON_WIDTH = 16;
   static final int ICON_HEIGHT = 16;
   static final int ICON_TOP = 7;
+  static final int ICON_MARGIN = 8;
 
   Color[] textColor = new Color[2];
   Color[] tabColor = new Color[2];
@@ -367,7 +368,7 @@ public class EditorFooter extends Box {
     int getTextLeft() {
       int links = left;
       if (enabledIcon != null) {
-        links += ICON_WIDTH;
+        links += ICON_WIDTH + ICON_MARGIN;
       }
       return links + ((right - links) - textWidth) / 2;
     }
