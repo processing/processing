@@ -6368,7 +6368,9 @@ public class PApplet implements PConstants {
         if (platform == MACOSX && useNativeSelect != false) {
           FileDialog fileDialog =
             new FileDialog(parentFrame, prompt, FileDialog.LOAD);
-          fileDialog.setDirectory(defaultSelection.getAbsolutePath());
+          if (defaultSelection != null) {
+            fileDialog.setDirectory(defaultSelection.getAbsolutePath());
+          }
           System.setProperty("apple.awt.fileDialogForDirectories", "true");
           fileDialog.setVisible(true);
           System.setProperty("apple.awt.fileDialogForDirectories", "false");

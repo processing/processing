@@ -1,9 +1,23 @@
 0243 core (3.0b5)
+X selectFolder broken (gives NullPointerException)
+X   https://github.com/processing/processing/issues/3661
+
+cleaning
+X How do images behave when pixelDensity(2) is set?
+X   https://github.com/processing/processing/issues/3364
+X retina sketches slow to start
+X   https://github.com/processing/processing/issues/2357
+X zero alpha values still a problem with retina renderer
+X   https://github.com/processing/processing/issues/2030
 
 jakub
 X keyTyped() not firing with P2D and P3D
 X   https://github.com/processing/processing/issues/3582
 X   https://github.com/processing/processing/pull/3652
+X rect() sizing in JavaFX
+X   https://github.com/processing/processing/pull/3656
+X FX - Proper sketch sizing
+X   https://github.com/processing/processing/pull/3658
 
 
 known issues
@@ -170,14 +184,8 @@ _ don't override the window icon w/ p5 logo if already set
 
 
 retina/hidpi
-_ How do images behave when pixelDensity(2) is set?
-_   https://github.com/processing/processing/issues/3364
 _ no high-dpi support for core on Windows
 _   https://github.com/processing/processing/issues/2411
-_ retina sketches slow to start
-_   https://github.com/processing/processing/issues/2357
-_ zero alpha values still a problem with retina renderer
-_   https://github.com/processing/processing/issues/2030
 
 
 decisions/misc

@@ -38,6 +38,10 @@ _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
 _ sketch modified externally with FAT32 volumes on OS X
 _   https://github.com/processing/processing/issues/3387
+_ also appearing with encrypted volumes?
+_   also an un-ending loop caused by it
+_   https://github.com/processing/processing/issues/3650
+_ add this to the preferences?
 
 
 gui
