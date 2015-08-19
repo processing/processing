@@ -3,3 +3,10 @@
 ._*
 *~
 /build/shared/reference.zip
+/core/target/
+/build/target/
+/app/target/
+/java/libraries/video/target/
+/java/libraries/net/target/
+/java/libraries/serial/target/
+/java/libraries/pdf/target/

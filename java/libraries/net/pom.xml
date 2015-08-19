@@ -1,0 +1,93 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.processing</groupId>
+        <artifactId>processing-complete</artifactId>
+        <version>3.0b3</version>
+        <relativePath>../../../build/pom.xml</relativePath>
+    </parent>
+    
+    <groupId>org.processing</groupId>
+    <artifactId>net</artifactId>
+    <version>${project.parent.version}</version>
+    <packaging>jar</packaging>
+
+    <name>Processing net library</name>
+    <description>Processing is a programming language, development environment, and online community. 
+        Network library. Send and receive data over the Internet through simple clients and servers.
+    </description>
+
+        
+    <dependencies>
+        <dependency>
+            <groupId>org.processing</groupId>
+            <artifactId>core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
+                                
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        
+        <plugins>    
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.2</version>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <configuration>
+                            <target>
+                                <!--NOT Working build manually with "$ant build" in the folder...-->
+                                <ant antfile="build.xml" target="build"/>
+                                <copy todir="target/classes/">
+                                    <fileset dir="bin/"/>
+                                </copy>
+                            </target>                            
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin> 
+            
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-gpg-plugin</artifactId>
+            </plugin>
+       
+        </plugins>
+        
+    </build>
+    <properties>
+        <netbeans.hint.license>license</netbeans.hint.license>
+    </properties>
+</project>

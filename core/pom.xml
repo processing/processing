@@ -1,0 +1,113 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.processing</groupId>
+        <artifactId>processing-complete</artifactId>
+        <version>3.0b3</version>
+        <relativePath>../build/pom.xml</relativePath>
+    </parent>
+    
+    <groupId>org.processing</groupId>
+    <artifactId>core</artifactId>
+    <version>${project.parent.version}</version>
+    <packaging>jar</packaging>
+
+    <name>Processing Core</name>
+    <description>Processing is a programming language, development environment, and online community. 
+        This core package contains the core : PApplet, Graphics. Without the IDE and libraries. 
+    </description>
+
+              
+    <dependencies>
+        <dependency>
+            <groupId>gluegen-rt</groupId>  
+            <artifactId>gluegen-rt</artifactId>  
+            <version>3.0</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/library/gluegen-rt.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>jogl-all</groupId>  
+            <artifactId>jogl-all</artifactId>  
+            <version>3.0</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/library/jogl-all.jar</systemPath>
+        </dependency>
+        
+        <dependency>
+            <groupId>apple</groupId>  
+            <artifactId>apple</artifactId>  
+            <version>3.0</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/apple.jar</systemPath>
+        </dependency>
+        
+    </dependencies> 
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        
+        <plugins>    
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.2</version>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <configuration>
+                            <target>
+                                <ant antfile="build.xml" target="build"/>
+                                <copy todir="target/classes/">
+                                    <fileset dir="bin/"/>
+                                </copy>
+                            </target>                            
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin> 
+            
+            <!--// Disabled for beta-->
+            <!--            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>-->
+            
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-gpg-plugin</artifactId>
+            </plugin>
+       
+        </plugins>
+        
+    </build>
+    <properties>
+        <netbeans.hint.license>license</netbeans.hint.license>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+</project>
