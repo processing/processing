@@ -153,7 +153,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
   Image backgroundGradient;
 
 
-//  protected Editor(final Base base, String path, int[] location, final Mode mode) {
   protected Editor(final Base base, String path, final EditorState state,
                    final Mode mode) throws EditorException {
     super("Processing", state.checkConfig());
@@ -2026,6 +2025,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     return endUndoEvent != null;
   }
 
+
   void startTimerEvent() {
     endUndoEvent = new TimerTask() {
       public void run() {
@@ -2037,6 +2037,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     timer.purge();
   }
 
+
   void endTextEditHistory() {
     if (endUndoEvent != null) {
       endUndoEvent.cancel();
@@ -2044,6 +2045,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     stopCompoundEdit();
   }
+
+
+  public void removeNotify() {
+    timer.cancel();
+    super.removeNotify();
+  }
+
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
