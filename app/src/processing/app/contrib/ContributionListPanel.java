@@ -59,6 +59,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   protected ContributionListing contribListing = ContributionListing.getInstance();
   protected JTable table;
   DefaultTableModel dtm;
+  JScrollPane scrollPane;
+  Font myFont;
 
   public ContributionListPanel() {
     // TODO Auto-generated constructor stub
@@ -100,7 +102,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     // There is a space before Status
     String[] colName = { " Status", "Name", "Author" };
     dtm.setColumnIdentifiers(colName);
-    JScrollPane scrollPane = new JScrollPane(table);
+    scrollPane = new JScrollPane(table);
+    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     table.setFillsViewportHeight(true);
 //    table.setBorder();
     table.setDefaultRenderer(Contribution.class, new StatusRendere());
