@@ -389,7 +389,7 @@ public class EditorFooter extends Box {
                                       isFirst() ? CURVE_RADIUS : 0));
 
       if (hasIcon()) {
-        Image icon = isCurrent() ? selectedIcon : enabledIcon;
+        Image icon = (isCurrent() || notification) ? selectedIcon : enabledIcon;
         g.drawImage(icon, left + MARGIN, ICON_TOP, ICON_WIDTH, ICON_HEIGHT, null);
       }
 
