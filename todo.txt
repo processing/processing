@@ -56,6 +56,9 @@ _ add this to the preferences?
 
 
 gui
+_ replace about screen (1x and 2x versions)
+_   change 'alpha' to correct name
+_   also change the revision in the "about processing" dialog
 _ fix red in sidebar, the squiggly line beneath code
 _ Error/warning location visualisation not updating when editor resizes
 _   https://github.com/processing/processing/issues/3619
