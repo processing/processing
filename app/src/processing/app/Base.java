@@ -59,7 +59,7 @@ public class Base {
   /** Set true if this a proper release rather than a numbered revision. */
 
   /** True if heavy debugging error/log messages are enabled */
-  static public boolean DEBUG = false;
+  static public boolean DEBUG = !false;
 //  static public boolean DEBUG = true;
 
   static private boolean commandLine;
