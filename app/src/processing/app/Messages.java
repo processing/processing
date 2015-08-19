@@ -155,7 +155,7 @@ public class Messages {
   /**
    * Testing a new warning window that includes the stack trace.
    */
-  static void showBadnessTrace(String title, String message,
+  static public void showTrace(String title, String message,
                                        Throwable t, boolean fatal) {
     if (title == null) title = fatal ? "Error" : "Warning";
 

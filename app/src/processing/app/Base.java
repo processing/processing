@@ -111,7 +111,7 @@ public class Base {
           try {
             createAndShowGUI(args);
           } catch (Throwable t) {
-            Messages.showBadnessTrace("It was not meant to be",
+            Messages.showTrace("It was not meant to be",
                                       "A serious problem happened during startup. Please report:\n" +
                                       "http://github.com/processing/processing/issues/new", t, true);
           }
@@ -209,7 +209,7 @@ public class Base {
               try {
                 new Welcome(base, prompt);
               } catch (IOException e) {
-                Messages.showBadnessTrace("Unwelcoming",
+                Messages.showTrace("Unwelcoming",
                                           "Please report this error to\n" +
                                           "https://github.com/processing/processing/issues", e, false);
               }
@@ -224,7 +224,7 @@ public class Base {
           // show this one so that it's not truncated in the error window.
           t = t.getCause();
         }
-        Messages.showBadnessTrace("We're off on the wrong foot",
+        Messages.showTrace("We're off on the wrong foot",
                                   "An error occurred during startup.", t, true);
       }
       Messages.log("done creating base..."); //$NON-NLS-1$
@@ -915,11 +915,11 @@ public class Base {
                              "Try updating the Mode or contact its author for a new version.", nsme);
       } catch (Throwable t) {
         if (nextMode.equals(getDefaultMode())) {
-          Messages.showBadnessTrace("Serious Problem",
+          Messages.showTrace("Serious Problem",
                                     "An unexpected, unknown, and unrecoverable error occurred\n" +
                                     "while opening a new editor window. Please report this.", t, true);
         } else {
-          Messages.showBadnessTrace("Mode Problems",
+          Messages.showTrace("Mode Problems",
                                     "A nasty error occurred while trying to use " + nextMode.getTitle() + ".\n" +
                                     "It may not be compatible with this version of Processing.\n" +
                                     "Try updating the Mode or contact its author for a new version.", t, false);
@@ -943,7 +943,7 @@ public class Base {
       */
 
     } catch (Throwable t) {
-      Messages.showBadnessTrace("Terrible News",
+      Messages.showTrace("Terrible News",
                                 "A serious error occurred while " +
                                 "trying to create a new editor window.", t,
                                 nextMode == getDefaultMode());  // quit if default

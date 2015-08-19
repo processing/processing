@@ -11,8 +11,9 @@ X   https://github.com/processing/processing/issues/707
 X   https://github.com/processing/processing/pull/3660
 
 gsoc
-_ Foundation libraries disapear from CM after restart
-_   https://github.com/processing/processing/issues/3659
+X Foundation libraries disapear from CM after restart
+X   https://github.com/processing/processing/issues/3659
+X   https://github.com/processing/processing/pull/3663
 
 earlier
 X modify build to insert these after antlr run:
