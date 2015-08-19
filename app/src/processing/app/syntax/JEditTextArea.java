@@ -93,7 +93,6 @@ public class JEditTextArea extends JComponent
     if (!DISABLE_CARET) {
       caretTimer = new Timer(500, new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          System.out.println("blink " + caretTimer);
           if (hasFocus()) {
             blinkCaret();
           }
@@ -1937,7 +1936,6 @@ public class JEditTextArea extends JComponent
 //      focusedComponent = null;
     if (!DISABLE_CARET) {
       caretTimer.stop();
-      System.out.println("disabling caret");
     }
   }
 
