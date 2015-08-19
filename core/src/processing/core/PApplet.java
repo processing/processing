@@ -10022,6 +10022,9 @@ public class PApplet implements PConstants {
     // TODO IIRC this helped on Windows, but need to double check.
     System.setProperty("sun.awt.noerasebackground", "true");
 
+    // Remove 60fps limit on the JavaFX "pulse" timer
+    System.setProperty("javafx.animation.fullspeed", "true");
+
     // Catch any HeadlessException to provide more useful feedback
     try {
       // Call validate() while resize events are in progress
