@@ -187,7 +187,6 @@ public class PSurfaceFX implements PSurface {
 
     @Override
     public void start(final Stage stage) {
-      surface.stage = stage;
 //      if (title != null) {
 //        stage.setTitle(title);
 //      }
@@ -198,9 +197,17 @@ public class PSurfaceFX implements PSurface {
       canvas.widthProperty().bind(stackPane.widthProperty());
       canvas.heightProperty().bind(stackPane.heightProperty());
 
+      PApplet sketch = surface.sketch;
+      int width = sketch.sketchWidth();
+      int height = sketch.sketchHeight();
+
       //stage.setScene(new Scene(new Group(canvas)));
-      stage.setScene(new Scene(stackPane));
+      stage.setScene(new Scene(stackPane, width, height));
       //stage.show();  // move to setVisible(true)?
+
+      // initFrame in different thread is waiting for
+      // the stage, assign it only when it is all set up
+      surface.stage = stage;
     }
   }
 
@@ -225,7 +232,6 @@ public class PSurfaceFX implements PSurface {
         Thread.sleep(5);
       } catch (InterruptedException e) { }
     }
-    setSize(sketch.sketchWidth(), sketch.sketchHeight());
   }
 
 
@@ -410,8 +416,11 @@ public class PSurfaceFX implements PSurface {
 
   public void setSize(int width, int height) {
     //System.out.format("%s.setSize(%d, %d)%n", getClass().getSimpleName(), width, height);
-    stage.setWidth(width);
-    stage.setHeight(height);
+    Scene scene = stage.getScene();
+    double decorH = stage.getWidth() - scene.getWidth();
+    double decorV = stage.getHeight() - scene.getHeight();
+    stage.setWidth(width + decorH);
+    stage.setHeight(height + decorV);
     fx.setSize(width, height);
   }
 

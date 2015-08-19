@@ -936,6 +936,13 @@ public abstract class Mode {
 //    base.handleNewReplace();
 //  }
 
+
+  // this is Java-specific, so keeping it in JavaMode
+//  public String getSearchPath() {
+//    return null;
+//  }
+
+
   @Override
   public String toString() {
     return getTitle();

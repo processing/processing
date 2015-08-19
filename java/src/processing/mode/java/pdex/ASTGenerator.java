@@ -228,8 +228,8 @@ public class ASTGenerator {
 
       Map<String, String> options = JavaCore.getOptions();
 
-      JavaCore.setComplianceOptions(JavaCore.VERSION_1_6, options);
-      options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
+      JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
+      options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
       parser.setCompilerOptions(options);
       compilationUnit = (CompilationUnit) parser.createAST(null);
     } else {
@@ -306,37 +306,34 @@ public class ASTGenerator {
   protected void loadJars() {
     factory = new ClassPathFactory();
 
-    StringBuilder tehPath =
-      new StringBuilder(System.getProperty("java.class.path"));
-
-    // Starting with JDK 1.7, no longer using Apple's Java, so
-    // rt.jar has the same path on all OSes
-    tehPath.append(File.pathSeparatorChar
-                   + System.getProperty("java.home") + File.separator + "lib"
-                   + File.separator + "rt.jar" + File.pathSeparatorChar);
+    StringBuilder path = new StringBuilder();
+    String modeClassPath = ((JavaMode) editor.getMode()).getSearchPath();
+    if (modeClassPath != null) {
+      path.append(modeClassPath);
+    }
 
     if (errorCheckerService.classpathJars != null) {
       synchronized (errorCheckerService.classpathJars) {
         for (URL jarPath : errorCheckerService.classpathJars) {
           //log(jarPath.getPath());
-          tehPath.append(jarPath.getPath() + File.pathSeparatorChar);
+          path.append(jarPath.getPath() + File.pathSeparatorChar);
         }
       }
     }
 
-    classPath = factory.createFromPath(tehPath.toString());
+    classPath = factory.createFromPath(path.toString());
     log("Classpath created " + (classPath != null));
     log("Sketch classpath jars loaded.");
     if (Platform.isMacOS()) {
-      File f = new File(System.getProperty("java.home") + File.separator + "bundle"
-          + File.separator + "Classes" + File.separator + "classes.jar");
-      log(f.getAbsolutePath() + " | classes.jar found?"
-          + f.exists());
+      File f = new File(System.getProperty("java.home") +
+                        File.separator + "bundle" +
+                        File.separator + "Classes" +
+                        File.separator + "classes.jar");
+      log(f.getAbsolutePath() + " | classes.jar found?" + f.exists());
     } else {
-      File f = new File(System.getProperty("java.home") + File.separator
-                        + "lib" + File.separator + "rt.jar" + File.separator);
-      log(f.getAbsolutePath() + " | rt.jar found?"
-          + f.exists());
+      File f = new File(System.getProperty("java.home") + File.separator +
+                        "lib" + File.separator + "rt.jar" + File.separator);
+      log(f.getAbsolutePath() + " | rt.jar found?" + f.exists());
     }
   }
 
@@ -3291,21 +3288,27 @@ public class ASTGenerator {
     return null;
   }
 
-  public String[] getSuggestImports(final String className){
-    if(ignoredImportSuggestions == null) {
+  public String[] getSuggestImports(final String className) {
+    if (classPath == null) {
+      return null;
+    }
+
+    if (ignoredImportSuggestions == null) {
       ignoredImportSuggestions = new TreeSet<String>();
     } else {
-      if(ignoredImportSuggestions.contains(className)) {
+      if (ignoredImportSuggestions.contains(className)) {
         log("Ignoring import suggestions for " + className);
         return null;
       }
     }
 
     log("Looking for class " + className);
-    RegExpResourceFilter regf =
-      new RegExpResourceFilter(Pattern.compile(".*"),
-                               Pattern.compile(className + ".class",
-                                               Pattern.CASE_INSENSITIVE));
+    RegExpResourceFilter regf = new RegExpResourceFilter(
+                                                         Pattern.compile(".*"),
+                                                         Pattern
+                                                             .compile(className
+                                                                          + ".class",
+                                                                      Pattern.CASE_INSENSITIVE));
     // TODO once saw NPE here...possible for classPath to be null? [fry 150808]
     String[] resources = classPath.findResources("", regf);
     List<String> candidates = new ArrayList<String>();
@@ -3328,7 +3331,8 @@ public class ASTGenerator {
       File codeFolder = editor.getSketch().getCodeFolder();
       // get a list of .jar files in the "code" folder
       // (class files in subfolders should also be picked up)
-      ClassPath cp = factory.createFromPath(Util.contentsToClassPath(codeFolder));
+      ClassPath cp = factory.createFromPath(Util
+          .contentsToClassPath(codeFolder));
       resources = cp.findResources("", regf);
       for (String res : resources) {
         candidates.add(res);
@@ -3349,6 +3353,7 @@ public class ASTGenerator {
 
     return resources;
   }
+
   protected JFrame frmImportSuggest;
   private TreeSet<String> ignoredImportSuggestions;
 
@@ -3526,8 +3531,7 @@ public class ASTGenerator {
     if (impName.startsWith("processing")) {
       if (JavaMode.suggestionsMap.get(processingInclude).contains(impName)) {
         return false;
-      } else if (JavaMode.suggestionsMap.get(processingExclude)
-          .contains(impName)) {
+      } else if (JavaMode.suggestionsMap.get(processingExclude).contains(impName)) {
         return true;
       }
     } else if (impName.startsWith("java")) {

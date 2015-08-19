@@ -1909,6 +1909,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public void startCompoundEdit() {
     stopCompoundEdit();
     compoundEdit = new CompoundEdit();
+    caretUndoStack.push(textarea.getCaretPosition());
+    caretRedoStack.clear();
   }
 
 
@@ -1919,8 +1921,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     if (compoundEdit != null) {
       compoundEdit.end();
       undo.addEdit(compoundEdit);
-      caretUndoStack.push(textarea.getCaretPosition());
-      caretRedoStack.clear();
       undoAction.updateUndoState();
       redoAction.updateRedoState();
       compoundEdit = null;

@@ -1119,6 +1119,11 @@ public class PGraphics extends PImage implements PConstants {
    * hint(DISABLE_DEPTH_READING) if you don't plan to read depth from
    * this PGraphics anymore.
    * <br/> <br/>
+   * hint(ENABLE_KEY_AUTO_REPEAT) - Auto-repeating key events are discarded
+   * by default (works only in P2D/P3D); use this hint to get all the key events
+   * (including auto-repeated). Call hint(DISABLE_KEY_AUTO_REPEAT) to get events
+   * only when the key goes physically up or down.
+   * <br/> <br/>
    * As of release 0149, unhint() has been removed in favor of adding
    * additional ENABLE/DISABLE constants to reset the default behavior. This
    * prevents the double negatives, and also reinforces which hints can be
@@ -1138,6 +1143,11 @@ public class PGraphics extends PImage implements PConstants {
         which == DISABLE_NATIVE_FONTS) {
       showWarning("hint(ENABLE_NATIVE_FONTS) no longer supported. " +
                   "Use createFont() instead.");
+    }
+    if (which == ENABLE_KEY_REPEAT) {
+      parent.keyRepeatEnabled = true;
+    } else if (which == DISABLE_KEY_REPEAT) {
+      parent.keyRepeatEnabled = false;
     }
     if (which > 0) {
       hints[which] = true;

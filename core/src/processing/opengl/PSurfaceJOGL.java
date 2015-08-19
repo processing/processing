@@ -195,11 +195,7 @@ public class PSurfaceJOGL implements PSurface {
     if (profile == null) {
       if (PJOGL.profile == 2) {
         try {
-          if (PApplet.platform == PConstants.MACOSX) {
-            profile = GLProfile.getMaxProgrammableCore(true);
-          } else {
-            profile = GLProfile.getGL2ES2();
-          }
+          profile = GLProfile.getGL2ES2();
         } catch (GLException ex) {
           profile = GLProfile.getMaxProgrammable(true);
         }
@@ -928,9 +924,24 @@ public class PSurfaceJOGL implements PSurface {
     KeyEvent ke = new KeyEvent(nativeEvent, nativeEvent.getWhen(),
                                peAction, peModifiers,
                                keyChar,
-                               keyCode);
+                               keyCode,
+                               nativeEvent.isAutoRepeat());
 
     sketch.postEvent(ke);
+
+    if (!isPCodedKey(code) && !isHackyKey(code)) {
+      if (peAction == KeyEvent.PRESS) {
+        // Create key typed event
+        // TODO: combine dead keys with the following key
+        KeyEvent tke = new KeyEvent(nativeEvent, nativeEvent.getWhen(),
+                                    KeyEvent.TYPE, peModifiers,
+                                    keyChar,
+                                    0,
+                                    nativeEvent.isAutoRepeat());
+
+        sketch.postEvent(tke);
+      }
+    }
   }
 
   private static boolean isPCodedKey(short code) {

@@ -284,6 +284,8 @@ public class Language {
     LanguageBundle(String language) throws IOException {
       table = new HashMap<String, String>();
 
+      // Check to see if the user is working on localization,
+      // and has their own .properties files in their sketchbook.
       String baseFilename = "languages/PDE.properties";
       String langFilename = "languages/PDE_" + language + ".properties";
 

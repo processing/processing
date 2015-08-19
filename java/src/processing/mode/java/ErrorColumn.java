@@ -30,6 +30,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -98,7 +99,8 @@ public class ErrorColumn extends JPanel {
 	/**
 	 * Stores error markers displayed PER TAB along the error bar.
 	 */
-	protected List<ErrorMarker> errorPoints = new ArrayList<ErrorMarker>();
+	protected List<ErrorMarker> errorPoints =
+	  Collections.synchronizedList(new ArrayList<ErrorMarker>());
 
 	/**
 	 * Stores previous list of error markers.

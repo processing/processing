@@ -28,6 +28,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -113,30 +115,32 @@ public class JavaMode extends Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /*
   public Runner handleRun(Sketch sketch,
                           RunnerListener listener) throws SketchException {
-    final JavaEditor editor = (JavaEditor)listener;
+    final JavaEditor editor = (JavaEditor) listener;
     editor.errorCheckerService.quickErrorCheck();
-    if (enableTweak) {
-      enableTweak = false;
-      return handleTweak(sketch, listener, false);
-    } else {
-      return handleLaunch(sketch, listener, false);
-    }
+//    if (enableTweak) {
+//      enableTweak = false;
+//      return handleTweak(sketch, listener, false);
+//    } else {
+    return handleLaunch(sketch, listener, false);
+//    }
   }
 
 
   public Runner handlePresent(Sketch sketch,
                               RunnerListener listener) throws SketchException {
-    final JavaEditor editor = (JavaEditor)listener;
+    final JavaEditor editor = (JavaEditor) listener;
     editor.errorCheckerService.quickErrorCheck();
-    if (enableTweak) {
-      enableTweak = false;
-      return handleTweak(sketch, listener, true);
-    } else {
-      return handleLaunch(sketch, listener, true);
-    }
+//    if (enableTweak) {
+//      enableTweak = false;
+//      return handleTweak(sketch, listener, true);
+//    } else {
+    return handleLaunch(sketch, listener, true);
+//    }
   }
+  */
 
 
   /** Handles the standard Java "Run" or "Present" */
@@ -165,9 +169,10 @@ public class JavaMode extends Mode {
 
   /** Start a sketch in tweak mode */
   public Runner handleTweak(Sketch sketch,
-                            RunnerListener listener,
-                            final boolean present) throws SketchException {
-    final JavaEditor editor = (JavaEditor)listener;
+                            RunnerListener listener) throws SketchException {
+//                            final boolean present) throws SketchException {
+    final JavaEditor editor = (JavaEditor) listener;
+//    editor.errorCheckerService.quickErrorCheck();  // done in prepareRun()
 
     if (isSketchModified(sketch)) {
       editor.deactivateRun();
@@ -204,11 +209,11 @@ public class JavaMode extends Mode {
       new Thread(new Runnable() {
         public void run() {
           // these block until finished
-          if (present) {
-            runtime.present(null);
-          } else {
-            runtime.launch(null);
-          }
+//          if (present) {
+//            runtime.present(null);
+//          } else {
+          runtime.launch(null);
+//          }
           // next lines are executed when the sketch quits
           if (launchInteractive) {
             editor.initEditorCode(parser.allHandles, false);
@@ -257,6 +262,13 @@ public class JavaMode extends Mode {
   public boolean handleExportApplication(Sketch sketch) throws SketchException, IOException {
     JavaBuild build = new JavaBuild(sketch);
     return build.exportApplication();
+  }
+
+
+  public String getSearchPath() {
+    return System.getProperty("java.class.path") +
+      File.pathSeparatorChar + System.getProperty("java.home") +
+      File.separator + "lib" + File.separator + "rt.jar";
   }
 
 
@@ -338,13 +350,13 @@ public class JavaMode extends Mode {
   static public final String prefImportSuggestEnabled = "pdex.importSuggestEnabled";
   static public final String suggestionsFileName = "suggestions.txt";
 
-  static volatile public boolean enableTweak = false;
+//  static volatile public boolean enableTweak = false;
 
   /**
    * Stores the white list/black list of allowed/blacklisted imports. These are defined in
    * suggestions.txt in java mode folder.
    */
-  static public final HashMap<String, HashSet<String>> suggestionsMap = new HashMap<>();
+  static public final Map<String, Set<String>> suggestionsMap = new HashMap<>();
 
   public void loadPreferences() {
     Messages.log("Load PDEX prefs");
