@@ -263,11 +263,14 @@ public class JavaBuild {
     if (sizeInfo != null && sizeInfo.hasSettings()) {
 //      String sizeStatement = sizeInfo.getStatement();
       for (String stmt : sizeInfo.getStatements()) {
-//      if (sizeStatement != null) {
         //System.out.format("size stmt is '%s'%n", sizeStatement);
+        // Don't remove newlines (and while you're at it, just keep spaces)
+        // https://github.com/processing/processing/issues/3654
+        stmt = stmt.trim();
         int index = bigCode.indexOf(stmt);
         if (index != -1) {
           bigCode.delete(index, index + stmt.length());
+          System.out.println("code now " + bigCode);
         } else {
           // TODO remove once we hit final; but prevent an exception like in
           // https://github.com/processing/processing/issues/3531
@@ -1183,7 +1186,7 @@ public class JavaBuild {
       pw.close();
 
       // attempt to code sign if the Xcode tools appear to be installed
-      if (Platform.isMacOS() && new File("/usr/bin/codesign_allocate").exists()) {
+      if (Platform.isMacOS() && isXcodeInstalled()) {
         if (embedJava) {
           ProcessHelper.ffs("codesign", "--force", "--sign", "-", jdkPath);
         }
@@ -1328,6 +1331,23 @@ public class JavaBuild {
 
     /// goodbye
     return true;
+  }
+
+
+  static Boolean xcodeInstalled;
+
+  static protected boolean isXcodeInstalled() {
+    if (xcodeInstalled == null) {
+      // http://stackoverflow.com/questions/15371925
+      Process p = PApplet.launch("xcode-select", "-p");
+      int result = -1;
+      try {
+        result = p.waitFor();
+      } catch (InterruptedException e) { }
+      // returns 0 if installed, 2 if not (-1 if exception)
+      xcodeInstalled = (result == 0);
+    }
+    return xcodeInstalled;
   }
 
 

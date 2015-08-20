@@ -447,8 +447,8 @@ class ContributionPanel extends JPanel {
     this.contrib = contrib;
 
     if (contrib.isSpecial()) {
-      ImageIcon processingIcon = Toolkit.getLibIcon("icons/pde-48.png");
-      JLabel iconLabel = new JLabel(processingIcon);
+      JLabel iconLabel =
+        new JLabel(Toolkit.getLibIcon("icons/foundation-32.png"));  // was 48?
       iconLabel.setBorder(new EmptyBorder(4, 7, 7, 7));
       iconLabel.setVerticalAlignment(SwingConstants.TOP);
       add(iconLabel, BorderLayout.WEST);
@@ -462,7 +462,7 @@ class ContributionPanel extends JPanel {
       description.append("<a href=\"" + contrib.getUrl() + "\">" + contrib.getName() + "</a>");
     }
     description.append("</b> ");
-    
+
     String version = contrib.getPrettyVersion();
 
     // TODO this has no place here, we shouldn't be cleaning up contrib
@@ -476,7 +476,7 @@ class ContributionPanel extends JPanel {
         description.append(version);
     }
     description.append(" <br/>");
-    
+
     String authorList = contrib.getAuthorList();
     if (authorList != null && !authorList.isEmpty()) {
       description.append(toHtmlLinks(contrib.getAuthorList()));

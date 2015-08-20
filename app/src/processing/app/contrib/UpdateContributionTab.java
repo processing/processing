@@ -3,6 +3,7 @@ package processing.app.contrib;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Comparator;
@@ -52,7 +53,15 @@ public class UpdateContributionTab extends ContributionTab {
       progressBar = new JProgressBar();
       progressBar.setVisible(false);
       buildErrorPanel();
-      panel = new JPanel(false);
+      panel = new JPanel(false){
+        @Override
+        protected void paintComponent(Graphics g) {
+          super.paintComponent(g);
+          g.setColor(new Color(0xe0fffd));
+          g.fillRect(getX(), panel.getY() - ContributionManagerDialog.TAB_HEIGHT - 2 , panel.getWidth(), 2);
+
+        }
+      };
       loaderLabel = new JLabel(Toolkit.getLibIcon("icons/loader.gif"));
       loaderLabel.setOpaque(false);
       loaderLabel.setBackground(Color.WHITE);
@@ -68,6 +77,7 @@ public class UpdateContributionTab extends ContributionTab {
 
     layout.setVerticalGroup(layout
       .createSequentialGroup()
+      .addGap(2)
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(loaderLabel)
                   .addComponent(contributionListPanel))

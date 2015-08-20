@@ -29,7 +29,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -43,6 +42,7 @@ import javax.swing.text.html.HTMLDocument;
 import processing.app.ui.Toolkit;
 import processing.app.Base;
 import processing.app.Platform;
+
 
 class StatusPanel extends JPanel {
   static final int BUTTON_WIDTH = 150;
@@ -216,15 +216,13 @@ class StatusPanel extends JPanel {
   }
 
   public void update(ContributionPanel panel) {
-
     progressBarPanel.removeAll();
 
+    Icon icon = null;
     if (panel.getContrib().isSpecial()) {
-      Icon contribIcon = new ImageIcon(Toolkit.getLibImage("/icons/pde-48.png"));
-      iconLabel.setIcon(contribIcon);
-    } else {
-      iconLabel.setIcon(null);
+      icon = Toolkit.getLibIcon("icons/foundation-32.png");  // was 48?
     }
+    iconLabel.setIcon(icon);
     label.setText(panel.description.toString());
     ((HTMLDocument)label.getDocument()).getStyleSheet().addRule(bodyRule);
 
@@ -232,8 +230,8 @@ class StatusPanel extends JPanel {
       && (contributionListing.hasUpdates(panel.getContrib()) && !panel
         .getContrib().isUpdateFlagged()));
 
-    String latestVersion = contributionListing.getLatestVersion(panel
-      .getContrib());
+    String latestVersion =
+      contributionListing.getLatestVersion(panel.getContrib());
     String currentVersion = panel.getContrib().getPrettyVersion();
 
     if (latestVersion != null) {

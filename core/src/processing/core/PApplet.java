@@ -6368,7 +6368,9 @@ public class PApplet implements PConstants {
         if (platform == MACOSX && useNativeSelect != false) {
           FileDialog fileDialog =
             new FileDialog(parentFrame, prompt, FileDialog.LOAD);
-          fileDialog.setDirectory(defaultSelection.getAbsolutePath());
+          if (defaultSelection != null) {
+            fileDialog.setDirectory(defaultSelection.getAbsolutePath());
+          }
           System.setProperty("apple.awt.fileDialogForDirectories", "true");
           fileDialog.setVisible(true);
           System.setProperty("apple.awt.fileDialogForDirectories", "false");
@@ -10019,6 +10021,9 @@ public class PApplet implements PConstants {
     // Supposed to help with flicker, but no effect on OS X.
     // TODO IIRC this helped on Windows, but need to double check.
     System.setProperty("sun.awt.noerasebackground", "true");
+
+    // Remove 60fps limit on the JavaFX "pulse" timer
+    System.setProperty("javafx.animation.fullspeed", "true");
 
     // Catch any HeadlessException to provide more useful feedback
     try {

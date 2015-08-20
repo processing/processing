@@ -1286,8 +1286,7 @@ public class JEditTextArea extends JComponent
       fireCaretEvent();
     }
 
-    // When the user is typing, etc, we don't want the caret
-    // to blink
+    // When the user is typing, etc, we don't want the caret to blink
     blink = true;
     if (!DISABLE_CARET) {
       caretTimer.restart();
@@ -2001,13 +2000,11 @@ public class JEditTextArea extends JComponent
   protected static String RIGHT = "right";
   protected static String BOTTOM = "bottom";
 
-//  protected static JEditTextArea focusedComponent;
   protected Timer caretTimer;
-  private boolean DISABLE_CARET = false;
+  static private final boolean DISABLE_CARET = false;
 
   protected TextAreaPainter painter;
 
-  //protected EditPopupMenu popup;
   protected JPopupMenu popup;
 
   protected EventListenerList eventListenerList;
