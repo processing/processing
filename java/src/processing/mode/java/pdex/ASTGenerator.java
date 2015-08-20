@@ -3303,11 +3303,8 @@ public class ASTGenerator {
     }
 
     log("Looking for class " + className);
-    RegExpResourceFilter regf = new RegExpResourceFilter(
-                                                         Pattern.compile(".*"),
-                                                         Pattern
-                                                             .compile(className
-                                                                          + ".class",
+    RegExpResourceFilter regf = new RegExpResourceFilter(Pattern.compile(".*"),
+                                                         Pattern.compile(className + ".class",
                                                                       Pattern.CASE_INSENSITIVE));
     // TODO once saw NPE here...possible for classPath to be null? [fry 150808]
     String[] resources = classPath.findResources("", regf);
@@ -3331,8 +3328,7 @@ public class ASTGenerator {
       File codeFolder = editor.getSketch().getCodeFolder();
       // get a list of .jar files in the "code" folder
       // (class files in subfolders should also be picked up)
-      ClassPath cp = factory.createFromPath(Util
-          .contentsToClassPath(codeFolder));
+      ClassPath cp = factory.createFromPath(Util.contentsToClassPath(codeFolder));
       resources = cp.findResources("", regf);
       for (String res : resources) {
         candidates.add(res);
