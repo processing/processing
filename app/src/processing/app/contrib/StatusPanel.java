@@ -106,6 +106,7 @@ class StatusPanel extends JPanel {
     progressBarPanel.setOpaque(false);
     updateLabel = new JLabel(" ");
     updateLabel.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+    updateLabel.setHorizontalAlignment(SwingConstants.CENTER);
     updateButton = new JButton("Update",
                                Toolkit.getLibIcon("manager/update.png"));
     updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
@@ -155,19 +156,19 @@ class StatusPanel extends JPanel {
       .addComponent(label, labelWidth, labelWidth, labelWidth)
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-      .addGroup(layout
-                  .createParallelGroup(GroupLayout.Alignment.CENTER)
+      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(installButton, BUTTON_WIDTH, BUTTON_WIDTH,
-                                BUTTON_WIDTH).addComponent(progressBarPanel)
-                  .addComponent(updateLabel).addComponent(updateButton)
+                                BUTTON_WIDTH)
+                  .addComponent(progressBarPanel)
+                  .addComponent(updateLabel, BUTTON_WIDTH, BUTTON_WIDTH, BUTTON_WIDTH)
+                  .addComponent(updateButton)
                   .addComponent(removeButton)));
 
     layout.setVerticalGroup(layout
       .createParallelGroup(GroupLayout.Alignment.LEADING)
       .addComponent(iconLabel)
       .addComponent(label)
-      .addGroup(layout
-                  .createSequentialGroup()
+      .addGroup(layout.createSequentialGroup()
                   .addComponent(installButton)
                   .addGroup(layout.createParallelGroup()
                               .addComponent(progressBarPanel)
