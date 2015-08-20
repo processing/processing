@@ -68,7 +68,7 @@ public class JavaBuild {
   private String javaLibraryPath;
 
   /** List of library folders, as figured out during preprocessing. */
-  private ArrayList<Library> importedLibraries;
+  private List<Library> importedLibraries;
 
 
   public JavaBuild(Sketch sketch) {
@@ -270,7 +270,6 @@ public class JavaBuild {
         int index = bigCode.indexOf(stmt);
         if (index != -1) {
           bigCode.delete(index, index + stmt.length());
-          System.out.println("code now " + bigCode);
         } else {
           // TODO remove once we hit final; but prevent an exception like in
           // https://github.com/processing/processing/issues/3531
@@ -645,7 +644,7 @@ public class JavaBuild {
    * Get the list of imported libraries. Used by external tools like Android mode.
    * @return list of library folders connected to this sketch.
    */
-  public ArrayList<Library> getImportedLibraries() {
+  public List<Library> getImportedLibraries() {
     return importedLibraries;
   }
 

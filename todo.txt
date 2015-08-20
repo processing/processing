@@ -4,6 +4,8 @@ X   https://github.com/processing/processing/issues/3497
 o   probably have to add the script/Processing.app location to user's path
 X line selected for errors is off by one or two
 X   https://github.com/processing/processing/issues/3654
+X PDE window leaks undisposed Timer objects even when closed
+X   https://github.com/processing/processing/issues/3655
 
 contribs
 X Undo does not move to the correct location in the editor window
@@ -24,6 +26,12 @@ X   https://github.com/processing/processing/pull/3636
 X CM: Category dropdown alignment
 X   https://github.com/processing/processing/pull/3666
 _   https://github.com/processing/processing/issues/3644
+X CM column widths change with selection
+X   https://github.com/processing/processing/issues/3609
+X   https://github.com/processing/processing/pull/3675
+X remove category dropdown from CM except when viewing libraries
+X   https://github.com/processing/processing/issues/3668
+X   https://github.com/processing/processing/pull/3676
 
 cleaning
 X modify build to insert these after antlr run:

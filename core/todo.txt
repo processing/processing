@@ -19,6 +19,8 @@ X   https://github.com/processing/processing/pull/3656
 X FX - Proper sketch sizing
 X   https://github.com/processing/processing/pull/3658
 X implement frameRate()
+X FX - Fix key typed
+X   https://github.com/processing/processing/pull/3672
 
 
 known issues
