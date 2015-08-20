@@ -237,7 +237,10 @@ public class ContributionTab {
       .addComponent(statusPanel, GroupLayout.PREFERRED_SIZE,
                     GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE));
     layout.linkSize(SwingConstants.VERTICAL, categoryChooser, filterField);
+
+    // these will occupy space even if not visible
     layout.setHonorsVisibility(contributionListPanel, false);
+    layout.setHonorsVisibility(categoryChooser, false);
 
     panel.setBackground(Color.WHITE);
     panel.setBorder(null);
@@ -357,7 +360,7 @@ public class ContributionTab {
           categoriesFound = true;
         }
       }
-      categoryChooser.setEnabled(categoriesFound);
+      categoryChooser.setVisible(categoriesFound);
     }
   }
 
