@@ -708,7 +708,12 @@ public class PSurfaceFX implements PSurface {
     long when = System.currentTimeMillis();
     KeyCode kc = fxEvent.getCode();
     // Are they f*ing serious?
-    char key = kc.impl_getChar().charAt(0);
+    char key;
+    if (et == KeyEvent.KEY_TYPED) {
+      key = fxEvent.getCharacter().charAt(0);
+    } else {
+      key = kc.impl_getChar().charAt(0);
+    }
     int keyCode = kc.impl_getCode();
     sketch.postEvent(new processing.event.KeyEvent(fxEvent, when,
                                                    action, modifiers,
