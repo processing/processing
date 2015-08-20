@@ -79,7 +79,7 @@ public class ContributionManagerDialog {
 
   public ContributionManagerDialog() {
     myFont = Toolkit.getSansFont(14, Font.PLAIN);
-//    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(myFont);
+    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(myFont);
     numberLabel = new JLabel(Toolkit.getLibIcon("manager/notification.png"), SwingConstants.CENTER);
     toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
     librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
