@@ -83,7 +83,7 @@ public class JavaEditor extends Editor {
   protected VariableInspector inspector;
   protected JMenuItem inspectorItem;
 
-  private ErrorColumn errorColumn;
+  private MarkerColumn errorColumn;
 
   protected JScrollPane errorTableScrollPane;
   protected XQErrorTable errorTable;
@@ -164,7 +164,7 @@ public class JavaEditor extends Editor {
     // remove the text area temporarily
     box.remove(2);
     textAndError.setLayout(new BorderLayout());
-    errorColumn =  new ErrorColumn(this, textarea.getMinimumSize().height);
+    errorColumn =  new MarkerColumn(this, textarea.getMinimumSize().height);
     textAndError.add(errorColumn, BorderLayout.EAST);
     textarea.setBounds(0, 0, errorColumn.getX() - 1, textarea.getHeight());
     textAndError.add(textarea);

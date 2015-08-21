@@ -48,10 +48,10 @@ public class LineMarker {
   private Problem problem;
 
 
-  public LineMarker(Problem problem, int y, int type) {
+  public LineMarker(Problem problem, int y, boolean error) {
     this.problem = problem;
     this.y = y;
-    this.type = type;
+    this.type = error ? ERROR : WARNING;
   }
 
 
