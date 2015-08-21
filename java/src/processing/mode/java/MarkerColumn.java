@@ -77,25 +77,6 @@ public class MarkerColumn extends JPanel {
 //	private List<LineMarker> errorPointsOld = new ArrayList<LineMarker>();
 
 
-	public void paintComponent(Graphics g) {
-//		Graphics2D g2d = (Graphics2D) g;
-//		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//				RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setColor(backgroundColor);
-		g.fillRect(0, 0, getWidth(), getHeight());
-
-		for (LineMarker m : errorPoints) {
-			if (m.getType() == LineMarker.ERROR) {
-				g.setColor(errorColor);
-			} else {
-				g.setColor(warningColor);
-			}
-			//g.fillRect(2, emarker.getY(), (getWidth() - 3), errorMarkerHeight);
-			g.drawLine(2, m.getY(), getWidth() - 2, m.getY());
-		}
-	}
-
-
 	public MarkerColumn(JavaEditor editor, int height) {
 		this.editor = editor;
 		this.errorCheckerService = editor.errorCheckerService;
@@ -117,6 +98,21 @@ public class MarkerColumn extends JPanel {
       }
     });
 	}
+
+
+  public void paintComponent(Graphics g) {
+    g.setColor(backgroundColor);
+    g.fillRect(0, 0, getWidth(), getHeight());
+
+    for (LineMarker m : errorPoints) {
+      if (m.getType() == LineMarker.ERROR) {
+        g.setColor(errorColor);
+      } else {
+        g.setColor(warningColor);
+      }
+      g.drawLine(2, m.getY(), getWidth() - 2, m.getY());
+    }
+  }
 
 
 	public List<LineMarker> getErrorPoints() {
