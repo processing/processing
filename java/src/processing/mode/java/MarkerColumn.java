@@ -158,17 +158,13 @@ public class MarkerColumn extends JPanel {
 
 
 	/** Find out which error/warning the user has clicked and scroll to it */
-	void scrollToMarkerAt(final int y) {
+	private void scrollToMarkerAt(final int y) {
 	  try {
-	    new SwingWorker<Object, Object>() {
+	    new SwingWorker() {
 	      protected Object doInBackground() throws Exception {
-	        for (LineMarker m : errorPoints) {
-	          // -2 and +2 are extra allowance, clicks in the
-	          // vicinity of the markers register that way
-	          if (Math.abs(y - m.getY()) < 3) {
-	            editor.getErrorChecker().scrollToErrorLine(m.getProblem());
-	            return null;
-	          }
+	        LineMarker m = findClosestMarker(y);
+	        if (m != null) {
+	          editor.getErrorChecker().scrollToErrorLine(m.getProblem());
 	        }
 	        return null;
 	      }
@@ -180,20 +176,18 @@ public class MarkerColumn extends JPanel {
 
 
 	/** Show tooltip on hover. */
-	void showMarkerHover(final int y) {
+	private void showMarkerHover(final int y) {
 	  try {
-	    new SwingWorker<Object, Object>() {
+	    new SwingWorker() {
 	      protected Object doInBackground() throws Exception {
-	        for (LineMarker m : errorPoints) {
-	          if (Math.abs(y - m.getY()) < 3) {
-	            Problem p = m.getProblem();
-	            String kind = p.isError() ?
-	              Language.text("editor.status.error") :
-	              Language.text("editor.status.warning");
-	            setToolTipText(kind + ": " + p.getMessage());
-	            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-	            break;
-	          }
+	        LineMarker m = findClosestMarker(y);
+	        if (m != null) {
+	          Problem p = m.getProblem();
+	          String kind = p.isError() ?
+	            Language.text("editor.status.error") :
+	            Language.text("editor.status.warning");
+	          setToolTipText(kind + ": " + p.getMessage());
+	          setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	        }
 	        return null;
 	      }
@@ -201,6 +195,20 @@ public class MarkerColumn extends JPanel {
 	  } catch (Exception ex) {
 	    ex.printStackTrace();
 	  }
+	}
+
+
+	private LineMarker findClosestMarker(final int y) {
+	  LineMarker closest = null;
+	  int closestDist = Integer.MAX_VALUE;
+	  for (LineMarker m : errorPoints) {
+	    int dist = Math.abs(y - m.getY());
+	    if (dist < 3 && dist < closestDist) {
+	      closest = m;
+	      closestDist = dist;
+	    }
+	  }
+	  return closest;
 	}
 
 
