@@ -25,10 +25,11 @@ X   https://github.com/processing/processing/pull/3658
 X implement frameRate()
 X FX - Fix key typed
 X   https://github.com/processing/processing/pull/3672
-
-java.lang.StringIndexOutOfBoundsException: String index out of range: 0
-	at java.lang.String.charAt(String.java:658)
-	at processing.javafx.PSurfaceFX.fxKeyEvent(PSurfaceFX.java:713)
+X FX - Make key events little bit more sane
+X   https://github.com/processing/processing/pull/3686
+X   added note about AIOOBE seen earlier
+X Update LowLevelGL to use VBOs
+X   https://github.com/processing/processing-docs/pull/289
 
 
 known issues

@@ -40,7 +40,6 @@ import processing.app.Mode;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.Util;
-import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.Problem;
 import processing.app.Language;
@@ -57,13 +56,8 @@ import processing.app.Language;
  */
 public class MarkerColumn extends JPanel {
   protected JavaEditor editor;
-  protected ErrorCheckerService errorCheckerService;
 
   static final int WIDE = 12;
-//	protected int preferredHeight;
-//	protected int preferredWidth = 12;
-
-//	static final int errorMarkerHeight = 4;
 
 	private Color errorColor;
 	private Color warningColor;
@@ -73,13 +67,9 @@ public class MarkerColumn extends JPanel {
 	private List<LineMarker> errorPoints =
 	  Collections.synchronizedList(new ArrayList<LineMarker>());
 
-//	/** Stores previous list of error markers. */
-//	private List<LineMarker> errorPointsOld = new ArrayList<LineMarker>();
-
 
 	public MarkerColumn(JavaEditor editor, int height) {
 		this.editor = editor;
-		this.errorCheckerService = editor.errorCheckerService;
 
 		Mode mode = editor.getMode();
 		errorColor = mode.getColor("editor.column.error.color");
@@ -121,10 +111,9 @@ public class MarkerColumn extends JPanel {
 
 
 	synchronized public void updateErrorPoints(final List<Problem> problems) {
-		// NOTE TO SELF: ErrorMarkers are calculated for the present tab only
-		// Error Marker index in the arraylist is LOCALIZED for current tab.
-		// Also, need to do the update in the UI thread via SwingWorker to prevent
-	  // concurrency issues.
+		// NOTE: ErrorMarkers are calculated for the present tab only Error Marker
+	  // index in the arraylist is LOCALIZED for current tab. Also, update is in
+	  // the UI thread via SwingWorker to prevent concurrency issues. [Manindra]
 	  try {
 	    new SwingWorker() {
 	      protected Object doInBackground() throws Exception {
@@ -168,30 +157,6 @@ public class MarkerColumn extends JPanel {
 	}
 
 
-	/*
-	// Check if new errors have popped up in the sketch since the last check
-	public boolean errorPointsChanged() {
-		if (errorPointsOld.size() != errorPoints.size()) {
-			editor.getTextArea().repaint();
-			// System.out.println("2 Repaint " + System.currentTimeMillis());
-			return true;
-		}
-
-		else {
-			for (int i = 0; i < errorPoints.size(); i++) {
-				if (errorPoints.get(i).getY() != errorPointsOld.get(i).getY()) {
-					editor.getTextArea().repaint();
-					// System.out.println("3 Repaint " +
-					// System.currentTimeMillis());
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	*/
-
-
 	/** Find out which error/warning the user has clicked and scroll to it */
 	void scrollToMarkerAt(final int y) {
 	  try {
@@ -201,7 +166,7 @@ public class MarkerColumn extends JPanel {
 	          // -2 and +2 are extra allowance, clicks in the
 	          // vicinity of the markers register that way
 	          if (Math.abs(y - m.getY()) < 3) {
-	            errorCheckerService.scrollToErrorLine(m.getProblem());
+	            editor.getErrorChecker().scrollToErrorLine(m.getProblem());
 	            return null;
 	          }
 	        }
