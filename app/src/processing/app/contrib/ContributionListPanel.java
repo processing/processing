@@ -298,12 +298,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         label.setBorder(BorderFactory.createEmptyBorder(2, 17, 0, 0));
         label.setFont(Toolkit.getSansFont(14, Font.PLAIN));
         if (contribution.isInstalled()) {
-          icon = Toolkit.getLibIcon("manager/up-to-date.png");
+          icon = Toolkit.getLibIcon("manager/up-to-date-" + ContributionManagerDialog.iconVer + "x.png");
           if (contribListing.hasUpdates(contribution)) {
-            icon = Toolkit.getLibIcon("manager/update-available.png");
+            icon = Toolkit.getLibIcon("manager/update-available-" + ContributionManagerDialog.iconVer + "x.png");
           }
           if (!contribution.isCompatible(Base.getRevision())) {
-            icon = Toolkit.getLibIcon("manager/incompatible.png");
+            icon = Toolkit.getLibIcon("manager/incompatible-" + ContributionManagerDialog.iconVer + "x.png");
           }
         }
         label.setIcon(icon);

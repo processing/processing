@@ -86,7 +86,7 @@ class StatusPanel extends JPanel {
       }
     });
     installButton = new JButton("Install",
-                                Toolkit.getLibIcon("manager/install.png"));
+                                Toolkit.getLibIcon("manager/install-" + ContributionManagerDialog.iconVer + "x.png"));
     installButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     installButton.setHorizontalAlignment(SwingConstants.LEFT);
 //    installButton.setContentAreaFilled(false);
@@ -108,7 +108,7 @@ class StatusPanel extends JPanel {
     updateLabel.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     updateLabel.setHorizontalAlignment(SwingConstants.CENTER);
     updateButton = new JButton("Update",
-                               Toolkit.getLibIcon("manager/update.png"));
+                               Toolkit.getLibIcon("manager/update-" + ContributionManagerDialog.iconVer + "x.png"));
     updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     updateButton.setHorizontalAlignment(SwingConstants.LEFT);
 //    updateButton.setAlignmentX(SwingConstants.LEFT);
@@ -126,7 +126,7 @@ class StatusPanel extends JPanel {
     });
 
     removeButton = new JButton("Remove",
-                               Toolkit.getLibIcon("manager/remove.png"));
+                               Toolkit.getLibIcon("manager/remove-" + ContributionManagerDialog.iconVer + "x.png"));
     removeButton.setFont(Toolkit.getSansFont(14, Font.BOLD));
     removeButton.setHorizontalAlignment(SwingConstants.LEFT);
 //    removeButton.setContentAreaFilled(false);
