@@ -40,7 +40,6 @@ import java.nio.IntBuffer;
 import com.jogamp.common.util.VersionNumber;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GL2ES1;
 import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GL2GL3;
@@ -55,8 +54,6 @@ import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
-import processing.opengl.PGL;
-import processing.opengl.PGraphicsOpenGL;
 
 
 public class PJOGL extends PGL {
@@ -1676,7 +1673,6 @@ public class PJOGL extends PGL {
     STENCIL_TEST    = GL.GL_STENCIL_TEST;
     DEPTH_TEST      = GL.GL_DEPTH_TEST;
     DEPTH_WRITEMASK = GL.GL_DEPTH_WRITEMASK;
-    ALPHA_TEST      = GL2ES1.GL_ALPHA_TEST;
 
     COLOR_BUFFER_BIT   = GL.GL_COLOR_BUFFER_BIT;
     DEPTH_BUFFER_BIT   = GL.GL_DEPTH_BUFFER_BIT;
@@ -1733,7 +1729,6 @@ public class PJOGL extends PGL {
     RENDERBUFFER_INTERNAL_FORMAT = GL.GL_RENDERBUFFER_INTERNAL_FORMAT;
 
     MULTISAMPLE    = GL.GL_MULTISAMPLE;
-    POINT_SMOOTH   = GL2ES1.GL_POINT_SMOOTH;
     LINE_SMOOTH    = GL.GL_LINE_SMOOTH;
     POLYGON_SMOOTH = GL2GL3.GL_POLYGON_SMOOTH;
   }
@@ -1971,15 +1966,6 @@ public class PJOGL extends PGL {
   }
 
   @Override
-  public void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer data) {
-    if (gl2x != null) {
-      gl2x.glVertexAttribPointer(index, size, type, normalized, stride, data);
-    } else {
-      throw new RuntimeException(String.format(MISSING_GLFUNC_ERROR, "glVertexAttribPointer()"));
-    }
-  }
-
-  @Override
   public void enableVertexAttribArray(int index) {
     gl2.glEnableVertexAttribArray(index);
   }
@@ -1997,15 +1983,6 @@ public class PJOGL extends PGL {
   @Override
   public void drawElements(int mode, int count, int type, int offset) {
     gl.glDrawElements(mode, count, type, offset);
-  }
-
-  @Override
-  public void drawElements(int mode, int count, int type, Buffer indices) {
-    if (gl2x != null) {
-      gl2x.glDrawElements(mode, count, type, indices);
-    } else {
-      throw new RuntimeException(String.format(MISSING_GLFUNC_ERROR, "glDrawElements()"));
-    }
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -2489,15 +2466,6 @@ public class PJOGL extends PGL {
   @Override
   public void blendColor(float red, float green, float blue, float alpha) {
     gl2.glBlendColor(red, green, blue, alpha);
-  }
-
-  @Override
-  public void alphaFunc(int func, float ref) {
-    if (gl2x != null) {
-      gl2x.glAlphaFunc(func, ref);
-    } else {
-      throw new RuntimeException(String.format(MISSING_GLFUNC_ERROR, "glAlphaFunc()"));
-    }
   }
 
   ///////////////////////////////////////////////////////////

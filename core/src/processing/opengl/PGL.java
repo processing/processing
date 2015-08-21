@@ -2663,7 +2663,6 @@ public abstract class PGL {
   public static int STENCIL_TEST;
   public static int DEPTH_TEST;
   public static int DEPTH_WRITEMASK;
-  public static int ALPHA_TEST;
 
   public static int COLOR_BUFFER_BIT;
   public static int DEPTH_BUFFER_BIT;
@@ -2719,7 +2718,6 @@ public abstract class PGL {
   public static int RENDERBUFFER_INTERNAL_FORMAT;
 
   public static int MULTISAMPLE;
-  public static int POINT_SMOOTH;
   public static int LINE_SMOOTH;
   public static int POLYGON_SMOOTH;
 
@@ -2811,12 +2809,10 @@ public abstract class PGL {
   public abstract void vertexAttrib3fv(int index, FloatBuffer values);
   public abstract void vertexAttri4fv(int index, FloatBuffer values);
   public abstract void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, int offset);
-  public abstract void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, Buffer data);
   public abstract void enableVertexAttribArray(int index);
   public abstract void disableVertexAttribArray(int index);
   public abstract void drawArrays(int mode, int first, int count);
   public abstract void drawElements(int mode, int count, int type, int offset);
-  public abstract void drawElements(int mode, int count, int type, Buffer indices);
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -2956,7 +2952,6 @@ public abstract class PGL {
   public abstract void blendFunc(int src, int dst);
   public abstract void blendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha);
   public abstract void blendColor(float red, float green, float blue, float alpha);
-  public abstract void alphaFunc(int func, float ref);
 
   ///////////////////////////////////////////////////////////
 
