@@ -20,7 +20,6 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,33 +38,31 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
+import processing.data.StringList;
 import processing.mode.java.preproc.PdePreprocessor;
 
+
 /**
- * My implementation of P5 preprocessor. Uses Eclipse JDT features instead of
- * ANTLR. Performance gains mostly and full control over debug output. But needs
- * lots and lots of testing. There will always an option to switch back to PDE
- * preproc.
- * 
- * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
- * 
+ * Implementation of P5 preprocessor that uses Eclipse JDT features instead
+ * of ANTLR. Performance gains mostly and full control over debug output,
+ * but needs lots and lots of testing.
  */
 public class XQPreprocessor {
-
 	private ASTRewrite rewrite = null;
-	private ArrayList<String> imports;
-	private ArrayList<ImportStatement> extraImports;
-	
-	private String[] coreImports, defaultImports;
-	
-	
+//	private List<String> imports;
+	private List<ImportStatement> extraImports;
+
+	private String[] coreImports;
+	private String[] defaultImports;
+
+
 	public XQPreprocessor() {
 		PdePreprocessor p = new PdePreprocessor(null);
-		defaultImports = p.getDefaultImports();		
+		defaultImports = p.getDefaultImports();
 		coreImports = p.getCoreImports();
 	}
 
-	
+
 	/**
 	 * The main method that performs preprocessing. Converts code into compilable java.
 	 * @param source - String
@@ -73,7 +70,7 @@ public class XQPreprocessor {
 	 * @return String - Compile ready java code
 	 */
 	public String doYourThing(String source,
-	                          ArrayList<ImportStatement> programImports) {
+	                          List<ImportStatement> programImports) {
 		this.extraImports = programImports;
 		//source = prepareImports() + source;
 		Document doc = new Document(source);
@@ -120,50 +117,62 @@ public class XQPreprocessor {
 		return doc.get();
 	}
 
-	
-	/**
-	 * Returns all import statements as lines of code
-	 * @return String - All import statements combined. Each import in a separate line.
-	 */
-	public String prepareImports() {
-		imports = new ArrayList<String>();
-		for (int i = 0; i < extraImports.size(); i++) {
-			imports.add(new String(extraImports.get(i).getImportName()));
-		}
-		imports.add(new String("// Default Imports"));
-		for (int i = 0; i < coreImports.length; i++) {
-			imports.add(new String("import " + coreImports[i] + ";"));
-		}
-		for (int i = 0; i < defaultImports.length; i++) {
-			imports.add(new String("import " + defaultImports[i] + ";"));
-		}
-		String totalImports = "";
-		for (int i = 0; i < imports.size(); i++) {
-			totalImports += imports.get(i) + "\n";
-		}
-		totalImports += "\n";
-		return totalImports;
-	}
-	
-	
-	public String prepareImports(ArrayList<ImportStatement> programImports) {
+
+//	/**
+//	 * Returns all import statements as lines of code
+//	 * @return String - All import statements combined. Each import in a separate line.
+//	 */
+//	private String prepareImports() {
+//		imports = new ArrayList<String>();
+//		for (int i = 0; i < extraImports.size(); i++) {
+//			imports.add(new String(extraImports.get(i).getImportName()));
+//		}
+//		imports.add(new String("// Default Imports"));
+//		for (int i = 0; i < coreImports.length; i++) {
+//			imports.add(new String("import " + coreImports[i] + ";"));
+//		}
+//		for (int i = 0; i < defaultImports.length; i++) {
+//			imports.add(new String("import " + defaultImports[i] + ";"));
+//		}
+//		String totalImports = "";
+//		for (int i = 0; i < imports.size(); i++) {
+//			totalImports += imports.get(i) + "\n";
+//		}
+//		totalImports += "\n";
+//		return totalImports;
+//	}
+
+
+	String prepareImports(List<ImportStatement> programImports) {
 	  this.extraImports = programImports;
-	  return prepareImports();
+
+	  StringList imports = new StringList();
+    for (ImportStatement imp : extraImports) {
+      imports.append(imp.getImportName());
+    }
+    imports.append("// Default Imports");
+    for (String imp : coreImports) {
+      imports.append("import " + imp + ";");
+    }
+    for (String imp : defaultImports) {
+      imports.append("import " + imp + ";");
+    }
+    return imports.join("\n") + "\n";
 	}
 
-	
+
 	/**
 	 * Visitor implementation that does all the substitution dirty work. <br>
 	 * <LI>Any function not specified as being protected or private will be made
 	 * 'public'. This means that <TT>void setup()</TT> becomes
 	 * <TT>public void setup()</TT>.
-	 * 
+	 *
 	 * <LI>Converts doubles into floats, i.e. 12.3 becomes 12.3f so that people
 	 * don't have to add f after their numbers all the time since it's confusing
 	 * for beginners. Also, most functions of p5 core deal with floats only.
-	 * 
+	 *
 	 * @author Manindra Moharana
-	 * 
+	 *
 	 */
 	private class XQASTVisitor extends ASTVisitor {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -194,14 +203,12 @@ public class XQPreprocessor {
 
 			return true;
 		}
-		
+
 
 		public boolean visit(NumberLiteral node) {
-			if (!node.getToken().endsWith("f")
-					&& !node.getToken().endsWith("d")) {
-				for (int i = 0; i < node.getToken().length(); i++) {
-					if (node.getToken().charAt(i) == '.') {
-
+			if (!node.getToken().endsWith("f") && !node.getToken().endsWith("d")) {
+			  for (int i = 0; i < node.getToken().length(); i++) {
+			    if (node.getToken().charAt(i) == '.') {
 						String s = node.getToken() + "f";
 						node.setToken(s);
 						break;
@@ -211,7 +218,7 @@ public class XQPreprocessor {
 			return true;
 		}
 
-		
+
 		// public boolean visit(FieldDeclaration node) {
 		// if (node.getType().toString().equals("color")){
 		// System.err.println("color type detected!");
@@ -230,6 +237,7 @@ public class XQPreprocessor {
 		// return true;
 		// }
 
+
 		/**
 		 * This is added just for debugging purposes - to make sure that all
 		 * instances of color type have been substituded as in by the regex
@@ -237,7 +245,7 @@ public class XQPreprocessor {
 		 */
 		public boolean visit(SimpleType node) {
 			if (node.toString().equals("color")) {
-				System.err.println("color type detected! \nThis shouldn't be happening! Please report this as an issue.");
+				System.err.println("Color type detected: please report as an issue.");
 			}
 			return true;
 		}

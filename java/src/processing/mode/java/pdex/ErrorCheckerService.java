@@ -342,22 +342,24 @@ public class ErrorCheckerService implements Runnable {
 
 
   protected void updateSketchCodeListeners() {
-    for (final SketchCode sc : editor.getSketch().getCode()) {
-      boolean flag = false;
-      if (sc.getDocument() == null
-          || ((SyntaxDocument) sc.getDocument()).getDocumentListeners() == null)
-        continue;
-      for (DocumentListener dl : ((SyntaxDocument)sc.getDocument()).getDocumentListeners()) {
-        if(dl.equals(sketchChangedListener)){
-          flag = true;
-          break;
-        }
-      }
-      if(!flag){
-        // log("Adding doc listener to " + sc.getPrettyName());
-        sc.getDocument().addDocumentListener(sketchChangedListener);
+    for (SketchCode sc : editor.getSketch().getCode()) {
+      SyntaxDocument doc = (SyntaxDocument) sc.getDocument();
+      if (!hasSketchChangedListener(doc)) {
+        doc.addDocumentListener(sketchChangedListener);
       }
     }
+  }
+
+
+  boolean hasSketchChangedListener(SyntaxDocument doc) {
+    if (doc != null && doc.getDocumentListeners() != null) {
+      for (DocumentListener dl : doc.getDocumentListeners()) {
+        if (dl.equals(sketchChangedListener)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
 
@@ -702,8 +704,7 @@ public class ErrorCheckerService implements Runnable {
       for (SketchCode sc : editor.getSketch().getCode()) {
         PlainDocument tab = new PlainDocument();
         if (editor.getSketch().getCurrentCode().equals(sc)) {
-          Document doc = sc.getDocument();
-          tab.insertString(0, doc.getText(0, doc.getLength()), null);
+          tab.insertString(0, sc.getDocumentText(), null);
         } else {
           tab.insertString(0, sc.getProgram(), null);
         }
@@ -1054,7 +1055,7 @@ public class ErrorCheckerService implements Runnable {
         if (sc.isExtension("pde")) {
           int len = 0;
           if (editor.getSketch().getCurrentCode().equals(sc)) {
-            len = Util.countLines(sc.getDocument().getText(0, sc.getDocument().getLength())) + 1;
+            len = Util.countLines(sc.getDocumentText()) + 1;
           } else {
             len = Util.countLines(sc.getProgram()) + 1;
           }
@@ -1142,7 +1143,7 @@ public class ErrorCheckerService implements Runnable {
         if (sc.isExtension("pde")) {
           int len = 0;
           if (editor.getSketch().getCurrentCode().equals(sc)) {
-            len = Util.countLines(sc.getDocument().getText(0, sc.getDocument().getLength())) + 1;
+            len = Util.countLines(sc.getDocumentText()) + 1;
           } else {
             len = Util.countLines(sc.getProgram()) + 1;
           }
@@ -1220,8 +1221,7 @@ public class ErrorCheckerService implements Runnable {
 
           try {
             if (sketch.getCurrentCode().equals(sc)) {
-              Document d = sc.getDocument();
-              rawCode.append(scrapImportStatements(d.getText(0, d.getLength()),
+              rawCode.append(scrapImportStatements(sc.getDocumentText(),
                                                    sketch.getCodeIndex(sc)));
             } else {
               rawCode.append(scrapImportStatements(sc.getProgram(),

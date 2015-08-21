@@ -26,6 +26,7 @@ package processing.app;
 
 import java.io.*;
 
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.undo.*;
 
@@ -220,6 +221,11 @@ public class SketchCode {
 
   public Document getDocument() {
     return document;
+  }
+
+
+  public String getDocumentText() throws BadLocationException {
+    return document.getText(0, document.getLength());
   }
 
 

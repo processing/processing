@@ -34,7 +34,6 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 
 import processing.app.Mode;
 import processing.app.Sketch;
@@ -63,7 +62,7 @@ public class MarkerColumn extends JPanel {
 	private Color warningColor;
 	private Color backgroundColor;
 
-	/** Stores error markers displayed PER TAB along the error bar. */
+	// Stores error markers displayed PER TAB along the error bar.
 	private List<LineMarker> errorPoints =
 	  Collections.synchronizedList(new ArrayList<LineMarker>());
 
@@ -118,16 +117,14 @@ public class MarkerColumn extends JPanel {
 	    new SwingWorker() {
 	      protected Object doInBackground() throws Exception {
 	        Sketch sketch = editor.getSketch();
-	        SketchCode sc = sketch.getCurrentCode();
+	        SketchCode code = sketch.getCurrentCode();
 	        int totalLines = 0;
 	        int currentTab = sketch.getCurrentCodeIndex();
 	        try {
-	          Document doc = sc.getDocument();
-	          totalLines = Util.countLines(doc.getText(0, doc.getLength())) + 1;
+	          totalLines = Util.countLines(code.getDocumentText());
 	        } catch (BadLocationException e) {
 	          e.printStackTrace();
 	        }
-//	        errorPointsOld = errorPoints;
 	        errorPoints = new ArrayList<>();
 
 	        // Each problem.getSourceLine() will have an extra line added because

@@ -2448,20 +2448,8 @@ public class JavaEditor extends Editor {
    * @return the document object
    */
   public Document currentDocument() {
-    //return ta.getDocument();
     return getCurrentTab().getDocument();
   }
-
-
-//  /**
-//   * Event Handler for double clicking in the left hand gutter area.
-//   * @param lineIdx the line (0-based) that was double clicked
-//   */
-//  public void gutterDblClicked(int lineIdx) {
-//    if (debugger != null) {
-//      debugger.toggleBreakpoint(lineIdx);
-//    }
-//  }
 
 
   public void statusBusy() {
