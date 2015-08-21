@@ -49,6 +49,7 @@ public class ContributionManagerDialog {
   static final int AUTHOR_WIDTH = 240;
   static final int STATUS_WIDTH = 60;
   static final int FILTER_WIDTH = 180;
+  static final int ICON_WIDTH = 45;
 
   JFrame dialog;
   JTabbedPane tabbedPane;
@@ -75,12 +76,13 @@ public class ContributionManagerDialog {
   private JLabel updateTabLabel;
 
   static Font myFont;
+  static int iconVer = Toolkit.highResDisplay() ? 2 : 1;
 
 
   public ContributionManagerDialog() {
     myFont = Toolkit.getSansFont(14, Font.PLAIN);
 //    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(myFont);
-    numberLabel = new JLabel(Toolkit.getLibIcon("manager/notification.png"), SwingConstants.CENTER);
+    numberLabel = new JLabel(Toolkit.getLibIcon("manager/notification-" + iconVer + "x.png"), SwingConstants.CENTER);
     toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
     librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
     modesContributionTab = new ContributionTab(ContributionType.MODE, this);

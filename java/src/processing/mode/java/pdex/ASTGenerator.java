@@ -3520,18 +3520,17 @@ public class ASTGenerator {
       log("SuggestionsMap is null or empty, won't be able to trim class names");
       return true;
     }
-    final String processingInclude = "include.processing";
-    final String processingExclude = "exclude.processing";
-    final String jdkInclude = "include.jdk";
+    final String include = "include";
+    final String exclude = "exclude";
 
     if (impName.startsWith("processing")) {
-      if (JavaMode.suggestionsMap.get(processingInclude).contains(impName)) {
+      if (JavaMode.suggestionsMap.get(include).contains(impName)) {
         return false;
-      } else if (JavaMode.suggestionsMap.get(processingExclude).contains(impName)) {
+      } else if (JavaMode.suggestionsMap.get(exclude).contains(impName)) {
         return true;
       }
     } else if (impName.startsWith("java")) {
-      if (JavaMode.suggestionsMap.get(jdkInclude).contains(impName)) {
+      if (JavaMode.suggestionsMap.get(include).contains(impName)) {
         return false;
       }
     }
