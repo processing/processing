@@ -412,6 +412,9 @@ public class PShapeOpenGL extends PShape {
       // GROUP shapes are always marked as ended.
       shapeCreated = true;
     }
+
+    // OpenGL supports per-vertex coloring (unlike Java2D)
+    perVertexStyles = true;
   }
 
 
