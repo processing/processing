@@ -356,13 +356,8 @@ public class PVector implements Serializable {
   }
 
 
-  public PVector copy() {
-    return new PVector(x, y, z);
-  }
-
-
   /**
-   * ( begin auto-generated from PVector_get.xml )
+   * ( begin auto-generated from PVector_copy.xml )
    *
    * Gets a copy of the vector, returns a PVector object.
    *
@@ -372,6 +367,11 @@ public class PVector implements Serializable {
    * @usage web_application
    * @brief Get a copy of the vector
    */
+  public PVector copy() {
+    return new PVector(x, y, z);
+  }
+
+
   @Deprecated
   public PVector get() {
     return copy();
