@@ -497,7 +497,7 @@
                displayName="Processing"
                executableName="Processing"
                identifier="org.processing.app"
-               signature="Pde2"
+               signature="Pde3"
                icon="macosx/processing.icns"
                copyright="© The Processing Foundation"
                getInfo="${version}, Copyright © The Processing Foundation"
