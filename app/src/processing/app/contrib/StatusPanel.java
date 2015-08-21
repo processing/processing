@@ -151,7 +151,8 @@ class StatusPanel extends JPanel {
 
     layout.setHorizontalGroup(layout
       .createSequentialGroup()
-      .addComponent(iconLabel, 50, 50, 50)
+      .addGap((ContributionManagerDialog.STATUS_WIDTH - ContributionManagerDialog.ICON_WIDTH))
+      .addComponent(iconLabel, ContributionManagerDialog.ICON_WIDTH, ContributionManagerDialog.ICON_WIDTH, ContributionManagerDialog.ICON_WIDTH)
       .addGap(0)
       .addComponent(label, labelWidth, labelWidth, labelWidth)
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,

@@ -49,6 +49,7 @@ public class ContributionManagerDialog {
   static final int AUTHOR_WIDTH = 240;
   static final int STATUS_WIDTH = 60;
   static final int FILTER_WIDTH = 180;
+  static final int ICON_WIDTH = 45;
 
   JFrame dialog;
   JTabbedPane tabbedPane;
