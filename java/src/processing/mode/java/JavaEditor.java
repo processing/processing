@@ -76,10 +76,6 @@ public class JavaEditor extends Editor {
   protected final String breakpointMarkerComment = " //<>//";
 
   protected JMenu debugMenu;
-//  JCheckBoxMenuItem enableDebug;
-//  boolean debugEnabled;
-//  JMenuItem enableDebug;
-
   protected JMenuItem debugItem;
   protected Debugger debugger;
   protected boolean debugEnabled;
@@ -87,15 +83,9 @@ public class JavaEditor extends Editor {
   protected VariableInspector inspector;
   protected JMenuItem inspectorItem;
 
-//  private EditorToolbar javaToolbar;
-//  private DebugToolbar debugToolbar;
+  private ErrorColumn errorColumn;
 
-  private ErrorColumn errorBar;
-
-//  protected XQConsoleToggle btnShowConsole;
-//  protected XQConsoleToggle btnShowErrors;
   protected JScrollPane errorTableScrollPane;
-//  protected JPanel consoleProblemsPane;
   protected XQErrorTable errorTable;
   static final int ERROR_TAB_INDEX = 0;
 
@@ -174,9 +164,9 @@ public class JavaEditor extends Editor {
     // remove the text area temporarily
     box.remove(2);
     textAndError.setLayout(new BorderLayout());
-    errorBar =  new ErrorColumn(this, textarea.getMinimumSize().height, jmode);
-    textAndError.add(errorBar, BorderLayout.EAST);
-    textarea.setBounds(0, 0, errorBar.getX() - 1, textarea.getHeight());
+    errorColumn =  new ErrorColumn(this, textarea.getMinimumSize().height, jmode);
+    textAndError.add(errorColumn, BorderLayout.EAST);
+    textarea.setBounds(0, 0, errorColumn.getX() - 1, textarea.getHeight());
     textAndError.add(textarea);
     // add our hacked version back to the editor
     box.add(textAndError);
@@ -219,16 +209,6 @@ public class JavaEditor extends Editor {
 
   @Override
   public EditorFooter createFooter() {
-//    //JPanel consolePanel = new JPanel();
-//    JTabbedPane footer = new JTabbedPane(JTabbedPane.BOTTOM);
-////    tabPane.setUI(new BasicTabbedPaneUI());
-//    footer.setUI(new SimpleTabbedPaneUI());
-////    tabPane.setUI(new SillyTabbedPaneUI());
-////    tabPane.setUI(new PlasticTabbedPaneUI());
-////    tabPane.setBorder(BorderFactory.createEmptyBorder());
-////    tabPane.setBackground(Color.RED);
-
-//    EditorFooter footer = new EditorFooter(this);
     EditorFooter footer = super.createFooter();
 
     // Adding Error Table in a scroll pane
@@ -239,38 +219,8 @@ public class JavaEditor extends Editor {
     errorTableScrollPane.setBorder(BorderFactory.createEmptyBorder());
 //    errorTableScrollPane.setBorder(new EmptyBorder(0, Editor.LEFT_GUTTER, 0, 0));
     errorTableScrollPane.setViewportView(errorTable);
-
-//    // Adding toggle console button
-////    consolePanel.remove(2);  // removes the line status
-//    JPanel lineStatusPanel = new JPanel();
-//    lineStatusPanel.setLayout(new BorderLayout());
-//    btnShowConsole = new XQConsoleToggle(this, Language.text("editor.footer.console"), mode.getInteger("linestatus.height"));
-//    btnShowErrors = new XQConsoleToggle(this, Language.text("editor.footer.errors"), mode.getInteger("linestatus.height"));
-//    btnShowConsole.addMouseListener(btnShowConsole);
-//    btnShowErrors.addMouseListener(btnShowErrors);
-
-//    JPanel toggleButtonPanel = new JPanel(new BorderLayout());
-//    toggleButtonPanel.add(btnShowConsole, BorderLayout.EAST);
-//    toggleButtonPanel.add(btnShowErrors, BorderLayout.WEST);
-//    lineStatusPanel.add(toggleButtonPanel, BorderLayout.EAST);
-////    lineStatus.setBounds(0, 0, toggleButtonPanel.getX() - 1,
-////                         toggleButtonPanel.getHeight());
-////    lineStatusPanel.add(lineStatus);
-//    consolePanel.add(lineStatusPanel, BorderLayout.SOUTH);
-//    lineStatusPanel.repaint();
-
-//    // Adding JPanel with CardLayout for Console/Problems Toggle
-////    consolePanel.remove(1);  // removes the console itself
-//    consoleProblemsPane = new JPanel(new CardLayout());
-//    consoleProblemsPane.add(errorTableScrollPane, Language.text("editor.footer.errors"));
-//    consoleProblemsPane.add(super.createConsolePanel(), Language.text("editor.footer.console"));
-//    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
-
-//    console = new EditorConsole(this);
-//    footer.addPanel(Language.text("editor.footer.console"), console);
     footer.addPanel(errorTableScrollPane, Language.text("editor.footer.errors"), "/lib/footer/error");
 
-    //return consolePanel;
     return footer;
   }
 
@@ -2593,17 +2543,17 @@ public class JavaEditor extends Editor {
 
 
   public void updateErrorBar(List<Problem> problems) {
-    errorBar.updateErrorPoints(problems);
+    errorColumn.updateErrorPoints(problems);
   }
 
 
   public List<ErrorMarker> getErrorPoints() {
-    return errorBar.errorPoints;
+    return errorColumn.errorPoints;
   }
 
 
   public void repaintErrorBar() {
-    errorBar.repaint();
+    errorColumn.repaint();
   }
 
 
