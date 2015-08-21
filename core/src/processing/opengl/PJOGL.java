@@ -1956,7 +1956,7 @@ public class PJOGL extends PGL {
   }
 
   @Override
-  public void vertexAttri4fv(int index, FloatBuffer values) {
+  public void vertexAttrib4fv(int index, FloatBuffer values) {
     gl2.glVertexAttrib4fv(index, values);
   }
 
