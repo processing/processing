@@ -706,17 +706,82 @@ public class PSurfaceFX implements PSurface {
     }
 
     long when = System.currentTimeMillis();
-    KeyCode kc = fxEvent.getCode();
-    // Are they f*ing serious?
-    char key;
-    if (et == KeyEvent.KEY_TYPED) {
-      key = fxEvent.getCharacter().charAt(0);
-    } else {
-      key = kc.impl_getChar().charAt(0);
-    }
-    int keyCode = kc.impl_getCode();
+
+    char keyChar = getKeyChar(fxEvent);
+    int keyCode = getKeyCode(fxEvent);
     sketch.postEvent(new processing.event.KeyEvent(fxEvent, when,
                                                    action, modifiers,
-                                                   key, keyCode));
+                                                   keyChar, keyCode));
   }
+
+  private int getKeyCode(KeyEvent fxEvent) {
+    if (fxEvent.getEventType() == KeyEvent.KEY_TYPED) {
+      return 0;
+    }
+
+    KeyCode kc = fxEvent.getCode();
+    switch (kc) {
+      case ALT_GRAPH:
+        return PConstants.ALT;
+    }
+    return kc.impl_getCode();
+  }
+
+  private char getKeyChar(KeyEvent fxEvent) {
+    if (fxEvent.getEventType() == KeyEvent.KEY_TYPED) {
+      return fxEvent.getCharacter().charAt(0);
+    }
+
+    KeyCode kc = fxEvent.getCode();
+
+    if (kc.isKeypadKey()) {
+      return (char) (kc.impl_getChar().charAt(0) - ('a' - '0') + 1);
+    }
+
+    switch (kc) {
+      case UP:
+      case KP_UP:
+      case DOWN:
+      case KP_DOWN:
+      case LEFT:
+      case KP_LEFT:
+      case RIGHT:
+      case KP_RIGHT:
+      case ALT:
+      case ALT_GRAPH:
+      case CONTROL:
+      case SHIFT:
+      case CAPS:
+      case META:
+      case WINDOWS:
+      case CONTEXT_MENU:
+      case HOME:
+      case PAGE_UP:
+      case PAGE_DOWN:
+      case END:
+      case PAUSE:
+      case PRINTSCREEN:
+      case INSERT:
+      case NUM_LOCK:
+      case SCROLL_LOCK:
+      case F1:
+      case F2:
+      case F3:
+      case F4:
+      case F5:
+      case F6:
+      case F7:
+      case F8:
+      case F9:
+      case F10:
+      case F11:
+      case F12:
+        return PConstants.CODED;
+      case ENTER:
+        return '\n';
+    }
+
+    return kc.impl_getChar().charAt(0);
+  }
+
 }
