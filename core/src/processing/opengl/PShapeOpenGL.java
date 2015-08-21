@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2012-15 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
@@ -4802,7 +4803,6 @@ public class PShapeOpenGL extends PShape {
   }
 
 
-  // Applies the styles of g.
   @Override
   protected void styles(PGraphics g) {
     if (g instanceof PGraphicsOpenGL) {
@@ -4849,9 +4849,11 @@ public class PShapeOpenGL extends PShape {
   // Rendering methods
 
 
+  /*
   public void draw() {
     draw(pg);
   }
+  */
 
 
   @Override
@@ -4876,18 +4878,15 @@ public class PShapeOpenGL extends PShape {
             }
             render(gl, tex);
           }
-
         } else {
           render(gl, image);
         }
-
         post(gl);
       }
     } else {
-      // The renderer is not PGraphicsOpenGL, which probably
-      // means that the draw() method is being called by the
-      // recorder. We just use the default drawing from the
-      // parent class.
+      // The renderer is not PGraphicsOpenGL, which probably means that
+      // the draw() method is being called by the recorder. We just use
+      // the default draw implementation from the parent class.
       super.draw(g);
     }
   }

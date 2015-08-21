@@ -1,6 +1,8 @@
 0243 core (3.0b5)
 X NullPointerException in selectFolder() on OS X
 X   https://github.com/processing/processing/issues/3661
+X Wrong positioning of circles in SVG shapes (regression from 2)
+X   https://github.com/processing/processing/issues/3685
 
 cleaning
 X How do images behave when pixelDensity(2) is set?
@@ -21,6 +23,10 @@ X   https://github.com/processing/processing/pull/3658
 X implement frameRate()
 X FX - Fix key typed
 X   https://github.com/processing/processing/pull/3672
+
+java.lang.StringIndexOutOfBoundsException: String index out of range: 0
+	at java.lang.String.charAt(String.java:658)
+	at processing.javafx.PSurfaceFX.fxKeyEvent(PSurfaceFX.java:713)
 
 
 known issues

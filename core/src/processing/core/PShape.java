@@ -1544,6 +1544,9 @@ public class PShape implements PConstants {
 
   // TODO unapproved
   static protected void copyStyles(PShape src, PShape dest) {
+    dest.ellipseMode = src.ellipseMode;
+    dest.rectMode = src.rectMode;
+
     if (src.stroke) {
       dest.stroke = true;
       dest.strokeColor = src.strokeColor;
@@ -1640,8 +1643,13 @@ public class PShape implements PConstants {
 
     } else if (kind == RECT) {
       if (image != null) {
+        int oldMode = g.imageMode;
+        g.imageMode(CORNER);
         g.image(image, params[0], params[1], params[2], params[3]);
+        g.imageMode(oldMode);
       } else {
+        int oldMode = g.rectMode;
+        g.rectMode(rectMode);
         if (params.length == 4) {
           g.rect(params[0], params[1],
                  params[2], params[3]);
@@ -1655,11 +1663,18 @@ public class PShape implements PConstants {
                  params[4], params[5],
                  params[6], params[7]);
         }
+        g.rectMode(oldMode);
       }
     } else if (kind == ELLIPSE) {
+      int oldMode = g.ellipseMode;
+      g.ellipseMode(ellipseMode);
       g.ellipse(params[0], params[1],
                 params[2], params[3]);
+      g.ellipseMode(oldMode);
+
     } else if (kind == ARC) {
+      int oldMode = g.ellipseMode;
+      g.ellipseMode(ellipseMode);
       if (params.length == 6) {
         g.arc(params[0], params[1],
               params[2], params[3],
@@ -1670,6 +1685,8 @@ public class PShape implements PConstants {
               params[4], params[5],
               (int) params[6]);
       }
+      g.ellipseMode(oldMode);
+
     } else if (kind == BOX) {
       if (params.length == 1) {
         g.box(params[0]);

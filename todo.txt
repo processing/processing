@@ -6,6 +6,7 @@ X line selected for errors is off by one or two
 X   https://github.com/processing/processing/issues/3654
 X PDE window leaks undisposed Timer objects even when closed
 X   https://github.com/processing/processing/issues/3655
+_ items still show up in "Recent" if they no longer exist (on startup)
 
 contribs
 X Undo does not move to the correct location in the editor window
@@ -32,6 +33,13 @@ X   https://github.com/processing/processing/pull/3675
 X remove category dropdown from CM except when viewing libraries
 X   https://github.com/processing/processing/issues/3668
 X   https://github.com/processing/processing/pull/3676
+X Fix info panel text color and alignment in CM
+_   https://github.com/processing/processing/issues/3642
+X   https://github.com/processing/processing/pull/3684
+X Right-clicking popup menu closes instead of shifting its location
+X   https://github.com/processing/processing/issues/3649
+X Use 1x or 2x icons in the CM
+X   https://github.com/processing/processing/pull/3681
 
 cleaning
 X modify build to insert these after antlr run:
@@ -81,6 +89,9 @@ _   http://www.oracle.com/us/technologies/java/locale-140624.html
 
 
 3.0 final
+_ CM: Clicking item in Libraries list throws exception
+_   https://github.com/processing/processing/issues/3667
+_ Casey reports that exported app still asks to download Java
 _ prompt to install Xcode coming up on Export to Application
 _   http://stackoverflow.com/questions/15371925/how-to-check-if-command-line-tools-is-installed
 _   "xcode-select -p" returns 0 if they exist (and the dir) or 2 if they don't
@@ -180,7 +191,7 @@ crashing
 _ fix appbundler problems due to rollback
 _   appbundler is no longer being developed by Oracle, switch to "packager"
 _   this re-introduces two bugs (serial export and scrolling)
-_   and any other changes later than 16 November 2015:
+_   and any other changes later than 16 November 2014:
 _   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
 _   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
 _ another possible culprit
