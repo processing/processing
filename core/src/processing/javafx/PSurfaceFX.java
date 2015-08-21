@@ -61,7 +61,6 @@ public class PSurfaceFX implements PSurface {
   public PSurfaceFX(PGraphicsFX2D graphics) {
     fx = graphics;
     canvas = new ResizableCanvas();
-    fx.context = canvas.getGraphicsContext2D();
 
     // set up main drawing loop
     KeyFrame keyFrame = new KeyFrame(Duration.millis(1000),
@@ -207,6 +206,7 @@ public class PSurfaceFX implements PSurface {
 //      }
 
       Canvas canvas = surface.canvas;
+      surface.fx.context = canvas.getGraphicsContext2D();
       StackPane stackPane = new StackPane();
       stackPane.getChildren().add(canvas);
       canvas.widthProperty().bind(stackPane.widthProperty());
