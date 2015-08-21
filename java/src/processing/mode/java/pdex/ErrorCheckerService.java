@@ -988,9 +988,9 @@ public class ErrorCheckerService implements Runnable {
     // editor.getTextArea().getCaretLine());
     if (JavaMode.errorCheckEnabled) {
       synchronized (editor.getErrorPoints()) {
-        for (ErrorMarker emarker : editor.getErrorPoints()) {
+        for (LineMarker emarker : editor.getErrorPoints()) {
           if (emarker.getProblem().getLineNumber() == editor.getTextArea().getCaretLine()) {
-            if (emarker.getType() == ErrorMarker.Warning) {
+            if (emarker.getType() == LineMarker.WARNING) {
               editor.statusMessage(emarker.getProblem().getMessage(),
                                    JavaEditor.STATUS_INFO);
             } else {
@@ -1579,12 +1579,9 @@ public class ErrorCheckerService implements Runnable {
     return new String(p2, 0, index);
   }
 
-  public void handleErrorCheckingToggle(){
+  public void handleErrorCheckingToggle() {
     if (!JavaMode.errorCheckEnabled) {
-      // unticked Menu Item
-      // pauseThread();
-      Messages.log(editor.getSketch().getName()
-          + " - Error Checker paused.");
+      Messages.log(editor.getSketch().getName() + " Error Checker paused.");
       editor.getErrorPoints().clear();
       problemsList.clear();
       updateErrorTable();
@@ -1592,9 +1589,7 @@ public class ErrorCheckerService implements Runnable {
       editor.getTextArea().repaint();
       editor.repaintErrorBar();
     } else {
-      //resumeThread();
-      Messages.log(editor.getSketch().getName()
-          + " - Error Checker resumed.");
+      Messages.log(editor.getSketch().getName() + " Error Checker resumed.");
       runManualErrorCheck();
     }
   }

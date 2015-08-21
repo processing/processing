@@ -24,8 +24,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -36,110 +34,84 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
+import processing.app.Mode;
+import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.Util;
 import processing.mode.java.pdex.ErrorCheckerService;
-import processing.mode.java.pdex.ErrorMarker;
+import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.Problem;
 import processing.app.Language;
 
+
 /**
- * The bar on the left of the text area which displays all errors as rectangles. <br>
+ * Implements the column to the right of the editor window that displays ticks
+ * for errors and warnings.
  * <br>
  * All errors and warnings of a sketch are drawn on the bar, clicking on one,
  * scrolls to the tab and location. Error messages displayed on hover. Markers
  * are not in sync with the error line. Similar to eclipse's right error bar
  * which displays the overall errors in a document
- *
- * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
- *
  */
 public class ErrorColumn extends JPanel {
-	/**
-	 * Preferred height of the component
-	 */
-	protected int preferredHeight;
+  protected JavaEditor editor;
+  protected ErrorCheckerService errorCheckerService;
 
-	/**
-	 * Preferred height of the component
-	 */
-	protected int preferredWidth = 12;
+  static final int WIDE = 12;
+//	protected int preferredHeight;
+//	protected int preferredWidth = 12;
 
-	/**
-	 * Height of marker
-	 */
-	public static final int errorMarkerHeight = 4;
+//	static final int errorMarkerHeight = 4;
 
-	/**
-	 * Color of Error Marker
-	 */
-	public Color errorColor; // = new Color(0xED2630);
+	private Color errorColor;
+	private Color warningColor;
+	private Color backgroundColor;
 
-	/**
-	 * Color of Warning Marker
-	 */
-	public Color warningColor; // = new Color(0xFFC30E);
+	/** Stores error markers displayed PER TAB along the error bar. */
+	private List<LineMarker> errorPoints =
+	  Collections.synchronizedList(new ArrayList<LineMarker>());
 
-	/**
-	 * Background color of the component
-	 */
-	public Color backgroundColor; // = new Color(0x2C343D);
+	/** Stores previous list of error markers. */
+	private List<LineMarker> errorPointsOld = new ArrayList<LineMarker>();
 
-	/**
-	 * JavaEditor instance
-	 */
-	protected JavaEditor editor;
-
-	/**
-	 * ErrorCheckerService instance
-	 */
-	protected ErrorCheckerService errorCheckerService;
-
-	/**
-	 * Stores error markers displayed PER TAB along the error bar.
-	 */
-	protected List<ErrorMarker> errorPoints =
-	  Collections.synchronizedList(new ArrayList<ErrorMarker>());
-
-	/**
-	 * Stores previous list of error markers.
-	 */
-	protected ArrayList<ErrorMarker> errorPointsOld = new ArrayList<ErrorMarker>();
 
 	public void paintComponent(Graphics g) {
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+//		Graphics2D g2d = (Graphics2D) g;
+//		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//				RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(backgroundColor);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
-		for (ErrorMarker emarker : errorPoints) {
-			if (emarker.getType() == ErrorMarker.Error) {
+		for (LineMarker m : errorPoints) {
+			if (m.getType() == LineMarker.ERROR) {
 				g.setColor(errorColor);
 			} else {
 				g.setColor(warningColor);
 			}
-			g.fillRect(2, emarker.getY(), (getWidth() - 3), errorMarkerHeight);
+			//g.fillRect(2, emarker.getY(), (getWidth() - 3), errorMarkerHeight);
+			g.drawLine(2, m.getY(), getWidth() - 2, m.getY());
 		}
 	}
 
 
-	public Dimension getPreferredSize() {
-		return new Dimension(preferredWidth, preferredHeight);
-	}
+//	public Dimension getPreferredSize() {
+//		return new Dimension(preferredWidth, preferredHeight);
+//	}
 
 
-	public Dimension getMinimumSize() {
-		return getPreferredSize();
-	}
+//	public Dimension getMinimumSize() {
+//		return getPreferredSize();
+//	}
 
 
-	public ErrorColumn(JavaEditor editor, int height, JavaMode mode) {
+	public ErrorColumn(JavaEditor editor, int height) {
 		this.editor = editor;
-		this.preferredHeight = height;
+//		this.preferredHeight = height;
 		this.errorCheckerService = editor.errorCheckerService;
 
+		Mode mode = editor.getMode();
 		errorColor = mode.getColor("editor.column.error.color");
 		warningColor = mode.getColor("editor.column.warning.color");
 		backgroundColor = mode.getColor("editor.gutter.bgcolor");
@@ -147,12 +119,12 @@ public class ErrorColumn extends JPanel {
 		addListeners();
 	}
 
-	/**
-	 * Update error markers in the error bar.
-	 *
-	 * @param problems
-	 *            - List of problems.
-	 */
+
+	public List<LineMarker> getErrorPoints() {
+	  return errorPoints;
+	}
+
+
 	synchronized public void updateErrorPoints(final List<Problem> problems) {
 		// NOTE TO SELF: ErrorMarkers are calculated for the present tab only
 		// Error Marker index in the arraylist is LOCALIZED for current tab.
@@ -162,43 +134,45 @@ public class ErrorColumn extends JPanel {
 		SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
       protected Object doInBackground() throws Exception {
-        SketchCode sc = editor.getSketch().getCurrentCode();
-        int totalLines = 0, currentTab = editor.getSketch()
-            .getCurrentCodeIndex();
+        Sketch sketch = editor.getSketch();
+        SketchCode sc = sketch.getCurrentCode();
+        int totalLines = 0;
+        int currentTab = sketch.getCurrentCodeIndex();
         try {
-          totalLines = Util.countLines(sc.getDocument()
-              .getText(0, sc.getDocument().getLength())) + 1;
+          Document doc = sc.getDocument();
+          totalLines = Util.countLines(doc.getText(0, doc.getLength())) + 1;
         } catch (BadLocationException e) {
           e.printStackTrace();
         }
         // System.out.println("Total lines: " + totalLines);
-        synchronized (errorPoints) {
-          errorPointsOld.clear();
-          for (ErrorMarker marker : errorPoints) {
-            errorPointsOld.add(marker);
-          }
-          errorPoints.clear();
+//        synchronized (errorPoints) {
+        errorPointsOld = errorPoints;
+        errorPoints = new ArrayList<>();
+//          errorPointsOld.clear();
+//          for (ErrorMarker marker : errorPoints) {
+//            errorPointsOld.add(marker);
+//          }
+//          errorPoints.clear();
 
           // Each problem.getSourceLine() will have an extra line added
           // because of
           // class declaration in the beginning as well as default imports
-          synchronized (problems) {
-            for (Problem problem : problems) {
-              if (problem.getTabIndex() == currentTab) {
-                // Ratio of error line to total lines
-                float y = (problem.getLineNumber() + 1)
-                    / ((float) totalLines);
-                // Ratio multiplied by height of the error bar
-                y *= fheight - 15; // -15 is just a vertical offset
-                errorPoints
-                    .add(new ErrorMarker(problem, (int) y,
-                                         problem.isError() ? ErrorMarker.Error
-                                             : ErrorMarker.Warning));
+        synchronized (problems) {
+          for (Problem problem : problems) {
+            if (problem.getTabIndex() == currentTab) {
+              // Ratio of error line to total lines
+              float y = (problem.getLineNumber() + 1) / ((float) totalLines);
+              // Ratio multiplied by height of the error bar
+              y *= fheight - 15; // -15 is just a vertical offset
+              errorPoints.add(new LineMarker(problem, (int) y,
+                                              problem.isError() ?
+                                                  LineMarker.ERROR
+                                                  : LineMarker.WARNING));
                 // System.out.println("Y: " + y);
               }
             }
           }
-        }
+//        }
         return null;
       }
 
@@ -255,11 +229,11 @@ public class ErrorColumn extends JPanel {
         SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           protected Object doInBackground() throws Exception {
-            for (ErrorMarker eMarker : errorPoints) {
+            for (LineMarker eMarker : errorPoints) {
               // -2 and +2 are extra allowance, clicks in the
               // vicinity of the markers register that way
               if (e.getY() >= eMarker.getY() - 2
-                  && e.getY() <= eMarker.getY() + 2 + errorMarkerHeight) {
+                  && e.getY() <= eMarker.getY() + 2) {
                 errorCheckerService.scrollToErrorLine(eMarker.getProblem());
                 return null;
               }
@@ -285,9 +259,9 @@ public class ErrorColumn extends JPanel {
         SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           protected Object doInBackground() throws Exception {
-            for (ErrorMarker eMarker : errorPoints) {
+            for (LineMarker eMarker : errorPoints) {
               if (evt.getY() >= eMarker.getY() - 2 &&
-                  evt.getY() <= eMarker.getY() + 2 + errorMarkerHeight) {
+                  evt.getY() <= eMarker.getY() + 2) {
                 Problem p = eMarker.getProblem();
                 String msg = ((p.isError()
                                ? Language.text("editor.status.error")
@@ -313,5 +287,15 @@ public class ErrorColumn extends JPanel {
 				}
 			}
 		});
+	}
+
+
+	public Dimension getPreferredSize() {
+	  return new Dimension(WIDE, super.getPreferredSize().height);
+	}
+
+
+	public Dimension getMinimumSize() {
+	  return new Dimension(WIDE, super.getMinimumSize().height);
 	}
 }

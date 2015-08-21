@@ -132,12 +132,12 @@ public class JavaTextArea extends JEditTextArea {
 
     // load settings from theme.txt
     Mode mode = editor.getMode();
-    gutterBgColor = mode.getColor("gutter.bgcolor");  //, gutterBgColor);
-    gutterLineColor = mode.getColor("gutter.linecolor"); //, gutterLineColor);
-    gutterPadding = mode.getInteger("gutter.padding");
-    breakpointMarker = mode.getString("breakpoint.marker");  //, breakpointMarker);
+    gutterBgColor = mode.getColor("editor.gutter.bgcolor");  //, gutterBgColor);
+    gutterLineColor = mode.getColor("editor.gutter.linecolor"); //, gutterLineColor);
+    gutterPadding = mode.getInteger("editor.gutter.padding");
+    breakpointMarker = mode.getString("editor.gutter.breakpoint.marker");  //, breakpointMarker);
 //    breakpointMarker = "\u2666";
-    currentLineMarker = mode.getString("currentline.marker"); //, currentLineMarker);
+    currentLineMarker = mode.getString("editor.gutter.currentline.marker"); //, currentLineMarker);
 
     // TweakMode code
     prevCompListeners = painter.getComponentListeners();

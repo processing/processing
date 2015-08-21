@@ -45,7 +45,7 @@ import processing.mode.java.debug.LineBreakpoint;
 import processing.mode.java.debug.LineHighlight;
 import processing.mode.java.debug.LineID;
 import processing.mode.java.pdex.ErrorCheckerService;
-import processing.mode.java.pdex.ErrorMarker;
+import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.ErrorMessageSimplifier;
 import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.Problem;
@@ -164,7 +164,7 @@ public class JavaEditor extends Editor {
     // remove the text area temporarily
     box.remove(2);
     textAndError.setLayout(new BorderLayout());
-    errorColumn =  new ErrorColumn(this, textarea.getMinimumSize().height, jmode);
+    errorColumn =  new ErrorColumn(this, textarea.getMinimumSize().height);
     textAndError.add(errorColumn, BorderLayout.EAST);
     textarea.setBounds(0, 0, errorColumn.getX() - 1, textarea.getHeight());
     textAndError.add(textarea);
@@ -2547,8 +2547,8 @@ public class JavaEditor extends Editor {
   }
 
 
-  public List<ErrorMarker> getErrorPoints() {
-    return errorColumn.errorPoints;
+  public List<LineMarker> getErrorPoints() {
+    return errorColumn.getErrorPoints();
   }
 
 

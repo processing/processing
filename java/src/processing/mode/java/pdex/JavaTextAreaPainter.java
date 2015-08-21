@@ -57,11 +57,12 @@ import processing.app.syntax.TokenMarker;
 import processing.app.ui.Editor;
 
 
+// TODO Most of this needs to be merged into the main TextAreaPainter,
+//      since it's not specific to Java. [fry 150821]
+
 /**
  * Customized line painter. Adds support for background colors,
  * left hand gutter area with background color and text.
- * TODO Most of this needs to be merged into the main TextAreaPainter,
- * since it has nothing to do with Java. [fry]
  */
 public class JavaTextAreaPainter extends TextAreaPainter
 	implements MouseListener, MouseMotionListener {
@@ -314,17 +315,12 @@ public class JavaTextAreaPainter extends TextAreaPainter
     y += fm.getLeading() + fm.getMaxDescent();
     int height = fm.getHeight();
 
-    // get the color
     Color col = getTextArea().getLineBgColor(line);
-    //System.out.print("bg line " + line + ": ");
-    // no need to paint anything
-    if (col == null) {
-      //log("none");
-      return;
+    if (col != null) {
+      // paint line background
+      gfx.setColor(col);
+      gfx.fillRect(0, y, getWidth(), height);
     }
-    // paint line background
-    gfx.setColor(col);
-    gfx.fillRect(0, y, getWidth(), height);
   }
 
 
@@ -351,10 +347,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
     errorLineCoords.clear();
     // Check if current line contains an error. If it does, find if it's an
     // error or warning
-    for (ErrorMarker emarker : getEditor().getErrorPoints()) {
+    for (LineMarker emarker : getEditor().getErrorPoints()) {
       if (emarker.getProblem().getLineNumber() == line) {
         notFound = false;
-        if (emarker.getType() == ErrorMarker.Warning) {
+        if (emarker.getType() == LineMarker.WARNING) {
           isWarning = true;
         }
         problem = emarker.getProblem();
@@ -463,9 +459,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
   /**
    * Sets ErrorCheckerService and loads theme for TextAreaPainter(XQMode)
-   *
-   * @param ecs
-   * @param mode
    */
   public void setMode(JavaMode mode) {
     errorUnderlineColor = mode.getColor("editor.error.underline.color");

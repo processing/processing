@@ -111,11 +111,24 @@ editor.gutter.text.font = processing.mono,plain,11
 #editor.gutter.text.color = #587478
 editor.gutter.text.color = #bbd6d5
 
+# marker for breakpointed lines in left hand gutter (2 ascii characters)
+editor.gutter.breakpoint.marker = <>
+editor.gutter.breakpoint.marker.color = #4a545e
+
+# marker for the current line in left hand gutter (2 ascii characters)
+editor.gutter.currentline.marker = ->
+editor.gutter.currentline.marker.color = #e27500
+
 # bgcolor for the current (highlighted) line
 editor.gutter.linehighlight.color=#587478
 
 # left- and right-hand gutter color
 editor.gutter.bgcolor = #122535
+
+# color of vertical separation line
+#gutter.linecolor = #e9e9e9
+# space (in px) added to left and right of gutter markers
+editor.gutter.padding = 3
 
 # squiggly line underneath errors in the editor
 editor.error.underline.color = #C40E0E
@@ -125,23 +138,6 @@ editor.warning.underline.color = #ffc30e
 editor.column.error.color = #9F1613
 editor.column.warning.color = #ffc30e
 
-
-# DEBUGGER
-
-# breakpointed line background color
-breakpoint.bgcolor = #f0f0f0
-# marker for breakpointed lines in left hand gutter (2 ascii characters)
-breakpoint.marker = <>
-breakpoint.marker.color = #4a545e
-
-# current line background color
-currentline.bgcolor = #ffff96
-# marker for the current line in left hand gutter (2 ascii characters)
-currentline.marker = ->
-currentline.marker.color = #e27500
-
-# color of vertical separation line
-#gutter.linecolor = #e9e9e9
-# space (in px) added to left and right of gutter markers
-gutter.padding = 3
-
+# not in use?
+#breakpoint.bgcolor = #f0f0f0
+#currentline.bgcolor = #ffff96
