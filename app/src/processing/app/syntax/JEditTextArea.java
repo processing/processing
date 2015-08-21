@@ -2429,8 +2429,10 @@ public class JEditTextArea extends JComponent
 //        if (focusedComponent != JEditTextArea.this) return;
       if (!hasFocus()) {
 //          System.out.println("requesting focus in window");
-        requestFocusInWindow();
-        return;
+        // The following condition check fixes #3649 [manindra, 08/20/15]
+        if(!requestFocusInWindow()) {
+          return;
+        }
       }
 
       // isPopupTrigger() is handled differently across platforms,
