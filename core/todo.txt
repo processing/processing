@@ -3,6 +3,8 @@ X NullPointerException in selectFolder() on OS X
 X   https://github.com/processing/processing/issues/3661
 X Wrong positioning of circles in SVG shapes (regression from 2)
 X   https://github.com/processing/processing/issues/3685
+X setFill() on PShape in Java2D throws ArrayIndexOutOfBoundsException
+X   https://github.com/processing/processing/issues/3677
 
 cleaning
 X How do images behave when pixelDensity(2) is set?

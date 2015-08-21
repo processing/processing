@@ -140,10 +140,9 @@ public class ErrorColumn extends JPanel {
 		this.preferredHeight = height;
 		this.errorCheckerService = editor.errorCheckerService;
 
-		errorColor = mode.getColor("errorbar.errorcolor"); //, errorColor);
-		warningColor = mode.getColor("errorbar.warningcolor"); //, warningColor);
-		//backgroundColor = mode.getColor("errorbar.backgroundcolor"); //, backgroundColor);
-		backgroundColor = mode.getColor("gutter.bgcolor");
+		errorColor = mode.getColor("editor.column.error.color");
+		warningColor = mode.getColor("editor.column.warning.color");
+		backgroundColor = mode.getColor("editor.gutter.bgcolor");
 
 		addListeners();
 	}

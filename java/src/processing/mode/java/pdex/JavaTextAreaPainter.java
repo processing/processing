@@ -66,13 +66,10 @@ import processing.app.ui.Editor;
 public class JavaTextAreaPainter extends TextAreaPainter
 	implements MouseListener, MouseMotionListener {
 
-//  protected JavaTextArea ta; // we need the subclassed textarea
-//  protected ErrorCheckerService errorCheckerService;
-
-  public Color errorColor; // = new Color(0xED2630);
-  public Color warningColor; // = new Color(0xFFC30E);
-  public Color errorMarkerColor; // = new Color(0xED2630);
-  public Color warningMarkerColor; // = new Color(0xFFC30E);
+  public Color errorUnderlineColor;
+  public Color warningUnderlineColor;
+//  public Color errorMarkerColor;
+//  public Color warningMarkerColor;
 
   protected Font gutterTextFont;
   protected Color gutterTextColor;
@@ -214,14 +211,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
       getEditor().getErrorChecker().getASTGenerator().scrollToDeclaration(line, word, xLS);
     }
   }
-
-
-//  private void loadTheme(ExperimentalMode mode) {
-//    errorColor = mode.getThemeColor("editor.errorcolor", errorColor);
-//    warningColor = mode.getThemeColor("editor.warningcolor", warningColor);
-//    errorMarkerColor = mode.getThemeColor("editor.errormarkercolor", errorMarkerColor);
-//    warningMarkerColor = mode.getThemeColor("editor.warningmarkercolor", warningMarkerColor);
-//  }
 
 
   /**
@@ -428,9 +417,9 @@ public class JavaTextAreaPainter extends TextAreaPainter
 //      }
 //      gfx.fillRect(1, y + 2, 3, height - 2);
 
-      gfx.setColor(errorColor);
+      gfx.setColor(errorUnderlineColor);
       if (isWarning) {
-        gfx.setColor(warningColor);
+        gfx.setColor(warningUnderlineColor);
       }
       int xx = x1;
 
@@ -479,13 +468,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * @param mode
    */
   public void setMode(JavaMode mode) {
-    //this.errorCheckerService = ecs;
-    //loadTheme(mode);
-
-    errorColor = mode.getColor("editor.errorcolor"); //, errorColor);
-    warningColor = mode.getColor("editor.warningcolor"); //, warningColor);
-    errorMarkerColor = mode.getColor("editor.errormarkercolor"); //, errorMarkerColor);
-    warningMarkerColor = mode.getColor("editor.warningmarkercolor"); //, warningMarkerColor);
+    errorUnderlineColor = mode.getColor("editor.error.underline.color");
+    warningUnderlineColor = mode.getColor("editor.warning.underline.color");
+//    errorMarkerColor = mode.getColor("editor.errormarkercolor");
+//    warningMarkerColor = mode.getColor("editor.warningmarkercolor");
 
     gutterTextFont = mode.getFont("editor.gutter.text.font");
     gutterTextColor = mode.getColor("editor.gutter.text.color");

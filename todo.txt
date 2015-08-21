@@ -6,7 +6,10 @@ X line selected for errors is off by one or two
 X   https://github.com/processing/processing/issues/3654
 X PDE window leaks undisposed Timer objects even when closed
 X   https://github.com/processing/processing/issues/3655
-_ items still show up in "Recent" if they no longer exist (on startup)
+X prompt to install Xcode coming up on Export to Application
+X   http://stackoverflow.com/questions/15371925/how-to-check-if-command-line-tools-is-installed
+X   "xcode-select -p" returns 0 if they exist (and the dir) or 2 if they don't
+X   no special case added for 10.8, but it's on the way out
 
 contribs
 X Undo does not move to the correct location in the editor window
@@ -41,12 +44,13 @@ X   https://github.com/processing/processing/issues/3649
 X Use 1x or 2x icons in the CM
 X   https://github.com/processing/processing/pull/3681
 
-cleaning
+earlier/cleaning
 X modify build to insert these after antlr run:
 X   @SuppressWarnings({"unused", "cast"})
 X   or get the updated ANTLR, which likely would support it
 o scrollable stack trace
 o   http://www.javalobby.org/java/forums/t19012.html
+X disable the Export button if no platforms selected on Export to Application
 
 cleaning/libraries
 o different name for 'lib' folder because of libraries folder?
@@ -92,13 +96,15 @@ _   http://www.oracle.com/us/technologies/java/locale-140624.html
 _ CM: Clicking item in Libraries list throws exception
 _   https://github.com/processing/processing/issues/3667
 _ Casey reports that exported app still asks to download Java
-_ prompt to install Xcode coming up on Export to Application
-_   http://stackoverflow.com/questions/15371925/how-to-check-if-command-line-tools-is-installed
-_   "xcode-select -p" returns 0 if they exist (and the dir) or 2 if they don't
+_   could this be a JOGL bug (linking against the app stub?)
 _ Contributions Manager UI design
 _   https://github.com/processing/processing/issues/3482
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
+_ items still show up in "Recent" if they no longer exist (on startup)
+
+
+sketch modified externally
 _ sketch modified externally with FAT32 volumes on OS X
 _   https://github.com/processing/processing/issues/3387
 _ also appearing with encrypted volumes?
@@ -115,6 +121,7 @@ _   https://github.com/processing/processing/issues/3665
 _ fix red in sidebar, the squiggly line beneath code
 _ Error/warning location visualisation not updating when editor resizes
 _   https://github.com/processing/processing/issues/3619
+_ error/warning location is awkward when no scroll bar is in use
 _ show hover text when the mouse is over the 'debug' button
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
@@ -247,7 +254,6 @@ _ improve start time by populating sketchbook/libraries on threads
 _   https://github.com/processing/processing/issues/2945
 _ longer PR about sketchbook stuff, but closed
 _   https://github.com/processing/processing/pull/3178
-_ disable the Export button if no platforms selected on Export to Application
 
 
 help me
