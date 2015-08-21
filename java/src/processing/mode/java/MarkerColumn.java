@@ -222,12 +222,10 @@ public class MarkerColumn extends JPanel {
 	        for (LineMarker m : errorPoints) {
 	          if (Math.abs(y - m.getY()) < 3) {
 	            Problem p = m.getProblem();
-	            String msg = ((p.isError()
-	                ? Language.text("editor.status.error")
-	                    : Language.text("editor.status.warning")) + ": "
-	                    + p.getMessage());
-
-	            setToolTipText(msg);
+	            String kind = p.isError() ?
+	              Language.text("editor.status.error") :
+	              Language.text("editor.status.warning");
+	            setToolTipText(kind + ": " + p.getMessage());
 	            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	            break;
 	          }
