@@ -2901,6 +2901,20 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   /**
+   * Called by ErrorTable when a row is selected. Action taken is specific
+   * to each Mode, based on the object passed in.
+   */
+  public void errorTableClick(Object item) { }
+
+
+  public void errorTableDoubleClick(Object item) { }
+
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  /**
    * Show an error in the status bar.
    */
   public void statusError(String what) {

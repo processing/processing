@@ -14,9 +14,11 @@ import java.util.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-import javax.swing.table.TableModel;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -2559,10 +2561,118 @@ public class JavaEditor extends Editor {
 //  }
 
 
-  /** Updates the error table */
-  synchronized public boolean updateTable(final TableModel tableModel) {
-    return errorTable.updateTable(tableModel);
+  public XQErrorTable getErrorTable() {
+    return errorTable;
   }
+
+
+  public void errorTableClick(Object item) {
+    Problem p = (Problem) item;
+    errorCheckerService.scrollToErrorLine(p);
+  }
+
+
+  public void errorTableDoubleClick(Object item) {
+    Problem p = (Problem) item;
+
+//    MouseEvent evt = null;
+    String[] suggs = p.getImportSuggestions();
+    if (suggs != null && suggs.length > 0) {
+//      String t = p.getMessage() + "(Import Suggestions available)";
+//      FontMetrics fm = getFontMetrics(getFont());
+//      int x1 = fm.stringWidth(p.getMessage());
+//      int x2 = fm.stringWidth(t);
+//      if (evt.getX() > x1 && evt.getX() < x2) {
+      String[] list = p.getImportSuggestions();
+      String className = list[0].substring(list[0].lastIndexOf('.') + 1);
+      String[] temp = new String[list.length];
+      for (int i = 0; i < list.length; i++) {
+        temp[i] = "<html>Import '" +  className + "' <font color=#777777>(" + list[i] + ")</font></html>";
+      }
+      //        showImportSuggestion(temp, evt.getXOnScreen(), evt.getYOnScreen() - 3 * getFont().getSize());
+      Point mouse = MouseInfo.getPointerInfo().getLocation();
+      showImportSuggestion(temp, mouse.x, mouse.y);
+    }
+  }
+
+
+  JFrame frmImportSuggest;
+
+  private void showImportSuggestion(String[] list, int x, int y) {
+    if (frmImportSuggest != null) {
+//      frmImportSuggest.setVisible(false);
+//      frmImportSuggest = null;
+      return;
+    }
+    final JList<String> classList = new JList<String>(list);
+    classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    frmImportSuggest = new JFrame();
+
+    frmImportSuggest.setUndecorated(true);
+    frmImportSuggest.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    panel.setBackground(Color.WHITE);
+    frmImportSuggest.setBackground(Color.WHITE);
+    panel.add(classList);
+    JLabel label = new JLabel("<html><div alight = \"left\"><font size = \"2\"><br>(Click to insert)</font></div></html>");
+    label.setBackground(Color.WHITE);
+    label.setHorizontalTextPosition(SwingConstants.LEFT);
+    panel.add(label);
+    panel.validate();
+    frmImportSuggest.getContentPane().add(panel);
+    frmImportSuggest.pack();
+
+    classList.addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        if (classList.getSelectedValue() != null) {
+          try {
+            String t = classList.getSelectedValue().trim();
+            Messages.log(t);
+            int x = t.indexOf('(');
+            String impString = "import " + t.substring(x + 1, t.indexOf(')')) + ";\n";
+            int ct = getSketch().getCurrentCodeIndex();
+            getSketch().setCurrentCode(0);
+            getTextArea().getDocument().insertString(0, impString, null);
+            getSketch().setCurrentCode(ct);
+          } catch (BadLocationException ble) {
+            Messages.log("Failed to insert import");
+            ble.printStackTrace();
+          }
+        }
+        frmImportSuggest.setVisible(false);
+        frmImportSuggest.dispose();
+        frmImportSuggest = null;
+      }
+    });
+
+    frmImportSuggest.addWindowFocusListener(new WindowFocusListener() {
+
+      @Override
+      public void windowLostFocus(WindowEvent e) {
+        if (frmImportSuggest != null) {
+          frmImportSuggest.dispose();
+          frmImportSuggest = null;
+        }
+      }
+
+      @Override
+      public void windowGainedFocus(WindowEvent e) {
+
+      }
+    });
+
+    frmImportSuggest.setLocation(x, y);
+    frmImportSuggest.setBounds(x, y, 250, 100);
+    frmImportSuggest.pack();
+    frmImportSuggest.setVisible(true);
+  }
+
+
+//  /** Updates the error table */
+//  synchronized public boolean updateTable(final TableModel tableModel) {
+//    return errorTable.updateTable(tableModel);
+//  }
 
 
   /**

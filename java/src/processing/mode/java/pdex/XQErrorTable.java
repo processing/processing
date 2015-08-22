@@ -24,36 +24,36 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.event.*;
-import java.util.List;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.SwingWorker;
+import javax.swing.ToolTipManager;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
-import javax.swing.text.BadLocationException;
 
 import processing.app.Language;
 import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.ui.Editor;
-import processing.mode.java.JavaEditor;
 
 
 public class XQErrorTable extends JTable {
   Editor editor;
 
 	static final String[] columnNames = {
+	  "",
 	  Language.text("editor.footer.errors.problem"),
 	  Language.text("editor.footer.errors.tab"),
 	  Language.text("editor.footer.errors.line")
 	};
 
-	int[] columnWidths = { 400, 100, 50 };
+	int[] columnWidths = { Editor.LEFT_GUTTER, 400, 100, 50 };
 
 	/** Is the column being resized? */
 	private boolean columnResizing = false;
@@ -67,7 +67,30 @@ public class XQErrorTable extends JTable {
 	Color rowBgColor;
 
 
-	public XQErrorTable(final JavaEditor editor) {
+	/*
+	class Item {
+	  String message;
+	  String filename;
+	  int line;
+	}
+	*/
+
+
+	public void clear() {
+	  DefaultTableModel dtm = (DefaultTableModel) getModel();
+	  dtm.setRowCount(0);
+	}
+
+
+	public void append(Object data, String message, String filename, String line) {
+	  DefaultTableModel dtm = (DefaultTableModel) getModel();
+	  dtm.addRow(new Object[] { data, message, filename, line });
+	}
+
+
+	public XQErrorTable(final Editor editor) {
+	  super(new DefaultTableModel(columnNames, 0));
+
 	  this.editor = editor;
 	  JTableHeader header = getTableHeader();
 
@@ -85,19 +108,28 @@ public class XQErrorTable extends JTable {
 			//System.out.println("class is " + columnModel.getColumn(i).getClass());
 		}
 		*/
+//    DefaultTableModel tm = new DefaultTableModel(columnNames, 0);
 
 		addMouseListener(new MouseAdapter() {
 			@Override
 			synchronized public void mouseClicked(MouseEvent e) {
 				try {
 				  int row = ((XQErrorTable) e.getSource()).getSelectedRow();
-					editor.getErrorChecker().scrollToErrorLine(row);
+				  Object data = getModel().getValueAt(row, 0);
+				  int clickCount = e.getClickCount();
+				  if (clickCount == 1) {
+				    editor.errorTableClick(data);
+				  } else if (clickCount > 1) {
+				    editor.errorTableDoubleClick(data);
+				  }
+//					editor.getErrorChecker().scrollToErrorLine(row);
 				} catch (Exception e1) {
 					Messages.log("Exception XQErrorTable mouseReleased " +  e);
 				}
 			}
 		});
 
+		/*
 		addMouseMotionListener(new MouseMotionAdapter() {
       @Override
       public void mouseMoved(MouseEvent evt) {
@@ -128,6 +160,7 @@ public class XQErrorTable extends JTable {
         }
       }
     });
+    */
 
 		header.setReorderingAllowed(false);
 
@@ -207,79 +240,6 @@ public class XQErrorTable extends JTable {
 	}
 
 
-	JFrame frmImportSuggest;
-
-	private void showImportSuggestion(String[] list, int x, int y) {
-	  if (frmImportSuggest != null) {
-//	    frmImportSuggest.setVisible(false);
-//	    frmImportSuggest = null;
-	    return;
-	  }
-	  final JList<String> classList = new JList<String>(list);
-    classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    frmImportSuggest = new JFrame();
-
-    frmImportSuggest.setUndecorated(true);
-    frmImportSuggest.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    JPanel panel = new JPanel();
-    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-    panel.setBackground(Color.WHITE);
-    frmImportSuggest.setBackground(Color.WHITE);
-    panel.add(classList);
-    JLabel label = new JLabel("<html><div alight = \"left\"><font size = \"2\"><br>(Click to insert)</font></div></html>");
-    label.setBackground(Color.WHITE);
-    label.setHorizontalTextPosition(SwingConstants.LEFT);
-    panel.add(label);
-    panel.validate();
-    frmImportSuggest.getContentPane().add(panel);
-    frmImportSuggest.pack();
-
-    classList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        if (classList.getSelectedValue() != null) {
-          try {
-            String t = classList.getSelectedValue().trim();
-            Messages.log(t);
-            int x = t.indexOf('(');
-            String impString = "import " + t.substring(x + 1, t.indexOf(')')) + ";\n";
-            int ct = editor.getSketch().getCurrentCodeIndex();
-            editor.getSketch().setCurrentCode(0);
-            editor.getTextArea().getDocument().insertString(0, impString, null);
-            editor.getSketch().setCurrentCode(ct);
-          } catch (BadLocationException ble) {
-            Messages.log("Failed to insert import");
-            ble.printStackTrace();
-          }
-        }
-        frmImportSuggest.setVisible(false);
-        frmImportSuggest.dispose();
-        frmImportSuggest = null;
-      }
-    });
-
-    frmImportSuggest.addWindowFocusListener(new WindowFocusListener() {
-
-      @Override
-      public void windowLostFocus(WindowEvent e) {
-        if (frmImportSuggest != null) {
-          frmImportSuggest.dispose();
-          frmImportSuggest = null;
-        }
-      }
-
-      @Override
-      public void windowGainedFocus(WindowEvent e) {
-
-      }
-    });
-
-    frmImportSuggest.setLocation(x, y);
-    frmImportSuggest.setBounds(x, y, 250, 100);
-    frmImportSuggest.pack();
-    frmImportSuggest.setVisible(true);
-	}
-
-
 	// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -338,7 +298,11 @@ public class XQErrorTable extends JTable {
 	      setForeground(textColor);
 	      setBackground(bgColor);
 	    }
-	    setText(value == null ? "" : value.toString());
+	    if (column == 0 || value == null) {
+	      setText("");
+	    } else {
+	      setText(value.toString());
+	    }
 	    return this;
 	  }
 	}

@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
@@ -919,20 +918,15 @@ public class ErrorCheckerService implements Runnable {
    */
   public void updateErrorTable() {
     try {
-      String[][] errorData = new String[problemsList.size()][3];
-      int index = 0;
+      XQErrorTable table = editor.getErrorTable();
+      table.clear();
+
+//      String[][] errorData = new String[problemsList.size()][3];
+//      int index = 0;
 //      for (int i = 0; i < problemsList.size(); i++) {
+      Sketch sketch = editor.getSketch();
       for (Problem p : problemsList) {
-        errorData[index][0] = p.getMessage();
-        errorData[index][1] = editor.getSketch().getCode(p.getTabIndex()).getPrettyName();
-        errorData[index][2] = Integer.toString(p.getLineNumber() + 1);
-        // Added +1 because lineNumbers internally are 0-indexed
-
-//        //TODO: This is temporary
-//        if (tempErrorLog.size() < 200) {
-//          tempErrorLog.put(p.getMessage(), p.getIProblem());
-//        }
-
+        String message = p.getMessage();
         if (JavaMode.importSuggestEnabled) {
           if (p.getIProblem().getID() == IProblem.UndefinedType) {
             String[] args = p.getIProblem().getArguments();
@@ -941,18 +935,29 @@ public class ErrorCheckerService implements Runnable {
               String[] si = astGenerator.getSuggestImports(missingClass);
               if (si != null && si.length > 0) {
                 p.setImportSuggestions(si);
-                errorData[index][0] = "<html>" + p.getMessage() +
-                  " (<font color=#0000ff><u>Import Suggestions available</u></font>)</html>";
+//                errorData[index][0] = "<html>" + p.getMessage() +
+//                  " (<font color=#0000ff><u>Import Suggestions available</u></font>)</html>";
+                message += " (click for suggested libraries)";
               }
             }
           }
         }
-        index++;
+
+        table.append(p, message,
+                     sketch.getCode(p.getTabIndex()).getPrettyName(),
+                     Integer.toString(p.getLineNumber() + 1));
+        // Added +1 because lineNumbers internally are 0-indexed
+
+//        //TODO: This is temporary
+//        if (tempErrorLog.size() < 200) {
+//          tempErrorLog.put(p.getMessage(), p.getIProblem());
+//        }
+
       }
 
-      DefaultTableModel tm =
-        new DefaultTableModel(errorData, XQErrorTable.columnNames);
-      editor.updateTable(tm);
+//      DefaultTableModel tm =
+//        new DefaultTableModel(errorData, XQErrorTable.columnNames);
+//      editor.updateTable(tm);
 
     } catch (Exception e) {
       Messages.loge("Exception at updateErrorTable()", e);
