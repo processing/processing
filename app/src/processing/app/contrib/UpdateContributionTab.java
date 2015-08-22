@@ -146,7 +146,7 @@ public class UpdateContributionTab extends ContributionTab {
 //          return super.isRowSelected(row);
 //        }
       };
-      JScrollPane scrollPane = new JScrollPane(table);
+      scrollPane = new JScrollPane(table);
       table.setFillsViewportHeight(true);
       table.setSelectionBackground(new Color(0xe0fffd));
       table.setSelectionForeground(table.getForeground());
