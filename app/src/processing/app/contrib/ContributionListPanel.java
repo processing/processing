@@ -111,7 +111,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     table.setRowHeight(28);
     table.setRowMargin(6);
     table.getColumnModel().setColumnMargin(0);
-    table.getColumnModel().getColumn(0).setMaxWidth(60);
+    table.getColumnModel().getColumn(0).setMaxWidth(ContributionManagerDialog.STATUS_WIDTH);
     table.getColumnModel().getColumn(2).setMinWidth(ContributionManagerDialog.AUTHOR_WIDTH);
     table.getColumnModel().getColumn(2).setMaxWidth(ContributionManagerDialog.AUTHOR_WIDTH);
     table.setShowGrid(false);
