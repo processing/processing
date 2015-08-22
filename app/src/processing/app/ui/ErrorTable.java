@@ -47,7 +47,7 @@ public class ErrorTable extends JTable {
   Editor editor;
 
 	static final String[] columnNames = {
-	  "",
+	  "",  // the blank column used for spacing
 	  Language.text("editor.footer.errors.problem"),
 	  Language.text("editor.footer.errors.tab"),
 	  Language.text("editor.footer.errors.line")

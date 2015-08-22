@@ -939,7 +939,7 @@ public class ErrorCheckerService implements Runnable {
                 p.setImportSuggestions(si);
 //                errorData[index][0] = "<html>" + p.getMessage() +
 //                  " (<font color=#0000ff><u>Import Suggestions available</u></font>)</html>";
-                message += " (click for suggested libraries)";
+                message += " (double-click for suggestions)";
               }
             }
           }
