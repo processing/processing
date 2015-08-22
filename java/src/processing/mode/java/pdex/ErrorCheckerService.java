@@ -956,6 +956,7 @@ public class ErrorCheckerService implements Runnable {
 //        }
 
       }
+//      table.updateColumns();
 
 //      DefaultTableModel tm =
 //        new DefaultTableModel(errorData, XQErrorTable.columnNames);

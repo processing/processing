@@ -194,7 +194,7 @@ public class JavaEditor extends Editor {
   @Override
   public EditorFooter createFooter() {
     EditorFooter footer = super.createFooter();
-    addErrorTable();
+    addErrorTable(footer);
     return footer;
   }
 
