@@ -141,3 +141,12 @@ editor.column.warning.color = #ffc30e
 # not in use?
 #breakpoint.bgcolor = #f0f0f0
 #currentline.bgcolor = #ffff96
+
+errors.header.font = processing.sans,plain,12
+errors.header.bgcolor = #EBEBEB
+errors.header.fgcolor = #484848
+errors.row.font = processing.sans,plain,12
+errors.row.fgcolor = #484848
+errors.row.bgcolor = #FFFFFF
+errors.selection.fgcolor = #242424
+errors.selection.bgcolor = #E5E5E5

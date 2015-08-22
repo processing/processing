@@ -43,6 +43,15 @@ X Right-clicking popup menu closes instead of shifting its location
 X   https://github.com/processing/processing/issues/3649
 X Use 1x or 2x icons in the CM
 X   https://github.com/processing/processing/pull/3681
+X Shifted the text right a little bit
+X   https://github.com/processing/processing/pull/3696
+X No underline and no blue color
+X   https://github.com/processing/processing/pull/3695
+X Update buttom enabled when updates are present and background is set
+_   https://github.com/processing/processing/issues/3614
+X   https://github.com/processing/processing/pull/3694
+X Make auto-format into a compund edit
+X   https://github.com/processing/processing/pull/3693
 
 earlier/cleaning
 X modify build to insert these after antlr run:

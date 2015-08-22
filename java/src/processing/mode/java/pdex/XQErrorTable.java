@@ -21,6 +21,8 @@
 package processing.mode.java.pdex;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.event.*;
@@ -30,14 +32,15 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
 
 import processing.app.Language;
 import processing.app.Messages;
+import processing.app.Mode;
 import processing.app.ui.Editor;
-import processing.app.ui.Toolkit;
 import processing.mode.java.JavaEditor;
 
 
@@ -55,21 +58,33 @@ public class XQErrorTable extends JTable {
 	/** Is the column being resized? */
 	private boolean columnResizing = false;
 
+	Font headerFont;
+	Color headerColor;
+	Color headerBgColor;
+
+	Font rowFont;
+	Color rowColor;
+	Color rowBgColor;
+
 
 	public XQErrorTable(final JavaEditor editor) {
 	  this.editor = editor;
 	  JTableHeader header = getTableHeader();
 
-	  // Try to make things a little less awful until I find time to finish it
-	  Font font = Toolkit.getSansFont(12, Font.PLAIN);
-	  setFont(font);
-	  header.setFont(font);
-	  //setBorder(new EmptyBorder(0, Editor.LEFT_GUTTER, 0, 0));  // no effect
+	  Mode mode = editor.getMode();
+    header.setDefaultRenderer(new GradyHeaderRenderer(mode));
+    setDefaultRenderer(Object.class, new GradyRowRenderer(mode));
+    //setShowGrid(false);
+    setIntercellSpacing(new Dimension(0, 0));
 
+    // this did nothing, no columns existed yet
+    /*
 	  TableColumnModel columnModel = getColumnModel();
 		for (int i = 0; i < columnModel.getColumnCount(); i++) {
 			columnModel.getColumn(i).setPreferredWidth(columnWidths[i]);
+			//System.out.println("class is " + columnModel.getColumn(i).getClass());
 		}
+		*/
 
 		addMouseListener(new MouseAdapter() {
 			@Override
@@ -118,7 +133,7 @@ public class XQErrorTable extends JTable {
 
 		// Handles the resizing of columns. When mouse press is detected on
 		// table header, Stop updating the table, store new values of column
-		// widths,and resume updating. Updating is disabled as long as
+		// widths, and resume updating. Updating is disabled as long as
 		// columnResizing is true
 		header.addMouseListener(new MouseAdapter() {
 
@@ -150,7 +165,6 @@ public class XQErrorTable extends JTable {
 
 	/**
 	 * Updates table contents with new data
-	 * @param tableModel - TableModel
 	 * @return boolean - If table data was updated
 	 */
 	synchronized public boolean updateTable(final TableModel tableModel) {
@@ -263,5 +277,69 @@ public class XQErrorTable extends JTable {
     frmImportSuggest.setBounds(x, y, 250, 100);
     frmImportSuggest.pack();
     frmImportSuggest.setVisible(true);
+	}
+
+
+	// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+	static class GradyHeaderRenderer extends JLabel implements TableCellRenderer {
+
+	  public GradyHeaderRenderer(Mode mode) {
+	    setFont(mode.getFont("errors.header.font"));
+	    setAlignmentX(LEFT_ALIGNMENT);
+
+	    setForeground(mode.getColor("errors.header.fgcolor"));
+	    setBackground(mode.getColor("errors.header.bgcolor"));
+	    setOpaque(true);
+	  }
+
+	  @Override
+	  public Component getTableCellRendererComponent(JTable table, Object value,
+	                                                 boolean selected,
+	                                                 boolean focused,
+	                                                 int row, int column) {
+	    setText(value == null ? "" : value.toString());
+	    return this;
+	  }
+	}
+
+
+	// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+	static class GradyRowRenderer extends JLabel implements TableCellRenderer {
+	  Color textColor;
+	  Color bgColor;
+	  Color textColorSelected;
+	  Color bgColorSelected;
+
+	  public GradyRowRenderer(Mode mode) {
+	    setFont(mode.getFont("errors.row.font"));
+	    setAlignmentX(LEFT_ALIGNMENT);
+
+	    textColor = mode.getColor("errors.row.fgcolor");
+	    bgColor = mode.getColor("errors.row.bgcolor");
+	    textColorSelected = mode.getColor("errors.selection.fgcolor");
+	    bgColorSelected = mode.getColor("errors.selection.bgcolor");
+	    setOpaque(true);
+	  }
+
+	  @Override
+	  public Component getTableCellRendererComponent(JTable table, Object value,
+	                                                 boolean selected,
+	                                                 boolean focused,
+	                                                 int row, int column) {
+	    setBackground(Color.RED);
+	    if (selected) {
+	      setForeground(textColorSelected);
+	      setBackground(bgColorSelected);
+	    } else {
+	      setForeground(textColor);
+	      setBackground(bgColor);
+	    }
+	    setText(value == null ? "" : value.toString());
+	    return this;
+	  }
 	}
 }
