@@ -185,6 +185,7 @@ class StatusPanel extends JPanel {
     installButton.setEnabled(false);
     updateButton.setEnabled(false);
     removeButton.setEnabled(false);
+    updateLabel.setVisible(true);
 
     layout.setHonorsVisibility(updateLabel, false); // Makes the label take up space even though not visible
 
@@ -266,7 +267,9 @@ class StatusPanel extends JPanel {
 
     removeButton.setEnabled(panel.getContrib().isInstalled());
     progressBarPanel.add(panel.installProgressBar);
-    if (panel.installProgressBar.isEnabled()) {
+    progressBarPanel.setVisible(false);
+    updateLabel.setVisible(true);
+    if (panel.isUpdateInProgress || panel.isInstallInProgress || panel.isRemoveInProgress) {
       progressBarPanel.setVisible(true);
       updateLabel.setVisible(false);
       progressBarPanel.repaint();
