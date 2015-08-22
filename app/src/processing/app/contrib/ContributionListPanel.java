@@ -295,7 +295,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       JLabel label = new JLabel();
       if (column == 0) {
         Icon icon = null;
-        label.setBorder(BorderFactory.createEmptyBorder(2, 17, 0, 0));
         label.setFont(Toolkit.getSansFont(14, Font.PLAIN));
         if (contribution.isInstalled()) {
           icon = Toolkit.getLibIcon("manager/up-to-date.png");
@@ -307,6 +306,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           }
         }
         label.setIcon(icon);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
         if (isSelected) {
           label.setBackground(new Color(0xe0fffd));
         }
