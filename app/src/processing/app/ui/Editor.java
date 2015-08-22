@@ -433,7 +433,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   public EditorFooter createFooter() {
     EditorFooter ef = new EditorFooter(this);
-    addConsole();  // console is required
+    console = new EditorConsole(this);
+    ef.addPanel(console, Language.text("editor.footer.console"), "/lib/footer/console");
     return ef;
 
     /*
@@ -456,13 +457,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  public void addConsole() {
-    console = new EditorConsole(this);
-    footer.addPanel(console, Language.text("editor.footer.console"), "/lib/footer/console");
-  }
-
-
-  public void addErrorTable() {
+  public void addErrorTable(EditorFooter footer) {
     JScrollPane errorTableScrollPane = new JScrollPane();
     errorTable = new ErrorTable(this);
     errorTableScrollPane.setBorder(BorderFactory.createEmptyBorder());
