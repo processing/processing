@@ -18,7 +18,7 @@
   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-package processing.mode.java.pdex;
+package processing.app.ui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -43,7 +43,7 @@ import processing.app.Mode;
 import processing.app.ui.Editor;
 
 
-public class XQErrorTable extends JTable {
+public class ErrorTable extends JTable {
   Editor editor;
 
 	static final String[] columnNames = {
@@ -67,28 +67,7 @@ public class XQErrorTable extends JTable {
 	Color rowBgColor;
 
 
-	/*
-	class Item {
-	  String message;
-	  String filename;
-	  int line;
-	}
-	*/
-
-
-	public void clear() {
-	  DefaultTableModel dtm = (DefaultTableModel) getModel();
-	  dtm.setRowCount(0);
-	}
-
-
-	public void append(Object data, String message, String filename, String line) {
-	  DefaultTableModel dtm = (DefaultTableModel) getModel();
-	  dtm.addRow(new Object[] { data, message, filename, line });
-	}
-
-
-	public XQErrorTable(final Editor editor) {
+	public ErrorTable(final Editor editor) {
 	  super(new DefaultTableModel(columnNames, 0));
 
 	  this.editor = editor;
@@ -114,7 +93,7 @@ public class XQErrorTable extends JTable {
 			@Override
 			synchronized public void mouseClicked(MouseEvent e) {
 				try {
-				  int row = ((XQErrorTable) e.getSource()).getSelectedRow();
+				  int row = ((ErrorTable) e.getSource()).getSelectedRow();
 				  Object data = getModel().getValueAt(row, 0);
 				  int clickCount = e.getClickCount();
 				  if (clickCount == 1) {
@@ -188,6 +167,18 @@ public class XQErrorTable extends JTable {
 
 		ToolTipManager.sharedInstance().registerComponent(this);
 	}
+
+
+	public void clearRows() {
+    DefaultTableModel dtm = (DefaultTableModel) getModel();
+    dtm.setRowCount(0);
+  }
+
+
+  public void addRow(Object data, String message, String filename, String line) {
+    DefaultTableModel dtm = (DefaultTableModel) getModel();
+    dtm.addRow(new Object[] { data, message, filename, line });
+  }
 
 
 	@Override

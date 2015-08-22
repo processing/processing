@@ -110,7 +110,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   protected JSplitPane splitPane;
   protected EditorFooter footer;
   protected EditorConsole console;
-//  protected EditorLineStatus lineStatus;
+  protected ErrorTable errorTable;
 
   // currently opened program
   protected Sketch sketch;
@@ -433,8 +433,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   public EditorFooter createFooter() {
     EditorFooter ef = new EditorFooter(this);
-    console = new EditorConsole(this);
-    ef.addPanel(console, Language.text("editor.footer.console"), "/lib/footer/console");
+    addConsole();  // console is required
     return ef;
 
     /*
@@ -454,6 +453,21 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    consolePanel.add(lineStatus, BorderLayout.SOUTH);
     return panel;
     */
+  }
+
+
+  public void addConsole() {
+    console = new EditorConsole(this);
+    footer.addPanel(console, Language.text("editor.footer.console"), "/lib/footer/console");
+  }
+
+
+  public void addErrorTable() {
+    JScrollPane errorTableScrollPane = new JScrollPane();
+    errorTable = new ErrorTable(this);
+    errorTableScrollPane.setBorder(BorderFactory.createEmptyBorder());
+    errorTableScrollPane.setViewportView(errorTable);
+    footer.addPanel(errorTableScrollPane, Language.text("editor.footer.errors"), "/lib/footer/error");
   }
 
 
@@ -2898,6 +2912,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public ErrorTable getErrorTable() {
+    return errorTable;
+  }
 
 
   /**

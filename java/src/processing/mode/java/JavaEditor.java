@@ -14,10 +14,7 @@ import java.util.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
+import javax.swing.event.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
@@ -26,23 +23,11 @@ import org.eclipse.jdt.core.compiler.IProblem;
 import processing.core.PApplet;
 import processing.data.StringList;
 import processing.app.*;
-import processing.app.contrib.AvailableContribution;
-import processing.app.contrib.Contribution;
-import processing.app.contrib.ContributionListing;
-import processing.app.contrib.ContributionManager;
-import processing.app.contrib.ToolContribution;
+import processing.app.contrib.*;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
-import processing.app.ui.About;
-import processing.app.ui.ColorChooser;
-import processing.app.ui.Editor;
-import processing.app.ui.EditorException;
-import processing.app.ui.EditorFooter;
-import processing.app.ui.EditorHeader;
-import processing.app.ui.EditorState;
-import processing.app.ui.EditorToolbar;
+import processing.app.ui.*;
 import processing.app.ui.Toolkit;
-import processing.app.ui.Welcome;
 import processing.mode.java.debug.LineBreakpoint;
 import processing.mode.java.debug.LineHighlight;
 import processing.mode.java.debug.LineID;
@@ -51,7 +36,6 @@ import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.ErrorMessageSimplifier;
 import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.Problem;
-import processing.mode.java.pdex.XQErrorTable;
 import processing.mode.java.runner.Runner;
 import processing.mode.java.tweak.ColorControlBox;
 import processing.mode.java.tweak.Handle;
@@ -87,8 +71,6 @@ public class JavaEditor extends Editor {
 
   private MarkerColumn errorColumn;
 
-  protected JScrollPane errorTableScrollPane;
-  protected XQErrorTable errorTable;
   static final int ERROR_TAB_INDEX = 0;
 
   private boolean hasJavaTabs;
@@ -212,17 +194,7 @@ public class JavaEditor extends Editor {
   @Override
   public EditorFooter createFooter() {
     EditorFooter footer = super.createFooter();
-
-    // Adding Error Table in a scroll pane
-    errorTableScrollPane = new JScrollPane();
-    errorTable = new XQErrorTable(this);
-    // errorTableScrollPane.setBorder(new EmptyBorder(2, 2, 2, 2));
-//    errorTableScrollPane.setBorder(new EtchedBorder());
-    errorTableScrollPane.setBorder(BorderFactory.createEmptyBorder());
-//    errorTableScrollPane.setBorder(new EmptyBorder(0, Editor.LEFT_GUTTER, 0, 0));
-    errorTableScrollPane.setViewportView(errorTable);
-    footer.addPanel(errorTableScrollPane, Language.text("editor.footer.errors"), "/lib/footer/error");
-
+    addErrorTable();
     return footer;
   }
 
@@ -2561,11 +2533,6 @@ public class JavaEditor extends Editor {
 //  }
 
 
-  public XQErrorTable getErrorTable() {
-    return errorTable;
-  }
-
-
   public void errorTableClick(Object item) {
     Problem p = (Problem) item;
     errorCheckerService.scrollToErrorLine(p);
@@ -2680,7 +2647,7 @@ public class JavaEditor extends Editor {
    * the error button at the bottom of the PDE
    */
   public void updateErrorToggle() {
-    footer.setNotification(errorTableScrollPane,
+    footer.setNotification(errorTable.getParent(),  //errorTableScrollPane,
                            JavaMode.errorCheckEnabled &&
                            errorCheckerService.hasErrors());
 //    String title = Language.text("editor.footer.errors");

@@ -56,6 +56,7 @@ import processing.app.Util;
 import processing.app.syntax.SyntaxDocument;
 import processing.app.ui.Editor;
 import processing.app.ui.EditorStatus;
+import processing.app.ui.ErrorTable;
 import processing.core.PApplet;
 import processing.mode.java.JavaMode;
 import processing.mode.java.JavaEditor;
@@ -918,8 +919,8 @@ public class ErrorCheckerService implements Runnable {
    */
   public void updateErrorTable() {
     try {
-      XQErrorTable table = editor.getErrorTable();
-      table.clear();
+      ErrorTable table = editor.getErrorTable();
+      table.clearRows();
 
 //      String[][] errorData = new String[problemsList.size()][3];
 //      int index = 0;
@@ -943,7 +944,7 @@ public class ErrorCheckerService implements Runnable {
           }
         }
 
-        table.append(p, message,
+        table.addRow(p, message,
                      sketch.getCode(p.getTabIndex()).getPrettyName(),
                      Integer.toString(p.getLineNumber() + 1));
         // Added +1 because lineNumbers internally are 0-indexed
