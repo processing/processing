@@ -194,6 +194,7 @@ public class ContributionManagerDialog {
           updateTabPanel.setBackground(new Color(0xe0fffd));
           updateTabLabel.setForeground(Color.BLACK);
         }
+        getActiveTab().contributionListPanel.scrollPane.requestFocusInWindow();
 //        // When the tab is changed update status to the current selected panel
 //        ContributionPanel currentPanel = getActiveTab().contributionListPanel
 //          .getSelectedPanel();
