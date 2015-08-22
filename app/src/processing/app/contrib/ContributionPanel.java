@@ -111,8 +111,8 @@ class ContributionPanel extends JPanel {
   private ActionListener undoActionListener;
 
   boolean isUpdateInProgress;
-  private boolean isInstallInProgress;
-  private boolean isRemoveInProgress;
+  boolean isInstallInProgress;
+  boolean isRemoveInProgress;
 
   StringBuilder description;
 
