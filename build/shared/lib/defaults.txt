@@ -355,3 +355,5 @@ pdex.writeErrorLogs=false
 pdex.completion = false
 # Trigger happy version of completion that fires more often
 pdex.completion.trigger = false
+# Suggest libraries to import when a class is undefined/unavailable
+pdex.suggest.imports = true

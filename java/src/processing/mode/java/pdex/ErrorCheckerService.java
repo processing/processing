@@ -50,6 +50,7 @@ import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 
 import processing.app.Library;
 import processing.app.Messages;
+import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.Util;
@@ -364,7 +365,7 @@ public class ErrorCheckerService implements Runnable {
 
 
   protected void checkForMissingImports() {
-    if (JavaMode.importSuggestEnabled) {
+    if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
       for (Problem p : problemsList) {
         if(p.getIProblem().getID() == IProblem.UndefinedType) {
           String args[] = p.getIProblem().getArguments();
@@ -928,7 +929,7 @@ public class ErrorCheckerService implements Runnable {
       Sketch sketch = editor.getSketch();
       for (Problem p : problemsList) {
         String message = p.getMessage();
-        if (JavaMode.importSuggestEnabled) {
+        if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
           if (p.getIProblem().getID() == IProblem.UndefinedType) {
             String[] args = p.getIProblem().getArguments();
             if (args.length > 0) {
