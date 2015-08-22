@@ -111,7 +111,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     table.setRowHeight(28);
     table.setRowMargin(6);
     table.getColumnModel().setColumnMargin(0);
-    table.getColumnModel().getColumn(0).setMaxWidth(60);
+    table.getColumnModel().getColumn(0).setMaxWidth(ContributionManagerDialog.STATUS_WIDTH);
     table.getColumnModel().getColumn(2).setMinWidth(ContributionManagerDialog.AUTHOR_WIDTH);
     table.getColumnModel().getColumn(2).setMaxWidth(ContributionManagerDialog.AUTHOR_WIDTH);
     table.setShowGrid(false);
@@ -295,7 +295,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       JLabel label = new JLabel();
       if (column == 0) {
         Icon icon = null;
-        label.setBorder(BorderFactory.createEmptyBorder(2, 17, 0, 0));
         label.setFont(Toolkit.getSansFont(14, Font.PLAIN));
         if (contribution.isInstalled()) {
           icon = Toolkit.getLibIcon("manager/up-to-date-" + ContributionManagerDialog.iconVer + "x.png");
@@ -307,6 +306,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           }
         }
         label.setIcon(icon);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
         if (isSelected) {
           label.setBackground(new Color(0xe0fffd));
         }

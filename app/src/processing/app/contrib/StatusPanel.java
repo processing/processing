@@ -67,6 +67,7 @@ class StatusPanel extends JPanel {
     this.contributionTab = contributionTab;
 
     iconLabel = new JLabel();
+    iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
     label = new JTextPane();
     label.setEditable(false);
@@ -151,8 +152,8 @@ class StatusPanel extends JPanel {
 
     layout.setHorizontalGroup(layout
       .createSequentialGroup()
-      .addGap((ContributionManagerDialog.STATUS_WIDTH - ContributionManagerDialog.ICON_WIDTH))
-      .addComponent(iconLabel, ContributionManagerDialog.ICON_WIDTH, ContributionManagerDialog.ICON_WIDTH, ContributionManagerDialog.ICON_WIDTH)
+      .addGap(0)
+      .addComponent(iconLabel, ContributionManagerDialog.STATUS_WIDTH, ContributionManagerDialog.STATUS_WIDTH, ContributionManagerDialog.STATUS_WIDTH)
       .addGap(0)
       .addComponent(label, labelWidth, labelWidth, labelWidth)
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
