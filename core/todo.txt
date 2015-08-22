@@ -22,6 +22,14 @@ X   https://github.com/processing/processing/pull/3686
 X   added note about AIOOBE seen earlier
 X Update LowLevelGL to use VBOs
 X   https://github.com/processing/processing-docs/pull/289
+X Remove legacy GL functions from PGL
+X   https://github.com/processing/processing/issues/3674
+X   https://github.com/processing/processing/pull/3691
+X   https://github.com/processing/processing/issues/3671
+X   https://github.com/processing/processing/issues/3621
+X "Internal graphics not initialized yet"
+X   https://github.com/processing/processing/issues/3690
+X   https://github.com/processing/processing/pull/3692
 
 cleaning
 X How do images behave when pixelDensity(2) is set?

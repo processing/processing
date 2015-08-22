@@ -45,7 +45,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
-
 import processing.core.*;
 
 
@@ -679,7 +678,6 @@ public class PSurfaceFX implements PSurface {
   }
 
 
-  @SuppressWarnings("deprecation")
   protected void fxKeyEvent(javafx.scene.input.KeyEvent fxEvent) {
     int action = 0;
     EventType<? extends KeyEvent> et = fxEvent.getEventType();
@@ -714,6 +712,8 @@ public class PSurfaceFX implements PSurface {
                                                    keyChar, keyCode));
   }
 
+
+  @SuppressWarnings("deprecation")
   private int getKeyCode(KeyEvent fxEvent) {
     if (fxEvent.getEventType() == KeyEvent.KEY_TYPED) {
       return 0;
@@ -723,10 +723,14 @@ public class PSurfaceFX implements PSurface {
     switch (kc) {
       case ALT_GRAPH:
         return PConstants.ALT;
+      default:
+        break;
     }
     return kc.impl_getCode();
   }
 
+
+  @SuppressWarnings("deprecation")
   private char getKeyChar(KeyEvent fxEvent) {
     if (fxEvent.getEventType() == KeyEvent.KEY_TYPED) {
       return fxEvent.getCharacter().charAt(0);
@@ -779,9 +783,9 @@ public class PSurfaceFX implements PSurface {
         return PConstants.CODED;
       case ENTER:
         return '\n';
+      default:
+        break;
     }
-
     return kc.impl_getChar().charAt(0);
   }
-
 }
