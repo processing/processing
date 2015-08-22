@@ -243,9 +243,7 @@ class StatusPanel extends JPanel {
       latestVersion = "Update";
     }
 
-    if (currentVersion != null) {
-      currentVersion = "Version " + currentVersion;
-    } else {
+    if (currentVersion == null) {
       currentVersion = "";
     }
 
