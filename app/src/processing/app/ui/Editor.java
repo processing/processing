@@ -2207,6 +2207,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       if (formattedText.equals(source)) {
         statusNotice(Language.text("editor.status.autoformat.no_changes"));
       } else {
+        startCompoundEdit();
         // replace with new bootiful text
         // selectionEnd hopefully at least in the neighborhood
         int scrollPos = textarea.getVerticalScrollPosition();
@@ -2227,6 +2228,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           textarea.setVerticalScrollPosition(scrollPos);
 //          }
         }
+        stopCompoundEdit();
         getSketch().setModified(true);
         // mark as finished
         statusNotice(Language.text("editor.status.autoformat.finished"));
