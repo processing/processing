@@ -2216,11 +2216,23 @@ public abstract class Editor extends JFrame implements RunnerListener {
       if (formattedText.equals(source)) {
         statusNotice(Language.text("editor.status.autoformat.no_changes"));
       } else {
+        /*
+         * Call endTextEditHistory() before starting a new CompoundEdit,
+         * because there's a timer that's possibly set off for 3 seconds after
+         * which endTextEditHistory() is called, which means that things get
+         * messed up. Hence, manually call this method so that auto-format gets
+         * undone in one fell swoop if the user calls auto-formats within 3
+         * seconds of typing in the last character. Then start a new compound
+         * edit so that the auto-format can be undone in one go.
+         * (Refer to issue #3003)
+         */
+        endTextEditHistory();
         startCompoundEdit();
+
         // replace with new bootiful text
         // selectionEnd hopefully at least in the neighborhood
         int scrollPos = textarea.getVerticalScrollPosition();
-        setText(formattedText);
+        textarea.setText(formattedText);
         setSelection(selectionEnd, selectionEnd);
 
         // Put the scrollbar position back, otherwise it jumps on each format.
