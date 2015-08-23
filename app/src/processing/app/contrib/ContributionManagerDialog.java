@@ -373,11 +373,11 @@ public class ContributionManagerDialog {
 //                                    boolean isSelected) {
 //      return 0;
 //    }
-//    @Override
-//    protected int getTabLabelShiftY(int tabPlacement, int tabIndex,
-//                                    boolean isSelected) {
-//      return 3;
-//    }
+    @Override
+    protected int getTabLabelShiftY(int tabPlacement, int tabIndex,
+                                    boolean isSelected) {
+      return 1;
+    }
 //    @Override
 //    protected void paintTab(Graphics g, int tabPlacement,
 //                            Rectangle[] rects, int tabIndex,
