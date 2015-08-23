@@ -1700,24 +1700,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  /**
-   * Called to update the text but not switch to a different set of code
-   * (which would affect the undo manager).
-   */
-//  public void setText2(String what, int start, int stop) {
-//    beginCompoundEdit();
-//    textarea.setText(what);
-//    endCompoundEdit();
-//
-//    // make sure that a tool isn't asking for a bad location
-//    start = Math.max(0, Math.min(start, textarea.getDocumentLength()));
-//    stop = Math.max(0, Math.min(start, textarea.getDocumentLength()));
-//    textarea.select(start, stop);
-//
-//    textarea.requestFocus();  // get the caret blinking
-//  }
-
-
   public String getSelectedText() {
     return textarea.getSelectedText();
   }
@@ -1828,9 +1810,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // seconds of typing in the last character. Then start a new compound
     // edit so that the auto-format can be undone in one go.
     // https://github.com/processing/processing/issues/3003
-    endTextEditHistory();
+    endTextEditHistory();  // also calls stopCompoundEdit()
 
-    stopCompoundEdit();
+    //stopCompoundEdit();
     compoundEdit = new CompoundEdit();
     caretUndoStack.push(textarea.getCaretPosition());
     caretRedoStack.clear();
@@ -2130,10 +2112,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
       if (formattedText.equals(source)) {
         statusNotice(Language.text("editor.status.autoformat.no_changes"));
-      } else {
-        startCompoundEdit();
 
-        // replace with new bootiful text
+      } else {  // replace with new bootiful text
+        startCompoundEdit();
         // selectionEnd hopefully at least in the neighborhood
         int scrollPos = textarea.getVerticalScrollPosition();
         textarea.setText(formattedText);
@@ -2144,18 +2125,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
         // a more complicated workaround here is fairly pointless.
         // http://code.google.com/p/processing/issues/detail?id=1533
         if (scrollPos != textarea.getVerticalScrollPosition()) {
-//          boolean wouldBeVisible =
-//            scrollPos >= textarea.getFirstLine() &&
-//            scrollPos < textarea.getLastLine();
-//
-//          // if it was visible, and now it's not, then allow the scroll
-//          if (!(wasVisible && !wouldBeVisible)) {
           textarea.setVerticalScrollPosition(scrollPos);
-//          }
         }
         stopCompoundEdit();
-        getSketch().setModified(true);
-        // mark as finished
+        sketch.setModified(true);
         statusNotice(Language.text("editor.status.autoformat.finished"));
       }
 
