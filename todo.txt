@@ -18,8 +18,8 @@ contribs
 X Undo does not move to the correct location in the editor window
 X   https://github.com/processing/processing/issues/707
 X   https://github.com/processing/processing/pull/3660
-_ Undo sometimes causes the editor to go blank
-_   https://github.com/processing/processing/issues/3003
+X Undo sometimes causes the editor to go blank
+X   https://github.com/processing/processing/issues/3003
 X   https://github.com/processing/processing/pull/3693
 X   https://github.com/processing/processing/pull/3702
 X Miscellaneous language improvements
@@ -114,8 +114,6 @@ _   http://www.oracle.com/us/technologies/java/locale-140624.html
 
 
 3.0 final
-_ CM: Clicking item in Libraries list throws exception
-_   https://github.com/processing/processing/issues/3667
 _ Casey reports that exported app still asks to download Java
 _   could this be a JOGL bug (linking against the app stub?)
 _ Contributions Manager UI design
@@ -123,6 +121,10 @@ _   https://github.com/processing/processing/issues/3482
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
 _ items still show up in "Recent" if they no longer exist (on startup)
+_ replace about screen (1x and 2x versions)
+_   change 'alpha' to correct name
+_   also change the revision in the "about processing" dialog
+_   https://github.com/processing/processing/issues/3665
 
 
 sketch modified externally
@@ -135,10 +137,6 @@ _ add this to the preferences?
 
 
 gui
-_ replace about screen (1x and 2x versions)
-_   change 'alpha' to correct name
-_   also change the revision in the "about processing" dialog
-_   https://github.com/processing/processing/issues/3665
 _ different design of squiggly line?
 _ Error/warning location visualisation not updating when editor resizes
 _   https://github.com/processing/processing/issues/3619
@@ -171,6 +169,22 @@ _ show compiling/startup animation after clicking run
 _   or maybe show an animation for starting up
 _   rather than post-compile
 _   https://github.com/processing/processing/issues/136
+
+
+gui/low
+_ welcome screen tweaks
+_   click "show this welcome" text to check/uncheck the box
+_   submit the form (as if 'get started' clicked) when closing the window
+_     whether hitting ESC or the close box on the window
+
+
+manager
+_ CM: Clicking item in Libraries list throws exception
+_   https://github.com/processing/processing/issues/3667
+_ fonts are fake-bolded version rather than the real bold
+_ scrolling "past" top/bottom causes the screen to jiggle
+_ number of updates available is not correct
+_ retina icons show at twice the size and just crop at top/bottom
 
 
 fonts
