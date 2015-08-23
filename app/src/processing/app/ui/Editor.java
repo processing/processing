@@ -1911,10 +1911,20 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   /**
-   * Use before a manipulating text to group editing operations together as a
-   * single undo. Use stopCompoundEdit() once finished.
+   * Use before a manipulating text to group editing operations together
+   * as a single undo. Use stopCompoundEdit() once finished.
    */
   public void startCompoundEdit() {
+    // Call endTextEditHistory() before starting a new CompoundEdit,
+    // because there's a timer that's possibly set off for 3 seconds after
+    // which endTextEditHistory() is called, which means that things get
+    // messed up. Hence, manually call this method so that auto-format gets
+    // undone in one fell swoop if the user calls auto-formats within 3
+    // seconds of typing in the last character. Then start a new compound
+    // edit so that the auto-format can be undone in one go.
+    // https://github.com/processing/processing/issues/3003
+    endTextEditHistory();
+
     stopCompoundEdit();
     compoundEdit = new CompoundEdit();
     caretUndoStack.push(textarea.getCaretPosition());
@@ -2216,17 +2226,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
       if (formattedText.equals(source)) {
         statusNotice(Language.text("editor.status.autoformat.no_changes"));
       } else {
-        /*
-         * Call endTextEditHistory() before starting a new CompoundEdit,
-         * because there's a timer that's possibly set off for 3 seconds after
-         * which endTextEditHistory() is called, which means that things get
-         * messed up. Hence, manually call this method so that auto-format gets
-         * undone in one fell swoop if the user calls auto-formats within 3
-         * seconds of typing in the last character. Then start a new compound
-         * edit so that the auto-format can be undone in one go.
-         * (Refer to issue #3003)
-         */
-        endTextEditHistory();
         startCompoundEdit();
 
         // replace with new bootiful text

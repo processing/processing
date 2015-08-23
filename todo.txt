@@ -10,11 +10,18 @@ X prompt to install Xcode coming up on Export to Application
 X   http://stackoverflow.com/questions/15371925/how-to-check-if-command-line-tools-is-installed
 X   "xcode-select -p" returns 0 if they exist (and the dir) or 2 if they don't
 X   no special case added for 10.8, but it's on the way out
+X move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
+X   need to make the list abstract, also "scroll to line" feature
+X fix red in sidebar, the squiggly line beneath code
 
 contribs
 X Undo does not move to the correct location in the editor window
 X   https://github.com/processing/processing/issues/707
 X   https://github.com/processing/processing/pull/3660
+_ Undo sometimes causes the editor to go blank
+_   https://github.com/processing/processing/issues/3003
+X   https://github.com/processing/processing/pull/3693
+X   https://github.com/processing/processing/pull/3702
 
 gsoc
 X Foundation libraries disapear from CM after restart
@@ -127,7 +134,7 @@ _ replace about screen (1x and 2x versions)
 _   change 'alpha' to correct name
 _   also change the revision in the "about processing" dialog
 _   https://github.com/processing/processing/issues/3665
-_ fix red in sidebar, the squiggly line beneath code
+_ different design of squiggly line?
 _ Error/warning location visualisation not updating when editor resizes
 _   https://github.com/processing/processing/issues/3619
 _ error/warning location is awkward when no scroll bar is in use
@@ -155,9 +162,6 @@ _ update EditorButton rollover label when pressing shift or alt
 _ disable the debug toggle menu while running
 _   otherwise could run in one mode, then try to stop in another
 _ recent menu gets huge with other p5 versions on osx
-_ move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
-_   need to make the list abstract, also "scroll to line" feature
-_   fix up the UI, oy
 _ show compiling/startup animation after clicking run
 _   or maybe show an animation for starting up
 _   rather than post-compile
