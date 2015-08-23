@@ -436,33 +436,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
     console = new EditorConsole(this);
     ef.addPanel(console, Language.text("editor.footer.console"), "/lib/footer/console");
     return ef;
-
-    /*
-    // assemble console panel, consisting of status area and the console itself
-    JPanel panel = new JPanel();
-    panel.setLayout(new BorderLayout());
-
-//    status = new EditorStatus(this);
-//    consolePanel.add(status, BorderLayout.NORTH);
-
-    console = new EditorConsole(this);
-    // windows puts an ugly border on this guy
-    console.setBorder(null);
-    panel.add(console, BorderLayout.CENTER);
-
-//    lineStatus = new EditorLineStatus(this);
-//    consolePanel.add(lineStatus, BorderLayout.SOUTH);
-    return panel;
-    */
   }
 
 
-  public void addErrorTable(EditorFooter footer) {
-    JScrollPane errorTableScrollPane = new JScrollPane();
+  public void addErrorTable(EditorFooter ef) {
+    JScrollPane scrollPane = new JScrollPane();
     errorTable = new ErrorTable(this);
-    errorTableScrollPane.setBorder(BorderFactory.createEmptyBorder());
-    errorTableScrollPane.setViewportView(errorTable);
-    footer.addPanel(errorTableScrollPane, Language.text("editor.footer.errors"), "/lib/footer/error");
+    scrollPane.setBorder(BorderFactory.createEmptyBorder());
+    scrollPane.setViewportView(errorTable);
+    ef.addPanel(scrollPane, Language.text("editor.footer.errors"), "/lib/footer/error");
   }
 
 
