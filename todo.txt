@@ -22,6 +22,8 @@ _ Undo sometimes causes the editor to go blank
 _   https://github.com/processing/processing/issues/3003
 X   https://github.com/processing/processing/pull/3693
 X   https://github.com/processing/processing/pull/3702
+X Miscellaneous language improvements
+X   https://github.com/processing/processing/pull/3700
 
 gsoc
 X Foundation libraries disapear from CM after restart
@@ -59,6 +61,9 @@ _   https://github.com/processing/processing/issues/3614
 X   https://github.com/processing/processing/pull/3694
 X Make auto-format into a compund edit
 X   https://github.com/processing/processing/pull/3693
+X Focus is shifted out of the filter field after CM search
+X   https://github.com/processing/processing/issues/3682
+X   https://github.com/processing/processing/pull/3701
 
 earlier/cleaning
 X modify build to insert these after antlr run:

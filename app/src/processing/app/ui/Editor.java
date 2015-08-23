@@ -1777,7 +1777,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   /**
-   * Replace the entire contents of the front-most tab.
+   * Replace the entire contents of the front-most tab. Note that this does
+   * a compound edit, so internal callers may want to use textarea.setText()
+   * if this is part of a larger compound edit.
    */
   public void setText(String what) {
     startCompoundEdit();
