@@ -29,8 +29,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.sun.jna.Library;
-import com.sun.jna.Native;
 import com.sun.jna.platform.FileUtils;
 
 import processing.app.platform.DefaultPlatform;
@@ -379,29 +377,17 @@ public class Platform {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public interface CLibrary extends Library {
-    CLibrary INSTANCE = (CLibrary)Native.loadLibrary("c", CLibrary.class);
-    int setenv(String name, String value, int overwrite);
-    String getenv(String name);
-    int unsetenv(String name);
-    int putenv(String string);
+  public void setenv(String variable, String value) {
+    inst.setenv(variable, value);
   }
 
 
-  static public void setenv(String variable, String value) {
-    CLibrary clib = CLibrary.INSTANCE;
-    clib.setenv(variable, value, 1);
-  }
-
-
-  static public String getenv(String variable) {
-    CLibrary clib = CLibrary.INSTANCE;
-    return clib.getenv(variable);
+  public String getenv(String variable) {
+    return inst.getenv(variable);
   }
 
 
   public int unsetenv(String variable) {
-    CLibrary clib = CLibrary.INSTANCE;
-    return clib.unsetenv(variable);
+    return inst.unsetenv(variable);
   }
 }

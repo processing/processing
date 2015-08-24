@@ -29,6 +29,9 @@ import java.net.URI;
 
 import javax.swing.UIManager;
 
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+
 import processing.app.Base;
 import processing.app.Preferences;
 
@@ -119,5 +122,35 @@ public class DefaultPlatform {
 
   public void openFolder(File file) throws Exception {
     Desktop.getDesktop().open(file);
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public interface CLibrary extends Library {
+    CLibrary INSTANCE = (CLibrary)Native.loadLibrary("c", CLibrary.class);
+    int setenv(String name, String value, int overwrite);
+    String getenv(String name);
+    int unsetenv(String name);
+    int putenv(String string);
+  }
+
+
+  public void setenv(String variable, String value) {
+    CLibrary clib = CLibrary.INSTANCE;
+    clib.setenv(variable, value, 1);
+  }
+
+
+  public String getenv(String variable) {
+    CLibrary clib = CLibrary.INSTANCE;
+    return clib.getenv(variable);
+  }
+
+
+  public int unsetenv(String variable) {
+    CLibrary clib = CLibrary.INSTANCE;
+    return clib.unsetenv(variable);
   }
 }
