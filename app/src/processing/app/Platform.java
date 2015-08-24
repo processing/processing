@@ -377,17 +377,17 @@ public class Platform {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public void setenv(String variable, String value) {
+  static public void setenv(String variable, String value) {
     inst.setenv(variable, value);
   }
 
 
-  public String getenv(String variable) {
+  static public String getenv(String variable) {
     return inst.getenv(variable);
   }
 
 
-  public int unsetenv(String variable) {
+  static public int unsetenv(String variable) {
     return inst.unsetenv(variable);
   }
 }
