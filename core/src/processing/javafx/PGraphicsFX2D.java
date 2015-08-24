@@ -611,6 +611,12 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void line(float x1, float y1, float x2, float y2) {
+    if (drawingThinLines()) {
+      x1 += 0.5f;
+      x2 += 0.5f;
+      y1 += 0.5f;
+      y2 += 0.5f;
+    }
     context.strokeLine(x1, y1, x2, y2);
   }
 
@@ -618,6 +624,14 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
+    if (drawingThinLines()) {
+      x1 += 0.5f;
+      x2 += 0.5f;
+      x3 += 0.5f;
+      y1 += 0.5f;
+      y2 += 0.5f;
+      y3 += 0.5f;
+    }
     context.beginPath();
     context.moveTo(x1, y1);
     context.lineTo(x2, y2);
@@ -631,6 +645,16 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
+    if (drawingThinLines()) {
+      x1 += 0.5f;
+      x2 += 0.5f;
+      x3 += 0.5f;
+      x4 += 0.5f;
+      y1 += 0.5f;
+      y2 += 0.5f;
+      y3 += 0.5f;
+      y4 += 0.5f;
+    }
     context.beginPath();
     context.moveTo(x1, y1);
     context.lineTo(x2, y2);
@@ -658,6 +682,12 @@ public class PGraphicsFX2D extends PGraphics {
   protected void rectImpl(float x1, float y1, float x2, float y2) {
 //    rect.setFrame(x1, y1, x2-x1, y2-y1);
 //    drawShape(rect);
+    if (drawingThinLines()) {
+      x1 += 0.5f;
+      x2 += 0.5f;
+      y1 += 0.5f;
+      y2 += 0.5f;
+    }
     if (fill) context.fillRect(x1, y1, x2 - x1, y2 - y1);
     if (stroke) context.strokeRect(x1, y1, x2 - x1, y2 - y1);
   }
@@ -679,6 +709,10 @@ public class PGraphicsFX2D extends PGraphics {
   protected void ellipseImpl(float x, float y, float w, float h) {
 //    ellipse.setFrame(x, y, w, h);
 //    drawShape(ellipse);
+    if (drawingThinLines()) {
+      x += 0.5f;
+      y += 0.5f;
+    }
     if (fill) context.fillOval(x, y, w, h);
     if (stroke) context.strokeOval(x, y, w, h);
   }
@@ -699,6 +733,10 @@ public class PGraphicsFX2D extends PGraphics {
                          float start, float stop, int mode) {
     // 0 to 90 in java would be 0 to -90 for p5 renderer
     // but that won't work, so -90 to 0?
+    if (drawingThinLines()) {
+      x += 0.5f;
+      y += 0.5f;
+    }
 
     start = -start * RAD_TO_DEG;
     stop = -stop * RAD_TO_DEG;
@@ -1726,6 +1764,12 @@ public class PGraphicsFX2D extends PGraphics {
   protected void strokeFromCalc() {
     super.strokeFromCalc();
     context.setStroke(new Color(strokeR, strokeG, strokeB, strokeA));
+  }
+
+
+  protected boolean drawingThinLines() {
+    // align strokes to pixel centers when drawing thin lines
+    return stroke && strokeWeight == 1;
   }
 
 
