@@ -1697,8 +1697,8 @@ public abstract class PGL {
       String[] search = new String[] {
           "varying", "attribute",
           "texture",
-          "texMap2D", "texMap3D", "texMap2DRect",
-          "texMapCube", "gl_FragColor"
+          "texMap2DRect", "texMap2D", "texMap3D", "texMapCube",
+          "gl_FragColor"
       };
       String[] replace = new String[] {
           "in", "in",
@@ -1739,7 +1739,7 @@ public abstract class PGL {
       String[] search = new String[] {
           "varying", "attribute",
           "texture",
-          "texMap2D", "texMap3D", "texMap2DRect", "texMapCube"
+          "texMap2DRect", "texMap2D", "texMap3D", "texMapCube"
       };
       String[] replace = new String[] {
           "out", "in",
