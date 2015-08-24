@@ -34,8 +34,9 @@ X   https://github.com/processing/processing/issues/3690
 X   https://github.com/processing/processing/pull/3692
 X Remove support for fixed-function pipeline
 X   https://github.com/processing/processing/issues/3505
-_ NullPointerException in Demos > Graphics > Planets
-_   https://github.com/processing/processing/issues/3551
+X NullPointerException in Demos > Graphics > Planets
+X   https://github.com/processing/processing/issues/3551
+X   turns out to be a problem with capitalization
 
 cleaning
 X How do images behave when pixelDensity(2) is set?
@@ -56,12 +57,6 @@ _ P2D and P3D windows behave strangely when larger than the screen size
 _   https://github.com/processing/processing/issues/3401
 
 
-docs
-_ note that full screen and present are now different
-_   on Export to Application, this has an impact
-_ update wiki/docs to say "don't override sketchXxxx() methods"
-
-
 3.0 final
 _ move blending calculations from PImage into PGraphics
 _   tricky because that means moving blend_resize() as well
@@ -77,6 +72,9 @@ _   use the BufferStrategy directly from the Frame object?
 _     might fix performance issues w/ Presentation mode
 _ sketch placement (window insets) not properly set on Linux
 _   https://github.com/processing/processing/issues/2063
+_ note in docs that full screen and present are now different
+_   on Export to Application, this has an impact
+_ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 javafx

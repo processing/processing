@@ -160,7 +160,10 @@ public class XQPreprocessor {
 
 
     public boolean visit(NumberLiteral node) {
-      if (!node.getToken().endsWith("f") && !node.getToken().endsWith("d")) {
+      // Need to handle both 1.0F and 1.0D cases
+      // https://github.com/processing/processing/issues/3707
+      String lower = node.getToken().toLowerCase();
+      if (!lower.endsWith("f") && !lower.endsWith("d")) {
         for (int i = 0; i < node.getToken().length(); i++) {
           if (node.getToken().charAt(i) == '.') {
             String s = node.getToken() + "f";
