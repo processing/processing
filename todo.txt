@@ -13,6 +13,11 @@ X   no special case added for 10.8, but it's on the way out
 X move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
 X   need to make the list abstract, also "scroll to line" feature
 X fix red in sidebar, the squiggly line beneath code
+_ ast generator complains about F instead of f after floats
+_   https://github.com/processing/processing/issues/3707
+o 3.0b4 demos fail to create PDF files
+_   https://github.com/processing/processing/issues/3708
+
 
 contribs
 X Undo does not move to the correct location in the editor window

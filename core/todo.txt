@@ -5,6 +5,8 @@ X Wrong positioning of circles in SVG shapes (regression from 2)
 X   https://github.com/processing/processing/issues/3685
 X setFill() on PShape in Java2D throws ArrayIndexOutOfBoundsException
 X   https://github.com/processing/processing/issues/3677
+X saveJSONObject() doesn't close the file
+X   https://github.com/processing/processing/issues/3705
 
 jakub
 X keyTyped() not firing with P2D and P3D
@@ -30,6 +32,10 @@ X   https://github.com/processing/processing/issues/3621
 X "Internal graphics not initialized yet"
 X   https://github.com/processing/processing/issues/3690
 X   https://github.com/processing/processing/pull/3692
+X Remove support for fixed-function pipeline
+X   https://github.com/processing/processing/issues/3505
+_ NullPointerException in Demos > Graphics > Planets
+_   https://github.com/processing/processing/issues/3551
 
 cleaning
 X How do images behave when pixelDensity(2) is set?
