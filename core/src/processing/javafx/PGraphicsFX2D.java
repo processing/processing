@@ -51,6 +51,8 @@ public class PGraphicsFX2D extends PGraphics {
   static final WritablePixelFormat<IntBuffer> argbFormat =
     PixelFormat.getIntArgbInstance();
 
+  WritableImage snapshotImage;
+
   Path workPath;
   Path auxPath;
   boolean openContour;
@@ -140,16 +142,12 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void endDraw() {
+    flush();
+
     if (!primaryGraphics) {
       // TODO this is probably overkill for most tasks...
       loadPixels();
     }
-
-    // Marks pixels as modified so that the pixels will be updated.
-    // Also sets mx1/y1/x2/y2 so that OpenGL will pick it up.
-    setModified();
-
-    //g2.dispose();
   }
 
 
@@ -588,7 +586,44 @@ public class PGraphicsFX2D extends PGraphics {
   // RENDERER
 
 
-  //public void flush()
+  public void flush() {
+    boolean hasPixels = modified && pixels != null;
+    if (hasPixels) {
+      // If the user has been manipulating individual pixels,
+      // the changes need to be copied to the screen before
+      // drawing any new geometry.
+      flushPixels();
+    }
+    
+    modified = false;
+  }
+
+
+  protected void flushPixels() {
+    int mx1 = getModifiedX1();
+    int mx2 = getModifiedX2();
+    int my1 = getModifiedY1();
+    int my2 = getModifiedY2();
+    int mw = mx2 - mx1;
+    int mh = my2 - my1;
+
+    checkSnapshotImage();
+
+    PixelWriter pw = snapshotImage.getPixelWriter();
+    pw.setPixels(mx1, my1, mw, mh, argbFormat, pixels,
+                 mx1 + my1 * pixelWidth, pixelWidth);
+
+    context.drawImage(snapshotImage, mx1, my1, mw, mh, mx1, my1, mw, mh);
+  }
+
+
+  protected void checkSnapshotImage() {
+    if (snapshotImage == null ||
+        snapshotImage.getWidth() != pixelWidth ||
+        snapshotImage.getHeight() != pixelHeight) {
+      snapshotImage = new WritableImage(pixelWidth, pixelHeight);
+    }
+  }
 
 
 
@@ -1908,180 +1943,76 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void loadPixels() {
-//    pixelFactor = 2;
-    int wide = width * pixelDensity;
-    int high = height * pixelDensity;
 
-    if ((pixels == null) || (pixels.length != wide*high)) {
-      pixels = new int[wide * high];
+    flush();
+
+    if ((pixels == null) || (pixels.length != pixelWidth*pixelHeight)) {
+      pixels = new int[pixelWidth * pixelHeight];
     }
 
-//    WritableRaster raster = getRaster();
-//    raster.getDataElements(0, 0, width, height, pixels);
-//    if (raster.getNumBands() == 3) {
-//      // Java won't set the high bits when RGB, returns 0 for alpha
-//      // https://github.com/processing/processing/issues/2030
-//      for (int i = 0; i < pixels.length; i++) {
-//        pixels[i] = 0xff000000 | pixels[i];
-//      }
-//    }
+    checkSnapshotImage();
+
     SnapshotParameters sp = new SnapshotParameters();
     if (pixelDensity == 2) {
       sp.setTransform(Transform.scale(2, 2));
     }
-    WritableImage wi = ((PSurfaceFX) surface).canvas.snapshot(sp, null);
-    PixelReader pr = wi.getPixelReader();
-    //pr.getPixels(0, 0, width, height, argbFormat, pixels, 0, width);
-    //pr.getPixels(0, 0, width*2, height*2, argbFormat, pixels, 0, width*2);
-    pr.getPixels(0, 0, wide, high, argbFormat, pixels, 0, wide);
+    snapshotImage = ((PSurfaceFX) surface).canvas.snapshot(sp, snapshotImage);
+    PixelReader pr = snapshotImage.getPixelReader();
+    pr.getPixels(0, 0, pixelWidth, pixelHeight, argbFormat, pixels, 0, pixelWidth);
   }
 
 
-//  /**
-//   * Update the pixels[] buffer to the PGraphics image.
-//   * <P>
-//   * Unlike in PImage, where updatePixels() only requests that the
-//   * update happens, in PGraphicsJava2D, this will happen immediately.
-//   */
-//  @Override
-//  public void updatePixels(int x, int y, int c, int d) {
-//    //if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
-////    System.err.format("%d %d %d %d .. w/h = %d %d .. pw/ph = %d %d %n", x, y, c, d, width, height, pixelWidth, pixelHeight);
-//    if ((x != 0) || (y != 0) || (c != pixelWidth) || (d != pixelHeight)) {
-//      // Show a warning message, but continue anyway.
-//      showVariationWarning("updatePixels(x, y, w, h)");
-////      new Exception().printStackTrace(System.out);
-//    }
-////    updatePixels();
-//    if (pixels != null) {
-//      getRaster().setDataElements(0, 0, width, height, pixels);
-//    }
-//    modified = true;
-//  }
-//
-//
-////  @Override
-////  protected void updatePixelsImpl(int x, int y, int w, int h) {
-////    super.updatePixelsImpl(x, y, w, h);
-////
-////    if ((x != 0) || (y != 0) || (w != width) || (h != height)) {
-////      // Show a warning message, but continue anyway.
-////      showVariationWarning("updatePixels(x, y, w, h)");
-////    }
-////    getRaster().setDataElements(0, 0, width, height, pixels);
-////  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // GET/SET
-//
-//
-//  static int getset[] = new int[1];
-//
-//
-//  @Override
-//  public int get(int x, int y) {
-//    if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
-//    //return ((BufferedImage) image).getRGB(x, y);
-////    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
-//    WritableRaster raster = getRaster();
-//    raster.getDataElements(x, y, getset);
-//    if (raster.getNumBands() == 3) {
-//      // https://github.com/processing/processing/issues/2030
-//      return getset[0] | 0xff000000;
-//    }
-//    return getset[0];
-//  }
-//
-//
-//  //public PImage get(int x, int y, int w, int h)
-//
-//
-//  @Override
-//  public PImage get() {
-//    return get(0, 0, width, height);
-//  }
-//
-//
-//  @Override
-//  protected void getImpl(int sourceX, int sourceY,
-//                         int sourceWidth, int sourceHeight,
-//                         PImage target, int targetX, int targetY) {
-//    // last parameter to getRGB() is the scan size of the *target* buffer
-//    //((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, w);
-////    WritableRaster raster =
-////      ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
-//    WritableRaster raster = getRaster();
-//
-//    if (sourceWidth == target.width && sourceHeight == target.height) {
-//      raster.getDataElements(sourceX, sourceY, sourceWidth, sourceHeight, target.pixels);
-//      // https://github.com/processing/processing/issues/2030
-//      if (raster.getNumBands() == 3) {
-//        target.filter(OPAQUE);
-//      }
-//
-//    } else {
-//      // TODO optimize, incredibly inefficient to reallocate this much memory
-//      int[] temp = new int[sourceWidth * sourceHeight];
-//      raster.getDataElements(sourceX, sourceY, sourceWidth, sourceHeight, temp);
-//
-//      // Copy the temporary output pixels over to the outgoing image
-//      int sourceOffset = 0;
-//      int targetOffset = targetY*target.width + targetX;
-//      for (int y = 0; y < sourceHeight; y++) {
-//        if (raster.getNumBands() == 3) {
-//          for (int i = 0; i < sourceWidth; i++) {
-//            // Need to set the high bits for this feller
-//            // https://github.com/processing/processing/issues/2030
-//            target.pixels[targetOffset + i] = 0xFF000000 | temp[sourceOffset + i];
-//          }
-//        } else {
-//          System.arraycopy(temp, sourceOffset, target.pixels, targetOffset, sourceWidth);
-//        }
-//        sourceOffset += sourceWidth;
-//        targetOffset += target.width;
-//      }
-//    }
-//  }
-//
-//
-//  @Override
-//  public void set(int x, int y, int argb) {
-//    if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
-////    ((BufferedImage) image).setRGB(x, y, argb);
-//    getset[0] = argb;
-////    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
-////    WritableRaster raster = image.getRaster();
-//    getRaster().setDataElements(x, y, getset);
-//  }
-//
-//
-//  //public void set(int x, int y, PImage img)
-//
-//
-//  @Override
-//  protected void setImpl(PImage sourceImage,
-//                         int sourceX, int sourceY,
-//                         int sourceWidth, int sourceHeight,
-//                         int targetX, int targetY) {
-//    WritableRaster raster = getRaster();
-////      ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
-//
-//    if ((sourceX == 0) && (sourceY == 0) &&
-//        (sourceWidth == sourceImage.width) &&
-//        (sourceHeight == sourceImage.height)) {
-//      raster.setDataElements(targetX, targetY,
-//                             sourceImage.width, sourceImage.height,
-//                             sourceImage.pixels);
-//    } else {
-//      // TODO optimize, incredibly inefficient to reallocate this much memory
-//      PImage temp = sourceImage.get(sourceX, sourceY, sourceWidth, sourceHeight);
-//      raster.setDataElements(targetX, targetY, temp.width, temp.height, temp.pixels);
-//    }
-//  }
+  //////////////////////////////////////////////////////////////
 
+  // GET/SET PIXELS
+
+
+  @Override
+  public int get(int x, int y) {
+    loadPixels();
+    return super.get(x, y);
+  }
+
+
+  @Override
+  protected void getImpl(int sourceX, int sourceY,
+                         int sourceWidth, int sourceHeight,
+                         PImage target, int targetX, int targetY) {
+    loadPixels();
+    super.getImpl(sourceX, sourceY, sourceWidth, sourceHeight,
+                  target, targetX, targetY);
+  }
+
+
+  @Override
+  public void set(int x, int y, int argb) {
+    loadPixels();
+    super.set(x, y, argb);
+  }
+
+
+  @Override
+  protected void setImpl(PImage sourceImage,
+                         int sourceX, int sourceY,
+                         int sourceWidth, int sourceHeight,
+                         int targetX, int targetY) {
+
+    // Copies the pixels
+    loadPixels();
+    sourceImage.loadPixels();
+    int sourceOffset = sourceY * sourceImage.pixelWidth + sourceX;
+    int targetOffset = targetY * pixelWidth + targetX;
+    for (int y = sourceY; y < sourceY + sourceHeight; y++) {
+      System.arraycopy(sourceImage.pixels, sourceOffset, pixels, targetOffset, sourceWidth);
+      sourceOffset += sourceImage.pixelWidth;
+      targetOffset += pixelWidth;
+    }
+
+    // Draws the image
+    copy(sourceImage,
+         sourceX, sourceY, sourceWidth, sourceHeight,
+         targetX, targetY, sourceWidth, sourceHeight);
+  }
 
 
   //////////////////////////////////////////////////////////////
