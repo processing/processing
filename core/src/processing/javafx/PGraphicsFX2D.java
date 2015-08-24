@@ -1437,7 +1437,7 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void rotate(float angle) {
-    context.rotate(PApplet.radians(angle));
+    context.rotate(PApplet.degrees(angle));
   }
 
 
