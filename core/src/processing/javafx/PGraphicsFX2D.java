@@ -1404,7 +1404,7 @@ public class PGraphicsFX2D extends PGraphics {
       throw new RuntimeException("pushMatrix() cannot use push more than " +
                                  transformStack.length + " times");
     }
-    context.getTransform(transformStack[transformCount]);
+    transformStack[transformCount] = context.getTransform(transformStack[transformCount]);
     transformCount++;
   }
 
