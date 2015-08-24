@@ -13,11 +13,10 @@ X   no special case added for 10.8, but it's on the way out
 X move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
 X   need to make the list abstract, also "scroll to line" feature
 X fix red in sidebar, the squiggly line beneath code
-_ ast generator complains about F instead of f after floats
-_   https://github.com/processing/processing/issues/3707
-o 3.0b4 demos fail to create PDF files
-_   https://github.com/processing/processing/issues/3708
-
+X live error checking complains about F instead of f after floats
+X   https://github.com/processing/processing/issues/3707
+X NoClassDefError with CLibrary and getenv when switching to Android Mode
+X   https://github.com/processing/processing/issues/3704
 
 contribs
 X Undo does not move to the correct location in the editor window
@@ -41,18 +40,12 @@ X   no longer issue in the new release
 X CM blue bar missing
 X   https://github.com/processing/processing/issues/3599
 X   https://github.com/processing/processing/pull/3636
-X CM: Category dropdown alignment
-X   https://github.com/processing/processing/pull/3666
-_   https://github.com/processing/processing/issues/3644
 X CM column widths change with selection
 X   https://github.com/processing/processing/issues/3609
 X   https://github.com/processing/processing/pull/3675
 X remove category dropdown from CM except when viewing libraries
 X   https://github.com/processing/processing/issues/3668
 X   https://github.com/processing/processing/pull/3676
-X Fix info panel text color and alignment in CM
-_   https://github.com/processing/processing/issues/3642
-X   https://github.com/processing/processing/pull/3684
 X Right-clicking popup menu closes instead of shifting its location
 X   https://github.com/processing/processing/issues/3649
 X Use 1x or 2x icons in the CM
@@ -61,9 +54,6 @@ X Shifted the text right a little bit
 X   https://github.com/processing/processing/pull/3696
 X No underline and no blue color
 X   https://github.com/processing/processing/pull/3695
-X Update buttom enabled when updates are present and background is set
-_   https://github.com/processing/processing/issues/3614
-X   https://github.com/processing/processing/pull/3694
 X Make auto-format into a compund edit
 X   https://github.com/processing/processing/pull/3693
 X Focus is shifted out of the filter field after CM search
@@ -96,6 +86,18 @@ o set DYLD_LIBRARY_PATH to include .dylib and other framework stuff
 o   java.library.path will only handle .jnilib stuff
 
 
+may be fixed in b5, but unconfirmed at press time
+X CM: Category dropdown alignment
+X   https://github.com/processing/processing/pull/3666
+_   https://github.com/processing/processing/issues/3644
+X Update buttom enabled when updates are present and background is set
+_   https://github.com/processing/processing/issues/3614
+X   https://github.com/processing/processing/pull/3694
+X Fix info panel text color and alignment in CM
+_   https://github.com/processing/processing/issues/3642
+X   https://github.com/processing/processing/pull/3684
+
+
 known issues
 _ launch4j doesn't work from folders with non-native charsets
 _   anything in CP1252 on an English Windows system is fine
@@ -116,6 +118,10 @@ _   http://happygiraffe.net/blog/2009/09/24/java-platform-encoding/
 _   fix: get sun.jnu.encoding and make sure the user name is supported in it?
 _     and if not, put up a warning for the user?
 _   http://www.oracle.com/us/technologies/java/locale-140624.html
+
+
+o 3.0b4 demos fail to create PDF files
+_   https://github.com/processing/processing/issues/3708
 
 
 3.0 final
