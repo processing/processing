@@ -1676,6 +1676,11 @@ public abstract class PGL {
 
   protected static String[] preprocessFragmentSource(String[] fragSrc0,
                                                      int version) {
+    if (containsVersionDirective(fragSrc0)) {
+      // The user knows what she or he is doing
+      return fragSrc0;
+    }
+
     String[] fragSrc;
 
     if (version < 130) {
@@ -1713,6 +1718,11 @@ public abstract class PGL {
 
   protected static String[] preprocessVertexSource(String[] vertSrc0,
                                                    int version) {
+    if (containsVersionDirective(vertSrc0)) {
+      // The user knows what she or he is doing
+      return vertSrc0;
+    }
+
     String[] vertSrc;
 
     if (version < 130) {
@@ -1763,6 +1773,15 @@ public abstract class PGL {
     return src;
   }
 
+  protected static boolean containsVersionDirective(String[] shSrc) {
+    for (int i = 0; i < shSrc.length; i++) {
+      String line = shSrc[i];
+      if (line.contains("#version")) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   protected int createShader(int shaderType, String source) {
     int shader = createShader(shaderType);
