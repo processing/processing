@@ -76,7 +76,9 @@ public class ContributionManagerDialog {
   private JLabel updateTabLabel;
 
   static Font myFont;
-  static int iconVer = Toolkit.highResDisplay() ? 2 : 1;
+  // disabling this because the icon sizing is not implemented correctly
+  //static int iconVer = Toolkit.highResDisplay() ? 2 : 1;
+  static final int iconVer = 1;
 
 
   public ContributionManagerDialog() {
