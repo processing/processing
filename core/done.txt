@@ -1,3 +1,57 @@
+0243 core (3.0b5)
+X NullPointerException in selectFolder() on OS X
+X   https://github.com/processing/processing/issues/3661
+X Wrong positioning of circles in SVG shapes (regression from 2)
+X   https://github.com/processing/processing/issues/3685
+X setFill() on PShape in Java2D throws ArrayIndexOutOfBoundsException
+X   https://github.com/processing/processing/issues/3677
+X saveJSONObject() doesn't close the file
+X   https://github.com/processing/processing/issues/3705
+
+jakub
+X keyTyped() not firing with P2D and P3D
+X   https://github.com/processing/processing/issues/3582
+X   https://github.com/processing/processing/pull/3652
+X rect() sizing in JavaFX
+X   https://github.com/processing/processing/pull/3656
+X FX - Proper sketch sizing
+X   https://github.com/processing/processing/pull/3658
+X implement frameRate()
+X FX - Fix key typed
+X   https://github.com/processing/processing/pull/3672
+X FX - Make key events little bit more sane
+X   https://github.com/processing/processing/pull/3686
+X   added note about AIOOBE seen earlier
+X Update LowLevelGL to use VBOs
+X   https://github.com/processing/processing-docs/pull/289
+X Remove legacy GL functions from PGL
+X   https://github.com/processing/processing/issues/3674
+X   https://github.com/processing/processing/pull/3691
+X   https://github.com/processing/processing/issues/3671
+X   https://github.com/processing/processing/issues/3621
+X "Internal graphics not initialized yet"
+X   https://github.com/processing/processing/issues/3690
+X   https://github.com/processing/processing/pull/3692
+X Remove support for fixed-function pipeline
+X   https://github.com/processing/processing/issues/3505
+X NullPointerException in Demos > Graphics > Planets
+X   https://github.com/processing/processing/issues/3551
+X   turns out to be a problem with capitalization
+
+cleaning
+X How do images behave when pixelDensity(2) is set?
+X   https://github.com/processing/processing/issues/3364
+X retina sketches slow to start
+X   https://github.com/processing/processing/issues/2357
+X zero alpha values still a problem with retina renderer
+X   https://github.com/processing/processing/issues/2030
+X fullScreen(SPAN) reported not working (cannot reproduce)
+X   probably need to re-query for displays each time opening prefs
+X   what happens when a screen is added after p5 has started?
+X   https://github.com/processing/processing/issues/3381
+X   fixed in beta 1
+
+
 0242 core (3.0b4)
 X dataPath() not working when app is not run from app dir on Linux
 X   https://github.com/processing/processing/issues/2195
