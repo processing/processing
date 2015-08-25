@@ -774,8 +774,8 @@ public class PGraphicsFX2D extends PGraphics {
       y += 0.5f;
     }
 
-    start = -start * RAD_TO_DEG;
-    stop = -stop * RAD_TO_DEG;
+    start = -start;
+    stop = -stop;
 
     float sweep = stop - start;
 
