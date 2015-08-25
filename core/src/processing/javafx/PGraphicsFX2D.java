@@ -586,6 +586,7 @@ public class PGraphicsFX2D extends PGraphics {
   // RENDERER
 
 
+  @Override
   public void flush() {
     boolean hasPixels = modified && pixels != null;
     if (hasPixels) {
@@ -594,7 +595,7 @@ public class PGraphicsFX2D extends PGraphics {
       // drawing any new geometry.
       flushPixels();
     }
-    
+
     modified = false;
   }
 
