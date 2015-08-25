@@ -1,16 +1,36 @@
 0244 (3.0b6)
+o 3.0b4 demos fail to create PDF files
+o   https://github.com/processing/processing/issues/3708
+X   problem was that the example was creating files inside Processing.app
+X Casey reports that exported app still asks to download Java
+X   could this be a JOGL bug (linking against the app stub?)
+X   ran otool -L on the binaries and saw nothing
 
-
-may be fixed in b5, but unconfirmed at press time
+gsoc
 X CM: Category dropdown alignment
+X   https://github.com/processing/processing/issues/3644
 X   https://github.com/processing/processing/pull/3666
-_   https://github.com/processing/processing/issues/3644
+X   https://github.com/processing/processing/pull/3669
+
+fixed in b5, but unconfirmed at press time
+X CM - Focus is shifted out of the filter field when something is searched
+X   https://github.com/processing/processing/issues/3682
+X   https://github.com/processing/processing/pull/3701
+X CM - info panel text color
+X   https://github.com/processing/processing/issues/3642
+X   https://github.com/processing/processing/pull/3695
+X   https://github.com/processing/processing/pull/3696
+X CM - Filter field display
+X   https://github.com/processing/processing/issues/3689
+X   https://github.com/processing/processing/pull/3698
 X Update buttom enabled when updates are present and background is set
-_   https://github.com/processing/processing/issues/3614
+X   https://github.com/processing/processing/issues/3614
 X   https://github.com/processing/processing/pull/3694
 X Fix info panel text color and alignment in CM
-_   https://github.com/processing/processing/issues/3642
+X   https://github.com/processing/processing/issues/3642
 X   https://github.com/processing/processing/pull/3684
+X Ready to add contributed example packages?
+X   https://github.com/processing/processing/issues/2953
 
 
 known issues
@@ -35,17 +55,9 @@ _     and if not, put up a warning for the user?
 _   http://www.oracle.com/us/technologies/java/locale-140624.html
 
 
-o 3.0b4 demos fail to create PDF files
-_   https://github.com/processing/processing/issues/3708
-
-
 3.0 final
-_ Casey reports that exported app still asks to download Java
-_   could this be a JOGL bug (linking against the app stub?)
 _ Contributions Manager UI design
 _   https://github.com/processing/processing/issues/3482
-_ Ready to add contributed example packages?
-_   https://github.com/processing/processing/issues/2953
 _ items still show up in "Recent" if they no longer exist (on startup)
 _ replace about screen (1x and 2x versions)
 _   change 'alpha' to correct name

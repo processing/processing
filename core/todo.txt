@@ -1,6 +1,21 @@
 0244 core (3.0b6)
 
 
+jakub
+X FX - fix transformation stack NPE
+X   https://github.com/processing/processing/pull/3710
+X FX - fix rad-deg conversion in rotate()
+X   https://github.com/processing/processing/pull/3711
+X FX - basic pixel operations (get, set, load, update) 
+X   https://github.com/processing/processing/pull/3709
+X FX - align to pixel grid when drawing 1 px strokes
+X   https://github.com/processing/processing/pull/3712
+X keyChar and keyCode are super wonky and unlike AWT
+X   https://github.com/processing/processing/issues/3290
+X   what's the way to do this after the deprecation?
+X   if this is going to be the default renderer, has to be ironed out
+
+
 known issues
 _ P2D and P3D windows behave strangely when larger than the screen size
 _   https://github.com/processing/processing/issues/3401
@@ -31,10 +46,6 @@ _ static mode sketches (draw once and halt w/o closing window)
 _ fix display handling, line up the device order with AWT
 _   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html
 _ noLoop()
-_ keyChar and keyCode are super wonky and unlike AWT
-_   https://github.com/processing/processing/issues/3290
-_   what's the way to do this after the deprecation?
-_   if this is going to be the default renderer, has to be ironed out
 _ displayWidth, displayHeight, full screen, display number
 _ present mode not working at all
 _   stage in the center, clear the rest of the screen
