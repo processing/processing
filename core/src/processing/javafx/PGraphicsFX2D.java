@@ -700,8 +700,8 @@ public class PGraphicsFX2D extends PGraphics {
     // 0 to 90 in java would be 0 to -90 for p5 renderer
     // but that won't work, so -90 to 0?
 
-    start = -start * RAD_TO_DEG;
-    stop = -stop * RAD_TO_DEG;
+    start = -start;
+    stop = -stop;
 
     float sweep = stop - start;
 
