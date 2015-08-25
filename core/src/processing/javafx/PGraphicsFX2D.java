@@ -22,6 +22,10 @@
 
 package processing.javafx;
 
+import com.sun.javafx.geom.Path2D;
+import com.sun.javafx.geom.PathIterator;
+import com.sun.javafx.geom.Shape;
+
 import java.nio.IntBuffer;
 
 import javafx.scene.SnapshotParameters;
@@ -35,8 +39,6 @@ import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcType;
-import javafx.scene.shape.ClosePath;
-import javafx.scene.shape.Path;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.transform.Affine;
@@ -53,11 +55,13 @@ public class PGraphicsFX2D extends PGraphics {
 
   WritableImage snapshotImage;
 
-  Path workPath;
-  Path auxPath;
+  Path2D workPath = new Path2D();
+  Path2D auxPath = new Path2D();
   boolean openContour;
   /// break the shape at the next vertex (next vertex() call is a moveto())
   boolean breakShape;
+
+  private float pathCoordsBuffer[] = new float[6];
 
   /// coordinates for internal curve calculation
   float[] curveCoordX;
@@ -197,15 +201,14 @@ public class PGraphicsFX2D extends PGraphics {
   public void beginShape(int kind) {
     shape = kind;
     vertexCount = 0;
-    curveVertexCount = 0;
 
-    // set gpath to null, because when mixing curves and straight
-    // lines, vertexCount will be set back to zero, so vertexCount == 1
-    // is no longer a good indicator of whether the shape is new.
-    // this way, just check to see if gpath is null, and if it isn't
-    // then just use it to continue the shape.
-    workPath = null;
-    auxPath = null;
+    workPath.reset();
+    auxPath.reset();
+
+    if (drawingThinLines()) {
+      pushMatrix();
+      translate(0.5f, 0.5f);
+    }
   }
 
 
@@ -226,9 +229,6 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void vertex(float x, float y) {
-    curveVertexCount = 0;
-    //float vertex[];
-
     if (vertexCount == vertices.length) {
       float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
@@ -322,13 +322,11 @@ public class PGraphicsFX2D extends PGraphics {
       break;
 
     case POLYGON:
-      if (workPath == null) {
-        context.moveTo(x, y);
-      } else if (breakShape) {
-        context.moveTo(x, y);
+      if (workPath.getNumCommands() == 0 || breakShape) {
+        workPath.moveTo(x, y);
         breakShape = false;
       } else {
-        context.lineTo(x, y);
+        workPath.lineTo(x, y);
       }
       break;
     }
@@ -367,16 +365,14 @@ public class PGraphicsFX2D extends PGraphics {
     }
 
     // draw contours to auxiliary path so main path can be closed later
-    Path temp = auxPath;
+    Path2D contourPath = auxPath;
     auxPath = workPath;
-    workPath = temp;
+    workPath = contourPath;
 
-//    if (auxPath != null) {  // first contour does not break
-    breakShape = true;
-    auxPath = new Path();
-//    }
+    if (contourPath.getNumCommands() > 0) {  // first contour does not break
+      breakShape = true;
+    }
 
-    breakShape = true;
     openContour = true;
   }
 
@@ -388,15 +384,9 @@ public class PGraphicsFX2D extends PGraphics {
       return;
     }
 
-    // close this contour
-    if (workPath != null) {
-      //gpath.closePath();
-      auxPath.getElements().addAll(workPath.getElements());
-      auxPath.getElements().add(new ClosePath());
-    }
+    if (workPath.getNumCommands() > 0) workPath.closePath();
 
-    // switch back to main path
-    Path temp = workPath;
+    Path2D temp = workPath;
     workPath = auxPath;
     auxPath = temp;
 
@@ -410,21 +400,56 @@ public class PGraphicsFX2D extends PGraphics {
       endContour();
       PGraphics.showWarning("Missing endContour() before endShape()");
     }
-    if (workPath != null) {  // make sure something has been drawn
+    if (workPath.getNumCommands() > 0) {
       if (shape == POLYGON) {
         if (mode == CLOSE) {
-          //gpath.closePath();
-          workPath.getElements().add(new ClosePath());
+          workPath.closePath();
         }
-        if (auxPath != null) {
-          //gpath.append(auxPath, false);
-          workPath.getElements().addAll(auxPath.getElements());
+        if (auxPath.getNumCommands() > 0) {
+          workPath.append(auxPath, false);
         }
-        //drawShape(gpath);
-        // TODO argh, can't go this route
+        drawShape(workPath);
       }
     }
     shape = 0;
+
+    if (drawingThinLines()) {
+      popMatrix();
+    }
+  }
+
+
+  private void drawShape(Shape s) {
+    context.beginPath();
+    PathIterator pi = s.getPathIterator(null);
+    while (!pi.isDone()) {
+      int pitype = pi.currentSegment(pathCoordsBuffer);
+      switch (pitype) {
+        case PathIterator.SEG_MOVETO:
+          context.moveTo(pathCoordsBuffer[0], pathCoordsBuffer[1]);
+          break;
+        case PathIterator.SEG_LINETO:
+          context.lineTo(pathCoordsBuffer[0], pathCoordsBuffer[1]);
+          break;
+        case PathIterator.SEG_QUADTO:
+          context.quadraticCurveTo(pathCoordsBuffer[0], pathCoordsBuffer[1],
+                                   pathCoordsBuffer[2], pathCoordsBuffer[3]);
+          break;
+        case PathIterator.SEG_CUBICTO:
+          context.bezierCurveTo(pathCoordsBuffer[0], pathCoordsBuffer[1],
+                                pathCoordsBuffer[2], pathCoordsBuffer[3],
+                                pathCoordsBuffer[4], pathCoordsBuffer[5]);
+          break;
+        case PathIterator.SEG_CLOSE:
+          context.closePath();
+          break;
+        default:
+          showWarning("Unknown segment type " + pitype);
+      }
+      pi.next();
+    }
+    if (fill) context.fill();
+    if (stroke) context.stroke();
   }
 
 
@@ -485,12 +510,23 @@ public class PGraphicsFX2D extends PGraphics {
 
 
   @Override
+  protected void bezierVertexCheck() {
+    if (shape == 0 || shape != POLYGON) {
+      throw new RuntimeException("beginShape() or beginShape(POLYGON) " +
+                                 "must be used before bezierVertex() or quadraticVertex()");
+    }
+    if (workPath.getNumCommands() == 0) {
+      throw new RuntimeException("vertex() must be used at least once " +
+                                 "before bezierVertex() or quadraticVertex()");
+    }
+  }
+
+  @Override
   public void bezierVertex(float x1, float y1,
                            float x2, float y2,
                            float x3, float y3) {
     bezierVertexCheck();
-    context.bezierCurveTo(x1, y1, x2, y2, x3, y3);
-
+    workPath.curveTo(x1, y1, x2, y2, x3, y3);
   }
 
 
@@ -511,7 +547,8 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void quadraticVertex(float ctrlX, float ctrlY,
                               float endX, float endY) {
-    context.quadraticCurveTo(ctrlX, ctrlY, endX, endY);
+    bezierVertexCheck();
+    workPath.quadTo(ctrlX, ctrlY, endX, endY);
   }
 
 
@@ -530,7 +567,12 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   protected void curveVertexCheck() {
-    super.curveVertexCheck();
+    if (shape != POLYGON) {
+      throw new RuntimeException("You must use beginShape() or " +
+                                     "beginShape(POLYGON) before curveVertex()");
+    }
+
+    curveInitCheck();
 
     if (curveCoordX == null) {
       curveCoordX = new float[4];
@@ -563,14 +605,14 @@ public class PGraphicsFX2D extends PGraphics {
 
     // since the paths are continuous,
     // only the first point needs the actual moveto
-    if (workPath == null) {
-//      gpath = new GeneralPath();
-      context.moveTo(curveDrawX[0], curveDrawY[0]);
+    if (workPath.getNumCommands() == 0) {
+      workPath.moveTo(curveDrawX[0], curveDrawY[0]);
+      breakShape = false;
     }
 
-    context.bezierCurveTo(curveDrawX[1], curveDrawY[1],
-                          curveDrawX[2], curveDrawY[2],
-                          curveDrawX[3], curveDrawY[3]);
+    workPath.curveTo(curveDrawX[1], curveDrawY[1],
+                     curveDrawX[2], curveDrawY[2],
+                     curveDrawX[3], curveDrawY[3]);
   }
 
 
