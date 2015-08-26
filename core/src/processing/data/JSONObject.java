@@ -1554,7 +1554,10 @@ public class JSONObject {
 
 
   public boolean save(File file, String options) {
-    return write(PApplet.createWriter(file), options);
+    PrintWriter writer = PApplet.createWriter(file);
+    boolean success = write(writer, options);
+    writer.close();
+    return success;
   }
 
 

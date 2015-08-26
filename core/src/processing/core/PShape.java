@@ -116,13 +116,11 @@ public class PShape implements PConstants {
     "getVertexCount() only works with PATH or GEOMETRY shapes";
 
   public static final String NOT_A_SIMPLE_VERTEX =
-      "%1$s can not be called on quadratic or bezier vertices";
+    "%1$s can not be called on quadratic or bezier vertices";
 
-  // boundary box of this shape
-  //protected float x;
-  //protected float y;
-  //protected float width;
-  //protected float height;
+  static public final String PER_VERTEX_UNSUPPORTED =
+    "This renderer does not support %1$s for individual vertices";
+
   /**
    * ( begin auto-generated from PShape_width.xml )
    *
@@ -238,6 +236,8 @@ public class PShape implements PConstants {
 
   /** True if contains 3D data */
   protected boolean is3D = false;
+
+  protected boolean perVertexStyles = false;
 
   // should this be called vertices (consistent with PGraphics internals)
   // or does that hurt flexibility?
@@ -704,8 +704,7 @@ public class PShape implements PConstants {
 
 
   public void vertex(float x, float y, float z) {
-    // why not?
-    vertex(x, y);
+    vertex(x, y);  // maybe? maybe not?
   }
 
 
@@ -1544,6 +1543,9 @@ public class PShape implements PConstants {
 
   // TODO unapproved
   static protected void copyStyles(PShape src, PShape dest) {
+    dest.ellipseMode = src.ellipseMode;
+    dest.rectMode = src.rectMode;
+
     if (src.stroke) {
       dest.stroke = true;
       dest.strokeColor = src.strokeColor;
@@ -1640,8 +1642,13 @@ public class PShape implements PConstants {
 
     } else if (kind == RECT) {
       if (image != null) {
+        int oldMode = g.imageMode;
+        g.imageMode(CORNER);
         g.image(image, params[0], params[1], params[2], params[3]);
+        g.imageMode(oldMode);
       } else {
+        int oldMode = g.rectMode;
+        g.rectMode(rectMode);
         if (params.length == 4) {
           g.rect(params[0], params[1],
                  params[2], params[3]);
@@ -1655,11 +1662,18 @@ public class PShape implements PConstants {
                  params[4], params[5],
                  params[6], params[7]);
         }
+        g.rectMode(oldMode);
       }
     } else if (kind == ELLIPSE) {
+      int oldMode = g.ellipseMode;
+      g.ellipseMode(ellipseMode);
       g.ellipse(params[0], params[1],
                 params[2], params[3]);
+      g.ellipseMode(oldMode);
+
     } else if (kind == ARC) {
+      int oldMode = g.ellipseMode;
+      g.ellipseMode(ellipseMode);
       if (params.length == 6) {
         g.arc(params[0], params[1],
               params[2], params[3],
@@ -1670,6 +1684,8 @@ public class PShape implements PConstants {
               params[4], params[5],
               (int) params[6]);
       }
+      g.ellipseMode(oldMode);
+
     } else if (kind == BOX) {
       if (params.length == 1) {
         g.box(params[0]);
@@ -2371,8 +2387,8 @@ public class PShape implements PConstants {
 
     this.fillColor = fill;
 
-    if (vertices != null) {
-      for  (int i = 0; i < vertices.length; i++) {
+    if (vertices != null && perVertexStyles) {
+      for (int i = 0; i < vertexCount; i++) {
         setFill(i, fill);
       }
     }
@@ -2385,13 +2401,16 @@ public class PShape implements PConstants {
       return;
     }
 
-    // make sure we allocated the vertices array and that vertex exists
-    if (vertices == null ||
-        index >= vertices.length) {
-      PGraphics.showWarning(NO_SUCH_VERTEX_ERROR + " (" + index + ")", "getFill()");
+    if (!perVertexStyles) {
+      PGraphics.showWarning(PER_VERTEX_UNSUPPORTED, "setFill()");
       return;
     }
 
+    // make sure we allocated the vertices array and that vertex exists
+    if (vertices == null || index >= vertices.length) {
+      PGraphics.showWarning(NO_SUCH_VERTEX_ERROR + " (" + index + ")", "getFill()");
+      return;
+    }
 
     if (image == null) {
       vertices[index][PGraphics.A] = ((fill >> 24) & 0xFF) / 255.0f;
@@ -2404,8 +2423,7 @@ public class PShape implements PConstants {
 
   public int getTint(int index) {
     // make sure we allocated the vertices array and that vertex exists
-    if (vertices == null ||
-        index >= vertices.length) {
+    if (vertices == null || index >= vertices.length) {
       PGraphics.showWarning(NO_SUCH_VERTEX_ERROR + " (" + index + ")", "getTint()");
       return this.tintColor;
     }
@@ -2503,8 +2521,9 @@ public class PShape implements PConstants {
     }
 
     strokeColor = stroke;
-    if (vertices != null) {
-      for  (int i = 0; i < vertices.length; i++) {
+
+    if (vertices != null && perVertexStyles) {
+      for (int i = 0; i < vertices.length; i++) {
         setStroke(i, stroke);
       }
     }
@@ -2517,9 +2536,13 @@ public class PShape implements PConstants {
       return;
     }
 
+    if (!perVertexStyles) {
+      PGraphics.showWarning(PER_VERTEX_UNSUPPORTED, "setStroke()");
+      return;
+    }
+
     // make sure we allocated the vertices array and that vertex exists
-    if (vertices == null ||
-        index >= vertices.length) {
+    if (vertices == null || index >= vertices.length) {
       PGraphics.showWarning(NO_SUCH_VERTEX_ERROR + " (" + index + ")", "setStroke()");
       return;
     }
@@ -2533,12 +2556,10 @@ public class PShape implements PConstants {
 
   public float getStrokeWeight(int index) {
     // make sure we allocated the vertices array and that vertex exists
-    if (vertices == null ||
-        index >= vertices.length) {
+    if (vertices == null || index >= vertices.length) {
       PGraphics.showWarning(NO_SUCH_VERTEX_ERROR + " (" + index + ")", "getStrokeWeight()");
       return strokeWeight;
     }
-
 
     return vertices[index][PGraphics.SW];
   }
@@ -2552,8 +2573,8 @@ public class PShape implements PConstants {
 
     strokeWeight = weight;
 
-    if (vertices != null) {
-      for  (int i = 0; i < vertices.length; i++) {
+    if (vertices != null && perVertexStyles) {
+      for (int i = 0; i < vertexCount; i++) {
         setStrokeWeight(i, weight);
       }
     }
@@ -2566,9 +2587,13 @@ public class PShape implements PConstants {
       return;
     }
 
+    if (!perVertexStyles) {
+      PGraphics.showWarning(PER_VERTEX_UNSUPPORTED, "setStrokeWeight()");
+      return;
+    }
+
     // make sure we allocated the vertices array and that vertex exists
-    if (vertices == null ||
-        index >= vertices.length) {
+    if (vertices == null || index >= vertices.length) {
       PGraphics.showWarning(NO_SUCH_VERTEX_ERROR + " (" + index + ")", "setStrokeWeight()");
       return;
     }
@@ -2598,10 +2623,8 @@ public class PShape implements PConstants {
 
 
   public int getAmbient(int index) {
-
     // make sure we allocated the vertices array and that vertex exists
-    if (vertices == null ||
-        index >= vertices.length) {
+    if (vertices == null || index >= vertices.length) {
       PGraphics.showWarning(NO_SUCH_VERTEX_ERROR + " (" + index + ")", "getAmbient()");
       return ambientColor;
     }
@@ -2636,8 +2659,7 @@ public class PShape implements PConstants {
     }
 
     // make sure we allocated the vertices array and that vertex exists
-    if (vertices == null ||
-        index >= vertices.length) {
+    if (vertices == null || index >= vertices.length) {
       PGraphics.showWarning(NO_SUCH_VERTEX_ERROR + " (" + index + ")", "setAmbient()");
       return;
     }
@@ -2650,8 +2672,7 @@ public class PShape implements PConstants {
 
   public int getSpecular(int index) {
     // make sure we allocated the vertices array and that vertex exists
-    if (vertices == null ||
-        index >= vertices.length) {
+    if (vertices == null || index >= vertices.length) {
       PGraphics.showWarning(NO_SUCH_VERTEX_ERROR + " (" + index + ")", "getSpecular()");
       return specularColor;
     }
@@ -2686,8 +2707,7 @@ public class PShape implements PConstants {
     }
 
     // make sure we allocated the vertices array and that vertex exists
-    if (vertices == null ||
-        index >= vertices.length) {
+    if (vertices == null || index >= vertices.length) {
       PGraphics.showWarning(NO_SUCH_VERTEX_ERROR + " (" + index + ")", "setSpecular()");
       return;
     }
@@ -2700,8 +2720,7 @@ public class PShape implements PConstants {
 
   public int getEmissive(int index) {
     // make sure we allocated the vertices array and that vertex exists
-    if (vertices == null ||
-        index >= vertices.length) {
+    if (vertices == null || index >= vertices.length) {
       PGraphics.showWarning(NO_SUCH_VERTEX_ERROR + " (" + index + ")", "getEmissive()");
       return emissiveColor;
     }

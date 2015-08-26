@@ -45,7 +45,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
-
 import processing.core.*;
 
 
@@ -61,7 +60,6 @@ public class PSurfaceFX implements PSurface {
   public PSurfaceFX(PGraphicsFX2D graphics) {
     fx = graphics;
     canvas = new ResizableCanvas();
-    fx.context = canvas.getGraphicsContext2D();
 
     // set up main drawing loop
     KeyFrame keyFrame = new KeyFrame(Duration.millis(1000),
@@ -207,6 +205,7 @@ public class PSurfaceFX implements PSurface {
 //      }
 
       Canvas canvas = surface.canvas;
+      surface.fx.context = canvas.getGraphicsContext2D();
       StackPane stackPane = new StackPane();
       stackPane.getChildren().add(canvas);
       canvas.widthProperty().bind(stackPane.widthProperty());
@@ -679,7 +678,6 @@ public class PSurfaceFX implements PSurface {
   }
 
 
-  @SuppressWarnings("deprecation")
   protected void fxKeyEvent(javafx.scene.input.KeyEvent fxEvent) {
     int action = 0;
     EventType<? extends KeyEvent> et = fxEvent.getEventType();
@@ -706,17 +704,88 @@ public class PSurfaceFX implements PSurface {
     }
 
     long when = System.currentTimeMillis();
-    KeyCode kc = fxEvent.getCode();
-    // Are they f*ing serious?
-    char key;
-    if (et == KeyEvent.KEY_TYPED) {
-      key = fxEvent.getCharacter().charAt(0);
-    } else {
-      key = kc.impl_getChar().charAt(0);
-    }
-    int keyCode = kc.impl_getCode();
+
+    char keyChar = getKeyChar(fxEvent);
+    int keyCode = getKeyCode(fxEvent);
     sketch.postEvent(new processing.event.KeyEvent(fxEvent, when,
                                                    action, modifiers,
-                                                   key, keyCode));
+                                                   keyChar, keyCode));
+  }
+
+
+  @SuppressWarnings("deprecation")
+  private int getKeyCode(KeyEvent fxEvent) {
+    if (fxEvent.getEventType() == KeyEvent.KEY_TYPED) {
+      return 0;
+    }
+
+    KeyCode kc = fxEvent.getCode();
+    switch (kc) {
+      case ALT_GRAPH:
+        return PConstants.ALT;
+      default:
+        break;
+    }
+    return kc.impl_getCode();
+  }
+
+
+  @SuppressWarnings("deprecation")
+  private char getKeyChar(KeyEvent fxEvent) {
+    if (fxEvent.getEventType() == KeyEvent.KEY_TYPED) {
+      return fxEvent.getCharacter().charAt(0);
+    }
+
+    KeyCode kc = fxEvent.getCode();
+
+    if (kc.isKeypadKey()) {
+      return (char) (kc.impl_getChar().charAt(0) - ('a' - '0') + 1);
+    }
+
+    switch (kc) {
+      case UP:
+      case KP_UP:
+      case DOWN:
+      case KP_DOWN:
+      case LEFT:
+      case KP_LEFT:
+      case RIGHT:
+      case KP_RIGHT:
+      case ALT:
+      case ALT_GRAPH:
+      case CONTROL:
+      case SHIFT:
+      case CAPS:
+      case META:
+      case WINDOWS:
+      case CONTEXT_MENU:
+      case HOME:
+      case PAGE_UP:
+      case PAGE_DOWN:
+      case END:
+      case PAUSE:
+      case PRINTSCREEN:
+      case INSERT:
+      case NUM_LOCK:
+      case SCROLL_LOCK:
+      case F1:
+      case F2:
+      case F3:
+      case F4:
+      case F5:
+      case F6:
+      case F7:
+      case F8:
+      case F9:
+      case F10:
+      case F11:
+      case F12:
+        return PConstants.CODED;
+      case ENTER:
+        return '\n';
+      default:
+        break;
+    }
+    return kc.impl_getChar().charAt(0);
   }
 }

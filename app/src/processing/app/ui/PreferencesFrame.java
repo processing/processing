@@ -654,8 +654,8 @@ public class PreferencesFrame {
     Preferences.setBoolean("pdex.errorCheckEnabled", errorCheckerBox.isSelected());
     Preferences.setBoolean("pdex.warningsEnabled", warningsCheckerBox.isSelected());
     Preferences.setBoolean("pdex.completion", codeCompletionBox.isSelected());
-    //Preferences.setBoolean("pdex.completion.trigger", codeCompletionTriggerBox.isSelected());
-    Preferences.setBoolean("pdex.importSuggestEnabled", importSuggestionsBox.isSelected());
+//    Preferences.setBoolean("pdex.completion.trigger", codeCompletionTriggerBox.isSelected());
+    Preferences.setBoolean("pdex.suggest.imports", importSuggestionsBox.isSelected());
 
     for (Editor editor : base.getEditors()) {
       editor.applyPreferences();
@@ -671,7 +671,7 @@ public class PreferencesFrame {
     codeCompletionBox.setSelected(Preferences.getBoolean("pdex.completion"));
     //codeCompletionTriggerBox.setSelected(Preferences.getBoolean("pdex.completion.trigger"));
     //codeCompletionTriggerBox.setEnabled(codeCompletionBox.isSelected());
-    importSuggestionsBox.setSelected(Preferences.getBoolean("pdex.importSuggestEnabled"));
+    importSuggestionsBox.setSelected(Preferences.getBoolean("pdex.suggest.imports"));
     deletePreviousBox.setSelected(Preferences.getBoolean("export.delete_target_folder")); //$NON-NLS-1$
 
     sketchbookLocationField.setText(Preferences.getSketchbookPath());

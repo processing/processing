@@ -4,11 +4,30 @@ X   https://github.com/processing/processing/issues/3497
 o   probably have to add the script/Processing.app location to user's path
 X line selected for errors is off by one or two
 X   https://github.com/processing/processing/issues/3654
+X PDE window leaks undisposed Timer objects even when closed
+X   https://github.com/processing/processing/issues/3655
+X prompt to install Xcode coming up on Export to Application
+X   http://stackoverflow.com/questions/15371925/how-to-check-if-command-line-tools-is-installed
+X   "xcode-select -p" returns 0 if they exist (and the dir) or 2 if they don't
+X   no special case added for 10.8, but it's on the way out
+X move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
+X   need to make the list abstract, also "scroll to line" feature
+X fix red in sidebar, the squiggly line beneath code
+X live error checking complains about F instead of f after floats
+X   https://github.com/processing/processing/issues/3707
+X NoClassDefError with CLibrary and getenv when switching to Android Mode
+X   https://github.com/processing/processing/issues/3704
 
 contribs
 X Undo does not move to the correct location in the editor window
 X   https://github.com/processing/processing/issues/707
 X   https://github.com/processing/processing/pull/3660
+X Undo sometimes causes the editor to go blank
+X   https://github.com/processing/processing/issues/3003
+X   https://github.com/processing/processing/pull/3693
+X   https://github.com/processing/processing/pull/3702
+X Miscellaneous language improvements
+X   https://github.com/processing/processing/pull/3700
 
 gsoc
 X Foundation libraries disapear from CM after restart
@@ -21,16 +40,33 @@ X   no longer issue in the new release
 X CM blue bar missing
 X   https://github.com/processing/processing/issues/3599
 X   https://github.com/processing/processing/pull/3636
-X CM: Category dropdown alignment
-X   https://github.com/processing/processing/pull/3666
-_   https://github.com/processing/processing/issues/3644
+X CM column widths change with selection
+X   https://github.com/processing/processing/issues/3609
+X   https://github.com/processing/processing/pull/3675
+X remove category dropdown from CM except when viewing libraries
+X   https://github.com/processing/processing/issues/3668
+X   https://github.com/processing/processing/pull/3676
+X Right-clicking popup menu closes instead of shifting its location
+X   https://github.com/processing/processing/issues/3649
+X Use 1x or 2x icons in the CM
+X   https://github.com/processing/processing/pull/3681
+X Shifted the text right a little bit
+X   https://github.com/processing/processing/pull/3696
+X No underline and no blue color
+X   https://github.com/processing/processing/pull/3695
+X Make auto-format into a compund edit
+X   https://github.com/processing/processing/pull/3693
+X Focus is shifted out of the filter field after CM search
+X   https://github.com/processing/processing/issues/3682
+X   https://github.com/processing/processing/pull/3701
 
-cleaning
+earlier/cleaning
 X modify build to insert these after antlr run:
 X   @SuppressWarnings({"unused", "cast"})
 X   or get the updated ANTLR, which likely would support it
 o scrollable stack trace
 o   http://www.javalobby.org/java/forums/t19012.html
+X disable the Export button if no platforms selected on Export to Application
 
 cleaning/libraries
 o different name for 'lib' folder because of libraries folder?
@@ -48,6 +84,18 @@ X changing the sketchbook folder will make libraries show up
 o   but it won't reload the library mapping table
 o set DYLD_LIBRARY_PATH to include .dylib and other framework stuff
 o   java.library.path will only handle .jnilib stuff
+
+
+may be fixed in b5, but unconfirmed at press time
+X CM: Category dropdown alignment
+X   https://github.com/processing/processing/pull/3666
+_   https://github.com/processing/processing/issues/3644
+X Update buttom enabled when updates are present and background is set
+_   https://github.com/processing/processing/issues/3614
+X   https://github.com/processing/processing/pull/3694
+X Fix info panel text color and alignment in CM
+_   https://github.com/processing/processing/issues/3642
+X   https://github.com/processing/processing/pull/3684
 
 
 known issues
@@ -72,14 +120,25 @@ _     and if not, put up a warning for the user?
 _   http://www.oracle.com/us/technologies/java/locale-140624.html
 
 
+o 3.0b4 demos fail to create PDF files
+_   https://github.com/processing/processing/issues/3708
+
+
 3.0 final
-_ prompt to install Xcode coming up on Export to Application
-_   http://stackoverflow.com/questions/15371925/how-to-check-if-command-line-tools-is-installed
-_   "xcode-select -p" returns 0 if they exist (and the dir) or 2 if they don't
+_ Casey reports that exported app still asks to download Java
+_   could this be a JOGL bug (linking against the app stub?)
 _ Contributions Manager UI design
 _   https://github.com/processing/processing/issues/3482
 _ Ready to add contributed example packages?
 _   https://github.com/processing/processing/issues/2953
+_ items still show up in "Recent" if they no longer exist (on startup)
+_ replace about screen (1x and 2x versions)
+_   change 'alpha' to correct name
+_   also change the revision in the "about processing" dialog
+_   https://github.com/processing/processing/issues/3665
+
+
+sketch modified externally
 _ sketch modified externally with FAT32 volumes on OS X
 _   https://github.com/processing/processing/issues/3387
 _ also appearing with encrypted volumes?
@@ -89,13 +148,10 @@ _ add this to the preferences?
 
 
 gui
-_ replace about screen (1x and 2x versions)
-_   change 'alpha' to correct name
-_   also change the revision in the "about processing" dialog
-_   https://github.com/processing/processing/issues/3665
-_ fix red in sidebar, the squiggly line beneath code
+_ different design of squiggly line?
 _ Error/warning location visualisation not updating when editor resizes
 _   https://github.com/processing/processing/issues/3619
+_ error/warning location is awkward when no scroll bar is in use
 _ show hover text when the mouse is over the 'debug' button
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
@@ -120,13 +176,26 @@ _ update EditorButton rollover label when pressing shift or alt
 _ disable the debug toggle menu while running
 _   otherwise could run in one mode, then try to stop in another
 _ recent menu gets huge with other p5 versions on osx
-_ move processing.mode.java.pdex.XQErrorTable to processing.ui.ErrorTable
-_   need to make the list abstract, also "scroll to line" feature
-_   fix up the UI, oy
 _ show compiling/startup animation after clicking run
 _   or maybe show an animation for starting up
 _   rather than post-compile
 _   https://github.com/processing/processing/issues/136
+
+
+gui/low
+_ welcome screen tweaks
+_   click "show this welcome" text to check/uncheck the box
+_   submit the form (as if 'get started' clicked) when closing the window
+_     whether hitting ESC or the close box on the window
+
+
+manager
+_ CM: Clicking item in Libraries list throws exception
+_   https://github.com/processing/processing/issues/3667
+_ fonts are fake-bolded version rather than the real bold
+_ scrolling "past" top/bottom causes the screen to jiggle
+_ number of updates available is not correct
+_ retina icons show at twice the size and just crop at top/bottom
 
 
 fonts
@@ -172,7 +241,7 @@ crashing
 _ fix appbundler problems due to rollback
 _   appbundler is no longer being developed by Oracle, switch to "packager"
 _   this re-introduces two bugs (serial export and scrolling)
-_   and any other changes later than 16 November 2015:
+_   and any other changes later than 16 November 2014:
 _   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
 _   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
 _ another possible culprit
@@ -228,7 +297,6 @@ _ improve start time by populating sketchbook/libraries on threads
 _   https://github.com/processing/processing/issues/2945
 _ longer PR about sketchbook stuff, but closed
 _   https://github.com/processing/processing/pull/3178
-_ disable the Export button if no platforms selected on Export to Application
 
 
 help me

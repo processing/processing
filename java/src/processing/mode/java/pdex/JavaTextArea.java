@@ -57,10 +57,6 @@ public class JavaTextArea extends JEditTextArea {
   protected PdeTextAreaDefaults defaults;
   protected JavaEditor editor;
 
-//  static final int LEFT_GUTTER = Editor.LEFT_GUTTER;
-//  static final int RIGHT_GUTTER = Editor.RIGHT_GUTTER;
-//  static final int GUTTER_MARGIN = 3;
-
   // cached mouselisteners, these are wrapped by MouseHandler
   protected MouseListener[] mouseListeners;
 
@@ -85,11 +81,6 @@ public class JavaTextArea extends JEditTextArea {
 
 //  protected ErrorCheckerService errorCheckerService;
   private CompletionPanel suggestion;
-
-
-  protected JavaTextAreaPainter getCustomPainter() {
-    return (JavaTextAreaPainter) painter;
-  }
 
 
   public JavaTextArea(TextAreaDefaults defaults, JavaEditor editor) {
@@ -132,12 +123,12 @@ public class JavaTextArea extends JEditTextArea {
 
     // load settings from theme.txt
     Mode mode = editor.getMode();
-    gutterBgColor = mode.getColor("gutter.bgcolor");  //, gutterBgColor);
-    gutterLineColor = mode.getColor("gutter.linecolor"); //, gutterLineColor);
-    gutterPadding = mode.getInteger("gutter.padding");
-    breakpointMarker = mode.getString("breakpoint.marker");  //, breakpointMarker);
+    gutterBgColor = mode.getColor("editor.gutter.bgcolor");  //, gutterBgColor);
+    gutterLineColor = mode.getColor("editor.gutter.linecolor"); //, gutterLineColor);
+    gutterPadding = mode.getInteger("editor.gutter.padding");
+    breakpointMarker = mode.getString("editor.gutter.breakpoint.marker");  //, breakpointMarker);
 //    breakpointMarker = "\u2666";
-    currentLineMarker = mode.getString("currentline.marker"); //, currentLineMarker);
+    currentLineMarker = mode.getString("editor.gutter.currentline.marker"); //, currentLineMarker);
 
     // TweakMode code
     prevCompListeners = painter.getComponentListeners();
@@ -155,14 +146,12 @@ public class JavaTextArea extends JEditTextArea {
   }
 
 
-  /**
-   * Sets ErrorCheckerService and loads theme for TextArea(XQMode)
-   *
-   * @param ecs
-   * @param mode
-   */
+  protected JavaTextAreaPainter getCustomPainter() {
+    return (JavaTextAreaPainter) painter;
+  }
+
+
   public void setMode(JavaMode mode) {
-//    errorCheckerService = ecs;
     getCustomPainter().setMode(mode);
   }
 
@@ -183,17 +172,14 @@ public class JavaTextArea extends JEditTextArea {
 
     } else if (evt.getKeyCode() == KeyEvent.VK_ENTER &&
                evt.getID() == KeyEvent.KEY_PRESSED) {
-      if (suggestion != null) {
+      if (suggestion != null &&
+          suggestion.isVisible() &&
+          suggestion.insertSelection(CompletionPanel.KEYBOARD_COMPLETION)) {
+        evt.consume();
+        // Still try to show suggestions after inserting if it's
+        // the case of overloaded methods. See #2755
         if (suggestion.isVisible()) {
-          if (suggestion.insertSelection(CompletionPanel.KEYBOARD_COMPLETION)) {
-            //hideSuggestion(); // Kill it!
-            evt.consume();
-            // Still try to show suggestions after inserting if it's
-            // the case of overloaded methods. See #2755
-            if(suggestion.isVisible())
-              prepareSuggestions(evt);
-            return;
-          }
+          prepareSuggestions(evt);
         }
       }
     }
@@ -268,14 +254,12 @@ public class JavaTextArea extends JEditTextArea {
         keyChar == KeyEvent.VK_ESCAPE ||
         keyChar == KeyEvent.VK_TAB ||
         keyChar == KeyEvent.CHAR_UNDEFINED) {
-      return;
 
     } else if (keyChar == ')') {
-      hideSuggestion(); // See #2741
-      return;
-    }
+      // https://github.com/processing/processing/issues/2741
+      hideSuggestion();
 
-    if (keyChar == '.') {
+    } else if (keyChar == '.') {
       if (JavaMode.codeCompletionsEnabled) {
         Messages.log("[KeyEvent]" + KeyEvent.getKeyText(event.getKeyCode()) + "  |Prediction started");
         Messages.log("Typing: " + fetchPhrase(event));
@@ -307,8 +291,8 @@ public class JavaTextArea extends JEditTextArea {
 
 
   /** Kickstart auto-complete suggestions */
-  private void prepareSuggestions(final KeyEvent evt){
-    SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+  private void prepareSuggestions(final KeyEvent evt) {
+    new SwingWorker<Object, Object>() {
       protected Object doInBackground() throws Exception {
         // Provide completions only if it's enabled
         if (JavaMode.codeCompletionsEnabled &&
@@ -318,8 +302,7 @@ public class JavaTextArea extends JEditTextArea {
         }
         return null;
       }
-    };
-    worker.execute();
+    }.execute();
   }
 
 
@@ -395,7 +378,7 @@ public class JavaTextArea extends JEditTextArea {
    * Then triggers code completion for that word.
    * @param evt - the KeyEvent which triggered this method
    */
-  public String fetchPhrase(KeyEvent evt) {
+  protected String fetchPhrase(KeyEvent evt) {
     int off = getCaretPosition();
     Messages.log("off " + off);
     if (off < 0)
@@ -513,36 +496,6 @@ public class JavaTextArea extends JEditTextArea {
     return word;
 
   }
-
-
-//  /**
-//   * Retrieve the total width of the gutter area.
-//   * @return gutter width in pixels
-//   */
-//  protected int getGutterWidth() {
-//    if (!editor.isDebugToolbarEnabled()) {
-//      return 0;
-//    }
-//
-//    FontMetrics fm = painter.getFontMetrics();
-//    int textWidth = Math.max(fm.stringWidth(breakpointMarker),
-//                             fm.stringWidth(currentLineMarker));
-//    return textWidth + 2 * gutterPadding;
-//  }
-//
-//
-//  /**
-//   * Retrieve the width of margins applied to the left and right of the gutter
-//   * text.
-//   *
-//   * @return margins in pixels
-//   */
-//  protected int getGutterMargins() {
-//    if (!editor.isDebugToolbarEnabled()) {
-//      return 0;
-//    }
-//    return gutterPadding;
-//  }
 
 
   /**

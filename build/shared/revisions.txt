@@ -1,3 +1,144 @@
+PROCESSING 3.0b5 (REV 0243) - 24 August 2015
+
+Fixing a handful of regressions in beta 4, and clearing out some of the
+nooks and crannies as people report issues with the default download.
+
+
+[ changes ] 
+
++ Removed support for fixed-function pipeline in OpenGL. I'm told 
+  this "brings us out of the 90s" and gets things a bit more up-to-date
+  and compatible across many platforms and varying device types.
+  https://github.com/processing/processing/issues/3505
+  If you're a beginPGL() and endPGL() fan, see the updated docs:
+  https://github.com/processing/processing/wiki/Advanced-OpenGL
+
++ Remove legacy GL functions from PGL
+  https://github.com/processing/processing/issues/3674
+  https://github.com/processing/processing/pull/3691
+  https://github.com/processing/processing/issues/3671
+  https://github.com/processing/processing/issues/3621
+
++ Update LowLevelGL to use VBOs
+  https://github.com/processing/processing-docs/pull/289
+
+
+[ bug fixes ] 
+
++ Line selected for errors is off by one or two
+  https://github.com/processing/processing/issues/3654
+
++ NullPointerException in selectFolder() on OS X
+  https://github.com/processing/processing/issues/3661
+
++ Wrong positioning of circles in SVG shapes (regression from 2)
+  https://github.com/processing/processing/issues/3685
+
++ setFill() on PShape in Java2D throws ArrayIndexOutOfBoundsException
+  https://github.com/processing/processing/issues/3677
+
++ saveJSONObject() doesn't close the file
+  https://github.com/processing/processing/issues/3705
+
++ processing-java fixed for OS X 10.11 El Capitan
+  https://github.com/processing/processing/issues/3497
+
++ Prevent a prompt to install Xcode coming up on Export to Application
+
++ Live error checker complains about F instead of f after floats
+  https://github.com/processing/processing/issues/3707
+
++ NoClassDefError with CLibrary and getenv when switching to Android Mode
+  https://github.com/processing/processing/issues/3704
+
+
+[ foundation $$ = bug fixe$ + improvement$ ] 
+
++ keyTyped() not firing with P2D and P3D
+  https://github.com/processing/processing/issues/3582
+  https://github.com/processing/processing/pull/3652
+
++ rect() sizing in JavaFX
+  https://github.com/processing/processing/pull/3656
+
++ FX - Proper sketch sizing
+  https://github.com/processing/processing/pull/3658
+
++ FX - implement frameRate()
+
++ FX - Fix key typed
+  https://github.com/processing/processing/pull/3672
+
++ FX - Make key events little bit more sane
+  https://github.com/processing/processing/pull/3686
+
++ "Internal graphics not initialized yet"
+  https://github.com/processing/processing/issues/3690
+  https://github.com/processing/processing/pull/3692
+
++ NullPointerException in Demos > Graphics > Planets
+  https://github.com/processing/processing/issues/3551
+
++ PDE window leaks undisposed Timer objects even when closed
+  https://github.com/processing/processing/issues/3655
+
+
+[ contributed fixes ] 
+
++ Undo does not move to the correct location in the editor window
+  https://github.com/processing/processing/issues/707
+  https://github.com/processing/processing/pull/3660
+
++ Undo sometimes causes the editor to go blank
+  https://github.com/processing/processing/issues/3003
+  https://github.com/processing/processing/pull/3693
+  https://github.com/processing/processing/pull/3702
+
++ Miscellaneous language improvements
+  https://github.com/processing/processing/pull/3700
+
+
+[ google summer of code ] 
+
++ Foundation libraries disapear from CM after restart
+  https://github.com/processing/processing/issues/3659
+  https://github.com/processing/processing/pull/3663
+
++ CM blue bar missing
+  https://github.com/processing/processing/issues/3599
+  https://github.com/processing/processing/pull/3636
+
++ CM column widths change with selection
+  https://github.com/processing/processing/issues/3609
+  https://github.com/processing/processing/pull/3675
+
++ Remove category dropdown from CM except when viewing libraries
+  https://github.com/processing/processing/issues/3668
+  https://github.com/processing/processing/pull/3676
+
++ Right-clicking popup menu closes instead of shifting its location
+  https://github.com/processing/processing/issues/3649
+
++ Use 1x or 2x icons in the CM
+  https://github.com/processing/processing/pull/3681
+
++ Shifted the text right a little bit
+  https://github.com/processing/processing/pull/3696
+
++ No underline and no blue color
+  https://github.com/processing/processing/pull/3695
+
++ Make auto-format into a compund edit
+  https://github.com/processing/processing/pull/3693
+
++ Focus is shifted out of the filter field after CM search
+  https://github.com/processing/processing/issues/3682
+  https://github.com/processing/processing/pull/3701
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.0b4 (REV 0242) - 17 August 2015
 
 Fixes for several long-standing bugs, plus some internal changes 

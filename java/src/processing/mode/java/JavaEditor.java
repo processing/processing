@@ -14,9 +14,8 @@ import java.util.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
-import javax.swing.table.TableModel;
+import javax.swing.event.*;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -24,32 +23,19 @@ import org.eclipse.jdt.core.compiler.IProblem;
 import processing.core.PApplet;
 import processing.data.StringList;
 import processing.app.*;
-import processing.app.contrib.AvailableContribution;
-import processing.app.contrib.Contribution;
-import processing.app.contrib.ContributionListing;
-import processing.app.contrib.ContributionManager;
-import processing.app.contrib.ToolContribution;
+import processing.app.contrib.*;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
-import processing.app.ui.About;
-import processing.app.ui.ColorChooser;
-import processing.app.ui.Editor;
-import processing.app.ui.EditorException;
-import processing.app.ui.EditorFooter;
-import processing.app.ui.EditorHeader;
-import processing.app.ui.EditorState;
-import processing.app.ui.EditorToolbar;
+import processing.app.ui.*;
 import processing.app.ui.Toolkit;
-import processing.app.ui.Welcome;
 import processing.mode.java.debug.LineBreakpoint;
 import processing.mode.java.debug.LineHighlight;
 import processing.mode.java.debug.LineID;
 import processing.mode.java.pdex.ErrorCheckerService;
-import processing.mode.java.pdex.ErrorMarker;
+import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.ErrorMessageSimplifier;
 import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.Problem;
-import processing.mode.java.pdex.XQErrorTable;
 import processing.mode.java.runner.Runner;
 import processing.mode.java.tweak.ColorControlBox;
 import processing.mode.java.tweak.Handle;
@@ -76,10 +62,6 @@ public class JavaEditor extends Editor {
   protected final String breakpointMarkerComment = " //<>//";
 
   protected JMenu debugMenu;
-//  JCheckBoxMenuItem enableDebug;
-//  boolean debugEnabled;
-//  JMenuItem enableDebug;
-
   protected JMenuItem debugItem;
   protected Debugger debugger;
   protected boolean debugEnabled;
@@ -87,16 +69,8 @@ public class JavaEditor extends Editor {
   protected VariableInspector inspector;
   protected JMenuItem inspectorItem;
 
-//  private EditorToolbar javaToolbar;
-//  private DebugToolbar debugToolbar;
+  private MarkerColumn errorColumn;
 
-  private ErrorColumn errorBar;
-
-//  protected XQConsoleToggle btnShowConsole;
-//  protected XQConsoleToggle btnShowErrors;
-  protected JScrollPane errorTableScrollPane;
-//  protected JPanel consoleProblemsPane;
-  protected XQErrorTable errorTable;
   static final int ERROR_TAB_INDEX = 0;
 
   private boolean hasJavaTabs;
@@ -174,9 +148,9 @@ public class JavaEditor extends Editor {
     // remove the text area temporarily
     box.remove(2);
     textAndError.setLayout(new BorderLayout());
-    errorBar =  new ErrorColumn(this, textarea.getMinimumSize().height, jmode);
-    textAndError.add(errorBar, BorderLayout.EAST);
-    textarea.setBounds(0, 0, errorBar.getX() - 1, textarea.getHeight());
+    errorColumn =  new MarkerColumn(this, textarea.getMinimumSize().height);
+    textAndError.add(errorColumn, BorderLayout.EAST);
+    textarea.setBounds(0, 0, errorColumn.getX() - 1, textarea.getHeight());
     textAndError.add(textarea);
     // add our hacked version back to the editor
     box.add(textAndError);
@@ -219,58 +193,8 @@ public class JavaEditor extends Editor {
 
   @Override
   public EditorFooter createFooter() {
-//    //JPanel consolePanel = new JPanel();
-//    JTabbedPane footer = new JTabbedPane(JTabbedPane.BOTTOM);
-////    tabPane.setUI(new BasicTabbedPaneUI());
-//    footer.setUI(new SimpleTabbedPaneUI());
-////    tabPane.setUI(new SillyTabbedPaneUI());
-////    tabPane.setUI(new PlasticTabbedPaneUI());
-////    tabPane.setBorder(BorderFactory.createEmptyBorder());
-////    tabPane.setBackground(Color.RED);
-
-//    EditorFooter footer = new EditorFooter(this);
     EditorFooter footer = super.createFooter();
-
-    // Adding Error Table in a scroll pane
-    errorTableScrollPane = new JScrollPane();
-    errorTable = new XQErrorTable(this);
-    // errorTableScrollPane.setBorder(new EmptyBorder(2, 2, 2, 2));
-//    errorTableScrollPane.setBorder(new EtchedBorder());
-    errorTableScrollPane.setBorder(BorderFactory.createEmptyBorder());
-//    errorTableScrollPane.setBorder(new EmptyBorder(0, Editor.LEFT_GUTTER, 0, 0));
-    errorTableScrollPane.setViewportView(errorTable);
-
-//    // Adding toggle console button
-////    consolePanel.remove(2);  // removes the line status
-//    JPanel lineStatusPanel = new JPanel();
-//    lineStatusPanel.setLayout(new BorderLayout());
-//    btnShowConsole = new XQConsoleToggle(this, Language.text("editor.footer.console"), mode.getInteger("linestatus.height"));
-//    btnShowErrors = new XQConsoleToggle(this, Language.text("editor.footer.errors"), mode.getInteger("linestatus.height"));
-//    btnShowConsole.addMouseListener(btnShowConsole);
-//    btnShowErrors.addMouseListener(btnShowErrors);
-
-//    JPanel toggleButtonPanel = new JPanel(new BorderLayout());
-//    toggleButtonPanel.add(btnShowConsole, BorderLayout.EAST);
-//    toggleButtonPanel.add(btnShowErrors, BorderLayout.WEST);
-//    lineStatusPanel.add(toggleButtonPanel, BorderLayout.EAST);
-////    lineStatus.setBounds(0, 0, toggleButtonPanel.getX() - 1,
-////                         toggleButtonPanel.getHeight());
-////    lineStatusPanel.add(lineStatus);
-//    consolePanel.add(lineStatusPanel, BorderLayout.SOUTH);
-//    lineStatusPanel.repaint();
-
-//    // Adding JPanel with CardLayout for Console/Problems Toggle
-////    consolePanel.remove(1);  // removes the console itself
-//    consoleProblemsPane = new JPanel(new CardLayout());
-//    consoleProblemsPane.add(errorTableScrollPane, Language.text("editor.footer.errors"));
-//    consoleProblemsPane.add(super.createConsolePanel(), Language.text("editor.footer.console"));
-//    consolePanel.add(consoleProblemsPane, BorderLayout.CENTER);
-
-//    console = new EditorConsole(this);
-//    footer.addPanel(Language.text("editor.footer.console"), console);
-    footer.addPanel(errorTableScrollPane, Language.text("editor.footer.errors"), "/lib/footer/error");
-
-    //return consolePanel;
+    addErrorTable(footer);
     return footer;
   }
 
@@ -355,7 +279,7 @@ public class JavaEditor extends Editor {
       menu.add(item);
     }
 
-    item = new JMenuItem("Welcome to Processing 3");
+    item = new JMenuItem(Language.text("menu.help.welcome"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         try {
@@ -2498,20 +2422,8 @@ public class JavaEditor extends Editor {
    * @return the document object
    */
   public Document currentDocument() {
-    //return ta.getDocument();
     return getCurrentTab().getDocument();
   }
-
-
-//  /**
-//   * Event Handler for double clicking in the left hand gutter area.
-//   * @param lineIdx the line (0-based) that was double clicked
-//   */
-//  public void gutterDblClicked(int lineIdx) {
-//    if (debugger != null) {
-//      debugger.toggleBreakpoint(lineIdx);
-//    }
-//  }
 
 
   public void statusBusy() {
@@ -2593,17 +2505,17 @@ public class JavaEditor extends Editor {
 
 
   public void updateErrorBar(List<Problem> problems) {
-    errorBar.updateErrorPoints(problems);
+    errorColumn.updateErrorPoints(problems);
   }
 
 
-  public List<ErrorMarker> getErrorPoints() {
-    return errorBar.errorPoints;
+  public List<LineMarker> getErrorPoints() {
+    return errorColumn.getErrorPoints();
   }
 
 
   public void repaintErrorBar() {
-    errorBar.repaint();
+    errorColumn.repaint();
   }
 
 
@@ -2621,10 +2533,113 @@ public class JavaEditor extends Editor {
 //  }
 
 
-  /** Updates the error table */
-  synchronized public boolean updateTable(final TableModel tableModel) {
-    return errorTable.updateTable(tableModel);
+  public void errorTableClick(Object item) {
+    Problem p = (Problem) item;
+    errorCheckerService.scrollToErrorLine(p);
   }
+
+
+  public void errorTableDoubleClick(Object item) {
+    Problem p = (Problem) item;
+
+//    MouseEvent evt = null;
+    String[] suggs = p.getImportSuggestions();
+    if (suggs != null && suggs.length > 0) {
+//      String t = p.getMessage() + "(Import Suggestions available)";
+//      FontMetrics fm = getFontMetrics(getFont());
+//      int x1 = fm.stringWidth(p.getMessage());
+//      int x2 = fm.stringWidth(t);
+//      if (evt.getX() > x1 && evt.getX() < x2) {
+      String[] list = p.getImportSuggestions();
+      String className = list[0].substring(list[0].lastIndexOf('.') + 1);
+      String[] temp = new String[list.length];
+      for (int i = 0; i < list.length; i++) {
+        temp[i] = "<html>Import '" +  className + "' <font color=#777777>(" + list[i] + ")</font></html>";
+      }
+      //        showImportSuggestion(temp, evt.getXOnScreen(), evt.getYOnScreen() - 3 * getFont().getSize());
+      Point mouse = MouseInfo.getPointerInfo().getLocation();
+      showImportSuggestion(temp, mouse.x, mouse.y);
+    }
+  }
+
+
+  JFrame frmImportSuggest;
+
+  private void showImportSuggestion(String[] list, int x, int y) {
+    if (frmImportSuggest != null) {
+//      frmImportSuggest.setVisible(false);
+//      frmImportSuggest = null;
+      return;
+    }
+    final JList<String> classList = new JList<String>(list);
+    classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    frmImportSuggest = new JFrame();
+
+    frmImportSuggest.setUndecorated(true);
+    frmImportSuggest.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    panel.setBackground(Color.WHITE);
+    frmImportSuggest.setBackground(Color.WHITE);
+    panel.add(classList);
+    JLabel label = new JLabel("<html><div alight = \"left\"><font size = \"2\"><br>(Click to insert)</font></div></html>");
+    label.setBackground(Color.WHITE);
+    label.setHorizontalTextPosition(SwingConstants.LEFT);
+    panel.add(label);
+    panel.validate();
+    frmImportSuggest.getContentPane().add(panel);
+    frmImportSuggest.pack();
+
+    classList.addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        if (classList.getSelectedValue() != null) {
+          try {
+            String t = classList.getSelectedValue().trim();
+            Messages.log(t);
+            int x = t.indexOf('(');
+            String impString = "import " + t.substring(x + 1, t.indexOf(')')) + ";\n";
+            int ct = getSketch().getCurrentCodeIndex();
+            getSketch().setCurrentCode(0);
+            getTextArea().getDocument().insertString(0, impString, null);
+            getSketch().setCurrentCode(ct);
+          } catch (BadLocationException ble) {
+            Messages.log("Failed to insert import");
+            ble.printStackTrace();
+          }
+        }
+        frmImportSuggest.setVisible(false);
+        frmImportSuggest.dispose();
+        frmImportSuggest = null;
+      }
+    });
+
+    frmImportSuggest.addWindowFocusListener(new WindowFocusListener() {
+
+      @Override
+      public void windowLostFocus(WindowEvent e) {
+        if (frmImportSuggest != null) {
+          frmImportSuggest.dispose();
+          frmImportSuggest = null;
+        }
+      }
+
+      @Override
+      public void windowGainedFocus(WindowEvent e) {
+
+      }
+    });
+
+    frmImportSuggest.setLocation(x, y);
+    frmImportSuggest.setBounds(x, y, 250, 100);
+    frmImportSuggest.pack();
+    frmImportSuggest.setVisible(true);
+  }
+
+
+//  /** Updates the error table */
+//  synchronized public boolean updateTable(final TableModel tableModel) {
+//    return errorTable.updateTable(tableModel);
+//  }
 
 
   /**
@@ -2632,7 +2647,7 @@ public class JavaEditor extends Editor {
    * the error button at the bottom of the PDE
    */
   public void updateErrorToggle() {
-    footer.setNotification(errorTableScrollPane,
+    footer.setNotification(errorTable.getParent(),  //errorTableScrollPane,
                            JavaMode.errorCheckEnabled &&
                            errorCheckerService.hasErrors());
 //    String title = Language.text("editor.footer.errors");

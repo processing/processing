@@ -81,7 +81,6 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   Thread thread;
 
 
-  //public EditorStatus(Editor editor) {
   public EditorStatus(BasicSplitPaneUI ui, Editor editor) {
     super(ui);
     this.editor = editor;

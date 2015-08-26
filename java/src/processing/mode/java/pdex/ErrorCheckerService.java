@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
@@ -51,12 +50,14 @@ import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 
 import processing.app.Library;
 import processing.app.Messages;
+import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.Util;
 import processing.app.syntax.SyntaxDocument;
 import processing.app.ui.Editor;
 import processing.app.ui.EditorStatus;
+import processing.app.ui.ErrorTable;
 import processing.core.PApplet;
 import processing.mode.java.JavaMode;
 import processing.mode.java.JavaEditor;
@@ -342,27 +343,29 @@ public class ErrorCheckerService implements Runnable {
 
 
   protected void updateSketchCodeListeners() {
-    for (final SketchCode sc : editor.getSketch().getCode()) {
-      boolean flag = false;
-      if (sc.getDocument() == null
-          || ((SyntaxDocument) sc.getDocument()).getDocumentListeners() == null)
-        continue;
-      for (DocumentListener dl : ((SyntaxDocument)sc.getDocument()).getDocumentListeners()) {
-        if(dl.equals(sketchChangedListener)){
-          flag = true;
-          break;
-        }
-      }
-      if(!flag){
-        // log("Adding doc listener to " + sc.getPrettyName());
-        sc.getDocument().addDocumentListener(sketchChangedListener);
+    for (SketchCode sc : editor.getSketch().getCode()) {
+      SyntaxDocument doc = (SyntaxDocument) sc.getDocument();
+      if (!hasSketchChangedListener(doc)) {
+        doc.addDocumentListener(sketchChangedListener);
       }
     }
   }
 
 
+  boolean hasSketchChangedListener(SyntaxDocument doc) {
+    if (doc != null && doc.getDocumentListeners() != null) {
+      for (DocumentListener dl : doc.getDocumentListeners()) {
+        if (dl.equals(sketchChangedListener)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+
   protected void checkForMissingImports() {
-    if (JavaMode.importSuggestEnabled) {
+    if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
       for (Problem p : problemsList) {
         if(p.getIProblem().getID() == IProblem.UndefinedType) {
           String args[] = p.getIProblem().getArguments();
@@ -702,8 +705,7 @@ public class ErrorCheckerService implements Runnable {
       for (SketchCode sc : editor.getSketch().getCode()) {
         PlainDocument tab = new PlainDocument();
         if (editor.getSketch().getCurrentCode().equals(sc)) {
-          Document doc = sc.getDocument();
-          tab.insertString(0, doc.getText(0, doc.getLength()), null);
+          tab.insertString(0, sc.getDocumentText(), null);
         } else {
           tab.insertString(0, sc.getProgram(), null);
         }
@@ -918,21 +920,16 @@ public class ErrorCheckerService implements Runnable {
    */
   public void updateErrorTable() {
     try {
-      String[][] errorData = new String[problemsList.size()][3];
-      int index = 0;
+      ErrorTable table = editor.getErrorTable();
+      table.clearRows();
+
+//      String[][] errorData = new String[problemsList.size()][3];
+//      int index = 0;
 //      for (int i = 0; i < problemsList.size(); i++) {
+      Sketch sketch = editor.getSketch();
       for (Problem p : problemsList) {
-        errorData[index][0] = p.getMessage();
-        errorData[index][1] = editor.getSketch().getCode(p.getTabIndex()).getPrettyName();
-        errorData[index][2] = Integer.toString(p.getLineNumber() + 1);
-        // Added +1 because lineNumbers internally are 0-indexed
-
-//        //TODO: This is temporary
-//        if (tempErrorLog.size() < 200) {
-//          tempErrorLog.put(p.getMessage(), p.getIProblem());
-//        }
-
-        if (JavaMode.importSuggestEnabled) {
+        String message = p.getMessage();
+        if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
           if (p.getIProblem().getID() == IProblem.UndefinedType) {
             String[] args = p.getIProblem().getArguments();
             if (args.length > 0) {
@@ -940,18 +937,30 @@ public class ErrorCheckerService implements Runnable {
               String[] si = astGenerator.getSuggestImports(missingClass);
               if (si != null && si.length > 0) {
                 p.setImportSuggestions(si);
-                errorData[index][0] = "<html>" + p.getMessage() +
-                  " (<font color=#0000ff><u>Import Suggestions available</u></font>)</html>";
+//                errorData[index][0] = "<html>" + p.getMessage() +
+//                  " (<font color=#0000ff><u>Import Suggestions available</u></font>)</html>";
+                message += " (double-click for suggestions)";
               }
             }
           }
         }
-        index++;
-      }
 
-      DefaultTableModel tm =
-        new DefaultTableModel(errorData, XQErrorTable.columnNames);
-      editor.updateTable(tm);
+        table.addRow(p, message,
+                     sketch.getCode(p.getTabIndex()).getPrettyName(),
+                     Integer.toString(p.getLineNumber() + 1));
+        // Added +1 because lineNumbers internally are 0-indexed
+
+//        //TODO: This is temporary
+//        if (tempErrorLog.size() < 200) {
+//          tempErrorLog.put(p.getMessage(), p.getIProblem());
+//        }
+
+      }
+//      table.updateColumns();
+
+//      DefaultTableModel tm =
+//        new DefaultTableModel(errorData, XQErrorTable.columnNames);
+//      editor.updateTable(tm);
 
     } catch (Exception e) {
       Messages.loge("Exception at updateErrorTable()", e);
@@ -988,9 +997,9 @@ public class ErrorCheckerService implements Runnable {
     // editor.getTextArea().getCaretLine());
     if (JavaMode.errorCheckEnabled) {
       synchronized (editor.getErrorPoints()) {
-        for (ErrorMarker emarker : editor.getErrorPoints()) {
+        for (LineMarker emarker : editor.getErrorPoints()) {
           if (emarker.getProblem().getLineNumber() == editor.getTextArea().getCaretLine()) {
-            if (emarker.getType() == ErrorMarker.Warning) {
+            if (emarker.getType() == LineMarker.WARNING) {
               editor.statusMessage(emarker.getProblem().getMessage(),
                                    JavaEditor.STATUS_INFO);
             } else {
@@ -1054,7 +1063,7 @@ public class ErrorCheckerService implements Runnable {
         if (sc.isExtension("pde")) {
           int len = 0;
           if (editor.getSketch().getCurrentCode().equals(sc)) {
-            len = Util.countLines(sc.getDocument().getText(0, sc.getDocument().getLength())) + 1;
+            len = Util.countLines(sc.getDocumentText()) + 1;
           } else {
             len = Util.countLines(sc.getProgram()) + 1;
           }
@@ -1142,7 +1151,7 @@ public class ErrorCheckerService implements Runnable {
         if (sc.isExtension("pde")) {
           int len = 0;
           if (editor.getSketch().getCurrentCode().equals(sc)) {
-            len = Util.countLines(sc.getDocument().getText(0, sc.getDocument().getLength())) + 1;
+            len = Util.countLines(sc.getDocumentText()) + 1;
           } else {
             len = Util.countLines(sc.getProgram()) + 1;
           }
@@ -1220,8 +1229,7 @@ public class ErrorCheckerService implements Runnable {
 
           try {
             if (sketch.getCurrentCode().equals(sc)) {
-              Document d = sc.getDocument();
-              rawCode.append(scrapImportStatements(d.getText(0, d.getLength()),
+              rawCode.append(scrapImportStatements(sc.getDocumentText(),
                                                    sketch.getCodeIndex(sc)));
             } else {
               rawCode.append(scrapImportStatements(sc.getProgram(),
@@ -1579,12 +1587,9 @@ public class ErrorCheckerService implements Runnable {
     return new String(p2, 0, index);
   }
 
-  public void handleErrorCheckingToggle(){
+  public void handleErrorCheckingToggle() {
     if (!JavaMode.errorCheckEnabled) {
-      // unticked Menu Item
-      // pauseThread();
-      Messages.log(editor.getSketch().getName()
-          + " - Error Checker paused.");
+      Messages.log(editor.getSketch().getName() + " Error Checker paused.");
       editor.getErrorPoints().clear();
       problemsList.clear();
       updateErrorTable();
@@ -1592,9 +1597,7 @@ public class ErrorCheckerService implements Runnable {
       editor.getTextArea().repaint();
       editor.repaintErrorBar();
     } else {
-      //resumeThread();
-      Messages.log(editor.getSketch().getName()
-          + " - Error Checker resumed.");
+      Messages.log(editor.getSketch().getName() + " Error Checker resumed.");
       runManualErrorCheck();
     }
   }

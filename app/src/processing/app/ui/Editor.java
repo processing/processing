@@ -110,7 +110,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   protected JSplitPane splitPane;
   protected EditorFooter footer;
   protected EditorConsole console;
-//  protected EditorLineStatus lineStatus;
+  protected ErrorTable errorTable;
 
   // currently opened program
   protected Sketch sketch;
@@ -267,10 +267,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     upper.add(textarea);
 
-    // alternate spot for status, but ugly
-//    status = new EditorStatus(this);
-//    upper.add(status);
-
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, footer);
 
     // disable this because it hides the message area, which is essential (issue #745)
@@ -285,7 +281,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // remove an ugly border around anything in a SplitPane !$*&!%
     UIManager.getDefaults().put("SplitPane.border", BorderFactory.createEmptyBorder());
     // set the height per our gui design
-    //splitPane.setDividerSize(mode.getInteger("divider.height"));
     splitPane.setDividerSize(EditorStatus.HIGH);
 
     // override the look of the SplitPane so that it's identical across OSes
@@ -293,39 +288,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
       public BasicSplitPaneDivider createDefaultDivider() {
         status = new EditorStatus(this, Editor.this);
         return status;
-        /*
-        return new BasicSplitPaneDivider(this) {
-          final Color dividerColor = mode.getColor("divider.color"); //new Color(204, 204, 204);
-          final Color dotColor = mode.getColor("divider.dot.color"); //new Color(80, 80, 80);
-          int dotSize = mode.getInteger("divider.dot.diameter"); //3;
-
-          @Override
-          public void paint(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g;
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON);
-
-            final int w = getSize().width;
-            final int h = getSize().height;
-            g.setColor(dividerColor);
-            g.fillRect(0, 0, w, h);
-
-            g.setColor(dotColor);
-            int x = w/2 - dotSize/2;
-            int y = h/2 - dotSize/2;
-            g.fillOval(x, y, dotSize, dotSize);
-          }
-        };
-        */
       }
     });
 
     box.add(splitPane);
 
     contentPain.add(box);
-
-    // get shift down/up events so we can show the alt version of toolbar buttons
-    //textarea.addKeyListener(toolbar);
 
     // end an undo-chunk any time the caret moves unless it's when text is edited
     textarea.addCaretListener(new CaretListener() {
@@ -348,8 +316,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     state.apply(this);
 
     // Set the minimum size for the editor window
-    setMinimumSize(new Dimension(Preferences.getInteger("editor.window.width.min"),
-                                 Preferences.getInteger("editor.window.height.min")));
+    int minWidth = Preferences.getInteger("editor.window.width.min");
+    int minHeight = Preferences.getInteger("editor.window.height.min");
+    setMinimumSize(new Dimension(minWidth, minHeight));
 
     // Bring back the general options for the editor
     applyPreferences();
@@ -362,10 +331,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
       public void windowGainedFocus(WindowEvent e) {
         textarea.requestFocusInWindow();
       }
-
-//      public void windowLostFocus(WindowEvent e) {
-//        System.out.println("lost focus, should we tell the text area?");
-//      }
     });
 
     // Open the document that was passed in
@@ -391,43 +356,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  /**
-   * Broken out to get modes working for GSOC, but this needs a longer-term
-   * solution where the listeners are handled properly.
-   */
   protected JEditTextArea createTextArea() {
     return new JEditTextArea(new PdeTextAreaDefaults(mode),
                              new PdeInputHandler());
-    /*
-    return new JEditTextArea(new PdeTextAreaDefaults(mode), new PdeInputHandler()) {
-      // this is a kludge that needs to be removed [fry 150120]
-      public void processKeyEvent(KeyEvent evt) {
-        // this had to be added in Processing 007X, because the menu key
-        // events weren't making it up to the frame.
-        super.processKeyEvent(evt);
-
-        if (inputHandler != null) {
-          // Prevent sketch being marked modified cia ctrl-, on Windows/Linux
-          if ((evt.getModifiers() & InputEvent.CTRL_MASK) != 0 &&
-              evt.getKeyChar() == ',') {
-            System.out.println("skipping " + evt);
-            return;
-          }
-          switch (evt.getID()) {
-          case KeyEvent.KEY_TYPED:
-            inputHandler.keyTyped(evt);
-            break;
-          case KeyEvent.KEY_PRESSED:
-            inputHandler.keyPressed(evt);
-            break;
-          case KeyEvent.KEY_RELEASED:
-            inputHandler.keyReleased(evt);
-            break;
-          }
-        }
-      }
-    };
-    */
   }
 
 
@@ -436,40 +367,21 @@ public abstract class Editor extends JFrame implements RunnerListener {
     console = new EditorConsole(this);
     ef.addPanel(console, Language.text("editor.footer.console"), "/lib/footer/console");
     return ef;
+  }
 
-    /*
-    // assemble console panel, consisting of status area and the console itself
-    JPanel panel = new JPanel();
-    panel.setLayout(new BorderLayout());
 
-//    status = new EditorStatus(this);
-//    consolePanel.add(status, BorderLayout.NORTH);
-
-    console = new EditorConsole(this);
-    // windows puts an ugly border on this guy
-    console.setBorder(null);
-    panel.add(console, BorderLayout.CENTER);
-
-//    lineStatus = new EditorLineStatus(this);
-//    consolePanel.add(lineStatus, BorderLayout.SOUTH);
-    return panel;
-    */
+  public void addErrorTable(EditorFooter ef) {
+    JScrollPane scrollPane = new JScrollPane();
+    errorTable = new ErrorTable(this);
+    scrollPane.setBorder(BorderFactory.createEmptyBorder());
+    scrollPane.setViewportView(errorTable);
+    ef.addPanel(scrollPane, Language.text("editor.footer.errors"), "/lib/footer/error");
   }
 
 
   public EditorState getEditorState() {
     return state;
   }
-
-
-//  public void removeRecent() {
-//    Recent.remove(this);
-//  }
-//
-//
-//  public void addRecent() {
-//    Recent.handle(this);
-//  }
 
 
   /**
@@ -1768,7 +1680,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   /**
-   * Replace the entire contents of the front-most tab.
+   * Replace the entire contents of the front-most tab. Note that this does
+   * a compound edit, so internal callers may want to use textarea.setText()
+   * if this is part of a larger compound edit.
    */
   public void setText(String what) {
     startCompoundEdit();
@@ -1784,24 +1698,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
     textarea.setSelectedText(what);
     stopCompoundEdit();
   }
-
-
-  /**
-   * Called to update the text but not switch to a different set of code
-   * (which would affect the undo manager).
-   */
-//  public void setText2(String what, int start, int stop) {
-//    beginCompoundEdit();
-//    textarea.setText(what);
-//    endCompoundEdit();
-//
-//    // make sure that a tool isn't asking for a bad location
-//    start = Math.max(0, Math.min(start, textarea.getDocumentLength()));
-//    stop = Math.max(0, Math.min(start, textarea.getDocumentLength()));
-//    textarea.select(start, stop);
-//
-//    textarea.requestFocus();  // get the caret blinking
-//  }
 
 
   public String getSelectedText() {
@@ -1902,11 +1798,21 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   /**
-   * Use before a manipulating text to group editing operations together as a
-   * single undo. Use stopCompoundEdit() once finished.
+   * Use before a manipulating text to group editing operations together
+   * as a single undo. Use stopCompoundEdit() once finished.
    */
   public void startCompoundEdit() {
-    stopCompoundEdit();
+    // Call endTextEditHistory() before starting a new CompoundEdit,
+    // because there's a timer that's possibly set off for 3 seconds after
+    // which endTextEditHistory() is called, which means that things get
+    // messed up. Hence, manually call this method so that auto-format gets
+    // undone in one fell swoop if the user calls auto-formats within 3
+    // seconds of typing in the last character. Then start a new compound
+    // edit so that the auto-format can be undone in one go.
+    // https://github.com/processing/processing/issues/3003
+    endTextEditHistory();  // also calls stopCompoundEdit()
+
+    //stopCompoundEdit();
     compoundEdit = new CompoundEdit();
     caretUndoStack.push(textarea.getCaretPosition());
     caretRedoStack.clear();
@@ -2206,11 +2112,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
       if (formattedText.equals(source)) {
         statusNotice(Language.text("editor.status.autoformat.no_changes"));
-      } else {
-        // replace with new bootiful text
+
+      } else {  // replace with new bootiful text
+        startCompoundEdit();
         // selectionEnd hopefully at least in the neighborhood
         int scrollPos = textarea.getVerticalScrollPosition();
-        setText(formattedText);
+        textarea.setText(formattedText);
         setSelection(selectionEnd, selectionEnd);
 
         // Put the scrollbar position back, otherwise it jumps on each format.
@@ -2218,17 +2125,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
         // a more complicated workaround here is fairly pointless.
         // http://code.google.com/p/processing/issues/detail?id=1533
         if (scrollPos != textarea.getVerticalScrollPosition()) {
-//          boolean wouldBeVisible =
-//            scrollPos >= textarea.getFirstLine() &&
-//            scrollPos < textarea.getLastLine();
-//
-//          // if it was visible, and now it's not, then allow the scroll
-//          if (!(wasVisible && !wouldBeVisible)) {
           textarea.setVerticalScrollPosition(scrollPos);
-//          }
         }
-        getSketch().setModified(true);
-        // mark as finished
+        stopCompoundEdit();
+        sketch.setModified(true);
         statusNotice(Language.text("editor.status.autoformat.finished"));
       }
 
@@ -2893,6 +2793,25 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   abstract public void deactivateRun();
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public ErrorTable getErrorTable() {
+    return errorTable;
+  }
+
+
+  /**
+   * Called by ErrorTable when a row is selected. Action taken is specific
+   * to each Mode, based on the object passed in.
+   */
+  public void errorTableClick(Object item) { }
+
+
+  public void errorTableDoubleClick(Object item) { }
+
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .

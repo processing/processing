@@ -146,7 +146,7 @@ public class UpdateContributionTab extends ContributionTab {
 //          return super.isRowSelected(row);
 //        }
       };
-      JScrollPane scrollPane = new JScrollPane(table);
+      scrollPane = new JScrollPane(table);
       table.setFillsViewportHeight(true);
       table.setSelectionBackground(new Color(0xe0fffd));
       table.setSelectionForeground(table.getForeground());
@@ -281,12 +281,12 @@ public class UpdateContributionTab extends ContributionTab {
         }
         Icon icon = null;
         if (entry.isInstalled()) {
-          icon = Toolkit.getLibIcon("manager/up-to-date.png");
+          icon = Toolkit.getLibIcon("manager/up-to-date-" + ContributionManagerDialog.iconVer + "x.png");
           if (contribListing.hasUpdates(entry)) {
-            icon = Toolkit.getLibIcon("manager/update-available.png");
+            icon = Toolkit.getLibIcon("manager/update-available-" + ContributionManagerDialog.iconVer + "x.png");
           }
           if (!entry.isCompatible(Base.getRevision())) {
-            icon = Toolkit.getLibIcon("manager/incompatible.png");
+            icon = Toolkit.getLibIcon("manager/incompatible-" + ContributionManagerDialog.iconVer + "x.png");
           }
         }
         dtm
@@ -294,6 +294,7 @@ public class UpdateContributionTab extends ContributionTab {
             icon, "<html><b>" + entry.getName() + "</b></html>", name, entry.getPrettyVersion(),
             contributionTab.contribListing.getLatestVersion(entry) });
       }
+     ((UpdateStatusPanel)statusPanel).update();
     }
     private class MyTableModel extends DefaultTableModel{
       MyTableModel() {
@@ -329,7 +330,7 @@ public class UpdateContributionTab extends ContributionTab {
           }
         }
       });
-      this.setBackground(new Color(0xe0fffd));
+      setBackground(new Color(0xebebeb));
 //      this.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
       layout = new GroupLayout(this);
       this.setLayout(layout);
@@ -345,10 +346,10 @@ public class UpdateContributionTab extends ContributionTab {
       layout.setVerticalGroup(layout.createParallelGroup()
         .addComponent(updateButton));
       updateButton.setVisible(true);
+      updateButton.setEnabled(false);
     }
 
-    @Override
-    public void update(ContributionPanel panel) {
+    public void update() {
       if (contributionListPanel.getNoOfRows() > 0) {
         updateButton.setEnabled(true);
       } else {

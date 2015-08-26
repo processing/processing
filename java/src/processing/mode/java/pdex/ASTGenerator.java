@@ -2741,31 +2741,31 @@ public class ASTGenerator {
 //                  .toString()));
 
           SimpleType stp = extracTypeInfo(findDeclaration((qnn.getQualifier())));
-//          log(qnn.getQualifier() + "->" + qnn.getName());
-          declaringClass = findDeclaration(stp.getName());
-
-//          log("QN decl class: "
-//              + getNodeAsString(declaringClass));
-          constrains.clear();
-          constrains.add(ASTNode.TYPE_DECLARATION);
-          constrains.add(ASTNode.FIELD_DECLARATION);
-          return definedIn(declaringClass, qnn.getName().toString(), constrains,
-                           null);
+          if (stp != null) {
+            declaringClass = findDeclaration(stp.getName());
+            constrains.clear();
+            constrains.add(ASTNode.TYPE_DECLARATION);
+            constrains.add(ASTNode.FIELD_DECLARATION);
+            return definedIn(declaringClass, qnn.getName().toString(),
+                             constrains, null);
+          } else {
+            return null;
+          }
         }
       }
     } else if (parent.getNodeType() == ASTNode.SIMPLE_TYPE) {
       constrains.add(ASTNode.TYPE_DECLARATION);
-      if (parent.getParent().getNodeType() == ASTNode.CLASS_INSTANCE_CREATION)
+      if (parent.getParent().getNodeType() == ASTNode.CLASS_INSTANCE_CREATION) {
         constrains.add(ASTNode.CLASS_INSTANCE_CREATION);
-    } else if(parent.getNodeType() == ASTNode.TYPE_DECLARATION){
+      }
+    } else if (parent.getNodeType() == ASTNode.TYPE_DECLARATION) {
       // The condition where we look up the name of a class decl
       TypeDeclaration td = (TypeDeclaration) parent;
-      if(findMe.equals(td.getName()))
-      {
+      if (findMe.equals(td.getName())) {
         return parent;
       }
-    }
-    else if (parent instanceof Expression) {
+
+    } else if (parent instanceof Expression) {
 //      constrains.add(ASTNode.TYPE_DECLARATION);
 //      constrains.add(ASTNode.METHOD_DECLARATION);
 //      constrains.add(ASTNode.FIELD_DECLARATION);
@@ -3520,18 +3520,17 @@ public class ASTGenerator {
       log("SuggestionsMap is null or empty, won't be able to trim class names");
       return true;
     }
-    final String processingInclude = "include.processing";
-    final String processingExclude = "exclude.processing";
-    final String jdkInclude = "include.jdk";
+    final String include = "include";
+    final String exclude = "exclude";
 
     if (impName.startsWith("processing")) {
-      if (JavaMode.suggestionsMap.get(processingInclude).contains(impName)) {
+      if (JavaMode.suggestionsMap.get(include).contains(impName)) {
         return false;
-      } else if (JavaMode.suggestionsMap.get(processingExclude).contains(impName)) {
+      } else if (JavaMode.suggestionsMap.get(exclude).contains(impName)) {
         return true;
       }
     } else if (impName.startsWith("java")) {
-      if (JavaMode.suggestionsMap.get(jdkInclude).contains(impName)) {
+      if (JavaMode.suggestionsMap.get(include).contains(impName)) {
         return false;
       }
     }

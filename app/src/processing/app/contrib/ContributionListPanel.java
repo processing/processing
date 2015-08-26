@@ -111,7 +111,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     table.setRowHeight(28);
     table.setRowMargin(6);
     table.getColumnModel().setColumnMargin(0);
-    table.getColumnModel().getColumn(0).setMaxWidth(60);
+    table.getColumnModel().getColumn(0).setMaxWidth(ContributionManagerDialog.STATUS_WIDTH);
     table.getColumnModel().getColumn(2).setMinWidth(ContributionManagerDialog.AUTHOR_WIDTH);
     table.getColumnModel().getColumn(2).setMaxWidth(ContributionManagerDialog.AUTHOR_WIDTH);
     table.setShowGrid(false);
@@ -128,7 +128,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           if (table.getSelectedRow() != -1) {
             setSelectedPanel(panelByContribution.get(table.getValueAt(table
               .getSelectedRow(), 0)));
-            table.requestFocusInWindow();
+            // Preventing the focus to move out of filterField after typing every character
+            if (!contributionTab.filterField.hasFocus()) {
+              table.requestFocusInWindow();
+            }
           }
         }
       });
@@ -295,18 +298,18 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       JLabel label = new JLabel();
       if (column == 0) {
         Icon icon = null;
-        label.setBorder(BorderFactory.createEmptyBorder(2, 17, 0, 0));
         label.setFont(Toolkit.getSansFont(14, Font.PLAIN));
         if (contribution.isInstalled()) {
-          icon = Toolkit.getLibIcon("manager/up-to-date.png");
+          icon = Toolkit.getLibIcon("manager/up-to-date-" + ContributionManagerDialog.iconVer + "x.png");
           if (contribListing.hasUpdates(contribution)) {
-            icon = Toolkit.getLibIcon("manager/update-available.png");
+            icon = Toolkit.getLibIcon("manager/update-available-" + ContributionManagerDialog.iconVer + "x.png");
           }
           if (!contribution.isCompatible(Base.getRevision())) {
-            icon = Toolkit.getLibIcon("manager/incompatible.png");
+            icon = Toolkit.getLibIcon("manager/incompatible-" + ContributionManagerDialog.iconVer + "x.png");
           }
         }
         label.setIcon(icon);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
         if (isSelected) {
           label.setBackground(new Color(0xe0fffd));
         }

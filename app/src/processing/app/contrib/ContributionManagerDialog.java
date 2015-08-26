@@ -47,8 +47,9 @@ public class ContributionManagerDialog {
   static final int TAB_WIDTH = 100;
   static final int TAB_HEIGHT = 34;
   static final int AUTHOR_WIDTH = 240;
-  static final int STATUS_WIDTH = 60;
+  static final int STATUS_WIDTH = 66;
   static final int FILTER_WIDTH = 180;
+  static final int ICON_WIDTH = 50;
 
   JFrame dialog;
   JTabbedPane tabbedPane;
@@ -75,12 +76,15 @@ public class ContributionManagerDialog {
   private JLabel updateTabLabel;
 
   static Font myFont;
+  // disabling this because the icon sizing is not implemented correctly
+  //static int iconVer = Toolkit.highResDisplay() ? 2 : 1;
+  static final int iconVer = 1;
 
 
   public ContributionManagerDialog() {
     myFont = Toolkit.getSansFont(14, Font.PLAIN);
 //    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(myFont);
-    numberLabel = new JLabel(Toolkit.getLibIcon("manager/notification.png"), SwingConstants.CENTER);
+    numberLabel = new JLabel(Toolkit.getLibIcon("manager/notification-" + iconVer + "x.png"), SwingConstants.CENTER);
     toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
     librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
     modesContributionTab = new ContributionTab(ContributionType.MODE, this);
@@ -192,6 +196,7 @@ public class ContributionManagerDialog {
           updateTabPanel.setBackground(new Color(0xe0fffd));
           updateTabLabel.setForeground(Color.BLACK);
         }
+        getActiveTab().contributionListPanel.scrollPane.requestFocusInWindow();
 //        // When the tab is changed update status to the current selected panel
 //        ContributionPanel currentPanel = getActiveTab().contributionListPanel
 //          .getSelectedPanel();
@@ -370,11 +375,11 @@ public class ContributionManagerDialog {
 //                                    boolean isSelected) {
 //      return 0;
 //    }
-//    @Override
-//    protected int getTabLabelShiftY(int tabPlacement, int tabIndex,
-//                                    boolean isSelected) {
-//      return 3;
-//    }
+    @Override
+    protected int getTabLabelShiftY(int tabPlacement, int tabIndex,
+                                    boolean isSelected) {
+      return 1;
+    }
 //    @Override
 //    protected void paintTab(Graphics g, int tabPlacement,
 //                            Rectangle[] rects, int tabIndex,

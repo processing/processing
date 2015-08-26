@@ -20,7 +20,6 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import processing.mode.java.JavaMode;
 import processing.mode.java.JavaEditor;
 import processing.mode.java.tweak.*;
 
@@ -48,6 +47,7 @@ import javax.swing.text.Segment;
 import javax.swing.text.Utilities;
 
 import processing.app.Messages;
+import processing.app.Mode;
 import processing.app.Platform;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
@@ -57,22 +57,18 @@ import processing.app.syntax.TokenMarker;
 import processing.app.ui.Editor;
 
 
+// TODO Most of this needs to be merged into the main TextAreaPainter,
+//      since it's not specific to Java. [fry 150821]
+
 /**
  * Customized line painter. Adds support for background colors,
  * left hand gutter area with background color and text.
- * TODO Most of this needs to be merged into the main TextAreaPainter,
- * since it has nothing to do with Java. [fry]
  */
 public class JavaTextAreaPainter extends TextAreaPainter
 	implements MouseListener, MouseMotionListener {
 
-//  protected JavaTextArea ta; // we need the subclassed textarea
-//  protected ErrorCheckerService errorCheckerService;
-
-  public Color errorColor; // = new Color(0xED2630);
-  public Color warningColor; // = new Color(0xFFC30E);
-  public Color errorMarkerColor; // = new Color(0xED2630);
-  public Color warningMarkerColor; // = new Color(0xFFC30E);
+  public Color errorUnderlineColor;
+  public Color warningUnderlineColor;
 
   protected Font gutterTextFont;
   protected Color gutterTextColor;
@@ -101,7 +97,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent evt) {
-        if (!getEditor().hasJavaTabs()) { // Ctrl + Click disabled for java tabs
+        if (!getJavaEditor().hasJavaTabs()) { // Ctrl + Click disabled for java tabs
           if (evt.getButton() == MouseEvent.BUTTON1) {
             if ((evt.isControlDown() && !Platform.isMacOS()) || evt.isMetaDown()) {
               handleCtrlClick(evt);
@@ -116,7 +112,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
       long lastTime;  // OS X seems to be firing multiple mouse events
 
       public void mousePressed(MouseEvent event) {
-        JavaEditor javaEditor = getEditor();
+        JavaEditor javaEditor = getJavaEditor();
         // Don't toggle breakpoints when the debugger isn't enabled
         // https://github.com/processing/processing/issues/3306
         if (javaEditor.isDebuggerEnabled()) {
@@ -210,18 +206,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
       if (Character.isDigit(word.charAt(0)))
         return;
 
-      Messages.log(getEditor().getErrorChecker().mainClassOffset + line + "|" + line + "| offset " + xLS + word + " <= \n");
-      getEditor().getErrorChecker().getASTGenerator().scrollToDeclaration(line, word, xLS);
+      Messages.log(getJavaEditor().getErrorChecker().mainClassOffset + line + "|" + line + "| offset " + xLS + word + " <= \n");
+      getJavaEditor().getErrorChecker().getASTGenerator().scrollToDeclaration(line, word, xLS);
     }
   }
-
-
-//  private void loadTheme(ExperimentalMode mode) {
-//    errorColor = mode.getThemeColor("editor.errorcolor", errorColor);
-//    warningColor = mode.getThemeColor("editor.warningcolor", warningColor);
-//    errorMarkerColor = mode.getThemeColor("editor.errormarkercolor", errorMarkerColor);
-//    warningMarkerColor = mode.getThemeColor("editor.warningmarkercolor", warningMarkerColor);
-//  }
 
 
   /**
@@ -275,7 +263,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     gfx.fillRect(0, y, Editor.LEFT_GUTTER, fm.getHeight());
 
     String text = null;
-    if (getEditor().isDebuggerEnabled()) {
+    if (getJavaEditor().isDebuggerEnabled()) {
       text = getTextArea().getGutterText(line);
     }
     // if no special text for a breakpoint, just show the line number
@@ -325,17 +313,12 @@ public class JavaTextAreaPainter extends TextAreaPainter
     y += fm.getLeading() + fm.getMaxDescent();
     int height = fm.getHeight();
 
-    // get the color
     Color col = getTextArea().getLineBgColor(line);
-    //System.out.print("bg line " + line + ": ");
-    // no need to paint anything
-    if (col == null) {
-      //log("none");
-      return;
+    if (col != null) {
+      // paint line background
+      gfx.setColor(col);
+      gfx.fillRect(0, y, getWidth(), height);
     }
-    // paint line background
-    gfx.setColor(col);
-    gfx.fillRect(0, y, getWidth(), height);
   }
 
 
@@ -350,7 +333,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * @param x
    */
   protected void paintErrorLine(Graphics gfx, int line, int x) {
-    ErrorCheckerService ecs = getEditor().getErrorChecker();
+    ErrorCheckerService ecs = getJavaEditor().getErrorChecker();
     if (ecs == null || ecs.problemsList == null) {
       return;
     }
@@ -362,10 +345,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
     errorLineCoords.clear();
     // Check if current line contains an error. If it does, find if it's an
     // error or warning
-    for (ErrorMarker emarker : getEditor().getErrorPoints()) {
+    for (LineMarker emarker : getJavaEditor().getErrorPoints()) {
       if (emarker.getProblem().getLineNumber() == line) {
         notFound = false;
-        if (emarker.getType() == ErrorMarker.Warning) {
+        if (emarker.getType() == LineMarker.WARNING) {
           isWarning = true;
         }
         problem = emarker.getProblem();
@@ -428,9 +411,9 @@ public class JavaTextAreaPainter extends TextAreaPainter
 //      }
 //      gfx.fillRect(1, y + 2, 3, height - 2);
 
-      gfx.setColor(errorColor);
+      gfx.setColor(errorUnderlineColor);
       if (isWarning) {
-        gfx.setColor(warningColor);
+        gfx.setColor(warningUnderlineColor);
       }
       int xx = x1;
 
@@ -474,18 +457,12 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
   /**
    * Sets ErrorCheckerService and loads theme for TextAreaPainter(XQMode)
-   *
-   * @param ecs
-   * @param mode
    */
-  public void setMode(JavaMode mode) {
-    //this.errorCheckerService = ecs;
-    //loadTheme(mode);
-
-    errorColor = mode.getColor("editor.errorcolor"); //, errorColor);
-    warningColor = mode.getColor("editor.warningcolor"); //, warningColor);
-    errorMarkerColor = mode.getColor("editor.errormarkercolor"); //, errorMarkerColor);
-    warningMarkerColor = mode.getColor("editor.warningmarkercolor"); //, warningMarkerColor);
+  public void setMode(Mode mode) {
+    errorUnderlineColor = mode.getColor("editor.error.underline.color");
+    warningUnderlineColor = mode.getColor("editor.warning.underline.color");
+//    errorMarkerColor = mode.getColor("editor.errormarkercolor");
+//    warningMarkerColor = mode.getColor("editor.warningmarkercolor");
 
     gutterTextFont = mode.getFont("editor.gutter.text.font");
     gutterTextColor = mode.getColor("editor.gutter.text.color");
@@ -495,7 +472,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
   @Override
   public String getToolTipText(MouseEvent event) {
-    if (!getEditor().hasJavaTabs()) {
+    if (!getJavaEditor().hasJavaTabs()) {
       int off = textArea.xyToOffset(event.getX(), event.getY());
       if (off < 0) {
         setToolTipText(null);
@@ -564,8 +541,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
           setToolTipText(null);
           return super.getToolTipText(event);
         }
-        String tooltipText = getEditor().getErrorChecker().getASTGenerator()
-            .getLabelForASTNode(line, word, xLS);
+        ASTGenerator ast = getJavaEditor().getErrorChecker().getASTGenerator();
+        String tooltipText = ast.getLabelForASTNode(line, word, xLS);
 
         //      log(errorCheckerService.mainClassOffset + " MCO "
         //      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
@@ -674,7 +651,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 		String prevText = textArea.getText();
 
 		for (int tab=0; tab<code.length; tab++) {
-			String tabCode = getEditor().baseCode[tab];
+			String tabCode = getJavaEditor().baseCode[tab];
 			textArea.setText(tabCode);
 			for (Handle n : handles.get(tab)) {
 				int lineStartChar = textArea.getLineStartOffset(n.line);
@@ -706,7 +683,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 		int charInc = 0;
 		int currentTab = getCurrentCodeIndex();
 		SketchCode sc = getEditor().getSketch().getCode(currentTab);
-		String code = getEditor().baseCode[currentTab];
+		String code = getJavaEditor().baseCode[currentTab];
 
 		for (Handle n : handles.get(currentTab)) {
 			int s = n.startChar + charInc;
@@ -885,7 +862,12 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-	private JavaEditor getEditor() {
+  public Editor getEditor() {
+    return ((JavaTextArea) textArea).editor;
+  }
+
+
+	private JavaEditor getJavaEditor() {
 	  return ((JavaTextArea) textArea).editor;
 	}
 

@@ -328,7 +328,7 @@ public class JavaMode extends Mode {
   static public volatile boolean autoSavePromptEnabled = true;
   static public volatile boolean defaultAutoSaveEnabled = true;
   static public volatile boolean ccTriggerEnabled = false;
-  static public volatile boolean importSuggestEnabled = true;
+//  static public volatile boolean importSuggestEnabled = true;
   static public int autoSaveInterval = 3; //in minutes
 
 
@@ -339,16 +339,17 @@ public class JavaMode extends Mode {
 
   static public final String prefErrorCheck = "pdex.errorCheckEnabled";
   static public final String prefWarnings = "pdex.warningsEnabled";
-  static public final String prefCodeCompletionEnabled = "pdex.completion";
-  static public final String prefCCTriggerEnabled = "pdex.completion.trigger";
   static public final String prefDebugOP = "pdex.dbgOutput";
   static public final String prefErrorLogs = "pdex.writeErrorLogs";
   static public final String prefAutoSaveInterval = "pdex.autoSaveInterval";
   static public final String prefAutoSave = "pdex.autoSave.autoSaveEnabled";
   static public final String prefAutoSavePrompt = "pdex.autoSave.promptDisplay";
   static public final String prefDefaultAutoSave = "pdex.autoSave.autoSaveByDefault";
-  static public final String prefImportSuggestEnabled = "pdex.importSuggestEnabled";
   static public final String suggestionsFileName = "suggestions.txt";
+
+  static public final String COMPLETION_PREF = "pdex.completion";
+  static public final String COMPLETION_TRIGGER_PREF = "pdex.completion.trigger";
+  static public final String SUGGEST_IMPORTS_PREF = "pdex.suggest.imports";
 
 //  static volatile public boolean enableTweak = false;
 
@@ -363,7 +364,7 @@ public class JavaMode extends Mode {
     ensurePrefsExist();
     errorCheckEnabled = Preferences.getBoolean(prefErrorCheck);
     warningsEnabled = Preferences.getBoolean(prefWarnings);
-    codeCompletionsEnabled = Preferences.getBoolean(prefCodeCompletionEnabled);
+    codeCompletionsEnabled = Preferences.getBoolean(COMPLETION_PREF);
 //    DEBUG = Preferences.getBoolean(prefDebugOP);
     errorLogsEnabled = Preferences.getBoolean(prefErrorLogs);
     autoSaveInterval = Preferences.getInteger(prefAutoSaveInterval);
@@ -371,8 +372,8 @@ public class JavaMode extends Mode {
     autoSaveEnabled = Preferences.getBoolean(prefAutoSave);
     autoSavePromptEnabled = Preferences.getBoolean(prefAutoSavePrompt);
     defaultAutoSaveEnabled = Preferences.getBoolean(prefDefaultAutoSave);
-    ccTriggerEnabled = Preferences.getBoolean(prefCCTriggerEnabled);
-    importSuggestEnabled = Preferences.getBoolean(prefImportSuggestEnabled);
+    ccTriggerEnabled = Preferences.getBoolean(COMPLETION_TRIGGER_PREF);
+//    importSuggestEnabled = Preferences.getBoolean(prefImportSuggestEnabled);
     loadSuggestionsMap();
   }
 
@@ -381,7 +382,7 @@ public class JavaMode extends Mode {
     Messages.log("Saving PDEX prefs");
     Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
     Preferences.setBoolean(prefWarnings, warningsEnabled);
-    Preferences.setBoolean(prefCodeCompletionEnabled, codeCompletionsEnabled);
+    Preferences.setBoolean(COMPLETION_PREF, codeCompletionsEnabled);
 //    Preferences.setBoolean(prefDebugOP, DEBUG);
     Preferences.setBoolean(prefErrorLogs, errorLogsEnabled);
     Preferences.setInteger(prefAutoSaveInterval, autoSaveInterval);
@@ -389,8 +390,8 @@ public class JavaMode extends Mode {
     Preferences.setBoolean(prefAutoSave, autoSaveEnabled);
     Preferences.setBoolean(prefAutoSavePrompt, autoSavePromptEnabled);
     Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
-    Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
-    Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
+    Preferences.setBoolean(COMPLETION_TRIGGER_PREF, ccTriggerEnabled);
+//    Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
   }
 
   public void loadSuggestionsMap() {
@@ -441,8 +442,8 @@ public class JavaMode extends Mode {
       Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
     if (Preferences.get(prefWarnings) == null)
       Preferences.setBoolean(prefWarnings, warningsEnabled);
-    if (Preferences.get(prefCodeCompletionEnabled) == null)
-      Preferences.setBoolean(prefCodeCompletionEnabled, codeCompletionsEnabled);
+    if (Preferences.get(COMPLETION_PREF) == null)
+      Preferences.setBoolean(COMPLETION_PREF, codeCompletionsEnabled);
     if (Preferences.get(prefDebugOP) == null)
 //      Preferences.setBoolean(prefDebugOP, DEBUG);
     if (Preferences.get(prefErrorLogs) == null)
@@ -457,10 +458,10 @@ public class JavaMode extends Mode {
       Preferences.setBoolean(prefAutoSavePrompt, autoSavePromptEnabled);
     if (Preferences.get(prefDefaultAutoSave) == null)
       Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
-    if (Preferences.get(prefCCTriggerEnabled) == null)
-      Preferences.setBoolean(prefCCTriggerEnabled, ccTriggerEnabled);
-    if (Preferences.get(prefImportSuggestEnabled) == null)
-      Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
+    if (Preferences.get(COMPLETION_TRIGGER_PREF) == null)
+      Preferences.setBoolean(COMPLETION_TRIGGER_PREF, ccTriggerEnabled);
+//    if (Preferences.get(prefImportSuggestEnabled) == null)
+//      Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
   }
 
 

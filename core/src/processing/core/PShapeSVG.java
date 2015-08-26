@@ -100,7 +100,7 @@ public class PShapeSVG extends PShape {
   protected float svgHeight;
 
   /** √((w² + h²)/2) of containing SVG (used for percentages). */
-  protected float svgXYSize;
+  protected float svgSizeXY;
 
   protected Gradient strokeGradient;
   String strokeName;  // id of another object, gradients only?
@@ -177,7 +177,7 @@ public class PShapeSVG extends PShape {
 
       svgWidth = width;
       svgHeight = height;
-      svgXYSize = PApplet.sqrt((svgWidth*svgWidth + svgHeight*svgHeight)/2.0f);
+      svgSizeXY = PApplet.sqrt((svgWidth*svgWidth + svgHeight*svgHeight)/2.0f);
     }
 
     element = properties;
@@ -262,7 +262,7 @@ public class PShapeSVG extends PShape {
 
       svgWidth  = parent.svgWidth;
       svgHeight = parent.svgHeight;
-      svgXYSize = parent.svgXYSize;
+      svgSizeXY = parent.svgSizeXY;
 
       opacity = parent.opacity;
     }
@@ -416,7 +416,7 @@ public class PShapeSVG extends PShape {
 
     float rx, ry;
     if (circle) {
-      rx = ry = getFloatWithUnit(element, "r", svgXYSize);
+      rx = ry = getFloatWithUnit(element, "r", svgSizeXY);
     } else {
       rx = getFloatWithUnit(element, "rx", svgWidth);
       ry = getFloatWithUnit(element, "ry", svgHeight);
@@ -426,7 +426,6 @@ public class PShapeSVG extends PShape {
 
     params[2] = rx*2;
     params[3] = ry*2;
-
   }
 
 
@@ -1181,7 +1180,7 @@ public class PShapeSVG extends PShape {
 
 
   void setStrokeWeight(String lineweight) {
-    strokeWeight = parseUnitSize(lineweight, svgXYSize);
+    strokeWeight = parseUnitSize(lineweight, svgSizeXY);
   }
 
 
@@ -1537,7 +1536,7 @@ public class PShapeSVG extends PShape {
 
       this.cx = getFloatWithUnit(properties, "cx", svgWidth);
       this.cy = getFloatWithUnit(properties, "cy", svgHeight);
-      this.r  = getFloatWithUnit(properties, "r", svgXYSize);
+      this.r  = getFloatWithUnit(properties, "r", svgSizeXY);
 
       String transformStr =
         properties.getString("gradientTransform");
