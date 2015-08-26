@@ -733,7 +733,9 @@ public class PSurfaceFX implements PSurface {
   @SuppressWarnings("deprecation")
   private char getKeyChar(KeyEvent fxEvent) {
     if (fxEvent.getEventType() == KeyEvent.KEY_TYPED) {
-      return fxEvent.getCharacter().charAt(0);
+      String ch = fxEvent.getCharacter();
+      if (ch.length() < 1) return PConstants.CODED;
+      return ch.charAt(0);
     }
 
     KeyCode kc = fxEvent.getCode();

@@ -85,9 +85,9 @@ public class ContributionManagerDialog {
     myFont = Toolkit.getSansFont(14, Font.PLAIN);
 //    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(myFont);
     numberLabel = new JLabel(Toolkit.getLibIcon("manager/notification-" + iconVer + "x.png"), SwingConstants.CENTER);
-    toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
     librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
     modesContributionTab = new ContributionTab(ContributionType.MODE, this);
+    toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
     examplesContributionTab = new ContributionTab(ContributionType.EXAMPLES, this);
     updatesContributionTab = new UpdateContributionTab(null, this);
   }
@@ -104,9 +104,9 @@ public class ContributionManagerDialog {
 
 
   public boolean hasUpdates(Base base) {
-    return toolsContributionTab.hasUpdates(base)
+    return librariesContributionTab.hasUpdates(base)
       || modesContributionTab.hasUpdates(base)
-      || librariesContributionTab.hasUpdates(base)
+      || toolsContributionTab.hasUpdates(base)
       || examplesContributionTab.hasUpdates(base);
   }
 
@@ -116,11 +116,11 @@ public class ContributionManagerDialog {
 
     //Calculating index to switch to the required tab
     int index;
-    if (contributionType == ContributionType.TOOL) {
+    if (contributionType == ContributionType.LIBRARY) {
       index = 0;
-    } else if (contributionType == ContributionType.LIBRARY) {
-      index = 1;
     } else if (contributionType == ContributionType.MODE) {
+      index = 1;
+    } else if (contributionType == ContributionType.TOOL) {
       index = 2;
     } else if (contributionType == ContributionType.EXAMPLES) {
       index = 3;
@@ -155,14 +155,14 @@ public class ContributionManagerDialog {
 
     makeAndShowTab(false, true);
 
-    tabbedPane.addTab("Tools", null, toolsContributionTab.panel, "Tools");
+    tabbedPane.addTab("Libraries", null, librariesContributionTab.panel, "Libraries");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-    tabbedPane.addTab("Libraries", null, librariesContributionTab.panel,
-                      "Libraries");
+    tabbedPane.addTab("Modes", null, modesContributionTab.panel,
+                      "Modes");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-    tabbedPane.addTab("Modes", null, modesContributionTab.panel, "Modes");
+    tabbedPane.addTab("Tools", null, toolsContributionTab.panel, "Tools");
     tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
     tabbedPane.addTab("Examples", null, examplesContributionTab.panel,
@@ -170,7 +170,7 @@ public class ContributionManagerDialog {
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
     tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
-    tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
+    tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
     tabbedPane.setUI(new SpacedTabbedPaneUI());
     tabbedPane.setBackground(new Color(0x132638));
     tabbedPane.setOpaque(true);
@@ -266,7 +266,7 @@ public class ContributionManagerDialog {
 
   private void makeAndSetTabComponents() {
     final String[] tabTitles = {
-      "Tools", "Libraries", "Modes", "Examples", "Updates"
+      "Libraries", "Modes", "Tools", "Examples", "Updates"
     };
     tabLabels = new JLabel[4];
 
@@ -773,9 +773,9 @@ public class ContributionManagerDialog {
 
 
   void makeAndShowTab(boolean activateErrorPanel, boolean isLoading) {
-    toolsContributionTab.showFrame(editor, activateErrorPanel, isLoading);
     librariesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
     modesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
+    toolsContributionTab.showFrame(editor, activateErrorPanel, isLoading);
     examplesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
     updatesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
   }
@@ -788,11 +788,11 @@ public class ContributionManagerDialog {
   public ContributionTab getActiveTab() {
     switch (tabbedPane.getSelectedIndex()) {
     case 0:
-      return toolsContributionTab;
-    case 1:
       return librariesContributionTab;
-    case 2:
+    case 1:
       return modesContributionTab;
+    case 2:
+      return toolsContributionTab;
     case 3:
       return examplesContributionTab;
     default:

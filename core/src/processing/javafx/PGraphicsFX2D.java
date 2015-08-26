@@ -22,6 +22,10 @@
 
 package processing.javafx;
 
+import com.sun.javafx.geom.Path2D;
+import com.sun.javafx.geom.PathIterator;
+import com.sun.javafx.geom.Shape;
+
 import java.nio.IntBuffer;
 
 import javafx.scene.SnapshotParameters;
@@ -35,8 +39,6 @@ import javafx.scene.image.WritablePixelFormat;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcType;
-import javafx.scene.shape.ClosePath;
-import javafx.scene.shape.Path;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.transform.Affine;
@@ -51,11 +53,15 @@ public class PGraphicsFX2D extends PGraphics {
   static final WritablePixelFormat<IntBuffer> argbFormat =
     PixelFormat.getIntArgbInstance();
 
-  Path workPath;
-  Path auxPath;
+  WritableImage snapshotImage;
+
+  Path2D workPath = new Path2D();
+  Path2D auxPath = new Path2D();
   boolean openContour;
   /// break the shape at the next vertex (next vertex() call is a moveto())
   boolean breakShape;
+
+  private float pathCoordsBuffer[] = new float[6];
 
   /// coordinates for internal curve calculation
   float[] curveCoordX;
@@ -140,16 +146,12 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void endDraw() {
+    flush();
+
     if (!primaryGraphics) {
       // TODO this is probably overkill for most tasks...
       loadPixels();
     }
-
-    // Marks pixels as modified so that the pixels will be updated.
-    // Also sets mx1/y1/x2/y2 so that OpenGL will pick it up.
-    setModified();
-
-    //g2.dispose();
   }
 
 
@@ -199,15 +201,14 @@ public class PGraphicsFX2D extends PGraphics {
   public void beginShape(int kind) {
     shape = kind;
     vertexCount = 0;
-    curveVertexCount = 0;
 
-    // set gpath to null, because when mixing curves and straight
-    // lines, vertexCount will be set back to zero, so vertexCount == 1
-    // is no longer a good indicator of whether the shape is new.
-    // this way, just check to see if gpath is null, and if it isn't
-    // then just use it to continue the shape.
-    workPath = null;
-    auxPath = null;
+    workPath.reset();
+    auxPath.reset();
+
+    if (drawingThinLines()) {
+      pushMatrix();
+      translate(0.5f, 0.5f);
+    }
   }
 
 
@@ -228,9 +229,6 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void vertex(float x, float y) {
-    curveVertexCount = 0;
-    //float vertex[];
-
     if (vertexCount == vertices.length) {
       float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
@@ -324,13 +322,11 @@ public class PGraphicsFX2D extends PGraphics {
       break;
 
     case POLYGON:
-      if (workPath == null) {
-        context.moveTo(x, y);
-      } else if (breakShape) {
-        context.moveTo(x, y);
+      if (workPath.getNumCommands() == 0 || breakShape) {
+        workPath.moveTo(x, y);
         breakShape = false;
       } else {
-        context.lineTo(x, y);
+        workPath.lineTo(x, y);
       }
       break;
     }
@@ -369,16 +365,14 @@ public class PGraphicsFX2D extends PGraphics {
     }
 
     // draw contours to auxiliary path so main path can be closed later
-    Path temp = auxPath;
+    Path2D contourPath = auxPath;
     auxPath = workPath;
-    workPath = temp;
+    workPath = contourPath;
 
-//    if (auxPath != null) {  // first contour does not break
-    breakShape = true;
-    auxPath = new Path();
-//    }
+    if (contourPath.getNumCommands() > 0) {  // first contour does not break
+      breakShape = true;
+    }
 
-    breakShape = true;
     openContour = true;
   }
 
@@ -390,15 +384,9 @@ public class PGraphicsFX2D extends PGraphics {
       return;
     }
 
-    // close this contour
-    if (workPath != null) {
-      //gpath.closePath();
-      auxPath.getElements().addAll(workPath.getElements());
-      auxPath.getElements().add(new ClosePath());
-    }
+    if (workPath.getNumCommands() > 0) workPath.closePath();
 
-    // switch back to main path
-    Path temp = workPath;
+    Path2D temp = workPath;
     workPath = auxPath;
     auxPath = temp;
 
@@ -412,21 +400,56 @@ public class PGraphicsFX2D extends PGraphics {
       endContour();
       PGraphics.showWarning("Missing endContour() before endShape()");
     }
-    if (workPath != null) {  // make sure something has been drawn
+    if (workPath.getNumCommands() > 0) {
       if (shape == POLYGON) {
         if (mode == CLOSE) {
-          //gpath.closePath();
-          workPath.getElements().add(new ClosePath());
+          workPath.closePath();
         }
-        if (auxPath != null) {
-          //gpath.append(auxPath, false);
-          workPath.getElements().addAll(auxPath.getElements());
+        if (auxPath.getNumCommands() > 0) {
+          workPath.append(auxPath, false);
         }
-        //drawShape(gpath);
-        // TODO argh, can't go this route
+        drawShape(workPath);
       }
     }
     shape = 0;
+
+    if (drawingThinLines()) {
+      popMatrix();
+    }
+  }
+
+
+  private void drawShape(Shape s) {
+    context.beginPath();
+    PathIterator pi = s.getPathIterator(null);
+    while (!pi.isDone()) {
+      int pitype = pi.currentSegment(pathCoordsBuffer);
+      switch (pitype) {
+        case PathIterator.SEG_MOVETO:
+          context.moveTo(pathCoordsBuffer[0], pathCoordsBuffer[1]);
+          break;
+        case PathIterator.SEG_LINETO:
+          context.lineTo(pathCoordsBuffer[0], pathCoordsBuffer[1]);
+          break;
+        case PathIterator.SEG_QUADTO:
+          context.quadraticCurveTo(pathCoordsBuffer[0], pathCoordsBuffer[1],
+                                   pathCoordsBuffer[2], pathCoordsBuffer[3]);
+          break;
+        case PathIterator.SEG_CUBICTO:
+          context.bezierCurveTo(pathCoordsBuffer[0], pathCoordsBuffer[1],
+                                pathCoordsBuffer[2], pathCoordsBuffer[3],
+                                pathCoordsBuffer[4], pathCoordsBuffer[5]);
+          break;
+        case PathIterator.SEG_CLOSE:
+          context.closePath();
+          break;
+        default:
+          showWarning("Unknown segment type " + pitype);
+      }
+      pi.next();
+    }
+    if (fill) context.fill();
+    if (stroke) context.stroke();
   }
 
 
@@ -487,12 +510,23 @@ public class PGraphicsFX2D extends PGraphics {
 
 
   @Override
+  protected void bezierVertexCheck() {
+    if (shape == 0 || shape != POLYGON) {
+      throw new RuntimeException("beginShape() or beginShape(POLYGON) " +
+                                 "must be used before bezierVertex() or quadraticVertex()");
+    }
+    if (workPath.getNumCommands() == 0) {
+      throw new RuntimeException("vertex() must be used at least once " +
+                                 "before bezierVertex() or quadraticVertex()");
+    }
+  }
+
+  @Override
   public void bezierVertex(float x1, float y1,
                            float x2, float y2,
                            float x3, float y3) {
     bezierVertexCheck();
-    context.bezierCurveTo(x1, y1, x2, y2, x3, y3);
-
+    workPath.curveTo(x1, y1, x2, y2, x3, y3);
   }
 
 
@@ -513,7 +547,8 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void quadraticVertex(float ctrlX, float ctrlY,
                               float endX, float endY) {
-    context.quadraticCurveTo(ctrlX, ctrlY, endX, endY);
+    bezierVertexCheck();
+    workPath.quadTo(ctrlX, ctrlY, endX, endY);
   }
 
 
@@ -532,7 +567,12 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   protected void curveVertexCheck() {
-    super.curveVertexCheck();
+    if (shape != POLYGON) {
+      throw new RuntimeException("You must use beginShape() or " +
+                                     "beginShape(POLYGON) before curveVertex()");
+    }
+
+    curveInitCheck();
 
     if (curveCoordX == null) {
       curveCoordX = new float[4];
@@ -565,14 +605,14 @@ public class PGraphicsFX2D extends PGraphics {
 
     // since the paths are continuous,
     // only the first point needs the actual moveto
-    if (workPath == null) {
-//      gpath = new GeneralPath();
-      context.moveTo(curveDrawX[0], curveDrawY[0]);
+    if (workPath.getNumCommands() == 0) {
+      workPath.moveTo(curveDrawX[0], curveDrawY[0]);
+      breakShape = false;
     }
 
-    context.bezierCurveTo(curveDrawX[1], curveDrawY[1],
-                          curveDrawX[2], curveDrawY[2],
-                          curveDrawX[3], curveDrawY[3]);
+    workPath.curveTo(curveDrawX[1], curveDrawY[1],
+                     curveDrawX[2], curveDrawY[2],
+                     curveDrawX[3], curveDrawY[3]);
   }
 
 
@@ -588,7 +628,45 @@ public class PGraphicsFX2D extends PGraphics {
   // RENDERER
 
 
-  //public void flush()
+  @Override
+  public void flush() {
+    boolean hasPixels = modified && pixels != null;
+    if (hasPixels) {
+      // If the user has been manipulating individual pixels,
+      // the changes need to be copied to the screen before
+      // drawing any new geometry.
+      flushPixels();
+    }
+
+    modified = false;
+  }
+
+
+  protected void flushPixels() {
+    int mx1 = getModifiedX1();
+    int mx2 = getModifiedX2();
+    int my1 = getModifiedY1();
+    int my2 = getModifiedY2();
+    int mw = mx2 - mx1;
+    int mh = my2 - my1;
+
+    checkSnapshotImage();
+
+    PixelWriter pw = snapshotImage.getPixelWriter();
+    pw.setPixels(mx1, my1, mw, mh, argbFormat, pixels,
+                 mx1 + my1 * pixelWidth, pixelWidth);
+
+    context.drawImage(snapshotImage, mx1, my1, mw, mh, mx1, my1, mw, mh);
+  }
+
+
+  protected void checkSnapshotImage() {
+    if (snapshotImage == null ||
+        snapshotImage.getWidth() != pixelWidth ||
+        snapshotImage.getHeight() != pixelHeight) {
+      snapshotImage = new WritableImage(pixelWidth, pixelHeight);
+    }
+  }
 
 
 
@@ -611,6 +689,12 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void line(float x1, float y1, float x2, float y2) {
+    if (drawingThinLines()) {
+      x1 += 0.5f;
+      x2 += 0.5f;
+      y1 += 0.5f;
+      y2 += 0.5f;
+    }
     context.strokeLine(x1, y1, x2, y2);
   }
 
@@ -618,6 +702,14 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
+    if (drawingThinLines()) {
+      x1 += 0.5f;
+      x2 += 0.5f;
+      x3 += 0.5f;
+      y1 += 0.5f;
+      y2 += 0.5f;
+      y3 += 0.5f;
+    }
     context.beginPath();
     context.moveTo(x1, y1);
     context.lineTo(x2, y2);
@@ -631,6 +723,16 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
+    if (drawingThinLines()) {
+      x1 += 0.5f;
+      x2 += 0.5f;
+      x3 += 0.5f;
+      x4 += 0.5f;
+      y1 += 0.5f;
+      y2 += 0.5f;
+      y3 += 0.5f;
+      y4 += 0.5f;
+    }
     context.beginPath();
     context.moveTo(x1, y1);
     context.lineTo(x2, y2);
@@ -658,6 +760,12 @@ public class PGraphicsFX2D extends PGraphics {
   protected void rectImpl(float x1, float y1, float x2, float y2) {
 //    rect.setFrame(x1, y1, x2-x1, y2-y1);
 //    drawShape(rect);
+    if (drawingThinLines()) {
+      x1 += 0.5f;
+      x2 += 0.5f;
+      y1 += 0.5f;
+      y2 += 0.5f;
+    }
     if (fill) context.fillRect(x1, y1, x2 - x1, y2 - y1);
     if (stroke) context.strokeRect(x1, y1, x2 - x1, y2 - y1);
   }
@@ -679,6 +787,10 @@ public class PGraphicsFX2D extends PGraphics {
   protected void ellipseImpl(float x, float y, float w, float h) {
 //    ellipse.setFrame(x, y, w, h);
 //    drawShape(ellipse);
+    if (drawingThinLines()) {
+      x += 0.5f;
+      y += 0.5f;
+    }
     if (fill) context.fillOval(x, y, w, h);
     if (stroke) context.strokeOval(x, y, w, h);
   }
@@ -699,9 +811,13 @@ public class PGraphicsFX2D extends PGraphics {
                          float start, float stop, int mode) {
     // 0 to 90 in java would be 0 to -90 for p5 renderer
     // but that won't work, so -90 to 0?
+    if (drawingThinLines()) {
+      x += 0.5f;
+      y += 0.5f;
+    }
 
-    start = -start * RAD_TO_DEG;
-    stop = -stop * RAD_TO_DEG;
+    start = -start;
+    stop = -stop;
 
     float sweep = stop - start;
 
@@ -1404,7 +1520,7 @@ public class PGraphicsFX2D extends PGraphics {
       throw new RuntimeException("pushMatrix() cannot use push more than " +
                                  transformStack.length + " times");
     }
-    context.getTransform(transformStack[transformCount]);
+    transformStack[transformCount] = context.getTransform(transformStack[transformCount]);
     transformCount++;
   }
 
@@ -1437,7 +1553,7 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void rotate(float angle) {
-    context.rotate(PApplet.radians(angle));
+    context.rotate(PApplet.degrees(angle));
   }
 
 
@@ -1729,6 +1845,12 @@ public class PGraphicsFX2D extends PGraphics {
   }
 
 
+  protected boolean drawingThinLines() {
+    // align strokes to pixel centers when drawing thin lines
+    return stroke && strokeWeight == 1;
+  }
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -1908,180 +2030,76 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void loadPixels() {
-//    pixelFactor = 2;
-    int wide = width * pixelDensity;
-    int high = height * pixelDensity;
 
-    if ((pixels == null) || (pixels.length != wide*high)) {
-      pixels = new int[wide * high];
+    flush();
+
+    if ((pixels == null) || (pixels.length != pixelWidth*pixelHeight)) {
+      pixels = new int[pixelWidth * pixelHeight];
     }
 
-//    WritableRaster raster = getRaster();
-//    raster.getDataElements(0, 0, width, height, pixels);
-//    if (raster.getNumBands() == 3) {
-//      // Java won't set the high bits when RGB, returns 0 for alpha
-//      // https://github.com/processing/processing/issues/2030
-//      for (int i = 0; i < pixels.length; i++) {
-//        pixels[i] = 0xff000000 | pixels[i];
-//      }
-//    }
+    checkSnapshotImage();
+
     SnapshotParameters sp = new SnapshotParameters();
     if (pixelDensity == 2) {
       sp.setTransform(Transform.scale(2, 2));
     }
-    WritableImage wi = ((PSurfaceFX) surface).canvas.snapshot(sp, null);
-    PixelReader pr = wi.getPixelReader();
-    //pr.getPixels(0, 0, width, height, argbFormat, pixels, 0, width);
-    //pr.getPixels(0, 0, width*2, height*2, argbFormat, pixels, 0, width*2);
-    pr.getPixels(0, 0, wide, high, argbFormat, pixels, 0, wide);
+    snapshotImage = ((PSurfaceFX) surface).canvas.snapshot(sp, snapshotImage);
+    PixelReader pr = snapshotImage.getPixelReader();
+    pr.getPixels(0, 0, pixelWidth, pixelHeight, argbFormat, pixels, 0, pixelWidth);
   }
 
 
-//  /**
-//   * Update the pixels[] buffer to the PGraphics image.
-//   * <P>
-//   * Unlike in PImage, where updatePixels() only requests that the
-//   * update happens, in PGraphicsJava2D, this will happen immediately.
-//   */
-//  @Override
-//  public void updatePixels(int x, int y, int c, int d) {
-//    //if ((x == 0) && (y == 0) && (c == width) && (d == height)) {
-////    System.err.format("%d %d %d %d .. w/h = %d %d .. pw/ph = %d %d %n", x, y, c, d, width, height, pixelWidth, pixelHeight);
-//    if ((x != 0) || (y != 0) || (c != pixelWidth) || (d != pixelHeight)) {
-//      // Show a warning message, but continue anyway.
-//      showVariationWarning("updatePixels(x, y, w, h)");
-////      new Exception().printStackTrace(System.out);
-//    }
-////    updatePixels();
-//    if (pixels != null) {
-//      getRaster().setDataElements(0, 0, width, height, pixels);
-//    }
-//    modified = true;
-//  }
-//
-//
-////  @Override
-////  protected void updatePixelsImpl(int x, int y, int w, int h) {
-////    super.updatePixelsImpl(x, y, w, h);
-////
-////    if ((x != 0) || (y != 0) || (w != width) || (h != height)) {
-////      // Show a warning message, but continue anyway.
-////      showVariationWarning("updatePixels(x, y, w, h)");
-////    }
-////    getRaster().setDataElements(0, 0, width, height, pixels);
-////  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // GET/SET
-//
-//
-//  static int getset[] = new int[1];
-//
-//
-//  @Override
-//  public int get(int x, int y) {
-//    if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
-//    //return ((BufferedImage) image).getRGB(x, y);
-////    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
-//    WritableRaster raster = getRaster();
-//    raster.getDataElements(x, y, getset);
-//    if (raster.getNumBands() == 3) {
-//      // https://github.com/processing/processing/issues/2030
-//      return getset[0] | 0xff000000;
-//    }
-//    return getset[0];
-//  }
-//
-//
-//  //public PImage get(int x, int y, int w, int h)
-//
-//
-//  @Override
-//  public PImage get() {
-//    return get(0, 0, width, height);
-//  }
-//
-//
-//  @Override
-//  protected void getImpl(int sourceX, int sourceY,
-//                         int sourceWidth, int sourceHeight,
-//                         PImage target, int targetX, int targetY) {
-//    // last parameter to getRGB() is the scan size of the *target* buffer
-//    //((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, w);
-////    WritableRaster raster =
-////      ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
-//    WritableRaster raster = getRaster();
-//
-//    if (sourceWidth == target.width && sourceHeight == target.height) {
-//      raster.getDataElements(sourceX, sourceY, sourceWidth, sourceHeight, target.pixels);
-//      // https://github.com/processing/processing/issues/2030
-//      if (raster.getNumBands() == 3) {
-//        target.filter(OPAQUE);
-//      }
-//
-//    } else {
-//      // TODO optimize, incredibly inefficient to reallocate this much memory
-//      int[] temp = new int[sourceWidth * sourceHeight];
-//      raster.getDataElements(sourceX, sourceY, sourceWidth, sourceHeight, temp);
-//
-//      // Copy the temporary output pixels over to the outgoing image
-//      int sourceOffset = 0;
-//      int targetOffset = targetY*target.width + targetX;
-//      for (int y = 0; y < sourceHeight; y++) {
-//        if (raster.getNumBands() == 3) {
-//          for (int i = 0; i < sourceWidth; i++) {
-//            // Need to set the high bits for this feller
-//            // https://github.com/processing/processing/issues/2030
-//            target.pixels[targetOffset + i] = 0xFF000000 | temp[sourceOffset + i];
-//          }
-//        } else {
-//          System.arraycopy(temp, sourceOffset, target.pixels, targetOffset, sourceWidth);
-//        }
-//        sourceOffset += sourceWidth;
-//        targetOffset += target.width;
-//      }
-//    }
-//  }
-//
-//
-//  @Override
-//  public void set(int x, int y, int argb) {
-//    if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
-////    ((BufferedImage) image).setRGB(x, y, argb);
-//    getset[0] = argb;
-////    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
-////    WritableRaster raster = image.getRaster();
-//    getRaster().setDataElements(x, y, getset);
-//  }
-//
-//
-//  //public void set(int x, int y, PImage img)
-//
-//
-//  @Override
-//  protected void setImpl(PImage sourceImage,
-//                         int sourceX, int sourceY,
-//                         int sourceWidth, int sourceHeight,
-//                         int targetX, int targetY) {
-//    WritableRaster raster = getRaster();
-////      ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
-//
-//    if ((sourceX == 0) && (sourceY == 0) &&
-//        (sourceWidth == sourceImage.width) &&
-//        (sourceHeight == sourceImage.height)) {
-//      raster.setDataElements(targetX, targetY,
-//                             sourceImage.width, sourceImage.height,
-//                             sourceImage.pixels);
-//    } else {
-//      // TODO optimize, incredibly inefficient to reallocate this much memory
-//      PImage temp = sourceImage.get(sourceX, sourceY, sourceWidth, sourceHeight);
-//      raster.setDataElements(targetX, targetY, temp.width, temp.height, temp.pixels);
-//    }
-//  }
+  //////////////////////////////////////////////////////////////
 
+  // GET/SET PIXELS
+
+
+  @Override
+  public int get(int x, int y) {
+    loadPixels();
+    return super.get(x, y);
+  }
+
+
+  @Override
+  protected void getImpl(int sourceX, int sourceY,
+                         int sourceWidth, int sourceHeight,
+                         PImage target, int targetX, int targetY) {
+    loadPixels();
+    super.getImpl(sourceX, sourceY, sourceWidth, sourceHeight,
+                  target, targetX, targetY);
+  }
+
+
+  @Override
+  public void set(int x, int y, int argb) {
+    loadPixels();
+    super.set(x, y, argb);
+  }
+
+
+  @Override
+  protected void setImpl(PImage sourceImage,
+                         int sourceX, int sourceY,
+                         int sourceWidth, int sourceHeight,
+                         int targetX, int targetY) {
+
+    // Copies the pixels
+    loadPixels();
+    sourceImage.loadPixels();
+    int sourceOffset = sourceY * sourceImage.pixelWidth + sourceX;
+    int targetOffset = targetY * pixelWidth + targetX;
+    for (int y = sourceY; y < sourceY + sourceHeight; y++) {
+      System.arraycopy(sourceImage.pixels, sourceOffset, pixels, targetOffset, sourceWidth);
+      sourceOffset += sourceImage.pixelWidth;
+      targetOffset += pixelWidth;
+    }
+
+    // Draws the image
+    copy(sourceImage,
+         sourceX, sourceY, sourceWidth, sourceHeight,
+         targetX, targetY, sourceWidth, sourceHeight);
+  }
 
 
   //////////////////////////////////////////////////////////////
