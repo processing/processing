@@ -1,0 +1,178 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.processing</groupId>
+        <artifactId>processing-complete</artifactId>
+        <version>3.0b4</version>
+        <relativePath>../build/pom.xml</relativePath>
+    </parent>
+    
+    <groupId>org.processing</groupId>
+    <artifactId>pde</artifactId>
+    <version>${project.parent.version}</version>
+    <packaging>jar</packaging>
+
+    <name>Processing PDE</name>
+    <description>Processing is a programming language, development environment, and online community. 
+        This PDE package contains the Processing IDE. 
+    </description>
+
+        
+    <dependencies>
+        <dependency>
+            <groupId>org.processing</groupId>
+            <artifactId>core</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+    
+<!--        <dependency>
+            <groupId>antlr</groupId>  
+            <artifactId>antlr</artifactId>  
+            <version>2.7.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/antlr.jar</systemPath>
+        </dependency>
+        
+        <dependency>
+            <groupId>apple</groupId>  
+            <artifactId>apple</artifactId>  
+            <version>2.2.1</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/apple.jar</systemPath>
+        </dependency>-->
+        
+        <dependency>
+            <groupId>ant</groupId>  
+            <artifactId>ant</artifactId>  
+            <version>2.2.1</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/ant.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>ant-launcher</groupId>  
+            <artifactId>ant-launcher</artifactId>  
+            <version>2.2.1</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/ant-launcher.jar</systemPath>
+        </dependency>
+        <!--        <dependency>
+            <groupId>jdt-core</groupId>  
+            <artifactId>jdt-core</artifactId>  
+            <version>2.2.1</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jdt-core.jar</systemPath>
+        </dependency>-->
+        <dependency>
+            <groupId>jna</groupId>  
+            <artifactId>jna</artifactId>  
+            <version>2.2.1</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jna.jar</systemPath>
+        </dependency>
+        <!--        <dependency>
+            <groupId>org-netbeans-swing-outline</groupId>  
+            <artifactId>org-netbeans-swing-outline</artifactId>  
+            <version>2.2.1</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/org-netbeans-swing-outline.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.icu_4.4.2.v20110823</groupId>  
+            <artifactId>com.ibm.icu_4.4.2.v20110823</artifactId>  
+            <version>2.2.1</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/com.ibm.icu_4.4.2.v20110823.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>jdi</groupId>  
+            <artifactId>jdi</artifactId>  
+            <version>2.2.1</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jdi.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>jdimodel</groupId>  
+            <artifactId>jdimodel</artifactId>  
+            <version>2.2.1</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jdimodel.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.osgi_3.8.1.v20120830-144521</groupId>  
+            <artifactId>org.eclipse.osgi_3.8.1.v20120830-144521</artifactId>  
+            <version>2.2.1</version>   
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar</systemPath>
+        </dependency>-->
+
+    </dependencies>
+                                
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        
+        <plugins>    
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.2</version>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <configuration>
+                            <target>
+                                <!--NOT Working build manually with "$ant build" in the folder...-->
+                                <!--<ant antfile="build.xml" target="build"/>-->
+                                <copy todir="target/classes/">
+                                    <fileset dir="bin/"/>
+                                </copy>
+                            </target>                            
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin> 
+            
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin> 
+            
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-gpg-plugin</artifactId>
+            </plugin>
+       
+        </plugins>
+        
+    </build>
+    <properties>
+        <netbeans.hint.license>license</netbeans.hint.license>
+    </properties>
+</project>
