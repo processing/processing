@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.processing</groupId>
     <artifactId>processing-complete</artifactId>
-    <version>3.0b4</version>
+    <version>3.0b5</version>
     <packaging>pom</packaging>
 
 
