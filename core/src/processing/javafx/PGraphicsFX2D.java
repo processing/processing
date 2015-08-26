@@ -205,6 +205,8 @@ public class PGraphicsFX2D extends PGraphics {
     workPath.reset();
     auxPath.reset();
 
+    flushPixels();
+
     if (drawingThinLines()) {
       pushMatrix();
       translate(0.5f, 0.5f);
@@ -412,10 +414,10 @@ public class PGraphicsFX2D extends PGraphics {
       }
     }
     shape = 0;
-
     if (drawingThinLines()) {
       popMatrix();
     }
+    loaded = false;
   }
 
 
@@ -627,47 +629,38 @@ public class PGraphicsFX2D extends PGraphics {
 
   // RENDERER
 
-
   @Override
   public void flush() {
+    flushPixels();
+  }
+
+
+  protected void flushPixels() {
     boolean hasPixels = modified && pixels != null;
     if (hasPixels) {
       // If the user has been manipulating individual pixels,
       // the changes need to be copied to the screen before
       // drawing any new geometry.
-      flushPixels();
+      int mx1 = getModifiedX1();
+      int mx2 = getModifiedX2();
+      int my1 = getModifiedY1();
+      int my2 = getModifiedY2();
+      int mw = mx2 - mx1;
+      int mh = my2 - my1;
+
+      PixelWriter pw = context.getPixelWriter();
+      pw.setPixels(mx1, my1, mw, mh, argbFormat, pixels,
+                   mx1 + my1 * pixelWidth, pixelWidth);
     }
 
     modified = false;
   }
 
 
-  protected void flushPixels() {
-    int mx1 = getModifiedX1();
-    int mx2 = getModifiedX2();
-    int my1 = getModifiedY1();
-    int my2 = getModifiedY2();
-    int mw = mx2 - mx1;
-    int mh = my2 - my1;
-
-    checkSnapshotImage();
-
-    PixelWriter pw = snapshotImage.getPixelWriter();
-    pw.setPixels(mx1, my1, mw, mh, argbFormat, pixels,
-                 mx1 + my1 * pixelWidth, pixelWidth);
-
-    context.drawImage(snapshotImage, mx1, my1, mw, mh, mx1, my1, mw, mh);
+  protected void beforeContextDraw() {
+    flushPixels();
+    loaded = false;
   }
-
-
-  protected void checkSnapshotImage() {
-    if (snapshotImage == null ||
-        snapshotImage.getWidth() != pixelWidth ||
-        snapshotImage.getHeight() != pixelHeight) {
-      snapshotImage = new WritableImage(pixelWidth, pixelHeight);
-    }
-  }
-
 
 
   //////////////////////////////////////////////////////////////
@@ -689,6 +682,7 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void line(float x1, float y1, float x2, float y2) {
+    beforeContextDraw();
     if (drawingThinLines()) {
       x1 += 0.5f;
       x2 += 0.5f;
@@ -702,6 +696,7 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void triangle(float x1, float y1, float x2, float y2,
                        float x3, float y3) {
+    beforeContextDraw();
     if (drawingThinLines()) {
       x1 += 0.5f;
       x2 += 0.5f;
@@ -723,6 +718,7 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
+    beforeContextDraw();
     if (drawingThinLines()) {
       x1 += 0.5f;
       x2 += 0.5f;
@@ -758,8 +754,7 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   protected void rectImpl(float x1, float y1, float x2, float y2) {
-//    rect.setFrame(x1, y1, x2-x1, y2-y1);
-//    drawShape(rect);
+    beforeContextDraw();
     if (drawingThinLines()) {
       x1 += 0.5f;
       x2 += 0.5f;
@@ -785,8 +780,7 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   protected void ellipseImpl(float x, float y, float w, float h) {
-//    ellipse.setFrame(x, y, w, h);
-//    drawShape(ellipse);
+    beforeContextDraw();
     if (drawingThinLines()) {
       x += 0.5f;
       y += 0.5f;
@@ -809,13 +803,15 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   protected void arcImpl(float x, float y, float w, float h,
                          float start, float stop, int mode) {
-    // 0 to 90 in java would be 0 to -90 for p5 renderer
-    // but that won't work, so -90 to 0?
+    beforeContextDraw();
+
     if (drawingThinLines()) {
       x += 0.5f;
       y += 0.5f;
     }
 
+    // 0 to 90 in java would be 0 to -90 for p5 renderer
+    // but that won't work, so -90 to 0?
     start = -start;
     stop = -stop;
 
@@ -1928,6 +1924,12 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void backgroundImpl() {
+
+    // if pixels are modified, we don't flush them (just mark them flushed)
+    // because they would be immediatelly overwritten by the background anyway
+    modified = false;
+    loaded = false;
+
     // This only takes into account cases where this is the primary surface.
     // Not sure what we do with offscreen anyway.
     Paint savedFill = context.getFill();
@@ -2030,23 +2032,31 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void loadPixels() {
-
-    flush();
-
-    if ((pixels == null) || (pixels.length != pixelWidth*pixelHeight)) {
+    if ((pixels == null) || (pixels.length != pixelWidth * pixelHeight)) {
       pixels = new int[pixelWidth * pixelHeight];
+      loaded = false;
     }
 
-    checkSnapshotImage();
+    if (!loaded) {
+      if (snapshotImage == null ||
+          snapshotImage.getWidth() != pixelWidth ||
+          snapshotImage.getHeight() != pixelHeight) {
+        snapshotImage = new WritableImage(pixelWidth, pixelHeight);
+      }
 
-    SnapshotParameters sp = new SnapshotParameters();
-    if (pixelDensity == 2) {
-      sp.setTransform(Transform.scale(2, 2));
+      SnapshotParameters sp = new SnapshotParameters();
+      if (pixelDensity != 1) {
+        sp.setTransform(Transform.scale(pixelDensity, pixelDensity));
+      }
+      snapshotImage = ((PSurfaceFX) surface).canvas.snapshot(sp, snapshotImage);
+      PixelReader pr = snapshotImage.getPixelReader();
+      pr.getPixels(0, 0, pixelWidth, pixelHeight, argbFormat, pixels, 0, pixelWidth);
+
+      loaded = true;
+      modified = false;
     }
-    snapshotImage = ((PSurfaceFX) surface).canvas.snapshot(sp, snapshotImage);
-    PixelReader pr = snapshotImage.getPixelReader();
-    pr.getPixels(0, 0, pixelWidth, pixelHeight, argbFormat, pixels, 0, pixelWidth);
   }
+
 
 
   //////////////////////////////////////////////////////////////
@@ -2083,22 +2093,27 @@ public class PGraphicsFX2D extends PGraphics {
                          int sourceX, int sourceY,
                          int sourceWidth, int sourceHeight,
                          int targetX, int targetY) {
-
-    // Copies the pixels
-    loadPixels();
     sourceImage.loadPixels();
-    int sourceOffset = sourceY * sourceImage.pixelWidth + sourceX;
-    int targetOffset = targetY * pixelWidth + targetX;
-    for (int y = sourceY; y < sourceY + sourceHeight; y++) {
-      System.arraycopy(sourceImage.pixels, sourceOffset, pixels, targetOffset, sourceWidth);
-      sourceOffset += sourceImage.pixelWidth;
-      targetOffset += pixelWidth;
-    }
 
-    // Draws the image
-    copy(sourceImage,
-         sourceX, sourceY, sourceWidth, sourceHeight,
-         targetX, targetY, sourceWidth, sourceHeight);
+    int sourceOffset = sourceX + sourceImage.pixelWidth * sourceY;
+
+    PixelWriter pw = context.getPixelWriter();
+    pw.setPixels(targetX, targetY, sourceWidth, sourceHeight,
+                 argbFormat,
+                 sourceImage.pixels,
+                 sourceOffset,
+                 sourceImage.pixelWidth);
+
+    // Let's keep them loaded
+    if (loaded) {
+      int sourceStride = sourceImage.pixelWidth;
+      int targetStride = pixelWidth;
+      int targetOffset = targetX + targetY * targetStride;
+      for (int i = 0; i < sourceHeight; i++) {
+        System.arraycopy(sourceImage.pixels, sourceOffset + i * sourceStride,
+                         pixels, targetOffset + i * targetStride, sourceWidth);
+      }
+    }
   }
 
 
