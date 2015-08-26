@@ -56,6 +56,7 @@ public class PSurfaceFX implements PSurface {
   Canvas canvas;
 
   final Animation animation;
+  float frameRate = 60;
 
   public PSurfaceFX(PGraphicsFX2D graphics) {
     fx = graphics;
@@ -65,9 +66,14 @@ public class PSurfaceFX implements PSurface {
     KeyFrame keyFrame = new KeyFrame(Duration.millis(1000),
                                      new EventHandler<ActionEvent>() {
       public void handle(ActionEvent event) {
+        long startNanoTime = System.nanoTime();
         sketch.handleDraw();
+        long drawNanos = System.nanoTime() - startNanoTime;
         if (sketch.exitCalled()) {
           Platform.exit();  // version for safe JavaFX shutdown
+        }
+        if (sketch.frameCount > 5) {
+          animation.setRate(-PApplet.min(1e9f / drawNanos, frameRate));
         }
       }
     });
@@ -79,7 +85,7 @@ public class PSurfaceFX implements PSurface {
 
     // setting rate to negative so that event fires at the start of
     // the key frame and first frame is drawn immediately
-    animation.setRate(-60);
+    animation.setRate(-frameRate);
   }
 
 
@@ -453,7 +459,10 @@ public class PSurfaceFX implements PSurface {
   public void setFrameRate(float fps) {
     // setting rate to negative so that event fires at the start of
     // the key frame and first frame is drawn immediately
-    if (fps > 0) animation.setRate(-fps);
+    if (fps > 0) {
+      frameRate = fps;
+      animation.setRate(-frameRate);
+    }
   }
 
 
