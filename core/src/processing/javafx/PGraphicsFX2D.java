@@ -54,6 +54,7 @@ public class PGraphicsFX2D extends PGraphics {
     PixelFormat.getIntArgbInstance();
 
   WritableImage snapshotImage;
+  boolean arePixelsUpToDate;
 
   Path2D workPath = new Path2D();
   Path2D auxPath = new Path2D();
@@ -412,10 +413,10 @@ public class PGraphicsFX2D extends PGraphics {
       }
     }
     shape = 0;
-
     if (drawingThinLines()) {
       popMatrix();
     }
+    arePixelsUpToDate = false;
   }
 
 
@@ -684,6 +685,7 @@ public class PGraphicsFX2D extends PGraphics {
 //        set((int) screenX(x, y), (int) screenY(x, y), strokeColor);
 //      }
     }
+    arePixelsUpToDate = false;
   }
 
 
@@ -696,6 +698,7 @@ public class PGraphicsFX2D extends PGraphics {
       y2 += 0.5f;
     }
     context.strokeLine(x1, y1, x2, y2);
+    arePixelsUpToDate = false;
   }
 
 
@@ -717,6 +720,7 @@ public class PGraphicsFX2D extends PGraphics {
     context.closePath();
     if (fill) context.fill();
     if (stroke) context.stroke();
+    arePixelsUpToDate = false;
   }
 
 
@@ -741,6 +745,7 @@ public class PGraphicsFX2D extends PGraphics {
     context.closePath();
     if (fill) context.fill();
     if (stroke) context.stroke();
+    arePixelsUpToDate = false;
   }
 
 
@@ -768,6 +773,7 @@ public class PGraphicsFX2D extends PGraphics {
     }
     if (fill) context.fillRect(x1, y1, x2 - x1, y2 - y1);
     if (stroke) context.strokeRect(x1, y1, x2 - x1, y2 - y1);
+    arePixelsUpToDate = false;
   }
 
 
@@ -793,6 +799,7 @@ public class PGraphicsFX2D extends PGraphics {
     }
     if (fill) context.fillOval(x, y, w, h);
     if (stroke) context.strokeOval(x, y, w, h);
+    arePixelsUpToDate = false;
   }
 
 
@@ -843,6 +850,7 @@ public class PGraphicsFX2D extends PGraphics {
     if (stroke) {
       context.strokeArc(x, y, w, h, PApplet.degrees(start), PApplet.degrees(sweep), strokeMode);
     }
+    arePixelsUpToDate = false;
   }
 
 
@@ -1057,6 +1065,8 @@ public class PGraphicsFX2D extends PGraphics {
     context.drawImage(((ImageCache) getCache(who)).image,
                       u1, v1, u2-u1, v2-v1,
                       x1, y1, x2-x1, y2-y1);
+
+    arePixelsUpToDate = false;
   }
 
 
@@ -1937,6 +1947,7 @@ public class PGraphicsFX2D extends PGraphics {
     context.fillRect(0, 0, width, height);
     context.setFill(savedFill);
     context.setGlobalBlendMode(savedBlend);
+    arePixelsUpToDate = false;
   }
 
 
@@ -2031,21 +2042,26 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void loadPixels() {
 
-    flush();
-
-    if ((pixels == null) || (pixels.length != pixelWidth*pixelHeight)) {
+    if ((pixels == null) || (pixels.length != pixelWidth * pixelHeight)) {
       pixels = new int[pixelWidth * pixelHeight];
+      arePixelsUpToDate = false;
     }
 
     checkSnapshotImage();
 
-    SnapshotParameters sp = new SnapshotParameters();
-    if (pixelDensity == 2) {
-      sp.setTransform(Transform.scale(2, 2));
+    if (!arePixelsUpToDate) {
+      flush();
+
+      SnapshotParameters sp = new SnapshotParameters();
+      if (pixelDensity != 1) {
+        sp.setTransform(Transform.scale(pixelDensity, pixelDensity));
+      }
+      snapshotImage = ((PSurfaceFX) surface).canvas.snapshot(sp, snapshotImage);
+      PixelReader pr = snapshotImage.getPixelReader();
+      pr.getPixels(0, 0, pixelWidth, pixelHeight, argbFormat, pixels, 0, pixelWidth);
     }
-    snapshotImage = ((PSurfaceFX) surface).canvas.snapshot(sp, snapshotImage);
-    PixelReader pr = snapshotImage.getPixelReader();
-    pr.getPixels(0, 0, pixelWidth, pixelHeight, argbFormat, pixels, 0, pixelWidth);
+
+    arePixelsUpToDate = true;
   }
 
 
