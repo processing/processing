@@ -2514,6 +2514,16 @@ public class JavaEditor extends Editor {
   }
 
 
+  /*
+  public void clearErrorPoints() {
+    List<LineMarker> errorPoints = getErrorPoints();
+    synchronized (errorPoints) {  // necessary?
+      errorPoints.clear();
+    }
+  }
+  */
+
+
   public void repaintErrorBar() {
     errorColumn.repaint();
   }

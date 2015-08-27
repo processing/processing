@@ -14,6 +14,18 @@ X keyChar and keyCode are super wonky and unlike AWT
 X   https://github.com/processing/processing/issues/3290
 X   what's the way to do this after the deprecation?
 X   if this is going to be the default renderer, has to be ironed out
+X FX - arc - infamous deg-rad conversion strikes again
+X   https://github.com/processing/processing/pull/3713
+X FX - paths, contours, curves
+X   https://github.com/processing/processing/pull/3715
+X FX - fix AIOOBE when pressing ESC on Mac
+X   https://github.com/processing/processing/pull/3719
+X FX - framerate fix
+X   https://github.com/processing/processing/pull/3724
+X FX - loadPixels, updatePixels, get and set optimizations
+X   https://github.com/processing/processing/pull/3725
+X FX - keep track of whether pixels are up to date
+X   https://github.com/processing/processing/pull/3716
 
 
 known issues

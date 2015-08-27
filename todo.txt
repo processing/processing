@@ -5,12 +5,18 @@ X   problem was that the example was creating files inside Processing.app
 X Casey reports that exported app still asks to download Java
 X   could this be a JOGL bug (linking against the app stub?)
 X   ran otool -L on the binaries and saw nothing
+X deal with ConcurrentModificationException in Editor 
+X   "Error repainting line range" and ConcurrentModificationException 
+X   https://github.com/processing/processing/issues/3726
 
 gsoc
 X CM: Category dropdown alignment
 X   https://github.com/processing/processing/issues/3644
 X   https://github.com/processing/processing/pull/3666
 X   https://github.com/processing/processing/pull/3669
+X finalize CM tab order
+X   https://github.com/processing/processing/issues/3613
+X   https://github.com/processing/processing/pull/3714
 
 fixed in b5, but unconfirmed at press time
 X CM - Focus is shifted out of the filter field when something is searched

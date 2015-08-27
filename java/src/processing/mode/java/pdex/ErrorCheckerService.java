@@ -996,8 +996,9 @@ public class ErrorCheckerService implements Runnable {
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
     if (JavaMode.errorCheckEnabled) {
-      synchronized (editor.getErrorPoints()) {
-        for (LineMarker emarker : editor.getErrorPoints()) {
+      List<LineMarker> errorPoints = editor.getErrorPoints();
+      synchronized (errorPoints) {
+        for (LineMarker emarker : errorPoints) {
           if (emarker.getProblem().getLineNumber() == editor.getTextArea().getCaretLine()) {
             if (emarker.getType() == LineMarker.WARNING) {
               editor.statusMessage(emarker.getProblem().getMessage(),
@@ -1590,6 +1591,7 @@ public class ErrorCheckerService implements Runnable {
   public void handleErrorCheckingToggle() {
     if (!JavaMode.errorCheckEnabled) {
       Messages.log(editor.getSketch().getName() + " Error Checker paused.");
+      //editor.clearErrorPoints();
       editor.getErrorPoints().clear();
       problemsList.clear();
       updateErrorTable();

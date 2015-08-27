@@ -345,15 +345,18 @@ public class JavaTextAreaPainter extends TextAreaPainter
     errorLineCoords.clear();
     // Check if current line contains an error. If it does, find if it's an
     // error or warning
-    for (LineMarker emarker : getJavaEditor().getErrorPoints()) {
-      if (emarker.getProblem().getLineNumber() == line) {
-        notFound = false;
-        if (emarker.getType() == LineMarker.WARNING) {
-          isWarning = true;
+    List<LineMarker> errorPoints = getJavaEditor().getErrorPoints();
+    synchronized (errorPoints) {
+      for (LineMarker emarker : errorPoints) {
+        if (emarker.getProblem().getLineNumber() == line) {
+          notFound = false;
+          if (emarker.getType() == LineMarker.WARNING) {
+            isWarning = true;
+          }
+          problem = emarker.getProblem();
+          //log(problem.toString());
+          break;
         }
-        problem = emarker.getProblem();
-        //log(problem.toString());
-        break;
       }
     }
 
