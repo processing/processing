@@ -21,14 +21,13 @@
 */
 package processing.app;
 
+import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import javax.swing.SwingUtilities;
 
 import processing.core.PApplet;
 
@@ -38,8 +37,6 @@ import processing.core.PApplet;
  * Processing from running simultaneously. If there's already an instance
  * running, it'll handle opening a new empty sketch, or any files that had
  * been passed in on the command line.
- *
- * @author Peter Kalauskas, Ben Fry
  */
 public class SingleInstance {
   static final String SERVER_PORT = "instance_server.port";
@@ -58,7 +55,6 @@ public class SingleInstance {
   }
 
 
-//  static void startServer(final Platform platform) {
   static void startServer(final Base base) {
     try {
       final ServerSocket ss = new ServerSocket(0, 0, InetAddress.getByName(null));
@@ -75,11 +71,9 @@ public class SingleInstance {
               final BufferedReader reader = PApplet.createReader(s.getInputStream());
               String receivedKey = reader.readLine();
               Messages.log(this, "key is " + key + ", received is " + receivedKey);
-//              Base.log(this, "platform base is " + platform.base);
 
-//              if (platform.base != null) {
               if (key.equals(receivedKey)) {
-                SwingUtilities.invokeLater(new Runnable() {
+                EventQueue.invokeLater(new Runnable() {
                   public void run() {
                     try {
                       Messages.log(this, "about to read line");

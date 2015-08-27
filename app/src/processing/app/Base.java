@@ -1011,8 +1011,8 @@ public class Base {
       Preferences.unset("server.port"); //$NON-NLS-1$
       Preferences.unset("server.key"); //$NON-NLS-1$
 
-      // This will store the sketch count as zero
-      editors.remove(editor);
+//      // This will store the sketch count as zero
+//      editors.remove(editor);
 //      System.out.println("editors size now " + editors.size());
 //      storeSketches();
 

@@ -26,6 +26,8 @@ X FX - loadPixels, updatePixels, get and set optimizations
 X   https://github.com/processing/processing/pull/3725
 X FX - keep track of whether pixels are up to date
 X   https://github.com/processing/processing/pull/3716
+X FX - improve key events
+X   https://github.com/processing/processing/pull/3729
 
 
 known issues
