@@ -741,18 +741,10 @@ public class PSurfaceFX implements PSurface {
 
   @SuppressWarnings("deprecation")
   private char getKeyChar(KeyEvent fxEvent) {
-    if (fxEvent.getEventType() == KeyEvent.KEY_TYPED) {
-      String ch = fxEvent.getCharacter();
-      if (ch.length() < 1) return PConstants.CODED;
-      return ch.charAt(0);
-    }
-
     KeyCode kc = fxEvent.getCode();
 
-    if (kc.isKeypadKey()) {
-      return (char) (kc.impl_getChar().charAt(0) - ('a' - '0') + 1);
-    }
-
+    // Overriding chars for some
+    // KEY_PRESSED and KEY_RELEASED events
     switch (kc) {
       case UP:
       case KP_UP:
@@ -794,9 +786,58 @@ public class PSurfaceFX implements PSurface {
         return PConstants.CODED;
       case ENTER:
         return '\n';
+      case DIVIDE:
+        return '/';
+      case MULTIPLY:
+        return '*';
+      case SUBTRACT:
+        return '-';
+      case ADD:
+        return '+';
+      case NUMPAD0:
+        return '0';
+      case NUMPAD1:
+        return '1';
+      case NUMPAD2:
+        return '2';
+      case NUMPAD3:
+        return '3';
+      case NUMPAD4:
+        return '4';
+      case NUMPAD5:
+        return '5';
+      case NUMPAD6:
+        return '6';
+      case NUMPAD7:
+        return '7';
+      case NUMPAD8:
+        return '8';
+      case NUMPAD9:
+        return '9';
+      case DECIMAL:
+        // KEY_TYPED does not go through here and will produce
+        // dot or comma based on the keyboard layout.
+        // For KEY_PRESSED and KEY_RELEASED, let's just go with
+        // the dot. Users can detect the key by its keyCode.
+        return '.';
+      case UNDEFINED:
+        // KEY_TYPED has KeyCode: UNDEFINED
+        // and falls through here
+        break;
       default:
         break;
     }
-    return kc.impl_getChar().charAt(0);
+
+    // Just go with what FX gives us for the rest of
+    // KEY_PRESSED and KEY_RELEASED and all of KEY_TYPED
+    String ch;
+    if (fxEvent.getEventType() == KeyEvent.KEY_TYPED) {
+      ch = fxEvent.getCharacter();
+    } else {
+      ch = kc.impl_getChar();
+    }
+
+    if (ch.length() < 1) return PConstants.CODED;
+    return ch.charAt(0);
   }
 }
