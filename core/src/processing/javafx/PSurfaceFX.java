@@ -838,6 +838,7 @@ public class PSurfaceFX implements PSurface {
     }
 
     if (ch.length() < 1) return PConstants.CODED;
+    if (ch.startsWith("\r")) return '\n'; // normalize enter key
     return ch.charAt(0);
   }
 }
