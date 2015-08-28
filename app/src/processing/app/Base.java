@@ -510,6 +510,11 @@ public class Base {
   List<ToolContribution> contribTools;
 
 
+  public List<ToolContribution> getCoreTools() {
+    return coreTools;
+  }
+
+
   public List<ToolContribution> getToolContribs() {
     return contribTools;
   }

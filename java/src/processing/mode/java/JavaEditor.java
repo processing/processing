@@ -376,10 +376,10 @@ public class JavaEditor extends Editor {
         boolean isCoreToolMenuItemAdded = false;
         boolean isContribToolMenuItemAdded = false;
 
-        List<ToolContribution> contribTools = getToolContribs();
+        List<ToolContribution> contribTools = base.getToolContribs();
         // Adding this in in case a reference folder is added for MovieMaker, or in case
         // other core tools are introduced later
-        isCoreToolMenuItemAdded = addToolReferencesToSubMenu(getCoreTools(), toolRefSubmenu);
+        isCoreToolMenuItemAdded = addToolReferencesToSubMenu(base.getCoreTools(), toolRefSubmenu);
 
         if (isCoreToolMenuItemAdded && !contribTools.isEmpty())
           toolRefSubmenu.addSeparator();
@@ -398,7 +398,7 @@ public class JavaEditor extends Editor {
         else if (!isContribToolMenuItemAdded && !contribTools.isEmpty()) {
           // re-populate the menu to get rid of terminal separator
           toolRefSubmenu.removeAll();
-          addToolReferencesToSubMenu(getCoreTools(), toolRefSubmenu);
+          addToolReferencesToSubMenu(base.getCoreTools(), toolRefSubmenu);
         }
       }
 
