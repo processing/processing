@@ -23,21 +23,22 @@
 
 package processing.app.ui;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.event.*;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.text.*;
 
-import processing.app.Base;
-import processing.app.Mode;
-import processing.app.Platform;
-import processing.app.Preferences;
+import processing.app.*;
 import processing.core.PApplet;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 
 /**
@@ -55,6 +56,8 @@ import java.util.*;
  */
 public class EditorConsole extends JScrollPane {
   Editor editor;
+
+  Timer flushTimer;
 
   JTextPane consoleTextPane;
   BufferedStyledDocument consoleDoc;
@@ -159,22 +162,49 @@ public class EditorConsole extends JScrollPane {
     sketchOut = new PrintStream(new EditorConsoleStream(false, this));
     sketchErr = new PrintStream(new EditorConsoleStream(true, this));
 
-    // periodically post buffered messages to the console
-    // should the interval come from the preferences file?
-    new javax.swing.Timer(250, new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        // only if new text has been added
-        if (consoleDoc.hasAppendage) {
-          // insert the text that's been added in the meantime
-          consoleDoc.insertAll();
-          // always move to the end of the text as it's added
-          consoleTextPane.setCaretPosition(consoleDoc.getLength());
-        }
-      }
-    }).start();
+    startTimer();
 
     // windows puts an ugly border on this guy
     setBorder(null);
+  }
+
+
+  protected void flush() {
+    // only if new text has been added
+    if (consoleDoc.hasAppendage) {
+      // insert the text that's been added in the meantime
+      consoleDoc.insertAll();
+      // always move to the end of the text as it's added
+      consoleTextPane.setCaretPosition(consoleDoc.getLength());
+    }
+  }
+
+
+  /**
+   * Start the timer that handles flushing the console text. Has to be started
+   * and stopped/cleared because the Timer thread will keep a reference to its
+   * Editor around even after the Editor has been closed, leaking memory.
+   */
+  protected void startTimer() {
+    if (flushTimer == null) {
+      // periodically post buffered messages to the console
+      // should the interval come from the preferences file?
+      flushTimer = new Timer(250, new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          flush();
+        }
+      });
+      flushTimer.start();
+    }
+  }
+
+
+  protected void stopTimer() {
+    if (flushTimer != null) {
+      flush();  // clear anything that's there
+      flushTimer.stop();
+      flushTimer = null;
+    }
   }
 
 
@@ -256,7 +286,11 @@ public class EditorConsole extends JScrollPane {
 
 
   static public void setEditor(Editor editor) {
+    if (currentConsole != null) {
+      currentConsole.stopTimer();  // allow to be garbage collected
+    }
     currentConsole = editor.console;
+    currentConsole.startTimer();
   }
 
 
@@ -398,7 +432,7 @@ public class EditorConsole extends JScrollPane {
  * swing event thread, so they need to be synchronized
  */
 class BufferedStyledDocument extends DefaultStyledDocument {
-  ArrayList<ElementSpec> elements = new ArrayList<ElementSpec>();
+  List<ElementSpec> elements = new ArrayList<ElementSpec>();
   int maxLineLength, maxLineCount;
   int currentLineLength = 0;
   boolean needLineBreak = false;
