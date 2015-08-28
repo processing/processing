@@ -26,14 +26,13 @@ import java.net.URLClassLoader;
 //import java.net.*;
 import java.util.*;
 
-import processing.app.Base;
 import processing.app.Messages;
 //import processing.app.Base;
 import processing.app.tools.Tool;
 import processing.app.ui.Editor;
 
 
-public class ToolContribution extends LocalContribution implements Tool {
+public class ToolContribution extends LocalContribution implements Tool, Comparable<ToolContribution> {
   private Tool tool;
 
   private File referenceFile; // shortname/reference/index.html
@@ -73,30 +72,14 @@ public class ToolContribution extends LocalContribution implements Tool {
 
 
   /**
-   * Method to close the ClassLoader so that the archives are no longer "locked" and
-   * a tool can be removed without restart.
+   * Method to close the ClassLoader so that the archives are no longer
+   * "locked" and a tool can be removed without restart.
    */
-  public void clearClassLoader(Base base) {
+  public void clearClassLoader() {
     try {
       ((URLClassLoader) this.loader).close();
     } catch (IOException e1) {
       e1.printStackTrace();
-    }
-    Iterator<Editor> editorIter = base.getEditors().iterator();
-    while (editorIter.hasNext()) {
-      Editor editor = editorIter.next();
-      List<ToolContribution> contribTools = editor.getToolContribs();
-      for (ToolContribution toolContrib : contribTools)
-        if (toolContrib.getName().equals(this.name)) {
-          try {
-            ((URLClassLoader) toolContrib.loader).close();
-            editor.removeToolContrib(toolContrib);
-            break;
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-//        base.getActiveEditor().rebuildToolMenu();
-        }
     }
   }
 
@@ -128,6 +111,7 @@ public class ToolContribution extends LocalContribution implements Tool {
         }
       }
     }
+    Collections.sort(outgoing);
     return outgoing;
   }
 
@@ -171,5 +155,11 @@ public class ToolContribution extends LocalContribution implements Tool {
    */
   public boolean hasReference() {
     return referenceFile.exists();
+  }
+
+
+  @Override
+  public int compareTo(ToolContribution o) {
+    return getMenuTitle().compareTo(o.getMenuTitle());
   }
 }

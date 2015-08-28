@@ -480,7 +480,7 @@ public class ContributionListing {
         count++;
       }
     }
-    for (ToolContribution tc : base.getActiveEditor().getToolContribs()) {
+    for (ToolContribution tc : base.getToolContribs()) {
       if (hasUpdates(tc)) {
         count++;
       }
@@ -500,7 +500,7 @@ public class ContributionListing {
         return true;
       }
     }
-    for (ToolContribution tc : base.getActiveEditor().getToolContribs()) {
+    for (ToolContribution tc : base.getToolContribs()) {
       if (hasUpdates(tc)) {
         return true;
       }

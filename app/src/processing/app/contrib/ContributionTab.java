@@ -389,14 +389,15 @@ public class ContributionTab {
       libraries.addAll(editor.getMode().coreLibraries);
       contributions.addAll(libraries);
 
-      //ArrayList<ToolContribution> tools = editor.contribTools;
-      List<ToolContribution> tools = editor.getToolContribs();
+      Base base = editor.getBase();
+
+      List<ToolContribution> tools = base.getToolContribs();
       contributions.addAll(tools);
 
-      List<ModeContribution> modes = editor.getBase().getModeContribs();
+      List<ModeContribution> modes = base.getModeContribs();
       contributions.addAll(modes);
 
-      List<ExamplesContribution> examples = editor.getBase().getExampleContribs();
+      List<ExamplesContribution> examples = base.getExampleContribs();
       contributions.addAll(examples);
 
 //    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);

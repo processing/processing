@@ -270,7 +270,7 @@ abstract public class EditorToolbar extends JPanel {
 
       addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent event) {
-          JPopupMenu popup = editor.getModeMenu().getPopupMenu();
+          JPopupMenu popup = editor.getModePopup();
           popup.show(ModeSelector.this, event.getX(), event.getY());
         }
       });

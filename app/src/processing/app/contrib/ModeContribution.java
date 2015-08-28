@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -24,13 +24,11 @@ package processing.app.contrib;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import processing.app.Base;
 import processing.app.Messages;
@@ -82,7 +80,7 @@ public class ModeContribution extends LocalContribution {
    * @param className name of class and full package, or null to use default
    * @throws Exception
    */
-  private ModeContribution(Base base, File folder,
+  public ModeContribution(Base base, File folder,
                            String className) throws Exception {
     super(folder);
     className = initLoader(base, className);
@@ -117,53 +115,6 @@ public class ModeContribution extends LocalContribution {
       } catch (IOException e) {
         e.printStackTrace();
       }
-    }
-  }
-
-
-  static public void loadMissing(Base base) {
-    File modesFolder = Base.getSketchbookModesFolder();
-    List<ModeContribution> contribModes = base.getModeContribs();
-
-    Map<File, ModeContribution> existing = new HashMap<File, ModeContribution>();
-    for (ModeContribution contrib : contribModes) {
-      existing.put(contrib.getFolder(), contrib);
-    }
-    File[] potential = ContributionType.MODE.listCandidates(modesFolder);
-    // If modesFolder does not exist or is inaccessible (folks might like to
-    // mess with folders then report it as a bug) 'potential' will be null.
-    if (potential != null) {
-      for (File folder : potential) {
-        if (!existing.containsKey(folder)) {
-          try {
-            contribModes.add(new ModeContribution(base, folder, null));
-          } catch (NoSuchMethodError nsme) {
-            System.err.println(folder.getName() + " is not compatible with this version of Processing");
-          } catch (NoClassDefFoundError ncdfe) {
-            System.err.println(folder.getName() + " is not compatible with this version of Processing");
-          } catch (InvocationTargetException ite) {
-            System.err.println(folder.getName() + " could not be loaded and may not compatible with this version of Processing");
-//            Throwable cause = ite.getCause();
-//            if (cause != null) {
-//            }
-          } catch (IgnorableException ig) {
-            Messages.log(ig.getMessage());
-          } catch (Throwable e) {
-            e.printStackTrace();
-          }
-        }
-      }
-    }
-
-    // This allows you to build and test your Mode code from Eclipse.
-    // -Dusemode=com.foo.FrobMode:/path/to/FrobMode
-    final String useMode = System.getProperty("usemode");
-    if (useMode != null) {
-      final String[] modeInfo = useMode.split(":", 2);
-      final String modeClass = modeInfo[0];
-      final String modeResourcePath = modeInfo[1];
-      System.out.println("Attempting to load " + modeClass + " with resources at " + modeResourcePath);
-      contribModes.add(ModeContribution.load(base, new File(modeResourcePath), modeClass));
     }
   }
 
@@ -267,14 +218,4 @@ public class ModeContribution extends LocalContribution {
     }
     return className;
   }
-
-
-//  static protected List<File> discover(File folder) {
-//    File[] folders = listCandidates(folder, "mode");
-//    if (folders == null) {
-//      return new ArrayList<File>();
-//    } else {
-//      return Arrays.asList(folders);
-//    }
-//  }
 }

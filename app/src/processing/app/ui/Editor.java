@@ -36,9 +36,7 @@ import processing.app.SketchCode;
 import processing.app.SketchException;
 import processing.app.Util;
 import processing.app.contrib.ContributionManager;
-import processing.app.contrib.ToolContribution;
 import processing.app.syntax.*;
-import processing.app.tools.*;
 import processing.core.*;
 
 import java.awt.BorderLayout;
@@ -53,10 +51,7 @@ import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -145,10 +140,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   private FindReplace find;
   JMenu toolsMenu;
-  JMenu modeMenu;
-
-  List<ToolContribution> coreTools;
-  List<ToolContribution> contribTools;
+  JMenu modePopup;
 
   Image backgroundGradient;
 
@@ -252,7 +244,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    upper.setOpaque(false);
 //    box.setOpaque(false);
 
-    initModeMenu();
+    rebuildModePopup();
     toolbar = createToolbar();
     upper.add(toolbar);
 
@@ -341,6 +333,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  /*
   protected List<ToolContribution> getCoreTools() {
     return coreTools;
   }
@@ -354,6 +347,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public void removeToolContrib(ToolContribution tc) {
     contribTools.remove(tc);
   }
+  */
 
 
   protected JEditTextArea createTextArea() {
@@ -466,8 +460,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  protected void initModeMenu() {
-    modeMenu = new JMenu();
+  public void rebuildModePopup() {
+    modePopup = new JMenu();
     ButtonGroup modeGroup = new ButtonGroup();
     for (final Mode m : base.getModeList()) {
       JRadioButtonMenuItem item = new JRadioButtonMenuItem(m.getTitle());
@@ -482,7 +476,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
             // Re-select the old checkbox, because it was automatically
             // updated by Java, even though the Mode could not be changed.
             // https://github.com/processing/processing/issues/2615
-            for (Component c : modeMenu.getPopupMenu().getComponents()) {
+            for (Component c : getModePopup().getComponents()) {
               if (c instanceof JRadioButtonMenuItem) {
                 if (((JRadioButtonMenuItem)c).getText() == mode.getTitle()) {
                   ((JRadioButtonMenuItem)c).setSelected(true);
@@ -493,34 +487,34 @@ public abstract class Editor extends JFrame implements RunnerListener {
           }
         }
       });
-      modeMenu.add(item);
+      modePopup.add(item);
       modeGroup.add(item);
       if (mode == m) {
         item.setSelected(true);
       }
     }
 
-    modeMenu.addSeparator();
+    modePopup.addSeparator();
     JMenuItem addLib = new JMenuItem(Language.text("toolbar.add_mode"));
     addLib.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         ContributionManager.openModeManager(Editor.this);
       }
     });
-    modeMenu.add(addLib);
+    modePopup.add(addLib);
 
-    Toolkit.setMenuMnemsInside(modeMenu);
+    Toolkit.setMenuMnemsInside(modePopup);
   }
 
 
-  public void rebuildModeMenu() {
-    initModeMenu();
+  public JPopupMenu getModePopup() {
+    return modePopup.getPopupMenu();
   }
 
 
-  public JMenu getModeMenu() {
-    return modeMenu;
-  }
+//  public JMenu getModeMenu() {
+//    return modePopup;
+//  }
 
 
   public EditorConsole getConsole() {
@@ -656,8 +650,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
       menubar.add(modeMenu);
     }
 
-    rebuildToolMenu();
-    menubar.add(getToolMenu());
+    toolsMenu = new JMenu(Language.text("menu.tools"));
+    base.populateToolsMenu(toolsMenu);
+    menubar.add(toolsMenu);
 
     menubar.add(buildHelpMenu());
     Toolkit.setMenuMnemonics(menubar);
@@ -1060,6 +1055,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
   abstract public void handleImportLibrary(String name);
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public JMenu getToolMenu() {
+    return toolsMenu;
+  }
+
+
+  /*
   public JMenu getToolMenu() {
     if (toolsMenu == null) {
       rebuildToolMenu();
@@ -1067,165 +1071,19 @@ public abstract class Editor extends JFrame implements RunnerListener {
     return toolsMenu;
   }
 
-
-//  protected void rebuildToolList() {
-//    coreTools = ToolContribution.list(Base.getToolsFolder(), true);
-//    contribTools = ToolContribution.list(Base.getSketchbookToolsFolder(), true);
-//  }
-
-
-  public void rebuildToolMenu() {
-    if (toolsMenu == null) {
-      toolsMenu = new JMenu(Language.text("menu.tools"));
-    } else {
-      toolsMenu.removeAll();
-    }
-
-//    rebuildToolList();
-    coreTools = ToolContribution.loadAll(Base.getToolsFolder());
-    contribTools = ToolContribution.loadAll(Base.getSketchbookToolsFolder());
-
-    addInternalTools(toolsMenu);
-    addTools(toolsMenu, coreTools);
-    addTools(toolsMenu, contribTools);
-
-    toolsMenu.addSeparator();
-    JMenuItem item = new JMenuItem(Language.text("menu.tools.add_tool"));
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        ContributionManager.openToolManager(Editor.this);
-      }
-    });
-    toolsMenu.add(item);
-  }
-
-
-  public void clearToolMenu() {
-    toolsMenu.removeAll();
-    System.gc();
-  }
-
-
   public void removeTool() {
     rebuildToolMenu();
   }
+  */
 
 
-//  /**
-//   * Attempt to init or run a Tool from the safety of a try/catch block that
-//   * will report errors to the user.
-//   * @param tool The Tool object to be inited or run
-//   * @param item null to call init(), or the existing JMenuItem for run()
-//   * @return
-//   */
-//  protected boolean safeTool(Tool tool, JMenuItem item) {
-//    try {
-//      if (item == null) {
-//        tool.init(Editor.this);
-//      } else {
-//        tool.run();
-//      }
-//      return true;
-//
-//    } catch (NoSuchMethodError nsme) {
-//      System.out.println("tool is " + tool + " ");
-//      statusError("\"" + tool.getMenuTitle() + "\" " +
-//                  "is not compatible with this version of Processing");
-//      nsme.printStackTrace();
-//
-//    } catch (Exception ex) {
-//      statusError("An error occurred inside \"" + tool.getMenuTitle() + "\"");
-//      ex.printStackTrace();
-//    }
-//    if (item != null) {
-//      item.setEnabled(false);  // don't you try that again
-//    }
-//    return false;
-//  }
-
-
-  void addToolItem(final Tool tool, Map<String, JMenuItem> toolItems) {
-    String title = tool.getMenuTitle();
-    final JMenuItem item = new JMenuItem(title);
-    item.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        try {
-          tool.run();
-
-        } catch (NoSuchMethodError nsme) {
-          statusError("\"" + tool.getMenuTitle() + "\" is not" +
-                      "compatible with this version of Processing");
-          //nsme.printStackTrace();
-          Messages.loge("Incompatible tool found during tool.run()", nsme);
-          item.setEnabled(false);
-
-        } catch (Exception ex) {
-          statusError("An error occurred inside \"" + tool.getMenuTitle() + "\"");
-          ex.printStackTrace();
-          item.setEnabled(false);
-        }
-      }
-    });
-    //menu.add(item);
-    toolItems.put(title, item);
-  }
-
-
-  protected void addTools(JMenu menu, List<ToolContribution> tools) {
-    Map<String, JMenuItem> toolItems = new HashMap<String, JMenuItem>();
-
-    for (final ToolContribution tool : tools) {
-      try {
-        tool.init(Editor.this);
-        // If init() fails, the item won't be added to the menu
-        addToolItem(tool, toolItems);
-
-        // With the exceptions, we can't call statusError because the window
-        // isn't completely set up yet. Also not gonna pop up a warning because
-        // people may still be running different versions of Processing.
-        // TODO Once the dust settles on 2.x, change this to Base.showError()
-        // and open the Tools folder instead of showing System.err.println().
-
-      } catch (VerifyError ve) {
-        System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
-                           "compatible with this version of Processing");
-
-      } catch (NoSuchMethodError nsme) {
-        System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
-                           "compatible with this version of Processing");
-        System.err.println("The " + nsme.getMessage() + " method no longer exists.");
-        Messages.loge("Incompatible Tool found during tool.init()", nsme);
-
-      } catch (NoClassDefFoundError ncdfe) {
-        System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
-                           "compatible with this version of Processing");
-        System.err.println("The " + ncdfe.getMessage() + " class is no longer available.");
-        Messages.loge("Incompatible Tool found during tool.init()", ncdfe);
-
-      } catch (AbstractMethodError ame) {
-        System.err.println("\"" + tool.getMenuTitle() + "\" is not " +
-                           "compatible with this version of Processing");
-//        ame.printStackTrace();
-
-      } catch (Error err) {
-        System.err.println("An error occurred inside \"" + tool.getMenuTitle() + "\"");
-        err.printStackTrace();
-
-      } catch (Exception ex) {
-        System.err.println("An exception occurred inside \"" + tool.getMenuTitle() + "\"");
-        ex.printStackTrace();
-      }
-    }
-
-    ArrayList<String> toolList = new ArrayList<String>(toolItems.keySet());
-    if (toolList.size() > 0) {
-      menu.addSeparator();
-      Collections.sort(toolList);
-      for (String title : toolList) {
-        menu.add(toolItems.get(title));
-      }
-    }
+  /**
+   * Clears the Tool menu and runs the gc so that contributions can be updated
+   * without classes still being in use.
+   */
+  public void clearToolMenu() {
+    toolsMenu.removeAll();
+    System.gc();
   }
 
 
@@ -1237,6 +1095,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  /*
   protected void addToolMenuItem(JMenu menu, String className) {
     try {
       Class<?> toolClass = Class.forName(className);
@@ -1252,22 +1111,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
       });
       menu.add(item);
-//      return item;
 
     } catch (Exception e) {
       e.printStackTrace();
-//      return null;
     }
   }
 
 
   protected JMenu addInternalTools(JMenu menu) {
-//    JMenuItem item;
-//    item = createToolMenuItem("processing.app.tools.AutoFormatTool");
-//    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-//    item.setAccelerator(KeyStroke.getKeyStroke('T', modifiers));
-//    menu.add(item);
-
     addToolMenuItem(menu, "processing.app.tools.CreateFont");
     addToolMenuItem(menu, "processing.app.tools.ColorSelector");
     addToolMenuItem(menu, "processing.app.tools.Archiver");
@@ -1276,27 +1127,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
       addToolMenuItem(menu, "processing.app.tools.InstallCommander");
     }
 
-    // I think this is no longer needed... It was Mac OS X specific,
-    // and they gave up on MacRoman a long time ago.
-//    addToolMenuItem(menu, "processing.app.tools.FixEncoding");
-
-    // currently commented out
-//    if (Base.DEBUG) {
-//      addToolMenuItem(menu, "processing.app.tools.ExportExamples");
-//    }
-
-//    // These are temporary entries while Android mode is being worked out.
-//    // The mode will not be in the tools menu, and won't involve a cmd-key
-//    if (!Base.RELEASE) {
-//      item = createToolMenuItem("processing.app.tools.android.AndroidTool");
-//      item.setAccelerator(KeyStroke.getKeyStroke('D', modifiers));
-//      menu.add(item);
-//      menu.add(createToolMenuItem("processing.app.tools.android.Permissions"));
-//      menu.add(createToolMenuItem("processing.app.tools.android.Reset"));
-//    }
-
     return menu;
   }
+  */
 
 
   /*

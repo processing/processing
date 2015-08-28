@@ -1,6 +1,7 @@
 0244 core (3.0b6)
-_ Incomplete text rendering of strings with consecutive line breaks
-_   https://github.com/processing/processing/issues/3736
+X Incomplete text rendering of strings with consecutive line breaks
+X   https://github.com/processing/processing/issues/3736
+X   https://github.com/processing/processing/pull/3737
 
 
 jakub

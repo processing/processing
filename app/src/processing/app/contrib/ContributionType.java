@@ -215,7 +215,7 @@ public enum ContributionType {
       contribs.addAll(editor.getMode().contribLibraries);
       break;
     case TOOL:
-      contribs.addAll(editor.getToolContribs());
+      contribs.addAll(editor.getBase().getToolContribs());
       break;
     case MODE:
       contribs.addAll(editor.getBase().getModeContribs());

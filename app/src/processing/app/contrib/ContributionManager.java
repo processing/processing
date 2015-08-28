@@ -175,13 +175,15 @@ public class ContributionManager {
 
               if (contribution != null) {
                 listing.replaceContribution(ad, contribution);
+                /*
                 if (contribution.getType() == ContributionType.MODE) {
                   List<ModeContribution> contribModes = editor.getBase().getModeContribs();
                   if (!contribModes.contains(contribution)) {
                     contribModes.add((ModeContribution) contribution);
                   }
                 }
-                refreshInstalled(editor);
+                */
+                editor.getBase().refreshContribs(contribution.getType());
               }
               installProgress.finished();
             }
@@ -260,15 +262,16 @@ public class ContributionManager {
 
             if (contribution != null) {
               listing.replaceContribution(ad, contribution);
-              if (contribution.getType() == ContributionType.MODE) {
-                List<ModeContribution> contribModes = base.getModeContribs();
-                if (contribModes != null && !contribModes.contains(contribution)) {
-                  contribModes.add((ModeContribution) contribution);
-                }
-              }
-              if (base.getActiveEditor() != null) {
-                refreshInstalled(base.getActiveEditor());
-              }
+//              if (contribution.getType() == ContributionType.MODE) {
+//                List<ModeContribution> contribModes = base.getModeContribs();
+//                if (contribModes != null && !contribModes.contains(contribution)) {
+//                  contribModes.add((ModeContribution) contribution);
+//                }
+//              }
+//              if (base.getActiveEditor() != null) {
+//                refreshInstalled(base.getActiveEditor());
+//              }
+              base.refreshContribs(contribution.getType());
             }
 
             contribZip.delete();
@@ -369,7 +372,7 @@ public class ContributionManager {
             // Use the console to let the user know what's happening
             // The slightly complex if-else is required to let the user know when
             // one install is completed and the next download has begun without
-            // interfereing with occur status messages that may arise in the meanwhile
+            // interfering with other status messages that may arise in the meanwhile
             String statusMsg = base.getActiveEditor().getStatusMessage();
             if (isPrevDone) {
               String status = statusMsg + " "
@@ -388,14 +391,15 @@ public class ContributionManager {
 
             String arg = "contrib.import.progress.install";
             base.getActiveEditor().statusNotice(Language.interpolate(arg,ad.name));
-            LocalContribution contribution = ad.install(base, contribZip,
-                                                        false, null);
+            LocalContribution contribution =
+              ad.install(base, contribZip, false, null);
 
             if (contribution != null) {
               listing.replaceContribution(ad, contribution);
-              if (base.getActiveEditor() != null) {
-                refreshInstalled(base.getActiveEditor());
-              }
+//              if (base.getActiveEditor() != null) {
+//                refreshInstalled(base.getActiveEditor());
+//              }
+              base.refreshContribs(contribution.getType());
             }
 
             contribZip.delete();
@@ -428,6 +432,7 @@ public class ContributionManager {
   }
 
 
+  /*
   static void refreshInstalled(Editor e) {
     for (Editor ed : e.getBase().getEditors()) {
       ed.getMode().rebuildImportMenu();
@@ -436,6 +441,7 @@ public class ContributionManager {
       ed.rebuildModeMenu();
     }
   }
+  */
 
 
   /**

@@ -173,10 +173,10 @@ public class AvailableContribution extends Contribution {
 
         // 3.1 Unlock all the jars if it is a mode or tool
         if (newContrib.getType() == ContributionType.MODE) {
-          ((ModeContribution)newContrib).clearClassLoader(base);
+          ((ModeContribution) newContrib).clearClassLoader(base);
         }
         else if (newContrib.getType() == ContributionType.TOOL) {
-          ((ToolContribution)newContrib).clearClassLoader(base);
+          ((ToolContribution) newContrib).clearClassLoader();
         }
 
         // 3.2 Delete the newContrib, do a garbage collection, hope and pray

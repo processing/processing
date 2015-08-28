@@ -429,6 +429,7 @@ public abstract class LocalContribution extends Contribution {
     }
 
     if (getType() == ContributionType.TOOL) {
+      /*
       ToolContribution t = (ToolContribution) this;
       Iterator<Editor> iter = editor.getBase().getEditors().iterator();
       while (iter.hasNext()) {
@@ -436,6 +437,10 @@ public abstract class LocalContribution extends Contribution {
         ed.clearToolMenu();
       }
       t.clearClassLoader(editor.getBase());
+      */
+      // menu will be rebuilt below with the refreshContribs() call
+      editor.getBase().clearToolMenus();
+      ((ToolContribution) this).clearClassLoader();
     }
 
     if (doBackup) {
@@ -446,35 +451,37 @@ public abstract class LocalContribution extends Contribution {
     }
 
     if (success) {
-      if (getType() == ContributionType.TOOL) {
-        editor.removeTool();
-      }
+      // this was just rebuilding the tool menu in one editor, which happens
+      // yet again down below with the call to refreshInstalled() [fry 150828]
+//      if (getType() == ContributionType.TOOL) {
+//        editor.removeTool();
+//      }
 
-      Contribution advertisedVersion = contribListing
-        .getAvailableContribution(this);
+      Contribution advertisedVersion =
+        contribListing.getAvailableContribution(this);
 
       if (advertisedVersion == null) {
         contribListing.removeContribution(this);
       } else {
         contribListing.replaceContribution(this, advertisedVersion);
       }
-    }
-    else {
+
+    } else {
       // There was a failure backing up the folder
-          if (!doBackup || (doBackup && backup(editor, false, status))) {
-            if (setDeletionFlag(true)) {
-              contribListing.replaceContribution(this, this);
-            }
-          }
-         else
-          status.setErrorMessage("Could not delete the contribution's files");
+      if (!doBackup || (doBackup && backup(editor, false, status))) {
+        if (setDeletionFlag(true)) {
+          contribListing.replaceContribution(this, this);
+        }
+      } else {
+        status.setErrorMessage("Could not delete the contribution's files");
+      }
     }
-//    }
-    ContributionManager.refreshInstalled(editor);
-    if (success)
+    editor.getBase().refreshContribs(this.getType());
+    if (success) {
       pm.finished();
-    else
+    } else {
       pm.cancel();
+    }
   }
 
 
@@ -716,12 +723,5 @@ public abstract class LocalContribution extends Contribution {
       e.printStackTrace();
     }
     return null;
-  }
-
-
-  static protected class IgnorableException extends Exception {
-    public IgnorableException(String msg) {
-      super(msg);
-    }
   }
 }
