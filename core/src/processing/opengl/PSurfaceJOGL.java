@@ -909,6 +909,10 @@ public class PSurfaceJOGL implements PSurface {
     } else if (isHackyKey(code)) {
       keyCode = code;
       keyChar = hackToChar(code, nativeEvent.getKeyChar());
+    } else if (code == com.jogamp.newt.event.KeyEvent.VK_ENTER) {
+      // we can return only one char, let it be \n everywhere
+      keyCode = 10;
+      keyChar = '\n';
     } else {
       keyCode = code;
       keyChar = nativeEvent.getKeyChar();
