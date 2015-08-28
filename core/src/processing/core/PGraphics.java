@@ -4708,7 +4708,7 @@ public class PGraphics extends PImage implements PConstants {
       // boundary of a word or end of this sentence
       if ((buffer[index] == ' ') || (index == stop)) {
 //        System.out.println((index == stop) + " " + wordStart + " " + index);
-        if (wordStart == index) {  // end of line, nothing is fitting
+        if (start != stop && wordStart == index) {  // end of line, nothing is fitting
           return false;
         }
         float wordWidth = textWidthImpl(buffer, wordStart, index);
