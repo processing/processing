@@ -132,26 +132,13 @@ public class ToolContribution extends LocalContribution implements Tool {
   }
 
 
-//  Editor editor;  // used to send error messages
-
   public void init(Editor editor) {
-//    try {
-//      this.editor = editor;
     tool.init(editor);
-//    } catch (NoSuchMethodError nsme) {
-//      editor.statusError(tool.getMenuTitle() + " is not compatible with this version of Processing");
-//      nsme.printStackTrace();
-//    }
   }
 
 
   public void run() {
-//    try {
     tool.run();
-//    } catch (NoSuchMethodError nsme) {
-//      editor.statusError(tool.getMenuTitle() + " is not compatible with this version of Processing");
-//      nsme.printStackTrace();
-//    }
   }
 
 
