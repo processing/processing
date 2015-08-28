@@ -1,4 +1,6 @@
 0244 core (3.0b6)
+_ Incomplete text rendering of strings with consecutive line breaks
+_   https://github.com/processing/processing/issues/3736
 
 
 jakub
@@ -28,6 +30,12 @@ X FX - keep track of whether pixels are up to date
 X   https://github.com/processing/processing/pull/3716
 X FX - improve key events
 X   https://github.com/processing/processing/pull/3729
+X FX - add FX2D keyword, remove JFX keyword
+X   https://github.com/processing/processing/pull/3731
+X JOGL - normalize enter key
+X   https://github.com/processing/processing/pull/3735
+X FX - normalize enter key
+X   https://github.com/processing/processing/pull/3730
 
 
 known issues
