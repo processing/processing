@@ -265,10 +265,14 @@ public class JavaMode extends Mode {
   }
 
 
+  /**
+   * Any modes that extend JavaMode can override this method to add additional jars to be
+   * included in the classpath for code completion and error checking
+   * @return searchPath: file-paths separated by File.pathSeparatorChar
+   */
   public String getSearchPath() {
-    return System.getProperty("java.class.path") +
-      File.pathSeparatorChar + System.getProperty("java.home") +
-      File.separator + "lib" + File.separator + "rt.jar";
+    // Java Mode doesn't need any default external jars at the moment.
+    return "";
   }
 
 

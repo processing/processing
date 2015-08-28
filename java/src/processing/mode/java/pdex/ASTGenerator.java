@@ -300,6 +300,12 @@ public class ASTGenerator {
 
   //protected JFrame frmJavaDoc;
 
+  protected String getJavaSearchPath() {
+    return System.getProperty("java.class.path") +
+            File.pathSeparatorChar + System.getProperty("java.home") +
+            File.separator + "lib" + File.separator + "rt.jar";
+  }
+
   /**
    * Loads up .jar files and classes defined in it for completion lookup
    */
@@ -307,7 +313,7 @@ public class ASTGenerator {
     factory = new ClassPathFactory();
 
     StringBuilder path = new StringBuilder();
-    String modeClassPath = ((JavaMode) editor.getMode()).getSearchPath();
+    String modeClassPath = getJavaSearchPath() + File.pathSeparatorChar + ((JavaMode) editor.getMode()).getSearchPath();
     if (modeClassPath != null) {
       path.append(modeClassPath);
     }
