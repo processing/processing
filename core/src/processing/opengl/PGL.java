@@ -373,7 +373,7 @@ public abstract class PGL {
   }
 
 
-  static protected int smoothToSamples(int smooth) {
+  static public int smoothToSamples(int smooth) {
     if (smooth == 0) {
       // smooth(0) is noSmooth(), which is 1x sampling
       return 1;
