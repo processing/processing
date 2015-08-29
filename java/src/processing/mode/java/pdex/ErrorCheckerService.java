@@ -861,14 +861,8 @@ public class ErrorCheckerService implements Runnable {
                   e2.printStackTrace();
                 }
               }
-            } else {
-              System.err.format("Cannot find \"%s\" library. Line %d in tab %s%n",
-                                entry, impstat.getLineNumber(),
-                                editor.getSketch().getCode(impstat.getTab()).getPrettyName());
             }
 
-          } else {
-            new Exception("Error while handling '" + entry + "'", e).printStackTrace();
           }
         }
       }
