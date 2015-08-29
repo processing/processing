@@ -234,7 +234,6 @@ public class PSurfaceJOGL implements PSurface {
     caps.setNumSamples(PGL.smoothToSamples(graphics.smooth));
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
-    pgl.capabilities = caps;
     pgl.setCaps(caps);
   }
 
