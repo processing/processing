@@ -44,6 +44,7 @@ import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLCapabilitiesImmutable;
 import com.jogamp.opengl.GLContext;
 import com.jogamp.opengl.GLDrawable;
@@ -226,7 +227,21 @@ public class PJOGL extends PGL {
 */
 
 
-  protected void setFps(float fps) {
+  public void setCaps(GLCapabilities caps) {
+    reqNumSamples = caps.getNumSamples();
+//    reqNumSamples = PGL.smoothToSamples(smooth);
+//    caps.setSampleBuffers(true);
+//    caps.setNumSamples(reqNumSamples);
+//    caps.setBackgroundOpaque(true);
+//    caps.setOnscreen(true);
+    capabilities = caps;
+  }
+
+  public GLCapabilitiesImmutable getCaps() {
+    return capabilities;
+  }
+
+  public void setFps(float fps) {
     if (!setFps || targetFps != fps) {
       if (60 < fps) {
         // Disables v-sync
@@ -655,7 +670,7 @@ public class PJOGL extends PGL {
   }
 
 
-  protected void getGL(GLAutoDrawable glDrawable) {
+  public void getGL(GLAutoDrawable glDrawable) {
     context = glDrawable.getContext();
     glContext = context.hashCode();
     setThread(Thread.currentThread());
@@ -864,7 +879,7 @@ public class PJOGL extends PGL {
   }
 */
 
-  protected void init(GLAutoDrawable glDrawable) {
+  public void init(GLAutoDrawable glDrawable) {
     firstFrame = true;
     capabilities = glDrawable.getChosenGLCapabilities();
     if (!hasFBOs()) {

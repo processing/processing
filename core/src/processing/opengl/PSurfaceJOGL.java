@@ -229,17 +229,18 @@ public class PSurfaceJOGL implements PSurface {
 //  caps.setPBuffer(false);
 //  caps.setFBO(false);
 
-    pgl.reqNumSamples = PGL.smoothToSamples(graphics.smooth);
+//    pgl.reqNumSamples = PGL.smoothToSamples(graphics.smooth);
     caps.setSampleBuffers(true);
-    caps.setNumSamples(pgl.reqNumSamples);
+    caps.setNumSamples(PGL.smoothToSamples(graphics.smooth));
     caps.setBackgroundOpaque(true);
     caps.setOnscreen(true);
     pgl.capabilities = caps;
+    pgl.setCaps(caps);
   }
 
 
   protected void initWindow() {
-    window = GLWindow.create(screen, pgl.capabilities);
+    window = GLWindow.create(screen, pgl.getCaps());
     if (displayDevice == null) {
       displayDevice = window.getMainMonitor();
     }
