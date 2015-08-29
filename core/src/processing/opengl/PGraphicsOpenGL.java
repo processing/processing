@@ -779,7 +779,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (res == null) {
           break;
         }
-        System.out.println("Disposing texture resource " + iterations + " " + res.hashCode());
+//        System.out.println("Disposing texture resource " + iterations + " " + res.hashCode());
         res.dispose();
         ++iterations;
       }
@@ -855,7 +855,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (res == null) {
           break;
         }
-        System.out.println("Disposing VertexBuffer resource " + iterations + " " + res.hashCode());
+//        System.out.println("Disposing VertexBuffer resource " + iterations + " " + res.hashCode());
         res.dispose();
         ++iterations;
       }
@@ -933,7 +933,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (res == null) {
           break;
         }
-        System.out.println("Disposing shader resource " + res.hashCode());
+//        System.out.println("Disposing shader resource " + res.hashCode());
         res.dispose();
         ++iterations;
       }
