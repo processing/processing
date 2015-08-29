@@ -844,11 +844,10 @@ public class ErrorCheckerService implements Runnable {
               codeFolderChecked = true;
               // huh? doesn't this mean .length() == 0? [fry]
               if (codeFolderClassPath.equalsIgnoreCase("")) {
-                System.err.format("Cannot find \"%s\" library. Line %d in tab %s%n",
-                                  entry, impstat.getLineNumber(),
-                                  editor.getSketch().getCode(impstat.getTab()).getPrettyName());
-                System.err.println("Make sure that the library is installed properly.");
-
+                String message = String.format("Cannot find \"%s\" library in code folder. Line %d in tab %s%n",
+                        entry, impstat.getLineNumber(),
+                        editor.getSketch().getCode(impstat.getTab()).getPrettyName());
+                Messages.log(message);
               } else {
                 String codeFolderPath[] =
                   PApplet.split(codeFolderClassPath.substring(1).trim(),
