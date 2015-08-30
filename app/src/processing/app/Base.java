@@ -1754,7 +1754,7 @@ public class Base {
                              "Processing will switch to the default sketchbook\n" +
                              "location, and create a new sketchbook folder if\n" +
                              "necessary. Processing will then stop talking\n" +
-                             "about himself in the third person.", null);
+                             "about itself in the third person.", null);
         sketchbookFolder = null;
       }
     }
