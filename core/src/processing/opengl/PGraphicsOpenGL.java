@@ -45,9 +45,6 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Font cache for texture objects. */
   protected WeakHashMap<PFont, FontTexture> fontMap;
 
-  // just to get things running properly, need to
-  static protected PSurfaceJOGL surfaceJOGL;
-
   // ........................................................
 
   // Basic rendering parameters:
@@ -695,8 +692,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public PSurface createSurface() {  // ignore
-    surfaceJOGL = new PSurfaceJOGL(this);
-    return surfaceJOGL;
+    return new PSurfaceJOGL(this);
   }
 
 
@@ -731,8 +727,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public float getPixelScale() {
-    if (surfaceJOGL == null) return pixelDensity;
-    else return surfaceJOGL.getPixelScale();
+    PSurface surf = parent.getSurface();
+    if (surf == null) {
+      return pixelDensity;
+    } else if (surf instanceof PSurfaceJOGL) {
+      return ((PSurfaceJOGL)surf).getPixelScale();
+    } else {
+      throw new RuntimeException("Renderer cannot find a JOGL surface");
+    }
   }
 
 
