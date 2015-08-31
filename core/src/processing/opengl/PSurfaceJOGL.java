@@ -377,8 +377,13 @@ public class PSurfaceJOGL implements PSurface {
 
 
   @Override
-  public void setTitle(String title) {
-    window.setTitle(title);
+  public void setTitle(final String title) {
+    display.getEDTUtil().invoke(false, new Runnable() {
+      @Override
+      public void run() {
+        window.setTitle(title);
+      }
+    });
   }
 
 
