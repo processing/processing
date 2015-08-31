@@ -51,10 +51,7 @@ import javax.swing.event.*;
  * GUI tool for font creation heaven/hell.
  */
 public class CreateFont extends JFrame implements Tool {
-  Editor editor;
-  //Sketch sketch;
-
-//  Dimension windowSize;
+  Base base;
 
   JList<String> fontSelector;
   JTextField sizeSelector;
@@ -64,7 +61,7 @@ public class CreateFont extends JFrame implements Tool {
   JButton okButton;
   JTextField filenameField;
 
-  HashMap<String,Font> table;
+  Map<String,Font> table;
   boolean smooth = true;
 
   Font font;
@@ -86,7 +83,7 @@ public class CreateFont extends JFrame implements Tool {
 
 
   public void init(Editor editor) {
-    this.editor = editor;
+    base = editor.getBase();
 
     Container paine = getContentPane();
     paine.setLayout(new BorderLayout()); //10, 10));
@@ -111,12 +108,12 @@ public class CreateFont extends JFrame implements Tool {
     // also ignore dialog, dialoginput, monospaced, serif, sansserif
 
     // getFontList is deprecated in 1.4, so this has to be used
-    //long t = System.currentTimeMillis(); 
+    //long t = System.currentTimeMillis();
     GraphicsEnvironment ge =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
     Font[] fonts = ge.getAllFonts();
     //System.out.println("font startup took " + (System.currentTimeMillis() - t) + " ms");
-    
+
     if (false) {
       ArrayList<Font> fontList = new ArrayList<Font>();
       File folderList = new File("/Users/fry/coconut/sys/fonts/web");
@@ -136,7 +133,7 @@ public class CreateFont extends JFrame implements Tool {
               Font font = Font.createFont(Font.TRUETYPE_FONT, input);
               input.close();
               fontList.add(font);
-              
+
             } catch (Exception e) {
               System.out.println("Ignoring " + fontFile.getName());
             }
@@ -348,30 +345,14 @@ public class CreateFont extends JFrame implements Tool {
       filename += ".vlw";
     }
 
-    // Please implement me properly. The schematic is below, but not debugged.
-    // http://dev.processing.org/bugs/show_bug.cgi?id=1464
-
-//    final String filename2 = filename;
-//    final int fontsize2 = fontsize;
-//    SwingUtilities.invokeLater(new Runnable() {
-//      public void run() {
     try {
       Font instance = table.get(list[selection]);
       font = instance.deriveFont(Font.PLAIN, fontsize);
       //PFont f = new PFont(font, smooth, all ? null : PFont.CHARSET);
       PFont f = new PFont(font, smooth, charSelector.getCharacters());
 
-//      PFont f = new PFont(font, smooth, null);
-//      char[] charset = charSelector.getCharacters();
-//      ProgressMonitor progressMonitor = new ProgressMonitor(CreateFont.this,
-//                                            "Creating font", "", 0, charset.length);
-//      progressMonitor.setProgress(0);
-//      for (int i = 0; i < charset.length; i++) {
-//        System.out.println(charset[i]);
-//        f.index(charset[i]);  // load this char
-//        progressMonitor.setProgress(i+1);
-//      }
-
+      // the editor may have changed while the window was open
+      Editor editor = base.getActiveEditor();
       // make sure the 'data' folder exists
       File folder = editor.getSketch().prepareDataFolder();
       f.save(new FileOutputStream(new File(folder, filename)));
@@ -383,8 +364,6 @@ public class CreateFont extends JFrame implements Tool {
                                     JOptionPane.WARNING_MESSAGE);
       e.printStackTrace();
     }
-//      }
-//    });
 
     setVisible(false);
   }

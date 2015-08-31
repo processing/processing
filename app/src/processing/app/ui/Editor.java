@@ -152,10 +152,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
     this.state = state;
     this.mode = mode;
 
-    Toolkit.setIcon(this);  // TODO should this be per-mode?
+    // Make sure Base.getActiveEditor() never returns null
+    base.checkFirstEditor(this);
 
-    // Install default actions for Run, Present, etc.
-//    resetHandlers();
+    // This is a Processing window. Get rid of that ugly ass coffee cup.
+    Toolkit.setIcon(this);
 
     // add listener to handle window close box hit event
     addWindowListener(new WindowAdapter() {
