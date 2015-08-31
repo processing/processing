@@ -37,6 +37,8 @@ X JOGL - normalize enter key
 X   https://github.com/processing/processing/pull/3735
 X FX - normalize enter key
 X   https://github.com/processing/processing/pull/3730
+X Render text starting with space properly
+X   https://github.com/processing/processing/pull/3746
 
 
 known issues

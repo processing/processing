@@ -12,6 +12,9 @@ X repairs to prevent memory leak in EditorConsole
 _ add jar files from 'code' folder to the library path
 _   Code editor wrongly detects errors for libraries in code folder
 _   https://github.com/processing/processing/issues/3732
+_ remove old versions of processing-java when installing on OS X
+_ "color type detected! this shouldn't be happening! please report"
+_   https://github.com/processing/processing/issues/3739
 
 gsoc
 X CM: Category dropdown alignment
