@@ -4708,7 +4708,11 @@ public class PGraphics extends PImage implements PConstants {
       // boundary of a word or end of this sentence
       if ((buffer[index] == ' ') || (index == stop)) {
 //        System.out.println((index == stop) + " " + wordStart + " " + index);
-        float wordWidth = textWidthImpl(buffer, wordStart, index);
+        float wordWidth = 0;
+        if (index > wordStart) {
+          // we have a non-empty word, measure it
+          wordWidth = textWidthImpl(buffer, wordStart, index);
+        }
 
         if (runningX + wordWidth >= boxWidth) {
           if (runningX != 0) {
