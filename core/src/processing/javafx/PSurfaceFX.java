@@ -36,6 +36,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -220,9 +221,13 @@ public class PSurfaceFX implements PSurface {
       PApplet sketch = surface.sketch;
       int width = sketch.sketchWidth();
       int height = sketch.sketchHeight();
+      int smooth = sketch.sketchSmooth();
+      SceneAntialiasing sceneAntialiasing = (smooth == 0) ?
+          SceneAntialiasing.DISABLED :
+          SceneAntialiasing.BALANCED;
 
       //stage.setScene(new Scene(new Group(canvas)));
-      stage.setScene(new Scene(stackPane, width, height));
+      stage.setScene(new Scene(stackPane, width, height, false, sceneAntialiasing));
       //stage.show();  // move to setVisible(true)?
 
       // initFrame in different thread is waiting for
