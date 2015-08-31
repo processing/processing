@@ -294,6 +294,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
                                                    boolean isSelected,
                                                    boolean hasFocus, int row,
                                                    int column) {
+      //XXX: This should never come null
+      if(value == null){
+        dtm.fireTableDataChanged();
+        // Render nothing in the cell
+        return this;
+      }
       Contribution contribution = (Contribution) value;
       JLabel label = new JLabel();
       if (column == 0) {
