@@ -70,8 +70,15 @@ public class PSurfaceFX implements PSurface {
         long startNanoTime = System.nanoTime();
         sketch.handleDraw();
         long drawNanos = System.nanoTime() - startNanoTime;
+
         if (sketch.exitCalled()) {
-          Platform.exit();  // version for safe JavaFX shutdown
+          // using Platform.runLater() didn't work
+//          Platform.runLater(new Runnable() {
+//            public void run() {
+          // instead of System.exit(), safely shut down JavaFX this way
+          Platform.exit();
+//            }
+//          });
         }
         if (sketch.frameCount > 5) {
           animation.setRate(-PApplet.min(1e9f / drawNanos, frameRate));

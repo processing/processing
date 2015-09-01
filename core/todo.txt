@@ -4,10 +4,12 @@ X   https://github.com/processing/processing/issues/3736
 X   https://github.com/processing/processing/pull/3737
 X add the Contents/Java folder to java.library.path on OS X
 X   allows exported applications to use the Sound library
+_ SVG only exports last frame
+_   https://github.com/processing/processing/issues/3753
 
 andres
 X P2D: error calling surface.setTitle()
-o   https://github.com/processing/processing/issues/3721
+X   https://github.com/processing/processing/issues/3721
 X   https://github.com/processing/processing/commit/a384cbf0890a49dbf6e0fdd80e048de80e5d78d2
 
 jakub
@@ -75,6 +77,7 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 
 
 javafx
+_ need keyPressed() to do lower and upper case
 _ static mode sketches (draw once and halt w/o closing window)
 _ fix display handling, line up the device order with AWT
 _   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html
@@ -94,7 +97,7 @@ _ get() and set()
 _ clip/noClip
 _   https://github.com/processing/processing/issues/3274
 _ getNative() in PImage problematic because it gives back a BufferedImage
-_   move loadImage() into PGraphics, with AWT version the default?
+_   move loadImage() into PGraphics, with AWT version the default
 _   or pass createImage() through to renderer?
 _ implement external messages (moving the window)
 _ implement PSurfaceFX.setIcon()

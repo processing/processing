@@ -57,7 +57,20 @@ _   https://github.com/processing/processing/issues/3543
 _   move to javapackager or another option?
 _   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-application
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
+
+
+3.0 final
+_ change Tool API because it's not one Editor per Tool anymore?
+_   or just change the documentation?
+_ Contributions Manager UI design
+_   https://github.com/processing/processing/issues/3482
+_ items still show up in "Recent" if they no longer exist (on startup)
+_ replace about screen (1x and 2x versions)
+_   change 'alpha' to correct name
+_   also change the revision in the "about processing" dialog
+_   https://github.com/processing/processing/issues/3665
 _ JNA errors on startup when run from an account w/ non-ASCII characters
+_   https://github.com/processing/processing/issues/3624
 _   set jna.tmpdir (or java.io.tmpdir) to another location
 _   https://github.com/twall/jna/issues/124
 _   https://github.com/twall/jna/issues/238
@@ -71,17 +84,7 @@ _     and if not, put up a warning for the user?
 _   http://www.oracle.com/us/technologies/java/locale-140624.html
 
 
-3.0 final
-_ Contributions Manager UI design
-_   https://github.com/processing/processing/issues/3482
-_ items still show up in "Recent" if they no longer exist (on startup)
-_ replace about screen (1x and 2x versions)
-_   change 'alpha' to correct name
-_   also change the revision in the "about processing" dialog
-_   https://github.com/processing/processing/issues/3665
-
-
-sketch modified externally
+sketch modified externally (3.0 final)
 _ sketch modified externally with FAT32 volumes on OS X
 _   https://github.com/processing/processing/issues/3387
 _ also appearing with encrypted volumes?
