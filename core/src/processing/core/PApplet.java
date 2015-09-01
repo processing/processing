@@ -39,8 +39,6 @@ import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 
-
-
 // used by loadImage() functions
 import javax.imageio.ImageIO;
 // allows us to remove our own MediaTracker code
