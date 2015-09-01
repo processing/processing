@@ -14,7 +14,10 @@ _   Code editor wrongly detects errors for libraries in code folder
 _   https://github.com/processing/processing/issues/3732
 _ remove old versions of processing-java when installing on OS X
 _ "color type detected! this shouldn't be happening! please report"
+_   happens when user does 'new color' instead of 'color'
 _   https://github.com/processing/processing/issues/3739
+_ confusion when // tweak is used
+_   https://github.com/processing/processing/issues/3742
 
 gsoc
 X CM: Category dropdown alignment

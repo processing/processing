@@ -2,7 +2,13 @@
 X Incomplete text rendering of strings with consecutive line breaks
 X   https://github.com/processing/processing/issues/3736
 X   https://github.com/processing/processing/pull/3737
+X add the Contents/Java folder to java.library.path on OS X
+X   allows exported applications to use the Sound library
 
+andres
+X P2D: error calling surface.setTitle()
+o   https://github.com/processing/processing/issues/3721
+X   https://github.com/processing/processing/commit/a384cbf0890a49dbf6e0fdd80e048de80e5d78d2
 
 jakub
 X FX - fix transformation stack NPE
@@ -39,6 +45,8 @@ X FX - normalize enter key
 X   https://github.com/processing/processing/pull/3730
 X Render text starting with space properly
 X   https://github.com/processing/processing/pull/3746
+X FX - smooth for the main surface
+X   https://github.com/processing/processing/pull/3749
 
 
 known issues
