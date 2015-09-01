@@ -45,36 +45,32 @@ public class PSurfaceJOGL implements PSurface {
   /** Selected GL profile */
   public static GLProfile profile;
 
-  PJOGL pgl;
+  public PJOGL pgl;
 
-  GLWindow window;
-  FPSAnimator animator;
-  Rectangle screenRect;
+  protected GLWindow window;
+  protected FPSAnimator animator;
+  protected Rectangle screenRect;
 
-  PApplet sketch;
-  PGraphics graphics;
+  protected PApplet sketch;
+  protected PGraphics graphics;
 
-  int sketchX;
-  int sketchY;
-  int sketchWidth;
-  int sketchHeight;
+  protected int sketchX;
+  protected int sketchY;
+  protected int sketchWidth;
+  protected int sketchHeight;
 
-  Display display;
-  Screen screen;
-  List<MonitorDevice> monitors;
-  MonitorDevice displayDevice;
-  Throwable drawException;
-  Object waitObject = new Object();
+  protected Display display;
+  protected Screen screen;
+  protected List<MonitorDevice> monitors;
+  protected MonitorDevice displayDevice;
+  protected Throwable drawException;
+  protected Object waitObject = new Object();
 
-  NewtCanvasAWT canvas;
-  boolean placedWindow = false;
-  boolean requestedStart = false;
+  protected NewtCanvasAWT canvas;
+  protected boolean placedWindow = false;
+  protected boolean requestedStart = false;
 
-  float[] currentPixelScale = {0, 0};
-
-  boolean presentMode = false;
-  float offsetX;
-  float offsetY;
+  protected float[] currentPixelScale = {0, 0};
 
 
   public PSurfaceJOGL(PGraphics graphics) {
@@ -97,9 +93,7 @@ public class PSurfaceJOGL implements PSurface {
   }
 
 
-  public void initFrame(PApplet sketch) {/*, int backgroundColor,
-                        int deviceIndex, boolean fullScreen,
-                        boolean spanDisplays) {*/
+  public void initFrame(PApplet sketch) {
     this.sketch = sketch;
     initIcons();
     initScreen();
@@ -111,10 +105,6 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public Object getNative() {
-//    if (canvas == null) {
-//      initOffscreen(sketch);
-//    }
-//    return canvas;
     return window;
   }
 
@@ -193,7 +183,13 @@ public class PSurfaceJOGL implements PSurface {
   protected void initGL() {
 //  System.out.println("*******************************");
     if (profile == null) {
-      if (PJOGL.profile == 2) {
+      if (PJOGL.profile == 1) {
+        try {
+          profile = GLProfile.getGL2ES1();
+        } catch (GLException ex) {
+          profile = GLProfile.getMaxFixedFunc(true);
+        }
+      } else if (PJOGL.profile == 2) {
         try {
           profile = GLProfile.getGL2ES2();
         } catch (GLException ex) {
@@ -498,14 +494,15 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void placePresent(int stopColor) {
-
 //    if (presentMode) {
 //      System.err.println("Present mode");
 //    System.err.println("WILL USE FBO");
-    presentMode = pgl.presentMode = true;
-    offsetX = pgl.offsetX = 0.5f * (screenRect.width - sketchWidth);
-    offsetY = pgl.offsetY = 0.5f * (screenRect.height - sketchHeight);
-    pgl.requestFBOLayer();
+    pgl.initPresentMode(0.5f * (screenRect.width - sketchWidth),
+                        0.5f * (screenRect.height - sketchHeight));
+//    presentMode = pgl.presentMode = true;
+//    offsetX = pgl.offsetX = 0.5f * (screenRect.width - sketchWidth);
+//    offsetY = pgl.offsetY = 0.5f * (screenRect.height - sketchHeight);
+//    pgl.requestFBOLayer();
 
     window.setSize(screenRect.width, screenRect.height);
     PApplet.hideMenuBar();
@@ -513,8 +510,6 @@ public class PSurfaceJOGL implements PSurface {
                                sketchY + screenRect.y);
 //    window.setTopLevelPosition(0, 0);
     window.setFullscreen(true);
-
-
     placedWindow = true;
     if (requestedStart) startThread();
 
@@ -548,17 +543,20 @@ public class PSurfaceJOGL implements PSurface {
     }
   }
 
+
   public void pauseThread() {
     if (animator != null) {
       animator.pause();
     }
   }
 
+
   public void resumeThread() {
     if (animator != null) {
       animator.resume();
     }
   }
+
 
   public boolean stopThread() {
     if (animator != null) {
@@ -567,6 +565,7 @@ public class PSurfaceJOGL implements PSurface {
       return false;
     }
   }
+
 
   public boolean isStopped() {
     if (animator != null) {
@@ -593,7 +592,7 @@ public class PSurfaceJOGL implements PSurface {
 //    if (animator.isAnimating()) {
 //      System.err.println("3. set size");
 
-      if (!presentMode) {
+      if (!pgl.presentMode()) {
 //        sketch.width = width;
 //        sketch.height = height;
         sketch.setSize(width, height);
@@ -618,9 +617,11 @@ public class PSurfaceJOGL implements PSurface {
     }
   }
 
+
   public Component getComponent() {
     return canvas;
   }
+
 
   public void setSmooth(int level) {
     pgl.reqNumSamples = level;
@@ -637,6 +638,7 @@ public class PSurfaceJOGL implements PSurface {
     config.setChosenCapabilities(caps);
   }
 
+
   public void setFrameRate(float fps) {
     if (animator != null) {
       animator.stop();
@@ -646,11 +648,13 @@ public class PSurfaceJOGL implements PSurface {
     }
   }
 
+
   public void requestFocus() {
     if (window != null) {
       window.requestFocus();
     }
   }
+
 
   class DrawListener implements GLEventListener {
     public void display(GLAutoDrawable drawable) {
@@ -716,29 +720,25 @@ public class PSurfaceJOGL implements PSurface {
     }
   }
 
+
   protected class NEWTWindowListener implements com.jogamp.newt.event.WindowListener {
     public NEWTWindowListener() {
       super();
     }
     @Override
     public void windowGainedFocus(com.jogamp.newt.event.WindowEvent arg0) {
-//      pg.parent.focusGained(null);
-//      System.err.println("gain focus");
       sketch.focused = true;
       sketch.focusGained();
     }
 
     @Override
     public void windowLostFocus(com.jogamp.newt.event.WindowEvent arg0) {
-//      pg.parent.focusLost(null);
-//      System.err.println("lost focus");
       sketch.focused = false;
       sketch.focusLost();
     }
 
     @Override
     public void windowDestroyNotify(com.jogamp.newt.event.WindowEvent arg0) {
-//      System.err.println("bye");
       PSurfaceJOGL.this.sketch.dispose();
       PSurfaceJOGL.this.sketch.exitActual();
     }
@@ -757,14 +757,10 @@ public class PSurfaceJOGL implements PSurface {
 
     @Override
     public void windowResized(com.jogamp.newt.event.WindowEvent arg0) {
-//      System.err.println("resized");
-//      System.err.println(window.hasFocus());
-//      window.removeMouseListener(mouseListener);
-//      mouseListener = new NEWTMouseListener();
-//      window.addMouseListener(mouseListener);
     }
 
   }
+
 
   // NEWT mouse listener
   protected class NEWTMouseListener extends com.jogamp.newt.event.MouseAdapter {
@@ -807,6 +803,7 @@ public class PSurfaceJOGL implements PSurface {
     }
   }
 
+
   // NEWT key listener
   protected class NEWTKeyListener extends com.jogamp.newt.event.KeyAdapter {
     public NEWTKeyListener() {
@@ -824,6 +821,7 @@ public class PSurfaceJOGL implements PSurface {
       nativeKeyEvent(e, KeyEvent.TYPE);
     }
   }
+
 
   protected void nativeMouseEvent(com.jogamp.newt.event.MouseEvent nativeEvent,
                                   int peAction) {
@@ -861,32 +859,20 @@ public class PSurfaceJOGL implements PSurface {
     window.getCurrentSurfaceScale(currentPixelScale);
     int sx = (int)(nativeEvent.getX()/currentPixelScale[0]);
     int sy = (int)(nativeEvent.getY()/currentPixelScale[1]);
-    int mx = sx - (int)offsetX;
-    int my = sy - (int)offsetY;
+    int mx = sx;
+    int my = sy;
 
-    if (presentMode) {
+    if (pgl.presentMode()) {
+      mx -= (int)pgl.presentX;
+      my -= (int)pgl.presentY;
       if (peAction == KeyEvent.RELEASE &&
-          20 < sx && sx < 20 + 100 &&
-          screenRect.height - 70 < sy && sy < screenRect.height - 20) {
-//        System.err.println("clicked on exit button");
-//      if (externalMessages) {
-//        System.err.println(PApplet.EXTERNAL_QUIT);
-//        System.err.flush();  // important
-//      }
-//        animator.stop();
+          pgl.insideCloseButton(sx, sy - screenRect.height)) {
         sketch.exit();
-//        window.destroy();
       }
-
       if (mx < 0 || sketchWidth < mx || my < 0 || sketchHeight < my) {
         return;
       }
     }
-
-//    if (!graphics.is2X() && 1 < hasSurfacePixelScale[0]) {
-//      x /= 2;
-//      y /= 2;
-//    }
 
     MouseEvent me = new MouseEvent(nativeEvent, nativeEvent.getWhen(),
                                    peAction, peModifiers,
@@ -896,6 +882,7 @@ public class PSurfaceJOGL implements PSurface {
 
     sketch.postEvent(me);
   }
+
 
   protected void nativeKeyEvent(com.jogamp.newt.event.KeyEvent nativeEvent,
                                 int peAction) {
@@ -953,6 +940,7 @@ public class PSurfaceJOGL implements PSurface {
     }
   }
 
+
   private static boolean isPCodedKey(short code) {
     return code == com.jogamp.newt.event.KeyEvent.VK_UP ||
            code == com.jogamp.newt.event.KeyEvent.VK_DOWN ||
@@ -963,6 +951,7 @@ public class PSurfaceJOGL implements PSurface {
            code == com.jogamp.newt.event.KeyEvent.VK_SHIFT ||
            code == com.jogamp.newt.event.KeyEvent.VK_WINDOWS;
   }
+
 
   // Why do we need this mapping?
   // Relevant discussion and links here:
@@ -989,10 +978,12 @@ public class PSurfaceJOGL implements PSurface {
     return code;
   }
 
+
   private static boolean isHackyKey(short code) {
     return code == com.jogamp.newt.event.KeyEvent.VK_BACK_SPACE ||
            code == com.jogamp.newt.event.KeyEvent.VK_TAB;
   }
+
 
   private static char hackToChar(short code, char def) {
     if (code == com.jogamp.newt.event.KeyEvent.VK_BACK_SPACE) {
@@ -1031,11 +1022,13 @@ public class PSurfaceJOGL implements PSurface {
 
   }
 
+
   public void showCursor() {
     if (window != null) {
       window.setPointerVisible(true);
     }
   }
+
 
   public void hideCursor() {
     if (window != null) {
