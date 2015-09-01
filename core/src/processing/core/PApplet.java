@@ -10025,6 +10025,8 @@ public class PApplet implements PConstants {
     // Remove 60fps limit on the JavaFX "pulse" timer
     System.setProperty("javafx.animation.fullspeed", "true");
 
+    // This doesn't work, need to mess with Info.plist instead
+    /*
     // In an exported application, add the Contents/Java folder to the
     // java.library.path, so that native libraries work properly.
     // Without this, the library path is only set to Contents/MacOS
@@ -10042,6 +10044,7 @@ public class PApplet implements PConstants {
         System.setProperty("java.library.path", libraryPath);
       }
     }
+    */
 
     // Catch any HeadlessException to provide more useful feedback
     try {
