@@ -144,7 +144,7 @@
         <module>../java/libraries/net/</module>
         <module>../java/libraries/pdf/</module>
         <module>../java/libraries/serial/</module>
-        <module>../../processing-video/</module>
+        <!--<module>../../processing-video/</module>-->
     </modules>
     
     
