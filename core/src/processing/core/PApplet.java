@@ -29,7 +29,6 @@ import java.awt.Desktop;
 import java.awt.DisplayMode;
 import java.awt.EventQueue;
 import java.awt.FileDialog;
-import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -6140,39 +6139,12 @@ public class PApplet implements PConstants {
    * @param charset array containing characters to be generated
    * @see PFont
    * @see PGraphics#textFont(PFont, float)
-   * @see PGraphics#text(String, float, float, float, float, float)
+   * @see PGraphics#text(String, float, float, float, float)
    * @see PApplet#loadFont(String)
    */
   public PFont createFont(String name, float size,
                           boolean smooth, char[] charset) {
-    String lowerName = name.toLowerCase();
-    Font baseFont = null;
-
-    try {
-      InputStream stream = null;
-      if (lowerName.endsWith(".otf") || lowerName.endsWith(".ttf")) {
-        stream = createInput(name);
-        if (stream == null) {
-          System.err.println("The font \"" + name + "\" " +
-                             "is missing or inaccessible, make sure " +
-                             "the URL is valid or that the file has been " +
-                             "added to your sketch and is readable.");
-          return null;
-        }
-        baseFont = Font.createFont(Font.TRUETYPE_FONT, createInput(name));
-
-      } else {
-        baseFont = PFont.findFont(name);
-      }
-      return new PFont(baseFont.deriveFont(size * pixelDensity),
-                       smooth, charset, stream != null,
-                       pixelDensity);
-
-    } catch (Exception e) {
-      System.err.println("Problem with createFont(\"" + name + "\")");
-      e.printStackTrace();
-      return null;
-    }
+    return g.createFont(name, size, smooth, charset);
   }
 
 

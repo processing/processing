@@ -1282,7 +1282,23 @@ public class PGraphicsFX2D extends PGraphics {
   // and mirrors PGraphics.textFont field
   protected FontInfo textFontInfo;
 
-  protected Text measuringText = new Text();
+
+  @Override
+  protected PFont createFont(String name, float size,
+                             boolean smooth, char[] charset) {
+    PFont font = super.createFont(name, size, smooth, charset);
+    if (font.isStream()) {
+      Font fxFont = Font.loadFont(parent.createInput(name), size);
+      if (fxFont != null) {
+        String fontName = font.getName();
+        fontCache.nameToFilename.put(fontName, name);
+        FontInfo fontInfo = fontCache.createFontInfo(fxFont, false);
+        fontCache.put(fontName, size, fontInfo);
+      }
+    }
+    return font;
+  }
+
 
   @Override
   protected void defaultFontOrDeath(String method, float size) {
@@ -1290,10 +1306,12 @@ public class PGraphicsFX2D extends PGraphics {
     textFontInfo = fontCache.get(textFont.getName(), textFont.getSize());
   }
 
+
   @Override
   protected boolean textModeCheck(int mode) {
     return mode == MODEL;
   }
+
 
   @Override
   public void textSize(float size) {
@@ -1311,6 +1329,7 @@ public class PGraphicsFX2D extends PGraphics {
     textFontImpl(textFont, size);
   }
 
+
   @Override
   public void textFont(PFont which) {
     if (which != null) {
@@ -1319,6 +1338,7 @@ public class PGraphicsFX2D extends PGraphics {
       throw new RuntimeException(ERROR_TEXTFONT_NULL_PFONT);
     }
   }
+
 
   @Override
   public void textFont(PFont which, float size) {
@@ -1337,9 +1357,10 @@ public class PGraphicsFX2D extends PGraphics {
     }
   }
 
+
   /**
-   * Sets the font and size without doing any checks.
-   * Check the validity of args before calling.
+   * Sets the font and the size. Check the validity of args and
+   * print possible errors to the user before calling this.
    *
    * @param which font to set, not null
    * @param size size to set, greater than zero
@@ -1348,9 +1369,31 @@ public class PGraphicsFX2D extends PGraphics {
     textFont = which;
     textSize = size;
 
-    textFontInfo = fontCache.get(which.getName(), size);
+    String fontName = which.getName();
+
+    textFontInfo = fontCache.get(fontName, size);
+    if (textFontInfo == null) {
+      Font font;
+      String filename = fontCache.nameToFilename.get(fontName);
+      if (filename != null) {
+        font = Font.loadFont(parent.createInput(filename), size);
+      } else {
+        font = new Font(fontName, size);
+      }
+
+      // Loading from file is guaranteed to succeed, font was already
+      // successfully loaded in createFont().
+      // Loading system font may return fallback font if the font
+      // does not exist; this can be detected by comparing font names.
+      // Please note that some font names can differ in FX vs. AWT.
+      boolean isFallbackFont = filename == null &&
+          !fontName.equalsIgnoreCase(font.getName());
+      textFontInfo = fontCache.createFontInfo(font, isFallbackFont);
+      fontCache.put(fontName, size, textFontInfo);
+    }
+
     context.setFont(textFontInfo.font);
-    measuringText.setFont(textFontInfo.font);
+    fontCache.measuringText.setFont(textFontInfo.font);
     if (textFontInfo.isFallbackFont) {
       textLeading = (textFont.ascent() + textFont.descent()) * 1.275f;
     } else {
@@ -1399,6 +1442,8 @@ public class PGraphicsFX2D extends PGraphics {
 
     private static final int CACHE_SIZE = 512;
 
+    protected Map<String, String> nameToFilename = new HashMap<>();
+
     private final LinkedHashMap<Key, FontInfo> cache = new LinkedHashMap<Key, FontInfo>(16, 0.75f, true) {
 
       @Override
@@ -1413,27 +1458,28 @@ public class PGraphicsFX2D extends PGraphics {
     private FontInfo get(String name, float size) {
       retrievingKey.name = name;
       retrievingKey.size = size;
-      FontInfo fontInfo = cache.get(retrievingKey);
-      if (fontInfo == null) {
-        fontInfo = new FontInfo();
-        fontInfo.font = new Font(name, size);
-        fontInfo.isFallbackFont = !name.equalsIgnoreCase(fontInfo.font.getName());
-        { // measure ascent and descent
-          measuringText.setFont(fontInfo.font);
-          measuringText.setText(" ");
-          float lineHeight = (float) measuringText.getLayoutBounds().getHeight();
-          fontInfo.ascent = (float) measuringText.getBaselineOffset();
-          fontInfo.descent = lineHeight - fontInfo.ascent;
-        }
+      return cache.get(retrievingKey);
+    }
 
-        { // create new key and add the info to the cache
-          Key key = new Key();
-          key.name = name;
-          key.size = size;
-          cache.put(key, fontInfo);
-        }
+    private void put(String name, float size, FontInfo fontInfo) {
+      Key key = new Key();
+      key.name = name;
+      key.size = size;
+      cache.put(key, fontInfo);
+    }
+
+    private FontInfo createFontInfo(Font font, boolean isFallbackFont) {
+      FontInfo result = new FontInfo();
+      result.isFallbackFont = isFallbackFont;
+      result.font = font;
+      { // measure ascent and descent
+        measuringText.setFont(result.font);
+        measuringText.setText(" ");
+        float lineHeight = (float) measuringText.getLayoutBounds().getHeight();
+        result.ascent = (float) measuringText.getBaselineOffset();
+        result.descent = lineHeight - result.ascent;
       }
-      return fontInfo;
+      return result;
     }
 
     private static final class Key {
@@ -1545,8 +1591,8 @@ public class PGraphicsFX2D extends PGraphics {
       return super.textWidthImpl(buffer, start, stop);
     }
 
-    measuringText.setText(new String(buffer, start, stop - start));
-    return (float) measuringText.getLayoutBounds().getWidth();
+    fontCache.measuringText.setText(new String(buffer, start, stop - start));
+    return (float) fontCache.measuringText.getLayoutBounds().getWidth();
   }
 
 

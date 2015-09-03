@@ -29,8 +29,10 @@ package processing.core;
 import java.awt.Color;
 
 // Used for the 'image' object that's been here forever
+import java.awt.Font;
 import java.awt.Image;
 
+import java.io.InputStream;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.WeakHashMap;
@@ -4011,6 +4013,39 @@ public class PGraphics extends PImage implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // TEXT/FONTS
+
+
+  protected PFont createFont(String name, float size,
+                          boolean smooth, char[] charset) {
+    String lowerName = name.toLowerCase();
+    Font baseFont = null;
+
+    try {
+      InputStream stream = null;
+      if (lowerName.endsWith(".otf") || lowerName.endsWith(".ttf")) {
+        stream = parent.createInput(name);
+        if (stream == null) {
+          System.err.println("The font \"" + name + "\" " +
+                                 "is missing or inaccessible, make sure " +
+                                 "the URL is valid or that the file has been " +
+                                 "added to your sketch and is readable.");
+          return null;
+        }
+        baseFont = Font.createFont(Font.TRUETYPE_FONT, parent.createInput(name));
+
+      } else {
+        baseFont = PFont.findFont(name);
+      }
+      return new PFont(baseFont.deriveFont(size * parent.pixelDensity),
+                       smooth, charset, stream != null,
+                       parent.pixelDensity);
+
+    } catch (Exception e) {
+      System.err.println("Problem with createFont(\"" + name + "\")");
+      e.printStackTrace();
+      return null;
+    }
+  }
 
 
   public void textAlign(int alignX) {
