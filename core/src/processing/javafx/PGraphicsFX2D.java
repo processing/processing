@@ -1351,7 +1351,11 @@ public class PGraphicsFX2D extends PGraphics {
     textFontInfo = fontCache.get(which.getName(), size);
     context.setFont(textFontInfo.font);
     measuringText.setFont(textFontInfo.font);
-    textLeading = (textFontInfo.ascent + textFontInfo.descent) * 1.275f;
+    if (textFontInfo.isFallbackFont) {
+      textLeading = (textFont.ascent() + textFont.descent()) * 1.275f;
+    } else {
+      textLeading = (textFontInfo.ascent + textFontInfo.descent) * 1.275f;
+    }
   }
 
 
@@ -1359,6 +1363,9 @@ public class PGraphicsFX2D extends PGraphics {
   public float textAscent() {
     if (textFont == null) {
       defaultFontOrDeath("textAscent");
+    }
+    if (textFontInfo.isFallbackFont) {
+      return textFont.ascent();
     }
     return textFontInfo.ascent;
   }
@@ -1369,14 +1376,22 @@ public class PGraphicsFX2D extends PGraphics {
     if (textFont == null) {
       defaultFontOrDeath("textDescent");
     }
+    if (textFontInfo.isFallbackFont) {
+      return textFont.descent();
+    }
     return textFontInfo.descent;
   }
 
 
   protected static final class FontInfo {
+    // TODO: maybe make this dependent on font size?
+    protected static final int TINT_CACHE_SIZE = 1 << 10;
+
     Font font;
     float ascent;
     float descent;
+    boolean isFallbackFont;
+    Map<Integer, PImage[]> tintCache;
   }
 
 
@@ -1402,7 +1417,7 @@ public class PGraphicsFX2D extends PGraphics {
       if (fontInfo == null) {
         fontInfo = new FontInfo();
         fontInfo.font = new Font(name, size);
-
+        fontInfo.isFallbackFont = !name.equalsIgnoreCase(fontInfo.font.getName());
         { // measure ascent and descent
           measuringText.setFont(fontInfo.font);
           measuringText.setText(" ");
@@ -1459,13 +1474,77 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   protected void textLineImpl(char[] buffer, int start, int stop, float x, float y) {
-    // TODO(Jakub): fallback to PGraphics if font not found
-    context.fillText(new String(buffer, start, stop - start), x, y);
+    if (textFontInfo.isFallbackFont) {
+      super.textLineImpl(buffer, start, stop, x, y);
+    } else {
+      context.fillText(new String(buffer, start, stop - start), x, y);
+    }
+  }
+
+
+  protected PImage getTintedGlyphImage(PFont.Glyph glyph, int tintColor) {
+    if (textFontInfo.tintCache == null) {
+      textFontInfo.tintCache = new LinkedHashMap<Integer, PImage[]>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Integer, PImage[]> eldest) {
+          return size() > FontInfo.TINT_CACHE_SIZE;
+        }
+      };
+    }
+    PImage[] tintedGlyphs = textFontInfo.tintCache.get(tintColor);
+    if (tintedGlyphs == null) {
+      tintedGlyphs = new PImage[textFont.getGlyphCount()];
+      textFontInfo.tintCache.put(tintColor, tintedGlyphs);
+    }
+    int index = glyph.index;
+    PImage tintedGlyph = tintedGlyphs[index];
+    if (tintedGlyph == null) {
+      tintedGlyph = glyph.image.copy();
+      tintedGlyphs[index] = tintedGlyph;
+    }
+    return tintedGlyph;
+  }
+
+
+  @Override
+  protected void textCharImpl(char ch, float x, float y) { //, float z) {
+    PFont.Glyph glyph = textFont.getGlyph(ch);
+    if (glyph != null) {
+      if (textMode == MODEL) {
+        float high    = glyph.height     / (float) textFont.getSize();
+        float bwidth  = glyph.width      / (float) textFont.getSize();
+        float lextent = glyph.leftExtent / (float) textFont.getSize();
+        float textent = glyph.topExtent  / (float) textFont.getSize();
+
+        float x1 = x + lextent * textSize;
+        float y1 = y - textent * textSize;
+        float x2 = x1 + bwidth * textSize;
+        float y2 = y1 + high * textSize;
+
+        PImage glyphImage = fillColor == 0xFFFFFFFF ?
+            glyph.image :
+            getTintedGlyphImage(glyph, fillColor);
+
+        textCharModelImpl(glyphImage,
+                          x1, y1, x2, y2,
+                          glyph.width, glyph.height);
+      }
+    } else if (ch != ' ' && ch != 127) {
+      showWarning("No glyph found for the " + ch + " (\\u" + PApplet.hex(ch, 4) + ") character");
+    }
   }
 
 
   @Override
   protected float textWidthImpl(char[] buffer, int start, int stop) {
+    if (textFont == null) {
+      defaultFontOrDeath("textWidth");
+    }
+
+    if (textFontInfo.isFallbackFont) {
+      return super.textWidthImpl(buffer, start, stop);
+    }
+
     measuringText.setText(new String(buffer, start, stop - start));
     return (float) measuringText.getLayoutBounds().getWidth();
   }
