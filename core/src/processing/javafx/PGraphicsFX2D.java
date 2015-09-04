@@ -1475,7 +1475,6 @@ public class PGraphicsFX2D extends PGraphics {
     }
 
     context.setFont(textFontInfo.font);
-    fontCache.measuringText.setFont(textFontInfo.font);
   }
 
 
@@ -1552,6 +1551,7 @@ public class PGraphicsFX2D extends PGraphics {
       return super.textWidthImpl(buffer, start, stop);
     }
 
+    fontCache.measuringText.setFont(textFontInfo.font);
     fontCache.measuringText.setText(new String(buffer, start, stop - start));
     return (float) fontCache.measuringText.getLayoutBounds().getWidth();
   }
