@@ -1314,101 +1314,12 @@ public class PGraphicsFX2D extends PGraphics {
 
 
   @Override
-  public void textSize(float size) {
-    if (size <= 0) {
-      // Using System.err instead of showWarning to avoid running out of
-      // memory with a bunch of textSize() variants (cause of this bug is
-      // usually something done with map() or in a loop).
-      System.err.println("textSize(" + size + ") ignored: " +
-                             "the text size must be larger than zero");
-      return;
-    }
-    if (textFont == null) {
-      defaultFontOrDeath("textSize", size);
-    }
-    textFontImpl(textFont, size);
-  }
-
-
-  @Override
-  public void textFont(PFont which) {
-    if (which != null) {
-      textFontImpl(which, which.getDefaultSize());
-    } else {
-      throw new RuntimeException(ERROR_TEXTFONT_NULL_PFONT);
-    }
-  }
-
-
-  @Override
-  public void textFont(PFont which, float size) {
-    if (which != null) {
-      if (size <= 0) {
-        // Using System.err instead of showWarning to avoid running out of
-        // memory with a bunch of textSize() variants (cause of this bug is
-        // usually something done with map() or in a loop).
-        System.err.println("textFont with size " + size + " ignored: " +
-                               "the text size must be larger than zero");
-        size = textSize;
-      }
-      textFontImpl(which, size);
-    } else {
-      throw new RuntimeException(ERROR_TEXTFONT_NULL_PFONT);
-    }
-  }
-
-
-  /**
-   * Sets the font and the size. Check the validity of args and
-   * print possible errors to the user before calling this.
-   *
-   * @param which font to set, not null
-   * @param size size to set, greater than zero
-   */
-  protected void textFontImpl(PFont which, float size) {
-    textFont = which;
-    textSize = size;
-
-    String fontName = which.getName();
-
-    textFontInfo = fontCache.get(fontName, size);
-    if (textFontInfo == null) {
-      Font font;
-      String filename = fontCache.nameToFilename.get(fontName);
-      if (filename != null) {
-        font = Font.loadFont(parent.createInput(filename), size);
-      } else {
-        font = new Font(fontName, size);
-      }
-
-      // Loading from file is guaranteed to succeed, font was already
-      // successfully loaded in createFont().
-      // Loading system font may return fallback font if the font
-      // does not exist; this can be detected by comparing font names.
-      // Please note that some font names can differ in FX vs. AWT.
-      boolean isFallbackFont = filename == null &&
-          !fontName.equalsIgnoreCase(font.getName());
-      textFontInfo = fontCache.createFontInfo(font, isFallbackFont);
-      fontCache.put(fontName, size, textFontInfo);
-    }
-
-    context.setFont(textFontInfo.font);
-    fontCache.measuringText.setFont(textFontInfo.font);
-    if (textFontInfo.isFallbackFont) {
-      textLeading = (textFont.ascent() + textFont.descent()) * 1.275f;
-    } else {
-      textLeading = (textFontInfo.ascent + textFontInfo.descent) * 1.275f;
-    }
-  }
-
-
-  @Override
   public float textAscent() {
     if (textFont == null) {
       defaultFontOrDeath("textAscent");
     }
     if (textFontInfo.isFallbackFont) {
-      return textFont.ascent();
+      return super.textAscent();
     }
     return textFontInfo.ascent;
   }
@@ -1420,7 +1331,7 @@ public class PGraphicsFX2D extends PGraphics {
       defaultFontOrDeath("textDescent");
     }
     if (textFontInfo.isFallbackFont) {
-      return textFont.descent();
+      return super.textDescent();
     }
     return textFontInfo.descent;
   }
@@ -1516,6 +1427,56 @@ public class PGraphicsFX2D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // TEXT IMPL
+
+
+  @Override
+  protected void textFontImpl(PFont which, float size) {
+    setTextFont(which, size);
+    setTextSize(size);
+  }
+
+
+  @Override
+  protected void textSizeImpl(float size) {
+    setTextFont(textFont, size);
+    setTextSize(size);
+  }
+
+  /**
+   * FX specific. When setting font or size, new font has to
+   * be created. Both textFontImpl and textSizeImpl call this one.
+   * @param which font to be set, not null
+   * @param size size to be set, greater than zero
+   */
+  protected void setTextFont(PFont which, float size) {
+    textFont = which;
+
+    String fontName = which.getName();
+
+    textFontInfo = fontCache.get(fontName, size);
+    if (textFontInfo == null) {
+      Font font;
+      String filename = fontCache.nameToFilename.get(fontName);
+      if (filename != null) {
+        font = Font.loadFont(parent.createInput(filename), size);
+      } else {
+        font = new Font(fontName, size);
+      }
+
+      // Loading from file is guaranteed to succeed, font was already
+      // successfully loaded in createFont().
+      // Loading system font may return fallback font if the font
+      // does not exist; this can be detected by comparing font names.
+      // Please note that some font names can differ in FX vs. AWT.
+      boolean isFallbackFont = filename == null &&
+          !fontName.equalsIgnoreCase(font.getName());
+      textFontInfo = fontCache.createFontInfo(font, isFallbackFont);
+      fontCache.put(fontName, size, textFontInfo);
+    }
+
+    context.setFont(textFontInfo.font);
+    fontCache.measuringText.setFont(textFontInfo.font);
+  }
 
 
   @Override

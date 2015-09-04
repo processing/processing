@@ -4171,8 +4171,43 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#textSize(float)
    */
   public void textFont(PFont which) {
-    if (which != null) {
-      textFont = which;
+    if (which == null) {
+      throw new RuntimeException(ERROR_TEXTFONT_NULL_PFONT);
+    }
+    textFontImpl(which, which.getDefaultSize());
+  }
+
+
+  /**
+   * @param size the size of the letters in units of pixels
+   */
+  public void textFont(PFont which, float size) {
+    if (which == null) {
+      throw new RuntimeException(ERROR_TEXTFONT_NULL_PFONT);
+    }
+    // https://github.com/processing/processing/issues/3110
+    if (size <= 0) {
+      // Using System.err instead of showWarning to avoid running out of
+      // memory with a bunch of textSize() variants (cause of this bug is
+      // usually something done with map() or in a loop).
+      System.err.println("textFont: ignoring size " + size + " px:" +
+                             "the text size must be larger than zero");
+      size = textSize;
+    }
+    textFontImpl(which, size);
+  }
+
+
+  /**
+   * Called from textFont. Check the validity of args and
+   * print possible errors to the user before calling this.
+   * Subclasses will want to override this one.
+   *
+   * @param which font to set, not null
+   * @param size size to set, greater than zero
+   */
+  protected void textFontImpl(PFont which, float size) {
+    textFont = which;
 //      if (hints[ENABLE_NATIVE_FONTS]) {
 //        //if (which.font == null) {
 //        which.findNative();
@@ -4201,20 +4236,8 @@ public class PGraphics extends PImage implements PConstants {
         // float w = font.getStringBounds(text, g2.getFontRenderContext()).getWidth();
       }
       */
-      textSize(which.getDefaultSize());
 
-    } else {
-      throw new RuntimeException(ERROR_TEXTFONT_NULL_PFONT);
-    }
-  }
-
-
-  /**
-   * @param size the size of the letters in units of pixels
-   */
-  public void textFont(PFont which, float size) {
-    textFont(which);
-    textSize(size);
+    setTextSize(size);
   }
 
 
@@ -4328,6 +4351,26 @@ public class PGraphics extends PImage implements PConstants {
     if (textFont == null) {
       defaultFontOrDeath("textSize", size);
     }
+    textSizeImpl(size);
+  }
+
+
+  /**
+   * Called from textSize() after validating size. Subclasses
+   * will want to override this one.
+   * @param size size of the text, greater than zero
+   */
+  protected void textSizeImpl(float size) {
+    setTextSize(size);
+  }
+
+
+  /**
+   * Sets the actual size. Called from textSizeImpl and
+   * from textFontImpl after setting the font.
+   * @param size size of the text, greater than zero
+   */
+  protected void setTextSize(float size) {
     textSize = size;
     textLeading = (textAscent() + textDescent()) * 1.275f;
   }

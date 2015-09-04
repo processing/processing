@@ -4050,7 +4050,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public float textDescent() {
-    if (textFont == null) defaultFontOrDeath("textAscent");
+    if (textFont == null) defaultFontOrDeath("textDescent");
     Font font = (Font) textFont.getNative();
     float descent = 0;
     if (font != null) descent = pgl.getFontDescent(font);
@@ -4070,14 +4070,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   @Override
-  public void textSize(float size) {
-    if (textFont == null) defaultFontOrDeath("textSize", size);
+  protected void setTextSize(float size) {
     Font font = (Font) textFont.getNative();
     if (font != null) {
       Object dfont = pgl.getDerivedFont(font, size);
       textFont.setNative(dfont);
     }
-    super.textSize(size);
+    super.setTextSize(size);
   }
 
 
