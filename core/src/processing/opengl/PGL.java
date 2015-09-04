@@ -137,7 +137,7 @@ public abstract class PGL {
 
   // FBO layer
 
-  protected boolean fboLayerRequested = false;
+  protected boolean requestedFBOLayer = false;
   protected boolean fboLayerCreated = false;
   protected boolean fboLayerInUse = false;
   protected boolean firstFrame = true;
@@ -528,7 +528,7 @@ public abstract class PGL {
 
 
   public void requestFBOLayer() {
-    fboLayerRequested = true;
+    requestedFBOLayer = true;
   }
 
 
@@ -669,8 +669,8 @@ public abstract class PGL {
   // Frame rendering
 
 
-  protected void beginDraw(boolean clear0) {
-    if (needFBOLayer(clear0)) {
+  protected void beginDraw(boolean pclear) {
+    if (requestedFBOLayer) {
       if (!fboLayerCreated) createFBOLayer();
 
       bindFramebufferImpl(FRAMEBUFFER, glColorFbo.get(0));
@@ -690,7 +690,7 @@ public abstract class PGL {
         float b = ((argb) & 0xff) / 255.0f;
         clearColor(r, g, b, a);
         clear(COLOR_BUFFER_BIT);
-      } else if (!clear0) {
+      } else if (!pclear) {
         // Render previous back texture (now is the front) as background,
         // because no background() is being used ("incremental drawing")
         int x = 0;
@@ -714,17 +714,7 @@ public abstract class PGL {
     if (firstFrame) {
       firstFrame = false;
     }
-
-//    if (!USE_FBOLAYER_BY_DEFAULT) {
-      // The result of this assignment is the following: if the user requested
-      // at some point the use of the FBO layer, but subsequently didn't
-      // request it again, then the rendering won't render to the FBO layer if
-      // not needed by the config, since it is slower than simple onscreen
-      // rendering.
-//      fboLayerRequested = false;
-//    }
   }
-
 
 
   protected void endDraw(boolean clear, int windowColor) {
@@ -753,14 +743,6 @@ public abstract class PGL {
           texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
           texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
           texImage2D(TEXTURE_2D, 0, RGBA, closeBtnWidth, closeBtnHeight, 0, RGBA, UNSIGNED_BYTE, null);
-//          initTexture(TEXTURE_2D, RGBA, 100, 50, pg.backgroundColor);
-
-//          ByteBuffer bb = ByteBuffer.allocateDirect(labelPix.length*4);
-//          bb.order(ByteOrder.nativeOrder());
-//          IntBuffer ib = bb.asIntBuffer();
-//          ib.put(labelPix);
-//          ib.position(0);
-
           IntBuffer buf = allocateIntBuffer(closeBtnPix);
           copyToTexture(TEXTURE_2D, RGBA, closeBtnTex.get(0), 0, 0, closeBtnWidth, closeBtnHeight, buf);
           bindTexture(TEXTURE_2D, 0);
@@ -769,19 +751,6 @@ public abstract class PGL {
                     0, 0, closeBtnX + closeBtnWidth, closeBtnY + closeBtnHeight,
                     0, closeBtnHeight, closeBtnWidth, 0,
                     closeBtnX, closeBtnY, closeBtnX + closeBtnWidth, closeBtnY + closeBtnHeight);
-
-/*
-        // Don't use presentMode offset!
-        drawTexture(TEXTURE_2D, labelTex.get(0),
-                    100, 50, pg.width, pg.height,
-                                         0, 0, pg.width, pg.height,
-                                         0, 0, pg.width, pg.height);
-
-        drawTexture2D(labelTex.get(0), 100, 50, int scrW, int scrH,
-                      0, 0, 100, 50,
-                      int scrX0, int scrY0, int scrX1, int scrY1);
-*/
-
       } else {
         clearDepth(1);
         clearColor(0, 0, 0, 0);
@@ -808,12 +777,13 @@ public abstract class PGL {
       frontTex = backTex;
       backTex = temp;
     } else if (!clear && pg.parent.frameCount == 1) {
-      //requestFBOLayer();
+      requestFBOLayer();
     }
   }
 
 
   protected abstract void getGL(PGL pgl);
+
 
   protected abstract boolean canDraw();
 
@@ -841,16 +811,6 @@ public abstract class PGL {
 
 
   protected void endGL() { }
-
-
-  private boolean needFBOLayer(boolean clear0) {
-    // TODO: need to revise this, on windows we might not want to use FBO layer
-    // even with anti-aliasing enabled...
-//    boolean res = !clear0 || fboLayerRequested || 1 < numSamples;
-//    System.err.println(res + " " + clear0 + " " + fboLayerRequested + " " + numSamples);
-//    return res;
-    return fboLayerRequested;
-  }
 
 
   private void createFBOLayer() {
@@ -933,6 +893,26 @@ public abstract class PGL {
     float b = ((argb) & 0xff) / 255.0f;
     clearColor(r, g, b, a);
     clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
+
+    if (0 < pg.parent.frameCount) {
+      // Copy the contents of the front and back screen buffers to the textures
+      // of the FBO, so they are properly initialized.
+      bindFramebufferImpl(READ_FRAMEBUFFER, BACK);
+      bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                           TEXTURE_2D, glColorTex.get(backTex), 0);
+      blitFramebuffer(0, 0, fboWidth, fboHeight,
+                      0, 0, fboWidth, fboHeight,
+                      COLOR_BUFFER_BIT, NEAREST);
+
+      bindFramebufferImpl(READ_FRAMEBUFFER, FRONT);
+      bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                           TEXTURE_2D, glColorTex.get(frontTex), 0);
+      blitFramebuffer(0, 0, fboWidth, fboHeight,
+                      0, 0, fboWidth, fboHeight,
+                      COLOR_BUFFER_BIT, NEAREST);
+    }
 
     bindFramebufferImpl(FRAMEBUFFER, 0);
 

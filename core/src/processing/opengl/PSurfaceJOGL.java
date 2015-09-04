@@ -300,6 +300,7 @@ public class PSurfaceJOGL implements PSurface {
     }
     window.setSurfaceScale(reqSurfacePixelScale);
     window.setSize(sketchWidth, sketchHeight);
+//    window.setResizable(false);
     setSize(sketchWidth, sketchHeight);
     sketchX = displayDevice.getViewportInWindowUnits().getX();
     sketchY = displayDevice.getViewportInWindowUnits().getY();
@@ -390,8 +391,13 @@ public class PSurfaceJOGL implements PSurface {
 
 
   @Override
-  public void setResizable(boolean resizable) {
-    // TODO Auto-generated method stub
+  public void setResizable(final boolean resizable) {
+//    display.getEDTUtil().invoke(false, new Runnable() {
+//      @Override
+//      public void run() {
+//        window.setResizable(resizable);
+//      }
+//    });
   }
 
 
@@ -1019,7 +1025,6 @@ public class PSurfaceJOGL implements PSurface {
 //                                            hotspotY);
 //
 //    window.setPointerIcon(pi);
-
   }
 
 

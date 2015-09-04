@@ -443,8 +443,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected IntBuffer viewport;
 
   /** Used to register calls to glClear. */
-  protected boolean clearColorBuffer;
-  protected boolean clearColorBuffer0;
+  protected boolean clearColor;
+  protected boolean pclearColor;
 
   protected boolean openContour = false;
   protected boolean breakShape = false;
@@ -2397,7 +2397,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     manipulatingCamera = false;
 
-    clearColorBuffer = false;
+    clearColor = false;
 
     // easiest for beginners
     textureMode(IMAGE);
@@ -5802,7 +5802,7 @@ public class PGraphicsOpenGL extends PGraphics {
     backgroundImpl();
     set(0, 0, image);
     if (0 < parent.frameCount) {
-      clearColorBuffer = true;
+      clearColor = true;
     }
     // Setting the background as opaque. If this an offscreen surface, the
     // alpha channel will be set to 1 in endOffscreenDraw(), even if
@@ -5824,7 +5824,7 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.clearColor(backgroundR, backgroundG, backgroundB, backgroundA);
     pgl.clear(PGL.COLOR_BUFFER_BIT);
     if (0 < parent.frameCount) {
-      clearColorBuffer = true;
+      clearColor = true;
     }
   }
 
@@ -6853,7 +6853,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void beginOnscreenDraw() {
     updatePixelSize();
 
-    pgl.beginDraw(clearColorBuffer);
+    pgl.beginDraw(clearColor);
 
     if (drawFramebuffer == null) {
       drawFramebuffer = new FrameBuffer(this, pixelWidth, pixelHeight, true);
@@ -6875,7 +6875,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void endOnscreenDraw() {
-    pgl.endDraw(clearColorBuffer, parent.sketchWindowColor());
+    pgl.endDraw(clearColor, parent.sketchWindowColor());
   }
 
 
@@ -7122,8 +7122,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
     pixelsOp = OP_NONE;
 
-    clearColorBuffer0 = clearColorBuffer;
-    clearColorBuffer = false;
+    pclearColor = clearColor;
+    clearColor = false;
 
     modified = false;
     arePixelsUpToDate = false;
