@@ -1289,13 +1289,7 @@ public class PGraphicsFX2D extends PGraphics {
                              boolean smooth, char[] charset) {
     PFont font = super.createFont(name, size, smooth, charset);
     if (font.isStream()) {
-      Font fxFont = Font.loadFont(parent.createInput(name), size);
-      if (fxFont != null) {
-        String fontName = font.getName();
-        fontCache.nameToFilename.put(fontName, name);
-        FontInfo fontInfo = fontCache.createFontInfo(fxFont);
-        fontCache.put(fontName, size, fontInfo);
-      }
+      fontCache.nameToFilename.put(font.getName(), name);
     }
     return font;
   }
@@ -1319,7 +1313,7 @@ public class PGraphicsFX2D extends PGraphics {
     if (textFont == null) {
       defaultFontOrDeath("textAscent");
     }
-    if (textFontInfo == FontInfo.NOT_FOUND) {
+    if (textFontInfo == FontInfo.NON_NATIVE) {
       return super.textAscent();
     }
     return textFontInfo.ascent;
@@ -1331,18 +1325,20 @@ public class PGraphicsFX2D extends PGraphics {
     if (textFont == null) {
       defaultFontOrDeath("textDescent");
     }
-    if (textFontInfo == FontInfo.NOT_FOUND) {
+    if (textFontInfo == FontInfo.NON_NATIVE) {
       return super.textDescent();
     }
     return textFontInfo.descent;
   }
 
 
-  protected static final class FontInfo {
-    // TODO: maybe make this dependent on font size?
-    protected static final int TINT_CACHE_SIZE = 1 << 10;
+  static final class FontInfo {
 
-    static final FontInfo NOT_FOUND = new FontInfo();
+    // TODO: this should be based on memory consumption
+    // this should be enough e.g. for all grays and alpha combos
+    static final int MAX_CACHED_COLORS_PER_FONT = 1 << 16;
+
+    static final FontInfo NON_NATIVE = new FontInfo();
 
     Font font;
     float ascent;
@@ -1351,42 +1347,52 @@ public class PGraphicsFX2D extends PGraphics {
   }
 
 
-  protected static final class FontCache {
+  static final class FontCache {
 
-    private static final int CACHE_SIZE = 512;
+    static final int MAX_CACHE_SIZE = 512;
 
-    protected Map<String, String> nameToFilename = new HashMap<>();
+    // keeps track of filenames of fonts loaded from ttf and otf files
+    Map<String, String> nameToFilename = new HashMap<>();
 
-    private final HashSet<String> namesNotFound = new HashSet<>();
+    // keeps track of fonts which should be rendered as pictures
+    // so we don't go through native font search process every time
+    final HashSet<String> nonNativeNames = new HashSet<>();
 
-    private final LinkedHashMap<Key, FontInfo> cache = new LinkedHashMap<Key, FontInfo>(16, 0.75f, true) {
-
+    // keeps all created fonts for reuse up to MAX_CACHE_SIZE limit
+    // when the limit is reached, the least recently used font is removed
+    // TODO: this should be based on memory consumtion
+    final LinkedHashMap<Key, FontInfo> cache =
+        new LinkedHashMap<Key, FontInfo>(16, 0.75f, true) {
       @Override
       protected boolean removeEldestEntry(Map.Entry<Key, FontInfo> eldest) {
-        return size() > CACHE_SIZE;
+        return size() > MAX_CACHE_SIZE;
       }
-
     };
-    private final Key retrievingKey = new Key();
-    private final Text measuringText = new Text();
 
-    private FontInfo get(String name, float size) {
-      if (namesNotFound.contains(name)) {
-        return FontInfo.NOT_FOUND;
+    // key for retrieving fonts from cache; don't use for insertion,
+    // every font has to have its own new Key instance
+    final Key retrievingKey = new Key();
+
+    // text node used for measuring sizes of text
+    final Text measuringText = new Text();
+
+    FontInfo get(String name, float size) {
+      if (nonNativeNames.contains(name)) {
+        return FontInfo.NON_NATIVE;
       }
       retrievingKey.name = name;
       retrievingKey.size = size;
       return cache.get(retrievingKey);
     }
 
-    private void put(String name, float size, FontInfo fontInfo) {
+    void put(String name, float size, FontInfo fontInfo) {
       Key key = new Key();
       key.name = name;
       key.size = size;
       cache.put(key, fontInfo);
     }
 
-    private FontInfo createFontInfo(Font font) {
+    FontInfo createFontInfo(Font font) {
       FontInfo result = new FontInfo();
       result.font = font;
       { // measure ascent and descent
@@ -1399,7 +1405,7 @@ public class PGraphicsFX2D extends PGraphics {
       return result;
     }
 
-    private static final class Key {
+    static final class Key {
       String name;
       float size;
 
@@ -1458,28 +1464,42 @@ public class PGraphicsFX2D extends PGraphics {
     textFont = which;
 
     String fontName = which.getName();
+    String fontPsName = which.getPostScriptName();
 
     textFontInfo = fontCache.get(fontName, size);
     if (textFontInfo == null) {
-      Font font;
-      String filename = fontCache.nameToFilename.get(fontName);
-      if (filename != null) {
+      Font font = null;
+
+      if (which.isStream()) {
+        // Load from ttf or otf file
+        String filename = fontCache.nameToFilename.get(fontName);
         font = Font.loadFont(parent.createInput(filename), size);
-      } else {
-        font = new Font(fontName, size);
       }
 
-      // Loading from file is guaranteed to succeed, font was already
-      // successfully loaded in createFont().
-      // Loading system font may return fallback font if the font
-      // does not exist; this can be detected by comparing font names.
-      // Please note that some font names can differ in FX vs. AWT.
-      boolean isNotFound = filename == null &&
-          !fontName.equalsIgnoreCase(font.getName());
-      if (isNotFound) {
-        fontCache.namesNotFound.add(fontName);
-        textFontInfo = FontInfo.NOT_FOUND;
+      if (font == null) {
+        // Look up font name
+        font = new Font(fontName, size);
+        if (!fontName.equalsIgnoreCase(font.getName())) {
+          // Look up font postscript name
+          font = new Font(fontPsName, size);
+          if (!fontPsName.equalsIgnoreCase(font.getName())) {
+            font = null; // Done with it
+          }
+        }
+      }
+
+      if (font == null && which.getNative() != null) {
+        // Ain't got nothing, but AWT has something, so glyph images are not
+        // going to be used for this font; go with the default font then
+        font = new Font(size);
+      }
+
+      if (font == null) {
+        // Ain't got nothing, let's use glyph images for this one
+        textFontInfo = FontInfo.NON_NATIVE;
+        fontCache.nonNativeNames.add(fontName);
       } else {
+        // Native font found, save it in the cache and use it
         textFontInfo = fontCache.createFontInfo(font);
         fontCache.put(fontName, size, textFontInfo);
       }
@@ -1491,7 +1511,7 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   protected void textLineImpl(char[] buffer, int start, int stop, float x, float y) {
-    if (textFontInfo == FontInfo.NOT_FOUND) {
+    if (textFontInfo == FontInfo.NON_NATIVE) {
       super.textLineImpl(buffer, start, stop, x, y);
     } else {
       context.fillText(new String(buffer, start, stop - start), x, y);
@@ -1504,7 +1524,7 @@ public class PGraphicsFX2D extends PGraphics {
       textFontInfo.tintCache = new LinkedHashMap<Integer, PImage[]>(16, 0.75f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<Integer, PImage[]> eldest) {
-          return size() > FontInfo.TINT_CACHE_SIZE;
+          return size() > FontInfo.MAX_CACHED_COLORS_PER_FONT;
         }
       };
     }
@@ -1562,7 +1582,7 @@ public class PGraphicsFX2D extends PGraphics {
       defaultFontOrDeath("textWidth");
     }
 
-    if (textFontInfo == FontInfo.NOT_FOUND) {
+    if (textFontInfo == FontInfo.NON_NATIVE) {
       return super.textWidthImpl(buffer, start, stop);
     }
 
