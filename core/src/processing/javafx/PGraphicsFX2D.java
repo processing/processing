@@ -1509,11 +1509,15 @@ public class PGraphicsFX2D extends PGraphics {
       };
     }
     PImage[] tintedGlyphs = textFontInfo.tintCache.get(tintColor);
-    if (tintedGlyphs == null) {
-      tintedGlyphs = new PImage[textFont.getGlyphCount()];
+    int index = glyph.index;
+    if (tintedGlyphs == null || tintedGlyphs.length <= index) {
+      PImage[] newArray = new PImage[textFont.getGlyphCount()];
+      if (tintedGlyphs != null) {
+        System.arraycopy(tintedGlyphs, 0, newArray, 0, tintedGlyphs.length);
+      }
+      tintedGlyphs = newArray;
       textFontInfo.tintCache.put(tintColor, tintedGlyphs);
     }
-    int index = glyph.index;
     PImage tintedGlyph = tintedGlyphs[index];
     if (tintedGlyph == null) {
       tintedGlyph = glyph.image.copy();
