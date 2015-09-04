@@ -410,9 +410,6 @@ public class PGraphicsOpenGL extends PGraphics {
   /** PImage that wraps filterTexture. */
   protected PImage filterImage;
 
-  /** Flag to indicate that pixels array is up-to-date and
-   * ready to be manipulated through the set()/get() methods */
-  protected boolean arePixelsUpToDate;
 
   // ........................................................
 
@@ -2688,7 +2685,7 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
     } else {
       // pixels array is not up-to-date anymore
-      arePixelsUpToDate = false;
+      loaded = false;
     }
   }
 
@@ -2706,7 +2703,7 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
     } else {
       // pixels array is not up-to-date anymore
-      arePixelsUpToDate = false;
+      loaded = false;
     }
   }
 
@@ -3064,11 +3061,12 @@ public class PGraphicsOpenGL extends PGraphics {
         modelviewInv = modelviewInv0;
         updateProjmodelview();
       }
+
+      loaded = false;
     }
 
     tessGeo.clear();
     texCache.clear();
-    arePixelsUpToDate = false;
   }
 
 
@@ -5949,6 +5947,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // blending operations during draw create translucent areas in the
     // color buffer.
     backgroundA = 1;
+    loaded = false;
   }
 
 
@@ -5966,6 +5965,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (0 < parent.frameCount) {
       clearColor = true;
     }
+    loaded = false;
   }
 
 
@@ -6060,7 +6060,7 @@ public class PGraphicsOpenGL extends PGraphics {
       needEndDraw = true;
     }
 
-    if (!arePixelsUpToDate) {
+    if (!loaded) {
       // Draws any remaining geometry in case the user is still not
       // setting/getting new pixels.
       flush();
@@ -6068,12 +6068,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
     allocatePixels();
 
-    if (!arePixelsUpToDate) {
+    if (!loaded) {
       readPixels();
     }
 
     // Pixels are now up-to-date, set the flag.
-    arePixelsUpToDate = true;
+    loaded = true;
+
 
     if (needEndDraw) {
       endDraw();
@@ -6086,6 +6087,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if ((pixels == null) || (pixels.length != pixelWidth * pixelHeight)) {
       pixels = new int[pixelWidth * pixelHeight];
       pixelBuffer = PGL.allocateIntBuffer(pixels);
+      loaded = false;
     }
   }
 
@@ -6788,7 +6790,7 @@ public class PGraphicsOpenGL extends PGraphics {
     Texture tex = (Texture)initCache(img);
     if (tex == null) return null;
 
-    if (img.isModified() || img.isLoaded()) {
+    if (img.isModified()) {
       if (img.width != tex.width || img.height != tex.height) {
         tex.init(img.width, img.height);
       }
@@ -6834,7 +6836,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (tex != null) {
         img.loadPixels();
         tex.set(img.pixels, img.format);
-        img.setLoaded(false);
+        img.setModified();
       }
     }
     return tex;
@@ -6930,12 +6932,9 @@ public class PGraphicsOpenGL extends PGraphics {
         int w = img.getModifiedX2() - x;
         int h = img.getModifiedY2() - y;
         tex.set(img.pixels, x, y, w, h, img.format);
-      } else if (img.isLoaded()) {
-        tex.set(img.pixels, 0, 0, img.width, img.height, img.format);
       }
     }
     img.setModified(false);
-    img.setLoaded(false);
   }
 
 
@@ -7266,7 +7265,7 @@ public class PGraphicsOpenGL extends PGraphics {
     clearColor = false;
 
     modified = false;
-    arePixelsUpToDate = false;
+    loaded = false;
   }
 
 
