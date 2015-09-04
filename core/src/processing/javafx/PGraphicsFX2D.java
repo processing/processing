@@ -28,6 +28,7 @@ import com.sun.javafx.geom.Shape;
 
 import java.nio.IntBuffer;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -1292,7 +1293,7 @@ public class PGraphicsFX2D extends PGraphics {
       if (fxFont != null) {
         String fontName = font.getName();
         fontCache.nameToFilename.put(fontName, name);
-        FontInfo fontInfo = fontCache.createFontInfo(fxFont, false);
+        FontInfo fontInfo = fontCache.createFontInfo(fxFont);
         fontCache.put(fontName, size, fontInfo);
       }
     }
@@ -1318,7 +1319,7 @@ public class PGraphicsFX2D extends PGraphics {
     if (textFont == null) {
       defaultFontOrDeath("textAscent");
     }
-    if (textFontInfo.isFallbackFont) {
+    if (textFontInfo == FontInfo.NOT_FOUND) {
       return super.textAscent();
     }
     return textFontInfo.ascent;
@@ -1330,7 +1331,7 @@ public class PGraphicsFX2D extends PGraphics {
     if (textFont == null) {
       defaultFontOrDeath("textDescent");
     }
-    if (textFontInfo.isFallbackFont) {
+    if (textFontInfo == FontInfo.NOT_FOUND) {
       return super.textDescent();
     }
     return textFontInfo.descent;
@@ -1341,10 +1342,11 @@ public class PGraphicsFX2D extends PGraphics {
     // TODO: maybe make this dependent on font size?
     protected static final int TINT_CACHE_SIZE = 1 << 10;
 
+    static final FontInfo NOT_FOUND = new FontInfo();
+
     Font font;
     float ascent;
     float descent;
-    boolean isFallbackFont;
     Map<Integer, PImage[]> tintCache;
   }
 
@@ -1354,6 +1356,8 @@ public class PGraphicsFX2D extends PGraphics {
     private static final int CACHE_SIZE = 512;
 
     protected Map<String, String> nameToFilename = new HashMap<>();
+
+    private final HashSet<String> namesNotFound = new HashSet<>();
 
     private final LinkedHashMap<Key, FontInfo> cache = new LinkedHashMap<Key, FontInfo>(16, 0.75f, true) {
 
@@ -1367,6 +1371,9 @@ public class PGraphicsFX2D extends PGraphics {
     private final Text measuringText = new Text();
 
     private FontInfo get(String name, float size) {
+      if (namesNotFound.contains(name)) {
+        return FontInfo.NOT_FOUND;
+      }
       retrievingKey.name = name;
       retrievingKey.size = size;
       return cache.get(retrievingKey);
@@ -1379,9 +1386,8 @@ public class PGraphicsFX2D extends PGraphics {
       cache.put(key, fontInfo);
     }
 
-    private FontInfo createFontInfo(Font font, boolean isFallbackFont) {
+    private FontInfo createFontInfo(Font font) {
       FontInfo result = new FontInfo();
-      result.isFallbackFont = isFallbackFont;
       result.font = font;
       { // measure ascent and descent
         measuringText.setFont(result.font);
@@ -1468,10 +1474,15 @@ public class PGraphicsFX2D extends PGraphics {
       // Loading system font may return fallback font if the font
       // does not exist; this can be detected by comparing font names.
       // Please note that some font names can differ in FX vs. AWT.
-      boolean isFallbackFont = filename == null &&
+      boolean isNotFound = filename == null &&
           !fontName.equalsIgnoreCase(font.getName());
-      textFontInfo = fontCache.createFontInfo(font, isFallbackFont);
-      fontCache.put(fontName, size, textFontInfo);
+      if (isNotFound) {
+        fontCache.namesNotFound.add(fontName);
+        textFontInfo = FontInfo.NOT_FOUND;
+      } else {
+        textFontInfo = fontCache.createFontInfo(font);
+        fontCache.put(fontName, size, textFontInfo);
+      }
     }
 
     context.setFont(textFontInfo.font);
@@ -1480,7 +1491,7 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   protected void textLineImpl(char[] buffer, int start, int stop, float x, float y) {
-    if (textFontInfo.isFallbackFont) {
+    if (textFontInfo == FontInfo.NOT_FOUND) {
       super.textLineImpl(buffer, start, stop, x, y);
     } else {
       context.fillText(new String(buffer, start, stop - start), x, y);
@@ -1547,7 +1558,7 @@ public class PGraphicsFX2D extends PGraphics {
       defaultFontOrDeath("textWidth");
     }
 
-    if (textFontInfo.isFallbackFont) {
+    if (textFontInfo == FontInfo.NOT_FOUND) {
       return super.textWidthImpl(buffer, start, stop);
     }
 
