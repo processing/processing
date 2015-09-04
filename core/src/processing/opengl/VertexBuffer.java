@@ -2,6 +2,7 @@ package processing.opengl;
 
 import processing.opengl.PGraphicsOpenGL.GLResourceVertexBuffer;
 
+// TODO: need to combine with PGraphicsOpenGL.VertexAttribute
 public class VertexBuffer {
   static protected final int INIT_VERTEX_BUFFER_SIZE  = 256;
   static protected final int INIT_INDEX_BUFFER_SIZE   = 512;

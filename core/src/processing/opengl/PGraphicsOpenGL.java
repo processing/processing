@@ -156,10 +156,10 @@ public class PGraphicsOpenGL extends PGraphics {
 //    new HashMap<GLResource, Boolean>();
 //  static protected HashMap<GLResource, Boolean> glVertexBuffers =
 //    new HashMap<GLResource, Boolean>();
-  static protected HashMap<GLResource, Boolean> glFrameBuffers =
-    new HashMap<GLResource, Boolean>();
-  static protected HashMap<GLResource, Boolean> glRenderBuffers =
-    new HashMap<GLResource, Boolean>();
+//  static protected HashMap<GLResource, Boolean> glFrameBuffers =
+//    new HashMap<GLResource, Boolean>();
+//  static protected HashMap<GLResource, Boolean> glRenderBuffers =
+//    new HashMap<GLResource, Boolean>();
 //  static protected HashMap<GLResource, Boolean> glslPrograms =
 //    new HashMap<GLResource, Boolean>();
 //  static protected HashMap<GLResource, Boolean> glslVertexShaders =
@@ -655,7 +655,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
-    deleteFinalizedGLResources(pgl);
+//    deleteFinalizedGLResources(pgl);
 
     if (primaryGraphics) {
       pgl.deleteSurface();
@@ -1009,30 +1009,166 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
 
-  // http://www.oracle.com/technetwork/articles/java/finalization-137655.html
-  protected static class GLResource {
-    int id;
-    int context;
+  protected static class GLResourceFrameBuffer extends WeakReference<FrameBuffer> {
+    int glFbo;
+    int glDepth;
+    int glStencil;
+    int glDepthStencil;
+    int glMultisample;
 
-    GLResource(int id, int context) {
-      this.id = id;
-      this.context = context;
+    private PGL pgl;
+    private int context;
+
+    static private ReferenceQueue<FrameBuffer> refQueue = new ReferenceQueue<FrameBuffer>();
+    static private List<GLResourceFrameBuffer> refList = new ArrayList<GLResourceFrameBuffer>();
+
+    static void drainRefQueueBounded() {
+      ReferenceQueue<FrameBuffer> refQueue = GLResourceFrameBuffer.referenceQueue();
+      int iterations = 0;
+      while (iterations < MAX_DRAIN_GLRES_ITERATIONS) {
+        GLResourceFrameBuffer res = (GLResourceFrameBuffer)refQueue.poll();
+        if (res == null) {
+          break;
+        }
+//        System.out.println("Disposing framebuffer resource " + iterations + " " + res.hashCode());
+        res.dispose();
+        ++iterations;
+      }
+    }
+
+    static ReferenceQueue<FrameBuffer> referenceQueue() {
+      return refQueue;
+    }
+
+    public GLResourceFrameBuffer(FrameBuffer fb) {
+      super(fb, refQueue);
+
+      drainRefQueueBounded();
+
+      this.pgl = fb.pgl;
+
+      if (!fb.screenFb) {
+        pgl.genFramebuffers(1, intBuffer);
+        fb.glFbo = intBuffer.get(0);
+
+        if (fb.multisample) {
+          pgl.genRenderbuffers(1, intBuffer);
+          fb.glMultisample = intBuffer.get(0);
+        }
+
+        if (fb.packedDepthStencil) {
+          pgl.genRenderbuffers(1, intBuffer);
+          fb.glDepthStencil = intBuffer.get(0);
+        } else {
+          if (0 < fb.depthBits) {
+            pgl.genRenderbuffers(1, intBuffer);
+            fb.glDepth = intBuffer.get(0);
+          }
+          if (0 < fb.stencilBits) {
+            pgl.genRenderbuffers(1, intBuffer);
+            fb.glStencil = intBuffer.get(0);
+          }
+        }
+
+        this.glFbo = fb.glFbo;
+        this.glDepth = fb.glDepth;
+        this.glStencil = fb.glStencil;
+        this.glDepthStencil = fb.glDepthStencil;
+        this.glMultisample = fb.glMultisample;
+      }
+
+      this.context = fb.context;
+
+      refList.add(this);
+    }
+
+    private void disposeNative() {
+      if (pgl != null) {
+        if (glFbo != 0) {
+          intBuffer.put(0, glFbo);
+          pgl.deleteFramebuffers(1, intBuffer);
+          glFbo = 0;
+        }
+        if (glDepth != 0) {
+          intBuffer.put(0, glDepth);
+          pgl.deleteRenderbuffers(1, intBuffer);
+          glDepth = 0;
+        }
+        if (glStencil != 0) {
+          intBuffer.put(0, glStencil);
+          pgl.deleteRenderbuffers(1, intBuffer);
+          glStencil = 0;
+        }
+        if (glDepthStencil != 0) {
+          intBuffer.put(0, glDepthStencil);
+          pgl.deleteRenderbuffers(1, intBuffer);
+          glDepthStencil = 0;
+        }
+        if (glMultisample != 0) {
+          intBuffer.put(0, glMultisample);
+          pgl.deleteRenderbuffers(1, intBuffer);
+          glMultisample = 0;
+        }
+        pgl = null;
+      }
+    }
+
+    void dispose() {
+      refList.remove(this);
+      disposeNative();
     }
 
     @Override
     public boolean equals(Object obj) {
-      GLResource other = (GLResource)obj;
-      return other.id == id && other.context == context;
+      GLResourceFrameBuffer other = (GLResourceFrameBuffer)obj;
+      return other.glFbo == glFbo &&
+             other.glDepth == glDepth &&
+             other.glStencil == glStencil &&
+             other.glDepthStencil == glDepthStencil &&
+             other.glMultisample == glMultisample &&
+             other.context == context;
     }
 
     @Override
     public int hashCode() {
       int result = 17;
-      result = 31 * result + id;
+      result = 31 * result + glFbo;
+      result = 31 * result + glDepth;
+      result = 31 * result + glStencil;
+      result = 31 * result + glDepthStencil;
+      result = 31 * result + glMultisample;
       result = 31 * result + context;
       return result;
     }
   }
+
+
+
+
+  // http://www.oracle.com/technetwork/articles/java/finalization-137655.html
+//  protected static class GLResource {
+//    int id;
+//    int context;
+//
+//    GLResource(int id, int context) {
+//      this.id = id;
+//      this.context = context;
+//    }
+//
+//    @Override
+//    public boolean equals(Object obj) {
+//      GLResource other = (GLResource)obj;
+//      return other.id == id && other.context == context;
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//      int result = 17;
+//      result = 31 * result + id;
+//      result = 31 * result + context;
+//      return result;
+//    }
+//  }
 
 
   // Texture Objects -----------------------------------------------------------
@@ -1169,6 +1305,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // FrameBuffer Objects -------------------------------------------------------
 
+  /*
   protected static int createFrameBufferObject(int context, PGL pgl) {
     deleteFinalizedFrameBufferObjects(pgl);
 
@@ -1232,9 +1369,11 @@ public class PGraphicsOpenGL extends PGraphics {
       glFrameBuffers.remove(res);
     }
   }
+*/
 
   // RenderBuffer Objects ------------------------------------------------------
 
+  /*
   protected static int createRenderBufferObject(int context, PGL pgl) {
     deleteFinalizedRenderBufferObjects(pgl);
 
@@ -1296,6 +1435,7 @@ public class PGraphicsOpenGL extends PGraphics {
       glRenderBuffers.remove(res);
     }
   }
+  */
 
   /*
   // GLSL Program Objects ------------------------------------------------------
@@ -1483,15 +1623,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // All OpenGL resources ------------------------------------------------------
 
-  protected static void deleteFinalizedGLResources(PGL pgl) {
+//  protected static void deleteFinalizedGLResources(PGL pgl) {
 //    deleteFinalizedTextureObjects(pgl);
 //    deleteFinalizedVertexBufferObjects(pgl);
-    deleteFinalizedFrameBufferObjects(pgl);
-    deleteFinalizedRenderBufferObjects(pgl);
+//    deleteFinalizedFrameBufferObjects(pgl);
+//    deleteFinalizedRenderBufferObjects(pgl);
 //    deleteFinalizedGLSLProgramObjects(pgl);
 //    deleteFinalizedGLSLVertShaderObjects(pgl);
 //    deleteFinalizedGLSLFragShaderObjects(pgl);
-  }
+//  }
 
 
   //////////////////////////////////////////////////////////////
