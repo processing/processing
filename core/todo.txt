@@ -2,15 +2,25 @@
 X Incomplete text rendering of strings with consecutive line breaks
 X   https://github.com/processing/processing/issues/3736
 X   https://github.com/processing/processing/pull/3737
+X   https://github.com/processing/processing/issues/3761
 X add the Contents/Java folder to java.library.path on OS X
 X   allows exported applications to use the Sound library
+_ textFont() and textSize() are each calling one another
+_ move createFont() to PGraphics
 _ SVG only exports last frame
+_   possibly because Java2D is disposing the Graphics2D in between?
 _   https://github.com/processing/processing/issues/3753
 
 andres
 X P2D: error calling surface.setTitle()
 X   https://github.com/processing/processing/issues/3721
 X   https://github.com/processing/processing/commit/a384cbf0890a49dbf6e0fdd80e048de80e5d78d2
+X Error message with noLoop() and P2D renderer
+X   https://github.com/processing/processing/issues/3558
+X Concurrency issues in OpenGL renderer prevent proper garbage collection
+X   https://github.com/processing/processing/issues/3384
+X In P2D/P3D the background is cleared to black on each frame
+_   https://github.com/processing/processing/issues/3559
 
 jakub
 X FX - fix transformation stack NPE
@@ -49,14 +59,15 @@ X Render text starting with space properly
 X   https://github.com/processing/processing/pull/3746
 X FX - smooth for the main surface
 X   https://github.com/processing/processing/pull/3749
-
-
-known issues
-_ P2D and P3D windows behave strangely when larger than the screen size
-_   https://github.com/processing/processing/issues/3401
+X OpenGL - clean up loaded and modified for pixels
+X   https://github.com/processing/processing/pull/3768
+X FX - text stuff, move createFont() into PGraphics
+X   https://github.com/processing/processing/pull/3766
 
 
 3.0 final
+_ P2D and P3D windows behave strangely when larger than the screen size
+_   https://github.com/processing/processing/issues/3401
 _ move blending calculations from PImage into PGraphics
 _   tricky because that means moving blend_resize() as well
 _   and should that live in PGraphics or be its own class or ??

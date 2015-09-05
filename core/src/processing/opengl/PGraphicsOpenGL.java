@@ -4208,13 +4208,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   @Override
-  protected void setTextSize(float size) {
+  protected void handleTextSize(float size) {
     Font font = (Font) textFont.getNative();
     if (font != null) {
       Object dfont = pgl.getDerivedFont(font, size);
       textFont.setNative(dfont);
     }
-    super.setTextSize(size);
+    super.handleTextSize(size);
   }
 
 

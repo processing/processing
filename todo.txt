@@ -60,6 +60,7 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
 3.0 final
+_ https://github.com/processing/processing/milestones/3.0%20final
 _ change Tool API because it's not one Editor per Tool anymore?
 _   or just change the documentation?
 _ Contributions Manager UI design
@@ -94,7 +95,10 @@ _ add this to the preferences?
 
 
 gui
+_ don't allow breakpoints to be set on blank lines
+_   https://github.com/processing/processing/issues/3765
 _ different design of squiggly line?
+_ build custom scroll bar since the OS versions are so ugly?
 _ Error/warning location visualisation not updating when editor resizes
 _   https://github.com/processing/processing/issues/3619
 _ error/warning location is awkward when no scroll bar is in use

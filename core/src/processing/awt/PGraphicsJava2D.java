@@ -1893,7 +1893,7 @@ public class PGraphicsJava2D extends PGraphics {
    * will get recorded properly.
    */
   @Override
-  protected void setTextSize(float size) {
+  protected void handleTextSize(float size) {
     // if a native version available, derive this font
 //    if (textFontNative != null) {
 //      textFontNative = textFontNative.deriveFont(size);
@@ -1927,7 +1927,7 @@ public class PGraphicsJava2D extends PGraphics {
     // take care of setting the textSize and textLeading vars
     // this has to happen second, because it calls textAscent()
     // (which requires the native font metrics to be set)
-    super.setTextSize(size);
+    super.handleTextSize(size);
   }
 
 

@@ -4237,7 +4237,7 @@ public class PGraphics extends PImage implements PConstants {
       }
       */
 
-    setTextSize(size);
+    handleTextSize(size);
   }
 
 
@@ -4361,7 +4361,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param size size of the text, greater than zero
    */
   protected void textSizeImpl(float size) {
-    setTextSize(size);
+    handleTextSize(size);
   }
 
 
@@ -4370,7 +4370,7 @@ public class PGraphics extends PImage implements PConstants {
    * from textFontImpl after setting the font.
    * @param size size of the text, greater than zero
    */
-  protected void setTextSize(float size) {
+  protected void handleTextSize(float size) {
     textSize = size;
     textLeading = (textAscent() + textDescent()) * 1.275f;
   }

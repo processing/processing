@@ -1333,7 +1333,6 @@ public class PGraphicsFX2D extends PGraphics {
 
 
   static final class FontInfo {
-
     // TODO: this should be based on memory consumption
     // this should be enough e.g. for all grays and alpha combos
     static final int MAX_CACHED_COLORS_PER_FONT = 1 << 16;
@@ -1348,7 +1347,6 @@ public class PGraphicsFX2D extends PGraphics {
 
 
   static final class FontCache {
-
     static final int MAX_CACHE_SIZE = 512;
 
     // keeps track of filenames of fonts loaded from ttf and otf files
@@ -1427,14 +1425,14 @@ public class PGraphicsFX2D extends PGraphics {
     }
   }
 
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // TEXT
-//
-//  // None of the variations of text() are overridden from PGraphics.
-//
-//
+
+  ///////////////////////////////////////////////////////////////
+
+  // TEXT
+
+  // None of the variations of text() are overridden from PGraphics.
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -1443,16 +1441,17 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   protected void textFontImpl(PFont which, float size) {
-    setTextFont(which, size);
-    setTextSize(size);
+    handleTextFont(which, size);
+    handleTextSize(size);
   }
 
 
   @Override
   protected void textSizeImpl(float size) {
-    setTextFont(textFont, size);
-    setTextSize(size);
+    handleTextFont(textFont, size);
+    handleTextSize(size);
   }
+
 
   /**
    * FX specific. When setting font or size, new font has to
@@ -1460,7 +1459,7 @@ public class PGraphicsFX2D extends PGraphics {
    * @param which font to be set, not null
    * @param size size to be set, greater than zero
    */
-  protected void setTextFont(PFont which, float size) {
+  protected void handleTextFont(PFont which, float size) {
     textFont = which;
 
     String fontName = which.getName();
@@ -1562,16 +1561,16 @@ public class PGraphicsFX2D extends PGraphics {
         float x2 = x1 + bwidth * textSize;
         float y2 = y1 + high * textSize;
 
-        PImage glyphImage = fillColor == 0xFFFFFFFF ?
-            glyph.image :
-            getTintedGlyphImage(glyph, fillColor);
+        PImage glyphImage = (fillColor == 0xFFFFFFFF) ?
+          glyph.image : getTintedGlyphImage(glyph, fillColor);
 
         textCharModelImpl(glyphImage,
                           x1, y1, x2, y2,
                           glyph.width, glyph.height);
       }
     } else if (ch != ' ' && ch != 127) {
-      showWarning("No glyph found for the " + ch + " (\\u" + PApplet.hex(ch, 4) + ") character");
+      showWarning("No glyph found for the " + ch +
+                  " (\\u" + PApplet.hex(ch, 4) + ") character");
     }
   }
 
