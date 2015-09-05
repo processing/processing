@@ -1889,15 +1889,11 @@ public class PGraphicsJava2D extends PGraphics {
   /**
    * Same as parent, but override for native version of the font.
    * <p/>
-   * Also gets called by textFont, so the metrics
+   * Called from textFontImpl and textSizeImpl, so the metrics
    * will get recorded properly.
    */
   @Override
-  public void textSize(float size) {
-    if (textFont == null) {
-      defaultFontOrDeath("textSize", size);
-    }
-
+  protected void setTextSize(float size) {
     // if a native version available, derive this font
 //    if (textFontNative != null) {
 //      textFontNative = textFontNative.deriveFont(size);
@@ -1931,7 +1927,7 @@ public class PGraphicsJava2D extends PGraphics {
     // take care of setting the textSize and textLeading vars
     // this has to happen second, because it calls textAscent()
     // (which requires the native font metrics to be set)
-    super.textSize(size);
+    super.setTextSize(size);
   }
 
 

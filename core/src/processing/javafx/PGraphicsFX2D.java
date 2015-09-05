@@ -27,6 +27,10 @@ import com.sun.javafx.geom.PathIterator;
 import com.sun.javafx.geom.Shape;
 
 import java.nio.IntBuffer;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.GraphicsContext;
@@ -41,6 +45,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 
@@ -1266,157 +1272,161 @@ public class PGraphicsFX2D extends PGraphics {
 
 
 
-//  //////////////////////////////////////////////////////////////
-//
-//  // TEXT ATTRIBTUES
-//
-//
-//  //public void textAlign(int align)
-//
-//
-//  //public void textAlign(int alignX, int alignY)
-//
-//
-//  @Override
-//  public float textAscent() {
-//    if (textFont == null) {
-//      defaultFontOrDeath("textAscent");
-//    }
-//
-//    Font font = (Font) textFont.getNative();
-//    if (font != null) {
-//      return getFontMetrics(font).getAscent();
-//    }
-//    return super.textAscent();
-//  }
-//
-//
-//  @Override
-//  public float textDescent() {
-//    if (textFont == null) {
-//      defaultFontOrDeath("textDescent");
-//    }
-//    Font font = (Font) textFont.getNative();
-//    if (font != null) {
-//      return getFontMetrics(font).getDescent();
-//    }
-//    return super.textDescent();
-//  }
-//
-//
-//  //public void textFont(PFont which)
-//
-//
-//  //public void textFont(PFont which, float size)
-//
-//
-//  //public void textLeading(float leading)
-//
-//
-//  //public void textMode(int mode)
-//
-//
-//  @Override
-//  protected boolean textModeCheck(int mode) {
-//    return mode == MODEL;
-//  }
-//
-//
-//  /**
-//   * Same as parent, but override for native version of the font.
-//   * <p/>
-//   * Also gets called by textFont, so the metrics
-//   * will get recorded properly.
-//   */
-//  @Override
-//  public void textSize(float size) {
-//    if (textFont == null) {
-//      defaultFontOrDeath("textSize", size);
-//    }
-//
-//    // if a native version available, derive this font
-////    if (textFontNative != null) {
-////      textFontNative = textFontNative.deriveFont(size);
-////      g2.setFont(textFontNative);
-////      textFontNativeMetrics = g2.getFontMetrics(textFontNative);
-////    }
-//    Font font = (Font) textFont.getNative();
-//    //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
-//    if (font != null) {
-//      Map<TextAttribute, Object> map =
-//        new HashMap<TextAttribute, Object>();
-//      map.put(TextAttribute.SIZE, size);
-//      map.put(TextAttribute.KERNING,
-//              TextAttribute.KERNING_ON);
-////      map.put(TextAttribute.TRACKING,
-////              TextAttribute.TRACKING_TIGHT);
-//      font = font.deriveFont(map);
-//      g2.setFont(font);
-//      textFont.setNative(font);
-//
-////      Font dfont = font.deriveFont(size);
-//////      Map<TextAttribute, ?> attrs = dfont.getAttributes();
-//////      for (TextAttribute ta : attrs.keySet()) {
-//////        System.out.println(ta + " -> " + attrs.get(ta));
-//////      }
-////      g2.setFont(dfont);
-////      textFont.setNative(dfont);
-//    }
-//
-//    // take care of setting the textSize and textLeading vars
-//    // this has to happen second, because it calls textAscent()
-//    // (which requires the native font metrics to be set)
-//    super.textSize(size);
-//  }
-//
-//
-//  //public float textWidth(char c)
-//
-//
-//  //public float textWidth(String str)
-//
-//
-//  @Override
-//  protected float textWidthImpl(char buffer[], int start, int stop) {
-//    if (textFont == null) {
-//      defaultFontOrDeath("textWidth");
-//    }
-//
-//    Font font = (Font) textFont.getNative();
-//    //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
-//    if (font != null) {
-//      // maybe should use one of the newer/fancier functions for this?
-//      int length = stop - start;
-//      FontMetrics metrics = getFontMetrics(font);
-//      // Using fractional metrics makes the measurement worse, not better,
-//      // at least on OS X 10.6 (November, 2010).
-//      // TextLayout returns the same value as charsWidth().
-////      System.err.println("using native");
-////      g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-////                          RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-////      float m1 = metrics.charsWidth(buffer, start, length);
-////      //float m2 = (float) metrics.getStringBounds(buffer, start, stop, g2).getWidth();
-////      TextLayout tl = new TextLayout(new String(buffer, start, length), font, g2.getFontRenderContext());
-////      float m2 = (float) tl.getBounds().getWidth();
-////      System.err.println(m1 + " " + m2);
-//////      return m1;
-////      return m2;
-//      return metrics.charsWidth(buffer, start, length);
-//    }
-////    System.err.println("not native");
-//    return super.textWidthImpl(buffer, start, stop);
-//  }
-//
-//
-////  protected void beginTextScreenMode() {
-////    loadPixels();
-////  }
-//
-//
-////  protected void endTextScreenMode() {
-////    updatePixels();
-////  }
-//
+  //////////////////////////////////////////////////////////////
+
+  // TEXT ATTRIBTUES
+
+
+  protected FontCache fontCache = new FontCache();
+
+  // Is initialized when defaultFontOrDeath() is called
+  // and mirrors PGraphics.textFont field
+  protected FontInfo textFontInfo;
+
+
+  @Override
+  protected PFont createFont(String name, float size,
+                             boolean smooth, char[] charset) {
+    PFont font = super.createFont(name, size, smooth, charset);
+    if (font.isStream()) {
+      fontCache.nameToFilename.put(font.getName(), name);
+    }
+    return font;
+  }
+
+
+  @Override
+  protected void defaultFontOrDeath(String method, float size) {
+    super.defaultFontOrDeath(method, size);
+    textFontInfo = fontCache.get(textFont.getName(), textFont.getSize());
+  }
+
+
+  @Override
+  protected boolean textModeCheck(int mode) {
+    return mode == MODEL;
+  }
+
+
+  @Override
+  public float textAscent() {
+    if (textFont == null) {
+      defaultFontOrDeath("textAscent");
+    }
+    if (textFontInfo == FontInfo.NON_NATIVE) {
+      return super.textAscent();
+    }
+    return textFontInfo.ascent;
+  }
+
+
+  @Override
+  public float textDescent() {
+    if (textFont == null) {
+      defaultFontOrDeath("textDescent");
+    }
+    if (textFontInfo == FontInfo.NON_NATIVE) {
+      return super.textDescent();
+    }
+    return textFontInfo.descent;
+  }
+
+
+  static final class FontInfo {
+
+    // TODO: this should be based on memory consumption
+    // this should be enough e.g. for all grays and alpha combos
+    static final int MAX_CACHED_COLORS_PER_FONT = 1 << 16;
+
+    static final FontInfo NON_NATIVE = new FontInfo();
+
+    Font font;
+    float ascent;
+    float descent;
+    Map<Integer, PImage[]> tintCache;
+  }
+
+
+  static final class FontCache {
+
+    static final int MAX_CACHE_SIZE = 512;
+
+    // keeps track of filenames of fonts loaded from ttf and otf files
+    Map<String, String> nameToFilename = new HashMap<>();
+
+    // keeps track of fonts which should be rendered as pictures
+    // so we don't go through native font search process every time
+    final HashSet<String> nonNativeNames = new HashSet<>();
+
+    // keeps all created fonts for reuse up to MAX_CACHE_SIZE limit
+    // when the limit is reached, the least recently used font is removed
+    // TODO: this should be based on memory consumtion
+    final LinkedHashMap<Key, FontInfo> cache =
+        new LinkedHashMap<Key, FontInfo>(16, 0.75f, true) {
+      @Override
+      protected boolean removeEldestEntry(Map.Entry<Key, FontInfo> eldest) {
+        return size() > MAX_CACHE_SIZE;
+      }
+    };
+
+    // key for retrieving fonts from cache; don't use for insertion,
+    // every font has to have its own new Key instance
+    final Key retrievingKey = new Key();
+
+    // text node used for measuring sizes of text
+    final Text measuringText = new Text();
+
+    FontInfo get(String name, float size) {
+      if (nonNativeNames.contains(name)) {
+        return FontInfo.NON_NATIVE;
+      }
+      retrievingKey.name = name;
+      retrievingKey.size = size;
+      return cache.get(retrievingKey);
+    }
+
+    void put(String name, float size, FontInfo fontInfo) {
+      Key key = new Key();
+      key.name = name;
+      key.size = size;
+      cache.put(key, fontInfo);
+    }
+
+    FontInfo createFontInfo(Font font) {
+      FontInfo result = new FontInfo();
+      result.font = font;
+      { // measure ascent and descent
+        measuringText.setFont(result.font);
+        measuringText.setText(" ");
+        float lineHeight = (float) measuringText.getLayoutBounds().getHeight();
+        result.ascent = (float) measuringText.getBaselineOffset();
+        result.descent = lineHeight - result.ascent;
+      }
+      return result;
+    }
+
+    static final class Key {
+      String name;
+      float size;
+
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Key that = (Key) o;
+        if (Float.compare(that.size, size) != 0) return false;
+        return name.equals(that.name);
+      }
+
+      @Override
+      public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + (size != +0.0f ? Float.floatToIntBits(size) : 0);
+        return result;
+      }
+    }
+  }
+
 //
 //  //////////////////////////////////////////////////////////////
 //
@@ -1425,84 +1435,162 @@ public class PGraphicsFX2D extends PGraphics {
 //  // None of the variations of text() are overridden from PGraphics.
 //
 //
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // TEXT IMPL
-//
-//
-//  //protected void textLineAlignImpl(char buffer[], int start, int stop,
-//  //                                 float x, float y)
-//
-//
-//  @Override
-//  protected void textLineImpl(char buffer[], int start, int stop,
-//                              float x, float y) {
-//    Font font = (Font) textFont.getNative();
-////    if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
-//    if (font != null) {
-//      /*
-//      // save the current setting for text smoothing. note that this is
-//      // different from the smooth() function, because the font smoothing
-//      // is controlled when the font is created, not now as it's drawn.
-//      // fixed a bug in 0116 that handled this incorrectly.
-//      Object textAntialias =
-//        g2.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
-//
-//      // override the current text smoothing setting based on the font
-//      // (don't change the global smoothing settings)
-//      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-//                          textFont.smooth ?
-//                          RenderingHints.VALUE_ANTIALIAS_ON :
-//                          RenderingHints.VALUE_ANTIALIAS_OFF);
-//      */
-//      Object antialias =
-//        g2.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-//      if (antialias == null) {
-//        // if smooth() and noSmooth() not called, this will be null (0120)
-//        antialias = RenderingHints.VALUE_ANTIALIAS_DEFAULT;
-//      }
-//
-//      // override the current smoothing setting based on the font
-//      // also changes global setting for antialiasing, but this is because it's
-//      // not possible to enable/disable them independently in some situations.
-//      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//                          textFont.smooth ?
-//                          RenderingHints.VALUE_ANTIALIAS_ON :
-//                          RenderingHints.VALUE_ANTIALIAS_OFF);
-//
-//      g2.setColor(fillColorObject);
-//
-//      int length = stop - start;
-//      if (length != 0) {
-//      g2.drawChars(buffer, start, length, (int) (x + 0.5f), (int) (y + 0.5f));
-//      // better to use round here? also, drawChars now just calls drawString
-////      g2.drawString(new String(buffer, start, stop - start), Math.round(x), Math.round(y));
-//
-//      // better to use drawString() with floats? (nope, draws the same)
-//      //g2.drawString(new String(buffer, start, length), x, y);
-//
-//      // this didn't seem to help the scaling issue, and creates garbage
-//      // because of a fairly heavyweight new temporary object
-////      java.awt.font.GlyphVector gv =
-////        font.createGlyphVector(g2.getFontRenderContext(), new String(buffer, start, stop - start));
-////      g2.drawGlyphVector(gv, x, y);
-//      }
-//
-//      // return to previous smoothing state if it was changed
-//      //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialias);
-//      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialias);
-//
-//    } else {  // otherwise just do the default
-//      super.textLineImpl(buffer, start, stop, x, y);
-//    }
-//  }
-//
-//
-//  @Override
-//  public FontMetrics getFontMetrics(Font font) {
-//    return (g2 != null) ? g2.getFontMetrics(font) : super.getFontMetrics(font);
-//  }
+
+  //////////////////////////////////////////////////////////////
+
+  // TEXT IMPL
+
+
+  @Override
+  protected void textFontImpl(PFont which, float size) {
+    setTextFont(which, size);
+    setTextSize(size);
+  }
+
+
+  @Override
+  protected void textSizeImpl(float size) {
+    setTextFont(textFont, size);
+    setTextSize(size);
+  }
+
+  /**
+   * FX specific. When setting font or size, new font has to
+   * be created. Both textFontImpl and textSizeImpl call this one.
+   * @param which font to be set, not null
+   * @param size size to be set, greater than zero
+   */
+  protected void setTextFont(PFont which, float size) {
+    textFont = which;
+
+    String fontName = which.getName();
+    String fontPsName = which.getPostScriptName();
+
+    textFontInfo = fontCache.get(fontName, size);
+    if (textFontInfo == null) {
+      Font font = null;
+
+      if (which.isStream()) {
+        // Load from ttf or otf file
+        String filename = fontCache.nameToFilename.get(fontName);
+        font = Font.loadFont(parent.createInput(filename), size);
+      }
+
+      if (font == null) {
+        // Look up font name
+        font = new Font(fontName, size);
+        if (!fontName.equalsIgnoreCase(font.getName())) {
+          // Look up font postscript name
+          font = new Font(fontPsName, size);
+          if (!fontPsName.equalsIgnoreCase(font.getName())) {
+            font = null; // Done with it
+          }
+        }
+      }
+
+      if (font == null && which.getNative() != null) {
+        // Ain't got nothing, but AWT has something, so glyph images are not
+        // going to be used for this font; go with the default font then
+        font = new Font(size);
+      }
+
+      if (font == null) {
+        // Ain't got nothing, let's use glyph images for this one
+        textFontInfo = FontInfo.NON_NATIVE;
+        fontCache.nonNativeNames.add(fontName);
+      } else {
+        // Native font found, save it in the cache and use it
+        textFontInfo = fontCache.createFontInfo(font);
+        fontCache.put(fontName, size, textFontInfo);
+      }
+    }
+
+    context.setFont(textFontInfo.font);
+  }
+
+
+  @Override
+  protected void textLineImpl(char[] buffer, int start, int stop, float x, float y) {
+    if (textFontInfo == FontInfo.NON_NATIVE) {
+      super.textLineImpl(buffer, start, stop, x, y);
+    } else {
+      context.fillText(new String(buffer, start, stop - start), x, y);
+    }
+  }
+
+
+  protected PImage getTintedGlyphImage(PFont.Glyph glyph, int tintColor) {
+    if (textFontInfo.tintCache == null) {
+      textFontInfo.tintCache = new LinkedHashMap<Integer, PImage[]>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Integer, PImage[]> eldest) {
+          return size() > FontInfo.MAX_CACHED_COLORS_PER_FONT;
+        }
+      };
+    }
+    PImage[] tintedGlyphs = textFontInfo.tintCache.get(tintColor);
+    int index = glyph.index;
+    if (tintedGlyphs == null || tintedGlyphs.length <= index) {
+      PImage[] newArray = new PImage[textFont.getGlyphCount()];
+      if (tintedGlyphs != null) {
+        System.arraycopy(tintedGlyphs, 0, newArray, 0, tintedGlyphs.length);
+      }
+      tintedGlyphs = newArray;
+      textFontInfo.tintCache.put(tintColor, tintedGlyphs);
+    }
+    PImage tintedGlyph = tintedGlyphs[index];
+    if (tintedGlyph == null) {
+      tintedGlyph = glyph.image.copy();
+      tintedGlyphs[index] = tintedGlyph;
+    }
+    return tintedGlyph;
+  }
+
+
+  @Override
+  protected void textCharImpl(char ch, float x, float y) { //, float z) {
+    PFont.Glyph glyph = textFont.getGlyph(ch);
+    if (glyph != null) {
+      if (textMode == MODEL) {
+        float high    = glyph.height     / (float) textFont.getSize();
+        float bwidth  = glyph.width      / (float) textFont.getSize();
+        float lextent = glyph.leftExtent / (float) textFont.getSize();
+        float textent = glyph.topExtent  / (float) textFont.getSize();
+
+        float x1 = x + lextent * textSize;
+        float y1 = y - textent * textSize;
+        float x2 = x1 + bwidth * textSize;
+        float y2 = y1 + high * textSize;
+
+        PImage glyphImage = fillColor == 0xFFFFFFFF ?
+            glyph.image :
+            getTintedGlyphImage(glyph, fillColor);
+
+        textCharModelImpl(glyphImage,
+                          x1, y1, x2, y2,
+                          glyph.width, glyph.height);
+      }
+    } else if (ch != ' ' && ch != 127) {
+      showWarning("No glyph found for the " + ch + " (\\u" + PApplet.hex(ch, 4) + ") character");
+    }
+  }
+
+
+  @Override
+  protected float textWidthImpl(char[] buffer, int start, int stop) {
+    if (textFont == null) {
+      defaultFontOrDeath("textWidth");
+    }
+
+    if (textFontInfo == FontInfo.NON_NATIVE) {
+      return super.textWidthImpl(buffer, start, stop);
+    }
+
+    fontCache.measuringText.setFont(textFontInfo.font);
+    fontCache.measuringText.setText(new String(buffer, start, stop - start));
+    return (float) fontCache.measuringText.getLayoutBounds().getWidth();
+  }
+
 
 
   //////////////////////////////////////////////////////////////
