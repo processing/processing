@@ -7,12 +7,21 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 //import java.awt.Frame;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.jogamp.common.util.IOUtil.ClassResources;
 import com.jogamp.nativewindow.NativeSurface;
 import com.jogamp.nativewindow.ScalableSurface;
+import com.jogamp.nativewindow.util.Dimension;
+import com.jogamp.nativewindow.util.DimensionImmutable;
+import com.jogamp.nativewindow.util.PixelFormat;
+import com.jogamp.nativewindow.util.PixelRectangle;
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
@@ -21,6 +30,7 @@ import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.nativewindow.MutableGraphicsConfiguration;
 import com.jogamp.newt.Display;
+import com.jogamp.newt.Display.PointerIcon;
 import com.jogamp.newt.MonitorDevice;
 import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Screen;
@@ -1034,21 +1044,17 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void setCursor(PImage image, int hotspotX, int hotspotY) {
-    final Display disp = window.getScreen().getDisplay();
-    disp.createNative();
-
-//    BufferedImage jimg = (BufferedImage)image.getNative();
-//    IntBuffer buf = IntBuffer.wrap(jimg.getRGB(0, 0, jimg.getWidth(), jimg.getHeight(),
-//                                               null, 0, jimg.getWidth()));
-//
-//    final PixelRectangle pixelrect = new PixelRectangle.GenericPixelRect(srcFmt, new Dimension(width, height),
-//        srcStrideBytes, srcIsGLOriented, srcPixels);
-//
-//    PointerIcon pi = disp.createPointerIcon(PixelRectangle pixelrect,
-//                                            hotspotX,
-//                                            hotspotY);
-//
-//    window.setPointerIcon(pi);
+    Display disp = window.getScreen().getDisplay();
+    BufferedImage bimg = (BufferedImage)image.getNative();
+    DataBufferInt dbuf = (DataBufferInt)bimg.getData().getDataBuffer();
+    int[] ipix = dbuf.getData();
+    ByteBuffer pixels = ByteBuffer.allocate(ipix.length * 4);
+    pixels.asIntBuffer().put(ipix);
+    PixelFormat format = PixelFormat.ARGB8888;
+    final Dimension size = new Dimension(bimg.getWidth(), bimg.getHeight());
+    PixelRectangle pixelrect = new PixelRectangle.GenericPixelRect(format, size, 0, false, pixels);
+    PointerIcon pi = disp.createPointerIcon(pixelrect, hotspotX, hotspotY);
+    window.setPointerIcon(pi);
   }
 
 
