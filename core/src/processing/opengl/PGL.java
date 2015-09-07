@@ -75,13 +75,6 @@ public abstract class PGL {
   protected static boolean USE_DIRECT_BUFFERS = true;
   protected static int MIN_DIRECT_BUFFER_SIZE = 1;
 
-  /** This flag enables/disables a hack to make sure that anything drawn
-   * in setup will be maintained even a renderer restart (e.g.: smooth change).
-   * See the code and comments involving this constant in
-   * PGraphicsOpenGL.endDraw().
-   */
-  protected static boolean SAVE_SURFACE_TO_PIXELS_HACK = false;
-
   /** Enables/disables mipmap use. */
   protected static boolean MIPMAPS_ENABLED = true;
 
@@ -138,6 +131,7 @@ public abstract class PGL {
   // FBO layer
 
   protected boolean requestedFBOLayer = false;
+  protected boolean requestedFBOLayerReset = false;
   protected boolean fboLayerCreated = false;
   protected boolean fboLayerInUse = false;
   protected boolean firstFrame = true;
@@ -446,6 +440,11 @@ public abstract class PGL {
   }
 
 
+  public void dispose() {
+    destroyFBOLayer();
+  }
+
+
   public void setPrimary(boolean primary) {
     primaryPGL = primary;
   }
@@ -479,27 +478,6 @@ public abstract class PGL {
 //  protected abstract void registerListeners();
 
 
-  protected void deleteSurface() {
-    if (threadIsCurrent() && fboLayerCreated) {
-      deleteFramebuffers(1, glColorFbo);
-      deleteTextures(2, glColorTex);
-      deleteRenderbuffers(1, glDepthStencil);
-      deleteRenderbuffers(1, glDepth);
-      deleteRenderbuffers(1, glStencil);
-
-      deleteFramebuffers(1, glMultiFbo);
-      deleteRenderbuffers(1, glMultiColor);
-      deleteRenderbuffers(1, glMultiDepthStencil);
-      deleteRenderbuffers(1, glMultiDepth);
-      deleteRenderbuffers(1, glMultiStencil);
-    }
-
-    fboLayerCreated = false;
-    fboLayerInUse = false;
-    firstFrame = false;
-  }
-
-
   protected int getReadFramebuffer()  {
     return fboLayerInUse ? glColorFbo.get(0) : 0;
   }
@@ -529,6 +507,11 @@ public abstract class PGL {
 
   public void requestFBOLayer() {
     requestedFBOLayer = true;
+  }
+
+
+  public void requestFBOLayerReset() {
+    requestedFBOLayerReset = true;
   }
 
 
@@ -671,6 +654,10 @@ public abstract class PGL {
 
   protected void beginDraw(boolean pclear) {
     if (requestedFBOLayer) {
+      if (requestedFBOLayerReset) {
+        destroyFBOLayer();
+        requestedFBOLayerReset = false;
+      }
       if (!fboLayerCreated) createFBOLayer();
 
       bindFramebufferImpl(FRAMEBUFFER, glColorFbo.get(0));
@@ -711,9 +698,7 @@ public abstract class PGL {
       fboLayerInUse = false;
     }
 
-    if (firstFrame) {
-      firstFrame = false;
-    }
+    firstFrame = false;
   }
 
 
@@ -917,6 +902,27 @@ public abstract class PGL {
     }
 
     fboLayerCreated = true;
+  }
+
+
+  protected void destroyFBOLayer() {
+    if (threadIsCurrent() && fboLayerCreated) {
+      deleteFramebuffers(1, glColorFbo);
+      deleteTextures(2, glColorTex);
+      deleteRenderbuffers(1, glDepthStencil);
+      deleteRenderbuffers(1, glDepth);
+      deleteRenderbuffers(1, glStencil);
+
+      deleteFramebuffers(1, glMultiFbo);
+      deleteRenderbuffers(1, glMultiColor);
+      deleteRenderbuffers(1, glMultiDepthStencil);
+      deleteRenderbuffers(1, glMultiDepth);
+      deleteRenderbuffers(1, glMultiStencil);
+    }
+
+    fboLayerCreated = false;
+    fboLayerInUse = false;
+//    firstFrame = false;
   }
 
   private void createDepthAndStencilBuffer(boolean multisample, int depthBits,

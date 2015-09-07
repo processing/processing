@@ -3,15 +3,11 @@ package processing.opengl;
 import java.awt.Component;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-//import java.awt.Dimension;
 import java.awt.Point;
-//import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +15,6 @@ import com.jogamp.common.util.IOUtil.ClassResources;
 import com.jogamp.nativewindow.NativeSurface;
 import com.jogamp.nativewindow.ScalableSurface;
 import com.jogamp.nativewindow.util.Dimension;
-import com.jogamp.nativewindow.util.DimensionImmutable;
 import com.jogamp.nativewindow.util.PixelFormat;
 import com.jogamp.nativewindow.util.PixelRectangle;
 import com.jogamp.opengl.GLAnimatorControl;
@@ -36,8 +31,6 @@ import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Screen;
 import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.event.InputEvent;
-//import com.jogamp.newt.event.WindowAdapter;
-//import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.util.FPSAnimator;
 
@@ -737,7 +730,13 @@ public class PSurfaceJOGL implements PSurface {
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
-
+//      int c = graphics.backgroundColor;
+//      pgl.clearColor(((c >> 16) & 0xff) / 255f,
+//                     ((c >>  8) & 0xff) / 255f,
+//                     ((c >>  0) & 0xff) / 255f,
+//                     ((c >> 24) & 0xff) / 255f);
+//      pgl.clear(PGL.COLOR_BUFFER_BIT);
+      pgl.requestFBOLayerReset();
 //      final float[] valReqSurfacePixelScale = window.getRequestedSurfaceScale(new float[2]);
       window.getCurrentSurfaceScale(currentPixelScale);
 //      final float[] nativeSurfacePixelScale = window.getMaximumSurfaceScale(new float[2]);

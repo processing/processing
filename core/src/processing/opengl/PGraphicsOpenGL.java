@@ -418,9 +418,6 @@ public class PGraphicsOpenGL extends PGraphics {
   /** True if we are inside a beginDraw()/endDraw() block. */
   protected boolean drawing = false;
 
-  /** Used to indicate an OpenGL surface recreation */
-  protected boolean restoreSurface = false;
-
   /** Used to detect continuous use of the smooth/noSmooth functions */
   protected boolean smoothDisabled = false;
   protected int smoothCallCount = 0;
@@ -652,10 +649,8 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
-//    deleteFinalizedGLResources(pgl);
-
     if (primaryGraphics) {
-      pgl.deleteSurface();
+      pgl.dispose();
     }
   }
 
@@ -2195,17 +2190,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     // Flushing any remaining geometry.
     flush();
-
-    if (PGL.SAVE_SURFACE_TO_PIXELS_HACK &&
-        (!getPrimaryPG().initialized || parent.frameCount == 0)) {
-      // Smooth was disabled/enabled at some point during drawing. We save
-      // the current contents of the back buffer (because the  buffers haven't
-      // been swapped yet) to the pixels array. The frameCount == 0 condition
-      // is to handle the situation when no smooth is called in setup in the
-      // PDE, but the OpenGL appears to be recreated due to the size() nastiness.
-      saveSurfaceToPixels();
-      restoreSurface = true;
-    }
 
     if (primaryGraphics) {
       endOnscreenDraw();
@@ -6091,17 +6075,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void saveSurfaceToPixels() {
-    allocatePixels();
-    readPixels();
-  }
-
-
-  protected void restoreSurfaceFromPixels() {
-    drawPixels(0, 0, width, height);
-  }
-
-
   protected void readPixels() {
     updatePixelSize();
     beginPixelsOp(OP_READ);
@@ -7245,11 +7218,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (!settingsInited) {
       defaultSettings();
-    }
-
-    if (restoreSurface) {
-      restoreSurfaceFromPixels();
-      restoreSurface = false;
     }
 
     if (hints[DISABLE_DEPTH_MASK]) {
