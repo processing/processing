@@ -331,7 +331,6 @@ public class PSurfaceJOGL implements PSurface {
 
 
   protected void initAnimator() {
-//  System.err.println("1. create animator");
     animator = new FPSAnimator(window, 60);
     drawException = null;
     animator.setUncaughtExceptionHandler(new GLAnimatorControl.UncaughtExceptionHandler() {
@@ -340,7 +339,6 @@ public class PSurfaceJOGL implements PSurface {
                                     final GLAutoDrawable drawable,
                                     final Throwable cause) {
         synchronized (waitObject) {
-//        System.err.println("Caught exception: " + cause.getMessage());
           drawException = cause;
           waitObject.notify();
         }
@@ -386,7 +384,33 @@ public class PSurfaceJOGL implements PSurface {
 
   @Override
   public void setVisible(boolean visible) {
-    window.setVisible(visible);
+    try {
+      window.setVisible(visible);
+    } catch (Exception ex) {
+      Throwable glex = ex.getCause();
+      if (glex instanceof GLException) {
+        Throwable cause = glex.getCause();
+        if (cause instanceof UnsatisfiedLinkError) {
+          // https://github.com/processing/processing/issues/3453
+          // Special handling of missing libraries, for some reason throwing
+          // the cause still show the entire stack, including the enclosing
+          // exceptions from JOGL.
+          throw new UnsatisfiedLinkError(cause.getMessage());
+        } else {
+          try {
+            throw cause;
+          } catch (Throwable e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        } if (cause instanceof RuntimeException) {
+          throw (RuntimeException)cause;
+        } else {
+          throw new RuntimeException(cause);
+        }
+      }
+      throw ex;
+    }
   }
 
 
