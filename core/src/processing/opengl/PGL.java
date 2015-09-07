@@ -894,6 +894,8 @@ public abstract class PGL {
     clearColor(r, g, b, a);
     clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
 
+    bindFramebufferImpl(FRAMEBUFFER, 0);
+
     if (0 < pg.parent.frameCount) {
       // Copy the contents of the front and back screen buffers to the textures
       // of the FBO, so they are properly initialized.
@@ -913,8 +915,6 @@ public abstract class PGL {
                       0, 0, fboWidth, fboHeight,
                       COLOR_BUFFER_BIT, NEAREST);
     }
-
-    bindFramebufferImpl(FRAMEBUFFER, 0);
 
     fboLayerCreated = true;
   }
