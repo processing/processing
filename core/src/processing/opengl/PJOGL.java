@@ -1,9 +1,12 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Part of the Processing project - http://processing.org
+  Processing OpenGL (c) 2011-2015 Andres Colubri
 
-  Copyright (c) 2011-12 Ben Fry and Casey Reas
+  Part of the Processing project - http://processing.org
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2012-15 The Processing Foundation
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1126,12 +1129,12 @@ public class PJOGL extends PGL {
   }
 
   @Override
-  public void drawArrays(int mode, int first, int count) {
+  public void drawArraysImpl(int mode, int first, int count) {
     gl.glDrawArrays(mode, first, count);
   }
 
   @Override
-  public void drawElements(int mode, int count, int type, int offset) {
+  public void drawElementsImpl(int mode, int count, int type, int offset) {
     gl.glDrawElements(mode, count, type, offset);
   }
 
@@ -1643,11 +1646,6 @@ public class PJOGL extends PGL {
   }
 
   @Override
-  public void clear(int buf) {
-    gl.glClear(buf);
-  }
-
-  @Override
   public void clearColor(float r, float g, float b, float a) {
     gl.glClearColor(r, g, b, a);
   }
@@ -1660,6 +1658,11 @@ public class PJOGL extends PGL {
   @Override
   public void clearStencil(int s) {
     gl.glClearStencil(s);
+  }
+
+  @Override
+  public void clear(int buf) {
+    gl.glClear(buf);
   }
 
   ///////////////////////////////////////////////////////////

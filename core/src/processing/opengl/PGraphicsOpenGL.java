@@ -1,9 +1,12 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Part of the Processing project - http://processing.org
+  Processing OpenGL (c) 2011-2015 Andres Colubri
 
-  Copyright (c) 2004-13 Ben Fry and Casey Reas
+  Part of the Processing project - http://processing.org
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2012-15 The Processing Foundation
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -5922,9 +5925,6 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void backgroundImpl(PImage image) {
     backgroundImpl();
     set(0, 0, image);
-    if (0 < parent.frameCount) {
-      clearColor = true;
-    }
     // Setting the background as opaque. If this an offscreen surface, the
     // alpha channel will be set to 1 in endOffscreenDraw(), even if
     // blending operations during draw create translucent areas in the
@@ -6457,8 +6457,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     boolean needEndDraw = false;
-    if (primaryGraphics) pgl.requestFBOLayer();
-    else if (!drawing) {
+    if (primaryGraphics) {
+      pgl.requestFBOLayer();
+    } else if (!drawing) {
       beginDraw();
       needEndDraw = true;
     }
@@ -6964,7 +6965,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void beginOnscreenDraw() {
     updatePixelSize();
 
-    pgl.beginDraw(clearColor);
+    pgl.beginRender(pclearColor);
 
     if (drawFramebuffer == null) {
       drawFramebuffer = new FrameBuffer(this, pixelWidth, pixelHeight, true);
@@ -6986,7 +6987,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void endOnscreenDraw() {
-    pgl.endDraw(clearColor, parent.sketchWindowColor());
+    pgl.endRender(clearColor, parent.sketchWindowColor());
   }
 
 
