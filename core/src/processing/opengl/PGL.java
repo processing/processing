@@ -1,9 +1,12 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Part of the Processing project - http://processing.org
+  Processing OpenGL (c) 2011-2015 Andres Colubri
 
-  Copyright (c) 2011-13 Ben Fry and Casey Reas
+  Part of the Processing project - http://processing.org
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2012-15 The Processing Foundation
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -252,6 +255,13 @@ public abstract class PGL {
   protected FloatBuffer depthBuffer;
   protected ByteBuffer stencilBuffer;
 
+  //........................................................
+
+  // Rendering information
+
+  /** Used to register amount of geometry rendered in each frame. */
+  protected int geomCount = 0;
+  protected int pgeomCount;
 
   // ........................................................
 
@@ -652,14 +662,18 @@ public abstract class PGL {
   // Frame rendering
 
 
-  protected void beginDraw(boolean pclear) {
+  protected void beginRender(boolean pclearColor) {
+    pgeomCount = geomCount;
+    geomCount = 0;
+
     if (requestedFBOLayer) {
       if (requestedFBOLayerReset) {
         destroyFBOLayer();
         requestedFBOLayerReset = false;
       }
-      if (!fboLayerCreated) createFBOLayer();
+      if (!fboLayerCreated) createFBOLayer(pclearColor);
 
+      // Draw to the back texture
       bindFramebufferImpl(FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(backTex), 0);
@@ -677,7 +691,7 @@ public abstract class PGL {
         float b = ((argb) & 0xff) / 255.0f;
         clearColor(r, g, b, a);
         clear(COLOR_BUFFER_BIT);
-      } else if (!pclear) {
+      } else if (!pclearColor) {
         // Render previous back texture (now is the front) as background,
         // because no background() is being used ("incremental drawing")
         int x = 0;
@@ -702,7 +716,7 @@ public abstract class PGL {
   }
 
 
-  protected void endDraw(boolean clear, int windowColor) {
+  protected void endRender(boolean pclearColor, int windowColor) {
     if (fboLayerInUse) {
       syncBackTexture();
 
@@ -761,7 +775,7 @@ public abstract class PGL {
       int temp = frontTex;
       frontTex = backTex;
       backTex = temp;
-    } else if (!clear && 0 < pg.parent.frameCount || !pg.parent.isLooping()) {
+    } else if (!pclearColor && 0 < pg.parent.frameCount || !pg.parent.isLooping()) {
       requestFBOLayer();
     }
   }
@@ -798,7 +812,7 @@ public abstract class PGL {
   protected void endGL() { }
 
 
-  private void createFBOLayer() {
+  private void createFBOLayer(boolean pclearColor) {
     float scale = pg.getPixelScale();
 
     if (hasNpotTexSupport()) {
@@ -883,28 +897,18 @@ public abstract class PGL {
 
     if (0 < pg.parent.frameCount) {
       // Copy the contents of the front and back screen buffers to the textures
-      // of the FBO, so they are properly initialized.
-      if (pg.parent.isLooping()) {
-        bindFramebufferImpl(READ_FRAMEBUFFER, FRONT);
+      // of the FBO, so they are properly initialized. Note that the front buffer
+      // of the default framebuffer (the screen) contains the previous frame:
+      // https://www.opengl.org/wiki/Default_Framebuffer
+      // so it is copied to the front texture of the FBO layer:
+      if (pclearColor || 0 < pgeomCount || !pg.parent.isLooping()) {
         readBuffer(FRONT);
       } else {
-        bindFramebufferImpl(READ_FRAMEBUFFER, BACK);
+        // ...except when the previous frame has not been cleared and nothing was
+        // renderered while looping. In this case the back buffer, which holds the
+        // initial state of the previous frame, still contains the most up-to-date
+        // screen state.
         readBuffer(BACK);
-      }
-      bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
-      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
-                           TEXTURE_2D, glColorTex.get(backTex), 0);
-      drawBuffer(COLOR_ATTACHMENT0);
-      blitFramebuffer(0, 0, fboWidth, fboHeight,
-                      0, 0, fboWidth, fboHeight,
-                      COLOR_BUFFER_BIT, NEAREST);
-
-      if (pg.parent.isLooping()) {
-        bindFramebufferImpl(READ_FRAMEBUFFER, BACK);
-        readBuffer(BACK);
-      } else {
-        bindFramebufferImpl(READ_FRAMEBUFFER, FRONT);
-        readBuffer(FRONT);
       }
       bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
@@ -913,6 +917,17 @@ public abstract class PGL {
       blitFramebuffer(0, 0, fboWidth, fboHeight,
                       0, 0, fboWidth, fboHeight,
                       COLOR_BUFFER_BIT, NEAREST);
+
+      readBuffer(BACK);
+      bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                           TEXTURE_2D, glColorTex.get(backTex), 0);
+      drawBuffer(COLOR_ATTACHMENT0);
+      blitFramebuffer(0, 0, fboWidth, fboHeight,
+                      0, 0, fboWidth, fboHeight,
+                      COLOR_BUFFER_BIT, NEAREST);
+
+      bindFramebufferImpl(FRAMEBUFFER, 0);
     }
 
     fboLayerCreated = true;
@@ -2941,8 +2956,20 @@ public abstract class PGL {
   public abstract void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, int offset);
   public abstract void enableVertexAttribArray(int index);
   public abstract void disableVertexAttribArray(int index);
-  public abstract void drawArrays(int mode, int first, int count);
-  public abstract void drawElements(int mode, int count, int type, int offset);
+
+  public void drawArrays(int mode, int first, int count) {
+    geomCount += count;
+    drawArraysImpl(mode, first, count);
+  }
+
+  public abstract void drawArraysImpl(int mode, int first, int count);
+
+  public void drawElements(int mode, int count, int type, int offset) {
+    geomCount += count;
+    drawElementsImpl(mode, count, type, offset);
+  }
+
+  public abstract void drawElementsImpl(int mode, int count, int type, int offset);
 
   //////////////////////////////////////////////////////////////////////////////
 
@@ -3091,10 +3118,10 @@ public abstract class PGL {
   public abstract void depthMask(boolean mask);
   public abstract void stencilMask(int mask);
   public abstract void stencilMaskSeparate(int face, int mask);
-  public abstract void clear(int buf);
   public abstract void clearColor(float r, float g, float b, float a);
   public abstract void clearDepth(float d);
   public abstract void clearStencil(int s);
+  public abstract void clear(int buf);
 
   ///////////////////////////////////////////////////////////
 
