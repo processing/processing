@@ -48,10 +48,17 @@ public class LineMarker {
   private Problem problem;
 
 
-  public LineMarker(Problem problem, int y, boolean error) {
+  public LineMarker(Problem problem, boolean error) {
     this.problem = problem;
-    this.y = y;
     this.type = error ? ERROR : WARNING;
+  }
+
+
+  /**
+   * set y co-ordinate of the marker
+   */
+  public void setY(int y) {
+    this.y = y;
   }
 
 
@@ -60,6 +67,14 @@ public class LineMarker {
    */
   public int getY() {
     return y;
+  }
+
+
+  /**
+   * line number of the marker
+   */
+  public int getLineNumber() {
+    return problem.getLineNumber();
   }
 
 

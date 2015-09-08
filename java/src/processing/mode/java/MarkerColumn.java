@@ -89,6 +89,12 @@ public class MarkerColumn extends JPanel {
 	}
 
 
+	@Override
+	public void repaint() {
+	  recalculateMarkerPositions();
+	  super.repaint();
+	}
+
   public void paintComponent(Graphics g) {
     g.setColor(backgroundColor);
     g.fillRect(0, 0, getWidth(), getHeight());
@@ -117,14 +123,7 @@ public class MarkerColumn extends JPanel {
 	    new SwingWorker() {
 	      protected Object doInBackground() throws Exception {
 	        Sketch sketch = editor.getSketch();
-	        SketchCode code = sketch.getCurrentCode();
-	        int totalLines = 0;
 	        int currentTab = sketch.getCurrentCodeIndex();
-	        try {
-	          totalLines = Util.countLines(code.getDocumentText());
-	        } catch (BadLocationException e) {
-	          e.printStackTrace();
-	        }
 	        errorPoints = new ArrayList<>();
 
 	        // Each problem.getSourceLine() will have an extra line added because
@@ -132,14 +131,12 @@ public class MarkerColumn extends JPanel {
 	        synchronized (problems) {
 	          for (Problem problem : problems) {
 	            if (problem.getTabIndex() == currentTab) {
-	              // Ratio of error line to total lines
-	              float y = (problem.getLineNumber() + 1) / ((float) totalLines);
-	              // Ratio multiplied by height of the error bar
-	              y *= getHeight() - 15; // -15 is just a vertical offset
-	              errorPoints.add(new LineMarker(problem, (int) y, problem.isError()));
+	              errorPoints.add(new LineMarker(problem, problem.isError()));
 	            }
 	          }
 	        }
+
+	        recalculateMarkerPositions();
 	        return null;
 	      }
 
@@ -191,6 +188,31 @@ public class MarkerColumn extends JPanel {
 	    }.execute();
 	  } catch (Exception ex) {
 	    ex.printStackTrace();
+	  }
+	}
+
+
+	private void recalculateMarkerPositions() {
+	  List<LineMarker> errorPoints = getErrorPoints();
+	  if (errorPoints != null && errorPoints.size() > 0) {
+	    Sketch sketch = editor.getSketch();
+	    SketchCode code = sketch.getCurrentCode();
+	    int totalLines;
+	    try {
+	      totalLines = Util.countLines(code.getDocumentText());
+	    } catch (BadLocationException e) {
+	      e.printStackTrace();
+	      totalLines = 1; // do not divide by zero
+	    }
+
+	    for (LineMarker m : errorPoints) {
+	      // Ratio of error line to total lines
+	      float y = (m.getLineNumber() + 1) / ((float) totalLines);
+	      // Ratio multiplied by height of the error bar
+	      y *= getHeight() - 15; // -15 is just a vertical offset
+
+	      m.setY((int) y);
+	    }
 	  }
 	}
 
