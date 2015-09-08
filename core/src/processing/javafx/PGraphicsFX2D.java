@@ -1298,7 +1298,7 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   protected void defaultFontOrDeath(String method, float size) {
     super.defaultFontOrDeath(method, size);
-    textFontInfo = fontCache.get(textFont.getName(), textFont.getSize());
+    handleTextFont(textFont, size);
   }
 
 
@@ -1313,7 +1313,7 @@ public class PGraphicsFX2D extends PGraphics {
     if (textFont == null) {
       defaultFontOrDeath("textAscent");
     }
-    if (textFontInfo == FontInfo.NON_NATIVE) {
+    if (textFontInfo.font == null) {
       return super.textAscent();
     }
     return textFontInfo.ascent;
@@ -1325,7 +1325,7 @@ public class PGraphicsFX2D extends PGraphics {
     if (textFont == null) {
       defaultFontOrDeath("textDescent");
     }
-    if (textFontInfo == FontInfo.NON_NATIVE) {
+    if (textFontInfo.font == null) {
       return super.textDescent();
     }
     return textFontInfo.descent;
@@ -1337,11 +1337,13 @@ public class PGraphicsFX2D extends PGraphics {
     // this should be enough e.g. for all grays and alpha combos
     static final int MAX_CACHED_COLORS_PER_FONT = 1 << 16;
 
-    static final FontInfo NON_NATIVE = new FontInfo();
-
+    // used only when there is native font
     Font font;
     float ascent;
     float descent;
+
+    // used only when there is no native font
+    // maps 32-bit color to the arrays of tinted glyph images
     Map<Integer, PImage[]> tintCache;
   }
 
@@ -1376,7 +1378,10 @@ public class PGraphicsFX2D extends PGraphics {
 
     FontInfo get(String name, float size) {
       if (nonNativeNames.contains(name)) {
-        return FontInfo.NON_NATIVE;
+        // Don't have native font, using glyph images.
+        // Size is set to zero, because all sizes of this font
+        // should share one FontInfo with one tintCache.
+        size = 0;
       }
       retrievingKey.name = name;
       retrievingKey.size = size;
@@ -1384,6 +1389,13 @@ public class PGraphicsFX2D extends PGraphics {
     }
 
     void put(String name, float size, FontInfo fontInfo) {
+      if (fontInfo.font == null) {
+        // Don't have native font, using glyph images.
+        // Size is set to zero, because all sizes of this font
+        // should share one FontInfo with one tintCache.
+        nonNativeNames.add(name);
+        size = 0;
+      }
       Key key = new Key();
       key.name = name;
       key.size = size;
@@ -1393,7 +1405,8 @@ public class PGraphicsFX2D extends PGraphics {
     FontInfo createFontInfo(Font font) {
       FontInfo result = new FontInfo();
       result.font = font;
-      { // measure ascent and descent
+      if (font != null) {
+        // measure ascent and descent
         measuringText.setFont(result.font);
         measuringText.setText(" ");
         float lineHeight = (float) measuringText.getLayoutBounds().getHeight();
@@ -1493,15 +1506,8 @@ public class PGraphicsFX2D extends PGraphics {
         font = new Font(size);
       }
 
-      if (font == null) {
-        // Ain't got nothing, let's use glyph images for this one
-        textFontInfo = FontInfo.NON_NATIVE;
-        fontCache.nonNativeNames.add(fontName);
-      } else {
-        // Native font found, save it in the cache and use it
-        textFontInfo = fontCache.createFontInfo(font);
-        fontCache.put(fontName, size, textFontInfo);
-      }
+      textFontInfo = fontCache.createFontInfo(font);
+      fontCache.put(fontName, size, textFontInfo);
     }
 
     context.setFont(textFontInfo.font);
@@ -1510,7 +1516,7 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   protected void textLineImpl(char[] buffer, int start, int stop, float x, float y) {
-    if (textFontInfo == FontInfo.NON_NATIVE) {
+    if (textFontInfo.font == null) {
       super.textLineImpl(buffer, start, stop, x, y);
     } else {
       context.fillText(new String(buffer, start, stop - start), x, y);
@@ -1581,7 +1587,7 @@ public class PGraphicsFX2D extends PGraphics {
       defaultFontOrDeath("textWidth");
     }
 
-    if (textFontInfo == FontInfo.NON_NATIVE) {
+    if (textFontInfo.font == null) {
       return super.textWidthImpl(buffer, start, stop);
     }
 
