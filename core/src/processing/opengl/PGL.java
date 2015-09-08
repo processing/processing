@@ -761,7 +761,7 @@ public abstract class PGL {
       int temp = frontTex;
       frontTex = backTex;
       backTex = temp;
-    } else if (!clear && pg.parent.frameCount == 1) {
+    } else if (!clear && 0 < pg.parent.frameCount || !pg.parent.isLooping()) {
       requestFBOLayer();
     }
   }
@@ -884,18 +884,32 @@ public abstract class PGL {
     if (0 < pg.parent.frameCount) {
       // Copy the contents of the front and back screen buffers to the textures
       // of the FBO, so they are properly initialized.
-      bindFramebufferImpl(READ_FRAMEBUFFER, BACK);
+      if (pg.parent.isLooping()) {
+        bindFramebufferImpl(READ_FRAMEBUFFER, FRONT);
+        readBuffer(FRONT);
+      } else {
+        bindFramebufferImpl(READ_FRAMEBUFFER, BACK);
+        readBuffer(BACK);
+      }
       bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(backTex), 0);
+      drawBuffer(COLOR_ATTACHMENT0);
       blitFramebuffer(0, 0, fboWidth, fboHeight,
                       0, 0, fboWidth, fboHeight,
                       COLOR_BUFFER_BIT, NEAREST);
 
-      bindFramebufferImpl(READ_FRAMEBUFFER, FRONT);
+      if (pg.parent.isLooping()) {
+        bindFramebufferImpl(READ_FRAMEBUFFER, BACK);
+        readBuffer(BACK);
+      } else {
+        bindFramebufferImpl(READ_FRAMEBUFFER, FRONT);
+        readBuffer(FRONT);
+      }
       bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(frontTex), 0);
+      drawBuffer(COLOR_ATTACHMENT0);
       blitFramebuffer(0, 0, fboWidth, fboHeight,
                       0, 0, fboWidth, fboHeight,
                       COLOR_BUFFER_BIT, NEAREST);

@@ -692,8 +692,12 @@ public class PSurfaceJOGL implements PSurface {
   class DrawListener implements GLEventListener {
     public void display(GLAutoDrawable drawable) {
       pgl.getGL(drawable);
-//      System.out.println(" - " + sketch.frameCount);
+      int pframeCount = sketch.frameCount;
       sketch.handleDraw();
+      if (pframeCount == sketch.frameCount) {
+        pgl.beginDraw(false);
+        pgl.endDraw(false, sketch.sketchWindowColor());
+      }
 
       if (sketch.frameCount == 1) {
         requestFocus();
