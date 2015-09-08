@@ -12105,11 +12105,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
             cache.incCounts(index, 6, 1);
           }
-
-          // Vertices for next bevel
-          lastInd[0] = (short) (count + 2);
-          lastInd[1] = (short) (count + 3);
         }
+
+        // The last two vertices of the segment will be used in the next
+        // bevel triangle
+        lastInd[0] = (short) (count + 2);
+        lastInd[1] = (short) (count + 3);
       }
       return index;
     }
