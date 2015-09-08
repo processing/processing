@@ -11060,11 +11060,8 @@ public class PGraphicsOpenGL extends PGraphics {
           float y = lineVertices[index  ];
 
           index = 4 * i;
-          float xa = lineDirections[index++];
-          float ya = lineDirections[index  ];
-
-          float dx = xa - x;
-          float dy = ya - y;
+          float dx = lineDirections[index++];
+          float dy = lineDirections[index  ];
 
           index = 4 * i;
           lineVertices[index++] = x*tr.m00 + y*tr.m01 + tr.m02;
@@ -11162,13 +11159,9 @@ public class PGraphicsOpenGL extends PGraphics {
           float w = lineVertices[index  ];
 
           index = 4 * i;
-          float xa = lineDirections[index++];
-          float ya = lineDirections[index++];
-          float za = lineDirections[index  ];
-
-          float dx = xa - x;
-          float dy = ya - y;
-          float dz = za - z;
+          float dx = lineDirections[index++];
+          float dy = lineDirections[index++];
+          float dz = lineDirections[index  ];
 
           index = 4 * i;
           lineVertices[index++] = x*tr.m00 + y*tr.m01 + z*tr.m02 + w*tr.m03;
