@@ -9,6 +9,7 @@ X deal with ConcurrentModificationException in Editor
 X   "Error repainting line range" and ConcurrentModificationException 
 X   https://github.com/processing/processing/issues/3726
 X repairs to prevent memory leak in EditorConsole
+
 _ add jar files from 'code' folder to the library path
 _   Code editor wrongly detects errors for libraries in code folder
 _   https://github.com/processing/processing/issues/3732
@@ -18,6 +19,10 @@ _   happens when user does 'new color' instead of 'color'
 _   https://github.com/processing/processing/issues/3739
 _ confusion when // tweak is used
 _   https://github.com/processing/processing/issues/3742
+
+contribs
+X Code auto-complete not working when Box2D library imported
+X   https://github.com/processing/processing/issues/3720
 
 gsoc
 X CM: Category dropdown alignment
