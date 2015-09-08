@@ -723,8 +723,8 @@ public class PSurfaceJOGL implements PSurface {
       if (pframeCount == sketch.frameCount) {
         // This hack allows the FBO layer to be swapped normally even if
         // the sketch is no looping, otherwise background artifacts will occur.
-        pgl.beginRender(false);
-        pgl.endRender(false, sketch.sketchWindowColor());
+        pgl.beginRender();
+        pgl.endRender(sketch.sketchWindowColor());
       }
 
       if (sketch.frameCount == 1) {

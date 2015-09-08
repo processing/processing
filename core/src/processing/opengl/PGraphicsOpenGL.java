@@ -439,10 +439,6 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Viewport dimensions. */
   protected IntBuffer viewport;
 
-  /** Used to register calls to glClear. */
-  protected boolean clearColor;
-  protected boolean pclearColor;
-
   protected boolean openContour = false;
   protected boolean breakShape = false;
   protected boolean defaultEdges = false;
@@ -2175,7 +2171,7 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       beginOffscreenDraw();
     }
-    setDrawDefaults(); // TODO: look at using checkSettings() instead...
+    checkSettings();
 
     drawing = true;
 
@@ -2520,8 +2516,6 @@ public class PGraphicsOpenGL extends PGraphics {
     super.defaultSettings();
 
     manipulatingCamera = false;
-
-    clearColor = false;
 
     // easiest for beginners
     textureMode(IMAGE);
@@ -5937,17 +5931,8 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   protected void backgroundImpl() {
     flush();
-
-    if (!hints[DISABLE_DEPTH_MASK]) {
-      pgl.clearDepth(1);
-      pgl.clear(PGL.DEPTH_BUFFER_BIT);
-    }
-
-    pgl.clearColor(backgroundR, backgroundG, backgroundB, backgroundA);
-    pgl.clear(PGL.COLOR_BUFFER_BIT);
-    if (0 < parent.frameCount) {
-      clearColor = true;
-    }
+    pgl.clearBackground(backgroundR, backgroundG, backgroundB, backgroundA,
+                        !hints[DISABLE_DEPTH_MASK]);
     loaded = false;
   }
 
@@ -6965,7 +6950,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void beginOnscreenDraw() {
     updatePixelSize();
 
-    pgl.beginRender(pclearColor);
+    pgl.beginRender();
 
     if (drawFramebuffer == null) {
       drawFramebuffer = new FrameBuffer(this, pixelWidth, pixelHeight, true);
@@ -6987,7 +6972,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void endOnscreenDraw() {
-    pgl.endRender(clearColor, parent.sketchWindowColor());
+    pgl.endRender(parent.sketchWindowColor());
   }
 
 
@@ -6995,7 +6980,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // Getting the context and capabilities from the main renderer.
     loadTextureImpl(textureSampling, false);
 
-    // In case of reinitialization (for example, when the smooth level
+    // In case of re-initialization (for example, when the smooth level
     // is changed), we make sure that all the OpenGL resources associated
     // to the surface are released by calling delete().
     if (offscreenFramebuffer != null) {
@@ -7113,7 +7098,14 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void setDrawDefaults() {
+  @Override
+  protected void checkSettings() {
+    super.checkSettings();
+    setGLSettings();
+  }
+
+
+  protected void setGLSettings() {
     inGeo.clear();
     tessGeo.clear();
     texCache.clear();
@@ -7217,10 +7209,6 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.clearStencil(0);
     pgl.clear(PGL.DEPTH_BUFFER_BIT | PGL.STENCIL_BUFFER_BIT);
 
-    if (!settingsInited) {
-      defaultSettings();
-    }
-
     if (hints[DISABLE_DEPTH_MASK]) {
       pgl.depthMask(false);
     } else {
@@ -7228,9 +7216,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     pixelsOp = OP_NONE;
-
-    pclearColor = clearColor;
-    clearColor = false;
 
     modified = false;
     loaded = false;

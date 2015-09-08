@@ -236,7 +236,7 @@ public class PJOGL extends PGL {
 
   @Override
   protected void swapBuffers()  {
-    PSurfaceJOGL surf = (PSurfaceJOGL)pg.parent.getSurface();
+    PSurfaceJOGL surf = (PSurfaceJOGL)sketch.getSurface();
     surf.window.swapBuffers();
   }
 
@@ -248,44 +248,44 @@ public class PJOGL extends PGL {
         projMatrix = new float[16];
       }
       gl2x.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-      projMatrix[ 0] = pg.projection.m00;
-      projMatrix[ 1] = pg.projection.m10;
-      projMatrix[ 2] = pg.projection.m20;
-      projMatrix[ 3] = pg.projection.m30;
-      projMatrix[ 4] = pg.projection.m01;
-      projMatrix[ 5] = pg.projection.m11;
-      projMatrix[ 6] = pg.projection.m21;
-      projMatrix[ 7] = pg.projection.m31;
-      projMatrix[ 8] = pg.projection.m02;
-      projMatrix[ 9] = pg.projection.m12;
-      projMatrix[10] = pg.projection.m22;
-      projMatrix[11] = pg.projection.m32;
-      projMatrix[12] = pg.projection.m03;
-      projMatrix[13] = pg.projection.m13;
-      projMatrix[14] = pg.projection.m23;
-      projMatrix[15] = pg.projection.m33;
+      projMatrix[ 0] = graphics.projection.m00;
+      projMatrix[ 1] = graphics.projection.m10;
+      projMatrix[ 2] = graphics.projection.m20;
+      projMatrix[ 3] = graphics.projection.m30;
+      projMatrix[ 4] = graphics.projection.m01;
+      projMatrix[ 5] = graphics.projection.m11;
+      projMatrix[ 6] = graphics.projection.m21;
+      projMatrix[ 7] = graphics.projection.m31;
+      projMatrix[ 8] = graphics.projection.m02;
+      projMatrix[ 9] = graphics.projection.m12;
+      projMatrix[10] = graphics.projection.m22;
+      projMatrix[11] = graphics.projection.m32;
+      projMatrix[12] = graphics.projection.m03;
+      projMatrix[13] = graphics.projection.m13;
+      projMatrix[14] = graphics.projection.m23;
+      projMatrix[15] = graphics.projection.m33;
       gl2x.glLoadMatrixf(projMatrix, 0);
 
       if (mvMatrix == null) {
         mvMatrix = new float[16];
       }
       gl2x.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-      mvMatrix[ 0] = pg.modelview.m00;
-      mvMatrix[ 1] = pg.modelview.m10;
-      mvMatrix[ 2] = pg.modelview.m20;
-      mvMatrix[ 3] = pg.modelview.m30;
-      mvMatrix[ 4] = pg.modelview.m01;
-      mvMatrix[ 5] = pg.modelview.m11;
-      mvMatrix[ 6] = pg.modelview.m21;
-      mvMatrix[ 7] = pg.modelview.m31;
-      mvMatrix[ 8] = pg.modelview.m02;
-      mvMatrix[ 9] = pg.modelview.m12;
-      mvMatrix[10] = pg.modelview.m22;
-      mvMatrix[11] = pg.modelview.m32;
-      mvMatrix[12] = pg.modelview.m03;
-      mvMatrix[13] = pg.modelview.m13;
-      mvMatrix[14] = pg.modelview.m23;
-      mvMatrix[15] = pg.modelview.m33;
+      mvMatrix[ 0] = graphics.modelview.m00;
+      mvMatrix[ 1] = graphics.modelview.m10;
+      mvMatrix[ 2] = graphics.modelview.m20;
+      mvMatrix[ 3] = graphics.modelview.m30;
+      mvMatrix[ 4] = graphics.modelview.m01;
+      mvMatrix[ 5] = graphics.modelview.m11;
+      mvMatrix[ 6] = graphics.modelview.m21;
+      mvMatrix[ 7] = graphics.modelview.m31;
+      mvMatrix[ 8] = graphics.modelview.m02;
+      mvMatrix[ 9] = graphics.modelview.m12;
+      mvMatrix[10] = graphics.modelview.m22;
+      mvMatrix[11] = graphics.modelview.m32;
+      mvMatrix[12] = graphics.modelview.m03;
+      mvMatrix[13] = graphics.modelview.m13;
+      mvMatrix[14] = graphics.modelview.m23;
+      mvMatrix[15] = graphics.modelview.m33;
       gl2x.glLoadMatrixf(mvMatrix, 0);
     }
   }
@@ -420,14 +420,14 @@ public class PJOGL extends PGL {
 
   @Override
   protected String[] loadFragmentShader(String filename, int version) {
-    String[] fragSrc0 = pg.parent.loadStrings(filename);
+    String[] fragSrc0 = sketch.loadStrings(filename);
     return preprocessFragmentSource(fragSrc0, version);
   }
 
 
   @Override
   protected String[] loadVertexShader(String filename, int version) {
-    String[] vertSrc0 = pg.parent.loadStrings(filename);
+    String[] vertSrc0 = sketch.loadStrings(filename);
     return preprocessVertexSource(vertSrc0, version);
   }
 
@@ -1051,7 +1051,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void viewport(int x, int y, int w, int h) {
-    float scale = pg.getPixelScale();
+    float scale = graphics.getPixelScale();
     viewportImpl((int)scale * x, (int)(scale * y), (int)(scale * w), (int)(scale * h));
   }
 
@@ -1561,7 +1561,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void scissor(int x, int y, int w, int h) {
-    float scale = pg.getPixelScale();
+    float scale = graphics.getPixelScale();
     gl.glScissor((int)scale * x, (int)(scale * y), (int)(scale * w), (int)(scale * h));
 //    gl.glScissor(x, y, w, h);
   }
