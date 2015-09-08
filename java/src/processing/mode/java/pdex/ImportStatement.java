@@ -69,11 +69,18 @@ public class ImportStatement {
 	  return ret;
 	}
 
-  public int getTab() {
-    return tab;
-  }
+	public int getTab() {
+		return tab;
+	}
 
-  public int getLineNumber() {
-    return lineNumber;
-  }
+	public int getLineNumber() {
+		return lineNumber;
+	}
+
+	public boolean isStarredImport() {
+		String ret = new String(importName.trim());
+		if(ret.endsWith(";"))
+			ret = ret.substring(0, ret.length() - 1).trim();
+		return ret.endsWith(".*");
+	}
 }

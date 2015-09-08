@@ -1297,24 +1297,15 @@ public class ASTGenerator {
 
     for (ImportStatement impS : imports) {
       String temp = impS.getPackageName();
-
-      if (temp.endsWith("*")) {
-        temp = temp.substring(0, temp.length() - 1) + className;
-      } else {
-        int x = temp.lastIndexOf('.');
-        //log("fclife " + temp.substring(x + 1));
-        if (!temp.substring(x + 1).equals(className)) {
-          continue;
-        }
+      if (impS.isStarredImport() && className.indexOf('.') == -1) {
+        temp = impS.getPackageName() + "." + className;
       }
       tehClass = loadClass(temp);
       if (tehClass != null) {
         log(tehClass.getName() + " located.");
         return tehClass;
       }
-
-      //log("Doesn't exist in package: " + impS.getImportName());
-
+      //log("Doesn't exist in imp package: " + impS.getImportName());
     }
 
     PdePreprocessor p = new PdePreprocessor(null);

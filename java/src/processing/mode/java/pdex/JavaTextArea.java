@@ -181,6 +181,7 @@ public class JavaTextArea extends JEditTextArea {
         if (suggestion.isVisible()) {
           prepareSuggestions(evt);
         }
+        return;
       }
     }
 
