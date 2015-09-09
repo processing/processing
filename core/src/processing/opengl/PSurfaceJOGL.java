@@ -732,26 +732,17 @@ public class PSurfaceJOGL implements PSurface {
       }
 
       if (sketch.exitCalled()) {
-//        System.out.println("exit");
-        animator.stop();
-        sketch.dispose();
+        sketch.dispose(); // calls stopThread(), which stops the animator.
         sketch.exitActual();
       }
     }
     public void dispose(GLAutoDrawable drawable) {
-//      pgl.getGL(drawable);
-//      System.out.println("dispose");
       sketch.dispose();
-//      if (sketch.exitCalled()) {
-//        sketch.exitActual();
-//      }
     }
     public void init(GLAutoDrawable drawable) {
-//      System.err.println("2. init drawable");
       pgl.getGL(drawable);
       pgl.init(drawable);
       sketch.start();
-//      setSize(sketchWidth, sketchHeight);
 
       int c = graphics.backgroundColor;
       pgl.clearColor(((c >> 16) & 0xff) / 255f,
@@ -810,8 +801,8 @@ public class PSurfaceJOGL implements PSurface {
 
     @Override
     public void windowDestroyNotify(com.jogamp.newt.event.WindowEvent arg0) {
-      PSurfaceJOGL.this.sketch.dispose();
-      PSurfaceJOGL.this.sketch.exitActual();
+      sketch.dispose();
+      sketch.exitActual();
     }
 
     @Override
@@ -829,7 +820,6 @@ public class PSurfaceJOGL implements PSurface {
     @Override
     public void windowResized(com.jogamp.newt.event.WindowEvent arg0) {
     }
-
   }
 
 
