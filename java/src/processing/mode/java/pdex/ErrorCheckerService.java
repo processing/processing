@@ -212,13 +212,24 @@ public class ErrorCheckerService implements Runnable {
    */
   final public String importRegexp = "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
 
+//  /**
+//   * Regexp for function declarations. (Used from Processing source)
+//   */
+//  final Pattern FUNCTION_DECL = Pattern
+//    .compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*"
+//      + "(void|int|float|double|String|char|byte|boolean)"
+//      + "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(", Pattern.MULTILINE);
+
   /**
-   * Regexp for function declarations. (Used from Processing source)
+   * Matches setup or draw function declaration. We search for all those
+   * modifiers and return types in order to have proper error message
+   * when people use incompatible modifiers or non-void return type
    */
-  final Pattern FUNCTION_DECL = Pattern
-    .compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*"
-      + "(void|int|float|double|String|char|byte|boolean)"
-      + "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(", Pattern.MULTILINE);
+  private static final Pattern SETUP_OR_DRAW_FUNCTION_DECL =
+      Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
+                      "(void|int|float|double|String|char|byte|boolean)" +
+                      "(\\s*\\[\\s*\\])?\\s+(setup|draw)\\s*\\(",
+                      Pattern.MULTILINE);
 
   protected ErrorMessageSimplifier errorMsgSimplifier;
 
@@ -1302,9 +1313,10 @@ public class ErrorCheckerService implements Runnable {
     className = (editor == null) ?
       "DefaultClass" : editor.getSketch().getName();
 
-    // Check whether the code is being written in STATIC mode(no function
-    // declarations) - append class declaration and void setup() declaration
-    Matcher matcher = FUNCTION_DECL.matcher(sourceAlt);
+    // Check whether the code is being written in STATIC mode
+    // (no setup or draw function declarations) - append class
+    // declaration and void setup() declaration
+    Matcher matcher = SETUP_OR_DRAW_FUNCTION_DECL.matcher(sourceAlt);
     staticMode = !matcher.find();
     StringBuilder sb = new StringBuilder();
     sb.append(xqpreproc.prepareImports(programImports));

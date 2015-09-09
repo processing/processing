@@ -37,9 +37,6 @@ import processing.app.Preferences;
 import processing.app.SketchException;
 import processing.core.PApplet;
 import processing.data.StringList;
-import processing.mode.java.preproc.PdeLexer;
-import processing.mode.java.preproc.PdeRecognizer;
-import processing.mode.java.preproc.PdeTokenTypes;
 
 import antlr.*;
 import antlr.collections.AST;
@@ -174,7 +171,7 @@ public class PdePreprocessor {
 //    "(?:^|\\s|;)void\\s";
   /** Used to grab the start of setup() so we can mine it for size() */
   static private final String VOID_SETUP_REGEX =
-    "(?:^|\\s|;)void\\ssetup\\s*\\(";
+    "(?:^|\\s|;)void\\s+setup\\s*\\(";
 
 
   // Can't only match any 'public class', needs to be a PApplet
@@ -183,11 +180,22 @@ public class PdePreprocessor {
     Pattern.compile("(^|;)\\s*public\\s+class\\s+\\S+\\s+extends\\s+PApplet", Pattern.MULTILINE);
 
 
-  private static final Pattern FUNCTION_DECL =
-    Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
-                    "(void|int|float|double|String|char|byte)" +
-                    "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
-                    Pattern.MULTILINE);
+//  private static final Pattern FUNCTION_DECL =
+//    Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
+//                    "(void|int|float|double|String|char|byte)" +
+//                    "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
+//                    Pattern.MULTILINE);
+
+  /**
+   * Matches setup or draw function declaration. We search for all those
+   * modifiers and return types in order to have proper error message
+   * when people use incompatible modifiers or non-void return type
+   */
+  private static final Pattern SETUP_OR_DRAW_FUNCTION_DECL =
+      Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
+                      "(void|int|float|double|String|char|byte|boolean)" +
+                      "(\\s*\\[\\s*\\])?\\s+(setup|draw)\\s*\\(",
+                      Pattern.MULTILINE);
 
 
   public PdePreprocessor(final String sketchName) {
@@ -863,7 +871,7 @@ public class PdePreprocessor {
         parser = createParser(program);
         parser.pdeProgram();
       }
-    } else if (FUNCTION_DECL.matcher(uncomment).find()) {
+    } else if (SETUP_OR_DRAW_FUNCTION_DECL.matcher(uncomment).find()) {
       setMode(Mode.ACTIVE);
       parser.activeProgram();
     } else {
