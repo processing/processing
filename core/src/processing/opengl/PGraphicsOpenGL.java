@@ -11823,13 +11823,17 @@ public class PGraphicsOpenGL extends PGraphics {
       firstLineIndexCache = index;
       int i0 = 0;
       int i1 = -1;
+      int findex = 0;
       short[] lastInd = {-1, -1};
       short firstInd = -1;
       for (int ln = 0; ln < lineCount - 1; ln++) {
         i1 = ln + 1;
         if (0 < nBevelTr) {
           index = addLineSegment3D(i0, i1, i1 - 2, i1 - 1, index, lastInd, false);
-          if (ln == 0) firstInd = (short)(lastInd[0] - 2);
+          if (ln == 0) {
+            findex = index;
+            firstInd = (short)(lastInd[0] - 2);
+          }
         } else {
           index = addLineSegment3D(i0, i1, i1 - 2, i1 - 1, index, null, false);
         }
@@ -11837,7 +11841,9 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       index = addLineSegment3D(0, in.vertexCount - 1, i1 - 2, i1 - 1, index, lastInd, false);
       if (0 < nBevelTr) {
-        index = addBevel3D(0, 0, in.vertexCount - 1, index, lastInd, firstInd, false);
+        if (findex == index) {
+          index = addBevel3D(0, 0, in.vertexCount - 1, index, lastInd, firstInd, false);
+        }
       }
       lastLineIndexCache = index;
     }
@@ -11912,6 +11918,7 @@ public class PGraphicsOpenGL extends PGraphics {
       int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() :
                                               tess.lineIndexCache.getLast();
       firstLineIndexCache = index;
+      int findex = 0;
       short[] lastInd = {-1, -1};
       short firstInd = -1;
       int pi0 = -1;
@@ -11922,11 +11929,16 @@ public class PGraphicsOpenGL extends PGraphics {
         int i1 = edge[1];
         if (bevel) {
           if (edge[2] == EDGE_CLOSE) {
-            index = addBevel3D(edge[1], pi0, pi1, index, lastInd, firstInd, false);
+            if (findex == index) {
+              index = addBevel3D(edge[1], pi0, pi1, index, lastInd, firstInd, false);
+            }
             lastInd[0] = lastInd[1] = -1; // No join with next line segment.
           } else {
             index = addLineSegment3D(i0, i1, pi0, pi1, index, lastInd, false);
-            if (edge[2] == EDGE_START) firstInd = (short)(lastInd[0] - 2);
+            if (edge[2] == EDGE_START) {
+              findex = index;
+              firstInd = (short)(lastInd[0] - 2);
+            }
             if (edge[2] == EDGE_STOP || edge[2] == EDGE_SINGLE) {
               lastInd[0] = lastInd[1] = -1; // No join with next line segment.
             }
