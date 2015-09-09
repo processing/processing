@@ -171,7 +171,7 @@ public class PdePreprocessor {
 //    "(?:^|\\s|;)void\\s";
   /** Used to grab the start of setup() so we can mine it for size() */
   static private final String VOID_SETUP_REGEX =
-    "(?:^|\\s|;)void\\ssetup\\s*\\(";
+    "(?:^|\\s|;)void\\s+setup\\s*\\(";
 
 
   // Can't only match any 'public class', needs to be a PApplet
