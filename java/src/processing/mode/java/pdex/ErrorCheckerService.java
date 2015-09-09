@@ -227,7 +227,7 @@ public class ErrorCheckerService implements Runnable {
    */
   private static final Pattern SETUP_OR_DRAW_FUNCTION_DECL =
       Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
-                      "(void|int|float|double|String|char|byte)" +
+                      "(void|int|float|double|String|char|byte|boolean)" +
                       "(\\s*\\[\\s*\\])?\\s+(setup|draw)\\s*\\(",
                       Pattern.MULTILINE);
 
