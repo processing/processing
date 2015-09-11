@@ -12,6 +12,8 @@ o   https://github.com/processing/processing/issues/99
 X   won't fix for now, requires too much reworking on the image system
 X add surface.setAlwaysOnTop(boolean)
 X   https://github.com/processing/processing/issues/3718
+X Implement standard cursor types in OpenGL
+X   https://github.com/processing/processing/issues/3554
 
 andres
 X P2D: error calling surface.setTitle()

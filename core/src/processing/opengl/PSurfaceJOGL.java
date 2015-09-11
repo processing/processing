@@ -31,17 +31,14 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import com.jogamp.common.util.IOUtil.ClassResources;
@@ -1105,13 +1102,9 @@ public class PSurfaceJOGL implements PSurface {
     if (cursor == null) {
       String name = cursorNames.get(kind);
       if (name != null) {
-        //URL url = getClass().getResource("/processing/opengl/cursors/" + name + ".png");
-        URL url = getClass().getResource("cursors/" + name + ".png");
-        //byte[] b = PApplet.loadBytes(getClass().getResourceAsStream("/processing/opengl/cursors/" + name + ".png"));
-        //System.out.println(b.length);
-        ImageIcon icon = new ImageIcon(url);
+        ImageIcon icon =
+          new ImageIcon(getClass().getResource("cursors/" + name + ".png"));
         PImage img = new PImage(icon.getImage());
-        //PImage img = new PImage(Toolkit.getDefaultToolkit().createImage(b));
         // Most cursors just use the center as the hotspot...
         int x = img.width / 2;
         int y = img.height / 2;
