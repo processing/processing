@@ -31,7 +31,6 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.net.URL;
@@ -41,7 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import com.jogamp.common.util.IOUtil.ClassResources;
@@ -104,8 +102,8 @@ public class PSurfaceJOGL implements PSurface {
   protected Object waitObject = new Object();
 
   protected NewtCanvasAWT canvas;
-  protected boolean placedWindow = false;
-  protected boolean requestedStart = false;
+//  protected boolean placedWindow = false;
+//  protected boolean requestedStart = false;
 
   protected float[] currentPixelScale = {0, 0};
 
@@ -344,7 +342,7 @@ public class PSurfaceJOGL implements PSurface {
     if (fullScreen) {
       PApplet.hideMenuBar();
       window.setTopLevelPosition(sketchX, sketchY);
-      placedWindow = true;
+//      placedWindow = true;
       if (spanDisplays) {
         window.setFullscreen(monitors);
       } else {
@@ -398,6 +396,8 @@ public class PSurfaceJOGL implements PSurface {
 //            throw (ThreadDeath)cause;
             } else if (cause instanceof RuntimeException) {
               throw (RuntimeException)cause;
+            } else if (cause instanceof UnsatisfiedLinkError) {
+              throw new UnsatisfiedLinkError(cause.getMessage());
             } else {
               throw new RuntimeException(cause);
             }
@@ -420,34 +420,13 @@ public class PSurfaceJOGL implements PSurface {
 
 
   @Override
-  public void setVisible(boolean visible) {
-    try {
-      window.setVisible(visible);
-    } catch (Exception ex) {
-      Throwable glex = ex.getCause();
-      if (glex instanceof GLException) {
-        Throwable cause = glex.getCause();
-        if (cause instanceof UnsatisfiedLinkError) {
-          // https://github.com/processing/processing/issues/3453
-          // Special handling of missing libraries, for some reason throwing
-          // the cause still show the entire stack, including the enclosing
-          // exceptions from JOGL.
-          throw new UnsatisfiedLinkError(cause.getMessage());
-        } else {
-          try {
-            throw cause;
-          } catch (Throwable e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
-        } if (cause instanceof RuntimeException) {
-          throw (RuntimeException)cause;
-        } else {
-          throw new RuntimeException(cause);
-        }
+  public void setVisible(final boolean visible) {
+    display.getEDTUtil().invoke(false, new Runnable() {
+      @Override
+      public void run() {
+        window.setVisible(visible);
       }
-      throw ex;
-    }
+    });
   }
 
 
@@ -468,8 +447,13 @@ public class PSurfaceJOGL implements PSurface {
 
 
   @Override
-  public void setAlwaysOnTop(boolean always) {
-    window.setAlwaysOnTop(always);
+  public void setAlwaysOnTop(final boolean always) {
+    display.getEDTUtil().invoke(false, new Runnable() {
+      @Override
+      public void run() {
+        window.setAlwaysOnTop(always);
+      }
+    });
   }
 
 
@@ -558,8 +542,8 @@ public class PSurfaceJOGL implements PSurface {
       window.setTopLevelPosition(frameLoc.x, 30);
     }
 
-    placedWindow = true;
-    if (requestedStart) startThread();
+//    placedWindow = true;
+//    if (requestedStart) startThread();
 //    canvas.setBounds((contentW - sketchWidth)/2,
 //                     (contentH - sketchHeight)/2,
 //                     sketchWidth, sketchHeight);
@@ -583,9 +567,8 @@ public class PSurfaceJOGL implements PSurface {
                                sketchY + screenRect.y);
 //    window.setTopLevelPosition(0, 0);
     window.setFullscreen(true);
-    placedWindow = true;
-    if (requestedStart) startThread();
-
+//    placedWindow = true;
+//    if (requestedStart) startThread();
 //    }
   }
 
@@ -598,21 +581,7 @@ public class PSurfaceJOGL implements PSurface {
 
   public void startThread() {
     if (animator != null) {
-      if (placedWindow) {
-        window.setVisible(true);
-        animator.start();
-        requestedStart = false;
-      } else {
-        // The GL window is not visible until it has been placed, so we cannot
-        // start the animator because it requires the window to be visible.
-        requestedStart = true;
-        // Need this assignment to bypass the while loop in runSketch, otherwise
-        // the programs hangs waiting for defaultSize to be false, but it never
-        // happens because the animation thread is not yet running to avoid showing
-        // the window in the wrong place:
-        // https://github.com/processing/processing/issues/3308
-//      sketch.defaultSize = false;
-      }
+      animator.start();
     }
   }
 
@@ -649,14 +618,17 @@ public class PSurfaceJOGL implements PSurface {
   }
 
 
-  public void setLocation(int x, int y) {
-    if (window != null) {
-      window.setTopLevelPosition(x, y);
-    }
+  public void setLocation(final int x, final int y) {
+    display.getEDTUtil().invoke(false, new Runnable() {
+      @Override
+      public void run() {
+        window.setTopLevelPosition(x, y);
+      }
+    });
   }
 
 
-  public void setSize(int width, int height) {
+  public void setSize(final int width, final int height) {
     if (width == sketch.width && height == sketch.height) {
       return;
     }
@@ -672,7 +644,12 @@ public class PSurfaceJOGL implements PSurface {
         sketchWidth = width;
         sketchHeight = height;
         graphics.setSize(width, height);
-        window.setSize(width, height);
+        display.getEDTUtil().invoke(false, new Runnable() {
+          @Override
+          public void run() {
+            window.setSize(width, height);
+          }
+        });
       }
 
 
@@ -731,6 +708,12 @@ public class PSurfaceJOGL implements PSurface {
 
   class DrawListener implements GLEventListener {
     public void display(GLAutoDrawable drawable) {
+      if (display.getEDTUtil().isCurrentThreadEDT()) {
+        // For some reason, the first two frames of the animator are run on the
+        // EDT, skipping rendering Processing's frame in that case.
+        return;
+      }
+
       pgl.getGL(drawable);
       int pframeCount = sketch.frameCount;
       sketch.handleDraw();
@@ -1144,21 +1127,32 @@ public class PSurfaceJOGL implements PSurface {
     PixelFormat format = PixelFormat.ARGB8888;
     final Dimension size = new Dimension(bimg.getWidth(), bimg.getHeight());
     PixelRectangle pixelrect = new PixelRectangle.GenericPixelRect(format, size, 0, false, pixels);
-    PointerIcon pi = disp.createPointerIcon(pixelrect, hotspotX, hotspotY);
-    window.setPointerIcon(pi);
+    final PointerIcon pi = disp.createPointerIcon(pixelrect, hotspotX, hotspotY);
+    display.getEDTUtil().invoke(false, new Runnable() {
+      @Override
+      public void run() {
+        window.setPointerIcon(pi);
+      }
+    });
   }
 
 
   public void showCursor() {
-    if (window != null) {
-      window.setPointerVisible(true);
-    }
+    display.getEDTUtil().invoke(false, new Runnable() {
+      @Override
+      public void run() {
+        window.setPointerVisible(true);
+      }
+    });
   }
 
 
   public void hideCursor() {
-    if (window != null) {
-      window.setPointerVisible(false);
-    }
+    display.getEDTUtil().invoke(false, new Runnable() {
+      @Override
+      public void run() {
+        window.setPointerVisible(false);
+      }
+    });
   }
 }
