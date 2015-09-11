@@ -31,11 +31,18 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import com.jogamp.common.util.IOUtil.ClassResources;
 import com.jogamp.nativewindow.NativeSurface;
@@ -69,6 +76,7 @@ import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PGL;
+
 
 public class PSurfaceJOGL implements PSurface {
   /** Selected GL profile */
@@ -1065,8 +1073,64 @@ public class PSurfaceJOGL implements PSurface {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  class CursorInfo {
+    PImage image;
+    int x, y;
+
+    CursorInfo(PImage image, int x, int y) {
+      this.image = image;
+      this.x = x;
+      this.y = y;
+    }
+
+    void set() {
+      setCursor(image, x, y);
+    }
+  }
+
+  static Map<Integer, CursorInfo> cursors = new HashMap<>();
+  static Map<Integer, String> cursorNames = new HashMap<Integer, String>();
+  static {
+    cursorNames.put(PConstants.ARROW, "arrow");
+    cursorNames.put(PConstants.CROSS, "cross");
+    cursorNames.put(PConstants.WAIT, "wait");
+    cursorNames.put(PConstants.MOVE, "move");
+    cursorNames.put(PConstants.HAND, "hand");
+    cursorNames.put(PConstants.TEXT, "text");
+  }
+
+
   public void setCursor(int kind) {
-    PGraphics.showWarning("Cursor types not yet supported in OpenGL, provide your cursor image");
+    CursorInfo cursor = cursors.get(kind);
+    if (cursor == null) {
+      String name = cursorNames.get(kind);
+      if (name != null) {
+        //URL url = getClass().getResource("/processing/opengl/cursors/" + name + ".png");
+        URL url = getClass().getResource("cursors/" + name + ".png");
+        //byte[] b = PApplet.loadBytes(getClass().getResourceAsStream("/processing/opengl/cursors/" + name + ".png"));
+        //System.out.println(b.length);
+        ImageIcon icon = new ImageIcon(url);
+        PImage img = new PImage(icon.getImage());
+        //PImage img = new PImage(Toolkit.getDefaultToolkit().createImage(b));
+        // Most cursors just use the center as the hotspot...
+        int x = img.width / 2;
+        int y = img.height / 2;
+        // ...others are more specific
+        if (kind == PConstants.ARROW) {
+          x = 10; y = 7;
+        } else if (kind == PConstants.HAND) {
+          x = 12; y = 8;
+        } else if (kind == PConstants.TEXT) {
+          x = 16; y = 22;
+        }
+        cursor = new CursorInfo(img, x, y);
+        cursors.put(kind, cursor);
+      }
+      cursor.set();
+
+    } else {
+      PGraphics.showWarning("Unknown cursor type: " + kind);
+    }
   }
 
 

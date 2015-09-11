@@ -64,6 +64,7 @@
     <copy todir="bin">
       <fileset dir="src">
         <include name="processing/opengl/shaders/*.glsl" />
+        <include name="processing/opengl/cursors/*.png" />
         <include name="icon/*.png" />
       </fileset>
     </copy>
