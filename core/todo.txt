@@ -91,6 +91,16 @@ X textFont() and textSize() are each calling one another
 X move createFont() to PGraphics
 X Fix PShape creation in P3D 
 X   https://github.com/processing/processing/pull/3781
+X keyTyped() not firing with P2D and P3D
+X   https://github.com/processing/processing/issues/3582
+X   https://github.com/processing/processing/pull/3652
+X Implement a way to disable automatic key repeat
+X   implemented for OpenGL, where key repeat is now disabled by default
+X   hint(ENABLE_KEY_REPEAT) will turn it back on
+X   https://github.com/processing/processing/issues/1622
+X non-standard cursor images used for OpenGL
+X   https://github.com/processing/processing/issues/3791
+X   closed as cannot fix, but notes made in Wiki and in the repo
 
 
 3.0 final
@@ -613,8 +623,6 @@ _   -Xdock:icon=<path to icon file>
 
 CORE / Events
 
-_ Implement a way to disable automatic key repeat
-_   https://github.com/processing/processing/issues/1622
 _ touch events.. can't do MouseEvent et al with Android
 _   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
 _   http://www.html5rocks.com/en/mobile/touch.html
@@ -749,9 +757,6 @@ _     before rewriting all of createInput()
 
 LATER (post 2.0)
 
-_ handle repeat key events 
-_   and/or holding keys down and discerning repeats
-_   https://github.com/processing/processing/issues/1622
 _ fillMode(NONZERO) and fillMode(ODD) to replace solid(boolean)?
 _ create PVec2D and PVec3D as separate classes
 _ gui priorities

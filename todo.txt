@@ -61,6 +61,12 @@ X   https://github.com/processing/processing/pull/3684
 X Ready to add contributed example packages?
 X   https://github.com/processing/processing/issues/2953
 
+earlier
+X EXC_BAD_ACCESS inside AppleIntelHD5000GraphicsGLDriver when starting 3.0a8+
+X   https://github.com/processing/processing/issues/3359
+X Hard crash on startup inside strlen call when using 3.0a8+ on OS X
+X   https://github.com/processing/processing/issues/3360
+
 
 known issues
 _ launch4j doesn't work from folders with non-native charsets
@@ -70,7 +76,6 @@ _   https://github.com/processing/processing/issues/3543
 _   move to javapackager or another option?
 _   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-application
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
-_ non-standard cursor images used for OpenGL
 
 
 3.0 final
@@ -204,20 +209,6 @@ _   add Processing Foundation as 2012-15
 _   update license info to state gplv2 not v3
 _   run through that online license checker
 
-
-crashing
-_ fix appbundler problems due to rollback
-_   appbundler is no longer being developed by Oracle, switch to "packager"
-_   this re-introduces two bugs (serial export and scrolling)
-_   and any other changes later than 16 November 2014:
-_   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
-_   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
-_ another possible culprit
-_   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
-_ EXC_BAD_ACCESS inside AppleIntelHD5000GraphicsGLDriver when starting 3.0a8+
-_   https://github.com/processing/processing/issues/3359
-_ Hard crash on startup inside strlen call when using 3.0a8+ on OS X
-_   https://github.com/processing/processing/issues/3360
 
 
 breakage
@@ -937,6 +928,16 @@ _   this may already work with SingleInstance stuff
 
 DIST / Mac OS X
 
+_ replace appbundler with the Java 8 packager
+_   https://github.com/processing/processing/issues/3071
+_ fix appbundler problems due to rollback
+_   https://github.com/processing/processing/issues/3790
+_   appbundler is no longer being developed by Oracle, switch to "packager"
+_   this re-introduces two bugs (serial export and scrolling)
+_   and any other changes later than 16 November 2014:
+_   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
+_   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
+_   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
 _ Update QuickLook plugin for Processing 3
 _   https://github.com/processing/processing/issues/3261
 _ Find a long-term solution for OS X bundler to address signing/symlink issues
