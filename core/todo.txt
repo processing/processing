@@ -10,6 +10,8 @@ o   this is the difference between a lot of loadPixels() and not
 o   so important to have it in before beta if that's the change
 o   https://github.com/processing/processing/issues/99
 X   won't fix for now, requires too much reworking on the image system
+X add surface.setAlwaysOnTop(boolean)
+X   https://github.com/processing/processing/issues/3718
 
 andres
 X P2D: error calling surface.setTitle()

@@ -111,6 +111,10 @@ public class PSurfaceNone implements PSurface {
   public void setupExternalMessages() { }
 
 
+  @Override
+  public void setAlwaysOnTop(boolean always) { }
+
+
   //
 
 

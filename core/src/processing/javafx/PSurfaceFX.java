@@ -302,6 +302,12 @@ public class PSurfaceFX implements PSurface {
   }
 
 
+  @Override
+  public void setAlwaysOnTop(boolean always) {
+    stage.setAlwaysOnTop(always);
+  }
+
+
   /*
   @Override
   public void placeWindow(int[] location) {

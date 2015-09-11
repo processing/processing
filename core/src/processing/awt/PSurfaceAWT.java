@@ -594,6 +594,12 @@ public class PSurfaceAWT extends PSurfaceNone {
   }
 
 
+  @Override
+  public void setAlwaysOnTop(boolean always) {
+    frame.setAlwaysOnTop(always);
+  }
+
+
   List<Image> iconImages;
 
   protected void setProcessingIcon(Frame frame) {

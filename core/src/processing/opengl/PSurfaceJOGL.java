@@ -459,6 +459,12 @@ public class PSurfaceJOGL implements PSurface {
   }
 
 
+  @Override
+  public void setAlwaysOnTop(boolean always) {
+    window.setAlwaysOnTop(always);
+  }
+
+
   protected void initIcons() {
     final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
     String[] iconImages = new String[sizes.length];

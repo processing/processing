@@ -71,6 +71,9 @@ public interface PSurface {
   /** Set true if we want to resize things (default is not resizable) */
   public void setResizable(boolean resizable);
 
+  /** Dumb name, but inherited from Frame and no better ideas. */
+  public void setAlwaysOnTop(boolean always);
+
   public void setIcon(PImage icon);
 
   //
