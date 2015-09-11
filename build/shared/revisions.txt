@@ -1,6 +1,240 @@
 PROCESSING 3.0b6 (REV 0244) - 11 September 2015
 
-With the P2D and P3D renderers, a generic set of cursors are used because the OpenGL renderer doesn't have access to the default cursor images for each platform.
+And I beheld when he had opened the sixth beta, and, lo, there was 
+a great earthquake; and the sun became black as sackcloth of hair, 
+and the moon became as blood.
+
+Aside from bug fixes, the FX2D renderer has received a lot of attention. 
+On the plus side, it's working really well. On the minus side, we're giving
+up on making it the default for 3.0. The underlying JavaFX technology it uses
+is just not ready for our use. It is, however, super fast and makes great
+looking 2D sketches on retina devices. But it can be a little balky so we
+don't want it to be the first experience that beginners have with Processing.
+Especially if you're doing 2D on a retina Mac, you should definitely try FX2D. 
+We're at the limit of what we can do performance-wise with the default 
+(JAVA2D) renderer, so if you're having performance problems, try FX2D. 
+
+
+[ bug fixes and improvements ] 
+
++ Deal with ConcurrentModificationException in Editor 
+  "Error repainting line range" and ConcurrentModificationException 
+  https://github.com/processing/processing/issues/3726
+
++ Major surgery performed to drastically reduce the memory footprint
+  and startup time for individual editor windows.
+
++ Remove old versions of processing-java when installing on OS X
+  https://github.com/processing/processing/issues/3786
+
++ Confusion when // tweak was used accidentally, changed to /// tweak
+  https://github.com/processing/processing/issues/3742
+
++ Don't allow breakpoints to be set on blank lines
+  https://github.com/processing/processing/issues/3765
+
++ Fixed a couple hard crashes back in alpha 10:
+  EXC_BAD_ACCESS inside AppleIntelHD5000GraphicsGLDriver when starting 3.0a8+
+  https://github.com/processing/processing/issues/3359
+  Hard crash on startup inside strlen call when using 3.0a8+ on OS X
+  https://github.com/processing/processing/issues/3360
+  Though the workaround re-introduces issues that had been fixed earlier:
+  https://github.com/processing/processing/issues/3790
+
++ Add the Contents/Java folder to java.library.path on OS X to fix
+  exported applications that use native libraries (i.e. Sound)
+
++ Add surface.setAlwaysOnTop(boolean)
+  https://github.com/processing/processing/issues/3718
+
++ Implement standard cursor types in OpenGL
+  https://github.com/processing/processing/issues/3554
+
++ Change value of constants PRIMITIVE, PATH, and GEOMETRY constants in PShape
+  This avoids a collision with entries in PConstants which causes 
+  confusing errors or no errors to be thrown at all
+  https://github.com/processing/processing/issues/3776
+
++ Fix flickering cursor regression with Java2D on Windows introduced by
+  https://github.com/processing/processing/issues/3472
+
+
+[ Jakub won't be here forever, but his contributions are eternal ] 
+
++ Error/warning location visualisation not updating when editor resizes
+  https://github.com/processing/processing/issues/3619
+  https://github.com/processing/processing/pull/3778
+
++ "unexpected token" on anonymous instance of parameterized Comparator
+  https://github.com/processing/processing/issues/533
+  https://github.com/processing/processing/pull/3780
+
++ Incomplete text rendering of strings with consecutive line breaks
+  https://github.com/processing/processing/issues/3736
+  https://github.com/processing/processing/pull/3737
+  https://github.com/processing/processing/issues/3761
+
++ FX - fix transformation stack NPE
+  https://github.com/processing/processing/pull/3710
+
++ FX - fix rad-deg conversion in rotate()
+  https://github.com/processing/processing/pull/3711
+
++ FX - basic pixel operations (get, set, load, update) 
+  https://github.com/processing/processing/pull/3709
+
++ FX - align to pixel grid when drawing 1 px strokes
+  https://github.com/processing/processing/pull/3712
+
++ FX - keyChar and keyCode are super wonky and unlike AWT
+  https://github.com/processing/processing/issues/3290
+
++ FX - arc - infamous deg-rad conversion strikes again
+  https://github.com/processing/processing/pull/3713
+
++ FX - paths, contours, curves
+  https://github.com/processing/processing/pull/3715
+
++ FX - fix AIOOBE when pressing ESC on Mac
+  https://github.com/processing/processing/pull/3719
+
++ FX - framerate fix
+  https://github.com/processing/processing/pull/3724
+
++ FX - loadPixels, updatePixels, get and set optimizations
+  https://github.com/processing/processing/pull/3725
+
++ FX - keep track of whether pixels are up to date
+  https://github.com/processing/processing/pull/3716
+
++ FX - improve key events
+  https://github.com/processing/processing/pull/3729
+
++ FX - add FX2D keyword, remove JFX keyword
+  https://github.com/processing/processing/pull/3731
+
+X JOGL - normalize enter key
+  https://github.com/processing/processing/pull/3735
+
++ FX - normalize enter key
+  https://github.com/processing/processing/pull/3730
+
++ Render text starting with space properly
+  https://github.com/processing/processing/pull/3746
+
++ FX - smooth for the main surface
+  https://github.com/processing/processing/pull/3749
+
++ OpenGL - clean up loaded and modified for pixels
+  https://github.com/processing/processing/pull/3768
+
++ FX - text stuff, move createFont() into PGraphics
+  https://github.com/processing/processing/pull/3766
+
++ FX - fix bug where fonts would share a tint cache
+  https://github.com/processing/processing/pull/3771
+
++ textFont() and textSize() are each calling one another
+
++ move createFont() to PGraphics
+
++ Fix PShape creation in P3D 
+  https://github.com/processing/processing/pull/3781
+
++ keyTyped() not firing with P2D and P3D
+  https://github.com/processing/processing/issues/3582
+  https://github.com/processing/processing/pull/3652
+
++ Implement a way to disable automatic key repeat
+  implemented for OpenGL, where key repeat is now disabled by default
+  hint(ENABLE_KEY_REPEAT) will turn it back on
+  https://github.com/processing/processing/issues/1622
+
++ With the P2D and P3D renderers, a generic set of cursors are 
+  used because the OpenGL renderer doesn't have access to the 
+  default cursor images for each platform.
+  https://github.com/processing/processing/issues/3791
+
+
+[ Manindra re-emerges ]
+
++ Code auto-complete not working with imported libraries
+  https://github.com/processing/processing/issues/3720
+
+
+[ Google Summer of Contribution Manager ] 
+
++ CM: Category dropdown alignment
+  https://github.com/processing/processing/issues/3644
+  https://github.com/processing/processing/pull/3666
+  https://github.com/processing/processing/pull/3669
+
++ finalize CM tab order
+  https://github.com/processing/processing/issues/3613
+  https://github.com/processing/processing/pull/3714
+
++ Several of those below were in beta 5... 
+
++ CM - Focus is shifted out of the filter field when something is searched
+  https://github.com/processing/processing/issues/3682
+  https://github.com/processing/processing/pull/3701
+
++ CM - info panel text color
+  https://github.com/processing/processing/issues/3642
+  https://github.com/processing/processing/pull/3695
+  https://github.com/processing/processing/pull/3696
+
++ CM - Filter field display
+  https://github.com/processing/processing/issues/3689
+  https://github.com/processing/processing/pull/3698
+
++ Update buttom enabled when updates are present and background is set
+  https://github.com/processing/processing/issues/3614
+  https://github.com/processing/processing/pull/3694
+
++ Fix info panel text color and alignment in CM
+  https://github.com/processing/processing/issues/3642
+  https://github.com/processing/processing/pull/3684
+
++ Ready to add contributed example packages?
+  https://github.com/processing/processing/issues/2953
+
+
+[ Dr. Colubri, I presume? ]
+
++ P2D: error calling surface.setTitle()
+  https://github.com/processing/processing/issues/3721
+  https://github.com/processing/processing/commit/a384cbf0890a49dbf6e0fdd80e048de80e5d78d2
+
++ Error message with noLoop() and P2D renderer
+  https://github.com/processing/processing/issues/3558
+
++ Concurrency issues in OpenGL renderer prevent proper garbage collection
+  https://github.com/processing/processing/issues/3384
+
++ In P2D/P3D the background is cleared to black on each frame
+  https://github.com/processing/processing/issues/3559
+
++ cursor() command with PImage stopped working in 3.0 with P2D
+  https://github.com/processing/processing/issues/3769
+
++ Demos/Graphics/Wiggling regressed from 17 fps to 8.3 fps between a11 and b1
+  https://github.com/processing/processing/issues/3561
+
++ "Library not installed properly" message inconsistent in P2D/P3D vs. JAVA2D
+  https://github.com/processing/processing/issues/3453
+
++ PShape 3D: strange extra lines (another fix)
+  https://github.com/processing/processing/issues/3006
+
++ Line direction vectors are incorrectly transformed
+  https://github.com/processing/processing/issues/3779
+
++ Strokes in 3D PShapes are not properly connected
+  https://github.com/processing/processing/issues/3756
+
++ Setting surface properties hangs OpenGL sketches
+  https://github.com/processing/processing/issues/3789
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
