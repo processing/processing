@@ -5,6 +5,11 @@ X   https://github.com/processing/processing/pull/3737
 X   https://github.com/processing/processing/issues/3761
 X add the Contents/Java folder to java.library.path on OS X
 X   allows exported applications to use the Sound library
+o don't grab pixels of java2d images unless asked
+o   this is the difference between a lot of loadPixels() and not
+o   so important to have it in before beta if that's the change
+o   https://github.com/processing/processing/issues/99
+X   won't fix for now, requires too much reworking on the image system
 
 andres
 X P2D: error calling surface.setTitle()
@@ -22,6 +27,12 @@ X Demos/Graphics/Wiggling regressed from 17 fps to 8.3 fps between a11 and b1
 X   https://github.com/processing/processing/issues/3561
 X "Library not installed properly" message inconsistent in P2D/P3D vs. JAVA2D
 X   https://github.com/processing/processing/issues/3453
+X PShape 3D: strange extra lines (another fix)
+X   https://github.com/processing/processing/issues/3006
+X line direction vectors are incorrectly transformed
+X   https://github.com/processing/processing/issues/3779
+X Strokes in 3D PShapes are not properly connected
+X   https://github.com/processing/processing/issues/3756
 
 jakub
 X FX - fix transformation stack NPE
@@ -68,6 +79,8 @@ X FX - fix bug where fonts would share a tint cache
 X   https://github.com/processing/processing/pull/3771
 X textFont() and textSize() are each calling one another
 X move createFont() to PGraphics
+X Fix PShape creation in P3D 
+X   https://github.com/processing/processing/pull/3781
 
 
 3.0 final
@@ -94,6 +107,8 @@ _ SVG only exports last frame
 _   possibly because Java2D is disposing the Graphics2D in between?
 _   https://github.com/processing/processing/issues/3753
 
+_ selectInput/Output() is behind the drawing window (Windows)
+_   https://github.com/processing/processing/issues/3775
 
 javafx
 _ need keyPressed() to do lower and upper case
@@ -464,10 +479,6 @@ CORE / PImage
 _ TGA files writing strangely
 _   https://github.com/processing/processing/issues/2096
 
-_ don't grab pixels of java2d images unless asked
-_   this is the difference between a lot of loadPixels() and not
-_   so important to have it in before beta if that's the change
-_   https://github.com/processing/processing/issues/99
 _ loadPixels() implementation needs to be in PApplet, not PGraphics
 _ this is a tricky thing to implement because of how OpenGL is handled
 

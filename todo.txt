@@ -9,16 +9,28 @@ X deal with ConcurrentModificationException in Editor
 X   "Error repainting line range" and ConcurrentModificationException 
 X   https://github.com/processing/processing/issues/3726
 X repairs to prevent memory leak in EditorConsole
+o Claim that an exported application does not copy data directory
+X   https://github.com/processing/processing/issues/3777
+X   copying just fine
+X remove old versions of processing-java when installing on OS X
+X   https://github.com/processing/processing/issues/3786
 
 _ add jar files from 'code' folder to the library path
 _   Code editor wrongly detects errors for libraries in code folder
 _   https://github.com/processing/processing/issues/3732
-_ remove old versions of processing-java when installing on OS X
 _ "color type detected! this shouldn't be happening! please report"
 _   happens when user does 'new color' instead of 'color'
 _   https://github.com/processing/processing/issues/3739
 _ confusion when // tweak is used
 _   https://github.com/processing/processing/issues/3742
+
+jakub
+X Error/warning location visualisation not updating when editor resizes
+X   https://github.com/processing/processing/issues/3619
+X   https://github.com/processing/processing/pull/3778
+X "unexpected token" on anonymous instance of parameterized Comparator
+X   https://github.com/processing/processing/issues/533
+X   https://github.com/processing/processing/pull/3780
 
 contribs
 X Code auto-complete not working when Box2D library imported
@@ -52,7 +64,6 @@ X   https://github.com/processing/processing/issues/3642
 X   https://github.com/processing/processing/pull/3684
 X Ready to add contributed example packages?
 X   https://github.com/processing/processing/issues/2953
-
 
 known issues
 _ launch4j doesn't work from folders with non-native charsets
@@ -88,6 +99,8 @@ _   http://happygiraffe.net/blog/2009/09/24/java-platform-encoding/
 _   fix: get sun.jnu.encoding and make sure the user name is supported in it?
 _     and if not, put up a warning for the user?
 _   http://www.oracle.com/us/technologies/java/locale-140624.html
+_ Red error underline is sometimes at wrong location
+_   https://github.com/processing/processing/issues/3759
 
 
 sketch modified externally (3.0 final)
@@ -104,8 +117,6 @@ _ don't allow breakpoints to be set on blank lines
 _   https://github.com/processing/processing/issues/3765
 _ different design of squiggly line?
 _ build custom scroll bar since the OS versions are so ugly?
-_ Error/warning location visualisation not updating when editor resizes
-_   https://github.com/processing/processing/issues/3619
 _ error/warning location is awkward when no scroll bar is in use
 _ show hover text when the mouse is over the 'debug' button
 _ show number of updates available in the footer

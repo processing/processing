@@ -106,7 +106,12 @@ public class InstallCommander implements Tool {
         // with OS X 10.11 and its "System Integrity Protection"
         // https://github.com/processing/processing/issues/3497
         String targetPath = "/usr/local/bin/processing-java";
-        String shellScript = "/bin/mkdir -p /usr/local/bin && /bin/mv " + sourcePath + " " + targetPath;
+        // Remove the old version in case it exists
+        // https://github.com/processing/processing/issues/3786
+        String oldPath = "/usr/bin/processing-java";
+        String shellScript = "/bin/rm -f " + oldPath +
+          " && /bin/mkdir -p /usr/local/bin" +
+          " && /bin/mv " + sourcePath + " " + targetPath;
         String appleScript =
           "do shell script \"" + shellScript + "\" with administrator privileges";
         PApplet.exec(new String[] { "osascript", "-e", appleScript });
@@ -127,7 +132,7 @@ public class InstallCommander implements Tool {
 
     } catch (IOException e) {
       Messages.showWarning("Error while installing",
-                           "An error occurred and the tools were not installed.", e);
+                           "An error occurred and the tool was not installed.", e);
     }
   }
 
