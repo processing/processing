@@ -573,6 +573,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   @Override
+  public void setParent(PApplet parent) {
+    super.setParent(parent);
+    if (pgl != null) {
+      pgl.sketch = parent;
+    }
+  }
+
+
+  @Override
   public void setPrimary(boolean primary) {
     super.setPrimary(primary);
     pgl.setPrimary(primary);
