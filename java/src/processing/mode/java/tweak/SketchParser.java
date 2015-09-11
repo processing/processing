@@ -627,9 +627,13 @@ public class SketchParser {
 
 
   static private boolean hasTweakComment(String code) {
+    // https://github.com/processing/processing/issues/3742
+    return code.contains("/// tweak");
+    /*
     Pattern p = Pattern.compile("\\/\\/.*tweak", Pattern.CASE_INSENSITIVE);
     Matcher m = p.matcher(code);
     return m.find();
+    */
   }
 
 

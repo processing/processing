@@ -14,15 +14,9 @@ X   https://github.com/processing/processing/issues/3777
 X   copying just fine
 X remove old versions of processing-java when installing on OS X
 X   https://github.com/processing/processing/issues/3786
-
-_ add jar files from 'code' folder to the library path
-_   Code editor wrongly detects errors for libraries in code folder
-_   https://github.com/processing/processing/issues/3732
-_ "color type detected! this shouldn't be happening! please report"
-_   happens when user does 'new color' instead of 'color'
-_   https://github.com/processing/processing/issues/3739
-_ confusion when // tweak is used
-_   https://github.com/processing/processing/issues/3742
+X confusion when // tweak is used
+X   https://github.com/processing/processing/issues/3742
+X   change to /// tweak instead
 
 jakub
 X Error/warning location visualisation not updating when editor resizes
@@ -77,6 +71,12 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
+_ add jar files from 'code' folder to the library path
+_   Code editor wrongly detects errors for libraries in code folder
+_   https://github.com/processing/processing/issues/3732
+_ "color type detected! this shouldn't be happening! please report"
+_   happens when user does 'new color' instead of 'color'
+_   https://github.com/processing/processing/issues/3739
 _ change Tool API because it's not one Editor per Tool anymore?
 _   or just change the documentation?
 _ Contributions Manager UI design
