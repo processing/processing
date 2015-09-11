@@ -11842,6 +11842,11 @@ public class PGraphicsOpenGL extends PGraphics {
       index = addLineSegment3D(0, in.vertexCount - 1, i1 - 2, i1 - 1, index, lastInd, false);
       if (0 < nBevelTr) {
         if (findex == index) {
+          // The first index is in the same cache block as the last segment,
+          // so we can connect them. A consequence of this is that the connecting
+          // bevel will be missing in situations with very large stroke
+          // geometry the cache ends in the middle. Code to handle this
+          // properly will be too complex for the expected benefit.
           index = addBevel3D(0, 0, in.vertexCount - 1, index, lastInd, firstInd, false);
         }
       }
@@ -11930,6 +11935,11 @@ public class PGraphicsOpenGL extends PGraphics {
         if (bevel) {
           if (edge[2] == EDGE_CLOSE) {
             if (findex == index) {
+              // The first index is in the same cache block as the last segment,
+              // so we can connect them. A consequence of this is that the connecting
+              // bevel will be missing in situations with very large stroke
+              // geometry the cache ends in the middle. Code to handle this
+              // properly will be too complex for the expected benefit.
               index = addBevel3D(edge[1], pi0, pi1, index, lastInd, firstInd, false);
             }
             lastInd[0] = lastInd[1] = -1; // No join with next line segment.
