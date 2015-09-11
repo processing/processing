@@ -1,3 +1,73 @@
+0244 (3.0b6)
+o 3.0b4 demos fail to create PDF files
+o   https://github.com/processing/processing/issues/3708
+X   problem was that the example was creating files inside Processing.app
+X Casey reports that exported app still asks to download Java
+X   could this be a JOGL bug (linking against the app stub?)
+X   ran otool -L on the binaries and saw nothing
+X deal with ConcurrentModificationException in Editor 
+X   "Error repainting line range" and ConcurrentModificationException 
+X   https://github.com/processing/processing/issues/3726
+X repairs to prevent memory leak in EditorConsole
+o Claim that an exported application does not copy data directory
+X   https://github.com/processing/processing/issues/3777
+X   copying just fine
+X remove old versions of processing-java when installing on OS X
+X   https://github.com/processing/processing/issues/3786
+X confusion when // tweak is used
+X   https://github.com/processing/processing/issues/3742
+X   change to /// tweak instead
+X don't allow breakpoints to be set on blank lines
+X   https://github.com/processing/processing/issues/3765
+
+jakub
+X Error/warning location visualisation not updating when editor resizes
+X   https://github.com/processing/processing/issues/3619
+X   https://github.com/processing/processing/pull/3778
+X "unexpected token" on anonymous instance of parameterized Comparator
+X   https://github.com/processing/processing/issues/533
+X   https://github.com/processing/processing/pull/3780
+
+contribs
+X Code auto-complete not working when Box2D library imported
+X   https://github.com/processing/processing/issues/3720
+
+gsoc
+X CM: Category dropdown alignment
+X   https://github.com/processing/processing/issues/3644
+X   https://github.com/processing/processing/pull/3666
+X   https://github.com/processing/processing/pull/3669
+X finalize CM tab order
+X   https://github.com/processing/processing/issues/3613
+X   https://github.com/processing/processing/pull/3714
+
+fixed in b5, but unconfirmed at press time
+X CM - Focus is shifted out of the filter field when something is searched
+X   https://github.com/processing/processing/issues/3682
+X   https://github.com/processing/processing/pull/3701
+X CM - info panel text color
+X   https://github.com/processing/processing/issues/3642
+X   https://github.com/processing/processing/pull/3695
+X   https://github.com/processing/processing/pull/3696
+X CM - Filter field display
+X   https://github.com/processing/processing/issues/3689
+X   https://github.com/processing/processing/pull/3698
+X Update buttom enabled when updates are present and background is set
+X   https://github.com/processing/processing/issues/3614
+X   https://github.com/processing/processing/pull/3694
+X Fix info panel text color and alignment in CM
+X   https://github.com/processing/processing/issues/3642
+X   https://github.com/processing/processing/pull/3684
+X Ready to add contributed example packages?
+X   https://github.com/processing/processing/issues/2953
+
+earlier
+X EXC_BAD_ACCESS inside AppleIntelHD5000GraphicsGLDriver when starting 3.0a8+
+X   https://github.com/processing/processing/issues/3359
+X Hard crash on startup inside strlen call when using 3.0a8+ on OS X
+X   https://github.com/processing/processing/issues/3360
+
+
 0243 (3.0b5)
 X processing-java isn't working in OS X 10.11 El Capitan
 X   https://github.com/processing/processing/issues/3497

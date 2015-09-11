@@ -1,3 +1,111 @@
+0244 core (3.0b6)
+X Incomplete text rendering of strings with consecutive line breaks
+X   https://github.com/processing/processing/issues/3736
+X   https://github.com/processing/processing/pull/3737
+X   https://github.com/processing/processing/issues/3761
+X add the Contents/Java folder to java.library.path on OS X
+X   allows exported applications to use the Sound library
+o don't grab pixels of java2d images unless asked
+o   this is the difference between a lot of loadPixels() and not
+o   so important to have it in before beta if that's the change
+o   https://github.com/processing/processing/issues/99
+X   won't fix for now, requires too much reworking on the image system
+X add surface.setAlwaysOnTop(boolean)
+X   https://github.com/processing/processing/issues/3718
+X Implement standard cursor types in OpenGL
+X   https://github.com/processing/processing/issues/3554
+X Change value of constants PRIMITIVE, PATH, and GEOMETRY constants in PShape
+X   This avoids a collision with entries in PConstants which causes 
+X   confusing errors or no errors to be thrown at all
+X   https://github.com/processing/processing/issues/3776
+X Fix flickering cursor regression with Java2D on Windows introduced by #3472
+
+andres
+X P2D: error calling surface.setTitle()
+X   https://github.com/processing/processing/issues/3721
+X   https://github.com/processing/processing/commit/a384cbf0890a49dbf6e0fdd80e048de80e5d78d2
+X Error message with noLoop() and P2D renderer
+X   https://github.com/processing/processing/issues/3558
+X Concurrency issues in OpenGL renderer prevent proper garbage collection
+X   https://github.com/processing/processing/issues/3384
+X In P2D/P3D the background is cleared to black on each frame
+X   https://github.com/processing/processing/issues/3559
+X cursor() command with PImage stopped working in 3.0 with P2D
+X   https://github.com/processing/processing/issues/3769
+X Demos/Graphics/Wiggling regressed from 17 fps to 8.3 fps between a11 and b1
+X   https://github.com/processing/processing/issues/3561
+X "Library not installed properly" message inconsistent in P2D/P3D vs. JAVA2D
+X   https://github.com/processing/processing/issues/3453
+X PShape 3D: strange extra lines (another fix)
+X   https://github.com/processing/processing/issues/3006
+X line direction vectors are incorrectly transformed
+X   https://github.com/processing/processing/issues/3779
+X Strokes in 3D PShapes are not properly connected
+X   https://github.com/processing/processing/issues/3756
+X setting surface properties hangs OpenGL sketches
+X   https://github.com/processing/processing/issues/3789
+
+jakub
+X FX - fix transformation stack NPE
+X   https://github.com/processing/processing/pull/3710
+X FX - fix rad-deg conversion in rotate()
+X   https://github.com/processing/processing/pull/3711
+X FX - basic pixel operations (get, set, load, update) 
+X   https://github.com/processing/processing/pull/3709
+X FX - align to pixel grid when drawing 1 px strokes
+X   https://github.com/processing/processing/pull/3712
+X keyChar and keyCode are super wonky and unlike AWT
+X   https://github.com/processing/processing/issues/3290
+X   what's the way to do this after the deprecation?
+X   if this is going to be the default renderer, has to be ironed out
+X FX - arc - infamous deg-rad conversion strikes again
+X   https://github.com/processing/processing/pull/3713
+X FX - paths, contours, curves
+X   https://github.com/processing/processing/pull/3715
+X FX - fix AIOOBE when pressing ESC on Mac
+X   https://github.com/processing/processing/pull/3719
+X FX - framerate fix
+X   https://github.com/processing/processing/pull/3724
+X FX - loadPixels, updatePixels, get and set optimizations
+X   https://github.com/processing/processing/pull/3725
+X FX - keep track of whether pixels are up to date
+X   https://github.com/processing/processing/pull/3716
+X FX - improve key events
+X   https://github.com/processing/processing/pull/3729
+X FX - add FX2D keyword, remove JFX keyword
+X   https://github.com/processing/processing/pull/3731
+X JOGL - normalize enter key
+X   https://github.com/processing/processing/pull/3735
+X FX - normalize enter key
+X   https://github.com/processing/processing/pull/3730
+X Render text starting with space properly
+X   https://github.com/processing/processing/pull/3746
+X FX - smooth for the main surface
+X   https://github.com/processing/processing/pull/3749
+X OpenGL - clean up loaded and modified for pixels
+X   https://github.com/processing/processing/pull/3768
+X FX - text stuff, move createFont() into PGraphics
+X   https://github.com/processing/processing/pull/3766
+X FX - fix bug where fonts would share a tint cache
+X   https://github.com/processing/processing/pull/3771
+X textFont() and textSize() are each calling one another
+X move createFont() to PGraphics
+X Fix PShape creation in P3D 
+X   https://github.com/processing/processing/pull/3781
+X keyTyped() not firing with P2D and P3D
+X   https://github.com/processing/processing/issues/3582
+X   https://github.com/processing/processing/pull/3652
+X Implement a way to disable automatic key repeat
+X   implemented for OpenGL, where key repeat is now disabled by default
+X   hint(ENABLE_KEY_REPEAT) will turn it back on
+X   https://github.com/processing/processing/issues/1622
+X non-standard cursor images used for OpenGL
+X   https://github.com/processing/processing/issues/3791
+X   closed as cannot fix, but notes made in Wiki and in the repo
+X fix late-breaking NPE in PGL
+X   https://github.com/processing/processing/pull/3792
+
+
 0243 core (3.0b5)
 X NullPointerException in selectFolder() on OS X
 X   https://github.com/processing/processing/issues/3661
