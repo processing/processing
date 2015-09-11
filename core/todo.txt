@@ -14,6 +14,10 @@ X add surface.setAlwaysOnTop(boolean)
 X   https://github.com/processing/processing/issues/3718
 X Implement standard cursor types in OpenGL
 X   https://github.com/processing/processing/issues/3554
+X Change value of constants PRIMITIVE, PATH, and GEOMETRY constants in PShape
+X   This avoids a collision with entries in PConstants which causes 
+X   confusing errors or no errors to be thrown at all
+X   https://github.com/processing/processing/issues/3776
 
 andres
 X P2D: error calling surface.setTitle()

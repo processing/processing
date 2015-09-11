@@ -84,12 +84,16 @@ public class PShape implements PConstants {
 //  /** Generic, only draws its child objects. */
 //  static public final int GROUP = 0;
   // GROUP now inherited from PConstants, and is still zero
+
+  // These constants were updated in 3.0b6 so that they could be distinguished
+  // from others in PConstants and improve how some typos were handled.
+  // https://github.com/processing/processing/issues/3776
   /** A line, ellipse, arc, image, etc. */
-  static public final int PRIMITIVE = 1;
+  static public final int PRIMITIVE = 101;
   /** A series of vertex, curveVertex, and bezierVertex calls. */
-  static public final int PATH = 2;
+  static public final int PATH = 102;
   /** Collections of vertices created with beginShape(). */
-  static public final int GEOMETRY = 3;
+  static public final int GEOMETRY = 103;
   /** The shape type, one of GROUP, PRIMITIVE, PATH, or GEOMETRY. */
   protected int family;
 
