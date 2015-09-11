@@ -37,6 +37,8 @@ X line direction vectors are incorrectly transformed
 X   https://github.com/processing/processing/issues/3779
 X Strokes in 3D PShapes are not properly connected
 X   https://github.com/processing/processing/issues/3756
+X setting surface properties hangs OpenGL sketches
+X   https://github.com/processing/processing/issues/3789
 
 jakub
 X FX - fix transformation stack NPE
@@ -110,7 +112,6 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 _ SVG only exports last frame
 _   possibly because Java2D is disposing the Graphics2D in between?
 _   https://github.com/processing/processing/issues/3753
-
 _ selectInput/Output() is behind the drawing window (Windows)
 _   https://github.com/processing/processing/issues/3775
 

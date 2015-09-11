@@ -477,10 +477,15 @@ public class Debugger implements VMEventListener {
    */
   synchronized void toggleBreakpoint(int lineIdx) {
     LineID line = editor.getLineIDInCurrentTab(lineIdx);
+    int index = line.lineIdx();
     if (hasBreakpoint(line)) {
-      removeBreakpoint(line.lineIdx());
+      removeBreakpoint(index);
     } else {
-      setBreakpoint(line.lineIdx());
+      // Make sure the line contains actual code before setting the break
+      // https://github.com/processing/processing/issues/3765
+      if (editor.getLineText(index).trim().length() != 0) {
+        setBreakpoint(index);
+      }
     }
   }
 

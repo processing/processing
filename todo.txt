@@ -17,6 +17,8 @@ X   https://github.com/processing/processing/issues/3786
 X confusion when // tweak is used
 X   https://github.com/processing/processing/issues/3742
 X   change to /// tweak instead
+X don't allow breakpoints to be set on blank lines
+X   https://github.com/processing/processing/issues/3765
 
 jakub
 X Error/warning location visualisation not updating when editor resizes
@@ -67,6 +69,7 @@ _   https://github.com/processing/processing/issues/3543
 _   move to javapackager or another option?
 _   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-application
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
+_ non-standard cursor images used for OpenGL
 
 
 3.0 final
@@ -113,8 +116,6 @@ _ add this to the preferences?
 
 
 gui
-_ don't allow breakpoints to be set on blank lines
-_   https://github.com/processing/processing/issues/3765
 _ different design of squiggly line?
 _ build custom scroll bar since the OS versions are so ugly?
 _ error/warning location is awkward when no scroll bar is in use
