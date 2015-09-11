@@ -1,3 +1,11 @@
+PROCESSING 3.0b6 (REV 0244) - 11 September 2015
+
+With the P2D and P3D renderers, a generic set of cursors are used because the OpenGL renderer doesn't have access to the default cursor images for each platform.
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.0b5 (REV 0243) - 24 August 2015
 
 Fixing a handful of regressions in beta 4, and clearing out some of the
