@@ -552,9 +552,11 @@ public class PSurfaceAWT extends PSurfaceNone {
   @Override
   public void setTitle(String title) {
     frame.setTitle(title);
-    // Workaround for apparent Java bug?
+    // Workaround for apparent Java bug on OS X?
     // https://github.com/processing/processing/issues/3472
-    if (cursorVisible) {
+    if (cursorVisible &&
+        (PApplet.platform == PConstants.MACOSX) &&
+        (cursorType != PConstants.ARROW)) {
       hideCursor();
       showCursor();
     }
