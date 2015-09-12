@@ -1,7 +1,10 @@
 /*
-  Part of the Processing project - http://processing.org
+  Processing OpenGL (c) 2011-2015 Andres Colubri
 
-  Copyright (c) 2011-13 Ben Fry and Casey Reas
+  Part of the Processing project - http://processing.org
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2012-15 The Processing Foundation
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,8 +20,6 @@
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
  */
-
-#define PROCESSING_TEXTURE_SHADER
 
 uniform mat4 transformMatrix;
 uniform mat4 texMatrix;

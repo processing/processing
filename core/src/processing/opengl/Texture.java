@@ -1,12 +1,16 @@
-/*
-  Part of the Processing project - http://processing.org
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
-  Copyright (c) 2011-12 Ben Fry and Casey Reas
+/*
+  Processing OpenGL (c) 2011-2015 Andres Colubri
+
+  Part of the Processing project - http://processing.org
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2012-15 The Processing Foundation
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  License version 2.1 as published by the Free Software Foundation.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,7 +21,7 @@
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
-*/
+ */
 
 package processing.opengl;
 
@@ -167,18 +171,6 @@ public class Texture implements PConstants {
 
     init(width, height, (Parameters)params);
   }
-
-
-//  @Override
-//  protected void finalize() throws Throwable {
-//    try {
-//      if (glName != 0) {
-//        PGraphicsOpenGL.finalizeTextureObject(glName, context);
-//      }
-//    } finally {
-//      super.finalize();
-//    }
-//  }
 
 
   ////////////////////////////////////////////////////////////

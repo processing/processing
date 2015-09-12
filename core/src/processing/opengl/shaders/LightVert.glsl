@@ -1,7 +1,10 @@
 /*
-  Part of the Processing project - http://processing.org
+  Processing OpenGL (c) 2011-2015 Andres Colubri
 
-  Copyright (c) 2011-13 Ben Fry and Casey Reas
+  Part of the Processing project - http://processing.org
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2012-15 The Processing Foundation
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,8 +21,6 @@
   Boston, MA  02111-1307  USA
  */
 
-#define PROCESSING_LIGHT_SHADER
-
 uniform mat4 modelviewMatrix;
 uniform mat4 transformMatrix;
 uniform mat3 normalMatrix;
@@ -29,7 +30,7 @@ uniform vec4 lightPosition[8];
 uniform vec3 lightNormal[8];
 uniform vec3 lightAmbient[8];
 uniform vec3 lightDiffuse[8];
-uniform vec3 lightSpecular[8];
+uniform vec3 lightSpecular[8];      
 uniform vec3 lightFalloff[8];
 uniform vec2 lightSpot[8];
 
@@ -47,8 +48,7 @@ varying vec4 backVertColor;
 
 const float zero_float = 0.0;
 const float one_float = 1.0;
-const vec3 zero_vec3 = vec3(0.0);
-const vec3 minus_one_vec3 = vec3(0.0-1.0);
+const vec3 zero_vec3 = vec3(0);
 
 float falloffFactor(vec3 lightPos, vec3 vertPos, vec3 coeff) {
   vec3 lpv = lightPos - vertPos;
@@ -60,7 +60,7 @@ float falloffFactor(vec3 lightPos, vec3 vertPos, vec3 coeff) {
 
 float spotFactor(vec3 lightPos, vec3 vertPos, vec3 lightNorm, float minCos, float spotExp) {
   vec3 lpv = normalize(lightPos - vertPos);
-  vec3 nln = minus_one_vec3 * lightNorm;
+  vec3 nln = -one_float * lightNorm;
   float spotCos = dot(nln, lpv);
   return spotCos <= minCos ? zero_float : pow(spotCos, spotExp);
 }
@@ -84,7 +84,7 @@ void main() {
   
   // Normal vector in eye coordinates
   vec3 ecNormal = normalize(normalMatrix * normal);
-  vec3 ecNormalInv = ecNormal * minus_one_vec3;
+  vec3 ecNormalInv = ecNormal * -one_float;
   
   // Light calculations
   vec3 totalAmbient = vec3(0, 0, 0);
@@ -109,7 +109,7 @@ void main() {
       
     if (isDir) {
       falloff = one_float;
-      lightDir = minus_one_vec3 * lightNormal[i];
+      lightDir = -one_float * lightNormal[i];
     } else {
       falloff = falloffFactor(lightPos, ecVertex, lightFalloff[i]);  
       lightDir = normalize(lightPos - ecVertex);

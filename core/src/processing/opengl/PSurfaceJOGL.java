@@ -758,7 +758,7 @@ public class PSurfaceJOGL implements PSurface {
 //                     ((c >>  0) & 0xff) / 255f,
 //                     ((c >> 24) & 0xff) / 255f);
 //      pgl.clear(PGL.COLOR_BUFFER_BIT);
-      pgl.requestFBOLayerReset();
+      pgl.resetFBOLayer();
 //      final float[] valReqSurfacePixelScale = window.getRequestedSurfaceScale(new float[2]);
       window.getCurrentSurfaceScale(currentPixelScale);
 //      final float[] nativeSurfacePixelScale = window.getMaximumSurfaceScale(new float[2]);

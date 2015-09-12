@@ -1,14 +1,16 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Part of the Processing project - http://processing.org
+  Processing OpenGL (c) 2011-2015 Andres Colubri
 
+  Part of the Processing project - http://processing.org
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2012-15 The Processing Foundation
-  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation, version 2.1.
+  License version 2.1 as published by the Free Software Foundation.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,7 +21,7 @@
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
-*/
+ */
 
 package processing.opengl;
 
@@ -517,101 +519,6 @@ public class PShapeOpenGL extends PShape {
     }
   }
 
-
-//  @Override
-//  protected void finalize() throws Throwable {
-//    try {
-//      finalizePolyBuffers();
-//      finalizeLineBuffers();
-//      finalizePointBuffers();
-//    } finally {
-//      super.finalize();
-//    }
-//  }
-
-
-//  protected void finalizePolyBuffers() {
-//    if (glPolyVertex != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glPolyVertex, context);
-//    }
-//
-//    if (glPolyColor != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glPolyColor, context);
-//    }
-//
-//    if (glPolyNormal != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glPolyNormal, context);
-//    }
-//
-//    if (glPolyTexcoord != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glPolyTexcoord, context);
-//    }
-//
-//    if (glPolyAmbient != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glPolyAmbient, context);
-//    }
-//
-//    if (glPolySpecular != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glPolySpecular, context);
-//    }
-//
-//    if (glPolyEmissive != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glPolyEmissive, context);
-//    }
-//
-//    if (glPolyShininess != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glPolyShininess, context);
-//    }
-//
-//    for (VertexAttribute attrib: polyAttribs.values()) {
-//      if (attrib.glName != 0) {
-//        PGraphicsOpenGL.finalizeVertexBufferObject(attrib.glName, context);
-//      }
-//    }
-//
-//
-//    if (glPolyIndex != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glPolyIndex, context);
-//    }
-//  }
-
-
-//  protected void finalizeLineBuffers() {
-//    if (glLineVertex != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glLineVertex, context);
-//    }
-//
-//    if (glLineColor != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glLineColor, context);
-//    }
-//
-//    if (glLineAttrib != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glLineAttrib, context);
-//    }
-//
-//    if (glLineIndex != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glLineIndex, context);
-//    }
-//  }
-//
-//
-//  protected void finalizePointBuffers() {
-//    if (glPointVertex != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glPointVertex, context);
-//    }
-//
-//    if (glPointColor != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glPointColor, context);
-//    }
-//
-//    if (glPointAttrib != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glPointAttrib, context);
-//    }
-//
-//    if (glPointIndex != 0) {
-//      PGraphicsOpenGL.finalizeVertexBufferObject(glPointIndex, context);
-//    }
-//  }
 
   ///////////////////////////////////////////////////////////
 

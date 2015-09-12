@@ -35,7 +35,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
-
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -70,7 +69,6 @@ public abstract class PGL {
 
   // Parameters
 
-  protected static boolean USE_FBOLAYER_BY_DEFAULT = false;
   public static int REQUESTED_DEPTH_BITS   = 24;
   public static int REQUESTED_STENCIL_BITS = 8;
   public static int REQUESTED_ALPHA_BITS   = 8;
@@ -129,16 +127,17 @@ public abstract class PGL {
    * order to make sure the lines are always on top of the fill geometry */
   protected static float STROKE_DISPLACEMENT = 0.999f;
 
+  protected static boolean DOUBLE_BUFFERED = true;
 
   // ........................................................
 
   // FBO layer
 
-  protected boolean requestedFBOLayer = false;
-  protected boolean requestedFBOLayerReset = false;
+  protected boolean fboLayerEnabled = false;
   protected boolean fboLayerCreated = false;
-  protected boolean fboLayerInUse = false;
-  protected boolean firstFrame = true;
+  protected boolean fboLayerEnabledReq = false;
+  protected boolean fboLayerDisableReq = false;
+  protected boolean fbolayerResetReq = false;
   public int reqNumSamples;
   protected int numSamples;
 
@@ -443,10 +442,6 @@ public abstract class PGL {
       glMultiDepthStencil = allocateIntBuffer(1);
       glMultiDepth = allocateIntBuffer(1);
       glMultiStencil = allocateIntBuffer(1);
-
-      fboLayerCreated = false;
-      fboLayerInUse = false;
-      firstFrame = false;
     }
 
     byteBuffer = allocateByteBuffer(1);
@@ -478,55 +473,61 @@ public abstract class PGL {
     }
   }
 
-//  public abstract Object getCanvas();
-//
-//
-//  protected abstract void setFps(float fps);
-//
-//
-//  protected abstract void initSurface(int antialias);
-//
-//
-//  protected abstract void reinitSurface();
-//
-//
-//  protected abstract void registerListeners();
+
+  abstract public Object getNative();
+
+
+  abstract protected void setFrameRate(float fps);
+
+
+  abstract protected void initSurface(int antialias);
+
+
+  abstract protected void reinitSurface();
+
+
+  abstract protected void registerListeners();
 
 
   protected int getReadFramebuffer()  {
-    return fboLayerInUse ? glColorFbo.get(0) : 0;
+    return fboLayerEnabled ? glColorFbo.get(0) : 0;
   }
 
 
   protected int getDrawFramebuffer()  {
-    if (fboLayerInUse) return 1 < numSamples ? glMultiFbo.get(0) :
-                                               glColorFbo.get(0);
+    if (fboLayerEnabled) return 1 < numSamples ? glMultiFbo.get(0) :
+                                                 glColorFbo.get(0);
     else return 0;
   }
 
 
   protected int getDefaultDrawBuffer()  {
-    return fboLayerInUse ? COLOR_ATTACHMENT0 : BACK;
+    return fboLayerEnabled ? COLOR_ATTACHMENT0 : BACK;
   }
 
 
   protected int getDefaultReadBuffer()  {
-    return fboLayerInUse ? COLOR_ATTACHMENT0 : FRONT;
+    return fboLayerEnabled ? COLOR_ATTACHMENT0 : FRONT;
   }
 
 
   protected boolean isFBOBacked() {;
-    return fboLayerInUse;
+    return fboLayerEnabled;
   }
 
 
-  public void requestFBOLayer() {
-    requestedFBOLayer = true;
+  public void enableFBOLayer() {
+    fboLayerEnabledReq = true;
   }
 
 
-  public void requestFBOLayerReset() {
-    requestedFBOLayerReset = true;
+  public void disableFBOLayer() {
+    fboLayerDisableReq = true;
+  }
+
+
+  public void resetFBOLayer() {
+    fbolayerResetReq = true;
   }
 
 
@@ -628,6 +629,8 @@ public abstract class PGL {
   }
 
 
+  abstract protected float getPixelScale();
+
   ///////////////////////////////////////////////////////////
 
   // Present mode
@@ -637,7 +640,7 @@ public abstract class PGL {
     presentMode = true;
     presentX = x;
     presentY = y;
-    requestFBOLayer();
+    enableFBOLayer();
   }
 
 
@@ -691,12 +694,17 @@ public abstract class PGL {
     pclearColor = clearColor;
     clearColor = false;
 
-    if (requestedFBOLayer) {
-      if (requestedFBOLayerReset) {
+    if (fboLayerEnabledReq) {
+      fboLayerEnabled = true;
+      fboLayerEnabledReq = false;
+    }
+
+    if (fboLayerEnabled) {
+      if (fbolayerResetReq) {
         destroyFBOLayer();
-        requestedFBOLayerReset = false;
+        fbolayerResetReq = false;
       }
-      if (!fboLayerCreated) {
+      if (!fboLayerCreated && DOUBLE_BUFFERED) {
         createFBOLayer();
       }
 
@@ -709,7 +717,7 @@ public abstract class PGL {
         bindFramebufferImpl(FRAMEBUFFER, glMultiFbo.get(0));
       }
 
-      if (firstFrame) {
+      if (sketch.frameCount == 0) {
         // No need to draw back color buffer because we are in the first frame.
         int argb = graphics.backgroundColor;
         float a = ((argb >> 24) & 0xff) / 255.0f;
@@ -727,24 +735,18 @@ public abstract class PGL {
           x = (int)presentX;
           y = (int)presentY;
         }
-        float scale = graphics.getPixelScale();
+        float scale = getPixelScale();
         drawTexture(TEXTURE_2D, glColorTex.get(frontTex), fboWidth, fboHeight,
                     x, y, graphics.width, graphics.height,
                     0, 0, (int)(scale * graphics.width), (int)(scale * graphics.height),
                     0, 0, graphics.width, graphics.height);
       }
-
-      fboLayerInUse = true;
-    } else {
-      fboLayerInUse = false;
     }
-
-    firstFrame = false;
   }
 
 
   protected void endRender(int windowColor) {
-    if (fboLayerInUse) {
+    if (fboLayerEnabled) {
       syncBackTexture();
 
       // Draw the contents of the back texture to the screen framebuffer.
@@ -791,7 +793,7 @@ public abstract class PGL {
         x = (int)presentX;
         y = (int)presentY;
       }
-      float scale = graphics.getPixelScale();
+      float scale = getPixelScale();
       drawTexture(TEXTURE_2D, glColorTex.get(backTex),
                   fboWidth, fboHeight,
                   x, y, graphics.width, graphics.height,
@@ -802,8 +804,17 @@ public abstract class PGL {
       int temp = frontTex;
       frontTex = backTex;
       backTex = temp;
+
+      if (fboLayerDisableReq) {
+        fboLayerEnabled = false;
+        fboLayerDisableReq = false;
+      }
     } else if (!clearColor && 0 < sketch.frameCount || !sketch.isLooping()) {
-      requestFBOLayer();
+      enableFBOLayer();
+    }
+
+    if (fboLayerEnabledReq && !fboLayerCreated && !DOUBLE_BUFFERED) {
+      createFBOLayer();
     }
   }
 
@@ -840,7 +851,7 @@ public abstract class PGL {
 
 
   private void createFBOLayer() {
-    float scale = graphics.getPixelScale();
+    float scale = getPixelScale();
 
     if (hasNpotTexSupport()) {
       fboWidth = (int)(scale * graphics.width);
@@ -921,45 +932,12 @@ public abstract class PGL {
     clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
 
     bindFramebufferImpl(FRAMEBUFFER, 0);
-
-    if (0 < sketch.frameCount) {
-      // Copy the contents of the front and back screen buffers to the textures
-      // of the FBO, so they are properly initialized. Note that the front buffer
-      // of the default framebuffer (the screen) contains the previous frame:
-      // https://www.opengl.org/wiki/Default_Framebuffer
-      // so it is copied to the front texture of the FBO layer:
-      if (pclearColor || 0 < pgeomCount || !sketch.isLooping()) {
-        readBuffer(FRONT);
-      } else {
-        // ...except when the previous frame has not been cleared and nothing was
-        // renderered while looping. In this case the back buffer, which holds the
-        // initial state of the previous frame, still contains the most up-to-date
-        // screen state.
-        readBuffer(BACK);
-      }
-      bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
-      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
-                           TEXTURE_2D, glColorTex.get(frontTex), 0);
-      drawBuffer(COLOR_ATTACHMENT0);
-      blitFramebuffer(0, 0, fboWidth, fboHeight,
-                      0, 0, fboWidth, fboHeight,
-                      COLOR_BUFFER_BIT, NEAREST);
-
-      readBuffer(BACK);
-      bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
-      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
-                           TEXTURE_2D, glColorTex.get(backTex), 0);
-      drawBuffer(COLOR_ATTACHMENT0);
-      blitFramebuffer(0, 0, fboWidth, fboHeight,
-                      0, 0, fboWidth, fboHeight,
-                      COLOR_BUFFER_BIT, NEAREST);
-
-      bindFramebufferImpl(FRAMEBUFFER, 0);
-    }
+    initFBOLayer();
 
     fboLayerCreated = true;
   }
 
+  protected abstract void initFBOLayer();
 
   protected void destroyFBOLayer() {
     if (threadIsCurrent() && fboLayerCreated) {
@@ -975,10 +953,7 @@ public abstract class PGL {
       deleteRenderbuffers(1, glMultiDepth);
       deleteRenderbuffers(1, glMultiStencil);
     }
-
     fboLayerCreated = false;
-    fboLayerInUse = false;
-//    firstFrame = false;
   }
 
 
@@ -1188,7 +1163,7 @@ public abstract class PGL {
                           int viewX, int viewY, int viewW, int viewH,
                           int texX0, int texY0, int texX1, int texY1,
                           int scrX0, int scrY0, int scrX1, int scrY1) {
-    int viewF = (int)graphics.getPixelScale();
+    int viewF = (int)getPixelScale();
     drawTexture(target, id, texW, texH,
                 viewX, viewY, viewW, viewH, viewF,
                 texX0, texY0, texX1, texY1,
@@ -1773,9 +1748,7 @@ public abstract class PGL {
   }
 
 
-  protected int getGLSLVersion() {
-    return 120;
-  }
+  abstract protected int getGLSLVersion();
 
 
   protected String[] loadVertexShader(String filename) {

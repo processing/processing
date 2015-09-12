@@ -58,6 +58,7 @@ import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
+import processing.core.PSurface;
 
 
 public class PJOGL extends PGL {
@@ -142,6 +143,28 @@ public class PJOGL extends PGL {
   }
 
 
+  @Override
+  public Object getNative() {
+    return sketch.getSurface().getNative();
+  }
+
+
+  @Override
+  protected void setFrameRate(float fps) {}
+
+
+  @Override
+  protected void initSurface(int antialias) {}
+
+
+  @Override
+  protected void reinitSurface() {}
+
+
+  @Override
+  protected void registerListeners() {}
+
+
   ///////////////////////////////////////////////////////////////
 
   // Public methods to get/set renderer's properties
@@ -183,6 +206,19 @@ public class PJOGL extends PGL {
   @Override
   protected int getStencilBits() {
     return capabilities.getStencilBits();
+  }
+
+
+  @Override
+  protected float getPixelScale() {
+    PSurface surf = sketch.getSurface();
+    if (surf == null) {
+      return graphics.pixelDensity;
+    } else if (surf instanceof PSurfaceJOGL) {
+      return ((PSurfaceJOGL)surf).getPixelScale();
+    } else {
+      throw new RuntimeException("Renderer cannot find a JOGL surface");
+    }
   }
 
 
@@ -238,6 +274,45 @@ public class PJOGL extends PGL {
   protected void swapBuffers()  {
     PSurfaceJOGL surf = (PSurfaceJOGL)sketch.getSurface();
     surf.window.swapBuffers();
+  }
+
+
+  @Override
+  protected void initFBOLayer() {
+    if (0 < sketch.frameCount) {
+      // Copy the contents of the front and back screen buffers to the textures
+      // of the FBO, so they are properly initialized. Note that the front buffer
+      // of the default framebuffer (the screen) contains the previous frame:
+      // https://www.opengl.org/wiki/Default_Framebuffer
+      // so it is copied to the front texture of the FBO layer:
+      if (pclearColor || 0 < pgeomCount || !sketch.isLooping()) {
+        readBuffer(FRONT);
+      } else {
+        // ...except when the previous frame has not been cleared and nothing was
+        // rendered while looping. In this case the back buffer, which holds the
+        // initial state of the previous frame, still contains the most up-to-date
+        // screen state.
+        readBuffer(BACK);
+      }
+      bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                           TEXTURE_2D, glColorTex.get(frontTex), 0);
+      drawBuffer(COLOR_ATTACHMENT0);
+      blitFramebuffer(0, 0, fboWidth, fboHeight,
+                      0, 0, fboWidth, fboHeight,
+                      COLOR_BUFFER_BIT, NEAREST);
+
+      readBuffer(BACK);
+      bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                           TEXTURE_2D, glColorTex.get(backTex), 0);
+      drawBuffer(COLOR_ATTACHMENT0);
+      blitFramebuffer(0, 0, fboWidth, fboHeight,
+                      0, 0, fboWidth, fboHeight,
+                      COLOR_BUFFER_BIT, NEAREST);
+
+      bindFramebufferImpl(FRAMEBUFFER, 0);
+    }
   }
 
 
@@ -306,7 +381,6 @@ public class PJOGL extends PGL {
 
 
   public void init(GLAutoDrawable glDrawable) {
-    firstFrame = true;
     capabilities = glDrawable.getChosenGLCapabilities();
     if (!hasFBOs()) {
       throw new RuntimeException(MISSING_FBO_ERROR);
@@ -1051,7 +1125,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void viewport(int x, int y, int w, int h) {
-    float scale = graphics.getPixelScale();
+    float scale = getPixelScale();
     viewportImpl((int)scale * x, (int)(scale * y), (int)(scale * w), (int)(scale * h));
   }
 
@@ -1561,7 +1635,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void scissor(int x, int y, int w, int h) {
-    float scale = graphics.getPixelScale();
+    float scale = getPixelScale();
     gl.glScissor((int)scale * x, (int)(scale * y), (int)(scale * w), (int)(scale * h));
 //    gl.glScissor(x, y, w, h);
   }
