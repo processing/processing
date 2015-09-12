@@ -699,9 +699,12 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void requestFocus() {
-    if (window != null) {
-      window.requestFocus();
-    }
+    display.getEDTUtil().invoke(false, new Runnable() {
+      @Override
+      public void run() {
+        window.requestFocus();
+      }
+    });
   }
 
 
@@ -713,6 +716,10 @@ public class PSurfaceJOGL implements PSurface {
         return;
       }
 
+      if (sketch.frameCount == 0) {
+        requestFocus();
+      }
+
       pgl.getGL(drawable);
       int pframeCount = sketch.frameCount;
       sketch.handleDraw();
@@ -721,10 +728,6 @@ public class PSurfaceJOGL implements PSurface {
         // the sketch is no looping, otherwise background artifacts will occur.
         pgl.beginRender();
         pgl.endRender(sketch.sketchWindowColor());
-      }
-
-      if (sketch.frameCount == 1) {
-        requestFocus();
       }
 
       if (sketch.exitCalled()) {
