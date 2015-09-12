@@ -1,5 +1,9 @@
 0245 core (3.0b7)
 
+andres
+X surface.setLocation() causing a freeze on Windows
+X   https://github.com/processing/processing/commit/4c0f9234c0a48f62363233cafc9c9951ee351d3e
+
 
 3.0 final
 _ P2D and P3D windows behave strangely when larger than the screen size
