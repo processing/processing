@@ -516,6 +516,12 @@ public abstract class PGL {
   }
 
 
+  @Deprecated
+  public void requestFBOLayer() {
+    enableFBOLayer();
+  }
+
+
   public void enableFBOLayer() {
     fboLayerEnabledReq = true;
   }
