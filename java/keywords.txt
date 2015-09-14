@@ -623,7 +623,7 @@ mouseDragged	FUNCTION4	mouseDragged
 mouseMoved	FUNCTION4	mouseMoved
 mousePressed	FUNCTION4	mousePressed
 mousePressed	KEYWORD4	mousePressed
-mouseReleased	FUNCTION1	mouseReleased_
+mouseReleased	FUNCTION4	mouseReleased
 mouseWheel	FUNCTION4	mouseWheel
 mouseX	KEYWORD4	mouseX
 mouseY	KEYWORD4	mouseY
