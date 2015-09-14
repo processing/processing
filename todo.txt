@@ -1,4 +1,7 @@
 0245 (3.0b7)
+X add jar files from 'code' folder to the library path
+X   Code editor wrongly detects errors for libraries in code folder
+X   https://github.com/processing/processing/issues/3732
 
 
 known issues
@@ -13,9 +16,10 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
-_ add jar files from 'code' folder to the library path
-_   Code editor wrongly detects errors for libraries in code folder
-_   https://github.com/processing/processing/issues/3732
+_ Hitting enter on code completion completes and then creates a new line
+_   https://github.com/processing/processing/issues/3741
+_ Live error checking throws error when calling color() on a PGraphics
+_   https://github.com/processing/processing/issues/3762
 _ "color type detected! this shouldn't be happening! please report"
 _   happens when user does 'new color' instead of 'color'
 _   https://github.com/processing/processing/issues/3739
