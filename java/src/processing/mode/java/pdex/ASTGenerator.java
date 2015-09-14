@@ -1308,6 +1308,19 @@ public class ASTGenerator {
       //log("Doesn't exist in imp package: " + impS.getImportName());
     }
 
+    for (ImportStatement impS : errorCheckerService.codeFolderImports) {
+      String temp = impS.getPackageName();
+      if (impS.isStarredImport() && className.indexOf('.') == -1) {
+        temp = impS.getPackageName() + "." + className;
+      }
+      tehClass = loadClass(temp);
+      if (tehClass != null) {
+        log(tehClass.getName() + " located.");
+        return tehClass;
+      }
+      //log("Doesn't exist in (code folder) imp package: " + impS.getImportName());
+    }
+
     PdePreprocessor p = new PdePreprocessor(null);
     for (String impS : p.getCoreImports()) {
       tehClass = loadClass(impS.substring(0,impS.length()-1) + className);
@@ -3512,6 +3525,13 @@ public class ASTGenerator {
         return false;
       }
     }
+
+    for (ImportStatement impS : errorCheckerService.codeFolderImports) {
+      if (impName.toLowerCase().startsWith(impS.getPackageName().toLowerCase())) {
+        return false;
+      }
+    }
+
     if (JavaMode.suggestionsMap == null
         || JavaMode.suggestionsMap.keySet().size() == 0) {
       log("SuggestionsMap is null or empty, won't be able to trim class names");

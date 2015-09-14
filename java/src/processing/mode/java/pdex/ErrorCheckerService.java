@@ -203,6 +203,11 @@ public class ErrorCheckerService implements Runnable {
   protected ArrayList<ImportStatement> previousImports = new ArrayList<ImportStatement>();
 
   /**
+   * List of import statements for any .jar files in the code folder.
+   */
+  protected ArrayList<ImportStatement> codeFolderImports = new ArrayList<ImportStatement>();
+
+  /**
    * Teh Preprocessor
    */
   protected XQPreprocessor xqpreproc;
@@ -243,7 +248,7 @@ public class ErrorCheckerService implements Runnable {
 
     initParser();
     //initializeErrorWindow();
-    xqpreproc = new XQPreprocessor();
+    xqpreproc = new XQPreprocessor(this);
     PdePreprocessor pdePrepoc = new PdePreprocessor(null);
     defaultImportsOffset = pdePrepoc.getCoreImports().length +
         pdePrepoc.getDefaultImports().length + 1;
@@ -652,6 +657,10 @@ public class ErrorCheckerService implements Runnable {
         loadCompClass = false;
       }
 
+//      for(URL cpUrl: classPath) {
+//        Messages.log("CP jar: " + cpUrl.getPath());
+//      }
+
       if (compilerSettings == null) {
         prepareCompilerSetting();
       }
@@ -844,37 +853,36 @@ public class ErrorCheckerService implements Runnable {
             classpathJars.add(new File(pathItem).toURI().toURL());
           }
         } catch (Exception e) {
-          if (library == null && !codeFolderChecked) {
-            // Look around in the code folder for jar files
-            if (editor.getSketch().hasCodeFolder()) {
-              File codeFolder = editor.getSketch().getCodeFolder();
+          Messages.log("Encountered " + e + " while adding library to classpath");
+        }
+      }
 
-              // get a list of .jar files in the "code" folder
-              // (class files in subfolders should also be picked up)
-              String codeFolderClassPath = Util.contentsToClassPath(codeFolder);
-              codeFolderChecked = true;
-              // huh? doesn't this mean .length() == 0? [fry]
-              if (codeFolderClassPath.equalsIgnoreCase("")) {
-                String message = String.format("Cannot find \"%s\" library in code folder. Line %d in tab %s%n",
-                        entry, impstat.getLineNumber(),
-                        editor.getSketch().getCode(impstat.getTab()).getPrettyName());
-                Messages.log(message);
-              } else {
-                String codeFolderPath[] =
+
+      // Look around in the code folder for jar files and them too
+      if (editor.getSketch().hasCodeFolder()) {
+        File codeFolder = editor.getSketch().getCodeFolder();
+
+        // get a list of .jar files in the "code" folder
+        // (class files in subfolders should also be picked up)
+        String codeFolderClassPath = Util.contentsToClassPath(codeFolder);
+        codeFolderChecked = true;
+        // huh? doesn't this mean .length() == 0? [fry]
+        if (!codeFolderClassPath.equalsIgnoreCase("")) {
+          Messages.log("Sketch has a code folder. Adding its jars");
+          String codeFolderPath[] =
                   PApplet.split(codeFolderClassPath.substring(1).trim(),
-                                File.pathSeparatorChar);
-                try {
-                  for (String pathItem : codeFolderPath) {
-                    classpathJars.add(new File(pathItem).toURI().toURL());
-                  }
-                } catch (Exception e2) {
-                  e2.printStackTrace();
-                }
-              }
+                          File.pathSeparatorChar);
+          try {
+            for (String pathItem : codeFolderPath) {
+              classpathJars.add(new File(pathItem).toURI().toURL());
+              Messages.log("Addind cf jar: " + pathItem);
             }
-
+          } catch (Exception e2) {
+            e2.printStackTrace();
           }
         }
+
+
       }
 
       // Also add jars specified in mode's search path
