@@ -632,28 +632,15 @@ public class PSurfaceJOGL implements PSurface {
       return;
     }
 
-
-//    if (animator.isAnimating()) {
-//      System.err.println("3. set size");
-
-      if (!pgl.presentMode()) {
-//        sketch.width = width;
-//        sketch.height = height;
-        sketch.setSize(width, height);
-        sketchWidth = width;
-        sketchHeight = height;
-        graphics.setSize(width, height);
-        display.getEDTUtil().invoke(false, new Runnable() {
-          @Override
-          public void run() {
-            window.setSize(width, height);
-          }
-        });
-      }
-
-
-//    }
+    if (!pgl.presentMode()) {
+      sketch.setSize(width, height);
+      sketchWidth = width;
+      sketchHeight = height;
+      graphics.setSize(width, height);
+      window.setSize(width, height);
+    }
   }
+
 
   public float getPixelScale() {
     if (graphics.is2X()) {
