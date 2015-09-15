@@ -50,7 +50,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   protected ContributionFilter filter;
   protected ContributionListing contribListing = ContributionListing.getInstance();
   protected JTable table;
-  DefaultTableModel dtm;
+  DefaultTableModel model;
   JScrollPane scrollPane;
   Font myFont;
 
@@ -77,8 +77,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 //    status = new StatusPanel(null);
 
 
-    dtm = new ContribTableModel();
-    table = new JTable(dtm){
+    model = new ContribTableModel();
+    table = new JTable(model){
       @Override
       public Component prepareRenderer(
               TableCellRenderer renderer, int row, int column) {
@@ -94,7 +94,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
     // There is a space before Status
     String[] colName = { " Status", "Name", "Author" };
-    dtm.setColumnIdentifiers(colName);
+    model.setColumnIdentifiers(colName);
     scrollPane = new JScrollPane(table);
     scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     table.setFillsViewportHeight(true);
@@ -310,16 +310,20 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 //        return table.getDefaultRenderer(Icon.class).getTableCellRendererComponent(table, icon, isSelected, false, row, column);
       } else if (column == 1) {
         // Generating ellipses based on fontMetrics
-        FontMetrics fontMetrics = table.getFontMetrics(table.getFont());
+        Font boldFont = Toolkit.getSansFont(14, Font.BOLD);
+        String fontFace = "<font face=\"" + boldFont.getName() + "\">";
+        FontMetrics fontMetrics = table.getFontMetrics(boldFont); //table.getFont());
         int colSize = table.getColumnModel().getColumn(1).getWidth();
         String sentence = contribution.getSentence();
-        int currentWidth = table.getFontMetrics(table.getFont().deriveFont(Font.BOLD)).stringWidth(contribution.getName() + " | ");
+        //int currentWidth = table.getFontMetrics(table.getFont().deriveFont(Font.BOLD)).stringWidth(contribution.getName() + " | ");
+        int currentWidth = table.getFontMetrics(boldFont).stringWidth(contribution.getName() + " | ");
         int ellipsesWidth = fontMetrics.stringWidth("...");
-        String name = "<html><body><b>" + contribution.getName();
+        //String name = "<html><body><b>" + contribution.getName();
+        String name = "<html><body>" + fontFace + contribution.getName();
         if (sentence == null) {
-          label.setText(name + "</b></body></html>");
+          label.setText(name + "</font></body></html>");
         } else {
-          sentence = " | </b>" + sentence;
+          sentence = " | </font>" + sentence;
           currentWidth += ellipsesWidth;
           int i = 0;
           for (i = 0; i < sentence.length(); i++) {
@@ -410,35 +414,14 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
 
   void updatePanelOrdering(Set<Contribution> contributionsSet) {
-    /*   int row = 0;
-    for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
-      GridBagConstraints c = new GridBagConstraints();
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.weightx = 1;
-      c.gridx = 0;
-      c.gridy = row++;
-      c.anchor = GridBagConstraints.NORTH;
+    model.getDataVector().removeAllElements();
+    model.fireTableDataChanged();
 
-      add(entry.getValue(), c);
-    }
-
-    GridBagConstraints c = new GridBagConstraints();
-    c.fill = GridBagConstraints.BOTH;
-    c.weightx = 1;
-    c.weighty = 1;
-    c.gridx = 0;
-    c.gridy = row++;
-    c.anchor = GridBagConstraints.NORTH;
-    add(status, c);*/
-//    System.out.println(dtm.getDataVector());
-    dtm.getDataVector().removeAllElements();
-    dtm.fireTableDataChanged();
     int rowCount = 0;
     for (Contribution entry : contributionsSet) {
-      ((ContribTableModel) table.getModel()).addRow(new Object[] {
-        entry, entry, entry });
-      if (selectedPanel != null && entry.getName()
-        .equals(selectedPanel.getContrib().getName())) {
+      model.addRow(new Object[] { entry, entry, entry });
+      if (selectedPanel != null &&
+          entry.getName().equals(selectedPanel.getContrib().getName())) {
         table.setRowSelectionInterval(rowCount, rowCount);
       }
       rowCount++;

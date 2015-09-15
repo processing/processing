@@ -2,13 +2,17 @@
 X add jar files from 'code' folder to the library path
 X   Code editor wrongly detects errors for libraries in code folder
 X   https://github.com/processing/processing/issues/3732
-X CM: Clicking item in Libraries list throws exception
-X   https://github.com/processing/processing/issues/3667
 o dim out the Run button if there are compile errors detected
 o   the AST checker has better error message handling for those cases
 o   and hitting Run replaces the useful error with something weird
 X   https://github.com/processing/processing/issues/3408
 X   not great because the error checker runs more slowly than your typing
+
+manager
+X CM: Clicking item in Libraries list throws exception
+X   https://github.com/processing/processing/issues/3667
+X CM: Libraries missing descriptions and PFoundation credit
+X   https://github.com/processing/processing/issues/3688
 
 watcher
 X prevent re-prompting users when they say "no" to "sketch modified" message

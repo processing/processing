@@ -105,7 +105,7 @@ public class UpdateContributionTab extends ContributionTab {
 //      status = new StatusPanel(null);
 
       String[] colName = { "", "Name", "Author", "Installed", "Update To" };
-      dtm = new MyTableModel(){
+      model = new MyTableModel(){
         @Override
         public Class<?> getColumnClass(int columnIndex) {
           if (columnIndex == 0) {
@@ -114,8 +114,8 @@ public class UpdateContributionTab extends ContributionTab {
           return String.class;
         }
       };
-      dtm.setColumnIdentifiers(colName);
-      table = new JTable(dtm){
+      model.setColumnIdentifiers(colName);
+      table = new JTable(model){
         @Override
         public Component prepareRenderer(
                 TableCellRenderer renderer, int row, int column) {
@@ -252,13 +252,18 @@ public class UpdateContributionTab extends ContributionTab {
         .toString(panelByContribution.size()));
       contributionTab.contributionManagerDialog.numberLabel.setVisible(true);
       }
-      dtm.getDataVector().removeAllElements();
-      dtm.fireTableDataChanged();
+      model.getDataVector().removeAllElements();
+      model.fireTableDataChanged();
       ContributionType temp = null;
+
+      // Avoid ugly synthesized bold
+      Font boldFont = Toolkit.getSansFont(table.getFont().getSize(), Font.BOLD);
+      String fontFace = "<font face=\"" + boldFont.getName() + "\">";
+
       for (Contribution entry : contributionsSet) {
         if(entry.getType() != temp){
           temp = entry.getType();
-          dtm.addRow(new Object[] { null, "<html><i>" + temp.getTitle() + "</i></html>", null, null, null });
+          model.addRow(new Object[] { null, "<html><i>" + temp.getTitle() + "</i></html>", null, null, null });
         }
         //TODO Make this into a function
         StringBuilder name = new StringBuilder("");
@@ -289,9 +294,8 @@ public class UpdateContributionTab extends ContributionTab {
             icon = Toolkit.getLibIcon("manager/incompatible-" + ContributionManagerDialog.iconVer + "x.png");
           }
         }
-        dtm
-          .addRow(new Object[] {
-            icon, "<html><b>" + entry.getName() + "</b></html>", name, entry.getPrettyVersion(),
+        model.addRow(new Object[] {
+            icon, "<html>" + fontFace + entry.getName() + "</font></html>", name, entry.getPrettyVersion(),
             contributionTab.contribListing.getLatestVersion(entry) });
       }
      ((UpdateStatusPanel)statusPanel).update();
