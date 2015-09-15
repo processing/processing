@@ -13,6 +13,8 @@ X CM: Clicking item in Libraries list throws exception
 X   https://github.com/processing/processing/issues/3667
 X CM: Libraries missing descriptions and PFoundation credit
 X   https://github.com/processing/processing/issues/3688
+X use real version of bold font, rather than the fake version
+X remove the "v" from the version numbers in the updates tab
 
 watcher
 X prevent re-prompting users when they say "no" to "sketch modified" message
