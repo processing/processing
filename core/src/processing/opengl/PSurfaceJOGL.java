@@ -1,17 +1,15 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  Processing OpenGL (c) 2011-2015 Andres Colubri
-
   Part of the Processing project - http://processing.org
-  Copyright (c) 2001-04 Massachusetts Institute of Technology
-  Copyright (c) 2004-12 Ben Fry and Casey Reas
+
   Copyright (c) 2012-15 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  License as published by the Free Software Foundation, version 2.1.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
