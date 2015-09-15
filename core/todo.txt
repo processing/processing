@@ -1,5 +1,6 @@
 0245 core (3.0b7)
 
+
 andres
 X surface.setLocation() causing a freeze on Windows
 X   https://github.com/processing/processing/commit/4c0f9234c0a48f62363233cafc9c9951ee351d3e
@@ -32,6 +33,7 @@ _ selectInput/Output() is behind the drawing window (Windows)
 _   https://github.com/processing/processing/issues/3775
 
 javafx
+_ do we really need setTextFont/Size when we already have Impl? 
 _ need keyPressed() to do lower and upper case
 _ static mode sketches (draw once and halt w/o closing window)
 _ fix display handling, line up the device order with AWT

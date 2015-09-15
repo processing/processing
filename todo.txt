@@ -32,6 +32,8 @@ _ replace about screen (1x and 2x versions)
 _   change 'alpha' to correct name
 _   also change the revision in the "about processing" dialog
 _   https://github.com/processing/processing/issues/3665
+_ UnsatisfiedLinkError on startup "Access is denied" on Windows 10
+_   https://github.com/processing/processing/issues/3800
 _ JNA errors on startup when run from an account w/ non-ASCII characters
 _   https://github.com/processing/processing/issues/3624
 _   set jna.tmpdir (or java.io.tmpdir) to another location

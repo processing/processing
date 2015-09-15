@@ -268,6 +268,11 @@ public class WindowsPlatform extends DefaultPlatform {
 
 
   static private String getAppDataPath() throws Exception {
+    // Trying to deal with JNA problems on Windows 10
+    // https://github.com/processing/processing/issues/3800
+    // Try to load JNA and set its temporary directory
+    getLibC();
+
     // HKEY_CURRENT_USER\Software\Microsoft
     //   \Windows\CurrentVersion\Explorer\Shell Folders
     // Value Name: AppData
