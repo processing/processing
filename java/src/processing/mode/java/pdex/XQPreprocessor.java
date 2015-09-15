@@ -20,7 +20,6 @@
 
 package processing.mode.java.pdex;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +38,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
-import processing.app.Messages;
 import processing.app.Util;
 import processing.data.StringList;
 import processing.mode.java.preproc.PdePreprocessor;

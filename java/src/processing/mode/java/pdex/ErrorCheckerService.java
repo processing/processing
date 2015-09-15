@@ -829,7 +829,7 @@ public class ErrorCheckerService implements Runnable {
       // log("1..");
       classpathJars = new ArrayList<URL>();
       String entry = "";
-      boolean codeFolderChecked = false;
+//      boolean codeFolderChecked = false;
       for (ImportStatement impstat : programImports) {
         String item = impstat.getImportName();
         int dot = item.lastIndexOf('.');
@@ -865,7 +865,7 @@ public class ErrorCheckerService implements Runnable {
         // get a list of .jar files in the "code" folder
         // (class files in subfolders should also be picked up)
         String codeFolderClassPath = Util.contentsToClassPath(codeFolder);
-        codeFolderChecked = true;
+//        codeFolderChecked = true;
         // huh? doesn't this mean .length() == 0? [fry]
         if (!codeFolderClassPath.equalsIgnoreCase("")) {
           Messages.log("Sketch has a code folder. Adding its jars");
