@@ -4,6 +4,14 @@ X   Code editor wrongly detects errors for libraries in code folder
 X   https://github.com/processing/processing/issues/3732
 X CM: Clicking item in Libraries list throws exception
 X   https://github.com/processing/processing/issues/3667
+o dim out the Run button if there are compile errors detected
+o   the AST checker has better error message handling for those cases
+o   and hitting Run replaces the useful error with something weird
+X   https://github.com/processing/processing/issues/3408
+X   not great because the error checker runs more slowly than your typing
+
+watcher
+X prevent re-prompting users when they say "no" to "sketch modified" message
 
 
 known issues
@@ -56,8 +64,7 @@ _   https://github.com/processing/processing/issues/3759
 sketch modified externally (3.0 final)
 _ sketch modified externally with FAT32 volumes on OS X
 _   https://github.com/processing/processing/issues/3387
-_ also appearing with encrypted volumes?
-_   also an un-ending loop caused by it
+_ "Your sketch has been modified externally" with encrypted OS X volumes
 _   https://github.com/processing/processing/issues/3650
 _ add this to the preferences?
 
@@ -128,10 +135,6 @@ pde/build
 _ ignore-tools in build.xml not being called for some reason
 _ can't install processing-java into /usr/bin with El Capitan
 _   https://github.com/processing/processing/issues/3497
-_ dim out the Run button if there are compile errors detected
-_   the AST checker has better error message handling for those cases
-_   and hitting Run replaces the useful error with something weird
-_   https://github.com/processing/processing/issues/3408
 _ when variables used in size(), getting exceptions instead of any warning
 _   https://github.com/processing/processing/issues/3311
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found

@@ -156,6 +156,10 @@ editor.indent = true
 
 # Whether to check files to see if they've been modified externally
 editor.watcher = true
+# Set true to enable debugging, since this is quirky on others' machines
+editor.watcher.debug = false
+# The window of time (in milliseconds) in which a change won't be counted
+editor.watcher.window = 1500
 
 # font choice and size for the console
 #console.font = Monospaced,plain,11

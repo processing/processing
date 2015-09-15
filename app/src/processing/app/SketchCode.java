@@ -302,7 +302,7 @@ public class SketchCode {
       System.err.println();
     }
 
-    lastModified = file.lastModified();
+    setLastModified();
     setModified(false);
   }
 
@@ -330,7 +330,7 @@ public class SketchCode {
     savedProgram = program;
     file = newFile;
     makePrettyName();
-    lastModified = file.lastModified();
+    setLastModified();
     setModified(false);
   }
 
@@ -343,11 +343,21 @@ public class SketchCode {
     file = new File(sketchFolder, file.getName());
   }
 
+
+  /**
+   * Set the last known modification time, so that we're not re-firing
+   * "hey, this is modified!" events incessantly.
+   */
+  public void setLastModified() {
+    lastModified = file.lastModified();
+  }
+
+
   /**
    * Used to determine whether this file was modified externally
    * @return The time the file was last modified
    */
-  public long lastModified(){
+  public long getLastModified() {
     return lastModified;
   }
 }

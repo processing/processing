@@ -7,6 +7,8 @@ import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -17,18 +19,22 @@ import processing.app.SketchCode;
 
 
 public class ChangeDetector implements WindowFocusListener {
-  private Sketch sketch;
-  private Editor editor;
+  private final Sketch sketch;
+  private final Editor editor;
 
   // Windows and others seem to have a few hundred ms difference in reported
   // times, so we're arbitrarily setting a gap in time here.
   // Mac OS X has an (exactly) one second difference. Not sure if it's a Java
   // bug or something else about how OS X is writing files.
-  private final int MODIFIED_TIME_BUFFER = 1000;
+  static private final int MODIFICATION_WINDOW_MILLIS =
+    Preferences.getInteger("editor.watcher.window");
 
-  // Set true if the user selected 'no'. TODO this can't just skip once,
-  // because subsequent returns to the window w/o saving will keep firing.
-  private boolean skip = false;
+  // Debugging this feature is particularly difficult, adding an option for it
+  static private final boolean DEBUG =
+    Preferences.getBoolean("editor.watcher.debug");
+
+  // Store the known number of files to avoid re-asking about the same change
+//  private int lastKnownCount = -1;
 
 
   public ChangeDetector(Editor editor) {
@@ -39,21 +45,14 @@ public class ChangeDetector implements WindowFocusListener {
 
   @Override
   public void windowGainedFocus(WindowEvent e) {
-    // Keep the listener instantiated and check this to avoid a maze of
-    // adding and removing and re-adding with Preferences changes.
+    // When the window is activated, fire off a Thread to check for changes
     if (Preferences.getBoolean("editor.watcher")) {
-      // if they selected no, skip the next focus event
-      if (skip) {
-        skip = false;
-
-      } else {
-        new Thread(new Runnable() {
-          @Override
-          public void run() {
-            checkFileChange();
-          }
-        }).start();
-      }
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          checkFileChange();
+        }
+      }).start();
     }
   }
 
@@ -75,6 +74,10 @@ public class ChangeDetector implements WindowFocusListener {
     // if it does not, it will be re-saved, and no changes will be detected
     sketch.ensureExistence();
 
+//    if (lastKnownCount == -1) {
+//      lastKnownCount = sketch.getCodeCount();
+//    }
+
     // check file count first
     File sketchFolder = sketch.getFolder();
     File[] sketchFiles = sketchFolder.listFiles(new FilenameFilter() {
@@ -90,9 +93,12 @@ public class ChangeDetector implements WindowFocusListener {
     });
     int fileCount = sketchFiles.length;
 
+    // Prompt the user about this one even if they canceled before. It's a bad
+    // situation and there aren't good ways to recover or work around it.
     if (fileCount != sketch.getCodeCount()) {
+    //if (fileCount != lastKnownCount) {  //sketch.getCodeCount()) {
       // if they chose to reload and there aren't any files left
-      if (reloadSketch(null) && fileCount < 1) {
+      if (reloadCode(null) && fileCount < 1) {
         try {
           //make a blank file
           sketch.getMainFile().createNewFile();
@@ -101,36 +107,38 @@ public class ChangeDetector implements WindowFocusListener {
           showErrorEDT("Reload failed", "The sketch contains no code files.", e1);
           //don't try to reload again after the double fail
           //this editor is probably trashed by this point, but a save-as might be possible
-          skip = true;
+//          skip = true;
           return;
         }
         //it's okay to do this without confirmation, because they already confirmed to deleting the unsaved changes above
         sketch.reload();
         showWarningEDT("Modified Reload",
-                         "You cannot delete the last code file in a sketch.\n" +
-                         "A new blank sketch file has been generated for you.");
+                       "You cannot delete the last code file in a sketch.\n" +
+                       "A new blank sketch file has been generated for you.");
 
       }
       return;
     }
 
-
-    SketchCode[] codes = sketch.getCode();
-    for (SketchCode sc : codes) {
-      File sketchFile = sc.getFile();
+//    SketchCode[] codes = sketch.getCode();
+    List<SketchCode> reloadList = new ArrayList<>();
+    for (SketchCode code : sketch.getCode()) {
+      File sketchFile = code.getFile();
       if (sketchFile.exists()) {
-        long diff = sketchFile.lastModified() - sc.lastModified();
-        if (diff > MODIFIED_TIME_BUFFER) {
-          //System.out.println(sketchFile.getName() + " " + diff);
-          reloadSketch(sc);
-          //return;
+        long diff = sketchFile.lastModified() - code.getLastModified();
+        if (diff > MODIFICATION_WINDOW_MILLIS) {
+          if (DEBUG) System.out.println(sketchFile.getName() + " " + diff + "ms");
+          reloadList.add(code);
         }
       } else {
         // If a file in the sketch was not found, then it must have been
         // deleted externally, so reload the sketch.
-        reloadSketch(sc);
-        //return;
+        if (DEBUG) System.out.println(sketchFile.getName() + " (file disappeared)");
+        reloadList.add(code);
       }
+    }
+    if (reloadList.size() > 0) {
+      reloadCode(reloadList);
     }
   }
 
@@ -145,7 +153,7 @@ public class ChangeDetector implements WindowFocusListener {
    * @param changed The file that was known to be modified
    * @return true if the files in the sketch have been reloaded
    */
-  private boolean reloadSketch(SketchCode changed) {
+  private boolean reloadCode(List<SketchCode> changed) {
     int response = blockingYesNoPrompt(editor,
                                        "File Modified",
                                        "Your sketch has been modified externally.<br>" +
@@ -155,27 +163,32 @@ public class ChangeDetector implements WindowFocusListener {
       sketch.reload();
       rebuildHeaderEDT();
       return true;
-    }
 
-    // they said no (or canceled), make it possible to stop the msgs by saving
-    if (changed != null) {
-      //set it to be modified so that it will actually save to disk when the user saves from inside processing
-      setSketchCodeModified(changed);
-
-    } else {
-      // Because the number of files changed, they may be working with a file
-      // that doesn't exist any more. So find the files that are missing,
-      // and mark them as modified so that the next "Save" will write them.
-      for (SketchCode sc : sketch.getCode()) {
-        if (!sc.getFile().exists()) {
-          setSketchCodeModified(sc);
+    } else {  // "No" (or cancel by hitting ESC)
+      if (changed != null) {
+        for (SketchCode code : changed) {
+          // Set the file as modified in the Editor so the contents will
+          // save to disk when the user saves from inside Processing.
+          setSketchCodeModified(code);
+          // Since this was canceled, update the "last modified" time so we
+          // don't ask the user about it again.
+          code.setLastModified();
         }
+      } else {  // the file count changed
+        // Because the number of files changed, they may be working with a file
+        // that doesn't exist any more. So find the files that are missing,
+        // and mark them as modified so that the next "Save" will write them.
+        for (SketchCode code : sketch.getCode()) {
+          if (!code.getFile().exists()) {
+            setSketchCodeModified(code);
+          }
+        }
+        // If files were simply added, then nothing needs done
       }
-      // If files were simply added, then nothing needs done
+      rebuildHeaderEDT();
+//      skip = true;
+      return false;
     }
-    rebuildHeaderEDT();
-    skip = true;
-    return false;
   }
 
 
