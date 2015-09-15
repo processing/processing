@@ -12,6 +12,8 @@ X   not great because the error checker runs more slowly than your typing
 
 watcher
 X prevent re-prompting users when they say "no" to "sketch modified" message
+X add more preferences for editor.watcher
+X cleaning up the logic in the watcher
 
 
 known issues
@@ -67,6 +69,8 @@ _   https://github.com/processing/processing/issues/3387
 _ "Your sketch has been modified externally" with encrypted OS X volumes
 _   https://github.com/processing/processing/issues/3650
 _ add this to the preferences?
+_ use watcher service after all? 
+_   https://docs.oracle.com/javase/tutorial/essential/io/notification.html
 
 
 gui
