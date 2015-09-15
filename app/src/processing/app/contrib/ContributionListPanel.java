@@ -296,6 +296,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
                                                    int column) {
       Contribution contribution = (Contribution) value;
       JLabel label = new JLabel();
+      if (value == null) {
+        // Working on https://github.com/processing/processing/issues/3667
+        System.err.println("null value seen in getTableCellRendererComponent()");
+        return label;
+      }
       if (column == 0) {
         Icon icon = null;
         label.setFont(Toolkit.getSansFont(14, Font.PLAIN));
