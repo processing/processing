@@ -238,8 +238,10 @@ public class PSurfaceFX implements PSurface {
       //stage.setScene(new Scene(new Group(canvas)));
       stage.setScene(new Scene(stackPane, width, height, false, sceneAntialiasing));
       */
-      // Workaround for JavaFX bug
-      // https://bugs.openjdk.java.net/browse/JDK-8136495
+
+      // Workaround for https://bugs.openjdk.java.net/browse/JDK-8136495
+      // Only set when we're turning it off; the default doesn't have the bug,
+      // but still seems to anti-alias properly.
       // https://github.com/processing/processing/issues/3795
       if (smooth == 0) {
         stage.setScene(new Scene(stackPane, width, height, false, SceneAntialiasing.DISABLED));
