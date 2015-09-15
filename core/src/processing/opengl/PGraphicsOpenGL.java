@@ -7850,7 +7850,13 @@ public class PGraphicsOpenGL extends PGraphics {
     // Vertices
 
     int addVertex(float x, float y, boolean brk) {
-      return addVertex(x, y, VERTEX, brk);
+      return addVertex(x, y, 0,
+                       fillColor,
+                       normalX, normalY, normalZ,
+                       0, 0,
+                       strokeColor, strokeWeight,
+                       ambientColor, specularColor, emissiveColor, shininessFactor,
+                       VERTEX, brk);
     }
 
     int addVertex(float x, float y,
@@ -7867,7 +7873,13 @@ public class PGraphicsOpenGL extends PGraphics {
     int addVertex(float x, float y,
                   float u, float v,
                   boolean brk) {
-      return addVertex(x, y, u, v, VERTEX, brk);
+      return addVertex(x, y, 0,
+                       fillColor,
+                       normalX, normalY, normalZ,
+                       u, v,
+                       strokeColor, strokeWeight,
+                       ambientColor, specularColor, emissiveColor, shininessFactor,
+                       VERTEX, brk);
     }
 
     int addVertex(float x, float y,
@@ -7883,7 +7895,13 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     int addVertex(float x, float y, float z, boolean brk) {
-      return addVertex(x, y, z, VERTEX, brk);
+      return addVertex(x, y, z,
+                       fillColor,
+                       normalX, normalY, normalZ,
+                       0, 0,
+                       strokeColor, strokeWeight,
+                       ambientColor, specularColor, emissiveColor, shininessFactor,
+                       VERTEX, brk);
     }
 
     int addVertex(float x, float y, float z, int code, boolean brk) {
@@ -7899,7 +7917,13 @@ public class PGraphicsOpenGL extends PGraphics {
     int addVertex(float x, float y, float z,
                   float u, float v,
                   boolean brk) {
-      return addVertex(x, y, z, u, v, VERTEX, brk);
+      return addVertex(x, y, z,
+                       fillColor,
+                       normalX, normalY, normalZ,
+                       u, v,
+                       strokeColor, strokeWeight,
+                       ambientColor, specularColor, emissiveColor, shininessFactor,
+                       VERTEX, brk);
     }
 
     int addVertex(float x, float y, float z,
