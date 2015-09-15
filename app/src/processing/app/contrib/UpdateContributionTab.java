@@ -161,7 +161,7 @@ public class UpdateContributionTab extends ContributionTab {
       table.setAutoCreateColumnsFromModel(true);
       table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       table.setDefaultRenderer(String.class, new StatusRendere());
-      table.getTableHeader().setDefaultRenderer(new MyColumnHeaderRenderer() {
+      table.getTableHeader().setDefaultRenderer(new ContribHeaderRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table,
                                                        Object value,

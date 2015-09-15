@@ -666,6 +666,11 @@ class ContributionPanel extends JPanel {
   }
 
 
+  static final HyperlinkListener NULL_HYPERLINK_LISTENER = new HyperlinkListener() {
+    public void hyperlinkUpdate(HyperlinkEvent e) { }
+  };
+
+
   /**
    * Should be called whenever this component is selected (clicked on)
    * or unselected, even if it is already selected.
@@ -684,13 +689,13 @@ class ContributionPanel extends JPanel {
     installRemoveButton.setEnabled(installRemoveButton.getText().equals(Language.text("contrib.remove")) ||!contribListing.hasListDownloadFailed());
     reorganizePaneComponents();
 
-    descriptionPane.removeHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
+    descriptionPane.removeHyperlinkListener(NULL_HYPERLINK_LISTENER);
     descriptionPane.removeHyperlinkListener(conditionalHyperlinkOpener);
     if (isSelected()) {
       descriptionPane.addHyperlinkListener(conditionalHyperlinkOpener);
 //      descriptionPane.setEditable(false);
     } else {
-      descriptionPane.addHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
+      descriptionPane.addHyperlinkListener(NULL_HYPERLINK_LISTENER);
 //      descriptionPane.setEditable(true);
     }
 

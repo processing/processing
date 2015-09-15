@@ -2,6 +2,8 @@
 X add jar files from 'code' folder to the library path
 X   Code editor wrongly detects errors for libraries in code folder
 X   https://github.com/processing/processing/issues/3732
+X CM: Clicking item in Libraries list throws exception
+X   https://github.com/processing/processing/issues/3667
 
 
 known issues
@@ -102,8 +104,6 @@ _     whether hitting ESC or the close box on the window
 
 
 manager
-_ CM: Clicking item in Libraries list throws exception
-_   https://github.com/processing/processing/issues/3667
 _ fonts are fake-bolded version rather than the real bold
 _ scrolling "past" top/bottom causes the screen to jiggle
 _ number of updates available is not correct
