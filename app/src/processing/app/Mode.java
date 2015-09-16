@@ -589,6 +589,10 @@ public abstract class Mode {
     }
   }
 
+  public void refreshExampleFrame() {
+    examplesFrame.refresh();
+  }
+
 
   public void showExamplesFrame() {
     if (examplesFrame == null) {
