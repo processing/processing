@@ -36,6 +36,8 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 _ https://github.com/processing/processing/milestones/3.0%20final
 _ Hitting enter on code completion completes and then creates a new line
 _   https://github.com/processing/processing/issues/3741
+_   can't seem to get completion working at all on my machine
+_ ctrl-space first inserts space, then deletes it, with completion
 _ Live error checking throws error when calling color() on a PGraphics
 _   https://github.com/processing/processing/issues/3762
 _ "color type detected! this shouldn't be happening! please report"
@@ -71,13 +73,15 @@ _   https://github.com/processing/processing/issues/3759
 
 
 sketch modified externally (3.0 final)
-_ sketch modified externally with FAT32 volumes on OS X
-_   https://github.com/processing/processing/issues/3387
-_ "Your sketch has been modified externally" with encrypted OS X volumes
-_   https://github.com/processing/processing/issues/3650
-_ add this to the preferences?
-_ use watcher service after all? 
-_   https://docs.oracle.com/javase/tutorial/essential/io/notification.html
+X sketch modified externally with FAT32 volumes on OS X
+X   https://github.com/processing/processing/issues/3387
+_   might have this fixed with the larger time window
+_   need to check if "save as" thing is causing trouble
+X "Your sketch has been modified externally" with encrypted OS X volumes
+X   https://github.com/processing/processing/issues/3650
+o add this to the preferences?
+o use watcher service after all? 
+o   https://docs.oracle.com/javase/tutorial/essential/io/notification.html
 
 
 gui
