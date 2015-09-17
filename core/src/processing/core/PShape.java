@@ -29,20 +29,20 @@ import processing.core.PApplet;
 
 
 /**
-   * ( begin auto-generated from PShape.xml )
-   *
-   * Datatype for storing shapes. Processing can currently load and display
-   * SVG (Scalable Vector Graphics) shapes. Before a shape is used, it must
-   * be loaded with the <b>loadShape()</b> function. The <b>shape()</b>
-   * function is used to draw the shape to the display window. The
-   * <b>PShape</b> object contain a group of methods, linked below, that can
-   * operate on the shape data.
-   * <br /><br />
-   * The <b>loadShape()</b> function supports SVG files created with Inkscape
-   * and Adobe Illustrator. It is not a full SVG implementation, but offers
-   * some straightforward support for handling vector data.
-   *
-   * ( end auto-generated )
+ * ( begin auto-generated from PShape.xml )
+ *
+ * Datatype for storing shapes. Processing can currently load and display
+ * SVG (Scalable Vector Graphics) shapes. Before a shape is used, it must
+ * be loaded with the <b>loadShape()</b> function. The <b>shape()</b>
+ * function is used to draw the shape to the display window. The
+ * <b>PShape</b> object contain a group of methods, linked below, that can
+ * operate on the shape data.
+ * <br /><br />
+ * The <b>loadShape()</b> function supports SVG files created with Inkscape
+ * and Adobe Illustrator. It is not a full SVG implementation, but offers
+ * some straightforward support for handling vector data.
+ *
+ * ( end auto-generated )
  * <h3>Advanced</h3>
  *
  * In-progress class to handle shape data, currently to be considered of
@@ -2372,7 +2372,9 @@ public class PShape implements PConstants {
     }
   }
 
-
+ /**
+  * @nowebref
+  */
   public void setFill(boolean fill) {
     if (openShape) {
       PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setFill()");
@@ -2382,7 +2384,24 @@ public class PShape implements PConstants {
     this.fill = fill;
   }
 
-
+ /**
+   * ( begin auto-generated from PShape_setFill.xml )
+   *
+   * The <b>setFill()</b> method defines the fill color of a <b>PShape</b>. 
+   * This method is used after shapes are created or when a shape is defined explicitly 
+   * (e.g. <b>createShape(RECT, 20, 20, 80, 80)</b>) as shown in the above example. 
+   * When a shape is created with <b>beginShape()</b> and <b>endShape()</b>, its 
+   * attributes may be changed with <b>fill()</b> and <b>stroke()</b> within 
+   * <b>beginShape()</b> and <b>endShape()</b>. However, after the shape is 
+   * created, only the <b>setFill()</b> method can define a new fill value for 
+   * the <b>PShape</b>. 
+   *
+   * ( end auto-generated )
+   *
+   * @webref
+   * @param fill
+   * @brief Set the fill value
+   */
   public void setFill(int fill) {
     if (openShape) {
       PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setFill()");
@@ -2398,7 +2417,9 @@ public class PShape implements PConstants {
     }
   }
 
-
+ /**
+  * @nowebref
+  */
   public void setFill(int index, int fill) {
     if (openShape) {
       PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setFill()");
@@ -2507,7 +2528,9 @@ public class PShape implements PConstants {
     return (a << 24) | (r << 16) | (g << 8) | b;
   }
 
-
+  /**
+   * @nowebref
+   */
   public void setStroke(boolean stroke) {
     if (openShape) {
       PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStroke()");
@@ -2517,7 +2540,24 @@ public class PShape implements PConstants {
     this.stroke = stroke;
   }
 
-
+  /**
+   * ( begin auto-generated from PShape_setStroke.xml )
+   *
+   * The <b>setStroke()</b> method defines the outline color of a <b>PShape</b>. 
+   * This method is used after shapes are created or when a shape is defined 
+   * explicitly (e.g. <b>createShape(RECT, 20, 20, 80, 80)</b>) as shown in 
+   * the above example. When a shape is created with <b>beginShape()</b> and 
+   * <b>endShape()</b>, its attributes may be changed with <b>fill()</b> and 
+   * <b>stroke()</b> within <b>beginShape()</b> and <b>endShape()</b>. 
+   * However, after the shape is created, only the <b>setStroke()</b> method 
+   * can define a new stroke value for the <b>PShape</b>. 
+   *
+   * ( end auto-generated )
+   *
+   * @webref
+   * @param stroke
+   * @brief Set the stroke value
+   */
   public void setStroke(int stroke) {
     if (openShape) {
       PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStroke()");
@@ -2533,7 +2573,9 @@ public class PShape implements PConstants {
     }
   }
 
-
+  /**
+   * @nowebref
+   */
   public void setStroke(int index, int stroke) {
     if (openShape) {
       PGraphics.showWarning(INSIDE_BEGIN_END_ERROR, "setStroke()");
