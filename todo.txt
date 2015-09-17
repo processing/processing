@@ -21,6 +21,18 @@ X prevent re-prompting users when they say "no" to "sketch modified" message
 X add more preferences for editor.watcher
 X cleaning up the logic in the watcher
 
+gsoc
+X prevent "updating" to a still-incompatible version of a contrib
+X   https://github.com/processing/processing/issues/3801
+X   https://github.com/processing/processing/pull/3805
+
+jakub
+X Make preprocessor scope-aware
+X   https://github.com/processing/processing/issues/3799
+X   https://github.com/processing/processing/pull/3810
+_ auto-complete is broken on OS X
+_   https://github.com/processing/processing/issues/3812
+
 
 known issues
 _ launch4j doesn't work from folders with non-native charsets
@@ -36,7 +48,7 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 _ https://github.com/processing/processing/milestones/3.0%20final
 _ Hitting enter on code completion completes and then creates a new line
 _   https://github.com/processing/processing/issues/3741
-_   can't seem to get completion working at all on my machine
+_   found thread deadlock issues preventing it from working on OS X
 _ ctrl-space first inserts space, then deletes it, with completion
 _ Live error checking throws error when calling color() on a PGraphics
 _   https://github.com/processing/processing/issues/3762
@@ -70,6 +82,8 @@ _     and if not, put up a warning for the user?
 _   http://www.oracle.com/us/technologies/java/locale-140624.html
 _ Red error underline is sometimes at wrong location
 _   https://github.com/processing/processing/issues/3759
+_ Examples window closes and re-opens during library install/remove
+_   https://github.com/processing/processing/issues/3304
 
 
 sketch modified externally (3.0 final)
@@ -126,7 +140,8 @@ _     whether hitting ESC or the close box on the window
 
 
 manager
-_ fonts are fake-bolded version rather than the real bold
+_ after clicking 'install' it's still possible to click it again
+_   https://github.com/processing/processing/issues/3806
 _ scrolling "past" top/bottom causes the screen to jiggle
 _ number of updates available is not correct
 _ retina icons show at twice the size and just crop at top/bottom

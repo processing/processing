@@ -2,6 +2,9 @@
 X FX2D display is inverted in 3.0b6
 X   https://github.com/processing/processing/issues/3795
 
+jakub
+X Make the PApplet regex cache LRU
+X   https://github.com/processing/processing/pull/3815
 
 andres
 X surface.setLocation() causing a freeze on Windows
