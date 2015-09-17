@@ -12774,6 +12774,7 @@ public class PApplet implements PConstants {
   /**
    * <h3>Advanced</h3>
    * Rotate about a vector in space. Same as the glRotatef() function.
+   * @nowebref
    * @param x
    * @param y
    * @param z
