@@ -1,6 +1,8 @@
 0245 core (3.0b7)
-_ FX2D display is inverted in 3.0b6
-_   https://github.com/processing/processing/issues/3795
+X surface.setLocation(x,y) not working with the default renderer
+X   https://github.com/processing/processing/issues/3821
+X FX2D display is inverted in 3.0b6
+X   https://github.com/processing/processing/issues/3795
 
 jakub
 X Make the PApplet regex cache LRU

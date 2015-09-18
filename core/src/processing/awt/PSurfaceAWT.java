@@ -602,6 +602,12 @@ public class PSurfaceAWT extends PSurfaceNone {
   }
 
 
+  @Override
+  public void setLocation(int x, int y) {
+    frame.setLocation(x, y);
+  }
+
+
   List<Image> iconImages;
 
   protected void setProcessingIcon(Frame frame) {
