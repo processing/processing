@@ -328,7 +328,6 @@ public class UpdateContributionTab extends ContributionTab {
       updateButton.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          // TODO Auto-generated method stub
           for(ContributionPanel contributionPanel : contributionTab.contributionListPanel.panelByContribution.values()){
             contributionPanel.update();
           }
