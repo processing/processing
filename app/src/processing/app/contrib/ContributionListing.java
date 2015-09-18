@@ -515,8 +515,7 @@ public class ContributionListing {
       if (advertised == null) {
         return false;
       }
-      return advertised.getVersion() > contribution.getVersion()
-        && advertised.isCompatible(Base.getRevision());
+      return advertised.getVersion() > contribution.getVersion();
     }
     return false;
   }
