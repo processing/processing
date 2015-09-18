@@ -382,7 +382,7 @@ public class JEditTextArea extends JComponent
       }
       int charWidth = painter.getFontMetrics().charWidth('w');
       int width = maxLineLength * charWidth;
-      int painterWidth = painter.getWidth();
+      int painterWidth = painter.getScrollWidth();
 
       // Update to how horizontal scrolling is handled
       // http://code.google.com/p/processing/issues/detail?id=280

@@ -866,7 +866,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 
 	@Override
-	public int getWidth() {
+	public int getScrollWidth() {
 	  // https://github.com/processing/processing/issues/3591
 	  return super.getWidth() - Editor.LEFT_GUTTER;
 	}
