@@ -261,7 +261,7 @@ public class ContributionManagerDialog {
 
     for (int i = 0 ; i < 4; i++) {
       final int temp = i;
-      tabLabels[i] = new JLabel(tabTitles[i]){
+      tabLabels[i] = new JLabel(tabTitles[i]) {
         @Override
         protected void paintComponent(Graphics g) {
           g.setClip(Toolkit.createRoundRect(0, 0,
@@ -371,11 +371,13 @@ public class ContributionManagerDialog {
     protected LayoutManager createLayoutManager() {
       return new BasicTabbedPaneUI.TabbedPaneLayout() {
 
+        /*
         @Override
         public void addLayoutComponent(String name, Component comp) {
-          // TODO Auto-generated method stub
           super.addLayoutComponent(name, comp);
         }
+        */
+
         @Override
         protected void calculateTabRects(int tabPlacement, int tabCount) {
           super.calculateTabRects(tabPlacement, tabCount);
