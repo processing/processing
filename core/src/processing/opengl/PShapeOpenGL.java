@@ -1799,8 +1799,8 @@ public class PShapeOpenGL extends PShape {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
         child.setFill(fill);
       }
-    } else if (this.fill && !fill) {
-      setFillImpl(0x0);
+    } else if (this.fill != fill) {
+      markForTessellation();
     }
     this.fill = fill;
   }
@@ -1981,16 +1981,9 @@ public class PShapeOpenGL extends PShape {
         child.setStroke(stroke);
       }
     } else if (this.stroke != stroke) {
-      if (this.stroke) {
-        // Disabling stroke on a shape previously with
-        // stroke needs a re-tessellation in order to remove
-        // the additional geometry of lines and/or points.
-        markForTessellation();
-        stroke = false;
-      }
-      setStrokeImpl(0x0);
+      markForTessellation();
       if (is2D() && parent != null) {
-        ((PShapeOpenGL)parent).strokedTexture(false);
+        ((PShapeOpenGL)parent).strokedTexture(stroke && image != null);
       }
     }
     this.stroke = stroke;
