@@ -493,7 +493,6 @@ public class Base {
     if (ct == ContributionType.LIBRARY) {
       for (Mode m : getModeList()) {
         m.rebuildImportMenu();
-        m.refreshExampleFrame();
       }
 
     } else if (ct == ContributionType.MODE) {
@@ -511,7 +510,7 @@ public class Base {
     } else if (ct == ContributionType.EXAMPLES) {
       rebuildContribExamples();
       for (Mode m : getModeList()) {
-        m.refreshExampleFrame();
+        m.rebuildExamplesFrame();
       }
     }
   }

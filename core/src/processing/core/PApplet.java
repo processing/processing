@@ -8564,26 +8564,22 @@ public class PApplet implements PConstants {
   }
 
 
-  static protected HashMap<String, Pattern> matchPatterns;
+  static protected LinkedHashMap<String, Pattern> matchPatterns;
 
   static Pattern matchPattern(String regexp) {
     Pattern p = null;
     if (matchPatterns == null) {
-      matchPatterns = new HashMap<String, Pattern>();
+      matchPatterns = new LinkedHashMap<String, Pattern>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, Pattern> eldest) {
+          // Limit the number of match patterns at 10 most recently used
+          return size() == 10;
+        }
+      };
     } else {
       p = matchPatterns.get(regexp);
     }
     if (p == null) {
-      if (matchPatterns.size() == 10) {
-        // Just clear out the match patterns here if more than 10 are being
-        // used. It's not terribly efficient, but changes that you have >10
-        // different match patterns are very slim, unless you're doing
-        // something really tricky (like custom match() methods), in which
-        // case match() won't be efficient anyway. (And you should just be
-        // using your own Java code.) The alternative is using a queue here,
-        // but that's a silly amount of work for negligible benefit.
-        matchPatterns.clear();
-      }
       p = Pattern.compile(regexp, Pattern.MULTILINE | Pattern.DOTALL);
       matchPatterns.put(regexp, p);
     }
@@ -12774,6 +12770,7 @@ public class PApplet implements PConstants {
   /**
    * <h3>Advanced</h3>
    * Rotate about a vector in space. Same as the glRotatef() function.
+   * @nowebref
    * @param x
    * @param y
    * @param z
