@@ -660,7 +660,7 @@ public class Base {
 //        return o1.getMenuTitle().compareTo(o2.getMenuTitle());
 //      }
 //    });
-
+    toolsMenu.removeAll();
     for (Tool tool : internalTools) {
       toolsMenu.add(createToolItem(tool));
     }
