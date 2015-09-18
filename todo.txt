@@ -17,6 +17,7 @@ X CM: Libraries missing descriptions and PFoundation credit
 X   https://github.com/processing/processing/issues/3688
 X use real version of bold font, rather than the fake version
 X remove the "v" from the version numbers in the updates tab
+X fix bold version used in the description below, when an item is selected
 
 watcher
 X prevent re-prompting users when they say "no" to "sketch modified" message
@@ -155,8 +156,6 @@ _   foundation icon in list
 _   foundation icon below next to description when lib selected
 _   icons on the install/update/remove buttons
 _   search eyeglass icon
-_ fix bold version used in the description below, when an item is selected
-
 _ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
 _ total number of updates available is not correct
 _ Examples window closes and re-opens during library install/remove
