@@ -132,7 +132,7 @@ public class ErrorCheckerService implements Runnable {
   /**
    * Is the sketch running in static mode or active mode?
    */
-  public boolean staticMode = false;
+  public PdePreprocessor.Mode mode = PdePreprocessor.Mode.ACTIVE;
 
   /**
    * Compilation Unit for current sketch
@@ -1322,36 +1322,44 @@ public class ErrorCheckerService implements Runnable {
       "DefaultClass" : editor.getSketch().getName();
 
     // Check whether the code is being written in STATIC mode
-    // (no setup or draw function declarations) - append class
-    // declaration and void setup() declaration
-    Matcher matcher = SETUP_OR_DRAW_FUNCTION_DECL.matcher(sourceAlt);
-    staticMode = !matcher.find();
-    StringBuilder sb = new StringBuilder();
-    sb.append(xqpreproc.prepareImports(programImports));
-    sb.append("public class " + className + " extends PApplet {\n");
-    if (staticMode) {
-      sb.append("public void setup() {\n");
-    }
-    sb.append(sourceAlt);
-    if (staticMode) {
-      sb.append("\nnoLoop();\n}");
-    }
-    sb.append("\n}");
-    sourceAlt = sb.toString();
+    String uncommented = PdePreprocessor.scrubComments(sourceAlt);
 
-    int position = sourceAlt.indexOf("{") + 1;
+    mode = PdePreprocessor.parseMode(uncommented);
+
+    StringBuilder sb = new StringBuilder();
+
+    // Imports
+    sb.append(xqpreproc.prepareImports(programImports));
+
+    // Header
+    if (mode != PdePreprocessor.Mode.JAVA) {
+      sb.append("public class " + className + " extends PApplet {\n");
+      if (mode == PdePreprocessor.Mode.STATIC) {
+        sb.append("public void setup() {\n");
+      }
+    }
+
+    // Grab the offset before adding contents of the editor
     mainClassOffset = 1;
-    for (int i = 0; i <= position; i++) {
-      if (sourceAlt.charAt(i) == '\n') {
+    for (int i = 0; i < sb.length(); i++) {
+      if (sb.charAt(i) == '\n') {
         mainClassOffset++;
       }
     }
-    if (staticMode) {
-      mainClassOffset++;
+
+    // Editor content
+    sb.append(sourceAlt);
+
+    // Footer
+    if (mode != PdePreprocessor.Mode.JAVA) {
+      if (mode == PdePreprocessor.Mode.STATIC) {
+        sb.append("\nnoLoop();\n}");
+      }
+      sb.append("\n}");
     }
-    sourceAlt = substituteUnicode(sourceAlt);
-    sourceCode = sourceAlt;
-    return sourceAlt;
+
+    sourceCode = substituteUnicode(sb.toString());
+    return sourceCode;
   }
 
 

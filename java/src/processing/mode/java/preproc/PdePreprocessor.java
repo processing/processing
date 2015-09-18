@@ -29,6 +29,7 @@ package processing.mode.java.preproc;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -170,8 +171,8 @@ public class PdePreprocessor {
 //  static private final String VOID_REGEX =
 //    "(?:^|\\s|;)void\\s";
   /** Used to grab the start of setup() so we can mine it for size() */
-  static private final String VOID_SETUP_REGEX =
-    "(?:^|\\s|;)void\\s+setup\\s*\\(";
+  static private final Pattern VOID_SETUP_REGEX =
+    Pattern.compile("(?:^|\\s|;)void\\s+setup\\s*\\(", Pattern.MULTILINE);
 
 
   // Can't only match any 'public class', needs to be a PApplet
@@ -180,22 +181,13 @@ public class PdePreprocessor {
     Pattern.compile("(^|;)\\s*public\\s+class\\s+\\S+\\s+extends\\s+PApplet", Pattern.MULTILINE);
 
 
-//  private static final Pattern FUNCTION_DECL =
-//    Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
-//                    "(void|int|float|double|String|char|byte)" +
-//                    "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
-//                    Pattern.MULTILINE);
+  static private final Pattern FUNCTION_DECL =
+    Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
+                    "(void|int|float|double|String|char|byte|boolean)" +
+                    "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
+                    Pattern.MULTILINE);
 
-  /**
-   * Matches setup or draw function declaration. We search for all those
-   * modifiers and return types in order to have proper error message
-   * when people use incompatible modifiers or non-void return type
-   */
-  private static final Pattern SETUP_OR_DRAW_FUNCTION_DECL =
-      Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
-                      "(void|int|float|double|String|char|byte|boolean)" +
-                      "(\\s*\\[\\s*\\])?\\s+(setup|draw)\\s*\\(",
-                      Pattern.MULTILINE);
+  static private final Pattern CLOSING_BRACE = Pattern.compile("\\}");
 
 
   public PdePreprocessor(final String sketchName) {
@@ -289,44 +281,42 @@ public class PdePreprocessor {
     // if static mode sketch, all we need is regex
     // easy proxy for static in this case is whether [^\s]void\s is present
 
-    String searchArea = scrubComments(code);
-    String[] setupMatch = PApplet.match(searchArea, VOID_SETUP_REGEX);
-    if (setupMatch != null) {
-      String found = setupMatch[0];
-      int start = searchArea.indexOf(found) + found.length();
-      int openBrace = searchArea.indexOf("{", start);
-      char[] c = searchArea.toCharArray();
-      int depth = 0;
-      int closeBrace = -1;
-      StringBuilder sb = new StringBuilder();
-      for (int i = openBrace; i < c.length; i++) {
-        if (c[i] == '{') {
-          depth++;
-        } else if (c[i] == '\'') {
-          String quoted = readSingleQuote(c, i);
-          sb.append(quoted);
-          i += quoted.length() - 1;
+    String uncommented = scrubComments(code);
 
-        } else if (c[i] == '\"') {
-          String quoted = readDoubleQuote(c, i);
-          sb.append(quoted);
-          i += quoted.length() - 1;
+    Mode mode = parseMode(uncommented);
 
-        } else if (c[i] == '}') {
-          depth--;
-          if (depth == 0) {
-            closeBrace = ++i;
-            break;
+    String searchArea = null;
+
+    switch (mode) {
+      case JAVA:
+        // it's up to the user
+        searchArea = null;
+        break;
+      case ACTIVE:
+        // active mode, limit scope to setup
+
+        // Find setup() in global scope
+        MatchResult setupMatch = findInCurrentScope(VOID_SETUP_REGEX, uncommented);
+        if (setupMatch != null) {
+          int start = uncommented.indexOf("{", setupMatch.end());
+
+          // Find a closing brace
+          MatchResult match = findInCurrentScope(CLOSING_BRACE, uncommented, start);
+          if (match != null) {
+            searchArea = uncommented.substring(start + 1, match.end() - 1);
+          } else {
+            throw new SketchException("Found a { that's missing a matching }", false);
           }
-        } else {
-          sb.append(c[i]);
         }
-      }
-      if (closeBrace == -1) {
-        throw new SketchException("Found a { that's missing a matching }", false);
-//        return null;
-      }
-      searchArea = sb.toString();
+        break;
+      case STATIC:
+        // static mode, look everywhere
+        searchArea = uncommented;
+        break;
+    }
+
+    if (searchArea == null) {
+      return new SurfaceInfo();
     }
 
     StringList extraStatements = new StringList();
@@ -448,7 +438,7 @@ public class PdePreprocessor {
     return new SurfaceInfo();
   }
 
-
+/*
   static String readSingleQuote(char[] c, int i) {
     StringBuilder sb = new StringBuilder();
     try {
@@ -492,15 +482,195 @@ public class PdePreprocessor {
     }
     return sb.toString();
   }
+*/
 
 
+  /**
+   * Parses the code and determines the mode of the sketch.
+   *
+   * @param code code without comments
+   * @return determined mode
+   */
+  static public Mode parseMode(String code) {
+
+    // See if we can find any function in the global scope
+    if (findInCurrentScope(FUNCTION_DECL, code) != null) {
+      return Mode.ACTIVE;
+    }
+
+    // See if we can find any public class extending PApplet
+    if (findInCurrentScope(PUBLIC_CLASS, code) != null) {
+      return Mode.JAVA;
+    }
+
+    return Mode.STATIC;
+  }
+
+
+  /**
+   * Calls {@link #findInScope(Pattern, String, int, int, int, int) findInScope}
+   * on the whole string with min and max target scopes set to zero.
+   */
+  static protected MatchResult findInCurrentScope(Pattern pattern, String code) {
+    return findInScope(pattern, code, 0, code.length(), 0, 0);
+  }
+
+
+  /**
+   * Calls {@link #findInScope(Pattern, String, int, int, int, int) findInScope}
+   * starting at start char with min and max target scopes set to zero.
+   */
+  static protected MatchResult findInCurrentScope(Pattern pattern, String code,
+                                                  int start) {
+    return findInScope(pattern, code, start, code.length(), 0, 0);
+  }
+
+
+  /**
+   * Looks for the pattern at a specified target scope depth relative
+   * to the scope depth of the starting position.
+   *
+   * Example: Calling this with starting position inside a method body
+   * and target depth 0 would search only in the method body, while
+   * using target depth -1 would look only in the body of the enclosing class
+   * (but not in any methods of the class or outside of the class).
+   *
+   * By using a scope range, you can e.g. search in the whole class including
+   * bodies of methods and inner classes.
+   *
+   * @param pattern matching is realized by find() method of this pattern
+   * @param code Java code without comments
+   * @param start starting position in the code String (inclusive)
+   * @param stop ending position in the code Sting (exclusive)
+   * @param minTargetScopeDepth desired min scope depth of the match relative to the
+   *                            scope of the starting position
+   * @param maxTargetScopeDepth desired max scope depth of the match relative to the
+   *                            scope of the starting position
+   * @return first match at a desired relative scope depth,
+   *         null if there isn't one
+   */
+  static protected MatchResult findInScope(Pattern pattern, String code,
+                                           int start, int stop,
+                                           int minTargetScopeDepth,
+                                           int maxTargetScopeDepth) {
+    if (minTargetScopeDepth > maxTargetScopeDepth) {
+      int temp = minTargetScopeDepth;
+      minTargetScopeDepth = maxTargetScopeDepth;
+      maxTargetScopeDepth = temp;
+    }
+
+    Matcher m = pattern.matcher(code);
+    m.region(start, stop);
+    int depth = 0;
+    int position = start;
+
+    // We should not escape the enclosing scope. It can be either the original
+    // scope, or the min target scope, whichever is more out there (lower depth)
+    int minScopeDepth = PApplet.min(depth, minTargetScopeDepth);
+
+    while (m.find()) {
+      int newPosition = m.end();
+      int depthDiff = scopeDepthDiff(code, position, newPosition);
+      // Process this match only if it is not in string or char literal
+      if (depthDiff != Integer.MAX_VALUE) {
+        depth += depthDiff;
+        if (depth < minScopeDepth) break; // out of scope!
+        if (depth >= minTargetScopeDepth &&
+            depth <= maxTargetScopeDepth) {
+          return m.toMatchResult(); // jackpot
+        }
+        position = newPosition;
+      }
+    }
+    return null;
+  }
+
+
+  /**
+   * Walks the specified region (not including stop) and determines difference
+   * in scope depth. Adds one to depth on opening curly brace, subtracts one
+   * from depth on closing curly brace. Ignores string and char literals.
+   *
+   * @param code code without comments
+   * @param start start of the region, must not be in string literal,
+   *              char literal or second char of escaped sequence
+   * @param stop end of the region (exclusive)
+   *
+   * @return scope depth difference between start and stop,
+   *         Integer.MAX_VALUE if end is in string literal,
+   *         char literal or second char of escaped sequence
+   */
+  static protected int scopeDepthDiff(String code, int start, int stop) {
+    boolean insideString = false;
+    boolean insideChar = false;
+    boolean escapedChar = false;
+    int depth = 0;
+    for (int i = start; i < stop; i++) {
+      if (!escapedChar) {
+        char ch = code.charAt(i);
+        switch (ch) {
+          case '\\':
+            escapedChar = true;
+            break;
+          case '{':
+            if (!insideChar && !insideString) depth++;
+            break;
+          case '}':
+            if (!insideChar && !insideString) depth--;
+            break;
+          case '\"':
+            if (!insideChar) insideString = !insideString;
+            break;
+          case '\'':
+            if (!insideString) insideChar = !insideChar;
+            break;
+        }
+      } else {
+        escapedChar = false;
+      }
+    }
+    if (insideChar || insideString || escapedChar) {
+      return Integer.MAX_VALUE; // signal invalid location
+    }
+    return depth;
+  }
+
+
+  /**
+   * Looks for the specified method in the base scope of the search area.
+   */
   static protected String[] matchMethod(String methodName, String searchArea) {
     final String left = "(?:^|\\s|;)";
     // doesn't match empty pairs of parens
-    //final String right = "\\s*\\(([^\\)]+)\\)\\s*\\;";
-    final String right = "\\s*\\(([^\\)]*)\\)\\s*\\;";
-    return PApplet.match(searchArea, left + methodName + right);
+    //final String right = "\\s*\\(([^\\)]+)\\)\\s*;";
+    final String right = "\\s*\\(([^\\)]*)\\)\\s*;";
+    String regexp = left + methodName + right;
+    Pattern p = matchPatterns.get(regexp);
+    if (p == null) {
+      p = Pattern.compile(regexp, Pattern.MULTILINE | Pattern.DOTALL);
+      matchPatterns.put(regexp, p);
+    }
+    MatchResult match = findInCurrentScope(p, searchArea);
+    if (match != null) {
+      int count = match.groupCount() + 1;
+      String[] groups = new String[count];
+      for (int i = 0; i < count; i++) {
+        groups[i] = match.group(i);
+      }
+      return groups;
+    }
+    return null;
   }
+
+
+  static protected LinkedHashMap<String, Pattern> matchPatterns =
+      new LinkedHashMap<String, Pattern>(16, 0.75f, true) {
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<String, Pattern> eldest) {
+      // Limit the number of match patterns at 10 most recently used
+      return size() == 10;
+    }
+  };
 
 
   static protected String[] matchDensityMess(String searchArea) {
@@ -855,27 +1025,32 @@ public class PdePreprocessor {
     // http://code.google.com/p/processing/issues/detail?id=1404
     String uncomment = scrubComments(program);
     PdeRecognizer parser = createParser(program);
-    if (PUBLIC_CLASS.matcher(uncomment).find()) {
-      try {
-        final PrintStream saved = System.err;
+    Mode mode = parseMode(uncomment);
+    switch (mode) {
+      case JAVA:
         try {
-          // throw away stderr for this tentative parse
-          System.setErr(new PrintStream(new ByteArrayOutputStream()));
-          parser.javaProgram();
-        } finally {
-          System.setErr(saved);
+          final PrintStream saved = System.err;
+          try {
+            // throw away stderr for this tentative parse
+            System.setErr(new PrintStream(new ByteArrayOutputStream()));
+            parser.javaProgram();
+          } finally {
+            System.setErr(saved);
+          }
+          setMode(Mode.JAVA);
+        } catch (Exception e) {
+          // I can't figure out any other way of resetting the parser.
+          parser = createParser(program);
+          parser.pdeProgram();
         }
-        setMode(Mode.JAVA);
-      } catch (Exception e) {
-        // I can't figure out any other way of resetting the parser.
-        parser = createParser(program);
+        break;
+      case ACTIVE:
+        setMode(Mode.ACTIVE);
+        parser.activeProgram();
+        break;
+      case STATIC:
         parser.pdeProgram();
-      }
-    } else if (SETUP_OR_DRAW_FUNCTION_DECL.matcher(uncomment).find()) {
-      setMode(Mode.ACTIVE);
-      parser.activeProgram();
-    } else {
-      parser.pdeProgram();
+        break;
     }
 
     // set up the AST for traversal by PdeEmitter

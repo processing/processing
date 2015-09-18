@@ -246,6 +246,7 @@ public class PSurfaceFX implements PSurface {
       if (smooth == 0) {
         stage.setScene(new Scene(stackPane, width, height, false, SceneAntialiasing.DISABLED));
       } else {
+        // ...or maybe not, these seem to go to the same code path
         stage.setScene(new Scene(stackPane, width, height, false));
       }
 

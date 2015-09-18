@@ -92,7 +92,7 @@ public class ExamplesFrame extends JFrame {
         setVisible(false);
       }
     });
-
+    
     initFrame();
   }
 
@@ -415,6 +415,7 @@ public class ExamplesFrame extends JFrame {
     }
     return contribExamplesNode;
   }
+
 
   public void refresh() {
     JTree newTree = setTree();

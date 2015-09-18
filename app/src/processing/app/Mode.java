@@ -598,7 +598,6 @@ public abstract class Mode {
     }
   }
 
-
   public void showExamplesFrame() {
     if (examplesFrame == null) {
       examplesFrame = new ExamplesFrame(base, this);
