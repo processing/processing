@@ -231,7 +231,7 @@ public class PSurfaceFX implements PSurface {
       int smooth = sketch.sketchSmooth();
 
       // Workaround for https://bugs.openjdk.java.net/browse/JDK-8136495
-      // https://github.com/processing/processing/issues/3795
+      // https://github.com/processing/processing/issues/3823
       if ((PApplet.platform == PConstants.MACOSX ||
            PApplet.platform == PConstants.LINUX) &&
           PApplet.javaVersionName.equals("1.8.0_60")) {
