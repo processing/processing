@@ -96,6 +96,7 @@ class StatusPanel extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent e) {
+        installButton.setEnabled(false);
         ContributionPanel currentPanel = contributionTab.contributionListPanel
           .getSelectedPanel();
         currentPanel.install();
@@ -119,6 +120,7 @@ class StatusPanel extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent e) {
+        updateButton.setEnabled(false);
         ContributionPanel currentPanel = contributionTab.contributionListPanel
           .getSelectedPanel();
         currentPanel.update();
@@ -136,6 +138,7 @@ class StatusPanel extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent e) {
+        removeButton.setEnabled(false);
         ContributionPanel currentPanel = contributionTab.contributionListPanel
           .getSelectedPanel();
         currentPanel.remove();
@@ -232,7 +235,8 @@ class StatusPanel extends JPanel {
 
     updateButton.setEnabled(contributionListing.hasDownloadedLatestList()
       && (contributionListing.hasUpdates(panel.getContrib()) && !panel
-        .getContrib().isUpdateFlagged()));
+        .getContrib().isUpdateFlagged())
+        && !panel.isUpdateInProgress);
 
     String latestVersion =
       contributionListing.getLatestVersion(panel.getContrib());
@@ -256,7 +260,8 @@ class StatusPanel extends JPanel {
 
     installButton.setEnabled(!panel.getContrib().isInstalled()
       && contributionListing.hasDownloadedLatestList()
-      && panel.getContrib().isCompatible(Base.getRevision()));
+      && panel.getContrib().isCompatible(Base.getRevision())
+      && !panel.isInstallInProgress);
 
     if (installButton.isEnabled()) {
       updateLabel.setText(currentVersion + " available");
@@ -264,7 +269,8 @@ class StatusPanel extends JPanel {
       updateLabel.setText(currentVersion + " installed");
     }
 
-    removeButton.setEnabled(panel.getContrib().isInstalled());
+    removeButton.setEnabled(panel.getContrib().isInstalled()
+                            && !panel.isRemoveInProgress);
     progressBarPanel.add(panel.installProgressBar);
     progressBarPanel.setVisible(false);
     updateLabel.setVisible(true);
