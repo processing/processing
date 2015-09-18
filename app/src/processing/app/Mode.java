@@ -591,7 +591,10 @@ public abstract class Mode {
 
   public void refreshExampleFrame() {
     if (examplesFrame != null) {
+      Rectangle bounds = null;
+      bounds = examplesFrame.getBounds();
       examplesFrame.refresh();
+      examplesFrame.setBounds(bounds);
     }
   }
 

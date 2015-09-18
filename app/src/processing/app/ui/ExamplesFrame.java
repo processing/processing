@@ -75,6 +75,7 @@ public class ExamplesFrame extends JFrame {
   protected Mode mode;
 
   protected File examplesContribFolder;
+  private JScrollPane treePane;
 
 
   public ExamplesFrame(final Base base, final Mode mode) {
@@ -92,11 +93,11 @@ public class ExamplesFrame extends JFrame {
       }
     });
 
-    setTree();
+    initFrame();
   }
 
 
-  private void setTree() {
+  private void initFrame() {
     JPanel examplesPanel = new JPanel();
     examplesPanel.setLayout(new BorderLayout());
     examplesPanel.setBackground(Color.WHITE);
@@ -117,6 +118,25 @@ public class ExamplesFrame extends JFrame {
       }
     });
 
+    final JTree tree = setTree();
+
+    treePane = new JScrollPane(tree);
+    treePane.setPreferredSize(new Dimension(250, 300));
+    treePane.setBorder(new EmptyBorder(2, 0, 0, 0));
+    treePane.setOpaque(true);
+    treePane.setBackground(Color.WHITE);
+    treePane.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+    examplesPanel.add(openExamplesManagerPanel,BorderLayout.PAGE_START);
+    examplesPanel.add(treePane, BorderLayout.CENTER);
+
+    getContentPane().add(examplesPanel);
+    pack();
+    restoreExpanded(tree);
+  }
+
+
+  private JTree setTree() {
     final JTree tree = new JTree(buildTree());
 
     tree.setOpaque(true);
@@ -187,20 +207,7 @@ public class ExamplesFrame extends JFrame {
     } else {
       tree.setToggleClickCount(1);
     }
-
-    JScrollPane treePane = new JScrollPane(tree);
-    treePane.setPreferredSize(new Dimension(250, 300));
-    treePane.setBorder(new EmptyBorder(2, 0, 0, 0));
-    treePane.setOpaque(true);
-    treePane.setBackground(Color.WHITE);
-    treePane.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-    examplesPanel.add(openExamplesManagerPanel,BorderLayout.PAGE_START);
-    examplesPanel.add(treePane, BorderLayout.CENTER);
-
-    getContentPane().add(examplesPanel);
-    pack();
-    restoreExpanded(tree);
+    return tree;
   }
 
 
@@ -410,7 +417,10 @@ public class ExamplesFrame extends JFrame {
   }
 
   public void refresh() {
-    setTree();
+    JTree newTree = setTree();
+    treePane.setViewportView(newTree);
+    pack();
+    restoreExpanded(newTree);
   }
 
 }
