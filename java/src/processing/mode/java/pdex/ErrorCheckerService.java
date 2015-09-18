@@ -225,16 +225,16 @@ public class ErrorCheckerService implements Runnable {
 //      + "(void|int|float|double|String|char|byte|boolean)"
 //      + "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(", Pattern.MULTILINE);
 
-  /**
-   * Matches setup or draw function declaration. We search for all those
-   * modifiers and return types in order to have proper error message
-   * when people use incompatible modifiers or non-void return type
-   */
-  private static final Pattern SETUP_OR_DRAW_FUNCTION_DECL =
-      Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
-                      "(void|int|float|double|String|char|byte|boolean)" +
-                      "(\\s*\\[\\s*\\])?\\s+(setup|draw)\\s*\\(",
-                      Pattern.MULTILINE);
+//  /**
+//   * Matches setup or draw function declaration. We search for all those
+//   * modifiers and return types in order to have proper error message
+//   * when people use incompatible modifiers or non-void return type
+//   */
+//  private static final Pattern SETUP_OR_DRAW_FUNCTION_DECL =
+//      Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
+//                      "(void|int|float|double|String|char|byte|boolean)" +
+//                      "(\\s*\\[\\s*\\])?\\s+(setup|draw)\\s*\\(",
+//                      Pattern.MULTILINE);
 
   protected ErrorMessageSimplifier errorMsgSimplifier;
 
