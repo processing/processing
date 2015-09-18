@@ -161,6 +161,7 @@ SPHERE	LITERAL2	createShape_
 SOFT_LIGHT	LITERAL2	blend_
 SQUARE	LITERAL2	strokeCap_
 SUBTRACT	LITERAL2	blend_
+SVG	LITERAL2
 SVIDEO	LITERAL2	
 TAB	LITERAL2	keyCode
 TARGA	LITERAL2
@@ -703,6 +704,8 @@ rotateX	FUNCTION2	PShape_rotateX_
 rotateY	FUNCTION2	PShape_rotateY_
 rotateZ	FUNCTION2	PShape_rotateZ_
 scale	FUNCTION2	PShape_scale_
+setFill	FUNCTION2	PShape_setFill_
+setStroke	FUNCTION2	PShape_setStroke_
 setVertex	FUNCTION2	PShape_setVertex_
 setVisible	FUNCTION2	PShape_setVisible_
 translate	FUNCTION2	PShape_translate_
