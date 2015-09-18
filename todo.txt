@@ -31,6 +31,8 @@ X   https://github.com/processing/processing/pull/3820
 X after clicking 'install' it's still possible to click it again
 X   https://github.com/processing/processing/issues/3806
 X   https://github.com/processing/processing/pull/3817
+X CM list should be sortable by status and author name
+X   https://github.com/processing/processing/issues/3608
 
 jakub
 X Make preprocessor scope-aware
@@ -38,6 +40,10 @@ X   https://github.com/processing/processing/issues/3799
 X   https://github.com/processing/processing/pull/3810
 _ auto-complete is broken on OS X
 _   https://github.com/processing/processing/issues/3812
+_ Hitting enter on code completion completes and then creates a new line
+_   https://github.com/processing/processing/issues/3741
+_   found thread deadlock issues preventing it from working on OS X
+_ ctrl-space first inserts space, then deletes it, with completion
 
 
 known issues
@@ -52,10 +58,6 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
-_ Hitting enter on code completion completes and then creates a new line
-_   https://github.com/processing/processing/issues/3741
-_   found thread deadlock issues preventing it from working on OS X
-_ ctrl-space first inserts space, then deletes it, with completion
 _ Live error checking throws error when calling color() on a PGraphics
 _   https://github.com/processing/processing/issues/3762
 _ "color type detected! this shouldn't be happening! please report"
@@ -66,10 +68,6 @@ _   or just change the documentation?
 _ Contributions Manager UI design
 _   https://github.com/processing/processing/issues/3482
 _ items still show up in "Recent" if they no longer exist (on startup)
-_ replace about screen (1x and 2x versions)
-_   change 'alpha' to correct name
-_   also change the revision in the "about processing" dialog
-_   https://github.com/processing/processing/issues/3665
 _ UnsatisfiedLinkError on startup "Access is denied" on Windows 10
 _   https://github.com/processing/processing/issues/3800
 _   administrator, but using Microsoft account to log in
@@ -88,8 +86,6 @@ _     and if not, put up a warning for the user?
 _   http://www.oracle.com/us/technologies/java/locale-140624.html
 _ Red error underline is sometimes at wrong location
 _   https://github.com/processing/processing/issues/3759
-_ Examples window closes and re-opens during library install/remove
-_   https://github.com/processing/processing/issues/3304
 
 
 sketch modified externally (3.0 final)
@@ -104,6 +100,21 @@ o use watcher service after all?
 o   https://docs.oracle.com/javase/tutorial/essential/io/notification.html
 
 
+gui/James
+_ Fix placement and visual design when showing error on hover
+_   https://github.com/processing/processing/issues/3173
+_ import suggestions box needs design review
+_   https://github.com/processing/processing/issues/3407
+_ distinguish errors and warnings
+_   https://github.com/processing/processing/issues/3406
+_ make breakpoints more prominent
+_   https://github.com/processing/processing/issues/3307
+_ replace about screen (1x and 2x versions)
+_   change 'alpha' to correct name
+_   also change the revision in the "about processing" dialog
+_   https://github.com/processing/processing/issues/3665
+
+
 gui
 _ different design of squiggly line?
 _ build custom scroll bar since the OS versions are so ugly?
@@ -111,14 +122,6 @@ _ error/warning location is awkward when no scroll bar is in use
 _ show hover text when the mouse is over the 'debug' button
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
-_ make breakpoints more prominent
-_   https://github.com/processing/processing/issues/3307
-_ import suggestions box needs design review
-_   https://github.com/processing/processing/issues/3407
-_ Fix placement and visual design when showing error on hover
-_   https://github.com/processing/processing/issues/3173
-_ distinguish errors and warnings
-_   https://github.com/processing/processing/issues/3406
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
 _ see notes in the 'dialogs' section below, implement our own option panes?
@@ -147,8 +150,16 @@ _     whether hitting ESC or the close box on the window
 
 manager
 _ scrolling "past" top/bottom causes the screen to jiggle
-_ number of updates available is not correct
-_ retina icons show at twice the size and just crop at top/bottom
+_ total number of updates available is not correct
+_ implement 2x versions of icons
+_   https://github.com/processing/processing/issues/3478
+_   foundation icon in list
+_   foundation icon below next to description when lib selected
+_   icons on the install/update/remove buttons
+_   search eyeglass icon
+_   
+_ Examples window closes and re-opens during library install/remove
+_   https://github.com/processing/processing/issues/3304
 
 
 fonts

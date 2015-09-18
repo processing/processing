@@ -59,7 +59,6 @@ public class ContributionManagerDialog {
   // the calling editor, so updates can be applied
   Editor editor;
 
-  //The tabs
   ContributionTab toolsContributionTab;
   ContributionTab librariesContributionTab;
   ContributionTab examplesContributionTab;
@@ -70,19 +69,17 @@ public class ContributionManagerDialog {
   ContributionListing contributionListing = ContributionListing.getInstance();
 
   private JLabel[] tabLabels;
-
   private JPanel updateTabPanel;
-
   private JLabel updateTabLabel;
 
-  static Font myFont;
+  static Font font;
   // disabling this because the icon sizing is not implemented correctly
   //static int iconVer = Toolkit.highResDisplay() ? 2 : 1;
   static final int iconVer = 1;
 
 
   public ContributionManagerDialog() {
-    myFont = Toolkit.getSansFont(14, Font.PLAIN);
+    font = Toolkit.getSansFont(14, Font.PLAIN);
 //    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(myFont);
     numberLabel = new JLabel(Toolkit.getLibIcon("manager/notification-" + iconVer + "x.png"), SwingConstants.CENTER);
     librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
@@ -94,27 +91,19 @@ public class ContributionManagerDialog {
 
 
   /*
-  public boolean hasUpdates() {
-    return toolsContributionTab.hasUpdates()
-      || librariesContributionTab.hasUpdates()
-      || examplesContributionTab.hasUpdates()
-      || modesContributionTab.hasUpdates();
-  }
-  */
-
-
   public boolean hasUpdates(Base base) {
     return librariesContributionTab.hasUpdates(base)
       || modesContributionTab.hasUpdates(base)
       || toolsContributionTab.hasUpdates(base)
       || examplesContributionTab.hasUpdates(base);
   }
+   */
 
 
   public void showFrame(Editor editor, ContributionType contributionType) {
     this.editor = editor;
 
-    //Calculating index to switch to the required tab
+    // Calculating index to switch to the required tab
     int index;
     if (contributionType == ContributionType.LIBRARY) {
       index = 0;
@@ -148,7 +137,7 @@ public class ContributionManagerDialog {
   }
 
 
-  public void makeFrame(final Editor editor) {
+  private void makeFrame(final Editor editor) {
     dialog = new JFrame(title);
     dialog.setMinimumSize(new Dimension(750, 500));
     tabbedPane = new JTabbedPane();
@@ -270,7 +259,7 @@ public class ContributionManagerDialog {
     };
     tabLabels = new JLabel[4];
 
-    for(int i = 0 ; i < 4; i++){
+    for (int i = 0 ; i < 4; i++) {
       final int temp = i;
       tabLabels[i] = new JLabel(tabTitles[i]){
         @Override
@@ -312,21 +301,7 @@ public class ContributionManagerDialog {
     updateTabLabel.setForeground(Color.WHITE);
     updateTabPanel.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
     updateTabPanel.setPreferredSize(new Dimension(TAB_WIDTH, TAB_HEIGHT));
-//    updateTabPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
-//      .createMatteBorder(0, 2, 0, 0, Color.BLACK), BorderFactory
-//      .createEmptyBorder(4, 4, 4, 4)));
     tabbedPane.setTabComponentAt(4, updateTabPanel);
-
-//    JLabel tabLabels[] = new JLabel[4];
-//    for(int i = 0 ; i < tabLabels.length;i++){
-//      tabLabels[i] = new JLabel(tabTitles[i]);
-//      tabLabels[i]
-//        .setBorder(BorderFactory.createCompoundBorder(BorderFactory
-//          .createMatteBorder(0, (i == 0 ? 0 : 2), 0, (i == 3 ? 2 : 0),
-//                             Color.BLACK), BorderFactory
-//          .createEmptyBorder(4, 4, 4, 4)));
-//      tabbedPane.setTabComponentAt(i, tabLabels[i]);
-//    }
 
     GroupLayout tabLayout = new GroupLayout(updateTabPanel);
     tabLayout.setAutoCreateGaps(true);
@@ -351,14 +326,6 @@ public class ContributionManagerDialog {
 
 
   public class SpacedTabbedPaneUI extends BasicTabbedPaneUI {
-    protected Color hazAlfa(int fila) {
-      int alfa = 0;
-      if (fila >= 0) {
-          alfa = 50 + (fila > 7 ? 70 : 10 * fila);
-      }
-      return new Color(0, 0, 0, alfa);
-    }
-
 
     @Override
     protected void installDefaults() {
@@ -370,45 +337,35 @@ public class ContributionManagerDialog {
       tabAreaInsets = new Insets(0, 0, 0, 0);
       selectedTabPadInsets = new Insets(0, 0, 0, 0);
     }
-//    @Override
-//    protected int getTabLabelShiftX(int tabPlacement, int tabIndex,
-//                                    boolean isSelected) {
-//      return 0;
-//    }
+
+
     @Override
     protected int getTabLabelShiftY(int tabPlacement, int tabIndex,
                                     boolean isSelected) {
       return 1;
     }
-//    @Override
-//    protected void paintTab(Graphics g, int tabPlacement,
-//                            Rectangle[] rects, int tabIndex,
-//                            Rectangle iconRect, Rectangle textRect) {
-//      Graphics2D g2 = (Graphics2D) g;
-//      g2.fill(Toolkit.createRoundRect(rects[tabIndex].x, rects[tabIndex].y,
-//                                      rects[tabIndex].x + rects[tabIndex].width, rects[tabIndex].y + rects[tabIndex].height,
-//                                      6,
-//                                      6,
-//                                      0, 0));
-//    }
+
+
     @Override
     protected void paintTabBackground(Graphics g, int tabPlacement,
                                       int tabIndex, int x, int y, int w, int h,
                                       boolean isSelected) {
-      return;
     }
+
+
     @Override
     protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex,
                                   int x, int y, int w, int h, boolean isSelected) {
-      return;
     }
+
+
     @Override
     protected void paintFocusIndicator(Graphics g, int tabPlacement,
                                        Rectangle[] rects, int tabIndex,
                                        Rectangle iconRect, Rectangle textRect,
                                        boolean isSelected) {
-      return;
     }
+
 
     @Override
     protected LayoutManager createLayoutManager() {
@@ -460,200 +417,6 @@ public class ContributionManagerDialog {
   }
 
 
-/*  *//**
-   * Creates and arranges the Swing components in the dialog.
-   *
-   * @param panel1
-   *//*
-  private void createComponents(JPanel panel1) {
-    dialog.setResizable(true);
-
-    Container pane = panel1;
-//    pane.setLayout(new GridBagLayout());
-//
-//    { // Shows "Filter by Category" and the combo box for selecting a category
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 0;
-//      c.gridy = 0;
-    pane.setLayout(new BorderLayout());
-
-    JPanel filterPanel = new JPanel();
-    filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
-//      pane.add(filterPanel, c);
-    pane.add(filterPanel, BorderLayout.NORTH);
-
-    filterPanel.add(Box.createHorizontalStrut(6));
-
-    JLabel categoryLabel = new JLabel(Language.text("contrib.category"));
-    filterPanel.add(categoryLabel);
-
-    filterPanel.add(Box.createHorizontalStrut(5));
-
-    categoryChooser = new JComboBox<String>();
-    categoryChooser.setMaximumRowCount(20);
-    updateCategoryChooser();
-//      filterPanel.add(categoryChooser, c);
-    filterPanel.add(categoryChooser);
-    categoryChooser.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        category = (String) categoryChooser.getSelectedItem();
-        if (ContributionManagerDialog.ANY_CATEGORY.equals(category)) {
-          category = null;
-        }
-        filterLibraries(category, filterField.filters, isCompatibilityFilter);
-        contributionListPanel.updateColors();
-      }
-    });
-
-    filterPanel.add(Box.createHorizontalStrut(5));
-//      filterPanel.add(Box.createHorizontalGlue());
-    filterField = new FilterField();
-    filterPanel.add(filterField);
-
-    filterPanel.add(Box.createHorizontalStrut(5));
-
-    final JCheckBox compatibleContrib = new JCheckBox(compatibleCheckboxLabel);
-    compatibleContrib.addItemListener(new ItemListener() {
-
-      @Override
-      public void itemStateChanged(ItemEvent arg0) {
-        isCompatibilityFilter = compatibleContrib.isSelected();
-        filterLibraries(category, filterField.filters, isCompatibilityFilter);
-        contributionListPanel.updateColors();
-      }
-    });
-    filterPanel.add(compatibleContrib);
-//      filterPanel.add(Box.createHorizontalGlue());
-//    }
-    //filterPanel.setBorder(new EmptyBorder(13, 13, 13, 13));
-    filterPanel.setBorder(new EmptyBorder(7, 7, 7, 7));
-
-//    { // The scroll area containing the contribution listing and the status bar.
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.fill = GridBagConstraints.BOTH;
-//      c.gridx = 0;
-//      c.gridy = 1;
-//      c.gridwidth = 2;
-//      c.weighty = 1;
-//      c.weightx = 1;
-
-    scrollPane = new JScrollPane();
-    scrollPane.setPreferredSize(new Dimension(300, 300));
-    scrollPane.setViewportView(contributionListPanel);
-//      scrollPane.getViewport().setOpaque(true);
-//      scrollPane.getViewport().setBackground(contributionListPanel.getBackground());
-    scrollPane
-      .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-    scrollPane
-      .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-//      scrollPane.setBorder(new EmptyBorder(0, 7, 0, 7));
-    pane.add(scrollPane, BorderLayout.CENTER);
-
-    pane.add(Box.createHorizontalStrut(10), BorderLayout.WEST);
-    pane.add(Box.createHorizontalStrut(10), BorderLayout.EAST);
-
-    status = new StatusPanel();
-//      status.setBorder(new EmptyBorder(7, 7, 7, 7));
-
-    JPanel statusRestartPane = new JPanel();
-    statusRestartPane.setLayout(new BorderLayout());
-
-    statusRestartPane.setBorder(new EmptyBorder(7, 7, 7, 7));
-    statusRestartPane.setOpaque(false);
-
-    statusRestartPane.add(status, BorderLayout.WEST);
-    statusRestartPane.add(progressBar, BorderLayout.LINE_END);
-
-     Adding both of these to EAST shouldn't pose too much of a problem,
-    // since they can never get added together.
-    statusRestartPane.add(restartButton, BorderLayout.EAST);
-    statusRestartPane.add(retryConnectingButton, BorderLayout.EAST);
-
-    pane.add(statusRestartPane, BorderLayout.SOUTH);
-
-//      status = new StatusPanel();
-//      status.setBorder(BorderFactory.createEtchedBorder());
-
-//      final JLayeredPane layeredPane = new JLayeredPane();
-//      layeredPane.add(scrollPane, JLayeredPane.DEFAULT_LAYER);
-//      layeredPane.add(status, JLayeredPane.PALETTE_LAYER);
-//
-//      layeredPane.addComponentListener(new ComponentAdapter() {
-//
-//        void resizeLayers() {
-//          scrollPane.setSize(layeredPane.getSize());
-//          scrollPane.updateUI();
-//        }
-//
-//        public void componentShown(ComponentEvent e) {
-//          resizeLayers();
-//        }
-//
-//        public void componentResized(ComponentEvent arg0) {
-//          resizeLayers();
-//        }
-//      });
-//
-//      final JViewport viewport = scrollPane.getViewport();
-//      viewport.addComponentListener(new ComponentAdapter() {
-//        void resizeLayers() {
-//          status.setLocation(0, viewport.getHeight() - 18);
-//
-//          Dimension d = viewport.getSize();
-//          d.height = 20;
-//          d.width += 3;
-//          status.setSize(d);
-//        }
-//        public void componentShown(ComponentEvent e) {
-//          resizeLayers();
-//        }
-//        public void componentResized(ComponentEvent e) {
-//          resizeLayers();
-//        }
-//      });
-//
-//      pane.add(layeredPane, c);
-//    }
-
-//    { // The filter text area
-//      GridBagConstraints c = new GridBagConstraints();
-//      c.gridx = 0;
-//      c.gridy = 2;
-//      c.gridwidth = 2;
-//      c.weightx = 1;
-//      c.fill = GridBagConstraints.HORIZONTAL;
-//      filterField = new FilterField();
-//
-//      pane.add(filterField, c);
-//    }
-
-    dialog.setMinimumSize(new Dimension(450, 400));
-  }
-
-  private void updateCategoryChooser() {
-    if (categoryChooser != null) {
-      ArrayList<String> categories;
-      categoryChooser.removeAllItems();
-      categories = new ArrayList<String>(contribListing.getCategories(filter));
-//      for (int i = 0; i < categories.size(); i++) {
-//        System.out.println(i + " category: " + categories.get(i));
-//      }
-      Collections.sort(categories);
-//    categories.add(0, ContributionManagerDialog.ANY_CATEGORY);
-      boolean categoriesFound = false;
-      categoryChooser.addItem(ContributionManagerDialog.ANY_CATEGORY);
-      for (String s : categories) {
-        categoryChooser.addItem(s);
-        if (!s.equals("Unknown")) {
-          categoriesFound = true;
-        }
-      }
-      categoryChooser.setEnabled(categoriesFound);
-    }
-  }
-*/
-
-
   private void registerDisposeListeners() {
     dialog.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -680,65 +443,13 @@ public class ContributionManagerDialog {
   }
 
 
-  /*protected void filterLibraries(String category, List<String> filters) {
-    List<Contribution> filteredLibraries = contribListing
-      .getFilteredLibraryList(category, filters);
-    contributionListPanel.filterLibraries(filteredLibraries);
-  }
-
-  protected void filterLibraries(String category, List<String> filters,
-                                 boolean isCompatibilityFilter) {
-    List<Contribution> filteredLibraries = contribListing
-      .getFilteredLibraryList(category, filters);
-    filteredLibraries = contribListing
-      .getCompatibleContributionList(filteredLibraries, isCompatibilityFilter);
-    contributionListPanel.filterLibraries(filteredLibraries);
-  }
-*/
-  /*protected void updateContributionListing() {
-    if (editor != null) {
-      ArrayList<Contribution> contributions = new ArrayList<Contribution>();
-
-      ArrayList<Library> libraries = new ArrayList<Library>(
-                                                            editor.getMode().contribLibraries);
-      contributions.addAll(libraries);
-
-      //ArrayList<ToolContribution> tools = editor.contribTools;
-      List<ToolContribution> tools = editor.getToolContribs();
-      contributions.addAll(tools);
-
-      List<ModeContribution> modes = editor.getBase().getModeContribs();
-      contributions.addAll(modes);
-
-      List<ExamplesContribution> examples = editor.getBase()
-        .getExampleContribs();
-      contributions.addAll(examples);
-
-//    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
-//
-//    // Remove libraries from the list that are part of a compilations
-//    for (LibraryCompilation compilation : compilations) {
-//      Iterator<Library> it = libraries.iterator();
-//      while (it.hasNext()) {
-//        Library current = it.next();
-//        if (compilation.getFolder().equals(current.getFolder().getParentFile())) {
-//          it.remove();
-//        }
-//      }
-//    }
-
-      contribListing.updateInstalledList(contributions);
-    }
-  }
-*/
-
-
-  protected void downloadAndUpdateContributionListing(Base base) {
+  void downloadAndUpdateContributionListing(Base base) {
     //activeTab is required now but should be removed
     //as there is only one instance of contribListing and it should be present in this class
     final ContributionTab activeTab = getActiveTab();
-    activeTab.contribListing.downloadAvailableList(base, new ContribProgressBar(
-      activeTab.progressBar) {
+
+    ContribProgressMonitor progress =
+      new ContribProgressBar(activeTab.progressBar) {
 
       @Override
       public void startTask(String name, int maxValue) {
@@ -768,7 +479,8 @@ public class ContributionManagerDialog {
           makeAndShowTab(false, false);
         }
       }
-    });
+    };
+    activeTab.contribListing.downloadAvailableList(base, progress);
   }
 
 
@@ -781,11 +493,7 @@ public class ContributionManagerDialog {
   }
 
 
-  /**
-   *
-   * @return the currently selected tab
-   */
-  public ContributionTab getActiveTab() {
+  ContributionTab getActiveTab() {
     switch (tabbedPane.getSelectedIndex()) {
     case 0:
       return librariesContributionTab;
@@ -798,103 +506,5 @@ public class ContributionManagerDialog {
     default:
       return updatesContributionTab;
     }
-  }
-
-
-/*
-  protected void setFilterText(String filter) {
-    if (filter == null || filter.isEmpty()) {
-      filterField.setText("");
-      filterField.showingHint = true;
-    } else {
-      filterField.setText(filter);
-      filterField.showingHint = false;
-    }
-    filterField.applyFilter();
-  }
-
-//  private JPanel getPlaceholder() {
-//    return contributionListPanel.statusPlaceholder;
-//  }
-
-  class FilterField extends JTextField {
-    String filterHint;
-
-    boolean showingHint;
-
-    List<String> filters;
-
-    public FilterField() {
-      super(Language.text("contrib.filter_your_search"));
-      filterHint = Language.text("contrib.filter_your_search");
-
-      showingHint = true;
-      filters = new ArrayList<String>();
-      updateStyle();
-
-      addFocusListener(new FocusListener() {
-        public void focusLost(FocusEvent focusEvent) {
-          if (filterField.getText().isEmpty()) {
-            showingHint = true;
-          }
-          updateStyle();
-        }
-
-        public void focusGained(FocusEvent focusEvent) {
-          if (showingHint) {
-            showingHint = false;
-            filterField.setText("");
-          }
-          updateStyle();
-        }
-      });
-
-      getDocument().addDocumentListener(new DocumentListener() {
-        public void removeUpdate(DocumentEvent e) {
-          applyFilter();
-        }
-
-        public void insertUpdate(DocumentEvent e) {
-          applyFilter();
-        }
-
-        public void changedUpdate(DocumentEvent e) {
-          applyFilter();
-        }
-      });
-    }
-
-    public void applyFilter() {
-      String filter = filterField.getFilterText();
-      filter = filter.toLowerCase();
-
-      // Replace anything but 0-9, a-z, or : with a space
-      filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a^\\x3a]", " ");
-      filters = Arrays.asList(filter.split(" "));
-      filterLibraries(category, filters, isCompatibilityFilter);
-
-      contributionListPanel.updateColors();
-    }
-
-    public String getFilterText() {
-      return showingHint ? "" : getText();
-    }
-
-    public void updateStyle() {
-      if (showingHint) {
-        setText(filterHint);
-        // setForeground(UIManager.getColor("TextField.light")); // too light
-        setForeground(Color.gray);
-        setFont(getFont().deriveFont(Font.ITALIC));
-      } else {
-        setForeground(UIManager.getColor("TextField.foreground"));
-        setFont(getFont().deriveFont(Font.PLAIN));
-      }
-    }
-  }*/
-
-
-  public boolean hasAlreadyBeenOpened() {
-    return dialog != null;
   }
 }

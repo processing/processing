@@ -345,7 +345,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         if (table.isRowSelected(row)) {
           label.setBackground(new Color(0xe0fffd));
         }
-        label.setFont(ContributionManagerDialog.myFont);
+        label.setFont(ContributionManagerDialog.font);
         label.setOpaque(true);
       } else {
         if (contribution.isSpecial()) {
