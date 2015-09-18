@@ -7,6 +7,8 @@ o   the AST checker has better error message handling for those cases
 o   and hitting Run replaces the useful error with something weird
 X   https://github.com/processing/processing/issues/3408
 X   not great because the error checker runs more slowly than your typing
+X SVG not highlighting as a keyword
+X   https://github.com/processing/processing/issues/3752
 
 manager
 X CM: Clicking item in Libraries list throws exception
@@ -115,15 +117,20 @@ _   also change the revision in the "about processing" dialog
 _   https://github.com/processing/processing/issues/3665
 
 
-gui
-_ different design of squiggly line?
-_ build custom scroll bar since the OS versions are so ugly?
-_ error/warning location is awkward when no scroll bar is in use
+gui/3 final
 _ show hover text when the mouse is over the 'debug' button
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
 _ finish the gui
 _   https://github.com/processing/processing/issues/3072
+
+
+gui
+_ different design of squiggly line?
+_ build custom scroll bar since the OS versions are so ugly?
+_ error/warning location is awkward when no scroll bar is in use
+_   when only one screen-full, show ticks at exact location
+_   simpler/less confusing to not show at all? 
 _ see notes in the 'dialogs' section below, implement our own option panes?
 _ tiny trail of dots when moving the selection bar up/down on retina
 _ need 'actively pressed' version of 'play' and 'stop'
@@ -141,25 +148,26 @@ _   rather than post-compile
 _   https://github.com/processing/processing/issues/136
 
 
-gui/low
-_ welcome screen tweaks
-_   click "show this welcome" text to check/uncheck the box
-_   submit the form (as if 'get started' clicked) when closing the window
-_     whether hitting ESC or the close box on the window
-
-
 manager
-_ scrolling "past" top/bottom causes the screen to jiggle
-_ total number of updates available is not correct
 _ implement 2x versions of icons
 _   https://github.com/processing/processing/issues/3478
 _   foundation icon in list
 _   foundation icon below next to description when lib selected
 _   icons on the install/update/remove buttons
 _   search eyeglass icon
-_   
+_ fix bold version used in the description below, when an item is selected
+
+_ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
+_ total number of updates available is not correct
 _ Examples window closes and re-opens during library install/remove
 _   https://github.com/processing/processing/issues/3304
+
+
+gui/low
+_ welcome screen tweaks
+_   click "show this welcome" text to check/uncheck the box
+_   submit the form (as if 'get started' clicked) when closing the window
+_     whether hitting ESC or the close box on the window
 
 
 fonts
@@ -917,6 +925,8 @@ _   this may already work with SingleInstance stuff
 
 DIST / Mac OS X
 
+
+_ built-in images: http://nadeausoftware.com/articles/2008/12/mac_java_tip_how_access_mac_specific_nsimage_icons
 _ replace appbundler with the Java 8 packager
 _   https://github.com/processing/processing/issues/3071
 _ fix appbundler problems due to rollback

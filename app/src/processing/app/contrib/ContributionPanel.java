@@ -454,26 +454,22 @@ class ContributionPanel extends JPanel {
       add(iconLabel, BorderLayout.WEST);
     }
 
+    // Avoid ugly synthesized bold
+    Font boldFont = Toolkit.getSansFont(12, Font.BOLD);
+    String fontFace = "<font face=\"" + boldFont.getName() + "\">";
+
     description = new StringBuilder();
-    description.append("<html><body><b>");
+    description.append("<html><body>" + fontFace);
     if (contrib.getUrl() == null) {
       description.append(contrib.getName());
     } else {
       description.append("<a href=\"" + contrib.getUrl() + "\">" + contrib.getName() + "</a>");
     }
-    description.append("</b> ");
+    description.append("</font> ");
 
     String version = contrib.getPrettyVersion();
-
-    // TODO this has no place here, we shouldn't be cleaning up contrib
-    // information in the f*king GUI.
-    if (version != null && !version.isEmpty()) {
-      if (version.toLowerCase().startsWith("build")) // For Python mode
-        description.append(version.substring(5, version.indexOf(',')).trim());
-      else if (version.toLowerCase().startsWith("v")) // For ketai library
-        description.append(version);
-      else
-        description.append(version);
+    if (version != null) {
+      description.append(version);
     }
     description.append(" <br/>");
 

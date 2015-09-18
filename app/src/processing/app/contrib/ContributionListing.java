@@ -528,20 +528,6 @@ public class ContributionListing {
       return null;
     }
     return newestContrib.getPrettyVersion();
-    /*
-    String latestVersion = newestContrib.getPrettyVersion();
-    if (latestVersion != null && !latestVersion.isEmpty()) {
-      if (latestVersion.toLowerCase().startsWith("build")) // For Python mode
-        return ("v" + latestVersion.substring(5, latestVersion.indexOf(','))
-            .trim());
-      else if (latestVersion.toLowerCase().startsWith("v")) // For ketai library
-        return latestVersion;
-      else
-        return ("v" + latestVersion);
-    }
-    else
-      return null;
-    */
   }
 
 
@@ -556,36 +542,8 @@ public class ContributionListing {
   }
 
 
-//  /**
-//   * @return a lowercase string with all non-alphabetic characters removed
-//   */
-//  static protected String normalize(String s) {
-//    return s.toLowerCase().replaceAll("^\\p{Lower}", "");
-//  }
-
-
-//  /**
-//   * @return the proper, valid name of this category to be displayed in the UI
-//   *         (e.g. "Typography / Geometry"). "Unknown" if the category null.
-//   */
-//  static public String getCategory(String category) {
-//    if (category == null) {
-//      return "Unknown";
-//    }
-//    String normCatName = normalize(category);
-//
-//    for (String validCatName : validCategories) {
-//      String normValidCatName = normalize(validCatName);
-//      if (normValidCatName.equals(normCatName)) {
-//        return validCatName;
-//      }
-//    }
-//    return category;
-//  }
-
-
-  ArrayList<AvailableContribution> parseContribList(File file) {
-    ArrayList<AvailableContribution> outgoing = new ArrayList<AvailableContribution>();
+  List<AvailableContribution> parseContribList(File file) {
+    List<AvailableContribution> outgoing = new ArrayList<AvailableContribution>();
 
     if (file != null && file.exists()) {
       String[] lines = PApplet.loadStrings(file);

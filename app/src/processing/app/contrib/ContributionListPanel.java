@@ -491,27 +491,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
   public void filterLibraries(List<Contribution> filteredContributions) {
     synchronized (panelByContribution) {
-      /*Set<Contribution> hiddenPanels =
-        new TreeSet<Contribution>(contribListing.getComparator());
-      hiddenPanels.addAll(panelByContribution.keySet());
-
-      for (Contribution info : filteredContributions) {
-        ContributionPanel panel = panelByContribution.get(info);
-        if (panel != null) {
-          panel.setVisible(true);
-          hiddenPanels.remove(info);
-        }
-      }
-
-      for (Contribution info : hiddenPanels) {
-        ContributionPanel panel = panelByContribution.get(info);
-        if (panel != null) {
-          panel.setVisible(false);
-        }
-      }*/
       TreeSet<Contribution> panelInThisTab = new TreeSet<Contribution>(contribListing.getComparator());
       for (Contribution contribution : filteredContributions) {
-        if(contribution.getType() == this.contributionTab.contributionType){
+        if(contribution.getType() == this.contributionTab.contributionType) {
           panelInThisTab.add(contribution);
         }
       }
@@ -522,11 +504,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
   protected void setSelectedPanel(ContributionPanel contributionPanel) {
     contributionTab.updateStatusPanel(contributionPanel);
+
     if (selectedPanel == contributionPanel) {
       selectedPanel.setSelected(true);
 
     } else {
-
       ContributionPanel lastSelected = selectedPanel;
       selectedPanel = contributionPanel;
 
