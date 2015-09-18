@@ -244,7 +244,8 @@ class StatusPanel extends JPanel {
 
     installButton.setEnabled(!panel.getContrib().isInstalled()
                              && contributionListing.hasDownloadedLatestList()
-                             && panel.getContrib().isCompatible(Base.getRevision()));
+                             && panel.getContrib().isCompatible(Base.getRevision())
+                             && !panel.isInstallInProgress);
 
     if (installButton.isEnabled()) {
       updateLabel.setText(latestVersion + " available");
@@ -266,17 +267,6 @@ class StatusPanel extends JPanel {
       updateButton.setText(latestVersion);
     } else {
       updateButton.setText("Update");
-    }
-
-    installButton.setEnabled(!panel.getContrib().isInstalled()
-      && contributionListing.hasDownloadedLatestList()
-      && panel.getContrib().isCompatible(Base.getRevision())
-      && !panel.isInstallInProgress);
-
-    if (installButton.isEnabled()) {
-      updateLabel.setText(currentVersion + " available");
-    } else {
-      updateLabel.setText(currentVersion + " installed");
     }
 
     removeButton.setEnabled(panel.getContrib().isInstalled()
