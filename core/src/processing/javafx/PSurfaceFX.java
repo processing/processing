@@ -230,27 +230,20 @@ public class PSurfaceFX implements PSurface {
       int height = sketch.sketchHeight();
       int smooth = sketch.sketchSmooth();
 
-      /*
-      SceneAntialiasing sceneAntialiasing = (smooth == 0) ?
-          SceneAntialiasing.DISABLED :
-          SceneAntialiasing.BALANCED;
-
-      //stage.setScene(new Scene(new Group(canvas)));
-      stage.setScene(new Scene(stackPane, width, height, false, sceneAntialiasing));
-      */
-
       // Workaround for https://bugs.openjdk.java.net/browse/JDK-8136495
-      // Only set when we're turning it off; the default doesn't have the bug,
-      // but still seems to anti-alias properly.
       // https://github.com/processing/processing/issues/3795
-      if (smooth == 0) {
-        stage.setScene(new Scene(stackPane, width, height, false, SceneAntialiasing.DISABLED));
-      } else {
-        // ...or maybe not, these seem to go to the same code path
-        stage.setScene(new Scene(stackPane, width, height, false));
+      if ((PApplet.platform == PConstants.MACOSX ||
+           PApplet.platform == PConstants.LINUX) &&
+          PApplet.javaVersionName.equals("1.8.0_60")) {
+        System.err.println("smooth() disabled for JavaFX with this Java version due to Oracle bug");
+        System.err.println("https://github.com/processing/processing/issues/3795");
+        smooth = 0;
       }
 
-      //stage.show();  // move to setVisible(true)?
+      SceneAntialiasing sceneAntialiasing = (smooth == 0) ?
+        SceneAntialiasing.DISABLED : SceneAntialiasing.BALANCED;
+
+      stage.setScene(new Scene(stackPane, width, height, false, sceneAntialiasing));
 
       // initFrame in different thread is waiting for
       // the stage, assign it only when it is all set up

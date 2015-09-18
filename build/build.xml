@@ -57,15 +57,16 @@
   <property name="examples.dir" 
 	    value="../../processing-docs/content/examples" />
 
-  <!--
-  <property name="jdk.version" value="7" />
-  <property name="jdk.update" value="72" />
-  <property name="jdk.build" value="14" />
-  -->
   <!-- Switching to 8 because updates for 7 ended April 2015 -->
   <property name="jdk.version" value="8" />
+  <!-- moving back to 8u51 because of Oracle bug in OS X and Linux smoothing
+       https://github.com/processing/processing/issues/3795 -->
+  <property name="jdk.update" value="51" />
+  <property name="jdk.build" value="16" />
+  <!--
   <property name="jdk.update" value="60" />
   <property name="jdk.build" value="27" />
+  -->
   <property name="jdk.short" value="${jdk.version}u${jdk.update}" />
   <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />
 
