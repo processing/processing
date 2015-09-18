@@ -25,6 +25,12 @@ gsoc
 X prevent "updating" to a still-incompatible version of a contrib
 X   https://github.com/processing/processing/issues/3801
 X   https://github.com/processing/processing/pull/3805
+X Tools are getting redundantly added when installing new tool
+X   https://github.com/processing/processing/issues/3818
+X   https://github.com/processing/processing/pull/3820
+X after clicking 'install' it's still possible to click it again
+X   https://github.com/processing/processing/issues/3806
+X   https://github.com/processing/processing/pull/3817
 
 jakub
 X Make preprocessor scope-aware
@@ -140,8 +146,6 @@ _     whether hitting ESC or the close box on the window
 
 
 manager
-_ after clicking 'install' it's still possible to click it again
-_   https://github.com/processing/processing/issues/3806
 _ scrolling "past" top/bottom causes the screen to jiggle
 _ number of updates available is not correct
 _ retina icons show at twice the size and just crop at top/bottom
@@ -231,6 +235,8 @@ _   https://github.com/processing/processing/pull/3178
 
 
 help me
+_ Horizontal scrollbar does not scroll textarea all the way
+_   https://github.com/processing/processing/issues/3591
 _ "String index out of range" error
 _   https://github.com/processing/processing/issues/1940
 _ problems with non-US keyboards and some shortcuts

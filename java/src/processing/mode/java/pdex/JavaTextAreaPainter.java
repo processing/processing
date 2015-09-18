@@ -865,6 +865,13 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+	@Override
+	public int getWidth() {
+	  // https://github.com/processing/processing/issues/3591
+	  return super.getWidth() - Editor.LEFT_GUTTER;
+	}
+
+
   public Editor getEditor() {
     return ((JavaTextArea) textArea).editor;
   }
