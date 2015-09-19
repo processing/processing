@@ -1027,14 +1027,16 @@
       <equals arg1="${sun.arch.data.model}" arg2="64" />
     </condition>
 
+    <echo message="com/sun/jna/${jna.subfolder}/jnidispatch.dll" />
+
     <!--
       com/sun/jna/win32-amd64/jnidispatch.dll
       com/sun/jna/win32-x86/jnidispatch.dll
     -->
 
-    <unzip src="../app/lib/jna.jar" dest="windows/work/lib">
+    <unzip src="../app/lib/jna.jar" dest="windows/work">
       <patternset>
-        <include name="com/sun/jna/${jna.subfolder}/jnidispatch.dll"/>
+        <include name="com/sun/jna/${jna.subfolder}/jnidispatch.dll" />
       </patternset>
       <mapper type="flatten"/>
     </unzip>
