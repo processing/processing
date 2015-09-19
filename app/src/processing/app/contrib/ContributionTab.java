@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2012-15 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@ public class ContributionTab {
 
   ContributionType contributionType;
   ContributionManagerDialog contributionManagerDialog;
+
   JPanel panel;
   String title;
   ContributionFilter filter;
@@ -68,7 +69,10 @@ public class ContributionTab {
   JProgressBar progressBar;
 
 
-  public ContributionTab(ContributionType type,ContributionManagerDialog contributionManagerDialog) {
+  public ContributionTab(ContributionType type, ContributionManagerDialog contributionManagerDialog) {
+    this.contributionType = type;
+    this.contributionManagerDialog = contributionManagerDialog;
+
     if (type == ContributionType.MODE) {
       title = Language.text("contrib.manager_title.mode");
     } else if (type == ContributionType.TOOL) {
@@ -80,8 +84,6 @@ public class ContributionTab {
     }
 
     filter = type.createFilter();
-    this.contributionType = type;
-    this.contributionManagerDialog = contributionManagerDialog;
     contribListing = ContributionListing.getInstance();
       statusPanel = new StatusPanel(650,this);
       contributionListPanel = new ContributionListPanel(this, filter);
@@ -207,7 +209,7 @@ public class ContributionTab {
   }
 
 
-  void buildErrorPanel(){
+  void buildErrorPanel() {
     errorPanel = new JPanel();
     GroupLayout layout = new GroupLayout(errorPanel);
     layout.setAutoCreateGaps(true);
@@ -342,6 +344,7 @@ public class ContributionTab {
     }
   }
 
+
   protected void setFilterText(String filter) {
     if (filter == null || filter.isEmpty()) {
       filterField.setText("");
@@ -359,7 +362,6 @@ public class ContributionTab {
     JLabel filterLabel;
 
     public FilterField () {
-
       super("");
 
       filterLabel = new JLabel("Filter");
@@ -367,9 +369,12 @@ public class ContributionTab {
       filterLabel.setOpaque(false);
 
       setFont(Toolkit.getSansFont(14, Font.PLAIN));
-      searchIcon = Toolkit.getLibIcon("manager/search.png");
+      //searchIcon = Toolkit.getLibIcon("manager/search.png");
+      searchIcon = Toolkit.getLibIconX("manager/search");
+      filterLabel.setIcon(searchIcon);
+      //searchIcon = new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage("NSImage://NSComputerTemplate"));
       setOpaque(false);
-      setBorder(BorderFactory.createMatteBorder(0, 33, 0, 0, searchIcon));
+      //setBorder(BorderFactory.createMatteBorder(0, 33, 0, 0, searchIcon));
 
       GroupLayout fl = new GroupLayout(this);
       setLayout(fl);
@@ -386,13 +391,13 @@ public class ContributionTab {
       addFocusListener(new FocusListener() {
         public void focusLost(FocusEvent focusEvent) {
           if (getText().isEmpty()) {
-            setBorder(BorderFactory.createMatteBorder(0, 33, 0, 0, searchIcon));
+//            setBorder(BorderFactory.createMatteBorder(0, 33, 0, 0, searchIcon));
             filterLabel.setVisible(true);
           }
         }
 
         public void focusGained(FocusEvent focusEvent) {
-          setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 0));
+//          setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 0));
           filterLabel.setVisible(false);
         }
       });

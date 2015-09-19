@@ -36,6 +36,8 @@ X   https://github.com/processing/processing/issues/3806
 X   https://github.com/processing/processing/pull/3817
 X CM list should be sortable by status and author name
 X   https://github.com/processing/processing/issues/3608
+_ All contributions listed after install button is clicked
+_   https://github.com/processing/processing/issues/3826
 
 jakub
 X Make preprocessor scope-aware
@@ -150,6 +152,8 @@ _   https://github.com/processing/processing/issues/136
 
 
 manager
+_ ArrayIndexOutOfBoundsException freak out when clicking the header line
+_   think this was on name, with libraries, but not sure
 _ needs a frame title
 _ CM selected tabs are too tall 
 _   https://github.com/processing/processing/issues/3598

@@ -43,6 +43,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.image.ImageObserver;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -479,6 +480,40 @@ public class Toolkit {
       return null;
     }
     return new ImageIcon(file.getAbsolutePath());
+  }
+
+
+  static public ImageIcon getLibIconX(String base) {
+    final int scale = Toolkit.highResDisplay() ? 2 : 1;
+    String filename = base + "-" + scale + "x.png";
+    File file = Platform.getContentFile("lib/" + filename);
+    if (!file.exists()) {
+//      System.err.println("does not exist: " + file);
+      return null;
+    }
+//    ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+//    ImageIcon outgoing = new ImageIcon(icon.getImage()) {
+    ImageIcon outgoing = new ImageIcon(file.getAbsolutePath()) {
+      @Override
+      public int getIconWidth() {
+        return super.getIconWidth() / scale;
+      }
+
+      @Override
+      public int getIconHeight() {
+        return super.getIconHeight() / scale;
+      }
+
+      @Override
+      public synchronized void paintIcon(Component c, Graphics g, int x, int y) {
+        ImageObserver imageObserver = getImageObserver();
+        if (imageObserver == null) {
+          imageObserver = c;
+        }
+        g.drawImage(getImage(), x, y, getIconWidth(), getIconHeight(), imageObserver);
+      }
+    };
+    return outgoing;
   }
 
 

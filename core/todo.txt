@@ -9,8 +9,17 @@ X Make the PApplet regex cache LRU
 X   https://github.com/processing/processing/pull/3815
 
 andres
+X Cannot re-enable stroke or fill of a PShape with P2D
+X   https://github.com/processing/processing/issues/3808
+X setResizable broke with oscilating behavior in 3.0b6
+X   https://github.com/processing/processing/issues/3825
+X   https://github.com/processing/processing/commit/42c0150da0f400637de916db1f94a687a7bc4288
 X surface.setLocation() causing a freeze on Windows
 X   https://github.com/processing/processing/commit/4c0f9234c0a48f62363233cafc9c9951ee351d3e
+
+_ selectInput/Output() is behind the drawing window (Windows)
+_   https://github.com/processing/processing/issues/3775
+_   fixed has been added, test on Windows
 
 
 3.0 final
@@ -36,8 +45,6 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 _ SVG only exports last frame
 _   possibly because Java2D is disposing the Graphics2D in between?
 _   https://github.com/processing/processing/issues/3753
-_ selectInput/Output() is behind the drawing window (Windows)
-_   https://github.com/processing/processing/issues/3775
 
 javafx
 _ do we really need setTextFont/Size when we already have Impl? 
