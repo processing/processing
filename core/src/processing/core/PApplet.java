@@ -6208,32 +6208,31 @@ public class PApplet implements PConstants {
    * @param callback name of the method to be called when the selection is made
    */
   public void selectInput(String prompt, String callback) {
-    boolean hide = g instanceof PGraphicsOpenGL && platform == WINDOWS;
-    if (hide) surface.setVisible(false);
     selectInput(prompt, callback, null);
   }
 
 
   public void selectInput(String prompt, String callback, File file) {
-    boolean hide = g instanceof PGraphicsOpenGL && platform == WINDOWS;
-    if (hide) surface.setVisible(false);
     selectInput(prompt, callback, file, this);
-    if (hide) surface.setVisible(true);
   }
 
 
   public void selectInput(String prompt, String callback,
                           File file, Object callbackObject) {
-    boolean hide = g instanceof PGraphicsOpenGL && platform == WINDOWS;
-    if (hide) surface.setVisible(false);
-    selectInput(prompt, callback, file, callbackObject, null);  //selectFrame());
-    if (hide) surface.setVisible(true);
+    selectInput(prompt, callback, file, callbackObject, null, this);  //selectFrame());
+  }
+
+
+  static public void selectInput(String prompt, String callbackMethod,
+                                 File file, Object callbackObject, Frame parent,
+                                 PApplet sketch) {
+    selectImpl(prompt, callbackMethod, file, callbackObject, parent, FileDialog.LOAD, sketch);
   }
 
 
   static public void selectInput(String prompt, String callbackMethod,
                                  File file, Object callbackObject, Frame parent) {
-    selectImpl(prompt, callbackMethod, file, callbackObject, parent, FileDialog.LOAD);
+    selectImpl(prompt, callbackMethod, file, callbackObject, parent, FileDialog.LOAD, null);
   }
 
 
@@ -6245,32 +6244,30 @@ public class PApplet implements PConstants {
    * @param callback name of the method to be called when the selection is made
    */
   public void selectOutput(String prompt, String callback) {
-    boolean hide = g instanceof PGraphicsOpenGL && platform == WINDOWS;
-    if (hide) surface.setVisible(false);
     selectOutput(prompt, callback, null);
-    if (hide) surface.setVisible(true);
   }
 
   public void selectOutput(String prompt, String callback, File file) {
-    boolean hide = g instanceof PGraphicsOpenGL && platform == WINDOWS;
-    if (hide) surface.setVisible(false);
     selectOutput(prompt, callback, file, this);
-    if (hide) surface.setVisible(true);
   }
 
 
   public void selectOutput(String prompt, String callback,
                            File file, Object callbackObject) {
-    boolean hide = g instanceof PGraphicsOpenGL && platform == WINDOWS;
-    if (hide) surface.setVisible(false);
-    selectOutput(prompt, callback, file, callbackObject, null); //selectFrame());
-    if (hide) surface.setVisible(true);
+    selectOutput(prompt, callback, file, callbackObject, null, this); //selectFrame());
   }
 
 
   static public void selectOutput(String prompt, String callbackMethod,
                                   File file, Object callbackObject, Frame parent) {
-    selectImpl(prompt, callbackMethod, file, callbackObject, parent, FileDialog.SAVE);
+    selectImpl(prompt, callbackMethod, file, callbackObject, parent, FileDialog.SAVE, null);
+  }
+
+
+  static public void selectOutput(String prompt, String callbackMethod,
+                                  File file, Object callbackObject, Frame parent,
+                                  PApplet sketch) {
+    selectImpl(prompt, callbackMethod, file, callbackObject, parent, FileDialog.SAVE, sketch);
   }
 
 
@@ -6279,10 +6276,13 @@ public class PApplet implements PConstants {
                                    final File defaultSelection,
                                    final Object callbackObject,
                                    final Frame parentFrame,
-                                   final int mode) {
+                                   final int mode,
+                                   final PApplet sketch) {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         File selectedFile = null;
+        boolean hide = sketch != null && sketch.g instanceof PGraphicsOpenGL && platform == WINDOWS;
+        if (hide) sketch.surface.setVisible(false);
 
         if (useNativeSelect) {
           FileDialog dialog = new FileDialog(parentFrame, prompt, mode);
@@ -6290,6 +6290,7 @@ public class PApplet implements PConstants {
             dialog.setDirectory(defaultSelection.getParent());
             dialog.setFile(defaultSelection.getName());
           }
+
           dialog.setVisible(true);
           String directory = dialog.getDirectory();
           String filename = dialog.getFile();
@@ -6314,6 +6315,8 @@ public class PApplet implements PConstants {
             selectedFile = chooser.getSelectedFile();
           }
         }
+
+        if (hide) sketch.surface.setVisible(true);
         selectCallback(selectedFile, callbackMethod, callbackObject);
       }
     });
@@ -6328,27 +6331,18 @@ public class PApplet implements PConstants {
    * @param callback name of the method to be called when the selection is made
    */
   public void selectFolder(String prompt, String callback) {
-    boolean hide = g instanceof PGraphicsOpenGL && platform == WINDOWS;
-    if (hide) surface.setVisible(false);
     selectFolder(prompt, callback, null);
-    if (hide) surface.setVisible(true);
   }
 
 
   public void selectFolder(String prompt, String callback, File file) {
-    boolean hide = g instanceof PGraphicsOpenGL && platform == WINDOWS;
-    if (hide) surface.setVisible(false);
     selectFolder(prompt, callback, file, this);
-    if (hide) surface.setVisible(true);
   }
 
 
   public void selectFolder(String prompt, String callback,
                            File file, Object callbackObject) {
-    boolean hide = g instanceof PGraphicsOpenGL && platform == WINDOWS;
-    if (hide) surface.setVisible(false);
-    selectFolder(prompt, callback, file, callbackObject, null); //selectFrame());
-    if (hide) surface.setVisible(true);
+    selectFolder(prompt, callback, file, callbackObject, null, this); //selectFrame());
   }
 
 
@@ -6357,9 +6351,22 @@ public class PApplet implements PConstants {
                                   final File defaultSelection,
                                   final Object callbackObject,
                                   final Frame parentFrame) {
+    selectFolder(prompt, callbackMethod, defaultSelection, callbackObject, parentFrame, null);
+  }
+
+
+  static public void selectFolder(final String prompt,
+                                  final String callbackMethod,
+                                  final File defaultSelection,
+                                  final Object callbackObject,
+                                  final Frame parentFrame,
+                                  final PApplet sketch) {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         File selectedFile = null;
+
+        boolean hide = sketch != null && sketch.g instanceof PGraphicsOpenGL && platform == WINDOWS;
+        if (hide) sketch.surface.setVisible(false);
 
         if (platform == MACOSX && useNativeSelect != false) {
           FileDialog fileDialog =
@@ -6387,6 +6394,8 @@ public class PApplet implements PConstants {
             selectedFile = fileChooser.getSelectedFile();
           }
         }
+
+        if (hide) sketch.surface.setVisible(true);
         selectCallback(selectedFile, callbackMethod, callbackObject);
       }
     });
