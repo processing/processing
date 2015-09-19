@@ -16,10 +16,12 @@ X   https://github.com/processing/processing/issues/3825
 X   https://github.com/processing/processing/commit/42c0150da0f400637de916db1f94a687a7bc4288
 X surface.setLocation() causing a freeze on Windows
 X   https://github.com/processing/processing/commit/4c0f9234c0a48f62363233cafc9c9951ee351d3e
+X selectInput/Output() is behind the drawing window (Windows)
+X   https://github.com/processing/processing/issues/3775
 
-_ selectInput/Output() is behind the drawing window (Windows)
-_   https://github.com/processing/processing/issues/3775
-_   fixed has been added, test on Windows
+known
+_ window must close when using file dialogs with OpenGL on Windows
+_   https://github.com/processing/processing/issues/3831
 
 
 3.0 final

@@ -6247,6 +6247,7 @@ public class PApplet implements PConstants {
     selectOutput(prompt, callback, null);
   }
 
+
   public void selectOutput(String prompt, String callback, File file) {
     selectOutput(prompt, callback, file, this);
   }
@@ -6271,6 +6272,8 @@ public class PApplet implements PConstants {
   }
 
 
+  // Will remove the 'sketch' parameter once we get an upstream JOGL fix
+  // https://github.com/processing/processing/issues/3831
   static protected void selectImpl(final String prompt,
                                    final String callbackMethod,
                                    final File defaultSelection,
@@ -6281,7 +6284,9 @@ public class PApplet implements PConstants {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         File selectedFile = null;
-        boolean hide = sketch != null && sketch.g instanceof PGraphicsOpenGL && platform == WINDOWS;
+
+        boolean hide = (sketch != null) &&
+          (sketch.g instanceof PGraphicsOpenGL) && (platform == WINDOWS);
         if (hide) sketch.surface.setVisible(false);
 
         if (useNativeSelect) {
@@ -6355,6 +6360,8 @@ public class PApplet implements PConstants {
   }
 
 
+  // Will remove the 'sketch' parameter once we get an upstream JOGL fix
+  // https://github.com/processing/processing/issues/3831
   static public void selectFolder(final String prompt,
                                   final String callbackMethod,
                                   final File defaultSelection,
@@ -6365,7 +6372,8 @@ public class PApplet implements PConstants {
       public void run() {
         File selectedFile = null;
 
-        boolean hide = sketch != null && sketch.g instanceof PGraphicsOpenGL && platform == WINDOWS;
+        boolean hide = (sketch != null) &&
+          (sketch.g instanceof PGraphicsOpenGL) && (platform == WINDOWS);
         if (hide) sketch.surface.setVisible(false);
 
         if (platform == MACOSX && useNativeSelect != false) {
