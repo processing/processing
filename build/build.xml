@@ -1016,6 +1016,28 @@
     <copy todir="windows/work/lib" flatten="true">
       <fileset refid="runtime.jars" />
     </copy>
+
+    <!-- unpack the JNA DLLs for Windows to work around
+         https://github.com/processing/processing/issues/3624 -->
+
+    <condition property="jna.subfolder" value="win32-x86"> 
+      <equals arg1="${sun.arch.data.model}" arg2="32" />
+    </condition>
+    <condition property="jna.subfolder" value="win32-amd64"> 
+      <equals arg1="${sun.arch.data.model}" arg2="64" />
+    </condition>
+
+    <!--
+      com/sun/jna/win32-amd64/jnidispatch.dll
+      com/sun/jna/win32-x86/jnidispatch.dll
+    -->
+
+    <unzip src="../app/lib/jna.jar" dest="windows/work/lib">
+      <patternset>
+        <include name="com/sun/jna/${jna.subfolder}/jnidispatch.dll"/>
+      </patternset>
+      <mapper type="flatten"/>
+    </unzip>
     
     <copy todir="windows/work">
       <fileset dir=".." includes="core/library/**" />
