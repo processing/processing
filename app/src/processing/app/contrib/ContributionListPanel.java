@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -52,10 +52,19 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   protected JTable table;
   DefaultTableModel model;
   JScrollPane scrollPane;
-  Font myFont;
+
+  static Icon upToDateIcon;
+  static Icon updateAvailableIcon;
+  static Icon incompatibleIcon;
 
 
-  public ContributionListPanel() { }
+  public ContributionListPanel() {
+    if (upToDateIcon == null) {
+      upToDateIcon = Toolkit.getLibIconX("manager/up-to-date");
+      updateAvailableIcon = Toolkit.getLibIconX("manager/update-available");
+      incompatibleIcon = Toolkit.getLibIcon("manager/incompatible");
+    }
+  }
 
 
   public ContributionListPanel(final ContributionTab contributionTab,
@@ -293,12 +302,15 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         Icon icon = null;
         label.setFont(Toolkit.getSansFont(14, Font.PLAIN));
         if (contribution.isInstalled()) {
-          icon = Toolkit.getLibIcon("manager/up-to-date-" + ContributionManagerDialog.iconVer + "x.png");
+          //icon = Toolkit.getLibIcon("manager/up-to-date-" + ContributionManagerDialog.iconVer + "x.png");
+          icon = upToDateIcon;
           if (contribListing.hasUpdates(contribution)) {
-            icon = Toolkit.getLibIcon("manager/update-available-" + ContributionManagerDialog.iconVer + "x.png");
+            //icon = Toolkit.getLibIcon("manager/update-available-" + ContributionManagerDialog.iconVer + "x.png");
+            icon = updateAvailableIcon;
           }
           if (!contribution.isCompatible(Base.getRevision())) {
-            icon = Toolkit.getLibIcon("manager/incompatible-" + ContributionManagerDialog.iconVer + "x.png");
+            //icon = Toolkit.getLibIcon("manager/incompatible-" + ContributionManagerDialog.iconVer + "x.png");
+            icon = incompatibleIcon;
           }
         }
         label.setIcon(icon);
@@ -308,6 +320,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         }
         label.setOpaque(true);
 //        return table.getDefaultRenderer(Icon.class).getTableCellRendererComponent(table, icon, isSelected, false, row, column);
+
       } else if (column == 1) {
         // Generating ellipses based on fontMetrics
         Font boldFont = Toolkit.getSansFont(14, Font.BOLD);

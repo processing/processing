@@ -169,7 +169,8 @@ _   https://github.com/processing/processing/issues/3478
 _   foundation icon in list
 _   foundation icon below next to description when lib selected
 _   icons on the install/update/remove buttons
-_   search eyeglass icon
+X   search eyeglass icon
+X   available/installed/incompatible icons
 _ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
 _   looks like ContributionListing.getScrollableUnitIncrement() returns early
 _ total number of updates available is not correct
