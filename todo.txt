@@ -10,6 +10,24 @@ X   not great because the error checker runs more slowly than your typing
 X SVG not highlighting as a keyword
 X   https://github.com/processing/processing/issues/3752
 
+may be fixed
+_ UnsatisfiedLinkError on startup "Access is denied" on Windows 10
+_   https://github.com/processing/processing/issues/3800
+_   administrator, but using Microsoft account to log in
+_ JNA errors on startup when run from an account w/ non-ASCII characters
+_   https://github.com/processing/processing/issues/3624
+_   set jna.tmpdir (or java.io.tmpdir) to another location
+_   https://github.com/twall/jna/issues/124
+_   https://github.com/twall/jna/issues/238
+_   Sun says they won't fix: user locale and system locale probably different:
+_   https://bugs.openjdk.java.net/browse/JDK-8017274
+_   https://bugs.openjdk.java.net/browse/JDK-4958170
+_   https://github.com/twall/jna/blob/master/test/com/sun/jna/JNALoadTest.java
+_   http://happygiraffe.net/blog/2009/09/24/java-platform-encoding/
+_   fix: get sun.jnu.encoding and make sure the user name is supported in it?
+_     and if not, put up a warning for the user?
+_   http://www.oracle.com/us/technologies/java/locale-140624.html
+
 manager
 X CM: Clicking item in Libraries list throws exception
 X   https://github.com/processing/processing/issues/3667
@@ -73,22 +91,6 @@ _   or just change the documentation?
 _ Contributions Manager UI design
 _   https://github.com/processing/processing/issues/3482
 _ items still show up in "Recent" if they no longer exist (on startup)
-_ UnsatisfiedLinkError on startup "Access is denied" on Windows 10
-_   https://github.com/processing/processing/issues/3800
-_   administrator, but using Microsoft account to log in
-_ JNA errors on startup when run from an account w/ non-ASCII characters
-_   https://github.com/processing/processing/issues/3624
-_   set jna.tmpdir (or java.io.tmpdir) to another location
-_   https://github.com/twall/jna/issues/124
-_   https://github.com/twall/jna/issues/238
-_   Sun says they won't fix: user locale and system locale probably different:
-_   https://bugs.openjdk.java.net/browse/JDK-8017274
-_   https://bugs.openjdk.java.net/browse/JDK-4958170
-_   https://github.com/twall/jna/blob/master/test/com/sun/jna/JNALoadTest.java
-_   http://happygiraffe.net/blog/2009/09/24/java-platform-encoding/
-_   fix: get sun.jnu.encoding and make sure the user name is supported in it?
-_     and if not, put up a warning for the user?
-_   http://www.oracle.com/us/technologies/java/locale-140624.html
 _ Red error underline is sometimes at wrong location
 _   https://github.com/processing/processing/issues/3759
 

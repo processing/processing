@@ -503,7 +503,7 @@ public class WindowsPlatform extends DefaultPlatform {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  // Code partially thanks to Richard Quirk from:
+  // getenv/setenv code partially thanks to Richard Quirk from:
   // http://quirkygba.blogspot.com/2009/11/setting-environment-variables-in-java.html
 
   static WinLibC clib;
@@ -514,6 +514,11 @@ public class WindowsPlatform extends DefaultPlatform {
       try {
         clib = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
       } catch (UnsatisfiedLinkError ule) {
+        Messages.showTrace("JNA Error",
+                           "JNA could not be loaded. Please report here:\n" +
+                           "http://github.com/processing/processing/issues/new", ule, true);
+
+        /*
         // Might be a problem with file encoding, use a default directory
         // https://github.com/processing/processing/issues/3624
         File ctmp = new File("C:\\TEMP");  // kick it old school
@@ -541,6 +546,7 @@ public class WindowsPlatform extends DefaultPlatform {
                              "JNA could not be loaded into C:\\TEMP. Please report:\n" +
                              "http://github.com/processing/processing/issues/new", null);
         }
+        */
       }
     }
     return clib;
