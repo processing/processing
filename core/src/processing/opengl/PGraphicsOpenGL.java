@@ -357,10 +357,10 @@ public class PGraphicsOpenGL extends PGraphics {
   // Screen surface:
 
   /** Texture containing the current frame */
-  protected Texture texture;
+  protected WeakReference<Texture> texture = new WeakReference<Texture>(null);
 
   /** Texture containing the previous frame */
-  protected Texture ptexture;
+  protected WeakReference<Texture> ptexture = new WeakReference<Texture>(null);
 
   /** IntBuffer wrapping the pixels array. */
   protected IntBuffer pixelBuffer;
@@ -372,7 +372,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected IntBuffer nativePixelBuffer;
 
   /** texture used to apply a filter on the screen image. */
-  protected Texture filterTexture;
+  protected WeakReference<Texture> filterTexture = new WeakReference<Texture>(null);
 
   /** PImage that wraps filterTexture. */
   protected PImage filterImage;
@@ -612,9 +612,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
-    if (primaryGraphics) {
-      pgl.dispose();
-    }
+    pgl.dispose();
   }
 
 
@@ -5415,6 +5413,8 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean needToDrawTex = primaryGraphics && (!pgl.isFBOBacked() ||
                             (pgl.isFBOBacked() && pgl.isMultisampled())) ||
                             offscreenMultisample;
+    Texture tex = texture.get();
+    if (tex == null) return;
     if (needToDrawTex) {
       // The texture to screen needs to be drawn only if we are on the primary
       // surface w/out FBO-layer, or with FBO-layer and multisampling. Or, we
@@ -5424,9 +5424,9 @@ public class PGraphicsOpenGL extends PGraphics {
       // (off)screen buffer.
       // First, copy the pixels to the texture. We don't need to invert the
       // pixel copy because the texture will be drawn inverted.
-      int tw = PApplet.min(texture.glWidth - f * x, f * w);
-      int th = PApplet.min(texture.glHeight - f * y, f * h);
-      pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
+      int tw = PApplet.min(tex.glWidth - f * x, f * w);
+      int th = PApplet.min(tex.glHeight - f * y, f * h);
+      pgl.copyToTexture(tex.glTarget, tex.glFormat, tex.glName,
                         f * x, f * y, tw, th, nativePixelBuffer);
       beginPixelsOp(OP_WRITE);
       drawTexture(x, y, w, h);
@@ -5435,7 +5435,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // We only need to copy the pixels to the back texture where we are
       // currently drawing to. Because the texture is invertex along Y, we
       // need to reflect that in the vertical arguments.
-      pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
+      pgl.copyToTexture(tex.glTarget, tex.glFormat, tex.glName,
                         f * x, f * (height - (y + h)), f * w, f * h, nativePixelBuffer);
     }
   }
@@ -5559,7 +5559,10 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         endPixelsOp();
 
-        texture.setNative(nativePixelBuffer, 0, 0, pixelWidth, pixelHeight);
+        Texture tex = texture.get();
+        if (tex != null) {
+          tex.setNative(nativePixelBuffer, 0, 0, pixelWidth, pixelHeight);
+        }
       }
     } else if (offscreenMultisample) {
        // We need to copy the contents of the multisampled buffer to the color
@@ -5579,14 +5582,20 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Just marks the whole texture as updated
   public void updateTexture() {
-    texture.updateTexels();
+    Texture tex = texture.get();
+    if (tex != null) {
+      tex.updateTexels();
+    }
   }
 
 
   // Marks the specified rectanglular subregion in the texture as
   // updated.
   public void updateTexture(int x, int y, int w, int h) {
-    texture.updateTexels(x, y, w, h);
+    Texture tex = texture.get();
+    if (tex != null) {
+      tex.updateTexels(x, y, w, h);
+    }
   }
 
 
@@ -5602,67 +5611,82 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void loadTextureImpl(int sampling, boolean mipmap) {
     updatePixelSize();
     if (pixelWidth == 0 || pixelHeight == 0) return;
-    if (texture == null || texture.contextIsOutdated()) {
+    Texture tex = texture.get();
+    if (tex == null || tex.contextIsOutdated()) {
       Texture.Parameters params = new Texture.Parameters(ARGB,
                                                          sampling, mipmap);
-      texture = new Texture(this, pixelWidth, pixelHeight, params);
-      texture.invertedY(true);
-      texture.colorBuffer(true);
-      setCache(this, texture);
+      tex = new Texture(this, pixelWidth, pixelHeight, params);
+      tex.invertedY(true);
+      tex.colorBuffer(true);
+      setCache(this, tex);
+      texture = new WeakReference<Texture>(tex);
     }
   }
 
 
   protected void createPTexture() {
     updatePixelSize();
-    ptexture = new Texture(this, pixelWidth, pixelHeight, texture.getParameters());
-    ptexture.invertedY(true);
-    ptexture.colorBuffer(true);
+    Texture tex = texture.get();
+    if (tex != null) {
+      Texture ptex = new Texture(this, pixelWidth, pixelHeight, tex.getParameters());
+      ptex.invertedY(true);
+      ptex.colorBuffer(true);
+      ptexture = new WeakReference<Texture>(ptex);
+    }
   }
 
 
   protected void swapOffscreenTextures() {
+    Texture tex = texture.get();
+    Texture ptex = ptexture.get();
     FrameBuffer ofb = offscreenFramebuffer.get();
-    if (ptexture != null && ofb != null) {
-      int temp = texture.glName;
-      texture.glName = ptexture.glName;
-      ptexture.glName = temp;
-      ofb.setColorBuffer(texture);
+    if (tex != null && ptex != null && ofb != null) {
+      int temp = tex.glName;
+      tex.glName = ptex.glName;
+      ptex.glName = temp;
+      ofb.setColorBuffer(tex);
     }
   }
 
 
   protected void drawTexture() {
-    // No blend so the texure replaces wherever is on the screen,
-    // irrespective of the alpha
-    pgl.disable(PGL.BLEND);
-    pgl.drawTexture(texture.glTarget, texture.glName,
-                    texture.glWidth, texture.glHeight,
-                    0, 0, width, height);
-    pgl.enable(PGL.BLEND);
+    Texture tex = texture.get();
+    if (tex != null) {
+      // No blend so the texure replaces wherever is on the screen,
+      // irrespective of the alpha
+      pgl.disable(PGL.BLEND);
+      pgl.drawTexture(tex.glTarget, tex.glName,
+                      tex.glWidth, tex.glHeight,
+                      0, 0, width, height);
+      pgl.enable(PGL.BLEND);
+    }
   }
 
 
   protected void drawTexture(int x, int y, int w, int h) {
-    // Processing Y axis is inverted with respect to OpenGL, so we need to
-    // invert the y coordinates of the screen rectangle.
-    pgl.disable(PGL.BLEND);
-    pgl.drawTexture(texture.glTarget, texture.glName,
-                    texture.glWidth, texture.glHeight,
-                    0, 0, width, height,
-                    x, y, x + w, y + h,
-                    x, height - (y + h), x + w, height - y);
-    pgl.enable(PGL.BLEND);
+    Texture tex = texture.get();
+    if (tex != null) {
+      // Processing Y axis is inverted with respect to OpenGL, so we need to
+      // invert the y coordinates of the screen rectangle.
+      pgl.disable(PGL.BLEND);
+      pgl.drawTexture(tex.glTarget, tex.glName,
+                      tex.glWidth, tex.glHeight,
+                      0, 0, width, height,
+                      x, y, x + w, y + h,
+                      x, height - (y + h), x + w, height - y);
+      pgl.enable(PGL.BLEND);
+    }
   }
 
 
   protected void drawPTexture() {
-    if (ptexture != null) {
+    Texture ptex = ptexture.get();
+    if (ptex != null) {
       // No blend so the texure replaces wherever is on the screen,
       // irrespective of the alpha
       pgl.disable(PGL.BLEND);
-      pgl.drawTexture(ptexture.glTarget, ptexture.glName,
-                      ptexture.glWidth, ptexture.glHeight,
+      pgl.drawTexture(ptex.glTarget, ptex.glName,
+                      ptex.glWidth, ptex.glHeight,
                       0, 0, width, height);
       pgl.enable(PGL.BLEND);
     }
@@ -5748,13 +5772,16 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     loadTexture();
 
-    if (filterTexture == null || filterTexture.contextIsOutdated()) {
-      filterTexture = new Texture(this, texture.width, texture.height,
-                                  texture.getParameters());
-      filterTexture.invertedY(true);
-      filterImage = wrapTexture(filterTexture);
+    Texture tex = texture.get();
+    Texture ftex = filterTexture.get();
+    if (ftex == null || ftex.contextIsOutdated()) {
+      ftex = new Texture(this, tex.width, tex.height,
+                         tex.getParameters());
+      ftex.invertedY(true);
+      filterImage = wrapTexture(ftex);
+      filterTexture = new WeakReference<Texture>(ftex);
     }
-    filterTexture.set(texture);
+    ftex.set(tex);
 
     // Disable writing to the depth buffer, so that after applying the filter we
     // can still use the depth information to keep adding geometry to the scene.
@@ -5819,13 +5846,15 @@ public class PGraphicsOpenGL extends PGraphics {
                    int dx, int dy, int dw, int dh) {
     if (primaryGraphics) pgl.enableFBOLayer();
     loadTexture();
-    if (filterTexture == null || filterTexture.contextIsOutdated()) {
-      filterTexture = new Texture(this, texture.width, texture.height,
-                                  texture.getParameters());
-      filterTexture.invertedY(true);
-      filterImage = wrapTexture(filterTexture);
+    Texture tex = texture.get();
+    Texture ftex = filterTexture.get();
+    if (ftex == null || ftex.contextIsOutdated()) {
+      ftex = new Texture(this, tex.width, tex.height, tex.getParameters());
+      ftex.invertedY(true);
+      filterImage = wrapTexture(ftex);
+      filterTexture = new WeakReference<Texture>(ftex);
     }
-    filterTexture.put(texture, sx, height - (sy + sh), sw, height - sy);
+    ftex.put(tex, sx, height - (sy + sh), sw, height - sy);
     copy(filterImage, sx, sy, sw, sh, dx, dy, dw, dh);
   }
 
@@ -6031,7 +6060,7 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   public Texture getTexture(boolean load) {
     if (load) loadTexture();
-    return texture;
+    return texture.get();
   }
 
 
@@ -6103,8 +6132,12 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primaryGraphics) {
       pgl.bindFrontTexture();
     } else {
-      if (ptexture == null) createPTexture();
-      ptexture.bind();
+      Texture ptex = ptexture.get();
+      if (ptex == null) {
+        createPTexture();
+        ptex = ptexture.get();
+      }
+      ptex.bind();
     }
   }
 
@@ -6113,7 +6146,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primaryGraphics) {
       pgl.unbindFrontTexture();
     } else {
-      ptexture.unbind();
+      Texture ptex = ptexture.get();
+      ptex.unbind();
     }
   }
 
@@ -6196,15 +6230,24 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void deleteSurfaceTextures() {
     if (texture != null) {
-      texture.dispose();
+      Texture tex = texture.get();
+      if (tex != null) {
+        tex.dispose();
+      }
     }
 
     if (ptexture != null) {
-      ptexture.dispose();
+      Texture ptex = ptexture.get();
+      if (ptex != null) {
+        ptex.dispose();
+      }
     }
 
     if (filterTexture != null) {
-      filterTexture.dispose();
+      Texture ftex = filterTexture.get();
+      if (ftex != null) {
+        ftex.dispose();
+      }
     }
   }
 
@@ -6239,7 +6282,8 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.initSurface(smooth);
     if (texture != null) {
       removeCache(this);
-      texture = ptexture = null;
+      texture = new WeakReference<Texture>(null);
+      ptexture = new WeakReference<Texture>(null);
     }
     initialized = true;
   }
@@ -6263,8 +6307,17 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (pgl.isFBOBacked()) {
-      texture = pgl.wrapBackTexture(texture);
-      ptexture = pgl.wrapFrontTexture(ptexture);
+      Texture tex0 = texture.get();
+      Texture tex1 = pgl.wrapBackTexture(tex0);
+      if (tex0 != tex1) {
+        texture = new WeakReference<Texture>(tex1);
+      }
+
+      Texture ptex0 = ptexture.get();
+      Texture ptex1 = pgl.wrapFrontTexture(ptex0);
+      if (ptex0 != ptex1) {
+        ptexture = new WeakReference<Texture>(ptex1);
+      }
     }
   }
 
@@ -6278,6 +6331,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // Getting the context and capabilities from the main renderer.
     loadTextureImpl(textureSampling, false);
 
+    Texture tex = texture.get();
     FrameBuffer ofb = offscreenFramebuffer.get();
     FrameBuffer mfb = multisampleFramebuffer.get();
 
@@ -6296,7 +6350,7 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean packed = depthBits == 24 && stencilBits == 8 &&
                      packedDepthStencilSupported;
     if (PGraphicsOpenGL.fboMultisampleSupported && 1 < PGL.smoothToSamples(smooth)) {
-      mfb = new FrameBuffer(this, texture.glWidth, texture.glHeight, PGL.smoothToSamples(smooth), 0,
+      mfb = new FrameBuffer(this, tex.glWidth, tex.glHeight, PGL.smoothToSamples(smooth), 0,
                             depthBits, stencilBits, packed, false);
       mfb.clear();
       multisampleFramebuffer = new WeakReference<FrameBuffer>(mfb);
@@ -6306,19 +6360,19 @@ public class PGraphicsOpenGL extends PGraphics {
       // to. If depth reading is disabled it doesn't need depth and stencil buffers
       // since they are part of the multisampled framebuffer.
       if (hints[ENABLE_BUFFER_READING]) {
-        ofb = new FrameBuffer(this, texture.glWidth, texture.glHeight, 1, 1,
+        ofb = new FrameBuffer(this, tex.glWidth, tex.glHeight, 1, 1,
                               depthBits, stencilBits, packed, false);
       } else {
-        ofb = new FrameBuffer(this, texture.glWidth, texture.glHeight, 1, 1,
+        ofb = new FrameBuffer(this, tex.glWidth, tex.glHeight, 1, 1,
                           0, 0, false, false);
       }
     } else {
       smooth = 0;
-      ofb = new FrameBuffer(this, texture.glWidth, texture.glHeight, 1, 1,
+      ofb = new FrameBuffer(this, tex.glWidth, tex.glHeight, 1, 1,
                             depthBits, stencilBits, packed, false);
       offscreenMultisample = false;
     }
-    ofb.setColorBuffer(texture);
+    ofb.setColorBuffer(tex);
     ofb.clear();
     offscreenFramebuffer = new WeakReference<FrameBuffer>(ofb);
 
@@ -6392,7 +6446,10 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.colorMask(true, true, true, true);
     }
 
-    texture.updateTexels(); // Mark all texels in screen texture as modified.
+    Texture tex = texture.get();
+    if (tex != null) {
+      tex.updateTexels(); // Mark all texels in screen texture as modified.
+    }
 
     getPrimaryPG().restoreGL();
   }

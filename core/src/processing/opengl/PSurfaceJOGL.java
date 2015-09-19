@@ -297,6 +297,9 @@ public class PSurfaceJOGL implements PSurface {
     sketch.displayWidth = screenRect.width;
     sketch.displayHeight = screenRect.height;
 
+    /*
+    // Trying to fix
+    // https://github.com/processing/processing/issues/3401
     if (sketch.displayWidth < sketch.width ||
       sketch.displayHeight < sketch.height) {
       int w = sketch.width;
@@ -311,6 +314,7 @@ public class PSurfaceJOGL implements PSurface {
 //      graphics.setSize(w, h - 22 - 22);
       System.err.println("setting width/height to " + w + " "  + h);
     }
+    */
 
     sketchWidth = sketch.sketchWidth();
     sketchHeight = sketch.sketchHeight();
