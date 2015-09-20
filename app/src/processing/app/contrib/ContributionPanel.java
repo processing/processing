@@ -147,7 +147,7 @@ class ContributionPanel extends JPanel {
 
     undoActionListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        listPanel.contributionTab.statusPanel.clear();
+        listPanel.contributionTab.statusPanel.clearMessage();
         if (contrib instanceof LocalContribution) {
           LocalContribution installed = (LocalContribution) contrib;
           installed.setDeletionFlag(false);
@@ -816,7 +816,7 @@ class ContributionPanel extends JPanel {
 
 
   public void install() {
-    listPanel.contributionTab.statusPanel.clear();
+    listPanel.contributionTab.statusPanel.clearMessage();
     installInProgress = true;
     ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, PROGRESS_BAR_CONSTRAINT);
     if (contrib instanceof AvailableContribution) {
@@ -828,7 +828,7 @@ class ContributionPanel extends JPanel {
 
   public void update() {
 
-    listPanel.contributionTab.statusPanel.clear();
+    listPanel.contributionTab.statusPanel.clearMessage();
     updateInProgress = true;
     if (contrib.getType().requiresRestart()) {
       installRemoveButton.setEnabled(false);
@@ -897,7 +897,7 @@ class ContributionPanel extends JPanel {
 
   public void remove() {
 
-    listPanel.contributionTab.statusPanel.clear();
+    listPanel.contributionTab.statusPanel.clearMessage();
     if (contrib.isInstalled() && contrib instanceof LocalContribution) {
       removeInProgress = true;
       ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, PROGRESS_BAR_CONSTRAINT);

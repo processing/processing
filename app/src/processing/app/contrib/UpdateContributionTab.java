@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeMap;
@@ -300,15 +301,19 @@ public class UpdateContributionTab extends ContributionTab {
 
 
   public class UpdateStatusPanel extends StatusPanel {
+
     public UpdateStatusPanel(int width, final ContributionTab contributionTab) {
       super();
+
       updateButton = new JButton("Update All", Toolkit.getLibIconX("manager/update"));
       updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
       updateButton.setHorizontalAlignment(SwingConstants.LEFT);
       updateButton.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          for(ContributionPanel contributionPanel : contributionTab.contributionListPanel.panelByContribution.values()){
+          Collection<ContributionPanel> c =
+            contributionTab.contributionListPanel.panelByContribution.values();
+          for (ContributionPanel contributionPanel : c) {
             contributionPanel.update();
           }
         }
@@ -332,11 +337,7 @@ public class UpdateContributionTab extends ContributionTab {
     }
 
     public void update() {
-      if (contributionListPanel.getNoOfRows() > 0) {
-        updateButton.setEnabled(true);
-      } else {
-        updateButton.setEnabled(false);
-      }
+      updateButton.setEnabled(contributionListPanel.getNoOfRows() > 0);
     }
   }
 }

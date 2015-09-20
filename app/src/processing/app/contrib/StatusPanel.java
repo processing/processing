@@ -67,7 +67,13 @@ class StatusPanel extends JPanel {
   private String bodyRule;
 
 
+  /** Needed by ContributionListPanel */
+  public StatusPanel() { }
+
+
   public StatusPanel(int width, final ContributionTab contributionTab) {
+    this.contributionTab = contributionTab;
+
     if (foundationIcon == null) {
       foundationIcon = Toolkit.getLibIconX("icons/foundation", 32);
       installIcon = Toolkit.getLibIconX("manager/install");
@@ -77,8 +83,6 @@ class StatusPanel extends JPanel {
     }
 
     setBackground(new Color(0xebebeb));
-//    setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
-    this.contributionTab = contributionTab;
 
     iconLabel = new JLabel();
     iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -105,7 +109,6 @@ class StatusPanel extends JPanel {
     installButton.setFont(buttonFont);
     installButton.setHorizontalAlignment(SwingConstants.LEFT);
     installButton.addActionListener(new ActionListener() {
-
       @Override
       public void actionPerformed(ActionEvent e) {
         installButton.setEnabled(false);
@@ -151,7 +154,8 @@ class StatusPanel extends JPanel {
       }
     });
 
-    int labelWidth = (width != 0) ? (3 * width / 4) : GroupLayout.PREFERRED_SIZE;
+    int labelWidth = (width != 0) ?
+      (3 * width / 4) : GroupLayout.PREFERRED_SIZE;
     layout = new GroupLayout(this);
     this.setLayout(layout);
 
@@ -161,16 +165,20 @@ class StatusPanel extends JPanel {
     layout.setHorizontalGroup(layout
       .createSequentialGroup()
       .addGap(0)
-      .addComponent(iconLabel, ContributionManagerDialog.STATUS_WIDTH, ContributionManagerDialog.STATUS_WIDTH, ContributionManagerDialog.STATUS_WIDTH)
+      .addComponent(iconLabel,
+                    ContributionManagerDialog.STATUS_WIDTH,
+                    ContributionManagerDialog.STATUS_WIDTH,
+                    ContributionManagerDialog.STATUS_WIDTH)
       .addGap(0)
       .addComponent(label, labelWidth, labelWidth, labelWidth)
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                  .addComponent(installButton, BUTTON_WIDTH, BUTTON_WIDTH,
-                                BUTTON_WIDTH)
+                  .addComponent(installButton,
+                                BUTTON_WIDTH, BUTTON_WIDTH, BUTTON_WIDTH)
                   .addComponent(progressBarPanel)
-                  .addComponent(updateLabel, BUTTON_WIDTH, BUTTON_WIDTH, BUTTON_WIDTH)
+                  .addComponent(updateLabel,
+                                BUTTON_WIDTH, BUTTON_WIDTH, BUTTON_WIDTH)
                   .addComponent(updateButton)
                   .addComponent(removeButton)));
 
@@ -199,12 +207,8 @@ class StatusPanel extends JPanel {
     layout.setHonorsVisibility(updateLabel, false); // Makes the label take up space even though not visible
 
     validate();
-
   }
 
-  public StatusPanel() {
-    // TODO Auto-generated constructor stub
-  }
 
   void setMessage(String message) {
     if (label != null) {
@@ -213,6 +217,7 @@ class StatusPanel extends JPanel {
     }
   }
 
+
   void setErrorMessage(String message) {
     if (label != null) {
       label.setText(message);
@@ -220,12 +225,14 @@ class StatusPanel extends JPanel {
     }
   }
 
-  void clear() {
+
+  void clearMessage() {
     if (label != null) {
       label.setText(null);
       label.repaint();
     }
   }
+
 
   public void update(ContributionPanel panel) {
     progressBarPanel.removeAll();
@@ -282,60 +289,3 @@ class StatusPanel extends JPanel {
     }
   }
 }
-/*
-interface ErrorWidget {
-  void setErrorMessage(String msg);
-}
-
-class StatusPanel extends JPanel implements ErrorWidget {
-  String errorMessage;
-
-  StatusPanel() {
-    addMouseListener(new MouseAdapter() {
-      public void mousePressed(MouseEvent e) {
-        clearErrorMessage();
-      }
-    });
-  }
-
-  @Override
-  protected void paintComponent(Graphics g) {
-    super.paintComponent(g);
-
-    g.setFont(new Font("SansSerif", Font.PLAIN, 10));
-    int baseline = (getSize().height + g.getFontMetrics().getAscent()) / 2;
-
-    if (contribListing.isDownloadingListing()) {
-      g.setColor(Color.black);
-      g.drawString("Downloading software listing...", 2, baseline);
-      setVisible(true);
-    } else if (errorMessage != null) {
-      g.setColor(Color.red);
-      g.drawString(errorMessage, 2, baseline);
-      setVisible(true);
-    } else {
-      setVisible(false);
-    }
-  }
-
-  public void setErrorMessage(String message) {
-    errorMessage = message;
-    setVisible(true);
-
-    JPanel placeholder = getPlaceholder();
-    Dimension d = getPreferredSize();
-    if (Base.isWindows()) {
-      d.height += 5;
-      placeholder.setPreferredSize(d);
-    }
-    placeholder.setVisible(true);
-  }
-
-  void clearErrorMessage() {
-    errorMessage = null;
-    repaint();
-
-    getPlaceholder().setVisible(false);
-  }
-}
-*/
