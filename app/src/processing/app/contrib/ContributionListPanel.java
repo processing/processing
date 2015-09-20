@@ -355,7 +355,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         label.setOpaque(true);
       } else {
         if (contribution.isSpecial()) {
-          label = new JLabel(Toolkit.getLibIcon("icons/foundation-16.png"));
+          //label = new JLabel(Toolkit.getLibIcon("icons/foundation-16.png"));
+          label = new JLabel(Toolkit.getLibIconX("icons/foundation", 16));
         } else {
           label = new JLabel();
         }
@@ -379,12 +380,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   }
 
 
-  private class ContribTableModel extends DefaultTableModel {
-
-    ContribTableModel() {
-      super(0, 0);
-    }
-
+  static private class ContribTableModel extends DefaultTableModel {
     @Override
     public boolean isCellEditable(int row, int column) {
       return false;
@@ -440,7 +436,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       EventQueue.invokeLater(new Runnable() {
         public void run() {
           if (!panelByContribution.containsKey(contribution)) {
-            ContributionPanel newPanel = new ContributionPanel(ContributionListPanel.this);
+            ContributionPanel newPanel =
+              new ContributionPanel(ContributionListPanel.this);
             synchronized (panelByContribution) {
               panelByContribution.put(contribution, newPanel);
             }
@@ -500,7 +497,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       TreeSet<Contribution> panelInThisTab =
         new TreeSet<Contribution>(ContributionListing.COMPARATOR);
       for (Contribution contribution : filteredContributions) {
-        if(contribution.getType() == this.contributionTab.contributionType) {
+        if (contribution.getType() == contributionTab.contributionType) {
           panelInThisTab.add(contribution);
         }
       }
@@ -588,7 +585,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   /**
    * Amount to scroll to reveal a new page of items
    */
-  public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+  public int getScrollableBlockIncrement(Rectangle visibleRect,
+                                         int orientation, int direction) {
     if (orientation == SwingConstants.VERTICAL) {
       int blockAmount = visibleRect.height;
       if (direction > 0) {
@@ -597,7 +595,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         visibleRect.y -= blockAmount;
       }
 
-      blockAmount += getScrollableUnitIncrement(visibleRect, orientation, direction);
+      blockAmount +=
+        getScrollableUnitIncrement(visibleRect, orientation, direction);
       return blockAmount;
     }
     return 0;

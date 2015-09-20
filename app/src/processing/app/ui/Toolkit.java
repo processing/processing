@@ -484,8 +484,15 @@ public class Toolkit {
 
 
   static public ImageIcon getLibIconX(String base) {
+    return getLibIconX(base, 0);
+  }
+
+
+  static public ImageIcon getLibIconX(String base, int size) {
     final int scale = Toolkit.highResDisplay() ? 2 : 1;
-    String filename = base + "-" + scale + "x.png";
+    String filename = (size == 0) ?
+      (base + "-" + scale + "x.png") :
+      (base + "-" + (size*scale) + ".png");
     File file = Platform.getContentFile("lib/" + filename);
     if (!file.exists()) {
 //      System.err.println("does not exist: " + file);

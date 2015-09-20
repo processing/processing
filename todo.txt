@@ -166,7 +166,7 @@ _ remove focus blue from the scrollable list
 _ add extra space to the right of the buttons to line up w/ the scrollbar
 _ implement 2x versions of icons
 _   https://github.com/processing/processing/issues/3478
-_   foundation icon in list
+X   foundation icon in list
 _   foundation icon below next to description when lib selected
 _   icons on the install/update/remove buttons
 X   search eyeglass icon
