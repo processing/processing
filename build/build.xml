@@ -1036,7 +1036,7 @@
       <equals arg1="${sun.arch.data.model}" arg2="64" />
     </condition>
 
-    <unzip src="../app/lib/jna.jar" dest="windows/work">
+    <unzip src="../app/lib/jna.jar" dest="windows/work/lib">
       <patternset>
         <include name="com/sun/jna/${jna.subfolder}/jnidispatch.dll" />
       </patternset>

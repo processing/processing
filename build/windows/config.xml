@@ -32,8 +32,17 @@
     <path>java</path>
     <!-- https://github.com/processing/processing/issues/2239 -->
     <opt>-Djna.nosys=true</opt>
-    <!-- for 2.2, set a minimum version -->
-    <minVersion>1.7.0_40</minVersion>
+    <!-- Because nosys is set to true, the DLL in the current working 
+	 directory won't be considered. And we can't specify the user's 
+	 directory here because that'll get us into encoding trouble.
+	 (See https://github.com/processing/processing/issues/3624)
+	 Instead, set this so that Native.loadNativeLibrary() will use
+	 new File(path, "jnidispatch.dll") which will be relative to the
+	 directory of processing.exe (the current working directory). -->
+    <opt>-Djna.boot.library.path=lib</opt>
+    <opt>-Djna.nounpack=true</opt>
+    <!-- starting in 3.0, require Java 8 -->
+    <minVersion>1.8.0_51</minVersion>
     <!-- increase available per PDE X request -->
     <maxHeapSize>256</maxHeapSize>
   </jre>
