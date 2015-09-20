@@ -42,7 +42,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
   protected boolean pressed;
   protected boolean selected;
   protected boolean rollover;
-  protected JLabel rolloverLabel;
+//  protected JLabel rolloverLabel;
   protected boolean shift;
 
   protected Image enabledImage;
@@ -53,26 +53,29 @@ implements MouseListener, MouseMotionListener, ActionListener {
 
   protected Image gradient;
 
-  protected Mode mode;
+  protected EditorToolbar toolbar;
+//  protected Mode mode;
 
 
-  public EditorButton(Mode mode, String name, String title) {
-    this(mode, name, title, title, title);
+  public EditorButton(EditorToolbar parent, String name, String title) {
+    this(parent, name, title, title, title);
   }
 
 
-  public EditorButton(Mode mode, String name,
+  public EditorButton(EditorToolbar parent, String name,
                       String title, String titleShift) {
-    this(mode, name, title, titleShift, title);
+    this(parent, name, title, titleShift, title);
   }
 
 
-  public EditorButton(Mode mode, String name,
+  public EditorButton(EditorToolbar parent, String name,
                       String title, String titleShift, String titleAlt) {
-    this.mode = mode;
+    this.toolbar = parent;
     this.title = title;
     this.titleShift = titleShift;
     this.titleAlt = titleAlt;
+
+    Mode mode = toolbar.mode;
 
     final int res = Toolkit.highResDisplay() ? 2 : 1;
     disabledImage = mode.loadImage(name + "-disabled-" + res + "x.png");
@@ -138,9 +141,9 @@ implements MouseListener, MouseMotionListener, ActionListener {
 //  }
 
 
-  public void setReverse() {
-    gradient = mode.makeGradient("reversed", DIM, DIM);
-  }
+//  public void setReverse() {
+//    gradient = mode.makeGradient("reversed", DIM, DIM);
+//  }
 
 
 //  public void setGradient(Image gradient) {
@@ -148,9 +151,9 @@ implements MouseListener, MouseMotionListener, ActionListener {
 //  }
 
 
-  public void setRolloverLabel(JLabel label) {
-    rolloverLabel = label;
-  }
+//  public void setRolloverLabel(JLabel label) {
+//    rolloverLabel = label;
+//  }
 
 
   @Override
@@ -200,9 +203,37 @@ implements MouseListener, MouseMotionListener, ActionListener {
   }
 
 
+  /*
   @Override
-  public void mouseEntered(MouseEvent e) {
-    rollover = true;
+  public void keyTyped(KeyEvent e) { }
+
+
+  @Override
+  public void keyReleased(KeyEvent e) {
+    updateRollover(e);
+  }
+
+
+  @Override
+  public void keyPressed(KeyEvent e) {
+    System.out.println(e);
+    updateRollover(e);
+  }
+  */
+
+
+  public String getRolloverText(InputEvent e) {
+    if (e.isShiftDown()) {
+      return titleShift;
+    } else if (e.isAltDown()) {
+      return titleAlt;
+    }
+    return title;
+  }
+
+
+  /*
+  public void updateRollover(InputEvent e) {
     if (rolloverLabel != null) {
       if (e.isShiftDown()) {
         rolloverLabel.setText(titleShift);
@@ -212,17 +243,31 @@ implements MouseListener, MouseMotionListener, ActionListener {
         rolloverLabel.setText(title);
       }
     }
+  }
+  */
+
+
+  @Override
+  public void mouseEntered(MouseEvent e) {
+    toolbar.setRollover(this, e);
+    /*
+    rollover = true;
+    updateRollover(e);
     repaint();
+    */
   }
 
 
   @Override
   public void mouseExited(MouseEvent e) {
+    toolbar.setRollover(null, e);
+    /*
     rollover = false;
     if (rolloverLabel != null) {
       rolloverLabel.setText("");
     }
     repaint();
+    */
   }
 
 

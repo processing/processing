@@ -60,7 +60,7 @@ public class JavaToolbar extends EditorToolbar {
 
     final String runText = debug ?
       Language.text("toolbar.debug") : Language.text("toolbar.run");
-    runButton = new EditorButton(mode,
+    runButton = new EditorButton(this,
                                  "/lib/toolbar/run",
                                  runText,
                                  Language.text("toolbar.present")) {
@@ -72,7 +72,7 @@ public class JavaToolbar extends EditorToolbar {
     outgoing.add(runButton);
 
     if (debug) {
-      stepButton = new EditorButton(mode,
+      stepButton = new EditorButton(this,
                                     "/lib/toolbar/step",
                                     Language.text("menu.debug.step"),
                                     Language.text("menu.debug.step_into"),
@@ -85,7 +85,7 @@ public class JavaToolbar extends EditorToolbar {
       };
       outgoing.add(stepButton);
 
-      continueButton = new EditorButton(mode,
+      continueButton = new EditorButton(this,
                                         "/lib/toolbar/continue",
                                         Language.text("menu.debug.continue")) {
         @Override
@@ -96,7 +96,7 @@ public class JavaToolbar extends EditorToolbar {
       outgoing.add(continueButton);
     }
 
-    stopButton = new EditorButton(mode,
+    stopButton = new EditorButton(this,
                                   "/lib/toolbar/stop",
                                   Language.text("toolbar.stop")) {
       @Override
@@ -112,19 +112,19 @@ public class JavaToolbar extends EditorToolbar {
 
   @Override
   public void addModeButtons(Box box, JLabel label) {
-    EditorButton debugButton = new EditorButton(mode, "/lib/toolbar/debug",
-                                                Language.text("toolbar.debug")) {
-
+    EditorButton debugButton =
+      new EditorButton(this, "/lib/toolbar/debug",
+                       Language.text("toolbar.debug")) {
       @Override
       public void actionPerformed(ActionEvent e) {
         jeditor.toggleDebug();
       }
     };
-//    debugButton.setReverse();
+
     if (((JavaEditor) editor).isDebuggerEnabled()) {
       debugButton.setSelected(true);
     }
-    debugButton.setRolloverLabel(label);
+//    debugButton.setRolloverLabel(label);
     box.add(debugButton);
     addGap(box);
   }
@@ -170,53 +170,3 @@ public class JavaToolbar extends EditorToolbar {
     repaint();
   }
 }
-
-
-/*
-public class JavaToolbar extends EditorToolbar {
-  static protected final int RUN    = 0;
-  static protected final int STOP   = 1;
-
-
-  public JavaToolbar(Editor editor, Base base) {
-    super(editor, base);
-  }
-
-
-  public void init() {
-    Image[][] images = loadImages();
-    for (int i = 0; i < 2; i++) {
-      addButton(getTitle(i, false), getTitle(i, true), images[i], false);
-    }
-  }
-
-
-  static public String getTitle(int index, boolean shift) {
-    switch (index) {
-    case RUN: return !shift ? Language.text("toolbar.run") : Language.text("toolbar.present");
-    case STOP: return Language.text("toolbar.stop");
-    }
-    return null;
-  }
-
-
-  public void handlePressed(MouseEvent e, int sel) {
-    boolean shift = e.isShiftDown();
-    JavaEditor jeditor = (JavaEditor) editor;
-
-    switch (sel) {
-    case RUN:
-      if (shift) {
-        jeditor.handlePresent();
-      } else {
-        jeditor.handleRun();
-      }
-      break;
-
-    case STOP:
-      jeditor.handleStop();
-      break;
-    }
-  }
-}
-*/

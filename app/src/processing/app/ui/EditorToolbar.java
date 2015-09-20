@@ -49,7 +49,7 @@ import processing.app.Mode;
 /**
  * Run/Stop button plus Mode selection
  */
-abstract public class EditorToolbar extends JPanel {
+abstract public class EditorToolbar extends JPanel implements KeyListener {
   // haven't decided how to handle this/how to make public/consistency
   // for components/does it live in theme.txt
   static final int HIGH = 53;
@@ -64,10 +64,11 @@ abstract public class EditorToolbar extends JPanel {
 
   protected EditorButton runButton;
   protected EditorButton stopButton;
-//  protected EditorButton currentButton;
+
+  protected EditorButton rolloverButton;
+  protected JLabel rolloverLabel;
 
   protected Box box;
-  protected JLabel label;
 
   protected Image gradient;
 
@@ -91,28 +92,27 @@ abstract public class EditorToolbar extends JPanel {
     box = Box.createHorizontalBox();
     box.add(Box.createHorizontalStrut(Editor.LEFT_GUTTER));
 
-    label = new JLabel();
-    label.setFont(mode.getFont("toolbar.rollover.font"));
-    label.setForeground(mode.getColor("toolbar.rollover.color"));
+    rolloverLabel = new JLabel();
+    rolloverLabel.setFont(mode.getFont("toolbar.rollover.font"));
+    rolloverLabel.setForeground(mode.getColor("toolbar.rollover.color"));
 
     for (EditorButton button : buttons) {
       box.add(button);
       box.add(Box.createHorizontalStrut(GAP));
-      button.setRolloverLabel(label);
+//      registerButton(button);
     }
 //    // remove the last gap
 //    box.remove(box.getComponentCount() - 1);
 
 //    box.add(Box.createHorizontalStrut(LABEL_GAP));
-    box.add(label);
+    box.add(rolloverLabel);
 //    currentButton = runButton;
-
 
 //    runButton.setRolloverLabel(label);
 //    stopButton.setRolloverLabel(label);
 
     box.add(Box.createHorizontalGlue());
-    addModeButtons(box, label);
+    addModeButtons(box, rolloverLabel);
 //    Component items = createModeButtons();
 //    if (items != null) {
 //      box.add(items);
@@ -124,6 +124,12 @@ abstract public class EditorToolbar extends JPanel {
     setLayout(new BorderLayout());
     add(box, BorderLayout.CENTER);
   }
+
+
+//  public void registerButton(EditorButton button) {
+    //button.setRolloverLabel(rolloverLabel);
+    //editor.getTextArea().addKeyListener(button);
+//  }
 
 
 //  public void setReverse(EditorButton button) {
@@ -143,7 +149,7 @@ abstract public class EditorToolbar extends JPanel {
 
 
   public List<EditorButton> createButtons() {
-    runButton = new EditorButton(mode,
+    runButton = new EditorButton(this,
                                  "/lib/toolbar/run",
                                  Language.text("toolbar.run"),
                                  Language.text("toolbar.present")) {
@@ -153,7 +159,7 @@ abstract public class EditorToolbar extends JPanel {
       }
     };
 
-    stopButton = new EditorButton(mode,
+    stopButton = new EditorButton(this,
                                   "/lib/toolbar/stop",
                                   Language.text("toolbar.stop")) {
       @Override
@@ -218,6 +224,41 @@ abstract public class EditorToolbar extends JPanel {
 
 
   abstract public void handleStop();
+
+
+  void setRollover(EditorButton button, InputEvent e) {
+    rolloverButton = button;
+//    if (rolloverButton != null) {
+    updateRollover(e);
+//    } else {
+//      rolloverLabel.setText("");
+//    }
+  }
+
+
+  void updateRollover(InputEvent e) {
+    if (rolloverButton != null) {
+      rolloverLabel.setText(rolloverButton.getRolloverText(e));
+    } else {
+      rolloverLabel.setText("");
+    }
+  }
+
+
+  @Override
+  public void keyTyped(KeyEvent e) { }
+
+
+  @Override
+  public void keyReleased(KeyEvent e) {
+    updateRollover(e);
+  }
+
+
+  @Override
+  public void keyPressed(KeyEvent e) {
+    updateRollover(e);
+  }
 
 
   public Dimension getPreferredSize() {

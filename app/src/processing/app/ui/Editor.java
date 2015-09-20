@@ -300,6 +300,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     });
 
+    textarea.addKeyListener(toolbar);
+
     contentPain.setTransferHandler(new FileDropHandler());
 
     // Finish preparing Editor (formerly found in Base)
