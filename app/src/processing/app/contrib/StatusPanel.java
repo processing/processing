@@ -46,7 +46,12 @@ import processing.app.Platform;
 
 class StatusPanel extends JPanel {
   static final int BUTTON_WIDTH = 150;
+
   static Icon foundationIcon;
+  static Icon installIcon;
+  static Icon updateIcon;
+  static Icon removeIcon;
+  static Font buttonFont;
 
   JTextPane label;
   JButton installButton;
@@ -65,6 +70,10 @@ class StatusPanel extends JPanel {
   public StatusPanel(int width, final ContributionTab contributionTab) {
     if (foundationIcon == null) {
       foundationIcon = Toolkit.getLibIconX("icons/foundation", 32);
+      installIcon = Toolkit.getLibIconX("manager/install");
+      updateIcon = Toolkit.getLibIconX("manager/update");
+      removeIcon = Toolkit.getLibIconX("manager/remove");
+      buttonFont = Toolkit.getSansFont(14, Font.PLAIN);
     }
 
     setBackground(new Color(0xebebeb));
@@ -91,19 +100,17 @@ class StatusPanel extends JPanel {
         }
       }
     });
-    installButton =
-      new JButton("Install", Toolkit.getLibIconX("manager/install"));
-    installButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+    installButton = new JButton("Install", installIcon);
+    installButton.setDisabledIcon(installIcon);
+    installButton.setFont(buttonFont);
     installButton.setHorizontalAlignment(SwingConstants.LEFT);
-//    installButton.setContentAreaFilled(false);
-//    installButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     installButton.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent e) {
         installButton.setEnabled(false);
-        ContributionPanel currentPanel = contributionTab.contributionListPanel
-          .getSelectedPanel();
+        ContributionPanel currentPanel =
+          contributionTab.contributionListPanel.getSelectedPanel();
         currentPanel.install();
         StatusPanel.this.update(currentPanel);
       }
@@ -111,12 +118,14 @@ class StatusPanel extends JPanel {
     progressBarPanel = new JPanel();
     progressBarPanel.setLayout(new BorderLayout());
     progressBarPanel.setOpaque(false);
+
     updateLabel = new JLabel(" ");
-    updateLabel.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+    updateLabel.setFont(buttonFont);
     updateLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    updateButton =
-      new JButton("Update", Toolkit.getLibIconX("manager/update"));
-    updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+
+    updateButton = new JButton("Update", updateIcon);
+    updateButton.setDisabledIcon(updateIcon);
+    updateButton.setFont(buttonFont);
     updateButton.setHorizontalAlignment(SwingConstants.LEFT);
     updateButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -128,9 +137,9 @@ class StatusPanel extends JPanel {
       }
     });
 
-    removeButton =
-      new JButton("Remove", Toolkit.getLibIconX("manager/remove"));
-    removeButton.setFont(Toolkit.getSansFont(14, Font.BOLD));
+    removeButton = new JButton("Remove", removeIcon);
+    removeButton.setDisabledIcon(removeIcon);
+    removeButton.setFont(buttonFont);
     removeButton.setHorizontalAlignment(SwingConstants.LEFT);
     removeButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
