@@ -157,10 +157,14 @@ public class ContributionManagerDialog {
 
     tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
     tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
+
     tabbedPane.setUI(new SpacedTabbedPaneUI());
     tabbedPane.setBackground(new Color(0x132638));
     tabbedPane.setOpaque(true);
-//    tabbedPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+
+    for (int i = 0; i < 5; i++) {
+      tabbedPane.setToolTipTextAt(i, null);
+    }
 
     makeAndSetTabComponents();
 

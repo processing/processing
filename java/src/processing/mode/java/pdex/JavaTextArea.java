@@ -717,6 +717,10 @@ public class JavaTextArea extends JEditTextArea {
     public void mouseEntered(MouseEvent me) {
       // forward to standard listeners
       for (MouseListener ml : mouseListeners) {
+        // investigating an NPE that keeps showing up here [fry]
+//        if (ml == null || me == null) {
+//          System.out.println(ml + " " + me);
+//        }
         ml.mouseEntered(me);
       }
     }
