@@ -36,7 +36,16 @@
   <target name="check-linux-arm32" if="linux-arm32">
     <!-- there is currently no JRE available -->
     <property name="jre.download.jdk" value="true" />
-    <property name="jre.downloader" value="linux-arm32-vfp-hflt.tar.gz" />
+    <!-- temporary special case since the URL changed between 8u51 and 8u60 -->
+    <condition property="jre.downloader" value="linux-arm-vfp-hflt.tar.gz">
+      <equals arg1="${jdk.update}" arg2="51" />
+    </condition>
+    <condition property="jre.downloader" value="linux-arm32-vfp-hflt.tar.gz">
+      <not>
+        <equals arg1="${jdk.update}" arg2="51" />
+      </not>
+    </condition>
+    <!-- <property name="jre.downloader" value="linux-arm32-vfp-hflt.tar.gz" /> -->
     <property name="linux.dist" value="linux/processing-${version}-linux-armv6hf.tgz" />
   </target>
 
