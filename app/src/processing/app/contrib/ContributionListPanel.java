@@ -62,7 +62,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     if (upToDateIcon == null) {
       upToDateIcon = Toolkit.getLibIconX("manager/up-to-date");
       updateAvailableIcon = Toolkit.getLibIconX("manager/update-available");
-      incompatibleIcon = Toolkit.getLibIcon("manager/incompatible");
+      incompatibleIcon = Toolkit.getLibIconX("manager/incompatible");
     }
   }
 
@@ -295,14 +295,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         Icon icon = null;
         label.setFont(Toolkit.getSansFont(14, Font.PLAIN));
         if (contribution.isInstalled()) {
-          //icon = Toolkit.getLibIcon("manager/up-to-date-" + ContributionManagerDialog.iconVer + "x.png");
           icon = upToDateIcon;
           if (contribListing.hasUpdates(contribution)) {
-            //icon = Toolkit.getLibIcon("manager/update-available-" + ContributionManagerDialog.iconVer + "x.png");
             icon = updateAvailableIcon;
           }
           if (!contribution.isCompatible(Base.getRevision())) {
-            //icon = Toolkit.getLibIcon("manager/incompatible-" + ContributionManagerDialog.iconVer + "x.png");
             icon = incompatibleIcon;
           }
         }
@@ -355,7 +352,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         label.setOpaque(true);
       } else {
         if (contribution.isSpecial()) {
-          //label = new JLabel(Toolkit.getLibIcon("icons/foundation-16.png"));
           label = new JLabel(Toolkit.getLibIconX("icons/foundation", 16));
         } else {
           label = new JLabel();
