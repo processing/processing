@@ -16,24 +16,29 @@ X   foundation icon below next to description when lib selected
 X   icons on the install/update/remove buttons
 X   search eyeglass icon
 X   available/installed/incompatible icons
+o change Tool API because it's not one Editor per Tool anymore?
+X   or just change the documentation?
+X   updated the FAQ and tool template
+X items still show up in "Recent" if they no longer exist (on startup)
+X   checked code and this seems to be fine / can't reproduce
 
-may be fixed
-_ UnsatisfiedLinkError on startup "Access is denied" on Windows 10
-_   https://github.com/processing/processing/issues/3800
-_   administrator, but using Microsoft account to log in
-_ JNA errors on startup when run from an account w/ non-ASCII characters
-_   https://github.com/processing/processing/issues/3624
-_   set jna.tmpdir (or java.io.tmpdir) to another location
-_   https://github.com/twall/jna/issues/124
-_   https://github.com/twall/jna/issues/238
-_   Sun says they won't fix: user locale and system locale probably different:
-_   https://bugs.openjdk.java.net/browse/JDK-8017274
-_   https://bugs.openjdk.java.net/browse/JDK-4958170
-_   https://github.com/twall/jna/blob/master/test/com/sun/jna/JNALoadTest.java
-_   http://happygiraffe.net/blog/2009/09/24/java-platform-encoding/
-_   fix: get sun.jnu.encoding and make sure the user name is supported in it?
-_     and if not, put up a warning for the user?
-_   http://www.oracle.com/us/technologies/java/locale-140624.html
+jna problems
+X UnsatisfiedLinkError on startup "Access is denied" on Windows 10
+X   https://github.com/processing/processing/issues/3800
+X   administrator, but using Microsoft account to log in
+X JNA errors on startup when run from an account w/ non-ASCII characters
+X   https://github.com/processing/processing/issues/3624
+X   set jna.tmpdir (or java.io.tmpdir) to another location
+X   https://github.com/twall/jna/issues/124
+X   https://github.com/twall/jna/issues/238
+X   Sun says they won't fix: user locale and system locale probably different:
+X   https://bugs.openjdk.java.net/browse/JDK-8017274
+X   https://bugs.openjdk.java.net/browse/JDK-4958170
+X   https://github.com/twall/jna/blob/master/test/com/sun/jna/JNALoadTest.java
+X   http://happygiraffe.net/blog/2009/09/24/java-platform-encoding/
+X   fix: get sun.jnu.encoding and make sure the user name is supported in it?
+X     and if not, put up a warning for the user?
+X   http://www.oracle.com/us/technologies/java/locale-140624.html
 
 manager
 X CM: Clicking item in Libraries list throws exception
@@ -52,7 +57,7 @@ X prevent re-prompting users when they say "no" to "sketch modified" message
 X add more preferences for editor.watcher
 X cleaning up the logic in the watcher
 
-gsoc
+akarshit
 X prevent "updating" to a still-incompatible version of a contrib
 X   https://github.com/processing/processing/issues/3801
 X   https://github.com/processing/processing/pull/3805
@@ -66,16 +71,20 @@ X CM list should be sortable by status and author name
 X   https://github.com/processing/processing/issues/3608
 _ All contributions listed after install button is clicked
 _   https://github.com/processing/processing/issues/3826
+_ "update all" button appears to do nothing in library manager
+_   https://github.com/processing/processing/issues/3837
 
 jakub
 X Make preprocessor scope-aware
 X   https://github.com/processing/processing/issues/3799
 X   https://github.com/processing/processing/pull/3810
-_ auto-complete is broken on OS X
+_ auto-complete is a mess (and broken on OS X)
 _   https://github.com/processing/processing/issues/3812
 _ Hitting enter on code completion completes and then creates a new line
 _   https://github.com/processing/processing/issues/3741
 _   found thread deadlock issues preventing it from working on OS X
+_ Red error underline is sometimes at wrong location
+_   https://github.com/processing/processing/issues/3759
 _ ctrl-space first inserts space, then deletes it, with completion
 
 
@@ -91,16 +100,7 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
-_ Live error checking throws error when calling color() on a PGraphics
-_   https://github.com/processing/processing/issues/3762
-_ "color type detected! this shouldn't be happening! please report"
-_   happens when user does 'new color' instead of 'color'
-_   https://github.com/processing/processing/issues/3739
-_ change Tool API because it's not one Editor per Tool anymore?
-_   or just change the documentation?
-_ items still show up in "Recent" if they no longer exist (on startup)
-_ Red error underline is sometimes at wrong location
-_   https://github.com/processing/processing/issues/3759
+_ remove the dated releases from download.processing.org
 
 
 sketch modified externally (3.0 final)
@@ -115,7 +115,7 @@ o use watcher service after all?
 o   https://docs.oracle.com/javase/tutorial/essential/io/notification.html
 
 
-gui/James
+gui / James
 _ Fix placement and visual design when showing error on hover
 _   https://github.com/processing/processing/issues/3173
 _ import suggestions box needs design review
@@ -139,7 +139,8 @@ _   https://github.com/processing/processing/issues/3072
 
 
 gui / post 3.0
-_ different design of squiggly line?
+_ different design of squiggly line
+_   easy to do inside JavaTextAreaPainter.paintSquiggle()
 _ build custom scroll bar since the OS versions are so ugly?
 _ error/warning location is awkward when no scroll bar is in use
 _   when only one screen-full, show ticks at exact location
@@ -180,6 +181,8 @@ _ Examples window closes and re-opens during library install/remove
 _   https://github.com/processing/processing/issues/3304
 _ ArrayIndexOutOfBoundsException freak out when clicking the header line
 _   think this was on name, with libraries, but not sure
+_ CM - Icon instead of an "X" for the "could not connect" message
+_   https://github.com/processing/processing/issues/3706
 
 
 gui/low
@@ -538,7 +541,14 @@ _   http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
 
 PDE / Compiler & Preprocessor
 
+live error checker
+_ using "new color()" instead of "color()" results in "color type detected" 
+_   happens when user does 'new color' instead of 'color'
+_   https://github.com/processing/processing/issues/3739
+
 medium (bugs/features)
+_ preprocessor throws error when calling color() on a PGraphics
+_   https://github.com/processing/processing/issues/3762
 _ incorporate new preproc
 _   https://github.com/fjenett/processing-preprocessor-antlr4
 _   https://github.com/processing/processing/issues/3055

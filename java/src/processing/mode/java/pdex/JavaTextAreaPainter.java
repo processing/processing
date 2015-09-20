@@ -323,6 +323,34 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 
   /**
+   * Remove all trailing whitespace from a line
+   */
+  static private String trimRight(String str) {
+    int i = str.length() - 1;
+    while (i >= 0 && Character.isWhitespace(str.charAt(i))) {
+      i--;
+    }
+    return str.substring(0, i+1);
+  }
+
+
+  /**
+   * @return the LineMarker for the first error or warning on 'line'
+   */
+  private LineMarker findError(int line) {
+    List<LineMarker> errorPoints = getJavaEditor().getErrorPoints();
+    synchronized (errorPoints) {
+      for (LineMarker emarker : errorPoints) {
+        if (emarker.getProblem().getLineNumber() == line) {
+          return emarker;
+        }
+      }
+    }
+    return null;
+  }
+
+
+  /**
    * Paints the underline for an error/warning line
    *
    * @param gfx
@@ -338,123 +366,67 @@ public class JavaTextAreaPainter extends TextAreaPainter
       return;
     }
 
-    boolean notFound = true;
-    boolean isWarning = false;
-    Problem problem = null;
-
     errorLineCoords.clear();
-    // Check if current line contains an error. If it does, find if it's an
-    // error or warning
-    List<LineMarker> errorPoints = getJavaEditor().getErrorPoints();
-    synchronized (errorPoints) {
-      for (LineMarker emarker : errorPoints) {
-        if (emarker.getProblem().getLineNumber() == line) {
-          notFound = false;
-          if (emarker.getType() == LineMarker.WARNING) {
-            isWarning = true;
-          }
-          problem = emarker.getProblem();
-          //log(problem.toString());
-          break;
-        }
-      }
-    }
+    LineMarker marker = findError(line);
+    if (marker != null) {
+      Problem problem = marker.getProblem();
 
-    if (notFound) {
-      return;
-    }
+      int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
+      int start = textArea.getLineStartOffset(line) + problem.getPDELineStartOffset();
+      int length = 1 + problem.getPDELineStopOffset() - problem.getPDELineStartOffset();
 
-    // Determine co-ordinates
-    // log("Hoff " + ta.getHorizontalOffset() + ", " +
-    // horizontalAdjustment);
-    int y = textArea.lineToY(line);
-    y += fm.getLeading() + fm.getMaxDescent();
-//    int height = fm.getHeight();
-    int start = textArea.getLineStartOffset(line) + problem.getPDELineStartOffset();
-    int pLength = problem.getPDELineStopOffset() + 1 - problem.getPDELineStartOffset();
-
-    try {
-      String badCode = null;
-      String goodCode = null;
       try {
-        SyntaxDocument doc = textArea.getDocument();
-        badCode = doc.getText(start, pLength);
-        goodCode = doc.getText(textArea.getLineStartOffset(line), problem.getPDELineStartOffset());
-        //log("paintErrorLine() LineText GC: " + goodCode);
-        //log("paintErrorLine() LineText BC: " + badCode);
-      } catch (BadLocationException bl) {
-        // Error in the import statements or end of code.
-        // System.out.print("BL caught. " + ta.getLineCount() + " ,"
-        // + line + " ,");
-        // log((ta.getLineStopOffset(line) - start - 1));
-        return;
+        String badCode = null;
+        String goodCode = null;
+        try {
+          SyntaxDocument doc = textArea.getDocument();
+          badCode = doc.getText(start, length);
+          goodCode = doc.getText(textArea.getLineStartOffset(line), problem.getPDELineStartOffset());
+          //log("paintErrorLine() LineText GC: " + goodCode);
+          //log("paintErrorLine() LineText BC: " + badCode);
+        } catch (BadLocationException bl) {
+          // Error in the import statements or end of code.
+          // System.out.print("BL caught. " + ta.getLineCount() + " ,"
+          // + line + " ,");
+          // log((ta.getLineStopOffset(line) - start - 1));
+          return;
+        }
+
+        // Take care of offsets
+        int aw = fm.stringWidth(trimRight(badCode)) + textArea.getHorizontalOffset();
+        // to the left of line + text
+        // width
+        int rw = fm.stringWidth(badCode.trim()); // real width
+        int x1 = fm.stringWidth(goodCode) + (aw - rw);
+        int y1 = y + fm.getHeight() - 2, x2 = x1 + rw;
+        // Adding offsets for the gutter
+        x1 += Editor.LEFT_GUTTER;
+        x2 += Editor.LEFT_GUTTER;
+
+        errorLineCoords.add(new ErrorLineCoord(x1,  x2, y, y1, problem));
+
+        gfx.setColor(errorUnderlineColor);
+        if (marker.getType() == LineMarker.WARNING) {
+          gfx.setColor(warningUnderlineColor);
+        }
+        paintSquiggle(gfx, y1, x1, x2);
+
+      } catch (Exception e) {
+        e.printStackTrace();
       }
-
-      // Take care of offsets
-      int aw = fm.stringWidth(trimRight(badCode)) + textArea.getHorizontalOffset(); // apparent width. Whitespaces
-      // to the left of line + text
-      // width
-      int rw = fm.stringWidth(badCode.trim()); // real width
-      int x1 = fm.stringWidth(goodCode) + (aw - rw), y1 = y + fm.getHeight()
-          - 2, x2 = x1 + rw;
-      // Adding offsets for the gutter
-      x1 += Editor.LEFT_GUTTER;
-      x2 += Editor.LEFT_GUTTER;
-
-      errorLineCoords.add(new ErrorLineCoord(x1,  x2, y, y1, problem));
-
-      // gfx.fillRect(x1, y, rw, height);
-
-      // Let the painting begin!
-
-      // Little rect at starting of a line containing errors - disabling it for now
-//      gfx.setColor(errorMarkerColor);
-//      if (isWarning) {
-//        gfx.setColor(warningMarkerColor);
-//      }
-//      gfx.fillRect(1, y + 2, 3, height - 2);
-
-      gfx.setColor(errorUnderlineColor);
-      if (isWarning) {
-        gfx.setColor(warningUnderlineColor);
-      }
-      int xx = x1;
-
-      // Draw the jagged lines
-      while (xx < x2) {
-        gfx.drawLine(xx, y1, xx + 2, y1 + 1);
-        xx += 2;
-        gfx.drawLine(xx, y1 + 1, xx + 2, y1);
-        xx += 2;
-      }
-    } catch (Exception e) {
-      System.out
-          .println("Looks like I messed up! XQTextAreaPainter.paintLine() : "
-              + e);
-      //e.printStackTrace();
     }
-
-    // Won't highlight the line. Select the text instead.
-    // gfx.setColor(Color.RED);
-    // gfx.fillRect(2, y, 3, height);
   }
 
 
-  /**
-   * Trims out trailing whitespaces (to the right)
-   *
-   * @param string
-   * @return - String
-   */
-  static private String trimRight(String string) {
-    String newString = "";
-    for (int i = 0; i < string.length(); i++) {
-      if (string.charAt(i) != ' ') {
-        newString = string.substring(0, i) + string.trim();
-        break;
-      }
+  static private void paintSquiggle(Graphics g, int y, int x1, int x2) {
+    int xx = x1;
+
+    while (xx < x2) {
+      g.drawLine(xx, y, xx + 2, y + 1);
+      xx += 2;
+      g.drawLine(xx, y + 1, xx + 2, y);
+      xx += 2;
     }
-    return newString;
   }
 
 
@@ -464,8 +436,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
   public void setMode(Mode mode) {
     errorUnderlineColor = mode.getColor("editor.error.underline.color");
     warningUnderlineColor = mode.getColor("editor.warning.underline.color");
-//    errorMarkerColor = mode.getColor("editor.errormarkercolor");
-//    warningMarkerColor = mode.getColor("editor.warningmarkercolor");
 
     gutterTextFont = mode.getFont("editor.gutter.text.font");
     gutterTextColor = mode.getColor("editor.gutter.text.color");
