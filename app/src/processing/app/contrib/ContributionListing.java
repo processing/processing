@@ -90,7 +90,7 @@ public class ContributionListing {
     for (Contribution contribution : advertisedContributions) {
       addContribution(contribution);
     }
-    Collections.sort(allContributions, nameComparator);
+    Collections.sort(allContributions, COMPARATOR);
   }
 
 
@@ -154,7 +154,7 @@ public class ContributionListing {
       if (librariesByCategory.containsKey(category)) {
         List<Contribution> list = librariesByCategory.get(category);
         list.add(contribution);
-        Collections.sort(list, nameComparator);
+        Collections.sort(list, COMPARATOR);
 
       } else {
         ArrayList<Contribution> list = new ArrayList<Contribution>();
@@ -163,7 +163,7 @@ public class ContributionListing {
       }
       allContributions.add(contribution);
       notifyAdd(contribution);
-      Collections.sort(allContributions, nameComparator);
+      Collections.sort(allContributions, COMPARATOR);
     }
   }
 
@@ -584,12 +584,12 @@ public class ContributionListing {
 //  }
 
 
-  public Comparator<? super Contribution> getComparator() {
-    return nameComparator;
-  }
+//  public Comparator<? super Contribution> getComparator() {
+//    return COMPARATOR;
+//  }
 
 
-  static Comparator<Contribution> nameComparator = new Comparator<Contribution>() {
+  static public Comparator<Contribution> COMPARATOR = new Comparator<Contribution>() {
     public int compare(Contribution o1, Contribution o2) {
       return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
     }

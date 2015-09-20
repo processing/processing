@@ -69,22 +69,15 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
   public ContributionListPanel(final ContributionTab contributionTab,
                                ContributionFilter filter) {
-    super();
     this.contributionTab = contributionTab;
     this.filter = filter;
-
-//    contribListing = ContributionListing.getInstance();
 
     setLayout(new GridBagLayout());
     setOpaque(true);
     setBackground(Color.WHITE);
 
-    panelByContribution = new TreeMap<Contribution, ContributionPanel>(contribListing.getComparator());
-
-//    statusPlaceholder = new JPanel();
-//    statusPlaceholder.setVisible(false);
-//    status = new StatusPanel(null);
-
+    panelByContribution =
+      new TreeMap<Contribution, ContributionPanel>(ContributionListing.COMPARATOR);
 
     model = new ContribTableModel();
     table = new JTable(model){
@@ -140,7 +133,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
     TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
     table.setRowSorter(sorter);
-    sorter.setComparator(1, contribListing.getComparator());
+    sorter.setComparator(1, ContributionListing.COMPARATOR);
     sorter.setComparator(2, new Comparator<Contribution>() {
 
       @Override
@@ -504,7 +497,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
   public void filterLibraries(List<Contribution> filteredContributions) {
     synchronized (panelByContribution) {
-      TreeSet<Contribution> panelInThisTab = new TreeSet<Contribution>(contribListing.getComparator());
+      TreeSet<Contribution> panelInThisTab =
+        new TreeSet<Contribution>(ContributionListing.COMPARATOR);
       for (Contribution contribution : filteredContributions) {
         if(contribution.getType() == this.contributionTab.contributionType) {
           panelInThisTab.add(contribution);

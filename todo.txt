@@ -163,7 +163,7 @@ _ updates tab has ugly horizontal line at top
 _ status/name/author table header is alternating color
 _   area above scroll bar looks like more scroll bar
 _ remove focus blue from the scrollable list
-_ add extra space to the right of the buttons
+_ add extra space to the right of the buttons to line up w/ the scrollbar
 _ implement 2x versions of icons
 _   https://github.com/processing/processing/issues/3478
 _   foundation icon in list
