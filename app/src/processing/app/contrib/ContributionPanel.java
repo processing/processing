@@ -81,7 +81,8 @@ class ContributionPanel extends JPanel {
   private final ContributionListPanel listPanel;
   private final ContributionListing contribListing = ContributionListing.getInstance();
 
-  static private final int BUTTON_WIDTH = 100;
+  static final int BUTTON_WIDTH = 100;
+  static Icon foundationIcon;
 
   /**
    * Should only be set through setContribution(),
@@ -92,7 +93,6 @@ class ContributionPanel extends JPanel {
   public Contribution getContrib() {
     return contrib;
   }
-
 
   private boolean alreadySelected;
   private boolean enableHyperlinks;
@@ -110,13 +110,18 @@ class ContributionPanel extends JPanel {
   private ActionListener installActionListener;
   private ActionListener undoActionListener;
 
-  boolean isUpdateInProgress;
-  boolean isInstallInProgress;
-  boolean isRemoveInProgress;
+  boolean updateInProgress;
+  boolean installInProgress;
+  boolean removeInProgress;
 
-  StringBuilder description;
+  String description;
+
 
   ContributionPanel(ContributionListPanel contributionListPanel) {
+    if (foundationIcon == null) {
+      foundationIcon = Toolkit.getLibIconX("icons/foundation", 32);
+    }
+
     listPanel = contributionListPanel;
     barButtonCardPane = new JPanel();
 
@@ -362,7 +367,7 @@ class ContributionPanel extends JPanel {
     add(rightPane, BorderLayout.EAST);
 
 
-    if (updateButton.isVisible() && !isRemoveInProgress && !contrib.isDeletionFlagged()) {
+    if (updateButton.isVisible() && !removeInProgress && !contrib.isDeletionFlagged()) {
       JPanel updateRemovePanel = new JPanel();
       updateRemovePanel.setLayout(new FlowLayout());
       updateRemovePanel.setOpaque(false);
@@ -377,7 +382,7 @@ class ContributionPanel extends JPanel {
 //      barPane.add(installProgressBar);
       rightPane.add(barPane);
 
-      if (isUpdateInProgress)
+      if (updateInProgress)
         ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, PROGRESS_BAR_CONSTRAINT);
 
     }
@@ -397,7 +402,7 @@ class ContributionPanel extends JPanel {
 
       barButtonCardPane.add(buttonPane, BUTTON_CONSTRAINT);
       barButtonCardPane.add(barPane, PROGRESS_BAR_CONSTRAINT);
-      if (isInstallInProgress || isRemoveInProgress || isUpdateInProgress)
+      if (installInProgress || removeInProgress || updateInProgress)
         ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, PROGRESS_BAR_CONSTRAINT);
       else
         ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, BUTTON_CONSTRAINT);
@@ -447,8 +452,7 @@ class ContributionPanel extends JPanel {
     this.contrib = contrib;
 
     if (contrib.isSpecial()) {
-      JLabel iconLabel =
-        new JLabel(Toolkit.getLibIcon("icons/foundation-32.png"));  // was 48?
+      JLabel iconLabel = new JLabel(foundationIcon);
       iconLabel.setBorder(new EmptyBorder(4, 7, 7, 7));
       iconLabel.setVerticalAlignment(SwingConstants.TOP);
       add(iconLabel, BorderLayout.WEST);
@@ -458,33 +462,33 @@ class ContributionPanel extends JPanel {
     Font boldFont = Toolkit.getSansFont(12, Font.BOLD);
     String fontFace = "<font face=\"" + boldFont.getName() + "\">";
 
-    description = new StringBuilder();
-    description.append("<html><body>" + fontFace);
+    StringBuilder desc = new StringBuilder();
+    desc.append("<html><body>" + fontFace);
     if (contrib.getUrl() == null) {
-      description.append(contrib.getName());
+      desc.append(contrib.getName());
     } else {
-      description.append("<a href=\"" + contrib.getUrl() + "\">" + contrib.getName() + "</a>");
+      desc.append("<a href=\"" + contrib.getUrl() + "\">" + contrib.getName() + "</a>");
     }
-    description.append("</font> ");
+    desc.append("</font> ");
 
     String version = contrib.getPrettyVersion();
     if (version != null) {
-      description.append(version);
+      desc.append(version);
     }
-    description.append(" <br/>");
+    desc.append(" <br/>");
 
     String authorList = contrib.getAuthorList();
     if (authorList != null && !authorList.isEmpty()) {
-      description.append(toHtmlLinks(contrib.getAuthorList()));
+      desc.append(toHtmlLinks(contrib.getAuthorList()));
     }
-    description.append("<br/><br/>");
+    desc.append("<br/><br/>");
 
     if (contrib.isDeletionFlagged()) {
-      description.append(REMOVE_RESTART_MESSAGE);
+      desc.append(REMOVE_RESTART_MESSAGE);
     } else if (contrib.isRestartFlagged()) {
-      description.append(INSTALL_RESTART_MESSAGE);
+      desc.append(INSTALL_RESTART_MESSAGE);
     } else if (contrib.isUpdateFlagged()) {
-      description.append(UPDATE_RESTART_MESSAGE);
+      desc.append(UPDATE_RESTART_MESSAGE);
     } else {
       String sentence = contrib.getSentence();
       if (sentence == null || sentence.isEmpty()) {
@@ -493,7 +497,7 @@ class ContributionPanel extends JPanel {
         sentence = sanitizeHtmlTags(sentence);
         sentence = toHtmlLinks(sentence);
       }
-      description.append(sentence);
+      desc.append(sentence);
     }
 
     long lastUpdatedUTC = contrib.getLastUpdated();
@@ -501,12 +505,13 @@ class ContributionPanel extends JPanel {
       DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM);
       Date lastUpdatedDate = new Date(lastUpdatedUTC);
       if (version != null && !version.isEmpty())
-        description.append(", ");
-      description.append("Last Updated on " + dateFormatter.format(lastUpdatedDate));
+        desc.append(", ");
+      desc.append("Last Updated on " + dateFormatter.format(lastUpdatedDate));
     }
 
-    description.append("</body></html>");
-    descriptionPane.setText(description.toString());
+    desc.append("</body></html>");
+    description = desc.toString();
+    descriptionPane.setText(description);
 
     if (contribListing.hasUpdates(contrib)) {
       StringBuilder versionText = new StringBuilder();
@@ -533,7 +538,7 @@ class ContributionPanel extends JPanel {
 
     updateButton.setEnabled(true);
     if (contrib != null) {
-      updateButton.setVisible((contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged() && !contrib.isDeletionFlagged()) || isUpdateInProgress);
+      updateButton.setVisible((contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged() && !contrib.isDeletionFlagged()) || updateInProgress);
     }
 
     installRemoveButton.removeActionListener(installActionListener);
@@ -595,9 +600,9 @@ class ContributionPanel extends JPanel {
           installRemoveButton.setEnabled(!contrib.isUpdateFlagged());
 
           ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, BUTTON_CONSTRAINT);
-          isInstallInProgress = false;
-          if(isUpdateInProgress)
-            isUpdateInProgress = !isUpdateInProgress;
+          installInProgress = false;
+          if(updateInProgress)
+            updateInProgress = !updateInProgress;
           updateButton.setVisible(contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
           setSelected(true);
         }
@@ -613,9 +618,9 @@ class ContributionPanel extends JPanel {
             listPanel.contributionTab.statusPanel.setErrorMessage(Language.text("contrib.download_error"));
           }
           ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, BUTTON_CONSTRAINT);
-          isInstallInProgress = false;
-          if(isUpdateInProgress)
-            isUpdateInProgress = !isUpdateInProgress;
+          installInProgress = false;
+          if(updateInProgress)
+            updateInProgress = !updateInProgress;
           updateButton.setVisible(contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
           setSelected(true);
         }
@@ -678,10 +683,10 @@ class ContributionPanel extends JPanel {
     enableHyperlinks = alreadySelected;
 
     if (contrib != null) {
-      updateButton.setVisible((contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged() && !contrib.isDeletionFlagged()) || isUpdateInProgress);
+      updateButton.setVisible((contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged() && !contrib.isDeletionFlagged()) || updateInProgress);
       updateButton.setEnabled(!contribListing.hasListDownloadFailed());
     }
-    installRemoveButton.setVisible(isSelected() || installRemoveButton.getText().equals(Language.text("contrib.remove")) || isUpdateInProgress);
+    installRemoveButton.setVisible(isSelected() || installRemoveButton.getText().equals(Language.text("contrib.remove")) || updateInProgress);
     installRemoveButton.setEnabled(installRemoveButton.getText().equals(Language.text("contrib.remove")) ||!contribListing.hasListDownloadFailed());
     reorganizePaneComponents();
 
@@ -812,7 +817,7 @@ class ContributionPanel extends JPanel {
 
   public void install() {
     listPanel.contributionTab.statusPanel.clear();
-    isInstallInProgress = true;
+    installInProgress = true;
     ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, PROGRESS_BAR_CONSTRAINT);
     if (contrib instanceof AvailableContribution) {
       installContribution((AvailableContribution) contrib);
@@ -824,7 +829,7 @@ class ContributionPanel extends JPanel {
   public void update() {
 
     listPanel.contributionTab.statusPanel.clear();
-    isUpdateInProgress = true;
+    updateInProgress = true;
     if (contrib.getType().requiresRestart()) {
       installRemoveButton.setEnabled(false);
       installProgressBar.setVisible(true);
@@ -846,7 +851,7 @@ class ContributionPanel extends JPanel {
           super.cancel();
           resetInstallProgressBarState();
           listPanel.contributionTab.statusPanel.setMessage("");
-          isUpdateInProgress = false;
+          updateInProgress = false;
           installRemoveButton.setEnabled(true);
           if (contrib.isDeletionFlagged()) {
             ((LocalContribution)contrib).setUpdateFlag(true);
@@ -894,7 +899,7 @@ class ContributionPanel extends JPanel {
 
     listPanel.contributionTab.statusPanel.clear();
     if (contrib.isInstalled() && contrib instanceof LocalContribution) {
-      isRemoveInProgress = true;
+      removeInProgress = true;
       ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, PROGRESS_BAR_CONSTRAINT);
       updateButton.setEnabled(false);
       installRemoveButton.setEnabled(false);
@@ -905,7 +910,7 @@ class ContributionPanel extends JPanel {
         public void finishedAction() {
           // Finished uninstalling the library
           resetInstallProgressBarState();
-          isRemoveInProgress = false;
+          removeInProgress = false;
           installRemoveButton.setEnabled(true);
 
           reorganizePaneComponents();
@@ -915,7 +920,7 @@ class ContributionPanel extends JPanel {
         public void cancel() {
           super.cancel();
           resetInstallProgressBarState();
-          isRemoveInProgress = false;
+          removeInProgress = false;
           installRemoveButton.setEnabled(true);
 
           reorganizePaneComponents();

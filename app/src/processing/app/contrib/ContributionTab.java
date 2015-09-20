@@ -369,7 +369,6 @@ public class ContributionTab {
       filterLabel.setOpaque(false);
 
       setFont(Toolkit.getSansFont(14, Font.PLAIN));
-      //searchIcon = Toolkit.getLibIcon("manager/search.png");
       searchIcon = Toolkit.getLibIconX("manager/search");
       filterLabel.setIcon(searchIcon);
       //searchIcon = new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage("NSImage://NSComputerTemplate"));

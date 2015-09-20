@@ -46,6 +46,7 @@ import processing.app.Platform;
 
 class StatusPanel extends JPanel {
   static final int BUTTON_WIDTH = 150;
+  static Icon foundationIcon;
 
   JTextPane label;
   JButton installButton;
@@ -60,8 +61,12 @@ class StatusPanel extends JPanel {
 
   private String bodyRule;
 
+
   public StatusPanel(int width, final ContributionTab contributionTab) {
-    super();
+    if (foundationIcon == null) {
+      foundationIcon = Toolkit.getLibIconX("icons/foundation", 32);
+    }
+
     setBackground(new Color(0xebebeb));
 //    setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
     this.contributionTab = contributionTab;
@@ -216,18 +221,14 @@ class StatusPanel extends JPanel {
   public void update(ContributionPanel panel) {
     progressBarPanel.removeAll();
 
-    Icon icon = null;
-    if (panel.getContrib().isSpecial()) {
-      icon = Toolkit.getLibIcon("icons/foundation-32.png");  // was 48?
-    }
-    iconLabel.setIcon(icon);
-    label.setText(panel.description.toString());
+    iconLabel.setIcon(panel.getContrib().isSpecial() ? foundationIcon : null);
+    label.setText(panel.description);
     ((HTMLDocument)label.getDocument()).getStyleSheet().addRule(bodyRule);
 
-    updateButton.setEnabled(contributionListing.hasDownloadedLatestList()
-      && (contributionListing.hasUpdates(panel.getContrib()) && !panel
-        .getContrib().isUpdateFlagged())
-        && !panel.isUpdateInProgress);
+    updateButton.setEnabled(contributionListing.hasDownloadedLatestList() &&
+                            (contributionListing.hasUpdates(panel.getContrib()) &&
+                             !panel.getContrib().isUpdateFlagged()) &&
+                            !panel.updateInProgress);
 
     String latestVersion =
       contributionListing.getLatestVersion(panel.getContrib());
@@ -236,7 +237,7 @@ class StatusPanel extends JPanel {
     installButton.setEnabled(!panel.getContrib().isInstalled()
                              && contributionListing.hasDownloadedLatestList()
                              && panel.getContrib().isCompatible(Base.getRevision())
-                             && !panel.isInstallInProgress);
+                             && !panel.installInProgress);
 
     if (installButton.isEnabled()) {
       updateLabel.setText(latestVersion + " available");
@@ -261,11 +262,11 @@ class StatusPanel extends JPanel {
     }
 
     removeButton.setEnabled(panel.getContrib().isInstalled()
-                            && !panel.isRemoveInProgress);
+                            && !panel.removeInProgress);
     progressBarPanel.add(panel.installProgressBar);
     progressBarPanel.setVisible(false);
     updateLabel.setVisible(true);
-    if (panel.isUpdateInProgress || panel.isInstallInProgress || panel.isRemoveInProgress) {
+    if (panel.updateInProgress || panel.installInProgress || panel.removeInProgress) {
       progressBarPanel.setVisible(true);
       updateLabel.setVisible(false);
       progressBarPanel.repaint();
