@@ -23,6 +23,8 @@ X change the Tool API after all, since none of the tools have been updated
 X   https://github.com/processing/processing/wiki/Tool-Basics
 X items still show up in "Recent" if they no longer exist (on startup)
 X   checked code and this seems to be fine / can't reproduce
+X show hover text when the mouse is over the 'debug' button
+_ update EditorButton rollover label when pressing shift or alt
 
 jna problems
 X UnsatisfiedLinkError on startup "Access is denied" on Windows 10
@@ -108,7 +110,7 @@ _ remove the dated releases from download.processing.org
 sketch modified externally (3.0 final)
 X sketch modified externally with FAT32 volumes on OS X
 X   https://github.com/processing/processing/issues/3387
-_   might have this fixed with the larger time window
+X   might have this fixed with the larger time window
 _   need to check if "save as" thing is causing trouble
 X "Your sketch has been modified externally" with encrypted OS X volumes
 X   https://github.com/processing/processing/issues/3650
@@ -133,7 +135,6 @@ _   https://github.com/processing/processing/issues/3665
 
 
 gui / 3.0 final
-_ show hover text when the mouse is over the 'debug' button
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
 _ finish the gui
@@ -154,7 +155,6 @@ _   could do rollover as well, but do other apps use them?
 _   iTunes has no rollover state but has a 'down' state
 _     swaps to stop after release
 _ deactivate step, continue, stop when not running?
-_ update EditorButton rollover label when pressing shift or alt
 _ disable the debug toggle menu while running
 _   otherwise could run in one mode, then try to stop in another
 _ recent menu gets huge with other p5 versions on osx

@@ -112,7 +112,7 @@ abstract public class EditorToolbar extends JPanel {
 //    stopButton.setRolloverLabel(label);
 
     box.add(Box.createHorizontalGlue());
-    addModeButtons(box);
+    addModeButtons(box, label);
 //    Component items = createModeButtons();
 //    if (items != null) {
 //      box.add(items);
@@ -165,7 +165,7 @@ abstract public class EditorToolbar extends JPanel {
   }
 
 
-  public void addModeButtons(Box box) {
+  public void addModeButtons(Box box, JLabel label) {
   }
 
 

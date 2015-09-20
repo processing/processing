@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
+import javax.swing.JLabel;
 
 import processing.app.Language;
 import processing.app.ui.Editor;
@@ -109,7 +110,8 @@ public class JavaToolbar extends EditorToolbar {
   }
 
 
-  public void addModeButtons(Box box) {
+  @Override
+  public void addModeButtons(Box box, JLabel label) {
     EditorButton debugButton = new EditorButton(mode, "/lib/toolbar/debug",
                                                 Language.text("toolbar.debug")) {
 
@@ -122,6 +124,7 @@ public class JavaToolbar extends EditorToolbar {
     if (((JavaEditor) editor).isDebuggerEnabled()) {
       debugButton.setSelected(true);
     }
+    debugButton.setRolloverLabel(label);
     box.add(debugButton);
     addGap(box);
   }
