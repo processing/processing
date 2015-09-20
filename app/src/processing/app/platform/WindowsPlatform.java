@@ -30,6 +30,7 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.Shell32;
+import com.sun.jna.platform.win32.Shell32Util;
 import com.sun.jna.platform.win32.ShlObj;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinError;
@@ -267,7 +268,21 @@ public class WindowsPlatform extends DefaultPlatform {
   }
 
 
+  /*
+    What's happening internally with JNA https://github.com/java-native-access/jna/blob/master/contrib/platform/src/com/sun/jna/platform/win32/Shell32.java
+
+    Some goodies here: https://github.com/java-native-access/jna/blob/master/contrib/platform/src/com/sun/jna/platform/win32/Shell32Util.java
+    http://twall.github.io/jna/4.1.0/com/sun/jna/platform/win32/Shell32Util.html#getSpecialFolderPath(int, boolean)
+
+    SHGetKnownFolderPath function https://msdn.microsoft.com/en-us/library/windows/desktop/bb762188(v=vs.85).aspx
+    SHGetSpecialFolderPath https://msdn.microsoft.com/en-us/library/windows/desktop/bb762204(v=vs.85).aspx
+
+    http://blogs.msdn.com/b/patricka/archive/2010/03/18/where-should-i-store-my-data-and-configuration-files-if-i-target-multiple-os-versions.aspx
+   */
   static private String getAppDataPath() throws Exception {
+    return Shell32Util.getSpecialFolderPath(ShlObj.CSIDL_APPDATA, true);
+
+    /*
     // this will be contain the path if SHGetFolderPath is successful
     char[] pszPath = new char[WinDef.MAX_PATH];
     HRESULT hResult =
@@ -284,6 +299,7 @@ public class WindowsPlatform extends DefaultPlatform {
     String appDataPath = new String(pszPath);
     int len = appDataPath.indexOf("\0");
     return appDataPath.substring(0, len);
+    */
   }
 
 
