@@ -1733,7 +1733,8 @@ public class Base {
       if (!settingsFolder.mkdirs()) {
         Messages.showError("Settings issues",
                            "Processing cannot run because it could not\n" +
-                           "create a folder to store your settings.", null);
+                           "create a folder to store your settings.\n" +
+                           settingsFolder.getAbsolutePath(), null);
       }
     }
     return settingsFolder;

@@ -268,27 +268,6 @@ public class WindowsPlatform extends DefaultPlatform {
 
 
   static private String getAppDataPath() throws Exception {
-    // Trying to deal with JNA problems on Windows 10
-    // https://github.com/processing/processing/issues/3800
-    // Try to load JNA and set its temporary directory
-    getLibC();
-
-    // HKEY_CURRENT_USER\Software\Microsoft
-    //   \Windows\CurrentVersion\Explorer\Shell Folders
-    // Value Name: AppData
-    // Value Type: REG_SZ
-    // Value Data: path
-
-    //String keyPath =
-    //  "Software\\Microsoft\\Windows\\CurrentVersion" +
-    // "\\Explorer\\Shell Folders";
-    //String appDataPath =
-    //  Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER, keyPath, "AppData");
-
-    // Fix for Issue 410
-    // Java 1.6 doesn't provide a good workaround (http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6519127)
-    // Using JNA and SHGetFolderPath instead.
-
     // this will be contain the path if SHGetFolderPath is successful
     char[] pszPath = new char[WinDef.MAX_PATH];
     HRESULT hResult =
@@ -297,14 +276,13 @@ public class WindowsPlatform extends DefaultPlatform {
                                        pszPath);
 
     if (!hResult.equals(WinError.S_OK)) {
-      System.err.println(Kernel32Util.formatMessageFromHR(hResult));
-      throw new Exception("Problem city, population: your computer.");
+      //System.err.println(Kernel32Util.formatMessageFromHR(hResult));
+      //throw new Exception("Problem city, population: your computer.");
+      throw new Exception(Kernel32Util.formatMessageFromHR(hResult));
     }
 
     String appDataPath = new String(pszPath);
     int len = appDataPath.indexOf("\0");
-//    appDataPath = appDataPath.substring(0, len);
-//    return new File(appDataPath, "Processing");
     return appDataPath.substring(0, len);
   }
 
@@ -320,6 +298,9 @@ public class WindowsPlatform extends DefaultPlatform {
 
 
   static private String getDocumentsPath() throws Exception {
+    // heh, this is a little too cheeky
+    //new JFileChooser().getFileSystemView().getDefaultDirectory().toString();
+
     // http://support.microsoft.com/?kbid=221837&sd=RMVP
     // http://support.microsoft.com/kb/242557/en-us
 
@@ -347,14 +328,11 @@ public class WindowsPlatform extends DefaultPlatform {
     HRESULT hResult = Shell32.INSTANCE.SHGetFolderPath(null, ShlObj.CSIDL_PERSONAL, null, ShlObj.SHGFP_TYPE_CURRENT, pszPath);
 
     if (!hResult.equals(WinError.S_OK)) {
-      System.err.println(Kernel32Util.formatMessageFromHR(hResult));
-      throw new Exception("Problem city, population: your computer.");
+      throw new Exception(Kernel32Util.formatMessageFromHR(hResult));
     }
 
     String personalPath = new String(pszPath);
     int len = personalPath.indexOf("\0");
-//    personalPath = personalPath.substring(0, len);
-//    return new File(personalPath, "Processing");
     return personalPath.substring(0, len);
   }
 
