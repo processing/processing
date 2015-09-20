@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -19,17 +19,16 @@
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 package processing.app.contrib;
 
 import java.io.*;
 import java.net.URLClassLoader;
-//import java.net.*;
 import java.util.*;
 
+import processing.app.Base;
 import processing.app.Messages;
-//import processing.app.Base;
 import processing.app.tools.Tool;
-import processing.app.ui.Editor;
 
 
 public class ToolContribution extends LocalContribution implements Tool, Comparable<ToolContribution> {
@@ -116,8 +115,8 @@ public class ToolContribution extends LocalContribution implements Tool, Compara
   }
 
 
-  public void init(Editor editor) {
-    tool.init(editor);
+  public void init(Base base) {
+    tool.init(base);
   }
 
 

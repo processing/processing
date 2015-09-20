@@ -35,6 +35,7 @@ import java.util.zip.*;
 
 
 public class Archiver implements Tool {
+  Base base;
   Editor editor;
 
   // someday these will be settable
@@ -50,8 +51,8 @@ public class Archiver implements Tool {
   }
 
 
-  public void init(Editor editor) {
-    this.editor = editor;
+  public void init(Base base) {
+    this.base = base;
 
     numberFormat = NumberFormat.getInstance();
     numberFormat.setGroupingUsed(false); // no commas
@@ -62,6 +63,7 @@ public class Archiver implements Tool {
 
 
   public void run() {
+    editor = base.getActiveEditor();
     Sketch sketch = editor.getSketch();
 
     if (sketch.isModified()) {
@@ -134,7 +136,7 @@ public class Archiver implements Tool {
   }
 
 
-  public void buildZip(File dir, String sofar,
+  private void buildZip(File dir, String sofar,
                        ZipOutputStream zos) throws IOException {
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {

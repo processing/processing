@@ -19,6 +19,7 @@ X   available/installed/incompatible icons
 o change Tool API because it's not one Editor per Tool anymore?
 X   or just change the documentation?
 X   updated the FAQ and tool template
+X change the Tool API after all, since none of the tools have been updated
 X items still show up in "Recent" if they no longer exist (on startup)
 X   checked code and this seems to be fine / can't reproduce
 

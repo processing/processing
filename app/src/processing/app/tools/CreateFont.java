@@ -82,8 +82,8 @@ public class CreateFont extends JFrame implements Tool {
   }
 
 
-  public void init(Editor editor) {
-    base = editor.getBase();
+  public void init(Base base) {
+    this.base = base;
 
     Container paine = getContentPane();
     paine.setLayout(new BorderLayout()); //10, 10));
@@ -114,6 +114,7 @@ public class CreateFont extends JFrame implements Tool {
     Font[] fonts = ge.getAllFonts();
     //System.out.println("font startup took " + (System.currentTimeMillis() - t) + " ms");
 
+    /*
     if (false) {
       ArrayList<Font> fontList = new ArrayList<Font>();
       File folderList = new File("/Users/fry/coconut/sys/fonts/web");
@@ -144,8 +145,9 @@ public class CreateFont extends JFrame implements Tool {
 //      fontList.toArray(fonts);
       fonts = fontList.toArray(new Font[fontList.size()]);
     }
+    */
 
-    String flist[] = new String[fonts.length];
+    String[] fontList = new String[fonts.length];
     table = new HashMap<String,Font>();
 
     int index = 0;
@@ -154,7 +156,7 @@ public class CreateFont extends JFrame implements Tool {
       //if (psname == null) System.err.println("ps name is null");
 
       try {
-        flist[index++] = fonts[i].getPSName();
+        fontList[index++] = fonts[i].getPSName();
         table.put(fonts[i].getPSName(), fonts[i]);
         // Checking into http://processing.org/bugs/bugzilla/407.html
         // and https://github.com/processing/processing/issues/1727
@@ -169,7 +171,7 @@ public class CreateFont extends JFrame implements Tool {
     }
 
     list = new String[index];
-    System.arraycopy(flist, 0, list, 0, index);
+    System.arraycopy(fontList, 0, list, 0, index);
 
     fontSelector = new JList<String>(list);
     fontSelector.addListSelectionListener(new ListSelectionListener() {

@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 
 import javax.swing.JOptionPane;
 
+import processing.app.Base;
 import processing.app.Language;
 import processing.app.Messages;
 import processing.app.Platform;
@@ -37,7 +38,7 @@ import processing.data.StringList;
 
 
 public class InstallCommander implements Tool {
-  Editor editor;
+  Base base;
 
 
   public String getMenuTitle() {
@@ -45,13 +46,15 @@ public class InstallCommander implements Tool {
   }
 
 
-  public void init(Editor editor) {
-    this.editor = editor;
+  public void init(Base base) {
+    this.base = base;
   }
 
 
   public void run() {
     try {
+      Editor editor = base.getActiveEditor();
+
       final String primary =
         "Install processing-java for all users?";
       final String secondary =

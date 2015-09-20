@@ -557,7 +557,7 @@ public class Base {
     if (coreTools == null) {
       coreTools = ToolContribution.loadAll(Base.getToolsFolder());
       for (Tool tool : coreTools) {
-        tool.init(activeEditor);
+        tool.init(this);
       }
     }
 
@@ -565,7 +565,7 @@ public class Base {
     contribTools = ToolContribution.loadAll(Base.getSketchbookToolsFolder());
     for (Tool tool : contribTools) {
       try {
-        tool.init(activeEditor);
+        tool.init(this);
 
         // With the exceptions, we can't call statusError because the window
         // isn't completely set up yet. Also not gonna pop up a warning because
@@ -609,7 +609,7 @@ public class Base {
       Class<?> toolClass = Class.forName(className);
       final Tool tool = (Tool) toolClass.newInstance();
 
-      tool.init(activeEditor);
+      tool.init(this);
       internalTools.add(tool);
 
     } catch (Exception e) {

@@ -24,8 +24,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileSystemView;
 
+import processing.app.Base;
 import processing.app.Language;
-import processing.app.ui.Editor;
+
 import ch.randelshofer.gui.datatransfer.FileTextFieldTransferHandler;
 import ch.randelshofer.media.mp3.MP3AudioInputStream;
 import ch.randelshofer.media.quicktime.QuickTimeWriter;
@@ -74,8 +75,8 @@ public class MovieMaker extends JFrame implements Tool {
   }
 
 
-  public void init(Editor editor) {
-    initComponents(editor == null);
+  public void init(Base base) {
+    initComponents(base.getActiveEditor() == null);
 
     ((JComponent) getContentPane()).setBorder(new EmptyBorder(12, 18, 18, 18));
     imageFolderField.setTransferHandler(new FileTextFieldTransferHandler(JFileChooser.DIRECTORIES_ONLY));
