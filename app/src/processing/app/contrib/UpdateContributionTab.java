@@ -95,30 +95,31 @@ public class UpdateContributionTab extends ContributionTab {
 
     public UpdateContribListingPanel(ContributionTab contributionTab,
                                      ContributionFilter filter) {
-      super.contributionTab = contributionTab;
-      super.filter = filter;
+      this.contributionTab = contributionTab;
+      this.filter = filter;
+
       setOpaque(true);
       setBackground(Color.WHITE);
 
-//      statusPlaceholder = new JPanel();
-//      statusPlaceholder.setVisible(false);
-//      status = new StatusPanel(null);
+      model = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+          return false;
+        }
 
-      String[] colName = { "", "Name", "Author", "Installed", "Update To" };
-      model = new MyTableModel(){
         @Override
         public Class<?> getColumnClass(int columnIndex) {
-          if (columnIndex == 0) {
-            return Icon.class;
-          }
-          return String.class;
+          return (columnIndex == 0) ? Icon.class : String.class;
         }
       };
-      model.setColumnIdentifiers(colName);
-      table = new JTable(model){
+
+      model.setColumnIdentifiers(new String[] {
+        "", "Name", "Author", "Installed", "Update To"
+      });
+
+      table = new JTable(model) {
         @Override
-        public Component prepareRenderer(
-                TableCellRenderer renderer, int row, int column) {
+        public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
           Component c = super.prepareRenderer(renderer, row, column);
           String title = (String) getValueAt(row, 1);
           if (title.equals("<html><i>Library</i></html>") || title.equals("<html><i>Tools</i></html>")
@@ -128,24 +129,21 @@ public class UpdateContributionTab extends ContributionTab {
           }
           return c;
         }
+
         @Override
         public void changeSelection(int rowIndex, int columnIndex,
                                     boolean toggle, boolean extend) {
           String title = (String) getValueAt(rowIndex, 1);
-          if(title.equals("<html><i>Library</i></html>") || title.equals("<html><i>Tools</i></html>")
-                          || title.equals("<html><i>Modes</i></html>") || title.equals("<html><i>Examples</i></html>")){
+          if (title.equals("<html><i>Library</i></html>") ||
+              title.equals("<html><i>Tools</i></html>") ||
+              title.equals("<html><i>Modes</i></html>") ||
+              title.equals("<html><i>Examples</i></html>")){
             return;
           }
           super.changeSelection(rowIndex, columnIndex, toggle, extend);
         }
-//        @Override
-//        public boolean isRowSelected(int row) {
-//          if (row == 0) {
-//            return false;
-//          }
-//          return super.isRowSelected(row);
-//        }
       };
+
       scrollPane = new JScrollPane(table);
       table.setFillsViewportHeight(true);
       table.setSelectionBackground(new Color(0xe0fffd));
@@ -160,7 +158,19 @@ public class UpdateContributionTab extends ContributionTab {
       table.setRowSelectionAllowed(true);
       table.setAutoCreateColumnsFromModel(true);
       table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      table.setDefaultRenderer(String.class, new StatusRendere());
+
+      table.setDefaultRenderer(String.class, new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table,
+                                                       Object value,
+                                                       boolean isSelected,
+                                                       boolean hasFocus,
+                                                       int row, int column) {
+          return super.getTableCellRendererComponent(table, value, isSelected,
+                                                     false, row, column);
+        }
+      });
+
       table.getTableHeader().setDefaultRenderer(new ContribHeaderRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table,
@@ -168,15 +178,15 @@ public class UpdateContributionTab extends ContributionTab {
                                                        boolean isSelected,
                                                        boolean hasFocus, int row,
                                                        int column) {
-          super.getTableCellRendererComponent(table, value, isSelected, hasFocus,
-                                              row, column);
+          // TODO this doesn't do anything with the returned value? [fry]
+          super.getTableCellRendererComponent(table, value, isSelected,
+                                              hasFocus, row, column);
           JTableHeader tableHeader = table.getTableHeader();
           if (tableHeader != null) {
             setForeground(tableHeader.getForeground());
           }
           setIcon(getIcon(table, column));
           setBackground(new Color(0xebebeb));
-//          setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, Color.BLACK));
           return this;
         }
       });
@@ -224,33 +234,14 @@ public class UpdateContributionTab extends ContributionTab {
 
     }
 
-    class StatusRendere extends DefaultTableCellRenderer {
-      @Override
-      public Component getTableCellRendererComponent(JTable table,
-                                                     Object value,
-                                                     boolean isSelected,
-                                                     boolean hasFocus, int row,
-                                                     int column) {
-        return super.getTableCellRendererComponent(table, value, isSelected, false,
-                                                   row, column);
-      }
-    }
-  //
-//    @Override
-//    public void contributionAdded(Contribution contribution) {
-//      if(filter.matches(contribution)){
-//      super.contributionAdded(contribution);
-//      }
-//    }
-  //
     @Override
     void updatePanelOrdering(Set<Contribution> contributionsSet) {
-      if(getNoOfRows() == 0){
-        contributionTab.contributionManagerDialog.numberLabel.setVisible(false);
-      }else{
-      contributionTab.contributionManagerDialog.numberLabel.setText(Integer
-        .toString(panelByContribution.size()));
-      contributionTab.contributionManagerDialog.numberLabel.setVisible(true);
+      JLabel label = contributionTab.contributionManagerDialog.numberLabel;
+      if (getNoOfRows() == 0) {
+        label.setVisible(false);
+      } else {
+        label.setVisible(true);
+        label.setText(Integer.toString(panelByContribution.size()));
       }
       model.getDataVector().removeAllElements();
       model.fireTableDataChanged();
@@ -261,16 +252,19 @@ public class UpdateContributionTab extends ContributionTab {
       String fontFace = "<font face=\"" + boldFont.getName() + "\">";
 
       for (Contribution entry : contributionsSet) {
-        if(entry.getType() != temp){
+        if (entry.getType() != temp) {
           temp = entry.getType();
-          model.addRow(new Object[] { null, "<html><i>" + temp.getTitle() + "</i></html>", null, null, null });
+          model.addRow(new Object[] {
+            null,
+            "<html><i>" + temp.getTitle() + "</i></html>",
+            null, null, null
+          });
         }
         //TODO Make this into a function
         StringBuilder name = new StringBuilder("");
         String authorList = entry.getAuthorList();
         if (authorList != null) {
           for (int i = 0; i < authorList.length(); i++) {
-
             if (authorList.charAt(i) == '[' || authorList.charAt(i) == ']') {
               continue;
             }
@@ -286,37 +280,44 @@ public class UpdateContributionTab extends ContributionTab {
         }
         Icon icon = null;
         if (entry.isInstalled()) {
-          icon = Toolkit.getLibIcon("manager/up-to-date-" + ContributionManagerDialog.iconVer + "x.png");
+          icon = upToDateIcon;
           if (contribListing.hasUpdates(entry)) {
-            icon = Toolkit.getLibIcon("manager/update-available-" + ContributionManagerDialog.iconVer + "x.png");
+            icon = updateAvailableIcon;
           }
           if (!entry.isCompatible(Base.getRevision())) {
-            icon = Toolkit.getLibIcon("manager/incompatible-" + ContributionManagerDialog.iconVer + "x.png");
+            icon = incompatibleIcon;
           }
         }
         model.addRow(new Object[] {
-            icon, "<html>" + fontFace + entry.getName() + "</font></html>", name, entry.getPrettyVersion(),
-            contributionTab.contribListing.getLatestVersion(entry) });
+          icon,
+          "<html>" + fontFace + entry.getName() + "</font></html>",
+          name,
+          entry.getPrettyVersion(),
+          contributionTab.contribListing.getLatestVersion(entry)
+        });
       }
-     ((UpdateStatusPanel)statusPanel).update();
+      ((UpdateStatusPanel)statusPanel).update();
     }
-    private class MyTableModel extends DefaultTableModel{
-      MyTableModel() {
-        super(0,0);
-      }
+
+
+    /*
+    private class MyTableModel extends DefaultTableModel {
+
       @Override
       public boolean isCellEditable(int row, int column) {
         return false;
       }
+
       @Override
       public Class<?> getColumnClass(int columnIndex) {
-        if(columnIndex == 0){
-          return Icon.class;
-        }
-        return super.getColumnClass(columnIndex);
+        return (columnIndex == 0) ?
+          Icon.class : super.getColumnClass(columnIndex);
       }
     }
+    */
   }
+
+
   public class UpdateStatusPanel extends StatusPanel {
     public UpdateStatusPanel(int width, final ContributionTab contributionTab) {
       super();

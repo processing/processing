@@ -86,8 +86,8 @@ class StatusPanel extends JPanel {
         }
       }
     });
-    installButton = new JButton("Install",
-                                Toolkit.getLibIcon("manager/install-" + ContributionManagerDialog.iconVer + "x.png"));
+    installButton =
+      new JButton("Install", Toolkit.getLibIconX("manager/install"));
     installButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     installButton.setHorizontalAlignment(SwingConstants.LEFT);
 //    installButton.setContentAreaFilled(false);
@@ -109,44 +109,35 @@ class StatusPanel extends JPanel {
     updateLabel = new JLabel(" ");
     updateLabel.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     updateLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    updateButton = new JButton("Update",
-                               Toolkit.getLibIcon("manager/update-" + ContributionManagerDialog.iconVer + "x.png"));
+    updateButton =
+      new JButton("Update", Toolkit.getLibIconX("manager/update"));
     updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     updateButton.setHorizontalAlignment(SwingConstants.LEFT);
-//    updateButton.setAlignmentX(SwingConstants.LEFT);
-//    updateButton.setContentAreaFilled(false);
-//    updateButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     updateButton.addActionListener(new ActionListener() {
-
-      @Override
       public void actionPerformed(ActionEvent e) {
         updateButton.setEnabled(false);
-        ContributionPanel currentPanel = contributionTab.contributionListPanel
-          .getSelectedPanel();
+        ContributionPanel currentPanel =
+          contributionTab.contributionListPanel.getSelectedPanel();
         currentPanel.update();
         StatusPanel.this.update(currentPanel);
       }
     });
 
-    removeButton = new JButton("Remove",
-                               Toolkit.getLibIcon("manager/remove-" + ContributionManagerDialog.iconVer + "x.png"));
+    removeButton =
+      new JButton("Remove", Toolkit.getLibIconX("manager/remove"));
     removeButton.setFont(Toolkit.getSansFont(14, Font.BOLD));
     removeButton.setHorizontalAlignment(SwingConstants.LEFT);
-//    removeButton.setContentAreaFilled(false);
-//    removeButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
     removeButton.addActionListener(new ActionListener() {
-
-      @Override
       public void actionPerformed(ActionEvent e) {
         removeButton.setEnabled(false);
-        ContributionPanel currentPanel = contributionTab.contributionListPanel
-          .getSelectedPanel();
+        ContributionPanel currentPanel =
+          contributionTab.contributionListPanel.getSelectedPanel();
         currentPanel.remove();
         StatusPanel.this.update(currentPanel);
       }
     });
 
-    int labelWidth = width != 0 ? width * 3 / 4 : GroupLayout.PREFERRED_SIZE;
+    int labelWidth = (width != 0) ? (3 * width / 4) : GroupLayout.PREFERRED_SIZE;
     layout = new GroupLayout(this);
     this.setLayout(layout);
 

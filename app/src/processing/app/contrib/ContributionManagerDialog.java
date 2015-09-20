@@ -73,15 +73,11 @@ public class ContributionManagerDialog {
   private JLabel updateTabLabel;
 
   static Font font;
-  // disabling this because the icon sizing is not implemented correctly
-  //static int iconVer = Toolkit.highResDisplay() ? 2 : 1;
-  static final int iconVer = 1;
 
 
   public ContributionManagerDialog() {
     font = Toolkit.getSansFont(14, Font.PLAIN);
-//    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(myFont);
-    numberLabel = new JLabel(Toolkit.getLibIcon("manager/notification-" + iconVer + "x.png"), SwingConstants.CENTER);
+    numberLabel = new JLabel(Toolkit.getLibIconX("manager/notification"), SwingConstants.CENTER);
     librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
     modesContributionTab = new ContributionTab(ContributionType.MODE, this);
     toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
