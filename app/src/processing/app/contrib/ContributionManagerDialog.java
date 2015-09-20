@@ -51,9 +51,10 @@ public class ContributionManagerDialog {
   static final int FILTER_WIDTH = 180;
   static final int ICON_WIDTH = 50;
 
+  static final String title = "Manager";
+
   JFrame dialog;
   JTabbedPane tabbedPane;
-  String title;
   JButton restartButton;
 
   // the calling editor, so updates can be applied

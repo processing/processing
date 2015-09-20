@@ -44,8 +44,10 @@ public class ContributionTab {
   ContributionType contributionType;
   ContributionManagerDialog contributionManagerDialog;
 
+  // not actually used anywhere
+  //String title;
+
   JPanel panel;
-  String title;
   ContributionFilter filter;
   JComboBox<String> categoryChooser;
   JScrollPane scrollPane;
@@ -69,10 +71,15 @@ public class ContributionTab {
   JProgressBar progressBar;
 
 
-  public ContributionTab(ContributionType type, ContributionManagerDialog contributionManagerDialog) {
+  public ContributionTab() { }
+
+
+  public ContributionTab(ContributionType type,
+                         ContributionManagerDialog contributionManagerDialog) {
     this.contributionType = type;
     this.contributionManagerDialog = contributionManagerDialog;
 
+    /*
     if (type == ContributionType.MODE) {
       title = Language.text("contrib.manager_title.mode");
     } else if (type == ContributionType.TOOL) {
@@ -82,6 +89,7 @@ public class ContributionTab {
     } else if (type == ContributionType.EXAMPLES) {
       title = Language.text("contrib.manager_title.examples");
     }
+    */
 
     filter = type.createFilter();
     contribListing = ContributionListing.getInstance();
@@ -89,9 +97,6 @@ public class ContributionTab {
       contributionListPanel = new ContributionListPanel(this, filter);
     contribListing.addContributionListener(contributionListPanel);
   }
-
-
-  public ContributionTab() { }
 
 
   public boolean hasUpdates(Base base) {
