@@ -55,7 +55,7 @@ class StatusPanel extends JPanel {
 
   JTextPane label;
   JButton installButton;
-  JPanel progressBarPanel;
+  JPanel progressPanel;
   JLabel updateLabel;
   JButton updateButton;
   JButton removeButton;
@@ -118,9 +118,9 @@ class StatusPanel extends JPanel {
         StatusPanel.this.update(currentPanel);
       }
     });
-    progressBarPanel = new JPanel();
-    progressBarPanel.setLayout(new BorderLayout());
-    progressBarPanel.setOpaque(false);
+    progressPanel = new JPanel();
+    progressPanel.setLayout(new BorderLayout());
+    progressPanel.setOpaque(false);
 
     updateLabel = new JLabel(" ");
     updateLabel.setFont(buttonFont);
@@ -176,11 +176,12 @@ class StatusPanel extends JPanel {
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(installButton,
                                 BUTTON_WIDTH, BUTTON_WIDTH, BUTTON_WIDTH)
-                  .addComponent(progressBarPanel)
+                  .addComponent(progressPanel)
                   .addComponent(updateLabel,
                                 BUTTON_WIDTH, BUTTON_WIDTH, BUTTON_WIDTH)
                   .addComponent(updateButton)
-                  .addComponent(removeButton)));
+                  .addComponent(removeButton))
+      .addGap(16));  // make buttons line up relative to the scrollbar
 
     layout.setVerticalGroup(layout
       .createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -189,14 +190,14 @@ class StatusPanel extends JPanel {
       .addGroup(layout.createSequentialGroup()
                   .addComponent(installButton)
                   .addGroup(layout.createParallelGroup()
-                              .addComponent(progressBarPanel)
+                              .addComponent(progressPanel)
                               .addComponent(updateLabel))
                   .addComponent(updateButton).addComponent(removeButton)));
 
-    layout.linkSize(SwingConstants.HORIZONTAL, installButton, progressBarPanel,
-                    updateButton, removeButton);
+    layout.linkSize(SwingConstants.HORIZONTAL,
+                    installButton, progressPanel, updateButton, removeButton);
 
-    progressBarPanel.setVisible(false);
+    progressPanel.setVisible(false);
     updateLabel.setVisible(false);
 
     installButton.setEnabled(false);
@@ -204,7 +205,8 @@ class StatusPanel extends JPanel {
     removeButton.setEnabled(false);
     updateLabel.setVisible(true);
 
-    layout.setHonorsVisibility(updateLabel, false); // Makes the label take up space even though not visible
+    // Makes the label take up space even though not visible
+    layout.setHonorsVisibility(updateLabel, false);
 
     validate();
   }
@@ -235,7 +237,7 @@ class StatusPanel extends JPanel {
 
 
   public void update(ContributionPanel panel) {
-    progressBarPanel.removeAll();
+    progressPanel.removeAll();
 
     iconLabel.setIcon(panel.getContrib().isSpecial() ? foundationIcon : null);
     label.setText(panel.description);
@@ -279,13 +281,13 @@ class StatusPanel extends JPanel {
 
     removeButton.setEnabled(panel.getContrib().isInstalled()
                             && !panel.removeInProgress);
-    progressBarPanel.add(panel.installProgressBar);
-    progressBarPanel.setVisible(false);
+    progressPanel.add(panel.installProgressBar);
+    progressPanel.setVisible(false);
     updateLabel.setVisible(true);
     if (panel.updateInProgress || panel.installInProgress || panel.removeInProgress) {
-      progressBarPanel.setVisible(true);
+      progressPanel.setVisible(true);
       updateLabel.setVisible(false);
-      progressBarPanel.repaint();
+      progressPanel.repaint();
     }
   }
 }

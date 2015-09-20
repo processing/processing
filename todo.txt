@@ -43,6 +43,9 @@ X   https://github.com/processing/processing/issues/3688
 X use real version of bold font, rather than the fake version
 X remove the "v" from the version numbers in the updates tab
 X fix bold version used in the description below, when an item is selected
+X manager needs a frame title
+X remove tooltip that repeats the contents of the tab labels
+X add extra space to the right of the buttons to line up w/ the scrollbar
 
 watcher
 X prevent re-prompting users when they say "no" to "sketch modified" message
@@ -127,7 +130,7 @@ _   also change the revision in the "about processing" dialog
 _   https://github.com/processing/processing/issues/3665
 
 
-gui/3 final
+gui / 3.0 final
 _ show hover text when the mouse is over the 'debug' button
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
@@ -135,7 +138,7 @@ _ finish the gui
 _   https://github.com/processing/processing/issues/3072
 
 
-gui
+gui / post 3.0
 _ different design of squiggly line?
 _ build custom scroll bar since the OS versions are so ugly?
 _ error/warning location is awkward when no scroll bar is in use
@@ -159,23 +162,24 @@ _   https://github.com/processing/processing/issues/136
 
 
 manager
-_ Contributions Manager UI design
-_   https://github.com/processing/processing/issues/3482
-_ ArrayIndexOutOfBoundsException freak out when clicking the header line
-_   think this was on name, with libraries, but not sure
-_ needs a frame title
 _ CM selected tabs are too tall 
 _   https://github.com/processing/processing/issues/3598
 _ updates tab has ugly horizontal line at top
 _ status/name/author table header is alternating color
 _   area above scroll bar looks like more scroll bar
 _ remove focus blue from the scrollable list
-_ add extra space to the right of the buttons to line up w/ the scrollbar
 _ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
 _   looks like ContributionListing.getScrollableUnitIncrement() returns early
 _ total number of updates available is not correct
+_ Contributions Manager UI design
+_   https://github.com/processing/processing/issues/3482
+
+
+manager / post 3.0
 _ Examples window closes and re-opens during library install/remove
 _   https://github.com/processing/processing/issues/3304
+_ ArrayIndexOutOfBoundsException freak out when clicking the header line
+_   think this was on name, with libraries, but not sure
 
 
 gui/low
