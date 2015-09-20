@@ -191,7 +191,6 @@ public class UpdateContributionTab extends ContributionTab {
         }
       });
 
-
       GroupLayout layout = new GroupLayout(this);
       layout.setHorizontalGroup(layout.createParallelGroup().addComponent(scrollPane));
       layout.setVerticalGroup(layout.createSequentialGroup().addComponent(scrollPane));
@@ -231,7 +230,6 @@ public class UpdateContributionTab extends ContributionTab {
           return val1 - val2;
         }
       });
-
     }
 
     @Override
@@ -298,34 +296,15 @@ public class UpdateContributionTab extends ContributionTab {
       }
       ((UpdateStatusPanel)statusPanel).update();
     }
-
-
-    /*
-    private class MyTableModel extends DefaultTableModel {
-
-      @Override
-      public boolean isCellEditable(int row, int column) {
-        return false;
-      }
-
-      @Override
-      public Class<?> getColumnClass(int columnIndex) {
-        return (columnIndex == 0) ?
-          Icon.class : super.getColumnClass(columnIndex);
-      }
-    }
-    */
   }
 
 
   public class UpdateStatusPanel extends StatusPanel {
     public UpdateStatusPanel(int width, final ContributionTab contributionTab) {
       super();
-      updateButton = new JButton("Update All", Toolkit.getLibIcon("manager/update.png"));
+      updateButton = new JButton("Update All", Toolkit.getLibIconX("manager/update"));
       updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
       updateButton.setHorizontalAlignment(SwingConstants.LEFT);
-//      updateButton.setContentAreaFilled(false);
-//      updateButton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1),BorderFactory.createEmptyBorder(3, 0, 3, 0)));
       updateButton.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -335,7 +314,6 @@ public class UpdateContributionTab extends ContributionTab {
         }
       });
       setBackground(new Color(0xebebeb));
-//      this.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
       layout = new GroupLayout(this);
       this.setLayout(layout);
 
