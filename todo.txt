@@ -24,7 +24,7 @@ X   https://github.com/processing/processing/wiki/Tool-Basics
 X items still show up in "Recent" if they no longer exist (on startup)
 X   checked code and this seems to be fine / can't reproduce
 X show hover text when the mouse is over the 'debug' button
-_ update EditorButton rollover label when pressing shift or alt
+X update EditorButton rollover label when pressing shift or alt
 
 jna problems
 X UnsatisfiedLinkError on startup "Access is denied" on Windows 10
