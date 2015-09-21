@@ -46,6 +46,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import processing.app.Base;
 import processing.app.Messages;
+import processing.mode.java.JavaEditor;
 
 
 /**
@@ -541,21 +542,20 @@ public class ASTNodeWrapper {
   /**
    * Highlight the ASTNode in the editor, if it's of type
    * SimpleName
-   * @param astGenerator
+   * @param editor
    * @return - true if highlighting was successful
    */
-  public boolean highlightNode(ASTGenerator astGenerator){
-    if (!(Node instanceof SimpleName)) {
+  public boolean highlightNode(JavaEditor editor){
+    if (!(node instanceof SimpleName)) {
       return false;
     }
     SimpleName nodeName = (SimpleName) node;
     try {
       //TODO: Redundant code. See ASTGenerator.getJavaSourceCodeline()
       int javaLineNumber = getLineNumber(nodeName);
-      int pdeOffs[] = astGenerator.errorCheckerService
-          .calculateTabIndexAndLineNumber(javaLineNumber);
+      int pdeOffs[] = editor.getErrorChecker().calculateTabIndexAndLineNumber(javaLineNumber);
       PlainDocument javaSource = new PlainDocument();
-      javaSource.insertString(0, astGenerator.errorCheckerService.sourceCode, null);
+      javaSource.insertString(0, editor.getErrorChecker().sourceCode, null);
       Element lineElement = javaSource.getDefaultRootElement()
           .getElement(javaLineNumber-1);
       if(lineElement == null) {
@@ -566,8 +566,8 @@ public class ASTNodeWrapper {
       String javaLine = javaSource.getText(lineElement.getStartOffset(),
                                            lineElement.getEndOffset()
                                                - lineElement.getStartOffset());
-      astGenerator.editor.getSketch().setCurrentCode(pdeOffs[0]);
-      String pdeLine = astGenerator.editor.getLineText(pdeOffs[1]);
+      editor.getSketch().setCurrentCode(pdeOffs[0]);
+      String pdeLine = editor.getLineText(pdeOffs[1]);
       String lookingFor = nodeName.toString();
       Messages.log(lookingFor + ", " + nodeName.getStartPosition());
       Messages.log(javaLineNumber +" JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
@@ -587,9 +587,9 @@ public class ASTNodeWrapper {
         		"Please file a bug report.");
         return false;
       }
-      int lso = astGenerator.editor.getTextArea().getLineStartOffset(pdeOffs[1]);
+      int lso = editor.getTextArea().getLineStartOffset(pdeOffs[1]);
       highlightStart += lso;
-      astGenerator.editor.setSelection(highlightStart, highlightStart
+      editor.setSelection(highlightStart, highlightStart
           + nodeName.getLength());
       /*
       // First find the name in the java line, and marks its index

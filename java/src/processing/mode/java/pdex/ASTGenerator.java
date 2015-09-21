@@ -1752,7 +1752,7 @@ public class ASTGenerator {
       //errorCheckerService.highlightNode(simpName2);
       ASTNodeWrapper declWrap = new ASTNodeWrapper(simpName2, nodeLabel);
       //errorCheckerService.highlightNode(declWrap);
-      if (!declWrap.highlightNode(this)) {
+      if (!declWrap.highlightNode(editor)) {
         Messages.loge("Highlighting failed.");
       }
     }
@@ -1885,7 +1885,7 @@ public class ASTGenerator {
                 .getLastSelectedPathComponent();
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-              awrap.highlightNode(thisASTGenerator);
+              awrap.highlightNode(editor);
               // errorCheckerService.highlightNode(awrap);
 
               //--
@@ -1984,7 +1984,7 @@ public class ASTGenerator {
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
               //errorCheckerService.highlightNode(awrap);
-              awrap.highlightNode(thisASTGenerator);
+              awrap.highlightNode(editor);
             }
           }
         };
