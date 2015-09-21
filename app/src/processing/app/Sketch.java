@@ -24,21 +24,25 @@
 package processing.app;
 
 import processing.app.ui.Editor;
-import processing.app.ui.ProgressFrame;
 import processing.app.ui.Recent;
 import processing.app.ui.Toolkit;
 import processing.core.*;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.EventQueue;
 import java.awt.FileDialog;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 
 /**
@@ -792,7 +796,7 @@ public class Sketch {
     String newParentDir = null;
     String newName = null;
 
-    final String oldName2 = folder.getName();
+    String oldName = folder.getName();
     // TODO rewrite this to use shared version from PApplet
     final String PROMPT = Language.text("save");
     if (Preferences.getBoolean("chooser.files.native")) {
@@ -805,8 +809,8 @@ public class Sketch {
         // default to the parent folder of where this was
         fd.setDirectory(folder.getParent());
       }
-      String oldName = folder.getName();
-      fd.setFile(oldName);
+      String oldFolderName = folder.getName();
+      fd.setFile(oldFolderName);
       fd.setVisible(true);
       newParentDir = fd.getDirectory();
       newName = fd.getFile();
@@ -868,7 +872,7 @@ public class Sketch {
       // just use "save" here instead, because the user will have received a
       // message (from the operating system) about "do you want to replace?"
       return save();
-    }
+      }
 
     // check to see if the user is trying to save this sketch inside itself
     try {
@@ -927,21 +931,21 @@ public class Sketch {
       }
     });
 
+    // Kick off a background thread to copy everything *but* the .pde files.
+    // Due to the poor way (dating back to the late 90s with DBN) that our
+    // save() and saveAs() methods have been implemented to return booleans,
+    // there isn't a good way to return a value to the calling thread without
+    // a good bit of refactoring (that should be done at some point).
+    // As a result, this method will return 'true' before the full "Save As"
+    // has completed, which will cause problems in weird cases.
+    // For instance, saving an untitled sketch that has an enormous data
+    // folder while quitting. The save thread to move those data folder files
+    // won't have finished before this returns true, and the PDE may quit
+    // before the SwingWorker completes its job.
+    // https://github.com/processing/processing/issues/3843
+    startSaveAsThread(oldName, newName, newFolder, copyItems);
 
-    final File newFolder2 = newFolder;
-    final File[] copyItems2 = copyItems;
-    final String newName2 = newName;
-
-    // Create a new event dispatch thread- to display ProgressBar
-    // while Saving As
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        new ProgressFrame(copyItems2, newFolder2, oldName2, newName2, editor);
-      }
-    });
-
-
-    // save the other tabs to their new location
+    // save the other tabs to their new location (main tab saved below)
     for (int i = 1; i < codeCount; i++) {
       File newFile = new File(newFolder, code[i].getFileName());
       code[i].saveAs(newFile);
@@ -970,6 +974,171 @@ public class Sketch {
     return true;
   }
 
+
+  void startSaveAsThread(final String oldName, final String newName,
+                         final File newFolder, final File[] copyItems) {
+    EventQueue.invokeLater(new Runnable() {
+      public void run() {
+        final JFrame frame = new JFrame("Saving \u201C" + newName + "\u201C...");
+        // the UI of the progress bar follows
+        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+//        frame.setBounds(200, 200, 400, 140);
+//        frame.setResizable(false);
+
+        Box box = Box.createVerticalBox();
+        box.setBorder(new EmptyBorder(16, 16, 16, 16));
+//        JPanel panel = new JPanel(null);
+//        frame.add(panel);
+//        frame.setContentPane(panel);  // uh, both?
+
+        if (Platform.isMacOS()) {
+          frame.setBackground(Color.WHITE);
+        }
+
+        JLabel label = new JLabel("Saving additional files from the sketch folder...");
+//        JLabel label = new JLabel("Saving " + oldName + " as " + newName + "...");
+//        label.setBounds(40, 20, 300, 20);
+        box.add(label);
+
+        final JProgressBar progressBar = new JProgressBar(0, 100);
+        // no luck, stuck with ugly on OS X
+        //progressBar.putClientProperty("JComponent.sizeVariant", "regular");
+        progressBar.setValue(0);
+//        progressBar.setBounds(40, 50, 300, 30);
+        progressBar.setStringPainted(true);
+        box.add(progressBar);
+
+//        panel.add(progressBar);
+//        panel.add(label);
+
+        frame.getContentPane().add(box);
+        frame.pack();
+        frame.setLocationRelativeTo(editor);
+        Toolkit.setIcon(frame);
+        frame.setVisible(true);
+
+        new SwingWorker<Void, Void>() {
+
+          @Override
+          protected Void doInBackground() throws Exception {
+            addPropertyChangeListener(new PropertyChangeListener() {
+              public void propertyChange(PropertyChangeEvent evt) {
+                if ("progress".equals(evt.getPropertyName())) {
+                  System.out.println(evt.getNewValue());
+                  progressBar.setValue((Integer) evt.getNewValue());
+                }
+              }
+            });
+
+            long totalSize = 0;
+            for (File copyable : copyItems) {
+              totalSize += Util.calcSize(copyable);
+            }
+
+            long progress = 0;
+            setProgress(0);
+            for (File copyable : copyItems) {
+              if (copyable.isDirectory()) {
+                copyDir(copyable,
+                        new File(newFolder, copyable.getName()),
+                        progress, totalSize);
+                progress += Util.calcSize(copyable);
+              } else {
+                copyFile(copyable,
+                         new File(newFolder, copyable.getName()),
+                         progress, totalSize);
+                if (Util.calcSize(copyable) < 512 * 1024) {
+                  // If the file length > 0.5MB, the copyFile() function has
+                  // been redesigned to change progress every 0.5MB so that
+                  // the progress bar doesn't stagnate during that time
+                  progress += Util.calcSize(copyable);
+                  setProgress((int) (progress * 100L / totalSize));
+                }
+              }
+            }
+            return null;
+          }
+
+
+          /**
+           * Overloaded copyFile that is called whenever a Save As is being done,
+           * so that the ProgressBar is updated for very large files as well.
+           */
+          void copyFile(File sourceFile, File targetFile,
+                        long progress, long totalSize) throws IOException {
+            BufferedInputStream from =
+              new BufferedInputStream(new FileInputStream(sourceFile));
+            BufferedOutputStream to =
+              new BufferedOutputStream(new FileOutputStream(targetFile));
+            byte[] buffer = new byte[16 * 1024];
+            int bytesRead;
+            int progRead = 0;
+            while ((bytesRead = from.read(buffer)) != -1) {
+              to.write(buffer, 0, bytesRead);
+              progRead += bytesRead;
+              if (progRead >= 512 * 1024) {  // to update progress bar every 0.5MB
+                progress += progRead;
+                //progressBar.setValue((int) Math.min(Math.ceil(progress * 100.0 / totalSize), 100));
+                setProgress((int) (100L * progress / totalSize));
+                progRead = 0;
+              }
+            }
+            // Final update to progress bar
+            setProgress((int) (100L * progress / totalSize));
+
+            from.close();
+            from = null;
+            to.flush();
+            to.close();
+            to = null;
+
+            targetFile.setLastModified(sourceFile.lastModified());
+            targetFile.setExecutable(sourceFile.canExecute());
+          }
+
+
+          long copyDir(File sourceDir, File targetDir,
+                       long progress, long totalSize) throws IOException {
+            // Overloaded copyDir so that the Save As progress bar gets updated when the
+            //    files are in folders as well (like in the data folder)
+            if (sourceDir.equals(targetDir)) {
+              final String urDum = "source and target directories are identical";
+              throw new IllegalArgumentException(urDum);
+            }
+            targetDir.mkdirs();
+            String files[] = sourceDir.list();
+            for (String filename : files) {
+              // Ignore dot files (.DS_Store), dot folders (.svn) while copying
+              if (filename.charAt(0) == '.') {
+                continue;
+              }
+
+              File source = new File(sourceDir, filename);
+              File target = new File(targetDir, filename);
+              if (source.isDirectory()) {
+                progress = copyDir(source, target, progress, totalSize);
+                //progressBar.setValue((int) Math.min(Math.ceil(progress * 100.0 / totalSize), 100));
+                setProgress((int) (100L * progress / totalSize));
+                target.setLastModified(source.lastModified());
+              } else {
+                copyFile(source, target, progress, totalSize);
+                progress += source.length();
+                //progressBar.setValue((int) Math.min(Math.ceil(progress * 100.0 / totalSize), 100));
+                setProgress((int) (100L * progress / totalSize));
+              }
+            }
+            return progress;
+          }
+
+
+          @Override
+          public void done() {
+            frame.dispose();
+          }
+        }.execute();
+      }
+    });
+  }
 
 
   /**

@@ -2540,6 +2540,29 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  /*
+  public void handleSaveAs() {
+    statusNotice(Language.text("editor.status.saving"));
+    sketch.saveAs();
+  }
+
+
+  public void handleSaveAsSuccess() {
+    statusNotice(Language.text("editor.status.saving.done"));
+  }
+
+
+  public void handleSaveAsCanceled() {
+    statusNotice(Language.text("editor.status.saving.canceled"));
+  }
+
+
+  public void handleSaveAsError(Exception e) {
+    statusError(e);
+  }
+  */
+
+
   /**
    * Handler for File &rarr; Page Setup.
    */

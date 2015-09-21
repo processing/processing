@@ -73,10 +73,11 @@ X   https://github.com/processing/processing/issues/3806
 X   https://github.com/processing/processing/pull/3817
 X CM list should be sortable by status and author name
 X   https://github.com/processing/processing/issues/3608
+X "update all" button appears to do nothing in library manager
+X   https://github.com/processing/processing/issues/3837
+X   https://github.com/processing/processing/pull/3842
 _ All contributions listed after install button is clicked
 _   https://github.com/processing/processing/issues/3826
-_ "update all" button appears to do nothing in library manager
-_   https://github.com/processing/processing/issues/3837
 
 jakub
 X Make preprocessor scope-aware
@@ -232,7 +233,8 @@ _ pass through the source to update licenses
 _   add Processing Foundation as 2012-15
 _   update license info to state gplv2 not v3
 _   run through that online license checker
-
+_ save() and saveAs() need to be refactored
+_   https://github.com/processing/processing/issues/3843
 
 
 breakage
@@ -962,6 +964,8 @@ _   this may already work with SingleInstance stuff
 DIST / Mac OS X
 
 
+_ client properties 
+_   https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html
 _ built-in images: http://nadeausoftware.com/articles/2008/12/mac_java_tip_how_access_mac_specific_nsimage_icons
 _ replace appbundler with the Java 8 packager
 _   https://github.com/processing/processing/issues/3071

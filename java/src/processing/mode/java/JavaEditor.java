@@ -1730,39 +1730,6 @@ public class JavaEditor extends Editor {
 
   @Override
   public boolean handleSave(boolean immediately) {
-    //System.out.println("handleSave " + immediately);
-
-    //log("handleSave, viewing autosave? " + viewingAutosaveBackup);
-    /* If user wants to save a backup, the backup sketch should get
-     * copied to the main sketch directory, simply reload the main sketch.
-     */
-    if(viewingAutosaveBackup){
-          /*
-          File files[] = autosaver.getSketchBackupFolder().listFiles();
-          File src = autosaver.getSketchBackupFolder(), dst = autosaver
-              .getActualSketchFolder();
-          for (File f : files) {
-            log("Copying " + f.getAbsolutePath() + " to " + dst.getAbsolutePath());
-            try {
-              if (f.isFile()) {
-                f.delete();
-                Base.copyFile(f, new File(dst + File.separator + f.getName()));
-              } else {
-                Base.removeDir(f);
-                Base.copyDir(f, new File(dst + File.separator + f.getName()));
-              }
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-          }
-          File sk = autosaver.getActualSketchFolder();
-          Base.removeDir(autosaver.getAutoSaveDir());
-          //handleOpenInternal(sk.getAbsolutePath() + File.separator + sk.getName() + ".pde");
-          getBase().handleOpen(sk.getAbsolutePath() + File.separator + sk.getName() + ".pde");
-          //viewingAutosaveBackup = false;
-          */
-    }
-
     // note modified tabs
     final List<String> modified = new ArrayList<String>();
     for (int i = 0; i < getSketch().getCodeCount(); i++) {
@@ -1793,9 +1760,6 @@ public class JavaEditor extends Editor {
     // autosaver.reloadAutosaveDir();
     return saved;
   }
-
-
-  private boolean viewingAutosaveBackup;
 
 
   /**
