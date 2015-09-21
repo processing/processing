@@ -112,7 +112,7 @@ public class CompletionPanel {
     this.textarea = (JavaTextArea) textarea;
     this.editor = editor;
     this.insertionPosition = position;
-    if (subWord.indexOf('.') != -1) {
+    if (subWord.indexOf('.') != -1 && subWord.indexOf('.') != subWord.length()-1) {
       this.subWord = subWord.substring(subWord.lastIndexOf('.') + 1);
     } else {
       this.subWord = subWord;
@@ -129,8 +129,11 @@ public class CompletionPanel {
     scrollPane.setViewportView(completionList = createSuggestionList(position, items));
     popupMenu.add(scrollPane, BorderLayout.CENTER);
     popupMenu.setPopupSize(calcWidth(), calcHeight(items.getSize())); //TODO: Eradicate this evil
-    editor.getErrorChecker().getASTGenerator().updateJavaDoc(completionList.getSelectedValue());
-    textarea.requestFocusInWindow();
+    popupMenu.setFocusable(false);
+    ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
+    synchronized (astGenerator) {
+      astGenerator.updateJavaDoc(completionList.getSelectedValue());
+    }
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0) + location.y);
     //log("Suggestion shown: " + System.currentTimeMillis());
   }
@@ -395,13 +398,7 @@ public class CompletionPanel {
 
         if(mouseClickOnOverloadedMethods) {
           // See #2755
-          SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
-            protected Object doInBackground() throws Exception {
-              ((JavaTextArea) editor.getTextArea()).fetchPhrase(null);
-              return null;
-            }
-          };
-          worker.execute();
+          ((JavaTextArea) editor.getTextArea()).fetchPhrase();
         }
 
         return true;
@@ -506,7 +503,10 @@ public class CompletionPanel {
                                                  .getVerticalScrollBar()
                                                  .getValue()
                                                  - step);
-      editor.getErrorChecker().getASTGenerator().updateJavaDoc(completionList.getSelectedValue());
+      ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
+      synchronized (astGenerator) {
+        astGenerator.updateJavaDoc(completionList.getSelectedValue());
+      }
     }
   }
 
@@ -523,7 +523,10 @@ public class CompletionPanel {
       int index = Math.min(completionList.getSelectedIndex() + 1,
                            completionList.getModel().getSize() - 1);
       selectIndex(index);
-      editor.getErrorChecker().getASTGenerator().updateJavaDoc(completionList.getSelectedValue());
+      ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
+      synchronized (astGenerator) {
+        astGenerator.updateJavaDoc(completionList.getSelectedValue());
+      }
       int step = scrollPane.getVerticalScrollBar().getMaximum() / completionList.getModel().getSize();
       scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getValue() + step);
     }

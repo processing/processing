@@ -46,6 +46,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import processing.app.Base;
 import processing.app.Messages;
+import processing.mode.java.JavaEditor;
 
 
 /**
@@ -54,7 +55,7 @@ import processing.app.Messages;
  *
  */
 public class ASTNodeWrapper {
-  private ASTNode Node;
+  private ASTNode node;
   private String label;
   private int lineNumber;
 
@@ -72,7 +73,7 @@ public class ASTNodeWrapper {
     if (node == null){
       return;
     }
-    this.Node = node;
+    this.node = node;
     label = getNodeAsString(node);
     if (label == null)
       label = node.toString();
@@ -85,7 +86,7 @@ public class ASTNodeWrapper {
     if (node == null){
       return;
     }
-    this.Node = node;
+    this.node = node;
     if(label != null)
       this.label = label;
     else{
@@ -105,10 +106,10 @@ public class ASTNodeWrapper {
    *         node length}
    */
   public int[] getJavaCodeOffsets(ErrorCheckerService ecs) {
-    int nodeOffset = Node.getStartPosition(), nodeLength = Node
+    int nodeOffset = node.getStartPosition(), nodeLength = node
         .getLength();
     Messages.log("0.nodeOffset " + nodeOffset);
-    ASTNode thisNode = Node;
+    ASTNode thisNode = node;
     while (thisNode.getParent() != null) {
       if (getLineNumber(thisNode.getParent()) == lineNumber) {
         thisNode = thisNode.getParent();
@@ -178,12 +179,12 @@ public class ASTNodeWrapper {
 
                 flag = false;
               } else {
-                if (cnode == Node) {
+                if (cnode == node) {
                   // loop only till the current node.
                   break;
                 }
                 // We've located the first node in the line.
-                // Now normalize offsets till Node
+                // Now normalize offsets till node
                 //altStartPos += normalizeOffsets(cnode);
 
               }
@@ -356,7 +357,7 @@ public class ASTNodeWrapper {
    * @param source
    * @return int[0] - java code offsets, int[1] = pde code offsets
    */
-  public int[][] getOffsetMapping(ErrorCheckerService ecs, String source){
+  public int[][] getOffsetMapping(ErrorCheckerService ecs, String source) {
 
     /*
      * This is some tricky shiz. So detailed explanation follows:
@@ -390,7 +391,10 @@ public class ASTNodeWrapper {
     // Instead of converting pde into java, how can I simply extract the same source
     // from the java code? Think. TODO
     String sourceAlt = new String(source);
-    String sourceJava = ecs.astGenerator.getJavaSourceCodeLine(lineNumber);
+    String sourceJava;
+    synchronized (ecs.astGenerator) {
+      sourceJava = ecs.astGenerator.getJavaSourceCodeLine(lineNumber);
+    }
     TreeMap<Integer, Integer> offsetmap = new TreeMap<Integer, Integer>();
 
     if(sourceJava.trim().startsWith("public") && !source.startsWith("public")){
@@ -538,21 +542,20 @@ public class ASTNodeWrapper {
   /**
    * Highlight the ASTNode in the editor, if it's of type
    * SimpleName
-   * @param astGenerator
+   * @param editor
    * @return - true if highlighting was successful
    */
-  public boolean highlightNode(ASTGenerator astGenerator){
-    if (!(Node instanceof SimpleName)) {
+  public boolean highlightNode(JavaEditor editor){
+    if (!(node instanceof SimpleName)) {
       return false;
     }
-    SimpleName nodeName = (SimpleName) Node;
+    SimpleName nodeName = (SimpleName) node;
     try {
       //TODO: Redundant code. See ASTGenerator.getJavaSourceCodeline()
       int javaLineNumber = getLineNumber(nodeName);
-      int pdeOffs[] = astGenerator.errorCheckerService
-          .calculateTabIndexAndLineNumber(javaLineNumber);
+      int pdeOffs[] = editor.getErrorChecker().calculateTabIndexAndLineNumber(javaLineNumber);
       PlainDocument javaSource = new PlainDocument();
-      javaSource.insertString(0, astGenerator.errorCheckerService.sourceCode, null);
+      javaSource.insertString(0, editor.getErrorChecker().sourceCode, null);
       Element lineElement = javaSource.getDefaultRootElement()
           .getElement(javaLineNumber-1);
       if(lineElement == null) {
@@ -563,8 +566,8 @@ public class ASTNodeWrapper {
       String javaLine = javaSource.getText(lineElement.getStartOffset(),
                                            lineElement.getEndOffset()
                                                - lineElement.getStartOffset());
-      astGenerator.editor.getSketch().setCurrentCode(pdeOffs[0]);
-      String pdeLine = astGenerator.editor.getLineText(pdeOffs[1]);
+      editor.getSketch().setCurrentCode(pdeOffs[0]);
+      String pdeLine = editor.getLineText(pdeOffs[1]);
       String lookingFor = nodeName.toString();
       Messages.log(lookingFor + ", " + nodeName.getStartPosition());
       Messages.log(javaLineNumber +" JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
@@ -584,9 +587,9 @@ public class ASTNodeWrapper {
         		"Please file a bug report.");
         return false;
       }
-      int lso = astGenerator.editor.getTextArea().getLineStartOffset(pdeOffs[1]);
+      int lso = editor.getTextArea().getLineStartOffset(pdeOffs[1]);
       highlightStart += lso;
-      astGenerator.editor.setSelection(highlightStart, highlightStart
+      editor.setSelection(highlightStart, highlightStart
           + nodeName.getLength());
       /*
       // First find the name in the java line, and marks its index
@@ -649,18 +652,18 @@ public class ASTNodeWrapper {
    *         int[3] are on TODO
    */
   public int[] getPDECodeOffsets(ErrorCheckerService ecs) {
-    return ecs.JavaToPdeOffsets(lineNumber + 1, Node.getStartPosition());
+    return ecs.JavaToPdeOffsets(lineNumber + 1, node.getStartPosition());
   }
 
   public int getPDECodeOffsetForSN(ASTGenerator astGen){
-    if (Node instanceof SimpleName) {
+    if (node instanceof SimpleName) {
       Element lineElement = astGen.getJavaSourceCodeElement(lineNumber);
       Messages.log("Line element off " + lineElement.getStartOffset());
       OffsetMatcher ofm = new OffsetMatcher(astGen.getPDESourceCodeLine(lineNumber),
                                             astGen.getJavaSourceCodeLine(lineNumber));
       //log("");
-      int pdeOffset = ofm.getPdeOffForJavaOff(Node.getStartPosition()
-          - lineElement.getStartOffset(), Node.toString().length());
+      int pdeOffset = ofm.getPdeOffForJavaOff(node.getStartPosition()
+          - lineElement.getStartOffset(), node.toString().length());
       return pdeOffset;
     }
     return -1;
@@ -671,7 +674,7 @@ public class ASTNodeWrapper {
   }
 
   public ASTNode getNode() {
-    return Node;
+    return node;
   }
 
   public String getLabel() {
@@ -679,7 +682,7 @@ public class ASTNodeWrapper {
   }
 
   public int getNodeType() {
-    return Node.getNodeType();
+    return node.getNodeType();
   }
 
   public int getLineNumber() {

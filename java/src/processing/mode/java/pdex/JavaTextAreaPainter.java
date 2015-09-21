@@ -207,7 +207,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
         return;
 
       Messages.log(getJavaEditor().getErrorChecker().mainClassOffset + line + "|" + line + "| offset " + xLS + word + " <= \n");
-      getJavaEditor().getErrorChecker().getASTGenerator().scrollToDeclaration(line, word, xLS);
+      ASTGenerator astGenerator = getJavaEditor().getErrorChecker().getASTGenerator();
+      synchronized (astGenerator) {
+        astGenerator.scrollToDeclaration(line, word, xLS);
+      }
     }
   }
 
@@ -515,12 +518,14 @@ public class JavaTextAreaPainter extends TextAreaPainter
           return super.getToolTipText(event);
         }
         ASTGenerator ast = getJavaEditor().getErrorChecker().getASTGenerator();
-        String tooltipText = ast.getLabelForASTNode(line, word, xLS);
+        synchronized (ast) {
+          String tooltipText = ast.getLabelForASTNode(line, word, xLS);
 
-        //      log(errorCheckerService.mainClassOffset + " MCO "
-        //      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
-        if (tooltipText != null) {
-          return tooltipText;
+          //      log(errorCheckerService.mainClassOffset + " MCO "
+          //      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
+          if (tooltipText != null) {
+            return tooltipText;
+          }
         }
       }
     }

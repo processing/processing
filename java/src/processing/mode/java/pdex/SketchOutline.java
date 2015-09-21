@@ -157,7 +157,7 @@ public class SketchOutline {
                 .getLastSelectedPathComponent();
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-              awrap.highlightNode(errorCheckerService.astGenerator);
+              awrap.highlightNode(editor);
               //errorCheckerService.highlightNode(awrap);
               close();
             }
@@ -284,7 +284,7 @@ public class SketchOutline {
             .getLastSelectedPathComponent();
         if (tnode.getUserObject() instanceof ASTNodeWrapper) {
           ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-          awrap.highlightNode(errorCheckerService.astGenerator);
+          awrap.highlightNode(editor);
           // log(awrap);
           //errorCheckerService.highlightNode(awrap);
           close();

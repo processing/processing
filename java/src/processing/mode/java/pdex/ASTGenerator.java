@@ -35,7 +35,6 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -43,7 +42,6 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
@@ -157,7 +155,6 @@ public class ASTGenerator {
     //addCompletionPopupListner();
     addListeners();
     //loadJavaDoc();
-    predictionOngoing = new AtomicBoolean(false);
   }
 
 
@@ -222,7 +219,7 @@ public class ASTGenerator {
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
-      ASTParser parser = ASTParser.newParser(AST.JLS4);
+      ASTParser parser = ASTParser.newParser(AST.JLS8);
       parser.setSource(source.toCharArray());
       parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
@@ -398,7 +395,7 @@ public class ASTGenerator {
       }
       jdocMap.put(methodName, msg);
     }
-    System.out.println("JDoc loaded "+jdocMap.size());
+    System.out.println("JDoc loaded " + jdocMap.size());
   }
 
 
@@ -539,11 +536,42 @@ public class ASTGenerator {
       if(decl != null){
         // see if locally defined
         log(getNodeAsString(astNode)+" found decl -> " + getNodeAsString(decl));
+
+        {
+          if (decl.getNodeType() == ASTNode.TYPE_DECLARATION) {
+            TypeDeclaration td = (TypeDeclaration) decl;
+            return new ClassMember(td);
+          }
+        }
+
+        { // Handle "array." x "array[1]."
+          Type type = extracTypeInfo2(decl);
+          if (type != null && type.isArrayType() &&
+              astNode.getParent().getNodeType() != ASTNode.ARRAY_ACCESS) {
+            // No array access, we want members of the array itself
+            Type elementType = ((ArrayType) type).getElementType();
+
+            // Get name of the element class
+            String name = "";
+            if (elementType.isSimpleType()) {
+              Class<?> c = findClassIfExists(elementType.toString());
+              if (c != null) name = c.getName();
+            } else if (elementType.isPrimitiveType()) {
+              name = ((PrimitiveType) elementType).getPrimitiveTypeCode().toString();
+            }
+
+            // Convert element class to array class
+            Class<?> arrayClass = getArrayClass(name);
+
+            return arrayClass == null ? null : new ClassMember(arrayClass);
+          }
+        }
+
         return new ClassMember(extracTypeInfo(decl));
       }
       else {
         // or in a predefined class?
-        Class<?> tehClass = findClassIfExists(((SimpleName) astNode).toString());
+        Class<?> tehClass = findClassIfExists(astNode.toString());
         if (tehClass != null) {
           return new ClassMember(tehClass);
         }
@@ -596,6 +624,30 @@ public class ASTGenerator {
       if(temp instanceof MethodDeclaration){
         // method is locally defined
         log(mi.getName() + " was found locally," + getNodeAsString(extracTypeInfo(temp)));
+
+        { // Handle "array." x "array[1]."
+          Type type = extracTypeInfo2(temp);
+          if (type != null && type.isArrayType() &&
+              astNode.getParent().getNodeType() != ASTNode.ARRAY_ACCESS) {
+            // No array access, we want members of the array itself
+            Type elementType = ((ArrayType) type).getElementType();
+
+            // Get name of the element class
+            String name = "";
+            if (elementType.isSimpleType()) {
+              Class<?> c = findClassIfExists(elementType.toString());
+              if (c != null) name = c.getName();
+            } else if (elementType.isPrimitiveType()) {
+              name = ((PrimitiveType) elementType).getPrimitiveTypeCode().toString();
+            }
+
+            // Convert element class to array class
+            Class<?> arrayClass = getArrayClass(name);
+
+            return arrayClass == null ? null : new ClassMember(arrayClass);
+          }
+        }
+
         return new ClassMember(extracTypeInfo(temp));
       }
       if (mi.getExpression() == null) {
@@ -605,38 +657,46 @@ public class ASTGenerator {
         return null;
       } else {
         if (mi.getExpression() instanceof SimpleName) {
-          stp = extracTypeInfo(findDeclaration2((SimpleName) mi.getExpression(),
-                                                nearestNode));
-          if(stp == null){
+          ASTNode decl = findDeclaration2((SimpleName) mi.getExpression(),
+                                          nearestNode);
+          if (decl != null) {
+            if (decl.getNodeType() == ASTNode.TYPE_DECLARATION) {
+              TypeDeclaration td = (TypeDeclaration) decl;
+              return new ClassMember(td);
+            }
+
+            stp = extracTypeInfo(decl);
+            if(stp == null){
             /*The type wasn't found in local code, so it might be something like
              * System.console()., or maybe belonging to super class, etc.
              */
-            Class<?> tehClass = findClassIfExists(((SimpleName)mi.getExpression()).toString());
-            if (tehClass != null) {
-              // Method Expression is a simple name and wasn't located locally, but found in a class
-              // so look for method in this class.
-              return definedIn3rdPartyClass(new ClassMember(tehClass), mi
-                  .getName().toString());
+              Class<?> tehClass = findClassIfExists(((SimpleName)mi.getExpression()).toString());
+              if (tehClass != null) {
+                // Method Expression is a simple name and wasn't located locally, but found in a class
+                // so look for method in this class.
+                return definedIn3rdPartyClass(new ClassMember(tehClass), mi
+                    .getName().toString());
+              }
+              log("MI resolve 3rd par, Can't resolve " + mi.getExpression());
+              return null;
             }
-            log("MI resolve 3rd par, Can't resolve " + mi.getExpression());
-            return null;
-          }
-          log("MI, SN Type " + getNodeAsString(stp));
-          ASTNode typeDec = findDeclaration2(stp.getName(),nearestNode);
-          if(typeDec == null){
-            log(stp.getName() + " couldn't be found locally..");
-            Class<?> tehClass = findClassIfExists(stp.getName().toString());
-            if (tehClass != null) {
-              // Method Expression is a simple name and wasn't located locally, but found in a class
-              // so look for method in this class.
-              return definedIn3rdPartyClass(new ClassMember(tehClass), mi
-                  .getName().toString());
+            log("MI, SN Type " + getNodeAsString(stp));
+            ASTNode typeDec = findDeclaration2(stp.getName(),nearestNode);
+            if(typeDec == null){
+              log(stp.getName() + " couldn't be found locally..");
+              Class<?> tehClass = findClassIfExists(stp.getName().toString());
+              if (tehClass != null) {
+                // Method Expression is a simple name and wasn't located locally, but found in a class
+                // so look for method in this class.
+                return definedIn3rdPartyClass(new ClassMember(tehClass), mi
+                    .getName().toString());
+              }
+              //return new ClassMember(findClassIfExists(stp.getName().toString()));
             }
-            //return new ClassMember(findClassIfExists(stp.getName().toString()));
+            //scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
+            return definedIn3rdPartyClass(new ClassMember(typeDec), mi
+                .getName().toString());
           }
-          //scopeParent = definedIn3rdPartyClass(stp.getName().toString(), "THIS");
-          return definedIn3rdPartyClass(new ClassMember(typeDec), mi
-                                        .getName().toString());
         } else {
           log("MI EXP.."+getNodeAsString(mi.getExpression()));
 //          return null;
@@ -711,6 +771,36 @@ public class ASTGenerator {
     return null;
   }
 
+
+  public Class<?> getArrayClass(String elementClass) {
+    String name;
+    if (elementClass.startsWith("[")) {
+      // just add a leading "["
+      name = "[" + elementClass;
+    } else if (elementClass.equals("boolean")) {
+      name = "[Z";
+    } else if (elementClass.equals("byte")) {
+      name = "[B";
+    } else if (elementClass.equals("char")) {
+      name = "[C";
+    } else if (elementClass.equals("double")) {
+      name = "[D";
+    } else if (elementClass.equals("float")) {
+      name = "[F";
+    } else if (elementClass.equals("int")) {
+      name = "[I";
+    } else if (elementClass.equals("long")) {
+      name = "[J";
+    } else if (elementClass.equals("short")) {
+      name = "[S";
+    } else {
+      // must be an object non-array class
+      name = "[L" + elementClass + ";";
+    }
+    return loadClass(name);
+  }
+
+
   /**
    * For a().abc.a123 this would return a123
    *
@@ -753,151 +843,113 @@ public class ASTGenerator {
     return null;
   }
 
-  protected void trimCandidates(String newWord) {
-    ArrayList<CompletionCandidate> newCandidate = new ArrayList<CompletionCandidate>();
+  protected static List<CompletionCandidate> trimCandidates(String newWord, List<CompletionCandidate> candidates) {
+    ArrayList<CompletionCandidate> newCandidate = new ArrayList<>();
     newWord = newWord.toLowerCase();
     for (CompletionCandidate comp : candidates) {
       if(comp.getNoHtmlLabel().toLowerCase().startsWith(newWord)){
         newCandidate.add(comp);
       }
     }
-    candidates = newCandidate;
+    return newCandidate;
   }
 
   protected List<CompletionCandidate> candidates;
-  protected String lastPredictedWord = " ";
-  protected int predictionMinLength = 2;
-
-
-  private AtomicBoolean predictionOngoing;
+  protected String lastPredictedPhrase = " ";
+  protected static final int predictionMinLength = 2;
 
   /**
    * The main function that calculates possible code completion candidates
    *
-   * @param word
+   * @param pdePhrase
    * @param line
    * @param lineStartNonWSOffset
    */
-  public void preparePredictions(final String word, final int line,
-                                 final int lineStartNonWSOffset) {
-//    EventQueue.invokeLater(new Runnable() {
-//        public void run() {
-//          preparePredictions2(word, line, lineStartNonWSOffset);
-//        }
-//    });
-//  }
-//
-//  public void preparePredictions2(final String word, final int line,
-//                                 final int lineStartNonWSOffset) {
-//    System.out.println(EventQueue.isDispatchThread() + " " + predictionOngoing.get() + " " + (!JavaMode.codeCompletionsEnabled) + " " + (word.length() < predictionMinLength));
-//    new Exception("preparing predictions " + EventQueue.isDispatchThread() + " " + predictionOngoing.get() + " " + (!JavaMode.codeCompletionsEnabled) + " " + (word.length() < predictionMinLength)).printStackTrace(System.out);
-    if (predictionOngoing.get()) return;
-    if (!JavaMode.codeCompletionsEnabled) return;
-    if (word.length() < predictionMinLength) return;
-
-    predictionOngoing.set(true);
-    // This method is called from TextArea.fetchPhrase, which is called via a SwingWorker instance
-    // in TextArea.processKeyEvent
-    if (caretWithinLineComment()) {
-      log("No predictions.");
-      predictionOngoing.set(false);
-      return;
-    }
-
-    // presumably this was removed because the caller is running from a SwingWorker [fry]
-//    SwingWorker worker = new SwingWorker() {
-//
-//      @Override
-//      protected Object doInBackground() throws Exception {
-//        return null;
-//      }
-//
-//      protected void done() {
+  public List<CompletionCandidate> preparePredictions(final String pdePhrase,
+                                                      final int line) {
+    ErrorCheckerService errorCheckerService = editor.getErrorChecker();
+    ASTNode astRootNode = (ASTNode) errorCheckerService.getLatestCU().types().get(0);
 
     // If the parsed code contains pde enhancements, take 'em out.
-    String word2 = ASTNodeWrapper.getJavaCode(word);
+    String phrase = ASTNodeWrapper.getJavaCode(pdePhrase);
 
     //After typing 'arg.' all members of arg type are to be listed. This one is a flag for it
-    boolean noCompare = false;
-    if (word2.endsWith(".")) {
-      // return all matches
-      word2 = word2.substring(0, word2.length() - 1);
-      noCompare = true;
+    boolean noCompare = phrase.endsWith(".");
+
+    if (noCompare) {
+      phrase = phrase.substring(0, phrase.length() - 1);
     }
 
-    if (word2.length() >= predictionMinLength && !noCompare
-        && word2.length() > lastPredictedWord.length()) {
-      if (word2.startsWith(lastPredictedWord)) {
-        log(word + " starts with " + lastPredictedWord);
-        log("Don't recalc");
-        if (word2.contains(".")) {
-          int x = word2.lastIndexOf('.');
-          trimCandidates(word2.substring(x + 1));
-        } else {
-          trimCandidates(word2);
-        }
-        showPredictions(word);
-        lastPredictedWord = word2;
-        predictionOngoing.set(false);
-        return;
+    boolean incremental = !noCompare &&
+        phrase.length() > lastPredictedPhrase.length() &&
+        phrase.startsWith(lastPredictedPhrase);
+
+
+    if (incremental) {
+      log(pdePhrase + " starts with " + lastPredictedPhrase);
+      log("Don't recalc");
+
+      if (phrase.contains(".")) {
+        int x = phrase.lastIndexOf('.');
+        candidates = trimCandidates(phrase.substring(x + 1), candidates);
+      } else {
+        candidates = trimCandidates(phrase, candidates);
       }
+      lastPredictedPhrase = phrase;
+      return candidates;
     }
 
     int lineNumber = line;
     // Adjust line number for tabbed sketches
-    if (errorCheckerService != null) {
-      editor = errorCheckerService.getEditor();
-      int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
-      if (codeIndex > 0) {
-        for (int i = 0; i < codeIndex; i++) {
-          SketchCode sc = editor.getSketch().getCode(i);
-          int len = Util.countLines(sc.getProgram()) + 1;
-          lineNumber += len;
-        }
+    int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
+    if (codeIndex > 0) {
+      for (int i = 0; i < codeIndex; i++) {
+        SketchCode sc = editor.getSketch().getCode(i);
+        int len = Util.countLines(sc.getProgram()) + 1;
+        lineNumber += len;
       }
     }
 
-        // Ensure that we're not inside a comment. TODO: Binary search
+    // Ensure that we're not inside a comment. TODO: Binary search
 
-        /*for (Comment comm : getCodeComments()) {
-          int commLineNo = PdeToJavaLineNumber(compilationUnit
-              .getLineNumber(comm.getStartPosition()));
-          if(commLineNo == lineNumber){
-            log("Found a comment line " + comm);
-            log("Comment LSO "
-                + javaCodeOffsetToLineStartOffset(compilationUnit
-              .getLineNumber(comm.getStartPosition()),
-                                                  comm.getStartPosition()));
-            break;
-          }
-        }*/
+    /*for (Comment comm : getCodeComments()) {
+      int commLineNo = PdeToJavaLineNumber(compilationUnit
+          .getLineNumber(comm.getStartPosition()));
+      if(commLineNo == lineNumber){
+        log("Found a comment line " + comm);
+        log("Comment LSO "
+            + javaCodeOffsetToLineStartOffset(compilationUnit
+          .getLineNumber(comm.getStartPosition()),
+                                              comm.getStartPosition()));
+        break;
+      }
+    }*/
 
     // Now parse the expression into an ASTNode object
     ASTNode nearestNode = null;
-    ASTParser parser = ASTParser.newParser(AST.JLS4);
+    ASTParser parser = ASTParser.newParser(AST.JLS8);
     parser.setKind(ASTParser.K_EXPRESSION);
-    parser.setSource(word2.toCharArray());
+    parser.setSource(phrase.toCharArray());
     ASTNode testnode = parser.createAST(null);
     //Base.loge("PREDICTION PARSER PROBLEMS: " + parser);
     // Find closest ASTNode of the document to this word
-    Messages.loge("Typed: " + word2 + "|" + " temp Node type: " + testnode.getClass().getSimpleName());
+    Messages.loge("Typed: " + phrase + "|" + " temp Node type: " + testnode.getClass().getSimpleName());
     if(testnode instanceof MethodInvocation){
       MethodInvocation mi = (MethodInvocation)testnode;
       log(mi.getName() + "," + mi.getExpression() + "," + mi.typeArguments().size());
     }
 
     // find nearest ASTNode
-    nearestNode = findClosestNode(lineNumber, (ASTNode) errorCheckerService.getLastCorrectCU().types()
-                                  .get(0));
+    nearestNode = findClosestNode(lineNumber, astRootNode);
     if (nearestNode == null) {
       // Make sure nearestNode is not NULL if couldn't find a closeset node
-      nearestNode = (ASTNode) errorCheckerService.getLastCorrectCU().types().get(0);
+      nearestNode = astRootNode;
     }
     Messages.loge(lineNumber + " Nearest ASTNode to PRED "
         + getNodeAsString(nearestNode));
 
-    candidates = new ArrayList<CompletionCandidate>();
-    lastPredictedWord = word2;
+    candidates = new ArrayList<>();
+    lastPredictedPhrase = phrase;
     // Determine the expression typed
 
     if (testnode instanceof SimpleName && !noCompare) {
@@ -916,7 +968,7 @@ public class ASTGenerator {
             SimpleType st = (SimpleType) td.getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY);
             log("Superclass " + st.getName());
             ArrayList<CompletionCandidate> tempCandidates =
-                getMembersForType(st.getName().toString(), word2, noCompare, false);
+                getMembersForType(st.getName().toString(), phrase, noCompare, false);
             for (CompletionCandidate can : tempCandidates) {
               candidates.add(can);
             }
@@ -933,7 +985,7 @@ public class ASTGenerator {
               CompletionCandidate[] types = checkForTypes(cnode);
               if (types != null) {
                 for (int i = 0; i < types.length; i++) {
-                  if (types[i].getElementName().toLowerCase().startsWith(word2.toLowerCase()))
+                  if (types[i].getElementName().toLowerCase().startsWith(phrase.toLowerCase()))
                     candidates.add(types[i]);
                 }
               }
@@ -946,7 +998,7 @@ public class ASTGenerator {
               CompletionCandidate[] types = checkForTypes(clnode);
               if (types != null) {
                 for (int i = 0; i < types.length; i++) {
-                  if (types[i].getElementName().toLowerCase().startsWith(word2.toLowerCase()))
+                  if (types[i].getElementName().toLowerCase().startsWith(phrase.toLowerCase()))
                     candidates.add(types[i]);
                 }
               }
@@ -957,11 +1009,11 @@ public class ASTGenerator {
       }
       // We're seeing a simple name that's not defined locally or in
       // the parent class. So most probably a pre-defined type.
-      log("Empty can. " + word2);
+      log("Empty can. " + phrase);
       if (classPath != null) {
         RegExpResourceFilter regExpResourceFilter =
           new RegExpResourceFilter(Pattern.compile(".*"),
-                                   Pattern.compile(word2 + "[a-zA-Z_0-9]*.class",
+                                   Pattern.compile(phrase + "[a-zA-Z_0-9]*.class",
                                                    Pattern.CASE_INSENSITIVE));
         String[] resources = classPath.findResources("", regExpResourceFilter);
 
@@ -969,7 +1021,7 @@ public class ASTGenerator {
           matchedClass2 = matchedClass2.replace('/', '.'); //package name
           String matchedClass = matchedClass2.substring(0, matchedClass2.length() - 6);
           int d = matchedClass.lastIndexOf('.');
-          if (!ignorableImport(matchedClass,matchedClass.substring(d + 1))) {
+          if (!errorCheckerService.ignorableSuggestionImport(matchedClass)) {
             matchedClass = matchedClass.substring(d + 1); //class name
             // display package name in grey
             String html = "<html>" + matchedClass + " : <font color=#777777>" +
@@ -988,62 +1040,33 @@ public class ASTGenerator {
       ASTNode childExpr = getChildExpression(testnode);
       log("Parent expression : " + getParentExpression(testnode));
       log("Child expression : " + childExpr);
-      if (childExpr != null) {
-        if (!noCompare) {
-          log("Original testnode " + getNodeAsString(testnode));
-          testnode = getParentExpression(testnode);
-          log("Corrected testnode " + getNodeAsString(testnode));
-        }
-        ClassMember expr =
+      if (!noCompare) {
+        log("Original testnode " + getNodeAsString(testnode));
+        testnode = getParentExpression(testnode);
+        log("Corrected testnode " + getNodeAsString(testnode));
+      }
+      ClassMember expr =
           resolveExpression3rdParty(nearestNode, testnode, noCompare);
-        if (expr == null) {
-          log("Expr is null");
-        } else {
-          log("Expr is " + expr.toString());
-          candidates = getMembersForType(expr, childExpr.toString(),
-                                         noCompare, false);
-        }
+      if (expr == null) {
+        log("Expr is null");
       } else {
-        log("ChildExpr is null");
+        boolean isArray = expr.thisclass != null && expr.thisclass.isArray();
+        boolean isSimpleType = (expr.astNode != null) &&
+            expr.astNode.getNodeType() == ASTNode.SIMPLE_TYPE;
+        boolean isMethod = expr.method != null;
+        boolean staticOnly = !isMethod && !isArray && !isSimpleType;
+        log("Expr is " + expr.toString());
+        String lookFor = (noCompare || (childExpr == null)) ?
+            "" : childExpr.toString();
+        candidates = getMembersForType(expr, lookFor, noCompare, staticOnly);
       }
     }
-    showPredictions(word);
-    predictionOngoing.set(false);
-//      }
-//    };
-//
-//    worker.execute();
+    return candidates;
   }
 
 
-  protected void showPredictions(final String word) {
-    if (sketchOutline != null && sketchOutline.isVisible()) {
-      // don't show completions when the outline is visible
-      return;
-    }
-
-    Collections.sort(candidates);
-//    CompletionCandidate[][] candi = new CompletionCandidate[candidates.size()][1];
-//    DefaultListModel<CompletionCandidate> defListModel = new DefaultListModel<CompletionCandidate>();
-//
-//    for (int i = 0; i < candidates.size(); i++) {
-////      candi[i][0] = candidates.get(i);
-//      defListModel.addElement(candidates.get(i));
-//    }
-//    log("Total preds = " + candidates.size());
-    DefaultListModel<CompletionCandidate> defListModel = filterPredictions();
-//    DefaultTableModel tm = new DefaultTableModel(candi,
-//                                                 new String[] { "Suggestions" });
-//    if (tableAuto.isVisible()) {
-//      tableAuto.setModel(tm);
-//      tableAuto.validate();
-//      tableAuto.repaint();
-//    }
-    errorCheckerService.getEditor().getJavaTextArea().showSuggestion(defListModel, word);
-  }
-
-  private DefaultListModel<CompletionCandidate> filterPredictions(){
-    DefaultListModel<CompletionCandidate> defListModel = new DefaultListModel<CompletionCandidate>();
+  protected static DefaultListModel<CompletionCandidate> filterPredictions(List<CompletionCandidate> candidates){
+    DefaultListModel<CompletionCandidate> defListModel = new DefaultListModel<>();
     if (candidates.isEmpty())
       return defListModel;
     // check if first & last CompCandidate are the same methods, only then show all overloaded methods
@@ -1117,7 +1140,7 @@ public class ASTGenerator {
                                                           boolean noCompare,
                                                           boolean staticOnly) {
     String child = childToLookFor.toLowerCase();
-    ArrayList<CompletionCandidate> candidates = new ArrayList<CompletionCandidate>();
+    ArrayList<CompletionCandidate> candidates = new ArrayList<>();
     log("getMemFoType-> Looking for match " + child.toString()
         + " inside " + tehClass + " noCompare " + noCompare + " staticOnly "
         + staticOnly);
@@ -1126,28 +1149,34 @@ public class ASTGenerator {
     }
     // tehClass will either be a TypeDecl defined locally
     if(tehClass.getDeclaringNode() instanceof TypeDeclaration){
-
       TypeDeclaration td = (TypeDeclaration) tehClass.getDeclaringNode();
-      for (int i = 0; i < td.getFields().length; i++) {
-        List<VariableDeclarationFragment> vdfs = td.getFields()[i]
-            .fragments();
-        for (VariableDeclarationFragment vdf : vdfs) {
-          if (noCompare) {
-            candidates
-                .add(new CompletionCandidate(vdf));
-          } else if (vdf.getName().toString().toLowerCase()
-              .startsWith(child))
-            candidates
-                .add(new CompletionCandidate(vdf));
+      {
+        FieldDeclaration[] fields = td.getFields();
+        for (int i = 0; i < fields.length; i++) {
+          if (staticOnly && !isStatic(fields[i].modifiers())) {
+            continue;
+          }
+          List<VariableDeclarationFragment> vdfs = fields[i].fragments();
+          for (VariableDeclarationFragment vdf : vdfs) {
+            if (noCompare) {
+              candidates.add(new CompletionCandidate(vdf));
+            } else if (vdf.getName().toString().toLowerCase().startsWith(child))
+              candidates.add(new CompletionCandidate(vdf));
+          }
         }
-
       }
-      for (int i = 0; i < td.getMethods().length; i++) {
-        if (noCompare) {
-          candidates.add(new CompletionCandidate(td.getMethods()[i]));
-        } else if (td.getMethods()[i].getName().toString().toLowerCase()
-            .startsWith(child))
-          candidates.add(new CompletionCandidate(td.getMethods()[i]));
+      {
+        MethodDeclaration[] methods = td.getMethods();
+        for (int i = 0; i < methods.length; i++) {
+          if (staticOnly && !isStatic(methods[i].modifiers())) {
+            continue;
+          }
+          if (noCompare) {
+            candidates.add(new CompletionCandidate(methods[i]));
+          } else if (methods[i].getName().toString().toLowerCase()
+              .startsWith(child))
+            candidates.add(new CompletionCandidate(methods[i]));
+        }
       }
 
       ArrayList<CompletionCandidate> superClassCandidates = new ArrayList<CompletionCandidate>();
@@ -1209,7 +1238,33 @@ public class ASTGenerator {
         candidates.add(new CompletionCandidate(field));
       }
     }
+    if (probableClass.isArray() && !staticOnly) {
+      // add array members manually, they can't be fetched through code
+      
+      String className = probableClass.getSimpleName();
+
+      if (noCompare || "clone()".startsWith(child)) {
+        String methodLabel = "<html>clone() : " + className +
+            " - <font color=#777777>" + className + "</font></html>";
+        candidates.add(new CompletionCandidate("clone()", methodLabel, "clone()",
+                                               CompletionCandidate.PREDEF_METHOD));
+      }
+
+      if ("length".startsWith(child)) {
+        String fieldLabel = "<html>length : int - <font color=#777777>" +
+            className + "</font></html>";
+        candidates.add(new CompletionCandidate("length", fieldLabel, "length",
+                                               CompletionCandidate.PREDEF_FIELD));
+      }
+    }
     return candidates;
+  }
+
+  private static boolean isStatic(List<org.eclipse.jdt.core.dom.Modifier> modifiers) {
+    for (org.eclipse.jdt.core.dom.Modifier m : modifiers) {
+      if (m.isStatic()) return true;
+    }
+    return false;
   }
 
   public String getPDESourceCodeLine(int javaLineNumber) {
@@ -1752,7 +1807,7 @@ public class ASTGenerator {
       //errorCheckerService.highlightNode(simpName2);
       ASTNodeWrapper declWrap = new ASTNodeWrapper(simpName2, nodeLabel);
       //errorCheckerService.highlightNode(declWrap);
-      if (!declWrap.highlightNode(this)) {
+      if (!declWrap.highlightNode(editor)) {
         Messages.loge("Highlighting failed.");
       }
     }
@@ -1885,7 +1940,7 @@ public class ASTGenerator {
                 .getLastSelectedPathComponent();
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-              awrap.highlightNode(thisASTGenerator);
+              awrap.highlightNode(editor);
               // errorCheckerService.highlightNode(awrap);
 
               //--
@@ -1984,7 +2039,7 @@ public class ASTGenerator {
             if (tnode.getUserObject() instanceof ASTNodeWrapper) {
               ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
               //errorCheckerService.highlightNode(awrap);
-              awrap.highlightNode(thisASTGenerator);
+              awrap.highlightNode(editor);
             }
           }
         };
@@ -3022,19 +3077,6 @@ public class ASTGenerator {
   }
 
 
-  protected boolean caretWithinLineComment() {
-    final JEditTextArea ta = editor.getTextArea();
-    String pdeLine = editor.getLineText(ta.getCaretLine()).trim();
-    int caretPos = ta.getCaretPosition() - ta.getLineStartNonWhiteSpaceOffset(ta.getCaretLine());
-    int x = pdeLine.indexOf("//");
-
-    if (x >= 0 && caretPos > x) {
-      return true;
-    }
-    return false;
-  }
-
-
   /**
    * A wrapper for java.lang.reflect types.
    * Will have to see if the usage turns out to be internal only here or not
@@ -3161,9 +3203,9 @@ public class ASTGenerator {
       return null;
     } else if (t instanceof ArrayType) {
       ArrayType at = (ArrayType) t;
-      log(at.getComponentType() + " <-comp type, ele type-> "
-          + at.getElementType() + ", "
-          + at.getElementType().getClass().getName());
+      log("ele type "
+              + at.getElementType() + ", "
+              + at.getElementType().getClass().getName());
       if (at.getElementType() instanceof PrimitiveType) {
         return null;
       } else if (at.getElementType() instanceof SimpleType) {
@@ -3518,43 +3560,6 @@ public class ASTGenerator {
       if(jFrame != null)
         jFrame.dispose();
     }
-  }
-
-
-  protected boolean ignorableImport(String impName, String fullClassName) {
-    for (ImportStatement impS : errorCheckerService.getProgramImports()) {
-      if (impName.toLowerCase().startsWith(impS.getPackageName().toLowerCase())) {
-        return false;
-      }
-    }
-
-    for (ImportStatement impS : errorCheckerService.codeFolderImports) {
-      if (impName.toLowerCase().startsWith(impS.getPackageName().toLowerCase())) {
-        return false;
-      }
-    }
-
-    if (JavaMode.suggestionsMap == null
-        || JavaMode.suggestionsMap.keySet().size() == 0) {
-      log("SuggestionsMap is null or empty, won't be able to trim class names");
-      return true;
-    }
-    final String include = "include";
-    final String exclude = "exclude";
-
-    if (impName.startsWith("processing")) {
-      if (JavaMode.suggestionsMap.get(include).contains(impName)) {
-        return false;
-      } else if (JavaMode.suggestionsMap.get(exclude).contains(impName)) {
-        return true;
-      }
-    } else if (impName.startsWith("java")) {
-      if (JavaMode.suggestionsMap.get(include).contains(impName)) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
 
