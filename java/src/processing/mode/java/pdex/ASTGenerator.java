@@ -120,7 +120,7 @@ import com.google.classpath.ClassPathFactory;
 import com.google.classpath.RegExpResourceFilter;
 
 
-@SuppressWarnings({ "deprecation", "unchecked" })
+@SuppressWarnings({ "unchecked" })
 public class ASTGenerator {
   protected ErrorCheckerService errorCheckerService;
   protected JavaEditor editor;
@@ -1240,7 +1240,7 @@ public class ASTGenerator {
     }
     if (probableClass.isArray() && !staticOnly) {
       // add array members manually, they can't be fetched through code
-      
+
       String className = probableClass.getSimpleName();
 
       if (noCompare || "clone()".startsWith(child)) {
