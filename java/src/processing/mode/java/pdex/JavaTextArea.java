@@ -37,7 +37,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.DefaultListModel;
 import javax.swing.SwingWorker;
-import javax.swing.text.BadLocationException;
 
 import processing.app.Messages;
 import processing.app.Mode;

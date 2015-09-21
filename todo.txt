@@ -26,6 +26,13 @@ X   checked code and this seems to be fine / can't reproduce
 X show hover text when the mouse is over the 'debug' button
 X update EditorButton rollover label when pressing shift or alt
 X welcome screen shows coffee cup icon on Windows
+o Hitting enter on code completion completes and then creates a new line
+X   https://github.com/processing/processing/issues/3741
+X ctrl-space first inserts space, then deletes it, with completion
+X   https://github.com/processing/processing/issues/3847
+o finish the gui
+X   https://github.com/processing/processing/issues/3072
+X   closing in favor of specific issues
 
 sketch modified
 X sketch modified externally with FAT32 volumes on OS X
@@ -69,6 +76,9 @@ X remove tooltip that repeats the contents of the tab labels
 X add extra space to the right of the buttons to line up w/ the scrollbar
 X CM: Button formatting
 X   https://github.com/processing/processing/issues/3643
+o Contributions Manager UI design
+X   https://github.com/processing/processing/issues/3482
+X   closing in favor of separate issues
 
 watcher
 X prevent re-prompting users when they say "no" to "sketch modified" message
@@ -97,15 +107,11 @@ jakub
 X Make preprocessor scope-aware
 X   https://github.com/processing/processing/issues/3799
 X   https://github.com/processing/processing/pull/3810
-_ auto-complete is a mess (and broken on OS X)
+X auto-complete timing issues
 _   https://github.com/processing/processing/issues/3812
 X   https://github.com/processing/processing/pull/3845
-_ Hitting enter on code completion completes and then creates a new line
-_   https://github.com/processing/processing/issues/3741
-_   found thread deadlock issues preventing it from working on OS X
 _ Red error underline is sometimes at wrong location
 _   https://github.com/processing/processing/issues/3759
-_ ctrl-space first inserts space, then deletes it, with completion
 
 
 known issues
@@ -145,13 +151,23 @@ _   https://github.com/processing/processing/issues/3665
 gui / 3.0 final
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
-_ finish the gui
-_   https://github.com/processing/processing/issues/3072
+_ different design of squiggly line
+_   easy to do inside JavaTextAreaPainter.paintSquiggle()
+
+
+manager / 3.0 final
+_ CM selected tabs are too tall 
+_   https://github.com/processing/processing/issues/3598
+_ updates tab has ugly horizontal line at top
+_ status/name/author table header is alternating color
+_   area above scroll bar looks like more scroll bar
+_ remove focus blue from the scrollable list
+_ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
+_   looks like ContributionListing.getScrollableUnitIncrement() returns early
+_ total number of updates available is not correct
 
 
 gui / post 3.0
-_ different design of squiggly line
-_   easy to do inside JavaTextAreaPainter.paintSquiggle()
 _ build custom scroll bar since the OS versions are so ugly?
 _ error/warning location is awkward when no scroll bar is in use
 _   when only one screen-full, show ticks at exact location
@@ -170,20 +186,6 @@ _ show compiling/startup animation after clicking run
 _   or maybe show an animation for starting up
 _   rather than post-compile
 _   https://github.com/processing/processing/issues/136
-
-
-manager
-_ CM selected tabs are too tall 
-_   https://github.com/processing/processing/issues/3598
-_ updates tab has ugly horizontal line at top
-_ status/name/author table header is alternating color
-_   area above scroll bar looks like more scroll bar
-_ remove focus blue from the scrollable list
-_ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
-_   looks like ContributionListing.getScrollableUnitIncrement() returns early
-_ total number of updates available is not correct
-_ Contributions Manager UI design
-_   https://github.com/processing/processing/issues/3482
 
 
 manager / post 3.0
