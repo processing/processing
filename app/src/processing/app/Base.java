@@ -1726,19 +1726,19 @@ public class Base {
 
     try {
       settingsFolder = Platform.getSettingsFolder();
+
+      // create the folder if it doesn't exist already
+      if (!settingsFolder.exists()) {
+        if (!settingsFolder.mkdirs()) {
+          Messages.showError("Settings issues",
+                             "Processing cannot run because it could not\n" +
+                             "create a folder to store your settings.\n" +
+                             settingsFolder.getAbsolutePath(), null);
+        }
+      }
     } catch (Exception e) {
       Messages.showError("Problem getting the settings folder",
                          "Error getting the Processing the settings folder.", e);
-    }
-
-    // create the folder if it doesn't exist already
-    if (!settingsFolder.exists()) {
-      if (!settingsFolder.mkdirs()) {
-        Messages.showError("Settings issues",
-                           "Processing cannot run because it could not\n" +
-                           "create a folder to store your settings.\n" +
-                           settingsFolder.getAbsolutePath(), null);
-      }
     }
     return settingsFolder;
   }
