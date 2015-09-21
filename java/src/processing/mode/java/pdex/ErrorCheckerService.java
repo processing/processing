@@ -316,7 +316,9 @@ public class ErrorCheckerService implements Runnable {
     // This is when the loaded sketch already has syntax errors.
     // Completion wouldn't be complete, but it'd be still something
     // better than nothing
-    astGenerator.buildAST(cu);
+    synchronized (astGenerator) {
+      astGenerator.buildAST(cu);
+    }
     handleErrorCheckingToggle();
     while (!stopThread.get()) {
       try {
@@ -349,7 +351,9 @@ public class ErrorCheckerService implements Runnable {
       }
     }
 
-    astGenerator.disposeAllWindows();
+    synchronized (astGenerator) {
+      astGenerator.disposeAllWindows();
+    }
     compilationChecker = null;
     checkerClass = null;
     classLoader = null;
@@ -503,7 +507,9 @@ public class ErrorCheckerService implements Runnable {
         // log(editor.getSketch().getName() + "2 MCO " + mainClassOffset);
       }
 
-      astGenerator.buildAST(cu);
+      synchronized (astGenerator) {
+        astGenerator.buildAST(cu);
+      }
       if (!JavaMode.errorCheckEnabled) {
     	  problemsList.clear();
     	  Messages.log("Error Check disabled, so not updating UI.");
@@ -897,7 +903,9 @@ public class ErrorCheckerService implements Runnable {
     }
     new Thread(new Runnable() {
       public void run() {
-        astGenerator.loadJars(); // update jar file for completion lookup
+        synchronized (astGenerator) {
+          astGenerator.loadJars(); // update jar file for completion lookup
+        }
       }
     }).start();
   }
@@ -909,6 +917,40 @@ public class ErrorCheckerService implements Runnable {
   protected boolean ignorableImport(String packageName) {
     return (packageName.startsWith("java.") ||
             packageName.startsWith("javax."));
+  }
+
+
+  protected boolean ignorableSuggestionImport(String impName) {
+    String impNameLc = impName.toLowerCase();
+
+    for (ImportStatement impS : programImports) {
+      if (impNameLc.startsWith(impS.getPackageName().toLowerCase())) {
+        return false;
+      }
+    }
+
+    for (ImportStatement impS : codeFolderImports) {
+      if (impNameLc.startsWith(impS.getPackageName().toLowerCase())) {
+        return false;
+      }
+    }
+
+    final String include = "include";
+    final String exclude = "exclude";
+
+    if (impName.startsWith("processing")) {
+      if (JavaMode.suggestionsMap.get(include).contains(impName)) {
+        return false;
+      } else if (JavaMode.suggestionsMap.get(exclude).contains(impName)) {
+        return true;
+      }
+    } else if (impName.startsWith("java")) {
+      if (JavaMode.suggestionsMap.get(include).contains(impName)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
 
@@ -956,7 +998,10 @@ public class ErrorCheckerService implements Runnable {
             String[] args = p.getIProblem().getArguments();
             if (args.length > 0) {
               String missingClass = args[0];
-              String[] si = astGenerator.getSuggestImports(missingClass);
+              String[] si;
+              synchronized (astGenerator) {
+                si = astGenerator.getSuggestImports(missingClass);
+              }
               if (si != null && si.length > 0) {
                 p.setImportSuggestions(si);
 //                errorData[index][0] = "<html>" + p.getMessage() +
@@ -1353,7 +1398,9 @@ public class ErrorCheckerService implements Runnable {
     // Footer
     if (mode != PdePreprocessor.Mode.JAVA) {
       if (mode == PdePreprocessor.Mode.STATIC) {
-        sb.append("\nnoLoop();\n}");
+        // no noLoop() here so it does not tell you
+        // "can't invoke noLoop() on obj" when you type "obj."
+        sb.append("\n}");
       }
       sb.append("\n}");
     }
