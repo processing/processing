@@ -54,7 +54,7 @@ import processing.app.Messages;
  *
  */
 public class ASTNodeWrapper {
-  private ASTNode Node;
+  private ASTNode node;
   private String label;
   private int lineNumber;
 
@@ -72,7 +72,7 @@ public class ASTNodeWrapper {
     if (node == null){
       return;
     }
-    this.Node = node;
+    this.node = node;
     label = getNodeAsString(node);
     if (label == null)
       label = node.toString();
@@ -85,7 +85,7 @@ public class ASTNodeWrapper {
     if (node == null){
       return;
     }
-    this.Node = node;
+    this.node = node;
     if(label != null)
       this.label = label;
     else{
@@ -105,10 +105,10 @@ public class ASTNodeWrapper {
    *         node length}
    */
   public int[] getJavaCodeOffsets(ErrorCheckerService ecs) {
-    int nodeOffset = Node.getStartPosition(), nodeLength = Node
+    int nodeOffset = node.getStartPosition(), nodeLength = node
         .getLength();
     Messages.log("0.nodeOffset " + nodeOffset);
-    ASTNode thisNode = Node;
+    ASTNode thisNode = node;
     while (thisNode.getParent() != null) {
       if (getLineNumber(thisNode.getParent()) == lineNumber) {
         thisNode = thisNode.getParent();
@@ -178,12 +178,12 @@ public class ASTNodeWrapper {
 
                 flag = false;
               } else {
-                if (cnode == Node) {
+                if (cnode == node) {
                   // loop only till the current node.
                   break;
                 }
                 // We've located the first node in the line.
-                // Now normalize offsets till Node
+                // Now normalize offsets till node
                 //altStartPos += normalizeOffsets(cnode);
 
               }
@@ -356,7 +356,7 @@ public class ASTNodeWrapper {
    * @param source
    * @return int[0] - java code offsets, int[1] = pde code offsets
    */
-  public int[][] getOffsetMapping(ErrorCheckerService ecs, String source){
+  public int[][] getOffsetMapping(ErrorCheckerService ecs, String source) {
 
     /*
      * This is some tricky shiz. So detailed explanation follows:
@@ -545,7 +545,7 @@ public class ASTNodeWrapper {
     if (!(Node instanceof SimpleName)) {
       return false;
     }
-    SimpleName nodeName = (SimpleName) Node;
+    SimpleName nodeName = (SimpleName) node;
     try {
       //TODO: Redundant code. See ASTGenerator.getJavaSourceCodeline()
       int javaLineNumber = getLineNumber(nodeName);
@@ -649,18 +649,18 @@ public class ASTNodeWrapper {
    *         int[3] are on TODO
    */
   public int[] getPDECodeOffsets(ErrorCheckerService ecs) {
-    return ecs.JavaToPdeOffsets(lineNumber + 1, Node.getStartPosition());
+    return ecs.JavaToPdeOffsets(lineNumber + 1, node.getStartPosition());
   }
 
   public int getPDECodeOffsetForSN(ASTGenerator astGen){
-    if (Node instanceof SimpleName) {
+    if (node instanceof SimpleName) {
       Element lineElement = astGen.getJavaSourceCodeElement(lineNumber);
       Messages.log("Line element off " + lineElement.getStartOffset());
       OffsetMatcher ofm = new OffsetMatcher(astGen.getPDESourceCodeLine(lineNumber),
                                             astGen.getJavaSourceCodeLine(lineNumber));
       //log("");
-      int pdeOffset = ofm.getPdeOffForJavaOff(Node.getStartPosition()
-          - lineElement.getStartOffset(), Node.toString().length());
+      int pdeOffset = ofm.getPdeOffForJavaOff(node.getStartPosition()
+          - lineElement.getStartOffset(), node.toString().length());
       return pdeOffset;
     }
     return -1;
@@ -671,7 +671,7 @@ public class ASTNodeWrapper {
   }
 
   public ASTNode getNode() {
-    return Node;
+    return node;
   }
 
   public String getLabel() {
@@ -679,7 +679,7 @@ public class ASTNodeWrapper {
   }
 
   public int getNodeType() {
-    return Node.getNodeType();
+    return node.getNodeType();
   }
 
   public int getLineNumber() {
