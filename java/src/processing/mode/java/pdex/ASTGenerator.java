@@ -969,7 +969,7 @@ public class ASTGenerator {
           matchedClass2 = matchedClass2.replace('/', '.'); //package name
           String matchedClass = matchedClass2.substring(0, matchedClass2.length() - 6);
           int d = matchedClass.lastIndexOf('.');
-          if (!ignorableImport(matchedClass,matchedClass.substring(d + 1))) {
+          if (!errorCheckerService.ignorableSuggestionImport(matchedClass)) {
             matchedClass = matchedClass.substring(d + 1); //class name
             // display package name in grey
             String html = "<html>" + matchedClass + " : <font color=#777777>" +
@@ -3518,43 +3518,6 @@ public class ASTGenerator {
       if(jFrame != null)
         jFrame.dispose();
     }
-  }
-
-
-  protected boolean ignorableImport(String impName, String fullClassName) {
-    for (ImportStatement impS : errorCheckerService.getProgramImports()) {
-      if (impName.toLowerCase().startsWith(impS.getPackageName().toLowerCase())) {
-        return false;
-      }
-    }
-
-    for (ImportStatement impS : errorCheckerService.codeFolderImports) {
-      if (impName.toLowerCase().startsWith(impS.getPackageName().toLowerCase())) {
-        return false;
-      }
-    }
-
-    if (JavaMode.suggestionsMap == null
-        || JavaMode.suggestionsMap.keySet().size() == 0) {
-      log("SuggestionsMap is null or empty, won't be able to trim class names");
-      return true;
-    }
-    final String include = "include";
-    final String exclude = "exclude";
-
-    if (impName.startsWith("processing")) {
-      if (JavaMode.suggestionsMap.get(include).contains(impName)) {
-        return false;
-      } else if (JavaMode.suggestionsMap.get(exclude).contains(impName)) {
-        return true;
-      }
-    } else if (impName.startsWith("java")) {
-      if (JavaMode.suggestionsMap.get(include).contains(impName)) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
 
