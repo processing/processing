@@ -88,6 +88,8 @@ public class PSurfaceJOGL implements PSurface {
 
   protected int sketchX;
   protected int sketchY;
+  protected int sketchWidth0;
+  protected int sketchHeight0;
   protected int sketchWidth;
   protected int sketchHeight;
 
@@ -128,7 +130,7 @@ public class PSurfaceJOGL implements PSurface {
   public void initFrame(PApplet sketch) {
     this.sketch = sketch;
     initIcons();
-    initScreen();
+    initDisplay();
     initGL();
     initWindow();
     initListeners();
@@ -141,16 +143,16 @@ public class PSurfaceJOGL implements PSurface {
   }
 
 
-  protected void initScreen() {
-    display = NewtFactory.createDisplay(null);
-    display.addReference();
-    screen = NewtFactory.createScreen(display, 0);
-    screen.addReference();
+  protected void initDisplay() {
+    Display tmpDisplay = NewtFactory.createDisplay(null);
+    tmpDisplay.addReference();
+    Screen tmpScreen = NewtFactory.createScreen(tmpDisplay, 0);
+    tmpScreen.addReference();
 
     monitors = new ArrayList<MonitorDevice>();
     GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice[] awtDevices = environment.getScreenDevices();
-    List<MonitorDevice> newtDevices = screen.getMonitorDevices();
+    List<MonitorDevice> newtDevices = tmpScreen.getMonitorDevices();
 
     // AWT and NEWT name devices in different ways, depending on the platform,
     // and also appear to order them in different ways. The following code
@@ -210,7 +212,33 @@ public class PSurfaceJOGL implements PSurface {
         }
       }
     }
+
+    displayDevice = null;
+    int displayNum = sketch.sketchDisplay();
+    if (displayNum > 0) {  // if -1, use the default device
+      if (displayNum <= monitors.size()) {
+        displayDevice = monitors.get(displayNum - 1);
+      } else {
+        System.err.format("Display %d does not exist, " +
+          "using the default display instead.%n", displayNum);
+        for (int i = 0; i < monitors.size(); i++) {
+          System.err.format("Display %d is %s%n", i+1, monitors.get(i));
+        }
+      }
+    } else if (0 < monitors.size()) {
+      displayDevice = monitors.get(0);
+    }
+
+    if (displayDevice != null) {
+      screen = displayDevice.getScreen();
+      display = screen.getDisplay();
+    } else {
+      screen = tmpScreen;
+      display = tmpDisplay;
+      displayDevice = screen.getPrimaryMonitor();
+    }
   }
+
 
   protected void initGL() {
 //  System.out.println("*******************************");
@@ -268,22 +296,14 @@ public class PSurfaceJOGL implements PSurface {
 
   protected void initWindow() {
     window = GLWindow.create(screen, pgl.getCaps());
-    if (displayDevice == null) {
-      displayDevice = window.getMainMonitor();
-    }
 
-    int displayNum = sketch.sketchDisplay();
-    if (displayNum > 0) {  // if -1, use the default device
-      if (displayNum <= monitors.size()) {
-        displayDevice = monitors.get(displayNum - 1);
-      } else {
-        System.err.format("Display %d does not exist, " +
-          "using the default display instead.%n", displayNum);
-        for (int i = 0; i < monitors.size(); i++) {
-          System.err.format("Display %d is %s%n", i+1, monitors.get(i));
-        }
-      }
-    }
+//    if (displayDevice == null) {
+//
+//
+//    } else {
+//      window = GLWindow.create(displayDevice.getScreen(), pgl.getCaps());
+//    }
+
 
     boolean spanDisplays = sketch.sketchDisplay() == PConstants.SPAN;
     screenRect = spanDisplays ?
@@ -296,6 +316,9 @@ public class PSurfaceJOGL implements PSurface {
     // usable and can even be returned by the sketchWidth()/Height() methods.
     sketch.displayWidth = screenRect.width;
     sketch.displayHeight = screenRect.height;
+
+    sketchWidth0 = sketch.sketchWidth();
+    sketchHeight0 = sketch.sketchHeight();
 
     /*
     // Trying to fix
@@ -310,7 +333,7 @@ public class PSurfaceJOGL implements PSurface {
       if (sketch.displayHeight < h) {
         h = sketch.displayHeight;
       }
-//      sketch.setSize(w, h - 22 - 2);
+//      sketch.setSize(w, h - 22 - 22);
 //      graphics.setSize(w, h - 22 - 22);
       System.err.println("setting width/height to " + w + " "  + h);
     }
@@ -318,6 +341,7 @@ public class PSurfaceJOGL implements PSurface {
 
     sketchWidth = sketch.sketchWidth();
     sketchHeight = sketch.sketchHeight();
+//    System.out.println("init: " + sketchWidth + " " + sketchHeight);
 
     boolean fullScreen = sketch.sketchFullScreen();
     // Removing the section below because sometimes people want to do the
@@ -721,6 +745,10 @@ public class PSurfaceJOGL implements PSurface {
       }
 
       if (sketch.frameCount == 0) {
+        if (sketchWidth0 < sketchWidth0 || sketchHeight < sketchHeight0) {
+          PGraphics.showWarning("The sketch has been automatically resized to fit the screen resolution");
+        }
+//        System.out.println("display: " + window.getWidth() + " "+ window.getHeight() + " - " + sketchWidth + " " + sketchHeight);
         requestFocus();
       }
 
