@@ -67,6 +67,8 @@ X fix bold version used in the description below, when an item is selected
 X manager needs a frame title
 X remove tooltip that repeats the contents of the tab labels
 X add extra space to the right of the buttons to line up w/ the scrollbar
+X CM: Button formatting
+X   https://github.com/processing/processing/issues/3643
 
 watcher
 X prevent re-prompting users when they say "no" to "sketch modified" message
