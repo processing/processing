@@ -85,6 +85,7 @@ X   https://github.com/processing/processing/issues/3799
 X   https://github.com/processing/processing/pull/3810
 _ auto-complete is a mess (and broken on OS X)
 _   https://github.com/processing/processing/issues/3812
+X   https://github.com/processing/processing/pull/3845
 _ Hitting enter on code completion completes and then creates a new line
 _   https://github.com/processing/processing/issues/3741
 _   found thread deadlock issues preventing it from working on OS X
