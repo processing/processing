@@ -942,7 +942,7 @@ public class ASTGenerator {
     // find nearest ASTNode
     nearestNode = findClosestNode(lineNumber, astRootNode);
     if (nearestNode == null) {
-      // Make sure nearestNode is not NULL if couldn't find a closeset node
+      // Make sure nearestNode is not NULL if couldn't find a closest node
       nearestNode = astRootNode;
     }
     Messages.loge(lineNumber + " Nearest ASTNode to PRED "
@@ -1586,8 +1586,7 @@ public class ASTGenerator {
     } else if (parent instanceof Block) {
       nodes = ((Block) parent).statements();
     } else {
-      System.err.println("THIS CONDITION SHOULD NOT OCCUR - findClosestNode "
-          + getNodeAsString(parent));
+      System.err.println("findClosestNode() found " + getNodeAsString(parent));
       return null;
     }
 
