@@ -212,8 +212,8 @@ public class Base {
                 new Welcome(base, prompt);
               } catch (IOException e) {
                 Messages.showTrace("Unwelcoming",
-                                          "Please report this error to\n" +
-                                          "https://github.com/processing/processing/issues", e, false);
+                                   "Please report this error to\n" +
+                                   "https://github.com/processing/processing/issues", e, false);
               }
             }
           });
@@ -227,7 +227,7 @@ public class Base {
           t = t.getCause();
         }
         Messages.showTrace("We're off on the wrong foot",
-                                  "An error occurred during startup.", t, true);
+                           "An error occurred during startup.", t, true);
       }
       Messages.log("done creating base..."); //$NON-NLS-1$
     }
@@ -470,10 +470,13 @@ public class Base {
   }
 
 
-  // Because of variations in native windowing systems, no guarantees about
-  // changes to the focused and active Windows can be made. Developers must
-  // never assume that this Window is the focused or active Window until this
-  // Window receives a WINDOW_GAINED_FOCUS or WINDOW_ACTIVATED event.
+  /**
+   * Called when a window is activated. Because of variations in native
+   * windowing systems, no guarantees about changes to the focused and active
+   * Windows can be made. Never assume that this Window is the focused or
+   * active Window until this Window actually receives a WINDOW_GAINED_FOCUS
+   * or WINDOW_ACTIVATED event.
+   */
   public void handleActivated(Editor whichEditor) {
     activeEditor = whichEditor;
 
@@ -939,15 +942,15 @@ public class Base {
     }
     if (possibleModes.size() == 0) {
       if (preferredMode == null) {
-        Messages.showWarning("Modeless Dialog",
-                             "I don't know how to open a sketch with the \""
-                         + extension
-                         + "\"\nfile extension. You'll have to install a different"
-                         + "\nProcessing mode for that.");
+        final String msg =
+          "I don't know how to open a sketch with the \"" + extension + "\"\n" +
+          "file extension. You'll have to install a different\n" +
+          "Mode for that.";
+        Messages.showWarning("Modeless Dialog", msg);
       } else {
         Messages.showWarning("Modeless Dialog",
-                             "You'll have to install "
-          + preferredMode.title + " Mode " + "\nin order to open that sketch.");
+                             "Install " + preferredMode.title + " Mode " +
+                             "to open this sketch.");
       }
       return null;
     }
@@ -1235,13 +1238,13 @@ public class Base {
       } catch (Throwable t) {
         if (nextMode.equals(getDefaultMode())) {
           Messages.showTrace("Serious Problem",
-                                    "An unexpected, unknown, and unrecoverable error occurred\n" +
-                                    "while opening a new editor window. Please report this.", t, true);
+                             "An unexpected, unknown, and unrecoverable error occurred\n" +
+                             "while opening a new editor window. Please report this.", t, true);
         } else {
           Messages.showTrace("Mode Problems",
-                                    "A nasty error occurred while trying to use " + nextMode.getTitle() + ".\n" +
-                                    "It may not be compatible with this version of Processing.\n" +
-                                    "Try updating the Mode or contact its author for a new version.", t, false);
+                             "A nasty error occurred while trying to use " + nextMode.getTitle() + ".\n" +
+                             "It may not be compatible with this version of Processing.\n" +
+                             "Try updating the Mode or contact its author for a new version.", t, false);
         }
       }
       /*
@@ -1263,9 +1266,9 @@ public class Base {
 
     } catch (Throwable t) {
       Messages.showTrace("Terrible News",
-                                "A serious error occurred while " +
-                                "trying to create a new editor window.", t,
-                                nextMode == getDefaultMode());  // quit if default
+                         "A serious error occurred while " +
+                         "trying to create a new editor window.", t,
+                         nextMode == getDefaultMode());  // quit if default
       nextMode = getDefaultMode();
     }
     return null;

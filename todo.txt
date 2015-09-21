@@ -102,9 +102,13 @@ _   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-a
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
+beta 7
+_ remove the dated releases from download.processing.org
+_ new Android release (EditorButton constructor changed)
+
+
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
-_ remove the dated releases from download.processing.org
 
 
 sketch modified externally (3.0 final)
@@ -135,6 +139,7 @@ _   https://github.com/processing/processing/issues/3665
 
 
 gui / 3.0 final
+_ welcome screen shows coffee cup icon on Windows
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
 _ finish the gui
