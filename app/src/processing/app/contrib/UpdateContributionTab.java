@@ -2,6 +2,7 @@ package processing.app.contrib;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -296,6 +297,33 @@ public class UpdateContributionTab extends ContributionTab {
         });
       }
       ((UpdateStatusPanel)statusPanel).update();
+    }
+
+    @Override
+    public void contributionAdded(final Contribution contribution) {
+      if (filter.matches(contribution)) {
+        EventQueue.invokeLater(new Runnable() {
+          public void run() {
+            ContributionPanel newPanel = contributionManagerDialog
+              .getTab(contribution.getType()).contributionListPanel.panelByContribution
+              .get(contribution);
+            if (newPanel == null) {
+              newPanel = new ContributionPanel(UpdateContribListingPanel.this);
+            }
+            if (!panelByContribution.containsKey(contribution)) {
+              synchronized (panelByContribution) {
+                panelByContribution.put(contribution, newPanel);
+              }
+            }
+            if (newPanel != null) {
+              newPanel.setContribution(contribution);
+              add(newPanel);
+              updatePanelOrdering(panelByContribution.keySet());
+              updateColors(); // XXX this is the place
+            }
+          }
+        });
+      }
     }
   }
 
