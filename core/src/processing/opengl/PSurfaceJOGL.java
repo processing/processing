@@ -745,7 +745,7 @@ public class PSurfaceJOGL implements PSurface {
       }
 
       if (sketch.frameCount == 0) {
-        if (sketchWidth0 < sketchWidth0 || sketchHeight < sketchHeight0) {
+        if (sketchWidth < sketchWidth0 || sketchHeight < sketchHeight0) {
           PGraphics.showWarning("The sketch has been automatically resized to fit the screen resolution");
         }
 //        System.out.println("display: " + window.getWidth() + " "+ window.getHeight() + " - " + sketchWidth + " " + sketchHeight);
