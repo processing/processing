@@ -222,7 +222,7 @@ public class ASTGenerator {
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
-      ASTParser parser = ASTParser.newParser(AST.JLS4);
+      ASTParser parser = ASTParser.newParser(AST.JLS8);
       parser.setSource(source.toCharArray());
       parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
@@ -874,7 +874,7 @@ public class ASTGenerator {
 
     // Now parse the expression into an ASTNode object
     ASTNode nearestNode = null;
-    ASTParser parser = ASTParser.newParser(AST.JLS4);
+    ASTParser parser = ASTParser.newParser(AST.JLS8);
     parser.setKind(ASTParser.K_EXPRESSION);
     parser.setSource(word2.toCharArray());
     ASTNode testnode = parser.createAST(null);
@@ -3161,9 +3161,9 @@ public class ASTGenerator {
       return null;
     } else if (t instanceof ArrayType) {
       ArrayType at = (ArrayType) t;
-      log(at.getComponentType() + " <-comp type, ele type-> "
-          + at.getElementType() + ", "
-          + at.getElementType().getClass().getName());
+      log("ele type "
+              + at.getElementType() + ", "
+              + at.getElementType().getClass().getName());
       if (at.getElementType() instanceof PrimitiveType) {
         return null;
       } else if (at.getElementType() instanceof SimpleType) {
