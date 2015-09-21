@@ -269,28 +269,22 @@ public class JavaTextArea extends JEditTextArea {
     } else if (keyChar == ' ') { // Trigger on Ctrl-Space
       if (!Platform.isMacOS() && JavaMode.codeCompletionsEnabled &&
           (event.isControlDown() || event.isMetaDown())) {
-        //SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
-        //  protected Object doInBackground() throws Exception {
-            // Provide completions only if it's enabled
-            if (JavaMode.codeCompletionsEnabled) {
-              try {
-                getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
-                Messages.log("[KeyEvent]" + event.getKeyChar() + "  |Prediction started");
-                fetchPhrase();
-              } catch (BadLocationException e) {
-                e.printStackTrace();
-              }
-            }
-        //    return null;
-        //  }
-        //};
-        //worker.execute();
+        // Provide completions only if it's enabled
+        if (JavaMode.codeCompletionsEnabled) {
+          // Removed for https://github.com/processing/processing/issues/3847
+          //try {
+          //  getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
+          Messages.log("[KeyEvent]" + event.getKeyChar() + "  |Prediction started");
+          fetchPhrase();
+          //} catch (BadLocationException e) {
+          //  e.printStackTrace();
+          //}
+        }
       } else {
         hideSuggestion(); // hide on spacebar
       }
     } else {
       if (JavaMode.codeCompletionsEnabled) {
-        //fetchPhrase();
         prepareSuggestions(event);
       }
     }

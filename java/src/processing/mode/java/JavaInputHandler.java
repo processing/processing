@@ -324,6 +324,11 @@ public class JavaInputHandler extends PdeInputHandler {
         event.consume();
         return true;
       }
+      // https://github.com/processing/processing/issues/3847
+      if (c == KeyEvent.VK_SPACE) {
+        event.consume();
+        return true;
+      }
     }
     return false;
   }
