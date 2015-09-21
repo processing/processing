@@ -20,7 +20,6 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import processing.core.PVector;
 import processing.mode.java.JavaInputHandler;
 import processing.mode.java.JavaMode;
 import processing.mode.java.JavaEditor;
@@ -34,15 +33,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
 
