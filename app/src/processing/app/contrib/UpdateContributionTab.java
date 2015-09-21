@@ -298,13 +298,14 @@ public class UpdateContributionTab extends ContributionTab {
       }
       ((UpdateStatusPanel)statusPanel).update();
     }
+
     @Override
     public void contributionAdded(final Contribution contribution) {
       if (filter.matches(contribution)) {
         EventQueue.invokeLater(new Runnable() {
           public void run() {
             ContributionPanel newPanel = contributionManagerDialog
-              .getTab(contributionType).contributionListPanel.panelByContribution
+              .getTab(contribution.getType()).contributionListPanel.panelByContribution
               .get(contribution);
             if (newPanel == null) {
               newPanel = new ContributionPanel(UpdateContribListingPanel.this);

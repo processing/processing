@@ -237,11 +237,6 @@ class StatusPanel extends JPanel {
 
 
   public void update(ContributionPanel panel) {
-    if(contributionTab.contributionManagerDialog.updatesContributionTab.contributionListPanel.panelByContribution.values().contains(panel)){
-      System.out.println("same");
-    }else{
-      System.out.println("diff");
-    }
     progressPanel.removeAll();
 
     iconLabel.setIcon(panel.getContrib().isSpecial() ? foundationIcon : null);
