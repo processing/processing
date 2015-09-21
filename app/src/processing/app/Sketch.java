@@ -795,9 +795,10 @@ public class Sketch {
   public boolean saveAs() throws IOException {
     String newParentDir = null;
     String newName = null;
-
     String oldName = folder.getName();
-    // TODO rewrite this to use shared version from PApplet
+
+    // TODO rewrite this to use shared version from PApplet (But because that
+    // specifies a callback function, this needs to wait until the refactoring)
     final String PROMPT = Language.text("save");
     if (Preferences.getBoolean("chooser.files.native")) {
       // get new name for folder
