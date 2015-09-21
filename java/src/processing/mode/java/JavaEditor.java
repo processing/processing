@@ -31,6 +31,7 @@ import processing.app.ui.Toolkit;
 import processing.mode.java.debug.LineBreakpoint;
 import processing.mode.java.debug.LineHighlight;
 import processing.mode.java.debug.LineID;
+import processing.mode.java.pdex.ASTGenerator;
 import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.ErrorMessageSimplifier;
@@ -2674,14 +2675,20 @@ public class JavaEditor extends Editor {
   /** Handle refactor operation */
   private void handleRefactor() {
     Messages.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
-    errorCheckerService.getASTGenerator().handleRefactor();
+    ASTGenerator astGenerator = errorCheckerService.getASTGenerator();
+    synchronized (astGenerator) {
+      astGenerator.handleRefactor();
+    }
   }
 
 
   /** Handle show usage operation */
   private void handleShowUsage() {
     Messages.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
-    errorCheckerService.getASTGenerator().handleShowUsage();
+    ASTGenerator astGenerator = errorCheckerService.getASTGenerator();
+    synchronized (astGenerator) {
+      astGenerator.handleShowUsage();
+    }
   }
 
 

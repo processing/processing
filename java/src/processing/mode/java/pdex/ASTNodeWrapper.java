@@ -390,7 +390,10 @@ public class ASTNodeWrapper {
     // Instead of converting pde into java, how can I simply extract the same source
     // from the java code? Think. TODO
     String sourceAlt = new String(source);
-    String sourceJava = ecs.astGenerator.getJavaSourceCodeLine(lineNumber);
+    String sourceJava;
+    synchronized (ecs.astGenerator) {
+      sourceJava = ecs.astGenerator.getJavaSourceCodeLine(lineNumber);
+    }
     TreeMap<Integer, Integer> offsetmap = new TreeMap<Integer, Integer>();
 
     if(sourceJava.trim().startsWith("public") && !source.startsWith("public")){
