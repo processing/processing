@@ -931,18 +931,6 @@ public class Sketch {
       }
     });
 
-    // Kick off a background thread to copy everything *but* the .pde files.
-    // Due to the poor way (dating back to the late 90s with DBN) that our
-    // save() and saveAs() methods have been implemented to return booleans,
-    // there isn't a good way to return a value to the calling thread without
-    // a good bit of refactoring (that should be done at some point).
-    // As a result, this method will return 'true' before the full "Save As"
-    // has completed, which will cause problems in weird cases.
-    // For instance, saving an untitled sketch that has an enormous data
-    // folder while quitting. The save thread to move those data folder files
-    // won't have finished before this returns true, and the PDE may quit
-    // before the SwingWorker completes its job.
-    // https://github.com/processing/processing/issues/3843
     startSaveAsThread(oldName, newName, newFolder, copyItems);
 
     // save the other tabs to their new location (main tab saved below)
@@ -975,41 +963,47 @@ public class Sketch {
   }
 
 
+  /**
+   * Kick off a background thread to copy everything *but* the .pde files.
+   * Due to the poor way (dating back to the late 90s with DBN) that our
+   * save() and saveAs() methods have been implemented to return booleans,
+   * there isn't a good way to return a value to the calling thread without
+   * a good bit of refactoring (that should be done at some point).
+   * As a result, this method will return 'true' before the full "Save As"
+   * has completed, which will cause problems in weird cases.
+   *
+   * For instance, saving an untitled sketch that has an enormous data
+   * folder while quitting. The save thread to move those data folder files
+   * won't have finished before this returns true, and the PDE may quit
+   * before the SwingWorker completes its job.
+   *
+   * <a href="https://github.com/processing/processing/issues/3843">3843</a>
+   */
   void startSaveAsThread(final String oldName, final String newName,
                          final File newFolder, final File[] copyItems) {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
-        final JFrame frame = new JFrame("Saving \u201C" + newName + "\u201C...");
-        // the UI of the progress bar follows
+        final JFrame frame =
+          new JFrame("Saving \u201C" + newName + "\u201C...");
         frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-//        frame.setBounds(200, 200, 400, 140);
-//        frame.setResizable(false);
 
         Box box = Box.createVerticalBox();
         box.setBorder(new EmptyBorder(16, 16, 16, 16));
-//        JPanel panel = new JPanel(null);
-//        frame.add(panel);
-//        frame.setContentPane(panel);  // uh, both?
 
         if (Platform.isMacOS()) {
           frame.setBackground(Color.WHITE);
         }
 
-        JLabel label = new JLabel("Saving additional files from the sketch folder...");
-//        JLabel label = new JLabel("Saving " + oldName + " as " + newName + "...");
-//        label.setBounds(40, 20, 300, 20);
+        JLabel label =
+          new JLabel("Saving additional files from the sketch folder...");
         box.add(label);
 
         final JProgressBar progressBar = new JProgressBar(0, 100);
         // no luck, stuck with ugly on OS X
         //progressBar.putClientProperty("JComponent.sizeVariant", "regular");
         progressBar.setValue(0);
-//        progressBar.setBounds(40, 50, 300, 30);
         progressBar.setStringPainted(true);
         box.add(progressBar);
-
-//        panel.add(progressBar);
-//        panel.add(label);
 
         frame.getContentPane().add(box);
         frame.pack();
@@ -1024,7 +1018,6 @@ public class Sketch {
             addPropertyChangeListener(new PropertyChangeListener() {
               public void propertyChange(PropertyChangeEvent evt) {
                 if ("progress".equals(evt.getPropertyName())) {
-                  System.out.println(evt.getNewValue());
                   progressBar.setValue((Integer) evt.getNewValue());
                 }
               }
