@@ -76,6 +76,7 @@ public class WebFrame extends JFrame {
         handleClose();
       }
     });
+    Toolkit.setIcon(this);
 
     editorKit = (HTMLEditorKit) editorPane.getEditorKit();
     editorKit.setAutoFormSubmission(false);

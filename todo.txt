@@ -25,6 +25,18 @@ X items still show up in "Recent" if they no longer exist (on startup)
 X   checked code and this seems to be fine / can't reproduce
 X show hover text when the mouse is over the 'debug' button
 X update EditorButton rollover label when pressing shift or alt
+X welcome screen shows coffee cup icon on Windows
+
+sketch modified
+X sketch modified externally with FAT32 volumes on OS X
+X   https://github.com/processing/processing/issues/3387
+X   might have this fixed with the larger time window
+X   need to check if "save as" thing is causing trouble
+X "Your sketch has been modified externally" with encrypted OS X volumes
+X   https://github.com/processing/processing/issues/3650
+o add this to the preferences?
+o use watcher service after all? 
+o   https://docs.oracle.com/javase/tutorial/essential/io/notification.html
 
 jna problems
 X UnsatisfiedLinkError on startup "Access is denied" on Windows 10
@@ -113,18 +125,6 @@ _ new Android release (EditorButton constructor changed)
 _ https://github.com/processing/processing/milestones/3.0%20final
 
 
-sketch modified externally (3.0 final)
-X sketch modified externally with FAT32 volumes on OS X
-X   https://github.com/processing/processing/issues/3387
-X   might have this fixed with the larger time window
-_   need to check if "save as" thing is causing trouble
-X "Your sketch has been modified externally" with encrypted OS X volumes
-X   https://github.com/processing/processing/issues/3650
-o add this to the preferences?
-o use watcher service after all? 
-o   https://docs.oracle.com/javase/tutorial/essential/io/notification.html
-
-
 gui / James
 _ Fix placement and visual design when showing error on hover
 _   https://github.com/processing/processing/issues/3173
@@ -134,14 +134,13 @@ _ distinguish errors and warnings
 _   https://github.com/processing/processing/issues/3406
 _ make breakpoints more prominent
 _   https://github.com/processing/processing/issues/3307
-_ replace about screen (1x and 2x versions)
+_ replace startup/about screen (1x and 2x versions)
 _   change 'alpha' to correct name
 _   also change the revision in the "about processing" dialog
 _   https://github.com/processing/processing/issues/3665
 
 
 gui / 3.0 final
-_ welcome screen shows coffee cup icon on Windows
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
 _ finish the gui
