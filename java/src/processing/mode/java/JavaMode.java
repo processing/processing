@@ -266,13 +266,14 @@ public class JavaMode extends Mode {
 
 
   /**
-   * Any modes that extend JavaMode can override this method to add additional jars to be
-   * included in the classpath for code completion and error checking
+   * Any modes that extend JavaMode can override this method to add additional
+   * JARs to be included in the classpath for code completion and error checking
    * @return searchPath: file-paths separated by File.pathSeparatorChar
    */
   public String getSearchPath() {
     // Java Mode doesn't need any default external jars at the moment.
-    return "";
+    // This is here for Android Mode so that it can add its android.jar file.
+    return null;
   }
 
 

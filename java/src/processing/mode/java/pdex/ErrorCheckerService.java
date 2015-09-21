@@ -887,17 +887,18 @@ public class ErrorCheckerService implements Runnable {
             e2.printStackTrace();
           }
         }
-
-
       }
 
       // Also add jars specified in mode's search path
-      String modeJars[] = ((JavaMode) getEditor().getMode()).getSearchPath().split(File.pathSeparatorChar + "");
-      for (String mj : modeJars) {
-        try {
-          classpathJars.add(new File(mj).toURI().toURL());
-        } catch (MalformedURLException e) {
-          e.printStackTrace();
+      String searchPath = ((JavaMode) getEditor().getMode()).getSearchPath();
+      if (searchPath != null) {
+        String[] modeJars = PApplet.split(searchPath, File.pathSeparatorChar);
+        for (String mj : modeJars) {
+          try {
+            classpathJars.add(new File(mj).toURI().toURL());
+          } catch (MalformedURLException e) {
+            e.printStackTrace();
+          }
         }
       }
     }

@@ -111,6 +111,7 @@ import processing.app.SketchCode;
 import processing.app.Util;
 import processing.app.syntax.JEditTextArea;
 import processing.app.ui.Toolkit;
+import processing.data.StringList;
 import processing.mode.java.JavaEditor;
 import processing.mode.java.JavaMode;
 import processing.mode.java.preproc.PdePreprocessor;
@@ -295,13 +296,6 @@ public class ASTGenerator {
    */
   protected ClassPath classPath;
 
-  //protected JFrame frmJavaDoc;
-
-  protected String getJavaSearchPath() {
-    return System.getProperty("java.class.path") +
-            File.pathSeparatorChar + System.getProperty("java.home") +
-            File.separator + "lib" + File.separator + "rt.jar";
-  }
 
   /**
    * Loads up .jar files and classes defined in it for completion lookup
@@ -309,22 +303,36 @@ public class ASTGenerator {
   protected void loadJars() {
     factory = new ClassPathFactory();
 
-    StringBuilder path = new StringBuilder();
-    String modeClassPath = getJavaSearchPath() + File.pathSeparatorChar + ((JavaMode) editor.getMode()).getSearchPath();
+    StringList entries = new StringList();
+    entries.append(System.getProperty("java.class.path"));
+    entries.append(System.getProperty("java.home") +
+                   File.separator + "lib" + File.separator + "rt.jar");
+
+    String modeClassPath = ((JavaMode) editor.getMode()).getSearchPath();
     if (modeClassPath != null) {
-      path.append(modeClassPath);
+      entries.append(modeClassPath);
     }
 
     if (errorCheckerService.classpathJars != null) {
       synchronized (errorCheckerService.classpathJars) {
         for (URL jarPath : errorCheckerService.classpathJars) {
-          //log(jarPath.getPath());
-          path.append(jarPath.getPath() + File.pathSeparatorChar);
+          entries.append(jarPath.getPath());
         }
       }
     }
 
-    classPath = factory.createFromPath(path.toString());
+//    // Just in case, make sure we don't run off into oblivion
+//    String workingDirectory = System.getProperty("user.dir");
+//    if (entries.removeValue(workingDirectory) != -1) {
+//      System.err.println("user.dir found in classpath");
+//    }
+
+//    // hm, these weren't problematic either
+//    entries.append(System.getProperty("user.dir"));
+//    entries.append("");
+//    entries.print();
+
+    classPath = factory.createFromPath(entries.join(File.pathSeparator));
     log("Classpath created " + (classPath != null));
     log("Sketch classpath jars loaded.");
     if (Platform.isMacOS()) {
