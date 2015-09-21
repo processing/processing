@@ -998,6 +998,7 @@ public class Sketch {
         JLabel label =
           new JLabel("Saving additional files from the sketch folder...");
         box.add(label);
+        box.add(Box.createVerticalStrut(8));
 
         final JProgressBar progressBar = new JProgressBar(0, 100);
         // no luck, stuck with ugly on OS X
