@@ -1228,6 +1228,7 @@ public class Sketch {
     if (filename.toLowerCase().endsWith(".class") ||
         filename.toLowerCase().endsWith(".jar") ||
         filename.toLowerCase().endsWith(".dll") ||
+        filename.toLowerCase().endsWith(".dylib") ||
         filename.toLowerCase().endsWith(".jnilib") ||
         filename.toLowerCase().endsWith(".so")) {
 
