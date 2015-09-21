@@ -1364,7 +1364,9 @@ public class ErrorCheckerService implements Runnable {
     // Footer
     if (mode != PdePreprocessor.Mode.JAVA) {
       if (mode == PdePreprocessor.Mode.STATIC) {
-        sb.append("\nnoLoop();\n}");
+        // no noLoop() here so it does not tell you
+        // "can't invoke noLoop() on obj" when you type "obj."
+        sb.append("\n}");
       }
       sb.append("\n}");
     }
