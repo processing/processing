@@ -129,7 +129,7 @@ public class CompletionPanel {
     scrollPane.setViewportView(completionList = createSuggestionList(position, items));
     popupMenu.add(scrollPane, BorderLayout.CENTER);
     popupMenu.setPopupSize(calcWidth(), calcHeight(items.getSize())); //TODO: Eradicate this evil
-    textarea.requestFocusInWindow();
+    popupMenu.setFocusable(false);
     ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
     synchronized (astGenerator) {
       astGenerator.updateJavaDoc(completionList.getSelectedValue());
