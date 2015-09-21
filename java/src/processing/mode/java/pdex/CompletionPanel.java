@@ -112,7 +112,7 @@ public class CompletionPanel {
     this.textarea = (JavaTextArea) textarea;
     this.editor = editor;
     this.insertionPosition = position;
-    if (subWord.indexOf('.') != -1) {
+    if (subWord.indexOf('.') != -1 && subWord.indexOf('.') != subWord.length()-1) {
       this.subWord = subWord.substring(subWord.lastIndexOf('.') + 1);
     } else {
       this.subWord = subWord;
@@ -398,13 +398,7 @@ public class CompletionPanel {
 
         if(mouseClickOnOverloadedMethods) {
           // See #2755
-          SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
-            protected Object doInBackground() throws Exception {
-              ((JavaTextArea) editor.getTextArea()).fetchPhrase(null);
-              return null;
-            }
-          };
-          worker.execute();
+          ((JavaTextArea) editor.getTextArea()).fetchPhrase();
         }
 
         return true;

@@ -20,6 +20,7 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
+import processing.core.PVector;
 import processing.mode.java.JavaInputHandler;
 import processing.mode.java.JavaMode;
 import processing.mode.java.JavaEditor;
@@ -28,12 +29,22 @@ import processing.mode.java.tweak.Handle;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.BitSet;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.text.BadLocationException;
 
 import processing.app.Messages;
 import processing.app.Mode;
@@ -222,7 +233,8 @@ public class JavaTextArea extends JEditTextArea {
     if (!editor.hasJavaTabs()) {
       if (evt.getID() == KeyEvent.KEY_TYPED) {
         processCompletionKeys(evt);
-
+      } else if (!Platform.isMacOS() && evt.getID() == KeyEvent.KEY_RELEASED) {
+        processCompletionKeys(evt);
       } else if (Platform.isMacOS() && evt.getID() == KeyEvent.KEY_RELEASED) {
         processControlSpace(evt);
       }
@@ -234,28 +246,24 @@ public class JavaTextArea extends JEditTextArea {
   // https://github.com/processing/processing/issues/2699
   private void processControlSpace(final KeyEvent event) {
     if (event.getKeyCode() == KeyEvent.VK_SPACE && event.isControlDown()) {
-      SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
-        protected Object doInBackground() throws Exception {
-          // Provide completions only if it's enabled
-          if (JavaMode.codeCompletionsEnabled) {
-            Messages.log("[KeyEvent]" + KeyEvent.getKeyText(event.getKeyCode()) + "  |Prediction started");
-            Messages.log("Typing: " + fetchPhrase(event));
-          }
-          return null;
-        }
-      };
-      worker.execute();
+      // Provide completions only if it's enabled
+      if (JavaMode.codeCompletionsEnabled) {
+        Messages.log("[KeyEvent]" + KeyEvent.getKeyText(event.getKeyCode()) + "  |Prediction started");
+        fetchPhrase();
+      }
     }
   }
 
 
   private void processCompletionKeys(final KeyEvent event) {
     char keyChar = event.getKeyChar();
+    int keyCode = event.getKeyCode();
     if (keyChar == KeyEvent.VK_ENTER ||
         keyChar == KeyEvent.VK_ESCAPE ||
         keyChar == KeyEvent.VK_TAB ||
-        keyChar == KeyEvent.CHAR_UNDEFINED) {
-
+        (event.getID() == KeyEvent.KEY_RELEASED &&
+            keyCode != KeyEvent.VK_LEFT && keyCode != KeyEvent.VK_RIGHT)) {
+      // ignore
     } else if (keyChar == ')') {
       // https://github.com/processing/processing/issues/2741
       hideSuggestion();
@@ -263,28 +271,33 @@ public class JavaTextArea extends JEditTextArea {
     } else if (keyChar == '.') {
       if (JavaMode.codeCompletionsEnabled) {
         Messages.log("[KeyEvent]" + KeyEvent.getKeyText(event.getKeyCode()) + "  |Prediction started");
-        Messages.log("Typing: " + fetchPhrase(event));
+        fetchPhrase();
       }
     } else if (keyChar == ' ') { // Trigger on Ctrl-Space
       if (!Platform.isMacOS() && JavaMode.codeCompletionsEnabled &&
           (event.isControlDown() || event.isMetaDown())) {
-        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
-          protected Object doInBackground() throws Exception {
+        //SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+        //  protected Object doInBackground() throws Exception {
             // Provide completions only if it's enabled
             if (JavaMode.codeCompletionsEnabled) {
-              getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
-              Messages.log("[KeyEvent]" + event.getKeyChar() + "  |Prediction started");
-              Messages.log("Typing: " + fetchPhrase(event));
+              try {
+                getDocument().remove(getCaretPosition() - 1, 1); // Remove the typed space
+                Messages.log("[KeyEvent]" + event.getKeyChar() + "  |Prediction started");
+                fetchPhrase();
+              } catch (BadLocationException e) {
+                e.printStackTrace();
+              }
             }
-            return null;
-          }
-        };
-        worker.execute();
+        //    return null;
+        //  }
+        //};
+        //worker.execute();
       } else {
         hideSuggestion(); // hide on spacebar
       }
     } else {
       if (JavaMode.codeCompletionsEnabled) {
+        //fetchPhrase();
         prepareSuggestions(event);
       }
     }
@@ -293,17 +306,13 @@ public class JavaTextArea extends JEditTextArea {
 
   /** Kickstart auto-complete suggestions */
   private void prepareSuggestions(final KeyEvent evt) {
-    new SwingWorker<Object, Object>() {
-      protected Object doInBackground() throws Exception {
-        // Provide completions only if it's enabled
-        if (JavaMode.codeCompletionsEnabled &&
-            (JavaMode.ccTriggerEnabled || suggestion.isVisible())) {
-          Messages.log("[KeyEvent]" + evt.getKeyChar() + "  |Prediction started");
-          Messages.log("Typing: " + fetchPhrase(evt));
-        }
-        return null;
-      }
-    }.execute();
+    // Provide completions only if it's enabled
+    if (JavaMode.codeCompletionsEnabled &&
+        (JavaMode.ccTriggerEnabled ||
+        (suggestion != null && suggestion.isVisible()))) {
+      Messages.log("[KeyEvent]" + evt.getKeyChar() + "  |Prediction started");
+      fetchPhrase();
+    }
   }
 
 
@@ -377,128 +386,300 @@ public class JavaTextArea extends JEditTextArea {
   }
 
 
+  SwingWorker<Void, Void> suggestionWorker = null;
+
+  int lastCaretPosition = 0;
+  String lastPhrase = "";
+
+  volatile boolean suggestionRunning = false;
+  volatile boolean suggestionRequested = false;
+
   /**
    * Retrieves the current word typed just before the caret.
    * Then triggers code completion for that word.
    * @param evt - the KeyEvent which triggered this method
    */
-  protected String fetchPhrase(KeyEvent evt) {
-    int off = getCaretPosition();
-    Messages.log("off " + off);
-    if (off < 0)
-      return null;
-    int line = getCaretLine();
-    if (line < 0)
-      return null;
-    String s = getLineText(line);
-    Messages.log("  line " + line);
+  protected void fetchPhrase() {
 
-    //log2(s + " len " + s.length());
-
-    int x = getCaretPosition() - getLineStartOffset(line) - 1, x1 = x - 1;
-    if(x >= s.length() || x < 0) {
-      //log("X is " + x + ". Returning null");
-      hideSuggestion();
-      return null; //TODO: Does this check cause problems? Verify.
+    if (suggestionRunning) {
+      suggestionRequested = true;
+      return;
     }
 
-    Messages.log("  x char: " + s.charAt(x));
+    suggestionRunning = true;
+    suggestionRequested = false;
 
-    if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_'
-        || s.charAt(x) == '(' || s.charAt(x) == '.')) {
-      //log("Char before caret isn't a letter/digit/_(. so no predictions");
-      hideSuggestion();
-      return null;
-    } else if (x > 0 && (s.charAt(x - 1) == ' ' || s.charAt(x - 1) == '(')
-        && Character.isDigit(s.charAt(x))) {
-      //log("Char before caret isn't a letter, but ' ' or '(', so no predictions");
-      hideSuggestion(); // See #2755, Option 2 comment
-      return null;
-    } else if (x == 0){
-      //log("X is zero");
-      hideSuggestion();
-      return null;
+    final String text;
+    final int caretLineIndex;
+    final int caretLinePosition;
+    {
+      // Get caret position
+      int caretPosition = getCaretPosition();
+      if (caretPosition < 0) {
+        suggestionRunning = false;
+        return;
+      }
+
+      // Get line index
+      caretLineIndex = getCaretLine();
+      if (caretLineIndex < 0) {
+        suggestionRunning = false;
+        return;
+      }
+
+      // Get text of the line
+      String lineText = getLineText(caretLineIndex);
+      if (lineText == null) {
+        suggestionRunning = false;
+        return;
+      }
+
+      // Get caret position on the line
+      caretLinePosition = getCaretPosition() - getLineStartOffset(caretLineIndex);
+      if (caretLinePosition <= 0) {
+        suggestionRunning = false;
+        return;
+      }
+
+      // Get part of the line to the left of the caret
+      if (caretLinePosition > lineText.length()) {
+        suggestionRunning = false;
+        return;
+      }
+      text = lineText.substring(0, caretLinePosition);
     }
 
-    //int xLS = off - getLineStartNonWhiteSpaceOffset(line);
+    suggestionWorker = new SwingWorker<Void, Void>() {
 
-    String word = (x < s.length() ? s.charAt(x) : "") + "";
-    if (s.trim().length() == 1) {
-//      word = ""
-//          + (keyChar == KeyEvent.CHAR_UNDEFINED ? s.charAt(x - 1) : keyChar);
-      //word = (x < s.length()?s.charAt(x):"") + "";
-      word = word.trim();
-      if (word.endsWith("."))
-        word = word.substring(0, word.length() - 1);
+      String phrase = null;
+      DefaultListModel<CompletionCandidate> defListModel = null;
 
-      editor.getErrorChecker().getASTGenerator().preparePredictions(word, line + editor.getErrorChecker().mainClassOffset,0);
-      return word;
-    }
+      @Override
+      protected Void doInBackground() throws Exception {
+        Messages.log("phrase parse start");
+        phrase = parsePhrase(text, caretLinePosition);
+        Messages.log("phrase: " + phrase);
+        if (phrase == null) return null;
 
-    int i = 0;
-    int closeB = 0;
+        List<CompletionCandidate> candidates = null;
 
-    while (true) {
-      i++;
-      //TODO: currently works on single line only. "a. <new line> b()" won't be detected
-      if (x1 >= 0) {
-//        if (s.charAt(x1) != ';' && s.charAt(x1) != ',' && s.charAt(x1) != '(')
-        if (Character.isLetterOrDigit(s.charAt(x1)) || s.charAt(x1) == '_'
-            || s.charAt(x1) == '.' || s.charAt(x1) == ')' || s.charAt(x1) == ']') {
+        ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
+        synchronized (astGenerator) {
+          int lineOffset = caretLineIndex +
+              editor.getErrorChecker().mainClassOffset;
 
-          if (s.charAt(x1) == ')') {
-            word = s.charAt(x1--) + word;
-            closeB++;
-            while (x1 >= 0 && closeB > 0) {
-              word = s.charAt(x1) + word;
-              if (s.charAt(x1) == '(')
-                closeB--;
-              if (s.charAt(x1) == ')')
-                closeB++;
-              x1--;
+          candidates = astGenerator.preparePredictions(phrase, lineOffset);
+        }
+
+        if (suggestionRequested) return null;
+
+        // don't show completions when the outline is visible
+        boolean showSuggestions = astGenerator.sketchOutline == null ||
+            !astGenerator.sketchOutline.isVisible();
+
+        if (showSuggestions && phrase != null &&
+            candidates != null && !candidates.isEmpty()) {
+          Collections.sort(candidates);
+          defListModel = ASTGenerator.filterPredictions(candidates);
+          Messages.log("Got: " + candidates.size() + " candidates, " + defListModel.size() + " filtered");
+        }
+        return null;
+      }
+
+      @Override
+      protected void done() {
+
+        try {
+          get();
+        } catch (ExecutionException e) {
+          Messages.loge("error while preparing suggestions", e.getCause());
+        } catch (InterruptedException e) {
+          // don't care
+        }
+
+        suggestionRunning = false;
+        if (suggestionRequested) {
+          Messages.log("completion invalidated");
+          hideSuggestion();
+          fetchPhrase();
+          return;
+        }
+
+        Messages.log("completion finishing");
+
+        if (defListModel != null) {
+          showSuggestion(defListModel, phrase);
+        } else {
+          hideSuggestion();
+        }
+      }
+    };
+
+    suggestionWorker.execute();
+  }
+
+  protected static String parsePhrase(String lineText, int caretLinePosition) {
+
+    boolean overloading = false;
+
+    { // Check if we can provide suggestions for this phrase ending
+      String trimmedLineText = lineText.trim();
+      if (trimmedLineText.length() == 0) return null;
+
+      int lastCodePoint = trimmedLineText.codePointAt(trimmedLineText.length() - 1);
+      if (lastCodePoint == '.') {
+        trimmedLineText = trimmedLineText.substring(0, trimmedLineText.length() - 1).trim();
+        if (trimmedLineText.length() == 0) return null;
+        lastCodePoint = trimmedLineText.codePointAt(trimmedLineText.length() - 1);
+        switch (lastCodePoint) {
+          case ')':
+          case ']':
+          case '"':
+            break; // We can suggest for these
+          default:
+            if (!Character.isJavaIdentifierPart(lastCodePoint)) {
+              return null; // Not something we can suggest
             }
-          }
-          else if (s.charAt(x1) == ']') {
-            word = s.charAt(x1--) + word;
-            closeB++;
-            while (x1 >= 0 && closeB > 0) {
-              word = s.charAt(x1) + word;
-              if (s.charAt(x1) == '[')
-                closeB--;
-              if (s.charAt(x1) == ']')
-                closeB++;
-              x1--;
-            }
-          }
-          else {
-            word = s.charAt(x1--) + word;
+            break;
+        }
+      } else if (lastCodePoint == '(') {
+        overloading = true; // We can suggest overloaded methods
+      } else if (!Character.isJavaIdentifierPart(lastCodePoint)) {
+        return null; // Not something we can suggest
+      }
+    }
+
+    final int currentCharIndex = caretLinePosition - 1;
+
+    { // Check if the caret is in the comment
+      int commentStart = lineText.indexOf("//", 0);
+      if (commentStart >= 0 && currentCharIndex > commentStart) {
+        return null;
+      }
+    }
+
+    // Index the line
+    BitSet isInLiteral = new BitSet(lineText.length());
+    BitSet isInBrackets = new BitSet(lineText.length());
+
+    { // Mark parts in literals
+      boolean inString = false;
+      boolean inChar = false;
+      boolean inEscaped = false;
+
+      for (int i = 0; i < lineText.length(); i++) {
+        if (!inEscaped) {
+          switch (lineText.codePointAt(i)) {
+            case '\"':
+              if (!inChar) inString = !inString;
+              break;
+            case '\'':
+              if (!inString) inChar = !inChar;
+              break;
+            case '\\':
+              if (inString || inChar) {
+                inEscaped = true;
+              }
+              break;
           }
         } else {
-          break;
+          inEscaped = false;
         }
-      } else {
-        break;
-      }
-
-      if (i > 200) {
-        // time out!
-        break;
+        isInLiteral.set(i, inString || inChar);
       }
     }
 
-    if (Character.isDigit(word.charAt(0)))
-      return null;
-    word = word.trim();
-    //    if (word.endsWith("."))
-    //      word = word.substring(0, word.length() - 1);
-    int lineStartNonWSOffset = 0;
-    if (word.length() >= JavaMode.codeCompletionTriggerLength) {
-      editor.getErrorChecker().getASTGenerator()
-          .preparePredictions(word, line + editor.getErrorChecker().mainClassOffset,
-                              lineStartNonWSOffset);
-    }
-    return word;
+    if (isInLiteral.get(currentCharIndex)) return null;
 
+    { // Mark parts in top level brackets
+      int depth = overloading ? 1 : 0;
+      int bracketStart = overloading ? lineText.length() : 0;
+      int squareDepth = 0;
+      int squareBracketStart = 0;
+
+      bracketLoop: for (int i = lineText.length() - 1; i >= 0; i--) {
+        if (!isInLiteral.get(i)) {
+          switch (lineText.codePointAt(i)) {
+            case ')':
+              if (depth == 0) bracketStart = i;
+              depth++;
+              break;
+            case '(':
+              depth--;
+              if (depth == 0) {
+                isInBrackets.set(i, bracketStart);
+              } else if (depth < 0) {
+                break bracketLoop;
+              }
+              break;
+            case ']':
+              if (squareDepth == 0) squareBracketStart = i;
+              squareDepth++;
+              break;
+            case '[':
+              squareDepth--;
+              if (squareDepth == 0) {
+                isInBrackets.set(i, squareBracketStart);
+              } else if (squareDepth < 0) {
+                break bracketLoop;
+              }
+              break;
+          }
+        }
+      }
+
+      if (depth > 0) isInBrackets.set(0, bracketStart);
+      if (squareDepth > 0) isInBrackets.set(0, squareBracketStart);
+    }
+
+    // Walk the line from the end until it makes sense
+    int position = currentCharIndex;
+    parseLoop: while (position >= 0) {
+      int codePoint = lineText.codePointAt(position);
+      switch (codePoint) {
+        case '.': // Grab it
+          position--;
+          break;
+        case '[':
+          break parseLoop; // End of scope
+        case ']': // Grab the whole region in square brackets
+          position = isInBrackets.previousClearBit(position-1);
+          break;
+        case '(':
+          if (isInBrackets.get(position)) {
+            position--; // This checks for first bracket while overloading
+            break;
+          }
+          break parseLoop; // End of scope
+        case ')': // Grab the whole region in brackets
+          position = isInBrackets.previousClearBit(position-1);
+          break;
+        case '"': // Grab the whole literal and quit
+          position = isInLiteral.previousClearBit(position - 1);
+          break parseLoop;
+        default:
+          if (Character.isJavaIdentifierPart(codePoint)) {
+            position--; // Grab the identifier
+          } else if (Character.isWhitespace(codePoint)) {
+            position--; // Grab whitespace too
+          } else {
+            break parseLoop; // Got a char ending the phrase
+          }
+          break;
+      }
+    }
+
+    position++;
+
+    // Extract phrase
+    String phrase = lineText.substring(position, caretLinePosition).trim();
+    Messages.log(phrase);
+
+    if (phrase.length() == 0 || Character.isDigit(phrase.codePointAt(0))) {
+      return null; // Can't suggest for numbers or empty phrases
+    }
+
+    return phrase;
   }
 
 
@@ -799,9 +980,6 @@ public class JavaTextArea extends JEditTextArea {
         return;
       }
 
-      if (subWord.length() < 2) {
-        return;
-      }
       suggestion = new CompletionPanel(this, position, subWord,
                                        listModel, location, editor);
       requestFocusInWindow();
@@ -814,7 +992,7 @@ public class JavaTextArea extends JEditTextArea {
     if (suggestion != null) {
       suggestion.setInvisible();
       //log("Suggestion hidden.");
-      suggestion = null;
+      suggestion = null; // TODO: check if we dispose the window properly
     }
   }
 
