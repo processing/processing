@@ -93,6 +93,8 @@ public class ManagerFrame {
       tabs.setPanel(showTab);
     }
     frame.setVisible(true);
+    // Avoid the search box taking focus and hiding the 'search' text
+    tabs.requestFocusInWindow();
   }
 
 
