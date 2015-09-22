@@ -1064,20 +1064,16 @@ public class ErrorCheckerService implements Runnable {
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
     if (JavaMode.errorCheckEnabled) {
-      List<LineMarker> errorPoints = editor.getErrorPoints();
-      synchronized (errorPoints) {
-        for (LineMarker emarker : errorPoints) {
-          if (emarker.getProblem().getLineNumber() == editor.getTextArea().getCaretLine()) {
-            if (emarker.getType() == LineMarker.WARNING) {
-              editor.statusMessage(emarker.getProblem().getMessage(),
-                                   JavaEditor.STATUS_INFO);
-            } else {
-              editor.statusMessage(emarker.getProblem().getMessage(),
-                                   JavaEditor.STATUS_COMPILER_ERR);
-            }
-            return;
-          }
+      LineMarker errorMarker = editor.findError(editor.getTextArea().getCaretLine());
+      if (errorMarker != null) {
+        if (errorMarker.getType() == LineMarker.WARNING) {
+          editor.statusMessage(errorMarker.getProblem().getMessage(),
+                               JavaEditor.STATUS_INFO);
+        } else {
+          editor.statusMessage(errorMarker.getProblem().getMessage(),
+                               JavaEditor.STATUS_COMPILER_ERR);
         }
+        return;
       }
     }
 
