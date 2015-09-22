@@ -18,7 +18,6 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
 import processing.app.Base;
@@ -112,25 +111,24 @@ public class UpdateListPanel extends ListPanel {
       }
     });
 
-    table.getTableHeader().setDefaultRenderer(new ContribHeaderRenderer() {
+    table.getTableHeader().setDefaultRenderer(new ContribHeaderRenderer()); /* {
       @Override
       public Component getTableCellRendererComponent(JTable table,
                                                      Object value,
                                                      boolean isSelected,
                                                      boolean hasFocus, int row,
                                                      int column) {
-        // TODO this doesn't do anything with the returned value? [fry]
         super.getTableCellRendererComponent(table, value, isSelected,
                                             hasFocus, row, column);
         JTableHeader tableHeader = table.getTableHeader();
         if (tableHeader != null) {
           setForeground(tableHeader.getForeground());
         }
-        setIcon(getIcon(table, column));
+        setIcon(getSortIcon(table, column));
         setBackground(new Color(0xebebeb));
         return this;
       }
-    });
+    });*/
 
     GroupLayout layout = new GroupLayout(this);
     layout.setHorizontalGroup(layout.createParallelGroup().addComponent(scrollPane));

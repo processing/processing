@@ -61,6 +61,10 @@ implements Scrollable, ContributionListing.ChangeListener {
 
   static Font plainFont;
   static Font boldFont;
+  static Font headerFont;
+
+  // Should this be in theme.txt? Of course! Is it? No.
+  static final Color HEADER_BGCOLOR = new Color(0xffEBEBEB);
 
 
   public ListPanel() {
@@ -72,12 +76,13 @@ implements Scrollable, ContributionListing.ChangeListener {
 
       plainFont = Toolkit.getSansFont(14, Font.PLAIN);
       boldFont = Toolkit.getSansFont(14, Font.BOLD);
+      headerFont = Toolkit.getSansFont(12, Font.PLAIN);
     }
   }
 
 
   public ListPanel(final ContributionTab contributionTab,
-                               Contribution.Filter filter) {
+                   Contribution.Filter filter) {
     this.contributionTab = contributionTab;
     this.filter = filter;
 
@@ -89,17 +94,16 @@ implements Scrollable, ContributionListing.ChangeListener {
       new TreeMap<Contribution, DetailPanel>(ContributionListing.COMPARATOR);
 
     model = new ContribTableModel();
-    table = new JTable(model){
+    table = new JTable(model) {
       @Override
-      public Component prepareRenderer(
-              TableCellRenderer renderer, int row, int column) {
-          Component c = super.prepareRenderer(renderer, row, column);
-          if (isRowSelected(row)) {
-              c.setBackground(new Color(0xe0fffd));
-          } else {
-              c.setBackground(Color.white);
-          }
-          return c;
+      public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+        Component c = super.prepareRenderer(renderer, row, column);
+        if (isRowSelected(row)) {
+          c.setBackground(new Color(0xe0fffd));
+        } else {
+          c.setBackground(Color.white);
+        }
+        return c;
       }
     };
 
@@ -223,16 +227,19 @@ implements Scrollable, ContributionListing.ChangeListener {
             boolean isSelected, boolean hasFocus, int row, int column) {
       super.getTableCellRendererComponent(table, value,
               isSelected, hasFocus, row, column);
+
       JTableHeader tableHeader = table.getTableHeader();
       if (tableHeader != null) {
         setForeground(tableHeader.getForeground());
       }
-      setIcon(getIcon(table, column));
-      if (column % 2 == 0) {
-        setBackground(new Color(0xdfdfdf));
-      } else {
-        setBackground(new Color(0xebebeb));
-      }
+      setFont(headerFont);
+      setIcon(getSortIcon(table, column));
+      setBackground(HEADER_BGCOLOR);
+//      if (column % 2 == 0) {
+//        setBackground(new Color(0xdfdfdf));
+//      } else {
+//        setBackground(new Color(0xebebeb));
+//      }
       setBorder(null);
       return this;
     }
@@ -245,7 +252,7 @@ implements Scrollable, ContributionListing.ChangeListener {
      * @param column the column index.
      * @return the sort icon, or null if the column is unsorted.
      */
-    protected Icon getIcon(JTable table, int column) {
+    protected Icon getSortIcon(JTable table, int column) {
       SortKey sortKey = getSortKey(table, column);
       if (sortKey != null && table.convertColumnIndexToView(sortKey.getColumn()) == column) {
         switch (sortKey.getSortOrder()) {
