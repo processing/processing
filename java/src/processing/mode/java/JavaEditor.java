@@ -2479,6 +2479,27 @@ public class JavaEditor extends Editor {
   }
 
 
+  /**
+   * @return the LineMarker for the first error or warning on 'line'
+   */
+  public LineMarker findError(int line) {
+    List<LineMarker> errorPoints = getErrorPoints();
+    JavaTextArea textArea = getJavaTextArea();
+    synchronized (errorPoints) {
+      for (LineMarker emarker : errorPoints) {
+        Problem p = emarker.getProblem();
+        int pStartLine = p.getLineNumber();
+        int pEndOffset = textArea.getLineStartOffset(pStartLine) + p.getPDELineStopOffset() + 1;
+        int pEndLine = textArea.getLineOfOffset(pEndOffset);
+        if (line >= pStartLine && line <= pEndLine) {
+          return emarker;
+        }
+      }
+    }
+    return null;
+  }
+
+
   /*
   public void clearErrorPoints() {
     List<LineMarker> errorPoints = getErrorPoints();

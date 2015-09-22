@@ -74,25 +74,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
   protected Color gutterTextColor;
   protected Color gutterLineHighlightColor;
 
-  public static class ErrorLineCoord {
-    public int xStart;
-    public int xEnd;
-    public int yStart;
-    public int yEnd;
-    public Problem problem;
 
-    public ErrorLineCoord(int xStart, int xEnd, int yStart, int yEnd, Problem problem) {
-      this.xStart = xStart;
-      this.xEnd = xEnd;
-      this.yStart = yStart;
-      this.yEnd = yEnd;
-      this.problem = problem;
-    }
-  }
-  public List<ErrorLineCoord> errorLineCoords = new ArrayList<>();
-
-
-  public JavaTextAreaPainter(JavaTextArea textArea, TextAreaDefaults defaults) {
+  public JavaTextAreaPainter(final JavaTextArea textArea, TextAreaDefaults defaults) {
     super(textArea, defaults);
 
     addMouseListener(new MouseAdapter() {
@@ -134,11 +117,28 @@ public class JavaTextAreaPainter extends TextAreaPainter
     addMouseMotionListener(new MouseMotionAdapter() {
       @Override
       public void mouseMoved(final MouseEvent evt) {
-        for (ErrorLineCoord coord : errorLineCoords) {
-          if (evt.getX() >= coord.xStart && evt.getX() <= coord.xEnd &&
-              evt.getY() >= coord.yStart && evt.getY() <= coord.yEnd + 2) {
-            setToolTipText(coord.problem.getMessage());
-            break;
+        int line = textArea.yToLine(evt.getY());
+        int x = evt.getX();
+
+        LineMarker marker = getJavaEditor().findError(line);
+        if (marker != null) {
+          Problem problem = marker.getProblem();
+
+          int lineOffset = textArea.getLineStartOffset(problem.getLineNumber());
+
+          int lineStart = textArea.getLineStartOffset(line);
+          int lineEnd = textArea.getLineStopOffset(line);
+
+          int errorStart = lineOffset + problem.getPDELineStartOffset();
+          int errorEnd = lineOffset + problem.getPDELineStopOffset() + 1;
+
+          int startOffset = Math.max(errorStart, lineStart) - lineStart;
+          int stopOffset = Math.min(errorEnd, lineEnd) - lineStart;
+
+          if (x >= getTextArea().offsetToX(line, startOffset) &&
+              x <= getTextArea().offsetToX(line, stopOffset)) {
+            setToolTipText(problem.getMessage());
+            evt.consume();
           }
         }
       }
@@ -338,22 +338,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 
   /**
-   * @return the LineMarker for the first error or warning on 'line'
-   */
-  private LineMarker findError(int line) {
-    List<LineMarker> errorPoints = getJavaEditor().getErrorPoints();
-    synchronized (errorPoints) {
-      for (LineMarker emarker : errorPoints) {
-        if (emarker.getProblem().getLineNumber() == line) {
-          return emarker;
-        }
-      }
-    }
-    return null;
-  }
-
-
-  /**
    * Paints the underline for an error/warning line
    *
    * @param gfx
@@ -369,22 +353,29 @@ public class JavaTextAreaPainter extends TextAreaPainter
       return;
     }
 
-    errorLineCoords.clear();
-    LineMarker marker = findError(line);
+    LineMarker marker = getJavaEditor().findError(line);
     if (marker != null) {
       Problem problem = marker.getProblem();
 
+      int offset = textArea.getLineStartOffset(problem.getLineNumber());
+
+      int startOffset = offset + problem.getPDELineStartOffset();
+      int stopOffset = offset + problem.getPDELineStopOffset() + 1;
+
+      int lineOffset = textArea.getLineStartOffset(line);
+
+      int wiggleStart = Math.max(startOffset, lineOffset);
+      int wiggleStop = Math.min(stopOffset, textArea.getLineStopOffset(line));
+
       int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
-      int start = textArea.getLineStartOffset(line) + problem.getPDELineStartOffset();
-      int length = 1 + problem.getPDELineStopOffset() - problem.getPDELineStartOffset();
 
       try {
         String badCode = null;
         String goodCode = null;
         try {
           SyntaxDocument doc = textArea.getDocument();
-          badCode = doc.getText(start, length);
-          goodCode = doc.getText(textArea.getLineStartOffset(line), problem.getPDELineStartOffset());
+          badCode = doc.getText(wiggleStart, wiggleStop - wiggleStart);
+          goodCode = doc.getText(lineOffset, wiggleStart - lineOffset);
           //log("paintErrorLine() LineText GC: " + goodCode);
           //log("paintErrorLine() LineText BC: " + badCode);
         } catch (BadLocationException bl) {
@@ -402,11 +393,13 @@ public class JavaTextAreaPainter extends TextAreaPainter
         int rw = fm.stringWidth(badCode.trim()); // real width
         int x1 = fm.stringWidth(goodCode) + (aw - rw);
         int y1 = y + fm.getHeight() - 2, x2 = x1 + rw;
+
+        if (line != problem.getLineNumber()) {
+          x1 = 0; // on the following lines, wiggle extends to the left border
+        }
         // Adding offsets for the gutter
         x1 += Editor.LEFT_GUTTER;
         x2 += Editor.LEFT_GUTTER;
-
-        errorLineCoords.add(new ErrorLineCoord(x1,  x2, y, y1, problem));
 
         gfx.setColor(errorUnderlineColor);
         if (marker.getType() == LineMarker.WARNING) {
@@ -480,7 +473,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
           return super.getToolTipText(event);
         }
         if (!(Character.isLetterOrDigit(s.charAt(x)) ||
-            s.charAt(x) == '_' || s.charAt(x) == '$')) {
+            s.charAt(x) == '_' || s.charAt(x) == '$' || s.charAt(x) == '{' ||
+            s.charAt(x) == '}')) {
           setToolTipText(null);
           return super.getToolTipText(event);
         }
