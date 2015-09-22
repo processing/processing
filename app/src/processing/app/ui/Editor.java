@@ -501,7 +501,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     JMenuItem addLib = new JMenuItem(Language.text("toolbar.add_mode"));
     addLib.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        ContributionManager.openModeManager(Editor.this);
+        ContributionManager.openModes();
       }
     });
     modePopup.add(addLib);

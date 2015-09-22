@@ -3,7 +3,7 @@
 /*
  Part of the Processing project - http://processing.org
 
- Copyright (c) 2013 The Processing Foundation
+ Copyright (c) 2013-15 The Processing Foundation
  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
  This program is free software; you can redistribute it and/or modify
@@ -25,10 +25,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import processing.app.*;
 import processing.app.ui.Editor;
@@ -46,30 +42,33 @@ public class ManagerFrame {
   static final int TAB_HEIGHT = 34;
   static final int AUTHOR_WIDTH = 240;
   static final int STATUS_WIDTH = 66;
-  static final int BORDER = 8;
 
   static final String title = "Manager";
 
+  Base base;
   JFrame frame;
-  JTabbedPane tabbedPane;
+//  JTabbedPane tabbedPane;
+  ManagerTabs tabs;
 
   // the calling editor, so updates can be applied
-  Editor editor;
+//  Editor editor;
 
   ContributionTab librariesTab;
   ContributionTab modesTab;
   ContributionTab toolsTab;
   ContributionTab examplesTab;
   UpdateContributionTab updatesTab;
-  JLabel numberLabel;
+//  JLabel numberLabel;
 
-  private JLabel[] tabLabels;
-  private JPanel updateTabPanel;
-  private JLabel updateTabLabel;
+//  private JLabel[] tabLabels;
+//  private JPanel updateTabPanel;
+//  private JLabel updateTabLabel;
 
 
-  public ManagerFrame() {
-    numberLabel = new JLabel(Toolkit.getLibIconX("manager/notification"));
+  public ManagerFrame(Base base) {
+    this.base = base;
+
+//    numberLabel = new JLabel(Toolkit.getLibIconX("manager/notification"));
     librariesTab = new ContributionTab(ContributionType.LIBRARY, this);
     modesTab = new ContributionTab(ContributionType.MODE, this);
     toolsTab = new ContributionTab(ContributionType.TOOL, this);
@@ -78,53 +77,54 @@ public class ManagerFrame {
   }
 
 
-  public void showFrame(Editor editor, ContributionType contributionType) {
-    this.editor = editor;
+  // TODO remove this Editor... need to use Base.getActiveEditor()
+  // The editor may be closed while still running the contrib manager
+  public void showFrame(ContributionType contributionType) {
+//    this.editor = editor;
+
+    ContributionTab showTab = getTab(contributionType);
 
     // Calculating index to switch to the required tab
-    int index = ContributionManager.getTypeIndex(contributionType);
+    //int index = ContributionManager.getTypeIndex(contributionType);
     if (frame == null) {
-      makeFrame(editor);
+      makeFrame();
       // done before as downloadAndUpdateContributionListing()
       // requires the current selected tab
-      tabbedPane.setSelectedIndex(index);
-      downloadAndUpdateContributionListing(editor.getBase());
-      if (index != 4) {
-        Component selected =
-          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex());
+//      tabbedPane.setSelectedIndex(index);
+      tabs.setPanel(showTab);
+      downloadAndUpdateContributionListing(base);
+      if (showTab != updatesTab) {
+//        Component selected =
+//          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex());
+        Component selected = showTab;  // what the.. ? [fry]
         selected.setBackground(new Color(0xe0fffd));
         selected.setForeground(Color.BLACK);
       } else {
-        updateTabPanel.setBackground(new Color(0xe0fffd));
-        updateTabLabel.setForeground(Color.BLACK);
+//        updateTabPanel.setBackground(new Color(0xe0fffd));
+//        updateTabLabel.setForeground(Color.BLACK);
       }
+    } else {
+//      tabbedPane.setSelectedIndex(index);
+      tabs.setPanel(showTab);
     }
-    tabbedPane.setSelectedIndex(index);
     frame.setVisible(true);
   }
 
 
-  protected ContributionTab getTab(ContributionType contributionType) {
-    if (contributionType == ContributionType.LIBRARY) {
-      return librariesTab;
-    } else if (contributionType == ContributionType.MODE) {
-      return modesTab;
-    } else if (contributionType == ContributionType.TOOL) {
-      return toolsTab;
-    } else if (contributionType == ContributionType.EXAMPLES) {
-      return examplesTab;
-    }
-    return updatesTab;
-  }
-
-
-  private void makeFrame(final Editor editor) {
+  private void makeFrame() {
     frame = new JFrame(title);
     frame.setMinimumSize(new Dimension(750, 500));
-    tabbedPane = new JTabbedPane();
+    tabs = new ManagerTabs(base);
 
     makeAndShowTab(false, true);
 
+    tabs.add(librariesTab);
+    tabs.add(modesTab);
+    tabs.add(toolsTab);
+    tabs.add(examplesTab);
+    tabs.add(updatesTab);
+
+    /*
     tabbedPane.addTab("Libraries", null, librariesTab, "Libraries");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
@@ -147,47 +147,9 @@ public class ManagerFrame {
     for (int i = 0; i < 5; i++) {
       tabbedPane.setToolTipTextAt(i, null);
     }
+    */
 
-    makeAndSetTabComponents();
-
-    tabbedPane.addChangeListener(new ChangeListener() {
-
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        for(int i = 0 ; i < 4; i++){
-          tabLabels[i].setBackground(new Color(0x2d4251));
-          tabLabels[i].setForeground(Color.WHITE);
-        }
-        updateTabPanel.setBackground(new Color(0x2d4251));
-        updateTabLabel.setForeground(Color.WHITE);
-        int currentIndex = tabbedPane.getSelectedIndex();
-        if(currentIndex != 4){
-          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setBackground(new Color(0xe0fffd));
-          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setForeground(Color.BLACK);
-        }else{
-          updateTabPanel.setBackground(new Color(0xe0fffd));
-          updateTabLabel.setForeground(Color.BLACK);
-        }
-        getActiveTab().contributionListPanel.scrollPane.requestFocusInWindow();
-      }
-    });
-
-    frame.setResizable(true);
-    tabbedPane.setBorder(new EmptyBorder(BORDER, BORDER, BORDER, BORDER));
-    frame.getContentPane().add(tabbedPane);
-    frame.getContentPane().setBackground(new Color(0x132638));
-    frame.validate();
-    frame.repaint();
-
-    Toolkit.setIcon(frame);
-    registerDisposeListeners();
-
-    frame.pack();
-    frame.setLocationRelativeTo(null);
-  }
-
-
-  private void makeAndSetTabComponents() {
+    /*
     final String[] tabTitles = {
       "Libraries", "Modes", "Tools", "Examples", "Updates"
     };
@@ -215,7 +177,9 @@ public class ManagerFrame {
       tabLabels[i].setFont(Toolkit.getSansFont(14, Font.BOLD));
       tabbedPane.setTabComponentAt(i, tabLabels[i]);
     }
+    */
 
+    /*
     updateTabPanel = new JPanel() {
       @Override
       protected void paintComponent(Graphics g) {
@@ -236,7 +200,9 @@ public class ManagerFrame {
     updateTabPanel.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
     updateTabPanel.setPreferredSize(new Dimension(TAB_WIDTH, TAB_HEIGHT));
     tabbedPane.setTabComponentAt(4, updateTabPanel);
+    */
 
+    /*
     GroupLayout tabLayout = new GroupLayout(updateTabPanel);
     tabLayout.setAutoCreateGaps(true);
     updateTabPanel.setLayout(tabLayout);
@@ -253,13 +219,60 @@ public class ManagerFrame {
       .addComponent(numberLabel).addComponent(updateTabLabel));
 
     numberLabel.setVisible(false);
+    */
+
+    /*
+    tabbedPane.addChangeListener(new ChangeListener() {
+
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        for(int i = 0 ; i < 4; i++){
+          tabLabels[i].setBackground(new Color(0x2d4251));
+          tabLabels[i].setForeground(Color.WHITE);
+        }
+        updateTabPanel.setBackground(new Color(0x2d4251));
+        updateTabLabel.setForeground(Color.WHITE);
+        int currentIndex = tabbedPane.getSelectedIndex();
+        if(currentIndex != 4){
+          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setBackground(new Color(0xe0fffd));
+          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setForeground(Color.BLACK);
+        }else{
+          updateTabPanel.setBackground(new Color(0xe0fffd));
+          updateTabLabel.setForeground(Color.BLACK);
+        }
+        getActiveTab().contributionListPanel.scrollPane.requestFocusInWindow();
+      }
+    });
+    */
+
+    frame.setResizable(true);
+//    tabbedPane.setBorder(new EmptyBorder(BORDER, BORDER, BORDER, BORDER));
+    frame.getContentPane().add(tabs);
+    frame.validate();
+    frame.repaint();
+
+    Toolkit.setIcon(frame);
+    registerDisposeListeners();
+
+    frame.pack();
+    frame.setLocationRelativeTo(null);
+  }
+
+
+  /**
+   * Close the window after an OK or Cancel.
+   */
+  protected void disposeFrame() {
+    frame.dispose();
+//    editor = null;
   }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public class SpacedTabbedPaneUI extends BasicTabbedPaneUI {
+  /*
+  private class SpacedTabbedPaneUI extends BasicTabbedPaneUI {
 
     @Override
     protected void installDefaults() {
@@ -317,18 +330,10 @@ public class ManagerFrame {
       };
     }
   }
+  */
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  /**
-   * Close the window after an OK or Cancel.
-   */
-  protected void disposeFrame() {
-    frame.dispose();
-    editor = null;
-  }
 
 
   private void registerDisposeListeners() {
@@ -399,6 +404,7 @@ public class ManagerFrame {
 
 
   void makeAndShowTab(boolean error, boolean loading) {
+    Editor editor = base.getActiveEditor();
     librariesTab.showFrame(editor, error, loading);
     modesTab.showFrame(editor, error, loading);
     toolsTab.showFrame(editor, error, loading);
@@ -407,7 +413,23 @@ public class ManagerFrame {
   }
 
 
+  protected ContributionTab getTab(ContributionType contributionType) {
+    if (contributionType == ContributionType.LIBRARY) {
+      return librariesTab;
+    } else if (contributionType == ContributionType.MODE) {
+      return modesTab;
+    } else if (contributionType == ContributionType.TOOL) {
+      return toolsTab;
+    } else if (contributionType == ContributionType.EXAMPLES) {
+      return examplesTab;
+    }
+    return updatesTab;
+  }
+
+
   ContributionTab getActiveTab() {
+    return (ContributionTab) tabs.getPanel();
+    /*
     switch (tabbedPane.getSelectedIndex()) {
     case 0:
       return librariesTab;
@@ -420,5 +442,6 @@ public class ManagerFrame {
     default:
       return updatesTab;
     }
+    */
   }
 }

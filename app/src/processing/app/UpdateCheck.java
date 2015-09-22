@@ -180,7 +180,7 @@ public class UpdateCheck {
                                               options,
                                               options[0]);
     if (result == JOptionPane.YES_OPTION) {
-      ContributionManager.openUpdates(base.getActiveEditor());
+      ContributionManager.openUpdates();
       return true;
     }
 

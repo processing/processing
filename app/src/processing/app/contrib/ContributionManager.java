@@ -30,7 +30,6 @@ import javax.swing.SwingWorker;
 import processing.app.Base;
 import processing.app.Language;
 import processing.app.Messages;
-import processing.app.Settings;
 import processing.app.Util;
 import processing.app.ui.Editor;
 import processing.core.PApplet;
@@ -481,7 +480,7 @@ public class ContributionManager {
    * and remove any "requires restart" flags.
    * Also updates all entries previously marked for update.
    */
-  static public void cleanup(final Base base) throws Exception {
+  static private void cleanup(final Base base) throws Exception {
     deleteTemp(Base.getSketchbookModesFolder());
     deleteTemp(Base.getSketchbookToolsFolder());
 
@@ -649,47 +648,52 @@ public class ContributionManager {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  static ManagerFrame managerDialog =
-    new ManagerFrame();
+  static ManagerFrame managerDialog;
+
+
+  static public void init(Base base) throws Exception {
+    managerDialog = new ManagerFrame(base);
+    cleanup(base);
+  }
 
 
   /**
    * Show the Library installer window.
    */
-  static public void openLibraryManager(Editor editor) {
-    managerDialog.showFrame(editor, ContributionType.LIBRARY);
-  }
-
-
-  /**
-   * Show the Tool installer window.
-   */
-  static public void openToolManager(Editor editor) {
-    managerDialog.showFrame(editor, ContributionType.TOOL);
+  static public void openLibraries() {
+    managerDialog.showFrame(ContributionType.LIBRARY);
   }
 
 
   /**
    * Show the Mode installer window.
    */
-  static public void openModeManager(Editor editor) {
-    managerDialog.showFrame(editor, ContributionType.MODE);
+  static public void openModes() {
+    managerDialog.showFrame(ContributionType.MODE);
+  }
+
+
+  /**
+   * Show the Tool installer window.
+   */
+  static public void openTools() {
+    managerDialog.showFrame(ContributionType.TOOL);
   }
 
 
   /**
    * Show the Examples installer window.
    */
-  static public void openExampleManager(Editor editor) {
-    managerDialog.showFrame(editor, ContributionType.EXAMPLES);
+  static public void openExamples() {
+    managerDialog.showFrame(ContributionType.EXAMPLES);
   }
 
 
   /**
    * Open the updates panel.
    */
-  static public void openUpdates(Editor editor) {
-    managerDialog.showFrame(editor, null);
+  static public void openUpdates() {
+    managerDialog.showFrame(null);
   }
 
 

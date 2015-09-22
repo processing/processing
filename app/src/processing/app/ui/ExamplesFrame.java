@@ -108,7 +108,7 @@ public class ExamplesFrame extends JFrame {
     addExamplesButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        ContributionManager.openExampleManager(base.getActiveEditor());
+        ContributionManager.openExamples();
       }
     });
 

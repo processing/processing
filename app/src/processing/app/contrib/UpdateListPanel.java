@@ -12,7 +12,6 @@ import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -148,13 +147,13 @@ public class UpdateListPanel extends ListPanel {
 
   @Override
   void updatePanelOrdering(Set<Contribution> contributionsSet) {
-    JLabel label = contributionTab.contribDialog.numberLabel;
-    if (getNoOfRows() == 0) {
-      label.setVisible(false);
-    } else {
-      label.setVisible(true);
-      label.setText(Integer.toString(panelByContribution.size()));
-    }
+//    JLabel label = contributionTab.contribDialog.numberLabel;
+//    if (getNoOfRows() == 0) {
+//      label.setVisible(false);
+//    } else {
+//      label.setVisible(true);
+//      label.setText(Integer.toString(panelByContribution.size()));
+//    }
     model.getDataVector().removeAllElements();
     model.fireTableDataChanged();
     ContributionType temp = null;

@@ -268,7 +268,8 @@ public class Base {
 
 
   public Base(String[] args) throws Exception {
-    ContributionManager.cleanup(this);
+    ContributionManager.init(this);
+
     buildCoreModes();
     rebuildContribModes();
     rebuildContribExamples();
@@ -686,7 +687,7 @@ public class Base {
     JMenuItem item = new JMenuItem(Language.text("menu.tools.add_tool"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        ContributionManager.openToolManager(getActiveEditor());
+        ContributionManager.openTools();
       }
     });
     toolsMenu.add(item);

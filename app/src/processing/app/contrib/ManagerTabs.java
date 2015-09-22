@@ -36,9 +36,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
+import processing.app.Base;
 import processing.app.Mode;
-import processing.app.Sketch;
 import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
@@ -49,6 +50,9 @@ import processing.app.ui.Toolkit;
 public class ManagerTabs extends Box {
   // height of this tab bar
   static final int HIGH = 32;
+
+  // amount of space around the entire window
+  static final int BORDER = 8;
 
   static final int CURVE_RADIUS = 6;
 
@@ -70,9 +74,9 @@ public class ManagerTabs extends Box {
   Color[] textColor = new Color[2];
   Color[] tabColor = new Color[2];
 
-  Editor editor;
+  List<Tab> tabList = new ArrayList<>();
 
-  List<Tab> tabs = new ArrayList<>();
+  Mode mode;
 
   Font font;
   int fontAscent;
@@ -87,14 +91,15 @@ public class ManagerTabs extends Box {
   CardLayout cardLayout;
   Controller controller;
 
+  Component currentPanel;
 
-  public ManagerTabs(Editor eddie) {
+
+  public ManagerTabs(Base base) {
     super(BoxLayout.Y_AXIS);
-    this.editor = eddie;
 
     // A mode shouldn't actually override these, they're coming from theme.txt.
     // But use the default (Java) mode settings just in case.
-    Mode mode = editor.getBase().getDefaultMode();
+    mode = base.getDefaultMode();
 
     textColor[SELECTED] = mode.getColor("manager.tab.text.selected.color");
     textColor[UNSELECTED] = mode.getColor("manager.tab.text.unselected.color");
@@ -104,6 +109,9 @@ public class ManagerTabs extends Box {
     tabColor[UNSELECTED] = mode.getColor("manager.tab.unselected.color");
 
     gradient = mode.makeGradient("manager.tab", 400, HIGH);
+
+    setBackground(mode.getColor("manager.tab.background"));
+    setBorder(new EmptyBorder(BORDER, BORDER, BORDER, BORDER));
 
     controller = new Controller();
     add(controller);
@@ -127,7 +135,10 @@ public class ManagerTabs extends Box {
    * @param icon Prefix of the file name for the icon
    */
   public void addPanel(Component comp, String name, String icon) {
-    tabs.add(new Tab(comp, name, icon));
+    if (tabList.isEmpty()) {
+      currentPanel = comp;
+    }
+    tabList.add(new Tab(comp, name, icon));
     cardPanel.add(name, comp);
   }
 
@@ -138,8 +149,9 @@ public class ManagerTabs extends Box {
 
 
   public void setPanel(Component comp) {
-    for (Tab tab : tabs) {
+    for (Tab tab : tabList) {
       if (tab.comp == comp) {
+        currentPanel = comp;
         cardLayout.show(cardPanel, tab.name);
         repaint();
       }
@@ -147,8 +159,13 @@ public class ManagerTabs extends Box {
   }
 
 
+  public Component getPanel() {
+    return currentPanel;
+  }
+
+
   public void setNotification(Component comp, boolean note) {
-    for (Tab tab : tabs) {
+    for (Tab tab : tabList) {
       if (tab.comp == comp) {
         tab.notification = note;
         repaint();
@@ -166,10 +183,10 @@ public class ManagerTabs extends Box {
       addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
           int x = e.getX();
-          for (Tab tab : tabs) {
+          for (Tab tab : tabList) {
             if (tab.contains(x)) {
-              //editor.setFooterPanel(tab.index);
-              cardLayout.show(cardPanel, tab.name);
+              //cardLayout.show(cardPanel, tab.name);
+              setPanel(tab.comp);
               repaint();
             }
           }
@@ -179,8 +196,6 @@ public class ManagerTabs extends Box {
 
     public void paintComponent(Graphics screen) {
       if (screen == null) return;
-      Sketch sketch = editor.getSketch();
-      if (sketch == null) return;  // possible?
 
       Dimension size = getSize();
       if ((size.width != sizeW) || (size.height != sizeH)) {
@@ -223,7 +238,7 @@ public class ManagerTabs extends Box {
       g.drawImage(gradient, 0, 2, imageW, imageH, this);
 
       // reset all tab positions
-      for (Tab tab : tabs) {
+      for (Tab tab : tabList) {
         tab.textWidth = (int)
           font.getStringBounds(tab.name, g2.getFontRenderContext()).getWidth();
       }
@@ -248,7 +263,7 @@ public class ManagerTabs extends Box {
     private void placeTabs(int left, Graphics2D g) {
       int x = left;
 
-      for (Tab tab : tabs) {
+      for (Tab tab : tabList) {
         tab.left = x;
         x += MARGIN;
         if (tab.hasIcon()) {
@@ -332,7 +347,6 @@ public class ManagerTabs extends Box {
       this.name = name;
 
       if (icon != null) {
-        Mode mode = editor.getMode();
         enabledIcon = mode.loadImageX(icon + "-enabled");
         selectedIcon = mode.loadImageX(icon + "-selected");
         if (selectedIcon == null) {
@@ -350,11 +364,11 @@ public class ManagerTabs extends Box {
     }
 
     boolean isFirst() {
-      return tabs.get(0) == this;
+      return tabList.get(0) == this;
     }
 
     boolean isLast() {
-      return tabs.get(tabs.size() - 1) == this;
+      return tabList.get(tabList.size() - 1) == this;
     }
 
     int getTextLeft() {
