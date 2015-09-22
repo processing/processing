@@ -38,7 +38,7 @@ import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
 
-public class ContributionTab {
+public class ContributionTab extends JPanel {
   static final String ANY_CATEGORY = Language.text("contrib.all");
 
   ContributionType contributionType;
@@ -47,7 +47,7 @@ public class ContributionTab {
   // not actually used anywhere
   //String title;
 
-  JPanel panel;
+//  JPanel panel;
   Contribution.Filter filter;
   JComboBox<String> categoryChooser;
   JScrollPane scrollPane;
@@ -98,46 +98,40 @@ public class ContributionTab {
     };
 
     contribListing = ContributionListing.getInstance();
-      statusPanel = new StatusPanel(650,this);
-      contributionListPanel = new ListPanel(this, filter);
+    statusPanel = new StatusPanel(650, this);
+    contributionListPanel = new ListPanel(this, filter);
     contribListing.addContributionListener(contributionListPanel);
   }
 
 
-  public boolean hasUpdates(Base base) {
-    return contribListing.hasUpdates(base);
-  }
+//  public boolean hasUpdates(Base base) {
+//    return contribListing.hasUpdates(base);
+//  }
 
 
   public void showFrame(final Editor editor, boolean activateErrorPanel,
-                        final boolean isLoading) {
+                        final boolean loading) {
     this.editor = editor;
-    if (panel == null) {
-      setLayout(editor, activateErrorPanel, isLoading);
-    }
-    contributionListPanel.setVisible(!isLoading);
-    loaderLabel.setVisible(isLoading);
+
+    setLayout(editor, activateErrorPanel, loading);
+    contributionListPanel.setVisible(!loading);
+    loaderLabel.setVisible(loading);
     errorPanel.setVisible(activateErrorPanel);
-    panel.validate();
-    panel.repaint();
+
+    validate();
+    repaint();
   }
 
 
   public void setLayout(final Editor editor, boolean activateErrorPanel,
                         boolean isLoading) {
-    if (panel == null) {
+    if (progressBar == null) {
       progressBar = new JProgressBar();
       progressBar.setVisible(false);
-      createComponents();
-      panel = new JPanel(false){
-        @Override
-        protected void paintComponent(Graphics g) {
-          super.paintComponent(g);
-          g.setColor(new Color(0xe0fffd));
-          g.fillRect(getX(), panel.getY() - ContributionManagerDialog.TAB_HEIGHT - 2 , panel.getWidth(), 2);
 
-        }
-      };
+      createComponents();
+      buildErrorPanel();
+
       loaderLabel = new JLabel(Toolkit.getLibIcon("manager/loader.gif"));
       loaderLabel.setOpaque(false);
       loaderLabel.setBackground(Color.WHITE);
@@ -145,8 +139,8 @@ public class ContributionTab {
 
     int scrollBarWidth = contributionListPanel.scrollPane.getVerticalScrollBar().getPreferredSize().width;
 
-    GroupLayout layout = new GroupLayout(panel);
-    panel.setLayout(layout);
+    GroupLayout layout = new GroupLayout(this);
+    setLayout(layout);
 //    layout.setAutoCreateContainerGaps(true);
 //    layout.setAutoCreateGaps(true);
     layout.setHorizontalGroup(layout
@@ -188,8 +182,8 @@ public class ContributionTab {
     layout.setHonorsVisibility(contributionListPanel, false);
     layout.setHonorsVisibility(categoryChooser, false);
 
-    panel.setBackground(Color.WHITE);
-    panel.setBorder(null);
+    setBackground(Color.WHITE);
+    setBorder(null);
   }
 
 
@@ -214,8 +208,6 @@ public class ContributionTab {
     });
 
     filterField = new FilterField();
-
-    buildErrorPanel();
   }
 
 
@@ -273,6 +265,14 @@ public class ContributionTab {
                   .addComponent(closeButton)).addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED).addComponent(tryAgainButton));
     errorPanel.setBackground(Color.PINK);
     errorPanel.validate();
+  }
+
+
+  @Override
+  protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    g.setColor(new Color(0xe0fffd));
+    g.fillRect(getX(), getY() - ContributionManagerDialog.TAB_HEIGHT - 2 , getWidth(), 2);
   }
 
 

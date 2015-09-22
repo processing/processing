@@ -244,52 +244,36 @@ class ContributionPanel extends JPanel {
 //    notificationBlock.setContentType("text/html");
 //    notificationBlock.setHighlighter(null);
 //    setTextStyle(notificationBlock);
-    notificationLabel.setFont(new Font("Verdana", Font.ITALIC, 10));
+//    notificationLabel.setFont(new Font("Verdana", Font.ITALIC, 10));
+    notificationLabel.setFont(Toolkit.getSansFont(12, Font.PLAIN));
 //    stripTextSelectionListeners(notificationBlock);
 
     updateButton = new JButton("Update");
     updateButton.setInheritsPopupMenu(true);
-    Dimension updateButtonDimensions = updateButton.getPreferredSize();
-    updateButtonDimensions.width = BUTTON_WIDTH;
-    updateButton.setMinimumSize(updateButtonDimensions);
-    updateButton.setPreferredSize(updateButtonDimensions);
+    Dimension dim = updateButton.getPreferredSize();
+    dim.width = BUTTON_WIDTH;
+    updateButton.setMinimumSize(dim);
+    updateButton.setPreferredSize(dim);
     updateButton.setOpaque(false);
     updateButton.setVisible(false);
 
     updateButton.addActionListener(new ActionListener() {
-
       public void actionPerformed(ActionEvent e) {
         update();
       }
     });
-//      add(updateButton, c);
-//    }
+
     updateBox.add(updateButton, BorderLayout.EAST);
     updateBox.add(notificationLabel, BorderLayout.WEST);
     updateBox.setBorder(new EmptyBorder(4, 7, 7, 7));
     updateBox.setOpaque(false);
     add(updateBox, BorderLayout.SOUTH);
 
-//  }
-//
-//
-//  private void addProgressBarAndButton() {
-
-//    Box statusBox = Box.createVerticalBox();
-//    GridBagConstraints c = new GridBagConstraints();
-//    c.gridx = 4;
-//    c.gridy = 0;
-//    c.weighty = 1;
-//    c.gridheight = 3;
-//    c.fill = GridBagConstraints.VERTICAL;
-//    c.anchor = GridBagConstraints.NORTH;
     JPanel rightPane = new JPanel();
     rightPane.setInheritsPopupMenu(true);
     rightPane.setOpaque(false);
     rightPane.setLayout(new BoxLayout(rightPane, BoxLayout.Y_AXIS));
     rightPane.setMinimumSize(new Dimension(ContributionPanel.BUTTON_WIDTH, 1));
-//    add(rightPane, c);
-//    statusBox.add(rightPane);
     add(rightPane, BorderLayout.EAST);
 
     barButtonCardPane.setLayout(new CardLayout());

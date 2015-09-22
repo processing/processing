@@ -74,23 +74,13 @@ public class ContributionManagerDialog {
 
   public ContributionManagerDialog() {
     font = Toolkit.getSansFont(14, Font.PLAIN);
-    numberLabel = new JLabel(Toolkit.getLibIconX("manager/notification"), SwingConstants.CENTER);
+    numberLabel = new JLabel(Toolkit.getLibIconX("manager/notification"));
     librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
     modesContributionTab = new ContributionTab(ContributionType.MODE, this);
     toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
     examplesContributionTab = new ContributionTab(ContributionType.EXAMPLES, this);
     updatesContributionTab = new UpdateContributionTab(null, this);
   }
-
-
-  /*
-  public boolean hasUpdates(Base base) {
-    return librariesContributionTab.hasUpdates(base)
-      || modesContributionTab.hasUpdates(base)
-      || toolsContributionTab.hasUpdates(base)
-      || examplesContributionTab.hasUpdates(base);
-  }
-   */
 
 
   public void showFrame(Editor editor, ContributionType contributionType) {
@@ -140,21 +130,19 @@ public class ContributionManagerDialog {
 
     makeAndShowTab(false, true);
 
-    tabbedPane.addTab("Libraries", null, librariesContributionTab.panel, "Libraries");
+    tabbedPane.addTab("Libraries", null, librariesContributionTab, "Libraries");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-    tabbedPane.addTab("Modes", null, modesContributionTab.panel,
-                      "Modes");
+    tabbedPane.addTab("Modes", null, modesContributionTab, "Modes");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-    tabbedPane.addTab("Tools", null, toolsContributionTab.panel, "Tools");
+    tabbedPane.addTab("Tools", null, toolsContributionTab, "Tools");
     tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-    tabbedPane.addTab("Examples", null, examplesContributionTab.panel,
-                      "Examples");
+    tabbedPane.addTab("Examples", null, examplesContributionTab, "Examples");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
-    tabbedPane.addTab("Updates", null, updatesContributionTab.panel, "Updates");
+    tabbedPane.addTab("Updates", null, updatesContributionTab, "Updates");
     tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
     tabbedPane.setUI(new SpacedTabbedPaneUI());

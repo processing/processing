@@ -1,11 +1,9 @@
 package processing.app.contrib;
 
 import java.awt.Color;
-import java.awt.Graphics;
 
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
 import processing.app.ui.Editor;
@@ -38,26 +36,19 @@ public class UpdateContributionTab extends ContributionTab {
   @Override
   public void setLayout(Editor editor, boolean activateErrorPanel,
                         boolean isLoading) {
-    if (panel == null) {
+    if (progressBar == null) {
       progressBar = new JProgressBar();
       progressBar.setVisible(false);
-      buildErrorPanel();
-      panel = new JPanel(false){
-        @Override
-        protected void paintComponent(Graphics g) {
-          super.paintComponent(g);
-          g.setColor(new Color(0xe0fffd));
-          g.fillRect(getX(), panel.getY() - ContributionManagerDialog.TAB_HEIGHT - 2 , panel.getWidth(), 2);
 
-        }
-      };
+      buildErrorPanel();
+
       loaderLabel = new JLabel(Toolkit.getLibIcon("icons/loader.gif"));
       loaderLabel.setOpaque(false);
       loaderLabel.setBackground(Color.WHITE);
     }
 
-    GroupLayout layout = new GroupLayout(panel);
-    panel.setLayout(layout);
+    GroupLayout layout = new GroupLayout(this);
+    setLayout(layout);
     layout.setHorizontalGroup(layout
       .createParallelGroup(GroupLayout.Alignment.CENTER)
       .addComponent(loaderLabel)
@@ -75,6 +66,6 @@ public class UpdateContributionTab extends ContributionTab {
                     GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE));
     layout.setHonorsVisibility(contributionListPanel, false);
 
-    panel.setBackground(Color.WHITE);
+    setBackground(Color.WHITE);
   }
 }

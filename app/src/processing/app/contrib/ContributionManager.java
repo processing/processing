@@ -656,44 +656,47 @@ public class ContributionManager {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  static ContributionManagerDialog contributionManagerFrame =
+  static ContributionManagerDialog managerDialog =
     new ContributionManagerDialog();
 
 
   /**
-   * Show the library installer window.
+   * Show the Library installer window.
    */
   static public void openLibraryManager(Editor editor) {
-    contributionManagerFrame.showFrame(editor, ContributionType.LIBRARY);
+    managerDialog.showFrame(editor, ContributionType.LIBRARY);
   }
 
 
   /**
-   * Show the tool installer window.
+   * Show the Tool installer window.
    */
   static public void openToolManager(Editor editor) {
-    contributionManagerFrame.showFrame(editor, ContributionType.TOOL);
+    managerDialog.showFrame(editor, ContributionType.TOOL);
   }
 
 
   /**
-   * Show the mode installer window.
+   * Show the Mode installer window.
    */
   static public void openModeManager(Editor editor) {
-    contributionManagerFrame.showFrame(editor, ContributionType.MODE);
+    managerDialog.showFrame(editor, ContributionType.MODE);
   }
 
 
   /**
-   * Show the examples installer window.
+   * Show the Examples installer window.
    */
   static public void openExampleManager(Editor editor) {
-    contributionManagerFrame.showFrame(editor, ContributionType.EXAMPLES);
+    managerDialog.showFrame(editor, ContributionType.EXAMPLES);
   }
 
 
+  /**
+   * Open the updates panel.
+   */
   static public void openUpdates(Editor editor) {
-    contributionManagerFrame.showFrame(editor, null);
+    managerDialog.showFrame(editor, null);
   }
 
 
