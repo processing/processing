@@ -6,7 +6,6 @@ import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
-import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
 
@@ -26,15 +25,14 @@ public class UpdateContributionTab extends ContributionTab {
       }
     };
     contributionListPanel = new UpdateListPanel(this, filter);
-    statusPanel = new UpdateStatusPanel(this, 650, this);
+    statusPanel = new UpdateStatusPanel(this, 650);
     contribListing = ContributionListing.getInstance();
     contribListing.addListener(contributionListPanel);
   }
 
 
   @Override
-  protected void setLayout(Editor editor, boolean activateErrorPanel,
-                        boolean isLoading) {
+  protected void setLayout(boolean error, boolean loading) {
     if (progressBar == null) {
       progressBar = new JProgressBar();
       progressBar.setVisible(false);
@@ -43,7 +41,7 @@ public class UpdateContributionTab extends ContributionTab {
 
       loaderLabel = new JLabel(Toolkit.getLibIcon("icons/loader.gif"));
       loaderLabel.setOpaque(false);
-      loaderLabel.setBackground(Color.WHITE);
+//      loaderLabel.setBackground(Color.WHITE);
     }
 
     GroupLayout layout = new GroupLayout(this);

@@ -93,7 +93,7 @@ public class ContributionTab extends JPanel {
     };
 
     contribListing = ContributionListing.getInstance();
-    statusPanel = new StatusPanel(650, this);
+    statusPanel = new StatusPanel(this, 650);
     contributionListPanel = new ListPanel(this, filter);
     contribListing.addListener(contributionListPanel);
   }
@@ -107,7 +107,7 @@ public class ContributionTab extends JPanel {
   public void showFrame(final Editor editor, boolean error, boolean loading) {
     this.editor = editor;
 
-    setLayout(editor, error, loading);
+    setLayout(error, loading);
     contributionListPanel.setVisible(!loading);
     loaderLabel.setVisible(loading);
     errorPanel.setVisible(error);
@@ -117,7 +117,7 @@ public class ContributionTab extends JPanel {
   }
 
 
-  protected void setLayout(final Editor editor, boolean activateErrorPanel,
+  protected void setLayout(boolean activateErrorPanel,
                            boolean isLoading) {
     if (progressBar == null) {
       progressBar = new JProgressBar();

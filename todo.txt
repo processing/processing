@@ -131,8 +131,15 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
 beta 7
-_ CM selected tabs are too tall 
+X CM selected tabs are too tall 
 _   https://github.com/processing/processing/issues/3598
+_ why the aqua background when opening the window?
+_ list with contrib types separated is really wonky
+_   do we keep the list?
+_   does it even work for different contrib types?
+_ bring back the # of updates on each tab
+_   use this instead of the 'icon' stuff
+
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
 _   and have it be clickable so to open the manager

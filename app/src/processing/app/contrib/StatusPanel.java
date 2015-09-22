@@ -71,7 +71,7 @@ class StatusPanel extends JPanel {
   public StatusPanel() { }
 
 
-  public StatusPanel(int width, final ContributionTab contributionTab) {
+  public StatusPanel(final ContributionTab contributionTab, int width) {
     this.contributionTab = contributionTab;
 
     if (foundationIcon == null) {

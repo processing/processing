@@ -15,14 +15,9 @@ import processing.app.ui.Toolkit;
 
 public class UpdateStatusPanel extends StatusPanel {
 
-  /**
-   * 
-   */
-  private final UpdateContributionTab parent;
-
-  public UpdateStatusPanel(UpdateContributionTab updateContributionTab, int width, final ContributionTab contributionTab) {
+  public UpdateStatusPanel(UpdateContributionTab tab, int width) {
     super();
-    parent = updateContributionTab;
+    this.contributionTab = tab;
 
     updateButton = new JButton("Update All", Toolkit.getLibIconX("manager/update"));
     updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
@@ -56,6 +51,6 @@ public class UpdateStatusPanel extends StatusPanel {
   }
 
   public void update() {
-    updateButton.setEnabled(parent.contributionListPanel.getNoOfRows() > 0);
+    updateButton.setEnabled(contributionTab.contributionListPanel.getRowCount() > 0);
   }
 }

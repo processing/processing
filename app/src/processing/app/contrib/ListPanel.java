@@ -580,6 +580,7 @@ implements Scrollable, ContributionListing.ChangeListener {
   }
 
 
+  @Override
   public Dimension getPreferredScrollableViewportSize() {
     return getPreferredSize();
   }
@@ -588,6 +589,7 @@ implements Scrollable, ContributionListing.ChangeListener {
   /**
    * Amount to scroll to reveal a new page of items
    */
+  @Override
   public int getScrollableBlockIncrement(Rectangle visibleRect,
                                          int orientation, int direction) {
     if (orientation == SwingConstants.VERTICAL) {
@@ -609,6 +611,7 @@ implements Scrollable, ContributionListing.ChangeListener {
   /**
    * Amount to scroll to reveal the rest of something we are on or a new item
    */
+  @Override
   public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
     if (orientation == SwingConstants.VERTICAL) {
       int lastHeight = 0, height = 0;
@@ -647,17 +650,19 @@ implements Scrollable, ContributionListing.ChangeListener {
   }
 
 
+  @Override
   public boolean getScrollableTracksViewportHeight() {
     return false;
   }
 
 
+  @Override
   public boolean getScrollableTracksViewportWidth() {
     return true;
   }
 
 
-  public int getNoOfRows() {
+  public int getRowCount() {
     return panelByContribution.size();
   }
 }
