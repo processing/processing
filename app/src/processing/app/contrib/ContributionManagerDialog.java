@@ -63,7 +63,7 @@ public class ContributionManagerDialog {
   UpdateContributionTab updatesTab;
   JLabel numberLabel;
 
-  ContributionListing contributionListing = ContributionListing.getInstance();
+//  ContributionListing contributionListing = ContributionListing.getInstance();
 
   private JLabel[] tabLabels;
   private JPanel updateTabPanel;

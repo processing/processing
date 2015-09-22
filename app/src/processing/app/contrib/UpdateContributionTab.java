@@ -13,8 +13,10 @@ import processing.app.ui.Toolkit;
 public class UpdateContributionTab extends ContributionTab {
 
   public UpdateContributionTab(ContributionType type,
-                               ContributionManagerDialog contributionManagerDialog) {
+                               ContributionManagerDialog dialog) {
     super();
+    this.contribType = type;
+    this.contribDialog = dialog;
 
     filter = new Contribution.Filter() {
       public boolean matches(Contribution contrib) {
@@ -26,15 +28,13 @@ public class UpdateContributionTab extends ContributionTab {
     };
     contributionListPanel = new UpdateListPanel(this, filter);
     statusPanel = new UpdateStatusPanel(this, 650, this);
-    this.contributionType = type;
-    this.contributionManagerDialog = contributionManagerDialog;
     contribListing = ContributionListing.getInstance();
     contribListing.addListener(contributionListPanel);
   }
 
 
   @Override
-  public void setLayout(Editor editor, boolean activateErrorPanel,
+  protected void setLayout(Editor editor, boolean activateErrorPanel,
                         boolean isLoading) {
     if (progressBar == null) {
       progressBar = new JProgressBar();

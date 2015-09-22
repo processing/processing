@@ -148,7 +148,7 @@ public class UpdateListPanel extends ListPanel {
 
   @Override
   void updatePanelOrdering(Set<Contribution> contributionsSet) {
-    JLabel label = contributionTab.contributionManagerDialog.numberLabel;
+    JLabel label = contributionTab.contribDialog.numberLabel;
     if (getNoOfRows() == 0) {
       label.setVisible(false);
     } else {
@@ -220,7 +220,7 @@ public class UpdateListPanel extends ListPanel {
         public void run() {
           // TODO make this longer and more contorted [fry]
           DetailPanel newPanel =
-            contributionTab.contributionManagerDialog.getTab(contribution.getType()).contributionListPanel.panelByContribution.get(contribution);
+            contributionTab.contribDialog.getTab(contribution.getType()).contributionListPanel.panelByContribution.get(contribution);
           if (newPanel == null) {
             newPanel = new DetailPanel(UpdateListPanel.this);
           }

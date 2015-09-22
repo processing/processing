@@ -501,7 +501,7 @@ implements Scrollable, ContributionListing.ChangeListener {
       TreeSet<Contribution> panelInThisTab =
         new TreeSet<Contribution>(ContributionListing.COMPARATOR);
       for (Contribution contribution : filteredContributions) {
-        if (contribution.getType() == contributionTab.contributionType) {
+        if (contribution.getType() == contributionTab.contribType) {
           panelInThisTab.add(contribution);
         }
       }

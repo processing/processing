@@ -41,13 +41,9 @@ import processing.app.ui.Toolkit;
 public class ContributionTab extends JPanel {
   static final String ANY_CATEGORY = Language.text("contrib.all");
 
-  ContributionType contributionType;
-  ContributionManagerDialog contributionManagerDialog;
+  ContributionType contribType;
+  ContributionManagerDialog contribDialog;
 
-  // not actually used anywhere
-  //String title;
-
-//  JPanel panel;
   Contribution.Filter filter;
   JComboBox<String> categoryChooser;
   JScrollPane scrollPane;
@@ -75,9 +71,9 @@ public class ContributionTab extends JPanel {
 
 
   public ContributionTab(ContributionType type,
-                         ContributionManagerDialog contributionManagerDialog) {
-    this.contributionType = type;
-    this.contributionManagerDialog = contributionManagerDialog;
+                         ContributionManagerDialog dialog) {
+    this.contribType = type;
+    this.contribDialog = dialog;
 
     /*
     if (type == ContributionType.MODE) {
@@ -93,7 +89,7 @@ public class ContributionTab extends JPanel {
 
     filter = new Contribution.Filter() {
       public boolean matches(Contribution contrib) {
-        return contrib.getType() == contributionType;
+        return contrib.getType() == contribType;
       }
     };
 
@@ -123,8 +119,8 @@ public class ContributionTab extends JPanel {
   }
 
 
-  public void setLayout(final Editor editor, boolean activateErrorPanel,
-                        boolean isLoading) {
+  protected void setLayout(final Editor editor, boolean activateErrorPanel,
+                           boolean isLoading) {
     if (progressBar == null) {
       progressBar = new JProgressBar();
       progressBar.setVisible(false);
@@ -211,7 +207,7 @@ public class ContributionTab extends JPanel {
   }
 
 
-  void buildErrorPanel() {
+  protected void buildErrorPanel() {
     errorPanel = new JPanel();
     GroupLayout layout = new GroupLayout(errorPanel);
     layout.setAutoCreateGaps(true);
@@ -237,15 +233,15 @@ public class ContributionTab extends JPanel {
     closeButton.setContentAreaFilled(false);
     closeButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        contributionManagerDialog.makeAndShowTab(false, false);
+        contribDialog.makeAndShowTab(false, false);
       }
     });
     tryAgainButton = new JButton("Try Again");
     tryAgainButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     tryAgainButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        contributionManagerDialog.makeAndShowTab(false, true);
-        contributionManagerDialog.downloadAndUpdateContributionListing(editor.getBase());
+        contribDialog.makeAndShowTab(false, true);
+        contribDialog.downloadAndUpdateContributionListing(editor.getBase());
       }
     });
     layout.setHorizontalGroup(layout.createSequentialGroup()
