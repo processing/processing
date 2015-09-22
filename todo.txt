@@ -126,6 +126,12 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
 beta 7
+_ CM selected tabs are too tall 
+_   https://github.com/processing/processing/issues/3598
+_ show number of updates available in the footer
+_   https://github.com/processing/processing/issues/3518
+_   and have it be clickable so to open the manager
+_   total number of updates available is not correct? (may be fixed)
 _ remove the dated releases from download.processing.org
 _ new Android release (EditorButton constructor changed)
 
@@ -147,26 +153,17 @@ _ replace startup/about screen (1x and 2x versions)
 _   change 'alpha' to correct name
 _   also change the revision in the "about processing" dialog
 _   https://github.com/processing/processing/issues/3665
-
-
-gui / 3.0 final
-_ show number of updates available in the footer
-_   https://github.com/processing/processing/issues/3518
-_   and have it be clickable so to open the manager
 _ different design of squiggly line
 _   easy to do inside JavaTextAreaPainter.paintSquiggle()
 
 
 manager / 3.0 final
-_ CM selected tabs are too tall 
-_   https://github.com/processing/processing/issues/3598
 _ updates tab has ugly horizontal line at top
 _ status/name/author table header is alternating color
 _   area above scroll bar looks like more scroll bar
 _ remove focus blue from the scrollable list
 _ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
 _   looks like ContributionListing.getScrollableUnitIncrement() returns early
-_ total number of updates available is not correct
 
 
 gui / post 3.0
