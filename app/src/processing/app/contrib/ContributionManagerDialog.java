@@ -56,11 +56,11 @@ public class ContributionManagerDialog {
   // the calling editor, so updates can be applied
   Editor editor;
 
-  ContributionTab toolsContributionTab;
-  ContributionTab librariesContributionTab;
-  ContributionTab examplesContributionTab;
-  ContributionTab modesContributionTab;
-  UpdateContributionTab updatesContributionTab;
+  ContributionTab librariesTab;
+  ContributionTab modesTab;
+  ContributionTab toolsTab;
+  ContributionTab examplesTab;
+  UpdateContributionTab updatesTab;
   JLabel numberLabel;
 
   ContributionListing contributionListing = ContributionListing.getInstance();
@@ -69,17 +69,14 @@ public class ContributionManagerDialog {
   private JPanel updateTabPanel;
   private JLabel updateTabLabel;
 
-  static Font font;
-
 
   public ContributionManagerDialog() {
-    font = Toolkit.getSansFont(14, Font.PLAIN);
     numberLabel = new JLabel(Toolkit.getLibIconX("manager/notification"));
-    librariesContributionTab = new ContributionTab(ContributionType.LIBRARY, this);
-    modesContributionTab = new ContributionTab(ContributionType.MODE, this);
-    toolsContributionTab = new ContributionTab(ContributionType.TOOL, this);
-    examplesContributionTab = new ContributionTab(ContributionType.EXAMPLES, this);
-    updatesContributionTab = new UpdateContributionTab(null, this);
+    librariesTab = new ContributionTab(ContributionType.LIBRARY, this);
+    modesTab = new ContributionTab(ContributionType.MODE, this);
+    toolsTab = new ContributionTab(ContributionType.TOOL, this);
+    examplesTab = new ContributionTab(ContributionType.EXAMPLES, this);
+    updatesTab = new UpdateContributionTab(null, this);
   }
 
 
@@ -109,17 +106,17 @@ public class ContributionManagerDialog {
   }
 
 
-  ContributionTab getTab(ContributionType contributionType) {
+  protected ContributionTab getTab(ContributionType contributionType) {
     if (contributionType == ContributionType.LIBRARY) {
-      return librariesContributionTab;
+      return librariesTab;
     } else if (contributionType == ContributionType.MODE) {
-      return modesContributionTab;
+      return modesTab;
     } else if (contributionType == ContributionType.TOOL) {
-      return toolsContributionTab;
+      return toolsTab;
     } else if (contributionType == ContributionType.EXAMPLES) {
-      return examplesContributionTab;
+      return examplesTab;
     }
-    return updatesContributionTab;
+    return updatesTab;
   }
 
 
@@ -130,19 +127,19 @@ public class ContributionManagerDialog {
 
     makeAndShowTab(false, true);
 
-    tabbedPane.addTab("Libraries", null, librariesContributionTab, "Libraries");
+    tabbedPane.addTab("Libraries", null, librariesTab, "Libraries");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-    tabbedPane.addTab("Modes", null, modesContributionTab, "Modes");
+    tabbedPane.addTab("Modes", null, modesTab, "Modes");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-    tabbedPane.addTab("Tools", null, toolsContributionTab, "Tools");
+    tabbedPane.addTab("Tools", null, toolsTab, "Tools");
     tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-    tabbedPane.addTab("Examples", null, examplesContributionTab, "Examples");
+    tabbedPane.addTab("Examples", null, examplesTab, "Examples");
     tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
-    tabbedPane.addTab("Updates", null, updatesContributionTab, "Updates");
+    tabbedPane.addTab("Updates", null, updatesTab, "Updates");
     tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
     tabbedPane.setUI(new SpacedTabbedPaneUI());
@@ -476,26 +473,26 @@ public class ContributionManagerDialog {
 
 
   void makeAndShowTab(boolean activateErrorPanel, boolean isLoading) {
-    librariesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
-    modesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
-    toolsContributionTab.showFrame(editor, activateErrorPanel, isLoading);
-    examplesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
-    updatesContributionTab.showFrame(editor, activateErrorPanel, isLoading);
+    librariesTab.showFrame(editor, activateErrorPanel, isLoading);
+    modesTab.showFrame(editor, activateErrorPanel, isLoading);
+    toolsTab.showFrame(editor, activateErrorPanel, isLoading);
+    examplesTab.showFrame(editor, activateErrorPanel, isLoading);
+    updatesTab.showFrame(editor, activateErrorPanel, isLoading);
   }
 
 
   ContributionTab getActiveTab() {
     switch (tabbedPane.getSelectedIndex()) {
     case 0:
-      return librariesContributionTab;
+      return librariesTab;
     case 1:
-      return modesContributionTab;
+      return modesTab;
     case 2:
-      return toolsContributionTab;
+      return toolsTab;
     case 3:
-      return examplesContributionTab;
+      return examplesTab;
     default:
-      return updatesContributionTab;
+      return updatesTab;
     }
   }
 }

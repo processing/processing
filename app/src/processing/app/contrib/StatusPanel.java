@@ -91,8 +91,8 @@ class StatusPanel extends JPanel {
     label.setEditable(false);
     label.setOpaque(false);
     label.setContentType("text/html");
-    bodyRule = "a, body { font-family: " + ContributionManagerDialog.font.getFamily() + "; " +
-            "font-size: " + ContributionManagerDialog.font.getSize() + "pt; color: black; text-decoration: none;}";
+    bodyRule = "a, body { font-family: " + buttonFont.getFamily() + "; " +
+            "font-size: " + buttonFont.getSize() + "pt; color: black; text-decoration: none;}";
     label.addHyperlinkListener(new HyperlinkListener() {
 
       @Override

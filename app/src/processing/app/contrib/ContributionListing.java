@@ -36,20 +36,22 @@ import processing.data.StringDict;
 
 
 public class ContributionListing {
-  // Stable URL that will redirect to wherever we're hosting the file
+  static volatile ContributionListing singleInstance;
+
+  /** Stable URL that will redirect to wherever the file is hosted */
   static final String LISTING_URL = "http://download.processing.org/contribs";
   static final String LOCAL_FILENAME = "contribs.txt";
 
-  static volatile ContributionListing singleInstance;
-
+  /** Location of the listing file on disk, will be read and written. */
   File listingFile;
+
   List<ChangeListener> listeners;
   List<AvailableContribution> advertisedContributions;
   Map<String, List<Contribution>> librariesByCategory;
-  public Map<String, Contribution> librariesByImportHeader;
+  Map<String, Contribution> librariesByImportHeader;
   List<Contribution> allContributions;
-  boolean hasDownloadedLatestList;
-  boolean hasListDownloadFailed;
+  boolean listDownloaded;
+  boolean listDownloadFailed;
   ReentrantLock downloadingListingLock;
 
 
@@ -70,7 +72,7 @@ public class ContributionListing {
   }
 
 
-  public static ContributionListing getInstance() {
+  static public ContributionListing getInstance() {
     if (singleInstance == null) {
       synchronized (ContributionListing.class) {
         if (singleInstance == null) {
@@ -82,7 +84,7 @@ public class ContributionListing {
   }
 
 
-  void setAdvertisedList(File file) {
+  private void setAdvertisedList(File file) {
     listingFile = file;
 
     advertisedContributions.clear();
@@ -127,8 +129,8 @@ public class ContributionListing {
 
       if (oldLib.getImports() != null) {
         for (String importName : oldLib.getImports()) {
-          if (librariesByImportHeader.containsKey(importName)) {
-            librariesByImportHeader.put(importName, newLib);
+          if (getLibrariesByImportHeader().containsKey(importName)) {
+            getLibrariesByImportHeader().put(importName, newLib);
           }
         }
       }
@@ -147,7 +149,7 @@ public class ContributionListing {
   private void addContribution(Contribution contribution) {
     if (contribution.getImports() != null) {
       for (String importName : contribution.getImports()) {
-        librariesByImportHeader.put(importName, contribution);
+        getLibrariesByImportHeader().put(importName, contribution);
       }
     }
     for (String category : contribution.getCategories()) {
@@ -176,7 +178,7 @@ public class ContributionListing {
     }
     if (contribution.getImports() != null) {
       for (String importName : contribution.getImports()) {
-        librariesByImportHeader.remove(importName);
+        getLibrariesByImportHeader().remove(importName);
       }
     }
     allContributions.remove(contribution);
@@ -196,9 +198,7 @@ public class ContributionListing {
 
 
   protected AvailableContribution getAvailableContribution(Contribution info) {
-    Iterator<AvailableContribution> iter = advertisedContributions.iterator();
-    while(iter.hasNext()) {
-      AvailableContribution advertised = iter.next();
+    for (AvailableContribution advertised : advertisedContributions) {
       if (advertised.getType() == info.getType() &&
           advertised.getName().equals(info.getName())) {
         return advertised;
@@ -217,7 +217,7 @@ public class ContributionListing {
         if (filter.matches(contrib)) {
           // TODO still not sure why category would be coming back null [fry]
           // http://code.google.com/p/processing/issues/detail?id=1387
-          if (categoryName != null && categoryName.trim().length() != 0) {
+          if (categoryName != null && !categoryName.trim().isEmpty()) {
             outgoing.add(categoryName);
           }
           break;
@@ -264,11 +264,11 @@ public class ContributionListing {
   }
 
 
-  private boolean matches(Contribution contrib, String filter) {
-    int colon = filter.indexOf(":");
+  private boolean matches(Contribution contrib, String typed) {
+    int colon = typed.indexOf(":");
     if (colon != -1) {
-      String isText = filter.substring(0, colon);
-      String property = filter.substring(colon + 1);
+      String isText = typed.substring(0, colon);
+      String property = typed.substring(colon + 1);
 
       // Chances are the person is still typing the property, so rather than
       // make the list flash empty (because nothing contains "is:" or "has:",
@@ -278,28 +278,37 @@ public class ContributionListing {
       }
 
       if ("is".equals(isText) || "has".equals(isText)) {
-        return hasProperty(contrib, filter.substring(colon + 1));
+        return hasProperty(contrib, typed.substring(colon + 1));
       } else if ("not".equals(isText)) {
-        return !hasProperty(contrib, filter.substring(colon + 1));
+        return !hasProperty(contrib, typed.substring(colon + 1));
       }
     }
 
-    filter = ".*" + filter.toLowerCase() + ".*";
+    typed = ".*" + typed.toLowerCase() + ".*";
 
-    return contrib.getAuthorList() != null && deAccent(contrib.getAuthorList().toLowerCase()).matches(filter)
-        || contrib.getSentence() != null && deAccent(contrib.getSentence().toLowerCase()).matches(filter)
-        || contrib.getParagraph() != null && deAccent(contrib.getParagraph().toLowerCase()).matches(filter)
-        || contrib.hasCategory(filter)
-        || contrib.getName() != null && deAccent(contrib.getName().toLowerCase()).matches(filter);
+    return (matchField(contrib.getName(), typed) ||
+            matchField(contrib.getAuthorList(), typed) ||
+            matchField(contrib.getSentence(), typed) ||
+            matchField(contrib.getParagraph(), typed) ||
+            contrib.hasCategory(typed));
   }
 
-  public String deAccent(String str) {
+
+  static private boolean matchField(String field, String typed) {
+    return (field != null) &&
+      removeAccents(field.toLowerCase()).matches(typed);
+  }
+
+
+  // TODO is this removing characters with accents, not ascii normalizing them? [fry]
+  static private String removeAccents(String str) {
     String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
     Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
     return pattern.matcher(nfdNormalizedString).replaceAll("");
   }
 
-  private boolean isProperty(String property) {
+
+  static private boolean isProperty(String property) {
     return property.startsWith("updat") || property.startsWith("upgrad")
         || property.startsWith("instal") && !property.startsWith("installabl")
         || property.equals("tool") || property.startsWith("lib")
@@ -324,20 +333,15 @@ public class ContributionListing {
     }
     if (property.startsWith("lib")) {
       return contrib.getType() == ContributionType.LIBRARY;
-//      return contrib.getType() == Contribution.Type.LIBRARY
-//          || contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
     }
     if (property.equals("mode")) {
       return contrib.getType() == ContributionType.MODE;
     }
-//    if (property.equals("compilation")) {
-//      return contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
-//    }
-
     return false;
   }
 
 
+  /*
   protected List<Contribution> listCompatible(List<Contribution> contribs, boolean filter) {
     List<Contribution> filteredList =
       new ArrayList<Contribution>(contribs);
@@ -353,6 +357,7 @@ public class ContributionListing {
     }
     return filteredList;
   }
+  */
 
 
   private void notifyRemove(Contribution contribution) {
@@ -376,24 +381,12 @@ public class ContributionListing {
   }
 
 
-  protected void addContributionListener(ChangeListener listener) {
+  protected void addListener(ChangeListener listener) {
     for (Contribution contrib : allContributions) {
       listener.contributionAdded(contrib);
     }
     listeners.add(listener);
   }
-
-
-  /*
-  private void removeContributionListener(ContributionChangeListener listener) {
-    listeners.remove(listener);
-  }
-
-
-  private ArrayList<ContributionChangeListener> getContributionListeners() {
-    return new ArrayList<ContributionChangeListener>(listeners);
-  }
-  */
 
 
   /**
@@ -430,11 +423,11 @@ public class ContributionListing {
               listingFile.delete();  // may silently fail, but below may still work
             }
             if (tempContribFile.renameTo(listingFile)) {
-              hasDownloadedLatestList = true;
-              hasListDownloadFailed = false;
+              listDownloaded = true;
+              listDownloadFailed = false;
               setAdvertisedList(listingFile);
             } else {
-              hasListDownloadFailed = true;
+              listDownloadFailed = true;
             }
           }
 
@@ -449,15 +442,99 @@ public class ContributionListing {
 
 
   /*
-  boolean hasUpdates() {
-    for (Contribution info : allContributions) {
-      if (hasUpdates(info)) {
+  boolean hasUpdates(Base base) {
+    for (ModeContribution mc : base.getModeContribs()) {
+      if (hasUpdates(mc)) {
+        return true;
+      }
+    }
+    for (Library lib : base.getActiveEditor().getMode().contribLibraries) {
+      if (hasUpdates(lib)) {
+        return true;
+      }
+    }
+    for (ToolContribution tc : base.getToolContribs()) {
+      if (hasUpdates(tc)) {
         return true;
       }
     }
     return false;
   }
   */
+
+
+  protected boolean hasUpdates(Contribution contribution) {
+    if (contribution.isInstalled()) {
+      Contribution advertised = getAvailableContribution(contribution);
+      if (advertised == null) {
+        return false;
+      }
+      return advertised.getVersion() > contribution.getVersion()
+        && advertised.isCompatible(Base.getRevision());
+    }
+    return false;
+  }
+
+
+  protected String getLatestVersion(Contribution contribution) {
+    Contribution newestContrib = getAvailableContribution(contribution);
+    if (newestContrib == null) {
+      return null;
+    }
+    return newestContrib.getPrettyVersion();
+  }
+
+
+
+  protected boolean hasDownloadedLatestList() {
+    return listDownloaded;
+  }
+
+
+  protected boolean hasListDownloadFailed() {
+    return listDownloadFailed;
+  }
+
+
+  private List<AvailableContribution> parseContribList(File file) {
+    List<AvailableContribution> outgoing =
+      new ArrayList<AvailableContribution>();
+
+    if (file != null && file.exists()) {
+      String[] lines = PApplet.loadStrings(file);
+
+      int start = 0;
+      while (start < lines.length) {
+        String type = lines[start];
+        ContributionType contribType = ContributionType.fromName(type);
+        if (contribType == null) {
+          System.err.println("Error in contribution listing file on line " + (start+1));
+          // Scan forward for the next blank line
+          int end = ++start;
+          while (end < lines.length && !lines[end].trim().isEmpty()) {
+            end++;
+          }
+          start = end + 1;
+
+        } else {
+          // Scan forward for the next blank line
+          int end = ++start;
+          while (end < lines.length && !lines[end].trim().isEmpty()) {
+            end++;
+          }
+
+          String[] contribLines = PApplet.subset(lines, start, end-start);
+          StringDict contribParams = Util.readSettings(file.getName(), contribLines);
+          outgoing.add(new AvailableContribution(contribType, contribParams));
+          start = end + 1;
+        }
+      }
+    }
+    return outgoing;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
@@ -467,7 +544,7 @@ public class ContributionListing {
    * correct information on the number of items available.
    * @return The number of contributions that have available updates.
    */
-  int countUpdates(Base base) {
+  public int countUpdates(Base base) {
     int count = 0;
     for (ModeContribution mc : base.getModeContribs()) {
       if (hasUpdates(mc)) {
@@ -488,104 +565,10 @@ public class ContributionListing {
   }
 
 
-  boolean hasUpdates(Base base) {
-    for (ModeContribution mc : base.getModeContribs()) {
-      if (hasUpdates(mc)) {
-        return true;
-      }
-    }
-    for (Library lib : base.getActiveEditor().getMode().contribLibraries) {
-      if (hasUpdates(lib)) {
-        return true;
-      }
-    }
-    for (ToolContribution tc : base.getToolContribs()) {
-      if (hasUpdates(tc)) {
-        return true;
-      }
-    }
-    return false;
+  /** Used by JavaEditor to auto-import */
+  public Map<String, Contribution> getLibrariesByImportHeader() {
+    return librariesByImportHeader;
   }
-
-
-  boolean hasUpdates(Contribution contribution) {
-    if (contribution.isInstalled()) {
-      Contribution advertised = getAvailableContribution(contribution);
-      if (advertised == null) {
-        return false;
-      }
-      return advertised.getVersion() > contribution.getVersion()
-        && advertised.isCompatible(Base.getRevision());
-    }
-    return false;
-  }
-
-
-  String getLatestVersion(Contribution contribution) {
-    Contribution newestContrib = getAvailableContribution(contribution);
-    if (newestContrib == null) {
-      return null;
-    }
-    return newestContrib.getPrettyVersion();
-  }
-
-
-
-  boolean hasDownloadedLatestList() {
-    return hasDownloadedLatestList;
-  }
-
-
-  boolean hasListDownloadFailed() {
-    return hasListDownloadFailed;
-  }
-
-
-  List<AvailableContribution> parseContribList(File file) {
-    List<AvailableContribution> outgoing = new ArrayList<AvailableContribution>();
-
-    if (file != null && file.exists()) {
-      String[] lines = PApplet.loadStrings(file);
-
-      int start = 0;
-      while (start < lines.length) {
-        String type = lines[start];
-        ContributionType contribType = ContributionType.fromName(type);
-        if (contribType == null) {
-          System.err.println("Error in contribution listing file on line " + (start+1));
-          // Scan forward for the next blank line
-          int end = ++start;
-          while (end < lines.length && lines[end].trim().length() != 0) {
-            end++;
-          }
-          start = end + 1;
-
-        } else {
-          // Scan forward for the next blank line
-          int end = ++start;
-          while (end < lines.length && lines[end].trim().length() != 0) {
-            end++;
-          }
-
-          String[] contribLines = PApplet.subset(lines, start, end-start);
-          StringDict contribParams = Util.readSettings(file.getName(), contribLines);
-          outgoing.add(new AvailableContribution(contribType, contribParams));
-          start = end + 1;
-        }
-      }
-    }
-    return outgoing;
-  }
-
-
-//  boolean isDownloadingListing() {
-//    return downloadingListingLock.isLocked();
-//  }
-
-
-//  public Comparator<? super Contribution> getComparator() {
-//    return COMPARATOR;
-//  }
 
 
   static public Comparator<Contribution> COMPARATOR = new Comparator<Contribution>() {

@@ -57,6 +57,10 @@ implements Scrollable, ContributionListing.ChangeListener {
   static Icon upToDateIcon;
   static Icon updateAvailableIcon;
   static Icon incompatibleIcon;
+  static Icon foundationIcon;
+
+  static Font plainFont;
+  static Font boldFont;
 
 
   public ListPanel() {
@@ -64,6 +68,10 @@ implements Scrollable, ContributionListing.ChangeListener {
       upToDateIcon = Toolkit.getLibIconX("manager/up-to-date");
       updateAvailableIcon = Toolkit.getLibIconX("manager/update-available");
       incompatibleIcon = Toolkit.getLibIconX("manager/incompatible");
+      foundationIcon = Toolkit.getLibIconX("icons/foundation", 16);
+
+      plainFont = Toolkit.getSansFont(14, Font.PLAIN);
+      boldFont = Toolkit.getSansFont(14, Font.BOLD);
     }
   }
 
@@ -103,7 +111,7 @@ implements Scrollable, ContributionListing.ChangeListener {
     table.setFillsViewportHeight(true);
 //    table.setBorder();
     table.setDefaultRenderer(Contribution.class, new ContribStatusRenderer());
-    table.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+    table.setFont(plainFont);
     table.setRowHeight(28);
     table.setRowMargin(6);
     table.getColumnModel().setColumnMargin(0);
@@ -294,7 +302,7 @@ implements Scrollable, ContributionListing.ChangeListener {
       }
       if (column == 0) {
         Icon icon = null;
-        label.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+        label.setFont(plainFont);
         if (contribution.isInstalled()) {
           icon = upToDateIcon;
           if (contribListing.hasUpdates(contribution)) {
@@ -314,7 +322,6 @@ implements Scrollable, ContributionListing.ChangeListener {
 
       } else if (column == 1) {
         // Generating ellipses based on fontMetrics
-        Font boldFont = Toolkit.getSansFont(14, Font.BOLD);
         String fontFace = "<font face=\"" + boldFont.getName() + "\">";
         FontMetrics fontMetrics = table.getFontMetrics(boldFont); //table.getFont());
         int colSize = table.getColumnModel().getColumn(1).getWidth();
@@ -349,11 +356,11 @@ implements Scrollable, ContributionListing.ChangeListener {
         if (table.isRowSelected(row)) {
           label.setBackground(new Color(0xe0fffd));
         }
-        label.setFont(ContributionManagerDialog.font);
+        label.setFont(plainFont);
         label.setOpaque(true);
       } else {
         if (contribution.isSpecial()) {
-          label = new JLabel(Toolkit.getLibIconX("icons/foundation", 16));
+          label = new JLabel(foundationIcon);
         } else {
           label = new JLabel();
         }

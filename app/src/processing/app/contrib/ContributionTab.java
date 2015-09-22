@@ -100,7 +100,7 @@ public class ContributionTab extends JPanel {
     contribListing = ContributionListing.getInstance();
     statusPanel = new StatusPanel(650, this);
     contributionListPanel = new ListPanel(this, filter);
-    contribListing.addContributionListener(contributionListPanel);
+    contribListing.addListener(contributionListPanel);
   }
 
 

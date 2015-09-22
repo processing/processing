@@ -29,7 +29,7 @@ public class UpdateContributionTab extends ContributionTab {
     this.contributionType = type;
     this.contributionManagerDialog = contributionManagerDialog;
     contribListing = ContributionListing.getInstance();
-    contribListing.addContributionListener(contributionListPanel);
+    contribListing.addListener(contributionListPanel);
   }
 
 

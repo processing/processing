@@ -1924,16 +1924,18 @@ public class JavaEditor extends Editor {
    * @param importHeaders
    */
   private List<AvailableContribution> getNotInstalledAvailableLibs(ArrayList<String> importHeadersList) {
-    Map<String, Contribution> importMap = ContributionListing.getInstance().librariesByImportHeader;
-    ArrayList<AvailableContribution> libList = new ArrayList<AvailableContribution>();
+    Map<String, Contribution> importMap =
+      ContributionListing.getInstance().getLibrariesByImportHeader();
+    List<AvailableContribution> libList = new ArrayList<AvailableContribution>();
     for (String importHeaders : importHeadersList) {
       int dot = importHeaders.lastIndexOf('.');
       String entry = (dot == -1) ? importHeaders : importHeaders.substring(0,
           dot);
 
-      if (entry.startsWith("java.") || entry.startsWith("javax.")
-          || entry.startsWith("processing.")) {
-        continue;// null;
+      if (entry.startsWith("java.") ||
+          entry.startsWith("javax.") ||
+          entry.startsWith("processing.")) {
+        continue;
       }
 
       Library library = null;
