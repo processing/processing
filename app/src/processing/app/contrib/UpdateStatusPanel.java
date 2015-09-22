@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -22,14 +21,13 @@ public class UpdateStatusPanel extends StatusPanel {
     updateButton = new JButton("Update All", Toolkit.getLibIconX("manager/update"));
     updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     updateButton.setHorizontalAlignment(SwingConstants.LEFT);
+    updateButton.setVisible(true);
+    updateButton.setEnabled(false);
+
     updateButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        Collection<DetailPanel> c =
-          contributionTab.contributionListPanel.panelByContribution.values();
-        for (DetailPanel contributionPanel : c) {
-          contributionPanel.update();
-        }
+        contributionTab.updateAll();
       }
     });
     setBackground(new Color(0xebebeb));
@@ -48,11 +46,9 @@ public class UpdateStatusPanel extends StatusPanel {
 
     layout.setVerticalGroup(layout.createParallelGroup()
       .addComponent(updateButton));
-    updateButton.setVisible(true);
-    updateButton.setEnabled(false);
   }
 
   public void update() {
-    updateButton.setEnabled(contributionTab.contributionListPanel.getRowCount() > 0);
+    updateButton.setEnabled(contributionTab.hasUpdates());
   }
 }

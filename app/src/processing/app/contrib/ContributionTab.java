@@ -433,4 +433,18 @@ public class ContributionTab extends JPanel {
   public void updateStatusPanel(DetailPanel contributionPanel) {
     statusPanel.update(contributionPanel);
   }
+
+
+  protected void updateAll() {
+    Collection<DetailPanel> collection =
+      contributionListPanel.panelByContribution.values();
+    for (DetailPanel detailPanel : collection) {
+      detailPanel.update();
+    }
+  }
+
+
+  protected boolean hasUpdates() {
+    return contributionListPanel.getRowCount() > 0;
+  }
 }
