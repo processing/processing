@@ -23,10 +23,6 @@ package processing.app.contrib;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -55,7 +51,7 @@ public class ContributionManagerDialog {
 
   JFrame dialog;
   JTabbedPane tabbedPane;
-  JButton restartButton;
+//  JButton restartButton;
 
   // the calling editor, so updates can be applied
   Editor editor;
@@ -101,7 +97,7 @@ public class ContributionManagerDialog {
     this.editor = editor;
 
     // Calculating index to switch to the required tab
-    int index = getIndex(contributionType);
+    int index = getTypeIndex(contributionType);
     if (dialog == null) {
       makeFrame(editor);
       // done before as downloadAndUpdateContributionListing()
@@ -123,7 +119,7 @@ public class ContributionManagerDialog {
   }
 
 
-  int getIndex(ContributionType contributionType) {
+  static int getTypeIndex(ContributionType contributionType) {
     int index;
     if (contributionType == ContributionType.LIBRARY) {
       index = 0;
@@ -138,7 +134,7 @@ public class ContributionManagerDialog {
     }
     return index;
   }
-  
+
   ContributionTab getTab(ContributionType contributionType) {
     if (contributionType == ContributionType.LIBRARY) {
       return librariesContributionTab;
@@ -219,6 +215,7 @@ public class ContributionManagerDialog {
 //    tabbedPane.setSize(450, 400);
     setLayout();
 
+    /*
     restartButton = new JButton(Language.text("contrib.restart"));
     restartButton.setVisible(false);
     restartButton.addActionListener(new ActionListener() {
@@ -230,9 +227,9 @@ public class ContributionManagerDialog {
         while (iter.hasNext()) {
           Editor ed = iter.next();
           if (ed.getSketch().isModified()) {
-            int option = Messages.showYesNoQuestion(editor, title, Language
-              .text("contrib.unsaved_changes"), Language
-              .text("contrib.unsaved_changes.prompt"));
+            int option = Messages.showYesNoQuestion(editor, title,
+                                                    Language.text("contrib.unsaved_changes"),
+                                                    Language.text("contrib.unsaved_changes.prompt"));
 
             if (option == JOptionPane.NO_OPTION)
               return;
@@ -264,6 +261,7 @@ public class ContributionManagerDialog {
       }
 
     });
+    */
 
     Toolkit.setIcon(dialog);
     registerDisposeListeners();
@@ -493,10 +491,9 @@ public class ContributionManagerDialog {
         activeTab.updateContributionListing();
         activeTab.updateCategoryChooser();
 
-
         if (error) {
           exception.printStackTrace();
-          makeAndShowTab(true,false);
+          makeAndShowTab(true, false);
         } else {
           makeAndShowTab(false, false);
         }

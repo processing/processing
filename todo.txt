@@ -33,6 +33,7 @@ X   https://github.com/processing/processing/issues/3847
 o finish the gui
 X   https://github.com/processing/processing/issues/3072
 X   closing in favor of specific issues
+X fix the bold in the welcome window to not use fake bold
 
 sketch modified
 X sketch modified externally with FAT32 volumes on OS X
@@ -151,6 +152,7 @@ _   https://github.com/processing/processing/issues/3665
 gui / 3.0 final
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
+_   and have it be clickable so to open the manager
 _ different design of squiggly line
 _   easy to do inside JavaTextAreaPainter.paintSquiggle()
 

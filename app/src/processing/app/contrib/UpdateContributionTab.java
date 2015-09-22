@@ -40,7 +40,7 @@ public class UpdateContributionTab extends ContributionTab {
   public UpdateContributionTab(ContributionType type,ContributionManagerDialog contributionManagerDialog) {
     super();
     filter = ContributionType.createUpdateFilter();
-    contributionListPanel = new UpdateContribListingPanel(this, filter);
+    contributionListPanel = new UpdateContributionListPanel(this, filter);
     statusPanel = new UpdateStatusPanel(650, this);
     this.contributionType = type;
     this.contributionManagerDialog = contributionManagerDialog;
@@ -93,10 +93,10 @@ public class UpdateContributionTab extends ContributionTab {
 
   }
 
-  public class UpdateContribListingPanel extends ContributionListPanel {
+  public class UpdateContributionListPanel extends ContributionListPanel {
 
-    public UpdateContribListingPanel(ContributionTab contributionTab,
-                                     ContributionFilter filter) {
+    public UpdateContributionListPanel(ContributionTab contributionTab,
+                                       ContributionFilter filter) {
       this.contributionTab = contributionTab;
       this.filter = filter;
 
@@ -197,39 +197,19 @@ public class UpdateContributionTab extends ContributionTab {
       layout.setHorizontalGroup(layout.createParallelGroup().addComponent(scrollPane));
       layout.setVerticalGroup(layout.createSequentialGroup().addComponent(scrollPane));
 
-      this.setLayout(layout);
+      setLayout(layout);
       table.setVisible(true);
 
       panelByContribution = new TreeMap<Contribution, ContributionPanel>(new Comparator<Contribution>() {
-
         @Override
         public int compare(Contribution o1, Contribution o2) {
-          int val1 = 0;
-          int val2 = 0;
-          switch(o1.getType()){
-          case LIBRARY: val1 = 1;
-          break;
-          case TOOL: val1 = 2;
-          break;
-          case MODE: val1 = 3;
-          break;
-          case EXAMPLES: val1 = 4;
-          break;
+          int diff =
+            ContributionManagerDialog.getTypeIndex(o1.getType()) -
+            ContributionManagerDialog.getTypeIndex(o2.getType());
+          if (diff == 0) {
+            diff = o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
           }
-          switch(o2.getType()){
-          case LIBRARY: val2 = 1;
-          break;
-          case TOOL: val2 = 2;
-          break;
-          case MODE: val2 = 3;
-          break;
-          case EXAMPLES: val2 = 4;
-          break;
-          }
-          if(val1 == val2){
-            return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-          }
-          return val1 - val2;
+          return diff;
         }
       });
     }
@@ -308,7 +288,7 @@ public class UpdateContributionTab extends ContributionTab {
               .getTab(contribution.getType()).contributionListPanel.panelByContribution
               .get(contribution);
             if (newPanel == null) {
-              newPanel = new ContributionPanel(UpdateContribListingPanel.this);
+              newPanel = new ContributionPanel(UpdateContributionListPanel.this);
             }
             if (!panelByContribution.containsKey(contribution)) {
               synchronized (panelByContribution) {
