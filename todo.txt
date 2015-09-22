@@ -111,8 +111,9 @@ X   https://github.com/processing/processing/pull/3810
 X auto-complete timing issues
 _   https://github.com/processing/processing/issues/3812
 X   https://github.com/processing/processing/pull/3845
-_ Red error underline is sometimes at wrong location
-_   https://github.com/processing/processing/issues/3759
+X Red error underline is sometimes at wrong location
+X   https://github.com/processing/processing/issues/3759
+X   https://github.com/processing/processing/pull/3848
 
 
 known issues
