@@ -43,7 +43,7 @@ public class ContributionListing {
   static volatile ContributionListing singleInstance;
 
   File listingFile;
-  List<ContributionChangeListener> listeners;
+  List<ChangeListener> listeners;
   List<AvailableContribution> advertisedContributions;
   Map<String, List<Contribution>> librariesByCategory;
   public Map<String, Contribution> librariesByImportHeader;
@@ -54,7 +54,7 @@ public class ContributionListing {
 
 
   private ContributionListing() {
-    listeners = new ArrayList<ContributionChangeListener>();
+    listeners = new ArrayList<ChangeListener>();
     advertisedContributions = new ArrayList<AvailableContribution>();
     librariesByCategory = new HashMap<String, List<Contribution>>();
     librariesByImportHeader = new HashMap<String, Contribution>();
@@ -208,7 +208,7 @@ public class ContributionListing {
   }
 
 
-  protected Set<String> getCategories(ContributionFilter filter) {
+  protected Set<String> getCategories(Contribution.Filter filter) {
     Set<String> outgoing = new HashSet<String>();
 
     Set<String> categorySet = librariesByCategory.keySet();
@@ -357,27 +357,27 @@ public class ContributionListing {
 
 
   private void notifyRemove(Contribution contribution) {
-    for (ContributionChangeListener listener : listeners) {
+    for (ChangeListener listener : listeners) {
       listener.contributionRemoved(contribution);
     }
   }
 
 
   private void notifyAdd(Contribution contribution) {
-    for (ContributionChangeListener listener : listeners) {
+    for (ChangeListener listener : listeners) {
       listener.contributionAdded(contribution);
     }
   }
 
 
   private void notifyChange(Contribution oldLib, Contribution newLib) {
-    for (ContributionChangeListener listener : listeners) {
+    for (ChangeListener listener : listeners) {
       listener.contributionChanged(oldLib, newLib);
     }
   }
 
 
-  protected void addContributionListener(ContributionChangeListener listener) {
+  protected void addContributionListener(ChangeListener listener) {
     for (Contribution contrib : allContributions) {
       listener.contributionAdded(contrib);
     }
@@ -594,4 +594,11 @@ public class ContributionListing {
       return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
     }
   };
+
+
+  public interface ChangeListener {
+    public void contributionAdded(Contribution Contribution);
+    public void contributionRemoved(Contribution Contribution);
+    public void contributionChanged(Contribution oldLib, Contribution newLib);
+  }
 }

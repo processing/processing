@@ -28,7 +28,7 @@ import processing.app.ui.Toolkit;
 public class UpdateContributionListPanel extends ContributionListPanel {
 
   public UpdateContributionListPanel(ContributionTab contributionTab,
-                                     ContributionFilter filter) {
+                                     Contribution.Filter filter) {
     this.contributionTab = contributionTab;
     this.filter = filter;
 

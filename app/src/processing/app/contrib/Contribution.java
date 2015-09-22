@@ -321,4 +321,12 @@ abstract public class Contribution {
     String cleaned = cat.replaceAll("[\\W]+", "_").toLowerCase();
     return Language.text("contrib.category." + cleaned);
   }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public interface Filter {
+    boolean matches(Contribution contrib);
+  }
 }

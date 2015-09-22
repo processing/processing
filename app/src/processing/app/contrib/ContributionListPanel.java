@@ -42,12 +42,13 @@ import processing.app.ui.Toolkit;
 // necessary in the first place, however; seems like odd behavior.
 // It also allows the description text in the panels to wrap properly.
 
-public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
+public class ContributionListPanel extends JPanel
+implements Scrollable, ContributionListing.ChangeListener {
   ContributionTab contributionTab;
   TreeMap<Contribution, ContributionPanel> panelByContribution;
 
   private ContributionPanel selectedPanel;
-  protected ContributionFilter filter;
+  protected Contribution.Filter filter;
   protected ContributionListing contribListing = ContributionListing.getInstance();
   protected JTable table;
   DefaultTableModel model;
@@ -68,7 +69,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
 
   public ContributionListPanel(final ContributionTab contributionTab,
-                               ContributionFilter filter) {
+                               Contribution.Filter filter) {
     this.contributionTab = contributionTab;
     this.filter = filter;
 

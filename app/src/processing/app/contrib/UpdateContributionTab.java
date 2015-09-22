@@ -17,7 +17,15 @@ public class UpdateContributionTab extends ContributionTab {
   public UpdateContributionTab(ContributionType type,
                                ContributionManagerDialog contributionManagerDialog) {
     super();
-    filter = ContributionType.createUpdateFilter();
+
+    filter = new Contribution.Filter() {
+      public boolean matches(Contribution contrib) {
+        if (contrib instanceof LocalContribution) {
+          return ContributionListing.getInstance().hasUpdates(contrib);
+        }
+        return false;
+      }
+    };
     contributionListPanel = new UpdateContributionListPanel(this, filter);
     statusPanel = new UpdateStatusPanel(this, 650, this);
     this.contributionType = type;

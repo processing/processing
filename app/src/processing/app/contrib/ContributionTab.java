@@ -48,7 +48,7 @@ public class ContributionTab {
   //String title;
 
   JPanel panel;
-  ContributionFilter filter;
+  Contribution.Filter filter;
   JComboBox<String> categoryChooser;
   JScrollPane scrollPane;
   ContributionListPanel contributionListPanel;
@@ -91,7 +91,12 @@ public class ContributionTab {
     }
     */
 
-    filter = type.createFilter();
+    filter = new Contribution.Filter() {
+      public boolean matches(Contribution contrib) {
+        return contrib.getType() == contributionType;
+      }
+    };
+
     contribListing = ContributionListing.getInstance();
       statusPanel = new StatusPanel(650,this);
       contributionListPanel = new ContributionListPanel(this, filter);
