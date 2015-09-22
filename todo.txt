@@ -113,15 +113,13 @@ X   https://github.com/processing/processing/issues/3608
 X "update all" button appears to do nothing in library manager
 X   https://github.com/processing/processing/issues/3837
 X   https://github.com/processing/processing/pull/3842
-_ contributions filter is ignored after clicking Install
-_   https://github.com/processing/processing/issues/3826
 
 jakub
 X Make preprocessor scope-aware
 X   https://github.com/processing/processing/issues/3799
 X   https://github.com/processing/processing/pull/3810
 X auto-complete timing issues
-_   https://github.com/processing/processing/issues/3812
+X   https://github.com/processing/processing/issues/3812
 X   https://github.com/processing/processing/pull/3845
 X Red error underline is sometimes at wrong location
 X   https://github.com/processing/processing/issues/3759
@@ -184,6 +182,8 @@ _ ugly white gap at the top of scroll bar
 _   the table header doesn't extend far enough
 _ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
 _   looks like ContributionListing.getScrollableUnitIncrement() returns early
+_ contributions filter is ignored after clicking Install
+_   https://github.com/processing/processing/issues/3826
 
 
 gui / post 3.0
