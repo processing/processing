@@ -38,12 +38,12 @@ import processing.app.ui.Toolkit;
 public class ManagerFrame {
   static final String ANY_CATEGORY = Language.text("contrib.all");
 
-  static final int TAB_WIDTH = 100;
-  static final int TAB_HEIGHT = 34;
+//  static final int TAB_WIDTH = 100;
+//  static final int TAB_HEIGHT = 34;
   static final int AUTHOR_WIDTH = 240;
   static final int STATUS_WIDTH = 66;
 
-  static final String title = "Manager";
+  static final String title = "Contribution Manager";
 
   Base base;
   JFrame frame;
@@ -69,11 +69,11 @@ public class ManagerFrame {
     this.base = base;
 
 //    numberLabel = new JLabel(Toolkit.getLibIconX("manager/notification"));
-    librariesTab = new ContributionTab(ContributionType.LIBRARY, this);
-    modesTab = new ContributionTab(ContributionType.MODE, this);
-    toolsTab = new ContributionTab(ContributionType.TOOL, this);
-    examplesTab = new ContributionTab(ContributionType.EXAMPLES, this);
-    updatesTab = new UpdateContributionTab(null, this);
+    librariesTab = new ContributionTab(this, ContributionType.LIBRARY);
+    modesTab = new ContributionTab(this, ContributionType.MODE);
+    toolsTab = new ContributionTab(this, ContributionType.TOOL);
+    examplesTab = new ContributionTab(this, ContributionType.EXAMPLES);
+    updatesTab = new UpdateContributionTab(this, null);
   }
 
 
@@ -118,11 +118,11 @@ public class ManagerFrame {
 
     makeAndShowTab(false, true);
 
-    tabs.add(librariesTab);
-    tabs.add(modesTab);
-    tabs.add(toolsTab);
-    tabs.add(examplesTab);
-    tabs.add(updatesTab);
+    tabs.addPanel(librariesTab, "Libraries");
+    tabs.addPanel(modesTab, "Modes");
+    tabs.addPanel(toolsTab, "Tools");
+    tabs.addPanel(examplesTab, "Examples");
+    tabs.addPanel(updatesTab, "Updates");
 
     /*
     tabbedPane.addTab("Libraries", null, librariesTab, "Libraries");
@@ -247,7 +247,11 @@ public class ManagerFrame {
 
     frame.setResizable(true);
 //    tabbedPane.setBorder(new EmptyBorder(BORDER, BORDER, BORDER, BORDER));
-    frame.getContentPane().add(tabs);
+
+    Container c = frame.getContentPane();
+    c.add(tabs);
+    c.setBackground(base.getDefaultMode().getColor("manager.tab.background"));
+
     frame.validate();
     frame.repaint();
 

@@ -12,11 +12,10 @@ import processing.app.ui.Toolkit;
 
 public class UpdateContributionTab extends ContributionTab {
 
-  public UpdateContributionTab(ContributionType type,
-                               ManagerFrame dialog) {
+  public UpdateContributionTab(ManagerFrame dialog, ContributionType type) {
     super();
-    this.contribType = type;
     this.contribDialog = dialog;
+    this.contribType = type;
 
     filter = new Contribution.Filter() {
       public boolean matches(Contribution contrib) {

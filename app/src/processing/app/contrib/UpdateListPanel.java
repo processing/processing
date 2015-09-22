@@ -47,7 +47,7 @@ public class UpdateListPanel extends ListPanel {
     };
 
     model.setColumnIdentifiers(new String[] {
-      "", "Name", "Author", "Installed", "Update To"
+      "", "Name", "Author", "Installed", "Available"
     });
 
     table = new JTable(model) {

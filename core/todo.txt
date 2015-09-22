@@ -20,6 +20,8 @@ X surface.setLocation() causing a freeze on Windows
 X   https://github.com/processing/processing/commit/4c0f9234c0a48f62363233cafc9c9951ee351d3e
 X selectInput/Output() is behind the drawing window (Windows)
 X   https://github.com/processing/processing/issues/3775
+X MouseWheel count wrong (backwards?) in P2D and P3D
+X   https://github.com/processing/processing/issues/3840
 
 known
 _ window must close when using file dialogs with OpenGL on Windows

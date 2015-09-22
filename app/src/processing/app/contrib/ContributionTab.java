@@ -25,7 +25,6 @@ package processing.app.contrib;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.event.*;
 import java.util.*;
 
@@ -71,10 +70,9 @@ public class ContributionTab extends JPanel {
   public ContributionTab() { }
 
 
-  public ContributionTab(ContributionType type,
-                         ManagerFrame dialog) {
-    this.contribType = type;
+  public ContributionTab(ManagerFrame dialog, ContributionType type) {
     this.contribDialog = dialog;
+    this.contribType = type;
 
     /*
     if (type == ContributionType.MODE) {
@@ -106,14 +104,13 @@ public class ContributionTab extends JPanel {
 //  }
 
 
-  public void showFrame(final Editor editor, boolean activateErrorPanel,
-                        final boolean loading) {
+  public void showFrame(final Editor editor, boolean error, boolean loading) {
     this.editor = editor;
 
-    setLayout(editor, activateErrorPanel, loading);
+    setLayout(editor, error, loading);
     contributionListPanel.setVisible(!loading);
     loaderLabel.setVisible(loading);
-    errorPanel.setVisible(activateErrorPanel);
+    errorPanel.setVisible(error);
 
     validate();
     repaint();
@@ -264,12 +261,14 @@ public class ContributionTab extends JPanel {
   }
 
 
+  /*
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
     g.setColor(new Color(0xe0fffd));
     g.fillRect(getX(), getY() - ManagerFrame.TAB_HEIGHT - 2 , getWidth(), 2);
   }
+  */
 
 
   protected void updateCategoryChooser() {

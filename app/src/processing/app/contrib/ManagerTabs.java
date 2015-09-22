@@ -40,7 +40,6 @@ import javax.swing.border.EmptyBorder;
 
 import processing.app.Base;
 import processing.app.Mode;
-import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
 
@@ -49,17 +48,19 @@ import processing.app.ui.Toolkit;
  */
 public class ManagerTabs extends Box {
   // height of this tab bar
-  static final int HIGH = 32;
+  static final int HIGH = 34;
+//  static final int HIGH = 29;
 
   // amount of space around the entire window
   static final int BORDER = 8;
+//  static final int BORDER = 12;
 
   static final int CURVE_RADIUS = 6;
 
-  static final int TAB_TOP = 2;
-  static final int TAB_BOTTOM = 29;
+  static final int TAB_TOP = 0;
+  static final int TAB_BOTTOM = HIGH - 2;
   // amount of extra space between individual tabs
-  static final int TAB_BETWEEN = 2;
+  static final int TAB_BETWEEN = 2; //4;
   // amount of margin on the left/right for the text on the tab
   static final int MARGIN = 14;
 
@@ -110,7 +111,6 @@ public class ManagerTabs extends Box {
 
     gradient = mode.makeGradient("manager.tab", 400, HIGH);
 
-    setBackground(mode.getColor("manager.tab.background"));
     setBorder(new EmptyBorder(BORDER, BORDER, BORDER, BORDER));
 
     controller = new Controller();
@@ -232,10 +232,10 @@ public class ManagerTabs extends Box {
 
       Graphics2D g2 = Toolkit.prepareGraphics(g);
 
-      g.setColor(tabColor[SELECTED]);
-      g.fillRect(0, 0, imageW, 2);
+      g.drawImage(gradient, 0, 0, imageW, imageH, this);
 
-      g.drawImage(gradient, 0, 2, imageW, imageH, this);
+      g.setColor(tabColor[SELECTED]);
+      g.fillRect(0, TAB_BOTTOM, imageW, 2);
 
       // reset all tab positions
       for (Tab tab : tabList) {
@@ -243,8 +243,9 @@ public class ManagerTabs extends Box {
           font.getStringBounds(tab.name, g2.getFontRenderContext()).getWidth();
       }
 
+      placeTabs(0); //Editor.LEFT_GUTTER);
       // now actually draw the tabs
-      placeTabs(Editor.LEFT_GUTTER, g2);
+      drawTabs(g2);
 
 //      // draw the two pixel line that extends left/right below the tabs
 //      g.setColor(tabColor[SELECTED]);
@@ -260,7 +261,7 @@ public class ManagerTabs extends Box {
      * @param left starting position from the left
      * @param g graphics context, or null if we're not drawing
      */
-    private void placeTabs(int left, Graphics2D g) {
+    private void placeTabs(int left) {  //, Graphics2D g) {
       int x = left;
 
       for (Tab tab : tabList) {
@@ -272,43 +273,25 @@ public class ManagerTabs extends Box {
         x += tab.textWidth + MARGIN;
         tab.right = x;
 
-        // if drawing and not just placing
-        if (g != null) {
-          tab.draw(g);
-          /*
-          int state = tab.isCurrent() ? SELECTED : UNSELECTED;
-          g.setColor(tabColor[state]);
-          if (tab.notification) {
-            g.setColor(errorColor);
-          }
-          //drawTab(g, tab.left, tab.right, tab.isFirst(), tab.isLast());
-          tab.draw(g);
-
-          int textLeft = tab.getTextLeft();
-          if (tab.notification && state == UNSELECTED) {
-            g.setColor(Color.LIGHT_GRAY);
-          } else {
-            g.setColor(textColor[state]);
-          }
-          int tabHeight = TAB_BOTTOM - TAB_TOP;
-          int baseline = TAB_TOP + (tabHeight + fontAscent) / 2;
-          g.drawString(tab.name, textLeft, baseline);
-          */
-        }
+//        // if drawing and not just placing
+//        if (g != null) {
+//          tab.draw(g);
+//        }
         x += TAB_BETWEEN;
       }
+      // Align the final tab (the "updates") to the right-hand side
+      Tab lastTab = tabList.get(tabList.size() - 1);
+      int offset = getWidth() - lastTab.right;
+      lastTab.left += offset;
+      lastTab.right += offset;
     }
 
 
-    /*
-    private void drawTab(Graphics g, int left, int right,
-                         boolean leftNotch, boolean rightNotch) {
-      Graphics2D g2 = (Graphics2D) g;
-      g2.fill(Toolkit.createRoundRect(left, TAB_TOP, right, TAB_BOTTOM, 0, 0,
-                                      rightNotch ? CURVE_RADIUS : 0,
-                                      leftNotch ? CURVE_RADIUS : 0));
+    private void drawTabs(Graphics2D g) {
+      for (Tab tab: tabList) {
+        tab.draw(g);
+      }
     }
-    */
 
 
     public Dimension getPreferredSize() {
@@ -363,12 +346,15 @@ public class ManagerTabs extends Box {
       return comp.isVisible();
     }
 
-    boolean isFirst() {
-      return tabList.get(0) == this;
+    boolean hasLeftNotch() {
+      return (tabList.get(0) == this ||
+              tabList.get(tabList.size() - 1) == this);
     }
 
-    boolean isLast() {
-      return tabList.get(tabList.size() - 1) == this;
+    boolean hasRightNotch() {
+      return (tabList.get(tabList.size() - 1) == this ||
+              tabList.get(tabList.size() - 2) == this);
+
     }
 
     int getTextLeft() {
@@ -388,9 +374,14 @@ public class ManagerTabs extends Box {
       g.setColor(tabColor[state]);
 
       Graphics2D g2 = (Graphics2D) g;
-      g2.fill(Toolkit.createRoundRect(left, TAB_TOP, right, TAB_BOTTOM, 0, 0,
-                                      isLast() ? CURVE_RADIUS : 0,
-                                      isFirst() ? CURVE_RADIUS : 0));
+//      g2.fill(Toolkit.createRoundRect(left, TAB_TOP, right, TAB_BOTTOM, 0, 0,
+//                                      isLast() ? CURVE_RADIUS : 0,
+//                                      hastLeftCurve() ? CURVE_RADIUS : 0));
+      g2.fill(Toolkit.createRoundRect(left, TAB_TOP,
+                                      right, TAB_BOTTOM,
+                                      hasLeftNotch() ? CURVE_RADIUS : 0,
+                                      hasRightNotch() ? CURVE_RADIUS : 0,
+                                      0, 0));
 
       if (hasIcon()) {
         Image icon = (isCurrent() || notification) ? selectedIcon : enabledIcon;
