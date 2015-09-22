@@ -143,12 +143,6 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
 beta 7
-_ bring back the # of updates on the update tab
-_   use this instead of the 'icon' stuff
-_ show number of updates available in the footer
-_   https://github.com/processing/processing/issues/3518
-_   and have it be clickable so to open the manager
-_   total number of updates available is not correct? (may be fixed)
 _ remove the dated releases from download.processing.org
 _ new Android release (EditorButton constructor changed)
 
@@ -178,6 +172,14 @@ _   does it even work for different contrib types?
 
 
 manager / 3.0 final
+_ bring back the # of updates on the update tab
+_   use this instead of the 'icon' stuff?
+_   or in addition, since only the 'updates' tab has it
+_   https://github.com/processing/processing/issues/3855
+_ show number of updates available in the footer
+_   https://github.com/processing/processing/issues/3518
+_   and have it be clickable so to open the manager
+_   total number of updates available is not correct? (may be fixed)
 _ ugly white gap at the top of scroll bar
 _   the table header doesn't extend far enough
 _ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
