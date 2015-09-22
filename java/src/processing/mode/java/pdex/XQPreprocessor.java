@@ -31,7 +31,6 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.NumberLiteral;
-import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -44,9 +43,8 @@ import processing.mode.java.preproc.PdePreprocessor;
 
 
 /**
- * Implementation of P5 preprocessor that uses Eclipse JDT features instead
- * of ANTLR. Performance gains mostly and full control over debug output,
- * but needs lots and lots of testing.
+ * Implementation of PdePreprocessor that uses Eclipse JDT features
+ * instead of ANTLR.
  */
 public class XQPreprocessor {
   private ASTRewrite rewrite = null;
@@ -56,8 +54,10 @@ public class XQPreprocessor {
   private String[] defaultImports;
 
 
-  public XQPreprocessor(ErrorCheckerService errorCheckerService) {
-    ecs = errorCheckerService;
+  public XQPreprocessor(ErrorCheckerService ecs) {
+    this.ecs = ecs;
+
+    // get parameters from the main preproc
     PdePreprocessor p = new PdePreprocessor(null);
     defaultImports = p.getDefaultImports();
     coreImports = p.getCoreImports();
@@ -67,8 +67,8 @@ public class XQPreprocessor {
   /**
    * The main preprocessing method that converts code into compilable Java.
    */
-  public String doYourThing(String source,
-                            List<ImportStatement> programImports) {
+  protected String handle(String source,
+                          List<ImportStatement> programImports) {
     this.extraImports = programImports;
     Document doc = new Document(source);
 
@@ -77,7 +77,7 @@ public class XQPreprocessor {
     parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
     @SuppressWarnings("unchecked")
-      Map<String, String> options = JavaCore.getOptions();
+    Map<String, String> options = JavaCore.getOptions();
 
     JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
     options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
@@ -85,7 +85,7 @@ public class XQPreprocessor {
     CompilationUnit cu = (CompilationUnit) parser.createAST(null);
     cu.recordModifications();
     rewrite = ASTRewrite.create(cu.getAST());
-    cu.accept(new XQASTVisitor());
+    cu.accept(new XQVisitor());
 
     TextEdit edits = cu.rewrite(doc, null);
     try {
@@ -99,7 +99,7 @@ public class XQPreprocessor {
   }
 
 
-  String prepareImports(List<ImportStatement> programImports) {
+  protected String prepareImports(List<ImportStatement> programImports) {
     this.extraImports = programImports;
 
     StringList imports = new StringList();
@@ -139,11 +139,8 @@ public class XQPreprocessor {
    * <LI>Converts doubles into floats, i.e. 12.3 becomes 12.3f so that people
    * don't have to add f after their numbers all the time since it's confusing
    * for beginners. Also, most functions of p5 core deal with floats only.
-   *
-   * @author Manindra Moharana
-   *
    */
-  private class XQASTVisitor extends ASTVisitor {
+  private class XQVisitor extends ASTVisitor {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public boolean visit(MethodDeclaration node) {
       if (node.getReturnType2() != null) {

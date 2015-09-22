@@ -101,7 +101,7 @@ X   https://github.com/processing/processing/issues/3608
 X "update all" button appears to do nothing in library manager
 X   https://github.com/processing/processing/issues/3837
 X   https://github.com/processing/processing/pull/3842
-_ All contributions listed after install button is clicked
+_ contributions filter is ignored after clicking Install
 _   https://github.com/processing/processing/issues/3826
 
 jakub
@@ -114,6 +114,10 @@ X   https://github.com/processing/processing/pull/3845
 X Red error underline is sometimes at wrong location
 X   https://github.com/processing/processing/issues/3759
 X   https://github.com/processing/processing/pull/3848
+X using "new color()" instead of "color()" results in "color type detected" 
+X   happens when user does 'new color' instead of 'color'
+X   https://github.com/processing/processing/issues/3739
+X   https://github.com/processing/processing/pull/3850
 
 
 known issues
@@ -553,11 +557,6 @@ _   http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
 
 
 PDE / Compiler & Preprocessor
-
-live error checker
-_ using "new color()" instead of "color()" results in "color type detected" 
-_   happens when user does 'new color' instead of 'color'
-_   https://github.com/processing/processing/issues/3739
 
 medium (bugs/features)
 _ preprocessor throws error when calling color() on a PGraphics

@@ -494,7 +494,7 @@ public class ErrorCheckerService implements Runnable {
       if (problems.length == 0 && !editor.hasJavaTabs()) {
         //mainClassOffset++; // just a hack.
 
-        sourceCode = xqpreproc.doYourThing(sourceCode, programImports);
+        sourceCode = xqpreproc.handle(sourceCode, programImports);
         prepareCompilerClasspath();
 //        mainClassOffset = xqpreproc.mainClassOffset; // tiny, but
 //                                // significant
