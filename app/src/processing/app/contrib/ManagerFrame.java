@@ -83,28 +83,13 @@ public class ManagerFrame {
 //    this.editor = editor;
 
     ContributionTab showTab = getTab(contributionType);
-
-    // Calculating index to switch to the required tab
-    //int index = ContributionManager.getTypeIndex(contributionType);
     if (frame == null) {
       makeFrame();
       // done before as downloadAndUpdateContributionListing()
       // requires the current selected tab
-//      tabbedPane.setSelectedIndex(index);
       tabs.setPanel(showTab);
       downloadAndUpdateContributionListing(base);
-      if (showTab != updatesTab) {
-//        Component selected =
-//          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex());
-        Component selected = showTab;  // what the.. ? [fry]
-        selected.setBackground(new Color(0xe0fffd));
-        selected.setForeground(Color.BLACK);
-      } else {
-//        updateTabPanel.setBackground(new Color(0xe0fffd));
-//        updateTabLabel.setForeground(Color.BLACK);
-      }
     } else {
-//      tabbedPane.setSelectedIndex(index);
       tabs.setPanel(showTab);
     }
     frame.setVisible(true);

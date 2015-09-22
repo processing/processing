@@ -261,16 +261,6 @@ public class ContributionTab extends JPanel {
   }
 
 
-  /*
-  @Override
-  protected void paintComponent(Graphics g) {
-    super.paintComponent(g);
-    g.setColor(new Color(0xe0fffd));
-    g.fillRect(getX(), getY() - ManagerFrame.TAB_HEIGHT - 2 , getWidth(), 2);
-  }
-  */
-
-
   protected void updateCategoryChooser() {
     if (categoryChooser != null) {
       ArrayList<String> categories;
