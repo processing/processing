@@ -335,7 +335,6 @@ public class ErrorTable extends JTable {
 	                                                 boolean selected,
 	                                                 boolean focused,
 	                                                 int row, int column) {
-	    setBackground(Color.RED);
 	    if (selected) {
 	      setForeground(textColorSelected);
 	      setBackground(bgColorSelected);
