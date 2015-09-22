@@ -13,7 +13,7 @@ import processing.app.ui.Toolkit;
 public class UpdateContributionTab extends ContributionTab {
 
   public UpdateContributionTab(ContributionType type,
-                               ContributionManagerDialog dialog) {
+                               ManagerFrame dialog) {
     super();
     this.contribType = type;
     this.contribDialog = dialog;

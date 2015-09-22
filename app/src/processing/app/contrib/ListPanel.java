@@ -114,9 +114,9 @@ implements Scrollable, ContributionListing.ChangeListener {
     table.setRowHeight(28);
     table.setRowMargin(6);
     table.getColumnModel().setColumnMargin(0);
-    table.getColumnModel().getColumn(0).setMaxWidth(ContributionManagerDialog.STATUS_WIDTH);
-    table.getColumnModel().getColumn(2).setMinWidth(ContributionManagerDialog.AUTHOR_WIDTH);
-    table.getColumnModel().getColumn(2).setMaxWidth(ContributionManagerDialog.AUTHOR_WIDTH);
+    table.getColumnModel().getColumn(0).setMaxWidth(ManagerFrame.STATUS_WIDTH);
+    table.getColumnModel().getColumn(2).setMinWidth(ManagerFrame.AUTHOR_WIDTH);
+    table.getColumnModel().getColumn(2).setMaxWidth(ManagerFrame.AUTHOR_WIDTH);
     table.setShowGrid(false);
     table.setColumnSelectionAllowed(false);
     table.setCellSelectionEnabled(false);

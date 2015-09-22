@@ -43,7 +43,7 @@ public class ContributionTab extends JPanel {
   static final int FILTER_WIDTH = 180;
 
   ContributionType contribType;
-  ContributionManagerDialog contribDialog;
+  ManagerFrame contribDialog;
 
   Contribution.Filter filter;
   JComboBox<String> categoryChooser;
@@ -72,7 +72,7 @@ public class ContributionTab extends JPanel {
 
 
   public ContributionTab(ContributionType type,
-                         ContributionManagerDialog dialog) {
+                         ManagerFrame dialog) {
     this.contribType = type;
     this.contribDialog = dialog;
 
@@ -144,16 +144,16 @@ public class ContributionTab extends JPanel {
       .createParallelGroup(GroupLayout.Alignment.CENTER)
       .addGroup(layout
                   .createSequentialGroup()
-                  .addGap(ContributionManagerDialog.STATUS_WIDTH)
+                  .addGap(ManagerFrame.STATUS_WIDTH)
                   .addComponent(filterField,
                                 FILTER_WIDTH, FILTER_WIDTH, FILTER_WIDTH)
 //                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                   .addComponent(categoryChooser,
-                                ContributionManagerDialog.AUTHOR_WIDTH,
-                                ContributionManagerDialog.AUTHOR_WIDTH,
-                                ContributionManagerDialog.AUTHOR_WIDTH)
+                                ManagerFrame.AUTHOR_WIDTH,
+                                ManagerFrame.AUTHOR_WIDTH,
+                                ManagerFrame.AUTHOR_WIDTH)
                   .addGap(scrollBarWidth)).addComponent(loaderLabel)
       .addComponent(contributionListPanel).addComponent(errorPanel)
       .addComponent(statusPanel));
@@ -194,7 +194,7 @@ public class ContributionTab extends JPanel {
     categoryChooser.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         category = (String) categoryChooser.getSelectedItem();
-        if (ContributionManagerDialog.ANY_CATEGORY.equals(category)) {
+        if (ManagerFrame.ANY_CATEGORY.equals(category)) {
           category = null;
         }
         filterLibraries(category, filterField.filters);
@@ -268,7 +268,7 @@ public class ContributionTab extends JPanel {
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
     g.setColor(new Color(0xe0fffd));
-    g.fillRect(getX(), getY() - ContributionManagerDialog.TAB_HEIGHT - 2 , getWidth(), 2);
+    g.fillRect(getX(), getY() - ManagerFrame.TAB_HEIGHT - 2 , getWidth(), 2);
   }
 
 
@@ -283,7 +283,7 @@ public class ContributionTab extends JPanel {
       Collections.sort(categories);
 //    categories.add(0, ContributionManagerDialog.ANY_CATEGORY);
       boolean categoriesFound = false;
-      categoryChooser.addItem(ContributionManagerDialog.ANY_CATEGORY);
+      categoryChooser.addItem(ManagerFrame.ANY_CATEGORY);
       for (String s : categories) {
         categoryChooser.addItem(s);
         if (!s.equals(Contribution.UNKNOWN_CATEGORY)) {

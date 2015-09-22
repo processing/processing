@@ -166,9 +166,9 @@ class StatusPanel extends JPanel {
       .createSequentialGroup()
       .addGap(0)
       .addComponent(iconLabel,
-                    ContributionManagerDialog.STATUS_WIDTH,
-                    ContributionManagerDialog.STATUS_WIDTH,
-                    ContributionManagerDialog.STATUS_WIDTH)
+                    ManagerFrame.STATUS_WIDTH,
+                    ManagerFrame.STATUS_WIDTH,
+                    ManagerFrame.STATUS_WIDTH)
       .addGap(0)
       .addComponent(label, labelWidth, labelWidth, labelWidth)
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,

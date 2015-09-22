@@ -39,20 +39,19 @@ import processing.app.ui.Toolkit;
  * This class is the main Contribution Manager Dialog.
  * It contains all the contributions tab and the update tab.
  */
-public class ContributionManagerDialog {
+public class ManagerFrame {
   static final String ANY_CATEGORY = Language.text("contrib.all");
+
   static final int TAB_WIDTH = 100;
   static final int TAB_HEIGHT = 34;
   static final int AUTHOR_WIDTH = 240;
   static final int STATUS_WIDTH = 66;
-//  static final int ICON_WIDTH = 50;
   static final int BORDER = 8;
 
   static final String title = "Manager";
 
-  JFrame dialog;
+  JFrame frame;
   JTabbedPane tabbedPane;
-//  JButton restartButton;
 
   // the calling editor, so updates can be applied
   Editor editor;
@@ -69,7 +68,7 @@ public class ContributionManagerDialog {
   private JLabel updateTabLabel;
 
 
-  public ContributionManagerDialog() {
+  public ManagerFrame() {
     numberLabel = new JLabel(Toolkit.getLibIconX("manager/notification"));
     librariesTab = new ContributionTab(ContributionType.LIBRARY, this);
     modesTab = new ContributionTab(ContributionType.MODE, this);
@@ -84,7 +83,7 @@ public class ContributionManagerDialog {
 
     // Calculating index to switch to the required tab
     int index = ContributionManager.getTypeIndex(contributionType);
-    if (dialog == null) {
+    if (frame == null) {
       makeFrame(editor);
       // done before as downloadAndUpdateContributionListing()
       // requires the current selected tab
@@ -101,7 +100,7 @@ public class ContributionManagerDialog {
       }
     }
     tabbedPane.setSelectedIndex(index);
-    dialog.setVisible(true);
+    frame.setVisible(true);
   }
 
 
@@ -120,8 +119,8 @@ public class ContributionManagerDialog {
 
 
   private void makeFrame(final Editor editor) {
-    dialog = new JFrame(title);
-    dialog.setMinimumSize(new Dimension(750, 500));
+    frame = new JFrame(title);
+    frame.setMinimumSize(new Dimension(750, 500));
     tabbedPane = new JTabbedPane();
 
     makeAndShowTab(false, true);
@@ -181,23 +180,23 @@ public class ContributionManagerDialog {
 
 //    GroupLayout layout = new GroupLayout(dialog.getContentPane());
 //    dialog.getContentPane().setLayout(layout);
-    dialog.setResizable(true);
+    frame.setResizable(true);
 //    layout.setAutoCreateContainerGaps(true);
 //    layout.setHorizontalGroup(layout.createParallelGroup().addComponent(tabbedPane));
 //    layout.setVerticalGroup(layout.createParallelGroup().addComponent(tabbedPane));
 //    layout.setHonorsVisibility(tabbedPane, true);
     tabbedPane.setBorder(new EmptyBorder(BORDER, BORDER, BORDER, BORDER));
-    dialog.getContentPane().add(tabbedPane);
+    frame.getContentPane().add(tabbedPane);
     //TODO set color here
-    dialog.getContentPane().setBackground(new Color(0x132638));
-    dialog.validate();
-    dialog.repaint();
+    frame.getContentPane().setBackground(new Color(0x132638));
+    frame.validate();
+    frame.repaint();
 
-    Toolkit.setIcon(dialog);
+    Toolkit.setIcon(frame);
     registerDisposeListeners();
 
-    dialog.pack();
-    dialog.setLocationRelativeTo(null);
+    frame.pack();
+    frame.setLocationRelativeTo(null);
   }
 
 
@@ -340,25 +339,25 @@ public class ContributionManagerDialog {
    * Close the window after an OK or Cancel.
    */
   protected void disposeFrame() {
-    dialog.dispose();
+    frame.dispose();
     editor = null;
   }
 
 
   private void registerDisposeListeners() {
-    dialog.addWindowListener(new WindowAdapter() {
+    frame.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         disposeFrame();
       }
     });
     // handle window closing commands for ctrl/cmd-W or hitting ESC.
-    Toolkit.registerWindowCloseKeys(dialog.getRootPane(), new ActionListener() {
+    Toolkit.registerWindowCloseKeys(frame.getRootPane(), new ActionListener() {
       public void actionPerformed(ActionEvent actionEvent) {
         disposeFrame();
       }
     });
 
-    dialog.getContentPane().addKeyListener(new KeyAdapter() {
+    frame.getContentPane().addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
         //System.out.println(e);
         KeyStroke wc = Toolkit.WINDOW_CLOSE_KEYSTROKE;

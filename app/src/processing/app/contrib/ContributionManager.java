@@ -656,8 +656,8 @@ public class ContributionManager {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  static ContributionManagerDialog managerDialog =
-    new ContributionManagerDialog();
+  static ManagerFrame managerDialog =
+    new ManagerFrame();
 
 
   /**

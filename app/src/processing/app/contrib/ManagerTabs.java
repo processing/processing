@@ -46,7 +46,7 @@ import processing.app.ui.Toolkit;
 /**
  * Console/error/whatever tabs at the bottom of the editor window.
  */
-public class ManagerHeader extends Box {
+public class ManagerTabs extends Box {
   // height of this tab bar
   static final int HIGH = 32;
 
@@ -88,7 +88,7 @@ public class ManagerHeader extends Box {
   Controller controller;
 
 
-  public ManagerHeader(Editor eddie) {
+  public ManagerTabs(Editor eddie) {
     super(BoxLayout.Y_AXIS);
     this.editor = eddie;
 
