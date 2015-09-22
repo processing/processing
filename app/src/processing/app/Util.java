@@ -655,4 +655,13 @@ public class Util {
     out.flush();
     out.close();
   }
+
+
+  static public byte[] gzipEncode(byte[] what) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    GZIPOutputStream output = new GZIPOutputStream(baos);
+    PApplet.saveStream(output, new ByteArrayInputStream(what));
+    output.close();
+    return baos.toByteArray();
+  }
 }

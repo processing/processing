@@ -24,7 +24,6 @@ package processing.app.contrib;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.zip.GZIPOutputStream;
 
 import javax.swing.SwingWorker;
 
@@ -70,7 +69,7 @@ public class ContributionManager {
         conn.connect();
 
       } else {
-        post = gzipEncode(post);
+        post = Util.gzipEncode(post);
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setRequestProperty("Content-Encoding", "gzip");
@@ -127,15 +126,6 @@ public class ContributionManager {
       progress.finished();
     }
     return success;
-  }
-
-
-  static private byte[] gzipEncode(byte[] what) throws IOException {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    GZIPOutputStream output = new GZIPOutputStream(baos);
-    PApplet.saveStream(output, new ByteArrayInputStream(what));
-    output.close();
-    return baos.toByteArray();
   }
 
 
@@ -238,10 +228,8 @@ public class ContributionManager {
    * procedure is not of importance, such as if a contribution has to be
    * installed at startup time.
    *
-   * @param url
-   *          Direct link to the contribution.
-   * @param ad
-   *          The AvailableContribution to be downloaded and installed.
+   * @param url Direct link to the contribution.
+   * @param ad The AvailableContribution to be downloaded and installed.
    */
   static void downloadAndInstallOnStartup(final Base base, final URL url,
                                           final AvailableContribution ad) {
@@ -518,7 +506,7 @@ public class ContributionManager {
       @Override
       protected Void doInBackground() throws Exception {
         try {
-          Thread.sleep(1 * 1000);
+          Thread.sleep(1000);
           installPreviouslyFailed(base, Base.getSketchbookToolsFolder());
         } catch (InterruptedException e) {
           e.printStackTrace();
@@ -569,10 +557,6 @@ public class ContributionManager {
   /**
    * Installs all the modes/tools whose installation failed during an
    * auto-update the previous time Processing was started up.
-   *
-   * @param base
-   * @param root
-   * @throws Exception
    */
   static private void installPreviouslyFailed(Base base, File root) throws Exception {
     File[] installList = root.listFiles(new FileFilter() {
@@ -595,10 +579,6 @@ public class ContributionManager {
 
   /**
    * Updates all the flagged modes/tools.
-   *
-   * @param base
-   * @param root
-   * @throws Exception
    */
   static private void updateFlagged(Base base, File root) throws Exception {
     File[] markedForUpdate = root.listFiles(new FileFilter() {
