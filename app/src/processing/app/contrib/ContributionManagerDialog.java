@@ -97,7 +97,7 @@ public class ContributionManagerDialog {
     this.editor = editor;
 
     // Calculating index to switch to the required tab
-    int index = getTypeIndex(contributionType);
+    int index = ContributionManager.getTypeIndex(contributionType);
     if (dialog == null) {
       makeFrame(editor);
       // done before as downloadAndUpdateContributionListing()
@@ -118,22 +118,6 @@ public class ContributionManagerDialog {
     dialog.setVisible(true);
   }
 
-
-  static int getTypeIndex(ContributionType contributionType) {
-    int index;
-    if (contributionType == ContributionType.LIBRARY) {
-      index = 0;
-    } else if (contributionType == ContributionType.MODE) {
-      index = 1;
-    } else if (contributionType == ContributionType.TOOL) {
-      index = 2;
-    } else if (contributionType == ContributionType.EXAMPLES) {
-      index = 3;
-    } else {
-      index = 4;
-    }
-    return index;
-  }
 
   ContributionTab getTab(ContributionType contributionType) {
     if (contributionType == ContributionType.LIBRARY) {

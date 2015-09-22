@@ -136,8 +136,8 @@ public class UpdateContributionListPanel extends ContributionListPanel {
       @Override
       public int compare(Contribution o1, Contribution o2) {
         int diff =
-          ContributionManagerDialog.getTypeIndex(o1.getType()) -
-          ContributionManagerDialog.getTypeIndex(o2.getType());
+          ContributionManager.getTypeIndex(o1.getType()) -
+          ContributionManager.getTypeIndex(o2.getType());
         if (diff == 0) {
           diff = o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
         }
