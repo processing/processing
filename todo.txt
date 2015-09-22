@@ -84,6 +84,9 @@ X updates tab has ugly horizontal line at top
 X CM selected tabs are too tall 
 X   https://github.com/processing/processing/issues/3598
 X why the aqua background when opening the window?
+X get rid of gross italic subheads on the Updates page
+X "update all" is too far too the right
+X other buttons were out of whack as well
 
 watcher
 X prevent re-prompting users when they say "no" to "sketch modified" message
@@ -170,6 +173,7 @@ _   does it even work for different contrib types?
 
 
 manager / 3.0 final
+_ don't focus the window on the search box on opening
 _ status/name/author table header is alternating color
 _   area above scroll bar looks like more scroll bar
 _ table header is the wrong font
@@ -177,7 +181,6 @@ _ updates panel has the gray across, but nothing above the scrollbar
 _ remove focus blue from the scrollable list
 _ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
 _   looks like ContributionListing.getScrollableUnitIncrement() returns early
-_ get rid of gross italic subheads on the Updates page
 
 
 gui / post 3.0

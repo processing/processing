@@ -181,7 +181,7 @@ class StatusPanel extends JPanel {
                                 BUTTON_WIDTH, BUTTON_WIDTH, BUTTON_WIDTH)
                   .addComponent(updateButton)
                   .addComponent(removeButton))
-      .addGap(16));  // make buttons line up relative to the scrollbar
+      .addGap(12));  // make buttons line up relative to the scrollbar
 
     layout.setVerticalGroup(layout
       .createParallelGroup(GroupLayout.Alignment.LEADING)

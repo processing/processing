@@ -34,7 +34,7 @@ public class UpdateStatusPanel extends StatusPanel {
     });
     setBackground(new Color(0xebebeb));
     layout = new GroupLayout(this);
-    this.setLayout(layout);
+    setLayout(layout);
 
     layout.setAutoCreateContainerGaps(true);
     layout.setAutoCreateGaps(true);
@@ -43,7 +43,9 @@ public class UpdateStatusPanel extends StatusPanel {
       .createSequentialGroup()
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-      .addComponent(updateButton, BUTTON_WIDTH, BUTTON_WIDTH, BUTTON_WIDTH));
+      .addComponent(updateButton, BUTTON_WIDTH, BUTTON_WIDTH, BUTTON_WIDTH)
+      .addGap(12));  // make button line up relative to the scrollbar
+
     layout.setVerticalGroup(layout.createParallelGroup()
       .addComponent(updateButton));
     updateButton.setVisible(true);
