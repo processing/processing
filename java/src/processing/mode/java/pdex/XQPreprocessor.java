@@ -210,16 +210,16 @@ public class XQPreprocessor {
     // }
 
 
-    /**
-     * This is added just for debugging purposes - to make sure that all
-     * instances of color type have been substituded as in by the regex
-     * search in ErrorCheckerService.preprocessCode().
-     */
-    public boolean visit(SimpleType node) {
-      if (node.toString().equals("color")) {
-        System.err.println("Color type detected: please report as an issue.");
-      }
-      return true;
-    }
+//    /**
+//     * This is added just for debugging purposes - to make sure that all
+//     * instances of color type have been substituded as in by the regex
+//     * search in ErrorCheckerService.preprocessCode().
+//     */
+//    public boolean visit(SimpleType node) {
+//      if (node.toString().equals("color")) {
+//        System.err.println("Color type detected: please report as an issue.");
+//      }
+//      return true;
+//    }
   }
 }
