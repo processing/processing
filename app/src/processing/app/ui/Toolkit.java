@@ -984,7 +984,7 @@ public class Toolkit {
    * Synthesized replacement for FontMetrics.getAscent(), which is dreadfully
    * inaccurate and inconsistent across platforms.
    */
-  static double getAscent(Graphics g) { //, Font font) {
+  static public double getAscent(Graphics g) {
     Graphics2D g2 = (Graphics2D) g;
     FontRenderContext frc = g2.getFontRenderContext();
     //return new TextLayout("H", font, frc).getBounds().getHeight();
