@@ -77,12 +77,11 @@ implements MouseListener, MouseMotionListener, ActionListener {
 
     Mode mode = toolbar.mode;
 
-    final int res = Toolkit.highResDisplay() ? 2 : 1;
-    disabledImage = mode.loadImage(name + "-disabled-" + res + "x.png");
-    enabledImage = mode.loadImage(name + "-enabled-" + res + "x.png");
-    selectedImage = mode.loadImage(name + "-selected-" + res + "x.png");
-    pressedImage = mode.loadImage(name + "-pressed-" + res + "x.png");
-    rolloverImage = mode.loadImage(name + "-rollover-" + res + "x.png");
+    disabledImage = mode.loadImageX(name + "-disabled");
+    enabledImage = mode.loadImageX(name + "-enabled");
+    selectedImage = mode.loadImageX(name + "-selected");
+    pressedImage = mode.loadImageX(name + "-pressed");
+    rolloverImage = mode.loadImageX(name + "-rollover");
 
     if (disabledImage == null) {
       disabledImage = enabledImage;

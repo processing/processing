@@ -340,9 +340,8 @@ public class EditorFooter extends Box {
 
       if (icon != null) {
         Mode mode = editor.getMode();
-        final int res = Toolkit.highResDisplay() ? 2 : 1;
-        enabledIcon = mode.loadImage(icon + "-enabled-" + res + "x.png");
-        selectedIcon = mode.loadImage(icon + "-selected-" + res + "x.png");
+        enabledIcon = mode.loadImageX(icon + "-enabled");
+        selectedIcon = mode.loadImageX(icon + "-selected");
         if (selectedIcon == null) {
           selectedIcon = enabledIcon;  // use this as the default
         }

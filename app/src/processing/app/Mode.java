@@ -667,6 +667,12 @@ public abstract class Mode {
   }
 
 
+  public Image loadImageX(String filename) {
+    final int res = Toolkit.highResDisplay() ? 2 : 1;
+    return loadImage(filename + "-" + res +  "x.png");
+  }
+
+
 //  public EditorButton loadButton(String name) {
 //    return new EditorButton(this, name);
 //  }
