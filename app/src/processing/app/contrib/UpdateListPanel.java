@@ -26,6 +26,7 @@ import processing.app.ui.Toolkit;
 
 
 public class UpdateListPanel extends ListPanel {
+  static final Color SECTION_COLOR = new Color(0xFFf8f8f8);
   static final String[] PLURAL_TYPES = {
     ContributionType.LIBRARY.getPluralTitle(),
     ContributionType.MODE.getPluralTitle(),
@@ -63,12 +64,8 @@ public class UpdateListPanel extends ListPanel {
       public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         Component c = super.prepareRenderer(renderer, row, column);
         String title = (String) getValueAt(row, 1);
-        if (title.equals("Libraries") ||
-            title.equals("Modes") ||
-            title.equals("Tools") ||
-            title.equals("Examples")) {
-          c.setBackground(new Color(0xFFf0f0f0));
-          //((JComponent) c).setBorder(BorderFactory.createMatteBorder(row == 0 ? 0 : 1, 0, 1, 0, Color.GRAY));
+        if (sectionNames.contains(title)) {
+          c.setBackground(SECTION_COLOR);
         } else {
           c.setBackground(Color.WHITE);
         }
@@ -80,10 +77,7 @@ public class UpdateListPanel extends ListPanel {
                                   boolean toggle, boolean extend) {
         String title = (String) getValueAt(rowIndex, 1);
         // Disallow selection on the fake rows
-        if (!title.equals("Libraries") &&
-            !title.equals("Modes") &&
-            !title.equals("Tools") &&
-            !title.equals("Examples")) {
+        if (!sectionNames.contains(title)) {
           super.changeSelection(rowIndex, columnIndex, toggle, extend);
         }
       }
@@ -177,7 +171,7 @@ public class UpdateListPanel extends ListPanel {
       if (entry.getType() != currentType) {
         currentType = entry.getType();
         model.addRow(new Object[] {
-          null, currentType.getTitle(), null, null, null
+          null, currentType.getPluralTitle(), null, null, null
         });
       }
       //TODO Make this into a function
