@@ -33,17 +33,17 @@ import processing.app.Util;
 import processing.app.ui.Editor;
 
 public enum ContributionType {
-  LIBRARY, TOOL, MODE, EXAMPLES;
+  LIBRARY, MODE, TOOL, EXAMPLES;
 
 
   public String toString() {
     switch (this) {
     case LIBRARY:
       return "library";
-    case TOOL:
-      return "tool";
     case MODE:
       return "mode";
+    case TOOL:
+      return "tool";
     case EXAMPLES:
       return "examples";
     }
@@ -58,6 +58,21 @@ public enum ContributionType {
   public String getTitle() {
     String lower = toString();
     return Character.toUpperCase(lower.charAt(0)) + lower.substring(1);
+  }
+
+
+  public String getPluralTitle() {
+    switch (this) {
+    case LIBRARY:
+      return "Libraries";
+    case MODE:
+      return "Modes";
+    case TOOL:
+      return "Tools";
+    case EXAMPLES:
+      return "Examples";
+    }
+    return null;  // should be unreachable
   }
 
 
@@ -115,11 +130,11 @@ public enum ContributionType {
       if ("library".equalsIgnoreCase(s)) {
         return LIBRARY;
       }
-      if ("tool".equalsIgnoreCase(s)) {
-        return TOOL;
-      }
       if ("mode".equalsIgnoreCase(s)) {
         return MODE;
+      }
+      if ("tool".equalsIgnoreCase(s)) {
+        return TOOL;
       }
       if ("examples".equalsIgnoreCase(s)) {
         return EXAMPLES;

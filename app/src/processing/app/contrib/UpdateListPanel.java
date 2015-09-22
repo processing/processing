@@ -4,14 +4,15 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -25,9 +26,16 @@ import processing.app.ui.Toolkit;
 
 
 public class UpdateListPanel extends ListPanel {
+  static final String[] PLURAL_TYPES = {
+    ContributionType.LIBRARY.getPluralTitle(),
+    ContributionType.MODE.getPluralTitle(),
+    ContributionType.TOOL.getPluralTitle(),
+    ContributionType.EXAMPLES.getPluralTitle(),
+  };
+  Set<String> sectionNames = new HashSet<String>(Arrays.asList(PLURAL_TYPES));
 
   public UpdateListPanel(ContributionTab contributionTab,
-                                     Contribution.Filter filter) {
+                         Contribution.Filter filter) {
     this.contributionTab = contributionTab;
     this.filter = filter;
 
@@ -55,10 +63,14 @@ public class UpdateListPanel extends ListPanel {
       public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         Component c = super.prepareRenderer(renderer, row, column);
         String title = (String) getValueAt(row, 1);
-        if (title.equals("<html><i>Library</i></html>") || title.equals("<html><i>Tools</i></html>")
-          || title.equals("<html><i>Modes</i></html>") || title.equals("<html><i>Examples</i></html>")) {
-          ((JComponent) c).setBorder(BorderFactory
-            .createMatteBorder(row == 0 ? 0 : 2, 0, 2, 0, Color.BLACK));
+        if (title.equals("Libraries") ||
+            title.equals("Modes") ||
+            title.equals("Tools") ||
+            title.equals("Examples")) {
+          c.setBackground(new Color(0xFFf0f0f0));
+          //((JComponent) c).setBorder(BorderFactory.createMatteBorder(row == 0 ? 0 : 1, 0, 1, 0, Color.GRAY));
+        } else {
+          c.setBackground(Color.WHITE);
         }
         return c;
       }
@@ -67,17 +79,19 @@ public class UpdateListPanel extends ListPanel {
       public void changeSelection(int rowIndex, int columnIndex,
                                   boolean toggle, boolean extend) {
         String title = (String) getValueAt(rowIndex, 1);
-        if (title.equals("<html><i>Library</i></html>") ||
-            title.equals("<html><i>Tools</i></html>") ||
-            title.equals("<html><i>Modes</i></html>") ||
-            title.equals("<html><i>Examples</i></html>")){
-          return;
+        // Disallow selection on the fake rows
+        if (!title.equals("Libraries") &&
+            !title.equals("Modes") &&
+            !title.equals("Tools") &&
+            !title.equals("Examples")) {
+          super.changeSelection(rowIndex, columnIndex, toggle, extend);
         }
-        super.changeSelection(rowIndex, columnIndex, toggle, extend);
       }
     };
 
     scrollPane = new JScrollPane(table);
+    scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
     table.setFillsViewportHeight(true);
     table.setSelectionBackground(new Color(0xe0fffd));
     table.setSelectionForeground(table.getForeground());
@@ -147,28 +161,23 @@ public class UpdateListPanel extends ListPanel {
 
   @Override
   void updatePanelOrdering(Set<Contribution> contributionsSet) {
-//    JLabel label = contributionTab.contribDialog.numberLabel;
-//    if (getNoOfRows() == 0) {
-//      label.setVisible(false);
-//    } else {
-//      label.setVisible(true);
-//      label.setText(Integer.toString(panelByContribution.size()));
-//    }
+//    int updateCount = panelByContribution.size();
+//    new Exception("update count is " + updateCount).printStackTrace(System.out);
+//    (UpdateContributionTab) contributionTab
+
     model.getDataVector().removeAllElements();
     model.fireTableDataChanged();
-    ContributionType temp = null;
+    ContributionType currentType = null;
 
     // Avoid ugly synthesized bold
     Font boldFont = Toolkit.getSansFont(table.getFont().getSize(), Font.BOLD);
     String fontFace = "<font face=\"" + boldFont.getName() + "\">";
 
     for (Contribution entry : contributionsSet) {
-      if (entry.getType() != temp) {
-        temp = entry.getType();
+      if (entry.getType() != currentType) {
+        currentType = entry.getType();
         model.addRow(new Object[] {
-          null,
-          "<html><i>" + temp.getTitle() + "</i></html>",
-          null, null, null
+          null, currentType.getTitle(), null, null, null
         });
       }
       //TODO Make this into a function

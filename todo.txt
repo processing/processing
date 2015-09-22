@@ -80,6 +80,10 @@ X   https://github.com/processing/processing/issues/3643
 o Contributions Manager UI design
 X   https://github.com/processing/processing/issues/3482
 X   closing in favor of separate issues
+X updates tab has ugly horizontal line at top
+X CM selected tabs are too tall 
+X   https://github.com/processing/processing/issues/3598
+X why the aqua background when opening the window?
 
 watcher
 X prevent re-prompting users when they say "no" to "sketch modified" message
@@ -131,10 +135,7 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
 beta 7
-X CM selected tabs are too tall 
-X   https://github.com/processing/processing/issues/3598
-X why the aqua background when opening the window?
-_ bring back the # of updates on each tab
+_ bring back the # of updates on the update tab
 _   use this instead of the 'icon' stuff
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
@@ -167,17 +168,20 @@ _ list with contrib types separated is really wonky
 _   do we keep the list?
 _   does it even work for different contrib types?
 
+
 manager / 3.0 final
-_ updates tab has ugly horizontal line at top
 _ status/name/author table header is alternating color
 _   area above scroll bar looks like more scroll bar
+_ table header is the wrong font
+_ updates panel has the gray across, but nothing above the scrollbar
 _ remove focus blue from the scrollable list
 _ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
 _   looks like ContributionListing.getScrollableUnitIncrement() returns early
+_ get rid of gross italic subheads on the Updates page
 
 
 gui / post 3.0
-_ build custom scroll bar since the OS versions are so ugly?
+_ build custom scroll bar since the OS versions are so ugly
 _ error/warning location is awkward when no scroll bar is in use
 _   when only one screen-full, show ticks at exact location
 _   simpler/less confusing to not show at all? 

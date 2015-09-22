@@ -25,6 +25,8 @@ public class UpdateContributionTab extends ContributionTab {
       }
     };
     contributionListPanel = new UpdateListPanel(this, filter);
+//    contributionListPanel.setBorder(new EmptyBorder(8, 8, 8, 8));
+
     statusPanel = new UpdateStatusPanel(this, 650);
     contribListing = ContributionListing.getInstance();
     contribListing.addListener(contributionListPanel);
@@ -49,12 +51,12 @@ public class UpdateContributionTab extends ContributionTab {
     layout.setHorizontalGroup(layout
       .createParallelGroup(GroupLayout.Alignment.CENTER)
       .addComponent(loaderLabel)
-      .addComponent(contributionListPanel).addComponent(errorPanel)
+      .addComponent(contributionListPanel)
+      .addComponent(errorPanel)
       .addComponent(statusPanel));
 
     layout.setVerticalGroup(layout
       .createSequentialGroup()
-      .addGap(2)
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(loaderLabel)
                   .addComponent(contributionListPanel))

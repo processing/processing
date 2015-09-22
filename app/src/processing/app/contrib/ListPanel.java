@@ -108,6 +108,7 @@ implements Scrollable, ContributionListing.ChangeListener {
     model.setColumnIdentifiers(colName);
     scrollPane = new JScrollPane(table);
     scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+    scrollPane.setBorder(BorderFactory.createEmptyBorder());
     table.setFillsViewportHeight(true);
     table.setDefaultRenderer(Contribution.class, new ContribStatusRenderer());
     table.setFont(plainFont);
