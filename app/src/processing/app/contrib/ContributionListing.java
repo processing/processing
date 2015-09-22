@@ -198,10 +198,12 @@ public class ContributionListing {
 
 
   protected AvailableContribution getAvailableContribution(Contribution info) {
-    for (AvailableContribution advertised : advertisedContributions) {
-      if (advertised.getType() == info.getType() &&
-          advertised.getName().equals(info.getName())) {
-        return advertised;
+    synchronized (advertisedContributions) {
+      for (AvailableContribution advertised : advertisedContributions) {
+        if (advertised.getType() == info.getType() &&
+            advertised.getName().equals(info.getName())) {
+          return advertised;
+        }
       }
     }
     return null;
