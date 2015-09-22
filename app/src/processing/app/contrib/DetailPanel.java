@@ -61,7 +61,7 @@ import processing.app.ui.Toolkit;
 /**
  * Panel that expands and gives a brief overview of a library when clicked.
  */
-class ContributionPanel extends JPanel {
+class DetailPanel extends JPanel {
   static public final String REMOVE_RESTART_MESSAGE =
     String.format("<i>%s</i>", Language.text("contrib.messages.remove_restart"));
 
@@ -117,7 +117,7 @@ class ContributionPanel extends JPanel {
   String description;
 
 
-  ContributionPanel(ListPanel contributionListPanel) {
+  DetailPanel(ListPanel contributionListPanel) {
     if (foundationIcon == null) {
       foundationIcon = Toolkit.getLibIconX("icons/foundation", 32);
     }
@@ -197,7 +197,7 @@ class ContributionPanel extends JPanel {
     setExpandListener(this, new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
         if (contrib.isCompatible(Base.getRevision())) {
-          listPanel.setSelectedPanel(ContributionPanel.this);
+          listPanel.setSelectedPanel(DetailPanel.this);
         } else {
           final String msg = contrib.getName()
             + " is not compatible with this version of Processing";
@@ -275,13 +275,13 @@ class ContributionPanel extends JPanel {
     rightPane.setInheritsPopupMenu(true);
     rightPane.setOpaque(false);
     rightPane.setLayout(new BoxLayout(rightPane, BoxLayout.Y_AXIS));
-    rightPane.setMinimumSize(new Dimension(ContributionPanel.BUTTON_WIDTH, 1));
+    rightPane.setMinimumSize(new Dimension(DetailPanel.BUTTON_WIDTH, 1));
     add(rightPane, BorderLayout.EAST);
 
     barButtonCardPane.setLayout(new CardLayout());
     barButtonCardPane.setInheritsPopupMenu(true);
     barButtonCardPane.setOpaque(false);
-    barButtonCardPane.setMinimumSize(new Dimension(ContributionPanel.BUTTON_WIDTH, 1));
+    barButtonCardPane.setMinimumSize(new Dimension(DetailPanel.BUTTON_WIDTH, 1));
 
     {
       installProgressBar = new JProgressBar();
@@ -289,7 +289,7 @@ class ContributionPanel extends JPanel {
       installProgressBar.setStringPainted(true);
       resetInstallProgressBarState();
       Dimension dim =
-        new Dimension(ContributionPanel.BUTTON_WIDTH,
+        new Dimension(DetailPanel.BUTTON_WIDTH,
                       installProgressBar.getPreferredSize().height);
       installProgressBar.setPreferredSize(dim);
       installProgressBar.setMaximumSize(dim);
@@ -302,7 +302,7 @@ class ContributionPanel extends JPanel {
     installRemoveButton.setInheritsPopupMenu(true);
 
     Dimension installButtonDimensions = installRemoveButton.getPreferredSize();
-    installButtonDimensions.width = ContributionPanel.BUTTON_WIDTH;
+    installButtonDimensions.width = DetailPanel.BUTTON_WIDTH;
     installRemoveButton.setPreferredSize(installButtonDimensions);
     installRemoveButton.setMaximumSize(installButtonDimensions);
     installRemoveButton.setMinimumSize(installButtonDimensions);
@@ -327,7 +327,7 @@ class ContributionPanel extends JPanel {
     // Set the minimum size of this pane to be the sum of the height of the
     // progress bar and install button
     Dimension dim =
-      new Dimension(ContributionPanel.BUTTON_WIDTH,
+      new Dimension(DetailPanel.BUTTON_WIDTH,
                     installRemoveButton.getPreferredSize().height);
     rightPane.setMinimumSize(dim);
     rightPane.setPreferredSize(dim);
@@ -351,7 +351,7 @@ class ContributionPanel extends JPanel {
     rightPane.setInheritsPopupMenu(true);
     rightPane.setOpaque(false);
     rightPane.setLayout(new BoxLayout(rightPane, BoxLayout.Y_AXIS));
-    rightPane.setMinimumSize(new Dimension(ContributionPanel.BUTTON_WIDTH, 1));
+    rightPane.setMinimumSize(new Dimension(DetailPanel.BUTTON_WIDTH, 1));
     add(rightPane, BorderLayout.EAST);
 
 
@@ -400,7 +400,7 @@ class ContributionPanel extends JPanel {
 
     Dimension d = installProgressBar.getPreferredSize();
     Dimension d2 = installRemoveButton.getPreferredSize();
-    d.width = ContributionPanel.BUTTON_WIDTH;
+    d.width = DetailPanel.BUTTON_WIDTH;
     d.height = Math.max(d.height,d2.height);
     rightPane.setMinimumSize(d);
     rightPane.setPreferredSize(d);

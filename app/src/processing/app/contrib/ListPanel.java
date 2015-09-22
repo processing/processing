@@ -45,9 +45,9 @@ import processing.app.ui.Toolkit;
 public class ListPanel extends JPanel
 implements Scrollable, ContributionListing.ChangeListener {
   ContributionTab contributionTab;
-  TreeMap<Contribution, ContributionPanel> panelByContribution;
+  TreeMap<Contribution, DetailPanel> panelByContribution;
 
-  private ContributionPanel selectedPanel;
+  private DetailPanel selectedPanel;
   protected Contribution.Filter filter;
   protected ContributionListing contribListing = ContributionListing.getInstance();
   protected JTable table;
@@ -78,7 +78,7 @@ implements Scrollable, ContributionListing.ChangeListener {
     setBackground(Color.WHITE);
 
     panelByContribution =
-      new TreeMap<Contribution, ContributionPanel>(ContributionListing.COMPARATOR);
+      new TreeMap<Contribution, DetailPanel>(ContributionListing.COMPARATOR);
 
     model = new ContribTableModel();
     table = new JTable(model){
@@ -433,8 +433,8 @@ implements Scrollable, ContributionListing.ChangeListener {
       EventQueue.invokeLater(new Runnable() {
         public void run() {
           if (!panelByContribution.containsKey(contribution)) {
-            ContributionPanel newPanel =
-              new ContributionPanel(ListPanel.this);
+            DetailPanel newPanel =
+              new DetailPanel(ListPanel.this);
             synchronized (panelByContribution) {
               panelByContribution.put(contribution, newPanel);
             }
@@ -455,7 +455,7 @@ implements Scrollable, ContributionListing.ChangeListener {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         synchronized (panelByContribution) {
-          ContributionPanel panel = panelByContribution.get(contribution);
+          DetailPanel panel = panelByContribution.get(contribution);
           if (panel != null) {
             remove(panel);
             panelByContribution.remove(contribution);
@@ -474,7 +474,7 @@ implements Scrollable, ContributionListing.ChangeListener {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         synchronized (panelByContribution) {
-          ContributionPanel panel = panelByContribution.get(oldContrib);
+          DetailPanel panel = panelByContribution.get(oldContrib);
           if (panel == null) {
             contributionAdded(newContrib);
           } else {
@@ -503,14 +503,14 @@ implements Scrollable, ContributionListing.ChangeListener {
   }
 
 
-  protected void setSelectedPanel(ContributionPanel contributionPanel) {
+  protected void setSelectedPanel(DetailPanel contributionPanel) {
     contributionTab.updateStatusPanel(contributionPanel);
 
     if (selectedPanel == contributionPanel) {
       selectedPanel.setSelected(true);
 
     } else {
-      ContributionPanel lastSelected = selectedPanel;
+      DetailPanel lastSelected = selectedPanel;
       selectedPanel = contributionPanel;
 
       if (lastSelected != null) {
@@ -524,7 +524,7 @@ implements Scrollable, ContributionListing.ChangeListener {
   }
 
 
-  protected ContributionPanel getSelectedPanel() {
+  protected DetailPanel getSelectedPanel() {
     return selectedPanel;
   }
 
@@ -535,8 +535,8 @@ implements Scrollable, ContributionListing.ChangeListener {
   protected void updateColors() {
     int count = 0;
     synchronized (panelByContribution) {
-      for (Entry<Contribution, ContributionPanel> entry : panelByContribution.entrySet()) {
-        ContributionPanel panel = entry.getValue();
+      for (Entry<Contribution, DetailPanel> entry : panelByContribution.entrySet()) {
+        DetailPanel panel = entry.getValue();
 
         if (panel.isVisible() && panel.isSelected()) {
           panel.setBackground(UIManager.getColor("List.selectionBackground"));
@@ -610,7 +610,7 @@ implements Scrollable, ContributionListing.ChangeListener {
 
       for (Component c : getComponents()) {
         if (c.isVisible()) {
-          if (c instanceof ContributionPanel) {
+          if (c instanceof DetailPanel) {
             Dimension d = c.getPreferredSize();
 
             int nextHeight = height + d.height;

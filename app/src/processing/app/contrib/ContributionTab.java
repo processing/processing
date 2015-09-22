@@ -445,7 +445,7 @@ public class ContributionTab extends JPanel {
 //  }
 
 
-  public void updateStatusPanel(ContributionPanel contributionPanel) {
+  public void updateStatusPanel(DetailPanel contributionPanel) {
     statusPanel.update(contributionPanel);
   }
 }

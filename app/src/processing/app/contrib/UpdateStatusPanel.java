@@ -30,9 +30,9 @@ public class UpdateStatusPanel extends StatusPanel {
     updateButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        Collection<ContributionPanel> c =
+        Collection<DetailPanel> c =
           contributionTab.contributionListPanel.panelByContribution.values();
-        for (ContributionPanel contributionPanel : c) {
+        for (DetailPanel contributionPanel : c) {
           contributionPanel.update();
         }
       }

@@ -132,7 +132,7 @@ public class UpdateListPanel extends ListPanel {
     setLayout(layout);
     table.setVisible(true);
 
-    panelByContribution = new TreeMap<Contribution, ContributionPanel>(new Comparator<Contribution>() {
+    panelByContribution = new TreeMap<Contribution, DetailPanel>(new Comparator<Contribution>() {
       @Override
       public int compare(Contribution o1, Contribution o2) {
         int diff =
@@ -219,10 +219,10 @@ public class UpdateListPanel extends ListPanel {
       EventQueue.invokeLater(new Runnable() {
         public void run() {
           // TODO make this longer and more contorted [fry]
-          ContributionPanel newPanel =
+          DetailPanel newPanel =
             contributionTab.contributionManagerDialog.getTab(contribution.getType()).contributionListPanel.panelByContribution.get(contribution);
           if (newPanel == null) {
-            newPanel = new ContributionPanel(UpdateListPanel.this);
+            newPanel = new DetailPanel(UpdateListPanel.this);
           }
           if (!panelByContribution.containsKey(contribution)) {
             synchronized (panelByContribution) {

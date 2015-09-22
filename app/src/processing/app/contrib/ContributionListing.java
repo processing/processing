@@ -98,8 +98,8 @@ public class ContributionListing {
    * Adds the installed libraries to the listing of libraries, replacing any
    * pre-existing libraries by the same name as one in the list.
    */
-  protected void updateInstalledList(List<Contribution> installedContributions) {
-    for (Contribution contribution : installedContributions) {
+  protected void updateInstalledList(List<Contribution> installed) {
+    for (Contribution contribution : installed) {
       Contribution existingContribution = getContribution(contribution);
       if (existingContribution != null) {
         replaceContribution(existingContribution, contribution);
@@ -338,18 +338,17 @@ public class ContributionListing {
   }
 
 
-  protected List<Contribution> getCompatibleContributionList(List<Contribution> filteredLibraries, boolean filter) {
-    ArrayList<Contribution> filteredList =
-      new ArrayList<Contribution>(filteredLibraries);
+  protected List<Contribution> listCompatible(List<Contribution> contribs, boolean filter) {
+    List<Contribution> filteredList =
+      new ArrayList<Contribution>(contribs);
 
-    if (!filter)
-      return filteredList;
-
-    Iterator<Contribution> it = filteredList.iterator();
-    while (it.hasNext()) {
-      Contribution libInfo = it.next();
-      if (!libInfo.isCompatible(Base.getRevision())) {
-        it.remove();
+    if (filter) {
+      Iterator<Contribution> it = filteredList.iterator();
+      while (it.hasNext()) {
+        Contribution libInfo = it.next();
+        if (!libInfo.isCompatible(Base.getRevision())) {
+          it.remove();
+        }
       }
     }
     return filteredList;

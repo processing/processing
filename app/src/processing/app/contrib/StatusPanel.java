@@ -112,7 +112,7 @@ class StatusPanel extends JPanel {
       @Override
       public void actionPerformed(ActionEvent e) {
         installButton.setEnabled(false);
-        ContributionPanel currentPanel =
+        DetailPanel currentPanel =
           contributionTab.contributionListPanel.getSelectedPanel();
         currentPanel.install();
         StatusPanel.this.update(currentPanel);
@@ -133,7 +133,7 @@ class StatusPanel extends JPanel {
     updateButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         updateButton.setEnabled(false);
-        ContributionPanel currentPanel =
+        DetailPanel currentPanel =
           contributionTab.contributionListPanel.getSelectedPanel();
         currentPanel.update();
         StatusPanel.this.update(currentPanel);
@@ -147,7 +147,7 @@ class StatusPanel extends JPanel {
     removeButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         removeButton.setEnabled(false);
-        ContributionPanel currentPanel =
+        DetailPanel currentPanel =
           contributionTab.contributionListPanel.getSelectedPanel();
         currentPanel.remove();
         StatusPanel.this.update(currentPanel);
@@ -236,7 +236,7 @@ class StatusPanel extends JPanel {
   }
 
 
-  public void update(ContributionPanel panel) {
+  public void update(DetailPanel panel) {
     progressPanel.removeAll();
 
     iconLabel.setIcon(panel.getContrib().isSpecial() ? foundationIcon : null);
