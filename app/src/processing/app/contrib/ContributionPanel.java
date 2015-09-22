@@ -248,20 +248,22 @@ class ContributionPanel extends JPanel {
     notificationLabel.setFont(Toolkit.getSansFont(12, Font.PLAIN));
 //    stripTextSelectionListeners(notificationBlock);
 
-    updateButton = new JButton("Update");
-    updateButton.setInheritsPopupMenu(true);
-    Dimension dim = updateButton.getPreferredSize();
-    dim.width = BUTTON_WIDTH;
-    updateButton.setMinimumSize(dim);
-    updateButton.setPreferredSize(dim);
-    updateButton.setOpaque(false);
-    updateButton.setVisible(false);
+    {
+      updateButton = new JButton("Update");
+      updateButton.setInheritsPopupMenu(true);
+      Dimension dim =
+        new Dimension(BUTTON_WIDTH, updateButton.getPreferredSize().height);
+      updateButton.setMinimumSize(dim);
+      updateButton.setPreferredSize(dim);
+      updateButton.setOpaque(false);
+      updateButton.setVisible(false);
 
-    updateButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        update();
-      }
-    });
+      updateButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          update();
+        }
+      });
+    }
 
     updateBox.add(updateButton, BorderLayout.EAST);
     updateBox.add(notificationLabel, BorderLayout.WEST);
@@ -281,17 +283,20 @@ class ContributionPanel extends JPanel {
     barButtonCardPane.setOpaque(false);
     barButtonCardPane.setMinimumSize(new Dimension(ContributionPanel.BUTTON_WIDTH, 1));
 
-    installProgressBar = new JProgressBar();
-    installProgressBar.setInheritsPopupMenu(true);
-    installProgressBar.setStringPainted(true);
-    resetInstallProgressBarState();
-    Dimension d = installProgressBar.getPreferredSize();
-    d.width = ContributionPanel.BUTTON_WIDTH;
-    installProgressBar.setPreferredSize(d);
-    installProgressBar.setMaximumSize(d);
-    installProgressBar.setMinimumSize(d);
-    installProgressBar.setOpaque(false);
-    installProgressBar.setAlignmentX(CENTER_ALIGNMENT);
+    {
+      installProgressBar = new JProgressBar();
+      installProgressBar.setInheritsPopupMenu(true);
+      installProgressBar.setStringPainted(true);
+      resetInstallProgressBarState();
+      Dimension dim =
+        new Dimension(ContributionPanel.BUTTON_WIDTH,
+                      installProgressBar.getPreferredSize().height);
+      installProgressBar.setPreferredSize(dim);
+      installProgressBar.setMaximumSize(dim);
+      installProgressBar.setMinimumSize(dim);
+      installProgressBar.setOpaque(false);
+      installProgressBar.setAlignmentX(CENTER_ALIGNMENT);
+    }
 
     installRemoveButton = new JButton(" ");
     installRemoveButton.setInheritsPopupMenu(true);
@@ -321,12 +326,11 @@ class ContributionPanel extends JPanel {
 
     // Set the minimum size of this pane to be the sum of the height of the
     // progress bar and install button
-    d = installProgressBar.getPreferredSize();
-    Dimension d2 = installRemoveButton.getPreferredSize();
-    d.width = ContributionPanel.BUTTON_WIDTH;
-    d.height = d2.height;//d.height+d2.height;
-    rightPane.setMinimumSize(d);
-    rightPane.setPreferredSize(d);
+    Dimension dim =
+      new Dimension(ContributionPanel.BUTTON_WIDTH,
+                    installRemoveButton.getPreferredSize().height);
+    rightPane.setMinimumSize(dim);
+    rightPane.setPreferredSize(dim);
   }
 
 
