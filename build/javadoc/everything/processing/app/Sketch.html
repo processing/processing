@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":9,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":9,"i34":10,"i35":10,"i36":10,"i37":10};
+var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":9,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":9,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -128,8 +128,8 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../processing/app/Sketch.html#Sketch-java.lang.String-processing.app.Editor-">Sketch</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;path,
-      <a href="../../processing/app/Editor.html" title="class in processing.app">Editor</a>&nbsp;editor)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../processing/app/Sketch.html#Sketch-java.lang.String-processing.app.ui.Editor-">Sketch</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;path,
+      <a href="../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</code>
 <div class="block">path is location of the main .pde file, because this is also
  simplest to use when opening the file from the finder/explorer.</div>
 </td>
@@ -345,18 +345,30 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </td>
 </tr>
 <tr id="i35" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Sketch.html#saveAs--">saveAs</a></span>()</code>
+<div class="block">Handles 'Save As' for a sketch.</div>
+</td>
+</tr>
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Sketch.html#setCurrentCode-int-">setCurrentCode</a></span>(int&nbsp;which)</code>
 <div class="block">Change what file is currently being edited.</div>
 </td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i37" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Sketch.html#setCurrentCode-java.lang.String-">setCurrentCode</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;findName)</code>
+<div class="block">Internal helper function to set the current tab based on a name.</div>
+</td>
+</tr>
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Sketch.html#setModified-boolean-">setModified</a></span>(boolean&nbsp;state)</code>
 <div class="block">Sets the modified value for the code in the frontmost tab.</div>
 </td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Sketch.html#setUntitled-boolean-">setUntitled</a></span>(boolean&nbsp;untitled)</code>&nbsp;</td>
 </tr>
@@ -398,14 +410,14 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </dl>
 </li>
 </ul>
-<a name="Sketch-java.lang.String-processing.app.Editor-">
+<a name="Sketch-java.lang.String-processing.app.ui.Editor-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Sketch</h4>
 <pre>public&nbsp;Sketch(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;path,
-              <a href="../../processing/app/Editor.html" title="class in processing.app">Editor</a>&nbsp;editor)
+              <a href="../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)
        throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
 <div class="block">path is location of the main .pde file, because this is also
  simplest to use when opening the file from the finder/explorer.</div>
@@ -520,6 +532,29 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </dl>
 </li>
 </ul>
+<a name="saveAs--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>saveAs</h4>
+<pre>public&nbsp;boolean&nbsp;saveAs()
+               throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
+<div class="block">Handles 'Save As' for a sketch.
+ <P>
+ This basically just duplicates the current sketch folder to
+ a new location, and then calls 'Save'. (needs to take the current
+ state of the open files and save them to the new folder..
+ but not save over the old versions for the old sketch..)
+ <P>
+ Also removes the previously-generated .class and .jar files,
+ because they can cause trouble.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="handleAddFile--">
 <!--   -->
 </a>
@@ -567,6 +602,20 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  <LI> retrieve the String for the text of the new file.
  <LI> change the text that's visible in the text area
  </OL></div>
+</li>
+</ul>
+<a name="setCurrentCode-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setCurrentCode</h4>
+<pre>public&nbsp;void&nbsp;setCurrentCode(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;findName)</pre>
+<div class="block">Internal helper function to set the current tab based on a name.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>findName</code> - the file name (not pretty name) to be shown</dd>
+</dl>
 </li>
 </ul>
 <a name="makeTempFolder--">

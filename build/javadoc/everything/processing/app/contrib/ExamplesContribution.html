@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":9,"i4":9};
+var methods = {"i0":10,"i1":10,"i2":9,"i3":9,"i4":9,"i5":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../processing/app/contrib/ContributionType.html" title="enum in processing.app.contrib"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../processing/app/contrib/LocalContribution.html" title="class in processing.app.contrib"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../processing/app/contrib/IgnorableException.html" title="class in processing.app.contrib"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?processing/app/contrib/ExamplesContribution.html" target="_top">Frames</a></li>
@@ -72,7 +72,7 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.processing.app.contrib.Contribution">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#fields.inherited.from.class.LocalContribution">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -125,6 +125,21 @@ extends <a href="../../../processing/app/contrib/LocalContribution.html" title="
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested.classes.inherited.from.class.processing.app.contrib.Contribution">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from class&nbsp;<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a></h3>
+<code><a href="../../../processing/app/contrib/Contribution.Filter.html" title="interface in processing.app.contrib">Contribution.Filter</a></code></li>
+</ul>
+</li>
+</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field.summary">
@@ -153,8 +168,8 @@ extends <a href="../../../processing/app/contrib/LocalContribution.html" title="
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ExamplesContribution.html#getCompatibleModesList--">getCompatibleModesList</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../processing/data/StringList.html" title="class in processing.data">StringList</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ExamplesContribution.html#getModeList--">getModeList</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../../processing/app/contrib/ContributionType.html" title="enum in processing.app.contrib">ContributionType</a></code></td>
@@ -162,17 +177,22 @@ extends <a href="../../../processing/app/contrib/LocalContribution.html" title="
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ExamplesContribution.html#isExamplesCompatible-processing.app.Base-java.io.File-">isExamplesCompatible</a></span>(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
-                    <a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;exampleLocationFolder)</code>
-<div class="block">Function to determine whether or not the example present in the
- exampleLocation directory is compatible with the present mode.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ExamplesContribution.html#isCompatible-processing.app.Base-java.io.File-">isCompatible</a></span>(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
+            <a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;exampleFolder)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ExamplesContribution.html#isCompatible-processing.app.Base-processing.data.StringDict-">isCompatible</a></span>(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
+            <a href="../../../processing/data/StringDict.html" title="class in processing.data">StringDict</a>&nbsp;props)</code>
+<div class="block">Function to determine whether or not the example present in the
+ exampleLocation directory is compatible with the current mode.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static <a href="../../../processing/app/contrib/ExamplesContribution.html" title="class in processing.app.contrib">ExamplesContribution</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ExamplesContribution.html#load-java.io.File-">load</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;folder)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ExamplesContribution.html#loadMissing-processing.app.Base-">loadMissing</a></span>(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</code>&nbsp;</td>
 </tr>
@@ -182,14 +202,14 @@ extends <a href="../../../processing/app/contrib/LocalContribution.html" title="
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;<a href="../../../processing/app/contrib/LocalContribution.html" title="class in processing.app.contrib">LocalContribution</a></h3>
-<code><a href="../../../processing/app/contrib/LocalContribution.html#getFolder--">getFolder</a>, <a href="../../../processing/app/contrib/LocalContribution.html#getId--">getId</a>, <a href="../../../processing/app/contrib/LocalContribution.html#getLatestVersion--">getLatestVersion</a>, <a href="../../../processing/app/contrib/LocalContribution.html#getSpecifiedImports--">getSpecifiedImports</a>, <a href="../../../processing/app/contrib/LocalContribution.html#initLoader-java.lang.String-">initLoader</a>, <a href="../../../processing/app/contrib/LocalContribution.html#isInstalled--">isInstalled</a></code></li>
+<code><a href="../../../processing/app/contrib/LocalContribution.html#getFolder--">getFolder</a>, <a href="../../../processing/app/contrib/LocalContribution.html#getId--">getId</a>, <a href="../../../processing/app/contrib/LocalContribution.html#getImports--">getImports</a>, <a href="../../../processing/app/contrib/LocalContribution.html#getLatestVersion--">getLatestVersion</a>, <a href="../../../processing/app/contrib/LocalContribution.html#initLoader-java.lang.String-">initLoader</a>, <a href="../../../processing/app/contrib/LocalContribution.html#isInstalled--">isInstalled</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.Contribution">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a></h3>
-<code><a href="../../../processing/app/contrib/Contribution.html#getAuthorList--">getAuthorList</a>, <a href="../../../processing/app/contrib/Contribution.html#getLastUpdated--">getLastUpdated</a>, <a href="../../../processing/app/contrib/Contribution.html#getMaxRevision--">getMaxRevision</a>, <a href="../../../processing/app/contrib/Contribution.html#getMinRevision--">getMinRevision</a>, <a href="../../../processing/app/contrib/Contribution.html#getName--">getName</a>, <a href="../../../processing/app/contrib/Contribution.html#getParagraph--">getParagraph</a>, <a href="../../../processing/app/contrib/Contribution.html#getPrettyVersion--">getPrettyVersion</a>, <a href="../../../processing/app/contrib/Contribution.html#getSentence--">getSentence</a>, <a href="../../../processing/app/contrib/Contribution.html#getTypeName--">getTypeName</a>, <a href="../../../processing/app/contrib/Contribution.html#getUrl--">getUrl</a>, <a href="../../../processing/app/contrib/Contribution.html#getVersion--">getVersion</a>, <a href="../../../processing/app/contrib/Contribution.html#isCompatible-int-">isCompatible</a></code></li>
+<code><a href="../../../processing/app/contrib/Contribution.html#getAuthorList--">getAuthorList</a>, <a href="../../../processing/app/contrib/Contribution.html#getLastUpdated--">getLastUpdated</a>, <a href="../../../processing/app/contrib/Contribution.html#getMaxRevision--">getMaxRevision</a>, <a href="../../../processing/app/contrib/Contribution.html#getMinRevision--">getMinRevision</a>, <a href="../../../processing/app/contrib/Contribution.html#getName--">getName</a>, <a href="../../../processing/app/contrib/Contribution.html#getParagraph--">getParagraph</a>, <a href="../../../processing/app/contrib/Contribution.html#getPrettyVersion--">getPrettyVersion</a>, <a href="../../../processing/app/contrib/Contribution.html#getSentence--">getSentence</a>, <a href="../../../processing/app/contrib/Contribution.html#getTypeName--">getTypeName</a>, <a href="../../../processing/app/contrib/Contribution.html#getUrl--">getUrl</a>, <a href="../../../processing/app/contrib/Contribution.html#getVersion--">getVersion</a>, <a href="../../../processing/app/contrib/Contribution.html#isCompatible-int-">isCompatible</a>, <a href="../../../processing/app/contrib/Contribution.html#isFoundation--">isFoundation</a>, <a href="../../../processing/app/contrib/Contribution.html#loadProperties-java.io.File-">loadProperties</a>, <a href="../../../processing/app/contrib/Contribution.html#loadProperties-java.io.File-processing.app.contrib.ContributionType-">loadProperties</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.Object">
@@ -221,24 +241,34 @@ extends <a href="../../../processing/app/contrib/LocalContribution.html" title="
 <pre>public static&nbsp;<a href="../../../processing/app/contrib/ExamplesContribution.html" title="class in processing.app.contrib">ExamplesContribution</a>&nbsp;load(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;folder)</pre>
 </li>
 </ul>
-<a name="isExamplesCompatible-processing.app.Base-java.io.File-">
+<a name="isCompatible-processing.app.Base-processing.data.StringDict-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>isExamplesCompatible</h4>
-<pre>public static&nbsp;boolean&nbsp;isExamplesCompatible(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
-                                           <a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;exampleLocationFolder)</pre>
+<h4>isCompatible</h4>
+<pre>public static&nbsp;boolean&nbsp;isCompatible(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
+                                   <a href="../../../processing/data/StringDict.html" title="class in processing.data">StringDict</a>&nbsp;props)</pre>
 <div class="block">Function to determine whether or not the example present in the
- exampleLocation directory is compatible with the present mode.</div>
+ exampleLocation directory is compatible with the current mode.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>base</code> - </dd>
-<dd><code>exampleLocationFolder</code> - </dd>
+<dd><code>exampleFolder</code> - </dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the example is compatible with the mode of the currently
          active editor</dd>
 </dl>
+</li>
+</ul>
+<a name="isCompatible-processing.app.Base-java.io.File-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isCompatible</h4>
+<pre>public static&nbsp;boolean&nbsp;isCompatible(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
+                                   <a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;exampleFolder)</pre>
 </li>
 </ul>
 <a name="loadMissing-processing.app.Base-">
@@ -263,13 +293,13 @@ extends <a href="../../../processing/app/contrib/LocalContribution.html" title="
 </dl>
 </li>
 </ul>
-<a name="getCompatibleModesList--">
+<a name="getModeList--">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>getCompatibleModesList</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;getCompatibleModesList()</pre>
+<h4>getModeList</h4>
+<pre>public&nbsp;<a href="../../../processing/data/StringList.html" title="class in processing.data">StringList</a>&nbsp;getModeList()</pre>
 </li>
 </ul>
 </li>
@@ -300,7 +330,7 @@ extends <a href="../../../processing/app/contrib/LocalContribution.html" title="
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../processing/app/contrib/ContributionType.html" title="enum in processing.app.contrib"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../processing/app/contrib/LocalContribution.html" title="class in processing.app.contrib"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../processing/app/contrib/IgnorableException.html" title="class in processing.app.contrib"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?processing/app/contrib/ExamplesContribution.html" target="_top">Frames</a></li>
@@ -324,7 +354,7 @@ extends <a href="../../../processing/app/contrib/LocalContribution.html" title="
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.processing.app.contrib.Contribution">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#fields.inherited.from.class.LocalContribution">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>

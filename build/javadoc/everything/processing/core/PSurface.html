@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../processing/core/PStyle.html" title="class in processing.core"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../processing/core/PSurfaceAWT.html" title="class in processing.core"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../processing/core/PSurfaceNone.html" title="class in processing.core"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?processing/core/PSurface.html" target="_top">Frames</a></li>
@@ -99,7 +99,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Known Implementing Classes:</dt>
-<dd><a href="../../processing/core/PSurfaceAWT.html" title="class in processing.core">PSurfaceAWT</a>, <a href="../../processing/core/PSurfaceDanger.html" title="class in processing.core">PSurfaceDanger</a>, <a href="../../processing/core/PSurfaceFX.html" title="class in processing.core">PSurfaceFX</a>, <a href="../../processing/opengl/PSurfaceJOGL.html" title="class in processing.opengl">PSurfaceJOGL</a>, <a href="../../processing/core/PSurfaceNone.html" title="class in processing.core">PSurfaceNone</a></dd>
+<dd><a href="../../processing/awt/PSurfaceAWT.html" title="class in processing.awt">PSurfaceAWT</a>, <a href="../../processing/javafx/PSurfaceFX.html" title="class in processing.javafx">PSurfaceFX</a>, <a href="../../processing/opengl/PSurfaceJOGL.html" title="class in processing.opengl">PSurfaceJOGL</a>, <a href="../../processing/core/PSurfaceNone.html" title="class in processing.core">PSurfaceNone</a></dd>
 </dl>
 <hr>
 <br>
@@ -148,99 +148,117 @@ var activeTableTab = "activeTableTab";
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#hideCursor--">hideCursor</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#getNative--">getNative</a></span>()</code>
+<div class="block">Get the native window object associated with this drawing surface.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#initFrame-processing.core.PApplet-">initFrame</a></span>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;sketch)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#hideCursor--">hideCursor</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#initOffscreen-processing.core.PApplet-">initOffscreen</a></span>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;sketch)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#initFrame-processing.core.PApplet-">initFrame</a></span>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;sketch)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#initOffscreen-processing.core.PApplet-">initOffscreen</a></span>(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;sketch)</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#isStopped--">isStopped</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#pauseThread--">pauseThread</a></span>()</code>
 <div class="block">On the next trip through the animation thread, things should go sleepy-bye.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#placePresent-int-">placePresent</a></span>(int&nbsp;stopColor)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#placeWindow-int:A-int:A-">placeWindow</a></span>(int[]&nbsp;location,
            int[]&nbsp;editorLocation)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#resumeThread--">resumeThread</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#setAlwaysOnTop-boolean-">setAlwaysOnTop</a></span>(boolean&nbsp;always)</code>
+<div class="block">Dumb name, but inherited from Frame and no better ideas.</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#setCursor-int-">setCursor</a></span>(int&nbsp;kind)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#setCursor-processing.core.PImage-int-int-">setCursor</a></span>(<a href="../../processing/core/PImage.html" title="class in processing.core">PImage</a>&nbsp;image,
          int&nbsp;hotspotX,
          int&nbsp;hotspotY)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#setFrameRate-float-">setFrameRate</a></span>(float&nbsp;fps)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#setFrameRate-float-">setFrameRate</a></span>(float&nbsp;fps)</code>
+<div class="block">Called by <a href="../../processing/core/PApplet.html#createGraphics-int-int-"><code>PApplet.createGraphics(int, int)</code></a> to initialize the
+ <a href="../../processing/core/PGraphics.html#image"><code>PGraphics.image</code></a> object with an image that's compatible with this
+ drawing surface/display/hardware.</div>
+</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#setIcon-processing.core.PImage-">setIcon</a></span>(<a href="../../processing/core/PImage.html" title="class in processing.core">PImage</a>&nbsp;icon)</code>&nbsp;</td>
+</tr>
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#setLocation-int-int-">setLocation</a></span>(int&nbsp;x,
+           int&nbsp;y)</code>&nbsp;</td>
+</tr>
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#setResizable-boolean-">setResizable</a></span>(boolean&nbsp;resizable)</code>
 <div class="block">Set true if we want to resize things (default is not resizable)</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#setSize-int-int-">setSize</a></span>(int&nbsp;width,
        int&nbsp;height)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#setSmooth-int-">setSmooth</a></span>(int&nbsp;level)</code>
-<div class="block">Sometimes smoothing must be set at the drawing surface level
- not just inside the renderer itself.</div>
-</td>
-</tr>
-<tr id="i14" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#setTitle-java.lang.String-">setTitle</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;title)</code>
 <div class="block">Set the window (and dock, or whatever necessary) title.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#setupExternalMessages--">setupExternalMessages</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#setVisible-boolean-">setVisible</a></span>(boolean&nbsp;visible)</code>
 <div class="block">Show or hide the window.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#showCursor--">showCursor</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#startThread--">startThread</a></span>()</code>
 <div class="block">Start the animation thread</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PSurface.html#stopThread--">stopThread</a></span>()</code>
 <div class="block">Stop the animation thread (set it null)</div>
@@ -318,6 +336,21 @@ var activeTableTab = "activeTableTab";
 <pre>void&nbsp;initFrame(<a href="../../processing/core/PApplet.html" title="class in processing.core">PApplet</a>&nbsp;sketch)</pre>
 </li>
 </ul>
+<a name="getNative--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNative</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;getNative()</pre>
+<div class="block">Get the native window object associated with this drawing surface.
+ For Java2D, this will be an AWT Frame object. For OpenGL, the window.
+ The data returned here is subject to the whims of the renderer,
+ and using this method means you're willing to deal with underlying
+ implementation changes and that you won't throw a fit like a toddler
+ if your code breaks sometime in the future.</div>
+</li>
+</ul>
 <a name="setTitle-java.lang.String-">
 <!--   -->
 </a>
@@ -348,6 +381,25 @@ var activeTableTab = "activeTableTab";
 <div class="block">Set true if we want to resize things (default is not resizable)</div>
 </li>
 </ul>
+<a name="setAlwaysOnTop-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAlwaysOnTop</h4>
+<pre>void&nbsp;setAlwaysOnTop(boolean&nbsp;always)</pre>
+<div class="block">Dumb name, but inherited from Frame and no better ideas.</div>
+</li>
+</ul>
+<a name="setIcon-processing.core.PImage-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setIcon</h4>
+<pre>void&nbsp;setIcon(<a href="../../processing/core/PImage.html" title="class in processing.core">PImage</a>&nbsp;icon)</pre>
+</li>
+</ul>
 <a name="placeWindow-int:A-int:A-">
 <!--   -->
 </a>
@@ -376,6 +428,16 @@ var activeTableTab = "activeTableTab";
 <pre>void&nbsp;setupExternalMessages()</pre>
 </li>
 </ul>
+<a name="setLocation-int-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setLocation</h4>
+<pre>void&nbsp;setLocation(int&nbsp;x,
+                 int&nbsp;y)</pre>
+</li>
+</ul>
 <a name="setSize-int-int-">
 <!--   -->
 </a>
@@ -386,17 +448,6 @@ var activeTableTab = "activeTableTab";
              int&nbsp;height)</pre>
 </li>
 </ul>
-<a name="setSmooth-int-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setSmooth</h4>
-<pre>void&nbsp;setSmooth(int&nbsp;level)</pre>
-<div class="block">Sometimes smoothing must be set at the drawing surface level
- not just inside the renderer itself.</div>
-</li>
-</ul>
 <a name="setFrameRate-float-">
 <!--   -->
 </a>
@@ -404,6 +455,15 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>setFrameRate</h4>
 <pre>void&nbsp;setFrameRate(float&nbsp;fps)</pre>
+<div class="block">Called by <a href="../../processing/core/PApplet.html#createGraphics-int-int-"><code>PApplet.createGraphics(int, int)</code></a> to initialize the
+ <a href="../../processing/core/PGraphics.html#image"><code>PGraphics.image</code></a> object with an image that's compatible with this
+ drawing surface/display/hardware.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>gr</code> - PGraphics object whose image will be set</dd>
+<dd><code>wide</code> - </dd>
+<dd><code>high</code> - </dd>
+</dl>
 </li>
 </ul>
 <a name="setCursor-int-">
@@ -526,7 +586,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../processing/core/PStyle.html" title="class in processing.core"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../processing/core/PSurfaceAWT.html" title="class in processing.core"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../processing/core/PSurfaceNone.html" title="class in processing.core"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?processing/core/PSurface.html" target="_top">Frames</a></li>

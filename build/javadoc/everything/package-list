@@ -5,8 +5,11 @@ processing.app.platform
 processing.app.syntax
 processing.app.syntax.im
 processing.app.tools
+processing.app.ui
+processing.awt
 processing.core
 processing.data
 processing.event
+processing.javafx
 processing.mode.java.preproc
 processing.opengl
