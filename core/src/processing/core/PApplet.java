@@ -5825,12 +5825,19 @@ public class PApplet implements PConstants {
     return saveXML(xml, filename, null);
   }
 
-
+  /**
+   * @nowebref
+   */
   public boolean saveXML(XML xml, String filename, String options) {
     return xml.save(saveFile(filename), options);
   }
 
-
+  /**
+   * @webref input:files
+   * @param input String to parse as a JSONObject
+   * @see PApplet#loadJSONObject(String)
+   * @see PApplet#saveJSONObject(JSONObject, String)
+   */
   public JSONObject parseJSONObject(String input) {
     return new JSONObject(new StringReader(input));
   }
@@ -5867,12 +5874,20 @@ public class PApplet implements PConstants {
     return saveJSONObject(json, filename, null);
   }
 
-
+  /**
+   * @nowebref
+   */
   public boolean saveJSONObject(JSONObject json, String filename, String options) {
     return json.save(saveFile(filename), options);
   }
 
-
+/**
+   * @webref input:files
+   * @param input String to parse as a JSONArray
+   * @see JSONObject
+   * @see PApplet#loadJSONObject(String)
+   * @see PApplet#saveJSONObject(JSONObject, String)
+   */
   public JSONArray parseJSONArray(String input) {
     return new JSONArray(new StringReader(input));
   }
@@ -5881,7 +5896,6 @@ public class PApplet implements PConstants {
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL
-   * @see JSONObject
    * @see JSONArray
    * @see PApplet#loadJSONObject(String)
    * @see PApplet#saveJSONObject(JSONObject, String)

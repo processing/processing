@@ -942,8 +942,10 @@ public class PSurfaceJOGL implements PSurface {
 
     int peCount = 0;
     if (peAction == MouseEvent.WHEEL) {
-      peCount = nativeEvent.isShiftDown() ? (int)nativeEvent.getRotation()[0] :
-                                            (int)nativeEvent.getRotation()[1];
+      // Invert wheel rotation count so it matches JAVA2D's
+      // https://github.com/processing/processing/issues/3840
+      peCount = -(nativeEvent.isShiftDown() ? (int)nativeEvent.getRotation()[0]:
+                                              (int)nativeEvent.getRotation()[1]);
     } else {
       peCount = nativeEvent.getClickCount();
     }
