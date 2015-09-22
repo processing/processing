@@ -318,29 +318,28 @@ public class ContributionManager {
    * anything and providing feedback via the console status area, such as when
    * the user tries to run a sketch that imports uninstaled libraries.
    *
-   * @param aList
-   *          The list of AvailableContributions to be downloaded and installed.
+   * @param list The list of AvailableContributions to be downloaded and installed.
    */
-  public static void downloadAndInstallOnImport(final Base base,
-                                                final List<AvailableContribution> aList) {
-
-    // To avoid the user from modifying stuff, since this function is only called
-    // during pre-processing
-    base.getActiveEditor().getTextArea().setEditable(false);
+  static public void downloadAndInstallOnImport(final Base base,
+                                                final List<AvailableContribution> list) {
+    // To avoid the user from modifying stuff, since this function is only
+    // called during pre-processing
+    Editor editor = base.getActiveEditor();
+    editor.getTextArea().setEditable(false);
 //    base.getActiveEditor().getConsole().clear();
 
-    ArrayList<String> installedLibList = new ArrayList<String>();
+    List<String> installedLibList = new ArrayList<String>();
 
     // boolean variable to check if previous lib was installed successfully,
     // to give the user an idea about progress being made.
     boolean isPrevDone = false;
 
-    for (AvailableContribution ad : aList) {
-      if (ad.getType() != ContributionType.LIBRARY) {
+    for (AvailableContribution contrib : list) {
+      if (contrib.getType() != ContributionType.LIBRARY) {
         continue;
       }
       try {
-        URL url = new URL(ad.link);
+        URL url = new URL(contrib.link);
         String filename = url.getFile();
         filename = filename.substring(filename.lastIndexOf('/') + 1);
         try {
@@ -353,16 +352,15 @@ public class ContributionManager {
             // The slightly complex if-else is required to let the user know when
             // one install is completed and the next download has begun without
             // interfering with other status messages that may arise in the meanwhile
-            String statusMsg = base.getActiveEditor().getStatusMessage();
+            String statusMsg = editor.getStatusMessage();
             if (isPrevDone) {
               String status = statusMsg + " "
-                + Language.interpolate("contrib.import.progress.download", ad.name);
-              base.getActiveEditor().statusNotice(status);
-            }
-            else {
+                + Language.interpolate("contrib.import.progress.download", contrib.name);
+              editor.statusNotice(status);
+            } else {
               String arg = "contrib.import.progress.download";
-              String status = Language.interpolate(arg, ad.name);
-              base.getActiveEditor().statusNotice(status);
+              String status = Language.interpolate(arg, contrib.name);
+              editor.statusNotice(status);
             }
 
             isPrevDone = false;
@@ -370,41 +368,38 @@ public class ContributionManager {
             download(url, null, contribZip, null);
 
             String arg = "contrib.import.progress.install";
-            base.getActiveEditor().statusNotice(Language.interpolate(arg,ad.name));
+            editor.statusNotice(Language.interpolate(arg,contrib.name));
             LocalContribution contribution =
-              ad.install(base, contribZip, false, null);
+              contrib.install(base, contribZip, false, null);
 
             if (contribution != null) {
-              listing.replaceContribution(ad, contribution);
-//              if (base.getActiveEditor() != null) {
-//                refreshInstalled(base.getActiveEditor());
-//              }
+              listing.replaceContribution(contrib, contribution);
               base.refreshContribs(contribution.getType());
             }
 
             contribZip.delete();
 
-            installedLibList.add(ad.name);
+            installedLibList.add(contrib.name);
             isPrevDone = true;
 
             arg = "contrib.import.progress.done";
-            base.getActiveEditor().statusNotice(Language.interpolate(arg,ad.name));
+            editor.statusNotice(Language.interpolate(arg,contrib.name));
 
           } catch (Exception e) {
             String arg = "contrib.startup.errors.download_install";
-            System.err.println(Language.interpolate(arg, ad.getName()));
+            System.err.println(Language.interpolate(arg, contrib.getName()));
           }
         } catch (IOException e) {
           String arg = "contrib.startup.errors.temp_dir";
-          System.err.println(Language.interpolate(arg,ad.getName()));
+          System.err.println(Language.interpolate(arg,contrib.getName()));
         }
       } catch (MalformedURLException e1) {
         System.err.println(Language.interpolate("contrib.import.errors.link",
-                                                ad.getName()));
+                                                contrib.getName()));
       }
     }
-    base.getActiveEditor().getTextArea().setEditable(true);
-    base.getActiveEditor().statusEmpty();
+    editor.getTextArea().setEditable(true);
+    editor.statusEmpty();
     System.out.println(Language.text("contrib.import.progress.final_list"));
     for (String l : installedLibList) {
       System.out.println("  * " + l);
