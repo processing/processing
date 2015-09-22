@@ -30,6 +30,7 @@ import javax.swing.SwingWorker;
 import processing.app.Base;
 import processing.app.Language;
 import processing.app.Messages;
+import processing.app.Settings;
 import processing.app.Util;
 import processing.app.ui.Editor;
 import processing.core.PApplet;
@@ -58,7 +59,6 @@ public class ContributionManager {
                           File dest, ContribProgressMonitor progress) {
     boolean success = false;
     try {
-
       HttpURLConnection conn = (HttpURLConnection) source.openConnection();
       HttpURLConnection.setFollowRedirects(true);
       conn.setConnectTimeout(15 * 1000);
@@ -250,25 +250,13 @@ public class ContributionManager {
 
             if (contribution != null) {
               listing.replaceContribution(ad, contribution);
-//              if (contribution.getType() == ContributionType.MODE) {
-//                List<ModeContribution> contribModes = base.getModeContribs();
-//                if (contribModes != null && !contribModes.contains(contribution)) {
-//                  contribModes.add((ModeContribution) contribution);
-//                }
-//              }
-//              if (base.getActiveEditor() != null) {
-//                refreshInstalled(base.getActiveEditor());
-//              }
               base.refreshContribs(contribution.getType());
             }
 
             contribZip.delete();
-
             handleUpdateFailedMarkers(ad, filename.substring(0, filename.lastIndexOf('.')));
 
           } catch (Exception e) {
-//            Chuck the stack trace. The user might have no idea why it is appearing, or what (s)he did wrong...
-//            e.printStackTrace();
             String arg = "contrib.startup.errors.download_install";
             System.err.println(Language.interpolate(arg, ad.getName()));
           }
@@ -281,42 +269,47 @@ public class ContributionManager {
   }
 
 
-/**
- * After install, this function checks whether everything went properly or not.
- * If not, it adds a marker file so that the next time Processing is started, installPreviouslyFailed()
- * can install the contribution.
- * @param ac
- * The contribution just installed.
- * @param filename
- * The name of the folder in which the contribution is supposed to be stored.
- */
-  static private void handleUpdateFailedMarkers(final AvailableContribution ac, String filename) {
+  /**
+   * After install, this function checks whether everything went properly.
+   * If not, it adds a marker file so that the next time Processing is started,
+   * installPreviouslyFailed() can install the contribution.
+   * @param c the contribution just installed
+   * @param filename name of the folder for the contribution
+   */
+  static private void handleUpdateFailedMarkers(final AvailableContribution c,
+                                                String filename) {
+    File typeFolder = c.getType().getSketchbookFolder();
 
-    File contribLocn = ac.getType().getSketchbookFolder();
-
-    for (File contribDir : contribLocn.listFiles())
+    for (File contribDir : typeFolder.listFiles()) {
       if (contribDir.isDirectory()) {
+        /*
         File[] contents = contribDir.listFiles(new FilenameFilter() {
 
           @Override
           public boolean accept(File dir, String file) {
-            return file.equals(ac.getType() + ".properties");
+            return file.equals(c.getType() + ".properties");
           }
         });
-        if (contents.length > 0 && Util.readSettings(contents[0]).get("name").equals(ac.getName())) {
+        if (contents.length > 0 && Util.readSettings(contents[0]).get("name").equals(c.getName())) {
           return;
         }
+        */
+        File propsFile = new File(contribDir, c.getType() + ".properties");
+        if (propsFile.exists()) {
+          StringDict props = Util.readSettings(propsFile);
+          if (c.getName().equals(props.get("name"))) {
+            return;
+          }
+        }
       }
-
-    try {
-      new File(contribLocn, ac.getName()).createNewFile();
-    } catch (IOException e) {
-//      Again, forget about the stack trace. The user ain't done wrong
-//      e.printStackTrace();
-      String arg = "contrib.startup.errors.new_marker";
-      System.err.println(Language.interpolate(arg, ac.getName()));
     }
 
+    try {
+      new File(typeFolder, c.getName()).createNewFile();
+    } catch (IOException e) {
+      String arg = "contrib.startup.errors.new_marker";
+      System.err.println(Language.interpolate(arg, c.getName()));
+    }
   }
 
 

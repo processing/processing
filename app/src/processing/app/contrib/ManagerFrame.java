@@ -169,25 +169,12 @@ public class ManagerFrame {
           updateTabLabel.setForeground(Color.BLACK);
         }
         getActiveTab().contributionListPanel.scrollPane.requestFocusInWindow();
-//        // When the tab is changed update status to the current selected panel
-//        ContributionPanel currentPanel = getActiveTab().contributionListPanel
-//          .getSelectedPanel();
-//        if (currentPanel != null) {
-//          getActiveTab().contributionListPanel.setSelectedPanel(currentPanel);
-//        }
       }
     });
 
-//    GroupLayout layout = new GroupLayout(dialog.getContentPane());
-//    dialog.getContentPane().setLayout(layout);
     frame.setResizable(true);
-//    layout.setAutoCreateContainerGaps(true);
-//    layout.setHorizontalGroup(layout.createParallelGroup().addComponent(tabbedPane));
-//    layout.setVerticalGroup(layout.createParallelGroup().addComponent(tabbedPane));
-//    layout.setHonorsVisibility(tabbedPane, true);
     tabbedPane.setBorder(new EmptyBorder(BORDER, BORDER, BORDER, BORDER));
     frame.getContentPane().add(tabbedPane);
-    //TODO set color here
     frame.getContentPane().setBackground(new Color(0x132638));
     frame.validate();
     frame.repaint();
@@ -370,6 +357,7 @@ public class ManagerFrame {
   }
 
 
+  // TODO move this to ContributionTab (this is handled weirdly, period) [fry]
   void downloadAndUpdateContributionListing(Base base) {
     //activeTab is required now but should be removed
     //as there is only one instance of contribListing and it should be present in this class
@@ -410,12 +398,12 @@ public class ManagerFrame {
   }
 
 
-  void makeAndShowTab(boolean activateErrorPanel, boolean isLoading) {
-    librariesTab.showFrame(editor, activateErrorPanel, isLoading);
-    modesTab.showFrame(editor, activateErrorPanel, isLoading);
-    toolsTab.showFrame(editor, activateErrorPanel, isLoading);
-    examplesTab.showFrame(editor, activateErrorPanel, isLoading);
-    updatesTab.showFrame(editor, activateErrorPanel, isLoading);
+  void makeAndShowTab(boolean error, boolean loading) {
+    librariesTab.showFrame(editor, error, loading);
+    modesTab.showFrame(editor, error, loading);
+    toolsTab.showFrame(editor, error, loading);
+    examplesTab.showFrame(editor, error, loading);
+    updatesTab.showFrame(editor, error, loading);
   }
 
 
