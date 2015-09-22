@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":6,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":6,"i12":10,"i13":10,"i14":6,"i15":10,"i16":10,"i17":10,"i18":6,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":6,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10};
+var methods = {"i0":10,"i1":10,"i2":6,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":6,"i11":10,"i12":10,"i13":6,"i14":10,"i15":10,"i16":10,"i17":6,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":6,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../processing/app/Library.html" title="class in processing.app"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../processing/app/Messages.html" title="class in processing.app"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../processing/app/Platform.html" title="class in processing.app"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -128,11 +128,11 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;</code></td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#contribLibraries">contribLibraries</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;</code></td>
+<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#coreLibraries">coreLibraries</a></span></code>&nbsp;</td>
 </tr>
 </table>
@@ -170,234 +170,230 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/tree/DefaultMutableTreeNode.html?is-external=true" title="class or interface in javax.swing.tree">DefaultMutableTreeNode</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#buildExamplesTree--">buildExamplesTree</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/tree/DefaultMutableTreeNode.html?is-external=true" title="class or interface in javax.swing.tree">DefaultMutableTreeNode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#buildSketchbookTree--">buildSketchbookTree</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#canEdit-java.io.File-">canEdit</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;f)</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>abstract <a href="../../processing/app/Editor.html" title="class in processing.app">Editor</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#createEditor-processing.app.Base-java.lang.String-processing.app.EditorState-">createEditor</a></span>(<a href="../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>abstract <a href="../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#createEditor-processing.app.Base-java.lang.String-processing.app.ui.EditorState-">createEditor</a></span>(<a href="../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
             <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;path,
-            <a href="../../processing/app/EditorState.html" title="class in processing.app">EditorState</a>&nbsp;state)</code>
+            <a href="../../processing/app/ui/EditorState.html" title="class in processing.app.ui">EditorState</a>&nbsp;state)</code>
 <div class="block">Create a new editor associated with this mode.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../processing/app/Library.html" title="class in processing.app">Library</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#findLibraryByName-java.lang.String-">findLibraryByName</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;libName)</code>
 <div class="block">Checks coreLibraries and contribLibraries for a library with the specified name</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getBoolean-java.lang.String-">getBoolean</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/ClassLoader.html?is-external=true" title="class or interface in java.lang">ClassLoader</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getClassLoader--">getClassLoader</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getColor-java.lang.String-">getColor</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getContentFile-java.lang.String-">getContentFile</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;path)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/InputStream.html?is-external=true" title="class or interface in java.io">InputStream</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getContentStream-java.lang.String-">getContentStream</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;path)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../../processing/app/Library.html" title="class in processing.app">Library</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getCoreLibrary--">getCoreLibrary</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>abstract <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getDefaultExtension--">getDefaultExtension</a></span>()</code>
 <div class="block">Returns the default extension for this editor setup.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getExampleCategoryFolders--">getExampleCategoryFolders</a></span>()</code>
 <div class="block">Override this to control the order of the first set of example folders
  and how they appear in the examples window.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getExamplesFolder--">getExamplesFolder</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>abstract <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getExtensions--">getExtensions</a></span>()</code>
 <div class="block">Returns a String[] array of proper extensions.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getFolder--">getFolder</a></span>()</code>
 <div class="block">Get the folder where this mode is stored.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getFont-java.lang.String-">getFont</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getIdentifier--">getIdentifier</a></span>()</code>
 <div class="block">Get an identifier that can be used to resurrect this mode and connect it
  to a sketch.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>abstract <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getIgnorable--">getIgnorable</a></span>()</code>
 <div class="block">Get array of file/directory names that needn't be copied during "Save As".</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JMenu.html?is-external=true" title="class or interface in javax.swing">JMenu</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getImportMenu--">getImportMenu</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getInteger-java.lang.String-">getInteger</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getKeywordFiles--">getKeywordFiles</a></span>()</code>
 <div class="block">To add additional keywords, or to grab them from another mode, override
  this function.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getLibrariesFolder--">getLibrariesFolder</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code><a href="../../processing/app/Library.html" title="class in processing.app">Library</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getLibrary-java.lang.String-">getLibrary</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;pkgName)</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getModuleExtension--">getModuleExtension</a></span>()</code>
 <div class="block">Returns the appropriate file extension to use for auxilliary source files in a sketch.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getReferenceFolder--">getReferenceFolder</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getString-java.lang.String-">getString</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code><a href="../../processing/app/syntax/SyntaxStyle.html" title="class in processing.app.syntax">SyntaxStyle</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getStyle-java.lang.String-">getStyle</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute)</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>abstract <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getTitle--">getTitle</a></span>()</code>
 <div class="block">Return the pretty/printable/menu name for this mode.</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code><a href="../../processing/app/syntax/TokenMarker.html" title="class in processing.app.syntax">TokenMarker</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getTokenMarker--">getTokenMarker</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JMenu.html?is-external=true" title="class or interface in javax.swing">JMenu</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#getToolbarMenu--">getToolbarMenu</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#hideExtension-java.lang.String-">hideExtension</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;what)</code>
 <div class="block">True if the specified extension should be hidden when shown on a tab.</div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#insertImportMenu-javax.swing.JMenu-">insertImportMenu</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JMenu.html?is-external=true" title="class or interface in javax.swing">JMenu</a>&nbsp;sketchMenu)</code>
 <div class="block">Re-insert the Import Library menu.</div>
 </td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#insertToolbarRecentMenu--">insertToolbarRecentMenu</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#isDefaultExtension-processing.app.SketchCode-">isDefaultExtension</a></span>(<a href="../../processing/app/SketchCode.html" title="class in processing.app">SketchCode</a>&nbsp;code)</code>
 <div class="block">True if the specified code has the default file extension.</div>
 </td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#isDefaultExtension-java.lang.String-">isDefaultExtension</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;what)</code>
 <div class="block">True if the specified extension is the default file extension.</div>
 </td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/ImageIcon.html?is-external=true" title="class or interface in javax.swing">ImageIcon</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#loadIcon-java.lang.String-">loadIcon</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;filename)</code>
 <div class="block">Get an ImageIcon object from the Mode folder.</div>
 </td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#loadImage-java.lang.String-">loadImage</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;filename)</code>
 <div class="block">Get an image object from the mode folder.</div>
 </td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#lookupReference-java.lang.String-">lookupReference</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;keyword)</code>
 <div class="block">Returns the HTML filename (including path prefix if necessary)
  for this keyword, or null if it doesn't exist.</div>
 </td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#makeGradient-java.lang.String-int-int-">makeGradient</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;attribute,
             int&nbsp;wide,
             int&nbsp;high)</code>&nbsp;</td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#prepareExportFolder-java.io.File-">prepareExportFolder</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;targetFolder)</code>
 <div class="block">Create a fresh applet/application folder if the 'delete target folder'
  pref has been set in the preferences.</div>
 </td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#rebuildExamplesFrame--">rebuildExamplesFrame</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#rebuildImportMenu--">rebuildImportMenu</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#rebuildLibraryList--">rebuildLibraryList</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#rebuildSketchbookFrame--">rebuildSketchbookFrame</a></span>()</code>
 <div class="block">Sketchbook has changed, update it on next viewing.</div>
 </td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#removeImportMenu-javax.swing.JMenu-">removeImportMenu</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JMenu.html?is-external=true" title="class or interface in javax.swing">JMenu</a>&nbsp;sketchMenu)</code>
 <div class="block">Rather than re-building the library menu for every open sketch (very slow
@@ -405,34 +401,34 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  share a single instance across all windows.</div>
 </td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#removeToolbarRecentMenu--">removeToolbarRecentMenu</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#setClassLoader-java.lang.ClassLoader-">setClassLoader</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/ClassLoader.html?is-external=true" title="class or interface in java.lang">ClassLoader</a>&nbsp;loader)</code>&nbsp;</td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#setupGUI--">setupGUI</a></span>()</code>
 <div class="block">Setup additional elements that are only required when running with a GUI,
  rather than from the command-line.</div>
 </td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#showExamplesFrame--">showExamplesFrame</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#showSketchbookFrame--">showSketchbookFrame</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i51" class="rowColor">
+<tr id="i50" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i52" class="altColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Mode.html#validExtension-java.lang.String-">validExtension</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;what)</code>
 <div class="block">Check this extension (no dots, please) against the list of valid
@@ -467,7 +463,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockList">
 <li class="blockList">
 <h4>coreLibraries</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt; coreLibraries</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt; coreLibraries</pre>
 </li>
 </ul>
 <a name="contribLibraries">
@@ -476,7 +472,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="blockListLast">
 <li class="blockList">
 <h4>contribLibraries</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt; contribLibraries</pre>
+<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt; contribLibraries</pre>
 </li>
 </ul>
 </li>
@@ -598,16 +594,21 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </dl>
 </li>
 </ul>
-<a name="createEditor-processing.app.Base-java.lang.String-processing.app.EditorState-">
+<a name="createEditor-processing.app.Base-java.lang.String-processing.app.ui.EditorState-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createEditor</h4>
-<pre>public abstract&nbsp;<a href="../../processing/app/Editor.html" title="class in processing.app">Editor</a>&nbsp;createEditor(<a href="../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
+<pre>public abstract&nbsp;<a href="../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;createEditor(<a href="../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
                                     <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;path,
-                                    <a href="../../processing/app/EditorState.html" title="class in processing.app">EditorState</a>&nbsp;state)</pre>
+                                    <a href="../../processing/app/ui/EditorState.html" title="class in processing.app.ui">EditorState</a>&nbsp;state)
+                             throws <a href="../../processing/app/ui/EditorException.html" title="class in processing.app.ui">EditorException</a></pre>
 <div class="block">Create a new editor associated with this mode.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../processing/app/ui/EditorException.html" title="class in processing.app.ui">EditorException</a></code></dd>
+</dl>
 </li>
 </ul>
 <a name="getFolder--">
@@ -772,15 +773,6 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>[]&nbsp;getExampleCategoryFolders()</pre>
 <div class="block">Override this to control the order of the first set of example folders
  and how they appear in the examples window.</div>
-</li>
-</ul>
-<a name="buildExamplesTree--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>buildExamplesTree</h4>
-<pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/tree/DefaultMutableTreeNode.html?is-external=true" title="class or interface in javax.swing.tree">DefaultMutableTreeNode</a>&nbsp;buildExamplesTree()</pre>
 </li>
 </ul>
 <a name="rebuildExamplesFrame--">
@@ -1114,7 +1106,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../processing/app/Library.html" title="class in processing.app"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../processing/app/Messages.html" title="class in processing.app"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../processing/app/Platform.html" title="class in processing.app"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">

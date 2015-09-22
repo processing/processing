@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../processing/app/contrib/ContributionListPanel.html" title="class in processing.app.contrib"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../processing/app/contrib/ContributionListing.ChangeListener.html" title="interface in processing.app.contrib"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../processing/app/contrib/ContributionManagerDialog.html" title="class in processing.app.contrib"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -73,13 +73,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -115,25 +115,6 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field.summary">
-<!--   -->
-</a>
-<h3>Field Summary</h3>
-<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
-<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Field and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../processing/app/contrib/ContributionListing.html" title="class in processing.app.contrib">ContributionListing</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#contribListing">contribListing</a></span></code>&nbsp;</td>
-</tr>
-</table>
-</li>
-</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -192,7 +173,33 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#refreshInstalled-processing.app.Editor-">refreshInstalled</a></span>(<a href="../../../processing/app/Editor.html" title="class in processing.app">Editor</a>&nbsp;e)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openExampleManager-processing.app.ui.Editor-">openExampleManager</a></span>(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</code>
+<div class="block">Show the Examples installer window.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openLibraryManager-processing.app.ui.Editor-">openLibraryManager</a></span>(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</code>
+<div class="block">Show the Library installer window.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openModeManager-processing.app.ui.Editor-">openModeManager</a></span>(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</code>
+<div class="block">Show the Mode installer window.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openToolManager-processing.app.ui.Editor-">openToolManager</a></span>(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</code>
+<div class="block">Show the Tool installer window.</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openUpdates-processing.app.ui.Editor-">openUpdates</a></span>(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</code>
+<div class="block">Open the updates panel.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -210,23 +217,6 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
-<!-- ============ FIELD DETAIL =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field.detail">
-<!--   -->
-</a>
-<h3>Field Detail</h3>
-<a name="contribListing">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>contribListing</h4>
-<pre>public static final&nbsp;<a href="../../../processing/app/contrib/ContributionListing.html" title="class in processing.app.contrib">ContributionListing</a> contribListing</pre>
-</li>
-</ul>
-</li>
-</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
@@ -268,15 +258,6 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </dl>
 </li>
 </ul>
-<a name="refreshInstalled-processing.app.Editor-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>refreshInstalled</h4>
-<pre>public static&nbsp;void&nbsp;refreshInstalled(<a href="../../../processing/app/Editor.html" title="class in processing.app">Editor</a>&nbsp;e)</pre>
-</li>
-</ul>
 <a name="getUniqueName-java.io.File-java.lang.String-">
 <!--   -->
 </a>
@@ -311,7 +292,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <a name="cleanup-processing.app.Base-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>cleanup</h4>
 <pre>public static&nbsp;void&nbsp;cleanup(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)
@@ -323,6 +304,56 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="openLibraryManager-processing.app.ui.Editor-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>openLibraryManager</h4>
+<pre>public static&nbsp;void&nbsp;openLibraryManager(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</pre>
+<div class="block">Show the Library installer window.</div>
+</li>
+</ul>
+<a name="openToolManager-processing.app.ui.Editor-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>openToolManager</h4>
+<pre>public static&nbsp;void&nbsp;openToolManager(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</pre>
+<div class="block">Show the Tool installer window.</div>
+</li>
+</ul>
+<a name="openModeManager-processing.app.ui.Editor-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>openModeManager</h4>
+<pre>public static&nbsp;void&nbsp;openModeManager(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</pre>
+<div class="block">Show the Mode installer window.</div>
+</li>
+</ul>
+<a name="openExampleManager-processing.app.ui.Editor-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>openExampleManager</h4>
+<pre>public static&nbsp;void&nbsp;openExampleManager(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</pre>
+<div class="block">Show the Examples installer window.</div>
+</li>
+</ul>
+<a name="openUpdates-processing.app.ui.Editor-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>openUpdates</h4>
+<pre>public static&nbsp;void&nbsp;openUpdates(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</pre>
+<div class="block">Open the updates panel.</div>
 </li>
 </ul>
 </li>
@@ -352,7 +383,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../processing/app/contrib/ContributionListPanel.html" title="class in processing.app.contrib"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../processing/app/contrib/ContributionListing.ChangeListener.html" title="interface in processing.app.contrib"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../processing/app/contrib/ContributionManagerDialog.html" title="class in processing.app.contrib"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -378,13 +409,13 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>

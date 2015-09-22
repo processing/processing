@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -284,61 +284,65 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/syntax/TextAreaPainter.html#getPrintable--">getPrintable</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/syntax/TextAreaPainter.html#getScrollWidth--">getScrollWidth</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="../../../processing/app/syntax/SyntaxStyle.html" title="class in processing.app.syntax">SyntaxStyle</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/syntax/TextAreaPainter.html#getStyles--">getStyles</a></span>()</code>
 <div class="block">Returns the syntax styles used to paint colorized text.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/syntax/TextAreaPainter.html#invalidateLine-int-">invalidateLine</a></span>(int&nbsp;line)</code>
 <div class="block">Marks a line as needing a repaint.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/syntax/TextAreaPainter.html#isBlockCaretEnabled--">isBlockCaretEnabled</a></span>()</code>
 <div class="block">Returns true if the caret should be drawn as a block, false otherwise.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/syntax/TextAreaPainter.html#isBracketHighlightEnabled--">isBracketHighlightEnabled</a></span>()</code>
 <div class="block">Returns true if bracket highlighting is enabled, false otherwise.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>float</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/syntax/TextAreaPainter.html#nextTabStop-float-int-">nextTabStop</a></span>(float&nbsp;x,
            int&nbsp;tabOffset)</code>
 <div class="block">Returns next tab stop after a specified point.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/syntax/TextAreaPainter.html#paint-java.awt.Graphics-">paint</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Graphics.html?is-external=true" title="class or interface in java.awt">Graphics</a>&nbsp;gfx)</code>
 <div class="block">Repaints the text.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/syntax/TextAreaPainter.html#setCurrentLineIndex-int-">setCurrentLineIndex</a></span>(int&nbsp;what)</code>
 <div class="block">Accessor used by tools that want to hook in and grab the formatting.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/syntax/TextAreaPainter.html#setCurrentLineTokens-processing.app.syntax.Token-">setCurrentLineTokens</a></span>(<a href="../../../processing/app/syntax/Token.html" title="class in processing.app.syntax">Token</a>&nbsp;tokens)</code>
 <div class="block">Accessor used by tools that want to hook in and grab the formatting.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/syntax/TextAreaPainter.html#setLineHighlightEnabled-boolean-">setLineHighlightEnabled</a></span>(boolean&nbsp;lineHighlight)</code>
 <div class="block">Enables or disables current line highlighting.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/syntax/TextAreaPainter.html#updateAppearance--">updateAppearance</a></span>()</code>&nbsp;</td>
 </tr>
@@ -617,11 +621,20 @@ implements <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Ta
 <a name="getCurrentLine--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getCurrentLine</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/text/Segment.html?is-external=true" title="class or interface in javax.swing.text">Segment</a>&nbsp;getCurrentLine()</pre>
 <div class="block">Accessor used by tools that want to hook in and grab the formatting.</div>
+</li>
+</ul>
+<a name="getScrollWidth--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getScrollWidth</h4>
+<pre>public&nbsp;int&nbsp;getScrollWidth()</pre>
 </li>
 </ul>
 </li>

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -151,23 +151,17 @@ implements <a href="../../../processing/app/tools/Tool.html" title="interface in
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/tools/Archiver.html#buildZip-java.io.File-java.lang.String-java.util.zip.ZipOutputStream-">buildZip</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;dir,
-        <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;sofar,
-        <a href="http://docs.oracle.com/javase/7/docs/api/java/util/zip/ZipOutputStream.html?is-external=true" title="class or interface in java.util.zip">ZipOutputStream</a>&nbsp;zos)</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/tools/Archiver.html#fileSelected-java.io.File-">fileSelected</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;newbie)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/tools/Archiver.html#getMenuTitle--">getMenuTitle</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/tools/Archiver.html#init-processing.app.Editor-">init</a></span>(<a href="../../../processing/app/Editor.html" title="class in processing.app">Editor</a>&nbsp;editor)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/tools/Archiver.html#init-processing.app.Base-">init</a></span>(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/tools/Archiver.html#run--">run</a></span>()</code>&nbsp;</td>
 </tr>
@@ -223,16 +217,16 @@ implements <a href="../../../processing/app/tools/Tool.html" title="interface in
 </dl>
 </li>
 </ul>
-<a name="init-processing.app.Editor-">
+<a name="init-processing.app.Base-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>init</h4>
-<pre>public&nbsp;void&nbsp;init(<a href="../../../processing/app/Editor.html" title="class in processing.app">Editor</a>&nbsp;editor)</pre>
+<pre>public&nbsp;void&nbsp;init(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../processing/app/tools/Tool.html#init-processing.app.Editor-">init</a></code>&nbsp;in interface&nbsp;<code><a href="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a></code></dd>
+<dd><code><a href="../../../processing/app/tools/Tool.html#init-processing.app.Base-">init</a></code>&nbsp;in interface&nbsp;<code><a href="../../../processing/app/tools/Tool.html" title="interface in processing.app.tools">Tool</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -254,26 +248,10 @@ implements <a href="../../../processing/app/tools/Tool.html" title="interface in
 <a name="fileSelected-java.io.File-">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>fileSelected</h4>
 <pre>public&nbsp;void&nbsp;fileSelected(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;newbie)</pre>
-</li>
-</ul>
-<a name="buildZip-java.io.File-java.lang.String-java.util.zip.ZipOutputStream-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>buildZip</h4>
-<pre>public&nbsp;void&nbsp;buildZip(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;dir,
-                     <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;sofar,
-                     <a href="http://docs.oracle.com/javase/7/docs/api/java/util/zip/ZipOutputStream.html?is-external=true" title="class or interface in java.util.zip">ZipOutputStream</a>&nbsp;zos)
-              throws <a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/IOException.html?is-external=true" title="class or interface in java.io">IOException</a></code></dd>
-</dl>
 </li>
 </ul>
 </li>

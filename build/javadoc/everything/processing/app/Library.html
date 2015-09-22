@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":9,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":9,"i19":10,"i20":9,"i21":10};
+var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":9,"i18":10,"i19":9,"i20":9,"i21":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../processing/app/Language.html" title="class in processing.app"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../processing/app/Mode.html" title="class in processing.app"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../processing/app/Messages.html" title="class in processing.app"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?processing/app/Library.html" target="_top">Frames</a></li>
@@ -72,7 +72,7 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.processing.app.contrib.Contribution">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -125,6 +125,21 @@ extends <a href="../../processing/app/contrib/LocalContribution.html" title="cla
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested.classes.inherited.from.class.processing.app.contrib.Contribution">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from class&nbsp;<a href="../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a></h3>
+<code><a href="../../processing/app/contrib/Contribution.Filter.html" title="interface in processing.app.contrib">Contribution.Filter</a></code></li>
+</ul>
+</li>
+</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field.summary">
@@ -182,100 +197,99 @@ extends <a href="../../processing/app/contrib/LocalContribution.html" title="cla
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#addPackageList-java.util.HashMap-">addPackageList</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html?is-external=true" title="class or interface in java.util">HashMap</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;&gt;&nbsp;importToLibraryTable)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#addPackageList-java.util.Map-">addPackageList</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;&gt;&nbsp;importToLibraryTable)</code>
 <div class="block">Add the packages provided by this library to the master list that maps
  imports to specific libraries.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&gt;</code></td>
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#discover-java.io.File-">discover</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;folder)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#discover-java.io.File-java.util.ArrayList-">discover</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;folder,
-        <a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&gt;&nbsp;libraries)</code>&nbsp;</td>
-</tr>
-<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getAndroidExports--">getAndroidExports</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getAppletExports--">getAppletExports</a></span>()</code>
 <div class="block">Applet exports don't go by platform, since by their nature applets are
  meant to be cross-platform.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getApplicationExportList-int-int-">getApplicationExportList</a></span>(int&nbsp;platform,
-                        int&nbsp;bits)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getApplicationExportList-int-java.lang.String-">getApplicationExportList</a></span>(int&nbsp;platform,
+                        <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variant)</code>
 <div class="block">Returns the necessary exports for the specified platform.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getApplicationExports-int-int-">getApplicationExports</a></span>(int&nbsp;platform,
-                     int&nbsp;bits)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getApplicationExports-int-java.lang.String-">getApplicationExports</a></span>(int&nbsp;platform,
+                     <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variant)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getClassPath--">getClassPath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getExamplesFolder--">getExamplesFolder</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getGroup--">getGroup</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getJarPath--">getJarPath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getLibraryPath--">getLibraryPath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getNativePath--">getNativePath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getPath--">getPath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getReferenceIndexFile--">getReferenceIndexFile</a></span>()</code>
 <div class="block">Returns the object stored in the referenceFile field, which contains an
  instance of the file object representing the index file of the reference</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code><a href="../../processing/app/contrib/ContributionType.html" title="enum in processing.app.contrib">ContributionType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#getType--">getType</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#hasExamples--">hasExamples</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#hasMultipleArch-int-">hasMultipleArch</a></span>(int&nbsp;platform)</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#hasMultipleArch-int-java.util.ArrayList-">hasMultipleArch</a></span>(int&nbsp;platform,
-               <a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;&nbsp;libraries)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#hasMultipleArch-int-java.util.List-">hasMultipleArch</a></span>(int&nbsp;platform,
+               <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;&nbsp;libraries)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#hasReference--">hasReference</a></span>()</code>
 <div class="block">Tests whether the reference's index file indicated by referenceFile exists.</div>
 </td>
+</tr>
+<tr id="i19" class="rowColor">
+<td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#list-java.io.File-">list</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;folder)</code>&nbsp;</td>
 </tr>
 <tr id="i20" class="altColor">
 <td class="colFirst"><code>static <a href="../../processing/app/Library.html" title="class in processing.app">Library</a></code></td>
@@ -283,8 +297,8 @@ extends <a href="../../processing/app/contrib/LocalContribution.html" title="cla
 </tr>
 <tr id="i21" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#supportsArch-int-int-">supportsArch</a></span>(int&nbsp;platform,
-            int&nbsp;bits)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/app/Library.html#supportsArch-int-java.lang.String-">supportsArch</a></span>(int&nbsp;platform,
+            <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variant)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -292,14 +306,14 @@ extends <a href="../../processing/app/contrib/LocalContribution.html" title="cla
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;<a href="../../processing/app/contrib/LocalContribution.html" title="class in processing.app.contrib">LocalContribution</a></h3>
-<code><a href="../../processing/app/contrib/LocalContribution.html#getFolder--">getFolder</a>, <a href="../../processing/app/contrib/LocalContribution.html#getId--">getId</a>, <a href="../../processing/app/contrib/LocalContribution.html#getLatestVersion--">getLatestVersion</a>, <a href="../../processing/app/contrib/LocalContribution.html#getSpecifiedImports--">getSpecifiedImports</a>, <a href="../../processing/app/contrib/LocalContribution.html#initLoader-java.lang.String-">initLoader</a>, <a href="../../processing/app/contrib/LocalContribution.html#isInstalled--">isInstalled</a></code></li>
+<code><a href="../../processing/app/contrib/LocalContribution.html#getFolder--">getFolder</a>, <a href="../../processing/app/contrib/LocalContribution.html#getId--">getId</a>, <a href="../../processing/app/contrib/LocalContribution.html#getImports--">getImports</a>, <a href="../../processing/app/contrib/LocalContribution.html#getLatestVersion--">getLatestVersion</a>, <a href="../../processing/app/contrib/LocalContribution.html#initLoader-java.lang.String-">initLoader</a>, <a href="../../processing/app/contrib/LocalContribution.html#isInstalled--">isInstalled</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.Contribution">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;<a href="../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a></h3>
-<code><a href="../../processing/app/contrib/Contribution.html#getAuthorList--">getAuthorList</a>, <a href="../../processing/app/contrib/Contribution.html#getLastUpdated--">getLastUpdated</a>, <a href="../../processing/app/contrib/Contribution.html#getMaxRevision--">getMaxRevision</a>, <a href="../../processing/app/contrib/Contribution.html#getMinRevision--">getMinRevision</a>, <a href="../../processing/app/contrib/Contribution.html#getName--">getName</a>, <a href="../../processing/app/contrib/Contribution.html#getParagraph--">getParagraph</a>, <a href="../../processing/app/contrib/Contribution.html#getPrettyVersion--">getPrettyVersion</a>, <a href="../../processing/app/contrib/Contribution.html#getSentence--">getSentence</a>, <a href="../../processing/app/contrib/Contribution.html#getTypeName--">getTypeName</a>, <a href="../../processing/app/contrib/Contribution.html#getUrl--">getUrl</a>, <a href="../../processing/app/contrib/Contribution.html#getVersion--">getVersion</a>, <a href="../../processing/app/contrib/Contribution.html#isCompatible-int-">isCompatible</a></code></li>
+<code><a href="../../processing/app/contrib/Contribution.html#getAuthorList--">getAuthorList</a>, <a href="../../processing/app/contrib/Contribution.html#getLastUpdated--">getLastUpdated</a>, <a href="../../processing/app/contrib/Contribution.html#getMaxRevision--">getMaxRevision</a>, <a href="../../processing/app/contrib/Contribution.html#getMinRevision--">getMinRevision</a>, <a href="../../processing/app/contrib/Contribution.html#getName--">getName</a>, <a href="../../processing/app/contrib/Contribution.html#getParagraph--">getParagraph</a>, <a href="../../processing/app/contrib/Contribution.html#getPrettyVersion--">getPrettyVersion</a>, <a href="../../processing/app/contrib/Contribution.html#getSentence--">getSentence</a>, <a href="../../processing/app/contrib/Contribution.html#getTypeName--">getTypeName</a>, <a href="../../processing/app/contrib/Contribution.html#getUrl--">getUrl</a>, <a href="../../processing/app/contrib/Contribution.html#getVersion--">getVersion</a>, <a href="../../processing/app/contrib/Contribution.html#isCompatible-int-">isCompatible</a>, <a href="../../processing/app/contrib/Contribution.html#isFoundation--">isFoundation</a>, <a href="../../processing/app/contrib/Contribution.html#loadProperties-java.io.File-">loadProperties</a>, <a href="../../processing/app/contrib/Contribution.html#loadProperties-java.io.File-processing.app.contrib.ContributionType-">loadProperties</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.Object">
@@ -369,13 +383,13 @@ extends <a href="../../processing/app/contrib/LocalContribution.html" title="cla
 <pre>public static&nbsp;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&nbsp;load(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;folder)</pre>
 </li>
 </ul>
-<a name="addPackageList-java.util.HashMap-">
+<a name="addPackageList-java.util.Map-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>addPackageList</h4>
-<pre>public&nbsp;void&nbsp;addPackageList(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html?is-external=true" title="class or interface in java.util">HashMap</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;&gt;&nbsp;importToLibraryTable)</pre>
+<pre>public&nbsp;void&nbsp;addPackageList(<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;&gt;&nbsp;importToLibraryTable)</pre>
 <div class="block">Add the packages provided by this library to the master list that maps
  imports to specific libraries.</div>
 <dl>
@@ -469,24 +483,24 @@ extends <a href="../../processing/app/contrib/LocalContribution.html" title="cla
  obscure a case that we're not interested in supporting it.</div>
 </li>
 </ul>
-<a name="getApplicationExports-int-int-">
+<a name="getApplicationExports-int-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getApplicationExports</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>[]&nbsp;getApplicationExports(int&nbsp;platform,
-                                    int&nbsp;bits)</pre>
+                                    <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variant)</pre>
 </li>
 </ul>
-<a name="getApplicationExportList-int-int-">
+<a name="getApplicationExportList-int-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getApplicationExportList</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>[]&nbsp;getApplicationExportList(int&nbsp;platform,
-                                         int&nbsp;bits)</pre>
+                                         <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variant)</pre>
 <div class="block">Returns the necessary exports for the specified platform.
  If no 32 or 64-bit version of the exports exists, it returns the version
  that doesn't specify bit depth.</div>
@@ -510,24 +524,24 @@ extends <a href="../../processing/app/contrib/LocalContribution.html" title="cla
 <pre>public&nbsp;boolean&nbsp;hasMultipleArch(int&nbsp;platform)</pre>
 </li>
 </ul>
-<a name="supportsArch-int-int-">
+<a name="supportsArch-int-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>supportsArch</h4>
 <pre>public&nbsp;boolean&nbsp;supportsArch(int&nbsp;platform,
-                            int&nbsp;bits)</pre>
+                            <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;variant)</pre>
 </li>
 </ul>
-<a name="hasMultipleArch-int-java.util.ArrayList-">
+<a name="hasMultipleArch-int-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>hasMultipleArch</h4>
 <pre>public static&nbsp;boolean&nbsp;hasMultipleArch(int&nbsp;platform,
-                                      <a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;&nbsp;libraries)</pre>
+                                      <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;&nbsp;libraries)</pre>
 </li>
 </ul>
 <a name="discover-java.io.File-">
@@ -536,17 +550,16 @@ extends <a href="../../processing/app/contrib/LocalContribution.html" title="cla
 <ul class="blockList">
 <li class="blockList">
 <h4>discover</h4>
-<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&gt;&nbsp;discover(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;folder)</pre>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&gt;&nbsp;discover(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;folder)</pre>
 </li>
 </ul>
-<a name="discover-java.io.File-java.util.ArrayList-">
+<a name="list-java.io.File-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>discover</h4>
-<pre>public static&nbsp;void&nbsp;discover(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;folder,
-                            <a href="http://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&gt;&nbsp;libraries)</pre>
+<h4>list</h4>
+<pre>public static&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../processing/app/Library.html" title="class in processing.app">Library</a>&gt;&nbsp;list(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;folder)</pre>
 </li>
 </ul>
 <a name="getType--">
@@ -620,7 +633,7 @@ extends <a href="../../processing/app/contrib/LocalContribution.html" title="cla
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../processing/app/Language.html" title="class in processing.app"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../processing/app/Mode.html" title="class in processing.app"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../processing/app/Messages.html" title="class in processing.app"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?processing/app/Library.html" target="_top">Frames</a></li>
@@ -644,7 +657,7 @@ extends <a href="../../processing/app/contrib/LocalContribution.html" title="cla
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.processing.app.contrib.Contribution">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>

@@ -72,7 +72,7 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested.classes.inherited.from.class.processing.app.Platform">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.processing.app.platform.DefaultPlatform">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -98,7 +98,7 @@ var activeTableTab = "activeTableTab";
 <li><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../processing/app/Platform.html" title="class in processing.app">Platform</a></li>
+<li><a href="../../../processing/app/platform/DefaultPlatform.html" title="class in processing.app.platform">DefaultPlatform</a></li>
 <li>
 <ul class="inheritance">
 <li>MacPlatform</li>
@@ -113,7 +113,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">MacPlatform</span>
-extends <a href="../../../processing/app/Platform.html" title="class in processing.app">Platform</a></pre>
+extends <a href="../../../processing/app/platform/DefaultPlatform.html" title="class in processing.app.platform">DefaultPlatform</a></pre>
 <div class="block">Platform handler for Mac OS X.</div>
 </li>
 </ul>
@@ -128,11 +128,11 @@ extends <a href="../../../processing/app/Platform.html" title="class in processi
 </a>
 <h3>Nested Class Summary</h3>
 <ul class="blockList">
-<li class="blockList"><a name="nested.classes.inherited.from.class.processing.app.Platform">
+<li class="blockList"><a name="nested.classes.inherited.from.class.processing.app.platform.DefaultPlatform">
 <!--   -->
 </a>
-<h3>Nested classes/interfaces inherited from class&nbsp;<a href="../../../processing/app/Platform.html" title="class in processing.app">Platform</a></h3>
-<code><a href="../../../processing/app/Platform.CLibrary.html" title="interface in processing.app">Platform.CLibrary</a></code></li>
+<h3>Nested classes/interfaces inherited from class&nbsp;<a href="../../../processing/app/platform/DefaultPlatform.html" title="class in processing.app.platform">DefaultPlatform</a></h3>
+<code><a href="../../../processing/app/platform/DefaultPlatform.CLibrary.html" title="interface in processing.app.platform">DefaultPlatform.CLibrary</a></code></li>
 </ul>
 </li>
 </ul>
@@ -177,7 +177,7 @@ extends <a href="../../../processing/app/Platform.html" title="class in processi
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/platform/MacPlatform.html#init-processing.app.Base-">init</a></span>(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/platform/MacPlatform.html#initBase-processing.app.Base-">initBase</a></span>(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -187,11 +187,11 @@ extends <a href="../../../processing/app/Platform.html" title="class in processi
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.Platform">
+<li class="blockList"><a name="methods.inherited.from.class.DefaultPlatform">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;<a href="../../../processing/app/Platform.html" title="class in processing.app">Platform</a></h3>
-<code><a href="../../../processing/app/Platform.html#deleteFile-java.io.File-">deleteFile</a>, <a href="../../../processing/app/Platform.html#getenv-java.lang.String-">getenv</a>, <a href="../../../processing/app/Platform.html#openFolder-java.io.File-">openFolder</a>, <a href="../../../processing/app/Platform.html#openFolderAvailable--">openFolderAvailable</a>, <a href="../../../processing/app/Platform.html#openURL-java.lang.String-">openURL</a>, <a href="../../../processing/app/Platform.html#setenv-java.lang.String-java.lang.String-">setenv</a>, <a href="../../../processing/app/Platform.html#setLookAndFeel--">setLookAndFeel</a>, <a href="../../../processing/app/Platform.html#unsetenv-java.lang.String-">unsetenv</a></code></li>
+<h3>Methods inherited from class&nbsp;<a href="../../../processing/app/platform/DefaultPlatform.html" title="class in processing.app.platform">DefaultPlatform</a></h3>
+<code><a href="../../../processing/app/platform/DefaultPlatform.html#getenv-java.lang.String-">getenv</a>, <a href="../../../processing/app/platform/DefaultPlatform.html#openFolder-java.io.File-">openFolder</a>, <a href="../../../processing/app/platform/DefaultPlatform.html#openFolderAvailable--">openFolderAvailable</a>, <a href="../../../processing/app/platform/DefaultPlatform.html#openURL-java.lang.String-">openURL</a>, <a href="../../../processing/app/platform/DefaultPlatform.html#setenv-java.lang.String-java.lang.String-">setenv</a>, <a href="../../../processing/app/platform/DefaultPlatform.html#setLookAndFeel--">setLookAndFeel</a>, <a href="../../../processing/app/platform/DefaultPlatform.html#unsetenv-java.lang.String-">unsetenv</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.Object">
@@ -238,28 +238,28 @@ extends <a href="../../../processing/app/Platform.html" title="class in processi
 <li class="blockList">
 <h4>saveLanguage</h4>
 <pre>public&nbsp;void&nbsp;saveLanguage(<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;language)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../processing/app/Platform.html#saveLanguage-java.lang.String-">Platform</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../processing/app/platform/DefaultPlatform.html#saveLanguage-java.lang.String-">DefaultPlatform</a></code></span></div>
 <div class="block">Handle any platform-specific languages saving. This is necessary on OS X
  because of how bundles are handled, but perhaps your platform would like
  to Think Different too?</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../../processing/app/Platform.html#saveLanguage-java.lang.String-">saveLanguage</a></code>&nbsp;in class&nbsp;<code><a href="../../../processing/app/Platform.html" title="class in processing.app">Platform</a></code></dd>
+<dd><code><a href="../../../processing/app/platform/DefaultPlatform.html#saveLanguage-java.lang.String-">saveLanguage</a></code>&nbsp;in class&nbsp;<code><a href="../../../processing/app/platform/DefaultPlatform.html" title="class in processing.app.platform">DefaultPlatform</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>language</code> - 2-digit lowercase ISO language code</dd>
 </dl>
 </li>
 </ul>
-<a name="init-processing.app.Base-">
+<a name="initBase-processing.app.Base-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>init</h4>
-<pre>public&nbsp;void&nbsp;init(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</pre>
+<h4>initBase</h4>
+<pre>public&nbsp;void&nbsp;initBase(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../../processing/app/Platform.html#init-processing.app.Base-">init</a></code>&nbsp;in class&nbsp;<code><a href="../../../processing/app/Platform.html" title="class in processing.app">Platform</a></code></dd>
+<dd><code><a href="../../../processing/app/platform/DefaultPlatform.html#initBase-processing.app.Base-">initBase</a></code>&nbsp;in class&nbsp;<code><a href="../../../processing/app/platform/DefaultPlatform.html" title="class in processing.app.platform">DefaultPlatform</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -271,12 +271,12 @@ extends <a href="../../../processing/app/Platform.html" title="class in processi
 <h4>getSettingsFolder</h4>
 <pre>public&nbsp;<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;getSettingsFolder()
                        throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../processing/app/Platform.html#getSettingsFolder--">Platform</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../processing/app/platform/DefaultPlatform.html#getSettingsFolder--">DefaultPlatform</a></code></span></div>
 <div class="block">This function should throw an exception or return a value.
  Do not return null.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../../processing/app/Platform.html#getSettingsFolder--">getSettingsFolder</a></code>&nbsp;in class&nbsp;<code><a href="../../../processing/app/Platform.html" title="class in processing.app">Platform</a></code></dd>
+<dd><code><a href="../../../processing/app/platform/DefaultPlatform.html#getSettingsFolder--">getSettingsFolder</a></code>&nbsp;in class&nbsp;<code><a href="../../../processing/app/platform/DefaultPlatform.html" title="class in processing.app.platform">DefaultPlatform</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></code></dd>
 </dl>
@@ -292,7 +292,7 @@ extends <a href="../../../processing/app/Platform.html" title="class in processi
                                 throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../../processing/app/Platform.html#getDefaultSketchbookFolder--">getDefaultSketchbookFolder</a></code>&nbsp;in class&nbsp;<code><a href="../../../processing/app/Platform.html" title="class in processing.app">Platform</a></code></dd>
+<dd><code><a href="../../../processing/app/platform/DefaultPlatform.html#getDefaultSketchbookFolder--">getDefaultSketchbookFolder</a></code>&nbsp;in class&nbsp;<code><a href="../../../processing/app/platform/DefaultPlatform.html" title="class in processing.app.platform">DefaultPlatform</a></code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>if not overridden, a folder named "sketchbook" in user.home.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -352,7 +352,7 @@ extends <a href="../../../processing/app/Platform.html" title="class in processi
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested.classes.inherited.from.class.processing.app.Platform">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.processing.app.platform.DefaultPlatform">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
