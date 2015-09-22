@@ -51,7 +51,7 @@ public class ContributionTab {
   Contribution.Filter filter;
   JComboBox<String> categoryChooser;
   JScrollPane scrollPane;
-  ContributionListPanel contributionListPanel;
+  ListPanel contributionListPanel;
   StatusPanel statusPanel;
   FilterField filterField;
   JButton restartButton;
@@ -99,7 +99,7 @@ public class ContributionTab {
 
     contribListing = ContributionListing.getInstance();
       statusPanel = new StatusPanel(650,this);
-      contributionListPanel = new ContributionListPanel(this, filter);
+      contributionListPanel = new ListPanel(this, filter);
     contribListing.addContributionListener(contributionListPanel);
   }
 

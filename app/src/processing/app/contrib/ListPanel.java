@@ -42,7 +42,7 @@ import processing.app.ui.Toolkit;
 // necessary in the first place, however; seems like odd behavior.
 // It also allows the description text in the panels to wrap properly.
 
-public class ContributionListPanel extends JPanel
+public class ListPanel extends JPanel
 implements Scrollable, ContributionListing.ChangeListener {
   ContributionTab contributionTab;
   TreeMap<Contribution, ContributionPanel> panelByContribution;
@@ -59,7 +59,7 @@ implements Scrollable, ContributionListing.ChangeListener {
   static Icon incompatibleIcon;
 
 
-  public ContributionListPanel() {
+  public ListPanel() {
     if (upToDateIcon == null) {
       upToDateIcon = Toolkit.getLibIconX("manager/up-to-date");
       updateAvailableIcon = Toolkit.getLibIconX("manager/update-available");
@@ -68,7 +68,7 @@ implements Scrollable, ContributionListing.ChangeListener {
   }
 
 
-  public ContributionListPanel(final ContributionTab contributionTab,
+  public ListPanel(final ContributionTab contributionTab,
                                Contribution.Filter filter) {
     this.contributionTab = contributionTab;
     this.filter = filter;
@@ -434,7 +434,7 @@ implements Scrollable, ContributionListing.ChangeListener {
         public void run() {
           if (!panelByContribution.containsKey(contribution)) {
             ContributionPanel newPanel =
-              new ContributionPanel(ContributionListPanel.this);
+              new ContributionPanel(ListPanel.this);
             synchronized (panelByContribution) {
               panelByContribution.put(contribution, newPanel);
             }

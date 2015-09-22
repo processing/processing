@@ -78,7 +78,7 @@ class ContributionPanel extends JPanel {
   static public final String INCOMPATIBILITY_BLUR = "This contribution is not compatible with "
     + "the current revision of Processing";
 
-  private final ContributionListPanel listPanel;
+  private final ListPanel listPanel;
   private final ContributionListing contribListing = ContributionListing.getInstance();
 
   static final int BUTTON_WIDTH = 100;
@@ -117,7 +117,7 @@ class ContributionPanel extends JPanel {
   String description;
 
 
-  ContributionPanel(ContributionListPanel contributionListPanel) {
+  ContributionPanel(ListPanel contributionListPanel) {
     if (foundationIcon == null) {
       foundationIcon = Toolkit.getLibIconX("icons/foundation", 32);
     }

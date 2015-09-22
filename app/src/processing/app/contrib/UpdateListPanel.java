@@ -25,9 +25,9 @@ import processing.app.Base;
 import processing.app.ui.Toolkit;
 
 
-public class UpdateContributionListPanel extends ContributionListPanel {
+public class UpdateListPanel extends ListPanel {
 
-  public UpdateContributionListPanel(ContributionTab contributionTab,
+  public UpdateListPanel(ContributionTab contributionTab,
                                      Contribution.Filter filter) {
     this.contributionTab = contributionTab;
     this.filter = filter;
@@ -222,7 +222,7 @@ public class UpdateContributionListPanel extends ContributionListPanel {
           ContributionPanel newPanel =
             contributionTab.contributionManagerDialog.getTab(contribution.getType()).contributionListPanel.panelByContribution.get(contribution);
           if (newPanel == null) {
-            newPanel = new ContributionPanel(UpdateContributionListPanel.this);
+            newPanel = new ContributionPanel(UpdateListPanel.this);
           }
           if (!panelByContribution.containsKey(contribution)) {
             synchronized (panelByContribution) {

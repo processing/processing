@@ -26,7 +26,7 @@ public class UpdateContributionTab extends ContributionTab {
         return false;
       }
     };
-    contributionListPanel = new UpdateContributionListPanel(this, filter);
+    contributionListPanel = new UpdateListPanel(this, filter);
     statusPanel = new UpdateStatusPanel(this, 650, this);
     this.contributionType = type;
     this.contributionManagerDialog = contributionManagerDialog;
