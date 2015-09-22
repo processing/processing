@@ -25,6 +25,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
@@ -44,8 +45,8 @@ public class ContributionManagerDialog {
   static final int TAB_HEIGHT = 34;
   static final int AUTHOR_WIDTH = 240;
   static final int STATUS_WIDTH = 66;
-  static final int FILTER_WIDTH = 180;
-  static final int ICON_WIDTH = 50;
+//  static final int ICON_WIDTH = 50;
+  static final int BORDER = 8;
 
   static final String title = "Manager";
 
@@ -62,8 +63,6 @@ public class ContributionManagerDialog {
   ContributionTab examplesTab;
   UpdateContributionTab updatesTab;
   JLabel numberLabel;
-
-//  ContributionListing contributionListing = ContributionListing.getInstance();
 
   private JLabel[] tabLabels;
   private JPanel updateTabPanel;
@@ -180,57 +179,19 @@ public class ContributionManagerDialog {
       }
     });
 
-
-//    tabbedPane.setSize(450, 400);
-    setLayout();
-
-    /*
-    restartButton = new JButton(Language.text("contrib.restart"));
-    restartButton.setVisible(false);
-    restartButton.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-
-        Iterator<Editor> iter = editor.getBase().getEditors().iterator();
-        while (iter.hasNext()) {
-          Editor ed = iter.next();
-          if (ed.getSketch().isModified()) {
-            int option = Messages.showYesNoQuestion(editor, title,
-                                                    Language.text("contrib.unsaved_changes"),
-                                                    Language.text("contrib.unsaved_changes.prompt"));
-
-            if (option == JOptionPane.NO_OPTION)
-              return;
-            else
-              break;
-          }
-        }
-
-        // Thanks to http://stackoverflow.com/a/4160543
-        StringBuilder cmd = new StringBuilder();
-        cmd.append(System.getProperty("java.home") + File.separator + "bin"
-          + File.separator + "java ");
-        for (String jvmArg : ManagementFactory.getRuntimeMXBean()
-          .getInputArguments()) {
-          cmd.append(jvmArg + " ");
-        }
-        cmd.append("-cp ")
-          .append(ManagementFactory.getRuntimeMXBean().getClassPath())
-          .append(" ");
-        cmd.append(Base.class.getName());
-
-        try {
-          Runtime.getRuntime().exec(cmd.toString());
-          System.exit(0);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-
-      }
-
-    });
-    */
+//    GroupLayout layout = new GroupLayout(dialog.getContentPane());
+//    dialog.getContentPane().setLayout(layout);
+    dialog.setResizable(true);
+//    layout.setAutoCreateContainerGaps(true);
+//    layout.setHorizontalGroup(layout.createParallelGroup().addComponent(tabbedPane));
+//    layout.setVerticalGroup(layout.createParallelGroup().addComponent(tabbedPane));
+//    layout.setHonorsVisibility(tabbedPane, true);
+    tabbedPane.setBorder(new EmptyBorder(BORDER, BORDER, BORDER, BORDER));
+    dialog.getContentPane().add(tabbedPane);
+    //TODO set color here
+    dialog.getContentPane().setBackground(new Color(0x132638));
+    dialog.validate();
+    dialog.repaint();
 
     Toolkit.setIcon(dialog);
     registerDisposeListeners();
@@ -358,13 +319,6 @@ public class ContributionManagerDialog {
     protected LayoutManager createLayoutManager() {
       return new BasicTabbedPaneUI.TabbedPaneLayout() {
 
-        /*
-        @Override
-        public void addLayoutComponent(String name, Component comp) {
-          super.addLayoutComponent(name, comp);
-        }
-        */
-
         @Override
         protected void calculateTabRects(int tabPlacement, int tabCount) {
           super.calculateTabRects(tabPlacement, tabCount);
@@ -380,21 +334,6 @@ public class ContributionManagerDialog {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  private void setLayout() {
-    GroupLayout layout = new GroupLayout(dialog.getContentPane());
-    dialog.getContentPane().setLayout(layout);
-    dialog.setResizable(true);
-    layout.setAutoCreateContainerGaps(true);
-    layout.setHorizontalGroup(layout.createParallelGroup().addComponent(tabbedPane));
-    layout.setVerticalGroup(layout.createParallelGroup().addComponent(tabbedPane));
-    layout.setHonorsVisibility(tabbedPane, true);
-    //TODO set color here
-    dialog.getContentPane().setBackground(new Color(0x132638));
-    dialog.validate();
-    dialog.repaint();
-  }
 
 
   /**

@@ -150,3 +150,13 @@ errors.row.fgcolor = #484848
 errors.row.bgcolor = #FFFFFF
 errors.selection.fgcolor = #242424
 errors.selection.bgcolor = #E5E5E5
+
+manager.tab.selected.color = #e0fffd
+manager.tab.unselected.color = #2d4251
+manager.tab.text.font = processing.sans,bold,14
+manager.tab.text.selected.color = #000000
+manager.tab.text.unselected.color = #ffffff
+# orange circle for updates
+manager.tab.update.color = #ed7f15
+manager.tab.gradient.top = #132638
+manager.tab.gradient.bottom = #122535

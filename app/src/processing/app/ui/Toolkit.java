@@ -992,18 +992,18 @@ public class Toolkit {
   }
 
 
-  /** Do not use or rely upon presence of this method: not approved as final API. */
-  static public void debugOpacity(Component comp) {
-    //Component parent = comp.getParent();
-    while (comp != null) {
-      //EditorConsole.systemOut.println("parent is " + parent + " " + parent.isOpaque());
-      //EditorConsole.systemOut.println(parent.getClass().getName() + " " + (parent.isOpaque() ? "OPAQUE" : ""));
-      System.out.println(comp.getClass().getName() + " " + (comp.isOpaque() ? "OPAQUE" : ""));
-      comp = comp.getParent();
-    }
-    //EditorConsole.systemOut.println();
-    System.out.println();
-  }
+//  /** Do not use or rely upon presence of this method: not approved as final API. */
+//  static public void debugOpacity(Component comp) {
+//    //Component parent = comp.getParent();
+//    while (comp != null) {
+//      //EditorConsole.systemOut.println("parent is " + parent + " " + parent.isOpaque());
+//      //EditorConsole.systemOut.println(parent.getClass().getName() + " " + (parent.isOpaque() ? "OPAQUE" : ""));
+//      System.out.println(comp.getClass().getName() + " " + (comp.isOpaque() ? "OPAQUE" : ""));
+//      comp = comp.getParent();
+//    }
+//    //EditorConsole.systemOut.println();
+//    System.out.println();
+//  }
 
 
   static public int getMenuItemIndex(JMenu menu, JMenuItem item) {

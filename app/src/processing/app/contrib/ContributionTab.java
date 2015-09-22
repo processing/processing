@@ -40,6 +40,7 @@ import processing.app.ui.Toolkit;
 
 public class ContributionTab extends JPanel {
   static final String ANY_CATEGORY = Language.text("contrib.all");
+  static final int FILTER_WIDTH = 180;
 
   ContributionType contribType;
   ContributionManagerDialog contribDialog;
@@ -145,9 +146,7 @@ public class ContributionTab extends JPanel {
                   .createSequentialGroup()
                   .addGap(ContributionManagerDialog.STATUS_WIDTH)
                   .addComponent(filterField,
-                                ContributionManagerDialog.FILTER_WIDTH,
-                                ContributionManagerDialog.FILTER_WIDTH,
-                                ContributionManagerDialog.FILTER_WIDTH)
+                                FILTER_WIDTH, FILTER_WIDTH, FILTER_WIDTH)
 //                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
       .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                        GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
@@ -229,6 +228,7 @@ public class ContributionTab extends JPanel {
     StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
     doc.setParagraphAttributes(0, doc.getLength(), center, false);
 
+    // TODO https://github.com/processing/processing/issues/3706
     closeButton = new JButton("X");
     closeButton.setContentAreaFilled(false);
     closeButton.addActionListener(new ActionListener() {

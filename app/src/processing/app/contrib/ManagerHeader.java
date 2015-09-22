@@ -64,6 +64,9 @@ public class ManagerHeader extends Box {
   static final int ICON_TOP = 7;
   static final int ICON_MARGIN = 7;
 
+  static final int UNSELECTED = 0;
+  static final int SELECTED = 1;
+
   Color[] textColor = new Color[2];
   Color[] tabColor = new Color[2];
 
@@ -73,12 +76,6 @@ public class ManagerHeader extends Box {
 
   Font font;
   int fontAscent;
-
-  JMenu menu;
-  JPopupMenu popup;
-
-  static final int UNSELECTED = 0;
-  static final int SELECTED = 1;
 
   Image offscreen;
   int sizeW, sizeH;
@@ -95,14 +92,25 @@ public class ManagerHeader extends Box {
     super(BoxLayout.Y_AXIS);
     this.editor = eddie;
 
-    updateMode();
+    // A mode shouldn't actually override these, they're coming from theme.txt.
+    // But use the default (Java) mode settings just in case.
+    Mode mode = editor.getBase().getDefaultMode();
+
+    textColor[SELECTED] = mode.getColor("manager.tab.text.selected.color");
+    textColor[UNSELECTED] = mode.getColor("manager.tab.text.unselected.color");
+    font = mode.getFont("manager.tab.text.font");
+
+    tabColor[SELECTED] = mode.getColor("manager.tab.selected.color");
+    tabColor[UNSELECTED] = mode.getColor("manager.tab.unselected.color");
+
+    gradient = mode.makeGradient("manager.tab", 400, HIGH);
+
+    controller = new Controller();
+    add(controller);
 
     cardLayout = new CardLayout();
     cardPanel = new JPanel(cardLayout);
     add(cardPanel);
-
-    controller = new Controller();
-    add(controller);
   }
 
 
@@ -146,22 +154,6 @@ public class ManagerHeader extends Box {
         repaint();
       }
     }
-  }
-
-
-  public void updateMode() {
-    Mode mode = editor.getMode();
-
-    textColor[SELECTED] = mode.getColor("footer.text.selected.color");
-    textColor[UNSELECTED] = mode.getColor("footer.text.unselected.color");
-    font = mode.getFont("footer.text.font");
-
-    tabColor[SELECTED] = mode.getColor("footer.tab.selected.color");
-    tabColor[UNSELECTED] = mode.getColor("footer.tab.unselected.color");
-
-//    errorColor = mode.getColor("status.error.bgcolor");
-
-    gradient = mode.makeGradient("footer", 400, HIGH);
   }
 
 
@@ -380,9 +372,6 @@ public class ManagerHeader extends Box {
     void draw(Graphics g) {
       int state = isCurrent() ? SELECTED : UNSELECTED;
       g.setColor(tabColor[state]);
-//      if (notification) {
-//        g.setColor(errorColor);
-//      }
 
       Graphics2D g2 = (Graphics2D) g;
       g2.fill(Toolkit.createRoundRect(left, TAB_TOP, right, TAB_BOTTOM, 0, 0,

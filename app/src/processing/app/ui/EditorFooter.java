@@ -43,6 +43,7 @@ import processing.app.Sketch;
 
 /**
  * Console/error/whatever tabs at the bottom of the editor window.
+ * This shares a lot of code with EditorHeader and the Manager tabs as well.
  */
 public class EditorFooter extends Box {
   // height of this tab bar
@@ -62,9 +63,11 @@ public class EditorFooter extends Box {
   static final int ICON_TOP = 7;
   static final int ICON_MARGIN = 7;
 
+  static final int UNSELECTED = 0;
+  static final int SELECTED = 1;
+
   Color[] textColor = new Color[2];
   Color[] tabColor = new Color[2];
-//  Color errorColor;
 
   Editor editor;
 
@@ -72,12 +75,6 @@ public class EditorFooter extends Box {
 
   Font font;
   int fontAscent;
-
-  JMenu menu;
-  JPopupMenu popup;
-
-  static final int UNSELECTED = 0;
-  static final int SELECTED = 1;
 
   Image offscreen;
   int sizeW, sizeH;
