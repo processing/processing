@@ -646,6 +646,8 @@ noSmooth	FUNCTION1	noSmooth_
 noStroke	FUNCTION1	noStroke_
 noTint	FUNCTION1	noTint_
 ortho	FUNCTION1	ortho_
+parseJSONArray	FUNCTION1	parseJSONArray_
+parseJSONObject	FUNCTION1	parseJSONObject_
 parseXML	FUNCTION1	parseXML_
 perspective	FUNCTION1	perspective_
 PFont	KEYWORD5	PFont
