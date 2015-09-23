@@ -1,10 +1,10 @@
 PROCESSING 3.0b7 (REV 0245) - 22 September 2015
 
-It's 7:45pm and Jakub and Ben are holed up at Fathom's studio in Boston.
-Ben is wishing he was Jakub's age, as his back, wrists, and neck all 
-feel like hell after several days/weeks/months of coding. A bleary-eyed
-Jakub emerges from deep inside the error checker and completion code to 
-remove his headphones and grunt something about, "I think it's working."
+It's 8:08pm and Jakub and Ben are still holed up at Fathom's studio in Boston.
+Ben is wishing he was Jakub's age, as his wrists, neck, and back all feel 
+like a bag of broken pretzels after several hours/days/weeks/months of coding. 
+A bleary-eyed Jakub emerges from deep inside the error checker and completion 
+code, removes his headphones and grunts, "I think it's working."
 
 
 [ changes and additions ] 
@@ -130,6 +130,37 @@ remove his headphones and grunt something about, "I think it's working."
 + "Update All" button appears to do nothing in library manager
   https://github.com/processing/processing/issues/3837
   https://github.com/processing/processing/pull/3842
+
+
+[ we still care about graphics, too ]
+
++ FX2D display is inverted in 3.0b6
+  https://github.com/processing/processing/issues/3795
+
++ surface.setLocation(x,y) not working with the default renderer
+  https://github.com/processing/processing/issues/3821
+
++ Make the PApplet regex cache LRU
+  https://github.com/processing/processing/pull/3815
+
++ Minor OpenGL improvements
+  https://github.com/processing/processing/pull/3849
+
++ Cannot re-enable stroke or fill of a PShape with P2D
+  https://github.com/processing/processing/issues/3808
+
++ setResizable() with OpenGL broke in 3.0b6
+  https://github.com/processing/processing/issues/3825
+  https://github.com/processing/processing/commit/42c0150da0f400637de916db1f94a687a7bc4288
+
++ surface.setLocation() with OpenGL causing a freeze on Windows 
+  https://github.com/processing/processing/commit/4c0f9234c0a48f62363233cafc9c9951ee351d3e
+
++ selectInput/Output() is behind the drawing window (Windows)
+  https://github.com/processing/processing/issues/3775
+
++ MouseWheel count wrong (backwards) in P2D and P3D
+  https://github.com/processing/processing/issues/3840
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
