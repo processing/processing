@@ -1,6 +1,6 @@
 PROCESSING 3.0b7 (REV 0245) - 22 September 2015
 
-It's 8:08pm and Jakub and Ben are still holed up at Fathom's studio in Boston.
+It's 8:57pm and Jakub and Ben are still holed up at Fathom's studio in Boston.
 Ben is wishing he was Jakub's age, as his wrists, neck, and back all feel 
 like a bag of broken pretzels after several hours/days/weeks/months of coding. 
 A bleary-eyed Jakub emerges from deep inside the error checker and completion 
@@ -13,44 +13,16 @@ code, removes his headphones and grunts, "I think it's working."
   https://github.com/processing/processing/wiki/Tool-Basics
 
 
-[ bug fixes and improvements ]
-
-+ Code editor wrongly detects errors for libraries in code folder
-  https://github.com/processing/processing/issues/3732
-
-+ SVG not highlighting as a keyword
-  https://github.com/processing/processing/issues/3752
-
-+ Implement retina (2x) versions of all Contribution Manager icons
-  https://github.com/processing/processing/issues/3478
-
-+ Show hover text when the mouse is over the 'debug' button
-
-+ Update rollover label for buttons when pressing shift or alt
-
-+ Replace the coffee cup icon for the Welcome window
-
-+ ctrl-space first inserts space, then deletes it, with completion
-  https://github.com/processing/processing/issues/3847
-
-+ Fix the bold text in the welcome window to not use fake bold
-
-+ UnsatisfiedLinkError on startup "Access is denied" on Windows 10
-  https://github.com/processing/processing/issues/3800
-
-+ JNA errors on startup when run from an account w/ non-ASCII characters
-  https://github.com/processing/processing/issues/3624
-
-
 [ error checking and auto-completion fixes ] 
+
++ Huge rewrite of auto-complete and error checking code
+  https://github.com/processing/processing/issues/3812
+  https://github.com/processing/processing/pull/3845
+  https://github.com/processing/processing/pull/3856
 
 + Make preprocessor scope-aware
   https://github.com/processing/processing/issues/3799
   https://github.com/processing/processing/pull/3810
-
-+ Auto-complete broken or stuttering on OS X
-  https://github.com/processing/processing/issues/3812
-  https://github.com/processing/processing/pull/3845
 
 + Red error underline is sometimes at wrong location
   https://github.com/processing/processing/issues/3759
@@ -59,6 +31,9 @@ code, removes his headphones and grunts, "I think it's working."
 + Using "new color()" instead of "color()" results in "color type detected" 
   https://github.com/processing/processing/issues/3739
   https://github.com/processing/processing/pull/3850
+
++ Code editor wrongly detects errors for libraries in code folder
+  https://github.com/processing/processing/issues/3732
 
 
 [ watcher bug fixes ] 
@@ -76,7 +51,7 @@ code, removes his headphones and grunts, "I think it's working."
 + Cleaning up the logic in the watcher
 
 
-[ manager fixes ] 
+[ contribution manager fixes ] 
 
 + Contributions Manager UI design
   https://github.com/processing/processing/issues/3482
@@ -130,6 +105,32 @@ code, removes his headphones and grunts, "I think it's working."
 + "Update All" button appears to do nothing in library manager
   https://github.com/processing/processing/issues/3837
   https://github.com/processing/processing/pull/3842
+
+
+[ miscellaneous bug fixes ]
+
++ JNA errors on startup when run from an account w/ non-ASCII characters
+  https://github.com/processing/processing/issues/3624
+
++ UnsatisfiedLinkError on startup "Access is denied" on Windows 10
+  https://github.com/processing/processing/issues/3800
+
++ SVG not highlighting as a keyword
+  https://github.com/processing/processing/issues/3752
+
++ Implement retina (2x) versions of all Contribution Manager icons
+  https://github.com/processing/processing/issues/3478
+
++ Show hover text when the mouse is over the 'debug' button
+
++ Update rollover label for buttons when pressing shift or alt
+
++ Replace the coffee cup icon for the Welcome window
+
++ ctrl-space first inserts space, then deletes it, with completion
+  https://github.com/processing/processing/issues/3847
+
++ Fix the bold text in the welcome window to not use fake bold
 
 
 [ we still care about graphics, too ]

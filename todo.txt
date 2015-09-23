@@ -118,9 +118,10 @@ jakub
 X Make preprocessor scope-aware
 X   https://github.com/processing/processing/issues/3799
 X   https://github.com/processing/processing/pull/3810
-X auto-complete timing issues
+X massive auto-complete/error checker fixes
 X   https://github.com/processing/processing/issues/3812
 X   https://github.com/processing/processing/pull/3845
+X   https://github.com/processing/processing/pull/3856
 X Red error underline is sometimes at wrong location
 X   https://github.com/processing/processing/issues/3759
 X   https://github.com/processing/processing/pull/3848
@@ -147,6 +148,7 @@ _ new Android release (EditorButton constructor changed)
 
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
+_ clean up statusMessage() inside JavaEditor
 
 
 gui / James
