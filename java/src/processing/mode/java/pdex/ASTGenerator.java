@@ -407,10 +407,6 @@ public class ASTGenerator {
   }
 
 
-  public DefaultMutableTreeNode buildAST(CompilationUnit cu) {
-    return buildAST(errorCheckerService.sourceCode, cu);
-  }
-
   public static CompletionCandidate[] checkForTypes(ASTNode node) {
 
     List<VariableDeclarationFragment> vdfs = null;
@@ -1292,7 +1288,7 @@ public class ASTGenerator {
   public String getJavaSourceCodeLine(int javaLineNumber) {
     try {
       PlainDocument javaSource = new PlainDocument();
-      javaSource.insertString(0, errorCheckerService.sourceCode, null);
+      javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
       Element lineElement = javaSource.getDefaultRootElement()
           .getElement(javaLineNumber - 1);
       if (lineElement == null) {
@@ -1319,7 +1315,7 @@ public class ASTGenerator {
   public Element getJavaSourceCodeElement(int javaLineNumber) {
     try {
       PlainDocument javaSource = new PlainDocument();
-      javaSource.insertString(0, errorCheckerService.sourceCode, null);
+      javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
       Element lineElement = javaSource.getDefaultRootElement()
           .getElement(javaLineNumber - 1);
       if (lineElement == null) {
@@ -1956,7 +1952,7 @@ public class ASTGenerator {
                 int pdeOffs[] = errorCheckerService
                     .calculateTabIndexAndLineNumber(javaLineNumber);
                 PlainDocument javaSource = new PlainDocument();
-                javaSource.insertString(0, errorCheckerService.sourceCode, null);
+                javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
                 Element lineElement = javaSource.getDefaultRootElement()
                     .getElement(javaLineNumber-1);
                 if(lineElement == null) {
@@ -2076,7 +2072,7 @@ public class ASTGenerator {
     }
     //else log("New name looks K.");
 
-    errorCheckerService.pauseThread();
+    errorCheckerService.cancel();
     if(refactorTree.isVisible()){
       refactorTree.setModel(new DefaultTreeModel(defCU));
       ((DefaultTreeModel) refactorTree.getModel()).reload();
@@ -2128,9 +2124,9 @@ public class ASTGenerator {
       editor.getTextArea().setSelectedText(newName);
     }
     editor.stopCompoundEdit();
-    errorCheckerService.resumeThread();
+    errorCheckerService.request();
     editor.getSketch().setModified(true);
-    errorCheckerService.runManualErrorCheck();
+    errorCheckerService.request();
 //    frmOccurenceList.setVisible(false);
     frmRename.setVisible(false);
     lastClickedWord = null;
@@ -3492,7 +3488,7 @@ public class ASTGenerator {
               editor.getSketch().setCurrentCode(0);
               editor.getTextArea().getDocument().insertString(0, impString, null);
               editor.getSketch().setCurrentCode(ct);
-              errorCheckerService.runManualErrorCheck();
+              errorCheckerService.request();
               frmImportSuggest.setVisible(false);
               frmImportSuggest = null;
             } catch (BadLocationException e) {

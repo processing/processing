@@ -555,7 +555,7 @@ public class ASTNodeWrapper {
       int javaLineNumber = getLineNumber(nodeName);
       int pdeOffs[] = editor.getErrorChecker().calculateTabIndexAndLineNumber(javaLineNumber);
       PlainDocument javaSource = new PlainDocument();
-      javaSource.insertString(0, editor.getErrorChecker().sourceCode, null);
+      javaSource.insertString(0, editor.getErrorChecker().lastCodeCheckResult.sourceCode, null);
       Element lineElement = javaSource.getDefaultRootElement()
           .getElement(javaLineNumber-1);
       if(lineElement == null) {
