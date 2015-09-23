@@ -140,7 +140,7 @@ public class JavaEditor extends Editor {
     //initializeErrorChecker();
 
     errorCheckerService = new ErrorCheckerService(this);
-    new Thread(errorCheckerService).start();
+    errorCheckerService.start();
 
     // hack to add a JPanel to the right-hand side of the text area
     JPanel textAndError = new JPanel();
@@ -1307,7 +1307,7 @@ public class JavaEditor extends Editor {
     if (inspector != null) {
       inspector.dispose();
     }
-    errorCheckerService.stopThread();
+    errorCheckerService.stop();
     super.dispose();
   }
 
@@ -1872,7 +1872,7 @@ public class JavaEditor extends Editor {
     autoSave();
     super.prepareRun();
     downloadImports();
-    errorCheckerService.quickErrorCheck();
+    errorCheckerService.cancel();
   }
 
 
@@ -2487,15 +2487,13 @@ public class JavaEditor extends Editor {
   public LineMarker findError(int line) {
     List<LineMarker> errorPoints = getErrorPoints();
     JavaTextArea textArea = getJavaTextArea();
-    synchronized (errorPoints) {
-      for (LineMarker emarker : errorPoints) {
-        Problem p = emarker.getProblem();
-        int pStartLine = p.getLineNumber();
-        int pEndOffset = textArea.getLineStartOffset(pStartLine) + p.getPDELineStopOffset() + 1;
-        int pEndLine = textArea.getLineOfOffset(pEndOffset);
-        if (line >= pStartLine && line <= pEndLine) {
-          return emarker;
-        }
+    for (LineMarker emarker : errorPoints) {
+      Problem p = emarker.getProblem();
+      int pStartLine = p.getLineNumber();
+      int pEndOffset = textArea.getLineStartOffset(pStartLine) + p.getPDELineStopOffset() + 1;
+      int pEndLine = textArea.getLineOfOffset(pEndOffset);
+      if (line >= pStartLine && line <= pEndLine) {
+        return emarker;
       }
     }
     return null;
@@ -2712,7 +2710,7 @@ public class JavaEditor extends Editor {
       jmode.loadPreferences();
       Messages.log("Applying prefs");
       // trigger it once to refresh UI
-      errorCheckerService.runManualErrorCheck();
+      errorCheckerService.request();
     }
   }
 

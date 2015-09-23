@@ -142,6 +142,7 @@ public class MarkerColumn extends JPanel {
 
 	      protected void done() {
 	        repaint();
+					editor.getErrorChecker().updateEditorStatus();
 	      }
 	    }.execute();
 
