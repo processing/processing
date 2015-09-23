@@ -406,7 +406,7 @@ public class PSurfaceJOGL implements PSurface {
 
 
   protected void initAnimator() {
-    animator = new FPSAnimator(window, 60);
+    animator = new FPSAnimator(window, 60, true);
     drawException = null;
     animator.setUncaughtExceptionHandler(new GLAnimatorControl.UncaughtExceptionHandler() {
       @Override
