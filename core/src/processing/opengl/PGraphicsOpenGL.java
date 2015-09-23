@@ -673,7 +673,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   // Java only
   public PSurface createSurface() {  // ignore
-    return new PSurfaceJOGL(this);
+    return surface = new PSurfaceJOGL(this);
   }
 
 
