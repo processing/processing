@@ -1992,9 +1992,19 @@ public abstract class PGL {
     return false;
   }
 
+  protected boolean isES() {
+    return getString(VERSION).trim().toLowerCase().contains("opengl es");
+  }
 
   protected int[] getGLVersion() {
-    String version = getString(VERSION).trim();
+    String version = getString(VERSION).trim().toLowerCase();
+
+    String ES = "opengl es";
+    int esPosition = version.indexOf(ES);
+    if (esPosition >= 0) {
+      version = version.substring(esPosition + ES.length()).trim();
+    }
+
     int[] res = {0, 0, 0};
     String[] parts = version.split(" ");
     for (int i = 0; i < parts.length; i++) {
