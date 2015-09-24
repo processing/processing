@@ -1,3 +1,29 @@
+0245 core (3.0b7)
+X surface.setLocation(x,y) not working with the default renderer
+X   https://github.com/processing/processing/issues/3821
+X FX2D display is inverted in 3.0b6
+X   https://github.com/processing/processing/issues/3795
+
+jakub
+X Make the PApplet regex cache LRU
+X   https://github.com/processing/processing/pull/3815
+X Minor OpenGL improvements
+X   https://github.com/processing/processing/pull/3849
+
+andres
+X Cannot re-enable stroke or fill of a PShape with P2D
+X   https://github.com/processing/processing/issues/3808
+X setResizable broke with oscilating behavior in 3.0b6
+X   https://github.com/processing/processing/issues/3825
+X   https://github.com/processing/processing/commit/42c0150da0f400637de916db1f94a687a7bc4288
+X surface.setLocation() causing a freeze on Windows
+X   https://github.com/processing/processing/commit/4c0f9234c0a48f62363233cafc9c9951ee351d3e
+X selectInput/Output() is behind the drawing window (Windows)
+X   https://github.com/processing/processing/issues/3775
+X MouseWheel count wrong (backwards?) in P2D and P3D
+X   https://github.com/processing/processing/issues/3840
+
+
 0244 core (3.0b6)
 X Incomplete text rendering of strings with consecutive line breaks
 X   https://github.com/processing/processing/issues/3736

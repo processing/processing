@@ -1,3 +1,136 @@
+0245 (3.0b7)
+X add jar files from 'code' folder to the library path
+X   Code editor wrongly detects errors for libraries in code folder
+X   https://github.com/processing/processing/issues/3732
+o dim out the Run button if there are compile errors detected
+o   the AST checker has better error message handling for those cases
+o   and hitting Run replaces the useful error with something weird
+X   https://github.com/processing/processing/issues/3408
+X   not great because the error checker runs more slowly than your typing
+X SVG not highlighting as a keyword
+X   https://github.com/processing/processing/issues/3752
+X implement 2x versions of icons
+X   https://github.com/processing/processing/issues/3478
+X   foundation icon in list
+X   foundation icon below next to description when lib selected
+X   icons on the install/update/remove buttons
+X   search eyeglass icon
+X   available/installed/incompatible icons
+o change Tool API because it's not one Editor per Tool anymore?
+X   or just change the documentation?
+X   updated the FAQ and tool template
+X change the Tool API after all, since none of the tools have been updated
+X   https://github.com/processing/processing/wiki/Tool-Basics
+X items still show up in "Recent" if they no longer exist (on startup)
+X   checked code and this seems to be fine / can't reproduce
+X show hover text when the mouse is over the 'debug' button
+X update EditorButton rollover label when pressing shift or alt
+X welcome screen shows coffee cup icon on Windows
+o Hitting enter on code completion completes and then creates a new line
+X   https://github.com/processing/processing/issues/3741
+X ctrl-space first inserts space, then deletes it, with completion
+X   https://github.com/processing/processing/issues/3847
+o finish the gui
+X   https://github.com/processing/processing/issues/3072
+X   closing in favor of specific issues
+X fix the bold in the welcome window to not use fake bold
+
+sketch modified
+X sketch modified externally with FAT32 volumes on OS X
+X   https://github.com/processing/processing/issues/3387
+X   might have this fixed with the larger time window
+X   need to check if "save as" thing is causing trouble
+X "Your sketch has been modified externally" with encrypted OS X volumes
+X   https://github.com/processing/processing/issues/3650
+o add this to the preferences?
+o use watcher service after all? 
+o   https://docs.oracle.com/javase/tutorial/essential/io/notification.html
+
+jna problems
+X UnsatisfiedLinkError on startup "Access is denied" on Windows 10
+X   https://github.com/processing/processing/issues/3800
+X   administrator, but using Microsoft account to log in
+X JNA errors on startup when run from an account w/ non-ASCII characters
+X   https://github.com/processing/processing/issues/3624
+X   set jna.tmpdir (or java.io.tmpdir) to another location
+X   https://github.com/twall/jna/issues/124
+X   https://github.com/twall/jna/issues/238
+X   Sun says they won't fix: user locale and system locale probably different:
+X   https://bugs.openjdk.java.net/browse/JDK-8017274
+X   https://bugs.openjdk.java.net/browse/JDK-4958170
+X   https://github.com/twall/jna/blob/master/test/com/sun/jna/JNALoadTest.java
+X   http://happygiraffe.net/blog/2009/09/24/java-platform-encoding/
+X   fix: get sun.jnu.encoding and make sure the user name is supported in it?
+X     and if not, put up a warning for the user?
+X   http://www.oracle.com/us/technologies/java/locale-140624.html
+
+manager
+X CM: Clicking item in Libraries list throws exception
+X   https://github.com/processing/processing/issues/3667
+X CM: Libraries missing descriptions and PFoundation credit
+X   https://github.com/processing/processing/issues/3688
+X use real version of bold font, rather than the fake version
+X remove the "v" from the version numbers in the updates tab
+X fix bold version used in the description below, when an item is selected
+X manager needs a frame title
+X remove tooltip that repeats the contents of the tab labels
+X add extra space to the right of the buttons to line up w/ the scrollbar
+X CM: Button formatting
+X   https://github.com/processing/processing/issues/3643
+o Contributions Manager UI design
+X   https://github.com/processing/processing/issues/3482
+X   closing in favor of separate issues
+X updates tab has ugly horizontal line at top
+X CM selected tabs are too tall 
+X   https://github.com/processing/processing/issues/3598
+X why the aqua background when opening the window?
+X get rid of gross italic subheads on the Updates page
+X "update all" is too far too the right
+X other buttons were out of whack as well
+X remove focus blue from the scrollable list
+X don't focus the window on the search box on opening
+X status/name/author table header is alternating color
+X   area above scroll bar looks like more scroll bar
+X table header is the wrong font
+
+watcher
+X prevent re-prompting users when they say "no" to "sketch modified" message
+X add more preferences for editor.watcher
+X cleaning up the logic in the watcher
+
+akarshit
+X prevent "updating" to a still-incompatible version of a contrib
+X   https://github.com/processing/processing/issues/3801
+X   https://github.com/processing/processing/pull/3805
+X Tools are getting redundantly added when installing new tool
+X   https://github.com/processing/processing/issues/3818
+X   https://github.com/processing/processing/pull/3820
+X after clicking 'install' it's still possible to click it again
+X   https://github.com/processing/processing/issues/3806
+X   https://github.com/processing/processing/pull/3817
+X CM list should be sortable by status and author name
+X   https://github.com/processing/processing/issues/3608
+X "update all" button appears to do nothing in library manager
+X   https://github.com/processing/processing/issues/3837
+X   https://github.com/processing/processing/pull/3842
+
+jakub
+X Make preprocessor scope-aware
+X   https://github.com/processing/processing/issues/3799
+X   https://github.com/processing/processing/pull/3810
+X massive auto-complete/error checker fixes
+X   https://github.com/processing/processing/issues/3812
+X   https://github.com/processing/processing/pull/3845
+X   https://github.com/processing/processing/pull/3856
+X Red error underline is sometimes at wrong location
+X   https://github.com/processing/processing/issues/3759
+X   https://github.com/processing/processing/pull/3848
+X using "new color()" instead of "color()" results in "color type detected" 
+X   happens when user does 'new color' instead of 'color'
+X   https://github.com/processing/processing/issues/3739
+X   https://github.com/processing/processing/pull/3850
+
+
 0244 (3.0b6)
 o 3.0b4 demos fail to create PDF files
 o   https://github.com/processing/processing/issues/3708
