@@ -25,16 +25,14 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jdt.core.compiler.IProblem;
 
+import processing.app.ui.ErrorTable;
+
+
 /**
- * Wrapper class for IProblem.
- * 
- * Stores the tabIndex and line number according to its tab, including the
- * original IProblem object
- * 
- * @author Manindra Moharana &lt;me@mkmoharana.com&gt;
- * 
+ * Wrapper class for IProblem that stores the tabIndex and line number
+ * according to its tab, including the original IProblem object
  */
-public class Problem {
+public class Problem implements ErrorTable.Entry {
   /**
    * The IProblem which is being wrapped
    */
@@ -42,14 +40,14 @@ public class Problem {
   /**
    * The tab number to which the error belongs to
    */
-  private int tabIndex; 
+  private int tabIndex;
   /**
    * Line number(pde code) of the error
    */
   private int lineNumber;
-  
+
   private int lineStartOffset;
-  
+
   private int lineStopOffset;
 
   /**
@@ -61,7 +59,7 @@ public class Problem {
    * The type of error - WARNING or ERROR.
    */
   private int type;
-  
+
   /**
    * If the error is a 'cannot find type' contains the list of suggested imports
    */
@@ -70,7 +68,7 @@ public class Problem {
   public static final int ERROR = 1, WARNING = 2;
 
   /**
-   * 
+   *
    * @param iProblem - The IProblem which is being wrapped
    * @param tabIndex - The tab number to which the error belongs to
    * @param lineNumber - Line number(pde code) of the error
@@ -89,17 +87,17 @@ public class Problem {
     this.message = ErrorMessageSimplifier.getSimplifiedErrorMessage(this);
     //ErrorMessageSimplifier.getSimplifiedErrorMessage(this);
   }
-  
+
   public void setPDEOffsets(int startOffset, int stopOffset){
     lineStartOffset = startOffset;
     lineStopOffset = stopOffset;
   }
-  
-  public int getPDELineStartOffset(){
+
+  public int getPDELineStartOffset() {
     return lineStartOffset;
   }
-  
-  public int getPDELineStopOffset(){
+
+  public int getPDELineStopOffset() {
     return lineStopOffset;
   }
 
@@ -109,37 +107,37 @@ public class Problem {
         + message);
   }
 
-  public boolean isError(){
+  public boolean isError() {
     return type == ERROR;
   }
 
-  public boolean isWarning(){
+  public boolean isWarning() {
     return type == WARNING;
   }
 
-  public String getMessage(){
+  public String getMessage() {
     return message;
   }
 
-  public IProblem getIProblem(){
+  public IProblem getIProblem() {
     return iProblem;
   }
-  
-  public int getTabIndex(){
+
+  public int getTabIndex() {
     return tabIndex;
   }
-  
-  public int getLineNumber(){
+
+  public int getLineNumber() {
     return lineNumber;
   }
-  
+
   /**
    * Remember to subtract a -1 to line number because in compile check code an
    * extra package statement is added, so all line numbers are increased by 1
-   * 
+   *
    * @return
    */
-  public int getSourceLineNumber(){    
+  public int getSourceLineNumber() {
     return iProblem.getSourceLineNumber();
   }
 
@@ -150,11 +148,11 @@ public class Problem {
       type = WARNING;
     else throw new IllegalArgumentException("Illegal Problem type passed to Problem.setType(int)");
   }
-  
+
   public String[] getImportSuggestions() {
     return importSuggestions;
   }
-  
+
   public void setImportSuggestions(String[] a) {
     importSuggestions = a;
   }
@@ -169,7 +167,7 @@ public class Problem {
   }
 
   /**
-   * Processes error messages and attempts to make them a bit more english like. 
+   * Processes error messages and attempts to make them a bit more english like.
    * Currently performs:
    * <li>Remove all instances of token. "Syntax error on token 'blah', delete this token"
    * becomes "Syntax error on 'blah', delete this"
@@ -179,7 +177,7 @@ public class Problem {
   public static String process(String message) {
     // Remove all instances of token
     // "Syntax error on token 'blah', delete this token"
-	if(message == null) return null;  
+	if(message == null) return null;
     pattern = Pattern.compile(tokenRegExp);
     matcher = pattern.matcher(message);
     message = matcher.replaceAll("");
@@ -187,7 +185,7 @@ public class Problem {
     return message;
   }
 
-  // Split camel case words into separate words. 
+  // Split camel case words into separate words.
   // "VaraibleDeclaration" becomes "Variable Declaration"
   // But sadly "PApplet" become "P Applet" and so on.
   public static String splitCamelCaseWord(String word) {

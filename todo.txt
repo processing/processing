@@ -1,4 +1,6 @@
 0246 the holy land
+_ does the "Saving" message never clear on "Save As"? 
+_   probably a regression from the "save as" code
 
 
 known issues

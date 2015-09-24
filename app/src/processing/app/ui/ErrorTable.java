@@ -29,6 +29,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -36,13 +37,17 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import processing.app.Language;
-import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.ui.Editor;
 
 
 public class ErrorTable extends JTable {
   Editor editor;
+
+  public interface Entry {
+    public boolean isError();
+    public boolean isWarning();
+  }
 
 	static final String[] columnNames = {
 	  "",  // the blank column used for spacing
@@ -109,8 +114,8 @@ public class ErrorTable extends JTable {
 				    editor.errorTableDoubleClick(data);
 				  }
 //					editor.getErrorChecker().scrollToErrorLine(row);
-				} catch (Exception e1) {
-					Messages.log("Exception XQErrorTable mouseReleased " +  e);
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 			}
 		});
@@ -185,7 +190,7 @@ public class ErrorTable extends JTable {
   }
 
 
-  public void addRow(Object data, String message, String filename, String line) {
+  public void addRow(Entry data, String message, String filename, String line) {
     DefaultTableModel dtm = (DefaultTableModel) getModel();
     dtm.addRow(new Object[] { data, message, filename, line });
   }
@@ -318,6 +323,12 @@ public class ErrorTable extends JTable {
 	  Color bgColor;
 	  Color textColorSelected;
 	  Color bgColorSelected;
+	  Color bgColorError;
+	  Color bgColorWarning;
+
+//	  int indicatorSize;
+	  Color errorIndicatorColor;
+	  Color warningIndicatorColor;
 
 	  public GradyRowRenderer(Mode mode) {
 	    setFont(mode.getFont("errors.row.font"));
@@ -327,6 +338,13 @@ public class ErrorTable extends JTable {
 	    bgColor = mode.getColor("errors.row.bgcolor");
 	    textColorSelected = mode.getColor("errors.selection.fgcolor");
 	    bgColorSelected = mode.getColor("errors.selection.bgcolor");
+	    bgColorError = mode.getColor("errors.selection.error.bgcolor");
+	    bgColorWarning = mode.getColor("errors.selection.warning.bgcolor");
+
+//	    indicatorSize = mode.getInteger("errors.indicator.size");
+	    errorIndicatorColor = mode.getColor("errors.indicator.error.color");
+	    warningIndicatorColor = mode.getColor("errors.indicator.warning.color");
+
 	    setOpaque(true);
 	  }
 
@@ -335,19 +353,45 @@ public class ErrorTable extends JTable {
 	                                                 boolean selected,
 	                                                 boolean focused,
 	                                                 int row, int column) {
+	    Entry entry = (Entry) table.getValueAt(row, DATA_COLUMN);
+
 	    if (selected) {
 	      setForeground(textColorSelected);
-	      setBackground(bgColorSelected);
+	      if (entry.isError()) {
+	        setBackground(bgColorError);
+	      } else if (entry.isWarning()) {
+	        setBackground(bgColorWarning);
+	      } else {
+	        setBackground(bgColorSelected);
+	      }
 	    } else {
 	      setForeground(textColor);
 	      setBackground(bgColor);
 	    }
-	    if (column == DATA_COLUMN || value == null) {
+	    if (column == DATA_COLUMN) {
+	      setText("\u2022");
+	      setHorizontalAlignment(SwingConstants.CENTER);
+	      if (entry.isError()) {
+	        setForeground(errorIndicatorColor);
+	      } else if (entry.isWarning()) {
+	        setForeground(warningIndicatorColor);
+	      } else {
+	        setText("");  // no dot
+	      }
+	    } else if (value == null) {
 	      setText("");
 	    } else {
+        setHorizontalAlignment(SwingConstants.LEFT);
 	      setText(value.toString());
 	    }
 	    return this;
 	  }
+
+//	  Component dot = new JComponent() {
+//	    @Override
+//	    public void paintComponent(Graphics g) {
+//
+//	    }
+//    };
 	}
 }

@@ -4,8 +4,10 @@ status.notice.fgcolor = #000000
 status.notice.bgcolor = #818b95
 status.error.fgcolor = #ffffff
 status.error.bgcolor = #9E0A0A
-status.edit.fgcolor = #000000
-status.edit.bgcolor = #cc9900
+#status.edit.fgcolor = #000000
+#status.edit.bgcolor = #cc9900
+status.warning.bgcolor = #EF8115
+status.warning.fgcolor = #FFFFFF
 status.font = processing.sans,plain,13
 
 # HEADER TABS
@@ -150,6 +152,11 @@ errors.row.fgcolor = #484848
 errors.row.bgcolor = #FFFFFF
 errors.selection.fgcolor = #242424
 errors.selection.bgcolor = #E5E5E5
+errors.selection.error.bgcolor = #F5E6E6
+errors.selection.warning.bgcolor = #FDF2E7
+#errors.indicator.size = 3
+errors.indicator.error.color = #9E0A0A
+errors.indicator.warning.color = #EF8115
 
 manager.tab.selected.color = #e0fffd
 manager.tab.unselected.color = #2d4251

@@ -22,6 +22,7 @@ package processing.mode.java.pdex;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,7 +62,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -110,6 +110,7 @@ import processing.app.Platform;
 import processing.app.SketchCode;
 import processing.app.Util;
 import processing.app.syntax.JEditTextArea;
+import processing.app.ui.EditorStatus;
 import processing.app.ui.Toolkit;
 import processing.data.StringList;
 import processing.mode.java.JavaEditor;
@@ -1771,10 +1772,9 @@ public class ASTGenerator {
                                      (SimpleName) simpName);
           //retLabelString = getNodeAsString(decl);
         } else {
-//          Base.loge("null");
           if (scrollOnly) {
             editor.statusMessage(simpName + " is not defined in this sketch",
-                                 JavaEditor.STATUS_ERR);
+                                 EditorStatus.ERROR);
           }
         }
 
@@ -2059,7 +2059,7 @@ public class ASTGenerator {
     DefaultMutableTreeNode defCU = findAllOccurrences(); //TODO: Repetition here
     if(defCU == null){
       editor.statusMessage("Can't locate definition of " + selText,
-                           JavaEditor.STATUS_ERR);
+                           EditorStatus.ERROR);
       return;
     }
 
@@ -2156,14 +2156,14 @@ public class ASTGenerator {
     log("Last clicked word:" + lastClickedWord);
     if (lastClickedWord == null &&
         getSelectedText() == null) {
-      editor.statusMessage("Highlight the class/function/variable name first"
-                           , JavaEditor.STATUS_INFO);
+      editor.statusMessage("Highlight the class/function/variable name first",
+                           EditorStatus.NOTICE);
       return;
     }
 
-    if(errorCheckerService.hasSyntaxErrors()){
-      editor.statusMessage("Can't perform action until syntax errors are " +
-      		"fixed :(", JavaEditor.STATUS_WARNING);
+    if (errorCheckerService.hasSyntaxErrors()){
+      editor.statusMessage("Can't perform action until errors are fixed",
+                           EditorStatus.WARNING);
       return;
     }
     DefaultMutableTreeNode defCU = findAllOccurrences();
@@ -2171,7 +2171,7 @@ public class ASTGenerator {
       getSelectedText() : lastClickedWord;
     if (defCU == null) {
       editor.statusMessage("Can't locate definition of " + selText,
-                           JavaEditor.STATUS_ERR);
+                           EditorStatus.ERROR);
       return;
     }
     if(defCU.getChildCount() == 0)
@@ -2499,13 +2499,13 @@ public class ASTGenerator {
     if (lastClickedWord == null &&
         getSelectedText() == null) {
       editor.statusMessage("Highlight the class/function/variable name first",
-                           JavaEditor.STATUS_INFO);
+                           EditorStatus.NOTICE);
       return;
     }
 
     if (errorCheckerService.hasSyntaxErrors()) {
       editor.statusMessage("Can't perform action until syntax errors are fixed :(",
-                           JavaEditor.STATUS_WARNING);
+                           EditorStatus.WARNING);
       return;
     }
 
@@ -2513,8 +2513,8 @@ public class ASTGenerator {
     String selText = lastClickedWord == null ?
         getSelectedText() : lastClickedWord;
     if (defCU == null) {
-      editor.statusMessage(selText + " isn't defined in this sketch, so it can't" +
-      		" be renamed", JavaEditor.STATUS_ERR);
+      editor.statusMessage(selText + " isn't defined in this sketch, " +
+                           "so it cannot be renamed", EditorStatus.ERROR);
       return;
     }
     if (!frmRename.isVisible()){
@@ -2524,7 +2524,7 @@ public class ASTGenerator {
                             + (editor.getHeight() - frmRename.getHeight())
                             / 2);
       frmRename.setVisible(true);
-      SwingUtilities.invokeLater(new Runnable() {
+      EventQueue.invokeLater(new Runnable() {
         @Override
         public void run() {
           String selText = lastClickedWord == null ? getSelectedText()

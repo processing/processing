@@ -1882,20 +1882,20 @@ public class JavaEditor extends Editor {
    * them.
    */
   protected void downloadImports() {
-    String importRegex = errorCheckerService.importRegexp;
-    String tabCode;
     for (SketchCode sc : sketch.getCode()) {
       if (sc.isExtension("pde")) {
-        tabCode = sc.getProgram();
+        String tabCode = sc.getProgram();
 
-        String[][] pieces = PApplet.matchAll(tabCode, importRegex);
+        String[][] pieces =
+          PApplet.matchAll(tabCode, ErrorCheckerService.IMPORT_REGEX);
 
         if (pieces != null) {
           ArrayList<String> importHeaders = new ArrayList<String>();
           for (String[] importStatement : pieces) {
             importHeaders.add(importStatement[2]);
           }
-          List<AvailableContribution> installLibsHeaders = getNotInstalledAvailableLibs(importHeaders);
+          List<AvailableContribution> installLibsHeaders =
+            getNotInstalledAvailableLibs(importHeaders);
           if (!installLibsHeaders.isEmpty()) {
             StringBuilder libList = new StringBuilder("Would you like to install them now?");
             for (AvailableContribution ac : installLibsHeaders) {
@@ -1907,8 +1907,7 @@ public class JavaEditor extends Editor {
                 libList.toString());
 
             if (option == JOptionPane.YES_OPTION) {
-              ContributionManager.downloadAndInstallOnImport(base,
-                  installLibsHeaders);
+              ContributionManager.downloadAndInstallOnImport(base, installLibsHeaders);
             }
           }
         }
@@ -2403,10 +2402,21 @@ public class JavaEditor extends Editor {
   }
 
 
-  public static final int STATUS_EMPTY = 100, STATUS_COMPILER_ERR = 200,
-    STATUS_WARNING = 300, STATUS_INFO = 400, STATUS_ERR = 500;
-  public int statusMessageType = STATUS_EMPTY;
-  public String statusMessage;
+  public void statusMessage(String message, int type) {
+    status.message(message, type);
+  }
+
+
+  /*
+  static final int STATUS_EMPTY = 100;
+  static final int STATUS_COMPILER_ERR = 200;
+  static final int STATUS_WARNING = 300;
+  static final int STATUS_INFO = 400;
+  static final int STATUS_ERR = 500;
+
+  int statusMessageType = STATUS_EMPTY;
+  String statusMessage;
+
   public void statusMessage(final String what, int type){
     // Don't re-display the old message again
     if (type != STATUS_EMPTY) {
@@ -2451,6 +2461,7 @@ public class JavaEditor extends Editor {
     statusMessageType = STATUS_EMPTY;
     super.statusEmpty();
   }
+  */
 
 
 //  /**

@@ -181,7 +181,8 @@ public class ErrorCheckerService {
   /**
    * Regexp for import statements. (Used from Processing source)
    */
-  public static final String importRegexp = "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
+  public static final String IMPORT_REGEX =
+    "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
 
 //  /**
 //   * Regexp for function declarations. (Used from Processing source)
@@ -945,7 +946,7 @@ public class ErrorCheckerService {
    * line or not
    */
   public void updateEditorStatus() {
-    if (editor.getStatusMode() == EditorStatus.EDIT) return;
+//    if (editor.getStatusMode() == EditorStatus.EDIT) return;
 
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
@@ -954,20 +955,20 @@ public class ErrorCheckerService {
       if (errorMarker != null) {
         if (errorMarker.getType() == LineMarker.WARNING) {
           editor.statusMessage(errorMarker.getProblem().getMessage(),
-                               JavaEditor.STATUS_INFO);
+                               EditorStatus.WARNING);
         } else {
           editor.statusMessage(errorMarker.getProblem().getMessage(),
-                               JavaEditor.STATUS_COMPILER_ERR);
+                               EditorStatus.COMPILER_ERROR);
         }
         return;
       }
     }
 
-    // This line isn't an error line anymore, so probably just clear it
-    if (editor.statusMessageType == JavaEditor.STATUS_COMPILER_ERR) {
-      editor.statusEmpty();
-      return;
-    }
+//    // This line isn't an error line anymore, so probably just clear it
+//    if (editor.statusMessageType == JavaEditor.STATUS_COMPILER_ERR) {
+//      editor.statusEmpty();
+//      return;
+//    }
   }
 
 
@@ -1462,7 +1463,7 @@ public class ErrorCheckerService {
     String tabSource = tabProgram;
     do {
       // log("-->\n" + sourceAlt + "\n<--");
-      String[] pieces = PApplet.match(tabSource, importRegexp);
+      String[] pieces = PApplet.match(tabSource, IMPORT_REGEX);
 
       // Stop the loop if we've removed all the import lines
       if (pieces == null) {
