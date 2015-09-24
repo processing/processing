@@ -2525,7 +2525,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     statusNotice(Language.text("editor.status.saving"));
     try {
       if (sketch.saveAs()) {
-        // statusNotice("Done Saving.");
+        //statusNotice(Language.text("editor.status.saving.done"));
         // status is now printed from Sketch so that "Done Saving."
         // is only printed after Save As when progress bar is shown.
       } else {

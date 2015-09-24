@@ -1129,6 +1129,7 @@ public class Sketch {
           @Override
           public void done() {
             frame.dispose();
+            editor.statusNotice(Language.text("editor.status.saving.done"));
           }
         }.execute();
       }
