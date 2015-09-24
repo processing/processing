@@ -209,9 +209,12 @@ public class PJOGL extends PGL {
 
   @Override
   protected float getPixelScale() {
+    PGraphicsOpenGL g = graphics.get();
+    if (g == null) return 0;
+
     PSurface surf = sketch.getSurface();
     if (surf == null) {
-      return graphics.pixelDensity;
+      return g.pixelDensity;
     } else if (surf instanceof PSurfaceJOGL) {
       return ((PSurfaceJOGL)surf).getPixelScale();
     } else {
@@ -316,49 +319,52 @@ public class PJOGL extends PGL {
 
   @Override
   protected void beginGL() {
+    PGraphicsOpenGL g = graphics.get();
+    if (g == null) return;
+
     if (gl2x != null) {
       if (projMatrix == null) {
         projMatrix = new float[16];
       }
       gl2x.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-      projMatrix[ 0] = graphics.projection.m00;
-      projMatrix[ 1] = graphics.projection.m10;
-      projMatrix[ 2] = graphics.projection.m20;
-      projMatrix[ 3] = graphics.projection.m30;
-      projMatrix[ 4] = graphics.projection.m01;
-      projMatrix[ 5] = graphics.projection.m11;
-      projMatrix[ 6] = graphics.projection.m21;
-      projMatrix[ 7] = graphics.projection.m31;
-      projMatrix[ 8] = graphics.projection.m02;
-      projMatrix[ 9] = graphics.projection.m12;
-      projMatrix[10] = graphics.projection.m22;
-      projMatrix[11] = graphics.projection.m32;
-      projMatrix[12] = graphics.projection.m03;
-      projMatrix[13] = graphics.projection.m13;
-      projMatrix[14] = graphics.projection.m23;
-      projMatrix[15] = graphics.projection.m33;
+      projMatrix[ 0] = g.projection.m00;
+      projMatrix[ 1] = g.projection.m10;
+      projMatrix[ 2] = g.projection.m20;
+      projMatrix[ 3] = g.projection.m30;
+      projMatrix[ 4] = g.projection.m01;
+      projMatrix[ 5] = g.projection.m11;
+      projMatrix[ 6] = g.projection.m21;
+      projMatrix[ 7] = g.projection.m31;
+      projMatrix[ 8] = g.projection.m02;
+      projMatrix[ 9] = g.projection.m12;
+      projMatrix[10] = g.projection.m22;
+      projMatrix[11] = g.projection.m32;
+      projMatrix[12] = g.projection.m03;
+      projMatrix[13] = g.projection.m13;
+      projMatrix[14] = g.projection.m23;
+      projMatrix[15] = g.projection.m33;
       gl2x.glLoadMatrixf(projMatrix, 0);
 
       if (mvMatrix == null) {
         mvMatrix = new float[16];
       }
       gl2x.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-      mvMatrix[ 0] = graphics.modelview.m00;
-      mvMatrix[ 1] = graphics.modelview.m10;
-      mvMatrix[ 2] = graphics.modelview.m20;
-      mvMatrix[ 3] = graphics.modelview.m30;
-      mvMatrix[ 4] = graphics.modelview.m01;
-      mvMatrix[ 5] = graphics.modelview.m11;
-      mvMatrix[ 6] = graphics.modelview.m21;
-      mvMatrix[ 7] = graphics.modelview.m31;
-      mvMatrix[ 8] = graphics.modelview.m02;
-      mvMatrix[ 9] = graphics.modelview.m12;
-      mvMatrix[10] = graphics.modelview.m22;
-      mvMatrix[11] = graphics.modelview.m32;
-      mvMatrix[12] = graphics.modelview.m03;
-      mvMatrix[13] = graphics.modelview.m13;
-      mvMatrix[14] = graphics.modelview.m23;
-      mvMatrix[15] = graphics.modelview.m33;
+      mvMatrix[ 0] = g.modelview.m00;
+      mvMatrix[ 1] = g.modelview.m10;
+      mvMatrix[ 2] = g.modelview.m20;
+      mvMatrix[ 3] = g.modelview.m30;
+      mvMatrix[ 4] = g.modelview.m01;
+      mvMatrix[ 5] = g.modelview.m11;
+      mvMatrix[ 6] = g.modelview.m21;
+      mvMatrix[ 7] = g.modelview.m31;
+      mvMatrix[ 8] = g.modelview.m02;
+      mvMatrix[ 9] = g.modelview.m12;
+      mvMatrix[10] = g.modelview.m22;
+      mvMatrix[11] = g.modelview.m32;
+      mvMatrix[12] = g.modelview.m03;
+      mvMatrix[13] = g.modelview.m13;
+      mvMatrix[14] = g.modelview.m23;
+      mvMatrix[15] = g.modelview.m33;
       gl2x.glLoadMatrixf(mvMatrix, 0);
     }
   }

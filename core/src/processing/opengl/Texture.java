@@ -29,6 +29,7 @@ import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.opengl.PGraphicsOpenGL.GLResourceTexture;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -90,7 +91,7 @@ public class Texture implements PConstants {
   public int glHeight;
   private GLResourceTexture glres;
 
-  protected PGraphicsOpenGL pg;
+  protected WeakReference<PGraphicsOpenGL> pg;
   protected PGL pgl;                // The interface between Processing and OpenGL.
   protected int context;            // The context that created this texture.
   protected boolean colorBuffer;    // true if it is the color attachment of
@@ -131,7 +132,7 @@ public class Texture implements PConstants {
 
 
   public Texture(PGraphicsOpenGL pg) {
-    this.pg = pg;
+    this.pg = new WeakReference<PGraphicsOpenGL>(pg);
     pgl = pg.pgl;
     context = pgl.createEmptyContext();
 
@@ -160,7 +161,7 @@ public class Texture implements PConstants {
    * @param params Parameters
    */
   public Texture(PGraphicsOpenGL pg, int width, int height, Object params) {
-    this.pg = pg;
+    this.pg = new WeakReference<PGraphicsOpenGL>(pg);
     pgl = pg.pgl;
     context = pgl.createEmptyContext();
 
@@ -246,12 +247,15 @@ public class Texture implements PConstants {
 
 
   public void resize(int wide, int high) {
+    PGraphicsOpenGL g = pg.get();
+    if (g == null) return;
+
     // Marking the texture object as finalized so it is deleted
     // when creating the new texture.
     dispose();
 
     // Creating new texture with the appropriate size.
-    Texture tex = new Texture(pg, wide, high, getParameters());
+    Texture tex = new Texture(g, wide, high, getParameters());
 
     // Copying the contents of this texture into tex.
     tex.set(this);
@@ -437,6 +441,9 @@ public class Texture implements PConstants {
    * Copy texture to pixels. Involves video memory to main memory transfer (slow).
    */
   public void get(int[] pixels) {
+    PGraphicsOpenGL g = pg.get();
+    if (g == null) return;
+
     if (pixels == null) {
       throw new RuntimeException("Trying to copy texture to null pixels array");
     }
@@ -446,17 +453,17 @@ public class Texture implements PConstants {
     }
 
     if (tempFbo == null) {
-      tempFbo = new FrameBuffer(pg, glWidth, glHeight);
+      tempFbo = new FrameBuffer(g, glWidth, glHeight);
     }
 
     // Attaching the texture to the color buffer of a FBO, binding the FBO and
     // reading the pixels from the current draw buffer (which is the color
     // buffer of the FBO).
     tempFbo.setColorBuffer(this);
-    pg.pushFramebuffer();
-    pg.setFramebuffer(tempFbo);
+    g.pushFramebuffer();
+    g.setFramebuffer(tempFbo);
     tempFbo.readPixels();
-    pg.popFramebuffer();
+    g.popFramebuffer();
 
     tempFbo.getPixels(pixels);
     convertToARGB(pixels);
@@ -1214,12 +1221,15 @@ public class Texture implements PConstants {
   // Copies source texture tex into this.
   protected void copyTexture(Texture tex, int x, int y, int w, int h,
                              boolean scale) {
+    PGraphicsOpenGL g = pg.get();
+    if (g == null) return;
+
     if (tex == null) {
       throw new RuntimeException("Source texture is null");
     }
 
     if (tempFbo == null) {
-      tempFbo = new FrameBuffer(pg, glWidth, glHeight);
+      tempFbo = new FrameBuffer(g, glWidth, glHeight);
     }
 
     // This texture is the color (destination) buffer of the FBO.
@@ -1227,8 +1237,8 @@ public class Texture implements PConstants {
     tempFbo.disableDepthTest();
 
     // FBO copy:
-    pg.pushFramebuffer();
-    pg.setFramebuffer(tempFbo);
+    g.pushFramebuffer();
+    g.setFramebuffer(tempFbo);
     // Clear the color buffer to make sure that the alpha channel is set to
     // full transparency
     pgl.clearColor(0, 0, 0, 0);
@@ -1248,7 +1258,7 @@ public class Texture implements PConstants {
                       0, 0, tempFbo.width, tempFbo.height, 1,
                       x, y, x + w, y + h, x, y, x + w, y + h);
     }
-    pg.popFramebuffer();
+    g.popFramebuffer();
 
     updateTexels(x, y, w, h);
   }
@@ -1258,8 +1268,11 @@ public class Texture implements PConstants {
   protected void copyTexture(int texTarget, int texName,
                              int texWidth, int texHeight,
                              int x, int y, int w, int h, boolean scale) {
+    PGraphicsOpenGL g = pg.get();
+    if (g == null) return;
+
     if (tempFbo == null) {
-      tempFbo = new FrameBuffer(pg, glWidth, glHeight);
+      tempFbo = new FrameBuffer(g, glWidth, glHeight);
     }
 
     // This texture is the color (destination) buffer of the FBO.
@@ -1267,8 +1280,8 @@ public class Texture implements PConstants {
     tempFbo.disableDepthTest();
 
     // FBO copy:
-    pg.pushFramebuffer();
-    pg.setFramebuffer(tempFbo);
+    g.pushFramebuffer();
+    g.setFramebuffer(tempFbo);
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
@@ -1284,7 +1297,7 @@ public class Texture implements PConstants {
                       0, 0, tempFbo.width, tempFbo.height,
                       x, y, w, h, x, y, w, h);
     }
-    pg.popFramebuffer();
+    g.popFramebuffer();
     updateTexels(x, y, w, h);
   }
 

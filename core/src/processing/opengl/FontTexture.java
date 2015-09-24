@@ -64,7 +64,6 @@ class FontTexture implements PConstants {
   protected TextureInfo[] glyphTexinfos;
   protected HashMap<PFont.Glyph, TextureInfo> texinfoMap;
 
-
   public FontTexture(PGraphicsOpenGL pg, PFont font, boolean is3D) {
     pgl = pg.pgl;
     this.is3D = is3D;
@@ -156,10 +155,13 @@ class FontTexture implements PConstants {
       // REPLACE to preserve color of transparent pixels.
       Texture tex0 = textures[currentTex];
 
-      tex.pg.pushStyle();
-      tex.pg.blendMode(REPLACE);
-      tex.put(tex0);
-      tex.pg.popStyle();
+      PGraphicsOpenGL g = tex.pg.get();
+      if (g != null) {
+        g.pushStyle();
+        g.blendMode(REPLACE);
+        tex.put(tex0);
+        g.popStyle();
+      }
 
       textures[currentTex] = tex;
 

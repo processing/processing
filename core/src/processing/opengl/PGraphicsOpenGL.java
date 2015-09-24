@@ -41,7 +41,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public PGL pgl;
 
   /** The renderer currently in use. */
-  protected PGraphicsOpenGL currentPG;
+  public PGraphicsOpenGL currentPG;
 
   /** Font cache for texture objects. */
   protected WeakHashMap<PFont, FontTexture> fontMap;
@@ -344,10 +344,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Offscreen rendering:
 
-  protected WeakReference<FrameBuffer> offscreenFramebuffer =
-    new WeakReference<FrameBuffer>(null);
-  protected WeakReference<FrameBuffer> multisampleFramebuffer =
-    new WeakReference<FrameBuffer>(null);
+  protected FrameBuffer offscreenFramebuffer;
+  protected FrameBuffer multisampleFramebuffer;
   protected boolean offscreenMultisample;
 
   protected boolean pixOpChangedFB;
@@ -357,10 +355,10 @@ public class PGraphicsOpenGL extends PGraphics {
   // Screen surface:
 
   /** Texture containing the current frame */
-  protected WeakReference<Texture> texture = new WeakReference<Texture>(null);
+  protected Texture texture = null;
 
   /** Texture containing the previous frame */
-  protected WeakReference<Texture> ptexture = new WeakReference<Texture>(null);
+  protected Texture ptexture = null;
 
   /** IntBuffer wrapping the pixels array. */
   protected IntBuffer pixelBuffer;
@@ -372,7 +370,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected IntBuffer nativePixelBuffer;
 
   /** texture used to apply a filter on the screen image. */
-  protected WeakReference<Texture> filterTexture = new WeakReference<Texture>(null);
+  protected Texture filterTexture = null;
 
   /** PImage that wraps filterTexture. */
   protected PImage filterImage;
@@ -602,8 +600,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primaryGraphics) {
       deleteDefaultShaders();
     } else {
-      FrameBuffer ofb = offscreenFramebuffer.get();
-      FrameBuffer mfb = multisampleFramebuffer.get();
+      FrameBuffer ofb = offscreenFramebuffer;
+      FrameBuffer mfb = multisampleFramebuffer;
       if (ofb != null) {
         ofb.dispose();
       }
@@ -1493,7 +1491,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primaryGraphics) {
       setCurrentPG(null);
     } else {
-      getPrimaryPG().setCurrentPG(getPrimaryPG());
+      getPrimaryPG().setCurrentPG();
     }
     drawing = false;
 
@@ -1511,6 +1509,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void setCurrentPG(PGraphicsOpenGL pg) {
     currentPG = pg;
+  }
+
+  protected void setCurrentPG() {
+    currentPG = this;
   }
 
   protected PGraphicsOpenGL getCurrentPG() {
@@ -1636,8 +1638,8 @@ public class PGraphicsOpenGL extends PGraphics {
         pixfb = drawFramebuffer;
       }
     } else {
-      FrameBuffer ofb = offscreenFramebuffer.get();
-      FrameBuffer mfb = multisampleFramebuffer.get();
+      FrameBuffer ofb = offscreenFramebuffer;
+      FrameBuffer mfb = multisampleFramebuffer;
       if (op == OP_READ) {
         if (offscreenMultisample) {
           // Making sure the offscreen FBO is up-to-date
@@ -5413,8 +5415,7 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean needToDrawTex = primaryGraphics && (!pgl.isFBOBacked() ||
                             (pgl.isFBOBacked() && pgl.isMultisampled())) ||
                             offscreenMultisample;
-    Texture tex = texture.get();
-    if (tex == null) return;
+    if (texture == null) return;
     if (needToDrawTex) {
       // The texture to screen needs to be drawn only if we are on the primary
       // surface w/out FBO-layer, or with FBO-layer and multisampling. Or, we
@@ -5424,9 +5425,9 @@ public class PGraphicsOpenGL extends PGraphics {
       // (off)screen buffer.
       // First, copy the pixels to the texture. We don't need to invert the
       // pixel copy because the texture will be drawn inverted.
-      int tw = PApplet.min(tex.glWidth - f * x, f * w);
-      int th = PApplet.min(tex.glHeight - f * y, f * h);
-      pgl.copyToTexture(tex.glTarget, tex.glFormat, tex.glName,
+      int tw = PApplet.min(texture.glWidth - f * x, f * w);
+      int th = PApplet.min(texture.glHeight - f * y, f * h);
+      pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
                         f * x, f * y, tw, th, nativePixelBuffer);
       beginPixelsOp(OP_WRITE);
       drawTexture(x, y, w, h);
@@ -5435,7 +5436,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // We only need to copy the pixels to the back texture where we are
       // currently drawing to. Because the texture is invertex along Y, we
       // need to reflect that in the vertical arguments.
-      pgl.copyToTexture(tex.glTarget, tex.glFormat, tex.glName,
+      pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
                         f * x, f * (height - (y + h)), f * w, f * h, nativePixelBuffer);
     }
   }
@@ -5559,16 +5560,15 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         endPixelsOp();
 
-        Texture tex = texture.get();
-        if (tex != null) {
-          tex.setNative(nativePixelBuffer, 0, 0, pixelWidth, pixelHeight);
+        if (texture != null) {
+          texture.setNative(nativePixelBuffer, 0, 0, pixelWidth, pixelHeight);
         }
       }
     } else if (offscreenMultisample) {
        // We need to copy the contents of the multisampled buffer to the color
        // buffer, so the later is up-to-date with the last drawing.
-      FrameBuffer ofb = offscreenFramebuffer.get();
-      FrameBuffer mfb = multisampleFramebuffer.get();
+      FrameBuffer ofb = offscreenFramebuffer;
+      FrameBuffer mfb = multisampleFramebuffer;
       if (ofb != null && mfb != null) {
         mfb.copyColor(ofb);
       }
@@ -5582,9 +5582,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Just marks the whole texture as updated
   public void updateTexture() {
-    Texture tex = texture.get();
-    if (tex != null) {
-      tex.updateTexels();
+    if (texture != null) {
+      texture.updateTexels();
     }
   }
 
@@ -5592,9 +5591,8 @@ public class PGraphicsOpenGL extends PGraphics {
   // Marks the specified rectanglular subregion in the texture as
   // updated.
   public void updateTexture(int x, int y, int w, int h) {
-    Texture tex = texture.get();
-    if (tex != null) {
-      tex.updateTexels(x, y, w, h);
+    if (texture != null) {
+      texture.updateTexels(x, y, w, h);
     }
   }
 
@@ -5611,52 +5609,45 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void loadTextureImpl(int sampling, boolean mipmap) {
     updatePixelSize();
     if (pixelWidth == 0 || pixelHeight == 0) return;
-    Texture tex = texture.get();
-    if (tex == null || tex.contextIsOutdated()) {
+    if (texture == null || texture.contextIsOutdated()) {
       Texture.Parameters params = new Texture.Parameters(ARGB,
                                                          sampling, mipmap);
-      tex = new Texture(this, pixelWidth, pixelHeight, params);
-      tex.invertedY(true);
-      tex.colorBuffer(true);
-      setCache(this, tex);
-      texture = new WeakReference<Texture>(tex);
+      texture = new Texture(this, pixelWidth, pixelHeight, params);
+      texture.invertedY(true);
+      texture.colorBuffer(true);
+      setCache(this, texture);
     }
   }
 
 
   protected void createPTexture() {
     updatePixelSize();
-    Texture tex = texture.get();
-    if (tex != null) {
-      Texture ptex = new Texture(this, pixelWidth, pixelHeight, tex.getParameters());
-      ptex.invertedY(true);
-      ptex.colorBuffer(true);
-      ptexture = new WeakReference<Texture>(ptex);
+    if (texture != null) {
+      texture = new Texture(this, pixelWidth, pixelHeight, texture.getParameters());
+      ptexture.invertedY(true);
+      ptexture.colorBuffer(true);
     }
   }
 
 
   protected void swapOffscreenTextures() {
-    Texture tex = texture.get();
-    Texture ptex = ptexture.get();
-    FrameBuffer ofb = offscreenFramebuffer.get();
-    if (tex != null && ptex != null && ofb != null) {
-      int temp = tex.glName;
-      tex.glName = ptex.glName;
-      ptex.glName = temp;
-      ofb.setColorBuffer(tex);
+    FrameBuffer ofb = offscreenFramebuffer;
+    if (texture != null && ptexture != null && ofb != null) {
+      int temp = texture.glName;
+      texture.glName = ptexture.glName;
+      ptexture.glName = temp;
+      ofb.setColorBuffer(texture);
     }
   }
 
 
   protected void drawTexture() {
-    Texture tex = texture.get();
-    if (tex != null) {
+    if (texture != null) {
       // No blend so the texure replaces wherever is on the screen,
       // irrespective of the alpha
       pgl.disable(PGL.BLEND);
-      pgl.drawTexture(tex.glTarget, tex.glName,
-                      tex.glWidth, tex.glHeight,
+      pgl.drawTexture(texture.glTarget, texture.glName,
+                      texture.glWidth, texture.glHeight,
                       0, 0, width, height);
       pgl.enable(PGL.BLEND);
     }
@@ -5664,13 +5655,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void drawTexture(int x, int y, int w, int h) {
-    Texture tex = texture.get();
-    if (tex != null) {
+    if (texture != null) {
       // Processing Y axis is inverted with respect to OpenGL, so we need to
       // invert the y coordinates of the screen rectangle.
       pgl.disable(PGL.BLEND);
-      pgl.drawTexture(tex.glTarget, tex.glName,
-                      tex.glWidth, tex.glHeight,
+      pgl.drawTexture(texture.glTarget, texture.glName,
+                      texture.glWidth, texture.glHeight,
                       0, 0, width, height,
                       x, y, x + w, y + h,
                       x, height - (y + h), x + w, height - y);
@@ -5680,13 +5670,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void drawPTexture() {
-    Texture ptex = ptexture.get();
-    if (ptex != null) {
+    if (ptexture != null) {
       // No blend so the texure replaces wherever is on the screen,
       // irrespective of the alpha
       pgl.disable(PGL.BLEND);
-      pgl.drawTexture(ptex.glTarget, ptex.glName,
-                      ptex.glWidth, ptex.glHeight,
+      pgl.drawTexture(ptexture.glTarget, ptexture.glName,
+                      ptexture.glWidth, ptexture.glHeight,
                       0, 0, width, height);
       pgl.enable(PGL.BLEND);
     }
@@ -5772,16 +5761,13 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     loadTexture();
 
-    Texture tex = texture.get();
-    Texture ftex = filterTexture.get();
-    if (ftex == null || ftex.contextIsOutdated()) {
-      ftex = new Texture(this, tex.width, tex.height,
-                         tex.getParameters());
-      ftex.invertedY(true);
-      filterImage = wrapTexture(ftex);
-      filterTexture = new WeakReference<Texture>(ftex);
+    if (filterTexture == null || filterTexture.contextIsOutdated()) {
+      filterTexture = new Texture(this, texture.width, texture.height,
+                                  texture.getParameters());
+      filterTexture.invertedY(true);
+      filterImage = wrapTexture(filterTexture);
     }
-    ftex.set(tex);
+    filterTexture.set(texture);
 
     // Disable writing to the depth buffer, so that after applying the filter we
     // can still use the depth information to keep adding geometry to the scene.
@@ -5846,15 +5832,12 @@ public class PGraphicsOpenGL extends PGraphics {
                    int dx, int dy, int dw, int dh) {
     if (primaryGraphics) pgl.enableFBOLayer();
     loadTexture();
-    Texture tex = texture.get();
-    Texture ftex = filterTexture.get();
-    if (ftex == null || ftex.contextIsOutdated()) {
-      ftex = new Texture(this, tex.width, tex.height, tex.getParameters());
-      ftex.invertedY(true);
-      filterImage = wrapTexture(ftex);
-      filterTexture = new WeakReference<Texture>(ftex);
+    if (filterTexture == null || filterTexture.contextIsOutdated()) {
+      filterTexture = new Texture(this, texture.width, texture.height, texture.getParameters());
+      filterTexture.invertedY(true);
+      filterImage = wrapTexture(filterTexture);
     }
-    ftex.put(tex, sx, height - (sy + sh), sw, height - sy);
+    filterTexture.put(texture, sx, height - (sy + sh), sw, height - sy);
     copy(filterImage, sx, sy, sw, sh, dx, dy, dw, dh);
   }
 
@@ -6060,7 +6043,7 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   public Texture getTexture(boolean load) {
     if (load) loadTexture();
-    return texture.get();
+    return texture;
   }
 
 
@@ -6103,9 +6086,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public FrameBuffer getFrameBuffer(boolean multi) {
     if (multi) {
-      return multisampleFramebuffer.get();
+      return multisampleFramebuffer;
     } else {
-      return offscreenFramebuffer.get();
+      return offscreenFramebuffer;
     }
   }
 
@@ -6132,12 +6115,10 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primaryGraphics) {
       pgl.bindFrontTexture();
     } else {
-      Texture ptex = ptexture.get();
-      if (ptex == null) {
+      if (ptexture == null) {
         createPTexture();
-        ptex = ptexture.get();
       }
-      ptex.bind();
+      ptexture.bind();
     }
   }
 
@@ -6146,8 +6127,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primaryGraphics) {
       pgl.unbindFrontTexture();
     } else {
-      Texture ptex = ptexture.get();
-      ptex.unbind();
+      ptexture.unbind();
     }
   }
 
@@ -6230,24 +6210,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void deleteSurfaceTextures() {
     if (texture != null) {
-      Texture tex = texture.get();
-      if (tex != null) {
-        tex.dispose();
-      }
+      texture.dispose();
     }
 
     if (ptexture != null) {
-      Texture ptex = ptexture.get();
-      if (ptex != null) {
-        ptex.dispose();
-      }
+      ptexture.dispose();
     }
 
     if (filterTexture != null) {
-      Texture ftex = filterTexture.get();
-      if (ftex != null) {
-        ftex.dispose();
-      }
+      filterTexture.dispose();
     }
   }
 
@@ -6282,8 +6253,8 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.initSurface(smooth);
     if (texture != null) {
       removeCache(this);
-      texture = new WeakReference<Texture>(null);
-      ptexture = new WeakReference<Texture>(null);
+      texture = null;
+      ptexture = null;
     }
     initialized = true;
   }
@@ -6307,17 +6278,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (pgl.isFBOBacked()) {
-      Texture tex0 = texture.get();
-      Texture tex1 = pgl.wrapBackTexture(tex0);
-      if (tex0 != tex1) {
-        texture = new WeakReference<Texture>(tex1);
-      }
-
-      Texture ptex0 = ptexture.get();
-      Texture ptex1 = pgl.wrapFrontTexture(ptex0);
-      if (ptex0 != ptex1) {
-        ptexture = new WeakReference<Texture>(ptex1);
-      }
+      texture = pgl.wrapBackTexture(texture);
+      ptexture = pgl.wrapFrontTexture(ptexture);
     }
   }
 
@@ -6331,9 +6293,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // Getting the context and capabilities from the main renderer.
     loadTextureImpl(textureSampling, false);
 
-    Texture tex = texture.get();
-    FrameBuffer ofb = offscreenFramebuffer.get();
-    FrameBuffer mfb = multisampleFramebuffer.get();
+    FrameBuffer ofb = offscreenFramebuffer;
+    FrameBuffer mfb = multisampleFramebuffer;
 
     // In case of re-initialization (for example, when the smooth level
     // is changed), we make sure that all the OpenGL resources associated
@@ -6350,31 +6311,31 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean packed = depthBits == 24 && stencilBits == 8 &&
                      packedDepthStencilSupported;
     if (PGraphicsOpenGL.fboMultisampleSupported && 1 < PGL.smoothToSamples(smooth)) {
-      mfb = new FrameBuffer(this, tex.glWidth, tex.glHeight, PGL.smoothToSamples(smooth), 0,
+      mfb = new FrameBuffer(this, texture.glWidth, texture.glHeight, PGL.smoothToSamples(smooth), 0,
                             depthBits, stencilBits, packed, false);
       mfb.clear();
-      multisampleFramebuffer = new WeakReference<FrameBuffer>(mfb);
+      multisampleFramebuffer = mfb;
       offscreenMultisample = true;
 
       // The offscreen framebuffer where the multisampled image is finally drawn
       // to. If depth reading is disabled it doesn't need depth and stencil buffers
       // since they are part of the multisampled framebuffer.
       if (hints[ENABLE_BUFFER_READING]) {
-        ofb = new FrameBuffer(this, tex.glWidth, tex.glHeight, 1, 1,
+        ofb = new FrameBuffer(this, texture.glWidth, texture.glHeight, 1, 1,
                               depthBits, stencilBits, packed, false);
       } else {
-        ofb = new FrameBuffer(this, tex.glWidth, tex.glHeight, 1, 1,
+        ofb = new FrameBuffer(this, texture.glWidth, texture.glHeight, 1, 1,
                           0, 0, false, false);
       }
     } else {
       smooth = 0;
-      ofb = new FrameBuffer(this, tex.glWidth, tex.glHeight, 1, 1,
+      ofb = new FrameBuffer(this, texture.glWidth, texture.glHeight, 1, 1,
                             depthBits, stencilBits, packed, false);
       offscreenMultisample = false;
     }
-    ofb.setColorBuffer(tex);
+    ofb.setColorBuffer(texture);
     ofb.clear();
-    offscreenFramebuffer = new WeakReference<FrameBuffer>(ofb);
+    offscreenFramebuffer = ofb;
 
     initialized = true;
   }
@@ -6384,8 +6345,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (!initialized) {
       initOffscreen();
     } else {
-      FrameBuffer ofb = offscreenFramebuffer.get();
-      FrameBuffer mfb = multisampleFramebuffer.get();
+      FrameBuffer ofb = offscreenFramebuffer;
+      FrameBuffer mfb = multisampleFramebuffer;
       boolean outdated = ofb != null && ofb.contextIsOutdated();
       boolean outdatedMulti = mfb != null && mfb.contextIsOutdated();
       if (outdated || outdatedMulti) {
@@ -6401,12 +6362,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
     pushFramebuffer();
     if (offscreenMultisample) {
-      FrameBuffer mfb = multisampleFramebuffer.get();
+      FrameBuffer mfb = multisampleFramebuffer;
       if (mfb != null) {
         setFramebuffer(mfb);
       }
     } else {
-      FrameBuffer ofb = offscreenFramebuffer.get();
+      FrameBuffer ofb = offscreenFramebuffer;
       if (ofb != null) {
         setFramebuffer(ofb);
       }
@@ -6427,8 +6388,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void endOffscreenDraw() {
     if (offscreenMultisample) {
-      FrameBuffer ofb = offscreenFramebuffer.get();
-      FrameBuffer mfb = multisampleFramebuffer.get();
+      FrameBuffer ofb = offscreenFramebuffer;
+      FrameBuffer mfb = multisampleFramebuffer;
       if (ofb != null && mfb != null) {
         mfb.copyColor(ofb);
       }
@@ -6446,9 +6407,8 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.colorMask(true, true, true, true);
     }
 
-    Texture tex = texture.get();
-    if (tex != null) {
-      tex.updateTexels(); // Mark all texels in screen texture as modified.
+    if (texture != null) {
+      texture.updateTexels(); // Mark all texels in screen texture as modified.
     }
 
     getPrimaryPG().restoreGL();
@@ -7113,9 +7073,9 @@ public class PGraphicsOpenGL extends PGraphics {
   // Holds an array of textures and the range of vertex
   // indices each texture applies to.
   static protected class TexCache {
-    PGraphicsOpenGL pg;
     int size;
-    PImage[] textures;
+    WeakReference<PGraphicsOpenGL> pg;
+    WeakReference<PImage>[] textures;
     int[] firstIndex;
     int[] lastIndex;
     int[] firstCache;
@@ -7123,12 +7083,13 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean hasTextures;
 
     TexCache(PGraphicsOpenGL pg) {
-      this.pg = pg;
+      this.pg = new WeakReference<PGraphicsOpenGL>(pg);
       allocate();
     }
 
+    @SuppressWarnings("unchecked")
     void allocate() {
-      textures = new PImage[PGL.DEFAULT_IN_TEXTURES];
+      textures = new WeakReference[PGL.DEFAULT_IN_TEXTURES];
       firstIndex = new int[PGL.DEFAULT_IN_TEXTURES];
       lastIndex = new int[PGL.DEFAULT_IN_TEXTURES];
       firstCache = new int[PGL.DEFAULT_IN_TEXTURES];
@@ -7145,21 +7106,22 @@ public class PGraphicsOpenGL extends PGraphics {
 
     boolean containsTexture(PImage img) {
       for (int i = 0; i < size; i++) {
-        if (textures[i] == img) return true;
+        if (textures[i].get() == img) return true;
       }
       return false;
     }
 
     PImage getTextureImage(int i) {
-      return textures[i];
+      return textures[i].get();
     }
 
     Texture getTexture(int i) {
-      PImage img = textures[i];
+      PGraphicsOpenGL g = pg.get();
+      PImage img = textures[i].get();
       Texture tex = null;
 
-      if (img != null) {
-        tex = pg.getTexture(img);
+      if (img != null && g != null) {
+        tex = g.getTexture(img);
       }
 
       return tex;
@@ -7168,7 +7130,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void addTexture(PImage img, int firsti, int firstb, int lasti, int lastb) {
       arrayCheck();
 
-      textures[size] = img;
+      textures[size] = new WeakReference<PImage>(img);
       firstIndex[size] = firsti;
       lastIndex[size] = lasti;
       firstCache[size] = firstb;
@@ -7197,8 +7159,9 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
+    @SuppressWarnings("unchecked")
     void expandTextures(int n) {
-      PImage[] temp = new PImage[n];
+      WeakReference<PImage>[] temp = new WeakReference[n];
       PApplet.arrayCopy(textures, 0, temp, 0, size);
       textures = temp;
     }
@@ -7338,7 +7301,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // Holds the input vertices: xyz coordinates, fill/tint color,
   // normal, texture coordinates and stroke color and weight.
   static protected class InGeometry {
-    PGraphicsOpenGL pg;
+    WeakReference<PGraphicsOpenGL> pg;
     int renderMode;
     AttributeMap attribs;
 
@@ -7381,7 +7344,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float normalX, normalY, normalZ;
 
     InGeometry(PGraphicsOpenGL pg, AttributeMap attr, int mode) {
-      this.pg = pg;
+      this.pg = new WeakReference<PGraphicsOpenGL>(pg);
       this.attribs = attr;
       renderMode = mode;
       allocate();
@@ -8437,6 +8400,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void addEllipse(float x, float y, float w, float h,
                     boolean fill, boolean stroke) {
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return;
+
       float radiusH = w / 2;
       float radiusV = h / 2;
 
@@ -8444,10 +8410,10 @@ public class PGraphicsOpenGL extends PGraphics {
       float centerY = y + radiusV;
 
       // should call screenX/Y using current renderer.
-      float sx1 = pg.screenX(x, y);
-      float sy1 = pg.screenY(x, y);
-      float sx2 = pg.screenX(x + w, y + h);
-      float sy2 = pg.screenY(x + w, y + h);
+      float sx1 = g.screenX(x, y);
+      float sy1 = g.screenY(x, y);
+      float sx2 = g.screenX(x + w, y + h);
+      float sy2 = g.screenY(x + w, y + h);
 
       int accuracy =
         PApplet.min(MAX_POINT_ACCURACY, PApplet.max(MIN_POINT_ACCURACY,
@@ -8489,6 +8455,9 @@ public class PGraphicsOpenGL extends PGraphics {
     void addArc(float x, float y, float w, float h,
                 float start, float stop,
                 boolean fill, boolean stroke, int arcMode) {
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return;
+
       float hr = w / 2f;
       float vr = h / 2f;
 
@@ -8531,10 +8500,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
       int inc;
       { // initializes inc the same way ellipse does
-        float sx1 = pg.screenX(x, y);
-        float sy1 = pg.screenY(x, y);
-        float sx2 = pg.screenX(x + w, y + h);
-        float sy2 = pg.screenY(x + w, y + h);
+        float sx1 = g.screenX(x, y);
+        float sy1 = g.screenY(x, y);
+        float sx2 = g.screenX(x + w, y + h);
+        float sy2 = g.screenY(x + w, y + h);
 
         int accuracy =
           PApplet.min(MAX_POINT_ACCURACY, PApplet.max(MIN_POINT_ACCURACY,
@@ -8697,6 +8666,9 @@ public class PGraphicsOpenGL extends PGraphics {
     // any vertex or edge.
     int[] addSphere(float r, int detailU, int detailV,
                     boolean fill, boolean stroke) {
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return null;
+
       int nind = 3 * detailU + (6 * detailU + 3) * (detailV - 2) + 3 * detailU;
       int[] indices = new int[nind];
 
@@ -8723,15 +8695,15 @@ public class PGraphicsOpenGL extends PGraphics {
       vert0 = vertCount;
       u = 1; v -= dv;
       for (int i = 0; i < detailU; i++) {
-        setNormal(pg.sphereX[i], pg.sphereY[i], pg.sphereZ[i]);
-        addVertex(r*pg.sphereX[i], r*pg.sphereY[i], r*pg.sphereZ[i], u , v,
+        setNormal(g.sphereX[i], g.sphereY[i], g.sphereZ[i]);
+        addVertex(r*g.sphereX[i], r*g.sphereY[i], r*g.sphereZ[i], u , v,
                   VERTEX, false);
         u -= du;
       }
       vertCount += detailU;
       vert1 = vertCount;
-      setNormal(pg.sphereX[0], pg.sphereY[0], pg.sphereZ[0]);
-      addVertex(r*pg.sphereX[0], r*pg.sphereY[0], r*pg.sphereZ[0], u, v,
+      setNormal(g.sphereX[0], g.sphereY[0], g.sphereZ[0]);
+      addVertex(r*g.sphereX[0], r*g.sphereY[0], r*g.sphereZ[0], u, v,
                 VERTEX, false);
       vertCount++;
 
@@ -8757,15 +8729,15 @@ public class PGraphicsOpenGL extends PGraphics {
         u = 1; v -= dv;
         for (int i = 0; i < detailU; i++) {
           int ioff = offset + i;
-          setNormal(pg.sphereX[ioff], pg.sphereY[ioff], pg.sphereZ[ioff]);
-          addVertex(r*pg.sphereX[ioff], r*pg.sphereY[ioff], r*pg.sphereZ[ioff],
+          setNormal(g.sphereX[ioff], g.sphereY[ioff], g.sphereZ[ioff]);
+          addVertex(r*g.sphereX[ioff], r*g.sphereY[ioff], r*g.sphereZ[ioff],
                     u , v, VERTEX, false);
           u -= du;
         }
         vertCount += detailU;
         vert1 = vertCount;
-        setNormal(pg.sphereX[offset], pg.sphereY[offset], pg.sphereZ[offset]);
-        addVertex(r*pg.sphereX[offset], r*pg.sphereY[offset], r*pg.sphereZ[offset],
+        setNormal(g.sphereX[offset], g.sphereY[offset], g.sphereZ[offset]);
+        addVertex(r*g.sphereX[offset], r*g.sphereY[offset], r*g.sphereZ[offset],
                   u, v, VERTEX, false);
         vertCount++;
 
@@ -8826,7 +8798,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // Holds tessellated data for polygon, line and point geometry.
   static protected class TessGeometry {
     int renderMode;
-    PGraphicsOpenGL pg;
+    WeakReference<PGraphicsOpenGL> pg;
     AttributeMap polyAttribs;
 
     // Tessellated polygon data
@@ -8906,7 +8878,7 @@ public class PGraphicsOpenGL extends PGraphics {
     HashMap<String, byte[]> bpolyAttribs = new HashMap<String, byte[]>();
 
     TessGeometry(PGraphicsOpenGL pg, AttributeMap attr, int mode) {
-      this.pg = pg;
+      this.pg = new WeakReference<PGraphicsOpenGL>(pg);
       this.polyAttribs = attr;
       renderMode = mode;
       allocate();
@@ -9820,6 +9792,9 @@ public class PGraphicsOpenGL extends PGraphics {
     // Sets point vertex with index tessIdx using the data from input vertex
     // inIdx.
     void setPointVertex(int tessIdx, InGeometry in, int inIdx) {
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return;
+
       int index;
 
       index = 3 * inIdx;
@@ -9827,8 +9802,8 @@ public class PGraphicsOpenGL extends PGraphics {
       float y = in.vertices[index++];
       float z = in.vertices[index  ];
 
-      if (renderMode == IMMEDIATE && pg.flushMode == FLUSH_WHEN_FULL) {
-        PMatrix3D mm = pg.modelview;
+      if (renderMode == IMMEDIATE && g.flushMode == FLUSH_WHEN_FULL) {
+        PMatrix3D mm = g.modelview;
 
         index = 4 * tessIdx;
         pointVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
@@ -9851,6 +9826,9 @@ public class PGraphicsOpenGL extends PGraphics {
     // Add line geometry
 
     void setLineVertex(int tessIdx, float[] vertices, int inIdx0, int rgba) {
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return;
+
       int index;
 
       index = 3 * inIdx0;
@@ -9858,8 +9836,8 @@ public class PGraphicsOpenGL extends PGraphics {
       float y0 = vertices[index++];
       float z0 = vertices[index  ];
 
-      if (renderMode == IMMEDIATE && pg.flushMode == FLUSH_WHEN_FULL) {
-        PMatrix3D mm = pg.modelview;
+      if (renderMode == IMMEDIATE && g.flushMode == FLUSH_WHEN_FULL) {
+        PMatrix3D mm = g.modelview;
 
         index = 4 * tessIdx;
         lineVertices[index++] = x0*mm.m00 + y0*mm.m01 + z0*mm.m02 + mm.m03;
@@ -9886,6 +9864,9 @@ public class PGraphicsOpenGL extends PGraphics {
     // inIdx0 and inIdx1.
     void setLineVertex(int tessIdx, float[] vertices, int inIdx0, int inIdx1,
                        int rgba, float weight) {
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return;
+
       int index;
 
       index = 3 * inIdx0;
@@ -9902,8 +9883,8 @@ public class PGraphicsOpenGL extends PGraphics {
       float dy = y1 - y0;
       float dz = z1 - z0;
 
-      if (renderMode == IMMEDIATE && pg.flushMode == FLUSH_WHEN_FULL) {
-        PMatrix3D mm = pg.modelview;
+      if (renderMode == IMMEDIATE && g.flushMode == FLUSH_WHEN_FULL) {
+        PMatrix3D mm = g.modelview;
 
         index = 4 * tessIdx;
         lineVertices[index++] = x0*mm.m00 + y0*mm.m01 + z0*mm.m02 + mm.m03;
@@ -9937,6 +9918,9 @@ public class PGraphicsOpenGL extends PGraphics {
     // Add poly geometry
 
     void addPolyVertex(double[] d, boolean clampXY) {
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return;
+
       int fcolor =
         (int)d[ 3] << 24 | (int)d[ 4] << 16 | (int)d[ 5] << 8 | (int)d[ 6];
        int acolor =
@@ -9956,8 +9940,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
        if (25 < d.length) {
          // Add the values of the custom attributes...
-         PMatrix3D mm = pg.modelview;
-         PMatrix3D nm = pg.modelviewInv;
+         PMatrix3D mm = g.modelview;
+         PMatrix3D nm = g.modelviewInv;
          int tessIdx = polyVertexCount - 1;
          int index;
          int pos = 25;
@@ -9977,7 +9961,7 @@ public class PGraphicsOpenGL extends PGraphics {
              float x = (float)d[pos++];
              float y = (float)d[pos++];
              float z = (float)d[pos++];
-             if (renderMode == IMMEDIATE && pg.flushMode == FLUSH_WHEN_FULL) {
+             if (renderMode == IMMEDIATE && g.flushMode == FLUSH_WHEN_FULL) {
                if (clampXY) {
                  // ceil emulates the behavior of JAVA2D
                  farray[index++] =
@@ -10001,7 +9985,7 @@ public class PGraphicsOpenGL extends PGraphics {
              float x = (float)d[pos + 0];
              float y = (float)d[pos + 1];
              float z = (float)d[pos + 2];
-             if (renderMode == IMMEDIATE && pg.flushMode == FLUSH_WHEN_FULL) {
+             if (renderMode == IMMEDIATE && g.flushMode == FLUSH_WHEN_FULL) {
                farray[index++] = x*nm.m00 + y*nm.m10 + z*nm.m20;
                farray[index++] = x*nm.m01 + y*nm.m11 + z*nm.m21;
                farray[index  ] = x*nm.m02 + y*nm.m12 + z*nm.m22;
@@ -10064,11 +10048,14 @@ public class PGraphicsOpenGL extends PGraphics {
                        float u, float v,
                        int am, int sp, int em, float shine,
                        boolean clampXY) {
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return;
+
       int index;
 
-      if (renderMode == IMMEDIATE && pg.flushMode == FLUSH_WHEN_FULL) {
-        PMatrix3D mm = pg.modelview;
-        PMatrix3D nm = pg.modelviewInv;
+      if (renderMode == IMMEDIATE && g.flushMode == FLUSH_WHEN_FULL) {
+        PMatrix3D mm = g.modelview;
+        PMatrix3D nm = g.modelviewInv;
 
         index = 4 * tessIdx;
         if (clampXY) {
@@ -10122,14 +10109,17 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void addPolyVertices(InGeometry in, int i0, int i1, boolean clampXY) {
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return;
+
       int index;
       int nvert = i1 - i0 + 1;
 
       polyVertexCheck(nvert);
 
-      if (renderMode == IMMEDIATE && pg.flushMode == FLUSH_WHEN_FULL) {
-        PMatrix3D mm = pg.modelview;
-        PMatrix3D nm = pg.modelviewInv;
+      if (renderMode == IMMEDIATE && g.flushMode == FLUSH_WHEN_FULL) {
+        PMatrix3D mm = g.modelview;
+        PMatrix3D nm = g.modelviewInv;
 
         for (int i = 0; i < nvert; i++) {
           int inIdx = i0 + i;
@@ -10589,6 +10579,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Generates tessellated geometry given a batch of input vertices.
   static protected class Tessellator {
+    WeakReference<PGraphicsOpenGL> pg;
+
     InGeometry in;
     TessGeometry tess;
     TexCache texCache;
@@ -10611,7 +10603,6 @@ public class PGraphicsOpenGL extends PGraphics {
     PMatrix transform;
     float transformScale;
     boolean is2D, is3D;
-    protected PGraphicsOpenGL pg;
 
     int[] rawIndices;
     int rawSize;
@@ -10649,9 +10640,10 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void initGluTess() {
-      if (gluTess == null) {
+      PGraphicsOpenGL g = pg.get();
+      if (g != null && gluTess == null) {
         callback = new TessellatorCallback(tess.polyAttribs);
-        gluTess = pg.pgl.createTessellator(callback);
+        gluTess = g.pgl.createTessellator(callback);
       }
     }
 
@@ -10704,7 +10696,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     protected void setRenderer(PGraphicsOpenGL pg) {
-      this.pg = pg;
+      this.pg = new WeakReference<PGraphicsOpenGL>(pg);
     }
 
     void set3D(boolean value) {
@@ -10723,7 +10715,10 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void resetCurveVertexCount() {
-      pg.curveVertexCount = 0;
+      PGraphicsOpenGL g = pg.get();
+      if (g != null) {
+        g.curveVertexCount = 0;
+      }
     }
 
     // -----------------------------------------------------------------
@@ -11003,8 +10998,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     boolean clamp2D() {
-      return is2D && tess.renderMode == IMMEDIATE &&
-             zero(pg.modelview.m01) && zero(pg.modelview.m10);
+      PGraphicsOpenGL g = pg.get();
+      return is2D && tess.renderMode == IMMEDIATE && g != null &&
+             zero(g.modelview.m01) && zero(g.modelview.m10);
     }
 
     boolean clampSquarePoints2D() {
@@ -11679,10 +11675,13 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void unclampLine2D(int tessIdx, float x, float y) {
-      PMatrix3D mm = pg.modelview;
-      int index = 4 * tessIdx;
-      tess.polyVertices[index++] = x*mm.m00 + y*mm.m01 + mm.m03;
-      tess.polyVertices[index++] = x*mm.m10 + y*mm.m11 + mm.m13;
+      PGraphicsOpenGL g = pg.get();
+      if (g != null) {
+        PMatrix3D mm = g.modelview;
+        int index = 4 * tessIdx;
+        tess.polyVertices[index++] = x*mm.m00 + y*mm.m01 + mm.m03;
+        tess.polyVertices[index++] = x*mm.m10 + y*mm.m11 + mm.m13;
+      }
     }
 
     boolean noCapsJoins(int nInVert) {
@@ -12305,11 +12304,14 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void addBezierVertex(int i) {
-      pg.curveVertexCount = 0;
-      pg.bezierInitCheck();
-      pg.bezierVertexCheck(POLYGON, i);
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return;
 
-      PMatrix3D draw = pg.bezierDrawMatrix;
+      g.curveVertexCount = 0;
+      g.bezierInitCheck();
+      g.bezierVertexCheck(POLYGON, i);
+
+      PMatrix3D draw = g.bezierDrawMatrix;
 
       int i1 = i - 1;
       float x1 = in.vertices[3*i1 + 0];
@@ -12347,7 +12349,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
       float zplot3 = draw.m30*z1 + draw.m31*z2 + draw.m32*z3 + draw.m33*z4;
 
-      for (int j = 0; j < pg.bezierDetail; j++) {
+      for (int j = 0; j < g.bezierDetail; j++) {
         x1 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
         y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
         z1 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
@@ -12363,11 +12365,14 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void addQuadraticVertex(int i) {
-      pg.curveVertexCount = 0;
-      pg.bezierInitCheck();
-      pg.bezierVertexCheck(POLYGON, i);
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return;
 
-      PMatrix3D draw = pg.bezierDrawMatrix;
+      g.curveVertexCount = 0;
+      g.bezierInitCheck();
+      g.bezierVertexCheck(POLYGON, i);
+
+      PMatrix3D draw = g.bezierDrawMatrix;
 
       int i1 = i - 1;
       float x1 = in.vertices[3*i1 + 0];
@@ -12412,7 +12417,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
       float zplot3 = draw.m30*z1 + draw.m31*z2 + draw.m32*z3 + draw.m33*z4;
 
-      for (int j = 0; j < pg.bezierDetail; j++) {
+      for (int j = 0; j < g.bezierDetail; j++) {
         x1 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
         y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
         z1 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
@@ -12428,24 +12433,27 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void addCurveVertex(int i) {
-      pg.curveVertexCheck(POLYGON);
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return;
 
-      float[] vertex = pg.curveVertices[pg.curveVertexCount];
+      g.curveVertexCheck(POLYGON);
+
+      float[] vertex = g.curveVertices[g.curveVertexCount];
       vertex[X] = in.vertices[3*i + 0];
       vertex[Y] = in.vertices[3*i + 1];
       vertex[Z] = in.vertices[3*i + 2];
-      pg.curveVertexCount++;
+      g.curveVertexCount++;
 
       // draw a segment if there are enough points
-      if (pg.curveVertexCount == 3) {
-        float[] v = pg.curveVertices[pg.curveVertexCount - 2];
+      if (g.curveVertexCount == 3) {
+        float[] v = g.curveVertices[g.curveVertexCount - 2];
         addCurveInitialVertex(i, v[X], v[Y], v[Z]);
       }
-      if (pg.curveVertexCount > 3) {
-        float[] v1 = pg.curveVertices[pg.curveVertexCount - 4];
-        float[] v2 = pg.curveVertices[pg.curveVertexCount - 3];
-        float[] v3 = pg.curveVertices[pg.curveVertexCount - 2];
-        float[] v4 = pg.curveVertices[pg.curveVertexCount - 1];
+      if (g.curveVertexCount > 3) {
+        float[] v1 = g.curveVertices[g.curveVertexCount - 4];
+        float[] v2 = g.curveVertices[g.curveVertexCount - 3];
+        float[] v3 = g.curveVertices[g.curveVertexCount - 2];
+        float[] v4 = g.curveVertices[g.curveVertexCount - 1];
         addCurveVertexSegment(i, v1[X], v1[Y], v1[Z],
                                  v2[X], v2[Y], v2[Z],
                                  v3[X], v3[Y], v3[Z],
@@ -12470,6 +12478,9 @@ public class PGraphicsOpenGL extends PGraphics {
                                       float x2, float y2, float z2,
                                       float x3, float y3, float z3,
                                       float x4, float y4, float z4) {
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return;
+
       int strokeColor = 0;
       float strokeWeight = 0;
       if (stroke) {
@@ -12483,7 +12494,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float y = y2;
       float z = z2;
 
-      PMatrix3D draw = pg.curveDrawMatrix;
+      PMatrix3D draw = g.curveDrawMatrix;
 
       float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
       float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
@@ -12497,7 +12508,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
       float zplot3 = draw.m30*z1 + draw.m31*z2 + draw.m32*z3 + draw.m33*z4;
 
-      for (int j = 0; j < pg.curveDetail; j++) {
+      for (int j = 0; j < g.curveDetail; j++) {
         x += xplot1; xplot1 += xplot2; xplot2 += xplot3;
         y += yplot1; yplot1 += yplot2; yplot2 += yplot3;
         z += zplot1; zplot1 += zplot2; zplot2 += zplot3;
@@ -12513,7 +12524,10 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void addVertex(int i) {
-      pg.curveVertexCount = 0;
+      PGraphicsOpenGL g = pg.get();
+      if (g == null) return;
+
+      g.curveVertexCount = 0;
 
       float x = in.vertices[3*i + 0];
       float y = in.vertices[3*i + 1];
@@ -12888,8 +12902,11 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       public void error(int errnum) {
-        String estring = pg.pgl.tessError(errnum);
-        PGraphics.showWarning(TESSELLATION_ERROR, estring);
+        PGraphicsOpenGL g = pg.get();
+        if (g != null) {
+          String estring = g.pgl.tessError(errnum);
+          PGraphics.showWarning(TESSELLATION_ERROR, estring);
+        }
       }
 
       /**
