@@ -1,9 +1,12 @@
 0246 the holy land
+X does the "Saving" message never clear on "Save As"? 
+X   https://github.com/processing/processing/issues/3861
+
+gui
 X distinguish errors and warnings
 X   https://github.com/processing/processing/issues/3406
 X make breakpoints more prominent
 X   https://github.com/processing/processing/issues/3307 (comp is set)
-X does the "Saving" message never clear on "Save As"? 
 
 
 known issues
