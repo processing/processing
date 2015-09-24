@@ -114,12 +114,12 @@ editor.gutter.text.font = processing.mono,plain,11
 editor.gutter.text.color = #bbd6d5
 
 # marker for breakpointed lines in left hand gutter (2 ascii characters)
-editor.gutter.breakpoint.marker = <>
-editor.gutter.breakpoint.marker.color = #4a545e
+#editor.gutter.breakpoint.marker = <>
+#editor.gutter.breakpoint.marker.color = #4a545e
 
 # marker for the current line in left hand gutter (2 ascii characters)
-editor.gutter.currentline.marker = ->
-editor.gutter.currentline.marker.color = #e27500
+#editor.gutter.currentline.marker = ->
+#editor.gutter.currentline.marker.color = #e27500
 
 # bgcolor for the current (highlighted) line
 editor.gutter.linehighlight.color=#587478

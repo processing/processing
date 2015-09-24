@@ -38,6 +38,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -268,24 +269,56 @@ public class JavaTextAreaPainter extends TextAreaPainter
     if (getJavaEditor().isDebuggerEnabled()) {
       text = getTextArea().getGutterText(line);
     }
-    // if no special text for a breakpoint, just show the line number
-    if (text == null) {
+
+    gfx.setColor(gutterTextColor);
+    int textRight = Editor.LEFT_GUTTER - Editor.GUTTER_MARGIN;
+    int textBaseline = textArea.lineToY(line) + fm.getHeight();
+
+    if (text != null) {
+      if (text.equals(JavaTextArea.BREAK_MARKER)) {
+        drawDiamond(gfx, textRight - 8, textBaseline - 8, 8, 8);
+
+      } else if (text.equals(JavaTextArea.STEP_MARKER)) {
+        //drawRightArrow(gfx, textRight - 7, textBaseline - 7, 7, 6);
+        drawRightArrow(gfx, textRight - 7, textBaseline - 7.5f, 7, 7);
+      }
+    } else {
+      // if no special text for a breakpoint, just show the line number
       text = String.valueOf(line + 1);
       //text = makeOSF(String.valueOf(line + 1));
-    }
-    char[] txt = text.toCharArray();
 
-    //gfx.setFont(getFont());
-    gfx.setFont(gutterTextFont);
-    // Right-align the text
-    int tx = Editor.LEFT_GUTTER - Editor.GUTTER_MARGIN -
-      gfx.getFontMetrics().charsWidth(txt, 0, txt.length);
-    gfx.setColor(gutterTextColor);
-    // Using 'fm' here because it's relative to the editor text size,
-    // not the numbers in the gutter
-    int ty = textArea.lineToY(line) + fm.getHeight();
-    Utilities.drawTabbedText(new Segment(txt, 0, text.length()),
-                             tx, ty, gfx, this, 0);
+      gfx.setFont(gutterTextFont);
+      // Right-align the text
+      char[] txt = text.toCharArray();
+      int tx = textRight - gfx.getFontMetrics().charsWidth(txt, 0, txt.length);
+      // Using 'fm' here because it's relative to the editor text size,
+      // not the numbers in the gutter
+      Utilities.drawTabbedText(new Segment(txt, 0, text.length()),
+                               tx, textBaseline, gfx, this, 0);
+    }
+  }
+
+
+  private void drawDiamond(Graphics g, float x, float y, float w, float h) {
+    Graphics2D g2 = (Graphics2D) g;
+    GeneralPath path = new GeneralPath();
+    path.moveTo(x + w/2, y);
+    path.lineTo(x + w, y + h/2);
+    path.lineTo(x + w/2, y + h);
+    path.lineTo(x, y + h/2);
+    path.closePath();
+    g2.fill(path);
+  }
+
+
+  private void drawRightArrow(Graphics g, float x, float y, float w, float h) {
+    Graphics2D g2 = (Graphics2D) g;
+    GeneralPath path = new GeneralPath();
+    path.moveTo(x, y);
+    path.lineTo(x + w, y + h/2);
+    path.lineTo(x, y + h);
+    path.closePath();
+    g2.fill(path);
   }
 
 

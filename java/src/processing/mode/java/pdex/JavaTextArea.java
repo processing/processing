@@ -72,9 +72,9 @@ public class JavaTextArea extends JEditTextArea {
   protected Color gutterLineColor; // = new Color(233, 233, 233); // color of vertical separation line
 
   /// the text marker for highlighting breakpoints in the gutter
-  public String breakpointMarker = "<>";
+  static public final String BREAK_MARKER = "<>";
   /// the text marker for highlighting the current line in the gutter
-  public String currentLineMarker = "->";
+  static public final String STEP_MARKER = "->";
 
   /// maps line index to gutter text
   protected Map<Integer, String> gutterText = new HashMap<Integer, String>();
@@ -129,9 +129,9 @@ public class JavaTextArea extends JEditTextArea {
     gutterBgColor = mode.getColor("editor.gutter.bgcolor");  //, gutterBgColor);
     gutterLineColor = mode.getColor("editor.gutter.linecolor"); //, gutterLineColor);
     gutterPadding = mode.getInteger("editor.gutter.padding");
-    breakpointMarker = mode.getString("editor.gutter.breakpoint.marker");  //, breakpointMarker);
+//    breakpointMarker = mode.getString("editor.gutter.breakpoint.marker");  //, breakpointMarker);
 //    breakpointMarker = "\u2666";
-    currentLineMarker = mode.getString("editor.gutter.currentline.marker"); //, currentLineMarker);
+//    currentLineMarker = mode.getString("editor.gutter.currentline.marker"); //, currentLineMarker);
 
     // TweakMode code
     prevCompListeners = painter.getComponentListeners();

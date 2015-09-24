@@ -1,4 +1,8 @@
 0246 the holy land
+X distinguish errors and warnings
+X   https://github.com/processing/processing/issues/3406
+X make breakpoints more prominent
+X   https://github.com/processing/processing/issues/3307 (comp is set)
 _ does the "Saving" message never clear on "Save As"? 
 _   probably a regression from the "save as" code
 
@@ -20,7 +24,10 @@ _ new Android release (EditorButton constructor changed)
 
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
-_ clean up statusMessage() inside JavaEditor
+X clean up statusMessage() inside JavaEditor
+_   do we want to bring back the delays?
+_ JavaEditor has several null colors, remove color support
+_   once the design is complete and we for sure do not need color
 
 
 gui / James
@@ -28,10 +35,6 @@ _ Fix placement and visual design when showing error on hover
 _   https://github.com/processing/processing/issues/3173
 _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407
-_ distinguish errors and warnings
-_   https://github.com/processing/processing/issues/3406
-_ make breakpoints more prominent
-_   https://github.com/processing/processing/issues/3307 (comp is set)
 _ replace startup/about screen (1x and 2x versions)
 _   change 'alpha' to correct name
 _   also change the revision in the "about processing" dialog

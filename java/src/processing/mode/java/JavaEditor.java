@@ -50,8 +50,9 @@ public class JavaEditor extends Editor {
   // Runner associated with this editor window
   private Runner runtime;
 
-  // Need to sort through the rest of these additions...
+  // Need to sort through the rest of these additions [fry]
 
+  // TODO these are all null, need to remove color support
   protected Color breakpointColor;
   protected Color currentLineColor;
   protected Color breakpointMarkerColor;
@@ -122,11 +123,11 @@ public class JavaEditor extends Editor {
 
     Toolkit.setMenuMnemonics(textarea.getRightClickPopup());
 
-    // load settings from theme.txt
-    breakpointColor = mode.getColor("breakpoint.bgcolor");
-    breakpointMarkerColor = mode.getColor("breakpoint.marker.color");
-    currentLineColor = mode.getColor("currentline.bgcolor");
-    currentLineMarkerColor = mode.getColor("currentline.marker.color");
+//    // load settings from theme.txt
+//    breakpointColor = mode.getColor("breakpoint.bgcolor");
+//    breakpointMarkerColor = mode.getColor("breakpoint.marker.color");
+//    currentLineColor = mode.getColor("currentline.bgcolor");
+//    currentLineMarkerColor = mode.getColor("currentline.marker.color");
 
     // set breakpoints from marker comments
     for (LineID lineID : stripBreakpointComments()) {
@@ -2189,7 +2190,7 @@ public class JavaEditor extends Editor {
     cursorToLineStart(line.lineIdx());
     // highlight line
     currentLine = new LineHighlight(line.lineIdx(), currentLineColor, this);
-    currentLine.setMarker(getJavaTextArea().currentLineMarker, currentLineMarkerColor);
+    currentLine.setMarker(JavaTextArea.STEP_MARKER, currentLineMarkerColor);
     currentLine.setPriority(10); // fixes current line being hidden by the breakpoint when moved down
   }
 
@@ -2218,7 +2219,7 @@ public class JavaEditor extends Editor {
    */
   public void addBreakpointedLine(LineID lineID) {
     LineHighlight hl = new LineHighlight(lineID, breakpointColor, this);
-    hl.setMarker(getJavaTextArea().breakpointMarker, breakpointMarkerColor);
+    hl.setMarker(JavaTextArea.BREAK_MARKER, breakpointMarkerColor);
     breakpointedLines.add(hl);
     // repaint current line if it's on this line
     if (currentLine != null && currentLine.getLineID().equals(lineID)) {
