@@ -8,6 +8,12 @@ X   https://github.com/processing/processing/issues/3406
 X make breakpoints more prominent
 X   https://github.com/processing/processing/issues/3307 (comp is set)
 
+earlier
+X list with contrib types separated is really wonky
+o   do we keep the list?
+o   does it even work for different contrib types?
+X   cleaned this up in the last release
+
 
 known issues
 _ launch4j doesn't work from folders with non-native charsets
@@ -43,9 +49,6 @@ _   also change the revision in the "about processing" dialog
 _   https://github.com/processing/processing/issues/3665
 _ different design of squiggly line
 _   easy to do inside JavaTextAreaPainter.paintSquiggle()
-_ list with contrib types separated is really wonky
-_   do we keep the list?
-_   does it even work for different contrib types?
 
 
 manager / 3.0 final
