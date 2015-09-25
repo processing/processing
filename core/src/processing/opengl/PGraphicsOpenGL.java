@@ -703,13 +703,24 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void setCache(PImage image, Object storage) {
+    if (image instanceof PGraphicsOpenGL) {
+      // Prevent strong reference to the key from the value by wrapping
+      // the Texture into WeakReference (proposed solution by WeakHashMap docs)
+      getPrimaryPG().cacheMap.put(image, new WeakReference<>(storage));
+      return;
+    }
     getPrimaryPG().cacheMap.put(image, storage);
   }
 
 
   @Override
   public Object getCache(PImage image) {
-    return getPrimaryPG().cacheMap.get(image);
+    Object storage = getPrimaryPG().cacheMap.get(image);
+    if (storage != null && storage.getClass() == WeakReference.class) {
+      // Unwrap the value, use getClass() for fast check
+      return ((WeakReference) storage).get();
+    }
+    return storage;
   }
 
 
