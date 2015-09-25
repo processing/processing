@@ -1112,18 +1112,18 @@ public class PGraphics extends PImage implements PConstants {
    * hint(DISABLE_OPENGL_ERROR_REPORT) - Speeds up the P3D renderer setting
    * by not checking for errors while running. Undo with hint(ENABLE_OPENGL_ERROR_REPORT).
    * <br/> <br/>
-   * hint(ENABLE_DEPTH_READING) - Depth and stencil buffers in P2D/P3D will be
+   * hint(ENABLE_BUFFER_READING) - Depth and stencil buffers in P2D/P3D will be
    * downsampled to make PGL#readPixels work with multisampling. Enabling this
    * introduces some overhead, so if you experience bad performance, disable
    * multisampling with noSmooth() instead. This hint is not intended to be
    * enabled and disabled repeatedely, so call this once in setup() or after
    * creating your PGraphics2D/3D. You can restore the default with
-   * hint(DISABLE_DEPTH_READING) if you don't plan to read depth from
+   * hint(DISABLE_BUFFER_READING) if you don't plan to read depth from
    * this PGraphics anymore.
    * <br/> <br/>
-   * hint(ENABLE_KEY_AUTO_REPEAT) - Auto-repeating key events are discarded
+   * hint(ENABLE_KEY_REPEAT) - Auto-repeating key events are discarded
    * by default (works only in P2D/P3D); use this hint to get all the key events
-   * (including auto-repeated). Call hint(DISABLE_KEY_AUTO_REPEAT) to get events
+   * (including auto-repeated). Call hint(DISABLE_KEY_REPEAT) to get events
    * only when the key goes physically up or down.
    * <br/> <br/>
    * As of release 0149, unhint() has been removed in favor of adding
