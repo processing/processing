@@ -777,7 +777,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       drainRefQueueBounded();
 
-      this.pgl = tex.pg.getPrimaryPGL();
+      this.pgl = tex.pg.get().getPrimaryPGL();
       pgl.genTextures(1, intBuffer);
       tex.glName = intBuffer.get(0);
 
@@ -853,7 +853,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       drainRefQueueBounded();
 
-      this.pgl = vbo.pgl.graphics.getPrimaryPGL();
+      this.pgl = vbo.pgl.graphics.get().getPrimaryPGL();
       pgl.genBuffers(1, intBuffer);
       vbo.glId = intBuffer.get(0);
 
@@ -931,7 +931,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       drainRefQueueBounded();
 
-      this.pgl = sh.pgl.graphics.getPrimaryPGL();
+      this.pgl = sh.pgl.graphics.get().getPrimaryPGL();
       sh.glProgram = pgl.createProgram();
       sh.glVertex = pgl.createShader(PGL.VERTEX_SHADER);
       sh.glFragment = pgl.createShader(PGL.FRAGMENT_SHADER);
@@ -1025,7 +1025,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       drainRefQueueBounded();
 
-      this.pgl = fb.pg.getPrimaryPGL();
+      this.pgl = fb.pg.get().getPrimaryPGL();
 
       if (!fb.screenFb) {
         pgl.genFramebuffers(1, intBuffer);
