@@ -194,6 +194,22 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // ........................................................
 
+  // Async pixel reader
+
+  protected AsyncPixelReader asyncPixelReader;
+  protected boolean asyncPixelReaderInitialized;
+
+  // Keeps track of ongoing transfers so they can be finished.
+  // Set is copied to the List when we need to iterate it
+  // so that readers can remove themselves from the Set during
+  // iteration if they don't have any ongoing transfers.
+  protected static final Set<PGraphicsOpenGL.AsyncPixelReader>
+      ongoingPixelTransfers = new HashSet<>();
+  protected static final List<PGraphicsOpenGL.AsyncPixelReader>
+      ongoingPixelTransfersIterable = new ArrayList<>();
+
+  // ........................................................
+
   // Camera:
 
   /** Camera field of view. */
@@ -596,6 +612,11 @@ public class PGraphicsOpenGL extends PGraphics {
       // iterations have been conducted so far to properly
       // initialize all the buffers.
       pgl.swapBuffers();
+    }
+
+    if (asyncPixelReader != null) {
+      asyncPixelReader.dispose();
+      asyncPixelReader = null;
     }
 
     deleteSurfaceTextures();
@@ -5503,16 +5524,285 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public boolean save(String filename) {
 
-    // Act as an opaque surface for the purposes of saving.
-    if (primaryGraphics) {
-      int prevFormat = format;
-      format = RGB;
-      boolean result = super.save(filename);
-      format = prevFormat;
-      return result;
+    if (getHint(DISABLE_ASYNC_SAVEFRAME)) {
+      // Act as an opaque surface for the purposes of saving.
+      if (primaryGraphics) {
+        int prevFormat = format;
+        format = RGB;
+        boolean result = super.save(filename);
+        format = prevFormat;
+        return result;
+      }
+
+      return super.save(filename);
     }
 
-    return super.save(filename);
+    if (asyncImageSaver == null) {
+      asyncImageSaver = new AsyncImageSaver();
+    }
+
+    if (!asyncPixelReaderInitialized) {
+      // First call! Get this guy initialized
+      if (pgl.hasPBOs() && pgl.hasSynchronization()) {
+        asyncPixelReader = new AsyncPixelReader();
+      }
+      asyncPixelReaderInitialized = true;
+    }
+
+    if (asyncPixelReader != null && !loaded) {
+      boolean needEndDraw = false;
+      if (!drawing) {
+        beginDraw();
+        needEndDraw = true;
+      }
+      flush();
+      updatePixelSize();
+
+      // get the whole async package
+      asyncPixelReader.readAndSaveAsync(filename);
+
+      if (needEndDraw) endDraw();
+    } else {
+      // async transfer is not supported or
+      // pixels are already in memory, just do async save
+      if (!loaded) loadPixels();
+      int format = primaryGraphics ? RGB : ARGB;
+      PImage target = asyncImageSaver.getAvailableTarget(pixelWidth, pixelHeight,
+                                                         format);
+      if (target == null) return false;
+      int count = PApplet.min(pixels.length, target.pixels.length);
+      System.arraycopy(pixels, 0, target.pixels, 0, count);
+      asyncImageSaver.saveTargetAsync(this, target, filename);
+    }
+
+    return true;
+  }
+
+
+  @Override
+  protected void processImageBeforeAsyncSave(PImage image) {
+    if (image.format == AsyncPixelReader.OPENGL_NATIVE) {
+      PGL.nativeToJavaARGB(image.pixels, image.width, image.height);
+      image.format = ARGB;
+    } else if (image.format == AsyncPixelReader.OPENGL_NATIVE_OPAQUE) {
+      PGL.nativeToJavaRGB(image.pixels, image.width, image.height);
+      image.format = RGB;
+    }
+  }
+
+
+  protected static void completeFinishedPixelTransfers() {
+    ongoingPixelTransfersIterable.addAll(ongoingPixelTransfers);
+    for (PGraphicsOpenGL.AsyncPixelReader pixelReader :
+        ongoingPixelTransfersIterable) {
+      // if the getter was not called this frame,
+      // tell it to check for completed transfers now
+      if (!pixelReader.calledThisFrame) {
+        pixelReader.completeFinishedTransfers();
+      }
+      pixelReader.calledThisFrame = false;
+    }
+    ongoingPixelTransfersIterable.clear();
+  }
+
+  protected static void completeAllPixelTransfers() {
+    ongoingPixelTransfersIterable.addAll(ongoingPixelTransfers);
+    for (PGraphicsOpenGL.AsyncPixelReader pixelReader :
+        ongoingPixelTransfersIterable) {
+      pixelReader.completeAllTransfers();
+    }
+    ongoingPixelTransfersIterable.clear();
+  }
+
+
+  protected class AsyncPixelReader {
+
+    // PImage formats used internally to offload
+    // color format conversion to save threads
+    static final int OPENGL_NATIVE = -1;
+    static final int OPENGL_NATIVE_OPAQUE = -2;
+
+    static final int BUFFER_COUNT = 3;
+
+    int[] pbos;
+    long[] fences;
+    String[] filenames;
+    int[] widths;
+    int[] heights;
+
+    int head;
+    int tail;
+    int size;
+
+    boolean supportsAsyncTransfers;
+
+    boolean calledThisFrame;
+
+
+    /// PGRAPHICS API //////////////////////////////////////////////////////////
+
+    public AsyncPixelReader() {
+      supportsAsyncTransfers = pgl.hasPBOs() && pgl.hasSynchronization();
+      if (supportsAsyncTransfers) {
+        pbos = new int[BUFFER_COUNT];
+        fences = new long[BUFFER_COUNT];
+        filenames = new String[BUFFER_COUNT];
+        widths = new int[BUFFER_COUNT];
+        heights = new int[BUFFER_COUNT];
+
+        IntBuffer intBuffer = PGL.allocateIntBuffer(BUFFER_COUNT);
+        intBuffer.rewind();
+        pgl.genBuffers(BUFFER_COUNT, intBuffer);
+        for (int i = 0; i < BUFFER_COUNT; i++) {
+          pbos[i] = intBuffer.get(i);
+        }
+      }
+    }
+
+
+    public void dispose() {
+      if (fences != null) {
+        while (size > 0) {
+          pgl.deleteSync(fences[tail]);
+          size--;
+          tail = (tail + 1) % BUFFER_COUNT;
+        }
+        fences = null;
+      }
+      if (pbos != null) {
+        for (int i = 0; i < BUFFER_COUNT; i++) {
+          IntBuffer intBuffer = PGL.allocateIntBuffer(pbos);
+          pgl.deleteBuffers(BUFFER_COUNT, intBuffer);
+        }
+        pbos = null;
+      }
+      filenames = null;
+      widths = null;
+      heights = null;
+      size = 0;
+      head = 0;
+      tail = 0;
+      calledThisFrame = false;
+      ongoingPixelTransfers.remove(this);
+    }
+
+
+    public void readAndSaveAsync(final String filename) {
+      if (size > 0) {
+        boolean shouldRead = (size == BUFFER_COUNT);
+        if (!shouldRead) shouldRead = isLastTransferComplete();
+        if (shouldRead) endTransfer();
+      } else {
+        ongoingPixelTransfers.add(this);
+      }
+      beginTransfer(filename);
+      calledThisFrame = true;
+    }
+
+
+    public void completeFinishedTransfers() {
+      if (size <= 0 || !asyncImageSaver.hasAvailableTarget()) return;
+
+      boolean needEndDraw = false;
+      if (!drawing) {
+        beginDraw();
+        needEndDraw = true;
+      }
+
+      while (asyncImageSaver.hasAvailableTarget() &&
+          isLastTransferComplete()) {
+        endTransfer();
+      }
+
+      // make sure to always unregister if there are no ongoing transfers
+      // so that PGraphics can be GC'd if needed
+      if (size <= 0) ongoingPixelTransfers.remove(this);
+
+      if (needEndDraw) endDraw();
+    }
+
+
+    protected void completeAllTransfers() {
+      if (size <= 0) return;
+
+      boolean needEndDraw = false;
+      if (!drawing) {
+        beginDraw();
+        needEndDraw = true;
+      }
+
+      while (size > 0) {
+        endTransfer();
+      }
+
+      // make sure to always unregister if there are no ongoing transfers
+      // so that PGraphics can be GC'd if needed
+      ongoingPixelTransfers.remove(this);
+
+      if (needEndDraw) endDraw();
+    }
+
+
+    /// TRANSFERS //////////////////////////////////////////////////////////////
+
+    public boolean isLastTransferComplete() {
+      if (size <= 0) return false;
+      int status = pgl.clientWaitSync(fences[tail], 0, 0);
+      return (status == PGL.ALREADY_SIGNALED) ||
+          (status == PGL.CONDITION_SATISFIED);
+    }
+
+
+    public void beginTransfer(String filename) {
+      // check the size of the buffer
+      if (widths[head] != pixelWidth || heights[head] != pixelHeight) {
+        if (widths[head] * heights[head] != pixelWidth * pixelHeight) {
+          pgl.bindBuffer(PGL.PIXEL_PACK_BUFFER, pbos[head]);
+          pgl.bufferData(PGL.PIXEL_PACK_BUFFER,
+                         Integer.BYTES * pixelWidth * pixelHeight,
+                         null, PGL.STREAM_READ);
+        }
+        widths[head] = pixelWidth;
+        heights[head] = pixelHeight;
+        pgl.bindBuffer(PGL.PIXEL_PACK_BUFFER, 0);
+      }
+
+      pgl.bindBuffer(PGL.PIXEL_PACK_BUFFER, pbos[head]);
+      pgl.readPixels(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE, 0);
+      pgl.bindBuffer(PGL.PIXEL_PACK_BUFFER, 0);
+
+      fences[head] = pgl.fenceSync(PGL.SYNC_GPU_COMMANDS_COMPLETE, 0);
+      filenames[head] = filename;
+
+      head = (head + 1) % BUFFER_COUNT;
+      size++;
+    }
+
+
+    public void endTransfer() {
+      pgl.deleteSync(fences[tail]);
+      pgl.bindBuffer(PGL.PIXEL_PACK_BUFFER, pbos[tail]);
+      ByteBuffer readBuffer = pgl.mapBuffer(PGL.PIXEL_PACK_BUFFER,
+                                            PGL.READ_ONLY);
+      if (readBuffer != null) {
+        int format = primaryGraphics ? OPENGL_NATIVE_OPAQUE : OPENGL_NATIVE;
+        PImage target = asyncImageSaver.getAvailableTarget(widths[tail],
+                                                           heights[tail],
+                                                           format);
+        if (target == null) return;
+        readBuffer.rewind();
+        readBuffer.asIntBuffer().get(target.pixels);
+        pgl.unmapBuffer(PGL.PIXEL_PACK_BUFFER);
+        asyncImageSaver.saveTargetAsync(PGraphicsOpenGL.this, target,
+                                        filenames[tail]);
+      }
+
+      pgl.bindBuffer(PGL.PIXEL_PACK_BUFFER, 0);
+
+      size--;
+      tail = (tail + 1) % BUFFER_COUNT;
+    }
+
   }
 
 

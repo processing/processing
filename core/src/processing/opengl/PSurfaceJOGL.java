@@ -69,8 +69,6 @@ import processing.core.PImage;
 import processing.core.PSurface;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
-import processing.opengl.PGraphicsOpenGL;
-import processing.opengl.PGL;
 
 
 public class PSurfaceJOGL implements PSurface {
@@ -762,7 +760,11 @@ public class PSurfaceJOGL implements PSurface {
         pgl.endRender(sketch.sketchWindowColor());
       }
 
+      PGraphicsOpenGL.completeFinishedPixelTransfers();
+
       if (sketch.exitCalled()) {
+        PGraphicsOpenGL.completeAllPixelTransfers();
+
         sketch.dispose(); // calls stopThread(), which stops the animator.
         sketch.exitActual();
       }

@@ -2117,6 +2117,24 @@ public abstract class PGL {
   }
 
 
+  protected boolean hasSynchronization() {
+    int[] version = getGLVersion();
+    if (isES()) {
+      return version[0] >= 3;
+    }
+    return (version[0] > 3) || (version[0] == 3 && version[1] >= 2);
+  }
+
+
+  protected boolean hasPBOs() {
+    int[] version = getGLVersion();
+    if (isES()) {
+      return version[0] >= 3;
+    }
+    return (version[0] > 2) || (version[0] == 2 && version[1] >= 1);
+  }
+
+
   protected int maxSamples() {
     intBuffer.rewind();
     getIntegerv(MAX_SAMPLES, intBuffer);
