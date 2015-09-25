@@ -5768,7 +5768,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       pgl.bindBuffer(PGL.PIXEL_PACK_BUFFER, pbos[head]);
-      pgl.readPixels(0, 0, width, height, PGL.RGBA, PGL.UNSIGNED_BYTE, 0);
+      pgl.readPixels(0, 0, pixelWidth, pixelHeight, PGL.RGBA, PGL.UNSIGNED_BYTE, 0);
       pgl.bindBuffer(PGL.PIXEL_PACK_BUFFER, 0);
 
       fences[head] = pgl.fenceSync(PGL.SYNC_GPU_COMMANDS_COMPLETE, 0);
