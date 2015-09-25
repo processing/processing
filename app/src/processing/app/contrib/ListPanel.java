@@ -45,7 +45,8 @@ import processing.app.ui.Toolkit;
 public class ListPanel extends JPanel
 implements Scrollable, ContributionListing.ChangeListener {
   ContributionTab contributionTab;
-  TreeMap<Contribution, DetailPanel> panelByContribution;
+  TreeMap<Contribution, DetailPanel> panelByContribution = new TreeMap<Contribution, DetailPanel>(ContributionListing.COMPARATOR);
+  Set<Contribution> visibleContributions = new TreeSet<Contribution>(ContributionListing.COMPARATOR);
 
   private DetailPanel selectedPanel;
   protected Contribution.Filter filter;
@@ -89,10 +90,6 @@ implements Scrollable, ContributionListing.ChangeListener {
     setLayout(new GridBagLayout());
     setOpaque(true);
     setBackground(Color.WHITE);
-
-    panelByContribution =
-      new TreeMap<Contribution, DetailPanel>(ContributionListing.COMPARATOR);
-
     model = new ContribTableModel();
     table = new JTable(model) {
       @Override
@@ -429,7 +426,6 @@ implements Scrollable, ContributionListing.ChangeListener {
   void updatePanelOrdering(Set<Contribution> contributionsSet) {
     model.getDataVector().removeAllElements();
     model.fireTableDataChanged();
-
     int rowCount = 0;
     for (Contribution entry : contributionsSet) {
       model.addRow(new Object[] { entry, entry, entry });
@@ -452,10 +448,13 @@ implements Scrollable, ContributionListing.ChangeListener {
             synchronized (panelByContribution) {
               panelByContribution.put(contribution, newPanel);
             }
+            synchronized (visibleContributions) {
+              visibleContributions.add(contribution);
+            }
             if (newPanel != null) {
               newPanel.setContribution(contribution);
               add(newPanel);
-              updatePanelOrdering(panelByContribution.keySet());
+              updatePanelOrdering(visibleContributions);
               updateColors();  // XXX this is the place
             }
           }
@@ -475,7 +474,10 @@ implements Scrollable, ContributionListing.ChangeListener {
             panelByContribution.remove(contribution);
           }
         }
-        updatePanelOrdering(panelByContribution.keySet());
+        synchronized (visibleContributions) {
+          visibleContributions.remove(contribution);
+        }
+        updatePanelOrdering(visibleContributions);
         updateColors();
         updateUI();
       }
@@ -495,8 +497,14 @@ implements Scrollable, ContributionListing.ChangeListener {
             panelByContribution.remove(oldContrib);
             panel.setContribution(newContrib);
             panelByContribution.put(newContrib, panel);
-            updatePanelOrdering(panelByContribution.keySet());
           }
+        }
+        synchronized (visibleContributions) {
+          if (visibleContributions.contains(oldContrib)) {
+            visibleContributions.remove(oldContrib);
+            visibleContributions.add(newContrib);
+          }
+          updatePanelOrdering(visibleContributions);
         }
       }
     });
@@ -504,15 +512,14 @@ implements Scrollable, ContributionListing.ChangeListener {
 
 
   public void filterLibraries(List<Contribution> filteredContributions) {
-    synchronized (panelByContribution) {
-      TreeSet<Contribution> panelInThisTab =
-        new TreeSet<Contribution>(ContributionListing.COMPARATOR);
+    synchronized (visibleContributions) {
+      visibleContributions.clear();
       for (Contribution contribution : filteredContributions) {
         if (contribution.getType() == contributionTab.contribType) {
-          panelInThisTab.add(contribution);
+          visibleContributions.add(contribution);
         }
       }
-      updatePanelOrdering(panelInThisTab);
+      updatePanelOrdering(visibleContributions);
     }
   }
 
