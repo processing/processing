@@ -520,5 +520,8 @@ public interface PConstants {
   static final int DISABLE_KEY_REPEAT         =  11;
   static final int ENABLE_KEY_REPEAT          = -11;
 
-  static final int HINT_COUNT                 =  12;
+  static final int DISABLE_ASYNC_SAVEFRAME    =  12;
+  static final int ENABLE_ASYNC_SAVEFRAME     = -12;
+
+  static final int HINT_COUNT                 =  13;
 }

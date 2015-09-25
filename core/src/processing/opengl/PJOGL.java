@@ -44,6 +44,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.GL3ES3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLCapabilitiesImmutable;
@@ -108,6 +109,9 @@ public class PJOGL extends PGL {
   /** GL2 desktop functionality (blit framebuffer, map buffer range,
    * multisampled renderbuffers) */
   protected GL2 gl2x;
+
+  /** GL3ES3 interface */
+  protected GL3ES3 gl3es3;
 
   /** Stores exceptions that ocurred during drawing */
   protected Exception drawException;
@@ -236,6 +240,7 @@ public class PJOGL extends PGL {
     this.gl2 = pjogl.gl2;
     this.gl2x = pjogl.gl2x;
     this.gl3 = pjogl.gl3;
+    this.gl3es3 = pjogl.gl3es3;
   }
 
 
@@ -255,6 +260,11 @@ public class PJOGL extends PGL {
       gl3 = gl.getGL2GL3();
     } catch (com.jogamp.opengl.GLException e) {
       gl3 = null;
+    }
+    try {
+      gl3es3 = gl.getGL3ES3();
+    } catch (com.jogamp.opengl.GLException e) {
+      gl3es3 = null;
     }
   }
 
@@ -742,12 +752,14 @@ public class PJOGL extends PGL {
 
     ARRAY_BUFFER         = GL.GL_ARRAY_BUFFER;
     ELEMENT_ARRAY_BUFFER = GL.GL_ELEMENT_ARRAY_BUFFER;
+    PIXEL_PACK_BUFFER    = GL3ES3.GL_PIXEL_PACK_BUFFER;
 
     MAX_VERTEX_ATTRIBS  = GL2ES2.GL_MAX_VERTEX_ATTRIBS;
 
     STATIC_DRAW  = GL.GL_STATIC_DRAW;
     DYNAMIC_DRAW = GL.GL_DYNAMIC_DRAW;
     STREAM_DRAW  = GL2ES2.GL_STREAM_DRAW;
+    STREAM_READ  = GL3ES3.GL_STREAM_READ;
 
     BUFFER_SIZE  = GL.GL_BUFFER_SIZE;
     BUFFER_USAGE = GL.GL_BUFFER_USAGE;
@@ -962,6 +974,10 @@ public class PJOGL extends PGL {
     MULTISAMPLE    = GL.GL_MULTISAMPLE;
     LINE_SMOOTH    = GL.GL_LINE_SMOOTH;
     POLYGON_SMOOTH = GL2GL3.GL_POLYGON_SMOOTH;
+
+    SYNC_GPU_COMMANDS_COMPLETE = GL3ES3.GL_SYNC_GPU_COMMANDS_COMPLETE;
+    ALREADY_SIGNALED           = GL3ES3.GL_ALREADY_SIGNALED;
+    CONDITION_SATISFIED        = GL3ES3.GL_CONDITION_SATISFIED;
   }
 
   ///////////////////////////////////////////////////////////
@@ -1120,6 +1136,37 @@ public class PJOGL extends PGL {
 
   //////////////////////////////////////////////////////////////////////////////
 
+  // Synchronization
+
+  @Override
+  public long fenceSync(int condition, int flags) {
+    if (gl3es3 != null) {
+      return gl3es3.glFenceSync(condition, flags);
+    } else {
+      throw new RuntimeException(String.format(MISSING_GLFUNC_ERROR, "fenceSync()"));
+    }
+  }
+
+  @Override
+  public void deleteSync(long sync) {
+    if (gl3es3 != null) {
+      gl3es3.glDeleteSync(sync);
+    } else {
+      throw new RuntimeException(String.format(MISSING_GLFUNC_ERROR, "deleteSync()"));
+    }
+  }
+
+  @Override
+  public int clientWaitSync(long sync, int flags, long timeout) {
+    if (gl3es3 != null) {
+      return gl3es3.glClientWaitSync(sync, flags, timeout);
+    } else {
+      throw new RuntimeException(String.format(MISSING_GLFUNC_ERROR, "clientWaitSync()"));
+    }
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+
   // Viewport and Clipping
 
   @Override
@@ -1145,6 +1192,11 @@ public class PJOGL extends PGL {
   @Override
   protected void readPixelsImpl(int x, int y, int width, int height, int format, int type, Buffer buffer) {
     gl.glReadPixels(x, y, width, height, format, type, buffer);
+  }
+
+  @Override
+  protected void readPixelsImpl(int x, int y, int width, int height, int format, int type, long offset) {
+    gl.glReadPixels(x, y, width, height, format, type, 0);
   }
 
   //////////////////////////////////////////////////////////////////////////////

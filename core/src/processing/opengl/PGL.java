@@ -2017,9 +2017,19 @@ public abstract class PGL {
     return false;
   }
 
+  protected boolean isES() {
+    return getString(VERSION).trim().toLowerCase().contains("opengl es");
+  }
 
   protected int[] getGLVersion() {
-    String version = getString(VERSION).trim();
+    String version = getString(VERSION).trim().toLowerCase();
+
+    String ES = "opengl es";
+    int esPosition = version.indexOf(ES);
+    if (esPosition >= 0) {
+      version = version.substring(esPosition + ES.length()).trim();
+    }
+
     int[] res = {0, 0, 0};
     String[] parts = version.split(" ");
     for (int i = 0; i < parts.length; i++) {
@@ -2129,6 +2139,24 @@ public abstract class PGL {
     } else {
       return true;
     }
+  }
+
+
+  protected boolean hasSynchronization() {
+    int[] version = getGLVersion();
+    if (isES()) {
+      return version[0] >= 3;
+    }
+    return (version[0] > 3) || (version[0] == 3 && version[1] >= 2);
+  }
+
+
+  protected boolean hasPBOs() {
+    int[] version = getGLVersion();
+    if (isES()) {
+      return version[0] >= 3;
+    }
+    return (version[0] > 2) || (version[0] == 2 && version[1] >= 1);
   }
 
 
@@ -2681,12 +2709,14 @@ public abstract class PGL {
 
   public static int ARRAY_BUFFER;
   public static int ELEMENT_ARRAY_BUFFER;
+  public static int PIXEL_PACK_BUFFER;
 
   public static int MAX_VERTEX_ATTRIBS;
 
   public static int STATIC_DRAW;
   public static int DYNAMIC_DRAW;
   public static int STREAM_DRAW;
+  public static int STREAM_READ;
 
   public static int BUFFER_SIZE;
   public static int BUFFER_USAGE;
@@ -2901,6 +2931,10 @@ public abstract class PGL {
   public static int LINE_SMOOTH;
   public static int POLYGON_SMOOTH;
 
+  public static int SYNC_GPU_COMMANDS_COMPLETE;
+  public static int ALREADY_SIGNALED;
+  public static int CONDITION_SATISFIED;
+
   ///////////////////////////////////////////////////////////
 
   // Special Functions
@@ -2945,6 +2979,14 @@ public abstract class PGL {
 
   //////////////////////////////////////////////////////////////////////////////
 
+  // Synchronization
+
+  public abstract long fenceSync(int condition, int flags);
+  public abstract void deleteSync(long sync);
+  public abstract int clientWaitSync(long sync, int flags, long timeout);
+
+  //////////////////////////////////////////////////////////////////////////////
+
   // Viewport and Clipping
 
   public abstract void depthRangef(float n, float f);
@@ -2977,7 +3019,23 @@ public abstract class PGL {
     g.endReadPixels();
   }
 
+  public void readPixels(int x, int y, int width, int height, int format, int type, long offset){
+    boolean multisampled = isMultisampled() || graphics.offscreenMultisample;
+    boolean depthReadingEnabled = graphics.getHint(PConstants.ENABLE_BUFFER_READING);
+    boolean depthRequested = format == STENCIL_INDEX || format == DEPTH_COMPONENT || format == DEPTH_STENCIL;
+
+    if (multisampled && depthRequested && !depthReadingEnabled) {
+      PGraphics.showWarning(DEPTH_READING_NOT_ENABLED_ERROR);
+      return;
+    }
+
+    graphics.beginReadPixels();
+    readPixelsImpl(x, y, width, height, format, type, offset);
+    graphics.endReadPixels();
+  }
+
   protected abstract void readPixelsImpl(int x, int y, int width, int height, int format, int type, Buffer buffer);
+  protected abstract void readPixelsImpl(int x, int y, int width, int height, int format, int type, long offset);
 
   //////////////////////////////////////////////////////////////////////////////
 
