@@ -8249,7 +8249,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   @Override
-  public boolean save(String filename) {
+  public boolean save(String filename) { // ignore
 
     if (hints[DISABLE_ASYNC_SAVEFRAME]) {
       return super.save(filename);
@@ -8293,10 +8293,10 @@ public class PGraphics extends PImage implements PConstants {
     int lastFrameCount = 0;
 
 
-    public AsyncImageSaver() { }
+    public AsyncImageSaver() { } // ignore
 
 
-    public void dispose() {
+    public void dispose() { // ignore
       saveExecutor.shutdown();
       try {
         saveExecutor.awaitTermination(5000, TimeUnit.SECONDS);
@@ -8304,7 +8304,7 @@ public class PGraphics extends PImage implements PConstants {
     }
 
 
-    public boolean hasAvailableTarget() {
+    public boolean hasAvailableTarget() { // ignore
       return targetsCreated < TARGET_COUNT || targetPool.isEmpty();
     }
 
@@ -8313,7 +8313,7 @@ public class PGraphics extends PImage implements PConstants {
      * After taking a target, you must call saveTargetAsync() or
      * returnUnusedTarget(), otherwise one thread won't be able to run
      */
-    public PImage getAvailableTarget(int requestedWidth, int requestedHeight,
+    public PImage getAvailableTarget(int requestedWidth, int requestedHeight, // ignore
                                      int format) {
       try {
         PImage target;
@@ -8338,12 +8338,12 @@ public class PGraphics extends PImage implements PConstants {
     }
 
 
-    public void returnUnusedTarget(PImage target) {
+    public void returnUnusedTarget(PImage target) { // ignore
       targetPool.offer(target);
     }
 
 
-    public void saveTargetAsync(final PGraphics renderer, final PImage target,
+    public void saveTargetAsync(final PGraphics renderer, final PImage target, // ignore
                                 final String filename) {
       target.parent = renderer.parent;
 
@@ -8368,7 +8368,7 @@ public class PGraphics extends PImage implements PConstants {
       try {
         saveExecutor.submit(new Runnable() {
           @Override
-          public void run() {
+          public void run() { // ignore
             try {
               long startTime = System.nanoTime();
               renderer.processImageBeforeAsyncSave(target);
