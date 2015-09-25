@@ -1247,9 +1247,13 @@ public class ErrorCheckerService {
       "DefaultClass" : editor.getSketch().getName();
 
     // Check whether the code is being written in STATIC mode
-    String uncommented = PdePreprocessor.scrubComments(sourceAlt);
-
-    mode = PdePreprocessor.parseMode(uncommented);
+    try {
+      String uncommented = PdePreprocessor.scrubComments(sourceAlt);
+      mode = PdePreprocessor.parseMode(uncommented);
+    } catch (RuntimeException r) {
+      String uncommented = PdePreprocessor.scrubComments(sourceAlt + "*/");
+      mode = PdePreprocessor.parseMode(uncommented);
+    }
 
     StringBuilder sb = new StringBuilder();
 

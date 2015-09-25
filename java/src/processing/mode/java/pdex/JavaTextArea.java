@@ -512,25 +512,25 @@ public class JavaTextArea extends JEditTextArea {
       String trimmedLineText = lineText.trim();
       if (trimmedLineText.length() == 0) return null;
 
-      int lastCodePoint = trimmedLineText.codePointAt(trimmedLineText.length() - 1);
-      if (lastCodePoint == '.') {
+      char lastChar = trimmedLineText.charAt(trimmedLineText.length() - 1);
+      if (lastChar == '.') {
         trimmedLineText = trimmedLineText.substring(0, trimmedLineText.length() - 1).trim();
         if (trimmedLineText.length() == 0) return null;
-        lastCodePoint = trimmedLineText.codePointAt(trimmedLineText.length() - 1);
-        switch (lastCodePoint) {
+        lastChar = trimmedLineText.charAt(trimmedLineText.length() - 1);
+        switch (lastChar) {
           case ')':
           case ']':
           case '"':
             break; // We can suggest for these
           default:
-            if (!Character.isJavaIdentifierPart(lastCodePoint)) {
+            if (!Character.isJavaIdentifierPart(lastChar)) {
               return null; // Not something we can suggest
             }
             break;
         }
-      } else if (lastCodePoint == '(') {
+      } else if (lastChar == '(') {
         overloading = true; // We can suggest overloaded methods
-      } else if (!Character.isJavaIdentifierPart(lastCodePoint)) {
+      } else if (!Character.isJavaIdentifierPart(lastChar)) {
         return null; // Not something we can suggest
       }
     }
@@ -555,7 +555,7 @@ public class JavaTextArea extends JEditTextArea {
 
       for (int i = 0; i < lineText.length(); i++) {
         if (!inEscaped) {
-          switch (lineText.codePointAt(i)) {
+          switch (lineText.charAt(i)) {
             case '\"':
               if (!inChar) inString = !inString;
               break;
@@ -585,7 +585,7 @@ public class JavaTextArea extends JEditTextArea {
 
       bracketLoop: for (int i = lineText.length() - 1; i >= 0; i--) {
         if (!isInLiteral.get(i)) {
-          switch (lineText.codePointAt(i)) {
+          switch (lineText.charAt(i)) {
             case ')':
               if (depth == 0) bracketStart = i;
               depth++;
@@ -618,11 +618,11 @@ public class JavaTextArea extends JEditTextArea {
       if (squareDepth > 0) isInBrackets.set(0, squareBracketStart);
     }
 
-    // Walk the line from the end until it makes sense
+    // Walk the line from the end while it makes sense
     int position = currentCharIndex;
     parseLoop: while (position >= 0) {
-      int codePoint = lineText.codePointAt(position);
-      switch (codePoint) {
+      int currChar = lineText.charAt(position);
+      switch (currChar) {
         case '.': // Grab it
           position--;
           break;
@@ -644,9 +644,9 @@ public class JavaTextArea extends JEditTextArea {
           position = isInLiteral.previousClearBit(position - 1);
           break parseLoop;
         default:
-          if (Character.isJavaIdentifierPart(codePoint)) {
+          if (Character.isJavaIdentifierPart(currChar)) {
             position--; // Grab the identifier
-          } else if (Character.isWhitespace(codePoint)) {
+          } else if (Character.isWhitespace(currChar)) {
             position--; // Grab whitespace too
           } else {
             break parseLoop; // Got a char ending the phrase
@@ -661,7 +661,7 @@ public class JavaTextArea extends JEditTextArea {
     String phrase = lineText.substring(position, caretLinePosition).trim();
     Messages.log(phrase);
 
-    if (phrase.length() == 0 || Character.isDigit(phrase.codePointAt(0))) {
+    if (phrase.length() == 0 || Character.isDigit(phrase.charAt(0))) {
       return null; // Can't suggest for numbers or empty phrases
     }
 
