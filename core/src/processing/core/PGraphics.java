@@ -1126,6 +1126,11 @@ public class PGraphics extends PImage implements PConstants {
    * (including auto-repeated). Call hint(DISABLE_KEY_REPEAT) to get events
    * only when the key goes physically up or down.
    * <br/> <br/>
+   * hint(DISABLE_ASYNC_SAVEFRAME) - P2D/P3D only - save() and saveFrame()
+   * will not use separate threads for saving and will block until the image
+   * is written to the drive. This was the default behavior in 3.0b7 and before.
+   * To enable, call hint(ENABLE_ASYNC_SAVEFRAME).
+   * <br/> <br/>
    * As of release 0149, unhint() has been removed in favor of adding
    * additional ENABLE/DISABLE constants to reset the default behavior. This
    * prevents the double negatives, and also reinforces which hints can be
