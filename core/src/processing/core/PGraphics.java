@@ -36,6 +36,12 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.WeakHashMap;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import processing.opengl.PGL;
 import processing.opengl.PShader;
@@ -796,6 +802,10 @@ public class PGraphics extends PImage implements PConstants {
    * endRaw(), in order to shut things off.
    */
   public void dispose() {  // ignore
+    if (primaryGraphics && asyncImageSaver != null) {
+      asyncImageSaver.dispose();
+      asyncImageSaver = null;
+    }
   }
 
 
@@ -8231,4 +8241,158 @@ public class PGraphics extends PImage implements PConstants {
   public boolean is2X() {
     return pixelDensity == 2;
   }
+
+
+  //////////////////////////////////////////////////////////////
+
+  // ASYNC IMAGE SAVING
+
+
+  @Override
+  public boolean save(String filename) {
+
+    if (hints[DISABLE_ASYNC_SAVEFRAME]) {
+      return super.save(filename);
+    }
+
+    if (asyncImageSaver == null) {
+      asyncImageSaver = new AsyncImageSaver();
+    }
+
+    if (!loaded) loadPixels();
+    PImage target = asyncImageSaver.getAvailableTarget(pixelWidth, pixelHeight,
+                                                       format);
+    if (target == null) return false;
+    int count = PApplet.min(pixels.length, target.pixels.length);
+    System.arraycopy(pixels, 0, target.pixels, 0, count);
+    asyncImageSaver.saveTargetAsync(this, target, filename);
+
+    return true;
+  }
+
+  protected void processImageBeforeAsyncSave(PImage image) { }
+
+
+  protected static AsyncImageSaver asyncImageSaver;
+
+  protected static class AsyncImageSaver {
+
+    static final int TARGET_COUNT =
+        Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
+
+    BlockingQueue<PImage> targetPool = new ArrayBlockingQueue<>(TARGET_COUNT);
+    ExecutorService saveExecutor = Executors.newFixedThreadPool(TARGET_COUNT);
+
+    int targetsCreated = 0;
+
+
+    static final int TIME_AVG_FACTOR = 32;
+
+    volatile long avgNanos = 0;
+    long lastTime = 0;
+    int lastFrameCount = 0;
+
+
+    public AsyncImageSaver() { }
+
+
+    public void dispose() {
+      saveExecutor.shutdown();
+      try {
+        saveExecutor.awaitTermination(5000, TimeUnit.SECONDS);
+      } catch (InterruptedException e) { }
+    }
+
+
+    public boolean hasAvailableTarget() {
+      return targetsCreated < TARGET_COUNT || targetPool.isEmpty();
+    }
+
+
+    /**
+     * After taking a target, you must call saveTargetAsync() or
+     * returnUnusedTarget(), otherwise one thread won't be able to run
+     */
+    public PImage getAvailableTarget(int requestedWidth, int requestedHeight,
+                                     int format) {
+      try {
+        PImage target;
+        if (targetsCreated < TARGET_COUNT && targetPool.isEmpty()) {
+          target = new PImage(requestedWidth, requestedHeight);
+          targetsCreated++;
+        } else {
+          target = targetPool.take();
+          if (target.width != requestedWidth ||
+              target.height != requestedHeight) {
+            target.width = requestedWidth;
+            target.height = requestedHeight;
+            // TODO: this kills performance when saving different sizes
+            target.pixels = new int[requestedWidth * requestedHeight];
+          }
+        }
+        target.format = format;
+        return target;
+      } catch (InterruptedException e) {
+        return null;
+      }
+    }
+
+
+    public void returnUnusedTarget(PImage target) {
+      targetPool.offer(target);
+    }
+
+
+    public void saveTargetAsync(final PGraphics renderer, final PImage target,
+                                final String filename) {
+      target.parent = renderer.parent;
+
+      // if running every frame, smooth the framerate
+      if (target.parent.frameCount - 1 == lastFrameCount && TARGET_COUNT > 1) {
+
+        // count with one less thread to reduce jitter
+        // 2 cores - 1 save thread - no wait
+        // 4 cores - 3 save threads - wait 1/2 of save time
+        // 8 cores - 7 save threads - wait 1/6 of save time
+        long avgTimePerFrame = avgNanos / (Math.max(1, TARGET_COUNT - 1));
+        long now = System.nanoTime();
+        long delay = PApplet.round((lastTime + avgTimePerFrame - now) / 1e6f);
+        try {
+          if (delay > 0) Thread.sleep(delay);
+        } catch (InterruptedException e) { }
+      }
+
+      lastFrameCount = target.parent.frameCount;
+      lastTime = System.nanoTime();
+
+      try {
+        saveExecutor.submit(new Runnable() {
+          @Override
+          public void run() {
+            try {
+              long startTime = System.nanoTime();
+              renderer.processImageBeforeAsyncSave(target);
+              target.save(filename);
+              long saveNanos = System.nanoTime() - startTime;
+              synchronized (AsyncImageSaver.this) {
+                if (avgNanos == 0) {
+                  avgNanos = saveNanos;
+                } else if (saveNanos < avgNanos) {
+                  avgNanos = (avgNanos * (TIME_AVG_FACTOR - 1) + saveNanos) /
+                      (TIME_AVG_FACTOR);
+                } else {
+                  avgNanos = saveNanos;
+                }
+              }
+            } finally {
+              targetPool.offer(target);
+            }
+          }
+        });
+      } catch (RejectedExecutionException e) {
+        // the executor service was probably shut down, no more saving for us
+      }
+    }
+  }
+
 }
