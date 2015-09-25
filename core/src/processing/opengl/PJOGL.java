@@ -57,6 +57,7 @@ import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
+import processing.core.PMatrix3D;
 import processing.core.PSurface;
 
 
@@ -213,12 +214,9 @@ public class PJOGL extends PGL {
 
   @Override
   protected float getPixelScale() {
-    PGraphicsOpenGL g = graphics.get();
-    if (g == null) return 0;
-
     PSurface surf = sketch.getSurface();
     if (surf == null) {
-      return g.pixelDensity;
+      return graphics.pixelDensity;
     } else if (surf instanceof PSurfaceJOGL) {
       return ((PSurfaceJOGL)surf).getPixelScale();
     } else {
@@ -329,52 +327,51 @@ public class PJOGL extends PGL {
 
   @Override
   protected void beginGL() {
-    PGraphicsOpenGL g = graphics.get();
-    if (g == null) return;
-
+    PMatrix3D proj = graphics.projection;
+    PMatrix3D mdl = graphics.modelview;
     if (gl2x != null) {
       if (projMatrix == null) {
         projMatrix = new float[16];
       }
       gl2x.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-      projMatrix[ 0] = g.projection.m00;
-      projMatrix[ 1] = g.projection.m10;
-      projMatrix[ 2] = g.projection.m20;
-      projMatrix[ 3] = g.projection.m30;
-      projMatrix[ 4] = g.projection.m01;
-      projMatrix[ 5] = g.projection.m11;
-      projMatrix[ 6] = g.projection.m21;
-      projMatrix[ 7] = g.projection.m31;
-      projMatrix[ 8] = g.projection.m02;
-      projMatrix[ 9] = g.projection.m12;
-      projMatrix[10] = g.projection.m22;
-      projMatrix[11] = g.projection.m32;
-      projMatrix[12] = g.projection.m03;
-      projMatrix[13] = g.projection.m13;
-      projMatrix[14] = g.projection.m23;
-      projMatrix[15] = g.projection.m33;
+      projMatrix[ 0] = proj.m00;
+      projMatrix[ 1] = proj.m10;
+      projMatrix[ 2] = proj.m20;
+      projMatrix[ 3] = proj.m30;
+      projMatrix[ 4] = proj.m01;
+      projMatrix[ 5] = proj.m11;
+      projMatrix[ 6] = proj.m21;
+      projMatrix[ 7] = proj.m31;
+      projMatrix[ 8] = proj.m02;
+      projMatrix[ 9] = proj.m12;
+      projMatrix[10] = proj.m22;
+      projMatrix[11] = proj.m32;
+      projMatrix[12] = proj.m03;
+      projMatrix[13] = proj.m13;
+      projMatrix[14] = proj.m23;
+      projMatrix[15] = proj.m33;
       gl2x.glLoadMatrixf(projMatrix, 0);
 
       if (mvMatrix == null) {
         mvMatrix = new float[16];
       }
       gl2x.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-      mvMatrix[ 0] = g.modelview.m00;
-      mvMatrix[ 1] = g.modelview.m10;
-      mvMatrix[ 2] = g.modelview.m20;
-      mvMatrix[ 3] = g.modelview.m30;
-      mvMatrix[ 4] = g.modelview.m01;
-      mvMatrix[ 5] = g.modelview.m11;
-      mvMatrix[ 6] = g.modelview.m21;
-      mvMatrix[ 7] = g.modelview.m31;
-      mvMatrix[ 8] = g.modelview.m02;
-      mvMatrix[ 9] = g.modelview.m12;
-      mvMatrix[10] = g.modelview.m22;
-      mvMatrix[11] = g.modelview.m32;
-      mvMatrix[12] = g.modelview.m03;
-      mvMatrix[13] = g.modelview.m13;
-      mvMatrix[14] = g.modelview.m23;
-      mvMatrix[15] = g.modelview.m33;
+      mvMatrix[ 0] = mdl.m00;
+      mvMatrix[ 1] = mdl.m10;
+      mvMatrix[ 2] = mdl.m20;
+      mvMatrix[ 3] = mdl.m30;
+      mvMatrix[ 4] = mdl.m01;
+      mvMatrix[ 5] = mdl.m11;
+      mvMatrix[ 6] = mdl.m21;
+      mvMatrix[ 7] = mdl.m31;
+      mvMatrix[ 8] = mdl.m02;
+      mvMatrix[ 9] = mdl.m12;
+      mvMatrix[10] = mdl.m22;
+      mvMatrix[11] = mdl.m32;
+      mvMatrix[12] = mdl.m03;
+      mvMatrix[13] = mdl.m13;
+      mvMatrix[14] = mdl.m23;
+      mvMatrix[15] = mdl.m33;
       gl2x.glLoadMatrixf(mvMatrix, 0);
     }
   }
@@ -752,14 +749,14 @@ public class PJOGL extends PGL {
 
     ARRAY_BUFFER         = GL.GL_ARRAY_BUFFER;
     ELEMENT_ARRAY_BUFFER = GL.GL_ELEMENT_ARRAY_BUFFER;
-    PIXEL_PACK_BUFFER    = GL3ES3.GL_PIXEL_PACK_BUFFER;
+    PIXEL_PACK_BUFFER    = GL2ES3.GL_PIXEL_PACK_BUFFER;
 
     MAX_VERTEX_ATTRIBS  = GL2ES2.GL_MAX_VERTEX_ATTRIBS;
 
     STATIC_DRAW  = GL.GL_STATIC_DRAW;
     DYNAMIC_DRAW = GL.GL_DYNAMIC_DRAW;
     STREAM_DRAW  = GL2ES2.GL_STREAM_DRAW;
-    STREAM_READ  = GL3ES3.GL_STREAM_READ;
+    STREAM_READ  = GL2ES3.GL_STREAM_READ;
 
     BUFFER_SIZE  = GL.GL_BUFFER_SIZE;
     BUFFER_USAGE = GL.GL_BUFFER_USAGE;

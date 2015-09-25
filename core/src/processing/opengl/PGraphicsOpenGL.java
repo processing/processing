@@ -762,7 +762,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (res == null) {
           break;
         }
-//        System.out.println("Disposing texture resource " + iterations + " " + res.hashCode());
+        System.out.println("Disposing texture resource " + iterations + " " + res.hashCode());
         res.dispose();
         ++iterations;
       }
@@ -777,12 +777,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
       drainRefQueueBounded();
 
-      this.pgl = tex.pg.getPrimaryPGL();
-      pgl.genTextures(1, intBuffer);
-      tex.glName = intBuffer.get(0);
+      PGraphicsOpenGL g = tex.pg.get();
+      if (g != null) {
+        pgl = g.getPrimaryPGL();
+        pgl.genTextures(1, intBuffer);
+        tex.glName = intBuffer.get(0);
+      }
 
       this.glName = tex.glName;
-
       this.context = tex.context;
 
       refList.add(this);
@@ -838,7 +840,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (res == null) {
           break;
         }
-//        System.out.println("Disposing VertexBuffer resource " + iterations + " " + res.hashCode());
+        System.out.println("Disposing VertexBuffer resource " + iterations + " " + res.hashCode());
         res.dispose();
         ++iterations;
       }
@@ -853,12 +855,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
       drainRefQueueBounded();
 
-      this.pgl = vbo.pgl.graphics.getPrimaryPGL();
-      pgl.genBuffers(1, intBuffer);
-      vbo.glId = intBuffer.get(0);
+      PGraphicsOpenGL g = vbo.pgl.graphics;
+      if (g != null) {
+        pgl = g.getPrimaryPGL();
+        pgl.genBuffers(1, intBuffer);
+        vbo.glId = intBuffer.get(0);
+      }
 
       this.glId = vbo.glId;
-
       this.context = vbo.context;
 
       refList.add(this);
@@ -931,10 +935,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
       drainRefQueueBounded();
 
-      this.pgl = sh.pgl.graphics.getPrimaryPGL();
-      sh.glProgram = pgl.createProgram();
-      sh.glVertex = pgl.createShader(PGL.VERTEX_SHADER);
-      sh.glFragment = pgl.createShader(PGL.FRAGMENT_SHADER);
+      PGraphicsOpenGL g = sh.pgl.graphics;
+      if (g != null) {
+        this.pgl = g.getPrimaryPGL();
+        sh.glProgram = pgl.createProgram();
+        sh.glVertex = pgl.createShader(PGL.VERTEX_SHADER);
+        sh.glFragment = pgl.createShader(PGL.FRAGMENT_SHADER);
+      }
 
       this.glProgram = sh.glProgram;
       this.glVertex = sh.glVertex;
@@ -1010,7 +1017,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (res == null) {
           break;
         }
-//        System.out.println("Disposing framebuffer resource " + iterations + " " + res.hashCode());
+        System.out.println("Disposing framebuffer resource " + iterations + " " + res.hashCode());
         res.dispose();
         ++iterations;
       }
@@ -1025,36 +1032,38 @@ public class PGraphicsOpenGL extends PGraphics {
 
       drainRefQueueBounded();
 
-      this.pgl = fb.pg.getPrimaryPGL();
+      PGraphicsOpenGL g = fb.pgl.graphics;
+      if (g != null) {
+        pgl = g.getPrimaryPGL();
+        if (!fb.screenFb) {
+          pgl.genFramebuffers(1, intBuffer);
+          fb.glFbo = intBuffer.get(0);
 
-      if (!fb.screenFb) {
-        pgl.genFramebuffers(1, intBuffer);
-        fb.glFbo = intBuffer.get(0);
-
-        if (fb.multisample) {
-          pgl.genRenderbuffers(1, intBuffer);
-          fb.glMultisample = intBuffer.get(0);
-        }
-
-        if (fb.packedDepthStencil) {
-          pgl.genRenderbuffers(1, intBuffer);
-          fb.glDepthStencil = intBuffer.get(0);
-        } else {
-          if (0 < fb.depthBits) {
+          if (fb.multisample) {
             pgl.genRenderbuffers(1, intBuffer);
-            fb.glDepth = intBuffer.get(0);
+            fb.glMultisample = intBuffer.get(0);
           }
-          if (0 < fb.stencilBits) {
-            pgl.genRenderbuffers(1, intBuffer);
-            fb.glStencil = intBuffer.get(0);
-          }
-        }
 
-        this.glFbo = fb.glFbo;
-        this.glDepth = fb.glDepth;
-        this.glStencil = fb.glStencil;
-        this.glDepthStencil = fb.glDepthStencil;
-        this.glMultisample = fb.glMultisample;
+          if (fb.packedDepthStencil) {
+            pgl.genRenderbuffers(1, intBuffer);
+            fb.glDepthStencil = intBuffer.get(0);
+          } else {
+            if (0 < fb.depthBits) {
+              pgl.genRenderbuffers(1, intBuffer);
+              fb.glDepth = intBuffer.get(0);
+            }
+            if (0 < fb.stencilBits) {
+              pgl.genRenderbuffers(1, intBuffer);
+              fb.glStencil = intBuffer.get(0);
+            }
+          }
+
+          this.glFbo = fb.glFbo;
+          this.glDepth = fb.glDepth;
+          this.glStencil = fb.glStencil;
+          this.glDepthStencil = fb.glDepthStencil;
+          this.glMultisample = fb.glMultisample;
+        }
       }
 
       this.context = fb.context;
