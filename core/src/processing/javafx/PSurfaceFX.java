@@ -22,7 +22,9 @@
 
 package processing.javafx;
 
+import java.awt.GraphicsDevice;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javafx.animation.Animation;
@@ -35,6 +37,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.canvas.Canvas;
@@ -43,6 +46,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -218,6 +222,69 @@ public class PSurfaceFX implements PSurface {
 //        stage.setTitle(title);
 //      }
 
+      PApplet sketch = surface.sketch;
+
+      Screen screen = null;
+
+      int displayNum = sketch.sketchDisplay();
+      if (displayNum > 0) {  // if -1, use the default device
+        List<Screen> devices = Screen.getScreens();
+        if (displayNum <= devices.size()) {
+          screen = devices.get(displayNum - 1);
+        } else {
+          System.err.format("Display %d does not exist, " +
+                                "using the default display instead.%n", displayNum);
+          for (int i = 0; i < devices.size(); i++) {
+            System.err.format("Display %d is %s%n", (i+1), devices.get(i));
+          }
+        }
+      }
+      if (screen == null) {
+        screen = Screen.getPrimary();
+      }
+
+      boolean fullScreen = sketch.sketchFullScreen();
+
+      boolean spanDisplays = sketch.sketchDisplay() == PConstants.SPAN;
+      Rectangle2D screenRect = screen.getBounds();
+      if (spanDisplays) {
+        double minX = screenRect.getMinX();
+        double maxX = screenRect.getMaxX();
+        double minY = screenRect.getMinY();
+        double maxY = screenRect.getMaxY();
+        for (Screen s : Screen.getScreens()) {
+          Rectangle2D bounds = s.getBounds();
+          minX = Math.min(minX, bounds.getMinX());
+          maxX = Math.max(maxX, bounds.getMaxX());
+          minY = Math.min(minY, bounds.getMinY());
+          maxY = Math.max(maxY, bounds.getMaxY());
+        }
+        screenRect = new Rectangle2D(minX, minY, maxX - minX, maxY - minY);
+      }
+      // DisplayMode doesn't work here, because we can't get the upper-left
+      // corner of the display, which is important for multi-display setups.
+
+      // Set the displayWidth/Height variables inside PApplet, so that they're
+      // usable and can even be returned by the sketchWidth()/Height() methods.
+      sketch.displayWidth = (int) screenRect.getWidth();
+      sketch.displayHeight = (int) screenRect.getHeight();
+
+      int sketchWidth = sketch.sketchWidth();
+      int sketchHeight = sketch.sketchHeight();
+
+      if (fullScreen || spanDisplays) {
+        sketchWidth = (int) screenRect.getWidth();
+        sketchHeight = (int) screenRect.getHeight();
+
+        stage.setX(screenRect.getMinX());
+        stage.setY(screenRect.getMinY());
+        stage.setWidth(screenRect.getWidth());
+        stage.setHeight(screenRect.getHeight());
+
+        stage.setFullScreen(true);
+        stage.setFullScreenExitHint("");
+      }
+
       Canvas canvas = surface.canvas;
       surface.fx.context = canvas.getGraphicsContext2D();
       StackPane stackPane = new StackPane();
@@ -225,9 +292,8 @@ public class PSurfaceFX implements PSurface {
       canvas.widthProperty().bind(stackPane.widthProperty());
       canvas.heightProperty().bind(stackPane.heightProperty());
 
-      PApplet sketch = surface.sketch;
-      int width = sketch.sketchWidth();
-      int height = sketch.sketchHeight();
+      int width = sketchWidth;
+      int height = sketchHeight;
       int smooth = sketch.sketchSmooth();
 
       // Workaround for https://bugs.openjdk.java.net/browse/JDK-8136495
