@@ -29,6 +29,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.table.DefaultTableModel;
@@ -78,6 +79,8 @@ public class ErrorTable extends JTable {
 
 	public ErrorTable(final Editor editor) {
 	  super(new DefaultTableModel(columnNames, 0));
+
+    setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 	  this.editor = editor;
 	  JTableHeader header = getTableHeader();
