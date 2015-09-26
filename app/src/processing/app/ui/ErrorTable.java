@@ -29,6 +29,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.table.DefaultTableModel;
@@ -79,6 +80,8 @@ public class ErrorTable extends JTable {
 	public ErrorTable(final Editor editor) {
 	  super(new DefaultTableModel(columnNames, 0));
 
+    setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
 	  this.editor = editor;
 	  JTableHeader header = getTableHeader();
 
@@ -102,23 +105,25 @@ public class ErrorTable extends JTable {
 //    }
 
 		addMouseListener(new MouseAdapter() {
-			@Override
-			synchronized public void mouseClicked(MouseEvent e) {
-				try {
-				  int row = ((ErrorTable) e.getSource()).getSelectedRow();
-				  Object data = getModel().getValueAt(row, DATA_COLUMN);
-				  int clickCount = e.getClickCount();
-				  if (clickCount == 1) {
-				    editor.errorTableClick(data);
-				  } else if (clickCount > 1) {
-				    editor.errorTableDoubleClick(data);
-				  }
-//					editor.getErrorChecker().scrollToErrorLine(row);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});
+      @Override
+      synchronized public void mouseClicked(MouseEvent e) {
+        try {
+          int row = ((ErrorTable) e.getSource()).getSelectedRow();
+          if (row >= 0 && row < getRowCount()) {
+            Object data = getModel().getValueAt(row, DATA_COLUMN);
+            int clickCount = e.getClickCount();
+            if (clickCount == 1) {
+              editor.errorTableClick(data);
+            } else if (clickCount > 1) {
+              editor.errorTableDoubleClick(data);
+            }
+//				  editor.getErrorChecker().scrollToErrorLine(row);
+          }
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
+      }
+    });
 
 		/*
 		addMouseMotionListener(new MouseMotionAdapter() {
