@@ -1,6 +1,9 @@
 0246 the holy land
 X does the "Saving" message never clear on "Save As"? 
 X   https://github.com/processing/processing/issues/3861
+X error checker/suggestions fixes
+X   https://github.com/processing/processing/pull/3871
+X   https://github.com/processing/processing/pull/3879
 
 gui
 X distinguish errors and warnings
