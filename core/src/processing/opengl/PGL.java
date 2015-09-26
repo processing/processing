@@ -125,7 +125,12 @@ public abstract class PGL {
    * order to make sure the lines are always on top of the fill geometry */
   protected static float STROKE_DISPLACEMENT = 0.999f;
 
-  protected static boolean DOUBLE_BUFFERED = true;
+  // ........................................................
+
+  // Variables to handle single-buffered situations (i.e.: Android)
+
+  protected IntBuffer firstFrame;
+  protected static boolean SINGLE_BUFFERED = false;
 
   // ........................................................
 
@@ -698,6 +703,10 @@ public abstract class PGL {
     pclearColor = clearColor;
     clearColor = false;
 
+    if (SINGLE_BUFFERED && sketch.frameCount == 1) {
+      restoreFirstFrame();
+    }
+
     if (fboLayerEnabledReq) {
       fboLayerEnabled = true;
       fboLayerEnabledReq = false;
@@ -708,7 +717,7 @@ public abstract class PGL {
         destroyFBOLayer();
         fbolayerResetReq = false;
       }
-      if (!fboLayerCreated && DOUBLE_BUFFERED) {
+      if (!fboLayerCreated) {
         createFBOLayer();
       }
 
@@ -812,12 +821,17 @@ public abstract class PGL {
         fboLayerEnabled = false;
         fboLayerDisableReq = false;
       }
-    } else if (!clearColor && 0 < sketch.frameCount || !sketch.isLooping()) {
-      enableFBOLayer();
-    }
+    } else {
+      if (SINGLE_BUFFERED && sketch.frameCount == 0) {
+        saveFirstFrame();
+      }
 
-    if (fboLayerEnabledReq && !fboLayerCreated && !DOUBLE_BUFFERED) {
-      createFBOLayer();
+      if (!clearColor && 0 < sketch.frameCount || !sketch.isLooping()) {
+        enableFBOLayer();
+        if (SINGLE_BUFFERED) {
+          createFBOLayer();
+        }
+      }
     }
   }
 
@@ -941,6 +955,46 @@ public abstract class PGL {
   }
 
   protected abstract void initFBOLayer();
+
+
+  protected void saveFirstFrame() {
+    firstFrame = allocateDirectIntBuffer(graphics.width * graphics.height);
+    readBuffer(BACK);
+    readPixelsImpl(0, 0, graphics.width, graphics.height, RGBA, UNSIGNED_BYTE, firstFrame);
+  }
+
+
+  protected void restoreFirstFrame() {
+    IntBuffer tex = allocateIntBuffer(1);
+    genTextures(1, tex);
+
+    int w, h;
+    float scale = getPixelScale();
+    if (hasNpotTexSupport()) {
+      w = (int)(scale * graphics.width);
+      h = (int)(scale * graphics.height);
+    } else {
+      w = nextPowerOfTwo((int)(scale * graphics.width));
+      h = nextPowerOfTwo((int)(scale * graphics.height));
+    }
+
+    bindTexture(TEXTURE_2D, tex.get(0));
+    texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
+    texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
+    texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
+    texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
+    texImage2D(TEXTURE_2D, 0, RGBA, w, h, 0, RGBA, UNSIGNED_BYTE, null);
+    texSubImage2D(TEXTURE_2D, 0, 0, 0, graphics.width, graphics.height, RGBA, UNSIGNED_BYTE, firstFrame);
+
+    drawTexture(TEXTURE_2D, tex.get(0), w, h,
+                0, 0, graphics.width, graphics.height,
+                0, 0, (int)(scale * graphics.width), (int)(scale * graphics.height),
+                0, 0, graphics.width, graphics.height);
+
+    deleteTextures(1, tex);
+    firstFrame.clear();
+    firstFrame = null;
+  }
 
   protected void destroyFBOLayer() {
     if (threadIsCurrent() && fboLayerCreated) {

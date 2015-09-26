@@ -696,6 +696,64 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  public boolean saveImpl(String filename) {
+//    return super.save(filename); // ASYNC save frame using PBOs not yet available on Android
+
+    if (getHint(DISABLE_ASYNC_SAVEFRAME)) {
+      // Act as an opaque surface for the purposes of saving.
+      if (primaryGraphics) {
+        int prevFormat = format;
+        format = RGB;
+        boolean result = super.save(filename);
+        format = prevFormat;
+        return result;
+      }
+
+      return super.save(filename);
+    }
+
+    if (asyncImageSaver == null) {
+      asyncImageSaver = new AsyncImageSaver();
+    }
+
+    if (!asyncPixelReaderInitialized) {
+      // First call! Get this guy initialized
+      if (pgl.hasPBOs() && pgl.hasSynchronization()) {
+        asyncPixelReader = new AsyncPixelReader();
+      }
+      asyncPixelReaderInitialized = true;
+    }
+
+    if (asyncPixelReader != null && !loaded) {
+      boolean needEndDraw = false;
+      if (!drawing) {
+        beginDraw();
+        needEndDraw = true;
+      }
+      flush();
+      updatePixelSize();
+
+      // get the whole async package
+      asyncPixelReader.readAndSaveAsync(filename);
+
+      if (needEndDraw) endDraw();
+    } else {
+      // async transfer is not supported or
+      // pixels are already in memory, just do async save
+      if (!loaded) loadPixels();
+      int format = primaryGraphics ? RGB : ARGB;
+      PImage target = asyncImageSaver.getAvailableTarget(pixelWidth, pixelHeight,
+                                                         format);
+      if (target == null) return false;
+      int count = PApplet.min(pixels.length, target.pixels.length);
+      System.arraycopy(pixels, 0, target.pixels, 0, count);
+      asyncImageSaver.saveTargetAsync(this, target, filename);
+    }
+
+    return true;
+  }
+
+
   //////////////////////////////////////////////////////////////
 
   // IMAGE METADATA FOR THIS RENDERER
@@ -714,6 +772,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   @Override
+  @SuppressWarnings("rawtypes")
   public Object getCache(PImage image) {
     Object storage = getPrimaryPG().cacheMap.get(image);
     if (storage != null && storage.getClass() == WeakReference.class) {
@@ -773,7 +832,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (res == null) {
           break;
         }
-        System.out.println("Disposing texture resource " + iterations + " " + res.hashCode());
+//        System.out.println("Disposing texture resource " + iterations + " " + res.hashCode());
         res.dispose();
         ++iterations;
       }
@@ -851,7 +910,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (res == null) {
           break;
         }
-        System.out.println("Disposing VertexBuffer resource " + iterations + " " + res.hashCode());
+//        System.out.println("Disposing VertexBuffer resource " + iterations + " " + res.hashCode());
         res.dispose();
         ++iterations;
       }
@@ -1028,7 +1087,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (res == null) {
           break;
         }
-        System.out.println("Disposing framebuffer resource " + iterations + " " + res.hashCode());
+//        System.out.println("Disposing framebuffer resource " + iterations + " " + res.hashCode());
         res.dispose();
         ++iterations;
       }
@@ -5544,59 +5603,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public boolean save(String filename) {
-
-    if (getHint(DISABLE_ASYNC_SAVEFRAME)) {
-      // Act as an opaque surface for the purposes of saving.
-      if (primaryGraphics) {
-        int prevFormat = format;
-        format = RGB;
-        boolean result = super.save(filename);
-        format = prevFormat;
-        return result;
-      }
-
-      return super.save(filename);
-    }
-
-    if (asyncImageSaver == null) {
-      asyncImageSaver = new AsyncImageSaver();
-    }
-
-    if (!asyncPixelReaderInitialized) {
-      // First call! Get this guy initialized
-      if (pgl.hasPBOs() && pgl.hasSynchronization()) {
-        asyncPixelReader = new AsyncPixelReader();
-      }
-      asyncPixelReaderInitialized = true;
-    }
-
-    if (asyncPixelReader != null && !loaded) {
-      boolean needEndDraw = false;
-      if (!drawing) {
-        beginDraw();
-        needEndDraw = true;
-      }
-      flush();
-      updatePixelSize();
-
-      // get the whole async package
-      asyncPixelReader.readAndSaveAsync(filename);
-
-      if (needEndDraw) endDraw();
-    } else {
-      // async transfer is not supported or
-      // pixels are already in memory, just do async save
-      if (!loaded) loadPixels();
-      int format = primaryGraphics ? RGB : ARGB;
-      PImage target = asyncImageSaver.getAvailableTarget(pixelWidth, pixelHeight,
-                                                         format);
-      if (target == null) return false;
-      int count = PApplet.min(pixels.length, target.pixels.length);
-      System.arraycopy(pixels, 0, target.pixels, 0, count);
-      asyncImageSaver.saveTargetAsync(this, target, filename);
-    }
-
-    return true;
+    return saveImpl(filename);
   }
 
 
@@ -5780,7 +5787,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (widths[head] * heights[head] != pixelWidth * pixelHeight) {
           pgl.bindBuffer(PGL.PIXEL_PACK_BUFFER, pbos[head]);
           pgl.bufferData(PGL.PIXEL_PACK_BUFFER,
-                         Integer.BYTES * pixelWidth * pixelHeight,
+                         Integer.SIZE/8 * pixelWidth * pixelHeight,
                          null, PGL.STREAM_READ);
         }
         widths[head] = pixelWidth;
