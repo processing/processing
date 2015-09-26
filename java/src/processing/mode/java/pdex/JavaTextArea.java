@@ -443,7 +443,7 @@ public class JavaTextArea extends JEditTextArea {
       @Override
       protected Void doInBackground() throws Exception {
         Messages.log("phrase parse start");
-        phrase = parsePhrase(text, caretLinePosition);
+        phrase = parsePhrase(text);
         Messages.log("phrase: " + phrase);
         if (phrase == null) return null;
 
@@ -504,7 +504,7 @@ public class JavaTextArea extends JEditTextArea {
     suggestionWorker.execute();
   }
 
-  protected static String parsePhrase(String lineText, int caretLinePosition) {
+  protected static String parsePhrase(final String lineText) {
 
     boolean overloading = false;
 
@@ -535,7 +535,7 @@ public class JavaTextArea extends JEditTextArea {
       }
     }
 
-    final int currentCharIndex = caretLinePosition - 1;
+    final int currentCharIndex = lineText.length() - 1;
 
     { // Check if the caret is in the comment
       int commentStart = lineText.indexOf("//", 0);
@@ -658,7 +658,7 @@ public class JavaTextArea extends JEditTextArea {
     position++;
 
     // Extract phrase
-    String phrase = lineText.substring(position, caretLinePosition).trim();
+    String phrase = lineText.substring(position, lineText.length()).trim();
     Messages.log(phrase);
 
     if (phrase.length() == 0 || Character.isDigit(phrase.charAt(0))) {
