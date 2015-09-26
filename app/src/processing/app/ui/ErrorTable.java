@@ -106,14 +106,16 @@ public class ErrorTable extends JTable {
 			synchronized public void mouseClicked(MouseEvent e) {
 				try {
 				  int row = ((ErrorTable) e.getSource()).getSelectedRow();
-				  Object data = getModel().getValueAt(row, DATA_COLUMN);
-				  int clickCount = e.getClickCount();
-				  if (clickCount == 1) {
-				    editor.errorTableClick(data);
-				  } else if (clickCount > 1) {
-				    editor.errorTableDoubleClick(data);
+					if (row >= 0 && row < getRowCount()) {
+					  Object data = getModel().getValueAt(row, DATA_COLUMN);
+					  int clickCount = e.getClickCount();
+					  if (clickCount == 1) {
+					    editor.errorTableClick(data);
+					  } else if (clickCount > 1) {
+					    editor.errorTableDoubleClick(data);
+					  }
+//				  editor.getErrorChecker().scrollToErrorLine(row);
 				  }
-//					editor.getErrorChecker().scrollToErrorLine(row);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

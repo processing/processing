@@ -1927,6 +1927,8 @@ public class ASTGenerator {
       @Override
       public void valueChanged(TreeSelectionEvent e) {
         Messages.log(e.toString());
+
+        // TODO: this should already run on EDT so why the SwingWorker?
         SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
           @Override

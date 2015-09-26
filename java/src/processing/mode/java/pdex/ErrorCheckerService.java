@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -232,8 +233,6 @@ public class ErrorCheckerService {
     defaultImportsOffset = pdePrepoc.getCoreImports().length +
         pdePrepoc.getDefaultImports().length + 1;
     astGenerator = new ASTGenerator(this);
-    lastCodeCheckResult.syntaxErrors = false;
-    lastCodeCheckResult.containsErrors = false;
     errorMsgSimplifier = new ErrorMessageSimplifier();
     tempErrorLog = new TreeMap<>();
     sketchChangedListener = new SketchChangedListener();
@@ -256,26 +255,6 @@ public class ErrorCheckerService {
       Executors.newSingleThreadScheduledExecutor();
   volatile ScheduledFuture<?> scheduledUiUpdate = null;
   volatile long nextUiUpdate = 0;
-  private Runnable uiUpdater = new Runnable() {
-    @Override
-    public void run() {
-      if (nextUiUpdate > 0 &&
-          System.currentTimeMillis() >= nextUiUpdate) {
-        EventQueue.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            calcPdeOffsetsForProbList();
-            updateErrorTable();
-            editor.updateErrorBar(lastCodeCheckResult.problems);
-            editor.getTextArea().repaint();
-            updatePaintedThingys();
-            editor.updateErrorToggle();
-            updateSketchCodeListeners();
-          }
-        });
-      }
-    }
-  };
 
   private Runnable mainLoop = new Runnable() {
     @Override
@@ -284,7 +263,7 @@ public class ErrorCheckerService {
 
       lastCodeCheckResult = checkCode();
 
-      if (!hasSyntaxErrors()) {
+      if (!lastCodeCheckResult.syntaxErrors) {
 //      editor.showProblemListView(Language.text("editor.footer.console"));
         editor.showConsole();
       }
@@ -326,6 +305,27 @@ public class ErrorCheckerService {
             }
             // Update UI after a delay. See #2677
             long delay = nextUiUpdate - System.currentTimeMillis();
+            Runnable uiUpdater = new Runnable() {
+              final CodeCheckResult result = lastCodeCheckResult;
+
+              @Override
+              public void run() {
+                if (nextUiUpdate > 0 &&
+                    System.currentTimeMillis() >= nextUiUpdate) {
+                  EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                      calcPdeOffsetsForProbList(result);
+                      updateErrorTable(result.problems);
+                      editor.updateErrorBar(result.problems);
+                      editor.getTextArea().repaint();
+                      editor.updateErrorToggle(result.containsErrors);
+                      updateSketchCodeListeners();
+                    }
+                  });
+                }
+              }
+            };
             scheduledUiUpdate = scheduler.schedule(uiUpdater, delay,
                                                    TimeUnit.MILLISECONDS);
           }
@@ -399,6 +399,9 @@ public class ErrorCheckerService {
 
 
   protected void checkForMissingImports() {
+    // Atomic access
+    CodeCheckResult lastCodeCheckResult = this.lastCodeCheckResult;
+
     if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
       for (Problem p : lastCodeCheckResult.problems) {
         if(p.getIProblem().getID() == IProblem.UndefinedType) {
@@ -617,11 +620,11 @@ public class ErrorCheckerService {
   /**
    * Calculates PDE Offsets from Java Offsets for Problems
    */
-  private void calcPdeOffsetsForProbList() {
+  private void calcPdeOffsetsForProbList(CodeCheckResult codeCheckResult) {
     try {
       PlainDocument javaSource = new PlainDocument();
 
-      javaSource.insertString(0, lastCodeCheckResult.sourceCode, null);
+      javaSource.insertString(0, codeCheckResult.sourceCode, null);
       // Code in pde tabs stored as PlainDocument
       List<Document> pdeTabs = new ArrayList<>();
       for (SketchCode sc : editor.getSketch().getCode()) {
@@ -635,16 +638,16 @@ public class ErrorCheckerService {
       }
       int pkgNameOffset = ("package " + className + ";\n").length();
       // package name is added only during compile check
-      if (lastCodeCheckResult.sourceCodeOffset == 0) {
+      if (codeCheckResult.sourceCodeOffset == 0) {
         pkgNameOffset = 0;
       }
 
-      for (Problem p : lastCodeCheckResult.problems) {
+      for (Problem p : codeCheckResult.problems) {
         int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset;
         int prbEnd = p.getIProblem().getSourceEnd() - pkgNameOffset;
         int javaLineNumber = p.getSourceLineNumber() - 1;
         // not sure if this is necessary [fry 150808]
-        javaLineNumber -= lastCodeCheckResult.sourceCodeOffset;
+        javaLineNumber -= codeCheckResult.sourceCodeOffset;
         // errors on the first line were setting this to -1 [fry 150808]
         if (javaLineNumber < 0) {
           javaLineNumber = 0;
@@ -871,7 +874,7 @@ public class ErrorCheckerService {
   /**
    * Updates the error table in the Error Window.
    */
-  public void updateErrorTable() {
+  public void updateErrorTable(List<Problem> problems) {
     try {
       ErrorTable table = editor.getErrorTable();
       table.clearRows();
@@ -880,7 +883,7 @@ public class ErrorCheckerService {
 //      int index = 0;
 //      for (int i = 0; i < problemsList.size(); i++) {
       Sketch sketch = editor.getSketch();
-      for (Problem p : lastCodeCheckResult.problems) {
+      for (Problem p : problems) {
         String message = p.getMessage();
         if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
           if (p.getIProblem().getID() == IProblem.UndefinedType) {
@@ -926,21 +929,6 @@ public class ErrorCheckerService {
   }
 
 
-  // TODO: why is this here and not in event handler?
-  /** Repaints the textarea if required */
-  private void updatePaintedThingys() {
-//    currentTab = editor.getSketch().getCodeIndex(editor.getSketch().getCurrentCode());
-    currentTab = editor.getSketch().getCurrentCodeIndex();
-    //log("Tab changed " + currentTab + " LT " + lastTab);
-    if (currentTab != lastTab) {
-      request();
-      lastTab = currentTab;
-      editor.getTextArea().repaint();
-      editor.statusEmpty();
-    }
-  }
-
-
   /**
    * Updates editor status bar, depending on whether the caret is on an error
    * line or not
@@ -960,7 +948,8 @@ public class ErrorCheckerService {
           editor.statusMessage(errorMarker.getProblem().getMessage(),
                                EditorStatus.COMPILER_ERROR);
         }
-        return;
+      } else {
+        editor.statusEmpty(); // No error, clear the status
       }
     }
 
@@ -1335,6 +1324,9 @@ public class ErrorCheckerService {
       return;
     }
 
+    // Atomic access
+    CodeCheckResult lastCodeCheckResult = this.lastCodeCheckResult;
+
     if (errorIndex < lastCodeCheckResult.problems.size() && errorIndex >= 0) {
       Problem p = lastCodeCheckResult.problems.get(errorIndex);
       scrollToErrorLine(p);
@@ -1555,7 +1547,7 @@ public class ErrorCheckerService {
       //editor.clearErrorPoints();
       editor.getErrorPoints().clear();
       lastCodeCheckResult.problems.clear();
-      updateErrorTable();
+      updateErrorTable(Collections.<Problem>emptyList());
       updateEditorStatus();
       editor.getTextArea().repaint();
       editor.repaintErrorBar();

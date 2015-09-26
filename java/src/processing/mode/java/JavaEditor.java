@@ -2324,6 +2324,7 @@ public class JavaEditor extends Editor {
    */
   @Override
   public void setCode(SketchCode code) {
+
     //System.out.println("tab switch: " + code.getFileName());
     // set the new document in the textarea, etc. need to do this first
     super.setCode(code);
@@ -2354,6 +2355,13 @@ public class JavaEditor extends Editor {
     }
     if (getDebugger() != null && getDebugger().isStarted()) {
       getDebugger().startTrackingLineChanges();
+    }
+    if (errorCheckerService != null) {
+      if (errorColumn != null) {
+        getErrorPoints().clear();
+        statusEmpty();
+      }
+      errorCheckerService.request();
     }
   }
 
@@ -2654,10 +2662,10 @@ public class JavaEditor extends Editor {
    * Handle whether the tiny red error indicator is shown near
    * the error button at the bottom of the PDE
    */
-  public void updateErrorToggle() {
+  public void updateErrorToggle(boolean hasErrors) {
     footer.setNotification(errorTable.getParent(),  //errorTableScrollPane,
                            JavaMode.errorCheckEnabled &&
-                           errorCheckerService.hasErrors());
+                           hasErrors);
 //    String title = Language.text("editor.footer.errors");
 //    if (JavaMode.errorCheckEnabled && errorCheckerService.hasErrors()) {
 //      title += "*";
