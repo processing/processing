@@ -387,7 +387,7 @@ public class Commander implements RunnerListener {
 //    out.println("                     Otherwise specify 0 or leave it out.");
 
     out.println();
-    out.println("The --build, --run, --present, or --export will be the final parameter");
+    out.println("The --build, --run, --present, or --export must be the final parameter");
     out.println("passed to Processing. Arguments passed following one of those four will");
     out.println("be passed through to the sketch itself, and therefore available to the");
     out.println("sketch via the 'args' field. To pass options understood by PApplet.main(),");
