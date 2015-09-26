@@ -2793,6 +2793,10 @@ public class ASTGenerator {
 
         SimpleType stp = extracTypeInfo(findDeclaration((qn.getQualifier())));
 //        log(qn.getQualifier() + "->" + qn.getName());
+        if (stp == null) {
+          return null;
+        }
+
         declaringClass = findDeclaration(stp.getName());
 
 //        log("QN decl class: " + getNodeAsString(declaringClass));
@@ -2810,16 +2814,15 @@ public class ASTGenerator {
 //                  .toString()));
 
           SimpleType stp = extracTypeInfo(findDeclaration((qnn.getQualifier())));
-          if (stp != null) {
-            declaringClass = findDeclaration(stp.getName());
-            constrains.clear();
-            constrains.add(ASTNode.TYPE_DECLARATION);
-            constrains.add(ASTNode.FIELD_DECLARATION);
-            return definedIn(declaringClass, qnn.getName().toString(),
-                             constrains, null);
-          } else {
+          if (stp == null) {
             return null;
           }
+          declaringClass = findDeclaration(stp.getName());
+          constrains.clear();
+          constrains.add(ASTNode.TYPE_DECLARATION);
+          constrains.add(ASTNode.FIELD_DECLARATION);
+          return definedIn(declaringClass, qnn.getName().toString(),
+                           constrains, null);
         }
       }
     } else if (parent.getNodeType() == ASTNode.SIMPLE_TYPE) {
@@ -3010,6 +3013,11 @@ public class ASTGenerator {
 //                  .toString()));
 
           SimpleType stp = extracTypeInfo(findDeclaration2((qnn.getQualifier()), alternateParent));
+
+          if (stp == null) {
+            return null;
+          }
+
 //          log(qnn.getQualifier() + "->" + qnn.getName());
           declaringClass = findDeclaration2(stp.getName(), alternateParent);
 
