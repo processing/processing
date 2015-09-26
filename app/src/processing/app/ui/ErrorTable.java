@@ -105,25 +105,25 @@ public class ErrorTable extends JTable {
 //    }
 
 		addMouseListener(new MouseAdapter() {
-			@Override
-			synchronized public void mouseClicked(MouseEvent e) {
-				try {
-				  int row = ((ErrorTable) e.getSource()).getSelectedRow();
-					if (row >= 0 && row < getRowCount()) {
-					  Object data = getModel().getValueAt(row, DATA_COLUMN);
-					  int clickCount = e.getClickCount();
-					  if (clickCount == 1) {
-					    editor.errorTableClick(data);
-					  } else if (clickCount > 1) {
-					    editor.errorTableDoubleClick(data);
-					  }
+      @Override
+      synchronized public void mouseClicked(MouseEvent e) {
+        try {
+          int row = ((ErrorTable) e.getSource()).getSelectedRow();
+          if (row >= 0 && row < getRowCount()) {
+            Object data = getModel().getValueAt(row, DATA_COLUMN);
+            int clickCount = e.getClickCount();
+            if (clickCount == 1) {
+              editor.errorTableClick(data);
+            } else if (clickCount > 1) {
+              editor.errorTableDoubleClick(data);
+            }
 //				  editor.getErrorChecker().scrollToErrorLine(row);
-				  }
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		});
+          }
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
+      }
+    });
 
 		/*
 		addMouseMotionListener(new MouseMotionAdapter() {
