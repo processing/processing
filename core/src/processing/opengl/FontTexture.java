@@ -155,13 +155,10 @@ class FontTexture implements PConstants {
       // REPLACE to preserve color of transparent pixels.
       Texture tex0 = textures[currentTex];
 
-      PGraphicsOpenGL g = tex.pg.get();
-      if (g != null) {
-        g.pushStyle();
-        g.blendMode(REPLACE);
-        tex.put(tex0);
-        g.popStyle();
-      }
+      tex.pg.pushStyle();
+      tex.pg.blendMode(REPLACE);
+      tex.put(tex0);
+      tex.pg.popStyle();
 
       textures[currentTex] = tex;
 

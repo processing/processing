@@ -27,7 +27,6 @@ package processing.opengl;
 import processing.core.*;
 import processing.opengl.PGraphicsOpenGL.GLResourceShader;
 
-import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -80,8 +79,8 @@ public class PShader implements PConstants {
   // be called by different renderers within a single application
   // (the one corresponding to the main surface, or other offscreen
   // renderers).
-  protected WeakReference<PGraphicsOpenGL> primaryPG;
-  protected WeakReference<PGraphicsOpenGL> currentPG;
+  protected PGraphicsOpenGL primaryPG;
+  protected PGraphicsOpenGL currentPG;
   protected PGL pgl;
   protected int context;      // The context that created this shader.
 
@@ -185,9 +184,8 @@ public class PShader implements PConstants {
   public PShader(PApplet parent) {
     this();
     this.parent = parent;
-    PGraphicsOpenGL g = (PGraphicsOpenGL)parent.g;
-    primaryPG = new WeakReference<PGraphicsOpenGL>(g);
-    pgl = g.pgl;
+    primaryPG = (PGraphicsOpenGL)parent.g;
+    pgl = primaryPG.pgl;
     context = pgl.createEmptyContext();
   }
 
@@ -202,9 +200,8 @@ public class PShader implements PConstants {
    */
   public PShader(PApplet parent, String vertFilename, String fragFilename) {
     this.parent = parent;
-    PGraphicsOpenGL g = (PGraphicsOpenGL)parent.g;
-    primaryPG = new WeakReference<PGraphicsOpenGL>(g);
-    pgl = g.pgl;
+    primaryPG = (PGraphicsOpenGL)parent.g;
+    pgl = primaryPG.pgl;
 
     this.vertexURL = null;
     this.fragmentURL = null;
@@ -242,9 +239,8 @@ public class PShader implements PConstants {
    */
   public PShader(PApplet parent, URL vertURL, URL fragURL) {
     this.parent = parent;
-    PGraphicsOpenGL g = (PGraphicsOpenGL)parent.g;
-    primaryPG = new WeakReference<PGraphicsOpenGL>(g);
-    pgl = g.pgl;
+    primaryPG = (PGraphicsOpenGL)parent.g;
+    pgl = primaryPG.pgl;
 
     this.vertexURL = vertURL;
     this.fragmentURL = fragURL;
@@ -277,9 +273,8 @@ public class PShader implements PConstants {
 
   public PShader(PApplet parent, String[] vertSource, String[] fragSource) {
     this.parent = parent;
-    PGraphicsOpenGL g = (PGraphicsOpenGL)parent.g;
-    primaryPG = new WeakReference<PGraphicsOpenGL>(g);
-    pgl = g.pgl;
+    primaryPG = (PGraphicsOpenGL)parent.g;
+    pgl = primaryPG.pgl;
 
     this.vertexURL = null;
     this.fragmentURL = null;
@@ -824,9 +819,7 @@ public class PShader implements PConstants {
           pgl.uniformMatrix4fv(loc, 1, false, floatBuffer);
         } else if (val.type == UniformValue.SAMPLER2D) {
           PImage img = (PImage)val.value;
-          PGraphicsOpenGL g = currentPG.get();
-          if (g == null) return;
-          Texture tex = g.getTexture(img);
+          Texture tex = currentPG.getTexture(img);
 
           if (textures == null) textures = new HashMap<Integer, Texture>();
           textures.put(loc, tex);
@@ -1133,7 +1126,7 @@ public class PShader implements PConstants {
 
 
   protected void setRenderer(PGraphicsOpenGL pg) {
-    this.currentPG = new WeakReference<PGraphicsOpenGL>(pg);
+    this.currentPG = pg;
   }
 
 
@@ -1206,29 +1199,26 @@ public class PShader implements PConstants {
 
 
   protected void setCommonUniforms() {
-    PGraphicsOpenGL g = currentPG.get();
-    if (g == null) return;
-
     if (-1 < transformMatLoc) {
-      g.updateGLProjmodelview();
-      setUniformMatrix(transformMatLoc, g.glProjmodelview);
+      currentPG.updateGLProjmodelview();
+      setUniformMatrix(transformMatLoc, currentPG.glProjmodelview);
     }
 
     if (-1 < modelviewMatLoc) {
-      g.updateGLModelview();
-      setUniformMatrix(modelviewMatLoc, g.glModelview);
+      currentPG.updateGLModelview();
+      setUniformMatrix(modelviewMatLoc, currentPG.glModelview);
     }
 
     if (-1 < projectionMatLoc) {
-      g.updateGLProjection();
-      setUniformMatrix(projectionMatLoc, g.glProjection);
+      currentPG.updateGLProjection();
+      setUniformMatrix(projectionMatLoc, currentPG.glProjection);
     }
 
     if (-1 < viewportLoc) {
-      float x = g.viewport.get(0);
-      float y = g.viewport.get(1);
-      float w = g.viewport.get(2);
-      float h = g.viewport.get(3);
+      float x = currentPG.viewport.get(0);
+      float y = currentPG.viewport.get(1);
+      float w = currentPG.viewport.get(2);
+      float h = currentPG.viewport.get(3);
       setUniformValue(viewportLoc, x, y, w, h);
     }
 
@@ -1236,7 +1226,7 @@ public class PShader implements PConstants {
       ppixelsUnit = getLastTexUnit() + 1;
       setUniformValue(ppixelsLoc, ppixelsUnit);
       pgl.activeTexture(PGL.TEXTURE0 + ppixelsUnit);
-      g.bindFrontTexture();
+      currentPG.bindFrontTexture();
     } else {
       ppixelsUnit = -1;
     }
@@ -1244,15 +1234,12 @@ public class PShader implements PConstants {
 
 
   protected void bindTyped() {
-    PGraphicsOpenGL pg = primaryPG.get();
     if (currentPG == null) {
-      setRenderer(pg.getCurrentPG());
+      setRenderer(primaryPG.getCurrentPG());
       loadAttributes();
       loadUniforms();
     }
     setCommonUniforms();
-    PGraphicsOpenGL g = currentPG.get();
-    if (g == null) return;
 
     if (-1 < vertexLoc) pgl.enableVertexAttribArray(vertexLoc);
     if (-1 < colorLoc) pgl.enableVertexAttribArray(colorLoc);
@@ -1260,8 +1247,8 @@ public class PShader implements PConstants {
     if (-1 < normalLoc) pgl.enableVertexAttribArray(normalLoc);
 
     if (-1 < normalMatLoc) {
-      g.updateGLNormal();
-      setUniformMatrix(normalMatLoc, g.glNormal);
+      currentPG.updateGLNormal();
+      setUniformMatrix(normalMatLoc, currentPG.glNormal);
     }
 
     if (-1 < ambientLoc) pgl.enableVertexAttribArray(ambientLoc);
@@ -1269,17 +1256,17 @@ public class PShader implements PConstants {
     if (-1 < emissiveLoc) pgl.enableVertexAttribArray(emissiveLoc);
     if (-1 < shininessLoc) pgl.enableVertexAttribArray(shininessLoc);
 
-    int count = g.lightCount;
+    int count = currentPG.lightCount;
     setUniformValue(lightCountLoc, count);
     if (0 < count) {
-      setUniformVector(lightPositionLoc, g.lightPosition, 4, count);
-      setUniformVector(lightNormalLoc, g.lightNormal, 3, count);
-      setUniformVector(lightAmbientLoc, g.lightAmbient, 3, count);
-      setUniformVector(lightDiffuseLoc, g.lightDiffuse, 3, count);
-      setUniformVector(lightSpecularLoc, g.lightSpecular, 3, count);
-      setUniformVector(lightFalloffLoc, g.lightFalloffCoefficients,
+      setUniformVector(lightPositionLoc, currentPG.lightPosition, 4, count);
+      setUniformVector(lightNormalLoc, currentPG.lightNormal, 3, count);
+      setUniformVector(lightAmbientLoc, currentPG.lightAmbient, 3, count);
+      setUniformVector(lightDiffuseLoc, currentPG.lightDiffuse, 3, count);
+      setUniformVector(lightSpecularLoc, currentPG.lightSpecular, 3, count);
+      setUniformVector(lightFalloffLoc, currentPG.lightFalloffCoefficients,
                        3, count);
-      setUniformVector(lightSpotLoc, g.lightSpotParameters, 2, count);
+      setUniformVector(lightSpotLoc, currentPG.lightSpotParameters, 2, count);
     }
 
     if (-1 < directionLoc) pgl.enableVertexAttribArray(directionLoc);
@@ -1287,8 +1274,8 @@ public class PShader implements PConstants {
     if (-1 < offsetLoc) pgl.enableVertexAttribArray(offsetLoc);
 
     if (-1 < perspectiveLoc) {
-      if (g.getHint(ENABLE_STROKE_PERSPECTIVE) &&
-          g.nonOrthoProjection()) {
+      if (currentPG.getHint(ENABLE_STROKE_PERSPECTIVE) &&
+          currentPG.nonOrthoProjection()) {
         setUniformValue(perspectiveLoc, 1);
       } else {
         setUniformValue(perspectiveLoc, 0);
@@ -1296,11 +1283,11 @@ public class PShader implements PConstants {
     }
 
     if (-1 < scaleLoc) {
-      if (g.getHint(DISABLE_OPTIMIZED_STROKE)) {
+      if (currentPG.getHint(DISABLE_OPTIMIZED_STROKE)) {
         setUniformValue(scaleLoc, 1.0f, 1.0f, 1.0f);
       } else {
         float f = PGL.STROKE_DISPLACEMENT;
-        if (g.orthoProjection()) {
+        if (currentPG.orthoProjection()) {
           setUniformValue(scaleLoc, 1, 1, f);
         } else {
           setUniformValue(scaleLoc, f, f, f);
@@ -1310,9 +1297,6 @@ public class PShader implements PConstants {
   }
 
   protected void unbindTyped() {
-    PGraphicsOpenGL g = currentPG.get();
-    if (g == null) return;
-
     if (-1 < offsetLoc) pgl.disableVertexAttribArray(offsetLoc);
 
     if (-1 < directionLoc) pgl.disableVertexAttribArray(directionLoc);
@@ -1337,7 +1321,7 @@ public class PShader implements PConstants {
     if (-1 < ppixelsLoc) {
       pgl.enableFBOLayer();
       pgl.activeTexture(PGL.TEXTURE0 + ppixelsUnit);
-      g.unbindFrontTexture();
+      currentPG.unbindFrontTexture();
       pgl.activeTexture(PGL.TEXTURE0);
     }
 
