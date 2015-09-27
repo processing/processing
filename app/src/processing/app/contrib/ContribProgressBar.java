@@ -50,6 +50,9 @@ abstract class ContribProgressBar extends ContribProgressMonitor {
   @Override
   public void finished() {
     super.finished();
+
+    // TODO: this one almost always touches the UI, should be invoked on the EDT;
+    // TODO: then one can remove synchronization on visibleContributions in ListPanel
     finishedAction();
   }
 

@@ -427,13 +427,15 @@ implements Scrollable, ContributionListing.ChangeListener {
     model.getDataVector().removeAllElements();
     model.fireTableDataChanged();
     int rowCount = 0;
-    for (Contribution entry : contributionsSet) {
-      model.addRow(new Object[] { entry, entry, entry });
-      if (selectedPanel != null &&
-          entry.getName().equals(selectedPanel.getContrib().getName())) {
-        table.setRowSelectionInterval(rowCount, rowCount);
+    synchronized (contributionsSet) {
+      for (Contribution entry : contributionsSet) {
+        model.addRow(new Object[]{entry, entry, entry});
+        if (selectedPanel != null &&
+            entry.getName().equals(selectedPanel.getContrib().getName())) {
+          table.setRowSelectionInterval(rowCount, rowCount);
+        }
+        rowCount++;
       }
-      rowCount++;
     }
   }
 
