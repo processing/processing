@@ -836,7 +836,6 @@ class DetailPanel extends JPanel {
 
         @Override
         public void cancelAction() {
-          super.cancel();
           resetInstallProgressBarState();
           listPanel.contributionTab.statusPanel.setMessage("");
           updateInProgress = false;
@@ -906,7 +905,6 @@ class DetailPanel extends JPanel {
         }
 
         public void cancelAction() {
-          super.cancel();
           resetInstallProgressBarState();
           removeInProgress = false;
           installRemoveButton.setEnabled(true);
