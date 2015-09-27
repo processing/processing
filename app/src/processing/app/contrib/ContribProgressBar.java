@@ -21,6 +21,9 @@
 */
 package processing.app.contrib;
 
+import java.awt.EventQueue;
+import java.lang.reflect.InvocationTargetException;
+
 import javax.swing.JProgressBar;
 
 
@@ -48,13 +51,50 @@ abstract class ContribProgressBar extends ContribProgressMonitor {
   }
 
   @Override
-  public void finished() {
+  public final void finished() {
     super.finished();
-
-    // TODO: this one almost always touches the UI, should be invoked on the EDT;
-    // TODO: then one can remove synchronization on visibleContributions in ListPanel
-    finishedAction();
+    try {
+      EventQueue.invokeAndWait(new Runnable() {
+        @Override
+        public void run() {
+          finishedAction();
+        }
+      });
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof RuntimeException) {
+        throw (RuntimeException) cause;
+      } else {
+        cause.printStackTrace();
+      }
+    }
   }
 
   public abstract void finishedAction();
+
+  @Override
+  public final void cancel() {
+    super.cancel();
+    try {
+      EventQueue.invokeAndWait(new Runnable() {
+        @Override
+        public void run() {
+          cancelAction();
+        }
+      });
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof RuntimeException) {
+        throw (RuntimeException) cause;
+      } else {
+        cause.printStackTrace();
+      }
+    }
+  }
+
+  public void cancelAction() { }
 }

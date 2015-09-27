@@ -21,7 +21,9 @@
 */
 package processing.app.contrib;
 
+import java.awt.EventQueue;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import java.text.Normalizer;
 import java.util.*;
@@ -397,13 +399,14 @@ public class ContributionListing {
    */
   protected void downloadAvailableList(final Base base,
                                        final ContribProgressMonitor progress) {
+
+    // TODO: replace with SwingWorker [jv]
     new Thread(new Runnable() {
       public void run() {
         downloadingListingLock.lock();
 
-        URL url = null;
         try {
-          url = new URL(LISTING_URL);
+          URL url = new URL(LISTING_URL);
           // testing port
 //          url = new URL("http", "download.processing.org", 8989, "/contribs");
 
@@ -427,7 +430,24 @@ public class ContributionListing {
             if (tempContribFile.renameTo(listingFile)) {
               listDownloaded = true;
               listDownloadFailed = false;
-              setAdvertisedList(listingFile);
+              try {
+                // TODO: run this in SwingWorker done() [jv]
+                EventQueue.invokeAndWait(new Runnable() {
+                  @Override
+                  public void run() {
+                    setAdvertisedList(listingFile);
+                  }
+                });
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              } catch (InvocationTargetException e) {
+                Throwable cause = e.getCause();
+                if (cause instanceof RuntimeException) {
+                  throw (RuntimeException) cause;
+                } else {
+                  cause.printStackTrace();
+                }
+              }
             } else {
               listDownloadFailed = true;
             }
@@ -436,8 +456,9 @@ public class ContributionListing {
         } catch (MalformedURLException e) {
           progress.error(e);
           progress.finished();
+        } finally {
+          downloadingListingLock.unlock();
         }
-        downloadingListingLock.unlock();
       }
     }, "Contribution List Downloader").start();
   }

@@ -216,6 +216,7 @@ public class UpdateListPanel extends ListPanel {
   @Override
   public void contributionAdded(final Contribution contribution) {
     if (filter.matches(contribution)) {
+      // TODO: this should already be on EDT, check it [jv]
       EventQueue.invokeLater(new Runnable() {
         public void run() {
           // TODO make this longer and more contorted [fry]

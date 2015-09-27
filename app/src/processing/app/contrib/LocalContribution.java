@@ -21,7 +21,9 @@
 */
 package processing.app.contrib;
 
+import java.awt.EventQueue;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
@@ -380,6 +382,7 @@ public abstract class LocalContribution extends Contribution {
   void removeContribution(final Editor editor,
                           final ContribProgressMonitor pm,
                           final StatusPanel status) {
+    // TODO: replace with SwingWorker [jv]
     new Thread(new Runnable() {
       public void run() {
         remove(editor,
@@ -457,20 +460,55 @@ public abstract class LocalContribution extends Contribution {
 //        editor.removeTool();
 //      }
 
-      Contribution advertisedVersion =
-        contribListing.getAvailableContribution(this);
+      try {
+        // TODO: run this in SwingWorker done() [jv]
+        EventQueue.invokeAndWait(new Runnable() {
+          @Override
+          public void run() {
+            Contribution advertisedVersion =
+                contribListing.getAvailableContribution(LocalContribution.this);
 
-      if (advertisedVersion == null) {
-        contribListing.removeContribution(this);
-      } else {
-        contribListing.replaceContribution(this, advertisedVersion);
+            if (advertisedVersion == null) {
+              contribListing.removeContribution(LocalContribution.this);
+            } else {
+              contribListing.replaceContribution(LocalContribution.this, advertisedVersion);
+            }
+          }
+        });
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof RuntimeException) {
+          throw (RuntimeException) cause;
+        } else {
+          cause.printStackTrace();
+        }
       }
 
     } else {
       // There was a failure backing up the folder
       if (!doBackup || (doBackup && backup(editor, false, status))) {
         if (setDeletionFlag(true)) {
-          contribListing.replaceContribution(this, this);
+          try {
+            // TODO: run this in SwingWorker done() [jv]
+            EventQueue.invokeAndWait(new Runnable() {
+              @Override
+              public void run() {
+                contribListing.replaceContribution(LocalContribution.this,
+                                                   LocalContribution.this);
+              }
+            });
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException) {
+              throw (RuntimeException) cause;
+            } else {
+              cause.printStackTrace();
+            }
+          }
         }
       } else {
         status.setErrorMessage("Could not delete the contribution's files");

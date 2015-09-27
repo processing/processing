@@ -21,7 +21,9 @@
 */
 package processing.app.contrib;
 
+import java.awt.EventQueue;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import java.util.*;
 
@@ -145,7 +147,7 @@ public class ContributionManager {
                                  final ContribProgressBar downloadProgress,
                                  final ContribProgressBar installProgress,
                                  final StatusPanel status) {
-
+    // TODO: replace with SwingWorker [jv]
     new Thread(new Runnable() {
       public void run() {
         String filename = url.getFile();
@@ -159,11 +161,23 @@ public class ContributionManager {
 
             if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
               installProgress.startTask(Language.text("contrib.progress.installing"), ContribProgressMonitor.UNKNOWN);
-              LocalContribution contribution =
+              final LocalContribution contribution =
                 ad.install(editor.getBase(), contribZip, false, status);
 
               if (contribution != null) {
-                listing.replaceContribution(ad, contribution);
+                try {
+                  // TODO: run this in SwingWorker done() [jv]
+                  EventQueue.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                      listing.replaceContribution(ad, contribution);
+                    }
+                  });
+                } catch (InterruptedException e) {
+                  e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                  throw (Exception) e.getCause();
+                }
                 /*
                 if (contribution.getType() == ContributionType.MODE) {
                   List<ModeContribution> contribModes = editor.getBase().getModeContribs();
@@ -232,7 +246,7 @@ public class ContributionManager {
    */
   static void downloadAndInstallOnStartup(final Base base, final URL url,
                                           final AvailableContribution ad) {
-
+    // TODO: replace with SwingWorker [jv]
     new Thread(new Runnable() {
       public void run() {
         String filename = url.getFile();
@@ -244,12 +258,29 @@ public class ContributionManager {
           try {
             download(url, null, contribZip, null);
 
-            LocalContribution contribution = ad.install(base, contribZip,
+            final LocalContribution contribution = ad.install(base, contribZip,
                                                         false, null);
 
             if (contribution != null) {
-              listing.replaceContribution(ad, contribution);
-              base.refreshContribs(contribution.getType());
+              try {
+                // TODO: run this in SwingWorker done() [jv]
+                EventQueue.invokeAndWait(new Runnable() {
+                  @Override
+                  public void run() {
+                    listing.replaceContribution(ad, contribution);
+                    base.refreshContribs(contribution.getType());
+                  }
+                });
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              } catch (InvocationTargetException e) {
+                Throwable cause = e.getCause();
+                if (cause instanceof RuntimeException) {
+                  throw (RuntimeException) cause;
+                } else {
+                  cause.printStackTrace();
+                }
+              }
             }
 
             contribZip.delete();

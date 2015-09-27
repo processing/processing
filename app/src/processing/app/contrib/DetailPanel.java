@@ -582,7 +582,7 @@ class DetailPanel extends JPanel {
           // Finished downloading library
         }
 
-        public void cancel() {
+        public void cancelAction() {
           // Finished installing library
           resetInstallProgressBarState();
           installRemoveButton.setEnabled(!contrib.isUpdateFlagged());
@@ -613,7 +613,7 @@ class DetailPanel extends JPanel {
           setSelected(true);
         }
 
-        public void cancel() {
+        public void cancelAction() {
           finishedAction();
         }
       };
@@ -835,7 +835,7 @@ class DetailPanel extends JPanel {
         }
 
         @Override
-        public void cancel() {
+        public void cancelAction() {
           super.cancel();
           resetInstallProgressBarState();
           listPanel.contributionTab.statusPanel.setMessage("");
@@ -905,7 +905,7 @@ class DetailPanel extends JPanel {
           setSelected(true); // Needed for smooth working. Dunno why, though...
         }
 
-        public void cancel() {
+        public void cancelAction() {
           super.cancel();
           resetInstallProgressBarState();
           removeInProgress = false;
