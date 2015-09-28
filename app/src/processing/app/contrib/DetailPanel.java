@@ -501,7 +501,7 @@ class DetailPanel extends JPanel {
     description = desc.toString();
     descriptionPane.setText(description);
 
-    if (contribListing.hasUpdates(contrib)) {
+    if (contribListing.hasUpdates(contrib) && contrib.isCompatible(Base.getRevision())) {
       StringBuilder versionText = new StringBuilder();
       versionText.append("<html><body><i>");
       if (contrib.isUpdateFlagged() || contrib.isDeletionFlagged()) {
