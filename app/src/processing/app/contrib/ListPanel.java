@@ -442,6 +442,7 @@ implements Scrollable, ContributionListing.ChangeListener {
 
   public void contributionAdded(final Contribution contribution) {
     if (filter.matches(contribution)) {
+      // TODO: this should already be on EDT, check it [jv]
       EventQueue.invokeLater(new Runnable() {
         public void run() {
           if (!panelByContribution.containsKey(contribution)) {
@@ -467,6 +468,7 @@ implements Scrollable, ContributionListing.ChangeListener {
 
 
   public void contributionRemoved(final Contribution contribution) {
+    // TODO: this should already be on EDT, check it [jv]
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         synchronized (panelByContribution) {
@@ -489,6 +491,7 @@ implements Scrollable, ContributionListing.ChangeListener {
 
   public void contributionChanged(final Contribution oldContrib,
                                   final Contribution newContrib) {
+    // TODO: this should already be on EDT, check it [jv]
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         synchronized (panelByContribution) {
