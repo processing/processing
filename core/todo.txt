@@ -10,6 +10,9 @@ X   https://github.com/processing/processing/pull/3874
 X   https://github.com/processing/processing/pull/3875
 X Convert all documented hacky keys in OpenGL
 X   https://github.com/processing/processing/pull/3888
+X Frame size displays incorrectly if surface.setResizable(true)
+X   https://github.com/processing/processing/issues/3868
+X   https://github.com/processing/processing/pull/3880
 
 cleaning
 o move AWT image loading into PImageAWT
