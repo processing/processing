@@ -164,7 +164,8 @@ class DetailPanel extends JPanel {
               }
             }
           }
-          listPanel.contributionTab.restartButton.setVisible(toBeRestarted);
+          // TODO: remove or uncomment if the button was added
+          //listPanel.contributionTab.restartButton.setVisible(toBeRestarted);
         }
       }
     };
@@ -864,7 +865,8 @@ class DetailPanel extends JPanel {
           if (isModeActive) {
             updateButton.setEnabled(true);
           } else {
-            listPanel.contributionTab.restartButton.setVisible(true);
+            // TODO: remove or uncomment if the button was added
+            //listPanel.contributionTab.restartButton.setVisible(true);
           }
         }
       };
@@ -930,7 +932,8 @@ class DetailPanel extends JPanel {
           if (isModeActive) {
             updateButton.setEnabled(true);
           } else {
-            contributionTab.restartButton.setVisible(true);
+            // TODO: remove or uncomment if the button was added
+            //contributionTab.restartButton.setVisible(true);
           }
         }
       };

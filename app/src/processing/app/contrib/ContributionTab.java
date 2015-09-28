@@ -46,11 +46,11 @@ public class ContributionTab extends JPanel {
 
   Contribution.Filter filter;
   JComboBox<String> categoryChooser;
-  JScrollPane scrollPane;
   ListPanel contributionListPanel;
   StatusPanel statusPanel;
   FilterField filterField;
-  JButton restartButton;
+  // TODO: remove or initialize restartButton
+  //JButton restartButton;
   JLabel categoryLabel;
   JLabel loaderLabel;
 
@@ -200,6 +200,9 @@ public class ContributionTab extends JPanel {
     });
 
     filterField = new FilterField();
+
+    // TODO: initialize restartButton, whatever it is
+    // restartButton = ???
   }
 
 
