@@ -23,6 +23,7 @@
 package processing.app.contrib;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.*;
@@ -350,9 +351,9 @@ public class ContributionTab extends JPanel {
   }
 
 
-  //TODO: this is causing a lot of bugs as the hint is wrongly firing applyFilter()
   class FilterField extends JTextField {
     Icon searchIcon;
+    JButton removeFilter;
     List<String> filters;
     JLabel filterLabel;
 
@@ -366,19 +367,40 @@ public class ContributionTab extends JPanel {
       setFont(Toolkit.getSansFont(14, Font.PLAIN));
       searchIcon = Toolkit.getLibIconX("manager/search");
       filterLabel.setIcon(searchIcon);
+      removeFilter = new JButton("X"); // TODO icon should be initialized here
+      removeFilter.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 2));
+      removeFilter.setBorderPainted(false);
+      removeFilter.setContentAreaFilled(false);
+      removeFilter.setCursor(Cursor.getDefaultCursor());
+      removeFilter.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          setText("");
+          filterField.requestFocusInWindow();
+        }
+      });
       //searchIcon = new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage("NSImage://NSComputerTemplate"));
       setOpaque(false);
       //setBorder(BorderFactory.createMatteBorder(0, 33, 0, 0, searchIcon));
 
       GroupLayout fl = new GroupLayout(this);
       setLayout(fl);
-      fl.setHorizontalGroup(fl.createSequentialGroup().addComponent(filterLabel));
+      fl.setHorizontalGroup(fl
+        .createSequentialGroup()
+        .addComponent(filterLabel)
+        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+                         GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+        .addComponent(removeFilter));
+
       fl.setVerticalGroup(fl.createSequentialGroup()
                           .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                                            GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                          .addGroup(fl.createParallelGroup()
                           .addComponent(filterLabel)
+                          .addComponent(removeFilter))
                           .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
                                            GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE));
+      removeFilter.setVisible(false);
 
       filters = new ArrayList<String>();
 
@@ -398,14 +420,17 @@ public class ContributionTab extends JPanel {
 
       getDocument().addDocumentListener(new DocumentListener() {
         public void removeUpdate(DocumentEvent e) {
+          removeFilter.setVisible(!getText().isEmpty());
           applyFilter();
         }
 
         public void insertUpdate(DocumentEvent e) {
+          removeFilter.setVisible(!getText().isEmpty());
           applyFilter();
         }
 
         public void changedUpdate(DocumentEvent e) {
+          removeFilter.setVisible(!getText().isEmpty());
           applyFilter();
         }
       });
