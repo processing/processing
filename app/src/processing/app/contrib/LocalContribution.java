@@ -473,6 +473,7 @@ public abstract class LocalContribution extends Contribution {
             } else {
               contribListing.replaceContribution(LocalContribution.this, advertisedVersion);
             }
+            base.refreshContribs(LocalContribution.this.getType());
             base.setUpdatesAvailable(contribListing.countUpdates(base));
           }
         });
@@ -498,6 +499,7 @@ public abstract class LocalContribution extends Contribution {
               public void run() {
                 contribListing.replaceContribution(LocalContribution.this,
                                                    LocalContribution.this);
+                base.refreshContribs(LocalContribution.this.getType());
                 base.setUpdatesAvailable(contribListing.countUpdates(base));
               }
             });
@@ -516,7 +518,6 @@ public abstract class LocalContribution extends Contribution {
         status.setErrorMessage("Could not delete the contribution's files");
       }
     }
-    base.refreshContribs(this.getType());
     if (success) {
       pm.finished();
     } else {
