@@ -74,6 +74,11 @@ public class PSurfaceAWT extends PSurfaceNone {
   // Note that x and y may not be zero, depending on the display configuration
   Rectangle screenRect;
 
+  // Used for resizing, at least on Windows insets size changes when
+  // frame.setResizable() is called, and in resize listener we need
+  // to know what size the window was before.
+  Insets currentInsets = new Insets(0, 0, 0, 0);
+
   // 3.0a5 didn't use strategy, and active was shut off during init() w/ retina
 //  boolean useStrategy = true;
 
@@ -808,11 +813,11 @@ public class PSurfaceAWT extends PSurfaceNone {
 
 //    System.out.format("setting frame size %d %d %n", sketchWidth, sketchHeight);
 //    new Exception().printStackTrace(System.out);
-    Insets insets = frame.getInsets();
+    currentInsets = frame.getInsets();
     int windowW = Math.max(sketchWidth, MIN_WINDOW_WIDTH) +
-      insets.left + insets.right;
+      currentInsets.left + currentInsets.right;
     int windowH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT) +
-      insets.top + insets.bottom;
+      currentInsets.top + currentInsets.bottom;
     frame.setSize(windowW, windowH);
     return new Dimension(windowW, windowH);
   }
@@ -937,7 +942,8 @@ public class PSurfaceAWT extends PSurfaceNone {
 //    }
 
     //if (wide == sketchWidth && high == sketchHeight) {  // doesn't work on launch
-    if (wide == sketch.width && high == sketch.height) {
+    if (wide == sketch.width && high == sketch.height &&
+        (frame == null || currentInsets.equals(frame.getInsets()))) {
 //      if (PApplet.DEBUG) {
 //        new Exception("w/h unchanged " + wide + " " + high).printStackTrace(System.out);
 //      }
@@ -1123,16 +1129,20 @@ public class PSurfaceAWT extends PSurfaceNone {
           // ignore them because it's not the user resizing things.
           Frame farm = (Frame) e.getComponent();
           if (farm.isVisible()) {
-            Insets insets = farm.getInsets();
             Dimension windowSize = farm.getSize();
+            int x = farm.getX() + currentInsets.left;
+            int y = farm.getY() + currentInsets.top;
 
             // JFrame (unlike java.awt.Frame) doesn't include the left/top
             // insets for placement (though it does seem to need them for
             // overall size of the window. Perhaps JFrame sets its coord
             // system so that (0, 0) is always the upper-left of the content
             // area. Which seems nice, but breaks any f*ing AWT-based code.
-            setSize(windowSize.width - insets.left - insets.right,
-                    windowSize.height - insets.top - insets.bottom);
+            setSize(windowSize.width - currentInsets.left - currentInsets.right,
+                    windowSize.height - currentInsets.top - currentInsets.bottom);
+
+            // correct the location when inset size changes
+            setLocation(x - currentInsets.left, y - currentInsets.top);
           }
         }
       }
