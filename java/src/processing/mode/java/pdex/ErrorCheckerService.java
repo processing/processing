@@ -582,6 +582,16 @@ public class ErrorCheckerService {
 
     if (problems != null) {
       for (IProblem problem : problems) {
+
+        // Hide a useless error which is produced when a line ends with
+        // an identifier without a semicolon. "Missing a semicolon" is
+        // also produced and is preferred over this one.
+        // (Syntax error, insert ":: IdentifierOrNew" to complete Expression)
+        // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=405780
+        if (problem.getMessage().contains("Syntax error, insert \":: IdentifierOrNew\"")) {
+          continue;
+        }
+
         int sourceLine = problem.getSourceLineNumber() - result.sourceCodeOffset;
         int[] a = calculateTabIndexAndLineNumber(sourceLine);
 
