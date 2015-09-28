@@ -995,12 +995,10 @@ public class PSurfaceJOGL implements PSurface {
       keyCode = mapToPConst(code);
       keyChar = PConstants.CODED;
     } else if (isHackyKey(code)) {
-      keyCode = code;
+      // we can return only one char for ENTER, let it be \n everywhere
+      keyCode = code == com.jogamp.newt.event.KeyEvent.VK_ENTER ?
+          PConstants.ENTER : code;
       keyChar = hackToChar(code, nativeEvent.getKeyChar());
-    } else if (code == com.jogamp.newt.event.KeyEvent.VK_ENTER) {
-      // we can return only one char, let it be \n everywhere
-      keyCode = 10;
-      keyChar = '\n';
     } else {
       keyCode = code;
       keyChar = nativeEvent.getKeyChar();
@@ -1054,38 +1052,54 @@ public class PSurfaceJOGL implements PSurface {
   // http://forum.jogamp.org/Newt-wrong-keycode-for-key-td4033690.html#a4033697
   // (I don't think this is a complete solution).
   private static int mapToPConst(short code) {
-    if (code == com.jogamp.newt.event.KeyEvent.VK_UP) {
-      return PConstants.UP;
-    } else if (code == com.jogamp.newt.event.KeyEvent.VK_DOWN) {
-      return PConstants.DOWN;
-    } else if (code == com.jogamp.newt.event.KeyEvent.VK_LEFT) {
-      return PConstants.LEFT;
-    } else if (code == com.jogamp.newt.event.KeyEvent.VK_RIGHT) {
-      return PConstants.RIGHT;
-    } else if (code == com.jogamp.newt.event.KeyEvent.VK_ALT) {
-      return PConstants.ALT;
-    } else if (code == com.jogamp.newt.event.KeyEvent.VK_CONTROL) {
-      return PConstants.CONTROL;
-    } else if (code == com.jogamp.newt.event.KeyEvent.VK_SHIFT) {
-      return PConstants.SHIFT;
-    } else if (code == com.jogamp.newt.event.KeyEvent.VK_WINDOWS) {
-      return java.awt.event.KeyEvent.VK_META;
+    switch (code) {
+      case com.jogamp.newt.event.KeyEvent.VK_UP:
+        return PConstants.UP;
+      case com.jogamp.newt.event.KeyEvent.VK_DOWN:
+        return PConstants.DOWN;
+      case com.jogamp.newt.event.KeyEvent.VK_LEFT:
+        return PConstants.LEFT;
+      case com.jogamp.newt.event.KeyEvent.VK_RIGHT:
+        return PConstants.RIGHT;
+      case com.jogamp.newt.event.KeyEvent.VK_ALT:
+        return PConstants.ALT;
+      case com.jogamp.newt.event.KeyEvent.VK_CONTROL:
+        return PConstants.CONTROL;
+      case com.jogamp.newt.event.KeyEvent.VK_SHIFT:
+        return PConstants.SHIFT;
+      case com.jogamp.newt.event.KeyEvent.VK_WINDOWS:
+        return java.awt.event.KeyEvent.VK_META;
+      default:
+        return code;
     }
-    return code;
   }
 
 
   private static boolean isHackyKey(short code) {
-    return code == com.jogamp.newt.event.KeyEvent.VK_BACK_SPACE ||
-           code == com.jogamp.newt.event.KeyEvent.VK_TAB;
+    switch (code) {
+      case com.jogamp.newt.event.KeyEvent.VK_BACK_SPACE:
+      case com.jogamp.newt.event.KeyEvent.VK_TAB:
+      case com.jogamp.newt.event.KeyEvent.VK_ENTER:
+      case com.jogamp.newt.event.KeyEvent.VK_ESCAPE:
+      case com.jogamp.newt.event.KeyEvent.VK_DELETE:
+        return true;
+    }
+    return false;
   }
 
 
   private static char hackToChar(short code, char def) {
-    if (code == com.jogamp.newt.event.KeyEvent.VK_BACK_SPACE) {
-      return '\b';
-    } else if (code == com.jogamp.newt.event.KeyEvent.VK_TAB) {
-      return '\t';
+    switch (code) {
+      case com.jogamp.newt.event.KeyEvent.VK_BACK_SPACE:
+        return PConstants.BACKSPACE;
+      case com.jogamp.newt.event.KeyEvent.VK_TAB:
+        return PConstants.TAB;
+      case com.jogamp.newt.event.KeyEvent.VK_ENTER:
+        return PConstants.ENTER;
+      case com.jogamp.newt.event.KeyEvent.VK_ESCAPE:
+        return PConstants.ESC;
+      case com.jogamp.newt.event.KeyEvent.VK_DELETE:
+        return PConstants.DELETE;
     }
     return def;
   }
