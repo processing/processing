@@ -4,6 +4,15 @@ X   https://github.com/processing/processing/issues/3861
 X error checker/suggestions fixes
 X   https://github.com/processing/processing/pull/3871
 X   https://github.com/processing/processing/pull/3879
+X contributions filter is ignored after clicking Install
+X   https://github.com/processing/processing/issues/3826
+X   https://github.com/processing/processing/pull/3872
+X   https://github.com/processing/processing/pull/3883
+X Exception in thread "Contribution List Downloader"
+X   https://github.com/processing/processing/issues/3882
+X   https://github.com/processing/processing/pull/3884
+X Hide useless error in error checker
+X   https://github.com/processing/processing/pull/3887
 
 gui
 X distinguish errors and warnings
@@ -67,8 +76,6 @@ _ ugly white gap at the top of scroll bar
 _   the table header doesn't extend far enough
 _ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
 _   looks like ContributionListing.getScrollableUnitIncrement() returns early
-_ contributions filter is ignored after clicking Install
-_   https://github.com/processing/processing/issues/3826
 
 
 gui / post 3.0

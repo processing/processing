@@ -7,6 +7,9 @@ X   https://github.com/processing/processing/pull/3869
 X Textures disappearing in beta 7 (might be WeakReference regression)
 X   https://github.com/processing/processing/issues/3858
 X   https://github.com/processing/processing/pull/3874
+X   https://github.com/processing/processing/pull/3875
+X Convert all documented hacky keys in OpenGL
+X   https://github.com/processing/processing/pull/3888
 
 cleaning
 o move AWT image loading into PImageAWT
