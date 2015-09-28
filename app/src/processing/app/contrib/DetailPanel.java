@@ -618,7 +618,7 @@ class DetailPanel extends JPanel {
         }
       };
 
-      ContributionManager.downloadAndInstall(listPanel.contributionTab.editor,
+      ContributionManager.downloadAndInstall(listPanel.contributionTab.editor.getBase(),
                                              downloadUrl, ad,
                                              downloadProgress, installProgress,
                                              listPanel.contributionTab.statusPanel);
@@ -869,7 +869,7 @@ class DetailPanel extends JPanel {
         }
       };
       ((LocalContribution) contrib)
-        .removeContribution(listPanel.contributionTab.editor,
+        .removeContribution(listPanel.contributionTab.editor.getBase(),
                             progress, listPanel.contributionTab.statusPanel);
     } else {
       updateButton.setEnabled(false);
@@ -936,7 +936,7 @@ class DetailPanel extends JPanel {
       };
       ContributionTab contributionTab = listPanel.contributionTab;
       LocalContribution localContrib = (LocalContribution) contrib;
-      localContrib.removeContribution(contributionTab.editor, monitor, contributionTab.statusPanel);
+      localContrib.removeContribution(contributionTab.editor.getBase(), monitor, contributionTab.statusPanel);
     }
 
   }

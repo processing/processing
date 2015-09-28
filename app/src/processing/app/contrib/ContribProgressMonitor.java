@@ -26,7 +26,7 @@ package processing.app.contrib;
 // This code seems like it's adapted from old example code found on the web.
 // https://github.com/processing/processing/issues/3176
 
-abstract class ContribProgressMonitor {
+public abstract class ContribProgressMonitor {
   static final int UNKNOWN = -1;
   boolean canceled = false;
   boolean error = false;

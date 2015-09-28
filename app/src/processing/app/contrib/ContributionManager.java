@@ -141,7 +141,7 @@ public class ContributionManager {
    *          old version of a contribution that is being updated). Must not be
    *          null.
    */
-  static void downloadAndInstall(final Editor editor,
+  static void downloadAndInstall(final Base base,
                                  final URL url,
                                  final AvailableContribution ad,
                                  final ContribProgressBar downloadProgress,
@@ -162,7 +162,7 @@ public class ContributionManager {
             if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
               installProgress.startTask(Language.text("contrib.progress.installing"), ContribProgressMonitor.UNKNOWN);
               final LocalContribution contribution =
-                ad.install(editor.getBase(), contribZip, false, status);
+                ad.install(base, contribZip, false, status);
 
               if (contribution != null) {
                 try {
@@ -171,6 +171,7 @@ public class ContributionManager {
                     @Override
                     public void run() {
                       listing.replaceContribution(ad, contribution);
+                      base.setUpdatesAvailable(listing.countUpdates(base));
                     }
                   });
                 } catch (InterruptedException e) {
@@ -186,7 +187,7 @@ public class ContributionManager {
                   }
                 }
                 */
-                editor.getBase().refreshContribs(contribution.getType());
+                base.refreshContribs(contribution.getType());
               }
               installProgress.finished();
             }

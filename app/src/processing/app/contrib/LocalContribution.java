@@ -263,7 +263,7 @@ public abstract class LocalContribution extends Contribution {
 
           if (oldContrib.getType().requiresRestart()) {
             // XXX: We can't replace stuff, soooooo.... do something different
-            if (!oldContrib.backup(editor, false, status)) {
+            if (!oldContrib.backup(false, status)) {
               return null;
             }
           } else {
@@ -277,7 +277,7 @@ public abstract class LocalContribution extends Contribution {
                        "has been found in your sketchbook. Clicking “Yes”<br>"+
                        "will move the existing library to a backup folder<br>" +
                        "in <i>libraries/old</i> before replacing it.");
-                if (result != JOptionPane.YES_OPTION || !oldContrib.backup(editor, true, status)) {
+                if (result != JOptionPane.YES_OPTION || !oldContrib.backup(true, status)) {
                   return null;
                 }
               } else {
@@ -292,7 +292,7 @@ public abstract class LocalContribution extends Contribution {
                 }
               }
             } else {
-              if ((doBackup && !oldContrib.backup(editor, true, status)) ||
+              if ((doBackup && !oldContrib.backup(true, status)) ||
                   (!doBackup && !oldContrib.getFolder().delete())) {
                 return null;
               }
@@ -349,7 +349,7 @@ public abstract class LocalContribution extends Contribution {
    *          true if the file should be moved to the directory, false if it
    *          should instead be copied, leaving the original in place
    */
-  boolean backup(Editor editor, boolean deleteOriginal, StatusPanel status) {
+  boolean backup(boolean deleteOriginal, StatusPanel status) {
     File backupFolder = getType().createBackupFolder(status);
 
     boolean success = false;
@@ -379,13 +379,13 @@ public abstract class LocalContribution extends Contribution {
   /**
    * Non-blocking call to remove a contribution in a new thread.
    */
-  void removeContribution(final Editor editor,
+  void removeContribution(final Base base,
                           final ContribProgressMonitor pm,
                           final StatusPanel status) {
     // TODO: replace with SwingWorker [jv]
     new Thread(new Runnable() {
       public void run() {
-        remove(editor,
+        remove(base,
                pm,
                status,
                ContributionListing.getInstance());
@@ -394,7 +394,7 @@ public abstract class LocalContribution extends Contribution {
   }
 
 
-  void remove(final Editor editor,
+  void remove(final Base base,
               final ContribProgressMonitor pm,
               final StatusPanel status,
               final ContributionListing contribListing) {
@@ -412,7 +412,7 @@ public abstract class LocalContribution extends Contribution {
     if (getType() == ContributionType.MODE) {
       boolean isModeActive = false;
       ModeContribution m = (ModeContribution) this;
-      Iterator<Editor> iter = editor.getBase().getEditors().iterator();
+      Iterator<Editor> iter = base.getEditors().iterator();
       while (iter.hasNext()) {
         Editor e = iter.next();
         if (e.getMode().equals(m.getMode())) {
@@ -421,7 +421,7 @@ public abstract class LocalContribution extends Contribution {
         }
       }
       if (!isModeActive) {
-        m.clearClassLoader(editor.getBase());
+        m.clearClassLoader(base);
       } else {
         pm.cancel();
         Messages.showMessage("Mode Manager",
@@ -442,12 +442,12 @@ public abstract class LocalContribution extends Contribution {
       t.clearClassLoader(editor.getBase());
       */
       // menu will be rebuilt below with the refreshContribs() call
-      editor.getBase().clearToolMenus();
+      base.clearToolMenus();
       ((ToolContribution) this).clearClassLoader();
     }
 
     if (doBackup) {
-      success = backup(editor, true, status);
+      success = backup(true, status);
     } else {
       Util.removeDir(getFolder());
       success = !getFolder().exists();
@@ -473,6 +473,7 @@ public abstract class LocalContribution extends Contribution {
             } else {
               contribListing.replaceContribution(LocalContribution.this, advertisedVersion);
             }
+            base.setUpdatesAvailable(contribListing.countUpdates(base));
           }
         });
       } catch (InterruptedException e) {
@@ -488,7 +489,7 @@ public abstract class LocalContribution extends Contribution {
 
     } else {
       // There was a failure backing up the folder
-      if (!doBackup || (doBackup && backup(editor, false, status))) {
+      if (!doBackup || (doBackup && backup(false, status))) {
         if (setDeletionFlag(true)) {
           try {
             // TODO: run this in SwingWorker done() [jv]
@@ -497,6 +498,7 @@ public abstract class LocalContribution extends Contribution {
               public void run() {
                 contribListing.replaceContribution(LocalContribution.this,
                                                    LocalContribution.this);
+                base.setUpdatesAvailable(contribListing.countUpdates(base));
               }
             });
           } catch (InterruptedException e) {
@@ -514,7 +516,7 @@ public abstract class LocalContribution extends Contribution {
         status.setErrorMessage("Could not delete the contribution's files");
       }
     }
-    editor.getBase().refreshContribs(this.getType());
+    base.refreshContribs(this.getType());
     if (success) {
       pm.finished();
     } else {

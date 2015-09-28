@@ -225,16 +225,16 @@ public class UpdateListPanel extends ListPanel {
           if (newPanel == null) {
             newPanel = new DetailPanel(UpdateListPanel.this);
           }
-          if (!panelByContribution.containsKey(contribution)) {
-            synchronized (panelByContribution) {
+          synchronized (panelByContribution) {
+            if (!panelByContribution.containsKey(contribution)) {
               panelByContribution.put(contribution, newPanel);
             }
-          }
-          if (newPanel != null) {
-            newPanel.setContribution(contribution);
-            add(newPanel);
-            updatePanelOrdering(panelByContribution.keySet());
-            updateColors(); // XXX this is the place
+            if (newPanel != null) {
+              newPanel.setContribution(contribution);
+              add(newPanel);
+              updatePanelOrdering(panelByContribution.keySet());
+              updateColors(); // XXX this is the place
+            }
           }
         }
       });
