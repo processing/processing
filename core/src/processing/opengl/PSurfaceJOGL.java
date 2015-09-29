@@ -33,6 +33,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -177,7 +178,11 @@ public class PSurfaceJOGL implements PSurface {
           monitors.add(monitor);
         }
       }
-    } else { // All the other platforms...
+    } else if (PApplet.platform == PConstants.WINDOWS) {
+      // NEWT display id is == (adapterId << 8 | monitorId),
+      // should be in the same order as AWT
+      monitors.addAll(newtDevices);
+    } else { // MAC OSX and others
       for (GraphicsDevice device: awtDevices) {
         String did = device.getIDstring();
         String[] parts = did.split("Display");
@@ -384,7 +389,8 @@ public class PSurfaceJOGL implements PSurface {
       if (spanDisplays) {
         window.setFullscreen(monitors);
       } else {
-        window.setFullscreen(true);
+        List<MonitorDevice> display = Collections.singletonList(displayDevice);
+        window.setFullscreen(display);
       }
     }
   }
