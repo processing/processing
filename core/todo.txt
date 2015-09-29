@@ -18,6 +18,7 @@ X   https://github.com/processing/processing/pull/3893
 X   https://github.com/processing/processing/issues/3865
 X OpenGL with fullScreen() always opens on default display
 X   https://github.com/processing/processing/issues/3889
+X   https://github.com/processing/processing/issues/3797
 X   https://github.com/processing/processing/pull/3892
 
 cleaning
