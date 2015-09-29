@@ -86,7 +86,7 @@ editor.fgcolor = #000000
 editor.bgcolor = #ffffff
 
 editor.gradient.top = #122535
-editor.gradient.bottom = #020408
+editor.gradient.bottom = #010305
 
 # highlight for the current line
 #editor.linehighlight.color=#e2e2e2
