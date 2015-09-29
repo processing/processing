@@ -302,41 +302,22 @@ public class Util {
   /**
    * Remove all files in a directory and the directory itself.
    */
-  static public void removeDir(File dir) {
-    if (dir.exists()) {
-      removeDescendants(dir);
-      if (!dir.delete()) {
-        System.err.println("Could not delete " + dir);
-      }
-    }
-  }
+  static public boolean removeDir(File dir) {
+    if (!dir.exists()) return true;
 
-
-  /**
-   * Recursively remove all files within a directory,
-   * used with removeDir(), or when the contents of a dir
-   * should be removed, but not the directory itself.
-   * (i.e. when cleaning temp files from lib/build)
-   */
-  static public void removeDescendants(File dir) {
-    if (!dir.exists()) return;
-
-    String files[] = dir.list();
-    for (int i = 0; i < files.length; i++) {
-      if (files[i].equals(".") || files[i].equals("..")) continue;
-      File dead = new File(dir, files[i]);
-      if (!dead.isDirectory()) {
-        if (!Preferences.getBoolean("compiler.save_build_files")) {
-          if (!dead.delete()) {
-            // temporarily disabled
-            System.err.println("Could not delete " + dead);
-          }
+    boolean result = true;
+    File[] files = dir.listFiles();
+    if (files != null) {
+      for (File child : files) {
+        if (child.isFile()) {
+          result &= child.delete();
+        } else if (child.isDirectory()) {
+          result &= removeDir(child);
         }
-      } else {
-        removeDir(dead);
-        //dead.delete();
       }
     }
+    result &= dir.delete();
+    return result;
   }
 
 
