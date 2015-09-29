@@ -39,6 +39,7 @@ import processing.app.Mode;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.Util;
+import processing.core.PApplet;
 import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.Problem;
 import processing.app.Language;
@@ -205,12 +206,15 @@ public class MarkerColumn extends JPanel {
 	      e.printStackTrace();
 	      totalLines = 1; // do not divide by zero
 	    }
+	    int visibleLines = editor.getTextArea().getVisibleLines();
+	    totalLines = PApplet.max(totalLines, visibleLines);
 
 	    for (LineMarker m : errorPoints) {
 	      // Ratio of error line to total lines
 	      float y = (m.getLineNumber() + 1) / ((float) totalLines);
 	      // Ratio multiplied by height of the error bar
-	      y *= getHeight() - 15; // -15 is just a vertical offset
+	      y *= getHeight();
+	      y -= 15; // -15 is just a vertical offset
 
 	      m.setY((int) y);
 	    }
