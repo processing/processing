@@ -50,8 +50,9 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
   @SuppressWarnings("hiding")
   static public final int ERROR   = 1;
-  static public final int COMPILER_ERROR = 1;  // temporary
-  static public final int WARNING = 2;
+  static public final int CURSOR_LINE_ERROR = 2;
+  static public final int WARNING = 3;
+  static public final int CURSOR_LINE_WARNING = 4;
   static public final int NOTICE  = 0;
 
   static final int YES    = 1;
@@ -121,19 +122,25 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     fgColor = new Color[] {
       mode.getColor("status.notice.fgcolor"),
       mode.getColor("status.error.fgcolor"),
+      mode.getColor("status.error.fgcolor"),
+      mode.getColor("status.warning.fgcolor"),
       mode.getColor("status.warning.fgcolor")
     };
 
     bgColor = new Color[] {
       mode.getColor("status.notice.bgcolor"),
       mode.getColor("status.error.bgcolor"),
+      mode.getColor("status.error.bgcolor"),
+      mode.getColor("status.warning.bgcolor"),
       mode.getColor("status.warning.bgcolor")
     };
 
     bgImage = new Image[] {
       mode.loadImage("/lib/status/notice.png"),
       mode.loadImage("/lib/status/error.png"),
-      mode.loadImage("/lib/status/edit.png")
+      mode.loadImage("/lib/status/error.png"),
+      mode.loadImage("/lib/status/warning.png"),
+      mode.loadImage("/lib/status/warning.png")
     };
 
     font = mode.getFont("status.font");

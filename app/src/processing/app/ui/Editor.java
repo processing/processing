@@ -2789,6 +2789,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  /**
+   * Returns the current notice message in the editor status bar.
+   */
+  public int getStatusMode() {
+    return status.mode;
+  }
+
+
 //  /**
 //   * Returns the current mode of the editor status bar: NOTICE, ERR or EDIT.
 //   */

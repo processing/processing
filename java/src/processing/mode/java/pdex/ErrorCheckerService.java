@@ -953,13 +953,18 @@ public class ErrorCheckerService {
       if (errorMarker != null) {
         if (errorMarker.getType() == LineMarker.WARNING) {
           editor.statusMessage(errorMarker.getProblem().getMessage(),
-                               EditorStatus.WARNING);
+                               EditorStatus.CURSOR_LINE_WARNING);
         } else {
           editor.statusMessage(errorMarker.getProblem().getMessage(),
-                               EditorStatus.COMPILER_ERROR);
+                               EditorStatus.CURSOR_LINE_ERROR);
         }
       } else {
-        editor.statusEmpty(); // No error, clear the status
+        switch (editor.getStatusMode()) {
+          case EditorStatus.CURSOR_LINE_ERROR:
+          case EditorStatus.CURSOR_LINE_WARNING:
+            editor.statusEmpty();
+            break;
+        }
       }
     }
 
