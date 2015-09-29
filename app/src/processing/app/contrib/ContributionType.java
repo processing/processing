@@ -105,6 +105,19 @@ public enum ContributionType {
   }
 
 
+  public File[] listTempFolders() throws IOException {
+    File base = getSketchbookFolder();
+    return base.listFiles(new FileFilter() {
+      @Override
+      public boolean accept(File file) {
+        String name = file.getName();
+        return (file.isDirectory() &&
+                name.startsWith(toString()) && name.endsWith("tmp"));
+      }
+    });
+  }
+
+
   public boolean isTempFolderName(String name) {
     return name.startsWith(toString()) && name.endsWith("tmp");
   }
