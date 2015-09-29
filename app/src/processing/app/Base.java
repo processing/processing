@@ -523,7 +523,14 @@ public class Base {
   }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  private int updatesAvailable = 0;
+
+
   public void setUpdatesAvailable(int n) {
+    updatesAvailable = n;
     synchronized (editors) {
       for (Editor e : editors) {
         e.setUpdatesAvailable(n);
@@ -1228,6 +1235,8 @@ public class Base {
 
       try {
         Editor editor = nextMode.createEditor(this, path, state);
+
+        editor.setUpdatesAvailable(updatesAvailable);
 
         // opened successfully, let's go to work
         editor.getSketch().setUntitled(untitled);
