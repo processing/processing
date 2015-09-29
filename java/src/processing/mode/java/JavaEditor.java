@@ -167,6 +167,12 @@ public class JavaEditor extends Editor {
 
       public void windowGainedFocus(WindowEvent e) { }
     });
+
+    textarea.addCaretListener(new CaretListener() {
+      public void caretUpdate(CaretEvent e) {
+        errorCheckerService.updateEditorStatus();
+      }
+    });
   }
 
 
