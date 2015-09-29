@@ -13,6 +13,12 @@ X   https://github.com/processing/processing/pull/3888
 X Frame size displays incorrectly if surface.setResizable(true)
 X   https://github.com/processing/processing/issues/3868
 X   https://github.com/processing/processing/pull/3880
+X displayWidth, displayHeight, full screen, display number
+X   https://github.com/processing/processing/pull/3893
+X   https://github.com/processing/processing/issues/3865
+X OpenGL with fullScreen() always opens on default display
+X   https://github.com/processing/processing/issues/3889
+X   https://github.com/processing/processing/pull/3892
 
 cleaning
 o move AWT image loading into PImageAWT
@@ -54,7 +60,6 @@ _ static mode sketches (draw once and halt w/o closing window)
 _ fix display handling, line up the device order with AWT
 _   https://docs.oracle.com/javafx/2/api/javafx/stage/Screen.html
 _ noLoop()
-_ displayWidth, displayHeight, full screen, display number
 _ present mode not working at all
 _   stage in the center, clear the rest of the screen
 _ createGraphics() should probably create PGraphicsJava2D

@@ -48,7 +48,9 @@ X clean up statusMessage() inside JavaEditor
 _   do we want to bring back the delays?
 _ JavaEditor has several null colors, remove color support
 _   once the design is complete and we for sure do not need color
-
+_ grab bag of CM work from Jakub
+_   https://github.com/processing/processing/issues/3895
+X   https://github.com/processing/processing/pull/3897
 
 gui / James
 _ Fix placement and visual design when showing error on hover
@@ -70,6 +72,7 @@ _   or in addition, since only the 'updates' tab has it
 _   https://github.com/processing/processing/issues/3855
 _ show number of updates available in the footer
 _   https://github.com/processing/processing/issues/3518
+X   https://github.com/processing/processing/pull/3896
 _   and have it be clickable so to open the manager
 _   total number of updates available is not correct? (may be fixed)
 _ ugly white gap at the top of scroll bar
