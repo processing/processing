@@ -2403,6 +2403,7 @@ public class ASTGenerator {
   }
 
 
+  /*
   protected SketchOutline sketchOutline;
 
   public void showSketchOutline() {
@@ -2411,6 +2412,7 @@ public class ASTGenerator {
     sketchOutline = new SketchOutline(codeTree, errorCheckerService);
     sketchOutline.show();
   }
+  */
 
 
   public void showTabOutline() {

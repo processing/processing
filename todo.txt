@@ -13,6 +13,9 @@ X   https://github.com/processing/processing/issues/3882
 X   https://github.com/processing/processing/pull/3884
 X Hide useless error in error checker
 X   https://github.com/processing/processing/pull/3887
+X clean up statusMessage() inside JavaEditor
+o   do we want to bring back the delays?
+X implement side gradient on the editor
 
 gui
 X distinguish errors and warnings
@@ -25,6 +28,8 @@ X list with contrib types separated is really wonky
 o   do we keep the list?
 o   does it even work for different contrib types?
 X   cleaned this up in the last release
+X remove the dated releases from download.processing.org
+X new Android release (EditorButton constructor changed)
 
 
 known issues
@@ -37,16 +42,8 @@ _   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-a
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
-beta 7
-_ remove the dated releases from download.processing.org
-_ new Android release (EditorButton constructor changed)
-
-
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
-X clean up statusMessage() inside JavaEditor
-o   do we want to bring back the delays?
-_ gradient on editor is not working
 _ JavaEditor has several null colors, remove color support
 _   once the design is complete and we for sure do not need color
 _ grab bag of CM work from Jakub
@@ -56,6 +53,9 @@ _ error list tab
 _   when moving away from an error/warning line, de-select it below
 _   selecting a warning should also show the warning in the status area
 _   clicking an error or warning should give the focus back to the editor
+_ if fewer lines in sketch than can be shown in window, show ticks adjacent
+_   MarkerColumn.recalculateMarkerPositions()
+
 
 gui / James
 _ Fix placement and visual design when showing error on hover

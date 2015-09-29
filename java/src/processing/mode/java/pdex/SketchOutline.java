@@ -72,7 +72,7 @@ public class SketchOutline {
 
   ImageIcon classIcon, fieldIcon, methodIcon;
 
-  
+
   public SketchOutline(DefaultMutableTreeNode codeTree, ErrorCheckerService ecs) {
     errorCheckerService = ecs;
     editor = ecs.getEditor();
@@ -81,7 +81,7 @@ public class SketchOutline {
     soNode = (DefaultMutableTreeNode) soNode.getChildAt(0);
     tempNode = soNode;
     soTree = new JTree(soNode);
-    
+
     Mode mode = editor.getMode();
     classIcon = mode.loadIcon("theme/icon_class_obj.png");
     methodIcon = mode.loadIcon("theme/icon_methpub_obj.png");
@@ -89,15 +89,15 @@ public class SketchOutline {
 
     createGUI();
   }
-  
-  
+
+
   private void createGUI(){
     frmOutlineView = new JFrame();
     frmOutlineView.setAlwaysOnTop(true);
     frmOutlineView.setUndecorated(true);
     Point tp = errorCheckerService.getEditor().getTextArea().getLocationOnScreen();
 
-    int minWidth = (int) (editor.getMinimumSize().width * 0.7f); 
+    int minWidth = (int) (editor.getMinimumSize().width * 0.7f);
     int maxWidth = (int) (editor.getMinimumSize().width * 0.9f);
     frmOutlineView.setLayout(new BoxLayout(frmOutlineView.getContentPane(),
                                            BoxLayout.Y_AXIS));
@@ -109,7 +109,7 @@ public class SketchOutline {
     panelTop.add(searchField);
 
     jsp = new JScrollPane();
-    
+
     soTree.getSelectionModel()
         .setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     soTree.setRootVisible(false);
@@ -118,13 +118,13 @@ public class SketchOutline {
       soTree.expandRow(i);
     }
     soTree.setSelectionRow(0);
-    
+
     jsp.setViewportView(soTree);
     jsp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
     jsp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     jsp.setMinimumSize(new Dimension(minWidth, editor.getTextArea().getHeight() - 10));
-    jsp.setMaximumSize(new Dimension(maxWidth, editor.getTextArea().getHeight() - 10));    
-    
+    jsp.setMaximumSize(new Dimension(maxWidth, editor.getTextArea().getHeight() - 10));
+
     panelBottom.add(jsp);
     frmOutlineView.add(panelTop);
     frmOutlineView.add(panelBottom);
@@ -132,13 +132,13 @@ public class SketchOutline {
     frmOutlineView.pack();
     frmOutlineView.setBounds(tp.x + errorCheckerService.getEditor().getTextArea().getWidth() - minWidth, tp.y, minWidth,
                              Math.min(editor.getTextArea().getHeight(), frmOutlineView.getHeight()));
-    frmOutlineView.setMinimumSize(new Dimension(minWidth, Math.min(errorCheckerService.getEditor().getTextArea().getHeight(), frmOutlineView.getHeight())));    
+    frmOutlineView.setMinimumSize(new Dimension(minWidth, Math.min(errorCheckerService.getEditor().getTextArea().getHeight(), frmOutlineView.getHeight())));
     frmOutlineView.setLocation(tp.x + errorCheckerService.getEditor().getTextArea().getWidth()/2 - frmOutlineView.getWidth()/2,
                                frmOutlineView.getY() + (editor.getTextArea().getHeight() - frmOutlineView.getHeight()) / 2);
     addListeners();
   }
 
-  
+
   protected void addListeners() {
 
     searchField.addKeyListener(new KeyAdapter() {
@@ -147,10 +147,10 @@ public class SketchOutline {
           return;
 
         internalSelection = true;
-        
+
         if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
          close();
-         
+
         } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
           if (soTree.getLastSelectedPathComponent() != null) {
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
@@ -162,13 +162,13 @@ public class SketchOutline {
               close();
             }
           }
-          
+
         } else if (evt.getKeyCode() == KeyEvent.VK_UP) {
           if (soTree.getLastSelectedPathComponent() == null) {
             soTree.setSelectionRow(0);
             return;
           }
-          
+
           int x = soTree.getLeadSelectionRow() - 1;
           int step = jsp.getVerticalScrollBar().getMaximum()
               / soTree.getRowCount();
@@ -180,7 +180,7 @@ public class SketchOutline {
                                                     .getValue() - step));
           }
           soTree.setSelectionRow(x);
-          
+
         } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
           if (soTree.getLastSelectedPathComponent() == null) {
             soTree.setSelectionRow(0);
@@ -201,7 +201,7 @@ public class SketchOutline {
         }
       }
     });
-    
+
     searchField.getDocument().addDocumentListener(new DocumentListener() {
 
       public void insertUpdate(DocumentEvent e) {
@@ -215,7 +215,7 @@ public class SketchOutline {
       public void changedUpdate(DocumentEvent e) {
         updateSelection();
       }
-      
+
       private void updateSelection(){
         SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
           protected Object doInBackground() throws Exception {
@@ -225,7 +225,7 @@ public class SketchOutline {
             return null;
           }
 
-          protected void done() {            
+          protected void done() {
             soTree.setModel(new DefaultTreeModel(tempNode));
             ((DefaultTreeModel) soTree.getModel()).reload();
             for (int i = 0; i < soTree.getRowCount(); i++) {
@@ -260,15 +260,15 @@ public class SketchOutline {
         scrollToNode();
       }
     });
-    
+
     soTree.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent me) {
         scrollToNode();
       }
     });
   }
-  
-  
+
+
   private void scrollToNode() {
     SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
@@ -294,7 +294,7 @@ public class SketchOutline {
     worker.execute();
   }
 
-  
+
   protected boolean filterTree(String prefix, DefaultMutableTreeNode tree,
                                DefaultMutableTreeNode mainTree) {
     if (mainTree.isLeaf()) {
@@ -315,7 +315,7 @@ public class SketchOutline {
     }
     return found;
   }
-  
+
 
   @SuppressWarnings("unchecked")
   protected void generateSketchOutlineTree(DefaultMutableTreeNode node,
@@ -342,7 +342,7 @@ public class SketchOutline {
       FieldDeclaration fd = (FieldDeclaration) awnode.getNode();
       for (VariableDeclarationFragment vdf : (List<VariableDeclarationFragment>) fd.fragments()) {
         final String text = new CompletionCandidate(vdf).toString();
-        DefaultMutableTreeNode newNode = 
+        DefaultMutableTreeNode newNode =
           new DefaultMutableTreeNode(new ASTNodeWrapper(vdf.getName(), text));
         node.add(newNode);
       }
@@ -358,27 +358,27 @@ public class SketchOutline {
     }
   }
 
-  
+
   public void show() {
     frmOutlineView.setVisible(true);
   }
-  
-  
+
+
   public void close(){
     frmOutlineView.setVisible(false);
     frmOutlineView.dispose();
   }
-  
-  
+
+
   public boolean isVisible(){
     return frmOutlineView.isVisible();
   }
-  
-  
+
+
   protected class CustomCellRenderer extends DefaultTreeCellRenderer {
 
     public Component getTreeCellRendererComponent(JTree tree, Object value,
-                                                  boolean sel, boolean expanded, 
+                                                  boolean sel, boolean expanded,
                                                   boolean leaf, int row,
                                                   boolean hasFocus) {
       super.getTreeCellRendererComponent(tree, value, sel, expanded,
@@ -391,9 +391,9 @@ public class SketchOutline {
 
     public Icon getTreeIcon(Object o) {
       if (((DefaultMutableTreeNode) o).getUserObject() instanceof ASTNodeWrapper) {
-        ASTNodeWrapper awrap = (ASTNodeWrapper) 
+        ASTNodeWrapper awrap = (ASTNodeWrapper)
           ((DefaultMutableTreeNode) o).getUserObject();
-        
+
         int type = awrap.getNode().getParent().getNodeType();
         if (type == ASTNode.METHOD_DECLARATION) {
           return methodIcon;

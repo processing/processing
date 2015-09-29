@@ -102,9 +102,9 @@ public class JavaTextAreaPainter extends TextAreaPainter
           long thisTime = event.getWhen();
           if (thisTime - lastTime > 100) {
             if (event.getX() < Editor.LEFT_GUTTER) {
-              int offset = getTextArea().xyToOffset(event.getX(), event.getY());
+              int offset = getJavaTextArea().xyToOffset(event.getX(), event.getY());
               if (offset >= 0) {
-                int lineIndex = getTextArea().getLineOfOffset(offset);
+                int lineIndex = getJavaTextArea().getLineOfOffset(offset);
                 javaEditor.toggleBreakpoint(lineIndex);
               }
             }
@@ -135,8 +135,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
           int startOffset = Math.max(errorStart, lineStart) - lineStart;
           int stopOffset = Math.min(errorEnd, lineEnd) - lineStart;
 
-          if (x >= getTextArea().offsetToX(line, startOffset) &&
-              x <= getTextArea().offsetToX(line, stopOffset)) {
+          if (x >= getJavaTextArea().offsetToX(line, startOffset) &&
+              x <= getJavaTextArea().offsetToX(line, stopOffset)) {
             setToolTipText(problem.getMessage());
             evt.consume();
           }
@@ -256,18 +256,20 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * @param x horizontal position
    */
   protected void paintLeftGutter(Graphics gfx, int line, int x) {
-//    gfx.setColor(Color.ORANGE);
     int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
     if (line == textArea.getSelectionStopLine()) {
       gfx.setColor(gutterLineHighlightColor);
+      gfx.fillRect(0, y, Editor.LEFT_GUTTER, fm.getHeight());
     } else {
-      gfx.setColor(getTextArea().gutterBgColor);
+      //gfx.setColor(getJavaTextArea().gutterBgColor);
+      gfx.setClip(0, y, Editor.LEFT_GUTTER, fm.getHeight());
+      gfx.drawImage(getJavaTextArea().getGutterGradient(), 0, 0, getWidth(), getHeight(), this);
+      gfx.setClip(null);  // reset
     }
-    gfx.fillRect(0, y, Editor.LEFT_GUTTER, fm.getHeight());
 
     String text = null;
     if (getJavaEditor().isDebuggerEnabled()) {
-      text = getTextArea().getGutterText(line);
+      text = getJavaTextArea().getGutterText(line);
     }
 
     gfx.setColor(gutterTextColor);
@@ -342,19 +344,19 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * @param line
    *          0-based line number
    * @param x
-   */
-  protected void paintLineBgColor(Graphics gfx, int line, int x) {
+  private void paintLineBgColor(Graphics gfx, int line, int x) {
     int y = textArea.lineToY(line);
     y += fm.getLeading() + fm.getMaxDescent();
     int height = fm.getHeight();
 
-    Color col = getTextArea().getLineBgColor(line);
+    Color col = getJavaTextArea().getLineBgColor(line);
     if (col != null) {
       // paint line background
       gfx.setColor(col);
       gfx.fillRect(0, y, getWidth(), height);
     }
   }
+   */
 
 
   /**
@@ -888,7 +890,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
   }
 
 
-	private JavaTextArea getTextArea() {
+	private JavaTextArea getJavaTextArea() {
 	  return (JavaTextArea) textArea;
 	}
 }

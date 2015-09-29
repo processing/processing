@@ -68,7 +68,8 @@ public class JavaTextArea extends JEditTextArea {
 
   // [px] space added to the left and right of gutter chars
   protected int gutterPadding; // = 3;
-  protected Color gutterBgColor; // = new Color(252, 252, 252); // gutter background color
+  protected Image gutterGradient;
+//  protected Color gutterBgColor; // = new Color(252, 252, 252); // gutter background color
   protected Color gutterLineColor; // = new Color(233, 233, 233); // color of vertical separation line
 
   /// the text marker for highlighting breakpoints in the gutter
@@ -126,12 +127,10 @@ public class JavaTextArea extends JEditTextArea {
 
     // load settings from theme.txt
     Mode mode = editor.getMode();
-    gutterBgColor = mode.getColor("editor.gutter.bgcolor");  //, gutterBgColor);
-    gutterLineColor = mode.getColor("editor.gutter.linecolor"); //, gutterLineColor);
+    gutterGradient = mode.makeGradient("editor", Editor.LEFT_GUTTER, 500);
+    //gutterBgColor = mode.getColor("editor.gutter.bgcolor");
+    gutterLineColor = mode.getColor("editor.gutter.linecolor");
     gutterPadding = mode.getInteger("editor.gutter.padding");
-//    breakpointMarker = mode.getString("editor.gutter.breakpoint.marker");  //, breakpointMarker);
-//    breakpointMarker = "\u2666";
-//    currentLineMarker = mode.getString("editor.gutter.currentline.marker"); //, currentLineMarker);
 
     // TweakMode code
     prevCompListeners = painter.getComponentListeners();
@@ -459,12 +458,12 @@ public class JavaTextArea extends JEditTextArea {
 
         if (suggestionRequested) return null;
 
-        // don't show completions when the outline is visible
-        boolean showSuggestions = astGenerator.sketchOutline == null ||
-            !astGenerator.sketchOutline.isVisible();
+//        // don't show completions when the outline is visible
+//        boolean showSuggestions =
+//          astGenerator.sketchOutline == null || !astGenerator.sketchOutline.isVisible();
 
-        if (showSuggestions && phrase != null &&
-            candidates != null && !candidates.isEmpty()) {
+//        if (showSuggestions && phrase != null &&
+        if (phrase != null && candidates != null && !candidates.isEmpty()) {
           Collections.sort(candidates);
           defListModel = ASTGenerator.filterPredictions(candidates);
           Messages.log("Got: " + candidates.size() + " candidates, " + defListModel.size() + " filtered");
@@ -666,6 +665,11 @@ public class JavaTextArea extends JEditTextArea {
     }
 
     return phrase;
+  }
+
+
+  public Image getGutterGradient() {
+    return gutterGradient;
   }
 
 

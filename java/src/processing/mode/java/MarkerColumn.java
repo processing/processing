@@ -60,7 +60,8 @@ public class MarkerColumn extends JPanel {
 
 	private Color errorColor;
 	private Color warningColor;
-	private Color backgroundColor;
+//	private Color backgroundColor;
+//	private Image gutterGradient;
 
 	// Stores error markers displayed PER TAB along the error bar.
 	private List<LineMarker> errorPoints =
@@ -73,7 +74,8 @@ public class MarkerColumn extends JPanel {
 		Mode mode = editor.getMode();
 		errorColor = mode.getColor("editor.column.error.color");
 		warningColor = mode.getColor("editor.column.warning.color");
-		backgroundColor = mode.getColor("editor.gutter.bgcolor");
+//		backgroundColor = mode.getColor("editor.gutter.bgcolor");
+//		gutterGradient = mode.makeGradient("editor", Editor.RIGHT_GUTTER, height);
 
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
@@ -96,8 +98,8 @@ public class MarkerColumn extends JPanel {
 	}
 
   public void paintComponent(Graphics g) {
-    g.setColor(backgroundColor);
-    g.fillRect(0, 0, getWidth(), getHeight());
+    g.drawImage(editor.getJavaTextArea().getGutterGradient(),
+                0, 0, getWidth(), getHeight(), this);
 
     for (LineMarker m : errorPoints) {
       if (m.getType() == LineMarker.ERROR) {

@@ -42,8 +42,8 @@ console.error.color = #d9211e
 buttons.bgcolor = #000000
 
 # for the debug and mode buttons
-reversed.gradient.top = #10212f
-reversed.gradient.bottom = #122637
+#reversed.gradient.top = #10212f
+#reversed.gradient.bottom = #122637
 
 ## size of divider between editing area and the console
 #divider.size = 0
