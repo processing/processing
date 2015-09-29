@@ -117,6 +117,7 @@ public class ErrorTable extends JTable {
             } else if (clickCount > 1) {
               editor.errorTableDoubleClick(data);
             }
+						editor.getTextArea().requestFocusInWindow();
 //				  editor.getErrorChecker().scrollToErrorLine(row);
           }
         } catch (Exception ex) {
