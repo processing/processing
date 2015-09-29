@@ -141,7 +141,7 @@ public class ContributionManager {
    *          old version of a contribution that is being updated). Must not be
    *          null.
    */
-  static void downloadAndInstall(final Editor editor,
+  static void downloadAndInstall(final Base base,
                                  final URL url,
                                  final AvailableContribution ad,
                                  final ContribProgressBar downloadProgress,
@@ -162,7 +162,7 @@ public class ContributionManager {
             if (!downloadProgress.isCanceled() && !downloadProgress.isError()) {
               installProgress.startTask(Language.text("contrib.progress.installing"), ContribProgressMonitor.UNKNOWN);
               final LocalContribution contribution =
-                ad.install(editor.getBase(), contribZip, false, status);
+                ad.install(base, contribZip, false, status);
 
               if (contribution != null) {
                 try {
@@ -171,6 +171,16 @@ public class ContributionManager {
                     @Override
                     public void run() {
                       listing.replaceContribution(ad, contribution);
+                      /*
+                      if (contribution.getType() == ContributionType.MODE) {
+                        List<ModeContribution> contribModes = editor.getBase().getModeContribs();
+                        if (!contribModes.contains(contribution)) {
+                          contribModes.add((ModeContribution) contribution);
+                        }
+                      }
+                      */
+                      base.refreshContribs(contribution.getType());
+                      base.setUpdatesAvailable(listing.countUpdates(base));
                     }
                   });
                 } catch (InterruptedException e) {
@@ -178,15 +188,6 @@ public class ContributionManager {
                 } catch (InvocationTargetException e) {
                   throw (Exception) e.getCause();
                 }
-                /*
-                if (contribution.getType() == ContributionType.MODE) {
-                  List<ModeContribution> contribModes = editor.getBase().getModeContribs();
-                  if (!contribModes.contains(contribution)) {
-                    contribModes.add((ModeContribution) contribution);
-                  }
-                }
-                */
-                editor.getBase().refreshContribs(contribution.getType());
               }
               installProgress.finished();
             }
@@ -269,6 +270,7 @@ public class ContributionManager {
                   public void run() {
                     listing.replaceContribution(ad, contribution);
                     base.refreshContribs(contribution.getType());
+                    base.setUpdatesAvailable(listing.countUpdates(base));
                   }
                 });
               } catch (InterruptedException e) {
@@ -365,7 +367,7 @@ public class ContributionManager {
     // to give the user an idea about progress being made.
     boolean isPrevDone = false;
 
-    for (AvailableContribution contrib : list) {
+    for (final AvailableContribution contrib : list) {
       if (contrib.getType() != ContributionType.LIBRARY) {
         continue;
       }
@@ -400,12 +402,29 @@ public class ContributionManager {
 
             String arg = "contrib.import.progress.install";
             editor.statusNotice(Language.interpolate(arg,contrib.name));
-            LocalContribution contribution =
+            final LocalContribution contribution =
               contrib.install(base, contribZip, false, null);
 
             if (contribution != null) {
-              listing.replaceContribution(contrib, contribution);
-              base.refreshContribs(contribution.getType());
+              try {
+                EventQueue.invokeAndWait(new Runnable() {
+                  @Override
+                  public void run() {
+                    listing.replaceContribution(contrib, contribution);
+                    base.refreshContribs(contribution.getType());
+                    base.setUpdatesAvailable(listing.countUpdates(base));
+                  }
+                });
+              } catch (InterruptedException e) {
+                e.printStackTrace();
+              } catch (InvocationTargetException e) {
+                Throwable cause = e.getCause();
+                if (cause instanceof RuntimeException) {
+                  throw (RuntimeException) cause;
+                } else {
+                  cause.printStackTrace();
+                }
+              }
             }
 
             contribZip.delete();

@@ -1091,6 +1091,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   /**
+   * Updates update count in the UI. Called on EDT.
+   * @param n number of available updates
+   */
+  public void setUpdatesAvailable(int n) {
+    // TODO: refresh UI and remove the debug message
+    PApplet.println("setting update count to", n);
+  }
+
+
+  /**
    * Override this if you want a special menu for your particular 'mode'.
    */
   public JMenu buildModeMenu() {

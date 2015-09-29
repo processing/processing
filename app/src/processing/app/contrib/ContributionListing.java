@@ -397,8 +397,8 @@ public class ContributionListing {
    * Starts a new thread to download the advertised list of contributions.
    * Only one instance will run at a time.
    */
-  protected void downloadAvailableList(final Base base,
-                                       final ContribProgressMonitor progress) {
+  public void downloadAvailableList(final Base base,
+                                    final ContribProgressMonitor progress) {
 
     // TODO: replace with SwingWorker [jv]
     new Thread(new Runnable() {
@@ -436,6 +436,7 @@ public class ContributionListing {
                   @Override
                   public void run() {
                     setAdvertisedList(listingFile);
+                    base.setUpdatesAvailable(countUpdates(base));
                   }
                 });
               } catch (InterruptedException e) {

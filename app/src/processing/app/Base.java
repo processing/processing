@@ -342,6 +342,9 @@ public class Base {
 
     // check for updates
     new UpdateCheck(this);
+
+    ContributionListing cl = ContributionListing.getInstance();
+    cl.downloadAvailableList(this, new ContribProgressMonitor() { });
   }
 
 
@@ -515,6 +518,15 @@ public class Base {
       rebuildContribExamples();
       for (Mode m : getModeList()) {
         m.rebuildExamplesFrame();
+      }
+    }
+  }
+
+
+  public void setUpdatesAvailable(int n) {
+    synchronized (editors) {
+      for (Editor e : editors) {
+        e.setUpdatesAvailable(n);
       }
     }
   }
