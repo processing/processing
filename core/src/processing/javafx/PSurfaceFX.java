@@ -22,6 +22,9 @@
 
 package processing.javafx;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +47,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import processing.core.*;
@@ -218,6 +222,82 @@ public class PSurfaceFX implements PSurface {
 //        stage.setTitle(title);
 //      }
 
+      PApplet sketch = surface.sketch;
+
+      // Use AWT display code, because FX orders screens in different way
+      GraphicsDevice displayDevice = null;
+
+      GraphicsEnvironment environment =
+          GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+      int displayNum = sketch.sketchDisplay();
+      if (displayNum > 0) {  // if -1, use the default device
+        GraphicsDevice[] devices = environment.getScreenDevices();
+        if (displayNum <= devices.length) {
+          displayDevice = devices[displayNum - 1];
+        } else {
+          System.err.format("Display %d does not exist, " +
+                                "using the default display instead.%n", displayNum);
+          for (int i = 0; i < devices.length; i++) {
+            System.err.format("Display %d is %s%n", (i+1), devices[i]);
+          }
+        }
+      }
+      if (displayDevice == null) {
+        displayDevice = environment.getDefaultScreenDevice();
+      }
+
+      boolean fullScreen = sketch.sketchFullScreen();
+      boolean spanDisplays = sketch.sketchDisplay() == PConstants.SPAN;
+
+      Rectangle primaryScreenRect = displayDevice.getDefaultConfiguration().getBounds();
+      Rectangle screenRect = primaryScreenRect;
+      if (fullScreen || spanDisplays) {
+        double minX = screenRect.getMinX();
+        double maxX = screenRect.getMaxX();
+        double minY = screenRect.getMinY();
+        double maxY = screenRect.getMaxY();
+        if (spanDisplays) {
+          for (GraphicsDevice s : environment.getScreenDevices()) {
+            Rectangle bounds = s.getDefaultConfiguration().getBounds();
+            minX = Math.min(minX, bounds.getMinX());
+            maxX = Math.max(maxX, bounds.getMaxX());
+            minY = Math.min(minY, bounds.getMinY());
+            maxY = Math.max(maxY, bounds.getMaxY());
+          }
+        }
+        if (minY < 0) {
+          // FX can't handle this
+          System.err.format("FX can't place window at negative Y coordinate " +
+                                "[x=%d, y=%d]. Please make sure that your secondary " +
+                                "display does not extend above the main display.",
+                            (int) minX, (int) minY);
+          screenRect = primaryScreenRect;
+        } else {
+          screenRect = new Rectangle((int) minX, (int) minY,
+                                     (int) (maxX - minX), (int) (maxY - minY));
+        }
+      }
+
+      // Set the displayWidth/Height variables inside PApplet, so that they're
+      // usable and can even be returned by the sketchWidth()/Height() methods.
+      sketch.displayWidth = (int) screenRect.getWidth();
+      sketch.displayHeight = (int) screenRect.getHeight();
+
+      int sketchWidth = sketch.sketchWidth();
+      int sketchHeight = sketch.sketchHeight();
+
+      if (fullScreen || spanDisplays) {
+        sketchWidth = (int) screenRect.getWidth();
+        sketchHeight = (int) screenRect.getHeight();
+
+        stage.initStyle(StageStyle.UNDECORATED);
+        stage.setX(screenRect.getMinX());
+        stage.setY(screenRect.getMinY());
+        stage.setWidth(screenRect.getWidth());
+        stage.setHeight(screenRect.getHeight());
+      }
+
       Canvas canvas = surface.canvas;
       surface.fx.context = canvas.getGraphicsContext2D();
       StackPane stackPane = new StackPane();
@@ -225,9 +305,8 @@ public class PSurfaceFX implements PSurface {
       canvas.widthProperty().bind(stackPane.widthProperty());
       canvas.heightProperty().bind(stackPane.heightProperty());
 
-      PApplet sketch = surface.sketch;
-      int width = sketch.sketchWidth();
-      int height = sketch.sketchHeight();
+      int width = sketchWidth;
+      int height = sketchHeight;
       int smooth = sketch.sketchSmooth();
 
       // Workaround for https://bugs.openjdk.java.net/browse/JDK-8136495
