@@ -25,26 +25,19 @@ package processing.mode.java.pdex;
  * Line markers displayed on the Error Column.
  */
 public class LineMarker {
-  /**
-   * y co-ordinate of the marker
-   */
+  /** y co-ordinate of the marker */
   private int y;
-  /**
-   * Type of marker: Error or Warning?
-   */
+
+  /** Type of marker: Error or Warning? */
   private int type = -1;
-  /**
-   * Error Type constant
-   */
+
+  /** Error Type constant */
   public static final int ERROR = 1;
-  /**
-   * Warning Type constant
-   */
+
+  /** Warning Type constant */
   public static final int WARNING = 2;
-  /**
-   * Problem that the error marker represents
-   * @see Problem
-   */
+
+  /** Problem that the error marker represents */
   private Problem problem;
 
 
@@ -54,42 +47,27 @@ public class LineMarker {
   }
 
 
-  /**
-   * set y co-ordinate of the marker
-   */
   public void setY(int y) {
     this.y = y;
   }
 
 
-  /**
-   * y co-ordinate of the marker
-   */
   public int getY() {
     return y;
   }
 
 
-  /**
-   * line number of the marker
-   */
   public int getLineNumber() {
     return problem.getLineNumber();
   }
 
 
-  /**
-   * Type of marker: ErrorMarker.Error or ErrorMarker.Warning?
-   */
+  /** @return ERROR or WARNING */
   public int getType() {
     return type;
   }
 
 
-  /**
-   * Problem that the error marker represents
-   * @see Problem
-   */
   public Problem getProblem() {
     return problem;
   }
