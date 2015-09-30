@@ -137,7 +137,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
           if (x >= getJavaTextArea().offsetToX(line, startOffset) &&
               x <= getJavaTextArea().offsetToX(line, stopOffset)) {
-            setToolTipText(problem.getMessage());
+            //setToolTipText(problem.getMessage());
+            getJavaEditor().statusToolTip(JavaTextAreaPainter.this,
+                                          problem.getMessage(),
+                                          problem.isError());
             evt.consume();
           }
         }

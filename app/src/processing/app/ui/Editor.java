@@ -40,9 +40,11 @@ import processing.app.syntax.*;
 import processing.core.*;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Point;
@@ -2830,6 +2832,47 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   public boolean isHalted() {
     return false;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static Font font;
+  static Color textColor;
+  static Color bgColorWarning;
+  static Color bgColorError;
+
+
+  /*
+  public void toolTipError(JComponent comp, String message) {
+    setToolTip(comp, message, true);
+  }
+
+
+  public void toolTipWarning(JComponent comp, String message) {
+    setToolTip(comp, message, false);
+  }
+  */
+
+
+  public void statusToolTip(JComponent comp, String message, boolean error) {
+    if (font == null) {
+      font = Toolkit.getSansFont(9, Font.PLAIN);
+      textColor = mode.getColor("errors.selection.fgcolor");
+      bgColorWarning = mode.getColor("errors.selection.warning.bgcolor");
+      bgColorError = mode.getColor("errors.selection.error.bgcolor");
+    }
+
+    Color bgColor = error ? //text.startsWith(Language.text("editor.status.error")) ?
+      bgColorError : bgColorWarning;
+    String content = "<html>" +
+      "<div style='margin: -3 -3 -3 -3; padding: 3 3 3 3; " +
+      "background: #" + PApplet.hex(bgColor.getRGB(), 8).substring(2) + ";" +
+      "font-family: " + font.getFontName() + ", sans-serif;" +
+      "font-size: " + font.getSize() + "px;'>" + message + "</div></html>";
+    //System.out.println(content);
+    comp.setToolTipText(content);
   }
 
 

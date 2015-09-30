@@ -13,6 +13,9 @@ X   https://github.com/processing/processing/issues/3882
 X   https://github.com/processing/processing/pull/3884
 X Hide useless error in error checker
 X   https://github.com/processing/processing/pull/3887
+X grab bag of CM work from Jakub
+X   https://github.com/processing/processing/issues/3895
+X   https://github.com/processing/processing/pull/3897
 
 gui
 X distinguish errors and warnings
@@ -36,7 +39,14 @@ X   selecting a warning should also show the warning in the status area
 X   https://github.com/processing/processing/pull/3907
 X clicking an error or warning should give the focus back to the editor
 X   https://github.com/processing/processing/pull/3905
-
+X replace startup/about screen (1x and 2x versions)
+X   change 'alpha' to correct name
+X   also change the revision in the "about processing" dialog
+X   https://github.com/processing/processing/issues/3665
+X implement splash screen on OS X
+X   also implement special retina version
+X implement custom tooltip for error/warning hover
+X    applies to both MarkerColumn and JavaTextAreaPainter
 
 earlier
 X list with contrib types separated is really wonky
@@ -61,9 +71,6 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 _ https://github.com/processing/processing/milestones/3.0%20final
 _ JavaEditor has several null colors, remove color support
 _   once the design is complete and we for sure do not need color
-_ grab bag of CM work from Jakub
-_   https://github.com/processing/processing/issues/3895
-X   https://github.com/processing/processing/pull/3897
 
 gui / James
 _ make gutter of console match error list
@@ -73,16 +80,10 @@ _    remove extra border around the outside
 _    change font
 _    change selection highlight color
 _    put some margin around it
-_ implement custom tooltip for error/warning hover
-_    applies to both MarkerColumn and 
 _ Fix placement and visual design when showing error on hover
 _   https://github.com/processing/processing/issues/3173
 _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407
-_ replace startup/about screen (1x and 2x versions)
-_   change 'alpha' to correct name
-_   also change the revision in the "about processing" dialog
-_   https://github.com/processing/processing/issues/3665
 _ different design of squiggly line
 _   easy to do inside JavaTextAreaPainter.paintSquiggle()
 

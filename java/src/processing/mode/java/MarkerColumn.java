@@ -42,7 +42,6 @@ import processing.app.Util;
 import processing.core.PApplet;
 import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.Problem;
-import processing.app.Language;
 
 
 /**
@@ -186,10 +185,11 @@ public class MarkerColumn extends JPanel {
 	        LineMarker m = findClosestMarker(y);
 	        if (m != null) {
 	          Problem p = m.getProblem();
-	          String kind = p.isError() ?
-	            Language.text("editor.status.error") :
-	            Language.text("editor.status.warning");
-	          setToolTipText(kind + ": " + p.getMessage());
+//	          String kind = p.isError() ?
+//	            Language.text("editor.status.error") :
+//	            Language.text("editor.status.warning");
+//	          setToolTipText(kind + ": " + p.getMessage());
+	          editor.statusToolTip(MarkerColumn.this, p.getMessage(), p.isError());
 	          setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	        }
 	        return null;
