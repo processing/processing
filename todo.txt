@@ -26,6 +26,8 @@ o   total number of updates available is not correct? (may be fixed)
 o ArrayIndexOutOfBoundsException freak out when clicking the header line
 o   think this was on name, with libraries, but not sure
 X   should be fixed with the updates from Jakub
+X error checker updates for toggle and listeners
+X   https://github.com/processing/processing/pull/3915
 
 gui
 X distinguish errors and warnings
@@ -98,6 +100,8 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
+_ Windows suggests "Documents" as a new location for the sketchbook
+_   maybe prevent users from accepting that?
 _ completion panel
 X   what should the background color be? 
 _   test fg/bg color on other operating systems
