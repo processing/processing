@@ -89,12 +89,16 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
+_ completion panel
+_   what should the background color be? 
+_   test fg/bg color on other operating systems
+_   fix icon sizes/design
 _ fix the design of the completions window
 X   remove extra border around the outside
-_   change font
+X   change font
+X   add 2x version of the icons
 _   change selection highlight color
 _   put some margin around it
-X   add 2x version of the icons
 _   https://github.com/processing/processing/issues/3906
 _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407

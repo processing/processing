@@ -21,6 +21,7 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 package processing.mode.java.pdex;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -40,6 +41,7 @@ import javax.swing.text.BadLocationException;
 
 import processing.app.Base;
 import processing.app.Messages;
+import processing.app.Mode;
 import processing.app.syntax.JEditTextArea;
 import processing.app.ui.Toolkit;
 import processing.mode.java.JavaEditor;
@@ -84,6 +86,9 @@ public class CompletionPanel {
   static public ImageIcon methodIcon;
   static public ImageIcon localVarIcon;
 
+  static Color selectionBgColor;
+  static Color textColor;
+
 
   /**
    * Triggers the completion popup
@@ -108,11 +113,17 @@ public class CompletionPanel {
     }
 
     if (classIcon == null) {
-      File dir = new File(editor.getMode().getFolder(), "theme/completion");
+      Mode mode = editor.getMode();
+
+      File dir = new File(mode.getFolder(), "theme/completion");
       classIcon = Toolkit.getIconX(dir, "class_obj");
       methodIcon = Toolkit.getIconX(dir, "methpub_obj");
       fieldIcon = Toolkit.getIconX(dir, "field_protected_obj");
       localVarIcon = Toolkit.getIconX(dir, "field_default_obj");
+
+      //selectionBgColor = mode.getColor("");  // no theme.txt for Java Mode
+      selectionBgColor = new Color(0xffF0F0F0);
+      textColor = new Color(0xff222222);
     }
 
     popupMenu = new JPopupMenu();
@@ -560,6 +571,11 @@ public class CompletionPanel {
                                                                  index,
                                                                  isSelected,
                                                                  cellHasFocus);
+      if (isSelected) {
+        label.setBackground(selectionBgColor);
+      }
+      label.setForeground(textColor);
+
       if (value instanceof CompletionCandidate) {
         CompletionCandidate cc = (CompletionCandidate) value;
         switch (cc.getType()) {
