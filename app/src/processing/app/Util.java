@@ -301,42 +301,40 @@ public class Util {
 
   /**
    * Remove all files in a directory and the directory itself.
+   * Prints error messages with failed filenames.
    */
-  static public void removeDir(File dir) {
-    if (dir.exists()) {
-      removeDescendants(dir);
-      if (!dir.delete()) {
-        System.err.println("Could not delete " + dir);
-      }
-    }
+  static public boolean removeDir(File dir) {
+    return removeDir(dir, true);
   }
 
-
   /**
-   * Recursively remove all files within a directory,
-   * used with removeDir(), or when the contents of a dir
-   * should be removed, but not the directory itself.
-   * (i.e. when cleaning temp files from lib/build)
+   * Remove all files in a directory and the directory itself.
+   * Optinally prints error messages with failed filenames.
    */
-  static public void removeDescendants(File dir) {
-    if (!dir.exists()) return;
+  static public boolean removeDir(File dir, boolean printErrorMessages) {
+    if (!dir.exists()) return true;
 
-    String files[] = dir.list();
-    for (int i = 0; i < files.length; i++) {
-      if (files[i].equals(".") || files[i].equals("..")) continue;
-      File dead = new File(dir, files[i]);
-      if (!dead.isDirectory()) {
-        if (!Preferences.getBoolean("compiler.save_build_files")) {
-          if (!dead.delete()) {
-            // temporarily disabled
-            System.err.println("Could not delete " + dead);
+    boolean result = true;
+    File[] files = dir.listFiles();
+    if (files != null) {
+      for (File child : files) {
+        if (child.isFile()) {
+          boolean deleted = child.delete();
+          if (!deleted && printErrorMessages) {
+            System.err.println("Could not delete " + child.getAbsolutePath());
           }
+          result &= deleted;
+        } else if (child.isDirectory()) {
+          result &= removeDir(child, printErrorMessages);
         }
-      } else {
-        removeDir(dead);
-        //dead.delete();
       }
     }
+    boolean deleted = dir.delete();
+    if (!deleted && printErrorMessages) {
+      System.err.println("Could not delete " + dir.getAbsolutePath());
+    }
+    result &= deleted;
+    return result;
   }
 
 
