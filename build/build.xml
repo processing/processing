@@ -393,9 +393,9 @@
       <fileset dir="${examples.dir}" />
     </copy>
 
+    <!-- removed ignoreerrors="true" for 3.0 release process -->
     <get src="http://download.processing.org/reference.zip" 
          dest="../java/reference.zip" 
-         ignoreerrors="true"
          usetimestamp="true" />
 
     <unzip dest="${target.path}/modes/java" 

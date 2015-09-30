@@ -186,6 +186,10 @@ _   https://github.com/processing/processing/issues/2886
 
 
 pde/build
+_ Editor objects are staying in memory
+_   https://github.com/processing/processing/issues/3930
+_ unsupported java version when trying ant run with 7u65
+_   no helpful message about how to automatically download 8u51
 _ ignore-tools in build.xml not being called for some reason
 _ when variables used in size(), getting exceptions instead of any warning
 _   https://github.com/processing/processing/issues/3311
