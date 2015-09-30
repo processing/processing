@@ -24,7 +24,6 @@ package processing.app;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.zip.*;

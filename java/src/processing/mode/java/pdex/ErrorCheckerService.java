@@ -62,7 +62,6 @@ import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.Util;
-import processing.app.syntax.SyntaxDocument;
 import processing.app.ui.Editor;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.ErrorTable;
