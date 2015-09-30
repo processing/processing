@@ -449,8 +449,7 @@ public abstract class LocalContribution extends Contribution {
     if (doBackup) {
       success = backup(true, status);
     } else {
-      Util.removeDir(getFolder());
-      success = !getFolder().exists();
+      success = Util.removeDir(getFolder(), false);
     }
 
     if (success) {

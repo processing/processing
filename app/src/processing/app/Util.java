@@ -301,8 +301,17 @@ public class Util {
 
   /**
    * Remove all files in a directory and the directory itself.
+   * Prints error messages with failed filenames.
    */
   static public boolean removeDir(File dir) {
+    return removeDir(dir, true);
+  }
+
+  /**
+   * Remove all files in a directory and the directory itself.
+   * Optinally prints error messages with failed filenames.
+   */
+  static public boolean removeDir(File dir, boolean printErrorMessages) {
     if (!dir.exists()) return true;
 
     boolean result = true;
@@ -310,13 +319,21 @@ public class Util {
     if (files != null) {
       for (File child : files) {
         if (child.isFile()) {
-          result &= child.delete();
+          boolean deleted = child.delete();
+          if (!deleted && printErrorMessages) {
+            System.err.println("Could not delete " + child.getAbsolutePath());
+          }
+          result &= deleted;
         } else if (child.isDirectory()) {
-          result &= removeDir(child);
+          result &= removeDir(child, printErrorMessages);
         }
       }
     }
-    result &= dir.delete();
+    boolean deleted = dir.delete();
+    if (!deleted && printErrorMessages) {
+      System.err.println("Could not delete " + dir.getAbsolutePath());
+    }
+    result &= deleted;
     return result;
   }
 
