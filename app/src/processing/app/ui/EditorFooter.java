@@ -87,6 +87,7 @@ public class EditorFooter extends Box {
   int imageW, imageH;
 
   Image gradient;
+  Color bgColor;
 
   JPanel cardPanel;
   CardLayout cardLayout;
@@ -172,6 +173,11 @@ public class EditorFooter extends Box {
     updateColor = mode.getColor("footer.updates.color");
 
     gradient = mode.makeGradient("footer", 400, HIGH);
+    // Set the default background color in case the window size reported
+    // incorrectly by the OS, or we miss an update event of some kind
+    // https://github.com/processing/processing/issues/3919
+    bgColor = mode.getColor("footer.gradient.bottom");
+    setBackground(bgColor);
   }
 
 
