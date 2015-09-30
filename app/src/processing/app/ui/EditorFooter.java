@@ -299,6 +299,9 @@ public class EditorFooter extends Box {
         final String updateLabel = "Updates";
         String updatesStr = "" + updateCount;
         double countWidth = font.getStringBounds(updatesStr, frc).getWidth();
+        if (fontAscent > countWidth) {
+          countWidth = fontAscent;
+        }
         float diameter = (float) (countWidth * 1.65f);
         float ex = getWidth() - Editor.RIGHT_GUTTER - diameter;
         float ey = (getHeight() - diameter) / 2;

@@ -34,6 +34,9 @@ X file file counting in the change detector
 X   https://github.com/processing/processing/pull/3917
 X   https://github.com/processing/processing/issues/3898
 X   https://github.com/processing/processing/issues/3387
+X Windows suggests "Documents" as a new location for the 3.0 sketchbook
+X   maybe prevent users from accepting that?
+X   https://github.com/processing/processing/issues/3920
 
 gui
 X distinguish errors and warnings
@@ -86,6 +89,7 @@ X completion panel
 X   what should the background color be? 
 X   test fg/bg color on other operating systems
 J   fix icon sizes/design
+X set a better minimum size for the number of updates available
 
 earlier/cleaning
 X list with contrib types separated is really wonky
@@ -117,14 +121,25 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
-_ Windows suggests "Documents" as a new location for the 3.0 sketchbook
-_   maybe prevent users from accepting that?
-_   https://github.com/processing/processing/issues/3920
+
+
+3.0.1
+_ error checkers/suggestions not including the library path
+_   https://github.com/processing/processing/issues/3924
 _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407
 
 
+debug 
+_ debugger deadlocks when choosing "Step Into" on println()
+_   https://github.com/processing/processing/issues/3923
+
+
 gui
+_ fix background color for selected lines in VariableInspector 
+_   https://github.com/processing/processing/issues/3925
+_ implement 2x versions of the icons for the debugger window/variable inspector
+_   https://github.com/processing/processing/issues/3921
 _ different design of squiggly line
 _   easy to do inside JavaTextAreaPainter.paintSquiggle()
 _ build custom scroll bar since the OS versions are so ugly

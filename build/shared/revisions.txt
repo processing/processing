@@ -37,6 +37,9 @@ features.
 + Make the left edge of the Console match the Error List
   https://github.com/processing/processing/issues/3904
 
++ Windows suggests "Documents" as a new location for the 3.0 sketchbook
+  https://github.com/processing/processing/issues/3920
+
 
 [ errors and warnings: the checking and completion story ]
 
