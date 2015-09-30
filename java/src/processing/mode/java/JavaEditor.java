@@ -140,8 +140,15 @@ public class JavaEditor extends Editor {
     hasJavaTabs = checkForJavaTabs();
     //initializeErrorChecker();
 
-    errorCheckerService = new ErrorCheckerService(this);
-    errorCheckerService.start();
+    { // Init error checker
+      errorCheckerService = new ErrorCheckerService(this);
+      Document currentDocument = currentDocument();
+      if (currentDocument != null) {
+        errorCheckerService.addListener(currentDocument);
+      }
+      errorCheckerService.start();
+      errorCheckerService.request();
+    }
 
     // hack to add a JPanel to the right-hand side of the text area
     JPanel textAndError = new JPanel();
@@ -2330,9 +2337,17 @@ public class JavaEditor extends Editor {
    */
   @Override
   public void setCode(SketchCode code) {
+
+    Document oldDoc = code.getDocument();
+
     //System.out.println("tab switch: " + code.getFileName());
     // set the new document in the textarea, etc. need to do this first
     super.setCode(code);
+
+    Document newDoc = code.getDocument();
+    if (oldDoc != newDoc && errorCheckerService != null) {
+      errorCheckerService.addListener(newDoc);
+    }
 
     // set line background colors for tab
     final JavaTextArea ta = getJavaTextArea();

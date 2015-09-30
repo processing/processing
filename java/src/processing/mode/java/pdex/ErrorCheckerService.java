@@ -235,7 +235,6 @@ public class ErrorCheckerService {
     astGenerator = new ASTGenerator(this);
     errorMsgSimplifier = new ErrorMessageSimplifier();
     tempErrorLog = new TreeMap<>();
-    sketchChangedListener = new SketchChangedListener();
 //    for (final SketchCode sc : editor.getSketch().getCode()) {
 //      sc.getDocument().addDocumentListener(sketchChangedListener);
 //    }
@@ -287,16 +286,16 @@ public class ErrorCheckerService {
         try {
 
           Messages.log("Starting error check");
-          lastCodeCheckResult = checkCode();
+          CodeCheckResult result = checkCode();
 
           if (!JavaMode.errorCheckEnabled) {
             lastCodeCheckResult.problems.clear();
             Messages.log("Error Check disabled, so not updating UI.");
           }
 
-          checkForMissingImports();
+          lastCodeCheckResult = result;
 
-          updateSketchCodeListeners();
+          checkForMissingImports(lastCodeCheckResult);
 
           if (JavaMode.errorCheckEnabled) {
             if (scheduledUiUpdate != null) {
@@ -319,7 +318,6 @@ public class ErrorCheckerService {
                       editor.updateErrorBar(result.problems);
                       editor.getTextArea().repaint();
                       editor.updateErrorToggle(result.containsErrors);
-                      updateSketchCodeListeners();
                     }
                   });
                 }
@@ -375,35 +373,15 @@ public class ErrorCheckerService {
   }
 
 
-  protected void updateSketchCodeListeners() {
-    for (SketchCode sc : editor.getSketch().getCode()) {
-      SyntaxDocument doc = (SyntaxDocument) sc.getDocument();
-      if (!hasSketchChangedListener(doc)) {
-        doc.addDocumentListener(sketchChangedListener);
-      }
-    }
+  public void addListener(Document doc) {
+    doc.addDocumentListener(sketchChangedListener);
   }
 
 
-  boolean hasSketchChangedListener(SyntaxDocument doc) {
-    if (doc != null && doc.getDocumentListeners() != null) {
-      for (DocumentListener dl : doc.getDocumentListeners()) {
-        if (dl.equals(sketchChangedListener)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-
-  protected void checkForMissingImports() {
-    // Atomic access
-    CodeCheckResult lastCodeCheckResult = this.lastCodeCheckResult;
-
+  protected void checkForMissingImports(CodeCheckResult result) {
     if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
-      for (Problem p : lastCodeCheckResult.problems) {
-        if(p.getIProblem().getID() == IProblem.UndefinedType) {
+      for (Problem p : result.problems) {
+        if (p.getIProblem().getID() == IProblem.UndefinedType) {
           String args[] = p.getIProblem().getArguments();
           if (args.length > 0) {
             String missingClass = args[0];
@@ -423,37 +401,22 @@ public class ErrorCheckerService {
   }
 
 
-  protected SketchChangedListener sketchChangedListener;
-  protected class SketchChangedListener implements DocumentListener{
-
-    private SketchChangedListener(){
-    }
-
+  protected final DocumentListener sketchChangedListener = new DocumentListener() {
     @Override
     public void insertUpdate(DocumentEvent e) {
-      if (JavaMode.errorCheckEnabled) {
-        request();
-        //log("doc insert update, man error check..");
-      }
+      if (JavaMode.errorCheckEnabled) request();
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
-      if (JavaMode.errorCheckEnabled){
-        request();
-        //log("doc remove update, man error check..");
-      }
+      if (JavaMode.errorCheckEnabled) request();
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-      if (JavaMode.errorCheckEnabled){
-        request();
-        //log("doc changed update, man error check..");
-      }
+      if (JavaMode.errorCheckEnabled) request();
     }
-
-  }
+  };
 
   public static class CodeCheckResult {
 
