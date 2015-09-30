@@ -585,6 +585,11 @@ public class ContributionListing {
         count++;
       }
     }
+    for (ExamplesContribution ec : base.getExampleContribs()) {
+      if (hasUpdates(ec)) {
+        count++;
+      }
+    }
     return count;
   }
 
