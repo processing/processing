@@ -50,6 +50,8 @@ X Fix placement and visual design when showing error on hover
 X   https://github.com/processing/processing/issues/3173
 X   implement custom tooltip for error/warning hover
 X   applies to both MarkerColumn and JavaTextAreaPainter
+X make gutter of console match error list
+X   https://github.com/processing/processing/issues/3904
 
 earlier
 X list with contrib types separated is really wonky
@@ -76,8 +78,6 @@ _ JavaEditor has several null colors, remove color support
 _   once the design is complete and we for sure do not need color
 
 gui / James
-_ make gutter of console match error list
-_   https://github.com/processing/processing/issues/3904
 _ fix the design of the completions window
 _    remove extra border around the outside
 _    change font
