@@ -73,7 +73,7 @@ public class EditorFooter extends Box {
   Color[] tabColor = new Color[2];
 
   Color updateColor;
-  int updateLeft, updateRight;
+  int updateLeft;
 
   Editor editor;
 
@@ -191,7 +191,7 @@ public class EditorFooter extends Box {
               repaint();
             }
           }
-          if (x > updateLeft) {
+          if (updateCount > 0 && x > updateLeft) {
             ContributionManager.openUpdates();
           }
         }
