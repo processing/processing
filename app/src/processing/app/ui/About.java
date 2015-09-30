@@ -26,6 +26,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -90,8 +92,9 @@ public class About extends Window {
 //    Graphics2D g2 = Toolkit.prepareGraphics(g);
 //    g2.scale(0.5, 0.5);
 
-//    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-//                        RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
+    Graphics2D g2 = (Graphics2D) g;
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
     g.drawImage(icon.getImage(), 0, 0, width, height, null);
 //    g.setColor(Color.ORANGE);

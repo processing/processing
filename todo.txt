@@ -18,6 +18,8 @@ X   https://github.com/processing/processing/issues/3895
 X   https://github.com/processing/processing/pull/3897
 X Clean up delete dir function
 X   https://github.com/processing/processing/pull/3910
+X don't follow symlinks when deleting directories
+X   https://github.com/processing/processing/pull/3916
 X show number of updates available in the footer
 X   https://github.com/processing/processing/issues/3518
 X   https://github.com/processing/processing/pull/3896
