@@ -39,6 +39,7 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
@@ -143,44 +144,19 @@ public class Sketch {
     codeFolder = new File(folder, "code");
     dataFolder = new File(folder, "data");
 
-    // get list of files in the sketch folder
-    String list[] = folder.list();
+    List<String> filenames = new ArrayList<>();
+    List<String> extensions = new ArrayList<>();
 
-    // reset these because load() may be called after an
-    // external editor event. (fix for 0099)
-    codeCount = 0;
+    getSketchCodeFiles(filenames, extensions);
 
-    code = new SketchCode[list.length];
+    codeCount = filenames.size();
+    code = new SketchCode[codeCount];
 
-    String[] extensions = mode.getExtensions();
-
-    for (String filename : list) {
-      // Ignoring the dot prefix files is especially important to avoid files
-      // with the ._ prefix on Mac OS X. (You'll see this with Mac files on
-      // non-HFS drives, i.e. a thumb drive formatted FAT32.)
-      if (filename.startsWith(".")) continue;
-
-      // Don't let some wacko name a directory blah.pde or bling.java.
-      if (new File(folder, filename).isDirectory()) continue;
-
-      // figure out the name without any extension
-      String base = filename;
-      // now strip off the .pde and .java extensions
-      for (String extension : extensions) {
-        if (base.toLowerCase().endsWith("." + extension)) {
-          base = base.substring(0, base.length() - (extension.length() + 1));
-
-          // Don't allow people to use files with invalid names, since on load,
-          // it would be otherwise possible to sneak in nasty filenames. [0116]
-          if (isSanitaryName(base)) {
-            code[codeCount++] =
-              new SketchCode(new File(folder, filename), extension);
-          }
-        }
-      }
+    for (int i = 0; i < codeCount; i++) {
+      String filename = filenames.get(i);
+      String extension = extensions.get(i);
+      code[i] = new SketchCode(new File(folder, filename), extension);
     }
-    // Remove any code that wasn't proper
-    code = (SketchCode[]) PApplet.subset(code, 0, codeCount);
 
     // move the main class to the first tab
     // start at 1, if it's at zero, don't bother
@@ -200,6 +176,39 @@ public class Sketch {
     // set the main file to be the current tab
     if (editor != null) {
       setCurrentCode(0);
+    }
+  }
+
+
+  public void getSketchCodeFiles(List<String> outFilenames,
+                                 List<String> outExtensions) {
+    // get list of files in the sketch folder
+    String list[] = folder.list();
+
+    for (String filename : list) {
+      // Ignoring the dot prefix files is especially important to avoid files
+      // with the ._ prefix on Mac OS X. (You'll see this with Mac files on
+      // non-HFS drives, i.e. a thumb drive formatted FAT32.)
+      if (filename.startsWith(".")) continue;
+
+      // Don't let some wacko name a directory blah.pde or bling.java.
+      if (new File(folder, filename).isDirectory()) continue;
+
+      // figure out the name without any extension
+      String base = filename;
+      // now strip off the .pde and .java extensions
+      for (String extension : mode.getExtensions()) {
+        if (base.toLowerCase().endsWith("." + extension)) {
+          base = base.substring(0, base.length() - (extension.length() + 1));
+
+          // Don't allow people to use files with invalid names, since on load,
+          // it would be otherwise possible to sneak in nasty filenames. [0116]
+          if (isSanitaryName(base)) {
+            if (outFilenames != null) outFilenames.add(filename);
+            if (outExtensions != null) outExtensions.add(extension);
+          }
+        }
+      }
     }
   }
 

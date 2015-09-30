@@ -5,7 +5,6 @@ import java.awt.Frame;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,19 +78,12 @@ public class ChangeDetector implements WindowFocusListener {
 
   private boolean checkFileCount() {
     // check file count first
-    File sketchFolder = sketch.getFolder();
-    File[] sketchFiles = sketchFolder.listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(File dir, String filename) {
-        for (String ext : editor.getMode().getExtensions()) {
-          if (filename.toLowerCase().endsWith(ext.toLowerCase())) {
-            return true;
-          }
-        }
-        return false;
-      }
-    });
-    int fileCount = sketchFiles.length;
+
+    List<String> filenames = new ArrayList<>();
+
+    sketch.getSketchCodeFiles(filenames, null);
+
+    int fileCount = filenames.size();
 
     // Was considering keeping track of the last "known" number of files
     // (instead of using sketch.getCodeCount() here) in case the user
