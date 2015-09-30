@@ -32,6 +32,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +70,7 @@ public class EditorFooter extends Box {
 
   Color[] textColor = new Color[2];
   Color[] tabColor = new Color[2];
+  Color updateColor;
 
   Editor editor;
 
@@ -85,6 +88,8 @@ public class EditorFooter extends Box {
   JPanel cardPanel;
   CardLayout cardLayout;
   Controller controller;
+
+  int updateCount;
 
 
   public EditorFooter(Editor eddie) {
@@ -145,6 +150,12 @@ public class EditorFooter extends Box {
   }
 
 
+  public void setUpdateCount(int count) {
+    this.updateCount = count;
+    repaint();
+  }
+
+
   public void updateMode() {
     Mode mode = editor.getMode();
 
@@ -155,7 +166,7 @@ public class EditorFooter extends Box {
     tabColor[SELECTED] = mode.getColor("footer.tab.selected.color");
     tabColor[UNSELECTED] = mode.getColor("footer.tab.unselected.color");
 
-//    errorColor = mode.getColor("status.error.bgcolor");
+    updateColor = mode.getColor("footer.updates.color");
 
     gradient = mode.makeGradient("footer", 400, HIGH);
   }
@@ -233,7 +244,9 @@ public class EditorFooter extends Box {
       }
 
       // now actually draw the tabs
-      placeTabs(Editor.LEFT_GUTTER, g2);
+      drawTabs(Editor.LEFT_GUTTER, g2);
+
+      drawUpdates(g2);
 
 //      // draw the two pixel line that extends left/right below the tabs
 //      g.setColor(tabColor[SELECTED]);
@@ -249,7 +262,7 @@ public class EditorFooter extends Box {
      * @param left starting position from the left
      * @param g graphics context, or null if we're not drawing
      */
-    private void placeTabs(int left, Graphics2D g) {
+    private void drawTabs(int left, Graphics2D g) {
       int x = left;
 
       for (Tab tab : tabs) {
@@ -261,43 +274,30 @@ public class EditorFooter extends Box {
         x += tab.textWidth + MARGIN;
         tab.right = x;
 
-        // if drawing and not just placing
-        if (g != null) {
-          tab.draw(g);
-          /*
-          int state = tab.isCurrent() ? SELECTED : UNSELECTED;
-          g.setColor(tabColor[state]);
-          if (tab.notification) {
-            g.setColor(errorColor);
-          }
-          //drawTab(g, tab.left, tab.right, tab.isFirst(), tab.isLast());
-          tab.draw(g);
-
-          int textLeft = tab.getTextLeft();
-          if (tab.notification && state == UNSELECTED) {
-            g.setColor(Color.LIGHT_GRAY);
-          } else {
-            g.setColor(textColor[state]);
-          }
-          int tabHeight = TAB_BOTTOM - TAB_TOP;
-          int baseline = TAB_TOP + (tabHeight + fontAscent) / 2;
-          g.drawString(tab.name, textLeft, baseline);
-          */
-        }
+        tab.draw(g);
         x += TAB_BETWEEN;
       }
     }
 
 
-    /*
-    private void drawTab(Graphics g, int left, int right,
-                         boolean leftNotch, boolean rightNotch) {
-      Graphics2D g2 = (Graphics2D) g;
-      g2.fill(Toolkit.createRoundRect(left, TAB_TOP, right, TAB_BOTTOM, 0, 0,
-                                      rightNotch ? CURVE_RADIUS : 0,
-                                      leftNotch ? CURVE_RADIUS : 0));
+    private void drawUpdates(Graphics2D g2) {
+      FontRenderContext frc = g2.getFontRenderContext();
+      final int GAP = 5;
+      final String updateLabel = "Updates";
+      String updatesStr = "" + updateCount;
+      double countWidth = font.getStringBounds(updatesStr, frc).getWidth();
+      float diameter = (float) (countWidth * 1.65f);
+      float ex = getWidth() - Editor.RIGHT_GUTTER - diameter;
+      float ey = (getHeight() - diameter) / 2;
+      g2.setColor(updateColor);
+      g2.fill(new Ellipse2D.Float(ex, ey, diameter, diameter));
+      g2.setColor(textColor[SELECTED]);
+      int baseline = (getHeight() + fontAscent) / 2;
+      g2.drawString(updatesStr, (int) (ex + (diameter - countWidth)/2), baseline);
+      double updatesWidth = font.getStringBounds(updateLabel, frc).getWidth();
+      g2.setColor(textColor[UNSELECTED]);
+      g2.drawString(updateLabel, (int) (ex - updatesWidth - GAP), baseline);
     }
-    */
 
 
     public Dimension getPreferredSize() {

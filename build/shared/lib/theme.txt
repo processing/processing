@@ -30,6 +30,7 @@ footer.gradient.bottom = #122535
 footer.tab.selected.color = #2d4251
 footer.tab.unselected.color = #1f3241
 # updates orange #eb7f15
+footer.updates.color = #ed7f15
 
 # CONSOLE
 # The font is handled by preferences, so its size/etc are modifiable.

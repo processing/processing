@@ -53,13 +53,15 @@ X   applies to both MarkerColumn and JavaTextAreaPainter
 X make gutter of console match error list
 X   https://github.com/processing/processing/issues/3904
 
-earlier
+earlier/cleaning
 X list with contrib types separated is really wonky
 o   do we keep the list?
 o   does it even work for different contrib types?
 X   cleaned this up in the last release
 X remove the dated releases from download.processing.org
 X new Android release (EditorButton constructor changed)
+o JavaEditor has several null colors, remove color support
+o   once the design is complete and we for sure do not need color
 
 
 known issues
@@ -74,15 +76,12 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
-_ JavaEditor has several null colors, remove color support
-_   once the design is complete and we for sure do not need color
-
-gui / James
 _ fix the design of the completions window
-_    remove extra border around the outside
-_    change font
-_    change selection highlight color
-_    put some margin around it
+_   remove extra border around the outside
+_   change font
+_   change selection highlight color
+_   put some margin around it
+_   https://github.com/processing/processing/issues/3906
 _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407
 _ different design of squiggly line

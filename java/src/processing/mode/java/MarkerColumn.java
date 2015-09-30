@@ -39,6 +39,7 @@ import processing.app.Mode;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.Util;
+import processing.app.ui.Editor;
 import processing.core.PApplet;
 import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.Problem;
@@ -56,7 +57,7 @@ import processing.mode.java.pdex.Problem;
 public class MarkerColumn extends JPanel {
   protected JavaEditor editor;
 
-  static final int WIDE = 12;
+//  static final int WIDE = 12;
 
 	private Color errorColor;
 	private Color warningColor;
@@ -244,11 +245,11 @@ public class MarkerColumn extends JPanel {
 
 
 	public Dimension getPreferredSize() {
-	  return new Dimension(WIDE, super.getPreferredSize().height);
+	  return new Dimension(Editor.RIGHT_GUTTER, super.getPreferredSize().height);
 	}
 
 
 	public Dimension getMinimumSize() {
-	  return new Dimension(WIDE, super.getMinimumSize().height);
+	  return new Dimension(Editor.RIGHT_GUTTER, super.getMinimumSize().height);
 	}
 }

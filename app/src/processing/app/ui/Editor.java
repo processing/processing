@@ -74,7 +74,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   protected Mode mode;
 
   static public final int LEFT_GUTTER = 44;
-  static public final int RIGHT_GUTTER = 20;
+  static public final int RIGHT_GUTTER = 12;
   static public final int GUTTER_MARGIN = 3;
 
 
@@ -1094,11 +1094,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   /**
    * Updates update count in the UI. Called on EDT.
-   * @param n number of available updates
+   * @param count number of available updates
    */
-  public void setUpdatesAvailable(int n) {
-    // TODO: refresh UI and remove the debug message
-    PApplet.println("setting update count to", n);
+  public void setUpdatesAvailable(int count) {
+    footer.setUpdateCount(count);
   }
 
 
