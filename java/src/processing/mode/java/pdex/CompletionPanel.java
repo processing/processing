@@ -22,6 +22,7 @@ package processing.mode.java.pdex;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -39,7 +40,6 @@ import javax.swing.text.BadLocationException;
 
 import processing.app.Base;
 import processing.app.Messages;
-import processing.app.Mode;
 import processing.app.syntax.JEditTextArea;
 import processing.app.ui.Toolkit;
 import processing.mode.java.JavaEditor;
@@ -138,6 +138,7 @@ public class CompletionPanel {
         });
         setCellRenderer(new CustomListRenderer());
         setFocusable(false);
+        setFont(Toolkit.getSansFont(12, Font.PLAIN));
       }
     };
     scrollPane.setViewportView(completionList);
