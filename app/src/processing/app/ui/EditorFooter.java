@@ -41,6 +41,7 @@ import javax.swing.*;
 
 import processing.app.Mode;
 import processing.app.Sketch;
+import processing.app.contrib.ContributionManager;
 
 
 /**
@@ -70,7 +71,9 @@ public class EditorFooter extends Box {
 
   Color[] textColor = new Color[2];
   Color[] tabColor = new Color[2];
+
   Color updateColor;
+  int updateLeft, updateRight;
 
   Editor editor;
 
@@ -188,6 +191,9 @@ public class EditorFooter extends Box {
               repaint();
             }
           }
+          if (x > updateLeft) {
+            ContributionManager.openUpdates();
+          }
         }
       });
     }
@@ -297,7 +303,8 @@ public class EditorFooter extends Box {
         g2.drawString(updatesStr, (int) (ex + (diameter - countWidth)/2), baseline);
         double updatesWidth = font.getStringBounds(updateLabel, frc).getWidth();
         g2.setColor(textColor[UNSELECTED]);
-        g2.drawString(updateLabel, (int) (ex - updatesWidth - GAP), baseline);
+        updateLeft = (int) (ex - updatesWidth - GAP);
+        g2.drawString(updateLabel, updateLeft, baseline);
       }
     }
 
