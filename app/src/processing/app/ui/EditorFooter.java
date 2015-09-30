@@ -281,22 +281,24 @@ public class EditorFooter extends Box {
 
 
     private void drawUpdates(Graphics2D g2) {
-      FontRenderContext frc = g2.getFontRenderContext();
-      final int GAP = 5;
-      final String updateLabel = "Updates";
-      String updatesStr = "" + updateCount;
-      double countWidth = font.getStringBounds(updatesStr, frc).getWidth();
-      float diameter = (float) (countWidth * 1.65f);
-      float ex = getWidth() - Editor.RIGHT_GUTTER - diameter;
-      float ey = (getHeight() - diameter) / 2;
-      g2.setColor(updateColor);
-      g2.fill(new Ellipse2D.Float(ex, ey, diameter, diameter));
-      g2.setColor(textColor[SELECTED]);
-      int baseline = (getHeight() + fontAscent) / 2;
-      g2.drawString(updatesStr, (int) (ex + (diameter - countWidth)/2), baseline);
-      double updatesWidth = font.getStringBounds(updateLabel, frc).getWidth();
-      g2.setColor(textColor[UNSELECTED]);
-      g2.drawString(updateLabel, (int) (ex - updatesWidth - GAP), baseline);
+      if (updateCount != 0) {
+        FontRenderContext frc = g2.getFontRenderContext();
+        final int GAP = 5;
+        final String updateLabel = "Updates";
+        String updatesStr = "" + updateCount;
+        double countWidth = font.getStringBounds(updatesStr, frc).getWidth();
+        float diameter = (float) (countWidth * 1.65f);
+        float ex = getWidth() - Editor.RIGHT_GUTTER - diameter;
+        float ey = (getHeight() - diameter) / 2;
+        g2.setColor(updateColor);
+        g2.fill(new Ellipse2D.Float(ex, ey, diameter, diameter));
+        g2.setColor(textColor[SELECTED]);
+        int baseline = (getHeight() + fontAscent) / 2;
+        g2.drawString(updatesStr, (int) (ex + (diameter - countWidth)/2), baseline);
+        double updatesWidth = font.getStringBounds(updateLabel, frc).getWidth();
+        g2.setColor(textColor[UNSELECTED]);
+        g2.drawString(updateLabel, (int) (ex - updatesWidth - GAP), baseline);
+      }
     }
 
 
