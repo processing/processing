@@ -37,6 +37,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 
 import processing.app.Base;
+import processing.app.Platform;
 
 
 public class About extends Window {
@@ -93,7 +94,10 @@ public class About extends Window {
 //    g2.scale(0.5, 0.5);
 
     Graphics2D g2 = (Graphics2D) g;
+    // OS X looks better doing its own thing, Windows and Linux need AA
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        Platform.isMacOS() ?
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT :
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
     g.drawImage(icon.getImage(), 0, 0, width, height, null);
