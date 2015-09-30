@@ -2729,13 +2729,14 @@ public class JavaEditor extends Editor {
   }
 
 
+  @Override
   protected void applyPreferences() {
     super.applyPreferences();
     if (jmode != null) {
       jmode.loadPreferences();
       Messages.log("Applying prefs");
       // trigger it once to refresh UI
-      errorCheckerService.request();
+      errorCheckerService.handleErrorCheckingToggle();
     }
   }
 

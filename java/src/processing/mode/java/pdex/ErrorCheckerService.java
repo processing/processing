@@ -275,7 +275,6 @@ public class ErrorCheckerService {
         astGenerator.buildAST(lastCodeCheckResult.sourceCode,
                               lastCodeCheckResult.compilationUnit);
       }
-      handleErrorCheckingToggle();
 
       while (running) {
         try {
@@ -1556,10 +1555,10 @@ public class ErrorCheckerService {
     return new String(p2, 0, index);
   }
 
+
   public void handleErrorCheckingToggle() {
     if (!JavaMode.errorCheckEnabled) {
-      Messages.log(editor.getSketch().getName() + " Error Checker paused.");
-      //editor.clearErrorPoints();
+      Messages.log(editor.getSketch().getName() + " Error Checker disabled.");
       editor.getErrorPoints().clear();
       lastCodeCheckResult.problems.clear();
       updateErrorTable(Collections.<Problem>emptyList());
@@ -1567,7 +1566,7 @@ public class ErrorCheckerService {
       editor.getTextArea().repaint();
       editor.repaintErrorBar();
     } else {
-      Messages.log(editor.getSketch().getName() + " Error Checker resumed.");
+      Messages.log(editor.getSketch().getName() + " Error Checker enabled.");
       request();
     }
   }
