@@ -1,4 +1,4 @@
-0246 the holy land
+0246 the holy land (3.0)
 X "Saving" messages never clear on "Save As"
 X   https://github.com/processing/processing/issues/3861
 X error checker/suggestions fixes
@@ -128,11 +128,15 @@ _ error checkers/suggestions not including the library path
 _   https://github.com/processing/processing/issues/3924
 _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407
+_ update CM entries when sketchbook location changes
+_   https://github.com/processing/processing/issues/3927
 
 
-debug 
+run/debug
 _ debugger deadlocks when choosing "Step Into" on println()
 _   https://github.com/processing/processing/issues/3923
+_ Tweak Mode sometimes freezes while running, require a force quit
+_   https://github.com/processing/processing/issues/3928
 
 
 gui

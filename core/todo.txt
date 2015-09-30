@@ -1,4 +1,4 @@
-0246 the papal visit
+0246 the papal visit (3.0)
 X implement high-performance/async image saving
 X   Use PBOs for async texture copy
 X   https://github.com/processing/processing/issues/3569
