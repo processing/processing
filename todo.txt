@@ -16,6 +16,8 @@ X   https://github.com/processing/processing/pull/3887
 X grab bag of CM work from Jakub
 X   https://github.com/processing/processing/issues/3895
 X   https://github.com/processing/processing/pull/3897
+X Clean up delete dir function
+X   https://github.com/processing/processing/pull/3910
 X show number of updates available in the footer
 X   https://github.com/processing/processing/issues/3518
 X   https://github.com/processing/processing/pull/3896
@@ -97,20 +99,13 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
 _ completion panel
-_   what should the background color be? 
+X   what should the background color be? 
 _   test fg/bg color on other operating systems
 _   fix icon sizes/design
 _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407
 _ different design of squiggly line
 _   easy to do inside JavaTextAreaPainter.paintSquiggle()
-
-
-manager / 3.0 final
-_ ugly white gap at the top of scroll bar
-_   the table header doesn't extend far enough
-_ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
-_   looks like ContributionListing.getScrollableUnitIncrement() returns early
 
 
 gui / post 3.0
@@ -131,18 +126,12 @@ _   rather than post-compile
 _   https://github.com/processing/processing/issues/136
 
 
-manager / post 3.0
-_ Examples window closes and re-opens during library install/remove
-_   https://github.com/processing/processing/issues/3304
-_ CM - Icon instead of an "X" for the "could not connect" message
-_   https://github.com/processing/processing/issues/3706
-
-
-gui/low
-_ welcome screen tweaks
-_   click "show this welcome" text to check/uncheck the box
-_   submit the form (as if 'get started' clicked) when closing the window
-_     whether hitting ESC or the close box on the window
+welcome
+_ click "show this welcome" text to check/uncheck the box
+_   https://github.com/processing/processing/issues/3912
+_ submit the form (as if 'get started' clicked) when closing the window
+_   whether hitting ESC or the close box on the window
+_   https://github.com/processing/processing/issues/3911
 
 
 fonts
@@ -680,6 +669,14 @@ _   e.g. ocd is broken in 0125 because of method signature changes
 
 PDE / Manager
 
+_ ugly white gap at the top of scroll bar
+_   the table header doesn't extend far enough
+_ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
+_   looks like ContributionListing.getScrollableUnitIncrement() returns early
+_ Examples window closes and re-opens during library install/remove
+_   https://github.com/processing/processing/issues/3304
+_ CM - Icon instead of an "X" for the "could not connect" message
+_   https://github.com/processing/processing/issues/3706
 _ several TODO items listed in ContributionPanel
 _ something to set min/max versions that are supported by a library
 _ ability to cancel a download/install
