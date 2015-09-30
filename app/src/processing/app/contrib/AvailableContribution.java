@@ -196,7 +196,7 @@ public class AvailableContribution extends Contribution {
         }
 
         // 4. Okay, now actually delete that temp folder
-        Util.removeDir(newContribFolder);
+        Util.removeDir(newContribFolder, false);
 
       } else {
         if (status != null) {
@@ -207,7 +207,7 @@ public class AvailableContribution extends Contribution {
 
     // Remove any remaining boogers
     if (tempFolder.exists()) {
-      Util.removeDir(tempFolder);
+      Util.removeDir(tempFolder, false);
     }
     return installedContrib;
   }
