@@ -59,6 +59,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.event.*;
 import javax.swing.plaf.basic.*;
 import javax.swing.text.*;

@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.border.MatteBorder;
 import javax.swing.text.*;
 
 import processing.app.*;
@@ -153,19 +154,10 @@ public class EditorConsole extends JScrollPane {
     // add the jtextpane to this scrollpane
     this.setViewportView(consoleTextPane);
 
-    // to fix ugliness.. normally macosx java 1.3 puts an
-    // ugly white border around this object, so turn it off.
-    if (Platform.isMacOS()) {
-      setBorder(null);
-    }
-
     sketchOut = new PrintStream(new EditorConsoleStream(false, this));
     sketchErr = new PrintStream(new EditorConsoleStream(true, this));
 
     startTimer();
-
-    // windows puts an ugly border on this guy
-    setBorder(null);
   }
 
 
@@ -249,6 +241,10 @@ public class EditorConsole extends JScrollPane {
     Color bgColor = mode.getColor("console.color");
     Color fgColorOut = mode.getColor("console.output.color");
     Color fgColorErr = mode.getColor("console.error.color");
+
+    // Make things line up with the Editor above. If this is ever removed,
+    // setBorder(null) should be called instead. The defaults are nasty.
+    setBorder(new MatteBorder(0, Editor.LEFT_GUTTER, 0, 0, bgColor));
 
     stdStyle = new SimpleAttributeSet();
     StyleConstants.setForeground(stdStyle, fgColorOut);

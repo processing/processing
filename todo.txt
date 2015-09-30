@@ -44,9 +44,12 @@ X   change 'alpha' to correct name
 X   also change the revision in the "about processing" dialog
 X   https://github.com/processing/processing/issues/3665
 X implement splash screen on OS X
+X   http://www.randelshofer.ch/oop/javasplash/javasplash.html
 X   also implement special retina version
-X implement custom tooltip for error/warning hover
-X    applies to both MarkerColumn and JavaTextAreaPainter
+X Fix placement and visual design when showing error on hover
+X   https://github.com/processing/processing/issues/3173
+X   implement custom tooltip for error/warning hover
+X   applies to both MarkerColumn and JavaTextAreaPainter
 
 earlier
 X list with contrib types separated is really wonky
@@ -80,8 +83,6 @@ _    remove extra border around the outside
 _    change font
 _    change selection highlight color
 _    put some margin around it
-_ Fix placement and visual design when showing error on hover
-_   https://github.com/processing/processing/issues/3173
 _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407
 _ different design of squiggly line
