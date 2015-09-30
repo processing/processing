@@ -30,6 +30,10 @@ o   think this was on name, with libraries, but not sure
 X   should be fixed with the updates from Jakub
 X error checker updates for toggle and listeners
 X   https://github.com/processing/processing/pull/3915
+X file file counting in the change detector
+X   https://github.com/processing/processing/pull/3917
+X   https://github.com/processing/processing/issues/3898
+X   https://github.com/processing/processing/issues/3387
 
 gui
 X distinguish errors and warnings
@@ -78,6 +82,10 @@ X   add 2x version of the icons
 X   change selection highlight color
 o   put some margin around it
 X   https://github.com/processing/processing/issues/3906
+X completion panel
+X   what should the background color be? 
+X   test fg/bg color on other operating systems
+J   fix icon sizes/design
 
 earlier/cleaning
 X list with contrib types separated is really wonky
@@ -88,6 +96,13 @@ X remove the dated releases from download.processing.org
 X new Android release (EditorButton constructor changed)
 o JavaEditor has several null colors, remove color support
 o   once the design is complete and we for sure do not need color
+X remove deprecated methods
+X do the right thing on passing around List vs ArrayList and others
+o wonder if "Save As" is causing the problems with auto-reload
+X   found and fixed
+X look at the sound library https://github.com/wirsing/ProcessingSound
+o   sound is not yet supported on Windows
+X implement the new gui
 
 
 known issues
@@ -102,19 +117,16 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 3.0 final
 _ https://github.com/processing/processing/milestones/3.0%20final
-_ Windows suggests "Documents" as a new location for the sketchbook
+_ Windows suggests "Documents" as a new location for the 3.0 sketchbook
 _   maybe prevent users from accepting that?
-_ completion panel
-X   what should the background color be? 
-_   test fg/bg color on other operating systems
-_   fix icon sizes/design
+_   https://github.com/processing/processing/issues/3920
 _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407
+
+
+gui
 _ different design of squiggly line
 _   easy to do inside JavaTextAreaPainter.paintSquiggle()
-
-
-gui / post 3.0
 _ build custom scroll bar since the OS versions are so ugly
 _ see notes in the 'dialogs' section below, implement our own option panes?
 _ tiny trail of dots when moving the selection bar up/down on retina
@@ -156,8 +168,6 @@ _   https://github.com/processing/processing/issues/2886
 
 pde/build
 _ ignore-tools in build.xml not being called for some reason
-_ can't install processing-java into /usr/bin with El Capitan
-_   https://github.com/processing/processing/issues/3497
 _ when variables used in size(), getting exceptions instead of any warning
 _   https://github.com/processing/processing/issues/3311
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
@@ -175,11 +185,11 @@ _   update license info to state gplv2 not v3
 _   run through that online license checker
 _ save() and saveAs() need to be refactored
 _   https://github.com/processing/processing/issues/3843
-
-
-breakage
-_ remove deprecated methods
-_ do the right thing on passing around List vs ArrayList and others
+_ clean out the repo
+_   https://github.com/processing/processing/issues/1898
+_ search the source for 'applet' references (i.e. SVG docs)
+_ update list of optional JRE files
+_   https://github.com/processing/processing/issues/3288
 _ PreferencesFrame is a misnomer (not a frame itself)
 _   change to PreferencesDialog, and make it a dialog?
 _ move Library to LibraryContribution and into contrib?
@@ -189,22 +199,11 @@ from the todo list
 _ reas: comments go nasty when auto-formatted
 _ reas: code coloring sometimes disappears
 _ me: undo not in the correct location
-_ implement the new gui
 _ drop XP support (but improve Windows 8 support? ouch)
 _ improve error message when creating a tab with the same name
 _   right now it's generic, based on "a file exists"
 _ don't allow users to create 'blah.java' when 'blah.pde' already in sketch
 
-
-3.0 beta/final
-_ wonder if "Save As" is causing the problems with auto-reload
-_ look at the sound library https://github.com/wirsing/ProcessingSound
-_   sound is not yet supported on Windows
-_ clean out the repo
-_   https://github.com/processing/processing/issues/1898
-_ search the source for 'applet' references (i.e. SVG docs)
-_ update list of option JRE files
-_   https://github.com/processing/processing/issues/3288
 
 
 sketchbook

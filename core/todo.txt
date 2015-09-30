@@ -28,6 +28,9 @@ o run only the necessary pieces on the EDT
 o   in part because FX doesn't even use the EDT
 o   re-check the Linux frame visibility stuff
 X   cleaned most of this as far as we can go
+o Ubuntu Unity prevents full screen from working properly
+X   https://github.com/processing/processing/issues/3158
+X   can't fix; upstream problem, added to the wiki
 
 
 known
@@ -35,9 +38,11 @@ _ window must close when using file dialogs with OpenGL on Windows
 _   https://github.com/processing/processing/issues/3831
 _ P2D and P3D windows behave strangely when larger than the screen size
 _   https://github.com/processing/processing/issues/3401
+_ window loses focus after maximizing
+_   https://github.com/processing/processing/issues/3339
 
 
-3.0 final
+misc
 _ move blending calculations from PImage into PGraphics
 _   tricky because that means moving blend_resize() as well
 _   and should that live in PGraphics or be its own class or ??
@@ -53,6 +58,7 @@ _ update wiki/docs to say "don't override sketchXxxx() methods"
 _ SVG only exports last frame
 _   possibly because Java2D is disposing the Graphics2D in between?
 _   https://github.com/processing/processing/issues/3753
+
 
 javafx
 _ do we really need setTextFont/Size when we already have Impl? 
@@ -83,19 +89,8 @@ _ javafx not supported with ARM (so we're screwed on raspberry pi)
 _   https://www.linkedin.com/pulse/oracle-just-removed-javafx-support-arm-jan-snelders
 
 
-opengl
-_ Use PBOs for async texture copy
-_   https://github.com/processing/processing/issues/3569
-_ filter(PShader) broken in HiDPI mode
-_   https://github.com/processing/processing/issues/3577
-_ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
-_ window loses focus after maximizing
-_   https://github.com/processing/processing/issues/3339
-_ Implement standard cursor types in OpenGL
-_   https://github.com/processing/processing/issues/3554
-
-
 opengl questions
+_ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
 _ issues with how JOGL handles window layout/sizing
 _   https://github.com/processing/processing/issues/3401
 _ exitCalled() and exitActual made public by Andres, breaks Python
@@ -117,8 +112,6 @@ _   AMD Radeon HD 6770M was in the Oracle bug report
 _   https://github.com/processing/processing/issues/2186
 _   https://bugs.openjdk.java.net/browse/JDK-8027391
 _   test with JG's 13" retina laptop
-_ Ubuntu Unity prevents full screen from working properly
-_   https://github.com/processing/processing/issues/3158
 
 
 graphics
@@ -656,6 +649,7 @@ _   table.append(anotherTable)?
 _   table.join(anotherTable)
 _ getInt() on categorial to return index?
 _   getCategories() and getCategory() methods to query names?
+
 
 
 ////////////////////////////////////////////////////////////////////
