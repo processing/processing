@@ -249,8 +249,7 @@ public class ErrorCheckerService {
 
   private Thread errorCheckerThread;
   private BlockingQueue<Boolean> requestQueue = new ArrayBlockingQueue<>(1);
-  private ScheduledExecutorService scheduler =
-      Executors.newSingleThreadScheduledExecutor();
+  private ScheduledExecutorService scheduler;
   volatile ScheduledFuture<?> scheduledUiUpdate = null;
   volatile long nextUiUpdate = 0;
 
@@ -346,6 +345,7 @@ public class ErrorCheckerService {
 
 
   public void start() {
+    scheduler = Executors.newSingleThreadScheduledExecutor();
     errorCheckerThread = new Thread(mainLoop);
     errorCheckerThread.start();
   }
@@ -354,6 +354,9 @@ public class ErrorCheckerService {
     cancel();
     running = false;
     errorCheckerThread.interrupt();
+    if (scheduler != null) {
+      scheduler.shutdownNow();
+    }
   }
 
 
