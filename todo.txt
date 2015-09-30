@@ -1,5 +1,5 @@
 0246 the holy land
-X does the "Saving" message never clear on "Save As"? 
+X "Saving" messages never clear on "Save As"
 X   https://github.com/processing/processing/issues/3861
 X error checker/suggestions fixes
 X   https://github.com/processing/processing/pull/3871
@@ -13,15 +13,30 @@ X   https://github.com/processing/processing/issues/3882
 X   https://github.com/processing/processing/pull/3884
 X Hide useless error in error checker
 X   https://github.com/processing/processing/pull/3887
-X clean up statusMessage() inside JavaEditor
-o   do we want to bring back the delays?
-X implement side gradient on the editor
 
 gui
 X distinguish errors and warnings
 X   https://github.com/processing/processing/issues/3406
 X make breakpoints more prominent
 X   https://github.com/processing/processing/issues/3307 (comp is set)
+X clean up statusMessage() inside JavaEditor
+o   do we want to bring back the delays?
+X implement side gradient on the editor
+X if fewer lines in sketch than can be shown in window, show ticks adjacent
+X   error/warning location is awkward when no scroll bar is in use
+X   when only one screen-full, show ticks at exact location
+X   simpler/less confusing to not show at all? 
+X   MarkerColumn.recalculateMarkerPositions()
+X   https://github.com/processing/processing/pull/3903
+X Update status error/warning when changing the line
+X   https://github.com/processing/processing/pull/3907
+X Update status error/warning when changing the line
+X   when moving away from an error/warning line, de-select it below
+X   selecting a warning should also show the warning in the status area
+X   https://github.com/processing/processing/pull/3907
+X clicking an error or warning should give the focus back to the editor
+X   https://github.com/processing/processing/pull/3905
+
 
 earlier
 X list with contrib types separated is really wonky
@@ -49,15 +64,17 @@ _   once the design is complete and we for sure do not need color
 _ grab bag of CM work from Jakub
 _   https://github.com/processing/processing/issues/3895
 X   https://github.com/processing/processing/pull/3897
-_ error list tab
-_   when moving away from an error/warning line, de-select it below
-_   selecting a warning should also show the warning in the status area
-_   clicking an error or warning should give the focus back to the editor
-_ if fewer lines in sketch than can be shown in window, show ticks adjacent
-_   MarkerColumn.recalculateMarkerPositions()
-
 
 gui / James
+_ make gutter of console match error list
+_   https://github.com/processing/processing/issues/3904
+_ fix the design of the completions window
+_    remove extra border around the outside
+_    change font
+_    change selection highlight color
+_    put some margin around it
+_ implement custom tooltip for error/warning hover
+_    applies to both MarkerColumn and 
 _ Fix placement and visual design when showing error on hover
 _   https://github.com/processing/processing/issues/3173
 _ import suggestions box needs design review
@@ -89,9 +106,6 @@ _   looks like ContributionListing.getScrollableUnitIncrement() returns early
 
 gui / post 3.0
 _ build custom scroll bar since the OS versions are so ugly
-_ error/warning location is awkward when no scroll bar is in use
-_   when only one screen-full, show ticks at exact location
-_   simpler/less confusing to not show at all? 
 _ see notes in the 'dialogs' section below, implement our own option panes?
 _ tiny trail of dots when moving the selection bar up/down on retina
 _ need 'actively pressed' version of 'play' and 'stop'

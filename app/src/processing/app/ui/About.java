@@ -23,28 +23,31 @@
 package processing.app.ui;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.ImageIcon;
 
 import processing.app.Base;
 
 
 public class About extends Window {
-  Image image;
+  ImageIcon icon;
   int width, height;
 
 
   public About(Frame frame) {
     super(frame);
 
+    icon = Toolkit.getLibIconX("about");
+    width = icon.getIconWidth();
+    height = icon.getIconHeight();
+
+    /*
     if (Toolkit.highResDisplay()) {
       image = Toolkit.getLibImage("about-2x.jpg"); //$NON-NLS-1$
       width = image.getWidth(null) / 2;
@@ -54,6 +57,7 @@ public class About extends Window {
       width = image.getWidth(null);
       height = image.getHeight(null);
     }
+    */
 
     addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
@@ -61,21 +65,23 @@ public class About extends Window {
       }
     });
 
-    Dimension screen = Toolkit.getScreenSize();
-    setBounds((screen.width-width)/2, (screen.height-height)/2, width, height);
+//    Dimension screen = Toolkit.getScreenSize();
+//    setBounds((screen.width-width)/2, (screen.height-height)/2, width, height);
+    setLocationRelativeTo(null);
     setVisible(true);
   }
 
 
   public void paint(Graphics g) {
-    g.drawImage(image, 0, 0, width, height, null);
+    g.drawImage(icon.getImage(), 0, 0, width, height, null);
 
-    Graphics2D g2 = (Graphics2D) g;
-    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+//    Graphics2D g2 = (Graphics2D) g;
+//    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+//                        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
-    g.setFont(new Font("SansSerif", Font.PLAIN, 10)); //$NON-NLS-1$
+    g.setFont(Toolkit.getSansFont(Font.PLAIN, 10));
+    //g.setFont(new Font("SansSerif", Font.PLAIN, 10)); //$NON-NLS-1$
     g.setColor(Color.white);
-    g.drawString(Base.getVersionName(), 90, 29);
+    g.drawString(Base.getVersionName(), 26, 29);
   }
 }

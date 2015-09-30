@@ -109,7 +109,7 @@ public class PreferencesFrame {
 
     sketchbookLocationField = new JTextField(40);
 
-    browseButton = new JButton(Toolkit.PROMPT_BROWSE);
+    browseButton = new JButton(Language.getPrompt("browse"));
     browseButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           File dflt = new File(sketchbookLocationField.getText());
@@ -362,7 +362,7 @@ public class PreferencesFrame {
 
     // [  OK  ] [ Cancel ]
 
-    okButton = new JButton(Toolkit.PROMPT_OK);
+    okButton = new JButton(Language.getPrompt("ok"));
     okButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           applyFrame();
@@ -370,13 +370,14 @@ public class PreferencesFrame {
         }
       });
 
-    JButton cancelButton = new JButton(Toolkit.PROMPT_CANCEL);
+    JButton cancelButton = new JButton(Language.getPrompt("cancel"));
     cancelButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           disposeFrame();
         }
       });
 
+    final int buttonWidth = Toolkit.getButtonWidth();
     layout.setHorizontalGroup(layout.createSequentialGroup() // sequential group for border + mainContent + border
       .addGap(BORDER)
       .addGroup(layout.createParallelGroup() // parallel group for rest of the components
@@ -431,8 +432,8 @@ public class PreferencesFrame {
           .addComponent(preferencePathLabel)
           .addComponent(preferenceHintLabel)
           .addGroup(GroupLayout.Alignment.TRAILING,layout.createSequentialGroup() // Trailing so that the buttons are to the right
-                      .addComponent(okButton, Toolkit.BUTTON_WIDTH, GroupLayout.DEFAULT_SIZE, Toolkit.BUTTON_WIDTH) // Ok and Cancel buttton are now of size BUTTON_WIDTH
-                      .addComponent(cancelButton, Toolkit.BUTTON_WIDTH, GroupLayout.DEFAULT_SIZE, Toolkit.BUTTON_WIDTH)
+                      .addComponent(okButton, buttonWidth, GroupLayout.DEFAULT_SIZE, buttonWidth) // Ok and Cancel buttton are now of size BUTTON_WIDTH
+                      .addComponent(cancelButton, buttonWidth, GroupLayout.DEFAULT_SIZE, buttonWidth)
           ))
       .addGap(BORDER)
     );

@@ -401,8 +401,8 @@ public class Sketch {
                                                  JOptionPane.OK_CANCEL_OPTION,
                                                  JOptionPane.PLAIN_MESSAGE,
                                                  null, new Object[] {
-                                                 Toolkit.PROMPT_OK,
-                                                 Toolkit.PROMPT_CANCEL },
+                                                 Language.getPrompt("ok"),
+                                                 Language.getPrompt("cancel") },
                                                  field);
 
     if (userReply == JOptionPane.OK_OPTION) {

@@ -31,6 +31,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
+import processing.app.Language;
 import processing.app.Mode;
 import processing.app.Platform;
 import processing.core.PApplet;
@@ -265,7 +266,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     if (indeterminate) {
       //int x = cancelButton.getX();
       //int w = cancelButton.getWidth();
-      int w = Toolkit.BUTTON_WIDTH;
+      int w = Toolkit.getButtonWidth();
       int x = getWidth() - RIGHT_MARGIN - w;
       int y = getHeight() / 3;
       int h = getHeight() / 3;

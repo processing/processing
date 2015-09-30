@@ -80,20 +80,13 @@ import processing.app.Preferences;
  * @author fry
  */
 public class Toolkit {
+  /*
   static public final String PROMPT_YES     = Language.text("prompt.yes");
   static public final String PROMPT_NO      = Language.text("prompt.no");
   static public final String PROMPT_CANCEL  = Language.text("prompt.cancel");
   static public final String PROMPT_OK      = Language.text("prompt.ok");
   static public final String PROMPT_BROWSE  = Language.text("prompt.browse");
-
-  /**
-   * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
-   * Windows XP needs 66, and my Ubuntu machine needs 80+, so 80 seems proper.
-   * This is now stored in the languages file since this may need to be larger
-   * for languages that are consistently wider than English.
-   */
-  static public int BUTTON_WIDTH =
-    Integer.parseInt(Language.text("preferences.button.width"));
+  */
 
   static final java.awt.Toolkit awtToolkit =
     java.awt.Toolkit.getDefaultToolkit();
@@ -111,6 +104,19 @@ public class Toolkit {
   /** Command-Shift on Mac OS X, Ctrl-Shift on Windows and Linux */
   static final int SHORTCUT_SHIFT_KEY_MASK =
     ActionEvent.SHIFT_MASK | SHORTCUT_KEY_MASK;
+
+
+  /**
+   * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
+   * Windows XP needs 66, and my Ubuntu machine needs 80+, so 80 seems proper.
+   * This is now stored in the languages file since this may need to be larger
+   * for languages that are consistently wider than English.
+   */
+  static public int getButtonWidth() {
+    // Made into a method so that calling Toolkit methods doesn't require
+    // the languages to be loaded, and with that, Base initialized completely
+    return Integer.parseInt(Language.text("preferences.button.width"));
+  }
 
 
   /**

@@ -1,3 +1,5 @@
+package processing.app.ui;
+
 /*
  * @(#)SplashWindow.java  2.2.1  2006-05-27
  *
@@ -9,10 +11,16 @@
  * without having to attribute to Werner Randelshofer.
  */
 
-import java.awt.*;
-import java.awt.event.*;
-import java.net.*;
-import java.io.*;
+import java.awt.EventQueue;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.URL;
 
 /**
  * A Splash window.
@@ -42,12 +50,12 @@ public class SplashWindow extends Window {
      * (Singleton design pattern).
      */
     private static SplashWindow instance;
-    
+
     /**
      * The splash image which is displayed on the splash window.
      */
     private Image image;
-    
+
     /**
      * This attribute indicates whether the method
      * paint(Graphics) has been called at least once since the
@@ -62,23 +70,23 @@ public class SplashWindow extends Window {
      * @see #splash
      */
     private boolean paintCalled = false;
-    
+
     /**
      * Creates a new instance.
      * @param parent the parent of the window.
      * @param image the splash image.
      */
-    private SplashWindow(Frame parent, Image image) {
+    private SplashWindow(Frame parent, Image image, boolean hidpi) {
         super(parent);
         this.image = image;
-        
+
         // Load the image
         MediaTracker mt = new MediaTracker(this);
         mt.addImage(image,0);
         try {
             mt.waitForID(0);
         } catch(InterruptedException ie){}
-        
+
         // Abort on failure
         if (mt.isErrorID(0)) {
             setSize(0,0);
@@ -89,17 +97,21 @@ public class SplashWindow extends Window {
             }
             return;
         }
-        
+
         // Center the window on the screen
         int imgWidth = image.getWidth(this);
         int imgHeight = image.getHeight(this);
+
+        if (hidpi) {
+          imgWidth /= 2;
+          imgHeight /= 2;
+        }
         setSize(imgWidth, imgHeight);
-        Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation(
-        (screenDim.width - imgWidth) / 2,
-        (screenDim.height - imgHeight) / 2
-        );
-        
+//        Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
+//        setLocation((screenDim.width - imgWidth) / 2,
+//                    (screenDim.height - imgHeight) / 2);
+        setLocationRelativeTo(null);
+
         // Users shall be able to close the splash window by
         // clicking on its display area. This mouse listener
         // listens for mouse clicks and disposes the splash window.
@@ -119,7 +131,7 @@ public class SplashWindow extends Window {
         };
         addMouseListener(disposeOnClick);
     }
-    
+
     /**
      * Updates the display area of the window.
      */
@@ -134,8 +146,8 @@ public class SplashWindow extends Window {
      * Paints the image on the window.
      */
     public void paint(Graphics g) {
-        g.drawImage(image, 0, 0, this);
-        
+      g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+
         // Notify method splash that the window
         // has been painted.
         // Note: To improve performance we do not enter
@@ -145,21 +157,21 @@ public class SplashWindow extends Window {
             synchronized (this) { notifyAll(); }
         }
     }
-    
+
     /**
      * Open's a splash window using the specified image.
      * @param image The splash image.
      */
-    public static void splash(Image image) {
+    public static void splash(Image image, boolean hidpi) {
         if (instance == null && image != null) {
             Frame f = new Frame();
-            
+
             // Create the splash image
-            instance = new SplashWindow(f, image);
-            
+            instance = new SplashWindow(f, image, hidpi);
+
             // Show the window.
-            instance.show();
-            
+            instance.setVisible(true);
+
             // Note: To make sure the user gets a chance to see the
             // splash window we wait until its paint method has been
             // called at least once by the AWT event dispatcher thread.
@@ -175,16 +187,17 @@ public class SplashWindow extends Window {
             }
         }
     }
+
     /**
      * Open's a splash window using the specified image.
      * @param imageURL The url of the splash image.
      */
-    public static void splash(URL imageURL) {
+    public static void splash(URL imageURL, boolean hidpi) {
         if (imageURL != null) {
-            splash(Toolkit.getDefaultToolkit().createImage(imageURL));
+            splash(Toolkit.getDefaultToolkit().createImage(imageURL), hidpi);
         }
     }
-    
+
     /**
      * Closes the splash window.
      */
@@ -194,7 +207,7 @@ public class SplashWindow extends Window {
             instance = null;
         }
     }
-    
+
     /**
      * Invokes the main method of the provided class name.
      * @param args the command line arguments

@@ -514,7 +514,7 @@
                shortVersion="${version}"
                version="${revision}"
                javafx="true"
-               mainClassName="processing.app.Base">
+               mainClassName="processing.app.BaseSplash">
 
       <!-- The appbundler task needs a couple files (the Info.plist and
            anything else outside /jre) from the full JDK, even though 
@@ -549,8 +549,12 @@
                       role="Editor">
       </bundledocument>
 
+      <!-- !@#*&$ the @2x splash screen implementation was removed by Oracle -->
+      <!-- tiffutil -cathidpicheck about.png about\@2x.png -out about.tiff -->
+      <!--<option value="-splash:$APP_ROOT/Contents/Java/lib/about.png" />-->
+
       <!-- Sets dock icon when debugging (not launched via launch svcs) -->
-      <option value="-Xdock:icon=Contents/Resources/processing.icns" />
+      <option value="-Xdock:icon=$APP_ROOT/Contents/Resources/processing.icns" />
       <!-- Don't think these actually make any difference. -->
       <!--
       <option value="-Xdock:name=Processing" />
