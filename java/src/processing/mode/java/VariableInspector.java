@@ -465,10 +465,10 @@ public class VariableInspector extends JDialog {
    */
   class OutlineRenderer implements RenderDataProvider {
     Icon[][] icons;
-    static final int ICON_SIZE = 16; // icon size (square, size=width=height)
+    static final int ICON_SIZE = 16;
 
     OutlineRenderer() {
-      icons = loadIcons("theme/var-icons.gif");
+      icons = loadIcons("theme/variables-1x.png");
     }
 
     /**
