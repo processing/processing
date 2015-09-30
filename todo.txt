@@ -1,5 +1,9 @@
 0247 (3.0.1)
 
+jakub
+X Include Example packs into update count
+X   https://github.com/processing/processing/pull/3932
+
 
 known issues
 _ launch4j doesn't work from folders with non-native charsets
@@ -11,11 +15,8 @@ _   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-a
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
-3.0 final
-_ https://github.com/processing/processing/milestones/3.0%20final
-
-
 3.0.1
+_ https://github.com/processing/processing/milestones/3.0.1
 _ error checkers/suggestions not including the library path
 _   https://github.com/processing/processing/issues/3924
 _ import suggestions box needs design review
