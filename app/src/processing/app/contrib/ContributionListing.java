@@ -570,23 +570,24 @@ public class ContributionListing {
    */
   public int countUpdates(Base base) {
     int count = 0;
+    int revision = Base.getRevision();
     for (ModeContribution mc : base.getModeContribs()) {
-      if (hasUpdates(mc)) {
+      if (mc.isCompatible(revision) && hasUpdates(mc)) {
         count++;
       }
     }
     for (Library lib : base.getActiveEditor().getMode().contribLibraries) {
-      if (hasUpdates(lib)) {
+      if (lib.isCompatible(revision) && hasUpdates(lib)) {
         count++;
       }
     }
     for (ToolContribution tc : base.getToolContribs()) {
-      if (hasUpdates(tc)) {
+      if (tc.isCompatible(revision) && hasUpdates(tc)) {
         count++;
       }
     }
     for (ExamplesContribution ec : base.getExampleContribs()) {
-      if (hasUpdates(ec)) {
+      if (ec.isCompatible(revision) && hasUpdates(ec)) {
         count++;
       }
     }
