@@ -580,6 +580,11 @@ public class ContributionListing {
         count++;
       }
     }
+    for (Library lib : base.getActiveEditor().getMode().coreLibraries) {
+      if (hasUpdates(lib)) {
+        count++;
+      }
+    }
     for (ToolContribution tc : base.getToolContribs()) {
       if (hasUpdates(tc)) {
         count++;
