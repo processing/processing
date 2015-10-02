@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":9,"i2":10};
+var methods = {"i0":10,"i1":10,"i2":9,"i3":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -173,10 +173,17 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionListing.html#downloadAvailableList-processing.app.Base-processing.app.contrib.ContribProgressMonitor-">downloadAvailableList</a></span>(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
+                     <a href="../../../processing/app/contrib/ContribProgressMonitor.html" title="class in processing.app.contrib">ContribProgressMonitor</a>&nbsp;progress)</code>
+<div class="block">Starts a new thread to download the advertised list of contributions.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>static <a href="../../../processing/app/contrib/ContributionListing.html" title="class in processing.app.contrib">ContributionListing</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionListing.html#getInstance--">getInstance</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="../../../processing/app/contrib/Contribution.html" title="class in processing.app.contrib">Contribution</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionListing.html#getLibrariesByImportHeader--">getLibrariesByImportHeader</a></span>()</code>
 <div class="block">Used by JavaEditor to auto-import</div>
@@ -228,6 +235,18 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>getInstance</h4>
 <pre>public static&nbsp;<a href="../../../processing/app/contrib/ContributionListing.html" title="class in processing.app.contrib">ContributionListing</a>&nbsp;getInstance()</pre>
+</li>
+</ul>
+<a name="downloadAvailableList-processing.app.Base-processing.app.contrib.ContribProgressMonitor-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>downloadAvailableList</h4>
+<pre>public&nbsp;void&nbsp;downloadAvailableList(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
+                                  <a href="../../../processing/app/contrib/ContribProgressMonitor.html" title="class in processing.app.contrib">ContribProgressMonitor</a>&nbsp;progress)</pre>
+<div class="block">Starts a new thread to download the advertised list of contributions.
+ Only one instance will run at a time.</div>
 </li>
 </ul>
 <a name="countUpdates-processing.app.Base-">

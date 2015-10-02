@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../processing/app/contrib/ContributionListing.ChangeListener.html" title="interface in processing.app.contrib"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../processing/app/contrib/ContributionManagerDialog.html" title="class in processing.app.contrib"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../processing/app/contrib/ContributionTab.html" title="class in processing.app.contrib"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?processing/app/contrib/ContributionManager.html" target="_top">Frames</a></li>
@@ -146,58 +146,55 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#cleanup-processing.app.Base-">cleanup</a></span>(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</code>
-<div class="block">Called by Base to clean up entries previously marked for deletion
- and remove any "requires restart" flags.</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#downloadAndInstallOnImport-processing.app.Base-java.util.List-">downloadAndInstallOnImport</a></span>(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
-                          <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../processing/app/contrib/AvailableContribution.html" title="class in processing.app.contrib">AvailableContribution</a>&gt;&nbsp;aList)</code>
+                          <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../processing/app/contrib/AvailableContribution.html" title="class in processing.app.contrib">AvailableContribution</a>&gt;&nbsp;list)</code>
 <div class="block">Blocking call to download and install a set of libraries.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#getFileName-java.io.File-">getFileName</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;libFile)</code>
 <div class="block">Returns the name of a file without its path or extension.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>static <a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#getUniqueName-java.io.File-java.lang.String-">getUniqueName</a></span>(<a href="http://docs.oracle.com/javase/7/docs/api/java/io/File.html?is-external=true" title="class or interface in java.io">File</a>&nbsp;parentFolder,
              <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;fileName)</code>
 <div class="block">Returns a file in the parent folder that does not exist yet.</div>
 </td>
 </tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#init-processing.app.Base-">init</a></span>(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)</code>&nbsp;</td>
+</tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openExampleManager-processing.app.ui.Editor-">openExampleManager</a></span>(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openExamples--">openExamples</a></span>()</code>
 <div class="block">Show the Examples installer window.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openLibraryManager-processing.app.ui.Editor-">openLibraryManager</a></span>(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openLibraries--">openLibraries</a></span>()</code>
 <div class="block">Show the Library installer window.</div>
 </td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openModeManager-processing.app.ui.Editor-">openModeManager</a></span>(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openModes--">openModes</a></span>()</code>
 <div class="block">Show the Mode installer window.</div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openToolManager-processing.app.ui.Editor-">openToolManager</a></span>(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openTools--">openTools</a></span>()</code>
 <div class="block">Show the Tool installer window.</div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openUpdates-processing.app.ui.Editor-">openUpdates</a></span>(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../processing/app/contrib/ContributionManager.html#openUpdates--">openUpdates</a></span>()</code>
 <div class="block">Open the updates panel.</div>
 </td>
 </tr>
@@ -247,14 +244,14 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <li class="blockList">
 <h4>downloadAndInstallOnImport</h4>
 <pre>public static&nbsp;void&nbsp;downloadAndInstallOnImport(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base,
-                                              <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../processing/app/contrib/AvailableContribution.html" title="class in processing.app.contrib">AvailableContribution</a>&gt;&nbsp;aList)</pre>
+                                              <a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="../../../processing/app/contrib/AvailableContribution.html" title="class in processing.app.contrib">AvailableContribution</a>&gt;&nbsp;list)</pre>
 <div class="block">Blocking call to download and install a set of libraries. Used when a list
  of libraries have to be installed while forcing the user to not modify
  anything and providing feedback via the console status area, such as when
  the user tries to run a sketch that imports uninstaled libraries.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>aList</code> - The list of AvailableContributions to be downloaded and installed.</dd>
+<dd><code>list</code> - The list of AvailableContributions to be downloaded and installed.</dd>
 </dl>
 </li>
 </ul>
@@ -289,70 +286,67 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
    "helpfullib-0.1.1.plb" returns "helpfullib-0.1.1"</div>
 </li>
 </ul>
-<a name="cleanup-processing.app.Base-">
+<a name="init-processing.app.Base-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>cleanup</h4>
-<pre>public static&nbsp;void&nbsp;cleanup(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)
-                    throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></pre>
-<div class="block">Called by Base to clean up entries previously marked for deletion
- and remove any "requires restart" flags.
- Also updates all entries previously marked for update.</div>
+<h4>init</h4>
+<pre>public static&nbsp;void&nbsp;init(<a href="../../../processing/app/Base.html" title="class in processing.app">Base</a>&nbsp;base)
+                 throws <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Exception.html?is-external=true" title="class or interface in java.lang">Exception</a></code></dd>
 </dl>
 </li>
 </ul>
-<a name="openLibraryManager-processing.app.ui.Editor-">
+<a name="openLibraries--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>openLibraryManager</h4>
-<pre>public static&nbsp;void&nbsp;openLibraryManager(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</pre>
+<h4>openLibraries</h4>
+<pre>public static&nbsp;void&nbsp;openLibraries()</pre>
 <div class="block">Show the Library installer window.</div>
 </li>
 </ul>
-<a name="openToolManager-processing.app.ui.Editor-">
+<a name="openModes--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>openToolManager</h4>
-<pre>public static&nbsp;void&nbsp;openToolManager(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</pre>
-<div class="block">Show the Tool installer window.</div>
-</li>
-</ul>
-<a name="openModeManager-processing.app.ui.Editor-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>openModeManager</h4>
-<pre>public static&nbsp;void&nbsp;openModeManager(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</pre>
+<h4>openModes</h4>
+<pre>public static&nbsp;void&nbsp;openModes()</pre>
 <div class="block">Show the Mode installer window.</div>
 </li>
 </ul>
-<a name="openExampleManager-processing.app.ui.Editor-">
+<a name="openTools--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>openExampleManager</h4>
-<pre>public static&nbsp;void&nbsp;openExampleManager(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</pre>
+<h4>openTools</h4>
+<pre>public static&nbsp;void&nbsp;openTools()</pre>
+<div class="block">Show the Tool installer window.</div>
+</li>
+</ul>
+<a name="openExamples--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>openExamples</h4>
+<pre>public static&nbsp;void&nbsp;openExamples()</pre>
 <div class="block">Show the Examples installer window.</div>
 </li>
 </ul>
-<a name="openUpdates-processing.app.ui.Editor-">
+<a name="openUpdates--">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>openUpdates</h4>
-<pre>public static&nbsp;void&nbsp;openUpdates(<a href="../../../processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a>&nbsp;editor)</pre>
+<pre>public static&nbsp;void&nbsp;openUpdates()</pre>
 <div class="block">Open the updates panel.</div>
 </li>
 </ul>
@@ -384,7 +378,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../processing/app/contrib/ContributionListing.ChangeListener.html" title="interface in processing.app.contrib"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../processing/app/contrib/ContributionManagerDialog.html" title="class in processing.app.contrib"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../processing/app/contrib/ContributionTab.html" title="class in processing.app.contrib"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?processing/app/contrib/ContributionManager.html" target="_top">Frames</a></li>

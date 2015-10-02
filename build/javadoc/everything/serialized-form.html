@@ -126,7 +126,7 @@
 </li>
 <li class="blockList">
 <h4>contribDialog</h4>
-<pre><a href="processing/app/contrib/ContributionManagerDialog.html" title="class in processing.app.contrib">ContributionManagerDialog</a> contribDialog</pre>
+<pre><a href="processing/app/contrib/ManagerFrame.html" title="class in processing.app.contrib">ManagerFrame</a> contribDialog</pre>
 </li>
 <li class="blockList">
 <h4>filter</h4>
@@ -135,10 +135,6 @@
 <li class="blockList">
 <h4>categoryChooser</h4>
 <pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComboBox.html?is-external=true" title="class or interface in javax.swing">JComboBox</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JComboBox.html?is-external=true" title="class or interface in javax.swing">E</a>&gt; categoryChooser</pre>
-</li>
-<li class="blockList">
-<h4>scrollPane</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JScrollPane.html?is-external=true" title="class or interface in javax.swing">JScrollPane</a> scrollPane</pre>
 </li>
 <li class="blockList">
 <h4>contributionListPanel</h4>
@@ -151,10 +147,6 @@
 <li class="blockList">
 <h4>filterField</h4>
 <pre>ContributionTab.FilterField filterField</pre>
-</li>
-<li class="blockList">
-<h4>restartButton</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JButton.html?is-external=true" title="class or interface in javax.swing">JButton</a> restartButton</pre>
 </li>
 <li class="blockList">
 <h4>categoryLabel</h4>
@@ -222,6 +214,10 @@
 <pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html?is-external=true" title="class or interface in java.util">TreeMap</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html?is-external=true" title="class or interface in java.util">K</a>,<a href="http://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html?is-external=true" title="class or interface in java.util">V</a>&gt; panelByContribution</pre>
 </li>
 <li class="blockList">
+<h4>visibleContributions</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">E</a>&gt; visibleContributions</pre>
+</li>
+<li class="blockList">
 <h4>selectedPanel</h4>
 <pre>DetailPanel selectedPanel</pre>
 </li>
@@ -249,6 +245,82 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="processing.app.contrib.ManagerTabs">
+<!--   -->
+</a>
+<h3>Class <a href="processing/app/contrib/ManagerTabs.html" title="class in processing.app.contrib">ManagerTabs</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/Box.html?is-external=true" title="class or interface in javax.swing">Box</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>textColor</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>[] textColor</pre>
+</li>
+<li class="blockList">
+<h4>tabColor</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>[] tabColor</pre>
+</li>
+<li class="blockList">
+<h4>tabList</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">E</a>&gt; tabList</pre>
+</li>
+<li class="blockList">
+<h4>mode</h4>
+<pre><a href="processing/app/Mode.html" title="class in processing.app">Mode</a> mode</pre>
+</li>
+<li class="blockList">
+<h4>font</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Font.html?is-external=true" title="class or interface in java.awt">Font</a> font</pre>
+</li>
+<li class="blockList">
+<h4>fontAscent</h4>
+<pre>int fontAscent</pre>
+</li>
+<li class="blockList">
+<h4>offscreen</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a> offscreen</pre>
+</li>
+<li class="blockList">
+<h4>sizeW</h4>
+<pre>int sizeW</pre>
+</li>
+<li class="blockList">
+<h4>sizeH</h4>
+<pre>int sizeH</pre>
+</li>
+<li class="blockList">
+<h4>imageW</h4>
+<pre>int imageW</pre>
+</li>
+<li class="blockList">
+<h4>imageH</h4>
+<pre>int imageH</pre>
+</li>
+<li class="blockList">
+<h4>gradient</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a> gradient</pre>
+</li>
+<li class="blockList">
+<h4>cardPanel</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JPanel.html?is-external=true" title="class or interface in javax.swing">JPanel</a> cardPanel</pre>
+</li>
+<li class="blockList">
+<h4>cardLayout</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/CardLayout.html?is-external=true" title="class or interface in java.awt">CardLayout</a> cardLayout</pre>
+</li>
+<li class="blockList">
+<h4>controller</h4>
+<pre>ManagerTabs.Controller controller</pre>
+</li>
+<li class="blockListLast">
+<h4>currentPanel</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Component.html?is-external=true" title="class or interface in java.awt">Component</a> currentPanel</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="processing.app.contrib.UpdateContributionTab">
 <!--   -->
 </a>
@@ -258,22 +330,22 @@
 <!--   -->
 </a>
 <h3>Class <a href="processing/app/contrib/UpdateListPanel.html" title="class in processing.app.contrib">UpdateListPanel</a> extends <a href="processing/app/contrib/ListPanel.html" title="class in processing.app.contrib">ListPanel</a> implements Serializable</h3>
-</li>
-<li class="blockList"><a name="processing.app.contrib.UpdateStatusPanel">
-<!--   -->
-</a>
-<h3>Class <a href="processing/app/contrib/UpdateStatusPanel.html" title="class in processing.app.contrib">UpdateStatusPanel</a> extends StatusPanel implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>Serialized Fields</h3>
 <ul class="blockList">
 <li class="blockListLast">
-<h4>parent</h4>
-<pre><a href="processing/app/contrib/UpdateContributionTab.html" title="class in processing.app.contrib">UpdateContributionTab</a> parent</pre>
+<h4>sectionNames</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">Set</a>&lt;<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Set.html?is-external=true" title="class or interface in java.util">E</a>&gt; sectionNames</pre>
 </li>
 </ul>
 </li>
 </ul>
+</li>
+<li class="blockList"><a name="processing.app.contrib.UpdateStatusPanel">
+<!--   -->
+</a>
+<h3>Class <a href="processing/app/contrib/UpdateStatusPanel.html" title="class in processing.app.contrib">UpdateStatusPanel</a> extends StatusPanel implements Serializable</h3>
 </li>
 </ul>
 </li>
@@ -613,8 +685,8 @@
 <h3>Serialized Fields</h3>
 <ul class="blockList">
 <li class="blockList">
-<h4>image</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a> image</pre>
+<h4>icon</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/ImageIcon.html?is-external=true" title="class or interface in javax.swing">ImageIcon</a> icon</pre>
 </li>
 <li class="blockList">
 <h4>width</h4>
@@ -968,6 +1040,14 @@
 <pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>[] tabColor</pre>
 </li>
 <li class="blockList">
+<h4>updateColor</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> updateColor</pre>
+</li>
+<li class="blockList">
+<h4>updateLeft</h4>
+<pre>int updateLeft</pre>
+</li>
+<li class="blockList">
 <h4>editor</h4>
 <pre><a href="processing/app/ui/Editor.html" title="class in processing.app.ui">Editor</a> editor</pre>
 </li>
@@ -982,14 +1062,6 @@
 <li class="blockList">
 <h4>fontAscent</h4>
 <pre>int fontAscent</pre>
-</li>
-<li class="blockList">
-<h4>menu</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JMenu.html?is-external=true" title="class or interface in javax.swing">JMenu</a> menu</pre>
-</li>
-<li class="blockList">
-<h4>popup</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JPopupMenu.html?is-external=true" title="class or interface in javax.swing">JPopupMenu</a> popup</pre>
 </li>
 <li class="blockList">
 <h4>offscreen</h4>
@@ -1016,6 +1088,10 @@
 <pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a> gradient</pre>
 </li>
 <li class="blockList">
+<h4>bgColor</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a> bgColor</pre>
+</li>
+<li class="blockList">
 <h4>cardPanel</h4>
 <pre><a href="http://docs.oracle.com/javase/7/docs/api/javax/swing/JPanel.html?is-external=true" title="class or interface in javax.swing">JPanel</a> cardPanel</pre>
 </li>
@@ -1023,9 +1099,13 @@
 <h4>cardLayout</h4>
 <pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/CardLayout.html?is-external=true" title="class or interface in java.awt">CardLayout</a> cardLayout</pre>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>controller</h4>
 <pre>EditorFooter.Controller controller</pre>
+</li>
+<li class="blockListLast">
+<h4>updateCount</h4>
+<pre>int updateCount</pre>
 </li>
 </ul>
 </li>
@@ -1132,12 +1212,16 @@
 <h3>Serialized Fields</h3>
 <ul class="blockList">
 <li class="blockList">
-<h4>bgcolor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>[] bgcolor</pre>
+<h4>fgColor</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>[] fgColor</pre>
 </li>
 <li class="blockList">
-<h4>fgcolor</h4>
-<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>[] fgcolor</pre>
+<h4>bgColor</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html?is-external=true" title="class or interface in java.awt">Color</a>[] bgColor</pre>
+</li>
+<li class="blockList">
+<h4>bgImage</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a>[] bgImage</pre>
 </li>
 <li class="blockList">
 <h4>editor</h4>
@@ -1378,6 +1462,40 @@
 <li class="blockListLast">
 <h4>mode</h4>
 <pre><a href="processing/app/Mode.html" title="class in processing.app">Mode</a> mode</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="processing.app.ui.SplashWindow">
+<!--   -->
+</a>
+<h3>Class <a href="processing/app/ui/SplashWindow.html" title="class in processing.app.ui">SplashWindow</a> extends <a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Window.html?is-external=true" title="class or interface in java.awt">Window</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>image</h4>
+<pre><a href="http://docs.oracle.com/javase/7/docs/api/java/awt/Image.html?is-external=true" title="class or interface in java.awt">Image</a> image</pre>
+<div class="block">The splash image which is displayed on the splash window.</div>
+</li>
+<li class="blockListLast">
+<h4>paintCalled</h4>
+<pre>boolean paintCalled</pre>
+<div class="block">This attribute indicates whether the method
+ paint(Graphics) has been called at least once since the
+ construction of this window.<br>
+ This attribute is used to notify method splash(Image)
+ that the window has been drawn at least once
+ by the AWT event dispatcher thread.<br>
+ This attribute acts like a latch. Once set to true,
+ it will never be changed back to false again.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="processing/app/ui/SplashWindow.html#paint-java.awt.Graphics-"><code>SplashWindow.paint(java.awt.Graphics)</code></a>, 
+<a href="processing/app/ui/SplashWindow.html#splash-java.awt.Image-boolean-"><code>SplashWindow.splash(java.awt.Image, boolean)</code></a></dd>
+</dl>
 </li>
 </ul>
 </li>
