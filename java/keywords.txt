@@ -319,9 +319,8 @@ length	KEYWORD2	String
 
 
 # Temporary additions 3 September 2012 as the reference is getting updated
-
-end	FUNCTION1
-addChild	FUNCTION1
+#end	FUNCTION1
+#addChild	FUNCTION1
 
 # Operators are without KEYWORDS
 
@@ -370,12 +369,19 @@ PVector	FUNCTION1	PVector
 ArrayList	FUNCTION1	ArrayList
 HashMap	FUNCTION1	HashMap
 
+# pixelHeight is not generating correctly: https://github.com/processing/processing-docs/issues/260
 
-# THE TEXT ABOVE IS HAND-WRITTEN AND FOUND IN THE FILE "keywords_base.txt"
+pixelHeight	KEYWORD4	pixelHeight
+
+
+# THE TEXT ABOVE IS HAND-WRITTEN AND FOUND IN THE FILE "keywords_base.txt" in processing/processing-docs/generate
+#
 # THE TEXT BELOW IS AUTO-GENERATED
 #
-# SO DON'T 
-# TOUCH IT
+# SO 
+# DON'T 
+# TOUCH 
+# IT
 
 
 abs	FUNCTION1	abs_
