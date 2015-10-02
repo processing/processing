@@ -5928,7 +5928,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void createPTexture() {
     updatePixelSize();
     if (texture != null) {
-      texture = new Texture(this, pixelWidth, pixelHeight, texture.getParameters());
+      ptexture = new Texture(this, pixelWidth, pixelHeight, texture.getParameters());
       ptexture.invertedY(true);
       ptexture.colorBuffer(true);
     }
