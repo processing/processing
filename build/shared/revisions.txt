@@ -1,3 +1,112 @@
+PROCESSING 3.0 (REV 0246) - 30 September 2015, 3pm ET
+
+This one is huge. 
+
+This document covers (in detail) the individual changes between releases. 
+For an overview abut what's new, different, and exceptional in 3.0, read:
+https://github.com/processing/processing/wiki/Changes-in-3.0
+
+Most of the changes from the previous beta involve the final beautification
+of the GUI, and the beatification of the error checker and auto-completion
+features. 
+
+
+[ gui updates and fixes ] 
+
++ "Saving" messages never clear on "Save As"
+  https://github.com/processing/processing/issues/3861
+
++ Show number of updates available in the footer
+  https://github.com/processing/processing/issues/3518
+  https://github.com/processing/processing/pull/3896
+  https://github.com/processing/processing/pull/3901
+
++ Click the "Updates" item in the footer to open the Contribution Manager
+
++ Make breakpoints more prominent
+  https://github.com/processing/processing/issues/3307
+
++ Implement the side gradient on the Editor
+
++ Replace startup/about screen (1x and 2x versions)
+  https://github.com/processing/processing/issues/3665
+
++ Implement splash screen on OS X. Shout out to this article:
+  http://www.randelshofer.ch/oop/javasplash/javasplash.html
+
++ Make the left edge of the Console match the Error List
+  https://github.com/processing/processing/issues/3904
+
++ Windows suggests "Documents" as a new location for the 3.0 sketchbook
+  https://github.com/processing/processing/issues/3920
+
+
+[ errors and warnings: the checking and completion story ]
+
++ error checker/suggestions fixes
+  https://github.com/processing/processing/pull/3871
+  https://github.com/processing/processing/pull/3879
+
++ Hide useless error in error checker
+  https://github.com/processing/processing/pull/3887
+
++ Error checker updates for toggle and listeners
+  https://github.com/processing/processing/pull/3915
+
++ If fewer lines in sketch than can be shown in window, show ticks adjacent
+  https://github.com/processing/processing/pull/3903
+
++ Distinguish errors and warnings in the error list
+  https://github.com/processing/processing/issues/3406
+
++ Clicking an error or warning should give the focus back to the editor
+  https://github.com/processing/processing/pull/3905
+
++ Fix placement and visual design when showing error on hover
+  https://github.com/processing/processing/issues/3173
+
++ Fix the design of the completions window, new icons, etc
+  https://github.com/processing/processing/issues/3906
+
++ Update status error/warning when changing the line
+  https://github.com/processing/processing/pull/3907
+
+
+[ contribution manager ] 
+
++ Contributions filter ignored after clicking Install
+  https://github.com/processing/processing/issues/3826
+  https://github.com/processing/processing/pull/3872
+  https://github.com/processing/processing/pull/3883
+
++ Exception in thread "Contribution List Downloader"
+  https://github.com/processing/processing/issues/3882
+  https://github.com/processing/processing/pull/3884
+
++ Grab bag of Contribution Manager fixes
+  https://github.com/processing/processing/issues/3895
+  https://github.com/processing/processing/pull/3897
+
++ ArrayIndexOutOfBoundsException freak out when clicking the header line
+
+
+[ plumbing ] 
+
++ Fix nasty file counting problem in the change detector
+  https://github.com/processing/processing/pull/3917
+  https://github.com/processing/processing/issues/3898
+  https://github.com/processing/processing/issues/3387
+
++ Clean up delete dir function
+  https://github.com/processing/processing/pull/3910
+
++ Don't follow symlinks when deleting directories
+  https://github.com/processing/processing/pull/3916
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.0b7 (REV 0245) - 22 September 2015
 
 It's 8:57pm and Jakub and Ben are still holed up at Fathom's studio in Boston.

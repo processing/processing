@@ -1,89 +1,8 @@
-0246 the holy land
-X "Saving" messages never clear on "Save As"
-X   https://github.com/processing/processing/issues/3861
-X error checker/suggestions fixes
-X   https://github.com/processing/processing/pull/3871
-X   https://github.com/processing/processing/pull/3879
-X contributions filter is ignored after clicking Install
-X   https://github.com/processing/processing/issues/3826
-X   https://github.com/processing/processing/pull/3872
-X   https://github.com/processing/processing/pull/3883
-X Exception in thread "Contribution List Downloader"
-X   https://github.com/processing/processing/issues/3882
-X   https://github.com/processing/processing/pull/3884
-X Hide useless error in error checker
-X   https://github.com/processing/processing/pull/3887
-X grab bag of CM work from Jakub
-X   https://github.com/processing/processing/issues/3895
-X   https://github.com/processing/processing/pull/3897
-X Clean up delete dir function
-X   https://github.com/processing/processing/pull/3910
-X show number of updates available in the footer
-X   https://github.com/processing/processing/issues/3518
-X   https://github.com/processing/processing/pull/3896
-X   https://github.com/processing/processing/pull/3901
-o   total number of updates available is not correct? (may be fixed)
-o ArrayIndexOutOfBoundsException freak out when clicking the header line
-o   think this was on name, with libraries, but not sure
-X   should be fixed with the updates from Jakub
+0247 (3.0.1)
 
-gui
-X distinguish errors and warnings
-X   https://github.com/processing/processing/issues/3406
-X make breakpoints more prominent
-X   https://github.com/processing/processing/issues/3307 (comp is set)
-X clean up statusMessage() inside JavaEditor
-o   do we want to bring back the delays?
-X implement side gradient on the editor
-X if fewer lines in sketch than can be shown in window, show ticks adjacent
-X   error/warning location is awkward when no scroll bar is in use
-X   when only one screen-full, show ticks at exact location
-X   simpler/less confusing to not show at all? 
-X   MarkerColumn.recalculateMarkerPositions()
-X   https://github.com/processing/processing/pull/3903
-X Update status error/warning when changing the line
-X   https://github.com/processing/processing/pull/3907
-X Update status error/warning when changing the line
-X   when moving away from an error/warning line, de-select it below
-X   selecting a warning should also show the warning in the status area
-X   https://github.com/processing/processing/pull/3907
-X clicking an error or warning should give the focus back to the editor
-X   https://github.com/processing/processing/pull/3905
-X replace startup/about screen (1x and 2x versions)
-X   change 'alpha' to correct name
-X   also change the revision in the "about processing" dialog
-X   https://github.com/processing/processing/issues/3665
-X implement splash screen on OS X
-X   http://www.randelshofer.ch/oop/javasplash/javasplash.html
-X   also implement special retina version
-X Fix placement and visual design when showing error on hover
-X   https://github.com/processing/processing/issues/3173
-X   implement custom tooltip for error/warning hover
-X   applies to both MarkerColumn and JavaTextAreaPainter
-X make gutter of console match error list
-X   https://github.com/processing/processing/issues/3904
-o bring back the # of updates on the update tab
-o   use this instead of the 'icon' stuff?
-o   or in addition, since only the 'updates' tab has it
-X   https://github.com/processing/processing/issues/3855
-X for updates available, have it be clickable to open the manager
-X fix the design of the completions window
-X   remove extra border around the outside
-X   change font
-X   add 2x version of the icons
-X   change selection highlight color
-o   put some margin around it
-X   https://github.com/processing/processing/issues/3906
-
-earlier/cleaning
-X list with contrib types separated is really wonky
-o   do we keep the list?
-o   does it even work for different contrib types?
-X   cleaned this up in the last release
-X remove the dated releases from download.processing.org
-X new Android release (EditorButton constructor changed)
-o JavaEditor has several null colors, remove color support
-o   once the design is complete and we for sure do not need color
+jakub
+X Include Example packs into update count
+X   https://github.com/processing/processing/pull/3932
 
 
 known issues
@@ -96,19 +15,30 @@ _   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-a
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
-3.0 final
-_ https://github.com/processing/processing/milestones/3.0%20final
-_ completion panel
-X   what should the background color be? 
-_   test fg/bg color on other operating systems
-_   fix icon sizes/design
+3.0.1
+_ https://github.com/processing/processing/milestones/3.0.1
+_ error checkers/suggestions not including the library path
+_   https://github.com/processing/processing/issues/3924
 _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407
+_ update CM entries when sketchbook location changes
+_   https://github.com/processing/processing/issues/3927
+
+
+run/debug
+_ debugger deadlocks when choosing "Step Into" on println()
+_   https://github.com/processing/processing/issues/3923
+_ Tweak Mode sometimes freezes while running, require a force quit
+_   https://github.com/processing/processing/issues/3928
+
+
+gui
+_ fix background color for selected lines in VariableInspector 
+_   https://github.com/processing/processing/issues/3925
+_ implement 2x versions of the icons for the debugger window/variable inspector
+_   https://github.com/processing/processing/issues/3921
 _ different design of squiggly line
 _   easy to do inside JavaTextAreaPainter.paintSquiggle()
-
-
-gui / post 3.0
 _ build custom scroll bar since the OS versions are so ugly
 _ see notes in the 'dialogs' section below, implement our own option panes?
 _ tiny trail of dots when moving the selection bar up/down on retina
@@ -149,9 +79,11 @@ _   https://github.com/processing/processing/issues/2886
 
 
 pde/build
+_ Editor objects are staying in memory
+_   https://github.com/processing/processing/issues/3930
+_ unsupported java version when trying ant run with 7u65
+_   no helpful message about how to automatically download 8u51
 _ ignore-tools in build.xml not being called for some reason
-_ can't install processing-java into /usr/bin with El Capitan
-_   https://github.com/processing/processing/issues/3497
 _ when variables used in size(), getting exceptions instead of any warning
 _   https://github.com/processing/processing/issues/3311
 _ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
@@ -169,11 +101,11 @@ _   update license info to state gplv2 not v3
 _   run through that online license checker
 _ save() and saveAs() need to be refactored
 _   https://github.com/processing/processing/issues/3843
-
-
-breakage
-_ remove deprecated methods
-_ do the right thing on passing around List vs ArrayList and others
+_ clean out the repo
+_   https://github.com/processing/processing/issues/1898
+_ search the source for 'applet' references (i.e. SVG docs)
+_ update list of optional JRE files
+_   https://github.com/processing/processing/issues/3288
 _ PreferencesFrame is a misnomer (not a frame itself)
 _   change to PreferencesDialog, and make it a dialog?
 _ move Library to LibraryContribution and into contrib?
@@ -183,22 +115,11 @@ from the todo list
 _ reas: comments go nasty when auto-formatted
 _ reas: code coloring sometimes disappears
 _ me: undo not in the correct location
-_ implement the new gui
 _ drop XP support (but improve Windows 8 support? ouch)
 _ improve error message when creating a tab with the same name
 _   right now it's generic, based on "a file exists"
 _ don't allow users to create 'blah.java' when 'blah.pde' already in sketch
 
-
-3.0 beta/final
-_ wonder if "Save As" is causing the problems with auto-reload
-_ look at the sound library https://github.com/wirsing/ProcessingSound
-_   sound is not yet supported on Windows
-_ clean out the repo
-_   https://github.com/processing/processing/issues/1898
-_ search the source for 'applet' references (i.e. SVG docs)
-_ update list of option JRE files
-_   https://github.com/processing/processing/issues/3288
 
 
 sketchbook

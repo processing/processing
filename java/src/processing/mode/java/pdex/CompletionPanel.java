@@ -265,10 +265,6 @@ public class CompletionPanel {
   }
 
 
-  /**
-   * Dynamic width of completion panel
-   * @return - width
-   */
   private int calcWidth() {
     int maxWidth = 300;
     float min = 0;

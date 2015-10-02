@@ -73,7 +73,7 @@ public class EditorFooter extends Box {
   Color[] tabColor = new Color[2];
 
   Color updateColor;
-  int updateLeft, updateRight;
+  int updateLeft;
 
   Editor editor;
 
@@ -87,6 +87,7 @@ public class EditorFooter extends Box {
   int imageW, imageH;
 
   Image gradient;
+  Color bgColor;
 
   JPanel cardPanel;
   CardLayout cardLayout;
@@ -172,6 +173,11 @@ public class EditorFooter extends Box {
     updateColor = mode.getColor("footer.updates.color");
 
     gradient = mode.makeGradient("footer", 400, HIGH);
+    // Set the default background color in case the window size reported
+    // incorrectly by the OS, or we miss an update event of some kind
+    // https://github.com/processing/processing/issues/3919
+    bgColor = mode.getColor("footer.gradient.bottom");
+    setBackground(bgColor);
   }
 
 
@@ -191,7 +197,7 @@ public class EditorFooter extends Box {
               repaint();
             }
           }
-          if (x > updateLeft) {
+          if (updateCount > 0 && x > updateLeft) {
             ContributionManager.openUpdates();
           }
         }
@@ -293,6 +299,9 @@ public class EditorFooter extends Box {
         final String updateLabel = "Updates";
         String updatesStr = "" + updateCount;
         double countWidth = font.getStringBounds(updatesStr, frc).getWidth();
+        if (fontAscent > countWidth) {
+          countWidth = fontAscent;
+        }
         float diameter = (float) (countWidth * 1.65f);
         float ex = getWidth() - Editor.RIGHT_GUTTER - diameter;
         float ey = (getHeight() - diameter) / 2;

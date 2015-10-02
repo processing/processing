@@ -1,3 +1,38 @@
+0246 the papal visit (3.0)
+X implement high-performance/async image saving
+X   Use PBOs for async texture copy
+X   https://github.com/processing/processing/issues/3569
+X   https://github.com/processing/processing/pull/3863
+X   https://github.com/processing/processing/pull/3869
+X Textures disappearing in beta 7 (might be WeakReference regression)
+X   https://github.com/processing/processing/issues/3858
+X   https://github.com/processing/processing/pull/3874
+X   https://github.com/processing/processing/pull/3875
+X Convert all documented hacky keys in OpenGL
+X   https://github.com/processing/processing/pull/3888
+X Frame size displays incorrectly if surface.setResizable(true)
+X   https://github.com/processing/processing/issues/3868
+X   https://github.com/processing/processing/pull/3880
+X displayWidth, displayHeight, full screen, display number
+X   https://github.com/processing/processing/pull/3893
+X   https://github.com/processing/processing/issues/3865
+X OpenGL with fullScreen() always opens on default display
+X   https://github.com/processing/processing/issues/3889
+X   https://github.com/processing/processing/issues/3797
+X   https://github.com/processing/processing/pull/3892
+
+cleaning
+o move AWT image loading into PImageAWT
+o   look into how GL and FX will handle from there
+o run only the necessary pieces on the EDT
+o   in part because FX doesn't even use the EDT
+o   re-check the Linux frame visibility stuff
+X   cleaned most of this as far as we can go
+o Ubuntu Unity prevents full screen from working properly
+X   https://github.com/processing/processing/issues/3158
+X   can't fix; upstream problem, added to the wiki
+
+
 0245 core (3.0b7)
 X surface.setLocation(x,y) not working with the default renderer
 X   https://github.com/processing/processing/issues/3821

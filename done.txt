@@ -1,3 +1,114 @@
+0246 the holy land (3.0)
+X "Saving" messages never clear on "Save As"
+X   https://github.com/processing/processing/issues/3861
+X error checker/suggestions fixes
+X   https://github.com/processing/processing/pull/3871
+X   https://github.com/processing/processing/pull/3879
+X contributions filter is ignored after clicking Install
+X   https://github.com/processing/processing/issues/3826
+X   https://github.com/processing/processing/pull/3872
+X   https://github.com/processing/processing/pull/3883
+X Exception in thread "Contribution List Downloader"
+X   https://github.com/processing/processing/issues/3882
+X   https://github.com/processing/processing/pull/3884
+X Hide useless error in error checker
+X   https://github.com/processing/processing/pull/3887
+X grab bag of CM work from Jakub
+X   https://github.com/processing/processing/issues/3895
+X   https://github.com/processing/processing/pull/3897
+X Clean up delete dir function
+X   https://github.com/processing/processing/pull/3910
+X don't follow symlinks when deleting directories
+X   https://github.com/processing/processing/pull/3916
+X show number of updates available in the footer
+X   https://github.com/processing/processing/issues/3518
+X   https://github.com/processing/processing/pull/3896
+X   https://github.com/processing/processing/pull/3901
+o   total number of updates available is not correct? (may be fixed)
+o ArrayIndexOutOfBoundsException freak out when clicking the header line
+o   think this was on name, with libraries, but not sure
+X   should be fixed with the updates from Jakub
+X error checker updates for toggle and listeners
+X   https://github.com/processing/processing/pull/3915
+X file file counting in the change detector
+X   https://github.com/processing/processing/pull/3917
+X   https://github.com/processing/processing/issues/3898
+X   https://github.com/processing/processing/issues/3387
+X Windows suggests "Documents" as a new location for the 3.0 sketchbook
+X   maybe prevent users from accepting that?
+X   https://github.com/processing/processing/issues/3920
+
+gui
+X distinguish errors and warnings
+X   https://github.com/processing/processing/issues/3406
+X make breakpoints more prominent
+X   https://github.com/processing/processing/issues/3307 (comp is set)
+X clean up statusMessage() inside JavaEditor
+o   do we want to bring back the delays?
+X implement side gradient on the editor
+X if fewer lines in sketch than can be shown in window, show ticks adjacent
+X   error/warning location is awkward when no scroll bar is in use
+X   when only one screen-full, show ticks at exact location
+X   simpler/less confusing to not show at all? 
+X   MarkerColumn.recalculateMarkerPositions()
+X   https://github.com/processing/processing/pull/3903
+X Update status error/warning when changing the line
+X   https://github.com/processing/processing/pull/3907
+X Update status error/warning when changing the line
+X   when moving away from an error/warning line, de-select it below
+X   selecting a warning should also show the warning in the status area
+X   https://github.com/processing/processing/pull/3907
+X clicking an error or warning should give the focus back to the editor
+X   https://github.com/processing/processing/pull/3905
+X replace startup/about screen (1x and 2x versions)
+X   change 'alpha' to correct name
+X   also change the revision in the "about processing" dialog
+X   https://github.com/processing/processing/issues/3665
+X implement splash screen on OS X
+X   http://www.randelshofer.ch/oop/javasplash/javasplash.html
+X   also implement special retina version
+X Fix placement and visual design when showing error on hover
+X   https://github.com/processing/processing/issues/3173
+X   implement custom tooltip for error/warning hover
+X   applies to both MarkerColumn and JavaTextAreaPainter
+X make gutter of console match error list
+X   https://github.com/processing/processing/issues/3904
+o bring back the # of updates on the update tab
+o   use this instead of the 'icon' stuff?
+o   or in addition, since only the 'updates' tab has it
+X   https://github.com/processing/processing/issues/3855
+X for updates available, have it be clickable to open the manager
+X fix the design of the completions window
+X   remove extra border around the outside
+X   change font
+X   add 2x version of the icons
+X   change selection highlight color
+o   put some margin around it
+X   https://github.com/processing/processing/issues/3906
+X completion panel
+X   what should the background color be? 
+X   test fg/bg color on other operating systems
+J   fix icon sizes/design
+X set a better minimum size for the number of updates available
+
+earlier/cleaning
+X list with contrib types separated is really wonky
+o   do we keep the list?
+o   does it even work for different contrib types?
+X   cleaned this up in the last release
+X remove the dated releases from download.processing.org
+X new Android release (EditorButton constructor changed)
+o JavaEditor has several null colors, remove color support
+o   once the design is complete and we for sure do not need color
+X remove deprecated methods
+X do the right thing on passing around List vs ArrayList and others
+o wonder if "Save As" is causing the problems with auto-reload
+X   found and fixed
+X look at the sound library https://github.com/wirsing/ProcessingSound
+o   sound is not yet supported on Windows
+X implement the new gui
+
+
 0245 (3.0b7)
 X add jar files from 'code' folder to the library path
 X   Code editor wrongly detects errors for libraries in code folder

@@ -26,13 +26,18 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Window;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.ImageIcon;
 
 import processing.app.Base;
+import processing.app.Platform;
 
 
 public class About extends Window {
@@ -65,23 +70,42 @@ public class About extends Window {
       }
     });
 
+    addKeyListener(new KeyAdapter() {
+      public void keyTyped(KeyEvent e) {
+        System.out.println(e);
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+          dispose();
+        }
+      }
+    });
+
 //    Dimension screen = Toolkit.getScreenSize();
 //    setBounds((screen.width-width)/2, (screen.height-height)/2, width, height);
-    setLocationRelativeTo(null);
+    setSize(width, height);
+//    setLocationRelativeTo(null);
+    setLocationRelativeTo(frame);
     setVisible(true);
+    requestFocus();
   }
 
 
   public void paint(Graphics g) {
+//    Graphics2D g2 = Toolkit.prepareGraphics(g);
+//    g2.scale(0.5, 0.5);
+
+    Graphics2D g2 = (Graphics2D) g;
+    // OS X looks better doing its own thing, Windows and Linux need AA
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        Platform.isMacOS() ?
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT :
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
     g.drawImage(icon.getImage(), 0, 0, width, height, null);
+//    g.setColor(Color.ORANGE);
+//    g.fillRect(0, 0, width, height);
 
-//    Graphics2D g2 = (Graphics2D) g;
-//    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-//                        RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-
-    g.setFont(Toolkit.getSansFont(Font.PLAIN, 10));
-    //g.setFont(new Font("SansSerif", Font.PLAIN, 10)); //$NON-NLS-1$
-    g.setColor(Color.white);
+    g.setFont(Toolkit.getSansFont(12, Font.PLAIN));
+    g.setColor(Color.WHITE);
     g.drawString(Base.getVersionName(), 26, 29);
   }
 }

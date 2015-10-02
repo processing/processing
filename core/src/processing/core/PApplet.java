@@ -6408,7 +6408,7 @@ public class PApplet implements PConstants {
           fileChooser.setDialogTitle(prompt);
           fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
           if (defaultSelection != null) {
-            fileChooser.setSelectedFile(defaultSelection);
+            fileChooser.setCurrentDirectory(defaultSelection);
           }
 
           int result = fileChooser.showOpenDialog(parentFrame);

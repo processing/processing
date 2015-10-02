@@ -23,6 +23,7 @@
 package processing.app;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.zip.*;
@@ -301,7 +302,7 @@ public class Util {
 
   /**
    * Remove all files in a directory and the directory itself.
-   * Prints error messages with failed filenames.
+   * Prints error messages with failed filenames. Does not follow symlinks.
    */
   static public boolean removeDir(File dir) {
     return removeDir(dir, true);
@@ -310,22 +311,25 @@ public class Util {
   /**
    * Remove all files in a directory and the directory itself.
    * Optinally prints error messages with failed filenames.
+   * Does not follow symlinks.
    */
   static public boolean removeDir(File dir, boolean printErrorMessages) {
     if (!dir.exists()) return true;
 
     boolean result = true;
-    File[] files = dir.listFiles();
-    if (files != null) {
-      for (File child : files) {
-        if (child.isFile()) {
-          boolean deleted = child.delete();
-          if (!deleted && printErrorMessages) {
-            System.err.println("Could not delete " + child.getAbsolutePath());
+    if (!Files.isSymbolicLink(dir.toPath())) {
+      File[] files = dir.listFiles();
+      if (files != null) {
+        for (File child : files) {
+          if (child.isFile()) {
+            boolean deleted = child.delete();
+            if (!deleted && printErrorMessages) {
+              System.err.println("Could not delete " + child.getAbsolutePath());
+            }
+            result &= deleted;
+          } else if (child.isDirectory()) {
+            result &= removeDir(child, printErrorMessages);
           }
-          result &= deleted;
-        } else if (child.isDirectory()) {
-          result &= removeDir(child, printErrorMessages);
         }
       }
     }
