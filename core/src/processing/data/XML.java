@@ -443,7 +443,7 @@ public class XML implements Serializable {
    * Get a child by its name or path.
    *
    * @param name element name or path/to/element
-   * @return the first matching element
+   * @return the first matching element or null if no match
    */
   public XML getChild(String name) {
     if (name.length() > 0 && name.charAt(0) == '/') {
