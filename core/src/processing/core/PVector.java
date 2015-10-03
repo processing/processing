@@ -472,8 +472,6 @@ public class PVector implements Serializable {
 
 
   /**
-   * @param x x component of the vector
-   * @param y y component of the vector
    * @param z z component of the vector
    */
   public PVector add(float x, float y, float z) {
@@ -544,8 +542,6 @@ public class PVector implements Serializable {
 
 
   /**
-   * @param x the x component of the vector
-   * @param y the y component of the vector
    * @param z the z component of the vector
    */
   public PVector sub(float x, float y, float z) {
@@ -568,8 +564,6 @@ public class PVector implements Serializable {
 
   /**
    * Subtract one vector from another and store in another vector
-   * @param v1 the x, y, and z components of a PVector object
-   * @param v2 the x, y, and z components of a PVector object
    * @param target PVector in which to store the result
    */
   static public PVector sub(PVector v1, PVector v2, PVector target) {
