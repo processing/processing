@@ -3280,6 +3280,8 @@ public class PApplet implements PConstants {
 
 
   /**
+   * ( begin auto-generated from delay.xml )
+   *
    * The delay() function causes the program to halt for a specified time.
    * Delay times are specified in thousandths of a second. For example,
    * running delay(3000) will stop the program for three seconds and
@@ -3293,6 +3295,12 @@ public class PApplet implements PConstants {
    * a script that needs to pause a few seconds before attempting a download,
    * or a sketch that needs to wait a few milliseconds before reading from
    * the serial port).
+   *
+   * ( end auto-generated )
+   * @webref environment
+   * @param napTime milliseconds to pause before running draw() again
+   * @see PApplet#frameRate
+   * @see PApplet#draw()
    */
   public void delay(int napTime) {
     //if (frameCount != 0) {
@@ -11135,12 +11143,20 @@ public class PApplet implements PConstants {
   }
 
 
-  /*
-   * @webref rendering:shaders
-   * @param a x-coordinate of the rectangle by default
-   * @param b y-coordinate of the rectangle by default
-   * @param c width of the rectangle by default
-   * @param d height of the rectangle by default
+  /**
+   * ( begin auto-generated from clip.xml )
+   *
+   * Limits the rendering to the boundaries of a rectangle defined 
+   * by the parameters. The boundaries are drawn based on the state 
+   * of the <b>imageMode()</b> fuction, either CORNER, CORNERS, or CENTER. 
+   *
+   * ( end auto-generated )
+   *
+   * @webref rendering
+   * @param a x-coordinate of the rectangle, by default
+   * @param b y-coordinate of the rectangle, by default
+   * @param c width of the rectangle, by default
+   * @param d height of the rectangle, by default
    */
   public void clip(float a, float b, float c, float d) {
     if (recorder != null) recorder.clip(a, b, c, d);
@@ -11148,8 +11164,14 @@ public class PApplet implements PConstants {
   }
 
 
-  /*
-   * @webref rendering:shaders
+  /**
+   * ( begin auto-generated from noClip.xml )
+   *
+   * Disables the clipping previously started by the <b>clip()</b> function.
+   *
+   * ( end auto-generated )
+   *
+   * @webref rendering
    */
   public void noClip() {
     if (recorder != null) recorder.noClip();
