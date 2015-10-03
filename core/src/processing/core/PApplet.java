@@ -10681,6 +10681,16 @@ public class PApplet implements PConstants {
   }
 
 
+  /**
+   * ( begin auto-generated from hint.xml )
+   *
+   * Description to come...
+   *
+   * ( end auto-generated )
+   *
+   * @webref rendering
+   * @param which the constant to enable or disable the hint
+   */
   public void hint(int which) {
     if (recorder != null) recorder.hint(which);
     g.hint(which);
