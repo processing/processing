@@ -100,11 +100,8 @@ public class PSurfaceJOGL implements PSurface {
   protected Object waitObject = new Object();
 
   protected NewtCanvasAWT canvas;
-//  protected boolean placedWindow = false;
-//  protected boolean requestedStart = false;
 
   protected float[] currentPixelScale = {0, 0};
-
 
   public PSurfaceJOGL(PGraphics graphics) {
     this.graphics = graphics;
@@ -385,7 +382,6 @@ public class PSurfaceJOGL implements PSurface {
     if (fullScreen) {
       PApplet.hideMenuBar();
       window.setTopLevelPosition(sketchX, sketchY);
-//      placedWindow = true;
       if (spanDisplays) {
         window.setFullscreen(monitors);
       } else {
@@ -559,24 +555,8 @@ public class PSurfaceJOGL implements PSurface {
       // frame to the main display, which undermines the --display setting.
       int sketchX = displayDevice.getViewportInWindowUnits().getX();
       int sketchY = displayDevice.getViewportInWindowUnits().getY();
-//      System.err.println("just center on the screen at " + sketchX + screenRect.x + (screenRect.width - sketchWidth) / 2 + ", " +
-//                                                           sketchY + screenRect.y + (screenRect.height - sketchHeight) / 2);
-  //
-//      System.err.println("  Display starts at " +  sketchX + ", " + sketchY);
-//      System.err.println("  Screen rect pos: " +  screenRect.x + ", " + screenRect.y);
-//      System.err.println("  Screen rect w/h: " +  screenRect.width + ", " + screenRect.height);
-//      System.err.println("  Sketch w/h: " +  sketchWidth + ", " + sketchHeight);
-
-//      int w = sketchWidth;
-//      int h = sketchHeight;
-//      if (graphics.is2X()) {
-//        w /= 2;
-//        h /= 2;
-//      }
-
       window.setTopLevelPosition(sketchX + screenRect.x + (screenRect.width - sketchWidth) / 2,
                                  sketchY + screenRect.y + (screenRect.height - sketchHeight) / 2);
-
     }
 
     Point frameLoc = new Point(x, y);
@@ -585,35 +565,17 @@ public class PSurfaceJOGL implements PSurface {
       // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
       window.setTopLevelPosition(frameLoc.x, 30);
     }
-
-//    placedWindow = true;
-//    if (requestedStart) startThread();
-//    canvas.setBounds((contentW - sketchWidth)/2,
-//                     (contentH - sketchHeight)/2,
-//                     sketchWidth, sketchHeight);
   }
 
 
   public void placePresent(int stopColor) {
-//    if (presentMode) {
-//      System.err.println("Present mode");
-//    System.err.println("WILL USE FBO");
     pgl.initPresentMode(0.5f * (screenRect.width - sketchWidth),
                         0.5f * (screenRect.height - sketchHeight));
-//    presentMode = pgl.presentMode = true;
-//    offsetX = pgl.offsetX = 0.5f * (screenRect.width - sketchWidth);
-//    offsetY = pgl.offsetY = 0.5f * (screenRect.height - sketchHeight);
-//    pgl.requestFBOLayer();
-
     window.setSize(screenRect.width, screenRect.height);
     PApplet.hideMenuBar();
     window.setTopLevelPosition(sketchX + screenRect.x,
                                sketchY + screenRect.y);
-//    window.setTopLevelPosition(0, 0);
     window.setFullscreen(true);
-//    placedWindow = true;
-//    if (requestedStart) startThread();
-//    }
   }
 
 
@@ -1142,6 +1104,10 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void setCursor(int kind) {
+    if (!cursorNames.containsKey(kind)) {
+      PGraphics.showWarning("Unknown cursor type: " + kind);
+      return;
+    }
     CursorInfo cursor = cursors.get(kind);
     if (cursor == null) {
       String name = cursorNames.get(kind);
@@ -1163,10 +1129,11 @@ public class PSurfaceJOGL implements PSurface {
         cursor = new CursorInfo(img, x, y);
         cursors.put(kind, cursor);
       }
+    }
+    if (cursor != null) {
       cursor.set();
-
     } else {
-      PGraphics.showWarning("Unknown cursor type: " + kind);
+      PGraphics.showWarning("Cannot load cursor type: " + kind);
     }
   }
 
