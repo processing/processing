@@ -1,8 +1,16 @@
 0247 (3.0.1)
 
+contribs
+X Update Japanese translation
+X   https://github.com/processing/processing/pull/3956
+
 jakub
 X Include Example packs into update count
 X   https://github.com/processing/processing/pull/3932
+X Editor objects are staying in memory
+X   https://github.com/processing/processing/issues/3930
+X   https://github.com/processing/processing/pull/3934
+X   https://github.com/processing/processing/issues/3929
 
 
 known issues
@@ -23,6 +31,9 @@ _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407
 _ update CM entries when sketchbook location changes
 _   https://github.com/processing/processing/issues/3927
+_ Tooltip over variable decl has wrong style and content
+_   make all tooltips run through our style
+_   https://github.com/processing/processing/issues/3940
 
 
 run/debug
@@ -79,8 +90,6 @@ _   https://github.com/processing/processing/issues/2886
 
 
 pde/build
-_ Editor objects are staying in memory
-_   https://github.com/processing/processing/issues/3930
 _ unsupported java version when trying ant run with 7u65
 _   no helpful message about how to automatically download 8u51
 _ ignore-tools in build.xml not being called for some reason

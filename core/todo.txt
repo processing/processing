@@ -1,4 +1,10 @@
 0247 (3.0.1)
+X curveVertex() does not work with FX2D renderer
+X   https://github.com/processing/processing/issues/3960
+
+andres
+X cursor() fails to work as expected with P2D/P3D 
+X   https://github.com/processing/processing/issues/3955
 
 
 known
@@ -8,6 +14,9 @@ _ P2D and P3D windows behave strangely when larger than the screen size
 _   https://github.com/processing/processing/issues/3401
 _ window loses focus after maximizing
 _   https://github.com/processing/processing/issues/3339
+_ Output window cannot be set as non-resizable with the P2D or P3D renderers
+_   https://jogamp.org/bugzilla/show_bug.cgi?id=1188
+_   https://github.com/processing/processing/issues/3952
 
 
 misc
@@ -29,6 +38,9 @@ _   https://github.com/processing/processing/issues/3753
 
 
 javafx
+_ make wiki about quirks
+_   starving the thread makes things really slow down
+_   keyPressed() is always uppercase, keyTyped() will be correct
 _ do we really need setTextFont/Size when we already have Impl? 
 _ need keyPressed() to do lower and upper case
 _ static mode sketches (draw once and halt w/o closing window)
