@@ -2087,6 +2087,7 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
+
 /**
    * ( begin auto-generated from bezierVertex.xml )
    *
@@ -2149,6 +2150,7 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
+
   /**
    * @webref shape:vertex
    * @param cx the x-coordinate of the control point
@@ -2171,6 +2173,7 @@ public class PGraphics extends PImage implements PConstants {
                  x3, y3);
   }
 
+
   /**
    * @param cz the z-coordinate of the control point
    * @param z3 the z-coordinate of the anchor point
@@ -2187,9 +2190,11 @@ public class PGraphics extends PImage implements PConstants {
                  x3, y3, z3);
   }
 
+
   protected void curveVertexCheck() {
     curveVertexCheck(shape);
   }
+
 
   /**
    * Perform initialization specific to curveVertex(), and handle standard
@@ -2213,6 +2218,7 @@ public class PGraphics extends PImage implements PConstants {
     }
     curveInitCheck();
   }
+
 
  /**
    * ( begin auto-generated from curveVertex.xml )
