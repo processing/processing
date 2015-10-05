@@ -574,28 +574,17 @@ public class PGraphicsFX2D extends PGraphics {
 
 
   @Override
-  protected void curveVertexCheck() {
-    if (shape != POLYGON) {
-      throw new RuntimeException("You must use beginShape() or " +
-                                     "beginShape(POLYGON) before curveVertex()");
-    }
-
-    curveInitCheck();
-
+  protected void curveVertexSegment(float x1, float y1,
+                                    float x2, float y2,
+                                    float x3, float y3,
+                                    float x4, float y4) {
     if (curveCoordX == null) {
       curveCoordX = new float[4];
       curveCoordY = new float[4];
       curveDrawX = new float[4];
       curveDrawY = new float[4];
     }
-  }
 
-
-  @Override
-  protected void curveVertexSegment(float x1, float y1,
-                                    float x2, float y2,
-                                    float x3, float y3,
-                                    float x4, float y4) {
     curveCoordX[0] = x1;
     curveCoordY[0] = y1;
 
