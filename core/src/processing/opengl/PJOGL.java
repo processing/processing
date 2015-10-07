@@ -1678,7 +1678,7 @@ public class PJOGL extends PGL {
       gl2.glGetProgramInfoLog(program, length, val, 0, log, 0);
       return new String(log);
     } else {
-      return "Unknow error";
+      return "Unknown error";
     }
   }
 
