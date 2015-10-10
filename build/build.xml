@@ -1309,9 +1309,11 @@ remove the spaces for depth since it should be double dash, but screws up commen
         <include name="processing/**" />
       </packageset>
 
-      <packageset dir="../app/generated">
+
+
+      <!--<packageset dir="../app/generated">
         <include name="processing/**" />
-      </packageset>
+      </packageset>-->
 
       <packageset dir="../core/src">
         <include name="processing/**" />
@@ -1320,6 +1322,44 @@ remove the spaces for depth since it should be double dash, but screws up commen
 	-->
       </packageset>
     </javadoc>
+
+
+    <!-- do libraries -->
+    <exec executable="find" dir="javadoc" errorproperty="ignored">
+      <arg line="libraries -type f -exec rm -rf {} ';'" />
+    </exec>
+
+    <javadoc access="public" author="false" classpath="../app/lib/ant.jar:../app/lib/ant-launcher.jar:../app/lib/antlr.jar:../app/lib/apple.jar:../app/lib/jna.jar:../app/lib/org-netbeans-swing-outline.jar:../core/bin:../core/library/gluegen-rt.jar:../core/library/jogl-all.jar:../java/libraries/svg/bin:../java/libraries/pdf/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/dxf/bin:../java/libraries/net/bin:../java/libraries/serial/bin:../java/mode/ecj.jar:${java.home}/lib/tools.jar" destdir="javadoc/libraries" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" splitindex="false" use="false" version="false" noqualifier="all">
+
+      <arg value="-notimestamp" />
+
+      <arg value="-quiet" />
+
+      <link href="http://docs.oracle.com/javase/7/docs/api/" />
+      
+      <packageset dir="../java/libraries/dxf/src">
+        <include name="antlr/**" />
+        <include name="processing/**" />
+      </packageset>
+      <packageset dir="../java/libraries/net/src">
+        <include name="antlr/**" />
+        <include name="processing/**" />
+      </packageset>
+      <packageset dir="../java/libraries/pdf/src">
+        <include name="antlr/**" />
+        <include name="processing/**" />
+      </packageset>
+      <packageset dir="../java/libraries/serial/src">
+        <include name="antlr/**" />
+        <include name="processing/**" />
+      </packageset>
+      <packageset dir="../java/libraries/svg/src">
+        <include name="antlr/**" />
+        <include name="processing/**" />
+      </packageset>
+    </javadoc>
+
+
 
 <!--
     <copy file="javadoc/stylesheet.css" 
