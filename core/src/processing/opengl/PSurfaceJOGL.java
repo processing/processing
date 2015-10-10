@@ -40,6 +40,7 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
+import com.jogamp.common.util.IOUtil;
 import com.jogamp.common.util.IOUtil.ClassResources;
 import com.jogamp.nativewindow.NativeSurface;
 import com.jogamp.nativewindow.ScalableSurface;
@@ -503,7 +504,10 @@ public class PSurfaceJOGL implements PSurface {
     for (int i = 0; i < sizes.length; i++) {
       iconImages[i] = "/icon/icon-" + sizes[i] + ".png";
     }
-    NewtFactory.setWindowIcons(new ClassResources(PApplet.class, iconImages));
+    IOUtil.ClassResources res = new ClassResources(iconImages,
+                                                   PApplet.class.getClassLoader(),
+                                                   PApplet.class);
+    NewtFactory.setWindowIcons(res);
   }
 
 
