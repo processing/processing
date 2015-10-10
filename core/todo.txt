@@ -1,22 +1,33 @@
 0247 (3.0.1)
 X curveVertex() does not work with FX2D renderer
 X   https://github.com/processing/processing/issues/3960
+_ figure our size(img.width, img.height) situation
+_   just make loadImage() work in settings, update the wiki and reference
 
 andres
 X cursor() fails to work as expected with P2D/P3D 
 X   https://github.com/processing/processing/issues/3955
+X Topics/Shader/Convay broken
+X   https://github.com/processing/processing/issues/3947
+X   https://github.com/processing/processing/issues/3973
+
+jogl
+X Update to JogAmp JOGL 2.3.2
+X   https://github.com/processing/processing/issues/3979
+X Output window cannot be set as non-resizable with the P2D or P3D renderers
+X   https://jogamp.org/bugzilla/show_bug.cgi?id=1188
+X   https://github.com/processing/processing/issues/3952
+X setAlwaysOnTop does not work in P2D and P3D on Mac
+X   https://github.com/processing/processing/issues/3793
+X P2D and P3D windows behave strangely when larger than the screen size
+X   https://github.com/processing/processing/issues/3401
 
 
 known
 _ window must close when using file dialogs with OpenGL on Windows
 _   https://github.com/processing/processing/issues/3831
-_ P2D and P3D windows behave strangely when larger than the screen size
-_   https://github.com/processing/processing/issues/3401
 _ window loses focus after maximizing
 _   https://github.com/processing/processing/issues/3339
-_ Output window cannot be set as non-resizable with the P2D or P3D renderers
-_   https://jogamp.org/bugzilla/show_bug.cgi?id=1188
-_   https://github.com/processing/processing/issues/3952
 
 
 misc

@@ -3,6 +3,7 @@
 contribs
 X Update Japanese translation
 X   https://github.com/processing/processing/pull/3956
+_   https://github.com/processing/processing/pull/3971
 
 jakub
 X Include Example packs into update count
@@ -34,6 +35,8 @@ _   https://github.com/processing/processing/issues/3927
 _ Tooltip over variable decl has wrong style and content
 _   make all tooltips run through our style
 _   https://github.com/processing/processing/issues/3940
+_ File modified externally gives infinite pop-ups
+_   https://github.com/processing/processing/issues/3965
 
 
 run/debug
