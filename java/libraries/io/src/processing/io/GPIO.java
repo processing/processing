@@ -492,8 +492,10 @@ public class GPIO {
       if (ret == -2) {    // ENOENT
         System.err.println("Make sure your kernel is compiled with GPIO_SYSFS enabled");
       }
-      // EINVAL is also returned when trying to unexport pins that weren't exported to begin with
-      throw new RuntimeException(NativeInterface.getError(ret));
+      // EINVAL is returned when trying to unexport pins that weren't exported to begin with, ignore this case
+      if (ret != -22) {
+        throw new RuntimeException(NativeInterface.getError(ret));
+      }
     }
   }
 
