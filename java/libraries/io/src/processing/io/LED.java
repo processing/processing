@@ -87,7 +87,10 @@ public class LED {
     String fn = "/sys/class/leds/" + dev + "/trigger";
     int ret = NativeInterface.writeFile(fn, "none");
     if (ret < 0) {
-      throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
+      if (ret == -13) {     // EACCES
+        System.err.println("You might need to install a custom udev rule to allow regular users to modify /sys/class/leds/*.");
+      }
+      throw new RuntimeException(NativeInterface.getError(ret));
     }
   }
 
