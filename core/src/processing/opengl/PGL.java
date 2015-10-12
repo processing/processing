@@ -2193,7 +2193,7 @@ public abstract class PGL {
     if (isES()) {
       return version[0] >= 3;
     }
-    return version[0] > 2;
+    return version[0] >= 2;
   }
 
 
@@ -2202,7 +2202,7 @@ public abstract class PGL {
     if (isES()) {
       return version[0] >= 3;
     }
-    return version[0] > 2;
+    return version[0] >= 2;
   }
 
 
