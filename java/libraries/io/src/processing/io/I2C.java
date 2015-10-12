@@ -120,6 +120,9 @@ public class I2C {
     transmitting = false;
     out = null;
     if (ret < 0) {
+      if (ret == -5) {    // EIO
+        System.err.println("The device did not respond. Check the cabling and whether you are using the correct address.");
+      }
       throw new RuntimeException(NativeInterface.getError(ret));
     }
   }
@@ -170,6 +173,9 @@ public class I2C {
     transmitting = false;
     out = null;
     if (ret < 0) {
+      if (ret == -5) {    // EIO
+        System.err.println("The device did not respond. Check the cabling and whether you are using the correct address.");
+      }
       throw new RuntimeException(NativeInterface.getError(ret));
     }
 
