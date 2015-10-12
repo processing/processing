@@ -117,6 +117,8 @@ public class PGraphicsOpenGL extends PGraphics {
   static public boolean packedDepthStencilSupported;
   static public boolean anisoSamplingSupported;
   static public boolean blendEqSupported;
+  static public boolean readBufferSupported;
+  static public boolean drawBufferSupported;
 
   /** Some hardware limits */
   static public int maxTextureSize;
@@ -1682,7 +1684,7 @@ public class PGraphicsOpenGL extends PGraphics {
     FrameBuffer fb = getCurrentFB();
     if (fb != null) {
       fb.bind();
-      pgl.drawBuffer(fb.getDefaultDrawBuffer());
+      if (drawBufferSupported) pgl.drawBuffer(fb.getDefaultDrawBuffer());
     }
   }
 
@@ -1757,9 +1759,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     // We read from/write to the draw buffer.
     if (op == OP_READ) {
-      pgl.readBuffer(getCurrentFB().getDefaultDrawBuffer());
+      if (readBufferSupported) pgl.readBuffer(getCurrentFB().getDefaultDrawBuffer());
     } else if (op == OP_WRITE) {
-      pgl.drawBuffer(getCurrentFB().getDefaultDrawBuffer());
+      if (drawBufferSupported) pgl.drawBuffer(getCurrentFB().getDefaultDrawBuffer());
     }
 
     pixelsOp = op;
@@ -1774,8 +1776,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     // Restoring default read/draw buffer configuration.
-    pgl.readBuffer(getCurrentFB().getDefaultReadBuffer());
-    pgl.drawBuffer(getCurrentFB().getDefaultDrawBuffer());
+    if (readBufferSupported) pgl.readBuffer(getCurrentFB().getDefaultReadBuffer());
+    if (drawBufferSupported) pgl.drawBuffer(getCurrentFB().getDefaultDrawBuffer());
 
     pixelsOp = OP_NONE;
   }
@@ -6864,6 +6866,8 @@ public class PGraphicsOpenGL extends PGraphics {
     fboMultisampleSupported = pgl.hasFboMultisampleSupport();
     packedDepthStencilSupported = pgl.hasPackedDepthStencilSupport();
     anisoSamplingSupported = pgl.hasAnisoSamplingSupport();
+    readBufferSupported = pgl.hasReadBuffer();
+    drawBufferSupported = pgl.hasDrawBuffer();
 
     try {
       pgl.blendEquation(PGL.FUNC_ADD);

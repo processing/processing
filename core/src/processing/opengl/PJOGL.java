@@ -295,7 +295,7 @@ public class PJOGL extends PGL {
       // https://www.opengl.org/wiki/Default_Framebuffer
       // so it is copied to the front texture of the FBO layer:
       if (pclearColor || 0 < pgeomCount || !sketch.isLooping()) {
-        readBuffer(FRONT);
+        if (hasReadBuffer()) readBuffer(FRONT);
       } else {
         // ...except when the previous frame has not been cleared and nothing was
         // rendered while looping. In this case the back buffer, which holds the
@@ -306,7 +306,7 @@ public class PJOGL extends PGL {
       bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
       framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
                            TEXTURE_2D, glColorTex.get(frontTex), 0);
-      drawBuffer(COLOR_ATTACHMENT0);
+      if (hasDrawBuffer()) drawBuffer(COLOR_ATTACHMENT0);
       blitFramebuffer(0, 0, fboWidth, fboHeight,
                       0, 0, fboWidth, fboHeight,
                       COLOR_BUFFER_BIT, NEAREST);
