@@ -878,8 +878,8 @@ public abstract class PGL {
       fboHeight = nextPowerOfTwo((int)(scale * graphics.height));
     }
 
-    int maxs = maxSamples();
-    if (hasFboMultisampleSupport() && 1 < maxs) {
+    if (hasFboMultisampleSupport()) {
+      int maxs = maxSamples();
       numSamples = PApplet.min(reqNumSamples, maxs);
     } else {
       numSamples = 1;
