@@ -19,7 +19,7 @@ void setup() {
 }
 
 void draw() {
-  // make the leds count in binary
+  // make the LEDs count in binary
   for (int i=0; i < leds.length; i++) {
     if ((frameCount & (1 << i)) != 0) {
       leds[i].set(1.0);
