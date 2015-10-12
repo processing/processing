@@ -289,39 +289,61 @@ public class PJOGL extends PGL {
   @Override
   protected void initFBOLayer() {
     if (0 < sketch.frameCount) {
-      // Copy the contents of the front and back screen buffers to the textures
-      // of the FBO, so they are properly initialized. Note that the front buffer
-      // of the default framebuffer (the screen) contains the previous frame:
-      // https://www.opengl.org/wiki/Default_Framebuffer
-      // so it is copied to the front texture of the FBO layer:
-      if (pclearColor || 0 < pgeomCount || !sketch.isLooping()) {
-        if (hasReadBuffer()) readBuffer(FRONT);
-      } else {
-        // ...except when the previous frame has not been cleared and nothing was
-        // rendered while looping. In this case the back buffer, which holds the
-        // initial state of the previous frame, still contains the most up-to-date
-        // screen state.
-        readBuffer(BACK);
-      }
-      bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
-      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
-                           TEXTURE_2D, glColorTex.get(frontTex), 0);
-      if (hasDrawBuffer()) drawBuffer(COLOR_ATTACHMENT0);
-      blitFramebuffer(0, 0, fboWidth, fboHeight,
-                      0, 0, fboWidth, fboHeight,
-                      COLOR_BUFFER_BIT, NEAREST);
-
-      readBuffer(BACK);
-      bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
-      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
-                           TEXTURE_2D, glColorTex.get(backTex), 0);
-      drawBuffer(COLOR_ATTACHMENT0);
-      blitFramebuffer(0, 0, fboWidth, fboHeight,
-                      0, 0, fboWidth, fboHeight,
-                      COLOR_BUFFER_BIT, NEAREST);
-
-      bindFramebufferImpl(FRAMEBUFFER, 0);
+      if (isES()) initFBOLayerES();
+      else initFBOLayerGL();
     }
+  }
+
+
+  private void initFBOLayerES() {
+    IntBuffer buf = allocateDirectIntBuffer(fboWidth * fboHeight);
+
+    if (hasReadBuffer()) readBuffer(BACK);
+    readPixelsImpl(0, 0, fboWidth, fboHeight, RGBA, UNSIGNED_BYTE, buf);
+    bindTexture(TEXTURE_2D, glColorTex.get(frontTex));
+    texSubImage2D(TEXTURE_2D, 0, 0, 0, fboWidth, fboHeight, RGBA, UNSIGNED_BYTE, buf);
+
+    bindTexture(TEXTURE_2D, glColorTex.get(backTex));
+    texSubImage2D(TEXTURE_2D, 0, 0, 0, fboWidth, fboHeight, RGBA, UNSIGNED_BYTE, buf);
+
+    bindTexture(TEXTURE_2D, 0);
+    bindFramebufferImpl(FRAMEBUFFER, 0);
+  }
+
+
+  private void initFBOLayerGL() {
+    // Copy the contents of the front and back screen buffers to the textures
+    // of the FBO, so they are properly initialized. Note that the front buffer
+    // of the default framebuffer (the screen) contains the previous frame:
+    // https://www.opengl.org/wiki/Default_Framebuffer
+    // so it is copied to the front texture of the FBO layer:
+    if (pclearColor || 0 < pgeomCount || !sketch.isLooping()) {
+      if (hasReadBuffer()) readBuffer(FRONT);
+    } else {
+      // ...except when the previous frame has not been cleared and nothing was
+      // rendered while looping. In this case the back buffer, which holds the
+      // initial state of the previous frame, still contains the most up-to-date
+      // screen state.
+      readBuffer(BACK);
+    }
+    bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+    framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                         TEXTURE_2D, glColorTex.get(frontTex), 0);
+    if (hasDrawBuffer()) drawBuffer(COLOR_ATTACHMENT0);
+    blitFramebuffer(0, 0, fboWidth, fboHeight,
+                    0, 0, fboWidth, fboHeight,
+                    COLOR_BUFFER_BIT, NEAREST);
+
+    readBuffer(BACK);
+    bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+    framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                         TEXTURE_2D, glColorTex.get(backTex), 0);
+    drawBuffer(COLOR_ATTACHMENT0);
+    blitFramebuffer(0, 0, fboWidth, fboHeight,
+                    0, 0, fboWidth, fboHeight,
+                    COLOR_BUFFER_BIT, NEAREST);
+
+    bindFramebufferImpl(FRAMEBUFFER, 0);
   }
 
 
