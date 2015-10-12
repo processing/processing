@@ -20,8 +20,8 @@ class MCP4725 extends I2C {
     // convert to 12 bit value
     int val = int(4095 * fac);
     beginTransmission(address);
-    write((byte) (val >> 8));
-    write((byte) (val & 255));
+    write(val >> 8);
+    write(val & 255);
     endTransmission();
   }
 }

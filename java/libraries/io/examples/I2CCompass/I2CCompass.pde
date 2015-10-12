@@ -20,18 +20,18 @@ void draw() {
 void setHeadingMode() {
   i2c.beginTransmission(0x21);
   // command byte for writing to EEPROM
-  i2c.write((byte) 0x77);
+  i2c.write(0x77);
   // address of the output data control byte
-  i2c.write((byte) 0x4e);
+  i2c.write(0x4e);
   // give us the plain heading
-  i2c.write((byte) 0x00);
+  i2c.write(0x00);
   i2c.endTransmission();
 }
 
 float getHeading() {
   i2c.beginTransmission(0x21);
   // command byte for reading the data
-  i2c.write((byte) 0x41);
+  i2c.write(0x41);
   byte[] in = i2c.read(2);
   i2c.endTransmission();
   // put bytes together to tenth of degrees

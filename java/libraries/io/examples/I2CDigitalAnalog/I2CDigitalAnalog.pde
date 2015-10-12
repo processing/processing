@@ -21,7 +21,7 @@ void setAnalog(float fac) {
   // convert to 12 bit value
   int val = int(4095 * fac);
   i2c.beginTransmission(0x60);
-  i2c.write((byte) (val >> 8));
-  i2c.write((byte) (val & 255));
+  i2c.write(val >> 8);
+  i2c.write(val & 255);
   i2c.endTransmission();
 }
