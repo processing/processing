@@ -1,18 +1,18 @@
 import processing.io.*;
 
-// RPI.PIN3 refers to the physical pin 3 on the Raspberry Pi's
-// pin header, which is located on the second row, next to the
-// 5v power pin
+// RPI.PIN7 refers to the physical pin 7 on the Raspberry Pi's
+// pin header, which is located on the fourth row, above one of
+// the Ground pins
 
 void setup() {
-  GPIO.pinMode(RPI.PIN3, GPIO.INPUT);
+  GPIO.pinMode(RPI.PIN7, GPIO.INPUT);
   // this is equivalent to addressing the pin with its GPIO number:
-  // GPIO.pinMode(2, GPIO.INPUT);
+  // GPIO.pinMode(4, GPIO.INPUT);
 }
 
 void draw() {
   // sense the input pin
-  if (GPIO.digitalRead(RPI.PIN3) == GPIO.HIGH) {
+  if (GPIO.digitalRead(RPI.PIN7) == GPIO.HIGH) {
     fill(255);
   } else {
     fill(204);
