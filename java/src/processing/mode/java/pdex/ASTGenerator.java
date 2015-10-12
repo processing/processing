@@ -290,64 +290,12 @@ public class ASTGenerator {
     return codeTree;
   }
 
-  protected ClassPathFactory factory;
+  protected ClassPathFactory factory = new ClassPathFactory();
 
   /**
    * Used for searching for package declaration of a class
    */
   protected ClassPath classPath;
-
-
-  /**
-   * Loads up .jar files and classes defined in it for completion lookup
-   */
-  protected void loadJars() {
-    factory = new ClassPathFactory();
-
-    StringList entries = new StringList();
-    entries.append(System.getProperty("java.class.path"));
-    entries.append(System.getProperty("java.home") +
-                   File.separator + "lib" + File.separator + "rt.jar");
-
-    String modeClassPath = ((JavaMode) editor.getMode()).getSearchPath();
-    if (modeClassPath != null) {
-      entries.append(modeClassPath);
-    }
-
-    if (errorCheckerService.classpathJars != null) {
-      synchronized (errorCheckerService.classpathJars) {
-        for (URL jarPath : errorCheckerService.classpathJars) {
-          entries.append(jarPath.getPath());
-        }
-      }
-    }
-
-//    // Just in case, make sure we don't run off into oblivion
-//    String workingDirectory = System.getProperty("user.dir");
-//    if (entries.removeValue(workingDirectory) != -1) {
-//      System.err.println("user.dir found in classpath");
-//    }
-
-//    // hm, these weren't problematic either
-//    entries.append(System.getProperty("user.dir"));
-//    entries.append("");
-//    entries.print();
-
-    classPath = factory.createFromPath(entries.join(File.pathSeparator));
-    log("Classpath created " + (classPath != null));
-    log("Sketch classpath jars loaded.");
-    if (Platform.isMacOS()) {
-      File f = new File(System.getProperty("java.home") +
-                        File.separator + "bundle" +
-                        File.separator + "Classes" +
-                        File.separator + "classes.jar");
-      log(f.getAbsolutePath() + " | classes.jar found?" + f.exists());
-    } else {
-      File f = new File(System.getProperty("java.home") + File.separator +
-                        "lib" + File.separator + "rt.jar" + File.separator);
-      log(f.getAbsolutePath() + " | rt.jar found?" + f.exists());
-    }
-  }
 
 
   protected TreeMap<String, String> jdocMap;
