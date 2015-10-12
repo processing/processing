@@ -92,7 +92,8 @@ public class I2C {
    *  @see endTransmission
    */
   public void beginTransmission(int slave) {
-    if (127 < slave) {
+    // addresses 120 (0x78) to 127 are additionally reserved
+    if (0x78 <= slave) {
       System.err.println("beginTransmission expects a 7 bit address, try shifting one bit to the right");
       throw new IllegalArgumentException("Illegal address");
     }
