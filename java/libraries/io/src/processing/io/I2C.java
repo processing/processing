@@ -221,19 +221,23 @@ public class I2C {
 
 
   /**
-   *  Adds bytes to be written to the device
+   *  Adds a byte to be written to the device
    *
    *  You must call beginTransmission() before calling this function.
    *  The actual writing takes part when read() or endTransmission() is being
    *  called.
-   *  @param out single byte to be written
+   *  @param out single byte to be written (0-255)
    *  @see beginTransmission
    *  @see read
    *  @see endTransmission
    */
-  public void write(byte out) {
+  public void write(int out) {
+    if (out < 0 || 255 < out) {
+      System.err.println("The write function can only operate on a single byte at a time. Call it with a value from 0 to 255.");
+      throw new RuntimeException("Argument does not fit into a single byte");
+    }
     byte[] tmp = new byte[1];
-    tmp[0] = out;
+    tmp[0] = (byte)out;
     write(tmp);
   }
 }
