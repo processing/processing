@@ -341,6 +341,7 @@
     <subant buildpath="../core" target="clean"/>
     <subant buildpath="../app" target="clean"/>
     <subant buildpath="../java/libraries/dxf" target="clean"/>
+    <subant buildpath="../java/libraries/io" target="clean"/>
     <subant buildpath="../java/libraries/net" target="clean"/>
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
@@ -363,7 +364,12 @@
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
     <subant buildpath="../java" target="build"/>
   </target>
-  
+
+  <target name="subprojects-build-linux-arm32" if="linux-arm32">
+    <!-- I/O library is only compiled on supported ARM platforms -->
+    <subant buildpath="../java/libraries/io" target="build"/>
+  </target>
+
 
   <!-- - - - - - - - - -->
   <!-- Basic Assembly  -->
@@ -759,7 +765,7 @@
     <fail message="wrong platform (${os.name})" />
   </target>
   
-  <target name="linux-build" depends="ignore-tools, check-linux-arm32, revision-check, linux-check-os, jre-download, subprojects-build" description="Build Linux version">
+  <target name="linux-build" depends="ignore-tools, check-linux-arm32, revision-check, linux-check-os, jre-download, subprojects-build, subprojects-build-linux-arm32" description="Build Linux version">
     <mkdir dir="linux/work" />
     
     <copy todir="linux/work">
@@ -1296,7 +1302,7 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg line="everything -type f -exec rm -rf {} ';'" />
     </exec>
 
-    <javadoc access="public" author="false" classpath="../app/lib/ant.jar:../app/lib/ant-launcher.jar:../app/lib/antlr.jar:../app/lib/apple.jar:../app/lib/jna.jar:../app/lib/org-netbeans-swing-outline.jar:../core/bin:../core/library/gluegen-rt.jar:../core/library/jogl-all.jar:../java/libraries/svg/bin:../java/libraries/pdf/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/dxf/bin:../java/libraries/net/bin:../java/libraries/serial/bin:../java/mode/ecj.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" splitindex="false" use="false" version="false" noqualifier="all">
+    <javadoc access="public" author="false" classpath="../app/lib/ant.jar:../app/lib/ant-launcher.jar:../app/lib/antlr.jar:../app/lib/apple.jar:../app/lib/jna.jar:../app/lib/org-netbeans-swing-outline.jar:../core/bin:../core/library/gluegen-rt.jar:../core/library/jogl-all.jar:../java/libraries/svg/bin:../java/libraries/pdf/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/dxf/bin:../java/libraries/io/bin:../java/libraries/net/bin:../java/libraries/serial/bin:../java/mode/ecj.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" splitindex="false" use="false" version="false" noqualifier="all">
 
       <arg value="-notimestamp" />
 
