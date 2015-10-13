@@ -33,6 +33,18 @@ import java.util.Map;
 import jssc.*;
 
 
+/**
+ * ( begin auto-generated from Serial.xml )
+ * 
+ * Class for sending and receiving data using the serial communication protocol.
+ * 
+ * ( end auto-generated )
+ * @webref serial
+ * @brief Class for sending and receiving data using the serial communication protocol.
+ * @instanceName serial any variable of type Serial
+ * @usage Application
+ * @see_external LIB_serial/serialEvent
+ */
 public class Serial implements SerialPortEventListener {
   PApplet parent;
   public SerialPort port;
@@ -53,7 +65,6 @@ public class Serial implements SerialPortEventListener {
   // * state of the RING, RLSD line
   // * sending breaks
 
-  
   public Serial(PApplet parent) {
     this(parent, "COM1", 9600, 'N', 8, 1);
   }
@@ -167,7 +178,11 @@ public class Serial implements SerialPortEventListener {
     bufferUntilSize = size;
   }
 
-  
+  /**
+   * @webref
+   * @brief
+   * @param inByte byte to buffer until it's reached
+   */
   public void bufferUntil(int inByte) {
     bufferUntilSize = 0;
     bufferUntilByte = (byte)inByte;
