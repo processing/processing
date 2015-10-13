@@ -1169,7 +1169,12 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PApplet.html#clip-float-float-float-float-">clip</a></span>(float&nbsp;a,
     float&nbsp;b,
     float&nbsp;c,
-    float&nbsp;d)</code>&nbsp;</td>
+    float&nbsp;d)</code>
+<div class="block">( begin auto-generated from clip.xml )
+
+ Limits the rendering to the boundaries of a rectangle defined 
+ by the parameters.</div>
+</td>
 </tr>
 <tr id="i78" class="altColor">
 <td class="colFirst"><code>int</code></td>
@@ -1644,7 +1649,9 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 <tr id="i143" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PApplet.html#delay-int-">delay</a></span>(int&nbsp;napTime)</code>
-<div class="block">The delay() function causes the program to halt for a specified time.</div>
+<div class="block">( begin auto-generated from delay.xml )
+
+ The delay() function causes the program to halt for a specified time.</div>
 </td>
 </tr>
 <tr id="i144" class="altColor">
@@ -2941,7 +2948,11 @@ implements <a href="../../processing/core/PConstants.html" title="interface in p
 </tr>
 <tr id="i342" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PApplet.html#noClip--">noClip</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../processing/core/PApplet.html#noClip--">noClip</a></span>()</code>
+<div class="block">( begin auto-generated from noClip.xml )
+
+ Disables the clipping previously started by the <b>clip()</b> function.</div>
+</td>
 </tr>
 <tr id="i343" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -7657,7 +7668,9 @@ public&nbsp;<a href="../../processing/event/KeyEvent.html" title="class in proce
 <li class="blockList">
 <h4>delay</h4>
 <pre>public&nbsp;void&nbsp;delay(int&nbsp;napTime)</pre>
-<div class="block">The delay() function causes the program to halt for a specified time.
+<div class="block">( begin auto-generated from delay.xml )
+
+ The delay() function causes the program to halt for a specified time.
  Delay times are specified in thousandths of a second. For example,
  running delay(3000) will stop the program for three seconds and
  delay(500) will stop the program for a half-second.
@@ -7669,7 +7682,16 @@ public&nbsp;<a href="../../processing/event/KeyEvent.html" title="class in proce
  The delay() function should only be used for pausing scripts (i.e.
  a script that needs to pause a few seconds before attempting a download,
  or a sketch that needs to wait a few milliseconds before reading from
- the serial port).</div>
+ the serial port).
+
+ ( end auto-generated )</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>napTime</code> - milliseconds to pause before running draw() again</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../processing/core/PApplet.html#frameRate"><code>frameRate</code></a>, 
+<a href="../../processing/core/PApplet.html#draw--"><code>draw()</code></a></dd>
+</dl>
 </li>
 </ul>
 <a name="frameRate-float-">
@@ -14280,6 +14302,20 @@ public&nbsp;<a href="../../processing/event/KeyEvent.html" title="class in proce
                  float&nbsp;b,
                  float&nbsp;c,
                  float&nbsp;d)</pre>
+<div class="block">( begin auto-generated from clip.xml )
+
+ Limits the rendering to the boundaries of a rectangle defined 
+ by the parameters. The boundaries are drawn based on the state 
+ of the <b>imageMode()</b> fuction, either CORNER, CORNERS, or CENTER. 
+
+ ( end auto-generated )</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>a</code> - x-coordinate of the rectangle, by default</dd>
+<dd><code>b</code> - y-coordinate of the rectangle, by default</dd>
+<dd><code>c</code> - width of the rectangle, by default</dd>
+<dd><code>d</code> - height of the rectangle, by default</dd>
+</dl>
 </li>
 </ul>
 <a name="noClip--">
@@ -14289,6 +14325,11 @@ public&nbsp;<a href="../../processing/event/KeyEvent.html" title="class in proce
 <li class="blockList">
 <h4>noClip</h4>
 <pre>public&nbsp;void&nbsp;noClip()</pre>
+<div class="block">( begin auto-generated from noClip.xml )
+
+ Disables the clipping previously started by the <b>clip()</b> function.
+
+ ( end auto-generated )</div>
 </li>
 </ul>
 <a name="blendMode-int-">

@@ -11,5 +11,4 @@ processing.core
 processing.data
 processing.event
 processing.javafx
-processing.mode.java.preproc
 processing.opengl
