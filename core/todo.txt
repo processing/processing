@@ -10,6 +10,8 @@ X   https://github.com/processing/processing/issues/3955
 X Topics/Shader/Convay broken
 X   https://github.com/processing/processing/issues/3947
 X   https://github.com/processing/processing/issues/3973
+X Regressions wrt GLES2 support between b4 and b7
+X   https://github.com/processing/processing/issues/3976
 
 jogl
 X Update to JogAmp JOGL 2.3.2
@@ -21,6 +23,8 @@ X setAlwaysOnTop does not work in P2D and P3D on Mac
 X   https://github.com/processing/processing/issues/3793
 X P2D and P3D windows behave strangely when larger than the screen size
 X   https://github.com/processing/processing/issues/3401
+X Remove Gluegen & JOGL sources
+X   https://github.com/processing/processing/pull/3982
 
 
 known

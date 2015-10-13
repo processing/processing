@@ -4,6 +4,8 @@ contribs
 X Update Japanese translation
 X   https://github.com/processing/processing/pull/3956
 _   https://github.com/processing/processing/pull/3971
+X add i/o library for rpi
+X   https://github.com/processing/processing/pull/3985
 
 jakub
 X Include Example packs into update count
@@ -12,6 +14,9 @@ X Editor objects are staying in memory
 X   https://github.com/processing/processing/issues/3930
 X   https://github.com/processing/processing/pull/3934
 X   https://github.com/processing/processing/issues/3929
+X Library path for Error Checker and Suggestions
+X   https://github.com/processing/processing/pull/3989
+X   https://github.com/processing/processing/issues/3924
 
 
 known issues
