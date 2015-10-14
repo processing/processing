@@ -1347,6 +1347,10 @@ remove the spaces for depth since it should be double dash, but screws up commen
         <include name="antlr/**" />
         <include name="processing/**" />
       </packageset>
+      <packageset dir="../java/libraries/io/src">
+        <include name="antlr/**" />
+        <include name="processing/**" />
+      </packageset>
       <packageset dir="../java/libraries/net/src">
         <include name="antlr/**" />
         <include name="processing/**" />
