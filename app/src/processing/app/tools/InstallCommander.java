@@ -86,6 +86,16 @@ public class InstallCommander implements Tool {
       PrintWriter writer = PApplet.createWriter(file);
       writer.println("#!/bin/sh");
 
+
+      writer.print("\n# We don't want to steal focus for headless runs. See issue #3996.\n" +
+                   "OPTION_FOR_HEADLESS_RUN=\"\"\n" +
+                   "for ARG in \"$@\"\n" +
+                   "do\n" +
+                   "    if [ $ARG = \"--build\" ]; then\n" +
+                   "        OPTION_FOR_HEADLESS_RUN=\"-Djava.awt.headless=true\"\n" +
+                   "    fi\n" +
+                   "done\n\n");
+
       String javaRoot = Platform.getContentFile(".").getCanonicalPath();
 
       StringList jarList = new StringList();
@@ -97,6 +107,7 @@ public class InstallCommander implements Tool {
       writer.println("cd \"" + javaRoot + "\" && " +
                      Platform.getJavaPath() +
                      " -Djna.nosys=true" +
+                     " $OPTION_FOR_HEADLESS_RUN" +
       		           " -cp \"" + classPath + "\"" +
       		           " processing.mode.java.Commander \"$@\"");
       writer.flush();
