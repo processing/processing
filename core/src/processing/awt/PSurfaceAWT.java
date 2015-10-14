@@ -883,18 +883,9 @@ public class PSurfaceAWT extends PSurfaceNone {
           frame.setLocation(locationX - window.width, locationY);
 
         } else {  // doesn't fit
-          // if it fits inside the editor window,
-          // offset slightly from upper lefthand corner
-          // so that it's plunked inside the text area
-          locationX = editorLocation[0] + 66;
+          // center on screen, below the editor's window bar
+          locationX = (sketch.displayWidth - window.width) / 2;
           locationY = editorLocation[1] + 66;
-
-          if ((locationX + window.width > sketch.displayWidth - 33) ||
-            (locationY + window.height > sketch.displayHeight - 33)) {
-            // otherwise center on screen
-            locationX = (sketch.displayWidth - window.width) / 2;
-            locationY = (sketch.displayHeight - window.height) / 2;
-          }
           frame.setLocation(locationX, locationY);
         }
       } else {  // just center on screen
