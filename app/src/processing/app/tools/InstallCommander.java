@@ -84,10 +84,10 @@ public class InstallCommander implements Tool {
 
       File file = File.createTempFile("processing", "commander");
       PrintWriter writer = PApplet.createWriter(file);
-      writer.println("#!/bin/sh");
+      writer.print("#!/bin/sh\n\n");
 
-
-      writer.print("\n# We don't want to steal focus for headless runs. See issue #3996.\n" +
+      writer.print("# Prevents processing-java from stealing focus, see:\n" +
+                   "# https://github.com/processing/processing/issues/3996.\n" +
                    "OPTION_FOR_HEADLESS_RUN=\"\"\n" +
                    "for ARG in \"$@\"\n" +
                    "do\n" +

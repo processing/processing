@@ -6,6 +6,10 @@ X   https://github.com/processing/processing/pull/3956
 _   https://github.com/processing/processing/pull/3971
 X add i/o library for rpi
 X   https://github.com/processing/processing/pull/3985
+_   make sure naming, etc is all correct
+X processing-java stealing focus even with --build flag
+X   https://github.com/processing/processing/issues/3996
+X   https://github.com/processing/processing/pull/3998
 
 jakub
 X Include Example packs into update count
