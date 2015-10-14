@@ -141,7 +141,7 @@ public class LED {
    *  Sets the brightness
    *  @param bright 0.0 (off) to 1.0 (maximum)
    */
-  public void set(float bright) {
+  public void setBrightness(float bright) {
     String fn = "/sys/class/leds/" + dev + "/brightness";
     if (bright < 0.0 || 1.0 < bright) {
       System.err.println("Brightness must be between 0.0 and 1.0.");
