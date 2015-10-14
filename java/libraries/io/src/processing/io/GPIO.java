@@ -165,7 +165,7 @@ public class GPIO {
    *  the sketch is going to achieve.
    *  @param ms milliseconds to pause
    */ 
-  protected static void delay(int ms) {
+  public static void delay(int ms) {
     try {
       Thread.sleep(ms);
     } catch (InterruptedException e) {
@@ -196,7 +196,7 @@ public class GPIO {
    *  you might be disappointed.
    *  @param us microseconds to pause
    */
-  protected static void delayMicroseconds(int us) {
+  public static void delayMicroseconds(int us) {
     int ms = (int)(us / 1000);
     int ns = (us - (ms * 1000)) * 1000;
     try {
