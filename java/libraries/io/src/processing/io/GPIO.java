@@ -505,6 +505,7 @@ public class GPIO {
    *
    *  Make sure to setup the interrupt with enableInterrupt() before calling
    *  this function. A timeout value of -1 waits indefinitely.
+   *  @param pin GPIO pin
    *  @param timeout don't wait more than timeout milliseconds
    *  @return true if the interrupt occured, false if the timeout occured
    *  @see enableInterrupt
@@ -536,6 +537,7 @@ public class GPIO {
    *  Make sure to setup the interrupt with enableInterrupt() before calling
    *  this function. This function will wait indefinitely for an interrupt
    *  to occur.
+   *  @parm pin GPIO pin
    *  @see enableInterrupt
    *  @see disableInterrupt
    */
