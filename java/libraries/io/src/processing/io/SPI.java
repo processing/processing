@@ -64,7 +64,7 @@ public class SPI {
 
 
   /**
-   *  Closes the I2C interface
+   *  Closes the SPI interface
    */
   public void close() {
     NativeInterface.closeDevice(handle);

@@ -55,24 +55,6 @@ public class I2C {
 
 
   /**
-   *  Close the I2C device
-   */
-  public void close() {
-    NativeInterface.closeDevice(handle);
-    handle = 0;
-  }
-
-
-  protected void finalize() throws Throwable {
-    try {
-      close();
-    } finally {
-      super.finalize();
-    }
-  }
-
-
-  /**
    *  Begins a transmission to an attached device
    *
    *  I2C addresses consist of 7 bits plus one bit that indicates whether
@@ -84,7 +66,7 @@ public class I2C {
    *  of the i2cdetect tool.
    *  If the address provided in a datasheet is greater than 127 (hex 0x7f)
    *  or there are separate addresses for read and write operations listed,
-   *  which vary exactly by one, then you want to shif the this number by
+   *  which vary exactly by one, then you want to shift the this number by
    *  one bit to the right before passing it as an argument to this function.
    *  @param slave 7 bit address of slave device
    *  @see write
@@ -100,6 +82,24 @@ public class I2C {
     this.slave = slave;
     transmitting = true;
     out = null;
+  }
+
+
+  /**
+   *  Closes the I2C device
+   */
+  public void close() {
+    NativeInterface.closeDevice(handle);
+    handle = 0;
+  }
+
+
+  protected void finalize() throws Throwable {
+    try {
+      close();
+    } finally {
+      super.finalize();
+    }
   }
 
 

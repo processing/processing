@@ -81,7 +81,7 @@ public class PWM {
 
 
   /**
-   *  Disables the output
+   *  Disables the PWM output
    */
   public void clear() {
     String fn = String.format("/sys/class/pwm/%s/gpio%d/enable", chip, channel);
