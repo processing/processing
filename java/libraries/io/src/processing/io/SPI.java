@@ -33,12 +33,30 @@ import java.util.Map;
 
 public class SPI {
 
-  public static final int MODE0 = 0;      // CPOL=0, CPHA=0, most common
-  public static final int MODE1 = 1;      // CPOL=0, CPHA=1
-  public static final int MODE2 = 2;      // CPOL=1, CPHA=0
-  public static final int MODE3 = 3;      // CPOL=1, CPHA=1
-  public static final int MSBFIRST = 0;   // most significant bit first, most common
-  public static final int LSBFIRST = 1;   // least significant bit first
+  /**
+   *  CPOL=0, CPHA=0, most common
+   */
+  public static final int MODE0 = 0;
+  /**
+   *  CPOL=0, CPHA=1
+   */
+  public static final int MODE1 = 1;
+  /**
+   *  CPOL=1, CPHA=0
+   */
+  public static final int MODE2 = 2;
+  /**
+   *  CPOL=1, CPHA=1
+   */
+  public static final int MODE3 = 3;
+  /**
+   *  most significant bit first, most common
+   */
+  public static final int MSBFIRST = 0;
+  /**
+   *  least significant bit first
+   */
+  public static final int LSBFIRST = 1;
 
   protected int dataOrder = 0;
   protected String dev;

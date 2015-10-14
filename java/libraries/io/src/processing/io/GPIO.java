@@ -43,9 +43,18 @@ public class GPIO {
   public static final int HIGH = 1;
 
   public static final int NONE = 0;
-  public static final int CHANGE = 1;     // trigger when level changes
-  public static final int FALLING = 2;    // trigger when level changes from high to low
-  public static final int RISING = 3;     // trigger when level changes from low to high
+  /**
+   *  trigger when level changes
+   */
+  public static final int CHANGE = 1;
+  /**
+   *  trigger when level changes from high to low
+   */
+  public static final int FALLING = 2;
+  /**
+   *  trigger when level changes from low to high
+   */
+  public static final int RISING = 3;
 
   protected static Map<Integer, Thread> irqThreads = new HashMap<Integer, Thread>();
   protected static boolean serveInterrupts = true;
