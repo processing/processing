@@ -1250,7 +1250,7 @@ public class Base {
         return editor;
 
       } catch (EditorException ee) {
-        if (!ee.getMessage().equals("")) {  // blank if the user canceled
+        if (ee.getMessage() != null) {  // null if the user canceled
           Messages.showWarning("Error opening sketch", ee.getMessage(), ee);
         }
       } catch (NoSuchMethodError nsme) {
