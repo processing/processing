@@ -96,6 +96,23 @@ public class LED {
 
 
   /**
+   *  Sets the brightness
+   *  @param bright 0.0 (off) to 1.0 (maximum)
+   */
+  public void brightness(float bright) {
+    String fn = "/sys/class/leds/" + dev + "/brightness";
+    if (bright < 0.0 || 1.0 < bright) {
+      System.err.println("Brightness must be between 0.0 and 1.0.");
+      throw new IllegalArgumentException("Illegal argument");
+    }
+    int ret = NativeInterface.writeFile(fn, Integer.toString((int)(bright * maxBrightness)));
+    if (ret < 0) {
+      throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
+    }
+  }
+
+
+  /**
    *  Restores the previous state
    *
    *  Without calling this function the LED will remain in the current
@@ -134,22 +151,5 @@ public class LED {
     String[] tmp = devs.toArray(new String[devs.size()]);
     Arrays.sort(tmp);
     return tmp;
-  }
-
-
-  /**
-   *  Sets the brightness
-   *  @param bright 0.0 (off) to 1.0 (maximum)
-   */
-  public void setBrightness(float bright) {
-    String fn = "/sys/class/leds/" + dev + "/brightness";
-    if (bright < 0.0 || 1.0 < bright) {
-      System.err.println("Brightness must be between 0.0 and 1.0.");
-      throw new IllegalArgumentException("Illegal argument");
-    }
-    int ret = NativeInterface.writeFile(fn, Integer.toString((int)(bright * maxBrightness)));
-    if (ret < 0) {
-      throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
-    }
   }
 }
