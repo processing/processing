@@ -168,54 +168,6 @@ public class GPIO {
 
 
   /**
-   *  Pauses the execution of the sketch
-   *
-   *  Calling this function will have an influence on the framerate
-   *  the sketch is going to achieve.
-   *  @param ms milliseconds to pause
-   */ 
-  public static void delay(int ms) {
-    try {
-      Thread.sleep(ms);
-    } catch (InterruptedException e) {
-    }
-  }
-
-
-  /**
-   *  Pauses the execution of the sketch
-   *
-   *  Note: Both the operating system, as well as Processing, are not what is
-   *  called "hard real-time" systems. In other words: there are many factors,
-   *  outside of the control of the programmer, which can influence the execution
-   *  of the program in minute ways. Those are generally not an issue, or even
-   *  noticeable using a desktop operating system, but they can be a factor, when
-   *  the timing of a particular sequence of events is critical. For example, one
-   *  might to wait a very specific number amount of time after receiving an
-   *  interrupt before changing the state of an output pin. When programming with
-   *  micro-controllers, as found on the Arduino Uno, there very little between
-   *  your code and the actual hardware, and multiple executions of the same
-   *  sketch will probably match each other almost to the very tick of a clock
-   *  (which happens at the speed of 16 MHz). Systems running full-fledged
-   *  desktop operating systems, such as Linux, are generally multi-tasking,
-   *  which means that the operating system allocates small slices of time to
-   *  the many different processes that run concurrently. The effect of this is
-   *  often offset by the sheer clock speeds that such computers run. But
-   *  regardless: if you require your sketch to adhere to a very specific timing,
-   *  you might be disappointed.
-   *  @param us microseconds to pause
-   */
-  public static void delayMicroseconds(int us) {
-    int ms = (int)(us / 1000);
-    int ns = (us - (ms * 1000)) * 1000;
-    try {
-      Thread.sleep(ms, ns);
-    } catch (InterruptedException e) {
-    }
-  }
-
-
-  /**
    *  Returns the value of an input pin
    *
    *  You need to set the pin to INPUT by calling pinMode before calling
