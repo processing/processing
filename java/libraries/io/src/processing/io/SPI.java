@@ -31,6 +31,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ *  @webref
+ */
 public class SPI {
 
   /**
@@ -70,6 +73,7 @@ public class SPI {
    *  Opens an SPI interface
    *  @param dev device name
    *  @see list
+   *  @webref
    */
   public SPI(String dev) {
     NativeInterface.loadLibrary();
@@ -83,6 +87,7 @@ public class SPI {
 
   /**
    *  Closes the SPI interface
+   *  @webref
    */
   public void close() {
     NativeInterface.closeDevice(handle);
@@ -102,6 +107,7 @@ public class SPI {
   /**
    *  Lists all available SPI interfaces
    *  @return String array
+   *  @webref
    */
   public static String[] list() {
     ArrayList<String> devs = new ArrayList<String>();
@@ -126,6 +132,7 @@ public class SPI {
    *  @param maxSpeed maximum transmission rate in Hz, 500000 (500 kHz) is a resonable default
    *  @param dataOrder whether data is send with the first- or least significant bit first (SPI.MSBFIRST or SPI.LSBFIRST, the former is more common)
    *  @param mode SPI.MODE0 to SPI.MODE3 (see https://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus#Clock_polarity_and_phase)
+   *  @webref
    */
   public void settings(int maxSpeed, int dataOrder, int mode) {
     this.maxSpeed = maxSpeed;
@@ -142,6 +149,7 @@ public class SPI {
    *  one byte being read in.
    *  @param out bytes to send
    *  @return bytes read in (array is the same length as out)
+   *  @webref
    */
   public byte[] transfer(byte[] out) {
     // track the current setting per device across multiple instances
@@ -174,6 +182,7 @@ public class SPI {
    *  one byte being read in.
    *  @param out string to send
    *  @return bytes read in (array is the same length as out)
+   *  @webref
    */
   public byte[] transfer(String out) {
     return transfer(out.getBytes());
@@ -188,6 +197,7 @@ public class SPI {
    *  one byte being read in.
    *  @param out single byte to send
    *  @return bytes read in (array is the same length as out)
+   *  @webref
    */
   public byte[] transfer(int out) {
     if (out < 0 || 255 < out) {

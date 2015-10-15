@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
+/**
+ *  @webref
+ */
 public class PWM {
 
   int channel;
@@ -42,6 +45,7 @@ public class PWM {
    *  Opens a PWM channel
    *  @param channel PWM channel
    *  @see list
+   *  @webref
    */
   public PWM(String channel) {
     NativeInterface.loadLibrary();
@@ -82,6 +86,7 @@ public class PWM {
 
   /**
    *  Disables the PWM output
+   *  @webref
    */
   public void clear() {
     String fn = String.format("/sys/class/pwm/%s/gpio%d/enable", chip, channel);
@@ -97,6 +102,7 @@ public class PWM {
    *
    *  Without calling this function the channel will remain in the current
    *  state even after the sketch has been closed.
+   *  @webref
    */
   public void close() {
     // XXX: implicit clear()?
@@ -118,6 +124,7 @@ public class PWM {
   /**
    *  Lists all available PWM channels
    *  @return String array
+   *  @webref
    */
   public static String[] list() {
     ArrayList<String> devs = new ArrayList<String>();
@@ -148,6 +155,7 @@ public class PWM {
    *  Enables the PWM output
    *  @param period cycle period in Hz
    *  @param duty duty cycle, 0.0 (always off) to 1.0 (always on)
+   *  @webref
    */
   public void set(int period, float duty) {
     // set period
@@ -184,6 +192,7 @@ public class PWM {
    *  the Arduino Uno, which have a frequency of 980 Hz.
    *  It is recommended to use set(period, duty) instead.
    *  @param duty duty cycle, 0.0 (always off) to 1.0 (always on)
+   *  @webref
    */
   public void set(float duty) {
     set(1000, duty);

@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
+/**
+ *  @webref
+ */
 public class LED {
 
   protected String dev;
@@ -44,6 +47,7 @@ public class LED {
    *  Opens a LED device
    *  @param dev device name
    *  @see list
+   *  @webref
    */
   public LED(String dev) {
     NativeInterface.loadLibrary();
@@ -98,6 +102,7 @@ public class LED {
   /**
    *  Sets the brightness
    *  @param bright 0.0 (off) to 1.0 (maximum)
+   *  @webref
    */
   public void brightness(float bright) {
     String fn = "/sys/class/leds/" + dev + "/brightness";
@@ -117,6 +122,7 @@ public class LED {
    *
    *  Without calling this function the LED will remain in the current
    *  state even after the sketch has been closed.
+   *  @webref
    */
   public void close() {
     // restore previous settings
@@ -137,6 +143,7 @@ public class LED {
   /**
    *  Lists all available LED devices
    *  @return String array
+   *  @webref
    */
   public static String[] list() {
     ArrayList<String> devs = new ArrayList<String>();

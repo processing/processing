@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
+/**
+ *  @webref
+ */
 public class I2C {
 
   protected String dev;
@@ -43,6 +46,7 @@ public class I2C {
    *
    *  @param dev device name
    *  @see list
+   *  @webref
    */
   public I2C(String dev) {
     NativeInterface.loadLibrary();
@@ -72,6 +76,7 @@ public class I2C {
    *  @see write
    *  @see read
    *  @see endTransmission
+   *  @webref
    */
   public void beginTransmission(int slave) {
     // addresses 120 (0x78) to 127 are additionally reserved
@@ -87,6 +92,7 @@ public class I2C {
 
   /**
    *  Closes the I2C device
+   *  @webref
    */
   public void close() {
     NativeInterface.closeDevice(handle);
@@ -109,6 +115,7 @@ public class I2C {
    *  This executes any queued writes.
    *  @see beginTransmission
    *  @see write
+   *  @webref
    */
   public void endTransmission() {
     if (!transmitting) {
@@ -132,6 +139,7 @@ public class I2C {
   /**
    *  Lists all available I2C devices
    *  @return String array
+   *  @webref
    */
   public static String[] list() {
     ArrayList<String> devs = new ArrayList<String>();
@@ -162,6 +170,7 @@ public class I2C {
    *  @see beginTransmission
    *  @see write
    *  @see endTransmission
+   *  @webref
    */
   public byte[] read(int len) {
     if (!transmitting) {
@@ -194,6 +203,7 @@ public class I2C {
    *  @see beginTransmission
    *  @see read
    *  @see endTransmission
+   *  @webref
    */
   public void write(byte[] out) {
     if (!transmitting) {
@@ -221,6 +231,7 @@ public class I2C {
    *  @see beginTransmission
    *  @see read
    *  @see endTransmission
+   *  @webref
    */
   public void write(String out) {
     write(out.getBytes());
@@ -237,6 +248,7 @@ public class I2C {
    *  @see beginTransmission
    *  @see read
    *  @see endTransmission
+   *  @webref
    */
   public void write(int out) {
     if (out < 0 || 255 < out) {

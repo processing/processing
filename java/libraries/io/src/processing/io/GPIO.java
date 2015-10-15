@@ -31,6 +31,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ *  @webref
+ */
 public class GPIO {
 
   // those constants are generally the same as in Arduino.h
@@ -99,6 +102,7 @@ public class GPIO {
    *  @see noInterrupts
    *  @see interrupts
    *  @see releaseInterrupt
+   *  @webref
    */
   public static void attachInterrupt(int pin, PApplet parent, String method, int mode) {
     if (irqThreads.containsKey(pin)) {
@@ -159,6 +163,7 @@ public class GPIO {
    *  Board-specific classes, such as RPI, assign -1 to pins that carry power,
    *  ground and the like.
    *  @param pin GPIO pin
+   *  @webref
    */
   protected static void checkValidPin(int pin) {
     if (pin < 0) {
@@ -176,6 +181,7 @@ public class GPIO {
    *  @return GPIO.HIGH (1) or GPIO.LOW (0)
    *  @see pinMode
    *  @see digitalWrite
+   *  @webref
    */
   public static int digitalRead(int pin) {
     checkValidPin(pin);
@@ -211,6 +217,7 @@ public class GPIO {
    *  @param value GPIO.HIGH or GPIO.LOW
    *  @see pinMode
    *  @see digitalRead
+   *  @webref
    */
   public static void digitalWrite(int pin, int value) {
     checkValidPin(pin);
@@ -250,6 +257,7 @@ public class GPIO {
    *  @param value true or false
    *  @see pinMode
    *  @see digitalRead
+   *  @webref
    */
   public static void digitalWrite(int pin, boolean value) {
     if (value) {
@@ -269,6 +277,7 @@ public class GPIO {
    *  @param pin GPIO pin
    *  @see enableInterrupt
    *  @see waitForInterrupt
+   *  @webref
    */
   public static void disableInterrupt(int pin) {
     enableInterrupt(pin, NONE);
@@ -284,6 +293,7 @@ public class GPIO {
    *  @param mode what to wait for: GPIO.CHANGE, GPIO.FALLING or GPIO.RISING
    *  @see waitForInterrupt
    *  @see disableInterrupt
+   *  @webref
    */
   public static void enableInterrupt(int pin, int mode) {
     checkValidPin(pin);
@@ -322,6 +332,7 @@ public class GPIO {
    *  @see attachInterrupt
    *  @see noInterrupts
    *  @see releaseInterrupt
+   *  @webref
    */
   public static void interrupts() {
     serveInterrupts = true;
@@ -338,6 +349,7 @@ public class GPIO {
    *  @see attachInterrupt
    *  @see interrupts
    *  @see releaseInterrupt
+   *  @webref
    */
   public static void noInterrupts() {
     serveInterrupts = false;
@@ -355,6 +367,7 @@ public class GPIO {
    *  @see digitalRead
    *  @see digitalWrite
    *  @see releasePin
+   *  @webref
    */
   public static void pinMode(int pin, int mode) {
     checkValidPin(pin);
@@ -416,6 +429,7 @@ public class GPIO {
    *  @see attachInterrupt
    *  @see noInterrupts
    *  @see interrupts
+   *  @webref
    */
   public static void releaseInterrupt(int pin) {
     Thread t = irqThreads.get(pin);
@@ -443,6 +457,7 @@ public class GPIO {
    *  state even after the sketch has been closed.
    *  @param pin GPIO pin
    *  @see pinMode
+   *  @webref
    */
   public static void releasePin(int pin) {
     checkValidPin(pin);
@@ -471,6 +486,7 @@ public class GPIO {
    *  @return true if the interrupt occured, false if the timeout occured
    *  @see enableInterrupt
    *  @see disableInterrupt
+   *  @webref
    */
   public static boolean waitForInterrupt(int pin, int timeout) {
     checkValidPin(pin);
@@ -501,6 +517,7 @@ public class GPIO {
    *  @parm pin GPIO pin
    *  @see enableInterrupt
    *  @see disableInterrupt
+   *  @webref
    */
   public static void waitForInterrupt(int pin) {
     waitForInterrupt(pin, -1);
