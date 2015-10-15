@@ -119,9 +119,6 @@ public class LED {
 
   /**
    *  Restores the previous state
-   *
-   *  Without calling this function the LED will remain in the current
-   *  state even after the sketch has been closed.
    *  @webref
    */
   public void close() {

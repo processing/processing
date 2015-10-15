@@ -70,7 +70,7 @@ public class SPI {
 
 
   /**
-   *  Opens an SPI interface
+   *  Opens an SPI interface as master
    *  @param dev device name
    *  @see list
    *  @webref
@@ -130,8 +130,8 @@ public class SPI {
   /**
    *  Configures the SPI interface
    *  @param maxSpeed maximum transmission rate in Hz, 500000 (500 kHz) is a resonable default
-   *  @param dataOrder whether data is send with the first- or least significant bit first (SPI.MSBFIRST or SPI.LSBFIRST, the former is more common)
-   *  @param mode SPI.MODE0 to SPI.MODE3 (see https://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus#Clock_polarity_and_phase)
+   *  @param dataOrder whether data is send with the first- or least-significant bit first (SPI.MSBFIRST or SPI.LSBFIRST, the former is more common)
+   *  @param mode <a href="https://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus#Clock_polarity_and_phase">SPI.MODE0 to SPI.MODE3</br>
    *  @webref
    */
   public void settings(int maxSpeed, int dataOrder, int mode) {
@@ -143,10 +143,6 @@ public class SPI {
 
   /**
    *  Transfers data over the SPI bus
-   *
-   *  With SPI, data is simultaneously being exchanged between the master device
-   *  and the slave device. For every byte that is being sent out, there's also
-   *  one byte being read in.
    *  @param out bytes to send
    *  @return bytes read in (array is the same length as out)
    *  @webref
@@ -176,13 +172,8 @@ public class SPI {
 
   /**
    *  Transfers data over the SPI bus
-   *
-   *  With SPI, data is simultaneously being exchanged between the master device
-   *  and the slave device. For every byte that is being sent out, there's also
-   *  one byte being read in.
    *  @param out string to send
    *  @return bytes read in (array is the same length as out)
-   *  @webref
    */
   public byte[] transfer(String out) {
     return transfer(out.getBytes());
@@ -191,13 +182,8 @@ public class SPI {
 
   /**
    *  Transfers data over the SPI bus
-   *
-   *  With SPI, data is simultaneously being exchanged between the master device
-   *  and the slave device. For every byte that is being sent out, there's also
-   *  one byte being read in.
    *  @param out single byte to send
    *  @return bytes read in (array is the same length as out)
-   *  @webref
    */
   public byte[] transfer(int out) {
     if (out < 0 || 255 < out) {

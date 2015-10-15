@@ -99,9 +99,6 @@ public class PWM {
 
   /**
    *  Gives ownership of a channel back to the operating system
-   *
-   *  Without calling this function the channel will remain in the current
-   *  state even after the sketch has been closed.
    *  @webref
    */
   public void close() {
@@ -187,10 +184,6 @@ public class PWM {
 
   /**
    *  Enables the PWM output with a preset period of 1 kHz
-   *
-   *  This period approximately matches the dedicated PWM pins on
-   *  the Arduino Uno, which have a frequency of 980 Hz.
-   *  It is recommended to use set(period, duty) instead.
    *  @param duty duty cycle, 0.0 (always off) to 1.0 (always on)
    *  @webref
    */

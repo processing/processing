@@ -89,14 +89,9 @@ public class GPIO {
 
 
   /**
-   *  Calls a function when the value of an INPUT pin changes
-   *
-   *  Don't use enableInterrupt() and waitForInterrupt() in combination with
-   *  this function, as they are orthogonal. The sketch method provided must
-   *  accept a single integer (int) parameter, which is the number of the GPIO
-   *  pin that the interrupt occured on.
+   *  Calls a function when the value of an input pin changes
    *  @param pin GPIO pin
-   *  @param parent this
+   *  @param parent typically use "this"
    *  @param method name of sketch method to call
    *  @param mode when to call: GPIO.CHANGE, GPIO.FALLING or GPIO.RISING
    *  @see noInterrupts
@@ -163,7 +158,6 @@ public class GPIO {
    *  Board-specific classes, such as RPI, assign -1 to pins that carry power,
    *  ground and the like.
    *  @param pin GPIO pin
-   *  @webref
    */
   protected static void checkValidPin(int pin) {
     if (pin < 0) {
@@ -174,9 +168,6 @@ public class GPIO {
 
   /**
    *  Returns the value of an input pin
-   *
-   *  You need to set the pin to INPUT by calling pinMode before calling
-   *  this function.
    *  @param pin GPIO pin
    *  @return GPIO.HIGH (1) or GPIO.LOW (0)
    *  @see pinMode
@@ -207,14 +198,9 @@ public class GPIO {
 
 
   /**
-   *  Sets an output pin to HIGH or LOW
-   *
-   *  You need set the pin to OUTPUT by calling pinMode before calling this
-   *  function. It is not possible to enable or disable internal pull-up
-   *  resistors for inputs using this function, which is something that's
-   *  supported on Arduino.
+   *  Sets an output pin to be either high or low
    *  @param pin GPIO pin
-   *  @param value GPIO.HIGH or GPIO.LOW
+   *  @param value GPIO.HIGH (1) or GPIO.LOW (0)
    *  @see pinMode
    *  @see digitalRead
    *  @webref
@@ -247,17 +233,7 @@ public class GPIO {
 
 
   /**
-   *  Sets an output pin to HIGH or LOW
-   *
-   *  You need set the pin to OUTPUT by calling pinMode before calling this
-   *  function. It is not possible to enable or disable internal pull-up
-   *  resistors for inputs using this function, which is something that's
-   *  supported on Arduino.
-   *  @param pin GPIO pin
    *  @param value true or false
-   *  @see pinMode
-   *  @see digitalRead
-   *  @webref
    */
   public static void digitalWrite(int pin, boolean value) {
     if (value) {
@@ -269,33 +245,24 @@ public class GPIO {
 
 
   /**
-   *  Disables an interrupt for an INPUT pin
-   *
-   *  Use this function only in combination with enableInterrupt() and
-   *  waitForInterrupt(). This should not be called when attachInterrupt()
-   *  is being used.
+   *  Disables an interrupt for an input pin
    *  @param pin GPIO pin
    *  @see enableInterrupt
    *  @see waitForInterrupt
-   *  @webref
    */
-  public static void disableInterrupt(int pin) {
+  protected static void disableInterrupt(int pin) {
     enableInterrupt(pin, NONE);
   }
 
 
   /**
-   *  Enables an interrupt for an INPUT pin
-   *
-   *  Use this function only when calling waitForInterrupt(). This should not
-   *  be called when attachInterrupt() is being used.
+   *  Enables an interrupt for an input pin
    *  @param pin GPIO pin
    *  @param mode what to wait for: GPIO.CHANGE, GPIO.FALLING or GPIO.RISING
    *  @see waitForInterrupt
    *  @see disableInterrupt
-   *  @webref
    */
-  public static void enableInterrupt(int pin, int mode) {
+  protected static void enableInterrupt(int pin, int mode) {
     checkValidPin(pin);
 
     String out;
@@ -324,11 +291,6 @@ public class GPIO {
 
   /**
    *  Allows interrupts to happen
-   *
-   *  You can use noInterrupts() and interrupts() in tandem to make sure no interrupts
-   *  are occuring while your sketch is doing a particular task. This is only relevant
-   *  when using attachInterrupt(), not for waitForInterrupt(). By default, interrupts
-   *  are enabled.
    *  @see attachInterrupt
    *  @see noInterrupts
    *  @see releaseInterrupt
@@ -341,11 +303,6 @@ public class GPIO {
 
   /**
    *  Prevents interrupts from happpening
-   *
-   *  You can use noInterrupts() and interrupts() in tandem to make sure no interrupts
-   *  are occuring while your sketch is doing a particular task. This is only relevant
-   *  when using attachInterrupt(), not for waitForInterrupt(). By default, interrupts
-   *  are enabled.
    *  @see attachInterrupt
    *  @see interrupts
    *  @see releaseInterrupt
@@ -357,11 +314,7 @@ public class GPIO {
 
 
   /**
-   *  Sets a pin to INPUT or OUTPUT
-   *
-   *  While pins are implicitly set to input by default on Arduino, it is
-   *  necessary to call this function for any pin you want to access later,
-   *  including input pins.
+   *  Configures a pin to act either as input or output
    *  @param pin GPIO pin
    *  @param mode GPIO.INPUT or GPIO.OUTPUT
    *  @see digitalRead
@@ -421,10 +374,7 @@ public class GPIO {
 
 
   /**
-   *  Stops listening for interrupts on an INPUT pin
-   *
-   *  Use this function only in combination with attachInterrupt(). This should
-   *  not be called when enableInterrupt() and waitForInterrupt() are being used.
+   *  Stops listening for interrupts on an input pin
    *  @param pin GPIO pin
    *  @see attachInterrupt
    *  @see noInterrupts
@@ -452,9 +402,6 @@ public class GPIO {
 
   /**
    *  Gives ownership of a pin back to the operating system
-   *
-   *  Without calling this function the pin will remain in the current
-   *  state even after the sketch has been closed.
    *  @param pin GPIO pin
    *  @see pinMode
    *  @webref
@@ -477,7 +424,21 @@ public class GPIO {
 
 
   /**
-   *  Waits for the value of an INPUT pin to change
+   *  Waits for the value of an input pin to change
+   *  @param pin GPIO pin
+   *  @param mode what to wait for: GPIO.CHANGE, GPIO.FALLING or GPIO.RISING
+   *  @param timeout don't wait more than timeout milliseconds (-1 waits indefinitely)
+   *  @return true if the interrupt occured, false if the timeout occured
+   *  @webref
+   */
+  public static boolean waitForInterrupt(int pin, int mode, int timeout) {
+    enableInterrupt(pin, mode);
+    return waitForInterrupt(pin, timeout);
+  }
+
+
+  /**
+   *  Waits for the value of an input pin to change
    *
    *  Make sure to setup the interrupt with enableInterrupt() before calling
    *  this function. A timeout value of -1 waits indefinitely.
@@ -486,9 +447,8 @@ public class GPIO {
    *  @return true if the interrupt occured, false if the timeout occured
    *  @see enableInterrupt
    *  @see disableInterrupt
-   *  @webref
    */
-  public static boolean waitForInterrupt(int pin, int timeout) {
+  protected static boolean waitForInterrupt(int pin, int timeout) {
     checkValidPin(pin);
 
     String fn = String.format("/sys/class/gpio/gpio%d/value", pin);
@@ -509,7 +469,7 @@ public class GPIO {
 
 
   /**
-   *  Waits for the value of an INPUT pin to change
+   *  Waits for the value of an input pin to change
    *
    *  Make sure to setup the interrupt with enableInterrupt() before calling
    *  this function. This function will wait indefinitely for an interrupt
@@ -517,9 +477,8 @@ public class GPIO {
    *  @parm pin GPIO pin
    *  @see enableInterrupt
    *  @see disableInterrupt
-   *  @webref
    */
-  public static void waitForInterrupt(int pin) {
+  protected static void waitForInterrupt(int pin) {
     waitForInterrupt(pin, -1);
   }
 }
