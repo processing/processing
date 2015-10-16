@@ -142,9 +142,11 @@ public class JavaEditor extends Editor {
 
     { // Init error checker
       errorCheckerService = new ErrorCheckerService(this);
-      Document currentDocument = currentDocument();
-      if (currentDocument != null) {
-        errorCheckerService.addListener(currentDocument);
+      for (SketchCode code : getSketch().getCode()) {
+        Document document = code.getDocument();
+        if (document != null) {
+          errorCheckerService.addListener(document);
+        }
       }
       errorCheckerService.start();
       errorCheckerService.request();
