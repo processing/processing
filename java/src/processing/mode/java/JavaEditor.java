@@ -2953,7 +2953,7 @@ public class JavaEditor extends Editor {
       return false;
     }
 
-    int afterSizePos = SketchParser.getAfterSizePos(baseCode[0]);
+    int afterSizePos = SketchParser.getAfterSizePos(baseCode[0], 0);
     if (afterSizePos < 0) {
       return false;
     }
@@ -3053,7 +3053,7 @@ public class JavaEditor extends Editor {
       "    tweakmode_initCommunication();\n"+
       "  /* TWEAKMODE */\n\n";
 
-    afterSizePos = SketchParser.getAfterSizePos(c);
+    afterSizePos = SketchParser.getAfterSizePos(c, 0);
     c = replaceString(c, afterSizePos, afterSizePos, addToSetup);
 
     // Server code defines a class, so it should go later in the sketch
