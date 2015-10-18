@@ -1975,7 +1975,7 @@ public class PApplet implements PConstants {
         height != this.height ||
         !renderer.equals(this.renderer)) {
       //println(width, height, renderer, this.width, this.height, this.renderer);
-      if (insideSettings("size", width, height, renderer)) {
+      if (insideSettings("size", width, height, "\"" + renderer + "\"")) {
         this.width = width;
         this.height = height;
         this.renderer = renderer;
@@ -1994,7 +1994,8 @@ public class PApplet implements PConstants {
     if (width != this.width ||
         height != this.height ||
         !renderer.equals(this.renderer)) {
-      if (insideSettings("size", width, height, renderer, path)) {
+      if (insideSettings("size", width, height, "\"" + renderer + "\"",
+                         "\"" + path + "\"")) {
         this.width = width;
         this.height = height;
         this.renderer = renderer;
@@ -11136,9 +11137,9 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from clip.xml )
    *
-   * Limits the rendering to the boundaries of a rectangle defined 
-   * by the parameters. The boundaries are drawn based on the state 
-   * of the <b>imageMode()</b> fuction, either CORNER, CORNERS, or CENTER. 
+   * Limits the rendering to the boundaries of a rectangle defined
+   * by the parameters. The boundaries are drawn based on the state
+   * of the <b>imageMode()</b> fuction, either CORNER, CORNERS, or CENTER.
    *
    * ( end auto-generated )
    *
