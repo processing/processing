@@ -10220,15 +10220,18 @@ public class PApplet implements PConstants {
     // (and most likely, from the PDE's preference setting).
     sketch.display = displayNum;
 
+    // For 3.0.1, moved this above handleSettings() so that loadImage() can be
+    // used inside settings(). Sets a terrible precedent, but the alternative
+    // of not being able to size a sketch to an image is driving people loopy.
+    // A handful of things that need to be set before init/start.
+    sketch.sketchPath = folder;
+
     // Call the settings() method which will give us our size() call
 //    try {
     sketch.handleSettings();
 //    } catch (Throwable t) {
 //      System.err.println("I think I'm gonna hurl");
 //    }
-
-    // A handful of things that need to be set before init/start.
-    sketch.sketchPath = folder;
 
 ////    sketch.spanDisplays = spanDisplays;
 //    // If spanning screens, that means we're also full screen.

@@ -6,8 +6,9 @@ X add quotes to the necessary parameters in the size() error messages
 _ when calling exit(), if sketch has halted w/ exception, force the quit
 _   otherwise have to double-quit with cmd-q on OS X
 _   simple test case: using size() inside setup() from Eclipse
-_ figure our size(img.width, img.height) situation
-_   just make loadImage() work in settings, update the wiki and reference
+X figure our size(img.width, img.height) situation
+X   just make loadImage() work in settings
+_   update the wiki and reference
 
 andres
 X cursor() fails to work as expected with P2D/P3D 
