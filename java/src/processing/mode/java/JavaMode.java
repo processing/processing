@@ -35,6 +35,8 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.SwingUtilities;
+
 import processing.app.*;
 import processing.app.ui.Editor;
 import processing.app.ui.EditorException;
@@ -216,17 +218,27 @@ public class JavaMode extends Mode {
 //          }
           // next lines are executed when the sketch quits
           if (launchInteractive) {
-            editor.initEditorCode(parser.allHandles, false);
-            editor.stopTweakMode(parser.allHandles);
+            // fix swing deadlock issue: https://github.com/processing/processing/issues/3928
+            SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                editor.initEditorCode(parser.allHandles, false);
+                editor.stopTweakMode(parser.allHandles);
+              }
+            });
           }
         }
       }).start();
 
       if (launchInteractive) {
-        // replace editor code with baseCode
-        editor.initEditorCode(parser.allHandles, false);
-        editor.updateInterface(parser.allHandles, parser.colorBoxes);
-        editor.startTweakMode();
+        // fix swing deadlock issue: https://github.com/processing/processing/issues/3928
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            // replace editor code with baseCode
+            editor.initEditorCode(parser.allHandles, false);
+            editor.updateInterface(parser.allHandles, parser.colorBoxes);
+            editor.startTweakMode();
+          }
+        });
       }
       return runtime;
     }
