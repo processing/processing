@@ -1,6 +1,7 @@
 0247 (3.0.1)
 X curveVertex() does not work with FX2D renderer
 X   https://github.com/processing/processing/issues/3960
+X hide menu bar on OS X when FX2D is running full screen
 _ figure our size(img.width, img.height) situation
 _   just make loadImage() work in settings, update the wiki and reference
 

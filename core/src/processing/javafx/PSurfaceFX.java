@@ -441,6 +441,10 @@ public class PSurfaceFX implements PSurface {
 
   @Override
   public void placeWindow(int[] location, int[] editorLocation) {
+    if (sketch.sketchFullScreen()) {
+      PApplet.hideMenuBar();
+    }
+
     //Dimension window = setFrameSize();
 
 //    int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
@@ -504,6 +508,7 @@ public class PSurfaceFX implements PSurface {
   // http://download.java.net/jdk8/jfxdocs/javafx/stage/Stage.html#setFullScreenExitKeyCombination-javafx.scene.input.KeyCombination-
   public void placePresent(int stopColor) {
     // TODO Auto-generated method stub
+    PApplet.hideMenuBar();
   }
 
 
