@@ -53,7 +53,7 @@ boolean mouseOverRect() { // Test if mouse is over square
  }
  
  void loop() {
- if (Serial.available()) { // If data is available to read,
+ while (Serial.available()) { // If data is available to read,
  val = Serial.read(); // read it and store it in val
  }
  if (val == 'H') { // If H was received
