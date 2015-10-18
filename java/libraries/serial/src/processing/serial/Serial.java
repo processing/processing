@@ -65,26 +65,40 @@ public class Serial implements SerialPortEventListener {
   // * state of the RING, RLSD line
   // * sending breaks
 
+  /**
+   * @param parent typically use "this"
+   */
   public Serial(PApplet parent) {
     this(parent, "COM1", 9600, 'N', 8, 1);
   }
 
-  
+
+  /**
+   * @param baudRate 9600 is the default
+   */
   public Serial(PApplet parent, int baudRate) {
     this(parent, "COM1", baudRate, 'N', 8, 1);
   }
 
-  
+
+  /**
+   * @param portName name of the port (COM1 is the default)
+   */
   public Serial(PApplet parent, String portName) {
     this(parent, portName, 9600, 'N', 8, 1);
   }
 
-  
+
   public Serial(PApplet parent, String portName, int baudRate) {
     this(parent, portName, baudRate, 'N', 8, 1);
   }
 
-  
+
+  /**
+   * @param parity 'N' for none, 'E' for even, 'O' for odd, 'M' for mark, 'S' for space ('N' is the default)
+   * @param dataBits 8 is the default
+   * @param stopBits 1.0, 1.5, or 2.0 (1.0 is the default)
+   */
   public Serial(PApplet parent, String portName, int baudRate, char parity, int dataBits, float stopBits) {
     this.parent = parent;
     parent.registerMethod("dispose", this);
@@ -140,12 +154,15 @@ public class Serial implements SerialPortEventListener {
     return null;
   }
 
-  
+
+  /**
+   * Used by PApplet to shut things down.
+   */
   public void dispose() {
     stop();
   }
 
-  
+
   /**
    * Return true if this port is still active and hasn't run
    * into any trouble.
@@ -169,26 +186,44 @@ public class Serial implements SerialPortEventListener {
   }
 
 
+  /**
+   * @generate Serial_available.xml
+   * @webref serial:serial
+   * @usage web_application
+   */
   public int available() {
     return (inBuffer-readOffset);
   }
 
-  
+
+  /**
+   * @generate Serial_buffer.xml
+   * @webref serial:serial
+   * @usage web_application
+   * @param size number of bytes to buffer
+   */
   public void buffer(int size) {
     bufferUntilSize = size;
   }
 
+
   /**
-   * @webref
-   * @brief
-   * @param inByte byte to buffer until it's reached
+   * @generate Serial_bufferUntil.xml
+   * @webref serial:serial
+   * @usage web_application
+   * @param inByte the value to buffer until
    */
   public void bufferUntil(int inByte) {
     bufferUntilSize = 0;
     bufferUntilByte = (byte)inByte;
   }
 
-  
+
+  /**
+   * @generate Serial_clear.xml
+   * @webref serial:serial
+   * @usage web_application
+   */
   public void clear() {
     synchronized (buffer) {
       inBuffer = 0;
@@ -205,7 +240,7 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
-  
+
   public boolean getDSR() {
     try {
       return port.isDSR();
@@ -214,12 +249,21 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
-  
+
   public static Map<String, String> getProperties(String portName) {
     return SerialPortList.getPortProperties(portName);
   }
 
 
+  /**
+   * @generate Serial_last.xml
+   * <h3>Advanced</h3>
+   * Same as read() but returns the very last value received
+   * and clears the buffer. Useful when you just want the most
+   * recent value sent over the port.
+   * @webref serial:serial
+   * @usage web_application
+   */
   public int last() {
     if (inBuffer == readOffset) {
       return -1;
@@ -233,19 +277,34 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
-  
+
+  /**
+   * @generate Serial_lastChar.xml
+   * @webref serial:serial
+   * @usage web_application
+   */
   public char lastChar() {
     return (char)last();
   }
 
-  
+
+  /**
+   * @generate Serial_list.xml
+   * @webref serial
+   * @usage web_application
+   */
   public static String[] list() {
     // returns list sorted alphabetically, thus cu.* comes before tty.*
     // this was different with RXTX
     return SerialPortList.getPortNames();
   }
 
-  
+
+  /**
+   * @generate Serial_read.xml
+   * @webref serial:serial
+   * @usage web_application
+   */
   public int read() {
     if (inBuffer == readOffset) {
       return -1;
@@ -261,7 +320,12 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
-  
+
+  /**
+   * @generate Serial_readBytes.xml
+   * @webref serial:serial
+   * @usage web_application
+   */
   public byte[] readBytes() {
     if (inBuffer == readOffset) {
       return null;
@@ -277,6 +341,16 @@ public class Serial implements SerialPortEventListener {
   }
   
 
+  /**
+   * <h3>Advanced</h3>
+   * Grab whatever is in the serial buffer, and stuff it into a
+   * byte buffer passed in by the user. This is more memory/time
+   * efficient than readBytes() returning a byte[] array.
+   *
+   * Returns an int for how many bytes were read. If more bytes
+   * are available than can fit into the byte array, only those
+   * that will fit are read.
+   */
   public int readBytes(byte[] dest) {
     if (inBuffer == readOffset) {
       return 0;
@@ -298,6 +372,12 @@ public class Serial implements SerialPortEventListener {
   }
   
 
+  /**
+   * @generate Serial_readBytesUntil.xml
+   * @webref serial:serial
+   * @usage web_application
+   * @param inByte character designated to mark the end of the data
+   */
   public byte[] readBytesUntil(int inByte) {
     if (inBuffer == readOffset) {
       return null;
@@ -328,7 +408,15 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
-  
+
+  /**
+   * <h3>Advanced</h3>
+   * If dest[] is not big enough, then -1 is returned,
+   *   and an error message is printed on the console.
+   * If nothing is in the buffer, zero is returned.
+   * If 'interesting' byte is not in the buffer, then 0 is returned.
+   * @param dest passed in byte array to be altered
+   */
   public int readBytesUntil(int inByte, byte[] dest) {
     if (inBuffer == readOffset) {
       return 0;
@@ -365,12 +453,22 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
-  
+
+  /**
+   * @generate Serial_readChar.xml
+   * @webref serial:serial
+   * @usage web_application
+   */
   public char readChar() {
     return (char) read();
   }
 
-  
+
+  /**
+   * @generate Serial_readString.xml
+   * @webref serial:serial
+   * @usage web_application
+   */
   public String readString() {
     if (inBuffer == readOffset) {
       return null;
@@ -378,7 +476,18 @@ public class Serial implements SerialPortEventListener {
     return new String(readBytes());
   }
 
-  
+
+  /**
+   * @generate Serial_readStringUntil.xml
+   *<h3>Advanced</h3>
+   * If you want to move Unicode data, you can first convert the
+   * String to a byte stream in the representation of your choice
+   * (i.e. UTF8 or two-byte Unicode data), and send it as a byte array.
+   *
+   * @webref serial:serial
+   * @usage web_application
+   * @param inByte character designated to mark the end of the data
+   */
   public String readStringUntil(int inByte) {
     byte temp[] = readBytesUntil(inByte);
     if (temp == null) {
@@ -389,6 +498,12 @@ public class Serial implements SerialPortEventListener {
   }
 
 
+  /**
+   * @generate serialEvent.xml
+   * @webref serial:events
+   * @usage web_application
+   * @param serialPorttEvent the port where new data is available
+   */
   public void serialEvent(SerialPortEvent event) {
     if (event.getEventType() == SerialPortEvent.RXCHAR) {
       int toRead;
@@ -438,7 +553,10 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
-  
+
+  /**
+   * Set the DTR line
+   */
   public void setDTR(boolean state) {
     // there is no way to influence the behavior of the DTR line when opening the serial port
     // this means that at least on Linux and OS X, Arduino devices are always reset
@@ -449,7 +567,10 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
-  
+
+  /**
+   * Set the RTS line
+   */
   public void setRTS(boolean state) {
     try {
       port.setRTS(state);
@@ -458,7 +579,12 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
-  
+
+  /**
+   * @generate Serial_stop.xml
+   * @webref serial:serial
+   * @usage web_application
+   */
   public void stop() {
     try {
       port.closePort();
@@ -469,7 +595,10 @@ public class Serial implements SerialPortEventListener {
     readOffset = 0;
   }
 
-  
+
+ /**
+  * @param src data to write
+  */
   public void write(byte[] src) {
     try {
       // this might block if the serial device is not yet ready (esp. tty devices under OS X)
@@ -480,7 +609,12 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
-  
+
+  /**
+   * <h3>Advanced</h3>
+   * This will handle both ints, bytes and chars transparently.
+   * @param src data to write
+   */
   public void write(int src) {
     try {
       port.writeInt(src);
@@ -489,7 +623,25 @@ public class Serial implements SerialPortEventListener {
     }
   }
 
-  
+
+  /**
+   * @generate Serial_write.xml
+   * <h3>Advanced</h3>
+   * Write a String to the output. Note that this doesn't account
+   * for Unicode (two bytes per char), nor will it send UTF8
+   * characters.. It assumes that you mean to send a byte buffer
+   * (most often the case for networking and serial i/o) and
+   * will only use the bottom 8 bits of each char in the string.
+   * (Meaning that internally it uses String.getBytes)
+   *
+   * If you want to move Unicode data, you can first convert the
+   * String to a byte stream in the representation of your choice
+   * (i.e. UTF8 or two-byte Unicode data), and send it as a byte array.
+   *
+   * @webref serial:serial
+   * @usage web_application
+   * @param src data to write
+   */
   public void write(String src) {
     try {
       port.writeString(src);
