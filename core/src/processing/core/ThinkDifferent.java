@@ -61,7 +61,7 @@ public class ThinkDifferent {
       public void handleQuitRequestWith(QuitEvent event, QuitResponse response) {
         sketch.exit();
         if (!attemptedQuit) {
-          response.cancelQuit();  // we'll quit manually
+          response.cancelQuit();  // tell OS X we'll handle this
           attemptedQuit = true;
         } else {
           response.performQuit();  // just force it this time
