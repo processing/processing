@@ -1975,7 +1975,7 @@ public class PApplet implements PConstants {
         height != this.height ||
         !renderer.equals(this.renderer)) {
       //println(width, height, renderer, this.width, this.height, this.renderer);
-      if (insideSettings("size", width, height, renderer)) {
+      if (insideSettings("size", width, height, "\"" + renderer + "\"")) {
         this.width = width;
         this.height = height;
         this.renderer = renderer;
@@ -1994,7 +1994,8 @@ public class PApplet implements PConstants {
     if (width != this.width ||
         height != this.height ||
         !renderer.equals(this.renderer)) {
-      if (insideSettings("size", width, height, renderer, path)) {
+      if (insideSettings("size", width, height, "\"" + renderer + "\"",
+                         "\"" + path + "\"")) {
         this.width = width;
         this.height = height;
         this.renderer = renderer;
@@ -10219,15 +10220,18 @@ public class PApplet implements PConstants {
     // (and most likely, from the PDE's preference setting).
     sketch.display = displayNum;
 
+    // For 3.0.1, moved this above handleSettings() so that loadImage() can be
+    // used inside settings(). Sets a terrible precedent, but the alternative
+    // of not being able to size a sketch to an image is driving people loopy.
+    // A handful of things that need to be set before init/start.
+    sketch.sketchPath = folder;
+
     // Call the settings() method which will give us our size() call
 //    try {
     sketch.handleSettings();
 //    } catch (Throwable t) {
 //      System.err.println("I think I'm gonna hurl");
 //    }
-
-    // A handful of things that need to be set before init/start.
-    sketch.sketchPath = folder;
 
 ////    sketch.spanDisplays = spanDisplays;
 //    // If spanning screens, that means we're also full screen.
@@ -11136,9 +11140,9 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from clip.xml )
    *
-   * Limits the rendering to the boundaries of a rectangle defined 
-   * by the parameters. The boundaries are drawn based on the state 
-   * of the <b>imageMode()</b> fuction, either CORNER, CORNERS, or CENTER. 
+   * Limits the rendering to the boundaries of a rectangle defined
+   * by the parameters. The boundaries are drawn based on the state
+   * of the <b>imageMode()</b> fuction, either CORNER, CORNERS, or CENTER.
    *
    * ( end auto-generated )
    *
