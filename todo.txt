@@ -1,6 +1,11 @@
 0247 (3.0.1)
+X NullPointerException in ContributionManager.deleteTemp()
+X   https://github.com/processing/processing/issues/4026
 
 contribs
+X Tweak Mode sometimes freezes while running, require a force quit
+X   https://github.com/processing/processing/issues/3928
+X   https://github.com/processing/processing/pull/4014
 X Update Japanese translation
 X   https://github.com/processing/processing/pull/3956
 _   https://github.com/processing/processing/pull/3971
@@ -10,6 +15,8 @@ _   make sure naming, etc is all correct
 X processing-java stealing focus even with --build flag
 X   https://github.com/processing/processing/issues/3996
 X   https://github.com/processing/processing/pull/3998
+_ question about PDE_pt-br instead of PDE_pt
+_   https://github.com/processing/processing/issues/4018
 
 jakub
 X Include Example packs into update count
@@ -21,6 +28,9 @@ X   https://github.com/processing/processing/issues/3929
 X Library path for Error Checker and Suggestions
 X   https://github.com/processing/processing/pull/3989
 X   https://github.com/processing/processing/issues/3924
+X A serious error occurred while trying to create a new editor window
+X   https://github.com/processing/processing/issues/3974
+X   https://github.com/processing/processing/pull/4001
 
 
 known issues

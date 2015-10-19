@@ -10,6 +10,12 @@ X figure our size(img.width, img.height) situation
 X   just make loadImage() work in settings
 _   update the wiki and reference
 
+jakub
+X Fix depth sorter ordering when two triangles in a plane share vertices
+X   https://github.com/processing/processing/pull/4010
+X Turn off fixed rate scheduling in OpenGL
+X   https://github.com/processing/processing/pull/4004
+
 andres
 X cursor() fails to work as expected with P2D/P3D 
 X   https://github.com/processing/processing/issues/3955
@@ -18,6 +24,12 @@ X   https://github.com/processing/processing/issues/3947
 X   https://github.com/processing/processing/issues/3973
 X Regressions wrt GLES2 support between b4 and b7
 X   https://github.com/processing/processing/issues/3976
+X stroke glitches in P3D
+X   https://github.com/processing/processing/issues/4007
+X   https://github.com/processing/processing/issues/4027
+X   https://github.com/processing/processing/issues/4012
+X line loops incorrectly closed in P3D
+X   https://github.com/processing/processing/issues/4031
 
 jogl
 X Update to JogAmp JOGL 2.3.2
