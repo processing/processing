@@ -13449,9 +13449,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
                 testTid = activeTid + 1;
               } else {
-                // oops, we already tested this one, probably intersecting or
-                // interlocked in loop with others, just draw it incorrectly :(
-                draw = true;
+                // oops, we already tested this one, either in one plane or
+                // interlocked in loop with others, just ignore it for now :(
+                testTid++;
               }
             }
           }
