@@ -567,9 +567,12 @@ public class ContributionManager {
    */
   static private void deleteTemp(File root) {
     String pattern = root.getName().substring(0, 4) + "\\d*" + "tmp";
-    for (File f : root.listFiles()) {
-      if (f.getName().matches(pattern)) {
-        Util.removeDir(f);
+    File[] possible = root.listFiles();
+    if (possible != null) {
+      for (File f : possible) {
+        if (f.getName().matches(pattern)) {
+          Util.removeDir(f);
+        }
       }
     }
   }
