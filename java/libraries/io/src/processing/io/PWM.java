@@ -89,7 +89,7 @@ public class PWM {
    *  @webref
    */
   public void clear() {
-    String fn = String.format("/sys/class/pwm/%s/gpio%d/enable", chip, channel);
+    String fn = String.format("/sys/class/pwm/%s/pwm%d/enable", chip, channel);
     int ret = NativeInterface.writeFile(fn, "0");
     if (ret < 0) {
       throw new RuntimeException(NativeInterface.getError(ret));
@@ -156,14 +156,14 @@ public class PWM {
    */
   public void set(int period, float duty) {
     // set period
-    String fn = fn = String.format("/sys/class/pwm/%s/gpio%d/period", chip, channel);
+    String fn = fn = String.format("/sys/class/pwm/%s/pwm%d/period", chip, channel);
     int ret = NativeInterface.writeFile(fn, String.format("%d", (int)(1000000000 / period)));
     if (ret < 0) {
       throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
     }
 
     // set duty cycle
-    fn = fn = String.format("/sys/class/pwm/%s/gpio%d/duty", chip, channel);
+    fn = fn = String.format("/sys/class/pwm/%s/pwm%d/duty", chip, channel);
     if (duty < 0.0 || 1.0 < duty) {
       System.err.println("Duty cycle must be between 0.0 and 1.0.");
       throw new IllegalArgumentException("Illegal argument");
@@ -174,7 +174,7 @@ public class PWM {
     }
 
     // enable output
-    fn = String.format("/sys/class/pwm/%s/gpio%d/enable", chip, channel);
+    fn = String.format("/sys/class/pwm/%s/pwm%d/enable", chip, channel);
     ret = NativeInterface.writeFile(fn, "1");
     if (ret < 0) {
       throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
