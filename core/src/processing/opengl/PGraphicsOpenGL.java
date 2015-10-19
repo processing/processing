@@ -11497,9 +11497,9 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         i0 = i1;
       }
-      index = addLineSegment3D(0, in.vertexCount - 1, i1 - 2, i1 - 1, index, lastInd, false);
+      index = addLineSegment3D(in.vertexCount - 1, 0, i1 - 2, i1 - 1, index, lastInd, false);
       if (0 < nBevelTr) {
-        index = addBevel3D(0, 1, i1, 0, index, lastInd, false);
+        index = addBevel3D(0, 1, in.vertexCount - 1, 0, index, lastInd, false);
       }
       lastLineIndexCache = index;
     }
