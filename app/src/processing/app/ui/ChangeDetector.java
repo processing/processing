@@ -21,7 +21,7 @@ public class ChangeDetector implements WindowFocusListener {
   private final Sketch sketch;
   private final Editor editor;
   // Flag to prevent infinite reloadPrompt() PopUps
-  private boolean doReloadPrompt = true;
+  private boolean doReloadPrompt;
 
   // Windows and others seem to have a few hundred ms difference in reported
   // times, so we're arbitrarily setting a gap in time here.
@@ -75,6 +75,11 @@ public class ChangeDetector implements WindowFocusListener {
   public void windowLostFocus(WindowEvent e) {
     // Shouldn't need to do anything here, and not storing anything here b/c we
     // don't want to assume a loss of focus is required before change detection
+
+    // Switching "doReloadPrompt" flag to 'ON' to allow promptReload() to create PopUp
+    // if user modifies a file externally and comes back to window.
+    doReloadPrompt = true;
+
   }
 
 
@@ -154,7 +159,7 @@ public class ChangeDetector implements WindowFocusListener {
               setCodeModified(code);
             }
           }
-          // Switching this flag 'OFF' when user clicks "No" option in the reloadPrompt
+          // Switching "doReloadPrompt" flag to 'OFF' when user clicks "No" option in the reloadPrompt
           // to prevent infinite popups
           doReloadPrompt = false;
           rebuildHeaderEDT();
@@ -198,9 +203,6 @@ public class ChangeDetector implements WindowFocusListener {
           // don't ask the user about it again.
           code.setLastModified();
         }
-        // Switching this flag 'ON' to allow promptReload() to create PopUp
-        // if user modifies a file externally
-        doReloadPrompt = true;
         rebuildHeaderEDT();
       }
     }
