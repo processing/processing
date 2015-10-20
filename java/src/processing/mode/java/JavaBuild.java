@@ -803,7 +803,7 @@ public class JavaBuild {
           }
           // export the 64-bit version
           folder = new File(sketch.getFolder(), "application." + platformName + "64");
-          if (!exportApplication(folder, platform, "64", embedJava && Platform.getNativeBits() == 64 && "x86".equals(Platform.getNativeArch()))) {
+          if (!exportApplication(folder, platform, "64", embedJava && Platform.getNativeBits() == 64 && "amd64".equals(Platform.getNativeArch()))) {
             return false;
           }
           if (platform == PConstants.LINUX) {
