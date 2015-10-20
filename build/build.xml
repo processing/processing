@@ -64,7 +64,7 @@
        (Windows/Linux) or JDK (on Mac OS X) -->
 
   <property name="examples.dir" 
-	    value="../../processing-docs/content/examples" />
+        value="../../processing-docs/content/examples" />
 
   <!-- Switching to 8 because updates for 7 ended April 2015 -->
   <property name="jdk.version" value="8" />
@@ -221,8 +221,8 @@
 
     <!-- define our special JRE downloader task -->
     <taskdef name="downloader" 
-	     classname="Downloader"
-	     classpath="jre/downloader.jar" />
+         classname="Downloader"
+         classpath="jre/downloader.jar" />
   </target>
 
   <target name="jre-download" depends="jre-check, downloader-setup"
@@ -341,7 +341,6 @@
     <subant buildpath="../core" target="clean"/>
     <subant buildpath="../app" target="clean"/>
     <subant buildpath="../java/libraries/dxf" target="clean"/>
-    <subant buildpath="../java/libraries/io" target="clean"/>
     <subant buildpath="../java/libraries/net" target="clean"/>
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
@@ -364,12 +363,7 @@
     <subant buildpath="shared/tools/MovieMaker" target="build"/>
     <subant buildpath="../java" target="build"/>
   </target>
-
-  <target name="subprojects-build-linux-arm32" if="linux-arm32">
-    <!-- I/O library is only compiled on supported ARM platforms -->
-    <subant buildpath="../java/libraries/io" target="build"/>
-  </target>
-
+  
 
   <!-- - - - - - - - - -->
   <!-- Basic Assembly  -->
@@ -399,9 +393,9 @@
       <fileset dir="${examples.dir}" />
     </copy>
 
-    <!-- removed ignoreerrors="true" for 3.0 release process -->
     <get src="http://download.processing.org/reference.zip" 
          dest="../java/reference.zip" 
+         ignoreerrors="true"
          usetimestamp="true" />
 
     <unzip dest="${target.path}/modes/java" 
@@ -520,7 +514,7 @@
                shortVersion="${version}"
                version="${revision}"
                javafx="true"
-               mainClassName="processing.app.BaseSplash">
+               mainClassName="processing.app.Base">
 
       <!-- The appbundler task needs a couple files (the Info.plist and
            anything else outside /jre) from the full JDK, even though 
@@ -555,12 +549,8 @@
                       role="Editor">
       </bundledocument>
 
-      <!-- !@#*&$ the @2x splash screen implementation was removed by Oracle -->
-      <!-- tiffutil -cathidpicheck about.png about\@2x.png -out about.tiff -->
-      <!--<option value="-splash:$APP_ROOT/Contents/Java/lib/about.png" />-->
-
       <!-- Sets dock icon when debugging (not launched via launch svcs) -->
-      <option value="-Xdock:icon=$APP_ROOT/Contents/Resources/processing.icns" />
+      <option value="-Xdock:icon=Contents/Resources/processing.icns" />
       <!-- Don't think these actually make any difference. -->
       <!--
       <option value="-Xdock:name=Processing" />
@@ -607,10 +597,10 @@
          https://github.com/processing/processing/issues/3359
          https://github.com/processing/processing/issues/3360
          The 'keytool' file is deleted by our appbundler. Add it back so that
-	 Android signing works properly. (Not modifying our appbundler since
-	 most of the time that appbundler is used, keytool isn't needed). 
-	 Also, because Ant's copy task does not retain file permissions on 
-	 Unix systems, we need to use <exec executable="cp" ... > instead -->
+     Android signing works properly. (Not modifying our appbundler since
+     most of the time that appbundler is used, keytool isn't needed). 
+     Also, because Ant's copy task does not retain file permissions on 
+     Unix systems, we need to use <exec executable="cp" ... > instead -->
     <exec executable="cp">
       <arg line="${jdk.path.macosx}/Contents/Home/bin/keytool macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/bin"/>
     </exec>
@@ -628,6 +618,7 @@
       <!--<fileset dir="shared" includes="launch4j/**" />-->
       <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset file="shared/revisions.txt" />
+      <fileset file="shared/reservedKeywords.txt" />
     </copy>
 
     <!--
@@ -765,7 +756,7 @@
     <fail message="wrong platform (${os.name})" />
   </target>
   
-  <target name="linux-build" depends="ignore-tools, check-linux-arm32, revision-check, linux-check-os, jre-download, subprojects-build, subprojects-build-linux-arm32" description="Build Linux version">
+  <target name="linux-build" depends="ignore-tools, check-linux-arm32, revision-check, linux-check-os, jre-download, subprojects-build" description="Build Linux version">
     <mkdir dir="linux/work" />
     
     <copy todir="linux/work">
@@ -774,6 +765,7 @@
       <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
+      <fileset file="shared/reservedKeywords.txt" />
     </copy>
 
     <antcall target="assemble">
@@ -885,7 +877,7 @@
   </target>
   
   <target name="linux-dist" depends="linux-build" 
-	  description="Build .tar.gz of linux version">
+      description="Build .tar.gz of linux version">
 
 <!--
     <tar compression="gzip" destfile="linux/processing-${version}.tgz">
@@ -919,7 +911,7 @@
   </target>
   
   <target name="deb" depends="dist" 
-	  description="Build .deb of linux version">
+      description="Build .deb of linux version">
 
    <!-- start with a clean debian folder -->
    <delete dir="linux/debian" quiet="true" />
@@ -1059,6 +1051,7 @@
       <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
+      <fileset file="shared/reservedKeywords.txt" />
     </copy>
 
     <fixcrlf file="windows/work/revisions.txt" eol="crlf" encoding="UTF-8" />
@@ -1302,7 +1295,7 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg line="everything -type f -exec rm -rf {} ';'" />
     </exec>
 
-    <javadoc access="public" author="false" classpath="../app/lib/ant.jar:../app/lib/ant-launcher.jar:../app/lib/antlr.jar:../app/lib/apple.jar:../app/lib/jna.jar:../app/lib/org-netbeans-swing-outline.jar:../core/bin:../core/library/gluegen-rt.jar:../core/library/jogl-all.jar:../java/libraries/svg/bin:../java/libraries/pdf/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/dxf/bin:../java/libraries/io/bin:../java/libraries/net/bin:../java/libraries/serial/bin:../java/mode/ecj.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" splitindex="false" use="false" version="false" noqualifier="all">
+    <javadoc access="public" author="false" classpath="../app/lib/ant.jar:../app/lib/ant-launcher.jar:../app/lib/antlr.jar:../app/lib/apple.jar:../app/lib/jna.jar:../app/lib/org-netbeans-swing-outline.jar:../core/bin:../core/library/gluegen-rt.jar:../core/library/jogl-all.jar:../java/libraries/svg/bin:../java/libraries/pdf/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/dxf/bin:../java/libraries/net/bin:../java/libraries/serial/bin:../java/mode/ecj.jar:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" splitindex="false" use="false" version="false" noqualifier="all">
 
       <arg value="-notimestamp" />
 
@@ -1315,57 +1308,17 @@ remove the spaces for depth since it should be double dash, but screws up commen
         <include name="processing/**" />
       </packageset>
 
-
-
-      <!--<packageset dir="../app/generated">
+      <packageset dir="../app/generated">
         <include name="processing/**" />
-      </packageset>-->
+      </packageset>
 
       <packageset dir="../core/src">
         <include name="processing/**" />
-	<!--
+    <!--
         <include name="japplemenubar/**" />
-	-->
+    -->
       </packageset>
     </javadoc>
-
-
-    <!-- do libraries -->
-    <exec executable="find" dir="javadoc" errorproperty="ignored">
-      <arg line="libraries -type f -exec rm -rf {} ';'" />
-    </exec>
-
-    <javadoc access="public" author="false" classpath="../app/lib/ant.jar:../app/lib/ant-launcher.jar:../app/lib/antlr.jar:../app/lib/apple.jar:../app/lib/jna.jar:../app/lib/org-netbeans-swing-outline.jar:../core/bin:../core/library/gluegen-rt.jar:../core/library/jogl-all.jar:../java/libraries/svg/bin:../java/libraries/pdf/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/dxf/bin:../java/libraries/net/bin:../java/libraries/serial/bin:../java/mode/ecj.jar:${java.home}/lib/tools.jar" destdir="javadoc/libraries" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" splitindex="false" use="false" version="false" noqualifier="all">
-
-      <arg value="-notimestamp" />
-
-      <arg value="-quiet" />
-
-      <link href="http://docs.oracle.com/javase/7/docs/api/" />
-      
-      <packageset dir="../java/libraries/dxf/src">
-        <include name="antlr/**" />
-        <include name="processing/**" />
-      </packageset>
-      <packageset dir="../java/libraries/net/src">
-        <include name="antlr/**" />
-        <include name="processing/**" />
-      </packageset>
-      <packageset dir="../java/libraries/pdf/src">
-        <include name="antlr/**" />
-        <include name="processing/**" />
-      </packageset>
-      <packageset dir="../java/libraries/serial/src">
-        <include name="antlr/**" />
-        <include name="processing/**" />
-      </packageset>
-      <packageset dir="../java/libraries/svg/src">
-        <include name="antlr/**" />
-        <include name="processing/**" />
-      </packageset>
-    </javadoc>
-
-
 
 <!--
     <copy file="javadoc/stylesheet.css" 
