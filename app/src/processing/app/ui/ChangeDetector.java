@@ -198,6 +198,9 @@ public class ChangeDetector implements WindowFocusListener {
           // don't ask the user about it again.
           code.setLastModified();
         }
+        // Switching this flag 'ON' to allow promptReload() to create PopUp
+        // if user modifies a file externally
+        doReloadPrompt = true;
         rebuildHeaderEDT();
       }
     }
