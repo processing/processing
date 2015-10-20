@@ -40,7 +40,7 @@ public class SketchParser {
   List<List<Range>> scientificNotations;
 
   // currently is used to ignore numbers in 'setup' and 'settings' functions
-  List<Range> ignoreFunctions;
+  List<List<Range>> ignoreFunctions;
 
   List<List<Range>> commentBlocks;
   List<int[]> curlyScopes;
@@ -59,11 +59,15 @@ public class SketchParser {
     }
 
     // add 'settings' and 'setup' to ignore list (to ignore all numbers there)
-    ignoreFunctions = new ArrayList<Range>();
-    ignoreFunctions.add(new Range(getVoidFunctionStart(codeTabs[0], "settings"),
-                                  getVoidFunctionEnd(codeTabs[0], "settings")));
-    ignoreFunctions.add(new Range(getVoidFunctionStart(codeTabs[0], "setup"),
-                                  getVoidFunctionEnd(codeTabs[0], "setup")));
+    ignoreFunctions = new ArrayList<>();
+    ignoreFunctions.add(Arrays.asList(new Range(getVoidFunctionStart(codeTabs[0], "settings"),
+                                  				getVoidFunctionEnd(codeTabs[0], "settings")),
+                                  	  new Range(getVoidFunctionStart(codeTabs[0], "setup"),
+                                  			  	getVoidFunctionEnd(codeTabs[0], "setup"))));
+    
+    //Add empty lists for the other tabs so we do not get an index out of bounds error later
+    for(int i = 0; i < codeTabs.length-1; i++)
+    	ignoreFunctions.add(Collections.EMPTY_LIST);
 
     // build curly scope for every character in the code
     curlyScopes = new ArrayList<>();
@@ -102,7 +106,6 @@ public class SketchParser {
     }
   }
 
-
   /**
    * Get a list of all the numbers in this sketch
    * @return
@@ -130,7 +133,7 @@ public class SketchParser {
           continue;
         }
 
-        if (isInRangeList(start, ignoreFunctions)) {
+        if (isInRangeList(start, ignoreFunctions.get(i))) {
           // ignore numbers in predefined functions
           continue;
         }
@@ -222,7 +225,7 @@ public class SketchParser {
           continue;
         }
 
-        if (isInRangeList(start, ignoreFunctions)) {
+        if (isInRangeList(start, ignoreFunctions.get(i))) {
           // ignore numbers in predefined functions
           continue;
         }
@@ -283,7 +286,7 @@ public class SketchParser {
           continue;
         }
 
-        if (isInRangeList(start, ignoreFunctions)) {
+        if (isInRangeList(start, ignoreFunctions.get(i))) {
           // ignore numbers in predefined functions
           continue;
         }
@@ -387,7 +390,7 @@ public class SketchParser {
           continue;
         }
 
-        if (isInRangeList(m.start(), ignoreFunctions)) {
+        if (isInRangeList(m.start(), ignoreFunctions.get(i))) {
           // ignore numbers in predefined functions
           continue;
         }
@@ -471,7 +474,7 @@ public class SketchParser {
           continue;
         }
 
-        if (isInRangeList(m.start(), ignoreFunctions)) {
+        if (isInRangeList(m.start(), ignoreFunctions.get(i))) {
           // ignore numbers in predefined functions
           continue;
         }
