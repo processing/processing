@@ -39,8 +39,10 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.net.URL;
+
+import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -144,19 +146,44 @@ public class Sketch {
     codeFolder = new File(folder, "code");
     dataFolder = new File(folder, "data");
 
-    List<String> filenames = new ArrayList<>();
-    List<String> extensions = new ArrayList<>();
+    // get list of files in the sketch folder
+    String list[] = folder.list();
 
-    getSketchCodeFiles(filenames, extensions);
+    // reset these because load() may be called after an
+    // external editor event. (fix for 0099)
+    codeCount = 0;
 
-    codeCount = filenames.size();
-    code = new SketchCode[codeCount];
+    code = new SketchCode[list.length];
 
-    for (int i = 0; i < codeCount; i++) {
-      String filename = filenames.get(i);
-      String extension = extensions.get(i);
-      code[i] = new SketchCode(new File(folder, filename), extension);
+    String[] extensions = mode.getExtensions();
+
+    for (String filename : list) {
+      // Ignoring the dot prefix files is especially important to avoid files
+      // with the ._ prefix on Mac OS X. (You'll see this with Mac files on
+      // non-HFS drives, i.e. a thumb drive formatted FAT32.)
+      if (filename.startsWith(".")) continue;
+
+      // Don't let some wacko name a directory blah.pde or bling.java.
+      if (new File(folder, filename).isDirectory()) continue;
+
+      // figure out the name without any extension
+      String base = filename;
+      // now strip off the .pde and .java extensions
+      for (String extension : extensions) {
+        if (base.toLowerCase().endsWith("." + extension)) {
+          base = base.substring(0, base.length() - (extension.length() + 1));
+
+          // Don't allow people to use files with invalid names, since on load,
+          // it would be otherwise possible to sneak in nasty filenames. [0116]
+          if (isSanitaryName(base)) {
+            code[codeCount++] =
+              new SketchCode(new File(folder, filename), extension);
+          }
+        }
+      }
     }
+    // Remove any code that wasn't proper
+    code = (SketchCode[]) PApplet.subset(code, 0, codeCount);
 
     // move the main class to the first tab
     // start at 1, if it's at zero, don't bother
@@ -176,39 +203,6 @@ public class Sketch {
     // set the main file to be the current tab
     if (editor != null) {
       setCurrentCode(0);
-    }
-  }
-
-
-  public void getSketchCodeFiles(List<String> outFilenames,
-                                 List<String> outExtensions) {
-    // get list of files in the sketch folder
-    String list[] = folder.list();
-
-    for (String filename : list) {
-      // Ignoring the dot prefix files is especially important to avoid files
-      // with the ._ prefix on Mac OS X. (You'll see this with Mac files on
-      // non-HFS drives, i.e. a thumb drive formatted FAT32.)
-      if (filename.startsWith(".")) continue;
-
-      // Don't let some wacko name a directory blah.pde or bling.java.
-      if (new File(folder, filename).isDirectory()) continue;
-
-      // figure out the name without any extension
-      String base = filename;
-      // now strip off the .pde and .java extensions
-      for (String extension : mode.getExtensions()) {
-        if (base.toLowerCase().endsWith("." + extension)) {
-          base = base.substring(0, base.length() - (extension.length() + 1));
-
-          // Don't allow people to use files with invalid names, since on load,
-          // it would be otherwise possible to sneak in nasty filenames. [0116]
-          if (isSanitaryName(base)) {
-            if (outFilenames != null) outFilenames.add(filename);
-            if (outExtensions != null) outExtensions.add(extension);
-          }
-        }
-      }
     }
   }
 
@@ -410,8 +404,8 @@ public class Sketch {
                                                  JOptionPane.OK_CANCEL_OPTION,
                                                  JOptionPane.PLAIN_MESSAGE,
                                                  null, new Object[] {
-                                                 Language.getPrompt("ok"),
-                                                 Language.getPrompt("cancel") },
+                                                 Toolkit.PROMPT_OK,
+                                                 Toolkit.PROMPT_CANCEL },
                                                  field);
 
     if (userReply == JOptionPane.OK_OPTION) {
@@ -1210,7 +1204,7 @@ public class Sketch {
 
     if (result) {
 //      editor.statusNotice("One file added to the sketch.");
-    	//Done from within TaskAddFile inner class when copying is completed
+        //Done from within TaskAddFile inner class when copying is completed
     }
   }
 
@@ -1720,6 +1714,43 @@ public class Sketch {
   static public String sanitizeName(String origName) {
     char orig[] = origName.toCharArray();
     StringBuilder sb = new StringBuilder();
+    boolean keywordFlag = false;
+
+    // Opening the reservedKeywords.txt file to be check if the 'origName'
+    // is a 'Reserved Keyword' in Processing or class Name or primitive.
+    String keywordFileName = "reservedKeywords.txt";
+    File keywordFile = new File(keywordFileName);
+
+    try {
+        FileReader fileReader = new FileReader(keywordFile);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+        String keyword;
+
+        while ((keyword = bufferedReader.readLine()) != null) {
+
+            if (origName.equalsIgnoreCase(keyword) == true) {
+                keywordFlag = true;
+                break;
+            }
+        }
+    }
+    catch (FileNotFoundException ex) {
+        System.out.println("File not found!");
+    }
+    catch(IOException ex) {
+        System.out.println("IOException");
+    }
+
+    // If 'origName' is found in the 'reservedKeywords.txt' file 
+    // Pop up a Warning message
+    if (keywordFlag == true) {
+        Messages.showWarning(Language.text("check_name.messages.is_reserved_keyword"),
+                             Language.interpolate("check_name.messages.is_reserved_keyword.description", origName));
+        return "bad_sketch_name_please_fix";
+    }
+
+
 
     // Can't lead with a digit (or anything besides a letter), so prefix with
     // "sketch_". In 1.x this prefixed with an underscore, but those get shaved
@@ -1762,6 +1793,7 @@ public class Sketch {
     }
     return sb.toString();
   }
+
 
 
   public Mode getMode() {
