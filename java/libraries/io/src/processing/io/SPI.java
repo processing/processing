@@ -2,7 +2,7 @@
 
 /*
   Copyright (c) The Processing Foundation 2015
-  I/O library developed by Gottfried Haider as part of GSOC 2015
+  Hardware I/O library developed by Gottfried Haider as part of GSoC 2015
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,14 +31,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ *  @webref
+ */
 public class SPI {
 
-  public static final int MODE0 = 0;      // CPOL=0, CPHA=0, most common
-  public static final int MODE1 = 1;      // CPOL=0, CPHA=1
-  public static final int MODE2 = 2;      // CPOL=1, CPHA=0
-  public static final int MODE3 = 3;      // CPOL=1, CPHA=1
-  public static final int MSBFIRST = 0;   // most significant bit first, most common
-  public static final int LSBFIRST = 1;   // least significant bit first
+  /**
+   *  CPOL=0, CPHA=0, most common
+   */
+  public static final int MODE0 = 0;
+  /**
+   *  CPOL=0, CPHA=1
+   */
+  public static final int MODE1 = 1;
+  /**
+   *  CPOL=1, CPHA=0
+   */
+  public static final int MODE2 = 2;
+  /**
+   *  CPOL=1, CPHA=1
+   */
+  public static final int MODE3 = 3;
+  /**
+   *  most significant bit first, most common
+   */
+  public static final int MSBFIRST = 0;
+  /**
+   *  least significant bit first
+   */
+  public static final int LSBFIRST = 1;
 
   protected int dataOrder = 0;
   protected String dev;
@@ -49,9 +70,10 @@ public class SPI {
 
 
   /**
-   *  Opens an SPI interface
+   *  Opens an SPI interface as master
    *  @param dev device name
    *  @see list
+   *  @webref
    */
   public SPI(String dev) {
     NativeInterface.loadLibrary();
@@ -64,7 +86,8 @@ public class SPI {
 
 
   /**
-   *  Closes the I2C interface
+   *  Closes the SPI interface
+   *  @webref
    */
   public void close() {
     NativeInterface.closeDevice(handle);
@@ -84,6 +107,7 @@ public class SPI {
   /**
    *  Lists all available SPI interfaces
    *  @return String array
+   *  @webref
    */
   public static String[] list() {
     ArrayList<String> devs = new ArrayList<String>();
@@ -106,8 +130,9 @@ public class SPI {
   /**
    *  Configures the SPI interface
    *  @param maxSpeed maximum transmission rate in Hz, 500000 (500 kHz) is a resonable default
-   *  @param dataOrder whether data is send with the first- or least significant bit first (SPI.MSBFIRST or SPI.LSBFIRST, the former is more common)
-   *  @param mode SPI.MODE0 to SPI.MODE3 (see https://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus#Clock_polarity_and_phase)
+   *  @param dataOrder whether data is send with the first- or least-significant bit first (SPI.MSBFIRST or SPI.LSBFIRST, the former is more common)
+   *  @param mode <a href="https://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus#Clock_polarity_and_phase">SPI.MODE0 to SPI.MODE3</br>
+   *  @webref
    */
   public void settings(int maxSpeed, int dataOrder, int mode) {
     this.maxSpeed = maxSpeed;
@@ -118,12 +143,9 @@ public class SPI {
 
   /**
    *  Transfers data over the SPI bus
-   *
-   *  With SPI, data is simultaneously being exchanged between the master device
-   *  and the slave device. For every byte that is being sent out, there's also
-   *  one byte being read in.
    *  @param out bytes to send
    *  @return bytes read in (array is the same length as out)
+   *  @webref
    */
   public byte[] transfer(byte[] out) {
     // track the current setting per device across multiple instances
@@ -150,10 +172,6 @@ public class SPI {
 
   /**
    *  Transfers data over the SPI bus
-   *
-   *  With SPI, data is simultaneously being exchanged between the master device
-   *  and the slave device. For every byte that is being sent out, there's also
-   *  one byte being read in.
    *  @param out string to send
    *  @return bytes read in (array is the same length as out)
    */
@@ -164,10 +182,6 @@ public class SPI {
 
   /**
    *  Transfers data over the SPI bus
-   *
-   *  With SPI, data is simultaneously being exchanged between the master device
-   *  and the slave device. For every byte that is being sent out, there's also
-   *  one byte being read in.
    *  @param out single byte to send
    *  @return bytes read in (array is the same length as out)
    */

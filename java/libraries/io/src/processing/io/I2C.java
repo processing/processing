@@ -2,7 +2,7 @@
 
 /*
   Copyright (c) The Processing Foundation 2015
-  I/O library developed by Gottfried Haider as part of GSOC 2015
+  Hardware I/O library developed by Gottfried Haider as part of GSoC 2015
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
+/**
+ *  @webref
+ */
 public class I2C {
 
   protected String dev;
@@ -39,10 +42,10 @@ public class I2C {
 
 
   /**
-   *  Opens an I2C device as master
-   *
-   *  @param dev device name
+   *  Opens an I2C interface as master
+   *  @param dev interface name
    *  @see list
+   *  @webref
    */
   public I2C(String dev) {
     NativeInterface.loadLibrary();
@@ -55,7 +58,27 @@ public class I2C {
 
 
   /**
-   *  Close the I2C device
+   *  Begins a transmission to an attached device
+   *  @see write
+   *  @see read
+   *  @see endTransmission
+   *  @webref
+   */
+  public void beginTransmission(int slave) {
+    // addresses 120 (0x78) to 127 are additionally reserved
+    if (0x78 <= slave) {
+      System.err.println("beginTransmission expects a 7 bit address, try shifting one bit to the right");
+      throw new IllegalArgumentException("Illegal address");
+    }
+    this.slave = slave;
+    transmitting = true;
+    out = null;
+  }
+
+
+  /**
+   *  Closes the I2C device
+   *  @webref
    */
   public void close() {
     NativeInterface.closeDevice(handle);
@@ -73,42 +96,10 @@ public class I2C {
 
 
   /**
-   *  Begins a transmission to an attached device
-   *
-   *  I2C addresses consist of 7 bits plus one bit that indicates whether
-   *  the device is being read from or written to. Some datasheets list
-   *  the address in an 8 bit form (7 address bits + R/W bit), while others
-   *  provide the address in a 7 bit form, with the address in the lower
-   *  7 bits. This function expects the address in the lower 7 bits, the
-   *  same way as in Arduino's Wire library, and as shown in the output
-   *  of the i2cdetect tool.
-   *  If the address provided in a datasheet is greater than 127 (hex 0x7f)
-   *  or there are separate addresses for read and write operations listed,
-   *  which vary exactly by one, then you want to shif the this number by
-   *  one bit to the right before passing it as an argument to this function.
-   *  @param slave 7 bit address of slave device
-   *  @see write
-   *  @see read
-   *  @see endTransmission
-   */
-  public void beginTransmission(int slave) {
-    // addresses 120 (0x78) to 127 are additionally reserved
-    if (0x78 <= slave) {
-      System.err.println("beginTransmission expects a 7 bit address, try shifting one bit to the right");
-      throw new IllegalArgumentException("Illegal address");
-    }
-    this.slave = slave;
-    transmitting = true;
-    out = null;
-  }
-
-
-  /**
    *  Ends the current transmissions
-   *
-   *  This executes any queued writes.
    *  @see beginTransmission
    *  @see write
+   *  @webref
    */
   public void endTransmission() {
     if (!transmitting) {
@@ -130,8 +121,9 @@ public class I2C {
 
 
   /**
-   *  Lists all available I2C devices
+   *  Lists all available I2C interfaces
    *  @return String array
+   *  @webref
    */
   public static String[] list() {
     ArrayList<String> devs = new ArrayList<String>();
@@ -153,15 +145,12 @@ public class I2C {
 
   /**
    *  Reads bytes from the attached device
-   *
-   *  You must call beginTransmission() before calling this function. This function
-   *  also ends the current transmisison and sends any data that was queued using
-   *  write() before.
    *  @param len number of bytes to read
    *  @return bytes read from device
    *  @see beginTransmission
    *  @see write
    *  @see endTransmission
+   *  @webref
    */
   public byte[] read(int len) {
     if (!transmitting) {
@@ -186,14 +175,11 @@ public class I2C {
 
   /**
    *  Adds bytes to be written to the device
-   *
-   *  You must call beginTransmission() before calling this function.
-   *  The actual writing takes part when read() or endTransmission() is being
-   *  called.
    *  @param out bytes to be written
    *  @see beginTransmission
    *  @see read
    *  @see endTransmission
+   *  @webref
    */
   public void write(byte[] out) {
     if (!transmitting) {
@@ -212,11 +198,7 @@ public class I2C {
 
 
   /**
-   *  Adds bytes to be written to the device
-   *
-   *  You must call beginTransmission() before calling this function.
-   *  The actual writing takes part when read() or endTransmission() is being
-   *  called.
+   *  Adds bytes to be written to the attached device
    *  @param out string to be written
    *  @see beginTransmission
    *  @see read
@@ -228,11 +210,7 @@ public class I2C {
 
 
   /**
-   *  Adds a byte to be written to the device
-   *
-   *  You must call beginTransmission() before calling this function.
-   *  The actual writing takes part when read() or endTransmission() is being
-   *  called.
+   *  Adds a byte to be written to the attached device
    *  @param out single byte to be written (0-255)
    *  @see beginTransmission
    *  @see read

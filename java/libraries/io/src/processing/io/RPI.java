@@ -2,7 +2,7 @@
 
 /*
   Copyright (c) The Processing Foundation 2015
-  I/O library developed by Gottfried Haider as part of GSOC 2015
+  Hardware I/O library developed by Gottfried Haider as part of GSoC 2015
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,9 @@
 package processing.io;
 
 
+/**
+ *  @webref
+ */
 public class RPI {
 
   /*

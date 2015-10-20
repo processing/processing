@@ -2,7 +2,7 @@
 
 /*
   Copyright (c) The Processing Foundation 2015
-  I/O library developed by Gottfried Haider as part of GSOC 2015
+  Hardware I/O library developed by Gottfried Haider as part of GSoC 2015
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
+/**
+ *  @webref
+ */
 public class LED {
 
   protected String dev;
@@ -44,6 +47,7 @@ public class LED {
    *  Opens a LED device
    *  @param dev device name
    *  @see list
+   *  @webref
    */
   public LED(String dev) {
     NativeInterface.loadLibrary();
@@ -96,10 +100,26 @@ public class LED {
 
 
   /**
+   *  Sets the brightness
+   *  @param bright 0.0 (off) to 1.0 (maximum)
+   *  @webref
+   */
+  public void brightness(float bright) {
+    String fn = "/sys/class/leds/" + dev + "/brightness";
+    if (bright < 0.0 || 1.0 < bright) {
+      System.err.println("Brightness must be between 0.0 and 1.0.");
+      throw new IllegalArgumentException("Illegal argument");
+    }
+    int ret = NativeInterface.writeFile(fn, Integer.toString((int)(bright * maxBrightness)));
+    if (ret < 0) {
+      throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
+    }
+  }
+
+
+  /**
    *  Restores the previous state
-   *
-   *  Without calling this function the LED will remain in the current
-   *  state even after the sketch has been closed.
+   *  @webref
    */
   public void close() {
     // restore previous settings
@@ -120,6 +140,7 @@ public class LED {
   /**
    *  Lists all available LED devices
    *  @return String array
+   *  @webref
    */
   public static String[] list() {
     ArrayList<String> devs = new ArrayList<String>();
@@ -134,22 +155,5 @@ public class LED {
     String[] tmp = devs.toArray(new String[devs.size()]);
     Arrays.sort(tmp);
     return tmp;
-  }
-
-
-  /**
-   *  Sets the brightness
-   *  @param bright 0.0 (off) to 1.0 (maximum)
-   */
-  public void set(float bright) {
-    String fn = "/sys/class/leds/" + dev + "/brightness";
-    if (bright < 0.0 || 1.0 < bright) {
-      System.err.println("Brightness must be between 0.0 and 1.0.");
-      throw new IllegalArgumentException("Illegal argument");
-    }
-    int ret = NativeInterface.writeFile(fn, Integer.toString((int)(bright * maxBrightness)));
-    if (ret < 0) {
-      throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
-    }
   }
 }

@@ -2,7 +2,7 @@
 
 /*
   Copyright (c) The Processing Foundation 2015
-  I/O library developed by Gottfried Haider as part of GSOC 2015
+  Hardware I/O library developed by Gottfried Haider as part of GSoC 2015
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
+/**
+ *  @webref
+ */
 public class PWM {
 
   int channel;
@@ -42,6 +45,7 @@ public class PWM {
    *  Opens a PWM channel
    *  @param channel PWM channel
    *  @see list
+   *  @webref
    */
   public PWM(String channel) {
     NativeInterface.loadLibrary();
@@ -81,10 +85,11 @@ public class PWM {
 
 
   /**
-   *  Disables the output
+   *  Disables the PWM output
+   *  @webref
    */
   public void clear() {
-    String fn = String.format("/sys/class/pwm/%s/gpio%d/enable", chip, channel);
+    String fn = String.format("/sys/class/pwm/%s/pwm%d/enable", chip, channel);
     int ret = NativeInterface.writeFile(fn, "0");
     if (ret < 0) {
       throw new RuntimeException(NativeInterface.getError(ret));
@@ -94,9 +99,7 @@ public class PWM {
 
   /**
    *  Gives ownership of a channel back to the operating system
-   *
-   *  Without calling this function the channel will remain in the current
-   *  state even after the sketch has been closed.
+   *  @webref
    */
   public void close() {
     // XXX: implicit clear()?
@@ -118,6 +121,7 @@ public class PWM {
   /**
    *  Lists all available PWM channels
    *  @return String array
+   *  @webref
    */
   public static String[] list() {
     ArrayList<String> devs = new ArrayList<String>();
@@ -148,28 +152,31 @@ public class PWM {
    *  Enables the PWM output
    *  @param period cycle period in Hz
    *  @param duty duty cycle, 0.0 (always off) to 1.0 (always on)
+   *  @webref
    */
   public void set(int period, float duty) {
     // set period
-    String fn = fn = String.format("/sys/class/pwm/%s/gpio%d/period", chip, channel);
+    String fn = fn = String.format("/sys/class/pwm/%s/pwm%d/period", chip, channel);
+    // convert to nanoseconds
     int ret = NativeInterface.writeFile(fn, String.format("%d", (int)(1000000000 / period)));
     if (ret < 0) {
       throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
     }
 
     // set duty cycle
-    fn = fn = String.format("/sys/class/pwm/%s/gpio%d/duty", chip, channel);
+    fn = fn = String.format("/sys/class/pwm/%s/pwm%d/duty_cycle", chip, channel);
     if (duty < 0.0 || 1.0 < duty) {
       System.err.println("Duty cycle must be between 0.0 and 1.0.");
       throw new IllegalArgumentException("Illegal argument");
     }
+    // convert to nanoseconds
     ret = NativeInterface.writeFile(fn, String.format("%d", (int)((1000000000 * duty) / period)));
     if (ret < 0) {
       throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
     }
 
     // enable output
-    fn = String.format("/sys/class/pwm/%s/gpio%d/enable", chip, channel);
+    fn = String.format("/sys/class/pwm/%s/pwm%d/enable", chip, channel);
     ret = NativeInterface.writeFile(fn, "1");
     if (ret < 0) {
       throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
@@ -179,11 +186,8 @@ public class PWM {
 
   /**
    *  Enables the PWM output with a preset period of 1 kHz
-   *
-   *  This period approximately matches the dedicated PWM pins on
-   *  the Arduino Uno, which have a frequency of 980 Hz.
-   *  It is recommended to use set(period, duty) instead.
    *  @param duty duty cycle, 0.0 (always off) to 1.0 (always on)
+   *  @webref
    */
   public void set(float duty) {
     set(1000, duty);

@@ -2,7 +2,7 @@
 
 /*
   Copyright (c) The Processing Foundation 2015
-  I/O library developed by Gottfried Haider as part of GSOC 2015
+  Hardware I/O library developed by Gottfried Haider as part of GSoC 2015
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ *  @webref
+ */
 public class GPIO {
 
   // those constants are generally the same as in Arduino.h
@@ -43,9 +46,18 @@ public class GPIO {
   public static final int HIGH = 1;
 
   public static final int NONE = 0;
-  public static final int CHANGE = 1;     // trigger when level changes
-  public static final int FALLING = 2;    // trigger when level changes from high to low
-  public static final int RISING = 3;     // trigger when level changes from low to high
+  /**
+   *  trigger when level changes
+   */
+  public static final int CHANGE = 1;
+  /**
+   *  trigger when level changes from high to low
+   */
+  public static final int FALLING = 2;
+  /**
+   *  trigger when level changes from low to high
+   */
+  public static final int RISING = 3;
 
   protected static Map<Integer, Thread> irqThreads = new HashMap<Integer, Thread>();
   protected static boolean serveInterrupts = true;
@@ -77,19 +89,15 @@ public class GPIO {
 
 
   /**
-   *  Calls a function when the value of an INPUT pin changes
-   *
-   *  Don't use enableInterrupt() and waitForInterrupt() in combination with
-   *  this function, as they are orthogonal. The sketch method provided must
-   *  accept a single integer (int) parameter, which is the number of the GPIO
-   *  pin that the interrupt occured on.
+   *  Calls a function when the value of an input pin changes
    *  @param pin GPIO pin
-   *  @param parent this
+   *  @param parent typically use "this"
    *  @param method name of sketch method to call
    *  @param mode when to call: GPIO.CHANGE, GPIO.FALLING or GPIO.RISING
    *  @see noInterrupts
    *  @see interrupts
    *  @see releaseInterrupt
+   *  @webref
    */
   public static void attachInterrupt(int pin, PApplet parent, String method, int mode) {
     if (irqThreads.containsKey(pin)) {
@@ -159,62 +167,12 @@ public class GPIO {
 
 
   /**
-   *  Pauses the execution of the sketch
-   *
-   *  Calling this function will have an influence on the framerate
-   *  the sketch is going to achieve.
-   *  @param ms milliseconds to pause
-   */ 
-  protected static void delay(int ms) {
-    try {
-      Thread.sleep(ms);
-    } catch (InterruptedException e) {
-    }
-  }
-
-
-  /**
-   *  Pauses the execution of the sketch
-   *
-   *  Note: Both the operating system, as well as Processing, are not what is
-   *  called "hard real-time" systems. In other words: there are many factors,
-   *  outside of the control of the programmer, which can influence the execution
-   *  of the program in minute ways. Those are generally not an issue, or even
-   *  noticeable using a desktop operating system, but they can be a factor, when
-   *  the timing of a particular sequence of events is critical. For example, one
-   *  might to wait a very specific number amount of time after receiving an
-   *  interrupt before changing the state of an output pin. When programming with
-   *  micro-controllers, as found on the Arduino Uno, there very little between
-   *  your code and the actual hardware, and multiple executions of the same
-   *  sketch will probably match each other almost to the very tick of a clock
-   *  (which happens at the speed of 16 MHz). Systems running full-fledged
-   *  desktop operating systems, such as Linux, are generally multi-tasking,
-   *  which means that the operating system allocates small slices of time to
-   *  the many different processes that run concurrently. The effect of this is
-   *  often offset by the sheer clock speeds that such computers run. But
-   *  regardless: if you require your sketch to adhere to a very specific timing,
-   *  you might be disappointed.
-   *  @param us microseconds to pause
-   */
-  protected static void delayMicroseconds(int us) {
-    int ms = (int)(us / 1000);
-    int ns = (us - (ms * 1000)) * 1000;
-    try {
-      Thread.sleep(ms, ns);
-    } catch (InterruptedException e) {
-    }
-  }
-
-
-  /**
    *  Returns the value of an input pin
-   *
-   *  You need to set the pin to INPUT by calling pinMode before calling
-   *  this function.
    *  @param pin GPIO pin
    *  @return GPIO.HIGH (1) or GPIO.LOW (0)
    *  @see pinMode
    *  @see digitalWrite
+   *  @webref
    */
   public static int digitalRead(int pin) {
     checkValidPin(pin);
@@ -240,16 +198,12 @@ public class GPIO {
 
 
   /**
-   *  Sets an output pin to HIGH or LOW
-   *
-   *  You need set the pin to OUTPUT by calling pinMode before calling this
-   *  function. It is not possible to enable or disable internal pull-up
-   *  resistors for inputs using this function, which is something that's
-   *  supported on Arduino.
+   *  Sets an output pin to be either high or low
    *  @param pin GPIO pin
-   *  @param value GPIO.HIGH or GPIO.LOW
+   *  @param value GPIO.HIGH (1) or GPIO.LOW (0)
    *  @see pinMode
    *  @see digitalRead
+   *  @webref
    */
   public static void digitalWrite(int pin, int value) {
     checkValidPin(pin);
@@ -279,16 +233,7 @@ public class GPIO {
 
 
   /**
-   *  Sets an output pin to HIGH or LOW
-   *
-   *  You need set the pin to OUTPUT by calling pinMode before calling this
-   *  function. It is not possible to enable or disable internal pull-up
-   *  resistors for inputs using this function, which is something that's
-   *  supported on Arduino.
-   *  @param pin GPIO pin
    *  @param value true or false
-   *  @see pinMode
-   *  @see digitalRead
    */
   public static void digitalWrite(int pin, boolean value) {
     if (value) {
@@ -300,31 +245,24 @@ public class GPIO {
 
 
   /**
-   *  Disables an interrupt for an INPUT pin
-   *
-   *  Use this function only in combination with enableInterrupt() and
-   *  waitForInterrupt(). This should not be called when attachInterrupt()
-   *  is being used.
+   *  Disables an interrupt for an input pin
    *  @param pin GPIO pin
    *  @see enableInterrupt
    *  @see waitForInterrupt
    */
-  public static void disableInterrupt(int pin) {
+  protected static void disableInterrupt(int pin) {
     enableInterrupt(pin, NONE);
   }
 
 
   /**
-   *  Enables an interrupt for an INPUT pin
-   *
-   *  Use this function only when calling waitForInterrupt(). This should not
-   *  be called when attachInterrupt() is being used.
+   *  Enables an interrupt for an input pin
    *  @param pin GPIO pin
    *  @param mode what to wait for: GPIO.CHANGE, GPIO.FALLING or GPIO.RISING
    *  @see waitForInterrupt
    *  @see disableInterrupt
    */
-  public static void enableInterrupt(int pin, int mode) {
+  protected static void enableInterrupt(int pin, int mode) {
     checkValidPin(pin);
 
     String out;
@@ -353,14 +291,10 @@ public class GPIO {
 
   /**
    *  Allows interrupts to happen
-   *
-   *  You can use noInterrupts() and interrupts() in tandem to make sure no interrupts
-   *  are occuring while your sketch is doing a particular task. This is only relevant
-   *  when using attachInterrupt(), not for waitForInterrupt(). By default, interrupts
-   *  are enabled.
    *  @see attachInterrupt
    *  @see noInterrupts
    *  @see releaseInterrupt
+   *  @webref
    */
   public static void interrupts() {
     serveInterrupts = true;
@@ -369,14 +303,10 @@ public class GPIO {
 
   /**
    *  Prevents interrupts from happpening
-   *
-   *  You can use noInterrupts() and interrupts() in tandem to make sure no interrupts
-   *  are occuring while your sketch is doing a particular task. This is only relevant
-   *  when using attachInterrupt(), not for waitForInterrupt(). By default, interrupts
-   *  are enabled.
    *  @see attachInterrupt
    *  @see interrupts
    *  @see releaseInterrupt
+   *  @webref
    */
   public static void noInterrupts() {
     serveInterrupts = false;
@@ -384,16 +314,13 @@ public class GPIO {
 
 
   /**
-   *  Sets a pin to INPUT or OUTPUT
-   *
-   *  While pins are implicitly set to input by default on Arduino, it is
-   *  necessary to call this function for any pin you want to access later,
-   *  including input pins.
+   *  Configures a pin to act either as input or output
    *  @param pin GPIO pin
    *  @param mode GPIO.INPUT or GPIO.OUTPUT
    *  @see digitalRead
    *  @see digitalWrite
    *  @see releasePin
+   *  @webref
    */
   public static void pinMode(int pin, int mode) {
     checkValidPin(pin);
@@ -447,14 +374,12 @@ public class GPIO {
 
 
   /**
-   *  Stops listening for interrupts on an INPUT pin
-   *
-   *  Use this function only in combination with attachInterrupt(). This should
-   *  not be called when enableInterrupt() and waitForInterrupt() are being used.
+   *  Stops listening for interrupts on an input pin
    *  @param pin GPIO pin
    *  @see attachInterrupt
    *  @see noInterrupts
    *  @see interrupts
+   *  @webref
    */
   public static void releaseInterrupt(int pin) {
     Thread t = irqThreads.get(pin);
@@ -477,11 +402,9 @@ public class GPIO {
 
   /**
    *  Gives ownership of a pin back to the operating system
-   *
-   *  Without calling this function the pin will remain in the current
-   *  state even after the sketch has been closed.
    *  @param pin GPIO pin
    *  @see pinMode
+   *  @webref
    */
   public static void releasePin(int pin) {
     checkValidPin(pin);
@@ -501,16 +424,31 @@ public class GPIO {
 
 
   /**
-   *  Waits for the value of an INPUT pin to change
+   *  Waits for the value of an input pin to change
+   *  @param pin GPIO pin
+   *  @param mode what to wait for: GPIO.CHANGE, GPIO.FALLING or GPIO.RISING
+   *  @param timeout don't wait more than timeout milliseconds (-1 waits indefinitely)
+   *  @return true if the interrupt occured, false if the timeout occured
+   *  @webref
+   */
+  public static boolean waitForInterrupt(int pin, int mode, int timeout) {
+    enableInterrupt(pin, mode);
+    return waitForInterrupt(pin, timeout);
+  }
+
+
+  /**
+   *  Waits for the value of an input pin to change
    *
    *  Make sure to setup the interrupt with enableInterrupt() before calling
    *  this function. A timeout value of -1 waits indefinitely.
+   *  @param pin GPIO pin
    *  @param timeout don't wait more than timeout milliseconds
    *  @return true if the interrupt occured, false if the timeout occured
    *  @see enableInterrupt
    *  @see disableInterrupt
    */
-  public static boolean waitForInterrupt(int pin, int timeout) {
+  protected static boolean waitForInterrupt(int pin, int timeout) {
     checkValidPin(pin);
 
     String fn = String.format("/sys/class/gpio/gpio%d/value", pin);
@@ -531,15 +469,16 @@ public class GPIO {
 
 
   /**
-   *  Waits for the value of an INPUT pin to change
+   *  Waits for the value of an input pin to change
    *
    *  Make sure to setup the interrupt with enableInterrupt() before calling
    *  this function. This function will wait indefinitely for an interrupt
    *  to occur.
+   *  @parm pin GPIO pin
    *  @see enableInterrupt
    *  @see disableInterrupt
    */
-  public static void waitForInterrupt(int pin) {
+  protected static void waitForInterrupt(int pin) {
     waitForInterrupt(pin, -1);
   }
 }
