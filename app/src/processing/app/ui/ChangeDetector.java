@@ -20,6 +20,8 @@ import processing.app.SketchCode;
 public class ChangeDetector implements WindowFocusListener {
   private final Sketch sketch;
   private final Editor editor;
+  // Flag to prevent infinite reloadPrompt() PopUps
+  private boolean doReloadPrompt = true;
 
   // Windows and others seem to have a few hundred ms difference in reported
   // times, so we're arbitrarily setting a gap in time here.
@@ -99,58 +101,64 @@ public class ChangeDetector implements WindowFocusListener {
                          " instead of " + sketch.getCodeCount());
     }
 
-    if (reloadPrompt()) {
-      if (sketch.getMainFile().exists()) {
-        reloadSketch();
-      } else {
-        // If the main file was deleted, and that's why we're here,
-        // then we need to re-save the sketch instead.
-        try {
-          // Mark everything as modified so that it saves properly
-          for (SketchCode code : sketch.getCode()) {
-            code.setModified(true);
+    if (doReloadPrompt == true) {
+        if (reloadPrompt()) {
+          if (sketch.getMainFile().exists()) {
+            reloadSketch();
+          } else {
+            // If the main file was deleted, and that's why we're here,
+            // then we need to re-save the sketch instead.
+            try {
+              // Mark everything as modified so that it saves properly
+              for (SketchCode code : sketch.getCode()) {
+                code.setModified(true);
+              }
+              sketch.save();
+            } catch (Exception e) {
+              //if that didn't work, tell them it's un-recoverable
+              showErrorEDT("Reload Failed",
+                           "The main file for this sketch was deleted\n" +
+                           "and could not be rewritten.", e);
+            }
           }
-          sketch.save();
-        } catch (Exception e) {
-          //if that didn't work, tell them it's un-recoverable
-          showErrorEDT("Reload Failed",
-                       "The main file for this sketch was deleted\n" +
-                       "and could not be rewritten.", e);
-        }
-      }
 
-      /*
-      if (fileCount < 1) {
-        // if they chose to reload and there aren't any files left
-        try {
-          // make a blank file for the main PDE
-          sketch.getMainFile().createNewFile();
-        } catch (Exception e1) {
-          //if that didn't work, tell them it's un-recoverable
-          showErrorEDT("Reload failed", "The sketch contains no code files.", e1);
-          //don't try to reload again after the double fail
-          //this editor is probably trashed by this point, but a save-as might be possible
-//          skip = true;
-          return true;
+          /*
+          if (fileCount < 1) {
+            // if they chose to reload and there aren't any files left
+            try {
+              // make a blank file for the main PDE
+              sketch.getMainFile().createNewFile();
+            } catch (Exception e1) {
+              //if that didn't work, tell them it's un-recoverable
+              showErrorEDT("Reload failed", "The sketch contains no code files.", e1);
+              //don't try to reload again after the double fail
+              //this editor is probably trashed by this point, but a save-as might be possible
+    }
+    //          skip = true;
+              return true;
+            }
+            // it's okay to do this without confirmation, because they already
+            // confirmed to deleting the unsaved changes above
+            sketch.reload();
+            showWarningEDT("Modified Reload",
+                           "You cannot delete the last code file in a sketch.\n" +
+                           "A new blank sketch file has been generated for you.");
+          }
+          */
+        } else {  // !reload (user said no or closed the window)
+          // Because the number of files changed, they may be working with a file
+          // that doesn't exist any more. So find the files that are missing,
+          // and mark them as modified so that the next "Save" will write them.
+          for (SketchCode code : sketch.getCode()) {
+            if (!code.getFile().exists()) {
+              setCodeModified(code);
+            }
+          }
+          // Switching this flag 'OFF' when user clicks "No" option in the reloadPrompt
+          // to prevent infinite popups
+          doReloadPrompt = false;
+          rebuildHeaderEDT();
         }
-        // it's okay to do this without confirmation, because they already
-        // confirmed to deleting the unsaved changes above
-        sketch.reload();
-        showWarningEDT("Modified Reload",
-                       "You cannot delete the last code file in a sketch.\n" +
-                       "A new blank sketch file has been generated for you.");
-      }
-      */
-    } else {  // !reload (user said no or closed the window)
-      // Because the number of files changed, they may be working with a file
-      // that doesn't exist any more. So find the files that are missing,
-      // and mark them as modified so that the next "Save" will write them.
-      for (SketchCode code : sketch.getCode()) {
-        if (!code.getFile().exists()) {
-          setCodeModified(code);
-        }
-      }
-      rebuildHeaderEDT();
     }
     // Yes, we've brought this up with the user (so don't bother them further)
     return true;
