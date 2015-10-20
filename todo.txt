@@ -6,17 +6,21 @@ contribs
 X Tweak Mode sometimes freezes while running, require a force quit
 X   https://github.com/processing/processing/issues/3928
 X   https://github.com/processing/processing/pull/4014
+X Tweak Mode: Some numbers ignored in second tab
+X   https://github.com/processing/processing/issues/4017
+X   https://github.com/processing/processing/pull/4023
 X Update Japanese translation
 X   https://github.com/processing/processing/pull/3956
 _   https://github.com/processing/processing/pull/3971
-X add i/o library for rpi
-X   https://github.com/processing/processing/pull/3985
-_   make sure naming, etc is all correct
 X processing-java stealing focus even with --build flag
 X   https://github.com/processing/processing/issues/3996
 X   https://github.com/processing/processing/pull/3998
 _ question about PDE_pt-br instead of PDE_pt
 _   https://github.com/processing/processing/issues/4018
+X updates for serial
+X   https://github.com/processing/processing/pull/4015
+_ Saving sketch with the same name as a class
+_   https://github.com/processing/processing/pull/4033
 
 jakub
 X Include Example packs into update count
@@ -31,6 +35,17 @@ X   https://github.com/processing/processing/issues/3924
 X A serious error occurred while trying to create a new editor window
 X   https://github.com/processing/processing/issues/3974
 X   https://github.com/processing/processing/pull/4001
+X Export - fix java not being embedded on 64bit
+X   https://github.com/processing/processing/pull/4005
+X Add error checker document listeners to all tabs
+X   https://github.com/processing/processing/pull/4009
+
+arm/pi
+X Medium-sized I/O updates
+X   https://github.com/processing/processing/pull/3997
+X add i/o library for rpi
+X   https://github.com/processing/processing/pull/3985
+_   make sure naming, etc is all correct
 
 
 known issues
