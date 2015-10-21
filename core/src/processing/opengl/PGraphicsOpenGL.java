@@ -6456,7 +6456,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (img.parent == null) {
       img.parent = parent;
     }
-    Texture tex = new Texture(this, img.width, img.height, params);
+    Texture tex = new Texture(this, img.pixelWidth, img.pixelHeight, params);
     setCache(img, tex);
     return tex;
   }
