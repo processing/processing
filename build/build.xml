@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <project name="Processing" default="build">
-  
+
   <!-- Sets properties for macosx/windows/linux depending on current system -->
   <condition property="platform" value="macosx">
-    <os family="mac" /> 
+    <os family="mac" />
   </condition>
 
   <condition property="platform" value="windows">
-    <os family="windows" /> 
+    <os family="windows" />
   </condition>
 
   <condition property="platform" value="linux">
@@ -50,20 +50,20 @@
   </target>
 
   <!-- Require Java 8 everywhere. -->
-  <fail message="Unsupported Java version: ${java.version}. To build, make sure that Java 8 (aka Java 1.8) is installed."> 
-    <condition> 
-      <not> 
-        <or> 
-          <contains string="${java.version}" substring="1.8" /> 
-        </or> 
-      </not> 
-    </condition> 
-  </fail> 
+  <fail message="Unsupported Java version: ${java.version}. To build, make sure that Java 8 (aka Java 1.8) is installed.">
+    <condition>
+      <not>
+        <or>
+          <contains string="${java.version}" substring="1.8" />
+        </or>
+      </not>
+    </condition>
+  </fail>
 
   <!-- could prompt here to download the necessary JRE
        (Windows/Linux) or JDK (on Mac OS X) -->
 
-  <property name="examples.dir" 
+  <property name="examples.dir"
 	    value="../../processing-docs/content/examples" />
 
   <!-- Switching to 8 because updates for 7 ended April 2015 -->
@@ -81,12 +81,12 @@
 
   <!-- Figure out the JRE download location for Linux and Windows. -->
   <!--
-  <condition property="jre.file" 
-             value="jre-${jdk.short}-${platform}-i586.tar.gz"> 
+  <condition property="jre.file"
+             value="jre-${jdk.short}-${platform}-i586.tar.gz">
     <equals arg1="${sun.arch.data.model}" arg2="32" />
   </condition>
-  <condition property="jre.file" 
-             value="jre-${jdk.short}-${platform}-x64.tar.gz"> 
+  <condition property="jre.file"
+             value="jre-${jdk.short}-${platform}-x64.tar.gz">
     <equals arg1="${sun.arch.data.model}" arg2="64" />
   </condition>
   -->
@@ -144,7 +144,7 @@
     <include name="lib/cmm/PYCC.pf" />
   </fileset>
 
-  <!-- Unused JavaFX files that can be removed from the JRE on Windows 
+  <!-- Unused JavaFX files that can be removed from the JRE on Windows
        and Linux. On Mac OS X, this is removed by the appbundler task.
        www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
        However, we're now looking into using JavaFX as the default 2D
@@ -203,7 +203,7 @@
   <echo message="${java.class.path}" />
   -->
 
-  <!-- Set a property named macosx, linux, or windows. 
+  <!-- Set a property named macosx, linux, or windows.
        The 'value' chosen is arbitrary. -->
   <property name="${platform}" value="${platform}" />
 
@@ -211,7 +211,7 @@
 
   <property name="jre.tgz.path" value="${platform}/jre-${jdk.short}.tgz" />
 
-  <target name="jre-check"> 
+  <target name="jre-check">
     <available file="${jre.tgz.path}" property="jre.tgz.downloaded" />
   </target>
 
@@ -220,7 +220,7 @@
     <subant buildpath="jre" target="dist" />
 
     <!-- define our special JRE downloader task -->
-    <taskdef name="downloader" 
+    <taskdef name="downloader"
 	     classname="Downloader"
 	     classpath="jre/downloader.jar" />
   </target>
@@ -239,43 +239,43 @@
       <equals arg1="${sun.arch.data.model}" arg2="64" />
     </condition>
 
-    <downloader version="${jdk.version}" 
-                update="${jdk.update}" 
-                build="${jdk.build}" 
+    <downloader version="${jdk.version}"
+                update="${jdk.update}"
+                build="${jdk.build}"
                 jdk="${jre.download.jdk}"
                 flavor="${jre.downloader}"
-                path="${jre.tgz.path}" />    
+                path="${jre.tgz.path}" />
   </target>
 
   <target name="download-jdk-macosx" depends="downloader-setup">
-    <downloader version="${jdk.version}" 
-                update="${jdk.update}" 
-                build="${jdk.build}" 
-                jdk="true" 
+    <downloader version="${jdk.version}"
+                update="${jdk.update}"
+                build="${jdk.build}"
+                jdk="true"
                 flavor="macosx-x64.dmg"
                 path="${env.HOME}/Desktop/jdk-${jdk.short}.dmg" />
   </target>
 
   <!-- code signing hack, turns on code signing during dist -->
-  <condition property="codesign"> 
+  <condition property="codesign">
     <equals arg1="${env.USER}" arg2="fry" />
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.path.macosx" 
+  <property name="jdk.path.macosx"
             value="/Library/Java/JavaVirtualMachines/jdk${jdk.esoteric}.jdk" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
   <!--
-  <fail if="linux" unless="java_tools_found" 
+  <fail if="linux" unless="java_tools_found"
         message="The JAVA_HOME variable must be set to the location of a full JDK. For instance, on Ubuntu Linux, this might be /usr/lib/jvm/java-6-sun." />
   -->
-               
+
   <!-- Figure out the platform-specific output directory for all this work. -->
-  <condition property="target.path" 
+  <condition property="target.path"
              value="macosx/work/Processing.app/Contents/Java">
-    <os family="mac" /> 
+    <os family="mac" />
   </condition>
 
   <condition property="target.path" value="linux/work">
@@ -283,7 +283,7 @@
   </condition>
 
   <condition property="target.path" value="windows/work">
-    <os family="windows" /> 
+    <os family="windows" />
   </condition>
 
   <!-- Libraries required for running processing -->
@@ -311,7 +311,7 @@
 
   <target name="dist" depends="revision-check"
           description="Build Processing for distribution.">
-    <input message="Enter version number:" 
+    <input message="Enter version number:"
            addproperty="version"
            defaultvalue="${revision}" />
 
@@ -332,11 +332,11 @@
       <arg value="-p" />
     </java>
   </target>
-  
+
   <!-- - - - - - - - - - - - - - - - - - -->
   <!-- Subprojects: Core, App, Libraries -->
   <!-- - - - - - - - - - - - - - - - - - -->
-  
+
   <target name="subprojects-clean">
     <subant buildpath="../core" target="clean"/>
     <subant buildpath="../app" target="clean"/>
@@ -352,7 +352,7 @@
     <!-- make sure this isn't around from an old build 140730 -->
     <delete dir="../java/examples" />
   </target>
-  
+
   <target name="subprojects-build">
     <subant buildpath="../core" target="build"/>
     <subant buildpath="../app" target="build"/>
@@ -374,11 +374,11 @@
   <!-- - - - - - - - - -->
   <!-- Basic Assembly  -->
   <!-- - - - - - - - - -->
- 
+
   <target name="assemble" depends="version-clear, version-write">
-    <fail unless="target.path" 
+    <fail unless="target.path"
           message="Do not call assemble from the command line." />
-    
+
     <!-- copy shared tools folder -->
     <copy todir="${target.path}/tools">
       <fileset dir="shared/tools" />
@@ -400,12 +400,12 @@
     </copy>
 
     <!-- removed ignoreerrors="true" for 3.0 release process -->
-    <get src="http://download.processing.org/reference.zip" 
-         dest="../java/reference.zip" 
+    <get src="http://download.processing.org/reference.zip"
+         dest="../java/reference.zip"
          usetimestamp="true" />
 
-    <unzip dest="${target.path}/modes/java" 
-           src="../java/reference.zip" 
+    <unzip dest="${target.path}/modes/java"
+           src="../java/reference.zip"
            overwrite="false">
       <patternset>
         <exclude name="__MACOSX/**" />
@@ -424,13 +424,13 @@
 
   <target name="version-clear">
     <delete file="${target.path}/lib/version.txt" />
-  </target> 
+  </target>
 
   <target name="version-write" if="version">
     <echo file="${target.path}/lib/version.txt" message="${version}"/>
-  </target> 
+  </target>
 
-  
+
   <!-- - - - - - - - - -->
   <!-- Revision check  -->
   <!-- - - - - - - - - -->
@@ -447,9 +447,9 @@
       </filterchain>
     </loadfile>
     <!-- <echo message="revision is ${revision}." /> -->
-    
+
     <!-- figure out the revision number in base.java -->
-    <loadfile srcfile="../app/src/processing/app/Base.java" 
+    <loadfile srcfile="../app/src/processing/app/Base.java"
               property="revision.base">
       <filterchain>
         <tokenfilter>
@@ -460,20 +460,20 @@
       </filterchain>
     </loadfile>
     <!-- <echo message="base revision is ${revision.base}." /> -->
-    
+
     <condition property="revision.correct">
       <!-- Using contains because I can't figure out how to get rid of the
            LF in revision.base. Please file a bug if you have a fix. -->
       <contains string="${revision.base}" substring="${revision}"/>
     </condition>
-    
+
     <!-- the revision.base property won't be set
          if $revision wasn't found... -->
-    <fail unless="revision.correct" 
+    <fail unless="revision.correct"
           message="Fix revision number in Base.java" />
   </target>
-  
-  
+
+
   <!-- - - - - - - - -->
   <!-- Mac OS X      -->
   <!-- - - - - - - - -->
@@ -482,18 +482,18 @@
     <delete dir="macosx/work" />
     <delete file="macosx/processing-*.dmg" />
   </target>
-  
+
   <target name="macosx-check-os" unless="macosx">
     <echo>
       =======================================================
       Processing for Mac OS X can only be built on Mac OS X.
-      
-      Bye. 
+
+      Bye.
       =======================================================
     </echo>
     <fail message="wrong platform (${os.name})" />
   </target>
-  
+
   <target name="macosx-build" if="macosx" depends="revision-check, macosx-check-os, subprojects-build" description="Build Mac OS X version">
 
     <!-- Require that a JDK be installed, but call this on build, so that
@@ -502,10 +502,10 @@
           message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again.${line.separator}Or... type 'ant download-jdk-macosx' to download it to your Desktop." />
 
     <mkdir dir="macosx/work" />
-    
+
     <!-- app bundler for OS X and Java 1.7 -->
     <taskdef name="bundleapp"
-             classname="com.oracle.appbundler.AppBundlerTask"   
+             classname="com.oracle.appbundler.AppBundlerTask"
              classpath="macosx/appbundler.jar" />
 
     <bundleapp outputDirectory="macosx/work"
@@ -523,11 +523,11 @@
                mainClassName="processing.app.BaseSplash">
 
       <!-- The appbundler task needs a couple files (the Info.plist and
-           anything else outside /jre) from the full JDK, even though 
+           anything else outside /jre) from the full JDK, even though
            it's primarily copying over the JRE folder. -->
       <runtime dir="${jdk.path.macosx}/Contents/Home" />
-      <!-- Eventually we'll want to load the JRE directly from 
-           the .tgz on the Oracle site, though it's in a folder called 
+      <!-- Eventually we'll want to load the JRE directly from
+           the .tgz on the Oracle site, though it's in a folder called
            jre1.7.0_40.jre, so we'll need to strip that out. -->
 
       <!-- Same as runtime.jars, seen above; plus core.jar. -->
@@ -603,19 +603,19 @@
 -->
     </bundleapp>
 
-    <!-- Temporary fix until new appbundler is included again after solving 
+    <!-- Temporary fix until new appbundler is included again after solving
          https://github.com/processing/processing/issues/3359
          https://github.com/processing/processing/issues/3360
          The 'keytool' file is deleted by our appbundler. Add it back so that
 	 Android signing works properly. (Not modifying our appbundler since
-	 most of the time that appbundler is used, keytool isn't needed). 
-	 Also, because Ant's copy task does not retain file permissions on 
+	 most of the time that appbundler is used, keytool isn't needed).
+	 Also, because Ant's copy task does not retain file permissions on
 	 Unix systems, we need to use <exec executable="cp" ... > instead -->
     <exec executable="cp">
       <arg line="${jdk.path.macosx}/Contents/Home/bin/keytool macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/bin"/>
     </exec>
 
-    <!-- Replace libjli.dylib symlink with actual file. 
+    <!-- Replace libjli.dylib symlink with actual file.
          Deals with code signing issues on OS X 10.9.5+ -->
     <property name="jli.path" value="macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/MacOS/libjli.dylib" />
     <delete file="${jli.path}" />
@@ -628,6 +628,8 @@
       <!--<fileset dir="shared" includes="launch4j/**" />-->
       <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset file="shared/revisions.txt" />
+
+      <fileset file="shared/localClipboard.txt" />
     </copy>
 
     <!--
@@ -638,7 +640,7 @@
     </copy>
 
     <antcall target="assemble">
-      <param name="target.path" 
+      <param name="target.path"
              value="macosx/work/Processing.app/Contents/Java" />
     </antcall>
 
@@ -662,8 +664,8 @@
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
   </target>
-  
-  <target name="macosx-run" depends="macosx-build" 
+
+  <target name="macosx-run" depends="macosx-build"
           description="Run Mac OS X version">
     <exec executable="open" dir="macosx/work" spawn="true">
       <arg value="-a" />
@@ -698,7 +700,7 @@
       <arg value="Processing.app" />
     </exec>
 
-    <!-- Verify that the signature will pass Gatekeeper checks 
+    <!-- Verify that the signature will pass Gatekeeper checks
          https://developer.apple.com/library/mac/technotes/tn2206 -->
     <!--
     <exec executable="/usr/bin/codesign" dir="macosx/work">
@@ -711,8 +713,8 @@
     <!-- Disabling since it's a lot of gunk but not that useful. -->
   </target>
 
-  <target name="macosx-dist" if="macosx" 
-          depends="macosx-build" 
+  <target name="macosx-dist" if="macosx"
+          depends="macosx-build"
           description="Create a downloadable .zip for the Mac OS X version">
 
     <!-- The ant copy command does not preserve permissions. -->
@@ -735,52 +737,54 @@
     <echo>
       =======================================================
       Processing for Mac OS X was built. Grab it from
-      
+
       macosx/processing-${version}-macosx.zip
       =======================================================
     </echo>
   </target>
 
-  
+
   <!-- - - - - - - - -->
   <!-- Linux         -->
   <!-- - - - - - - - -->
-  
+
   <target name="linux-clean" depends="subprojects-clean" description="Clean linux version">
     <delete>
       <fileset dir="linux" includes="work" />
       <fileset dir="linux" includes="processing-*tgz" />
     </delete>
   </target>
-  
+
   <target name="linux-check-os" unless="linux">
     <echo>
       =======================================================
       Processing for Linux can only be built on *nix systems.
-      
-      Bye. 
+
+      Bye.
       =======================================================
     </echo>
-    
+
     <fail message="wrong platform (${os.name})" />
   </target>
-  
+
   <target name="linux-build" depends="ignore-tools, check-linux-arm32, revision-check, linux-check-os, jre-download, subprojects-build, subprojects-build-linux-arm32" description="Build Linux version">
     <mkdir dir="linux/work" />
-    
+
     <copy todir="linux/work">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
       <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
+
+      <fileset file="shared/localClipboard.txt" />
     </copy>
 
     <antcall target="assemble">
       <param name="target.path" value="linux/work" />
     </antcall>
 
-    <property name="launch4j.dir" 
+    <property name="launch4j.dir"
               value="linux/work/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
@@ -798,7 +802,7 @@
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
-    
+
     <copy todir="linux/work/lib" flatten="true">
       <fileset refid="runtime.jars" />
     </copy>
@@ -811,16 +815,16 @@
     <chmod perm="ugo+x" file="linux/work/processing-java" />
 
 <!--
-    <get src="http://download.processing.org/java/${jre.file}" 
-         dest="linux/jre.tgz" 
+    <get src="http://download.processing.org/java/${jre.file}"
+         dest="linux/jre.tgz"
          usetimestamp="true" />
 -->
 
-<!--           
+<!--
     Cannot use ant version of tar because it doesn't preserve properties.
-    <untar compression="gzip" 
-           dest="linux/work" 
-           src="linux/jre.tgz" 
+    <untar compression="gzip"
+           dest="linux/work"
+           src="linux/jre.tgz"
            overwrite="false"/>
 -->
 
@@ -830,7 +834,7 @@
     <exec executable="tar" dir="linux">
       <!-- Change directory -->
       <!--
-      <arg value="-C" /> 
+      <arg value="-C" />
       <arg value="linux/work" />
       <arg value="-xzpf" />
       -->
@@ -878,13 +882,13 @@
     </copy>
 
   </target>
-  
-  <target name="linux-run" depends="linux-build" 
+
+  <target name="linux-run" depends="linux-build"
           description="Run Linux version">
     <exec executable="./processing" dir="linux/work" spawn="true"/>
   </target>
-  
-  <target name="linux-dist" depends="linux-build" 
+
+  <target name="linux-dist" depends="linux-build"
 	  description="Build .tar.gz of linux version">
 
 <!--
@@ -911,14 +915,14 @@
 
     <echo>
       =======================================================
-      Processing for Linux was built. Grab the archive from   
-      
+      Processing for Linux was built. Grab the archive from
+
       ${linux.dist}
       =======================================================
     </echo>
   </target>
-  
-  <target name="deb" depends="dist" 
+
+  <target name="deb" depends="dist"
 	  description="Build .deb of linux version">
 
    <!-- start with a clean debian folder -->
@@ -946,10 +950,10 @@
    <!-- Set properties for DEBIAN/control file -->
    <property name="linux.deb" value="linux/processing-${version}-linux${sun.arch.data.model}.deb" />
 
-   <condition property="deb.arch" value="i386"> 
+   <condition property="deb.arch" value="i386">
      <equals arg1="${sun.arch.data.model}" arg2="32" />
    </condition>
-   <condition property="deb.arch" value="amd64"> 
+   <condition property="deb.arch" value="amd64">
      <equals arg1="${sun.arch.data.model}" arg2="64" />
    </condition>
 
@@ -990,23 +994,23 @@
    <!-- (rename the debian processing version to work) -->
    <move file="linux/debian/opt/processing" tofile="linux/work" />
 
-   <!-- cleanup --> 
+   <!-- cleanup -->
    <delete dir="linux/debian" />
 
     <echo>
       ========================================================
-      Processing for Debian Linux was built. Grab the deb from   
-      
+      Processing for Debian Linux was built. Grab the deb from
+
       ${linux.deb}
       ========================================================
     </echo>
   </target>
- 
+
 
   <!-- - - - - - - - -->
   <!-- Windows       -->
   <!-- - - - - - - - -->
-  
+
   <target name="windows-clean" depends="subprojects-clean"
           description="Clean windows version">
     <delete>
@@ -1014,22 +1018,22 @@
       <fileset dir="windows" includes="processing-*zip" />
     </delete>
   </target>
-  
+
   <target name="windows-check-os" unless="windows">
     <echo>
       =======================================================
       Processing for Windows can only be built on windows.
-      
-      Bye. 
+
+      Bye.
       =======================================================
     </echo>
-    
+
     <fail message="wrong platform (${os.name})" />
   </target>
-  
+
   <target name="windows-build" depends="ignore-tools, revision-check, windows-check-os, jre-download, subprojects-build" description="Build Windows version">
     <mkdir dir="windows/work" />
-    
+
     <!-- assemble the pde -->
     <mkdir dir="windows/work/lib" />
     <copy todir="windows/work/lib" flatten="true">
@@ -1039,10 +1043,10 @@
     <!-- unpack the JNA DLLs for Windows to work around
          https://github.com/processing/processing/issues/3624 -->
 
-    <condition property="jna.subfolder" value="win32-x86"> 
+    <condition property="jna.subfolder" value="win32-x86">
       <equals arg1="${sun.arch.data.model}" arg2="32" />
     </condition>
-    <condition property="jna.subfolder" value="win32-amd64"> 
+    <condition property="jna.subfolder" value="win32-amd64">
       <equals arg1="${sun.arch.data.model}" arg2="64" />
     </condition>
 
@@ -1052,16 +1056,20 @@
       </patternset>
       <mapper type="flatten"/>
     </unzip>
-    
+
     <copy todir="windows/work">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
       <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
+
+      <fileset file="shared/localClipboard.txt" />
     </copy>
 
     <fixcrlf file="windows/work/revisions.txt" eol="crlf" encoding="UTF-8" />
+
+    <fixcrlf file="windows/work/localClipboard.txt" eol="crlf" encoding="UTF-8" />
 
     <antcall target="assemble">
       <param name="target.path" value="windows/work" />
@@ -1080,12 +1088,12 @@
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
-    
-    <taskdef name="launch4j" 
-             classname="net.sf.launch4j.ant.Launch4jTask" 
+
+    <taskdef name="launch4j"
+             classname="net.sf.launch4j.ant.Launch4jTask"
              classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar" />
 
-    <!-- not all launch4j options are available when embedded inside this 
+    <!-- not all launch4j options are available when embedded inside this
          file (i.e. the icon param doesn't work), so use a config file -->
     <launch4j configFile="windows/config.xml" />
     <launch4j configFile="windows/config-cmd.xml" />
@@ -1097,21 +1105,21 @@
 
     <!-- starting with 2.0a7, require the local JRE + tools.jar -->
 <!--
-    <get src="http://download.processing.org/java/${jre.file}" 
-         dest="windows/jre.tgz" 
+    <get src="http://download.processing.org/java/${jre.file}"
+         dest="windows/jre.tgz"
          usetimestamp="true" />
 -->
 
     <!--
     <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
     -->
-    <!-- Hopefully this is OK with the permissions (unlike Linux), 
+    <!-- Hopefully this is OK with the permissions (unlike Linux),
          since those shouldn't matter on Windows. -->
     <untar compression="gzip"
-           dest="windows/work" 
-           src="${jre.tgz.path}" 
+           dest="windows/work"
+           src="${jre.tgz.path}"
            overwrite="false" />
-    <move file="windows/work/jre${jdk.esoteric}" 
+    <move file="windows/work/jre${jdk.esoteric}"
           tofile="windows/work/java" />
 
     <!-- Remove unused JRE bloat. -->
@@ -1127,56 +1135,56 @@
       <fileset dir="shared/lib/fonts" includes="*" />
     </copy>
   </target>
-  
-  <target name="windows-run" depends="windows-build" 
+
+  <target name="windows-run" depends="windows-build"
           description="Run windows version">
-    <exec executable="windows/work/processing.exe" 
+    <exec executable="windows/work/processing.exe"
           dir="windows/work" spawn="true"/>
   </target>
 
-  <target name="windows-dist" depends="windows-build" 
+  <target name="windows-dist" depends="windows-build"
           description="Create .zip files of windows version">
     <!--
-    <zip basedir="windows/work" 
+    <zip basedir="windows/work"
          prefix="processing-${version}"
          destfile="windows/processing-${version}.zip" />
-    <zip basedir="windows/work" 
+    <zip basedir="windows/work"
          prefix="processing-${version}"
-         destfile="windows/processing-${version}-expert.zip" 
+         destfile="windows/processing-${version}-expert.zip"
          excludes="java/**" />
     -->
 
     <property name="windows.dist" value="windows/processing-${version}-windows${sun.arch.data.model}.zip" />
 
     <zip destfile="${windows.dist}">
-      <zipfileset dir="windows/work" 
+      <zipfileset dir="windows/work"
                   prefix="processing-${version}" />
     </zip>
 
 <!-- Expert is too much of a headache. Just nix it for 2.0. -->
 <!--
     <zip destfile="windows/processing-${version}-windows-expert.zip">
-      <zipfileset dir="windows/work" 
-                  prefix="processing-${version}" 
+      <zipfileset dir="windows/work"
+                  prefix="processing-${version}"
                   excludes="java/**" />
     </zip>
 -->
-    
+
     <echo>
       =======================================================
-      Processing for Windows was built. Grab the archive from   
+      Processing for Windows was built. Grab the archive from
 
       ${windows.dist}
       =======================================================
     </echo>
-  </target> 
+  </target>
 
 
   <!-- bundle a bunch of PNGs into an OS X iconset -->
   <target name="iconset">
     <mkdir dir="${icon.set}" />
     <!--<echo message="root = ${icon.root} / set = ${icon.set}" />-->
-    
+
     <copy file="${icon.root}-16.png"
           tofile="${icon.set}/icon_16x16.png" />
     <copy file="${icon.root}-32.png"
@@ -1186,7 +1194,7 @@
           tofile="${icon.set}/icon_32x32.png" />
     <copy file="${icon.root}-64.png"
           tofile="${icon.set}/icon_32x32@2x.png" />
-    
+
     <copy file="${icon.root}-128.png"
           tofile="${icon.set}/icon_128x128.png" />
     <copy file="${icon.root}-256.png"
@@ -1209,7 +1217,7 @@
     <delete dir="${icon.set}" />
   </target>
 
-  
+
   <!-- Target to create the icons... putting this in here rather than docs.
        For OS X (though Linux might work), not intended for general use,
        because it requires things like iconutil (on OS X) or ImageMagick's
@@ -1228,8 +1236,8 @@
       <param name="icon.root" value="../core/src/icon/icon" />
       <param name="icon.icns" value="../java/application/sketch.icns" />
     </antcall>
-    
-    <!-- Create .ico for the PDE itself 
+
+    <!-- Create .ico for the PDE itself
          https://msdn.microsoft.com/en-us/library/dn742485.aspx
          "Application icons and Control Panel items: The full set includes
          16x16, 32x32, 48x48, and 256x256 (code scales between 32 and 256).
@@ -1246,7 +1254,7 @@
     </exec>
   </target>
 
-  
+
   <!-- - - - - - - - - - - - - - - - - - -->
   <!-- Package source 'n tag the release -->
   <!-- - - - - - - - - - - - - - - - - - -->
@@ -1275,8 +1283,8 @@ remove the spaces for depth since it should be double dash, but screws up commen
 
     <javadoc access="public" author="false" classpath="../core/library/jogl-all.jar:../core/bin:../core/library/gluegen-rt.jar" destdir="javadoc/core" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" splitindex="false" use="false" version="false">
 
-      <!-- provide links for java.* classes. 
-           also suppresses the java.lang prefix in the text.  --> 
+      <!-- provide links for java.* classes.
+           also suppresses the java.lang prefix in the text.  -->
       <link href="http://docs.oracle.com/javase/7/docs/api/" />
 
       <!-- prevent files from always appearing to have changed -->
@@ -1291,9 +1299,9 @@ remove the spaces for depth since it should be double dash, but screws up commen
     </javadoc>
 
 <!--
-    <copy file="javadoc/stylesheet.css" 
+    <copy file="javadoc/stylesheet.css"
           tofile="javadoc/core/stylesheet.css" />
-    <copy file="javadoc/index.html" 
+    <copy file="javadoc/index.html"
           tofile="javadoc/core/index.html" />
 -->
 
@@ -1309,7 +1317,7 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg value="-quiet" />
 
       <link href="http://docs.oracle.com/javase/7/docs/api/" />
-      
+
       <packageset dir="../app/src">
         <include name="antlr/**" />
         <include name="processing/**" />
@@ -1342,7 +1350,7 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg value="-quiet" />
 
       <link href="http://docs.oracle.com/javase/7/docs/api/" />
-      
+
       <packageset dir="../java/libraries/dxf/src">
         <include name="antlr/**" />
         <include name="processing/**" />
@@ -1372,9 +1380,9 @@ remove the spaces for depth since it should be double dash, but screws up commen
 
 
 <!--
-    <copy file="javadoc/stylesheet.css" 
+    <copy file="javadoc/stylesheet.css"
           tofile="javadoc/everything/stylesheet.css" />
-    <copy file="javadoc/index.html" 
+    <copy file="javadoc/index.html"
           tofile="javadoc/everything/index.html" />
 -->
 
@@ -1409,12 +1417,12 @@ remove the spaces for depth since it should be double dash, but screws up commen
   </target>
 -->
 
-  
+
   <!-- - - - - - - - -->
   <!-- Run It!       -->
   <!-- - - - - - - - -->
-  
-  <target name="clean" description="Perform a spring cleaning" 
+
+  <target name="clean" description="Perform a spring cleaning"
           depends="linux-clean, windows-clean, macosx-clean, subprojects-clean">
   </target>
 
