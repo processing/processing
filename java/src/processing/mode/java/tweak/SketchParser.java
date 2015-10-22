@@ -60,14 +60,14 @@ public class SketchParser {
 
     // add 'settings' and 'setup' to ignore list (to ignore all numbers there)
     ignoreFunctions = new ArrayList<>();
-    ignoreFunctions.add(Arrays.asList(new Range(getVoidFunctionStart(codeTabs[0], "settings"),
-                                  				getVoidFunctionEnd(codeTabs[0], "settings")),
-                                  	  new Range(getVoidFunctionStart(codeTabs[0], "setup"),
-                                  			  	getVoidFunctionEnd(codeTabs[0], "setup"))));
-    
+    Range settingsRange = getVoidFunctionRange(codeTabs[0], "settings");
+    Range setupRange = getVoidFunctionRange(codeTabs[0], "setup");
+    ignoreFunctions.add(Arrays.asList(settingsRange, setupRange));
+
     //Add empty lists for the other tabs so we do not get an index out of bounds error later
-    for(int i = 0; i < codeTabs.length-1; i++)
-    	ignoreFunctions.add(Collections.EMPTY_LIST);
+    for (int i = 0; i < codeTabs.length-1; i++) {
+    	ignoreFunctions.add(new ArrayList<SketchParser.Range>());
+    }
 
     // build curly scope for every character in the code
     curlyScopes = new ArrayList<>();
@@ -837,6 +837,11 @@ public class SketchParser {
       }
     }
     return obj;
+  }
+
+  static public Range getVoidFunctionRange(String code, String functionName) {
+    return new Range(getVoidFunctionStart(code, functionName),
+                     getVoidFunctionEnd(code, functionName));
   }
 
   static public int getVoidFunctionStart(String code, String functionName) {

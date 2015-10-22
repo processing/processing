@@ -935,17 +935,20 @@
    <mkdir dir="linux/debian/usr/share/mime/packages/" />
    <!-- rename the work folder temporarily -->
    <move file="linux/work" tofile="linux/debian/opt/processing" />
-   <symlink link="linux/debian/usr/bin/processing" resource="../../opt/processing/processing" />
+   <symlink link="linux/debian/usr/bin/processing" 
+            resource="../../opt/processing/processing" />
 
    <!-- place .desktop and .sharedmimeinfo file -->
-   <copy file="linux/processing.desktop" tofile="linux/debian/usr/share/applications/processing.desktop" >
+   <copy file="linux/processing.desktop" 
+         tofile="linux/debian/usr/share/applications/processing.desktop">
        <filterchain>
-           <replacetokens >
+           <replacetokens>
                <token key="version" value="${version}" />
            </replacetokens>
-       </filterchain >
-   </copy >
-   <copy file="linux/processing.sharedmimeinfo" tofile="linux/debian/usr/share/mime/packages/processing.xml" />
+       </filterchain>
+   </copy>
+   <copy file="linux/processing.sharedmimeinfo" 
+         tofile="linux/debian/usr/share/mime/packages/processing.xml" />
 
    <!-- Set properties for DEBIAN/control file -->
    <property name="linux.deb" value="linux/processing-${version}-linux${sun.arch.data.model}.deb" />

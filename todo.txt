@@ -21,6 +21,11 @@ X updates for serial
 X   https://github.com/processing/processing/pull/4015
 _ Saving sketch with the same name as a class
 _   https://github.com/processing/processing/pull/4033
+_ infinite "file changed" popups
+_   https://github.com/processing/processing/issues/3965
+_   https://github.com/processing/processing/pull/4037
+_ Pasting text into PDE results in "Clipboard does not contain a string
+_   https://github.com/processing/processing/pull/4040
 
 jakub
 X Include Example packs into update count
