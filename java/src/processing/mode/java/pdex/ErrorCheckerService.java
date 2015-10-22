@@ -793,6 +793,8 @@ public class ErrorCheckerService {
 
     JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, compilerOptions);
 
+    // See http://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.jdt.doc.isv%2Fguide%2Fjdt_api_options.htm&anchor=compiler
+
     final String[] generate = {
         JavaCore.COMPILER_LINE_NUMBER_ATTR,
         JavaCore.COMPILER_SOURCE_FILE_ATTR
@@ -806,6 +808,17 @@ public class ErrorCheckerService {
     };
 
     final String[] warn = {
+        JavaCore.COMPILER_PB_NO_EFFECT_ASSIGNMENT,
+        JavaCore.COMPILER_PB_NULL_REFERENCE,
+        JavaCore.COMPILER_PB_POTENTIAL_NULL_REFERENCE,
+        JavaCore.COMPILER_PB_REDUNDANT_NULL_CHECK,
+        JavaCore.COMPILER_PB_REDUNDANT_TYPE_ARGUMENTS,
+        JavaCore.COMPILER_PB_POSSIBLE_ACCIDENTAL_BOOLEAN_ASSIGNMENT,
+        JavaCore.COMPILER_PB_UNUSED_LABEL,
+        JavaCore.COMPILER_PB_UNUSED_LOCAL,
+        JavaCore.COMPILER_PB_UNUSED_OBJECT_ALLOCATION,
+        JavaCore.COMPILER_PB_UNUSED_PARAMETER,
+        JavaCore.COMPILER_PB_UNUSED_PRIVATE_MEMBER
     };
 
     for (String s : generate) compilerOptions.put(s, JavaCore.GENERATE);
