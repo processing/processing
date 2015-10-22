@@ -21,16 +21,20 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 package processing.mode.java.pdex;
 
 import java.awt.EventQueue;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -47,12 +51,23 @@ import javax.swing.text.Element;
 import javax.swing.text.PlainDocument;
 
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.internal.compiler.CompilationResult;
+import org.eclipse.jdt.internal.compiler.Compiler;
+import org.eclipse.jdt.internal.compiler.DefaultErrorHandlingPolicies;
+import org.eclipse.jdt.internal.compiler.ICompilerRequestor;
+import org.eclipse.jdt.internal.compiler.classfmt.ClassFileReader;
+import org.eclipse.jdt.internal.compiler.classfmt.ClassFormatException;
+import org.eclipse.jdt.internal.compiler.env.ICompilationUnit;
+import org.eclipse.jdt.internal.compiler.env.INameEnvironment;
+import org.eclipse.jdt.internal.compiler.env.NameEnvironmentAnswer;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
 
 import processing.app.Library;
 import processing.app.Messages;
@@ -97,12 +112,12 @@ public class ErrorCheckerService {
   /**
    * URLs of extra imports jar files stored here.
    */
-  protected URL[] classPath;
+  protected URL[] classPath = {};
 
   /**
-   * Stores all Problems in the sketch
+   * Class loader used by compiler check and ASTGenerator, based on classPath
    */
-  //public List<Problem> problemsList;
+  protected URLClassLoader classLoader = new URLClassLoader(classPath);
 
   /**
    * How many lines are present till the initial class declaration? In static
@@ -122,12 +137,6 @@ public class ErrorCheckerService {
    * items.
    */
   protected boolean loadCompClass = true;
-
-  /**
-   * Compilation Checker object.
-   */
-  protected CompilationChecker compilationChecker;
-
 
   /**
    * List of jar files to be present in compilation checker's classpath
@@ -157,6 +166,11 @@ public class ErrorCheckerService {
   protected final XQPreprocessor xqpreproc;
 
   /**
+   * ASTGenerator for operations on AST
+   */
+  protected final ASTGenerator astGenerator;
+
+  /**
    * Regexp for import statements. (Used from Processing source)
    */
   public static final String IMPORT_REGEX =
@@ -171,10 +185,11 @@ public class ErrorCheckerService {
 
   /**
    * Error checking doesn't happen before this interval has ellapsed since the
-   * last runManualErrorCheck() call.
+   * last request() call.
    */
   private final static long errorCheckInterval = 650;
 
+  protected volatile CodeCheckResult lastCodeCheckResult = new CodeCheckResult();
 
   private Thread errorCheckerThread;
   private final BlockingQueue<Boolean> requestQueue = new ArrayBlockingQueue<>(1);
@@ -261,11 +276,8 @@ public class ErrorCheckerService {
       synchronized (astGenerator) {
         astGenerator.disposeAllWindows();
       }
-      compilationChecker = null;
       classLoader = null;
-      System.gc();
       Messages.loge("Thread stopped: " + editor.getSketch().getName());
-      System.gc();
 
       running = false;
     }
@@ -277,6 +289,7 @@ public class ErrorCheckerService {
     errorCheckerThread = new Thread(mainLoop);
     errorCheckerThread.start();
   }
+
 
   public void stop() {
     cancel();
@@ -324,8 +337,6 @@ public class ErrorCheckerService {
   }
 
 
-  protected final ASTGenerator astGenerator;
-
   public ASTGenerator getASTGenerator() {
     return astGenerator;
   }
@@ -356,7 +367,6 @@ public class ErrorCheckerService {
     CompilationUnit compilationUnit;
 
     String sourceCode;
-    int sourceCodeOffset;
 
     final List<Problem> problems = new ArrayList();
 
@@ -367,12 +377,11 @@ public class ErrorCheckerService {
     CodeCheckResult result = new CodeCheckResult();
 
     result.sourceCode = preprocessCode();
-    result.sourceCodeOffset = 0;
 
     char[] sourceCodeArray = result.sourceCode.toCharArray();
 
 
-    IProblem[] problems;
+    List<IProblem> problems;
 
     {{ // SYNTAX CHECK
 
@@ -381,20 +390,15 @@ public class ErrorCheckerService {
 
       parser.setSource(sourceCodeArray);
       parser.setKind(ASTParser.K_COMPILATION_UNIT);
-
-      Map<String, String> options = JavaCore.getOptions();
-      JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
-      options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
-      options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
-      parser.setCompilerOptions(options);
+      parser.setCompilerOptions(COMPILER_OPTIONS);
       parser.setStatementsRecovery(true);
 
       result.compilationUnit = (CompilationUnit) parser.createAST(null);
 
       // Store errors returned by the ast parser
-      problems = result.compilationUnit.getProblems();
+      problems = Arrays.asList(result.compilationUnit.getProblems());
 
-      if (problems.length == 0) {
+      if (problems.isEmpty()) {
         result.syntaxErrors = false;
         result.containsErrors = false;
       } else {
@@ -405,7 +409,7 @@ public class ErrorCheckerService {
     }}
 
     // No syntax errors, proceed for compilation check, Stage 2.
-    if (problems.length == 0 && !editor.hasJavaTabs()) {
+    if (problems.isEmpty() && !editor.hasJavaTabs()) {
       String sourceCode = xqpreproc.handle(result.sourceCode, programImports);
       prepareCompilerClasspath();
 
@@ -413,17 +417,11 @@ public class ErrorCheckerService {
 
         parser.setSource(sourceCodeArray);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
-
-        Map<String, String> options = JavaCore.getOptions();
-        JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
-        options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
-        options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
-        parser.setCompilerOptions(options);
+        parser.setCompilerOptions(COMPILER_OPTIONS);
         parser.setStatementsRecovery(true);
 
         result.compilationUnit = (CompilationUnit) parser.createAST(null);
         result.sourceCode = sourceCode;
-        result.sourceCodeOffset = 1;
 
         // Currently (Sept, 2012) I'm using Java's reflection api to load the
         // CompilationChecker class(from CompilationChecker.jar) that houses the
@@ -441,26 +439,12 @@ public class ErrorCheckerService {
           if (loadCompClass) {
             classPath = new URL[classpathJars.size()];
             classPath = classpathJars.toArray(classPath);
-
-            compilationChecker = null;
-            classLoader = null;
-            System.gc();
-            // log("CP Len -- " + classpath.length);
             classLoader = new URLClassLoader(classPath);
-            compilationChecker = new CompilationChecker();
             loadCompClass = false;
           }
 
-//          for(URL cpUrl: classPath) {
-//            Messages.log("CP jar: " + cpUrl.getPath());
-//          }
-
-          if (compilerSettings == null) {
-            prepareCompilerSetting();
-          }
-
-          problems = compilationChecker.getErrors(className, sourceCode,
-                                                  compilerSettings, classLoader);
+          problems = compileAndReturnProblems(className, sourceCode,
+                                              COMPILER_OPTIONS, classLoader);
         } catch (Exception e) {
           System.err.println("compileCheck() problem." + e);
           e.printStackTrace();
@@ -484,7 +468,7 @@ public class ErrorCheckerService {
           continue;
         }
 
-        int sourceLine = problem.getSourceLineNumber() - result.sourceCodeOffset;
+        int sourceLine = problem.getSourceLineNumber();
         int[] a = calculateTabIndexAndLineNumber(sourceLine);
 
         Problem p = new Problem(problem, a[0], a[1]);
@@ -504,8 +488,6 @@ public class ErrorCheckerService {
     return result;
   }
 
-  protected volatile CodeCheckResult lastCodeCheckResult = new CodeCheckResult();
-
   public boolean hasSyntaxErrors(){
     return lastCodeCheckResult.syntaxErrors;
   }
@@ -514,9 +496,49 @@ public class ErrorCheckerService {
     return lastCodeCheckResult.containsErrors;
   }
 
-  public TreeMap<String, IProblem> tempErrorLog = new TreeMap<>();
+  /**
+   * Performs compiler error check.
+   * @param sourceName - name of the class
+   * @param source - source code
+   * @param options - compiler options
+   * @param classLoader - custom classloader which can load all dependencies
+   * @return list of compiler errors and warnings
+   */
+  static public List<IProblem> compileAndReturnProblems(String sourceName,
+                                                        String source,
+                                                        Map<String, String> options,
+                                                        URLClassLoader classLoader) {
+    final List<IProblem> problems = new ArrayList<>();
 
-  protected URLClassLoader classLoader;
+    ICompilerRequestor requestor = new ICompilerRequestor() {
+      @Override
+      public void acceptResult(CompilationResult cr) {
+        if (cr.hasProblems()) Collections.addAll(problems, cr.getProblems());
+      }
+    };
+
+    final char[] contents = source.toCharArray();
+    final char[][] packageName = new char[][]{};
+    final char[] mainTypeName = sourceName.toCharArray();
+    final char[] fileName = (sourceName + ".java").toCharArray();
+
+    ICompilationUnit unit = new ICompilationUnit() {
+      @Override public char[] getContents() { return contents; }
+      @Override public char[][] getPackageName() { return packageName; }
+      @Override public char[] getMainTypeName() { return mainTypeName; }
+      @Override public char[] getFileName() { return fileName; }
+      @Override public boolean ignoreOptionalProblems() { return false; }
+    };
+
+    org.eclipse.jdt.internal.compiler.Compiler compiler =
+        new Compiler(new NameEnvironmentImpl(classLoader),
+                     DefaultErrorHandlingPolicies.proceedWithAllProblems(),
+                     new CompilerOptions(options),
+                     requestor,
+                     new DefaultProblemFactory(Locale.getDefault()));
+    compiler.compile(new ICompilationUnit[]{unit});
+    return problems;
+  }
 
 
   /**
@@ -538,22 +560,11 @@ public class ErrorCheckerService {
         }
         pdeTabs.add(tab);
       }
-      int pkgNameOffset = ("package " + className + ";\n").length();
-      // package name is added only during compile check
-      if (codeCheckResult.sourceCodeOffset == 0) {
-        pkgNameOffset = 0;
-      }
 
       for (Problem p : codeCheckResult.problems) {
-        int prbStart = p.getIProblem().getSourceStart() - pkgNameOffset;
-        int prbEnd = p.getIProblem().getSourceEnd() - pkgNameOffset;
+        int prbStart = p.getIProblem().getSourceStart();
+        int prbEnd = p.getIProblem().getSourceEnd();
         int javaLineNumber = p.getSourceLineNumber() - 1;
-        // not sure if this is necessary [fry 150808]
-        javaLineNumber -= codeCheckResult.sourceCodeOffset;
-        // errors on the first line were setting this to -1 [fry 150808]
-        if (javaLineNumber < 0) {
-          javaLineNumber = 0;
-        }
         Element lineElement =
           javaSource.getDefaultRootElement().getElement(javaLineNumber);
         if (lineElement == null) {
@@ -597,16 +608,7 @@ public class ErrorCheckerService {
   }
 
 
-  private int loadClassCounter = 0;
-
   public URLClassLoader getSketchClassLoader() {
-    loadClassCounter++;
-    if (loadClassCounter > 100) {
-      loadClassCounter = 0;
-      classLoader = null;
-      System.gc();
-      classLoader = new URLClassLoader(classPath);
-    }
     return classLoader;
   }
 
@@ -785,29 +787,45 @@ public class ErrorCheckerService {
     return true;
   }
 
+  static final Map<String, String> COMPILER_OPTIONS;
+  static {
+    Map<String, String> compilerOptions = new HashMap<>();
 
-  /** Options for the JDT Compiler */
-  protected Map<String, String> compilerSettings;
+    JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, compilerOptions);
 
+    // See http://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.jdt.doc.isv%2Fguide%2Fjdt_api_options.htm&anchor=compiler
 
-  /** Set compiler options for JDT Compiler */
-  protected void prepareCompilerSetting() {
-    compilerSettings = new HashMap<>();
+    final String[] generate = {
+        JavaCore.COMPILER_LINE_NUMBER_ATTR,
+        JavaCore.COMPILER_SOURCE_FILE_ATTR
+    };
 
-    compilerSettings.put(CompilerOptions.OPTION_LineNumberAttribute,
-                         CompilerOptions.GENERATE);
-    compilerSettings.put(CompilerOptions.OPTION_SourceFileAttribute,
-                         CompilerOptions.GENERATE);
-    compilerSettings.put(CompilerOptions.OPTION_Source,
-                         CompilerOptions.VERSION_1_8);
-    compilerSettings.put(CompilerOptions.OPTION_ReportUnusedImport,
-                         CompilerOptions.IGNORE);
-    compilerSettings.put(CompilerOptions.OPTION_ReportMissingSerialVersion,
-                         CompilerOptions.IGNORE);
-    compilerSettings.put(CompilerOptions.OPTION_ReportRawTypeReference,
-                         CompilerOptions.IGNORE);
-    compilerSettings.put(CompilerOptions.OPTION_ReportUncheckedTypeOperation,
-                         CompilerOptions.IGNORE);
+    final String[] ignore = {
+        JavaCore.COMPILER_PB_UNUSED_IMPORT,
+        JavaCore.COMPILER_PB_MISSING_SERIAL_VERSION,
+        JavaCore.COMPILER_PB_RAW_TYPE_REFERENCE,
+        JavaCore.COMPILER_PB_REDUNDANT_TYPE_ARGUMENTS,
+        JavaCore.COMPILER_PB_UNCHECKED_TYPE_OPERATION
+    };
+
+    final String[] warn = {
+        JavaCore.COMPILER_PB_NO_EFFECT_ASSIGNMENT,
+        JavaCore.COMPILER_PB_NULL_REFERENCE,
+        JavaCore.COMPILER_PB_POTENTIAL_NULL_REFERENCE,
+        JavaCore.COMPILER_PB_REDUNDANT_NULL_CHECK,
+        JavaCore.COMPILER_PB_POSSIBLE_ACCIDENTAL_BOOLEAN_ASSIGNMENT,
+        JavaCore.COMPILER_PB_UNUSED_LABEL,
+        JavaCore.COMPILER_PB_UNUSED_LOCAL,
+        JavaCore.COMPILER_PB_UNUSED_OBJECT_ALLOCATION,
+        JavaCore.COMPILER_PB_UNUSED_PARAMETER,
+        JavaCore.COMPILER_PB_UNUSED_PRIVATE_MEMBER
+    };
+
+    for (String s : generate) compilerOptions.put(s, JavaCore.GENERATE);
+    for (String s : ignore)   compilerOptions.put(s, JavaCore.IGNORE);
+    for (String s : warn)     compilerOptions.put(s, JavaCore.WARNING);
+
+    COMPILER_OPTIONS = Collections.unmodifiableMap(compilerOptions);
   }
 
 
@@ -1498,5 +1516,75 @@ public class ErrorCheckerService {
 
   public ArrayList<ImportStatement> getProgramImports() {
     return programImports;
+  }
+
+
+  private static class NameEnvironmentImpl implements INameEnvironment {
+
+    private final ClassLoader classLoader;
+
+    NameEnvironmentImpl(ClassLoader classLoader) {
+      this.classLoader = classLoader;
+    }
+
+
+    @Override
+    public NameEnvironmentAnswer findType(char[][] compoundTypeName) {
+      return readClassFile(CharOperation.toString(compoundTypeName), classLoader);
+    }
+
+
+    @Override
+    public NameEnvironmentAnswer findType(char[] typeName, char[][] packageName) {
+      String fullName = CharOperation.toString(packageName);
+      if (typeName != null) {
+        if (fullName.length() > 0) fullName += ".";
+        fullName += new String(typeName);
+      }
+      return readClassFile(fullName, classLoader);
+    }
+
+
+    @Override
+    public boolean isPackage(char[][] parentPackageName, char[] packageName) {
+      String fullName = CharOperation.toString(parentPackageName);
+      if (packageName != null) {
+        if (fullName.length() > 0) fullName += ".";
+        fullName += new String(packageName);
+      }
+      if (readClassFile(fullName, classLoader) != null) return false;
+      try {
+        return (classLoader.loadClass(fullName) == null);
+      } catch (ClassNotFoundException e) {
+        return true;
+      }
+    }
+
+
+    @Override
+    public void cleanup() { }
+
+
+    private static NameEnvironmentAnswer readClassFile(String fullName, ClassLoader classLoader) {
+      String classFileName = fullName.replace('.', '/') + ".class";
+
+      InputStream is = classLoader.getResourceAsStream(classFileName);
+      if (is == null) return null;
+
+      byte[] buffer = new byte[8192];
+      ByteArrayOutputStream os = new ByteArrayOutputStream(buffer.length);
+      try {
+        int bytes;
+        while ((bytes = is.read(buffer, 0, buffer.length)) > 0) {
+          os.write(buffer, 0, bytes);
+        }
+        os.flush();
+        ClassFileReader classFileReader =
+            new ClassFileReader(os.toByteArray(), fullName.toCharArray(), true);
+        return new NameEnvironmentAnswer(classFileReader, null);
+      } catch (IOException | ClassFormatException e) {
+        return null;
+      }
+    }
   }
 }

@@ -216,8 +216,7 @@ public class ASTGenerator {
 
       Map<String, String> options = JavaCore.getOptions();
 
-      JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
-      options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+      JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, options);
       parser.setCompilerOptions(options);
       compilationUnit = (CompilationUnit) parser.createAST(null);
     } else {
@@ -343,7 +342,7 @@ public class ASTGenerator {
       }
       jdocMap.put(methodName, msg);
     }
-    System.out.println("JDoc loaded " + jdocMap.size());
+    //System.out.println("JDoc loaded " + jdocMap.size());
   }
 
 
@@ -1523,7 +1522,7 @@ public class ASTGenerator {
     } else if (parent instanceof Block) {
       nodes = ((Block) parent).statements();
     } else {
-      System.err.println("findClosestNode() found " + getNodeAsString(parent));
+      log("findClosestNode() found " + getNodeAsString(parent));
       return null;
     }
 

@@ -1296,9 +1296,9 @@ public class JavaEditor extends Editor {
 
   public void internalCloseRunner() {
     // Added temporarily to dump error log. TODO: Remove this later [mk29]
-    if (JavaMode.errorLogsEnabled) {
-      writeErrorsToFile();
-    }
+    //if (JavaMode.errorLogsEnabled) {
+    //  writeErrorsToFile();
+    //}
     handleStop();
   }
 
@@ -1328,10 +1328,12 @@ public class JavaEditor extends Editor {
   }
 
 
+  // Not sure how this was supposed to work, tempErrorLog is always empty [jv]
   /**
    * Writes all error messages to a csv file.
    * For analytics purposes only.
    */
+  /*
   private void writeErrorsToFile() {
     if (errorCheckerService.tempErrorLog.size() == 0) return;
 
@@ -1369,7 +1371,7 @@ public class JavaEditor extends Editor {
       System.err.println("Failed to save log file for sketch " + getSketch().getName());
       e.printStackTrace();
     }
-  }
+  }*/
 
 
   /*
