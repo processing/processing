@@ -277,9 +277,7 @@ public class ErrorCheckerService {
         astGenerator.disposeAllWindows();
       }
       classLoader = null;
-      System.gc();
       Messages.loge("Thread stopped: " + editor.getSketch().getName());
-      System.gc();
 
       running = false;
     }
@@ -441,9 +439,6 @@ public class ErrorCheckerService {
           if (loadCompClass) {
             classPath = new URL[classpathJars.size()];
             classPath = classpathJars.toArray(classPath);
-
-            classLoader = null;
-            System.gc();
             classLoader = new URLClassLoader(classPath);
             loadCompClass = false;
           }
@@ -613,16 +608,7 @@ public class ErrorCheckerService {
   }
 
 
-  private int loadClassCounter = 0;
-
   public URLClassLoader getSketchClassLoader() {
-    loadClassCounter++;
-    if (loadClassCounter > 100) {
-      loadClassCounter = 0;
-      classLoader = null;
-      System.gc();
-      classLoader = new URLClassLoader(classPath);
-    }
     return classLoader;
   }
 
