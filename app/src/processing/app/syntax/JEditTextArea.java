@@ -1343,7 +1343,8 @@ public class JEditTextArea extends JComponent
     int wordStart = 0;
     int wordEnd = lineText.length();
 
-    char ch = lineText.charAt(Math.max(0,offset - 1));
+    int charPos = PApplet.constrain(offset - 1, 0, lineText.length() - 1);
+    char ch = lineText.charAt(charPos);
 
     CharacterKinds thisWord = CharacterKind(ch,noWordSep);
 
