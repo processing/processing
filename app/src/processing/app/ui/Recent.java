@@ -351,12 +351,6 @@ public class Recent {
     String path;  // if not loaded, this is non-null
 //    EditorState state;  // if not loaded, this is non-null
 
-    /**
-     * If currently loaded, this is non-null, and takes precedence over the
-     * path and state information, which will instead be stored actively by
-     * the actual sketch object.
-     */
-    Editor editor;
 //    Sketch sketch;
 
 //    Record(String path, EditorState state) {
@@ -374,14 +368,10 @@ public class Recent {
 //    }
 
     Record(Editor editor) {
-      this.editor = editor;
-      this.path = editor.getSketch().getMainFilePath();
+      this(editor.getSketch().getMainFilePath());
     }
 
     String getName() {
-      if (editor != null) {
-        return editor.getSketch().getName();
-      }
       // Get the filename of the .pde (or .js or .py...)
       String name = path.substring(path.lastIndexOf(File.separatorChar) + 1);
       // Return the name with the extension removed
