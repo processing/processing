@@ -216,8 +216,7 @@ public class ASTGenerator {
 
       Map<String, String> options = JavaCore.getOptions();
 
-      JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
-      options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+      JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, options);
       parser.setCompilerOptions(options);
       compilationUnit = (CompilationUnit) parser.createAST(null);
     } else {

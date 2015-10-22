@@ -387,12 +387,7 @@ public class ErrorCheckerService {
 
       parser.setSource(sourceCodeArray);
       parser.setKind(ASTParser.K_COMPILATION_UNIT);
-
-      Map<String, String> options = JavaCore.getOptions();
-      JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
-      options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
-      options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
-      parser.setCompilerOptions(options);
+      parser.setCompilerOptions(COMPILER_OPTIONS);
       parser.setStatementsRecovery(true);
 
       result.compilationUnit = (CompilationUnit) parser.createAST(null);
@@ -419,12 +414,7 @@ public class ErrorCheckerService {
 
         parser.setSource(sourceCodeArray);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
-
-        Map<String, String> options = JavaCore.getOptions();
-        JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
-        options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
-        options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
-        parser.setCompilerOptions(options);
+        parser.setCompilerOptions(COMPILER_OPTIONS);
         parser.setStatementsRecovery(true);
 
         result.compilationUnit = (CompilationUnit) parser.createAST(null);
@@ -453,13 +443,8 @@ public class ErrorCheckerService {
             loadCompClass = false;
           }
 
-
-          if (compilerSettings == null) {
-            prepareCompilerSetting();
-          }
-
           problems = compileAndReturnProblems(className, sourceCode,
-                                              compilerSettings, classLoader);
+                                              COMPILER_OPTIONS, classLoader);
         } catch (Exception e) {
           System.err.println("compileCheck() problem." + e);
           e.printStackTrace();
@@ -815,29 +800,32 @@ public class ErrorCheckerService {
     return true;
   }
 
+  static final Map<String, String> COMPILER_OPTIONS;
+  static {
+    Map<String, String> compilerOptions = new HashMap<>();
 
-  /** Options for the JDT Compiler */
-  protected Map<String, String> compilerSettings;
+    JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, compilerOptions);
 
+    final String[] generate = {
+        JavaCore.COMPILER_LINE_NUMBER_ATTR,
+        JavaCore.COMPILER_SOURCE_FILE_ATTR
+    };
 
-  /** Set compiler options for JDT Compiler */
-  protected void prepareCompilerSetting() {
-    compilerSettings = new HashMap<>();
+    final String[] ignore = {
+        JavaCore.COMPILER_PB_UNUSED_IMPORT,
+        JavaCore.COMPILER_PB_MISSING_SERIAL_VERSION,
+        JavaCore.COMPILER_PB_RAW_TYPE_REFERENCE,
+        JavaCore.COMPILER_PB_UNCHECKED_TYPE_OPERATION
+    };
 
-    compilerSettings.put(CompilerOptions.OPTION_LineNumberAttribute,
-                         CompilerOptions.GENERATE);
-    compilerSettings.put(CompilerOptions.OPTION_SourceFileAttribute,
-                         CompilerOptions.GENERATE);
-    compilerSettings.put(CompilerOptions.OPTION_Source,
-                         CompilerOptions.VERSION_1_8);
-    compilerSettings.put(CompilerOptions.OPTION_ReportUnusedImport,
-                         CompilerOptions.IGNORE);
-    compilerSettings.put(CompilerOptions.OPTION_ReportMissingSerialVersion,
-                         CompilerOptions.IGNORE);
-    compilerSettings.put(CompilerOptions.OPTION_ReportRawTypeReference,
-                         CompilerOptions.IGNORE);
-    compilerSettings.put(CompilerOptions.OPTION_ReportUncheckedTypeOperation,
-                         CompilerOptions.IGNORE);
+    final String[] warn = {
+    };
+
+    for (String s : generate) compilerOptions.put(s, JavaCore.GENERATE);
+    for (String s : ignore)   compilerOptions.put(s, JavaCore.IGNORE);
+    for (String s : warn)     compilerOptions.put(s, JavaCore.WARNING);
+
+    COMPILER_OPTIONS = Collections.unmodifiableMap(compilerOptions);
   }
 
 

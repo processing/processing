@@ -21,9 +21,7 @@
 package processing.mode.java.pdex;
 
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -76,12 +74,7 @@ public class XQPreprocessor {
     parser.setSource(doc.get().toCharArray());
     parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
-    @SuppressWarnings("unchecked")
-    Map<String, String> options = JavaCore.getOptions();
-
-    JavaCore.setComplianceOptions(JavaCore.VERSION_1_8, options);
-    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
-    parser.setCompilerOptions(options);
+    parser.setCompilerOptions(ErrorCheckerService.COMPILER_OPTIONS);
     CompilationUnit cu = (CompilationUnit) parser.createAST(null);
     cu.recordModifications();
     rewrite = ASTRewrite.create(cu.getAST());
@@ -90,9 +83,7 @@ public class XQPreprocessor {
     TextEdit edits = cu.rewrite(doc, null);
     try {
       edits.apply(doc);
-    } catch (MalformedTreeException e) {
-      e.printStackTrace();
-    } catch (BadLocationException e) {
+    } catch (MalformedTreeException | BadLocationException e) {
       e.printStackTrace();
     }
     return doc.get();
