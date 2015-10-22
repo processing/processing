@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -513,8 +512,6 @@ public class ErrorCheckerService {
   public boolean hasErrors(){
     return lastCodeCheckResult.containsErrors;
   }
-
-  public TreeMap<String, IProblem> tempErrorLog = new TreeMap<>();
 
   protected URLClassLoader classLoader;
 
