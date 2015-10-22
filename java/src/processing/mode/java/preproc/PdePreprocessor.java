@@ -299,13 +299,14 @@ public class PdePreprocessor {
         MatchResult setupMatch = findInCurrentScope(VOID_SETUP_REGEX, uncommented);
         if (setupMatch != null) {
           int start = uncommented.indexOf("{", setupMatch.end());
-
-          // Find a closing brace
-          MatchResult match = findInCurrentScope(CLOSING_BRACE, uncommented, start);
-          if (match != null) {
-            searchArea = uncommented.substring(start + 1, match.end() - 1);
-          } else {
-            throw new SketchException("Found a { that's missing a matching }", false);
+          if (start >= 0) {
+            // Find a closing brace
+            MatchResult match = findInCurrentScope(CLOSING_BRACE, uncommented, start);
+            if (match != null) {
+              searchArea = uncommented.substring(start + 1, match.end() - 1);
+            } else {
+              throw new SketchException("Found a { that's missing a matching }", false);
+            }
           }
         }
         break;
