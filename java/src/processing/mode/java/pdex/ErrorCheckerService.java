@@ -112,12 +112,12 @@ public class ErrorCheckerService {
   /**
    * URLs of extra imports jar files stored here.
    */
-  protected URL[] classPath;
+  protected URL[] classPath = {};
 
   /**
-   * Stores all Problems in the sketch
+   * Class loader used by compiler check and ASTGenerator, based on classPath
    */
-  //public List<Problem> problemsList;
+  protected URLClassLoader classLoader = new URLClassLoader(classPath);
 
   /**
    * How many lines are present till the initial class declaration? In static
@@ -166,6 +166,11 @@ public class ErrorCheckerService {
   protected final XQPreprocessor xqpreproc;
 
   /**
+   * ASTGenerator for operations on AST
+   */
+  protected final ASTGenerator astGenerator;
+
+  /**
    * Regexp for import statements. (Used from Processing source)
    */
   public static final String IMPORT_REGEX =
@@ -180,10 +185,11 @@ public class ErrorCheckerService {
 
   /**
    * Error checking doesn't happen before this interval has ellapsed since the
-   * last runManualErrorCheck() call.
+   * last request() call.
    */
   private final static long errorCheckInterval = 650;
 
+  protected volatile CodeCheckResult lastCodeCheckResult = new CodeCheckResult();
 
   private Thread errorCheckerThread;
   private final BlockingQueue<Boolean> requestQueue = new ArrayBlockingQueue<>(1);
@@ -286,6 +292,7 @@ public class ErrorCheckerService {
     errorCheckerThread.start();
   }
 
+
   public void stop() {
     cancel();
     running = false;
@@ -331,8 +338,6 @@ public class ErrorCheckerService {
     }
   }
 
-
-  protected final ASTGenerator astGenerator;
 
   public ASTGenerator getASTGenerator() {
     return astGenerator;
@@ -488,8 +493,6 @@ public class ErrorCheckerService {
     return result;
   }
 
-  protected volatile CodeCheckResult lastCodeCheckResult = new CodeCheckResult();
-
   public boolean hasSyntaxErrors(){
     return lastCodeCheckResult.syntaxErrors;
   }
@@ -497,8 +500,6 @@ public class ErrorCheckerService {
   public boolean hasErrors(){
     return lastCodeCheckResult.containsErrors;
   }
-
-  protected URLClassLoader classLoader;
 
   /**
    * Performs compiler error check.

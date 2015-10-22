@@ -342,7 +342,7 @@ public class ASTGenerator {
       }
       jdocMap.put(methodName, msg);
     }
-    System.out.println("JDoc loaded " + jdocMap.size());
+    //System.out.println("JDoc loaded " + jdocMap.size());
   }
 
 
@@ -1522,7 +1522,7 @@ public class ASTGenerator {
     } else if (parent instanceof Block) {
       nodes = ((Block) parent).statements();
     } else {
-      System.err.println("findClosestNode() found " + getNodeAsString(parent));
+      log("findClosestNode() found " + getNodeAsString(parent));
       return null;
     }
 
