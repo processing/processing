@@ -43,8 +43,19 @@ import processing.app.ui.Toolkit;
 import processing.app.Base;
 import processing.app.Platform;
 
+import java.lang.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
-class StatusPanel extends JPanel {
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.MalformedURLException;
+
+import java.io.*;
+
+
+public class StatusPanel extends JPanel {
   static final int BUTTON_WIDTH = 150;
 
   static Icon foundationIcon;
@@ -57,6 +68,7 @@ class StatusPanel extends JPanel {
   JButton installButton;
   JPanel progressPanel;
   JLabel updateLabel;
+  public JLabel downloadSizeLabel;
   JButton updateButton;
   JButton removeButton;
   GroupLayout layout;
@@ -65,6 +77,7 @@ class StatusPanel extends JPanel {
   ContributionTab contributionTab;
 
   private String bodyRule;
+  private boolean getDownloadSize = false;
 
 
   /** Needed by ContributionListPanel */
@@ -126,6 +139,11 @@ class StatusPanel extends JPanel {
     updateLabel.setFont(buttonFont);
     updateLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
+    /* Label to display the download file size */
+    downloadSizeLabel = new JLabel("Hello");
+    downloadSizeLabel.setFont(buttonFont);
+    downloadSizeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
     updateButton = new JButton("Update", updateIcon);
     updateButton.setDisabledIcon(updateIcon);
     updateButton.setFont(buttonFont);
@@ -179,6 +197,8 @@ class StatusPanel extends JPanel {
                   .addComponent(progressPanel)
                   .addComponent(updateLabel,
                                 BUTTON_WIDTH, BUTTON_WIDTH, BUTTON_WIDTH)
+                  .addComponent(downloadSizeLabel,BUTTON_WIDTH,
+                       BUTTON_WIDTH,BUTTON_WIDTH)
                   .addComponent(updateButton)
                   .addComponent(removeButton))
       .addGap(12));  // make buttons line up relative to the scrollbar
@@ -192,6 +212,7 @@ class StatusPanel extends JPanel {
                   .addGroup(layout.createParallelGroup()
                               .addComponent(progressPanel)
                               .addComponent(updateLabel))
+                  .addComponent(downloadSizeLabel)
                   .addComponent(updateButton).addComponent(removeButton)));
 
     layout.linkSize(SwingConstants.HORIZONTAL,
@@ -204,6 +225,7 @@ class StatusPanel extends JPanel {
     updateButton.setEnabled(false);
     removeButton.setEnabled(false);
     updateLabel.setVisible(true);
+    downloadSizeLabel.setVisible(false);
 
     // Makes the label take up space even though not visible
     layout.setHonorsVisibility(updateLabel, false);
@@ -260,11 +282,19 @@ class StatusPanel extends JPanel {
     if (panel.getContrib().isCompatible(Base.getRevision())) {
       if (installButton.isEnabled()) {
         updateLabel.setText(latestVersion + " available");
+        getDownloadSize = true;
+        downloadSizeLabel.setVisible(true);
+
+
       } else {
         updateLabel.setText(currentVersion + " installed");
+        downloadSizeLabel.setVisible(false);
+        getDownloadSize = false;
       }
     } else {
       updateLabel.setText(currentVersion + " not compatible");
+      downloadSizeLabel.setVisible(false);
+        getDownloadSize = false;
     }
 
     if (latestVersion != null) {
@@ -293,5 +323,72 @@ class StatusPanel extends JPanel {
       updateLabel.setVisible(false);
       progressPanel.repaint();
     }
+
+    if (getDownloadSize == true) {
+
+      DetailPanel currentPanel =
+          contributionTab.contributionListPanel.getSelectedPanel();
+
+
+      try {
+        URL url = new URL((contributionListing.getAvailableContribution(currentPanel.getContrib())).link);
+        DownloadFileSize fs = new DownloadFileSize(url);
+        Thread t1 = new Thread(fs);
+        t1.start();
+      }
+      catch(MalformedURLException e)
+      {
+        System.out.println("Malformed URL");
+      }
+
+
+
+    }
   }
+}
+
+
+class DownloadFileSize implements Runnable {
+
+  public URL url;
+  public JLabel downloadSizeLabel;
+
+  DownloadFileSize(URL url) {
+    this.url = url;
+    //this.downloadSizeLabel = downloadSizeLabel;
+  }
+
+  public void run() {
+
+    double downloadSize =0 ;
+    //System.out.println("helo");
+
+
+    HttpURLConnection conn = null;
+    try {
+
+
+        conn = (HttpURLConnection)(this.url).openConnection();
+        //conn.setRequestMethod("HEAD");
+        //conn.getInputStream();
+        downloadSize = conn.getContentLength();
+        conn.disconnect();
+    } catch (IOException e) {
+      conn.disconnect();
+
+    } finally {
+        conn.disconnect();
+    }
+
+
+
+    //downloadSize = (contributionListing.getAvailableContribution(currentPanel.getContrib())).downloadSize;
+    downloadSize = (int)(downloadSize / 1024.0);
+    String unit = "kB";
+    System.out.println(this.url);
+    //downloadSizeLabel.setText("Size :   " + downloadSize + " " + unit);
+    //downloadSizeLabel.setVisible(true);
+
+  }
+
 }

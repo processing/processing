@@ -1696,12 +1696,17 @@ public class JEditTextArea extends JComponent
       for(int i = 0; i < repeatCount; i++)
         sb.append(selection);
 
-      // Writing the selection to the System Clipboard
-      clipboard.setContents(new StringSelection(sb.toString()), null);
-      // Writing the selection to the localClipboard.txt file
-      PrintWriter writer = new PrintWriter(file);
-      writer.print(sb.toString());
-      writer.close();
+      // Writing the selection to the localClipboard.txt file in case
+      // the user closes the Processing environment
+      try {
+          File file = new File("localClipboard.txt");
+          PrintWriter writer = new PrintWriter(file);
+          writer.print(sb.toString());
+          writer.close();
+      }
+      catch (FileNotFoundException e) {
+        System.out.println("localClipboard.txt not found!");
+      }
     }
   }
 
