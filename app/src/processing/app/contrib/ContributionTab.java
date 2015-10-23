@@ -228,8 +228,9 @@ public class ContributionTab extends JPanel {
     StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
     doc.setParagraphAttributes(0, doc.getLength(), center, false);
 
-    // TODO https://github.com/processing/processing/issues/3706
-    closeButton = new JButton("X");
+    ImageIcon cross = new ImageIcon("close.png");
+    closeButton = new JButton(cross);
+    closeButton.setSize(32, 32);
     closeButton.setContentAreaFilled(false);
     closeButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
