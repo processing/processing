@@ -1,3 +1,146 @@
+PROCESSING 3.0.1 (REV 0247) - 23 October 2015
+
+Lots and lots of bug fixes.
+
+
+[ graphics fixes ]
+
++ curveVertex() does not work with FX2D renderer
+  https://github.com/processing/processing/issues/3960
+  
++ Hide menu bar on OS X when FX2D is running full screen
+
++ Add quotes to the necessary parameters in the size() error messages
+
++ Editor menu is outside the visible screen with 800x480 display
+  https://github.com/processing/processing/issues/3913
+  https://github.com/processing/processing/pull/3999
+  https://github.com/processing/processing/pull/3992
+  
++ Add a patch for FX2D menubar not hiding, root cause not sorted out
+
++ Fix depth sorter ordering when two triangles in a plane share vertices
+  https://github.com/processing/processing/pull/4010
+  
++ Turn off fixed rate scheduling in OpenGL
+  https://github.com/processing/processing/pull/4004
+  
++ Fix GLSL preprocessing issues with variable name mangling
+  https://github.com/processing/processing/pull/4052
+  https://github.com/processing/processing/issues/3961
+  https://github.com/processing/processing/issues/3968
+
++ cursor() fails to work as expected with P2D/P3D 
+  https://github.com/processing/processing/issues/3955
+  
++ Topics/Shader/Convay broken
+  https://github.com/processing/processing/issues/3947
+  https://github.com/processing/processing/issues/3973
+  
++ Regressions wrt GLES2 support between b4 and b7
+  https://github.com/processing/processing/issues/3976
+  
++ stroke glitches in P3D
+  https://github.com/processing/processing/issues/4007
+  https://github.com/processing/processing/issues/4027
+  https://github.com/processing/processing/issues/4012
+  
++ Line loops incorrectly closed in P3D
+  https://github.com/processing/processing/issues/4031
+  
++ pixelDensity() not working with createGraphics() and OpenGL
+  https://github.com/processing/processing/issues/4039
+  
++ GL related crashes when closing the display window on Ubuntu (Intel)
+  https://github.com/processing/processing/issues/4041
+  
++ GL related crashes when closing window on MacBook Air (Intel) running 10.9.5
+  https://github.com/processing/processing/issues/3977
+
++ Update to JogAmp JOGL 2.3.2
+  https://github.com/processing/processing/issues/3979
+  
++ Output window cannot be set as non-resizable with the P2D or P3D renderers
+  https://jogamp.org/bugzilla/show_bug.cgi?id=1188
+  https://github.com/processing/processing/issues/3952
+  
++ setAlwaysOnTop() does not work in P2D and P3D on Mac
+  https://github.com/processing/processing/issues/3793
+  
++ P2D and P3D windows behave strangely when larger than the screen size
+  https://github.com/processing/processing/issues/3401
+  
++ Remove Gluegen & JOGL sources
+  https://github.com/processing/processing/pull/3982
+
+
+[ not graphics fixes ] 
+
++ NullPointerException in ContributionManager.deleteTemp()
+  https://github.com/processing/processing/issues/4026
+
++ Tweak Mode sometimes freezes while running, require a force quit
+  https://github.com/processing/processing/issues/3928
+  https://github.com/processing/processing/pull/4014
+  
++ Tweak Mode: Some numbers ignored in second tab
+  https://github.com/processing/processing/issues/4017
+  https://github.com/processing/processing/pull/4023
+  
++ Update Japanese translation
+  https://github.com/processing/processing/pull/3956
+  https://github.com/processing/processing/pull/3971
+  
++ processing-java stealing focus even with --build flag
+  https://github.com/processing/processing/issues/3996
+  https://github.com/processing/processing/pull/3998
+  
++ Documentation updates and other serial fixes
+  https://github.com/processing/processing/pull/4015
+
++ Include Example packs into update count
+  https://github.com/processing/processing/pull/3932
+  
++ Editor objects are staying in memory
+  https://github.com/processing/processing/issues/3930
+  https://github.com/processing/processing/pull/3934
+  https://github.com/processing/processing/issues/3929
+  
++ Library path for Error Checker and Suggestions
+  https://github.com/processing/processing/pull/3989
+  https://github.com/processing/processing/issues/3924
+  
++ A serious error occurred while trying to create a new editor window
+  https://github.com/processing/processing/issues/3974
+  https://github.com/processing/processing/pull/4001
+  
++ Export - fix Java not being embedded on 64bit
+  https://github.com/processing/processing/pull/4005
+  
++ Add error checker document listeners to all tabs
+  https://github.com/processing/processing/pull/4009
+  
++ Fix memory leak in Recent menu
+  https://github.com/processing/processing/pull/4044
+  
++ Error checker update (also enables switch on String objects)
+  https://github.com/processing/processing/issues/4034
+  https://github.com/processing/processing/pull/4042
+  
++ Fix occasional exception while editing text
+  https://github.com/processing/processing/pull/4043
+  
++ Prevent preprocessor from crashing when setup() has no body
+  https://github.com/processing/processing/pull/4045
+
++ I/O library implementation and fixes for ARM
+  https://github.com/processing/processing/pull/3997
+  https://github.com/processing/processing/pull/3985
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.0 (REV 0246) - 30 September 2015, 3pm ET
 
 This one is huge. 
