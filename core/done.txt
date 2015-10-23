@@ -1,3 +1,60 @@
+0247 (3.0.1)
+X curveVertex() does not work with FX2D renderer
+X   https://github.com/processing/processing/issues/3960
+X hide menu bar on OS X when FX2D is running full screen
+X add quotes to the necessary parameters in the size() error messages
+X Editor menu is outside the visible screen with 800x480 display
+X   https://github.com/processing/processing/issues/3913
+X   https://github.com/processing/processing/pull/3999
+X   https://github.com/processing/processing/pull/3992
+X add a patch for FX2D menubar not hiding, root cause not sorted out
+
+jakub
+X Fix depth sorter ordering when two triangles in a plane share vertices
+X   https://github.com/processing/processing/pull/4010
+X Turn off fixed rate scheduling in OpenGL
+X   https://github.com/processing/processing/pull/4004
+X Fix GLSL preprocessing issues with variable name mangling
+X   https://github.com/processing/processing/pull/4052
+X   https://github.com/processing/processing/issues/3961
+X   https://github.com/processing/processing/issues/3968
+
+andres
+X cursor() fails to work as expected with P2D/P3D 
+X   https://github.com/processing/processing/issues/3955
+X Topics/Shader/Convay broken
+X   https://github.com/processing/processing/issues/3947
+X   https://github.com/processing/processing/issues/3973
+X Regressions wrt GLES2 support between b4 and b7
+X   https://github.com/processing/processing/issues/3976
+X stroke glitches in P3D
+X   https://github.com/processing/processing/issues/4007
+X   https://github.com/processing/processing/issues/4027
+X   https://github.com/processing/processing/issues/4012
+X line loops incorrectly closed in P3D
+X   https://github.com/processing/processing/issues/4031
+X pixelDensity() and createGraphics()
+X   https://github.com/processing/processing/issues/4039
+X   https://github.com/processing/processing/commit/1d163197c970947bf5be17049bddbe8e444f759d
+X GL related crashes when closing the display window on Ubuntu (Intel)
+X   https://github.com/processing/processing/issues/4041
+X GL related crashes when closing window on MacBook Air (Intel) running 10.9.5
+X   https://github.com/processing/processing/issues/3977
+
+jogl
+X Update to JogAmp JOGL 2.3.2
+X   https://github.com/processing/processing/issues/3979
+X Output window cannot be set as non-resizable with the P2D or P3D renderers
+X   https://jogamp.org/bugzilla/show_bug.cgi?id=1188
+X   https://github.com/processing/processing/issues/3952
+X setAlwaysOnTop does not work in P2D and P3D on Mac
+X   https://github.com/processing/processing/issues/3793
+X P2D and P3D windows behave strangely when larger than the screen size
+X   https://github.com/processing/processing/issues/3401
+X Remove Gluegen & JOGL sources
+X   https://github.com/processing/processing/pull/3982
+
+
 0246 the papal visit (3.0)
 X implement high-performance/async image saving
 X   Use PBOs for async texture copy

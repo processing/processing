@@ -1,3 +1,58 @@
+0247 (3.0.1)
+X NullPointerException in ContributionManager.deleteTemp()
+X   https://github.com/processing/processing/issues/4026
+
+contribs
+X Tweak Mode sometimes freezes while running, require a force quit
+X   https://github.com/processing/processing/issues/3928
+X   https://github.com/processing/processing/pull/4014
+X Tweak Mode: Some numbers ignored in second tab
+X   https://github.com/processing/processing/issues/4017
+X   https://github.com/processing/processing/pull/4023
+X Update Japanese translation
+X   https://github.com/processing/processing/pull/3956
+X   https://github.com/processing/processing/pull/3971
+X processing-java stealing focus even with --build flag
+X   https://github.com/processing/processing/issues/3996
+X   https://github.com/processing/processing/pull/3998
+X updates for serial
+X   https://github.com/processing/processing/pull/4015
+
+jakub
+X Include Example packs into update count
+X   https://github.com/processing/processing/pull/3932
+X Editor objects are staying in memory
+X   https://github.com/processing/processing/issues/3930
+X   https://github.com/processing/processing/pull/3934
+X   https://github.com/processing/processing/issues/3929
+X Library path for Error Checker and Suggestions
+X   https://github.com/processing/processing/pull/3989
+X   https://github.com/processing/processing/issues/3924
+X A serious error occurred while trying to create a new editor window
+X   https://github.com/processing/processing/issues/3974
+X   https://github.com/processing/processing/pull/4001
+X Export - fix java not being embedded on 64bit
+X   https://github.com/processing/processing/pull/4005
+X Add error checker document listeners to all tabs
+X   https://github.com/processing/processing/pull/4009
+X Fix memory leak in Recent
+X   https://github.com/processing/processing/pull/4044
+X Error checker update (also enables switch on String objects)
+X   https://github.com/processing/processing/issues/4034
+X   https://github.com/processing/processing/pull/4042
+X Fix occasional exception while editing text
+X   https://github.com/processing/processing/pull/4043
+X Prevent preprocessor from crashing when setup() has no body
+X   https://github.com/processing/processing/pull/4045
+
+arm/pi
+X Medium-sized I/O updates
+X   https://github.com/processing/processing/pull/3997
+X add i/o library for rpi
+X   https://github.com/processing/processing/pull/3985
+o   make sure naming, etc is all correct
+
+
 0246 the holy land (3.0)
 X "Saving" messages never clear on "Save As"
 X   https://github.com/processing/processing/issues/3861
