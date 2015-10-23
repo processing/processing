@@ -331,15 +331,11 @@ public class FrameBuffer implements PConstants {
     dispose(); // Just in the case this object is being re-allocated.
 
     context = pgl.getCurrentContext();
-    glres = new GLResourceFrameBuffer(this);
+    glres = new GLResourceFrameBuffer(this); // create the FBO resources...
 
     if (screenFb) {
       glFbo = 0;
     } else {
-      //create the FBO object...
-//      glFbo = PGraphicsOpenGL.createFrameBufferObject(context, pgl);
-
-      // ... and then create the rest of the stuff.
       if (multisample) {
         initColorBufferMultisample();
       }
@@ -369,28 +365,6 @@ public class FrameBuffer implements PConstants {
       glDepthStencil = 0;
       glres = null;
     }
-
-
-//    if (glFbo != 0) {
-//      PGraphicsOpenGL.finalizeFrameBufferObject(glFbo, context);
-//      glFbo = 0;
-//    }
-//    if (glDepth != 0) {
-//      PGraphicsOpenGL.finalizeRenderBufferObject(glDepth, context);
-//      glDepth = 0;
-//    }
-//    if (glStencil != 0) {
-//      PGraphicsOpenGL.finalizeRenderBufferObject(glStencil, context);
-//      glStencil = 0;
-//    }
-//    if (glMultisample != 0) {
-//      PGraphicsOpenGL.finalizeRenderBufferObject(glMultisample, context);
-//      glMultisample = 0;
-//    }
-//    if (glDepthStencil != 0) {
-//      PGraphicsOpenGL.finalizeRenderBufferObject(glDepthStencil, context);
-//      glDepthStencil = 0;
-//    }
   }
 
 
@@ -400,18 +374,6 @@ public class FrameBuffer implements PConstants {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
       dispose();
-//      PGraphicsOpenGL.removeFrameBufferObject(glFbo, context);
-//      PGraphicsOpenGL.removeRenderBufferObject(glDepth, context);
-//      PGraphicsOpenGL.removeRenderBufferObject(glStencil, context);
-//      PGraphicsOpenGL.removeRenderBufferObject(glDepthStencil, context);
-//      PGraphicsOpenGL.removeRenderBufferObject(glMultisample, context);
-//
-//      glFbo = 0;
-//      glDepth = 0;
-//      glStencil = 0;
-//      glDepthStencil = 0;
-//      glMultisample = 0;
-
       for (int i = 0; i < numColorBuffers; i++) {
         colorBufferTex[i] = null;
       }
@@ -426,7 +388,6 @@ public class FrameBuffer implements PConstants {
     pg.pushFramebuffer();
     pg.setFramebuffer(this);
 
-//    glMultisample = PGraphicsOpenGL.createRenderBufferObject(context, pgl);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glMultisample);
     pgl.renderbufferStorageMultisample(PGL.RENDERBUFFER, nsamples,
                                        PGL.RGBA8, width, height);
@@ -447,7 +408,6 @@ public class FrameBuffer implements PConstants {
     pg.pushFramebuffer();
     pg.setFramebuffer(this);
 
-//    glDepthStencil = PGraphicsOpenGL.createRenderBufferObject(context, pgl);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glDepthStencil);
 
     if (multisample) {
@@ -477,7 +437,6 @@ public class FrameBuffer implements PConstants {
     pg.pushFramebuffer();
     pg.setFramebuffer(this);
 
-//    glDepth = PGraphicsOpenGL.createRenderBufferObject(context, pgl);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glDepth);
 
     int glConst = PGL.DEPTH_COMPONENT16;
@@ -513,7 +472,6 @@ public class FrameBuffer implements PConstants {
     pg.pushFramebuffer();
     pg.setFramebuffer(this);
 
-//    glStencil = PGraphicsOpenGL.createRenderBufferObject(context, pgl);
     pgl.bindRenderbuffer(PGL.RENDERBUFFER, glStencil);
 
     int glConst = PGL.STENCIL_INDEX1;

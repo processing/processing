@@ -903,10 +903,6 @@ public class PShader implements PConstants {
   protected void create() {
     context = pgl.getCurrentContext();
     glres = new GLResourceShader(this);
-
-//    glProgram = PGraphicsOpenGL.createGLSLProgramObject(context, pgl);
-//    glVertex = PGraphicsOpenGL.createGLSLVertShaderObject(context, pgl);
-//    glFragment = PGraphicsOpenGL.createGLSLFragShaderObject(context, pgl);
   }
 
 
@@ -950,9 +946,6 @@ public class PShader implements PConstants {
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
-//      PGraphicsOpenGL.removeGLSLProgramObject(glProgram, context);
-//      PGraphicsOpenGL.removeGLSLVertShaderObject(glVertex, context);
-//      PGraphicsOpenGL.removeGLSLFragShaderObject(glFragment, context);
       dispose();
     }
     return outdated;
@@ -974,8 +967,6 @@ public class PShader implements PConstants {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileVertexShader() {
-//    glVertex = PGraphicsOpenGL.createGLSLVertShaderObject(context, pgl);
-
     pgl.shaderSource(glVertex, PApplet.join(vertexShaderSource, "\n"));
     pgl.compileShader(glVertex);
 
@@ -995,8 +986,6 @@ public class PShader implements PConstants {
    * @param shaderSource a string containing the shader's code
    */
   protected boolean compileFragmentShader() {
-//    glFragment = PGraphicsOpenGL.createGLSLFragShaderObject(context, pgl);
-
     pgl.shaderSource(glFragment, PApplet.join(fragmentShaderSource, "\n"));
     pgl.compileShader(glFragment);
 
@@ -1020,18 +1009,6 @@ public class PShader implements PConstants {
       glProgram = 0;
       glres = null;
     }
-//    if (glVertex != 0) {
-//      PGraphicsOpenGL.deleteGLSLVertShaderObject(glVertex, context, pgl);
-//      glVertex = 0;
-//    }
-//    if (glFragment != 0) {
-//      PGraphicsOpenGL.deleteGLSLFragShaderObject(glFragment, context, pgl);
-//      glFragment = 0;
-//    }
-//    if (glProgram != 0) {
-//      PGraphicsOpenGL.deleteGLSLProgramObject(glProgram, context, pgl);
-//      glProgram = 0;
-//    }
   }
 
 

@@ -1229,11 +1229,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (!polyBuffersCreated || polyBuffersContextIsOutdated()) {
       polyBuffersContext = pgl.getCurrentContext();
 
-//      int sizef = INIT_VERTEX_BUFFER_SIZE * PGL.SIZEOF_FLOAT;
-//      int sizei = INIT_VERTEX_BUFFER_SIZE * PGL.SIZEOF_INT;
-//      int sizex = INIT_INDEX_BUFFER_SIZE * PGL.SIZEOF_INDEX;
-
-
       bufPolyVertex = new VertexBuffer(this, PGL.ARRAY_BUFFER, 3, PGL.SIZEOF_FLOAT);
       bufPolyColor = new VertexBuffer(this, PGL.ARRAY_BUFFER, 1, PGL.SIZEOF_INT);
       bufPolyNormal = new VertexBuffer(this, PGL.ARRAY_BUFFER, 3, PGL.SIZEOF_FLOAT);
@@ -1245,44 +1240,6 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
       bufPolyIndex = new VertexBuffer(this, PGL.ELEMENT_ARRAY_BUFFER, 1, PGL.SIZEOF_INDEX, true);
       pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
-
-
-//      glPolyVertex = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyVertex);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef, null, PGL.STATIC_DRAW);
-//
-//      glPolyColor = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyColor);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
-//
-//      glPolyNormal = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyNormal);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef, null, PGL.STATIC_DRAW);
-//
-//      glPolyTexcoord = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyTexcoord);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef, null, PGL.STATIC_DRAW);
-//
-//      glPolyAmbient = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyAmbient);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
-//
-//      glPolySpecular = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolySpecular);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
-//
-//      glPolyEmissive = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyEmissive);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
-//
-//      glPolyShininess = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyShininess);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, sizef, null, PGL.STATIC_DRAW);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
-//      glPolyIndex = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPolyIndex);
-//      pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER, sizex, null, PGL.STATIC_DRAW);
-//      pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
 
       polyBuffersCreated = true;
     }
