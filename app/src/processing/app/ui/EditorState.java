@@ -161,6 +161,9 @@ public class EditorState {
     int defaultWidth = Preferences.getInteger("editor.window.width.default");
     int defaultHeight = Preferences.getInteger("editor.window.height.default");
 
+    defaultWidth = Math.min(defaultWidth, deviceBounds.width);
+    defaultHeight = Math.min(defaultHeight, deviceBounds.height);
+
     if (editors.size() == 0) {
       // If no current active editor, use default placement.
       // Center the window on ths screen, taking into account that the
