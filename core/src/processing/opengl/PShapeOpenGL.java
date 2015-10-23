@@ -111,33 +111,16 @@ public class PShapeOpenGL extends PShape {
   protected VertexBuffer bufPolyEmissive;
   protected VertexBuffer bufPolyShininess;
   protected VertexBuffer bufPolyIndex;
-//  public int glPolyVertex;
-//  public int glPolyColor;
-//  public int glPolyNormal;
-//  public int glPolyTexcoord;
-//  public int glPolyAmbient;
-//  public int glPolySpecular;
-//  public int glPolyEmissive;
-//  public int glPolyShininess;
-//  public int glPolyIndex;
 
   protected VertexBuffer bufLineVertex;
   protected VertexBuffer bufLineColor;
   protected VertexBuffer bufLineAttrib;
   protected VertexBuffer bufLineIndex;
-//  public int glLineVertex;
-//  public int glLineColor;
-//  public int glLineAttrib;
-//  public int glLineIndex;
 
   protected VertexBuffer bufPointVertex;
   protected VertexBuffer bufPointColor;
   protected VertexBuffer bufPointAttrib;
   protected VertexBuffer bufPointIndex;
-//  public int glPointVertex;
-//  public int glPointColor;
-//  public int glPointAttrib;
-//  public int glPointIndex;
 
   // Testing this field, not use as it might go away...
   public int glUsage = PGL.STATIC_DRAW;
@@ -3836,7 +3819,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePolyVerticesBuffer();
     if (bufPolyVertex == null)
-//      glPolyVertex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufPolyVertex = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 4, PGL.SIZEOF_FLOAT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufPolyVertex.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
@@ -3844,7 +3826,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePolyColorsBuffer();
     if (bufPolyColor == null)
-//      glPolyColor = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufPolyColor = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 1, PGL.SIZEOF_INT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufPolyColor.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
@@ -3852,7 +3833,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePolyNormalsBuffer();
     if (bufPolyNormal == null)
-//      glPolyNormal = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufPolyNormal = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 3, PGL.SIZEOF_FLOAT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufPolyNormal.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef,
@@ -3860,7 +3840,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePolyTexCoordsBuffer();
     if (bufPolyTexcoord == null)
-//      glPolyTexcoord = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufPolyTexcoord = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 2, PGL.SIZEOF_FLOAT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufPolyTexcoord.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef,
@@ -3868,7 +3847,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePolyAmbientBuffer();
     if (bufPolyAmbient == null)
-//      glPolyAmbient = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufPolyAmbient = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 1, PGL.SIZEOF_INT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufPolyAmbient.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
@@ -3876,7 +3854,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePolySpecularBuffer();
     if (bufPolySpecular == null)
-//      glPolySpecular = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufPolySpecular = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 1, PGL.SIZEOF_INT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufPolySpecular.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
@@ -3884,7 +3861,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePolyEmissiveBuffer();
     if (bufPolyEmissive == null)
-//      glPolyEmissive = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufPolyEmissive = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 1, PGL.SIZEOF_INT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufPolyEmissive.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
@@ -3892,7 +3868,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePolyShininessBuffer();
     if (bufPolyShininess == null)
-//      glPolyShininess = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufPolyShininess = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 1, PGL.SIZEOF_FLOAT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufPolyShininess.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizef,
@@ -3911,7 +3886,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePolyIndicesBuffer();
     if (bufPolyIndex == null)
-//      glPolyIndex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufPolyIndex = new VertexBuffer(pg, PGL.ELEMENT_ARRAY_BUFFER, 1, PGL.SIZEOF_INDEX, true);
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, bufPolyIndex.glId);
     pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER,
@@ -3929,7 +3903,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updateLineVerticesBuffer();
     if (bufLineVertex == null)
-//      glLineVertex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufLineVertex = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 4, PGL.SIZEOF_FLOAT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufLineVertex.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
@@ -3937,7 +3910,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updateLineColorsBuffer();
     if (bufLineColor == null)
-//      glLineColor = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufLineColor = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 1, PGL.SIZEOF_INT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufLineColor.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
@@ -3945,7 +3917,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updateLineDirectionsBuffer();
     if (bufLineAttrib == null)
-//      glLineAttrib = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufLineAttrib = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 4, PGL.SIZEOF_FLOAT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufLineAttrib.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
@@ -3955,7 +3926,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updateLineIndicesBuffer();
     if (bufLineIndex == null)
-//      glLineIndex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufLineIndex = new VertexBuffer(pg, PGL.ELEMENT_ARRAY_BUFFER, 1, PGL.SIZEOF_INDEX, true);
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, bufLineIndex.glId);
     pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER,
@@ -3973,7 +3943,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePointVerticesBuffer();
     if (bufPointVertex == null)
-//      glPointVertex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufPointVertex = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 4, PGL.SIZEOF_FLOAT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufPointVertex.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, 4 * sizef,
@@ -3981,7 +3950,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePointColorsBuffer();
     if (bufPointColor == null)
-//      glPointColor = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufPointColor = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 1, PGL.SIZEOF_INT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufPointColor.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, sizei,
@@ -3989,7 +3957,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePointOffsetsBuffer();
     if (bufPointAttrib == null)
-//      glPointAttrib = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufPointAttrib = new VertexBuffer(pg, PGL.ARRAY_BUFFER, 2, PGL.SIZEOF_FLOAT);
     pgl.bindBuffer(PGL.ARRAY_BUFFER, bufPointAttrib.glId);
     pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef,
@@ -3999,7 +3966,6 @@ public class PShapeOpenGL extends PShape {
 
     tessGeo.updatePointIndicesBuffer();
     if (bufPointIndex == null)
-//      glPointIndex = PGraphicsOpenGL.createVertexBufferObject(context, pgl);
       bufPointIndex = new VertexBuffer(pg, PGL.ELEMENT_ARRAY_BUFFER, 1, PGL.SIZEOF_INDEX, true);
     pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, bufPointIndex.glId);
     pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER,
@@ -4013,20 +3979,6 @@ public class PShapeOpenGL extends PShape {
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
-      // Removing the VBOs from the renderer's list so they
-      // doesn't get deleted by OpenGL. The VBOs were already
-      // automatically disposed when the old context was
-      // destroyed.
-
-//    PGraphicsOpenGL.removeVertexBufferObject(glPolyVertex, context);
-//    PGraphicsOpenGL.removeVertexBufferObject(glPolyColor, context);
-//    PGraphicsOpenGL.removeVertexBufferObject(glPolyNormal, context);
-//    PGraphicsOpenGL.removeVertexBufferObject(glPolyTexcoord, context);
-//    PGraphicsOpenGL.removeVertexBufferObject(glPolyAmbient, context);
-//    PGraphicsOpenGL.removeVertexBufferObject(glPolySpecular, context);
-//    PGraphicsOpenGL.removeVertexBufferObject(glPolyEmissive, context);
-//    PGraphicsOpenGL.removeVertexBufferObject(glPolyShininess, context);
-
       bufPolyVertex.dispose();
       bufPolyColor.dispose();
       bufPolyNormal.dispose();
@@ -4037,169 +3989,21 @@ public class PShapeOpenGL extends PShape {
       bufPolyShininess.dispose();
       for (VertexAttribute attrib: polyAttribs.values()) {
         attrib.buf.dispose();
-//        PGraphicsOpenGL.removeVertexBufferObject(attrib.glName, context);
       }
-//      PGraphicsOpenGL.removeVertexBufferObject(glPolyIndex, context);
       bufPolyIndex.dispose();
 
-//      PGraphicsOpenGL.removeVertexBufferObject(glLineVertex, context);
-//      PGraphicsOpenGL.removeVertexBufferObject(glLineColor, context);
-//      PGraphicsOpenGL.removeVertexBufferObject(glLineAttrib, context);
-//      PGraphicsOpenGL.removeVertexBufferObject(glLineIndex, context);
       bufLineVertex.dispose();
       bufLineColor.dispose();
       bufLineAttrib.dispose();
       bufLineIndex.dispose();
 
-//      PGraphicsOpenGL.removeVertexBufferObject(glPointVertex, context);
-//      PGraphicsOpenGL.removeVertexBufferObject(glPointColor, context);
-//      PGraphicsOpenGL.removeVertexBufferObject(glPointAttrib, context);
-//      PGraphicsOpenGL.removeVertexBufferObject(glPointIndex, context);
       bufPointVertex.dispose();
       bufPointColor.dispose();
       bufPointAttrib.dispose();
       bufPointIndex.dispose();
-
-
-      // The OpenGL resources have been already deleted
-      // when the context changed. We only need to zero
-      // them to avoid deleting them again when the GC
-      // runs the finalizers of the disposed object.
-//      glPolyVertex = 0;
-//      glPolyColor = 0;
-//      glPolyNormal = 0;
-//      glPolyTexcoord = 0;
-//      glPolyAmbient = 0;
-//      glPolySpecular = 0;
-//      glPolyEmissive = 0;
-//      glPolyShininess = 0;
-//      for (VertexAttribute attrib: polyAttribs.values()) attrib.glName = 0;
-//      glPolyIndex = 0;
-//
-//      glLineVertex = 0;
-//      glLineColor = 0;
-//      glLineAttrib = 0;
-//      glLineIndex = 0;
-//
-//      glPointVertex = 0;
-//      glPointColor = 0;
-//      glPointAttrib = 0;
-//      glPointIndex = 0;
     }
     return outdated;
   }
-
-
-  ///////////////////////////////////////////////////////////
-
-  //
-
-  // Deletion methods
-
-
-//  protected void dispose() {
-//    deletePolyBuffers();
-//    deleteLineBuffers();
-//    deletePointBuffers();
-//  }
-//
-//
-//  protected void deletePolyBuffers() {
-//    if (glPolyVertex != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glPolyVertex, context, pgl);
-//      glPolyVertex = 0;
-//    }
-//
-//    if (glPolyColor != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glPolyColor, context, pgl);
-//      glPolyColor = 0;
-//    }
-//
-//    if (glPolyNormal != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glPolyNormal, context, pgl);
-//      glPolyNormal = 0;
-//    }
-//
-//    if (glPolyTexcoord != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glPolyTexcoord, context, pgl);
-//      glPolyTexcoord = 0;
-//    }
-//
-//    if (glPolyAmbient != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glPolyAmbient, context, pgl);
-//      glPolyAmbient = 0;
-//    }
-//
-//    if (glPolySpecular != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glPolySpecular, context, pgl);
-//      glPolySpecular = 0;
-//    }
-//
-//    if (glPolyEmissive != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glPolyEmissive, context, pgl);
-//      glPolyEmissive = 0;
-//    }
-//
-//    if (glPolyShininess != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glPolyShininess, context, pgl);
-//      glPolyShininess = 0;
-//    }
-//
-//    for (VertexAttribute attrib: polyAttribs.values()) {
-//      attrib.deleteBuffer(pgl);
-//    }
-//
-//    if (glPolyIndex != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glPolyIndex, context, pgl);
-//      glPolyIndex = 0;
-//    }
-//  }
-//
-//
-//  protected void deleteLineBuffers() {
-//    if (glLineVertex != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glLineVertex, context, pgl);
-//      glLineVertex = 0;
-//    }
-//
-//    if (glLineColor != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glLineColor, context, pgl);
-//      glLineColor = 0;
-//    }
-//
-//    if (glLineAttrib != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glLineAttrib, context, pgl);
-//      glLineAttrib = 0;
-//    }
-//
-//    if (glLineIndex != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glLineIndex, context, pgl);
-//      glLineIndex = 0;
-//    }
-//  }
-//
-//
-//  protected void deletePointBuffers() {
-//    if (glPointVertex != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glPointVertex, context, pgl);
-//      glPointVertex = 0;
-//    }
-//
-//    if (glPointColor != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glPointColor, context, pgl);
-//      glPointColor = 0;
-//    }
-//
-//    if (glPointAttrib != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glPointAttrib, context, pgl);
-//      glPointAttrib = 0;
-//    }
-//
-//    if (glPointIndex != 0) {
-//      PGraphicsOpenGL.deleteVertexBufferObject(glPointIndex, context, pgl);
-//      glPointIndex = 0;
-//    }
-//  }
 
 
   ///////////////////////////////////////////////////////////

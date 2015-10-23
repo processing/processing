@@ -246,8 +246,7 @@ public class Texture implements PConstants {
 
 
   public void resize(int wide, int high) {
-    // Marking the texture object as finalized so it is deleted
-    // when creating the new texture.
+    // Disposing current resources.
     dispose();
 
     // Creating new texture with the appropriate size.
@@ -1180,10 +1179,6 @@ public class Texture implements PConstants {
       glres = null;
       glName = 0;
     }
-//    if (glName != 0) {
-//      PGraphicsOpenGL.finalizeTextureObject(glName, context);
-//      glName = 0;
-//    }
   }
 
 

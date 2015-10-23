@@ -602,27 +602,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void dispose() { // PGraphics
-    super.dispose();
-
-    if (primaryGraphics) {
-      // Swap buffers the end to make sure that no
-      // garbage is shown on the screen, this particularly
-      // affects non-interactive sketches on windows that
-      // render only 1 frame, so no enough rendering
-      // iterations have been conducted so far to properly
-      // initialize all the buffers.
-      pgl.swapBuffers();
-    }
-
     if (asyncPixelReader != null) {
       asyncPixelReader.dispose();
       asyncPixelReader = null;
     }
 
-    deleteSurfaceTextures();
-    if (primaryGraphics) {
-      deleteDefaultShaders();
-    } else {
+    if (!primaryGraphics) {
+      deleteSurfaceTextures();
       FrameBuffer ofb = offscreenFramebuffer;
       FrameBuffer mfb = multisampleFramebuffer;
       if (ofb != null) {
@@ -634,6 +620,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     pgl.dispose();
+
+    super.dispose();
   }
 
 
@@ -1241,11 +1229,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (!polyBuffersCreated || polyBuffersContextIsOutdated()) {
       polyBuffersContext = pgl.getCurrentContext();
 
-//      int sizef = INIT_VERTEX_BUFFER_SIZE * PGL.SIZEOF_FLOAT;
-//      int sizei = INIT_VERTEX_BUFFER_SIZE * PGL.SIZEOF_INT;
-//      int sizex = INIT_INDEX_BUFFER_SIZE * PGL.SIZEOF_INDEX;
-
-
       bufPolyVertex = new VertexBuffer(this, PGL.ARRAY_BUFFER, 3, PGL.SIZEOF_FLOAT);
       bufPolyColor = new VertexBuffer(this, PGL.ARRAY_BUFFER, 1, PGL.SIZEOF_INT);
       bufPolyNormal = new VertexBuffer(this, PGL.ARRAY_BUFFER, 3, PGL.SIZEOF_FLOAT);
@@ -1257,44 +1240,6 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
       bufPolyIndex = new VertexBuffer(this, PGL.ELEMENT_ARRAY_BUFFER, 1, PGL.SIZEOF_INDEX, true);
       pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
-
-
-//      glPolyVertex = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyVertex);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef, null, PGL.STATIC_DRAW);
-//
-//      glPolyColor = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyColor);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
-//
-//      glPolyNormal = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyNormal);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, 3 * sizef, null, PGL.STATIC_DRAW);
-//
-//      glPolyTexcoord = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyTexcoord);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, 2 * sizef, null, PGL.STATIC_DRAW);
-//
-//      glPolyAmbient = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyAmbient);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
-//
-//      glPolySpecular = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolySpecular);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
-//
-//      glPolyEmissive = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyEmissive);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, sizei, null, PGL.STATIC_DRAW);
-//
-//      glPolyShininess = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glPolyShininess);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, sizef, null, PGL.STATIC_DRAW);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
-//      glPolyIndex = createVertexBufferObject(polyBuffersContext, pgl);
-//      pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, glPolyIndex);
-//      pgl.bufferData(PGL.ELEMENT_ARRAY_BUFFER, sizex, null, PGL.STATIC_DRAW);
-//      pgl.bindBuffer(PGL.ELEMENT_ARRAY_BUFFER, 0);
 
       polyBuffersCreated = true;
     }
@@ -7003,20 +6948,6 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       PGraphics.showWarning(UNKNOWN_SHADER_KIND_ERROR);
     }
-  }
-
-
-  protected void deleteDefaultShaders() {
-    // The default shaders contains references to the PGraphics object that
-    // creates them, so when restarting the renderer, those references should
-    // dissapear.
-    defColorShader = null;
-    defTextureShader = null;
-    defLightShader = null;
-    defTexlightShader = null;
-    defLineShader = null;
-    defPointShader = null;
-    maskShader = null;
   }
 
 
