@@ -101,6 +101,8 @@ editor.window.height.min = 500
 editor.window.height.min.macosx = 450
 # tested to be 515 on Windows XP, this leaves some room
 editor.window.height.min.windows = 530
+# tested with Raspberry Pi display
+editor.window.height.min.linux = 480
 
 # font size for editor
 #editor.font = Monospaced,plain,12
