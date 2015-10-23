@@ -11,20 +11,20 @@ X   https://github.com/processing/processing/issues/4017
 X   https://github.com/processing/processing/pull/4023
 X Update Japanese translation
 X   https://github.com/processing/processing/pull/3956
-_   https://github.com/processing/processing/pull/3971
+X   https://github.com/processing/processing/pull/3971
 X processing-java stealing focus even with --build flag
 X   https://github.com/processing/processing/issues/3996
 X   https://github.com/processing/processing/pull/3998
-_ question about PDE_pt-br instead of PDE_pt
-_   https://github.com/processing/processing/issues/4018
 X updates for serial
 X   https://github.com/processing/processing/pull/4015
+_ question about PDE_pt-br instead of PDE_pt
+_   https://github.com/processing/processing/issues/4018
 _ Saving sketch with the same name as a class
 _   https://github.com/processing/processing/pull/4033
 _ infinite "file changed" popups
 _   https://github.com/processing/processing/issues/3965
 _   https://github.com/processing/processing/pull/4037
-_ Pasting text into PDE results in "Clipboard does not contain a string
+_ Pasting text into PDE results in "Clipboard does not contain a string"
 _   https://github.com/processing/processing/pull/4040
 
 jakub
