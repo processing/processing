@@ -602,16 +602,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void dispose() { // PGraphics
-    super.dispose();
-
     if (asyncPixelReader != null) {
       asyncPixelReader.dispose();
       asyncPixelReader = null;
     }
 
-    if (primaryGraphics) {
-      deleteDefaultShaders();
-    } else {
+    if (!primaryGraphics) {
       deleteSurfaceTextures();
       FrameBuffer ofb = offscreenFramebuffer;
       FrameBuffer mfb = multisampleFramebuffer;
@@ -624,6 +620,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     pgl.dispose();
+
+    super.dispose();
   }
 
 
@@ -6993,20 +6991,6 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       PGraphics.showWarning(UNKNOWN_SHADER_KIND_ERROR);
     }
-  }
-
-
-  protected void deleteDefaultShaders() {
-    // The default shaders contains references to the PGraphics object that
-    // creates them, so when restarting the renderer, those references should
-    // disappear.
-    defColorShader = null;
-    defTextureShader = null;
-    defLightShader = null;
-    defTexlightShader = null;
-    defLineShader = null;
-    defPointShader = null;
-    maskShader = null;
   }
 
 
