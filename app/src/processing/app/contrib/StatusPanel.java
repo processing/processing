@@ -43,16 +43,14 @@ import processing.app.ui.Toolkit;
 import processing.app.Base;
 import processing.app.Platform;
 
-import java.lang.*;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.MalformedURLException;
 
 import java.io.*;
+import java.math.BigDecimal;
+
 
 
 public class StatusPanel extends JPanel {
@@ -68,7 +66,7 @@ public class StatusPanel extends JPanel {
   JButton installButton;
   JPanel progressPanel;
   JLabel updateLabel;
-  public JLabel downloadSizeLabel;
+  JLabel downloadSizeLabel;     // Label to display the downloadFile size
   JButton updateButton;
   JButton removeButton;
   GroupLayout layout;
@@ -139,8 +137,8 @@ public class StatusPanel extends JPanel {
     updateLabel.setFont(buttonFont);
     updateLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-    /* Label to display the download file size */
-    downloadSizeLabel = new JLabel("Hello");
+    /* Setting up the JLabel to display the download file size */
+    downloadSizeLabel = new JLabel("");
     downloadSizeLabel.setFont(buttonFont);
     downloadSizeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -282,10 +280,8 @@ public class StatusPanel extends JPanel {
     if (panel.getContrib().isCompatible(Base.getRevision())) {
       if (installButton.isEnabled()) {
         updateLabel.setText(latestVersion + " available");
+        downloadSizeLabel.setVisible(false);
         getDownloadSize = true;
-        downloadSizeLabel.setVisible(true);
-
-
       } else {
         updateLabel.setText(currentVersion + " installed");
         downloadSizeLabel.setVisible(false);
@@ -324,71 +320,48 @@ public class StatusPanel extends JPanel {
       progressPanel.repaint();
     }
 
+    /** Creating a Thread to calculate the size of the dowload file **/
+    // Thread is used to avoid the delay caused by the HTTPUrlConnection class
+    // while fetching the fileSize from the provided file URL
+
     if (getDownloadSize == true) {
 
-      DetailPanel currentPanel =
-          contributionTab.contributionListPanel.getSelectedPanel();
+      Thread t1 = new Thread(new Runnable() {
+        public void run() {
+          double downloadSize =0 ;
+          DetailPanel currentPanel =
+            contributionTab.contributionListPanel.getSelectedPanel();
+          HttpURLConnection conn = null;
+          try {
+            URL url = new URL((contributionListing.getAvailableContribution(currentPanel.getContrib())).link);
+            conn = (HttpURLConnection)(url).openConnection();
+            downloadSize = conn.getContentLength();
+            conn.disconnect();
+            } catch (MalformedURLException e) {
+                conn.disconnect();
+            } catch (IOException e) {
+                conn.disconnect();
+            } finally {
+                conn.disconnect();
+            }
 
+            String unit[] = {"KB","MB", "GB"};   // File size unit array
+            int u = -1;
+            // Calculating the file size in standard unit
+            while (downloadSize >= 1024.0) {
+              downloadSize = (downloadSize / 1024.0);
+              u++;
+            }
 
-      try {
-        URL url = new URL((contributionListing.getAvailableContribution(currentPanel.getContrib())).link);
-        DownloadFileSize fs = new DownloadFileSize(url);
-        Thread t1 = new Thread(fs);
-        t1.start();
-      }
-      catch(MalformedURLException e)
-      {
-        System.out.println("Malformed URL");
-      }
-
-
-
+            downloadSize = new BigDecimal(downloadSize).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            downloadSizeLabel.setText("Size :   " + downloadSize + " " + unit[u]);
+            downloadSizeLabel.setVisible(true);
+            return;
+          }
+      });
+      t1.start();
     }
   }
 }
 
 
-class DownloadFileSize implements Runnable {
-
-  public URL url;
-  public JLabel downloadSizeLabel;
-
-  DownloadFileSize(URL url) {
-    this.url = url;
-    //this.downloadSizeLabel = downloadSizeLabel;
-  }
-
-  public void run() {
-
-    double downloadSize =0 ;
-    //System.out.println("helo");
-
-
-    HttpURLConnection conn = null;
-    try {
-
-
-        conn = (HttpURLConnection)(this.url).openConnection();
-        //conn.setRequestMethod("HEAD");
-        //conn.getInputStream();
-        downloadSize = conn.getContentLength();
-        conn.disconnect();
-    } catch (IOException e) {
-      conn.disconnect();
-
-    } finally {
-        conn.disconnect();
-    }
-
-
-
-    //downloadSize = (contributionListing.getAvailableContribution(currentPanel.getContrib())).downloadSize;
-    downloadSize = (int)(downloadSize / 1024.0);
-    String unit = "kB";
-    System.out.println(this.url);
-    //downloadSizeLabel.setText("Size :   " + downloadSize + " " + unit);
-    //downloadSizeLabel.setVisible(true);
-
-  }
-
-}
