@@ -325,7 +325,7 @@ public class StatusPanel extends JPanel {
     // while fetching the fileSize from the provided file URL
     if (getDownloadSize == true) {
       t1 = new Thread(new Runnable() {
-        URLConnection conn = null;
+        HttpURLConnection conn = null;
 
         public void run() {
           double downloadSize =0 ;
@@ -335,18 +335,17 @@ public class StatusPanel extends JPanel {
           try {
             URL url = new URL((contributionListing
               .getAvailableContribution(currentPanel.getContrib())).link);
-            conn = url.openConnection();
+            conn = (HttpURLConnection)url.openConnection();
             downloadSize = conn.getContentLength();  // Fetching the download filesize
-
-            String unit[] = {"Bytes", "KB", "MB", "GB", "TB"};   // File size unit array
-            int u = 0;
+            conn.disconnect();
 
             // Calculating the file size in standard unit
+            String unit[] = {"Bytes", "KB", "MB", "GB", "TB"};
+            int u = 0;
             while (downloadSize >= 1024.0) {
               downloadSize = (downloadSize / 1024.0);
               u++;
             }
-
             downloadSize = new BigDecimal(downloadSize)
               .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 
@@ -363,6 +362,10 @@ public class StatusPanel extends JPanel {
             } catch (IOException e) {
                 System.out.println("IOException caught");
             }
+          }
+          public void stop() {
+            if (t1 != null)
+              conn.disconnect();
           }
       });
       t1.start();
