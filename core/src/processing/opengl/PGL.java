@@ -33,6 +33,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Arrays;
+import java.util.regex.Pattern;
+
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -1873,7 +1875,7 @@ public abstract class PGL {
     String[] fragSrc;
 
     if (version < 130) {
-      String[] search = { };
+      Pattern[] search = { };
       String[] replace = { };
       int offset = 1;
 
@@ -1883,23 +1885,20 @@ public abstract class PGL {
       // We need to replace 'texture' uniform by 'texMap' uniform and
       // 'textureXXX()' functions by 'texture()' functions. Order of these
       // replacements is important to prevent collisions between these two.
-      String[] search = new String[] {
-          "varying", "attribute",
-          "texture",
-          "texMap2DRect", "texMap2D", "texMap3D", "texMapCube",
-          "gl_FragColor"
+      Pattern[] search = new Pattern[] {
+          Pattern.compile(String.format(GLSL_ID_REGEX, "varying|attribute")),
+          Pattern.compile(String.format(GLSL_ID_REGEX, "texture")),
+          Pattern.compile(String.format(GLSL_FN_REGEX, "textureRect|texture2D|texture3D|textureCube")),
+          Pattern.compile(String.format(GLSL_ID_REGEX, "gl_FragColor"))
       };
       String[] replace = new String[] {
-          "in", "in",
-          "texMap",
-          "texture", "texture", "texture", "texture",
-          "fragColor"
+          "in", "texMap", "texture", "_fragColor"
       };
       int offset = 2;
 
       fragSrc = preprocessShaderSource(fragSrc0, search, replace, offset);
       fragSrc[0] = "#version " + version;
-      fragSrc[1] = "out vec4 fragColor;";
+      fragSrc[1] = "out vec4 _fragColor;";
     }
 
     return fragSrc;
@@ -1915,7 +1914,7 @@ public abstract class PGL {
     String[] vertSrc;
 
     if (version < 130) {
-      String[] search = { };
+      Pattern[] search = { };
       String[] replace = { };
       int offset = 1;
 
@@ -1925,15 +1924,14 @@ public abstract class PGL {
       // We need to replace 'texture' uniform by 'texMap' uniform and
       // 'textureXXX()' functions by 'texture()' functions. Order of these
       // replacements is important to prevent collisions between these two.
-      String[] search = new String[] {
-          "varying", "attribute",
-          "texture",
-          "texMap2DRect", "texMap2D", "texMap3D", "texMapCube"
+      Pattern[] search = new Pattern[] {
+          Pattern.compile(String.format(GLSL_ID_REGEX, "varying")),
+          Pattern.compile(String.format(GLSL_ID_REGEX, "attribute")),
+          Pattern.compile(String.format(GLSL_ID_REGEX, "texture")),
+          Pattern.compile(String.format(GLSL_FN_REGEX, "textureRect|texture2D|texture3D|textureCube"))
       };
       String[] replace = new String[] {
-          "out", "in",
-          "texMap",
-          "texture", "texture", "texture", "texture"
+          "out", "in", "texMap", "texture",
       };
       int offset = 1;
 
@@ -1944,8 +1942,13 @@ public abstract class PGL {
     return vertSrc;
   }
 
+
+  protected static final String GLSL_ID_REGEX = "(?<![0-9A-Z_a-z])(%s)(?![0-9A-Z_a-z])";
+  protected static final String GLSL_FN_REGEX = "(?<![0-9A-Z_a-z])(%s)(?=\\s*\\()";
+
+
   protected static String[] preprocessShaderSource(String[] src0,
-                                                   String[] search,
+                                                   Pattern[] search,
                                                    String[] replace,
                                                    int offset) {
     String[] src = new String[src0.length+offset];
@@ -1955,7 +1958,7 @@ public abstract class PGL {
         line = "";
       }
       for (int j = 0; j < search.length; j++) {
-        line = line.replace(search[j], replace[j]);
+        line = search[j].matcher(line).replaceAll(replace[j]);
       }
       src[i+offset] = line;
     }
