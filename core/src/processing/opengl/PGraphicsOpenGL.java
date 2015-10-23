@@ -609,10 +609,10 @@ public class PGraphicsOpenGL extends PGraphics {
       asyncPixelReader = null;
     }
 
-    deleteSurfaceTextures();
     if (primaryGraphics) {
       deleteDefaultShaders();
     } else {
+      deleteSurfaceTextures();
       FrameBuffer ofb = offscreenFramebuffer;
       FrameBuffer mfb = multisampleFramebuffer;
       if (ofb != null) {
@@ -6999,7 +6999,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteDefaultShaders() {
     // The default shaders contains references to the PGraphics object that
     // creates them, so when restarting the renderer, those references should
-    // dissapear.
+    // disappear.
     defColorShader = null;
     defTextureShader = null;
     defLightShader = null;
