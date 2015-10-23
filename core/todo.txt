@@ -9,6 +9,11 @@ _   simple test case: using size() inside setup() from Eclipse
 X figure our size(img.width, img.height) situation
 X   just make loadImage() work in settings
 _   update the wiki and reference
+_ menu bar not hiding properly in exported applications with FX2D
+_   hideMenuBar() called from setup() works fine
+_ see if 8u65 or 8u66 fix the JavaFX problem
+_   if not, need to add them to the block list
+_ --hide-stop not working
 
 jakub
 X Fix depth sorter ordering when two triangles in a plane share vertices
@@ -30,6 +35,13 @@ X   https://github.com/processing/processing/issues/4027
 X   https://github.com/processing/processing/issues/4012
 X line loops incorrectly closed in P3D
 X   https://github.com/processing/processing/issues/4031
+X pixelDensity() and createGraphics()
+X   https://github.com/processing/processing/issues/4039
+X   https://github.com/processing/processing/commit/1d163197c970947bf5be17049bddbe8e444f759d
+X GL related crashes when closing the display window on Ubuntu (Intel)
+X   https://github.com/processing/processing/issues/4041
+X GL related crashes when closing window on MacBook Air (Intel) running 10.9.5
+X   https://github.com/processing/processing/issues/3977
 
 jogl
 X Update to JogAmp JOGL 2.3.2

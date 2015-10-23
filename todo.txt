@@ -44,6 +44,15 @@ X Export - fix java not being embedded on 64bit
 X   https://github.com/processing/processing/pull/4005
 X Add error checker document listeners to all tabs
 X   https://github.com/processing/processing/pull/4009
+X Fix memory leak in Recent
+X   https://github.com/processing/processing/pull/4044
+X Error checker update (also enables switch on String objects)
+X   https://github.com/processing/processing/issues/4034
+X   https://github.com/processing/processing/pull/4042
+X Fix occasional exception while editing text
+X   https://github.com/processing/processing/pull/4043
+X Prevent preprocessor from crashing when setup() has no body
+X   https://github.com/processing/processing/pull/4045
 
 arm/pi
 X Medium-sized I/O updates

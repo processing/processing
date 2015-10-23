@@ -997,7 +997,7 @@ public class PApplet implements PConstants {
                                           JOptionPane.WARNING_MESSAGE);
           }
         });
-      } else if (!result.equals("1")) {
+      } else if (!"1".equals(result)) {
         System.err.println("Could not check the status of “Displays have separate spaces.”");
         System.err.format("Received message '%s' and result code %d.%n", trim(stderr.toString()), resultCode);
       }
@@ -10224,6 +10224,9 @@ public class PApplet implements PConstants {
     // used inside settings(). Sets a terrible precedent, but the alternative
     // of not being able to size a sketch to an image is driving people loopy.
     // A handful of things that need to be set before init/start.
+//    if (folder == null) {
+//      folder = calcSketchPath();
+//    }
     sketch.sketchPath = folder;
 
     // Call the settings() method which will give us our size() call
@@ -11140,9 +11143,9 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from clip.xml )
    *
-   * Limits the rendering to the boundaries of a rectangle defined
-   * by the parameters. The boundaries are drawn based on the state
-   * of the <b>imageMode()</b> fuction, either CORNER, CORNERS, or CENTER.
+   * Limits the rendering to the boundaries of a rectangle defined 
+   * by the parameters. The boundaries are drawn based on the state 
+   * of the <b>imageMode()</b> fuction, either CORNER, CORNERS, or CENTER. 
    *
    * ( end auto-generated )
    *
