@@ -17,15 +17,6 @@ X   https://github.com/processing/processing/issues/3996
 X   https://github.com/processing/processing/pull/3998
 X updates for serial
 X   https://github.com/processing/processing/pull/4015
-_ question about PDE_pt-br instead of PDE_pt
-_   https://github.com/processing/processing/issues/4018
-_ Saving sketch with the same name as a class
-_   https://github.com/processing/processing/pull/4033
-_ infinite "file changed" popups
-_   https://github.com/processing/processing/issues/3965
-_   https://github.com/processing/processing/pull/4037
-_ Pasting text into PDE results in "Clipboard does not contain a string"
-_   https://github.com/processing/processing/pull/4040
 
 jakub
 X Include Example packs into update count
@@ -59,7 +50,19 @@ X Medium-sized I/O updates
 X   https://github.com/processing/processing/pull/3997
 X add i/o library for rpi
 X   https://github.com/processing/processing/pull/3985
-_   make sure naming, etc is all correct
+o   make sure naming, etc is all correct
+
+
+more contribs
+_ question about PDE_pt-br instead of PDE_pt
+_   https://github.com/processing/processing/issues/4018
+_ Saving sketch with the same name as a class
+_   https://github.com/processing/processing/pull/4033
+_ infinite "file changed" popups
+_   https://github.com/processing/processing/issues/3965
+_   https://github.com/processing/processing/pull/4037
+_ Pasting text into PDE results in "Clipboard does not contain a string"
+_   https://github.com/processing/processing/pull/4040
 
 
 known issues
@@ -72,21 +75,6 @@ _   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-a
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
-3.0.1
-_ https://github.com/processing/processing/milestones/3.0.1
-_ error checkers/suggestions not including the library path
-_   https://github.com/processing/processing/issues/3924
-_ import suggestions box needs design review
-_   https://github.com/processing/processing/issues/3407
-_ update CM entries when sketchbook location changes
-_   https://github.com/processing/processing/issues/3927
-_ Tooltip over variable decl has wrong style and content
-_   make all tooltips run through our style
-_   https://github.com/processing/processing/issues/3940
-_ File modified externally gives infinite pop-ups
-_   https://github.com/processing/processing/issues/3965
-
-
 run/debug
 _ debugger deadlocks when choosing "Step Into" on println()
 _   https://github.com/processing/processing/issues/3923
@@ -95,6 +83,11 @@ _   https://github.com/processing/processing/issues/3928
 
 
 gui
+_ Tooltip over variable decl has wrong style and content
+_   make all tooltips run through our style
+_   https://github.com/processing/processing/issues/3940
+_ import suggestions box needs design review
+_   https://github.com/processing/processing/issues/3407
 _ fix background color for selected lines in VariableInspector 
 _   https://github.com/processing/processing/issues/3925
 _ implement 2x versions of the icons for the debugger window/variable inspector
@@ -650,6 +643,8 @@ _   e.g. ocd is broken in 0125 because of method signature changes
 
 PDE / Manager
 
+_ update CM entries when sketchbook location changes
+_   https://github.com/processing/processing/issues/3927
 _ ugly white gap at the top of scroll bar
 _   the table header doesn't extend far enough
 _ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)

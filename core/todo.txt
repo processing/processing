@@ -7,17 +7,6 @@ X Editor menu is outside the visible screen with 800x480 display
 X   https://github.com/processing/processing/issues/3913
 X   https://github.com/processing/processing/pull/3999
 X   https://github.com/processing/processing/pull/3992
-_ when calling exit(), if sketch has halted w/ exception, force the quit
-_   otherwise have to double-quit with cmd-q on OS X
-_   simple test case: using size() inside setup() from Eclipse
-X figure our size(img.width, img.height) situation
-X   just make loadImage() work in settings
-_   update the wiki and reference
-_ menu bar not hiding properly in exported applications with FX2D
-_   hideMenuBar() called from setup() works fine
-_ see if 8u65 or 8u66 fix the JavaFX problem
-_   if not, need to add them to the block list
-_ --hide-stop not working
 
 jakub
 X Fix depth sorter ordering when two triangles in a plane share vertices
@@ -63,6 +52,19 @@ X P2D and P3D windows behave strangely when larger than the screen size
 X   https://github.com/processing/processing/issues/3401
 X Remove Gluegen & JOGL sources
 X   https://github.com/processing/processing/pull/3982
+
+
+_ when calling exit(), if sketch has halted w/ exception, force the quit
+_   otherwise have to double-quit with cmd-q on OS X
+_   simple test case: using size() inside setup() from Eclipse
+_ figure our size(img.width, img.height) situation
+_   just make loadImage() work in settings
+_   update the wiki and reference
+_ menu bar not hiding properly in exported applications with FX2D
+_   hideMenuBar() called from setup() works fine
+_ see if 8u65 or 8u66 fix the JavaFX problem
+_   if not, need to add them to the block list
+_ the --hide-stop option not working (FX only? traces?)
 
 
 known
