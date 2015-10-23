@@ -466,18 +466,9 @@ public class PSurfaceFX implements PSurface {
         stage.setY(locationY);
 
       } else {  // doesn't fit
-        // if it fits inside the editor window,
-        // offset slightly from upper lefthand corner
-        // so that it's plunked inside the text area
-        locationX = editorLocation[0] + 66;
+        // center on screen, below the editor's window bar
+        locationX = (sketch.displayWidth - window.width) / 2;
         locationY = editorLocation[1] + 66;
-
-        if ((locationX + stage.getWidth() > sketch.displayWidth - 33) ||
-            (locationY + stage.getHeight() > sketch.displayHeight - 33)) {
-          // otherwise center on screen
-          locationX = (int) ((sketch.displayWidth - stage.getWidth()) / 2);
-          locationY = (int) ((sketch.displayHeight - stage.getHeight()) / 2);
-        }
         stage.setX(locationX);
         stage.setY(locationY);
       }
