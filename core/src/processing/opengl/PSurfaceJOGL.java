@@ -540,6 +540,7 @@ public class PSurfaceJOGL implements PSurface {
         window.setTopLevelPosition(locationX - w, locationY);
 
       } else {  // doesn't fit
+        /*
         // if it fits inside the editor window,
         // offset slightly from upper lefthand corner
         // so that it's plunked inside the text area
@@ -549,9 +550,12 @@ public class PSurfaceJOGL implements PSurface {
         if ((locationX + w > sketch.displayWidth - 33) ||
             (locationY + h > sketch.displayHeight - 33)) {
           // otherwise center on screen
-          locationX = (sketch.displayWidth - w) / 2;
-          locationY = (sketch.displayHeight - h) / 2;
+        */
+        locationX = (sketch.displayWidth - w) / 2;
+        locationY = (sketch.displayHeight - h) / 2;
+        /*
         }
+        */
         window.setTopLevelPosition(locationX, locationY);
       }
     } else {  // just center on screen

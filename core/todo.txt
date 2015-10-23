@@ -20,6 +20,10 @@ X Fix depth sorter ordering when two triangles in a plane share vertices
 X   https://github.com/processing/processing/pull/4010
 X Turn off fixed rate scheduling in OpenGL
 X   https://github.com/processing/processing/pull/4004
+X Fix GLSL preprocessing issues with variable name mangling
+X   https://github.com/processing/processing/pull/4052
+X   https://github.com/processing/processing/issues/3961
+X   https://github.com/processing/processing/issues/3968
 
 andres
 X cursor() fails to work as expected with P2D/P3D 
