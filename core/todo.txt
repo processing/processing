@@ -7,6 +7,7 @@ X Editor menu is outside the visible screen with 800x480 display
 X   https://github.com/processing/processing/issues/3913
 X   https://github.com/processing/processing/pull/3999
 X   https://github.com/processing/processing/pull/3992
+X add a patch for FX2D menubar not hiding, root cause not sorted out
 
 jakub
 X Fix depth sorter ordering when two triangles in a plane share vertices

@@ -313,7 +313,7 @@ public class PSurfaceFX implements PSurface {
       // https://github.com/processing/processing/issues/3823
       if ((PApplet.platform == PConstants.MACOSX ||
            PApplet.platform == PConstants.LINUX) &&
-          PApplet.javaVersionName.equals("1.8.0_60")) {
+          PApplet.javaVersionName.compareTo("1.8.0_60") >= 0) {
         System.err.println("smooth() disabled for JavaFX with this Java version due to Oracle bug");
         System.err.println("https://github.com/processing/processing/issues/3795");
         smooth = 0;
@@ -446,9 +446,11 @@ public class PSurfaceFX implements PSurface {
     }
 
     //Dimension window = setFrameSize();
-
 //    int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
 //    int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
+//    System.out.println("stage size is " + stage.getWidth() + " " + stage.getHeight());
+    int wide = sketch.width;  // stage.getWidth() is NaN here
+    int high = sketch.height;  // stage.getHeight()
 
     if (location != null) {
       // a specific location was received from the Runner
@@ -460,28 +462,26 @@ public class PSurfaceFX implements PSurface {
       int locationX = editorLocation[0] - 20;
       int locationY = editorLocation[1];
 
-      if (locationX - stage.getWidth() > 10) {
+      if (locationX - wide > 10) {
         // if it fits to the left of the window
-        stage.setX(locationX - stage.getWidth());
+        stage.setX(locationX - wide);
         stage.setY(locationY);
 
       } else {  // doesn't fit
-        /*
-        // if it fits inside the editor window,
-        // offset slightly from upper lefthand corner
-        // so that it's plunked inside the text area
-        locationX = editorLocation[0] + 66;
-        locationY = editorLocation[1] + 66;
-
-        if ((locationX + stage.getWidth() > sketch.displayWidth - 33) ||
-            (locationY + stage.getHeight() > sketch.displayHeight - 33)) {
-          // otherwise center on screen
-        */
-        locationX = (int) ((sketch.displayWidth - stage.getWidth()) / 2);
-        locationY = (int) ((sketch.displayHeight - stage.getHeight()) / 2);
-        /*
-        }
-        */
+//        // if it fits inside the editor window,
+//        // offset slightly from upper lefthand corner
+//        // so that it's plunked inside the text area
+//        locationX = editorLocation[0] + 66;
+//        locationY = editorLocation[1] + 66;
+//
+//        if ((locationX + stage.getWidth() > sketch.displayWidth - 33) ||
+//            (locationY + stage.getHeight() > sketch.displayHeight - 33)) {
+//          // otherwise center on screen
+//        locationX = (int) ((sketch.displayWidth - wide) / 2);
+//        locationY = (int) ((sketch.displayHeight - high) / 2);
+//        }
+        locationX = (sketch.displayWidth - wide) / 2;
+        locationY = (sketch.displayHeight - high) / 2;
         stage.setX(locationX);
         stage.setY(locationY);
       }

@@ -163,6 +163,7 @@ public class EditorState {
 
     defaultWidth = Math.min(defaultWidth, deviceBounds.width);
     defaultHeight = Math.min(defaultHeight, deviceBounds.height);
+    //System.out.println("default w/h = " + defaultWidth + "/" + defaultHeight);
 
     if (editors.size() == 0) {
       // If no current active editor, use default placement.
