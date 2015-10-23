@@ -2,19 +2,15 @@
 
 /*
   Part of the Processing project - http://processing.org
-
   Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
-
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
   as published by the Free Software Foundation.
-
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-
   You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -75,7 +71,8 @@ public class StatusPanel extends JPanel {
   ContributionTab contributionTab;
 
   private String bodyRule;
-  private boolean getDownloadSize = false;
+  private boolean getDownloadSize = false;  // To store download file size
+  Thread t1 = new Thread();    // Thread to calculate the download file size
 
 
   /** Needed by ContributionListPanel */
@@ -282,15 +279,18 @@ public class StatusPanel extends JPanel {
         updateLabel.setText(latestVersion + " available");
         downloadSizeLabel.setVisible(false);
         getDownloadSize = true;
+        t1.stop(); // Killing previous thread
       } else {
         updateLabel.setText(currentVersion + " installed");
         downloadSizeLabel.setVisible(false);
         getDownloadSize = false;
+        t1.stop(); // Killing previous thread
       }
     } else {
       updateLabel.setText(currentVersion + " not compatible");
       downloadSizeLabel.setVisible(false);
-        getDownloadSize = false;
+      getDownloadSize = false;
+      t1.stop(); // Killing previous thread
     }
 
     if (latestVersion != null) {
@@ -323,45 +323,49 @@ public class StatusPanel extends JPanel {
     /** Creating a Thread to calculate the size of the dowload file **/
     // Thread is used to avoid the delay caused by the HTTPUrlConnection class
     // while fetching the fileSize from the provided file URL
-
     if (getDownloadSize == true) {
+      t1 = new Thread(new Runnable() {
+        URLConnection conn = null;
 
-      Thread t1 = new Thread(new Runnable() {
         public void run() {
           double downloadSize =0 ;
           DetailPanel currentPanel =
             contributionTab.contributionListPanel.getSelectedPanel();
-          HttpURLConnection conn = null;
-          try {
-            URL url = new URL((contributionListing.getAvailableContribution(currentPanel.getContrib())).link);
-            conn = (HttpURLConnection)(url).openConnection();
-            downloadSize = conn.getContentLength();
-            conn.disconnect();
-            } catch (MalformedURLException e) {
-                conn.disconnect();
-            } catch (IOException e) {
-                conn.disconnect();
-            } finally {
-                conn.disconnect();
-            }
 
-            String unit[] = {"KB","MB", "GB"};   // File size unit array
-            int u = -1;
+          try {
+            URL url = new URL((contributionListing
+              .getAvailableContribution(currentPanel.getContrib())).link);
+            conn = url.openConnection();
+            downloadSize = conn.getContentLength();  // Fetching the download filesize
+
+            String unit[] = {"Bytes", "KB", "MB", "GB", "TB"};   // File size unit array
+            int u = 0;
+
             // Calculating the file size in standard unit
             while (downloadSize >= 1024.0) {
               downloadSize = (downloadSize / 1024.0);
               u++;
             }
 
-            downloadSize = new BigDecimal(downloadSize).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-            downloadSizeLabel.setText("Size :   " + downloadSize + " " + unit[u]);
+            downloadSize = new BigDecimal(downloadSize)
+              .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+            if (downloadSize > 0.0) {
+              downloadSizeLabel.setText("Size :   " + downloadSize + " " + unit[u]);
+            } else{
+                downloadSizeLabel.setText("Size not available!");
+            }
             downloadSizeLabel.setVisible(true);
             return;
+
+            } catch (MalformedURLException e) {
+                System.out.println("Malformed Url");
+            } catch (IOException e) {
+                System.out.println("IOException caught");
+            }
           }
       });
       t1.start();
     }
   }
 }
-
-
