@@ -86,7 +86,7 @@ public class JavaEditor extends Editor {
     inspector = new VariableInspector(this);
 
     // Add show usage option
-    JMenuItem showUsageItem = new JMenuItem("Show Usage...");
+    JMenuItem showUsageItem = new JMenuItem(Language.text("editor.popup.show_usage"));
     showUsageItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleShowUsage();
@@ -95,7 +95,7 @@ public class JavaEditor extends Editor {
     getTextArea().getRightClickPopup().add(showUsageItem);
 
     // add refactor option
-    JMenuItem renameItem = new JMenuItem("Rename...");
+    JMenuItem renameItem = new JMenuItem(Language.text("editor.popup.rename"));
     renameItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleRefactor();
