@@ -351,6 +351,8 @@ public abstract class PGL {
   // Present mode
 
   protected boolean presentMode = false;
+  protected boolean showStopButton = true;
+  protected int stopButtonColor;
   public float presentX;
   public float presentY;
   protected IntBuffer closeBtnTex;
@@ -647,8 +649,10 @@ public abstract class PGL {
   // Present mode
 
 
-  public void initPresentMode(float x, float y) {
+  public void initPresentMode(float x, float y, int stopColor) {
     presentMode = true;
+    showStopButton = stopColor != 0;
+    stopButtonColor = stopColor;
     presentX = x;
     presentY = y;
     enableFBOLayer();
@@ -670,7 +674,8 @@ public abstract class PGL {
   }
 
 
-  public boolean insideCloseButton(float x, float y) {
+  public boolean insideStopButton(float x, float y) {
+    if (!showStopButton) return false;
     return closeBtnX < x && x < closeBtnX + closeBtnWidth &&
            -(closeBtnY + closeBtnHeight) < y && y < -closeBtnY;
   }
@@ -776,23 +781,25 @@ public abstract class PGL {
         clearColor(wr, wg, wb, wa);
         clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
 
-        if (closeBtnTex == null) {
-          closeBtnTex = allocateIntBuffer(1);
-          genTextures(1, closeBtnTex);
-          bindTexture(TEXTURE_2D, closeBtnTex.get(0));
-          texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
-          texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
-          texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
-          texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
-          texImage2D(TEXTURE_2D, 0, RGBA, closeBtnWidth, closeBtnHeight, 0, RGBA, UNSIGNED_BYTE, null);
-          IntBuffer buf = allocateIntBuffer(closeBtnPix);
-          copyToTexture(TEXTURE_2D, RGBA, closeBtnTex.get(0), 0, 0, closeBtnWidth, closeBtnHeight, buf);
-          bindTexture(TEXTURE_2D, 0);
-        }
-        drawTexture(TEXTURE_2D, closeBtnTex.get(0), closeBtnWidth, closeBtnHeight,
-                    0, 0, closeBtnX + closeBtnWidth, closeBtnY + closeBtnHeight,
-                    0, closeBtnHeight, closeBtnWidth, 0,
-                    closeBtnX, closeBtnY, closeBtnX + closeBtnWidth, closeBtnY + closeBtnHeight);
+        if (showStopButton) {
+          if (closeBtnTex == null) {
+            closeBtnTex = allocateIntBuffer(1);
+            genTextures(1, closeBtnTex);
+            bindTexture(TEXTURE_2D, closeBtnTex.get(0));
+            texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
+            texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
+            texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
+            texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
+            texImage2D(TEXTURE_2D, 0, RGBA, closeBtnWidth, closeBtnHeight, 0, RGBA, UNSIGNED_BYTE, null);
+            IntBuffer buf = allocateIntBuffer(closeBtnPix);
+            copyToTexture(TEXTURE_2D, RGBA, closeBtnTex.get(0), 0, 0, closeBtnWidth, closeBtnHeight, buf);
+            bindTexture(TEXTURE_2D, 0);
+          }
+          drawTexture(TEXTURE_2D, closeBtnTex.get(0), closeBtnWidth, closeBtnHeight,
+                      0, 0, closeBtnX + closeBtnWidth, closeBtnY + closeBtnHeight,
+                      0, closeBtnHeight, closeBtnWidth, 0,
+                      closeBtnX, closeBtnY, closeBtnX + closeBtnWidth, closeBtnY + closeBtnHeight);
+          }
       } else {
         clearDepth(1);
         clearColor(0, 0, 0, 0);

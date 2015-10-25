@@ -578,7 +578,7 @@ public class PSurfaceJOGL implements PSurface {
 
   public void placePresent(int stopColor) {
     pgl.initPresentMode(0.5f * (screenRect.width - sketchWidth),
-                        0.5f * (screenRect.height - sketchHeight));
+                        0.5f * (screenRect.height - sketchHeight), stopColor);
     window.setSize(screenRect.width, screenRect.height);
     PApplet.hideMenuBar();
     window.setTopLevelPosition(sketchX + screenRect.x,
@@ -938,7 +938,7 @@ public class PSurfaceJOGL implements PSurface {
       mx -= (int)pgl.presentX;
       my -= (int)pgl.presentY;
       if (peAction == KeyEvent.RELEASE &&
-          pgl.insideCloseButton(sx, sy - screenRect.height)) {
+          pgl.insideStopButton(sx, sy - screenRect.height)) {
         sketch.exit();
       }
       if (mx < 0 || sketchWidth < mx || my < 0 || sketchHeight < my) {
