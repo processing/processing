@@ -2297,7 +2297,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         Language.interpolate("close.unsaved_changes", sketch.getName());
       int result =
         JOptionPane.showConfirmDialog(this, prompt,
-                                      Language.text("menu.file.close"),
+                                      Language.text("close"),
                                       JOptionPane.YES_NO_CANCEL_OPTION,
                                       JOptionPane.QUESTION_MESSAGE);
 
