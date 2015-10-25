@@ -352,15 +352,15 @@ public abstract class PGL {
 
   protected boolean presentMode = false;
   protected boolean showStopButton = true;
-  protected int stopButtonColor;
   public float presentX;
   public float presentY;
-  protected IntBuffer closeBtnTex;
-  protected int closeBtnWidth = 28;
-  protected int closeBtnHeight = 12;
-  protected int closeBtnX = 21; // The position of the close button is relative to the
-  protected int closeBtnY = 21; // lower left corner
-  protected static int[] closeBtnPix = {
+  protected IntBuffer closeButtonTex;
+  protected int stopButtonColor;
+  protected int stopButtonWidth = 28;
+  protected int stopButtonHeight = 12;
+  protected int stopButtonX = 21; // The position of the close button is relative to the
+  protected int closeButtonY = 21; // lower left corner
+  protected static int[] closeButtonPix = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, 0, 0, 0, -1, -1, -1, -1, -1, 0, 0, 0, -1,
@@ -626,8 +626,8 @@ public abstract class PGL {
 
   public boolean insideStopButton(float x, float y) {
     if (!showStopButton) return false;
-    return closeBtnX < x && x < closeBtnX + closeBtnWidth &&
-           -(closeBtnY + closeBtnHeight) < y && y < -closeBtnY;
+    return stopButtonX < x && x < stopButtonX + stopButtonWidth &&
+           -(closeButtonY + stopButtonHeight) < y && y < -closeButtonY;
   }
 
 
@@ -732,23 +732,41 @@ public abstract class PGL {
         clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
 
         if (showStopButton) {
-          if (closeBtnTex == null) {
-            closeBtnTex = allocateIntBuffer(1);
-            genTextures(1, closeBtnTex);
-            bindTexture(TEXTURE_2D, closeBtnTex.get(0));
+          if (closeButtonTex == null) {
+            closeButtonTex = allocateIntBuffer(1);
+            genTextures(1, closeButtonTex);
+            bindTexture(TEXTURE_2D, closeButtonTex.get(0));
             texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
             texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
             texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
             texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
-            texImage2D(TEXTURE_2D, 0, RGBA, closeBtnWidth, closeBtnHeight, 0, RGBA, UNSIGNED_BYTE, null);
-            IntBuffer buf = allocateIntBuffer(closeBtnPix);
-            copyToTexture(TEXTURE_2D, RGBA, closeBtnTex.get(0), 0, 0, closeBtnWidth, closeBtnHeight, buf);
+            texImage2D(TEXTURE_2D, 0, RGBA, stopButtonWidth, stopButtonHeight, 0, RGBA, UNSIGNED_BYTE, null);
+
+            int[] color = new int[closeButtonPix.length];
+            PApplet.arrayCopy(closeButtonPix, color);
+
+
+            // Multiply the texture by the button color
+            float ba = ((stopButtonColor >> 24) & 0xFF) / 255f;
+            float br = ((stopButtonColor >> 16) & 0xFF) / 255f;
+            float bg = ((stopButtonColor >>  8) & 0xFF) / 255f;
+            float bb = ((stopButtonColor >>  0) & 0xFF) / 255f;
+            for (int i = 0; i < color.length; i++) {
+              int c = closeButtonPix[i];
+              int a = (int)(ba * ((c >> 24) & 0xFF));
+              int r = (int)(br * ((c >> 16) & 0xFF));
+              int g = (int)(bg * ((c >>  8) & 0xFF));
+              int b = (int)(bb * ((c >>  0) & 0xFF));
+              color[i] = javaToNativeARGB((a << 24) | (r << 16) | (g << 8) | b);
+            }
+            IntBuffer buf = allocateIntBuffer(color);
+            copyToTexture(TEXTURE_2D, RGBA, closeButtonTex.get(0), 0, 0, stopButtonWidth, stopButtonHeight, buf);
             bindTexture(TEXTURE_2D, 0);
           }
-          drawTexture(TEXTURE_2D, closeBtnTex.get(0), closeBtnWidth, closeBtnHeight,
-                      0, 0, closeBtnX + closeBtnWidth, closeBtnY + closeBtnHeight,
-                      0, closeBtnHeight, closeBtnWidth, 0,
-                      closeBtnX, closeBtnY, closeBtnX + closeBtnWidth, closeBtnY + closeBtnHeight);
+          drawTexture(TEXTURE_2D, closeButtonTex.get(0), stopButtonWidth, stopButtonHeight,
+                      0, 0, stopButtonX + stopButtonWidth, closeButtonY + stopButtonHeight,
+                      0, stopButtonHeight, stopButtonWidth, 0,
+                      stopButtonX, closeButtonY, stopButtonX + stopButtonWidth, closeButtonY + stopButtonHeight);
           }
       } else {
         clearDepth(1);
