@@ -838,13 +838,12 @@ public class MovieMaker extends JFrame implements Tool {
       audioIn = null;
       if (streaming.equals("fastStart")) {
         qtOut.toWebOptimizedMovie(movieFile, false);
-        tmpFile.delete();
       } else if (streaming.equals("fastStartCompressed")) {
         qtOut.toWebOptimizedMovie(movieFile, true);
-        tmpFile.delete();
       }
       qtOut.close();
       qtOut = null;
+      tmpFile.delete();
     } catch (UnsupportedAudioFileException e) {
       IOException ioe = new IOException(e.getMessage());
       ioe.initCause(e);
@@ -965,13 +964,12 @@ public class MovieMaker extends JFrame implements Tool {
       }
       if (streaming.equals("fastStart")) {
         qtOut.toWebOptimizedMovie(movieFile, false);
-        tmpFile.delete();
       } else if (streaming.equals("fastStartCompressed")) {
         qtOut.toWebOptimizedMovie(movieFile, true);
-        tmpFile.delete();
       }
       qtOut.close();
       qtOut = null;
+      tmpFile.delete();
     } catch (UnsupportedAudioFileException e) {
       IOException ioe = new IOException(e.getMessage());
       ioe.initCause(e);
@@ -1196,17 +1194,94 @@ public class MovieMaker extends JFrame implements Tool {
 
   /**
    * @param args the command line arguments
+   *
+   * Usage: MovieMaker moviefile width height fps RLE|JPG|PNG imagefolder [soundfile]
+   *                   0         1     2      3   4           5           6
    */
   public static void main(String args[]) {
-    java.awt.EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        MovieMaker m = new MovieMaker();
-        m.init(null);
-//        m.init();
-        m.setVisible(true);
-//        m.pack();
+    // Needed for printing i18n messages
+    processing.app.Platform.init();
+
+    if (args.length < 6 || args.length > 7) {
+      System.err.println(Language.text("movie_maker.error.usage"));
+      System.exit(1);
+    }
+
+    MovieMaker mm = new MovieMaker();
+
+    // Taken from MoveMaker.createMovie
+    final File soundFile = args.length == 7 ? new File(args[6]) : null;
+    final File imageFolder = new File(args[5]);
+    final String streaming = "fastStartCompressed";
+
+    double fps = 1;
+    try {
+      mm.width = Integer.parseInt(args[1]);
+      mm.height = Integer.parseInt(args[2]);
+      fps = Double.parseDouble(args[3]);
+    } catch (Throwable t) {
+      System.err.println(Language.text("movie_maker.error.badnumbers"));
+      System.exit(1);
+    }
+    if (mm.width < 1 || mm.height < 1 || fps < 1) {
+      System.err.println(Language.text("movie_maker.error.badnumbers"));
+      System.exit(1);
+    }
+
+    final QuickTimeWriter.VideoFormat videoFormat;
+    switch (args[4]) {
+    case "RLE":
+      videoFormat = QuickTimeWriter.VideoFormat.RLE;
+      break;
+    case "JPG":
+      videoFormat = QuickTimeWriter.VideoFormat.JPG;
+      break;
+    case "PNG":
+      videoFormat = QuickTimeWriter.VideoFormat.PNG;
+      break;
+    default:
+      // Silence compiler warning
+      videoFormat = QuickTimeWriter.VideoFormat.PNG;
+      System.err.println(Language.text("movie_maker.error.supported_formats"));
+      System.exit(1);
+    }
+
+    final File movieFile = new File(args[0]);
+
+    try {
+      // Obtain list of image files
+      File[] imgFiles = null;
+      imgFiles = imageFolder.listFiles(new FileFilter() {
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+
+        public boolean accept(File f) {
+          return f.isFile() && !fsv.isHiddenFile(f) &&
+            !f.getName().equals("Thumbs.db");
+        }
+      });
+      if (imgFiles == null || imgFiles.length == 0) {
+        System.err.println(Language.text("movie_maker.error.no_images_found"));
+        System.exit(1);
       }
-    });
+      Arrays.sort(imgFiles);
+
+      // Delete movie file if it already exists.
+      if (movieFile.exists()) {
+        movieFile.delete();
+      }
+
+      if (soundFile != null)
+        mm.writeVideoAndAudio(movieFile, imgFiles, soundFile, mm.width, mm.height, fps, videoFormat, /*passThrough,*/ streaming);
+      else
+        mm.writeVideoOnlyVFR(movieFile, imgFiles, mm.width, mm.height, fps, videoFormat, /*passThrough,*/ streaming);
+
+    } catch (Throwable t) {
+      System.err.println(Language.text("movie_maker.error.movie_failed") +
+          "\n" + (t.getMessage() == null ? t.toString() : t.getMessage()));
+      System.exit(1);
+    }
+
+    System.exit(0);
   }
 
 
