@@ -229,6 +229,9 @@ public class UpdateListPanel extends ListPanel {
             if (!panelByContribution.containsKey(contribution)) {
               panelByContribution.put(contribution, newPanel);
             }
+            synchronized (visibleContributions) {
+              visibleContributions.add(contribution);
+            }
             if (newPanel != null) {
               newPanel.setContribution(contribution);
               add(newPanel);
@@ -239,5 +242,29 @@ public class UpdateListPanel extends ListPanel {
         }
       });
     }
+  }
+  
+  @Override
+  public void contributionChanged(final Contribution oldContrib,
+                                  final Contribution newContrib) {
+    // TODO: this should already be on EDT, check it [jv]
+    EventQueue.invokeLater(new Runnable() {
+      public void run() {
+        synchronized (panelByContribution) {
+          DetailPanel panel = panelByContribution.get(oldContrib);
+          if (panel == null) {
+            contributionAdded(newContrib);
+          } else {
+            panelByContribution.remove(oldContrib);
+          }
+        }
+        synchronized (visibleContributions) {
+          if (visibleContributions.contains(oldContrib)) {
+            visibleContributions.remove(oldContrib);
+          }
+          updatePanelOrdering(visibleContributions);
+        }
+      }
+    });
   }
 }

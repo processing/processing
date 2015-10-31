@@ -488,7 +488,6 @@ implements Scrollable, ContributionListing.ChangeListener {
     });
   }
 
-
   public void contributionChanged(final Contribution oldContrib,
                                   final Contribution newContrib) {
     // TODO: this should already be on EDT, check it [jv]
@@ -515,15 +514,25 @@ implements Scrollable, ContributionListing.ChangeListener {
     });
   }
 
-
   public void filterLibraries(List<Contribution> filteredContributions) {
     synchronized (visibleContributions) {
       visibleContributions.clear();
-      for (Contribution contribution : filteredContributions) {
+      for (Contribution contribution : panelByContribution.keySet()) {
         if (contribution.getType() == contributionTab.contribType) {
-          visibleContributions.add(contribution);
+          if (filteredContributions.contains(contribution)) {
+            if (panelByContribution.keySet().contains(contribution)) {
+              visibleContributions.add(contribution);
+            }
+          }
         }
       }
+//      for (Contribution contribution : filteredContributions) {
+//        if (contribution.getType() == contributionTab.contribType) {
+//          if(panelByContribution.keySet().contains(contribution)){
+//           visibleContributions.add(contribution); 
+//          }
+//        }
+//      }
       updatePanelOrdering(visibleContributions);
     }
   }
