@@ -51,6 +51,8 @@ public class ContributionListing {
   List<AvailableContribution> advertisedContributions;
   Map<String, List<Contribution>> librariesByCategory;
   Map<String, Contribution> librariesByImportHeader;
+  // TODO: Every contribution is getting added twice
+  // and nothing is replaced ever.
   List<Contribution> allContributions;
   boolean listDownloaded;
   boolean listDownloadFailed;

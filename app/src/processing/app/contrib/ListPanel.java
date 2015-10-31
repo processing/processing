@@ -526,6 +526,7 @@ implements Scrollable, ContributionListing.ChangeListener {
           }
         }
       }
+      // TODO: Make the following loop work for optimization
 //      for (Contribution contribution : filteredContributions) {
 //        if (contribution.getType() == contributionTab.contribType) {
 //          if(panelByContribution.keySet().contains(contribution)){
