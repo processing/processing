@@ -65,6 +65,9 @@ public class PJOGL extends PGL {
   // OpenGL profile to use (2, 3 or 4)
   public static int profile = 2;
 
+  // User-provided icons to override defaults
+  protected static String[] icons = null;
+
   // The two windowing toolkits available to use in JOGL:
   public static final int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
   public static final int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html
@@ -166,6 +169,12 @@ public class PJOGL extends PGL {
 
   @Override
   protected void registerListeners() {}
+
+
+  static public void setIcon(String... icons) {
+    PJOGL.icons = new String[icons.length];
+    PApplet.arrayCopy(icons, PJOGL.icons);
+  }
 
 
   ///////////////////////////////////////////////////////////////

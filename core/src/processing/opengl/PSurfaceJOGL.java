@@ -31,6 +31,10 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -103,6 +107,8 @@ public class PSurfaceJOGL implements PSurface {
   protected NewtCanvasAWT canvas;
 
   protected float[] currentPixelScale = {0, 0};
+
+  protected boolean external = false;
 
   public PSurfaceJOGL(PGraphics graphics) {
     this.graphics = graphics;
@@ -483,7 +489,8 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void setIcon(PImage icon) {
-    // TODO Auto-generated method stub
+    PGraphics.showWarning("Window icons for OpenGL sketches can only be set in settings()\n" +
+                          "using PJOGL.setIcon(filename).");
   }
 
 
@@ -499,28 +506,150 @@ public class PSurfaceJOGL implements PSurface {
 
 
   protected void initIcons() {
-    final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
-    String[] iconImages = new String[sizes.length];
-    for (int i = 0; i < sizes.length; i++) {
-      iconImages[i] = "/icon/icon-" + sizes[i] + ".png";
+    IOUtil.ClassResources res = null;
+    if (PJOGL.icons == null || PJOGL.icons.length == 0) {
+      // Default Processing icons
+      final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
+      String[] iconImages = new String[sizes.length];
+      for (int i = 0; i < sizes.length; i++) {
+         iconImages[i] = "/icon/icon-" + sizes[i] + ".png";
+       }
+       res = new ClassResources(iconImages,
+                                PApplet.class.getClassLoader(),
+                                PApplet.class);
+    } else {
+      // Loading custom icons from user-provided files.
+      String[] iconImages = new String[PJOGL.icons.length];
+      for (int i = 0; i < PJOGL.icons.length; i++) {
+        iconImages[i] = resourceFilename(PJOGL.icons[i]);
+      }
+
+      res = new ClassResources(iconImages,
+                               sketch.getClass().getClassLoader(),
+                               sketch.getClass());
     }
-    IOUtil.ClassResources res = new ClassResources(iconImages,
-                                                   PApplet.class.getClassLoader(),
-                                                   PApplet.class);
     NewtFactory.setWindowIcons(res);
   }
 
 
-//  private void setFrameCentered() {
-//  }
+  @SuppressWarnings("resource")
+  private String resourceFilename(String filename) {
+    // The code below comes from PApplet.createInputRaw() with a few adaptations
+    InputStream stream = null;
+    try {
+      // First see if it's in a data folder. This may fail by throwing
+      // a SecurityException. If so, this whole block will be skipped.
+      File file = new File(sketch.dataPath(filename));
+      if (!file.exists()) {
+        // next see if it's just in the sketch folder
+        file = sketch.sketchFile(filename);
+      }
+
+      if (file.exists() && !file.isDirectory()) {
+        try {
+          // handle case sensitivity check
+          String filePath = file.getCanonicalPath();
+          String filenameActual = new File(filePath).getName();
+          // make sure there isn't a subfolder prepended to the name
+          String filenameShort = new File(filename).getName();
+          // if the actual filename is the same, but capitalized
+          // differently, warn the user.
+          //if (filenameActual.equalsIgnoreCase(filenameShort) &&
+          //!filenameActual.equals(filenameShort)) {
+          if (!filenameActual.equals(filenameShort)) {
+            throw new RuntimeException("This file is named " +
+                                       filenameActual + " not " +
+                                       filename + ". Rename the file " +
+                                       "or change your code.");
+          }
+        } catch (IOException e) { }
+      }
+
+      stream = new FileInputStream(file);
+      if (stream != null) {
+        stream.close();
+        return file.getCanonicalPath();
+      }
+
+      // have to break these out because a general Exception might
+      // catch the RuntimeException being thrown above
+    } catch (IOException ioe) {
+    } catch (SecurityException se) { }
+
+    ClassLoader cl = sketch.getClass().getClassLoader();
+
+    try {
+      // by default, data files are exported to the root path of the jar.
+      // (not the data folder) so check there first.
+      stream = cl.getResourceAsStream("data/" + filename);
+      if (stream != null) {
+        String cn = stream.getClass().getName();
+        // this is an irritation of sun's java plug-in, which will return
+        // a non-null stream for an object that doesn't exist. like all good
+        // things, this is probably introduced in java 1.5. awesome!
+        // http://dev.processing.org/bugs/show_bug.cgi?id=359
+        if (!cn.equals("sun.plugin.cache.EmptyInputStream")) {
+          stream.close();
+          return "data/" + filename;
+        }
+      }
+
+      // When used with an online script, also need to check without the
+      // data folder, in case it's not in a subfolder called 'data'.
+      // http://dev.processing.org/bugs/show_bug.cgi?id=389
+      stream = cl.getResourceAsStream(filename);
+      if (stream != null) {
+        String cn = stream.getClass().getName();
+        if (!cn.equals("sun.plugin.cache.EmptyInputStream")) {
+          stream.close();
+          return filename;
+        }
+      }
+    } catch (IOException e) { }
+
+    try {
+      // attempt to load from a local file, used when running as
+      // an application, or as a signed applet
+      try {  // first try to catch any security exceptions
+        try {
+          String path = sketch.dataPath(filename);
+          stream = new FileInputStream(path);
+          if (stream != null) {
+            stream.close();
+            return path;
+          }
+        } catch (IOException e2) { }
+
+        try {
+          String path = sketch.sketchPath(filename);
+          stream = new FileInputStream(path);
+          if (stream != null) {
+            stream.close();
+            return path;
+          }
+        } catch (Exception e) { }  // ignored
+
+        try {
+          stream = new FileInputStream(filename);
+          if (stream != null) {
+            stream.close();
+            return filename;
+          }
+        } catch (IOException e1) { }
+
+      } catch (SecurityException se) { }  // online, whups
+
+    } catch (Exception e) {
+      //die(e.getMessage(), e);
+      e.printStackTrace();
+    }
+
+    return "";
+  }
 
 
   @Override
   public void placeWindow(int[] location, int[] editorLocation) {
-//    Dimension dim = new Dimension(sketchWidth, sketchHeight);
-//    int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
-//    int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
-
     int x = window.getX() - window.getInsets().getLeftWidth();
     int y = window.getY() - window.getInsets().getTopHeight();
     int w = window.getWidth() + window.getInsets().getTotalWidth();
@@ -588,8 +717,7 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void setupExternalMessages() {
-    // TODO Auto-generated method stub
-
+    external = true;
   }
 
 
@@ -820,6 +948,9 @@ public class PSurfaceJOGL implements PSurface {
 
     @Override
     public void windowMoved(com.jogamp.newt.event.WindowEvent arg0) {
+      if (external) {
+        sketch.frameMoved(window.getX(), window.getY());
+      }
     }
 
     @Override
