@@ -231,9 +231,7 @@ public class UpdateListPanel extends ListPanel {
             }
             if (newPanel != null) {
               newPanel.setContribution(contribution);
-              add(newPanel);
               updatePanelOrdering(panelByContribution.keySet());
-              updateColors(); // XXX this is the place
             }
           }
         }

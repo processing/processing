@@ -43,7 +43,7 @@ import processing.app.ui.Toolkit;
 // It also allows the description text in the panels to wrap properly.
 
 public class ListPanel extends JPanel
-implements Scrollable, ContributionListing.ChangeListener {
+implements ContributionListing.ChangeListener {
   ContributionTab contributionTab;
   TreeMap<Contribution, DetailPanel> panelByContribution = new TreeMap<Contribution, DetailPanel>(ContributionListing.COMPARATOR);
   Set<Contribution> visibleContributions = new TreeSet<Contribution>(ContributionListing.COMPARATOR);
@@ -329,7 +329,7 @@ implements Scrollable, ContributionListing.ChangeListener {
         String fontFace = "<font face=\"" + boldFont.getName() + "\">";
         FontMetrics fontMetrics = table.getFontMetrics(boldFont); //table.getFont());
         int colSize = table.getColumnModel().getColumn(1).getWidth();
-        String sentence = contribution.getSentence();
+        String sentence = Toolkit.toPlainText(contribution.getSentence());
         //int currentWidth = table.getFontMetrics(table.getFont().deriveFont(Font.BOLD)).stringWidth(contribution.getName() + " | ");
         int currentWidth = table.getFontMetrics(boldFont).stringWidth(contribution.getName() + " | ");
         int ellipsesWidth = fontMetrics.stringWidth("...");
@@ -456,9 +456,7 @@ implements Scrollable, ContributionListing.ChangeListener {
             }
             if (newPanel != null) {
               newPanel.setContribution(contribution);
-              add(newPanel);
               updatePanelOrdering(visibleContributions);
-              updateColors();  // XXX this is the place
             }
           }
         }
@@ -474,7 +472,6 @@ implements Scrollable, ContributionListing.ChangeListener {
         synchronized (panelByContribution) {
           DetailPanel panel = panelByContribution.get(contribution);
           if (panel != null) {
-            remove(panel);
             panelByContribution.remove(contribution);
           }
         }
@@ -482,8 +479,6 @@ implements Scrollable, ContributionListing.ChangeListener {
           visibleContributions.remove(contribution);
         }
         updatePanelOrdering(visibleContributions);
-        updateColors();
-        updateUI();
       }
     });
   }
@@ -531,156 +526,13 @@ implements Scrollable, ContributionListing.ChangeListener {
 
   protected void setSelectedPanel(DetailPanel contributionPanel) {
     contributionTab.updateStatusPanel(contributionPanel);
-
-    if (selectedPanel == contributionPanel) {
-      selectedPanel.setSelected(true);
-
-    } else {
-      DetailPanel lastSelected = selectedPanel;
-      selectedPanel = contributionPanel;
-
-      if (lastSelected != null) {
-        lastSelected.setSelected(false);
-      }
-      contributionPanel.setSelected(true);
-
-      updateColors();
-      requestFocusInWindow();
-    }
+    selectedPanel = contributionPanel;
   }
 
 
   protected DetailPanel getSelectedPanel() {
     return selectedPanel;
   }
-
-
-  /**
-   * Updates the colors of all library panels that are visible.
-   */
-  protected void updateColors() {
-    int count = 0;
-    synchronized (panelByContribution) {
-      for (Entry<Contribution, DetailPanel> entry : panelByContribution.entrySet()) {
-        DetailPanel panel = entry.getValue();
-
-        if (panel.isVisible() && panel.isSelected()) {
-          panel.setBackground(UIManager.getColor("List.selectionBackground"));
-          panel.setForeground(UIManager.getColor("List.selectionForeground"));
-          panel.setBorder(UIManager.getBorder("List.focusCellHighlightBorder"));
-          count++;
-
-        } else {
-          Border border = null;
-          if (panel.isVisible()) {
-            if (Platform.isMacOS()) {
-              if (count % 2 == 1) {
-                border = UIManager.getBorder("List.oddRowBackgroundPainter");
-              } else {
-                border = UIManager.getBorder("List.evenRowBackgroundPainter");
-              }
-            } else {
-              if (count % 2 == 1) {
-                panel.setBackground(new Color(219, 224, 229));
-              } else {
-                panel.setBackground(new Color(241, 241, 241));
-              }
-            }
-            count++;
-          }
-
-          if (border == null) {
-            border = BorderFactory.createEmptyBorder(1, 1, 1, 1);
-          }
-          panel.setBorder(border);
-          panel.setForeground(UIManager.getColor("List.foreground"));
-        }
-      }
-    }
-  }
-
-
-  @Override
-  public Dimension getPreferredScrollableViewportSize() {
-    return getPreferredSize();
-  }
-
-
-  /**
-   * Amount to scroll to reveal a new page of items
-   */
-  @Override
-  public int getScrollableBlockIncrement(Rectangle visibleRect,
-                                         int orientation, int direction) {
-    if (orientation == SwingConstants.VERTICAL) {
-      int blockAmount = visibleRect.height;
-      if (direction > 0) {
-        visibleRect.y += blockAmount;
-      } else {
-        visibleRect.y -= blockAmount;
-      }
-
-      blockAmount +=
-        getScrollableUnitIncrement(visibleRect, orientation, direction);
-      return blockAmount;
-    }
-    return 0;
-  }
-
-
-  /**
-   * Amount to scroll to reveal the rest of something we are on or a new item
-   */
-  @Override
-  public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-    if (orientation == SwingConstants.VERTICAL) {
-      int lastHeight = 0, height = 0;
-      int bottomOfScrollArea = visibleRect.y + visibleRect.height;
-
-      for (Component c : getComponents()) {
-        if (c.isVisible()) {
-          if (c instanceof DetailPanel) {
-            Dimension d = c.getPreferredSize();
-
-            int nextHeight = height + d.height;
-
-            if (direction > 0) {
-              // scrolling down
-              if (nextHeight > bottomOfScrollArea) {
-                return nextHeight - bottomOfScrollArea;
-              }
-            } else {
-              // scrolling up
-              if (nextHeight > visibleRect.y) {
-                if (visibleRect.y != height) {
-                  return visibleRect.y - height;
-                } else {
-                  return visibleRect.y - lastHeight;
-                }
-              }
-            }
-
-            lastHeight = height;
-            height = nextHeight;
-          }
-        }
-      }
-    }
-    return 0;
-  }
-
-
-  @Override
-  public boolean getScrollableTracksViewportHeight() {
-    return false;
-  }
-
-
-  @Override
-  public boolean getScrollableTracksViewportWidth() {
-    return true;
-  }
-
 
   public int getRowCount() {
     return panelByContribution.size();

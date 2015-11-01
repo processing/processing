@@ -195,7 +195,6 @@ public class ContributionTab extends JPanel {
           category = null;
         }
         filterLibraries(category, filterField.filters);
-        contributionListPanel.updateColors();
       }
     });
 
@@ -423,7 +422,6 @@ public class ContributionTab extends JPanel {
       filters = Arrays.asList(filter.split(" "));
       filterLibraries(category, filters);
 
-      contributionListPanel.updateColors();
     }
   }
 
