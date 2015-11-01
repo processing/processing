@@ -34,14 +34,14 @@ public class UpdateContributionTab extends ContributionTab {
 
 
   @Override
-  protected void setLayout(boolean error, boolean loading) {
+  protected void setLayout(boolean activateErrorPanel, boolean isLoading) {
     if (progressBar == null) {
       progressBar = new JProgressBar();
       progressBar.setVisible(false);
 
       buildErrorPanel();
 
-      loaderLabel = new JLabel(Toolkit.getLibIcon("icons/loader.gif"));
+      loaderLabel = new JLabel(Toolkit.getLibIcon("manager/loader.gif"));
       loaderLabel.setOpaque(false);
 //      loaderLabel.setBackground(Color.WHITE);
     }
