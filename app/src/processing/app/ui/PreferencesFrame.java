@@ -639,6 +639,9 @@ public class PreferencesFrame {
         // Replace with Integer version
         selection = Integer.parseInt((String) selection);
       }
+      if((Integer) selection == 0 ){
+        selection = 1;
+      }
       Preferences.set("console.font.size", String.valueOf(selection));
 
     } catch (NumberFormatException e) {
