@@ -628,6 +628,9 @@
       <!--<fileset dir="shared" includes="launch4j/**" />-->
       <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset file="shared/revisions.txt" />
+
+
+      <fileset file="shared/close.png" />
     </copy>
 
     <!--
@@ -774,6 +777,9 @@
       <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
+
+
+      <fileset file="shared/close.png" />
     </copy>
 
     <antcall target="assemble">
@@ -1062,6 +1068,9 @@
       <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
+
+
+      <fileset file="shared/close.png" />
     </copy>
 
     <fixcrlf file="windows/work/revisions.txt" eol="crlf" encoding="UTF-8" />
