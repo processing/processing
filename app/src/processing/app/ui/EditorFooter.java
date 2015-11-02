@@ -68,6 +68,8 @@ public class EditorFooter extends Box {
 
   static final int UNSELECTED = 0;
   static final int SELECTED = 1;
+  
+  static final int CIRCULAR_PADDING = 1;
 
   Color[] textColor = new Color[2];
   Color[] tabColor = new Color[2];
@@ -297,19 +299,20 @@ public class EditorFooter extends Box {
         FontRenderContext frc = g2.getFontRenderContext();
         final int GAP = 5;
         final String updateLabel = "Updates";
-        String updatesStr = "" + updateCount;
+        String updatesStr = " " + updateCount + " ";
         double countWidth = font.getStringBounds(updatesStr, frc).getWidth();
+        double countHeight = font.getStringBounds(updatesStr, frc).getHeight();
         if (fontAscent > countWidth) {
           countWidth = fontAscent;
         }
-        float diameter = (float) (countWidth * 1.65f);
+        float diameter = (float) (2 * (Math.max(countHeight, countWidth)/2 + CIRCULAR_PADDING));
         float ex = getWidth() - Editor.RIGHT_GUTTER - diameter;
         float ey = (getHeight() - diameter) / 2;
         g2.setColor(updateColor);
         g2.fill(new Ellipse2D.Float(ex, ey, diameter, diameter));
         g2.setColor(textColor[SELECTED]);
         int baseline = (getHeight() + fontAscent) / 2;
-        g2.drawString(updatesStr, (int) (ex + (diameter - countWidth)/2), baseline);
+        g2.drawString(updatesStr, (int) (ex + (diameter - countWidth) / 2), baseline);
         double updatesWidth = font.getStringBounds(updateLabel, frc).getWidth();
         g2.setColor(textColor[UNSELECTED]);
         updateLeft = (int) (ex - updatesWidth - GAP);
