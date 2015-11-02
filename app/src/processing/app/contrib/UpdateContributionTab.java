@@ -28,8 +28,7 @@ public class UpdateContributionTab extends ContributionTab {
 //    contributionListPanel.setBorder(new EmptyBorder(8, 8, 8, 8));
 
     statusPanel = new UpdateStatusPanel(this, 650);
-    contribListing = ContributionListing.getInstance();
-    contribListing.addListener(contributionListPanel);
+    ManagerFrame.contributionListing.addListener(contributionListPanel);
   }
 
 

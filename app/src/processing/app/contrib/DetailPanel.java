@@ -301,27 +301,6 @@ class DetailPanel {
             ((LocalContribution)contrib).setDeletionFlag(false);
             contribListing.replaceContribution(contrib,contrib);
           }
-
-          boolean isModeActive = false;
-          if (contrib.getType() == ContributionType.MODE) {
-            ModeContribution m = (ModeContribution) contrib;
-            //Iterator<Editor> iter = listPanel.contribManager.editor.getBase().getEditors().iterator();
-            //while (iter.hasNext()) {
-            // TODO there's gotta be a cleaner way to do this accessor
-            Base base = listPanel.contributionTab.editor.getBase();
-            for (Editor e : base.getEditors()) {
-              //Editor e = iter.next();
-              if (e.getMode().equals(m.getMode())) {
-                isModeActive = true;
-                break;
-              }
-            }
-          }
-          if (isModeActive) {
-          } else {
-            // TODO: remove or uncomment if the button was added
-            //listPanel.contributionTab.restartButton.setVisible(true);
-          }
         }
       };
       ((LocalContribution) contrib)
@@ -355,20 +334,6 @@ class DetailPanel {
         public void cancelAction() {
           resetInstallProgressBarState();
           removeInProgress = false;
-
-          ContributionTab contributionTab = listPanel.contributionTab;
-          if (contrib.getType() == ContributionType.MODE) {
-            ModeContribution m = (ModeContribution) contrib;
-            // TODO there's gotta be a cleaner way to do this accessor
-            for (Editor e : contributionTab.editor.getBase().getEditors()) {
-            //Iterator<Editor> iter = listPanel.contribManager.editor.getBase().getEditors().iterator();
-            //while (iter.hasNext()) {
-              //Editor e = iter.next();
-              if (e.getMode().equals(m.getMode())) {
-                break;
-              }
-            }
-          }
         }
       };
       ContributionTab contributionTab = listPanel.contributionTab;

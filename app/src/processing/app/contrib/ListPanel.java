@@ -24,16 +24,13 @@ package processing.app.contrib;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
-import java.util.Map.Entry;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.border.Border;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
 import processing.app.Base;
-import processing.app.Platform;
 import processing.app.ui.Toolkit;
 
 
@@ -148,8 +145,8 @@ implements ContributionListing.ChangeListener {
 
       @Override
       public int compare(Contribution o1, Contribution o2) {
-        return getAuthorNameWithoutMarkup(o1.getAuthorList())
-          .compareTo(getAuthorNameWithoutMarkup(o2.getAuthorList()));
+        return Toolkit.toPlainText(o1.getAuthorList())
+          .compareTo(Toolkit.toPlainText(o2.getAuthorList()));
       }
     });
     sorter.setComparator(0, new Comparator<Contribution>() {
@@ -369,7 +366,7 @@ implements ContributionListing.ChangeListener {
           label = new JLabel();
         }
         String authorList = contribution.getAuthorList();
-        String name = getAuthorNameWithoutMarkup(authorList);
+        String name = Toolkit.toPlainText(authorList);
         label.setText(name.toString());
         label.setHorizontalAlignment(SwingConstants.LEFT);
         if(!contribution.isCompatible(Base.getRevision())){
@@ -399,29 +396,6 @@ implements ContributionListing.ChangeListener {
       return Contribution.class;
     }
   }
-
-
-  String getAuthorNameWithoutMarkup(String authorList) {
-    StringBuilder name = new StringBuilder("");
-    if (authorList != null) {
-      for (int i = 0; i < authorList.length(); i++) {
-
-        if (authorList.charAt(i) == '[' || authorList.charAt(i) == ']') {
-          continue;
-        }
-        if (authorList.charAt(i) == '(') {
-          i++;
-          while (authorList.charAt(i) != ')') {
-            i++;
-          }
-        } else {
-          name.append(authorList.charAt(i));
-        }
-      }
-    }
-    return name.toString();
-  }
-
 
   void updatePanelOrdering(Set<Contribution> contributionsSet) {
     model.getDataVector().removeAllElements();

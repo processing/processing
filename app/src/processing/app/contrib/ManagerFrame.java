@@ -23,6 +23,8 @@ package processing.app.contrib;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -50,7 +52,7 @@ public class ManagerFrame {
 //  JTabbedPane tabbedPane;
   ManagerTabs tabs;
 
-  // the calling editor, so updates can be applied
+//   the calling editor, so updates can be applied
 //  Editor editor;
 
   ContributionTab librariesTab;
@@ -58,6 +60,8 @@ public class ManagerFrame {
   ContributionTab toolsTab;
   ContributionTab examplesTab;
   UpdateContributionTab updatesTab;
+  
+  static ContributionListing contributionListing;
 //  JLabel numberLabel;
 
 //  private JLabel[] tabLabels;
@@ -69,6 +73,7 @@ public class ManagerFrame {
     this.base = base;
 
 //    numberLabel = new JLabel(Toolkit.getLibIconX("manager/notification"));
+    contributionListing = ContributionListing.getInstance();
     librariesTab = new ContributionTab(this, ContributionType.LIBRARY);
     modesTab = new ContributionTab(this, ContributionType.MODE);
     toolsTab = new ContributionTab(this, ContributionType.TOOL);
@@ -353,34 +358,15 @@ public class ManagerFrame {
   }
 
 
-  // TODO move this to ContributionTab (this is handled weirdly, period) [fry]
   void downloadAndUpdateContributionListing(Base base) {
-    //activeTab is required now but should be removed
-    //as there is only one instance of contribListing and it should be present in this class
     final ContributionTab activeTab = getActiveTab();
 
     ContribProgressMonitor progress =
       new ContribProgressBar(activeTab.progressBar) {
 
       @Override
-      public void startTask(String name, int maxValue) {
-        super.startTask(name, maxValue);
-        progressBar.setVisible(true);
-        progressBar.setString(null);
-      }
-
-      @Override
-      public void setProgress(int value) {
-        super.setProgress(value);
-//        int percent = 100 * value / this.max;
-        progressBar.setValue(value);
-      }
-
-      @Override
       public void finishedAction() {
-        progressBar.setVisible(false);
-        activeTab.updateContributionListing();
-        activeTab.updateCategoryChooser();
+        updateContributionListing();
 
         if (error) {
           exception.printStackTrace();
@@ -390,7 +376,7 @@ public class ManagerFrame {
         }
       }
     };
-    activeTab.contribListing.downloadAvailableList(base, progress);
+    contributionListing.downloadAvailableList(base, progress);
   }
 
 
@@ -420,19 +406,51 @@ public class ManagerFrame {
 
   ContributionTab getActiveTab() {
     return (ContributionTab) tabs.getPanel();
-    /*
-    switch (tabbedPane.getSelectedIndex()) {
-    case 0:
-      return librariesTab;
-    case 1:
-      return modesTab;
-    case 2:
-      return toolsTab;
-    case 3:
-      return examplesTab;
-    default:
-      return updatesTab;
+  }
+  
+  protected void updateContributionListing() {
+    if (base.getActiveEditor() != null) {
+      List<Contribution> contributions = new ArrayList<Contribution>();
+
+      List<Library> libraries =
+        new ArrayList<Library>(base.getActiveEditor().getMode().contribLibraries);
+
+      // Only add core libraries that are installed in the sketchbook
+      // https://github.com/processing/processing/issues/3688
+      //libraries.addAll(editor.getMode().coreLibraries);
+      final String sketchbookPath =
+        Base.getSketchbookLibrariesFolder().getAbsolutePath();
+      for (Library lib : base.getActiveEditor().getMode().coreLibraries) {
+        if (lib.getLibraryPath().startsWith(sketchbookPath)) {
+          libraries.add(lib);
+        }
+      }
+
+      contributions.addAll(libraries);
+
+      List<ToolContribution> tools = base.getToolContribs();
+      contributions.addAll(tools);
+
+      List<ModeContribution> modes = base.getModeContribs();
+      contributions.addAll(modes);
+
+      List<ExamplesContribution> examples = base.getExampleContribs();
+      contributions.addAll(examples);
+
+//    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
+//
+//    // Remove libraries from the list that are part of a compilations
+//    for (LibraryCompilation compilation : compilations) {
+//      Iterator<Library> it = libraries.iterator();
+//      while (it.hasNext()) {
+//        Library current = it.next();
+//        if (compilation.getFolder().equals(current.getFolder().getParentFile())) {
+//          it.remove();
+//        }
+//      }
+//    }
+
+      contributionListing.updateInstalledList(contributions);
     }
-    */
   }
 }

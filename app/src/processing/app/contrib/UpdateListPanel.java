@@ -172,24 +172,7 @@ public class UpdateListPanel extends ListPanel {
           null, currentType.getPluralTitle(), null, null, null
         });
       }
-      //TODO Make this into a function
-      StringBuilder name = new StringBuilder("");
-      String authorList = entry.getAuthorList();
-      if (authorList != null) {
-        for (int i = 0; i < authorList.length(); i++) {
-          if (authorList.charAt(i) == '[' || authorList.charAt(i) == ']') {
-            continue;
-          }
-          if (authorList.charAt(i) == '(') {
-            i++;
-            while (authorList.charAt(i) != ')') {
-              i++;
-            }
-          } else {
-            name.append(authorList.charAt(i));
-          }
-        }
-      }
+      String name = Toolkit.toPlainText(entry.getAuthorList());
       Icon icon = null;
       if (entry.isInstalled()) {
         icon = upToDateIcon;
@@ -205,7 +188,7 @@ public class UpdateListPanel extends ListPanel {
         "<html>" + fontFace + entry.getName() + "</font></html>",
         name,
         entry.getPrettyVersion(),
-        contributionTab.contribListing.getLatestVersion(entry)
+        ManagerFrame.contributionListing.getLatestVersion(entry)
       });
     }
     UpdateContributionTab tab = (UpdateContributionTab) contributionTab;
