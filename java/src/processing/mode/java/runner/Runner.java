@@ -115,8 +115,8 @@ public class Runner implements MessageConsumer {
   }
 
 
-  public VirtualMachine launch(String[] args) {
-    if (launchVirtualMachine(false, args)) {
+  public VirtualMachine launch(String[] args, final boolean quiet) {
+    if (launchVirtualMachine(false, args, quiet)) {
       generateTrace();
     }
     return vm;
@@ -124,7 +124,7 @@ public class Runner implements MessageConsumer {
 
 
   public VirtualMachine present(String[] args) {
-    if (launchVirtualMachine(true, args)) {
+    if (launchVirtualMachine(true, args, false)) {
       generateTrace();
     }
     return vm;
@@ -144,7 +144,7 @@ public class Runner implements MessageConsumer {
    * @return debuggee VM or null on failure
    */
   public VirtualMachine debug(String[] args) {
-    if (launchVirtualMachine(false, args)) {  // will return null on failure
+    if (launchVirtualMachine(false, args, false)) {  // will return null on failure
       redirectStreams(vm);
     }
     return vm;
@@ -172,7 +172,7 @@ public class Runner implements MessageConsumer {
   }
 
 
-  public boolean launchVirtualMachine(boolean present, String[] args) {
+  public boolean launchVirtualMachine(boolean present, String[] args, boolean quiet) {
     StringList vmParams = getMachineParams();
     StringList sketchParams = getSketchParams(present, args);
 //    PApplet.printArray(sketchParams);
@@ -184,6 +184,9 @@ public class Runner implements MessageConsumer {
 //    String debugArg = "-Xdebug";
     // Newer (Java 1.5+) version that uses JVMTI
     String jdwpArg = "-agentlib:jdwp=transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
+    if (quiet) {
+      jdwpArg = jdwpArg + ",quiet=y";
+    }
 
     // Everyone works the same under Java 7 (also on OS X)
     StringList commandArgs = new StringList();

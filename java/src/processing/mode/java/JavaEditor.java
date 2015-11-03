@@ -1096,7 +1096,7 @@ public class JavaEditor extends Editor {
           try {
             toolbar.activateRun();
             //runtime = jmode.handleRun(sketch, JavaEditor.this);
-            runtime = jmode.handleLaunch(sketch, JavaEditor.this, false);
+            runtime = jmode.handleLaunch(sketch, JavaEditor.this, false, false);
           } catch (Exception e) {
             statusError(e);
           }
@@ -1113,7 +1113,7 @@ public class JavaEditor extends Editor {
         try {
           toolbar.activateRun();
           //runtime = jmode.handlePresent(sketch, JavaEditor.this);
-          runtime = jmode.handleLaunch(sketch, JavaEditor.this, true);
+          runtime = jmode.handleLaunch(sketch, JavaEditor.this, true, false);
         } catch (Exception e) {
           statusError(e);
         }
