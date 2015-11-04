@@ -58,6 +58,7 @@ public class Commander implements RunnerListener {
   static final String noJavaArg = "--no-java";
   static final String platformArg = "--platform=";
   static final String bitsArg = "--bits=";
+  static final String quietArg = "--quiet";
 //  static final String preferencesArg = "--preferences=";
 
   static final int HELP = -1;
@@ -95,6 +96,7 @@ public class Commander implements RunnerListener {
     File outputFolder = null;
     boolean outputSet = false;  // set an output folder
     boolean force = false;  // replace that no good output folder
+    boolean quiet = false;  // print dt_socket and "Finished" by default
 //    String preferencesPath = null;
     int platform = PApplet.platform; // default to this platform
 //    int platformBits = Base.getNativeBits();
@@ -185,6 +187,9 @@ public class Commander implements RunnerListener {
 
       } else if (arg.equals(forceArg)) {
         force = true;
+ 
+      } else if (arg.equals(quietArg)) {
+        quiet = true;
 
       } else {
         complainAndQuit("I don't know anything about " + arg + ".", true);
@@ -273,7 +278,7 @@ public class Commander implements RunnerListener {
               if (task == PRESENT) {
                 runner.present(sketchArgs);
               } else {
-                runner.launch(sketchArgs);
+                runner.launch(sketchArgs, quiet);
               }
               success = !runner.vmReturnedError();
             }
@@ -296,7 +301,9 @@ public class Commander implements RunnerListener {
         if (!success) {  // error already printed
           System.exit(1);
         }
-        systemOut.println("Finished.");
+        if (!quiet) {
+          systemOut.println("Finished.");
+        }
         System.exit(0);
 
       } catch (SketchException re) {
@@ -382,6 +389,8 @@ public class Commander implements RunnerListener {
     out.println("--no-java            Do not embed Java. Use at your own risk!");
     out.println("--platform           Specify the platform (export to application only).");
     out.println("                     Should be one of 'windows', 'macosx', or 'linux'.");
+    out.println();
+    out.println("--quiet              Do not print dt_socket port number.");
 //    out.println("--bits               Must be specified if libraries are used that are");
 //    out.println("                     32- or 64-bit specific such as the OpenGL library.");
 //    out.println("                     Otherwise specify 0 or leave it out.");
