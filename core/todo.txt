@@ -1,4 +1,5 @@
 0248 (3.0.2)
+X Fix another "Zero length string passed to TextLayout constructor" error
 
 andres
 X Stop button in OpenGL exported applications does not use preference settings
