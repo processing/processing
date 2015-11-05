@@ -1942,6 +1942,10 @@ public class PGraphicsJava2D extends PGraphics {
     if (textFont == null) {
       defaultFontOrDeath("textWidth");
     }
+    // Avoid "Zero length string passed to TextLayout constructor" error
+    if (start == stop) {
+      return 0;
+    }
 
     Font font = (Font) textFont.getNative();
 //    System.out.println(font);

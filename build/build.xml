@@ -561,7 +561,8 @@
 
       <!-- Sets dock icon when debugging (not launched via launch svcs) -->
       <option value="-Xdock:icon=$APP_ROOT/Contents/Resources/processing.icns" />
-      <!-- Don't think these actually make any difference. -->
+      <!-- Don't think these actually make any difference. 
+           (The apple.awt.application.name property is used.)-->
       <!--
       <option value="-Xdock:name=Processing" />
       -->
