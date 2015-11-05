@@ -1810,7 +1810,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void clearDepth(float d) {
-    gl.glClearDepthf(d);
+    gl.glClearDepth(d);
   }
 
   @Override
