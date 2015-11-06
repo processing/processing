@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import java.io.*;
+
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
@@ -1696,6 +1698,17 @@ public class JEditTextArea extends JComponent
         sb.append(selection);
 
       clipboard.setContents(new StringSelection(sb.toString()), null);
+      // Writing the selection to the localClipboard.txt file in case
+      // the user closes the Processing environment
+      try {
+          File file = new File("lib/localClipboard.txt");
+          PrintWriter writer = new PrintWriter(file);
+          writer.print(sb.toString());
+          writer.close();
+      }
+      catch (FileNotFoundException e) {
+        System.out.println("localClipboard not found!");
+      }
     }
   }
 
@@ -1859,15 +1872,54 @@ public class JEditTextArea extends JComponent
 
 
   /**
-   * Inserts the clipboard contents into the text.
+   * Inserts the System Clipboard or Local Clipboard contents into the text.
    */
   public void paste() {
 //    System.out.println("focus owner is: " + isFocusOwner());
+    String selection;
     if (editable) {
       Clipboard clipboard = getToolkit().getSystemClipboard();
+      selection = "";
       try {
-        String selection =
-          ((String) clipboard.getContents(this).getTransferData(DataFlavor.stringFlavor));
+        // Internal try block to check for SystemClipboard and
+        // LocalClipboard Contents.
+        try {
+          selection = ((String) clipboard.getContents(this)
+              .getTransferData(DataFlavor.stringFlavor));
+          // Emptying the contents of the localClipboard.txt file
+          File file = new File("lib/localClipboard.txt");
+          PrintWriter writer = new PrintWriter(file);
+          writer.print("");
+          writer.close();
+
+        } catch (Exception e) {
+            // Opening the localClipboard.txt file to check for it's
+            // contents after SystemClipboard is found empty.
+            File file = new File("lib/localClipboard.txt");
+            if (file.length() == 0) {
+              // Throwing an expection to the outer catch block
+              // if both localClipboard and SystemClipboard are found empty
+              throw new Exception("Both System and Local Clipboards are Empty");
+            }
+
+            // If there is content to be pasted in localClipboard.txt file
+            if (file.length() != 0) {
+              FileInputStream fis = new FileInputStream(file);
+              byte[] data = new byte[(int) file.length()];
+              fis.read(data);
+              fis.close();
+
+              // Copying the contents of the localClipboard.txt file into selection and
+              // into systemClipboard
+              selection = new String(data, "UTF-8");
+
+              clipboard.setContents(new StringSelection(selection), null);
+              // Emptying the contents of the localClipboard.txt file
+              PrintWriter writer = new PrintWriter(file);
+              writer.print("");
+              writer.close();
+            }
+        }
 
         if (selection.contains("\r\n")) {
           selection = selection.replaceAll("\r\n", "\n");
@@ -1922,7 +1974,6 @@ public class JEditTextArea extends JComponent
             ex.printStackTrace();
           }
         }
-
       }
     }
   }
