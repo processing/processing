@@ -25,7 +25,7 @@ ln -sf ../lib/processing/processing /usr/local/bin/processing
 ln -sf ../lib/processing/processing-java /usr/local/bin/processing-java
 
 # this assumes that the desktop manager picks up .desktop files in /usr/local/share/applications
-mkdir /usr/local/share/applications
+mkdir -p /usr/local/share/applications
 curl -sL https://raw.githubusercontent.com/processing/processing/master/build/linux/processing.desktop > /usr/local/share/applications/processing.desktop
 sed -i "s/@version@/$VER/" /usr/local/share/applications/processing.desktop
 sed -i 's|/opt/processing|/usr/local/lib/processing|' /usr/local/share/applications/processing.desktop
