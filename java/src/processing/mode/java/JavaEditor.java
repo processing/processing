@@ -1178,11 +1178,11 @@ public class JavaEditor extends Editor {
       Logger.getLogger(getClass().getName()).log(Level.INFO, "Invoked 'Step Over' menu item");
       debugger.stepOver();
 
-    } else if ((modifiers & KeyEvent.SHIFT_DOWN_MASK) != 0) {
+    } else if ((modifiers & ActionEvent.SHIFT_MASK) != 0) {
       Logger.getLogger(getClass().getName()).log(Level.INFO, "Invoked 'Step Into' menu item");
       debugger.stepInto();
 
-    } else if ((modifiers & KeyEvent.ALT_DOWN_MASK) != 0) {
+    } else if ((modifiers & ActionEvent.ALT_MASK) != 0) {
       Logger.getLogger(getClass().getName()).log(Level.INFO, "Invoked 'Step Out' menu item");
       debugger.stepOut();
     }
@@ -1494,7 +1494,7 @@ public class JavaEditor extends Editor {
     item = Toolkit.newJMenuItemShift(Language.text("menu.debug.step_into"), KeyEvent.VK_J);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleStep(KeyEvent.SHIFT_DOWN_MASK);
+          handleStep(ActionEvent.SHIFT_MASK);
         }
       });
     debugMenu.add(item);
@@ -1503,7 +1503,7 @@ public class JavaEditor extends Editor {
     item = Toolkit.newJMenuItemAlt(Language.text("menu.debug.step_out"), KeyEvent.VK_J);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleStep(KeyEvent.ALT_DOWN_MASK);
+          handleStep(ActionEvent.ALT_MASK);
         }
       });
     debugMenu.add(item);
