@@ -22,6 +22,7 @@ package processing.mode.java;
 
 import com.sun.jdi.*;
 import com.sun.jdi.event.*;
+import com.sun.jdi.event.Event;
 import com.sun.jdi.request.*;
 
 import java.io.*;
@@ -661,7 +662,12 @@ public class Debugger implements VMEventListener {
     // disallow stepping into invisible lines
     if (!locationIsVisible(se.location())) {
       // TODO: this leads to stepping, should it run on the EDT?
-      stepOutIntoViewOrContinue();
+      javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          stepOutIntoViewOrContinue();
+        }
+      });
     }
   }
 
