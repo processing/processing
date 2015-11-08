@@ -920,7 +920,8 @@ public class Debugger implements VMEventListener {
       if (!t.isSuspended() || t.frameCount() == 0) {
         return "";
       }
-      return t.frame(0).thisObject().referenceType().name();
+      ObjectReference ref = t.frame(0).thisObject();
+      return ref == null ? "" : ref.referenceType().name();
 
     } catch (IncompatibleThreadStateException ex) {
       log(Level.SEVERE, null, ex);
