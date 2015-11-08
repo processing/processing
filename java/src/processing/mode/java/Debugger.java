@@ -22,7 +22,6 @@ package processing.mode.java;
 
 import com.sun.jdi.*;
 import com.sun.jdi.event.*;
-import com.sun.jdi.event.Event;
 import com.sun.jdi.request.*;
 
 import java.io.*;
@@ -72,28 +71,25 @@ public class Debugger implements VMEventListener {
   protected ReferenceType mainClass;
 
   /// holds all loaded classes in the debuggee VM
-  protected Set<ReferenceType> classes = new HashSet<ReferenceType>();
+  protected Set<ReferenceType> classes = new HashSet<>();
 
   /// listeners for class load events
-  protected List<ClassLoadListener> classLoadListeners =
-    new ArrayList<ClassLoadListener>();
+  protected List<ClassLoadListener> classLoadListeners = new ArrayList<>();
 
   /// path to the src folder of the current build
   protected String srcPath;
 
   /// list of current breakpoints
-  protected List<LineBreakpoint> breakpoints =
-    new ArrayList<LineBreakpoint>();
+  protected List<LineBreakpoint> breakpoints = new ArrayList<>();
 
   /// the step request we are currently in, or null if not in a step
   protected StepRequest requestedStep;
 
   /// maps line number changes at runtime (orig -> changed)
-  protected Map<LineID, LineID> runtimeLineChanges =
-    new HashMap<LineID, LineID>();
+  protected Map<LineID, LineID> runtimeLineChanges = new HashMap<>();
 
   /// tab filenames which already have been tracked for runtime changes
-  protected Set<String> runtimeTabsTracked = new HashSet<String>();
+  protected Set<String> runtimeTabsTracked = new HashSet<>();
 
 
   public Debugger(JavaEditor editor) {
@@ -521,7 +517,7 @@ public class Debugger implements VMEventListener {
    * @return the list of breakpoints in the given tab
    */
   synchronized List<LineBreakpoint> getBreakpoints(String tabFilename) {
-    List<LineBreakpoint> list = new ArrayList<LineBreakpoint>();
+    List<LineBreakpoint> list = new ArrayList<>();
     for (LineBreakpoint bp : breakpoints) {
       if (bp.lineID().fileName().equals(tabFilename)) {
         list.add(bp);
@@ -973,7 +969,7 @@ public class Debugger implements VMEventListener {
    */
   protected List<VariableNode> getLocals(ThreadReference t, int depth) {
     //System.out.println("getting locals");
-    List<VariableNode> vars = new ArrayList<VariableNode>();
+    List<VariableNode> vars = new ArrayList<>();
     try {
       if (t.frameCount() > 0) {
         StackFrame sf = t.frame(0);
@@ -1015,7 +1011,7 @@ public class Debugger implements VMEventListener {
     } catch (IncompatibleThreadStateException ex) {
       log(Level.SEVERE, null, ex);
     }
-    return new ArrayList<VariableNode>();
+    return new ArrayList<>();
   }
 
 
@@ -1030,7 +1026,7 @@ public class Debugger implements VMEventListener {
   protected List<VariableNode> getFields(Value value, int depth, int maxDepth,
                                          boolean includeInherited) {
     // remember: Value <- ObjectReference, ArrayReference
-    List<VariableNode> vars = new ArrayList<VariableNode>();
+    List<VariableNode> vars = new ArrayList<>();
     if (depth <= maxDepth) {
       if (value instanceof ArrayReference) {
         return getArrayFields((ArrayReference) value);
@@ -1072,7 +1068,7 @@ public class Debugger implements VMEventListener {
    * @return list of array fields
    */
   protected List<VariableNode> getArrayFields(ArrayReference array) {
-    List<VariableNode> fields = new ArrayList<VariableNode>();
+    List<VariableNode> fields = new ArrayList<>();
     if (array != null) {
       String arrayType = array.type().name();
       if (arrayType.endsWith("[]")) {
@@ -1096,7 +1092,7 @@ public class Debugger implements VMEventListener {
    * @return call stack as list of {@link DefaultMutableTreeNode}s
    */
   protected List<DefaultMutableTreeNode> getStackTrace(ThreadReference t) {
-    List<DefaultMutableTreeNode> stack = new ArrayList<DefaultMutableTreeNode>();
+    List<DefaultMutableTreeNode> stack = new ArrayList<>();
     try {
       for (StackFrame f : t.frames()) {
         stack.add(new DefaultMutableTreeNode(locationToString(f.location())));
