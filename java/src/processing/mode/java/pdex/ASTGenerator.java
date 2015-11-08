@@ -2495,6 +2495,7 @@ public class ASTGenerator {
 
   protected static ASTNode findLineOfNode(ASTNode node, int lineNumber,
                                         int offset, String name) {
+    if (node == null) return null;
 
     CompilationUnit root = (CompilationUnit) node.getRoot();
 //    log("Inside "+getNodeAsString(node) + " | " + root.getLineNumber(node.getStartPosition()));
