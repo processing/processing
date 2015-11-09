@@ -447,36 +447,35 @@ public class JavaTextAreaPainter extends TextAreaPainter
   @Override
   public String getToolTipText(MouseEvent evt) {
     int line = evt.getY() / getFontMetrics().getHeight() + textArea.getFirstLine();
-    if (line < 0 || line > textArea.getLineCount() - 1) {
-      return null;
-    }
+    if (line >= 0 || line < textArea.getLineCount()) {
+      LineMarker marker = getJavaEditor().findError(line);
+      if (marker != null) {
+        Problem problem = marker.getProblem();
 
-    LineMarker marker = getJavaEditor().findError(line);
-    if (marker != null) {
-      Problem problem = marker.getProblem();
+        int lineOffset = textArea.getLineStartOffset(problem.getLineNumber());
 
-      int lineOffset = textArea.getLineStartOffset(problem.getLineNumber());
+        int lineStart = textArea.getLineStartOffset(line);
+        int lineEnd = textArea.getLineStopOffset(line);
 
-      int lineStart = textArea.getLineStartOffset(line);
-      int lineEnd = textArea.getLineStopOffset(line);
+        int errorStart = lineOffset + problem.getPDELineStartOffset();
+        int errorEnd = lineOffset + problem.getPDELineStopOffset() + 1;
 
-      int errorStart = lineOffset + problem.getPDELineStartOffset();
-      int errorEnd = lineOffset + problem.getPDELineStopOffset() + 1;
+        int startOffset = Math.max(errorStart, lineStart) - lineStart;
+        int stopOffset = Math.min(errorEnd, lineEnd) - lineStart;
 
-      int startOffset = Math.max(errorStart, lineStart) - lineStart;
-      int stopOffset = Math.min(errorEnd, lineEnd) - lineStart;
+        int x = evt.getX();
 
-      int x = evt.getX();
-
-      if (x >= getJavaTextArea().offsetToX(line, startOffset) &&
-          x <= getJavaTextArea().offsetToX(line, stopOffset)) {
-        getJavaEditor().statusToolTip(JavaTextAreaPainter.this,
-                                      problem.getMessage(),
-                                      problem.isError());
-        return super.getToolTipText();
+        if (x >= getJavaTextArea().offsetToX(line, startOffset) &&
+            x <= getJavaTextArea().offsetToX(line, stopOffset)) {
+          getJavaEditor().statusToolTip(JavaTextAreaPainter.this,
+                                        problem.getMessage(),
+                                        problem.isError());
+          return super.getToolTipText(evt);
+        }
       }
     }
-    return null;
+    setToolTipText(null);
+    return super.getToolTipText(evt);
   }
 
 
