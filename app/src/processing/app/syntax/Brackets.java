@@ -51,7 +51,7 @@ public class Brackets {
       return -1;
     }
 
-    if (offsets == null)
+    if (offsets == null || offsets.get(offsets.size()-1) >= text.length())
       parse(text);
     
     // find this bracket
