@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # This script installs the latest version of Processing for ARM into /usr/local/lib
-# Run it like this: "curl http://sukzessiv.net/~gohai/p5-arm/install-arm.sh | sudo sh"
+# Run it like this: "curl https://download.processing.org/install-arm.sh | sudo sh"
 
 # this assumes that newer releases are at the top
 TAR="$(curl -sL https://api.github.com/repos/processing/processing/releases | grep -oh -m 1 'https.*linux-armv6hf.tgz')"
