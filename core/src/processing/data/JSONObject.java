@@ -592,7 +592,7 @@ public class JSONObject {
    *
    * @webref jsonobject:method
    * @brief Gets the int value associated with a key
-   * @param key a key string
+   * @param key A key string.
    * @return The integer value.
    * @throws JSONException if the key is not found or if the value cannot
    *  be converted to an integer.
@@ -900,8 +900,10 @@ public class JSONObject {
 
 
   /**
-   * Determine if the value associated with the key is null or if there is
-   *  no value.
+   * Determine if the value associated with the key is null or if there is 
+   * no value.
+   * 
+   * @webref
    * @param key   A key string.
    * @return      true if there is no value associated with the key or if
    *  the value is the JSONObject.NULL object.
