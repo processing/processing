@@ -5973,6 +5973,8 @@ public class PApplet implements PConstants {
    * (in terms of speed and memory usage) for loading and parsing tables. The
    * dictionary file can only be tab separated values (.tsv) and its extension
    * will be ignored. This option was added in Processing 2.0.2.
+   *
+   * @param options may contain "header", "tsv", "csv", or "bin" separated by commas
    */
   public Table loadTable(String filename, String options) {
     try {
