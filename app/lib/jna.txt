@@ -1,2 +1,2 @@
-The JAR file is JNA 3.5.2 (presumably) downloaded from 
-https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/3.5.2/
+The JAR file is JNA 4.2.1 downloaded from 
+https://github.com/java-native-access/jna/archive/4.2.1.tar.gz
