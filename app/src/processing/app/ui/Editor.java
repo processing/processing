@@ -297,6 +297,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
       String lastText = textarea.getText();
       public void caretUpdate(CaretEvent e) {
         String newText = textarea.getText();
+        //Updates the Cursor Index Location values in the EditorStatus Bar
+        status.updateCursorIndexValues();
+
         if (lastText.equals(newText) && isDirectEdit()) {
           endTextEditHistory();
         }
