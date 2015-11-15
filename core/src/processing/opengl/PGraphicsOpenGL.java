@@ -9764,7 +9764,7 @@ public class PGraphicsOpenGL extends PGraphics {
         trimPolySpecular();
         trimPolyEmissive();
         trimPolyShininess();
-        trimAttributes();
+        trimPolyAttributes();
       }
 
       if (0 < polyIndexCount && polyIndexCount < polyIndices.length) {
@@ -9848,7 +9848,7 @@ public class PGraphicsOpenGL extends PGraphics {
       polyShininessBuffer = PGL.allocateFloatBuffer(polyShininess);
     }
 
-    void trimAttributes() {
+    void trimPolyAttributes() {
       for (String name: polyAttribs.keySet()) {
         VertexAttribute attrib = polyAttribs.get(name);
         if (attrib.type == PGL.FLOAT) {

@@ -3879,7 +3879,7 @@ public class PShapeOpenGL extends PShape {
       if (!attrib.bufferCreated()) attrib.createBuffer(pgl);
       pgl.bindBuffer(PGL.ARRAY_BUFFER, attrib.buf.glId);
       pgl.bufferData(PGL.ARRAY_BUFFER, attrib.sizeInBytes(size),
-                     tessGeo.polyAttribBuffers.get(name), PGL.STATIC_DRAW);
+                     tessGeo.polyAttribBuffers.get(name), glUsage);
     }
 
     pgl.bindBuffer(PGL.ARRAY_BUFFER, 0);
