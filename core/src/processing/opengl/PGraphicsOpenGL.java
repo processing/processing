@@ -10334,245 +10334,270 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void addPolyVertices(InGeometry in, int i0, int i1, boolean clampXY) {
-      int index;
+      int index = 0;
       int nvert = i1 - i0 + 1;
 
       polyVertexCheck(nvert);
 
       if (renderMode == IMMEDIATE && pg.flushMode == FLUSH_WHEN_FULL) {
-        PMatrix3D mm = pg.modelview;
-        PMatrix3D nm = pg.modelviewInv;
-
-        for (int i = 0; i < nvert; i++) {
-          int inIdx = i0 + i;
-          int tessIdx = firstPolyVertex + i;
-
-          index = 3 * inIdx;
-          float x = in.vertices[index++];
-          float y = in.vertices[index++];
-          float z = in.vertices[index  ];
-
-          index = 3 * inIdx;
-          float nx = in.normals[index++];
-          float ny = in.normals[index++];
-          float nz = in.normals[index  ];
-
-          index = 4 * tessIdx;
-          if (clampXY) {
-            // ceil emulates the behavior of JAVA2D
-            polyVertices[index++] =
-              PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
-            polyVertices[index++] =
-              PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
-          } else {
-            polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
-            polyVertices[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
-          }
-          polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
-          polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
-
-          index = 3 * tessIdx;
-          polyNormals[index++] = nx*nm.m00 + ny*nm.m10 + nz*nm.m20;
-          polyNormals[index++] = nx*nm.m01 + ny*nm.m11 + nz*nm.m21;
-          polyNormals[index  ] = nx*nm.m02 + ny*nm.m12 + nz*nm.m22;
-
-          for (String name: polyAttribs.keySet()) {
-            VertexAttribute attrib = polyAttribs.get(name);
-            if (attrib.isColor() || attrib.isOther()) continue;
-
-            float[] inValues = in.fattribs.get(name);
-            index = 3 * inIdx;
-            x = inValues[index++];
-            y = inValues[index++];
-            z = inValues[index  ];
-
-            float[] tessValues = fpolyAttribs.get(name);
-            if (attrib.isPosition()) {
-              index = 4 * tessIdx;
-              if (clampXY) {
-                // ceil emulates the behavior of JAVA2D
-                tessValues[index++] =
-                  PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
-                tessValues[index++] =
-                  PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
-              } else {
-                tessValues[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
-                tessValues[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
-              }
-              tessValues[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
-              tessValues[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
-            } else {
-              index = 3 * tessIdx;
-              tessValues[index++] = x*nm.m00 + y*nm.m10 + z*nm.m20;
-              tessValues[index++] = x*nm.m01 + y*nm.m11 + z*nm.m21;
-              tessValues[index  ] = x*nm.m02 + y*nm.m12 + z*nm.m22;
-            }
-          }
-        }
+        modelviewCoords(in, i0, index, nvert, clampXY);
       } else {
         if (nvert <= PGL.MIN_ARRAYCOPY_SIZE) {
-          // Copying elements one by one instead of using arrayCopy is more
-          // efficient for few vertices...
-          for (int i = 0; i < nvert; i++) {
-            int inIdx = i0 + i;
-            int tessIdx = firstPolyVertex + i;
-
-            index = 3 * inIdx;
-            float x = in.vertices[index++];
-            float y = in.vertices[index++];
-            float z = in.vertices[index  ];
-
-            index = 3 * inIdx;
-            float nx = in.normals[index++];
-            float ny = in.normals[index++];
-            float nz = in.normals[index  ];
-
-            index = 4 * tessIdx;
-            polyVertices[index++] = x;
-            polyVertices[index++] = y;
-            polyVertices[index++] = z;
-            polyVertices[index  ] = 1;
-
-            index = 3 * tessIdx;
-            polyNormals[index++] = nx;
-            polyNormals[index++] = ny;
-            polyNormals[index  ] = nz;
-
-            for (String name: polyAttribs.keySet()) {
-              VertexAttribute attrib = polyAttribs.get(name);
-              if (attrib.isColor() || attrib.isOther()) continue;
-
-              float[] inValues = in.fattribs.get(name);
-              index = 3 * inIdx;
-              x = inValues[index++];
-              y = inValues[index++];
-              z = inValues[index  ];
-
-              float[] tessValues = fpolyAttribs.get(name);
-              if (attrib.isPosition()) {
-                index = 4 * tessIdx;
-                tessValues[index++] = x;
-                tessValues[index++] = y;
-                tessValues[index++] = z;
-                tessValues[index  ] = 1;
-              } else {
-                index = 3 * tessIdx;
-                tessValues[index++] = x;
-                tessValues[index++] = y;
-                tessValues[index  ] = z;
-              }
-            }
-          }
+          copyFewCoords(in, i0, index, nvert);
         } else {
-          for (int i = 0; i < nvert; i++) {
-            int inIdx = i0 + i;
-            int tessIdx = firstPolyVertex + i;
-            PApplet.arrayCopy(in.vertices, 3 * inIdx,
-                              polyVertices, 4 * tessIdx, 3);
-            polyVertices[4 * tessIdx + 3] = 1;
-
-            for (String name: polyAttribs.keySet()) {
-              VertexAttribute attrib = polyAttribs.get(name);
-              if (!attrib.isPosition()) continue;
-              float[] inValues = in.fattribs.get(name);
-              float[] tessValues = fpolyAttribs.get(name);
-              PApplet.arrayCopy(inValues, 3 * inIdx,
-                                tessValues, 4 * tessIdx, 3);
-              tessValues[4 * tessIdx + 3] = 1;
-            }
-          }
-          PApplet.arrayCopy(in.normals, 3 * i0,
-                            polyNormals, 3 * firstPolyVertex, 3 * nvert);
-          for (String name: polyAttribs.keySet()) {
-            VertexAttribute attrib = polyAttribs.get(name);
-            if (!attrib.isPosition()) continue;
-            float[] inValues = in.fattribs.get(name);
-            float[] tessValues = fpolyAttribs.get(name);
-            PApplet.arrayCopy(inValues, 3 * i0,
-                              tessValues, 3 * firstPolyVertex, 3 * nvert);
-          }
+          copyManyCoords(in, i0, index, nvert);
         }
       }
 
       if (nvert <= PGL.MIN_ARRAYCOPY_SIZE) {
-        for (int i = 0; i < nvert; i++) {
-          int inIdx = i0 + i;
-          int tessIdx = firstPolyVertex + i;
+        copyFewAttribs(in, i0, index, nvert);
+      } else {
+        copyManyAttribs(in, i0, index, nvert);
+      }
+    }
 
-          index = 2 * inIdx;
-          float u = in.texcoords[index++];
-          float v = in.texcoords[index  ];
+    // Apply modelview transformation on the vertices
+    private void modelviewCoords(InGeometry in, int i0, int index, int nvert, boolean clampXY) {
+      PMatrix3D mm = pg.modelview;
+      PMatrix3D nm = pg.modelviewInv;
 
-          polyColors[tessIdx] = in.colors[inIdx];
+      for (int i = 0; i < nvert; i++) {
+        int inIdx = i0 + i;
+        int tessIdx = firstPolyVertex + i;
 
-          index = 2 * tessIdx;
-          polyTexCoords[index++] = u;
-          polyTexCoords[index  ] = v;
+        index = 3 * inIdx;
+        float x = in.vertices[index++];
+        float y = in.vertices[index++];
+        float z = in.vertices[index  ];
 
-          polyAmbient[tessIdx] = in.ambient[inIdx];
-          polySpecular[tessIdx] = in.specular[inIdx];
-          polyEmissive[tessIdx] = in.emissive[inIdx];
-          polyShininess[tessIdx] = in.shininess[inIdx];
+        index = 3 * inIdx;
+        float nx = in.normals[index++];
+        float ny = in.normals[index++];
+        float nz = in.normals[index  ];
 
-          for (String name: polyAttribs.keySet()) {
-            VertexAttribute attrib = polyAttribs.get(name);
-            if (attrib.isPosition() || attrib.isNormal()) continue;
-            int index0 = attrib.size * inIdx;
-            int index1 = attrib.size * tessIdx;
-            if (attrib.isFloat()) {
-              float[] inValues = in.fattribs.get(name);
-              float[] tessValues = fpolyAttribs.get(name);
-              for (int n = 0; n < attrib.size; n++) {
-                tessValues[index1++] = inValues[index0++];
-              }
-            } else if (attrib.isInt()) {
-              int[] inValues = in.iattribs.get(name);
-              int[] tessValues = ipolyAttribs.get(name);
-              for (int n = 0; n < attrib.size; n++) {
-                tessValues[index1++] = inValues[index0++];
-              }
-            } else if (attrib.isBool()) {
-              byte[] inValues = in.battribs.get(name);
-              byte[] tessValues = bpolyAttribs.get(name);
-              for (int n = 0; n < attrib.size; n++) {
-                tessValues[index1++] = inValues[index0++];
-              }
+        index = 4 * tessIdx;
+        if (clampXY) {
+          // ceil emulates the behavior of JAVA2D
+          polyVertices[index++] =
+            PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
+          polyVertices[index++] =
+            PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
+        } else {
+          polyVertices[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
+          polyVertices[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
+        }
+        polyVertices[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
+        polyVertices[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
+
+        index = 3 * tessIdx;
+        polyNormals[index++] = nx*nm.m00 + ny*nm.m10 + nz*nm.m20;
+        polyNormals[index++] = nx*nm.m01 + ny*nm.m11 + nz*nm.m21;
+        polyNormals[index  ] = nx*nm.m02 + ny*nm.m12 + nz*nm.m22;
+
+        for (String name: polyAttribs.keySet()) {
+          VertexAttribute attrib = polyAttribs.get(name);
+          if (attrib.isColor() || attrib.isOther()) continue;
+
+          float[] inValues = in.fattribs.get(name);
+          index = 3 * inIdx;
+          x = inValues[index++];
+          y = inValues[index++];
+          z = inValues[index  ];
+
+          float[] tessValues = fpolyAttribs.get(name);
+          if (attrib.isPosition()) {
+            index = 4 * tessIdx;
+            if (clampXY) {
+              // ceil emulates the behavior of JAVA2D
+              tessValues[index++] =
+                PApplet.ceil(x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03);
+              tessValues[index++] =
+                PApplet.ceil(x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13);
+            } else {
+              tessValues[index++] = x*mm.m00 + y*mm.m01 + z*mm.m02 + mm.m03;
+              tessValues[index++] = x*mm.m10 + y*mm.m11 + z*mm.m12 + mm.m13;
             }
+            tessValues[index++] = x*mm.m20 + y*mm.m21 + z*mm.m22 + mm.m23;
+            tessValues[index  ] = x*mm.m30 + y*mm.m31 + z*mm.m32 + mm.m33;
+          } else {
+            index = 3 * tessIdx;
+            tessValues[index++] = x*nm.m00 + y*nm.m10 + z*nm.m20;
+            tessValues[index++] = x*nm.m01 + y*nm.m11 + z*nm.m21;
+            tessValues[index  ] = x*nm.m02 + y*nm.m12 + z*nm.m22;
           }
         }
-      } else {
-        PApplet.arrayCopy(in.colors, i0,
-                          polyColors, firstPolyVertex, nvert);
-        PApplet.arrayCopy(in.texcoords, 2 * i0,
-                          polyTexCoords, 2 * firstPolyVertex, 2 * nvert);
-        PApplet.arrayCopy(in.ambient, i0,
-                          polyAmbient, firstPolyVertex, nvert);
-        PApplet.arrayCopy(in.specular, i0,
-                          polySpecular, firstPolyVertex, nvert);
-        PApplet.arrayCopy(in.emissive, i0,
-                          polyEmissive, firstPolyVertex, nvert);
-        PApplet.arrayCopy(in.shininess, i0,
-                          polyShininess, firstPolyVertex, nvert);
+      }
+    }
+
+    // Just copy vertices one by one.
+    private void copyFewCoords(InGeometry in, int i0, int index, int nvert) {
+      // Copying elements one by one instead of using arrayCopy is more
+      // efficient for few vertices...
+      for (int i = 0; i < nvert; i++) {
+        int inIdx = i0 + i;
+        int tessIdx = firstPolyVertex + i;
+
+        index = 3 * inIdx;
+        float x = in.vertices[index++];
+        float y = in.vertices[index++];
+        float z = in.vertices[index  ];
+
+        index = 3 * inIdx;
+        float nx = in.normals[index++];
+        float ny = in.normals[index++];
+        float nz = in.normals[index  ];
+
+        index = 4 * tessIdx;
+        polyVertices[index++] = x;
+        polyVertices[index++] = y;
+        polyVertices[index++] = z;
+        polyVertices[index  ] = 1;
+
+        index = 3 * tessIdx;
+        polyNormals[index++] = nx;
+        polyNormals[index++] = ny;
+        polyNormals[index  ] = nz;
+
+        for (String name: polyAttribs.keySet()) {
+          VertexAttribute attrib = polyAttribs.get(name);
+          if (attrib.isColor() || attrib.isOther()) continue;
+
+          float[] inValues = in.fattribs.get(name);
+          index = 3 * inIdx;
+          x = inValues[index++];
+          y = inValues[index++];
+          z = inValues[index  ];
+
+          float[] tessValues = fpolyAttribs.get(name);
+          if (attrib.isPosition()) {
+            index = 4 * tessIdx;
+            tessValues[index++] = x;
+            tessValues[index++] = y;
+            tessValues[index++] = z;
+            tessValues[index  ] = 1;
+          } else {
+            index = 3 * tessIdx;
+            tessValues[index++] = x;
+            tessValues[index++] = y;
+            tessValues[index  ] = z;
+          }
+        }
+      }
+    }
+
+    // Copy many vertices using arrayCopy
+    private void copyManyCoords(InGeometry in, int i0, int index, int nvert) {
+      for (int i = 0; i < nvert; i++) {
+        int inIdx = i0 + i;
+        int tessIdx = firstPolyVertex + i;
+        PApplet.arrayCopy(in.vertices, 3 * inIdx,
+                          polyVertices, 4 * tessIdx, 3);
+        polyVertices[4 * tessIdx + 3] = 1;
+
+        for (String name: polyAttribs.keySet()) {
+          VertexAttribute attrib = polyAttribs.get(name);
+          if (!attrib.isPosition()) continue;
+          float[] inValues = in.fattribs.get(name);
+          float[] tessValues = fpolyAttribs.get(name);
+          PApplet.arrayCopy(inValues, 3 * inIdx,
+                            tessValues, 4 * tessIdx, 3);
+          tessValues[4 * tessIdx + 3] = 1;
+        }
+      }
+      PApplet.arrayCopy(in.normals, 3 * i0,
+                        polyNormals, 3 * firstPolyVertex, 3 * nvert);
+      for (String name: polyAttribs.keySet()) {
+        VertexAttribute attrib = polyAttribs.get(name);
+        if (!attrib.isPosition()) continue;
+        float[] inValues = in.fattribs.get(name);
+        float[] tessValues = fpolyAttribs.get(name);
+        PApplet.arrayCopy(inValues, 3 * i0,
+                          tessValues, 3 * firstPolyVertex, 3 * nvert);
+      }
+    }
+
+    // Just copy attributes one by one.
+    private void copyFewAttribs(InGeometry in, int i0, int index, int nvert) {
+      for (int i = 0; i < nvert; i++) {
+        int inIdx = i0 + i;
+        int tessIdx = firstPolyVertex + i;
+
+        index = 2 * inIdx;
+        float u = in.texcoords[index++];
+        float v = in.texcoords[index  ];
+
+        polyColors[tessIdx] = in.colors[inIdx];
+
+        index = 2 * tessIdx;
+        polyTexCoords[index++] = u;
+        polyTexCoords[index  ] = v;
+
+        polyAmbient[tessIdx] = in.ambient[inIdx];
+        polySpecular[tessIdx] = in.specular[inIdx];
+        polyEmissive[tessIdx] = in.emissive[inIdx];
+        polyShininess[tessIdx] = in.shininess[inIdx];
 
         for (String name: polyAttribs.keySet()) {
           VertexAttribute attrib = polyAttribs.get(name);
           if (attrib.isPosition() || attrib.isNormal()) continue;
-          Object inValues = null;
-          Object tessValues = null;
+          int index0 = attrib.size * inIdx;
+          int index1 = attrib.size * tessIdx;
           if (attrib.isFloat()) {
-            inValues = in.fattribs.get(name);
-            tessValues = fpolyAttribs.get(name);
+            float[] inValues = in.fattribs.get(name);
+            float[] tessValues = fpolyAttribs.get(name);
+            for (int n = 0; n < attrib.size; n++) {
+              tessValues[index1++] = inValues[index0++];
+            }
           } else if (attrib.isInt()) {
-            inValues = in.iattribs.get(name);
-            tessValues = ipolyAttribs.get(name);
+            int[] inValues = in.iattribs.get(name);
+            int[] tessValues = ipolyAttribs.get(name);
+            for (int n = 0; n < attrib.size; n++) {
+              tessValues[index1++] = inValues[index0++];
+            }
           } else if (attrib.isBool()) {
-            inValues = in.battribs.get(name);
-            tessValues = bpolyAttribs.get(name);
+            byte[] inValues = in.battribs.get(name);
+            byte[] tessValues = bpolyAttribs.get(name);
+            for (int n = 0; n < attrib.size; n++) {
+              tessValues[index1++] = inValues[index0++];
+            }
           }
-          PApplet.arrayCopy(inValues, attrib.size * i0,
-                            tessValues, attrib.tessSize * firstPolyVertex,
-                            attrib.size * nvert);
         }
+      }
+    }
+
+    // Copy many attributes using arrayCopy()
+    private void copyManyAttribs(InGeometry in, int i0, int index, int nvert) {
+      PApplet.arrayCopy(in.colors, i0,
+                        polyColors, firstPolyVertex, nvert);
+      PApplet.arrayCopy(in.texcoords, 2 * i0,
+                        polyTexCoords, 2 * firstPolyVertex, 2 * nvert);
+      PApplet.arrayCopy(in.ambient, i0,
+                        polyAmbient, firstPolyVertex, nvert);
+      PApplet.arrayCopy(in.specular, i0,
+                        polySpecular, firstPolyVertex, nvert);
+      PApplet.arrayCopy(in.emissive, i0,
+                        polyEmissive, firstPolyVertex, nvert);
+      PApplet.arrayCopy(in.shininess, i0,
+                        polyShininess, firstPolyVertex, nvert);
+
+      for (String name: polyAttribs.keySet()) {
+        VertexAttribute attrib = polyAttribs.get(name);
+        if (attrib.isPosition() || attrib.isNormal()) continue;
+        Object inValues = null;
+        Object tessValues = null;
+        if (attrib.isFloat()) {
+          inValues = in.fattribs.get(name);
+          tessValues = fpolyAttribs.get(name);
+        } else if (attrib.isInt()) {
+          inValues = in.iattribs.get(name);
+          tessValues = ipolyAttribs.get(name);
+        } else if (attrib.isBool()) {
+          inValues = in.battribs.get(name);
+          tessValues = bpolyAttribs.get(name);
+        }
+        PApplet.arrayCopy(inValues, attrib.size * i0,
+                          tessValues, attrib.tessSize * firstPolyVertex,
+                          attrib.size * nvert);
       }
     }
 
