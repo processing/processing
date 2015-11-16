@@ -26,6 +26,15 @@ package processing.core;
 
 /**
  * 3x2 affine matrix implementation.
+ * Matrices are used to describe a transformation; see {@link PMatrix} for a
+ * general description. This matrix looks like the following when multiplying
+ * a vector (x, y) in {@code mult()}.
+ * <pre>
+ * [m00 m01 m02][x]   [m00*x + m01*y + m02*1]   [x']
+ * [m10 m11 m12][y] = [m10*x + m11*y + m12*1] = [y']
+ * [ 0   0   1 ][1]   [ 0*x  +  0*y  +  1*1 ]   [ 1]</pre>
+ * (x', y') is returned. The values in the matrix determine the transformation.
+ * They are modified by the various transformation functions.
  */
 public class PMatrix2D implements PMatrix {
 
@@ -33,6 +42,9 @@ public class PMatrix2D implements PMatrix {
   public float m10, m11, m12;
 
 
+  /**
+   * Create a new matrix, set to the identity matrix.
+   */
   public PMatrix2D() {
     reset();
   }
@@ -69,6 +81,7 @@ public class PMatrix2D implements PMatrix {
   /**
    * Copies the matrix contents into a 6 entry float array.
    * If target is null (or not the correct size), a new array will be created.
+   * Returned in the order {@code {m00, m01, m02, m10, m11, m12}}.
    */
   public float[] get(float[] target) {
     if ((target == null) || (target.length != 6)) {
@@ -86,6 +99,10 @@ public class PMatrix2D implements PMatrix {
   }
 
 
+  /**
+   * If matrix is a PMatrix2D, sets this matrix to be a copy of it.
+   * @throws IllegalArgumentException If <tt>matrix</tt> is not 2D.
+   */
   public void set(PMatrix matrix) {
     if (matrix instanceof PMatrix2D) {
       PMatrix2D src = (PMatrix2D) matrix;
@@ -97,6 +114,9 @@ public class PMatrix2D implements PMatrix {
   }
 
 
+  /**
+   * Unavailable in 2D. Does nothing.
+   */
   public void set(PMatrix3D src) {
   }
 
@@ -112,6 +132,9 @@ public class PMatrix2D implements PMatrix {
   }
 
 
+  /**
+   * Sets the matrix content.
+   */
   public void set(float m00, float m01, float m02,
                   float m10, float m11, float m12) {
     this.m00 = m00; this.m01 = m01; this.m02 = m02;
@@ -119,6 +142,9 @@ public class PMatrix2D implements PMatrix {
   }
 
 
+  /**
+   * Unavailable in 2D. Does nothing.
+   */
   public void set(float m00, float m01, float m02, float m03,
                   float m10, float m11, float m12, float m13,
                   float m20, float m21, float m22, float m23,
@@ -133,6 +159,10 @@ public class PMatrix2D implements PMatrix {
   }
 
 
+  /**
+   * Unavailable in 2D.
+   * @throws IllegalArgumentException
+   */
   public void translate(float x, float y, float z) {
     throw new IllegalArgumentException("Cannot use translate(x, y, z) on a PMatrix2D.");
   }
@@ -154,11 +184,19 @@ public class PMatrix2D implements PMatrix {
   }
 
 
+  /**
+   * Unavailable in 2D.
+   * @throws IllegalArgumentException
+   */
   public void rotateX(float angle) {
     throw new IllegalArgumentException("Cannot use rotateX() on a PMatrix2D.");
   }
 
 
+  /**
+   * Unavailable in 2D.
+   * @throws IllegalArgumentException
+   */
   public void rotateY(float angle) {
     throw new IllegalArgumentException("Cannot use rotateY() on a PMatrix2D.");
   }
@@ -169,6 +207,10 @@ public class PMatrix2D implements PMatrix {
   }
 
 
+  /**
+   * Unavailable in 2D.
+   * @throws IllegalArgumentException
+   */
   public void rotate(float angle, float v0, float v1, float v2) {
     throw new IllegalArgumentException("Cannot use this version of rotate() on a PMatrix2D.");
   }
@@ -185,6 +227,10 @@ public class PMatrix2D implements PMatrix {
   }
 
 
+  /**
+   * Unavailable in 2D.
+   * @throws IllegalArgumentException
+   */
   public void scale(float x, float y, float z) {
     throw new IllegalArgumentException("Cannot use this version of scale() on a PMatrix2D.");
   }
@@ -215,6 +261,10 @@ public class PMatrix2D implements PMatrix {
   }
 
 
+  /**
+   * Unavailable in 2D.
+   * @throws IllegalArgumentException
+   */
   public void apply(PMatrix3D source) {
     throw new IllegalArgumentException("Cannot use apply(PMatrix3D) on a PMatrix2D.");
   }
@@ -236,6 +286,10 @@ public class PMatrix2D implements PMatrix {
   }
 
 
+  /**
+   * Unavailable in 2D.
+   * @throws IllegalArgumentException
+   */
   public void apply(float n00, float n01, float n02, float n03,
                     float n10, float n11, float n12, float n13,
                     float n20, float n21, float n22, float n23,
@@ -262,6 +316,10 @@ public class PMatrix2D implements PMatrix {
   }
 
 
+  /**
+   * Unavailable in 2D.
+   * @throws IllegalArgumentException
+   */
   public void preApply(PMatrix3D left) {
     throw new IllegalArgumentException("Cannot use preApply(PMatrix3D) on a PMatrix2D.");
   }
@@ -289,6 +347,10 @@ public class PMatrix2D implements PMatrix {
   }
 
 
+  /**
+   * Unavailable in 2D.
+   * @throws IllegalArgumentException
+   */
   public void preApply(float n00, float n01, float n02, float n03,
                        float n10, float n11, float n12, float n13,
                        float n20, float n21, float n22, float n23,
@@ -301,7 +363,8 @@ public class PMatrix2D implements PMatrix {
 
 
   /**
-   * Multiply the x and y coordinates of a PVector against this matrix.
+   * {@inheritDoc}
+   * Ignores any z component.
    */
   public PVector mult(PVector source, PVector target) {
     if (target == null) {
@@ -339,26 +402,34 @@ public class PMatrix2D implements PMatrix {
   }
 
 
+  /**
+   * Returns the x-coordinate of the result of multiplying the point (x, y)
+   * by this matrix.
+   */
   public float multX(float x, float y) {
     return m00*x + m01*y + m02;
   }
 
 
+  /**
+   * Returns the y-coordinate of the result of multiplying the point (x, y)
+   * by this matrix.
+   */
   public float multY(float x, float y) {
     return m10*x + m11*y + m12;
   }
 
 
+
   /**
-   * Transpose this matrix.
+   * Unavailable in 2D. Does nothing.
    */
   public void transpose() {
   }
 
 
-  /**
-   * Invert this matrix. Implementation stolen from OpenJDK.
-   * @return true if successful
+  /*
+   * Implementation stolen from OpenJDK.
    */
   public boolean invert() {
     float determinant = determinant();
