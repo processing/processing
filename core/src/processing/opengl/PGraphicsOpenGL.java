@@ -7206,21 +7206,13 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void createBuffer(PGL pgl) {
-//      int ctx = pgl.getCurrentContext();
       buf = new VertexBuffer(pg, PGL.ARRAY_BUFFER, size, elementSize, false);
-//
-//      glName = createVertexBufferObject(ctx, pgl);
-//      pgl.bindBuffer(PGL.ARRAY_BUFFER, glName);
-//      pgl.bufferData(PGL.ARRAY_BUFFER, size * INIT_VERTEX_BUFFER_SIZE * elementSize,
-//                     null, PGL.STATIC_DRAW);
     }
 
     void deleteBuffer(PGL pgl) {
       if (buf.glId != 0) {
-//        int ctx = pgl.getCurrentContext();
         intBuffer.put(0, buf.glId);
         if (pgl.threadIsCurrent()) pgl.deleteBuffers(1, intBuffer);
-//        PGraphicsOpenGL.deleteVertexBufferObject(buf.glId, ctx, pgl);
       }
     }
 
