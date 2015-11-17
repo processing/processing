@@ -200,6 +200,10 @@ public class UpdateListPanel extends ListPanel {
           icon = incompatibleIcon;
         }
       }
+      if ((panelByContribution.get(entry)).updateInProgress) {
+        // Display "Loading icon" if download in progress
+        icon = downloadingIcon;
+      }
       model.addRow(new Object[] {
         icon,
         "<html>" + fontFace + entry.getName() + "</font></html>",
