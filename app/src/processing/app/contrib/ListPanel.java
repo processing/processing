@@ -318,8 +318,9 @@ implements Scrollable, ContributionListing.ChangeListener {
             icon = incompatibleIcon;
           }
         }
-        if ((panelByContribution.get(contribution)).updateInProgress) {
-          // Display "Loading icon" if download in progress
+        if ((panelByContribution.get(contribution)).updateInProgress ||
+          (panelByContribution.get(contribution)).installInProgress) {
+          // Display "Loading icon" if download/install in progress
           label.setIcon(downloadingIcon);
         } else {
           label.setIcon(icon);

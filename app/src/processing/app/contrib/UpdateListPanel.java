@@ -200,8 +200,9 @@ public class UpdateListPanel extends ListPanel {
           icon = incompatibleIcon;
         }
       }
-      if ((panelByContribution.get(entry)).updateInProgress) {
-        // Display "Loading icon" if download in progress
+      if ((panelByContribution.get(entry)).updateInProgress ||
+        (panelByContribution.get(entry)).installInProgress) {
+        // Display "Loading icon" if download/install in progress
         icon = downloadingIcon;
       }
       model.addRow(new Object[] {
