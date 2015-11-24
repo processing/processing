@@ -24,6 +24,9 @@
 
 package processing.core;
 
+import static java.awt.Font.BOLD;
+import static java.awt.Font.ITALIC;
+import static java.awt.Font.PLAIN;
 import processing.data.*;
 
 // TODO replace these with PMatrix2D
@@ -329,6 +332,10 @@ public class PShapeSVG extends PShape {
     } else if (name.equals("rect")) {
       shape = createShape(this, elem, true);
       shape.parseRect();
+   
+    } else if (name.equals("image")) {
+      shape = createShape(this, elem, true);
+      shape.parseImage();
 
     } else if (name.equals("polygon")) {
       shape = createShape(this, elem, true);
@@ -358,8 +365,10 @@ public class PShapeSVG extends PShape {
 //      return new FontGlyph(this, elem);
 
     } else if (name.equals("text")) {  // || name.equals("font")) {
-      PGraphics.showWarning("Text and fonts in SVG files are " +
-        "not currently supported, convert text to outlines instead.");
+        return new Text(this, elem);
+    
+    } else if (name.equals("tspan")) { 
+        return new LineOfText(this, elem);
 
     } else if (name.equals("filter")) {
       PGraphics.showWarning("Filters are not supported.");
@@ -439,8 +448,23 @@ public class PShapeSVG extends PShape {
       getFloatWithUnit(element, "height", svgHeight)
     };
   }
+  
+  
+  protected void parseImage() {
+    kind = RECT;
+    textureMode = NORMAL;
 
+    family = PRIMITIVE;
+    params = new float[] {
+      getFloatWithUnit(element, "x", svgWidth),
+      getFloatWithUnit(element, "y", svgHeight),
+      getFloatWithUnit(element, "width", svgWidth),
+      getFloatWithUnit(element, "height", svgHeight)
+    };
 
+    this.imagePath = element.getString("xlink:href");
+  }
+  
   /**
    * Parse a polyline or polygon from an SVG file.
    * Syntax defined at http://www.w3.org/TR/SVG/shapes.html#PointsBNF
@@ -1557,8 +1581,179 @@ public class PShapeSVG extends PShape {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+  public static float TEXT_QUALITY = 1;
+  protected PFont parseFont(XML properties) {
 
+//        FontFace fontFace = new FontFace(this, properties);
+    String fontFamily = null;
+    float size = 10;
+    int weight = PLAIN; // 0
+    int italic = 0;
+    
+    if (properties.hasAttribute("style")) {
+      String styleText = properties.getString("style");
+      String[] styleTokens = PApplet.splitTokens(styleText, ";");
 
+      //PApplet.println(styleTokens);
+      for (int i = 0; i < styleTokens.length; i++) {
+
+        String[] tokens = PApplet.splitTokens(styleTokens[i], ":");
+        //PApplet.println(tokens);
+
+        tokens[0] = PApplet.trim(tokens[0]);
+
+        if (tokens[0].equals("font-style")) {
+          // PApplet.println("font-style: " + tokens[1]);
+          if (tokens[1].contains("italic")) {
+            italic = ITALIC;
+          }
+        } else if (tokens[0].equals("font-variant")) {
+          // PApplet.println("font-variant: " + tokens[1]);
+          // setFillOpacity(tokens[1]);
+
+        } else if (tokens[0].equals("font-weight")) {
+            // PApplet.println("font-weight: " + tokens[1]);
+                
+            if (tokens[1].contains("bold")) {
+              weight = BOLD;
+              // PApplet.println("Bold weight ! ");
+            }
+    
+
+        } else if (tokens[0].equals("font-stretch")) {
+          // not supported.
+
+        } else if (tokens[0].equals("font-size")) {
+          // PApplet.println("font-size: " + tokens[1]);
+          size = Float.parseFloat(tokens[1].split("px")[0]);
+          // PApplet.println("font-size-parsed: " + size);
+        } else if (tokens[0].equals("line-height")) {
+                // not supported
+
+        } else if (tokens[0].equals("font-family")) {
+          // PApplet.println("Font-family: " + tokens[1]);
+          fontFamily = tokens[1];
+
+        } else if (tokens[0].equals("text-align")) {
+          // not supported
+
+        } else if (tokens[0].equals("letter-spacing")) {
+                // not supported
+
+        } else if (tokens[0].equals("word-spacing")) {
+                // not supported
+
+        } else if (tokens[0].equals("writing-mode")) {
+          // not supported
+
+        } else if (tokens[0].equals("text-anchor")) {
+          // not supported
+
+        } else {
+          // Other attributes are not yet implemented
+        }
+      }
+    }
+    if (fontFamily == null) {
+      return null;
+    }
+    size = size * TEXT_QUALITY;
+
+    return createFont(fontFamily, weight | italic, size, true);
+  }
+
+  protected PFont createFont(String name, int weight, float size, boolean smooth) {
+
+//    System.out.println("Try to create a font of " + name + " family, " + weight);
+    java.awt.Font baseFont = new java.awt.Font(name, weight, (int) size); // PFont.findFont(name);ç
+
+//    System.out.println("Resulting family : " + baseFont.getFamily() + " " + baseFont.getStyle());
+    PFont outputPFont = new PFont(baseFont.deriveFont(size), smooth, null);
+
+//    System.out.println("Resulting PFont family : " + outputPFont.getName());
+    return outputPFont;
+  }
+
+  public static class Text extends PShapeSVG {
+
+    protected PFont font;
+
+    public Text(PShapeSVG parent, XML properties) {
+      super(parent, properties, true);
+
+            // get location
+      float x = Float.parseFloat(properties.getString("x"));
+      float y = Float.parseFloat(properties.getString("y"));
+
+      if (matrix == null) {
+        matrix = new PMatrix2D();
+      }
+      matrix.translate(x, y);
+
+      family = GROUP;
+
+      font = parseFont(properties);
+
+    }
+
+//        @Override
+//        public void drawImpl(PGraphics g){
+//        }
+  }
+
+  public static class LineOfText extends PShapeSVG {
+
+    String textToDisplay;
+    PFont font;
+
+    public LineOfText(PShapeSVG parent, XML properties) {
+
+    // TODO: child should ideally be parsed too... 
+    // for inline content. 
+      super(parent, properties, false);
+
+//    // get location
+      float x = Float.parseFloat(properties.getString("x"));
+      float y = Float.parseFloat(properties.getString("y"));
+
+      float parentX = Float.parseFloat(parent.element.getString("x"));
+      float parentY = Float.parseFloat(parent.element.getString("y"));
+       
+      if (matrix == null) matrix = new PMatrix2D();
+      matrix.translate(x - parentX, (y - parentY) / 2f);
+     
+    // get the first properties
+     parseColors(properties);
+      font = parseFont(properties);
+
+      // It is a line.. 
+      boolean isALine = properties.getString("role") == "line";
+      // NO inline content yet.
+      if (this.childCount > 0) {
+      }
+
+      String text = properties.getContent();
+      textToDisplay = text;
+    }
+
+    @Override
+    public void drawImpl(PGraphics g) {
+      if (font == null) {
+        font = ((Text) parent).font;
+        if (font == null) {
+          return;
+        }
+      }
+
+      pre(g);
+      g.textFont(font, font.size / TEXT_QUALITY);
+      g.text(textToDisplay, 0, 0);
+      post(g);
+    }
+
+  }
+  
   public static class Font extends PShapeSVG {
     public FontFace face;
 
