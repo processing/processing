@@ -30,9 +30,9 @@ public class SyntaxStyle {
   /**
    * Creates a new SyntaxStyle.
    * @param color The text color
-   * @param italic True if the text should be italics
    * @param bold True if the text should be bold
    */
+// * @param italic True if the text should be italics
 //  public SyntaxStyle(Color color, boolean italic, boolean bold) {
   public SyntaxStyle(Color color, boolean bold) {
     this.color = color;

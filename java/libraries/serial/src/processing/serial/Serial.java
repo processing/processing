@@ -533,7 +533,7 @@ public class Serial implements SerialPortEventListener {
    * @generate serialEvent.xml
    * @webref serial:events
    * @usage web_application
-   * @param serialPorttEvent the port where new data is available
+   * @param event the port where new data is available
    */
   public void serialEvent(SerialPortEvent event) {
     if (event.getEventType() == SerialPortEvent.RXCHAR) {

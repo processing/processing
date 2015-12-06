@@ -32,8 +32,9 @@ import processing.app.syntax.TextAreaPainter;
  *
  * @see <a href="https://processing.org/bugs/bugzilla/854.html">Bug 854 : implement input method support for Japanese (and other languages)</a>
  * @see <a href="https://processing.org/bugs/bugzilla/1531.html">Bug 1531 : Can't input full-width space when Japanese IME is on.</a>
- * @see http://docs.oracle.com/javase/8/docs/technotes/guides/imf/index.html
- * @see http://docs.oracle.com/javase/tutorial/2d/text/index.html
+ * @see <a href="http://docs.oracle.com/javase/8/docs/technotes/guides/imf/index.html">Java Input Method Framework
+ * (IMF) Technology</a>
+ * @see <a href="http://docs.oracle.com/javase/tutorial/2d/text/index.html">The Java Tutorials</a>
  *
  * @author Takashi Maekawa (takachin@generative.info)
  * @author Satoshi Okita

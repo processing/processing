@@ -77,7 +77,7 @@ public class CompositionTextManager {
    * This method initializes text manager.
    *
    * @param text Text from InputMethodEvent.
-   * @param commited_count Numbers of committed characters in text.
+   * @param committed_count Numbers of committed characters in text.
    */
   public void beginCompositionText(AttributedCharacterIterator text, int committed_count) {
     isInputProcess = true;
@@ -91,7 +91,7 @@ public class CompositionTextManager {
    * select candidates from input method.
    *
    * @param text Text from InputMethodEvent.
-   * @param commited_count Numbers of committed characters in text.
+   * @param committed_count Numbers of committed characters in text.
    */
   public void processCompositionText(AttributedCharacterIterator text, int committed_count) {
     int layoutCaretPosition = initialCaretPosition + committed_count;
@@ -129,7 +129,7 @@ public class CompositionTextManager {
    * composition text. This method resets CompositionTextPainter.
    *
    * @param text Text from InputMethodEvent.
-   * @param commited_count Numbers of committed characters in text.
+   * @param committed_count Numbers of committed characters in text.
    */
   public void endCompositionText(AttributedCharacterIterator text, int committed_count) {
     /*

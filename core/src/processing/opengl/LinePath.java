@@ -159,7 +159,7 @@ public class LinePath {
    *
    * @param rule
    *          the winding rule
-   * @param initialTypes
+   * @param initialCapacity
    *          the size to make the initial array to store the path segment types
    */
   public LinePath(int rule, int initialCapacity) {
@@ -415,7 +415,7 @@ public class LinePath {
    *          the original path to be stroked
    * @param weight
    *          the weight of the stroked path
-   * @param cap
+   * @param caps
    *          the decoration of the ends of the segments in the path
    * @param join
    *          the decoration applied where path segments meet

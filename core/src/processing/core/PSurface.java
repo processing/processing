@@ -97,14 +97,14 @@ public interface PSurface {
 
   public void setSize(int width, int height);
 
-  /**
-   * Called by {@link PApplet#createGraphics} to initialize the
-   * {@link PGraphics#image} object with an image that's compatible with this
-   * drawing surface/display/hardware.
-   * @param gr PGraphics object whose image will be set
-   * @param wide
-   * @param high
-   */
+//  /**
+//   * Called by {@link PApplet#createGraphics} to initialize the
+//   * {@link PGraphics#image} object with an image that's compatible with this
+//   * drawing surface/display/hardware.
+//   * @param gr PGraphics object whose image will be set
+//   * @param wide
+//   * @param high
+//   */
   // create pixel buffer (pulled out for offscreen graphics)
   //public void initImage(PGraphics gr, int wide, int high);
   // create pixel buffer, called from allocate() to produce a compatible image for rendering efficiently

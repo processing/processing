@@ -1269,6 +1269,11 @@ remove the spaces for depth since it should be double dash, but screws up commen
 
   <target name="doc">
 
+    <mkdir dir="javadoc" />
+
+    <!-- Core is in the classpath, so we must build it. -->
+    <subant buildpath="../core" target="build" failonerror="false" />
+
     <!-- build doc for core -->
     <exec executable="find" dir="javadoc" errorproperty="ignored">
       <arg line="core -type f -exec rm -rf {} ';'" />
@@ -1284,6 +1289,16 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg value="-notimestamp" />
 
       <arg value="-quiet" />
+
+      <!-- Suppress errors and display some information. -->
+      <tag name="webref" enabled="false" />
+      <tag name="nowebref" enabled="false" />
+      <tag name="generate" enabled="false" />
+      <tag name="instanceName" enabled="false" />
+      <tag name="see_external" enabled="false" />
+      <tag name="brief" description="In brief:" />
+      <tag name="usage" />
+      <arg value="-Xdoclint:reference,accessibility" />
 
       <packageset dir="../core/src">
         <include name="processing/**" />
@@ -1303,7 +1318,7 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg line="everything -type f -exec rm -rf {} ';'" />
     </exec>
 
-    <javadoc access="public" author="false" classpath="../app/lib/ant.jar:../app/lib/ant-launcher.jar:../app/lib/antlr.jar:../app/lib/apple.jar:../app/lib/jna.jar:../app/lib/jna-platform.jar:../core/bin:../core/library/gluegen-rt.jar:../core/library/jogl-all.jar:../java/libraries/svg/bin:../java/libraries/pdf/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/dxf/bin:../java/libraries/io/bin:../java/libraries/net/bin:../java/libraries/serial/bin:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.8" splitindex="false" use="false" version="false" noqualifier="all">
+    <javadoc access="public" author="false" classpath="../app/lib/ant.jar:../app/lib/ant-launcher.jar:../app/lib/antlr.jar:../app/lib/apple.jar:../app/lib/jna.jar:../app/lib/jna-platform.jar:../core/bin:../core/library/gluegen-rt.jar:../core/library/jogl-all.jar:../java/libraries/svg:../java/libraries/pdf/library/itext.jar:../java/libraries/dxf:../java/libraries/serial/library:${java.home}/lib/tools.jar" destdir="javadoc/everything" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.8" splitindex="false" use="false" version="false" noqualifier="all">
 
       <arg value="-notimestamp" />
 
@@ -1317,6 +1332,14 @@ remove the spaces for depth since it should be double dash, but screws up commen
       </packageset>
 
 
+      <tag name="webref" enabled="false" />
+      <tag name="nowebref" enabled="false" />
+      <tag name="generate" enabled="false" />
+      <tag name="instanceName" enabled="false" />
+      <tag name="see_external" enabled="false" />
+      <tag name="brief" description="In brief:" />
+      <tag name="usage" />
+      <arg value="-Xdoclint:reference,accessibility" />
 
       <!--<packageset dir="../app/generated">
         <include name="processing/**" />
@@ -1336,14 +1359,25 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg line="libraries -type f -exec rm -rf {} ';'" />
     </exec>
 
-    <javadoc access="public" author="false" classpath="../app/lib/ant.jar:../app/lib/ant-launcher.jar:../app/lib/antlr.jar:../app/lib/apple.jar:../app/lib/jna.jar:../app/lib/jna-platform.jar:../core/bin:../core/library/gluegen-rt.jar:../core/library/jogl-all.jar:../java/libraries/svg/bin:../java/libraries/pdf/bin:../java/libraries/pdf/library/itext.jar:../java/libraries/dxf/bin:../java/libraries/net/bin:../java/libraries/serial/bin:${java.home}/lib/tools.jar" destdir="javadoc/libraries" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.8" splitindex="false" use="false" version="false" noqualifier="all">
+    <javadoc access="public" author="false" classpath="../app/lib/ant.jar:../app/lib/ant-launcher.jar:../app/lib/antlr.jar:../app/lib/apple.jar:../app/lib/jna.jar:../app/lib/jna-platform.jar:../core/bin:../core/library/gluegen-rt.jar:../core/library/jogl-all.jar:../java/libraries/svg/library/batik-dom-1.8.jar:../java/libraries/svg/library/batik-svggen-1.8.jar:../java/libraries/pdf/library/itext.jar:../java/libraries/dxf:../java/libraries/serial/library/jssc.jar:${java.home}/lib/tools.jar" destdir="javadoc/libraries" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.8" splitindex="false" use="false" version="false" noqualifier="all">
 
       <arg value="-notimestamp" />
 
       <arg value="-quiet" />
 
       <link href="http://docs.oracle.com/javase/7/docs/api/" />
+      <link href="../../javadoc/core/" />
       
+      <tag name="webref" enabled="false" />
+      <tag name="nowebref" enabled="false" />
+      <tag name="generate" enabled="false" />
+      <tag name="instanceName" enabled="false" />
+      <tag name="see_external" enabled="false" />
+      <tag name="brief" description="In brief:" />
+      <tag name="usage" />
+      <arg value="-Xdoclint:reference,accessibility" />
+
+
       <packageset dir="../java/libraries/dxf/src">
         <include name="antlr/**" />
         <include name="processing/**" />

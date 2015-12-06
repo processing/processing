@@ -43,7 +43,6 @@ public class CompositionTextPainter {
   /**
    * Check the painter has TextLayout.
    * If a user input via InputMethod, this result will return true.
-   * @param textarea textarea used by PDE.
    */
   public boolean hasComposedTextLayout() {
     return (composedTextLayout != null);
@@ -55,7 +54,6 @@ public class CompositionTextPainter {
    * TextLayout will be created and set by CompositionTextManager.
    * 
    * @see CompositionTextManager
-   * @param textarea textarea used by PDE.
    */
   public void setComposedTextLayout(TextLayout composedTextLayout, int composedStartCaretPosition) {
     this.composedTextLayout = composedTextLayout;
