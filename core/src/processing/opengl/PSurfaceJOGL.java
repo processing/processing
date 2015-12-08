@@ -938,8 +938,7 @@ public class PSurfaceJOGL implements PSurface {
 
     @Override
     public void windowDestroyNotify(com.jogamp.newt.event.WindowEvent arg0) {
-      sketch.dispose();
-      sketch.exitActual();
+      sketch.exit();
     }
 
     @Override
