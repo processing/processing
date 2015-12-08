@@ -3255,7 +3255,8 @@ public class PShapeOpenGL extends PShape {
     int[] indices = inGeo.addSphere(r, nu, nv, fill, stroke);
     tessellator.tessellateTriangles(indices);
 
-    if (savedDetailU != nu || savedDetailV != nv) {
+    if ((0 < savedDetailU && savedDetailU != nu) ||
+        (0 < savedDetailV && savedDetailV != nv)) {
       pg.sphereDetail(savedDetailU, savedDetailV);
     }
   }
