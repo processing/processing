@@ -47,8 +47,8 @@ void main() {
     gl_Position = clip + projectionMatrix * vec4(offset.xy, 0, 0);
   } else {
     // No perspective correction.	
-    vec4 offset = windowToClipVector(offset.xy, viewport, clip.w);
-    gl_Position = clip + offset;
+    vec4 cloff = windowToClipVector(offset.xy, viewport, clip.w);
+    gl_Position = clip + cloff;
   }
   
   vertColor = color;
