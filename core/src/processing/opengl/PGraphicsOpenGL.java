@@ -11030,9 +11030,9 @@ public class PGraphicsOpenGL extends PGraphics {
         float inc = (float) SINCOS_LENGTH / perim;
         for (int k = 0; k < perim; k++) {
           tess.pointOffsets[2 * attribIdx + 0] =
-            0.5f * cosLUT[(int) val] * strokeWeight;
+            0.5f * cosLUT[(int) val] * transformScale() * strokeWeight;
           tess.pointOffsets[2 * attribIdx + 1] =
-            0.5f * sinLUT[(int) val] * strokeWeight;
+            0.5f * sinLUT[(int) val] * transformScale() * strokeWeight;
           val = (val + inc) % SINCOS_LENGTH;
           attribIdx++;
         }
@@ -11160,9 +11160,9 @@ public class PGraphicsOpenGL extends PGraphics {
         attribIdx++;
         for (int k = 0; k < 4; k++) {
           tess.pointOffsets[2 * attribIdx + 0] =
-            0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight;
+            0.5f * QUAD_POINT_SIGNS[k][0] * transformScale() * strokeWeight;
           tess.pointOffsets[2 * attribIdx + 1] =
-            0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight;
+            0.5f * QUAD_POINT_SIGNS[k][1] * transformScale() * strokeWeight;
           attribIdx++;
         }
 
