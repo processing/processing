@@ -97,6 +97,7 @@ public class PShapeOpenGL extends PShape {
 
   protected HashSet<PImage> textures;
   protected boolean strokedTexture;
+  protected boolean untexChild;
 
   // ........................................................
 
@@ -425,6 +426,8 @@ public class PShapeOpenGL extends PShape {
             for (PImage tex: c3d.textures) {
               addTexture(tex);
             }
+          } else {
+            untexChild(true);
           }
           if (c3d.strokedTexture) {
             strokedTexture(true);
@@ -435,6 +438,8 @@ public class PShapeOpenGL extends PShape {
             if (c3d.stroke) {
               strokedTexture(true);
             }
+          } else {
+            untexChild(true);
           }
         }
 
@@ -462,6 +467,8 @@ public class PShapeOpenGL extends PShape {
             for (PImage tex: c3d.textures) {
               addTexture(tex);
             }
+          } else {
+            untexChild(true);
           }
           if (c3d.strokedTexture) {
             strokedTexture(true);
@@ -472,6 +479,8 @@ public class PShapeOpenGL extends PShape {
             if (c3d.stroke) {
               strokedTexture(true);
             }
+          } else {
+            untexChild(true);
           }
         }
 
@@ -487,6 +496,8 @@ public class PShapeOpenGL extends PShape {
   @Override
   public void removeChild(int idx) {
     super.removeChild(idx);
+    strokedTexture(false);
+    untexChild(false);
     markForTessellation();
   }
 
@@ -792,7 +803,7 @@ public class PShapeOpenGL extends PShape {
     }
 
     if (image0 != tex && parent != null) {
-      ((PShapeOpenGL)parent).removeTexture(tex);
+      ((PShapeOpenGL)parent).removeTexture(image0, this);
     }
     if (parent != null) {
       ((PShapeOpenGL)parent).addTexture(image);
@@ -845,14 +856,14 @@ public class PShapeOpenGL extends PShape {
   }
 
 
-  protected void removeTexture(PImage tex) {
+  protected void removeTexture(PImage tex, PShapeOpenGL caller) {
     if (textures == null || !textures.contains(tex)) return; // Nothing to remove.
 
-    // First check that none of the child shapes
-    // have texture tex...
+    // First check that none of the child shapes have texture tex...
     boolean childHasTex = false;
     for (int i = 0; i < childCount; i++) {
       PShapeOpenGL child = (PShapeOpenGL) children[i];
+      if (child == caller) continue;
       if (child.hasTexture(tex)) {
         childHasTex = true;
         break;
@@ -870,38 +881,76 @@ public class PShapeOpenGL extends PShape {
     // Since this shape and all its child shapes don't contain
     // tex anymore, we now can remove it from the parent.
     if (parent != null) {
-      ((PShapeOpenGL)parent).removeTexture(tex);
+      ((PShapeOpenGL)parent).removeTexture(tex, this);
     }
   }
 
 
   protected void strokedTexture(boolean newValue) {
+    strokedTexture(newValue, null);
+  }
+
+
+  protected void strokedTexture(boolean newValue, PShapeOpenGL caller) {
     if (strokedTexture == newValue) return; // Nothing to change.
 
     if (newValue) {
       strokedTexture = true;
     } else {
-      // First check that none of the child shapes
-      // have have a stroked texture...
-      boolean childHasStrokedTex = false;
+      // Check that none of the child shapes have a stroked texture...
+      strokedTexture = false;
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
+        if (child == caller) continue;
         if (child.hasStrokedTexture()) {
-          childHasStrokedTex = true;
+          strokedTexture = true;
           break;
         }
-      }
-
-      if (!childHasStrokedTex) {
-        // ...if not, it is safe to mark this shape as without
-        // stroked texture.
-        strokedTexture = false;
       }
     }
 
     // Now we can update the parent shape.
     if (parent != null) {
-      ((PShapeOpenGL)parent).strokedTexture(newValue);
+      ((PShapeOpenGL)parent).strokedTexture(newValue, this);
+    }
+  }
+
+
+  protected void untexChild(boolean newValue) {
+    untexChild(newValue, null);
+  }
+
+
+  protected void untexChild(boolean newValue, PShapeOpenGL caller) {
+    if (untexChild == newValue) return; // Nothing to change.
+
+    if (newValue) {
+      untexChild = true;
+    } else {
+      // Check if any of the child shapes is not textured...
+      untexChild = false;
+      for (int i = 0; i < childCount; i++) {
+        PShapeOpenGL child = (PShapeOpenGL) children[i];
+        if (child == caller) continue;
+        if (!child.hasTexture()) {
+          untexChild = true;
+          break;
+        }
+      }
+    }
+
+    // Now we can update the parent shape.
+    if (parent != null) {
+      ((PShapeOpenGL)parent).untexChild(newValue, this);
+    }
+  }
+
+
+  protected boolean hasTexture() {
+    if (family == GROUP) {
+      return textures != null && 0 < textures.size();
+    } else {
+      return image != null;
     }
   }
 
@@ -2797,6 +2846,11 @@ public class PShapeOpenGL extends PShape {
     lastPointIndexCache = -1;
 
     if (family == GROUP) {
+      if (polyAttribs == null) {
+        polyAttribs = PGraphicsOpenGL.newAttributeMap();
+        collectPolyAttribs();
+      }
+
       for (int i = 0; i < childCount; i++) {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
         child.tessellateImpl();
@@ -4600,13 +4654,14 @@ public class PShapeOpenGL extends PShape {
 
 
   // Returns true if some child shapes below this one either
-  // use different texture maps or have stroked textures,
+  // use different texture maps (or only one texture is used by some while
+  // others are untextured), or have stroked textures,
   // so they cannot rendered in a single call.
   // Or accurate 2D mode is enabled, which forces each
   // shape to be rendered separately.
   protected boolean fragmentedGroup(PGraphicsOpenGL g) {
     return g.getHint(DISABLE_OPTIMIZED_STROKE) ||
-           (textures != null && 1 < textures.size()) ||
+           (textures != null && (1 < textures.size() || untexChild)) ||
            strokedTexture;
   }
 
