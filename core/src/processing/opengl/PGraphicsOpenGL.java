@@ -509,6 +509,12 @@ public class PGraphicsOpenGL extends PGraphics {
     "to render this geometry properly, using default shader instead.";
   static final String TESSELLATION_ERROR =
     "Tessellation Error: %1$s";
+  static final String GL_THREAD_NOT_CURRENT =
+    "You are trying to draw outside OpenGL's animation thread.\n" +
+    "Place all drawing commands in the draw() function, or inside\n" +
+    "your own functions as long as they are called from draw(),\n" +
+    "but not in event handling functions such as keyPressed()\n" +
+    "or mousePressed().";
 
   //////////////////////////////////////////////////////////////
 
@@ -1455,6 +1461,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void beginDraw() {
+    if (!pgl.threadIsCurrent()) {
+      PGraphics.showWarning(GL_THREAD_NOT_CURRENT);
+      return;
+    }
+
     if (primaryGraphics) {
       if (!initialized) {
         initPrimary();
