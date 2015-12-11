@@ -367,7 +367,7 @@ public class ContributionTab extends JPanel {
       setFont(Toolkit.getSansFont(14, Font.PLAIN));
       searchIcon = Toolkit.getLibIconX("manager/search");
       filterLabel.setIcon(searchIcon);
-      removeFilter = new JButton("X"); // TODO icon should be initialized here
+      removeFilter = new JButton(Toolkit.getLibIconX("manager/remove"));
       removeFilter.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 2));
       removeFilter.setBorderPainted(false);
       removeFilter.setContentAreaFilled(false);
