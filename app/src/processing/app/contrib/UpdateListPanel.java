@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -16,6 +18,7 @@ import javax.swing.Icon;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -50,7 +53,7 @@ public class UpdateListPanel extends ListPanel {
 
       @Override
       public Class<?> getColumnClass(int columnIndex) {
-        return (columnIndex == 0) ? Icon.class : String.class;
+        return (columnIndex == 0) ? Component.class : String.class;
       }
     };
 
@@ -99,17 +102,7 @@ public class UpdateListPanel extends ListPanel {
     table.setAutoCreateColumnsFromModel(true);
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-    table.setDefaultRenderer(String.class, new DefaultTableCellRenderer() {
-      @Override
-      public Component getTableCellRendererComponent(JTable table,
-                                                     Object value,
-                                                     boolean isSelected,
-                                                     boolean hasFocus,
-                                                     int row, int column) {
-        return super.getTableCellRendererComponent(table, value, isSelected,
-                                                   false, row, column);
-      }
-    });
+    table.setDefaultRenderer(String.class, new ContribStatusRenderer());
 
     table.getTableHeader().setDefaultRenderer(new ContribHeaderRenderer()); /* {
       @Override
@@ -149,6 +142,26 @@ public class UpdateListPanel extends ListPanel {
         return diff;
       }
     });
+  }
+  
+  private class ContribStatusRenderer extends DefaultTableCellRenderer implements ActionListener {
+    
+    Timer timer = new Timer(100, this);
+    
+    @Override
+    public Component getTableCellRendererComponent(JTable table,
+                                                   Object value,
+                                                   boolean isSelected,
+                                                   boolean hasFocus,
+                                                   int row, int column) {
+      return super.getTableCellRendererComponent(table, value, isSelected,
+                                                 false, row, column);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      updatePanelOrdering(visibleContributions);
+    }
   }
 
   @Override
@@ -200,13 +213,25 @@ public class UpdateListPanel extends ListPanel {
           icon = incompatibleIcon;
         }
       }
-      model.addRow(new Object[] {
-        icon,
-        "<html>" + fontFace + entry.getName() + "</font></html>",
-        name,
-        entry.getPrettyVersion(),
-        contributionTab.contribListing.getLatestVersion(entry)
-      });
+      DetailPanel panel = panelByContribution.get(entry);
+      if (panel != null && (panel.installInProgress || panel.removeInProgress
+        || panel.updateInProgress)) {
+        model.addRow(new Object[] {
+          panel.progress,
+          "<html>" + fontFace + entry.getName() + "</font></html>",
+          name,
+          entry.getPrettyVersion(),
+          contributionTab.contribListing.getLatestVersion(entry)
+        });
+      }else{
+        model.addRow(new Object[] {
+          icon,
+          "<html>" + fontFace + entry.getName() + "</font></html>",
+          name,
+          entry.getPrettyVersion(),
+          contributionTab.contribListing.getLatestVersion(entry)
+        });
+      }
     }
     UpdateContributionTab tab = (UpdateContributionTab) contributionTab;
     ((UpdateStatusPanel) tab.statusPanel).update();

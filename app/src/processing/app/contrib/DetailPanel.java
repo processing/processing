@@ -23,6 +23,8 @@ package processing.app.contrib;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,6 +36,8 @@ import java.text.DateFormat;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
@@ -101,6 +105,7 @@ class DetailPanel extends JPanel {
   private JLabel notificationLabel;
   private JButton updateButton;
   JProgressBar installProgressBar;
+  JProgressBar progress;
   private JButton installRemoveButton;
   private JPopupMenu contextMenu;
   private JMenuItem openFolder;
@@ -297,6 +302,18 @@ class DetailPanel extends JPanel {
       installProgressBar.setMinimumSize(dim);
       installProgressBar.setOpaque(false);
       installProgressBar.setAlignmentX(CENTER_ALIGNMENT);
+      
+      progress = new JProgressBar() {
+//        @Override
+//        public void updateUI() {
+//          super.updateUI();
+//          setUI(new ProgressCircleUI());
+//        }
+      };
+      progress.setOpaque(false);
+      installProgressBar.addChangeListener(new ProgressListener(progress));
+//      progress.setForeground(new Color(0xAAFFAAAA));
+//      installProgressBar.addPropertyChangeListener(new ProgressListener(progress));
     }
 
     installRemoveButton = new JButton(" ");
@@ -942,5 +959,26 @@ class DetailPanel extends JPanel {
       localContrib.removeContribution(contributionTab.editor.getBase(), monitor, contributionTab.statusPanel);
     }
 
+  }
+
+  class ProgressListener implements ChangeListener {
+    private final JProgressBar progressBar;
+
+    protected ProgressListener(JProgressBar progressBar) {
+      this.progressBar = progressBar;
+      this.progressBar.setValue(0);
+      progressBar.setStringPainted(true);
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+      progressBar.setIndeterminate(false);
+      if (e.getSource() instanceof JProgressBar) {
+        int progress = ((JProgressBar) e.getSource()).getValue();
+        progressBar.setValue(progress);
+//        listPanel.refreshList();
+      }
+
+    }
   }
 }

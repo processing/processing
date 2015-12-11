@@ -22,12 +22,17 @@
 package processing.app.contrib;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.*;
 import java.util.Map.Entry;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.event.*;
 import javax.swing.table.*;
@@ -59,6 +64,7 @@ implements Scrollable, ContributionListing.ChangeListener {
   static Icon updateAvailableIcon;
   static Icon incompatibleIcon;
   static Icon foundationIcon;
+  static Icon downloadingIcon;
 
   static Font plainFont;
   static Font boldFont;
@@ -74,6 +80,7 @@ implements Scrollable, ContributionListing.ChangeListener {
       updateAvailableIcon = Toolkit.getLibIconX("manager/update-available");
       incompatibleIcon = Toolkit.getLibIconX("manager/incompatible");
       foundationIcon = Toolkit.getLibIconX("icons/foundation", 16);
+      downloadingIcon = Toolkit.getLibIcon("manager/downloading2.gif");
 
       plainFont = Toolkit.getSansFont(14, Font.PLAIN);
       boldFont = Toolkit.getSansFont(14, Font.BOLD);
@@ -284,7 +291,13 @@ implements Scrollable, ContributionListing.ChangeListener {
   }
 
 
-  private class ContribStatusRenderer extends DefaultTableCellRenderer {
+  private class ContribStatusRenderer extends DefaultTableCellRenderer implements ActionListener {
+
+    Timer timer = new Timer(100, this);
+    
+    public ContribStatusRenderer() {
+      timer.start();
+    }
 
     @Override
     public void setVerticalAlignment(int alignment) {
@@ -315,6 +328,14 @@ implements Scrollable, ContributionListing.ChangeListener {
           if (!contribution.isCompatible(Base.getRevision())) {
             icon = incompatibleIcon;
           }
+        }
+        DetailPanel panel = panelByContribution.get(contribution);
+        if (panel != null
+          && (panel.installInProgress || panel.removeInProgress || panel.updateInProgress)) {
+          icon = downloadingIcon;
+          panel.progress.setMaximum(panel.installProgressBar.getMaximum());
+//          panel.progress.setValue(panel.installProgressBar.getValue());
+          return panel.progress;
         }
         label.setIcon(icon);
         label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -384,6 +405,11 @@ implements Scrollable, ContributionListing.ChangeListener {
         label.setOpaque(true);
       }
       return label;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      updatePanelOrdering(visibleContributions);
     }
   }
 
@@ -685,4 +711,8 @@ implements Scrollable, ContributionListing.ChangeListener {
   public int getRowCount() {
     return panelByContribution.size();
   }
+//  
+//  public void refreshList(){
+//    updatePanelOrdering(visibleContributions);
+//  }
 }
