@@ -1461,11 +1461,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void beginDraw() {
-    if (!pgl.threadIsCurrent()) {
-      PGraphics.showWarning(GL_THREAD_NOT_CURRENT);
-      return;
-    }
-
     if (primaryGraphics) {
       if (!initialized) {
         initPrimary();
@@ -1474,6 +1469,11 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       pgl.getGL(getPrimaryPGL());
       getPrimaryPG().setCurrentPG(this);
+    }
+
+    if (!pgl.threadIsCurrent()) {
+      PGraphics.showWarning(GL_THREAD_NOT_CURRENT);
+      return;
     }
 
     // This has to go after the surface initialization, otherwise offscreen
