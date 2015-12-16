@@ -311,7 +311,8 @@ public class Platform {
           System.err.println("Could not find lib folder via " +
             jarFolder.getAbsolutePath() +
             ", switching to user.dir");
-          processingRoot = new File(System.getProperty("user.dir"));
+          final String userDir = System.getProperty("user.dir");
+          processingRoot = new File(PApplet.urlDecode(userDir));
         }
       }
     }
