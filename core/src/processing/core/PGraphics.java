@@ -5720,6 +5720,7 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
    *
    * @webref lights_camera:camera
+   * @see PGraphics#beginCamera()
    * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
    */
   public void endCamera() {
@@ -5742,6 +5743,7 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
    *
    * @webref lights_camera:camera
+   * @see PGraphics#beginCamera()
    * @see PGraphics#endCamera()
    * @see PGraphics#frustum(float, float, float, float, float, float)
    */
@@ -5876,6 +5878,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param near near component of the clipping plane; must be greater than zero
    * @param far far component of the clipping plane; must be greater than the near value
    * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#beginCamera()
    * @see PGraphics#endCamera()
    * @see PGraphics#perspective(float, float, float, float)
    */

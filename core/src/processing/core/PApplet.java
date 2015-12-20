@@ -12578,7 +12578,7 @@ public class PApplet implements PConstants {
    * ignored.
    *
    * @param x1 by default, the x-coordinate of text, see rectMode() for more info
-   * @param y1 by default, the x-coordinate of text, see rectMode() for more info
+   * @param y1 by default, the y-coordinate of text, see rectMode() for more info
    * @param x2 by default, the width of the text box, see rectMode() for more info
    * @param y2 by default, the height of the text box, see rectMode() for more info
    */
@@ -13205,6 +13205,7 @@ public class PApplet implements PConstants {
    * ( end auto-generated )
    *
    * @webref lights_camera:camera
+   * @see PGraphics#beginCamera()
    * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
    */
   public void endCamera() {
@@ -13229,6 +13230,7 @@ public class PApplet implements PConstants {
    * ( end auto-generated )
    *
    * @webref lights_camera:camera
+   * @see PGraphics#beginCamera()
    * @see PGraphics#endCamera()
    * @see PGraphics#frustum(float, float, float, float, float, float)
    */
@@ -13373,6 +13375,7 @@ public class PApplet implements PConstants {
    * @param near near component of the clipping plane; must be greater than zero
    * @param far far component of the clipping plane; must be greater than the near value
    * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#beginCamera()
    * @see PGraphics#endCamera()
    * @see PGraphics#perspective(float, float, float, float)
    */
