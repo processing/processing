@@ -10231,6 +10231,13 @@ public class PApplet implements PConstants {
 //    }
     sketch.sketchPath = folder;
 
+    // Don't set 'args' to a zero-length array if it should be null [3.0a8]
+    if (args.length != argIndex + 1) {
+      // pass everything after the class name in as args to the sketch itself
+      // (fixed for 2.0a5, this was just subsetting by 1, which didn't skip opts)
+      sketch.args = PApplet.subset(args, argIndex + 1);
+    }
+
     // Call the settings() method which will give us our size() call
 //    try {
     sketch.handleSettings();
@@ -10251,13 +10258,6 @@ public class PApplet implements PConstants {
 //    // Query the applet to see if it wants to be full screen all the time.
 //    //fullScreen |= sketch.sketchFullScreen();
 //    sketch.fullScreen |= fullScreen;
-
-    // Don't set 'args' to a zero-length array if it should be null [3.0a8]
-    if (args.length != argIndex + 1) {
-      // pass everything after the class name in as args to the sketch itself
-      // (fixed for 2.0a5, this was just subsetting by 1, which didn't skip opts)
-      sketch.args = PApplet.subset(args, argIndex + 1);
-    }
 
     sketch.external = external;
 
