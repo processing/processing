@@ -24,8 +24,6 @@ package processing.app.contrib;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.*;
 import java.util.Map.Entry;
@@ -71,7 +69,8 @@ implements Scrollable, ContributionListing.ChangeListener {
   static Font headerFont;
 
   // Should this be in theme.txt? Of course! Is it? No.
-  static final Color HEADER_BGCOLOR = new Color(0xffEBEBEB);
+  static final Color EVEN_HEADER_BGCOLOR = new Color(0xffDFDFDF);
+  static final Color ODD_HEADER_BGCOLOR = new Color(0xffEBEBEB);
 
 
   public ListPanel() {
@@ -238,13 +237,17 @@ implements Scrollable, ContributionListing.ChangeListener {
       }
       setFont(headerFont);
       setIcon(getSortIcon(table, column));
-      setBackground(HEADER_BGCOLOR);
-//      if (column % 2 == 0) {
-//        setBackground(new Color(0xdfdfdf));
-//      } else {
-//        setBackground(new Color(0xebebeb));
-//      }
-      setBorder(null);
+//      setBackground(HEADER_BGCOLOR);
+      if (column % 2 == 0) {
+        setBackground(EVEN_HEADER_BGCOLOR);
+      } else {
+        setBackground(ODD_HEADER_BGCOLOR);
+      }
+      if (column >= 1) {
+        setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+      } else {
+        setBorder(null);
+      }
       return this;
     }
 
@@ -334,7 +337,7 @@ implements Scrollable, ContributionListing.ChangeListener {
           && (panel.installInProgress || panel.removeInProgress || panel.updateInProgress)) {
           icon = downloadingIcon;
           panel.progress.setMaximum(panel.installProgressBar.getMaximum());
-//          panel.progress.setValue(panel.installProgressBar.getValue());
+          panel.progress.setBorder(null);
           return panel.progress;
         }
         label.setIcon(icon);
@@ -383,6 +386,7 @@ implements Scrollable, ContributionListing.ChangeListener {
         }
         label.setFont(plainFont);
         label.setOpaque(true);
+        label.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
       } else {
         if (contribution.isSpecial()) {
           label = new JLabel(foundationIcon);
@@ -403,13 +407,14 @@ implements Scrollable, ContributionListing.ChangeListener {
         }
         label.setFont(Toolkit.getSansFont(14, Font.BOLD));
         label.setOpaque(true);
+        label.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
       }
       return label;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      updatePanelOrdering(visibleContributions);
+      refreshPanel();
     }
   }
 
@@ -465,6 +470,23 @@ implements Scrollable, ContributionListing.ChangeListener {
     }
   }
 
+  public void refreshPanel() {
+    for (int i = 0; i < table.getRowCount(); i++) {
+      DetailPanel detailPanel = panelByContribution.get(table.getValueAt(i, 0));
+      if (detailPanel.installInProgress || detailPanel.removeInProgress
+        || detailPanel.updateInProgress) {
+        model.fireTableCellUpdated(table.convertRowIndexToView(i), 0);
+      }
+    }
+  }
+
+  public void refreshPanel(Contribution contribution) {
+    for (int i = 0; i < table.getRowCount(); i++) {
+      if (table.getValueAt(i, 0).equals(contribution)) {
+        model.fireTableCellUpdated(table.convertRowIndexToView(i), 0);
+      }
+    }
+  }
 
   public void contributionAdded(final Contribution contribution) {
     if (filter.matches(contribution)) {

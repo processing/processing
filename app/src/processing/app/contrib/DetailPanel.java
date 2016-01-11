@@ -303,15 +303,12 @@ class DetailPanel extends JPanel {
       installProgressBar.setOpaque(false);
       installProgressBar.setAlignmentX(CENTER_ALIGNMENT);
       
-      progress = new JProgressBar() {
-//        @Override
-//        public void updateUI() {
-//          super.updateUI();
-//          setUI(new ProgressCircleUI());
-//        }
-      };
-      progress.setOpaque(false);
+      progress = new JProgressBar();
+      progress.setUI(new CustomProgressBarUI(ListPanel.EVEN_HEADER_BGCOLOR, new Color(0xe0fffd), Color.BLACK));
+      progress.setOpaque(true);
+      installProgressBar.setUI(new CustomProgressBarUI(ListPanel.ODD_HEADER_BGCOLOR, ListPanel.EVEN_HEADER_BGCOLOR, Color.BLACK));
       installProgressBar.addChangeListener(new ProgressListener(progress));
+      installProgressBar.setBorder(null);
 //      progress.setForeground(new Color(0xAAFFAAAA));
 //      installProgressBar.addPropertyChangeListener(new ProgressListener(progress));
     }
@@ -629,6 +626,7 @@ class DetailPanel extends JPanel {
             updateInProgress = !updateInProgress;
           updateButton.setVisible(contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
           setSelected(true);
+          listPanel.refreshPanel(DetailPanel.this.contrib);
         }
 
         public void cancelAction() {
@@ -968,15 +966,23 @@ class DetailPanel extends JPanel {
       this.progressBar = progressBar;
       this.progressBar.setValue(0);
       progressBar.setStringPainted(true);
+      progressBar.setIndeterminate(false);
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
-      progressBar.setIndeterminate(false);
       if (e.getSource() instanceof JProgressBar) {
         int progress = ((JProgressBar) e.getSource()).getValue();
-        progressBar.setValue(progress);
-//        listPanel.refreshList();
+        if (progress >= 0) {
+          progressBar.setValue(progress);
+          progressBar.setStringPainted(true);
+          progressBar.setIndeterminate(false);
+        } else {
+          if (!progressBar.isIndeterminate()) {
+            progressBar.setIndeterminate(true);
+            progressBar.setStringPainted(false);
+          }
+        }
       }
 
     }
