@@ -296,7 +296,7 @@ implements Scrollable, ContributionListing.ChangeListener {
 
   private class ContribStatusRenderer extends DefaultTableCellRenderer implements ActionListener {
 
-    Timer timer = new Timer(100, this);
+    Timer timer = new Timer(250, this);
     
     public ContribStatusRenderer() {
       timer.start();
