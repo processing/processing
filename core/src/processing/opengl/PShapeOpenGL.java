@@ -1459,6 +1459,7 @@ public class PShapeOpenGL extends PShape {
         tessGeo.applyMatrixOnPointGeometry(matrix,
                                            firstPointVertex, lastPointVertex);
         root.setModifiedPointVertices(firstPointVertex, lastPointVertex);
+        root.setModifiedPointAttributes(firstPointVertex, lastPointVertex);
       }
     }
   }
