@@ -44,8 +44,11 @@ public class CustomProgressBarUI extends BasicProgressBarUI {
   @Override
   public void paint(Graphics g, JComponent c) {
     Graphics2D g2d = (Graphics2D) g.create();
-    g2d.setPaint(backgroundColor);
-    g2d.fillRect(0 + iStrokWidth, 0 + iStrokWidth, progressBar.getWidth() - iStrokWidth, progressBar.getHeight() - iStrokWidth);
+    if (backgroundColor != null) {
+      g2d.setPaint(backgroundColor);
+      g2d.fillRect(0 + iStrokWidth, 0 + iStrokWidth, progressBar.getWidth()
+        - iStrokWidth, progressBar.getHeight() - iStrokWidth);
+    }
     if (progressBar.isIndeterminate()) {
       paintIndeterminate(g, c);
     } else {

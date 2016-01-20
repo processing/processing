@@ -304,7 +304,7 @@ class DetailPanel extends JPanel {
       installProgressBar.setAlignmentX(CENTER_ALIGNMENT);
       
       progress = new JProgressBar();
-      progress.setUI(new CustomProgressBarUI(ListPanel.EVEN_HEADER_BGCOLOR, new Color(0xe0fffd), Color.BLACK));
+      progress.setUI(new CustomProgressBarUI(null, ListPanel.EVEN_HEADER_BGCOLOR, Color.BLACK));
       progress.setOpaque(true);
       installProgressBar.setUI(new CustomProgressBarUI(ListPanel.ODD_HEADER_BGCOLOR, ListPanel.EVEN_HEADER_BGCOLOR, Color.BLACK));
       installProgressBar.addChangeListener(new ProgressListener(progress));
