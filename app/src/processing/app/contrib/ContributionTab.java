@@ -64,8 +64,6 @@ public class ContributionTab extends JPanel {
   String category;
   ContributionListing contribListing;
 
-  JProgressBar progressBar;
-
 
   public ContributionTab() { }
 
@@ -104,7 +102,7 @@ public class ContributionTab extends JPanel {
 //  }
 
 
-  public void showFrame(final Editor editor, boolean error, boolean loading) {
+  public void makeFrame(final Editor editor, boolean error, boolean loading) {
     this.editor = editor;
 
     setLayout(error, loading);
@@ -112,6 +110,12 @@ public class ContributionTab extends JPanel {
     loaderLabel.setVisible(loading);
     errorPanel.setVisible(error);
 
+    // Changes the size so that everything fits in the layout
+    this.setPreferredSize(new Dimension(this.getPreferredSize().width,
+                                        (int) (contributionListPanel
+                                          .getPreferredSize().getHeight()
+                                          + statusPanel.getPreferredSize()
+                                            .getHeight())));
     validate();
     repaint();
   }
@@ -119,9 +123,7 @@ public class ContributionTab extends JPanel {
 
   protected void setLayout(boolean activateErrorPanel,
                            boolean isLoading) {
-    if (progressBar == null) {
-      progressBar = new JProgressBar();
-      progressBar.setVisible(false);
+    if (loaderLabel == null) {
 
       createComponents();
       buildErrorPanel();
@@ -233,15 +235,15 @@ public class ContributionTab extends JPanel {
     closeButton.setContentAreaFilled(false);
     closeButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        contribDialog.makeAndShowTab(false, false);
+        ManagerFrame.makeTab(false, false);
       }
     });
     tryAgainButton = new JButton("Try Again");
     tryAgainButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
     tryAgainButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        contribDialog.makeAndShowTab(false, true);
-        contribDialog.downloadAndUpdateContributionListing(editor.getBase());
+        ManagerFrame.makeTab(false, true);
+        ManagerFrame.downloadAndUpdateContributionListing(editor.getBase());
       }
     });
     layout.setHorizontalGroup(layout.createSequentialGroup()
@@ -291,55 +293,6 @@ public class ContributionTab extends JPanel {
     List<Contribution> filteredLibraries =
       contribListing.getFilteredLibraryList(category, filters);
     contributionListPanel.filterLibraries(filteredLibraries);
-  }
-
-
-  protected void updateContributionListing() {
-    if (editor != null) {
-      List<Contribution> contributions = new ArrayList<Contribution>();
-
-      List<Library> libraries =
-        new ArrayList<Library>(editor.getMode().contribLibraries);
-
-      // Only add core libraries that are installed in the sketchbook
-      // https://github.com/processing/processing/issues/3688
-      //libraries.addAll(editor.getMode().coreLibraries);
-      final String sketchbookPath =
-        Base.getSketchbookLibrariesFolder().getAbsolutePath();
-      for (Library lib : editor.getMode().coreLibraries) {
-        if (lib.getLibraryPath().startsWith(sketchbookPath)) {
-          libraries.add(lib);
-        }
-      }
-
-      contributions.addAll(libraries);
-
-      Base base = editor.getBase();
-
-      List<ToolContribution> tools = base.getToolContribs();
-      contributions.addAll(tools);
-
-      List<ModeContribution> modes = base.getModeContribs();
-      contributions.addAll(modes);
-
-      List<ExamplesContribution> examples = base.getExampleContribs();
-      contributions.addAll(examples);
-
-//    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
-//
-//    // Remove libraries from the list that are part of a compilations
-//    for (LibraryCompilation compilation : compilations) {
-//      Iterator<Library> it = libraries.iterator();
-//      while (it.hasNext()) {
-//        Library current = it.next();
-//        if (compilation.getFolder().equals(current.getFolder().getParentFile())) {
-//          it.remove();
-//        }
-//      }
-//    }
-
-      contribListing.updateInstalledList(contributions);
-    }
   }
 
 
