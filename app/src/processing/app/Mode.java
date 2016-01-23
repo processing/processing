@@ -484,6 +484,7 @@ public abstract class Mode {
   public void rebuildImportMenu() {  //JMenu importMenu) {
     if (importMenu == null) {
       importMenu = new JMenu(Language.text("menu.library"));
+      Editor.MenuScroller.setScrollerFor(importMenu, Editor.SCROLL_COUNT);
     } else {
       //System.out.println("rebuilding import menu");
       importMenu.removeAll();
