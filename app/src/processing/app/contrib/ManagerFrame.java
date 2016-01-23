@@ -466,6 +466,7 @@ public class ManagerFrame {
 
       @Override
       public void finished() {
+        finished = true;
         updateContributionListing();
         updateCategoryChooser();
         if (error) {
