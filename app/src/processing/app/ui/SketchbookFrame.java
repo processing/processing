@@ -33,7 +33,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.border.EmptyBorder;
@@ -149,6 +151,10 @@ public class SketchbookFrame extends JFrame {
               //Opens sketch book only if created sketches exist
               if (base.addSketches(checksb, Base.getSketchbookFolder(), false)) {
                   setVisible(true);
+              } else {
+                //Shows message in case sketch book is empty
+                JOptionPane.showMessageDialog(getParent(), "Your Sketchbook is empty!",
+                "Message", DO_NOTHING_ON_CLOSE, new ImageIcon(Toolkit.getLibImage("icons/pde-32.png")));
               }
         } catch (IOException e) {
           e.printStackTrace();
