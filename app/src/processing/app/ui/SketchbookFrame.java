@@ -31,6 +31,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -141,7 +142,17 @@ public class SketchbookFrame extends JFrame {
           // Open the window relative to the editor
           setLocation(p.x - roughWidth, p.y);
         }
-        setVisible(true);
+        //Check whether sketch book is empty or not
+        DefaultMutableTreeNode checksb =
+          new DefaultMutableTreeNode(Language.text("sketchbook.tree"));
+        try {
+              //Opens sketch book only if created sketches exist
+              if (base.addSketches(checksb, Base.getSketchbookFolder(), false)) {
+                  setVisible(true);
+              }
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
       }
     });
   }
