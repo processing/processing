@@ -136,7 +136,7 @@ public class ErrorCheckerService {
    * If true, compilation checker will be reloaded with updated classpath
    * items.
    */
-  protected boolean loadCompClass = true;
+  protected boolean loadCompClass;
 
   /**
    * List of jar files to be present in compilation checker's classpath
@@ -180,6 +180,7 @@ public class ErrorCheckerService {
     this.editor = debugEditor;
     xqpreproc = new XQPreprocessor(this);
     astGenerator = new ASTGenerator(this);
+    loadCompClass = true;
   }
 
 
@@ -438,8 +439,13 @@ public class ErrorCheckerService {
           // If imports have changed, reload classes with new classpath.
           if (loadCompClass) {
             classPath = new URL[classpathJars.size()];
+            /*System.out.println("CP Jars:");
+            for (URL u: classpathJars) {
+              String fn = u.getFile();
+              System.out.println(fn.substring(fn.lastIndexOf('/')));
+            }*/
             classPath = classpathJars.toArray(classPath);
-            classLoader = new URLClassLoader(classPath);
+            classLoader = new URLClassLoader(classPath, null);
             loadCompClass = false;
           }
 

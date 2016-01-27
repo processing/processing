@@ -283,9 +283,7 @@ public class JavaMode extends Mode {
    * @return searchPath: file-paths separated by File.pathSeparatorChar
    */
   public String getSearchPath() {
-    // Java Mode doesn't need any default external jars at the moment.
-    // This is here for Android Mode so that it can add its android.jar file.
-    return null;
+    return getCoreLibrary().getJarPath();
   }
 
 
