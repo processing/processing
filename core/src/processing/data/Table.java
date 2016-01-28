@@ -2604,6 +2604,7 @@ public class Table {
       rp = new RowPointer(table, row);
     }
 
+    @Override
     public void remove() {
       table.removeRow(row);
     }
@@ -2637,6 +2638,7 @@ public class Table {
       rp = new RowPointer(table, -1);
     }
 
+    @Override
     public void remove() {
       table.removeRow(indices[index]);
     }

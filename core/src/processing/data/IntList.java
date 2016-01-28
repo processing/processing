@@ -735,6 +735,7 @@ public class IntList implements Iterable<Integer> {
     return new Iterator<Integer>() {
       int index = -1;
 
+      @Override
       public void remove() {
         IntList.this.remove(index);
       }

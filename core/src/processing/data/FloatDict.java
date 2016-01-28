@@ -160,6 +160,7 @@ public class FloatDict {
         return new Iterator<String>() {
           int index = -1;
 
+          @Override
           public void remove() {
             removeIndex(index);
           }
@@ -248,6 +249,7 @@ public class FloatDict {
         return new Iterator<Float>() {
           int index = -1;
 
+          @Override
           public void remove() {
             removeIndex(index);
           }

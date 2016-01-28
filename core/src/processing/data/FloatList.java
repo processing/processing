@@ -791,6 +791,7 @@ public class FloatList implements Iterable<Float> {
     return new Iterator<Float>() {
       int index = -1;
 
+      @Override
       public void remove() {
         FloatList.this.remove(index);
       }

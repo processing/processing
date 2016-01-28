@@ -163,6 +163,7 @@ public class StringDict {
         return new Iterator<String>() {
           int index = -1;
 
+          @Override
           public void remove() {
             removeIndex(index);
           }
@@ -216,6 +217,7 @@ public class StringDict {
         return new Iterator<String>() {
           int index = -1;
 
+          @Override
           public void remove() {
             removeIndex(index);
           }
