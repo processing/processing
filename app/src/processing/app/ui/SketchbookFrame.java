@@ -22,6 +22,7 @@
 
 package processing.app.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Point;
@@ -37,6 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeSelectionModel;
 
 import processing.app.Base;
@@ -49,7 +51,6 @@ import processing.app.SketchReference;
 public class SketchbookFrame extends JFrame {
   protected Base base;
   protected Mode mode;
-
 
   public SketchbookFrame(final Base base, final Mode mode) {
     super(Language.text("sketchbook"));
@@ -70,13 +71,41 @@ public class SketchbookFrame extends JFrame {
     tree.expandRow(0);
     tree.setRootVisible(false);
 
+    // Making the borders transparent
+    tree.setCellRenderer(new DefaultTreeCellRenderer(){
+      @Override
+      public Color getBorderSelectionColor() {
+       return null;
+      }
+      @Override
+      public Color getBackgroundSelectionColor() {
+        return null;
+      }
+      @Override
+      public Color getBackgroundNonSelectionColor() {
+        return null;
+      }
+      @Override
+      public Color getBackground() {
+        return null;
+      }
+    });
+
     tree.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
+        // Getting the row nearest to the click location
+        int selRow = tree.getClosestRowForLocation(e.getX(), e.getY());
+        // Implementing toggle functionality
+        if (e.getClickCount() == tree.getToggleClickCount()) {
+          if (tree.isCollapsed(selRow)) {
+            tree.expandRow(selRow);
+          } else if (tree.isExpanded(selRow)) {
+            tree.collapseRow(selRow);
+          }
+        }
         if (e.getClickCount() == 2) {
           DefaultMutableTreeNode node =
             (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-
-          int selRow = tree.getRowForLocation(e.getX(), e.getY());
           //TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
           //if (node != null && node.isLeaf() && node.getPath().equals(selPath)) {
           if (node != null && node.isLeaf() && selRow != -1) {
@@ -84,6 +113,8 @@ public class SketchbookFrame extends JFrame {
             base.handleOpen(sketch.getPath());
           }
         }
+        // Changing the selected row to clicked row
+        tree.setSelectionRow(selRow);
       }
     });
 
