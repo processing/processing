@@ -29,7 +29,6 @@ import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.event.*;
 
 import processing.app.Base;
@@ -51,7 +50,7 @@ public class PreferencesFrame {
   static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 };
 
   JTextField sketchbookLocationField;
-  JTextField presentColor;
+  JButton presentColor;
   JTextField presentColorHex;
   JCheckBox editorAntialiasBox;
   JCheckBox deletePreviousBox;
@@ -163,12 +162,12 @@ public class PreferencesFrame {
     final String colorTip = "<html>" + Language.text("preferences.background_color.tip");
     backgroundColorLabel.setToolTipText(colorTip);
 
-    presentColor = new JTextField("      ");
-    presentColor.setOpaque(true);
-    presentColor.setEnabled(false);
-    Border cb = new CompoundBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, new Color(195, 195, 195)),
-                                   BorderFactory.createMatteBorder(0, 0, 1, 1, new Color(54, 54, 54)));
-    presentColor.setBorder(cb);
+    presentColor = new JButton("      ");
+    //presentColor.setOpaque(true);
+    //presentColor.setEnabled(false);
+    //Border cb = new CompoundBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, new Color(195, 195, 195)),
+    //                               BorderFactory.createMatteBorder(0, 0, 1, 1, new Color(54, 54, 54)));
+    //presentColor.setBorder(cb);
     presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
 
     presentColorHex = new JTextField(6);
