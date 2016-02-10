@@ -468,7 +468,7 @@ public class VariableInspector extends JDialog {
     static final int ICON_SIZE = 16;
 
     OutlineRenderer() {
-      icons = loadIcons("theme/variables-1x.png");
+      icons = loadIcons("theme/variables-2x.png");
     }
 
     /**
