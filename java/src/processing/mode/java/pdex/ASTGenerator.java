@@ -1015,9 +1015,10 @@ public class ASTGenerator {
     if (candidates.get(0).getElementName()
         .equals(candidates.get(candidates.size() - 1).getElementName())) {
       log("All CC are methods only: " + candidates.get(0).getElementName());
-      for (CompletionCandidate candidate : candidates) {
-        candidate.regenerateCompletionString();
-        defListModel.addElement(candidate);
+      for (int i = 0; i < candidates.size(); i++) {
+        CompletionCandidate cc = candidates.get(i).withRegeneratedCompString();
+        candidates.set(i, cc);
+        defListModel.addElement(cc);
       }
     }
     else {
@@ -1030,14 +1031,15 @@ public class ASTGenerator {
             CompletionCandidate cc = candidates.get(i - 1);
             String label = cc.getLabel();
             int x = label.lastIndexOf(')');
-            if(candidates.get(i).getType() == CompletionCandidate.PREDEF_METHOD) {
-              cc.setLabel((cc.getLabel().contains("<html>") ? "<html>" : "")
-                          + cc.getElementName() + "(...)" + label.substring(x + 1));
+            String newLabel;
+            if (candidates.get(i).getType() == CompletionCandidate.PREDEF_METHOD) {
+              newLabel = (cc.getLabel().contains("<html>") ? "<html>" : "")
+                  + cc.getElementName() + "(...)" + label.substring(x + 1);
+            } else {
+              newLabel = cc.getElementName() + "(...)" + label.substring(x + 1);
             }
-            else {
-              cc.setLabel(cc.getElementName() + "(...)" + label.substring(x + 1));
-            }
-            cc.setCompletionString(cc.getElementName() + "(");
+            String newCompString = cc.getElementName() + "(";
+            candidates.set(i - 1, cc.withLabelAndCompString(newLabel, newCompString));
             ignoredSome = true;
             continue;
           }

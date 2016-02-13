@@ -33,11 +33,11 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 
 public class CompletionCandidate implements Comparable<CompletionCandidate>{
-  private String elementName;
-  private String label; // the toString value
-  private String completionString;
-  private Object wrappedObject;
-  private int type;
+  private final String elementName;
+  private final String label; // the toString value
+  private final String completionString;
+  private final Object wrappedObject;
+  private final int type;
 
   static final int PREDEF_CLASS = 0;
   static final int PREDEF_FIELD = 1;
@@ -158,6 +158,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     label = labelStr;
     completionString = completionStr;
     this.type = type;
+    wrappedObject = null;
   }
 
   public CompletionCandidate(String name, int type) {
@@ -165,6 +166,17 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     label = name;
     completionString = name;
     this.type = type;
+    wrappedObject = null;
+  }
+
+  private CompletionCandidate(String elementName, String label,
+                              String completionString, int type,
+                              Object wrappedObject) {
+    this.elementName = elementName;
+    this.label = label;
+    this.completionString = completionString;
+    this.type = type;
+    this.wrappedObject = wrappedObject;
   }
 
   public String getElementName() {
@@ -204,14 +216,13 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     }
   }
 
-  public void setLabel(String label) {
-    this.label = label;
+  public CompletionCandidate withLabelAndCompString(String label,
+                                                    String completionString) {
+    return new CompletionCandidate(this.elementName, label, completionString,
+                                   this.type, this.wrappedObject);
   }
 
-  public void setCompletionString(String completionString) {
-    this.completionString = completionString;
-  }
-
+  @Override
   public int compareTo(CompletionCandidate cc) {
     if(type != cc.getType()){
       return cc.getType() - type;
@@ -219,7 +230,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     return (elementName.compareTo(cc.getElementName()));
   }
 
-  public void regenerateCompletionString(){
+  public CompletionCandidate withRegeneratedCompString() {
     if (wrappedObject instanceof MethodDeclaration) {
       MethodDeclaration method = (MethodDeclaration)wrappedObject;
 
@@ -243,8 +254,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
       if (method.getReturnType2() != null)
         label.append(" : " + method.getReturnType2());
       cstr.append(")");
-      this.label = label.toString();
-      this.completionString = cstr.toString();
+      return this.withLabelAndCompString(label.toString(), cstr.toString());
     }
    else if (wrappedObject instanceof Method) {
      Method method = (Method)wrappedObject;
@@ -265,8 +275,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
        label.append(" : " + method.getReturnType().getSimpleName());
      label.append(" - <font color=#777777>" + method.getDeclaringClass().getSimpleName() + "</font></html>");
      cstr.append(")");
-     this.label = label.toString();
-     this.completionString = cstr.toString();
+     return this.withLabelAndCompString(label.toString(), cstr.toString());
      /*
       * StringBuilder label = new StringBuilder("<html>"+method.getName() + "(");
     StringBuilder cstr = new StringBuilder(method.getName() + "(");
@@ -286,6 +295,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
     label.append(" - <font color=#777777>" + method.getDeclaringClass().getSimpleName() + "</font></html>");
       * */
    }
+    return this;
   }
 
 }
