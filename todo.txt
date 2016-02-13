@@ -31,6 +31,8 @@ X   https://github.com/processing/processing/pull/4152
 X get rid of dt_socket message, making command line run a little better
 X   https://github.com/processing/processing/issues/4098
 X   https://github.com/processing/processing/pull/4103
+X message when reference is find out on nothing selected
+X   https://github.com/processing/processing/pull/4296
 
 jakub
 X Workaround for JRE bug freezing the PDE during code completion

@@ -327,8 +327,7 @@ public class JavaEditor extends Editor {
       public void actionPerformed(ActionEvent e) {
         if (textarea.isSelectionActive()) {
           handleFindReference();
-        }
-        else {
+        } else {
           statusNotice(Language.text("editor.status.find_reference.select_word_first"));
         }
       }
