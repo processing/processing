@@ -179,11 +179,9 @@ public class Runner implements MessageConsumer {
     int port = 8000 + (int) (Math.random() * 1000);
     String portStr = String.valueOf(port);
 
-    // Older (Java 1.5 and earlier) version, go figure
-//    String jdwpArg = "-Xrunjdwp:transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
-//    String debugArg = "-Xdebug";
-    // Newer (Java 1.5+) version that uses JVMTI
-    String jdwpArg = "-agentlib:jdwp=transport=dt_socket,address=" + portStr + ",server=y,suspend=y";
+    // Added 'quiet=y' for 3.0.2 to prevent command line parsing problems
+    // https://github.com/processing/processing/issues/4098
+    String jdwpArg = "-agentlib:jdwp=transport=dt_socket,address=" + portStr + ",server=y,suspend=y,quiet=y";
 
     // Everyone works the same under Java 7 (also on OS X)
     StringList commandArgs = new StringList();
