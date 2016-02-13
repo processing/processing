@@ -165,7 +165,8 @@ public class PreferencesFrame {
 
     presentColor = new JTextField("      ");
     presentColor.setOpaque(true);
-    presentColor.setEnabled(false);
+    presentColor.setEnabled(true);
+    presentColor.setEditable(false);
     Border cb = new CompoundBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, new Color(195, 195, 195)),
                                    BorderFactory.createMatteBorder(0, 0, 1, 1, new Color(54, 54, 54)));
     presentColor.setBorder(cb);

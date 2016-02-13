@@ -587,6 +587,7 @@ public class AutoFormat implements Formatter {
           break;
         }
 
+        // In a simple enum, there's not necessarily a `;` to end the statement.
         inStatementFlag = false;
 
         curlyLvl--;
@@ -606,6 +607,7 @@ public class AutoFormat implements Formatter {
 
           trimRight(result);
           result.append('\n');
+          overflowFlag = false; // Would normally be done in writeIndentedLine.
           printIndentation();
           result.append(c);
           if (peek() == ';') result.append(nextChar());
@@ -728,10 +730,14 @@ public class AutoFormat implements Formatter {
         inStatementFlag = false;
         arrayLevel = -1; // Unlikely to be needed; just in case.
 
-        //Same format for case, default, and other labels.
-        tabs--;
-        writeIndentedLine();
-        tabs++;
+        // Same format for case, default, and other labels.
+        if (tabs > 0) {
+          tabs--;
+          writeIndentedLine();
+          tabs++;
+        } else {
+          writeIndentedLine();
+        }
 
         readForNewLine();
         writeIndentedLine();

@@ -3354,11 +3354,6 @@ public class PApplet implements PConstants {
    * <p>
    * When run with an applet, uses the browser to open the url,
    * for applications, attempts to launch a browser with the url.
-   * <p>
-   * Works on Mac OS X and Windows. For Linux, use:
-   * <PRE>open(new String[] { "firefox", url });</PRE>
-   * or whatever you want as your browser, since Linux doesn't
-   * yet have a standard method for launching URLs.
    *
    * @param url the complete URL, as a String in quotes
    */
@@ -3433,25 +3428,20 @@ public class PApplet implements PConstants {
       params = new String[] { "open" };
 
     } else if (platform == LINUX) {
-      if (openLauncher == null) {
-        // Attempt to use gnome-open
+      // xdg-open is in the Free Desktop Specification and really should just
+      // work on desktop Linux. Not risking it though.
+      final String[] launchers = {"xdg-open", "gnome-open", "kde-open"};
+      for (String l : launchers) {
+        if (openLauncher != null) break;
         try {
-          Process p = Runtime.getRuntime().exec(new String[] { "gnome-open" });
+          Process p = Runtime.getRuntime().exec(new String[] { l });
           /*int result =*/ p.waitFor();
           // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
-          openLauncher = "gnome-open";
+          openLauncher = l;
         } catch (Exception e) { }
       }
       if (openLauncher == null) {
-        // Attempt with kde-open
-        try {
-          Process p = Runtime.getRuntime().exec(new String[] { "kde-open" });
-          /*int result =*/ p.waitFor();
-          openLauncher = "kde-open";
-        } catch (Exception e) { }
-      }
-      if (openLauncher == null) {
-        System.err.println("Could not find gnome-open or kde-open, " +
+        System.err.println("Could not find xdg-, gnome-, or kde-open: " +
                            "the open() command may not work.");
       }
       if (openLauncher != null) {
