@@ -16,7 +16,7 @@ public class Brackets {
   }
 
   public int findMatchingBracket(final String text, final int pos) {
-    if (pos < 0 || pos > text.length())
+    if (pos < 0 || pos >= text.length())
       return -1;
     
     final char alpha = text.charAt(pos);
@@ -51,7 +51,7 @@ public class Brackets {
       return -1;
     }
 
-    if (offsets == null)
+    if (offsets == null || offsets.get(offsets.size()-1) >= text.length())
       parse(text);
     
     // find this bracket

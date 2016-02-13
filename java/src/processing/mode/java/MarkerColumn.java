@@ -155,15 +155,10 @@ public class MarkerColumn extends JPanel {
 	/** Find out which error/warning the user has clicked and scroll to it */
 	private void scrollToMarkerAt(final int y) {
 	  try {
-	    new SwingWorker() {
-	      protected Object doInBackground() throws Exception {
-	        LineMarker m = findClosestMarker(y);
-	        if (m != null) {
-	          editor.getErrorChecker().scrollToErrorLine(m.getProblem());
-	        }
-	        return null;
-	      }
-	    }.execute();
+      LineMarker m = findClosestMarker(y);
+      if (m != null) {
+        editor.getErrorChecker().scrollToErrorLine(m.getProblem());
+      }
 	  } catch (Exception ex) {
 	    ex.printStackTrace();
 	  }
@@ -181,21 +176,16 @@ public class MarkerColumn extends JPanel {
   /** Show tooltip on hover. */
 	private void showMarkerHover(final int y) {
 	  try {
-	    new SwingWorker() {
-	      protected Object doInBackground() throws Exception {
-	        LineMarker m = findClosestMarker(y);
-	        if (m != null) {
-	          Problem p = m.getProblem();
+      LineMarker m = findClosestMarker(y);
+      if (m != null) {
+        Problem p = m.getProblem();
 //	          String kind = p.isError() ?
 //	            Language.text("editor.status.error") :
 //	            Language.text("editor.status.warning");
 //	          setToolTipText(kind + ": " + p.getMessage());
-	          editor.statusToolTip(MarkerColumn.this, p.getMessage(), p.isError());
-	          setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-	        }
-	        return null;
-	      }
-	    }.execute();
+        editor.statusToolTip(MarkerColumn.this, p.getMessage(), p.isError());
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      }
 	  } catch (Exception ex) {
 	    ex.printStackTrace();
 	  }

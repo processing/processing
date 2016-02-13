@@ -26,6 +26,7 @@ import processing.mode.java.tweak.*;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -109,39 +110,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
               }
             }
             lastTime = thisTime;
-          }
-        }
-      }
-    });
-
-    addMouseMotionListener(new MouseMotionAdapter() {
-      @Override
-      public void mouseMoved(final MouseEvent evt) {
-        int line = textArea.yToLine(evt.getY());
-        int x = evt.getX();
-
-        LineMarker marker = getJavaEditor().findError(line);
-        if (marker != null) {
-          Problem problem = marker.getProblem();
-
-          int lineOffset = textArea.getLineStartOffset(problem.getLineNumber());
-
-          int lineStart = textArea.getLineStartOffset(line);
-          int lineEnd = textArea.getLineStopOffset(line);
-
-          int errorStart = lineOffset + problem.getPDELineStartOffset();
-          int errorEnd = lineOffset + problem.getPDELineStopOffset() + 1;
-
-          int startOffset = Math.max(errorStart, lineStart) - lineStart;
-          int stopOffset = Math.min(errorEnd, lineEnd) - lineStart;
-
-          if (x >= getJavaTextArea().offsetToX(line, startOffset) &&
-              x <= getJavaTextArea().offsetToX(line, stopOffset)) {
-            //setToolTipText(problem.getMessage());
-            getJavaEditor().statusToolTip(JavaTextAreaPainter.this,
-                                          problem.getMessage(),
-                                          problem.isError());
-            evt.consume();
           }
         }
       }
@@ -477,6 +445,42 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 
   @Override
+  public String getToolTipText(MouseEvent evt) {
+    int line = evt.getY() / getFontMetrics().getHeight() + textArea.getFirstLine();
+    if (line >= 0 || line < textArea.getLineCount()) {
+      LineMarker marker = getJavaEditor().findError(line);
+      if (marker != null) {
+        Problem problem = marker.getProblem();
+
+        int lineOffset = textArea.getLineStartOffset(problem.getLineNumber());
+
+        int lineStart = textArea.getLineStartOffset(line);
+        int lineEnd = textArea.getLineStopOffset(line);
+
+        int errorStart = lineOffset + problem.getPDELineStartOffset();
+        int errorEnd = lineOffset + problem.getPDELineStopOffset() + 1;
+
+        int startOffset = Math.max(errorStart, lineStart) - lineStart;
+        int stopOffset = Math.min(errorEnd, lineEnd) - lineStart;
+
+        int x = evt.getX();
+
+        if (x >= getJavaTextArea().offsetToX(line, startOffset) &&
+            x <= getJavaTextArea().offsetToX(line, stopOffset)) {
+          getJavaEditor().statusToolTip(JavaTextAreaPainter.this,
+                                        problem.getMessage(),
+                                        problem.isError());
+          return super.getToolTipText(evt);
+        }
+      }
+    }
+    setToolTipText(null);
+    return super.getToolTipText(evt);
+  }
+
+
+  /*
+  @Override
   public String getToolTipText(MouseEvent event) {
     if (!getJavaEditor().hasJavaTabs()) {
       int off = textArea.xyToOffset(event.getX(), event.getY());
@@ -564,6 +568,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 //    setToolTipText(null);
     return super.getToolTipText(event);
   }
+  */
 
 
   // TweakMode code

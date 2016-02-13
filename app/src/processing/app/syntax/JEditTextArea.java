@@ -755,6 +755,9 @@ public class JEditTextArea extends JComponent
 //                             ", i = " + i +
 //                             ", length = " + length +
 //                             ", array len = " + segmentArray.length);
+          if (segmentOffset + offset + i >= segmentArray.length) {
+            return segmentArray.length - segmentOffset - 1;
+          }
           char c = segmentArray[segmentOffset + offset + i];
           int charWidth;
           if (c == '\t') {
