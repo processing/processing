@@ -148,6 +148,14 @@ public class JavaMode extends Mode {
   /** Handles the standard Java "Run" or "Present" */
   public Runner handleLaunch(Sketch sketch, RunnerListener listener,
                              final boolean present) throws SketchException {
+    return handleLaunch(sketch, listener, present, false);
+  }
+
+
+  /** Handles the standard Java "Run" or "Present" */
+  public Runner handleLaunch(Sketch sketch, RunnerListener listener,
+                             final boolean present,
+                             final boolean quiet) throws SketchException {
     JavaBuild build = new JavaBuild(sketch);
 //    String appletClassName = build.build(false);
     String appletClassName = build.build(true);
@@ -159,7 +167,7 @@ public class JavaMode extends Mode {
           if (present) {
             runtime.present(null);
           } else {
-            runtime.launch(null);
+            runtime.launch(null, quiet);
           }
         }
       }).start();
