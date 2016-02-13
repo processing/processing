@@ -2,19 +2,15 @@
 
 /*
   Part of the Processing project - http://processing.org
-
   Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
-
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
   as published by the Free Software Foundation.
-
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-
   You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -43,8 +39,17 @@ import processing.app.ui.Toolkit;
 import processing.app.Base;
 import processing.app.Platform;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.MalformedURLException;
 
-class StatusPanel extends JPanel {
+import java.io.*;
+import java.math.BigDecimal;
+
+
+
+public class StatusPanel extends JPanel {
   static final int BUTTON_WIDTH = 150;
 
   static Icon foundationIcon;
@@ -57,6 +62,7 @@ class StatusPanel extends JPanel {
   JButton installButton;
   JPanel progressPanel;
   JLabel updateLabel;
+  JLabel downloadSizeLabel;     // Label to display the downloadFile size
   JButton updateButton;
   JButton removeButton;
   GroupLayout layout;
@@ -65,6 +71,8 @@ class StatusPanel extends JPanel {
   ContributionTab contributionTab;
 
   private String bodyRule;
+  private boolean getDownloadSize = false;  // To store download file size
+  Thread t1 = new Thread();    // Thread to calculate the download file size
 
 
   /** Needed by ContributionListPanel */
@@ -126,6 +134,11 @@ class StatusPanel extends JPanel {
     updateLabel.setFont(buttonFont);
     updateLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
+    /* Setting up the JLabel to display the download file size */
+    downloadSizeLabel = new JLabel("");
+    downloadSizeLabel.setFont(buttonFont);
+    downloadSizeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
     updateButton = new JButton("Update", updateIcon);
     updateButton.setDisabledIcon(updateIcon);
     updateButton.setFont(buttonFont);
@@ -179,6 +192,8 @@ class StatusPanel extends JPanel {
                   .addComponent(progressPanel)
                   .addComponent(updateLabel,
                                 BUTTON_WIDTH, BUTTON_WIDTH, BUTTON_WIDTH)
+                  .addComponent(downloadSizeLabel,BUTTON_WIDTH,
+                       BUTTON_WIDTH,BUTTON_WIDTH)
                   .addComponent(updateButton)
                   .addComponent(removeButton))
       .addGap(12));  // make buttons line up relative to the scrollbar
@@ -192,6 +207,7 @@ class StatusPanel extends JPanel {
                   .addGroup(layout.createParallelGroup()
                               .addComponent(progressPanel)
                               .addComponent(updateLabel))
+                  .addComponent(downloadSizeLabel)
                   .addComponent(updateButton).addComponent(removeButton)));
 
     layout.linkSize(SwingConstants.HORIZONTAL,
@@ -204,6 +220,7 @@ class StatusPanel extends JPanel {
     updateButton.setEnabled(false);
     removeButton.setEnabled(false);
     updateLabel.setVisible(true);
+    downloadSizeLabel.setVisible(false);
 
     // Makes the label take up space even though not visible
     layout.setHonorsVisibility(updateLabel, false);
@@ -260,11 +277,20 @@ class StatusPanel extends JPanel {
     if (panel.getContrib().isCompatible(Base.getRevision())) {
       if (installButton.isEnabled()) {
         updateLabel.setText(latestVersion + " available");
+        downloadSizeLabel.setVisible(false);
+        getDownloadSize = true;
+        t1.stop(); // Killing previous thread
       } else {
         updateLabel.setText(currentVersion + " installed");
+        downloadSizeLabel.setVisible(false);
+        getDownloadSize = false;
+        t1.stop(); // Killing previous thread
       }
     } else {
       updateLabel.setText(currentVersion + " not compatible");
+      downloadSizeLabel.setVisible(false);
+      getDownloadSize = false;
+      t1.stop(); // Killing previous thread
     }
 
     if (latestVersion != null) {
@@ -292,6 +318,57 @@ class StatusPanel extends JPanel {
       progressPanel.setVisible(true);
       updateLabel.setVisible(false);
       progressPanel.repaint();
+    }
+
+    /** Creating a Thread to calculate the size of the dowload file **/
+    // Thread is used to avoid the delay caused by the HTTPUrlConnection class
+    // while fetching the fileSize from the provided file URL
+    if (getDownloadSize == true) {
+      t1 = new Thread(new Runnable() {
+        HttpURLConnection conn = null;
+
+        public void run() {
+          double downloadSize =0 ;
+          DetailPanel currentPanel =
+            contributionTab.contributionListPanel.getSelectedPanel();
+
+          try {
+            URL url = new URL((contributionListing
+              .getAvailableContribution(currentPanel.getContrib())).link);
+            conn = (HttpURLConnection)url.openConnection();
+            downloadSize = conn.getContentLength();  // Fetching the download filesize
+            conn.disconnect();
+
+            // Calculating the file size in standard unit
+            String unit[] = {"Bytes", "KB", "MB", "GB", "TB"};
+            int u = 0;
+            while (downloadSize >= 1024.0) {
+              downloadSize = (downloadSize / 1024.0);
+              u++;
+            }
+            downloadSize = new BigDecimal(downloadSize)
+              .setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+            if (downloadSize > 0.0) {
+              downloadSizeLabel.setText("Size :   " + downloadSize + " " + unit[u]);
+            } else{
+                downloadSizeLabel.setText("Size not available!");
+            }
+            downloadSizeLabel.setVisible(true);
+            return;
+
+            } catch (MalformedURLException e) {
+                System.out.println("Malformed Url");
+            } catch (IOException e) {
+                System.out.println("IOException caught");
+            }
+          }
+          public void stop() {
+            if (t1 != null)
+              conn.disconnect();
+          }
+      });
+      t1.start();
     }
   }
 }
