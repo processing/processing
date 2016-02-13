@@ -2,7 +2,7 @@ Processing
 ==========
 
 This is the official source code for the [Processing](http://processing.org) Development Environment (PDE), 
-the “core” and the libraries that are included with the [download](http://processing.org/download). 
+the “core” and the libraries that are included with the [download](http://processing.org/download).
 
 __I've found a bug!__ 
 Let us know [here](https://github.com/processing/processing/issues) (after first checking if someone has already posted a similar problem). 
@@ -22,7 +22,7 @@ The instructions for building the source [are here](https://github.com/processin
 Please help us fix problems, and if you're submitting code, following the [style guidelines](https://github.com/processing/processing/wiki/Style-Guidelines) helps save us a lot of time.
 
 __And finally...__
-Someday we'll also fix all these bugs, throw together hundreds of unit tests, and get rich off all this stuff that we're giving away for free. But not today. 
+Someday we'll also fix all these bugs, throw together hundreds of unit tests, and get rich off all this stuff that we're giving away for free. But not today.
 
 So in the meantime, I ask for your patience, 
 [participation](https://github.com/processing/processing/wiki/Project-List), 
