@@ -328,6 +328,9 @@ public class JavaEditor extends Editor {
         if (textarea.isSelectionActive()) {
           handleFindReference();
         }
+        else {
+          statusNotice(Language.text("editor.status.find_reference.select_word_first"));
+        }
       }
     });
     menu.add(item);
