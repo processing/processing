@@ -81,6 +81,10 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   Image offscreen;
   int sizeW, sizeH;
 
+  int cursorRowNumber;
+  int cursorColumnNumber;
+  String cursorValues;
+
 //  JButton cancelButton;
 //  JButton okButton;
 //  JTextField editField;
@@ -96,6 +100,8 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     this.editor = editor;
     empty();
     updateMode();
+    cursorRowNumber = 0;
+    cursorColumnNumber = 0;
 
     addMouseListener(new MouseAdapter() {
       public void mouseEntered(MouseEvent e) {
@@ -226,6 +232,21 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     repaint();
   }
 
+  // Calculates and updates the LineNumber and ColumnNumber of the cursor
+  public void updateCursorIndexValues() {
+    // We create a try catch to catch any exceptions.
+    try {
+      int caretpos = editor.textarea.getCaretPosition();
+      cursorRowNumber = editor.textarea.getLineOfOffset(caretpos);
+      cursorColumnNumber = caretpos - 
+                             editor.textarea.getLineStartOffset(cursorRowNumber);
+      cursorRowNumber += 1;
+      }
+      catch(Exception ex) {
+      }
+      repaint();
+  }
+
 
   //public void paintComponent(Graphics screen) {
   public void paint(Graphics screen) {
@@ -266,6 +287,17 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     if (message != null) {
       g.setFont(font); // needs to be set each time on osx
       g.drawString(message, LEFT_MARGIN, (sizeH + ascent) / 2);
+      System.out.println();
+    }
+
+    // Updates the cursor Row & ColumnNumber and displays them
+    // on the right side of the EditorStatusBar
+    updateCursorIndexValues(); // Updating CaretPosition values
+    if (cursorRowNumber > 0) {
+      cursorValues = String.valueOf(cursorRowNumber) + ":" +
+                                    String.valueOf(cursorColumnNumber);
+      g.drawString(cursorValues, getWidth() - RIGHT_MARGIN -
+                   g.getFontMetrics().stringWidth(cursorValues), (sizeH + ascent) / 2);
     }
 
     if (indeterminate) {
