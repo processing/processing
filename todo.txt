@@ -1,5 +1,7 @@
 0248 (3.0.2)
 X move to Java 8u74, also fixes JavaFX issue
+X actually require OS X 10.8.5 (was set to 10.7)
+X   the Wiki said 10.8.3 required for 3.0, but has since been updated
 
 contribs
 X add "full screen" option to the Editor on OS X
