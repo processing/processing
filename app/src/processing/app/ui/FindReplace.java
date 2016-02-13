@@ -448,20 +448,21 @@ public class FindReplace extends JFrame {
     editor.setSelection(0, 0);
 
     boolean foundAtLeastOne = false;
-    int startTab = -1, startIndex = -1, c = 50000;
-    // you couldn't seriously be replacing 50K times o_O
-    while (--c > 0) {
+    int startTab = -1;
+    int startIndex = -1;
+    int counter = 10000;  // prevent infinite loop
+    while (--counter > 0) {
       if (find(false, false)) {
-        if (editor.getSketch().getCurrentCodeIndex() == startTab
-          && (editor.getSelectionStart() >= startIndex && (editor
-            .getSelectionStart() <= startIndex
-            + replaceField.getText().length()))) {
+        int caret = editor.getSelectionStart();
+        int stopIndex = startIndex + replaceField.getText().length();
+        if (editor.getSketch().getCurrentCodeIndex() == startTab &&
+            (caret >= startIndex && (caret <= stopIndex))) {
           // we've reached where we started, so stop the replace
           Toolkit.beep();
           editor.statusNotice("Reached beginning of search!");
           break;
         }
-        if(!foundAtLeastOne){
+        if (!foundAtLeastOne) {
           foundAtLeastOne = true;
           startTab = editor.getSketch().getCurrentCodeIndex();
           startIndex = editor.getSelectionStart();
