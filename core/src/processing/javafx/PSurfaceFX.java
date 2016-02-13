@@ -365,11 +365,15 @@ public class PSurfaceFX implements PSurface {
 
   /** Show or hide the window. */
   @Override
-  public void setVisible(boolean visible) {
+  public void setVisible(final boolean visible) {
     Platform.runLater(new Runnable() {
       public void run() {
-        stage.show();
-        canvas.requestFocus();
+        if (visible) {
+          stage.show();
+          canvas.requestFocus();
+        } else {
+          stage.hide();
+        }
       }
     });
   }
