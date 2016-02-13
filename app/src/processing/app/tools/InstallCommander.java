@@ -91,7 +91,7 @@ public class InstallCommander implements Tool {
                    "OPTION_FOR_HEADLESS_RUN=\"\"\n" +
                    "for ARG in \"$@\"\n" +
                    "do\n" +
-                   "    if [ $ARG = \"--build\" ]; then\n" +
+                   "    if [ \"$ARG\" = \"--build\" ]; then\n" +
                    "        OPTION_FOR_HEADLESS_RUN=\"-Djava.awt.headless=true\"\n" +
                    "    fi\n" +
                    "done\n\n");
