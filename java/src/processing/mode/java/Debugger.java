@@ -71,28 +71,25 @@ public class Debugger implements VMEventListener {
   protected ReferenceType mainClass;
 
   /// holds all loaded classes in the debuggee VM
-  protected Set<ReferenceType> classes = new HashSet<ReferenceType>();
+  protected Set<ReferenceType> classes = new HashSet<>();
 
   /// listeners for class load events
-  protected List<ClassLoadListener> classLoadListeners =
-    new ArrayList<ClassLoadListener>();
+  protected List<ClassLoadListener> classLoadListeners = new ArrayList<>();
 
   /// path to the src folder of the current build
   protected String srcPath;
 
   /// list of current breakpoints
-  protected List<LineBreakpoint> breakpoints =
-    new ArrayList<LineBreakpoint>();
+  protected List<LineBreakpoint> breakpoints = new ArrayList<>();
 
   /// the step request we are currently in, or null if not in a step
   protected StepRequest requestedStep;
 
   /// maps line number changes at runtime (orig -> changed)
-  protected Map<LineID, LineID> runtimeLineChanges =
-    new HashMap<LineID, LineID>();
+  protected Map<LineID, LineID> runtimeLineChanges = new HashMap<>();
 
   /// tab filenames which already have been tracked for runtime changes
-  protected Set<String> runtimeTabsTracked = new HashSet<String>();
+  protected Set<String> runtimeTabsTracked = new HashSet<>();
 
 
   public Debugger(JavaEditor editor) {
@@ -520,7 +517,7 @@ public class Debugger implements VMEventListener {
    * @return the list of breakpoints in the given tab
    */
   synchronized List<LineBreakpoint> getBreakpoints(String tabFilename) {
-    List<LineBreakpoint> list = new ArrayList<LineBreakpoint>();
+    List<LineBreakpoint> list = new ArrayList<>();
     for (LineBreakpoint bp : breakpoints) {
       if (bp.lineID().fileName().equals(tabFilename)) {
         list.add(bp);
@@ -661,7 +658,12 @@ public class Debugger implements VMEventListener {
     // disallow stepping into invisible lines
     if (!locationIsVisible(se.location())) {
       // TODO: this leads to stepping, should it run on the EDT?
-      stepOutIntoViewOrContinue();
+      javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          stepOutIntoViewOrContinue();
+        }
+      });
     }
   }
 
@@ -914,7 +916,8 @@ public class Debugger implements VMEventListener {
       if (!t.isSuspended() || t.frameCount() == 0) {
         return "";
       }
-      return t.frame(0).thisObject().referenceType().name();
+      ObjectReference ref = t.frame(0).thisObject();
+      return ref == null ? "" : ref.referenceType().name();
 
     } catch (IncompatibleThreadStateException ex) {
       log(Level.SEVERE, null, ex);
@@ -966,7 +969,7 @@ public class Debugger implements VMEventListener {
    */
   protected List<VariableNode> getLocals(ThreadReference t, int depth) {
     //System.out.println("getting locals");
-    List<VariableNode> vars = new ArrayList<VariableNode>();
+    List<VariableNode> vars = new ArrayList<>();
     try {
       if (t.frameCount() > 0) {
         StackFrame sf = t.frame(0);
@@ -1008,7 +1011,7 @@ public class Debugger implements VMEventListener {
     } catch (IncompatibleThreadStateException ex) {
       log(Level.SEVERE, null, ex);
     }
-    return new ArrayList<VariableNode>();
+    return new ArrayList<>();
   }
 
 
@@ -1023,7 +1026,7 @@ public class Debugger implements VMEventListener {
   protected List<VariableNode> getFields(Value value, int depth, int maxDepth,
                                          boolean includeInherited) {
     // remember: Value <- ObjectReference, ArrayReference
-    List<VariableNode> vars = new ArrayList<VariableNode>();
+    List<VariableNode> vars = new ArrayList<>();
     if (depth <= maxDepth) {
       if (value instanceof ArrayReference) {
         return getArrayFields((ArrayReference) value);
@@ -1065,7 +1068,7 @@ public class Debugger implements VMEventListener {
    * @return list of array fields
    */
   protected List<VariableNode> getArrayFields(ArrayReference array) {
-    List<VariableNode> fields = new ArrayList<VariableNode>();
+    List<VariableNode> fields = new ArrayList<>();
     if (array != null) {
       String arrayType = array.type().name();
       if (arrayType.endsWith("[]")) {
@@ -1089,7 +1092,7 @@ public class Debugger implements VMEventListener {
    * @return call stack as list of {@link DefaultMutableTreeNode}s
    */
   protected List<DefaultMutableTreeNode> getStackTrace(ThreadReference t) {
-    List<DefaultMutableTreeNode> stack = new ArrayList<DefaultMutableTreeNode>();
+    List<DefaultMutableTreeNode> stack = new ArrayList<>();
     try {
       for (StackFrame f : t.frames()) {
         stack.add(new DefaultMutableTreeNode(locationToString(f.location())));
@@ -1117,13 +1120,13 @@ public class Debugger implements VMEventListener {
       } else {
         StackFrame sf = t.frame(0);
         ObjectReference thisObject = sf.thisObject();
-        if (this != null) {
+        if (thisObject != null) {
           ReferenceType type = thisObject.referenceType();
           System.out.println("fields in this (" + type.name() + "):");
           for (Field f : type.visibleFields()) {
             System.out.println(f.typeName() + " " + f.name() + " = " + thisObject.getValue(f));
           }
-        } else {  // TODO [this is not reachable - fry]
+        } else {
           System.out.println("can't get this (in native or static method)");
         }
       }

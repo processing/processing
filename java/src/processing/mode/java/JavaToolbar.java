@@ -79,7 +79,7 @@ public class JavaToolbar extends EditorToolbar {
                                     Language.text("menu.debug.step_out")) {
         @Override
         public void actionPerformed(ActionEvent e) {
-          final int mask = KeyEvent.SHIFT_DOWN_MASK | KeyEvent.ALT_DOWN_MASK;
+          final int mask = ActionEvent.SHIFT_MASK | ActionEvent.ALT_MASK;
           jeditor.handleStep(e.getModifiers() & mask);
         }
       };
