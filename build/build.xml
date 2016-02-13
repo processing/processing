@@ -525,6 +525,7 @@
                shortVersion="${version}"
                version="${revision}"
                javafx="true"
+               minimumSystem="10.8.5"
                mainClassName="processing.app.BaseSplash">
 
       <!-- The appbundler task needs a couple files (the Info.plist and

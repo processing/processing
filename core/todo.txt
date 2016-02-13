@@ -6,14 +6,6 @@ X   add additional clarification for Eclipse users
 X Flipped Y-axis in JavaFX is now done (JDK bug)
 X   https://github.com/processing/processing/issues/3795
 
-_ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
-_   https://github.com/processing/processing/issues/4020
-_ add increment() that takes IntDict to merge things
-
-_ normalize error messages for missing files
-_   https://github.com/processing/processing/issues/4265
-_   https://github.com/processing/processing/pull/4268
-
 jakub
 X Initialize sketch args before calling settings() 
 X   https://github.com/processing/processing/issues/4219
@@ -48,6 +40,15 @@ X Fill out the Javadoc for PMatrix
 X   https://github.com/processing/processing/pull/4155
 X Have PSurfaceFX pay attention to the setVisible argument
 X   https://github.com/processing/processing/pull/4210
+
+
+_ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
+_   https://github.com/processing/processing/issues/4020
+_ add increment() that takes IntDict to merge things
+
+_ normalize error messages for missing files
+_   https://github.com/processing/processing/issues/4265
+_   https://github.com/processing/processing/pull/4268
 
 
 _ fix menu bar hiding in exported JavaFX apps
