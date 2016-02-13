@@ -313,7 +313,8 @@ public class PSurfaceFX implements PSurface {
       // https://github.com/processing/processing/issues/3823
       if ((PApplet.platform == PConstants.MACOSX ||
            PApplet.platform == PConstants.LINUX) &&
-          PApplet.javaVersionName.compareTo("1.8.0_60") >= 0) {
+          PApplet.javaVersionName.compareTo("1.8.0_60") >= 0 &&
+          PApplet.javaVersionName.compareTo("1.8.0_72") < 0) {
         System.err.println("smooth() disabled for JavaFX with this Java version due to Oracle bug");
         System.err.println("https://github.com/processing/processing/issues/3795");
         smooth = 0;

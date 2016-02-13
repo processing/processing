@@ -3,6 +3,8 @@ X Fix another "Zero length string passed to TextLayout constructor" error
 X Ambiguity on where to call smooth()
 X   https://github.com/processing/processing/issues/4211
 X   add additional clarification for Eclipse users
+X Flipped Y-axis in JavaFX is now done (JDK bug)
+X   https://github.com/processing/processing/issues/3795
 
 _ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
 _   https://github.com/processing/processing/issues/4020

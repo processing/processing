@@ -1,4 +1,5 @@
 0248 (3.0.2)
+X move to Java 8u74, also fixes JavaFX issue
 
 contribs
 X add "full screen" option to the Editor on OS X
@@ -33,6 +34,10 @@ X   https://github.com/processing/processing/issues/4098
 X   https://github.com/processing/processing/pull/4103
 X message when reference is find out on nothing selected
 X   https://github.com/processing/processing/pull/4296
+X better handling of quotes in command line args
+X   https://github.com/processing/processing/pull/4145
+X   https://github.com/processing/processing/issues/3996
+X   https://github.com/processing/processing/issues/4119
 
 jakub
 X Workaround for JRE bug freezing the PDE during code completion

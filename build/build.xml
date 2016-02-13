@@ -69,9 +69,14 @@
   <!-- Switching to 8 because updates for 7 ended April 2015 -->
   <property name="jdk.version" value="8" />
   <!-- moving back to 8u51 because of Oracle bug in OS X and Linux smoothing
-       https://github.com/processing/processing/issues/3795 -->
+       https://github.com/processing/processing/issues/3795
+       https://bugs.openjdk.java.net/browse/JDK-8136495 -->
+  <property name="jdk.update" value="74" />
+  <property name="jdk.build" value="2" />
+  <!--
   <property name="jdk.update" value="51" />
   <property name="jdk.build" value="16" />
+  -->
   <!--
   <property name="jdk.update" value="60" />
   <property name="jdk.build" value="27" />
@@ -499,7 +504,7 @@
     <!-- Require that a JDK be installed, but call this on build, so that
          the download-jdk-macosx target can be called. -->
     <fail unless="macosx_jdk_found"
-          message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again.${line.separator}Or... type 'ant download-jdk-macosx' to download it to your Desktop." />
+          message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Or... type 'ant download-jdk-macosx' to download it to your Desktop.${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
 
     <mkdir dir="macosx/work" />
     
