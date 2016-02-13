@@ -3430,18 +3430,18 @@ public class PApplet implements PConstants {
     } else if (platform == LINUX) {
       // xdg-open is in the Free Desktop Specification and really should just
       // work on desktop Linux. Not risking it though.
-      final String[] launchers = {"xdg-open", "gnome-open", "kde-open"};
-      for (String l : launchers) {
+      final String[] launchers = { "xdg-open", "gnome-open", "kde-open" };
+      for (String launcher : launchers) {
         if (openLauncher != null) break;
         try {
-          Process p = Runtime.getRuntime().exec(new String[] { l });
+          Process p = Runtime.getRuntime().exec(new String[] { launcher });
           /*int result =*/ p.waitFor();
           // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
-          openLauncher = l;
+          openLauncher = launcher;
         } catch (Exception e) { }
       }
       if (openLauncher == null) {
-        System.err.println("Could not find xdg-, gnome-, or kde-open: " +
+        System.err.println("Could not find xdg-open, gnome-open, or kde-open: " +
                            "the open() command may not work.");
       }
       if (openLauncher != null) {
