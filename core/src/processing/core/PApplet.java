@@ -1258,6 +1258,9 @@ public class PApplet implements PConstants {
     // When running from the PDE, say setup(), otherwise say settings()
     final String where = external ? "setup" : "settings";
     PGraphics.showWarning("%s() can only be used inside %s()", method, where);
+    if (external) {
+      PGraphics.showWarning("When run from the PDE, %s() is automatically moved from setup() to settings()", method);
+    }
   }
 
 
@@ -11145,9 +11148,9 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from clip.xml )
    *
-   * Limits the rendering to the boundaries of a rectangle defined 
-   * by the parameters. The boundaries are drawn based on the state 
-   * of the <b>imageMode()</b> fuction, either CORNER, CORNERS, or CENTER. 
+   * Limits the rendering to the boundaries of a rectangle defined
+   * by the parameters. The boundaries are drawn based on the state
+   * of the <b>imageMode()</b> fuction, either CORNER, CORNERS, or CENTER.
    *
    * ( end auto-generated )
    *
