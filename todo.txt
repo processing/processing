@@ -1,10 +1,80 @@
 0248 (3.0.2)
 
-
 contribs
 X add "full screen" option to the Editor on OS X
 X   https://github.com/processing/processing/issues/3993
 X   https://github.com/processing/processing/pull/4078
+X add install script for site for ARM
+X   https://github.com/processing/processing/pull/4110
+X search/replace shouldn't include the string being replaced
+X   https://github.com/processing/processing/issues/4270
+X   https://github.com/processing/processing/pull/4271
+X 'Background Color when Presenting' not visible on Preferences window
+X   https://github.com/processing/processing/issues/4272
+X   https://github.com/processing/processing/pull/4278
+X Fix minor autoformatter bugs (enums not working)
+X   https://github.com/processing/processing/issues/4185
+X   https://github.com/processing/processing/pull/4200
+X Use xdg-open in PApplet#launch(String)
+X   https://github.com/processing/processing/pull/4171
+X Update Source Code Pro and Source Sans Pro fonts to the latest versions
+X   https://github.com/processing/processing/pull/4150
+X   https://github.com/processing/processing/issues/3836
+X Minor fixes for Java Mode
+X   https://github.com/processing/processing/pull/4114
+X Add i18n support for the PopUp menu
+X   https://github.com/processing/processing/pull/4060
+X Add Turkish to the list of languages
+X   https://github.com/processing/processing/pull/4073
+X Make the error message for stack overflows clearer 
+X   https://github.com/processing/processing/pull/4152
+X get rid of dt_socket message, making command line run a little better
+X   https://github.com/processing/processing/issues/4098
+X   https://github.com/processing/processing/pull/4103
+
+jakub
+X Workaround for JRE bug freezing the PDE during code completion
+X   https://github.com/processing/processing/pull/4079
+X Debugger fixes
+X   prevent NPE because ui was not updated on AWT
+X   https://github.com/processing/processing/pull/4117
+X fix NPE when stepping into static method
+X   https://github.com/processing/processing/issues/3590
+X step button works correctly when SHIFT or ALT is pressed
+X   https://github.com/processing/processing/issues/4116
+X More editor fixes
+X   https://github.com/processing/processing/pull/4113
+X Tooltip over variable decl has wrong style and content
+X   https://github.com/processing/processing/issues/3940
+X May have fixed? NullPointerException in initiateToolTip()
+X   https://github.com/processing/processing/issues/3286
+X "String index out of range" error with bracket handling in the editor
+X   https://github.com/processing/processing/issues/1940
+
+_ spacing of the updates number/circle in the lower right is off
+_   https://github.com/processing/processing/issues/4094
+_   https://github.com/processing/processing/pull/4097
+
+_ need docs for translations
+_   https://github.com/processing/processing/issues/4018
+
+_ setting a bad font/size causes a crash on startup
+_   https://github.com/processing/processing/issues/4085
+o   https://github.com/processing/processing/pull/4087
+
+_ add 2016 to about-1x and about-2x
+
+_ patch to core classpath by Manindra?
+
+shortcuts
+_ ctrl-J (for debugger) is inserting newline
+_   https://github.com/processing/processing/issues/3830
+_ problems with non-US keyboards and some shortcuts
+_   https://github.com/processing/processing/issues/2199
+_ Determine shortcut for Export vs Use Selection for Find
+_   https://github.com/processing/processing/issues/2985
+_ Determine new keyboard shortcut for Step Out
+_   https://github.com/processing/processing/issues/3538
 
 
 more contribs
@@ -18,6 +88,9 @@ _   https://github.com/processing/processing/pull/4037
 _ Pasting text into PDE results in "Clipboard does not contain a string"
 _   https://github.com/processing/processing/pull/4040
 
+_ complex text input issues (may be fixed with PR)
+_   https://github.com/processing/processing/issues/3860
+_   https://github.com/processing/processing/issues/3475
 
 known issues
 _ launch4j doesn't work from folders with non-native charsets
@@ -34,6 +107,13 @@ _ debugger deadlocks when choosing "Step Into" on println()
 _   https://github.com/processing/processing/issues/3923
 _ Tweak Mode sometimes freezes while running, require a force quit
 _   https://github.com/processing/processing/issues/3928
+
+
+discussion
+_ loadImage() immediately after saveFrame() foiled by async default
+_   https://github.com/processing/processing/issues/4218
+_   the hint() mostly works, but gross to use a hint frequently
+_ how to handle the touch api
 
 
 gui
@@ -149,10 +229,6 @@ _   https://github.com/processing/processing/pull/3178
 help me
 _ Horizontal scrollbar does not scroll textarea all the way
 _   https://github.com/processing/processing/issues/3591
-_ "String index out of range" error
-_   https://github.com/processing/processing/issues/1940
-_ problems with non-US keyboards and some shortcuts
-_   https://github.com/processing/processing/issues/2199
 _ clean up 'ant doc' target to remove warnings
 _   https://github.com/processing/processing/issues/1492
 _ fix encodings, line endings, and mime types in the repo
@@ -164,12 +240,6 @@ _   https://github.com/processing/processing/pull/3337
 _ export application ubuntu -> windows not working (2.2.1)
 _   https://github.com/processing/processing/issues/2698
 _   might be something with libraries (native or otherwise)
-
-
-_ Determine shortcut for Export vs Use Selection for Find
-_   https://github.com/processing/processing/issues/2985
-_ Determine new keyboard shortcut for Step Out
-_   https://github.com/processing/processing/issues/3538
 
 
 medium
