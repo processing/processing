@@ -493,11 +493,9 @@ public class JavaTextAreaPainter extends TextAreaPainter
         setToolTipText(null);
         return super.getToolTipText(event);
       }
-      String s = textArea.getLineText(line);
-      if (s == "") {
-        return event.toString();
 
-      } else if (s.length() == 0) {
+      String s = textArea.getLineText(line);
+      if (s == null || s.isEmpty()) {
         setToolTipText(null);
         return super.getToolTipText(event);
 
