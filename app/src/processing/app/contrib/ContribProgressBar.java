@@ -33,6 +33,7 @@ import javax.swing.JProgressBar;
 
 abstract class ContribProgressBar extends ContribProgressMonitor {
   JProgressBar progressBar;
+  String purpose;
 
   public ContribProgressBar(JProgressBar progressBar) {
     this.progressBar = progressBar;
@@ -40,6 +41,7 @@ abstract class ContribProgressBar extends ContribProgressMonitor {
 
   public void startTask(String name, int maxValue) {
     finished = false;
+    purpose = name;
     progressBar.setString(name);
     progressBar.setIndeterminate(maxValue == UNKNOWN);
     progressBar.setMaximum(maxValue);
@@ -48,6 +50,8 @@ abstract class ContribProgressBar extends ContribProgressMonitor {
   public void setProgress(int value) {
     super.setProgress(value);
     progressBar.setValue(value);
+    int percentComplete = (int) (progressBar.getPercentComplete() * 100);
+    progressBar.setString(purpose + " " + percentComplete + "%");
   }
 
   @Override

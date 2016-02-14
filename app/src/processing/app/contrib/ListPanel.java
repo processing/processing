@@ -22,12 +22,15 @@
 package processing.app.contrib;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.*;
 import java.util.Map.Entry;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 import javax.swing.event.*;
 import javax.swing.table.*;
@@ -59,13 +62,15 @@ implements Scrollable, ContributionListing.ChangeListener {
   static Icon updateAvailableIcon;
   static Icon incompatibleIcon;
   static Icon foundationIcon;
+  static Icon downloadingIcon;
 
   static Font plainFont;
   static Font boldFont;
   static Font headerFont;
 
   // Should this be in theme.txt? Of course! Is it? No.
-  static final Color HEADER_BGCOLOR = new Color(0xffEBEBEB);
+  static final Color EVEN_HEADER_BGCOLOR = new Color(0xffDFDFDF);
+  static final Color ODD_HEADER_BGCOLOR = new Color(0xffEBEBEB);
 
 
   public ListPanel() {
@@ -74,6 +79,7 @@ implements Scrollable, ContributionListing.ChangeListener {
       updateAvailableIcon = Toolkit.getLibIconX("manager/update-available");
       incompatibleIcon = Toolkit.getLibIconX("manager/incompatible");
       foundationIcon = Toolkit.getLibIconX("icons/foundation", 16);
+      downloadingIcon = Toolkit.getLibIcon("manager/downloading2.gif");
 
       plainFont = Toolkit.getSansFont(14, Font.PLAIN);
       boldFont = Toolkit.getSansFont(14, Font.BOLD);
@@ -231,13 +237,17 @@ implements Scrollable, ContributionListing.ChangeListener {
       }
       setFont(headerFont);
       setIcon(getSortIcon(table, column));
-      setBackground(HEADER_BGCOLOR);
-//      if (column % 2 == 0) {
-//        setBackground(new Color(0xdfdfdf));
-//      } else {
-//        setBackground(new Color(0xebebeb));
-//      }
-      setBorder(null);
+//      setBackground(HEADER_BGCOLOR);
+      if (column % 2 == 0) {
+        setBackground(EVEN_HEADER_BGCOLOR);
+      } else {
+        setBackground(ODD_HEADER_BGCOLOR);
+      }
+      if (column >= 1) {
+        setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+      } else {
+        setBorder(null);
+      }
       return this;
     }
 
@@ -284,7 +294,13 @@ implements Scrollable, ContributionListing.ChangeListener {
   }
 
 
-  private class ContribStatusRenderer extends DefaultTableCellRenderer {
+  private class ContribStatusRenderer extends DefaultTableCellRenderer implements ActionListener {
+
+    Timer timer = new Timer(250, this);
+    
+    public ContribStatusRenderer() {
+      timer.start();
+    }
 
     @Override
     public void setVerticalAlignment(int alignment) {
@@ -315,6 +331,14 @@ implements Scrollable, ContributionListing.ChangeListener {
           if (!contribution.isCompatible(Base.getRevision())) {
             icon = incompatibleIcon;
           }
+        }
+        DetailPanel panel = panelByContribution.get(contribution);
+        if (panel != null
+          && (panel.installInProgress || panel.removeInProgress || panel.updateInProgress)) {
+          icon = downloadingIcon;
+          panel.progress.setMaximum(panel.installProgressBar.getMaximum());
+          panel.progress.setBorder(null);
+          return panel.progress;
         }
         label.setIcon(icon);
         label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -362,6 +386,7 @@ implements Scrollable, ContributionListing.ChangeListener {
         }
         label.setFont(plainFont);
         label.setOpaque(true);
+        label.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
       } else {
         if (contribution.isSpecial()) {
           label = new JLabel(foundationIcon);
@@ -382,8 +407,14 @@ implements Scrollable, ContributionListing.ChangeListener {
         }
         label.setFont(Toolkit.getSansFont(14, Font.BOLD));
         label.setOpaque(true);
+        label.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
       }
       return label;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      refreshPanel();
     }
   }
 
@@ -439,6 +470,23 @@ implements Scrollable, ContributionListing.ChangeListener {
     }
   }
 
+  public void refreshPanel() {
+    for (int i = 0; i < table.getRowCount(); i++) {
+      DetailPanel detailPanel = panelByContribution.get(table.getValueAt(i, 0));
+      if (detailPanel.installInProgress || detailPanel.removeInProgress
+        || detailPanel.updateInProgress) {
+        model.fireTableCellUpdated(table.convertRowIndexToView(i), 0);
+      }
+    }
+  }
+
+  public void refreshPanel(Contribution contribution) {
+    for (int i = 0; i < table.getRowCount(); i++) {
+      if (table.getValueAt(i, 0).equals(contribution)) {
+        model.fireTableCellUpdated(table.convertRowIndexToView(i), 0);
+      }
+    }
+  }
 
   public void contributionAdded(final Contribution contribution) {
     if (filter.matches(contribution)) {
@@ -685,4 +733,8 @@ implements Scrollable, ContributionListing.ChangeListener {
   public int getRowCount() {
     return panelByContribution.size();
   }
+//  
+//  public void refreshList(){
+//    updatePanelOrdering(visibleContributions);
+//  }
 }

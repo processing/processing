@@ -24,6 +24,7 @@ package processing.app.contrib;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Observable;
 
 import processing.core.PApplet;
 import processing.data.StringDict;

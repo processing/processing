@@ -23,6 +23,8 @@ package processing.app.contrib;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,6 +36,8 @@ import java.text.DateFormat;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
@@ -101,6 +105,7 @@ class DetailPanel extends JPanel {
   private JLabel notificationLabel;
   private JButton updateButton;
   JProgressBar installProgressBar;
+  JProgressBar progress;
   private JButton installRemoveButton;
   private JPopupMenu contextMenu;
   private JMenuItem openFolder;
@@ -297,6 +302,15 @@ class DetailPanel extends JPanel {
       installProgressBar.setMinimumSize(dim);
       installProgressBar.setOpaque(false);
       installProgressBar.setAlignmentX(CENTER_ALIGNMENT);
+      
+      progress = new JProgressBar();
+      progress.setUI(new CustomProgressBarUI(null, ListPanel.EVEN_HEADER_BGCOLOR, Color.BLACK));
+      progress.setOpaque(true);
+      installProgressBar.setUI(new CustomProgressBarUI(ListPanel.ODD_HEADER_BGCOLOR, ListPanel.EVEN_HEADER_BGCOLOR, Color.BLACK));
+      installProgressBar.addChangeListener(new ProgressListener(progress));
+      installProgressBar.setBorder(null);
+//      progress.setForeground(new Color(0xAAFFAAAA));
+//      installProgressBar.addPropertyChangeListener(new ProgressListener(progress));
     }
 
     installRemoveButton = new JButton(" ");
@@ -612,6 +626,7 @@ class DetailPanel extends JPanel {
             updateInProgress = !updateInProgress;
           updateButton.setVisible(contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
           setSelected(true);
+          listPanel.refreshPanel(DetailPanel.this.contrib);
         }
 
         public void cancelAction() {
@@ -942,5 +957,34 @@ class DetailPanel extends JPanel {
       localContrib.removeContribution(contributionTab.editor.getBase(), monitor, contributionTab.statusPanel);
     }
 
+  }
+
+  class ProgressListener implements ChangeListener {
+    private final JProgressBar progressBar;
+
+    protected ProgressListener(JProgressBar progressBar) {
+      this.progressBar = progressBar;
+      this.progressBar.setValue(0);
+      progressBar.setStringPainted(true);
+      progressBar.setIndeterminate(false);
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+      if (e.getSource() instanceof JProgressBar) {
+        int progress = ((JProgressBar) e.getSource()).getValue();
+        if (progress >= 0) {
+          progressBar.setValue(progress);
+          progressBar.setStringPainted(true);
+          progressBar.setIndeterminate(false);
+        } else {
+          if (!progressBar.isIndeterminate()) {
+            progressBar.setIndeterminate(true);
+            progressBar.setStringPainted(false);
+          }
+        }
+      }
+
+    }
   }
 }
