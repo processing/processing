@@ -303,8 +303,11 @@ public class ContributionListing {
       removeAccents(field.toLowerCase()).matches(typed);
   }
 
-
-  // TODO is this removing characters with accents, not ascii normalizing them? [fry]
+  /**
+   * Does not transliterate but only removes accents
+   * 
+   * Example: á ó ú ñ é í is converted to a o u n e i
+   */
   static private String removeAccents(String str) {
     String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
     Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");

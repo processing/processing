@@ -49,8 +49,6 @@ public class ContributionTab extends JPanel {
   ListPanel contributionListPanel;
   StatusPanel statusPanel;
   FilterField filterField;
-  // TODO: remove or initialize restartButton
-  //JButton restartButton;
   JLabel categoryLabel;
   JLabel loaderLabel;
 
@@ -62,7 +60,6 @@ public class ContributionTab extends JPanel {
   // the calling editor, so updates can be applied
   Editor editor;
   String category;
-  ContributionListing contribListing;
 
   JProgressBar progressBar;
 
@@ -92,10 +89,9 @@ public class ContributionTab extends JPanel {
       }
     };
 
-    contribListing = ContributionListing.getInstance();
     statusPanel = new StatusPanel(this, 650);
     contributionListPanel = new ListPanel(this, filter);
-    contribListing.addListener(contributionListPanel);
+    ManagerFrame.contributionListing.addListener(contributionListPanel);
   }
 
 
@@ -121,7 +117,6 @@ public class ContributionTab extends JPanel {
                            boolean isLoading) {
     if (progressBar == null) {
       progressBar = new JProgressBar();
-      progressBar.setVisible(false);
 
       createComponents();
       buildErrorPanel();
@@ -195,14 +190,10 @@ public class ContributionTab extends JPanel {
           category = null;
         }
         filterLibraries(category, filterField.filters);
-        contributionListPanel.updateColors();
       }
     });
 
     filterField = new FilterField();
-
-    // TODO: initialize restartButton, whatever it is
-    // restartButton = ???
   }
 
 
@@ -268,7 +259,7 @@ public class ContributionTab extends JPanel {
     if (categoryChooser != null) {
       ArrayList<String> categories;
       categoryChooser.removeAllItems();
-      categories = new ArrayList<String>(contribListing.getCategories(filter));
+      categories = new ArrayList<String>(ManagerFrame.contributionListing.getCategories(filter));
 //      for (int i = 0; i < categories.size(); i++) {
 //        System.out.println(i + " category: " + categories.get(i));
 //      }
@@ -289,59 +280,9 @@ public class ContributionTab extends JPanel {
 
   protected void filterLibraries(String category, List<String> filters) {
     List<Contribution> filteredLibraries =
-      contribListing.getFilteredLibraryList(category, filters);
+      ManagerFrame.contributionListing.getFilteredLibraryList(category, filters);
     contributionListPanel.filterLibraries(filteredLibraries);
   }
-
-
-  protected void updateContributionListing() {
-    if (editor != null) {
-      List<Contribution> contributions = new ArrayList<Contribution>();
-
-      List<Library> libraries =
-        new ArrayList<Library>(editor.getMode().contribLibraries);
-
-      // Only add core libraries that are installed in the sketchbook
-      // https://github.com/processing/processing/issues/3688
-      //libraries.addAll(editor.getMode().coreLibraries);
-      final String sketchbookPath =
-        Base.getSketchbookLibrariesFolder().getAbsolutePath();
-      for (Library lib : editor.getMode().coreLibraries) {
-        if (lib.getLibraryPath().startsWith(sketchbookPath)) {
-          libraries.add(lib);
-        }
-      }
-
-      contributions.addAll(libraries);
-
-      Base base = editor.getBase();
-
-      List<ToolContribution> tools = base.getToolContribs();
-      contributions.addAll(tools);
-
-      List<ModeContribution> modes = base.getModeContribs();
-      contributions.addAll(modes);
-
-      List<ExamplesContribution> examples = base.getExampleContribs();
-      contributions.addAll(examples);
-
-//    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
-//
-//    // Remove libraries from the list that are part of a compilations
-//    for (LibraryCompilation compilation : compilations) {
-//      Iterator<Library> it = libraries.iterator();
-//      while (it.hasNext()) {
-//        Library current = it.next();
-//        if (compilation.getFolder().equals(current.getFolder().getParentFile())) {
-//          it.remove();
-//        }
-//      }
-//    }
-
-      contribListing.updateInstalledList(contributions);
-    }
-  }
-
 
   protected void setFilterText(String filter) {
     if (filter == null || filter.isEmpty()) {
@@ -353,7 +294,6 @@ public class ContributionTab extends JPanel {
   }
 
 
-  //TODO: this is causing a lot of bugs as the hint is wrongly firing applyFilter()
   class FilterField extends JTextField {
     Icon searchIcon;
     List<String> filters;
@@ -423,7 +363,6 @@ public class ContributionTab extends JPanel {
       filters = Arrays.asList(filter.split(" "));
       filterLibraries(category, filters);
 
-      contributionListPanel.updateColors();
     }
   }
 
