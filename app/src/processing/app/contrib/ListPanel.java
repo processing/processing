@@ -59,6 +59,7 @@ implements Scrollable, ContributionListing.ChangeListener {
   static Icon updateAvailableIcon;
   static Icon incompatibleIcon;
   static Icon foundationIcon;
+  static Icon downloadingIcon;
 
   static Font plainFont;
   static Font boldFont;
@@ -74,6 +75,7 @@ implements Scrollable, ContributionListing.ChangeListener {
       updateAvailableIcon = Toolkit.getLibIconX("manager/update-available");
       incompatibleIcon = Toolkit.getLibIconX("manager/incompatible");
       foundationIcon = Toolkit.getLibIconX("icons/foundation", 16);
+      downloadingIcon = Toolkit.getLibIconX("manager/downloading");
 
       plainFont = Toolkit.getSansFont(14, Font.PLAIN);
       boldFont = Toolkit.getSansFont(14, Font.BOLD);
@@ -316,7 +318,13 @@ implements Scrollable, ContributionListing.ChangeListener {
             icon = incompatibleIcon;
           }
         }
-        label.setIcon(icon);
+        if ((panelByContribution.get(contribution)).updateInProgress ||
+          (panelByContribution.get(contribution)).installInProgress) {
+          // Display "Loading icon" if download/install in progress
+          label.setIcon(downloadingIcon);
+        } else {
+          label.setIcon(icon);
+        }
         label.setHorizontalAlignment(SwingConstants.CENTER);
         if (isSelected) {
           label.setBackground(new Color(0xe0fffd));

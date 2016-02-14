@@ -442,6 +442,10 @@ public class ContributionTab extends JPanel {
       contributionListPanel.panelByContribution.values();
     for (DetailPanel detailPanel : collection) {
       detailPanel.update();
+
+    // Refreshing the ContributionUpdateTab's status icons
+    contributionListPanel.updatePanelOrdering(contributionListPanel
+      .panelByContribution.keySet());
     }
   }
 
