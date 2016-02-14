@@ -945,8 +945,15 @@
          tofile="linux/debian/usr/share/mime/packages/processing.xml" />
 
    <!-- Set properties for DEBIAN/control file -->
+   <condition property="linux.deb" value="linux/processing-${version}-linux-armv6hf.deb">
+     <equals arg1="linux-arm32" arg2="linux-arm32" />
+   </condition>
    <property name="linux.deb" value="linux/processing-${version}-linux${sun.arch.data.model}.deb" />
 
+   <!-- Raspbian seems to borrow armhf for armv6hf, so this works -->
+   <condition property="deb.arch" value="armhf">
+     <equals arg1="linux-arm32" arg2="linux-arm32" />
+   </condition>
    <condition property="deb.arch" value="i386"> 
      <equals arg1="${sun.arch.data.model}" arg2="32" />
    </condition>
