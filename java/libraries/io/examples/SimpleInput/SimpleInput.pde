@@ -1,18 +1,15 @@
 import processing.io.*;
 
-// RPI.PIN7 refers to the physical pin 7 on the Raspberry Pi's
-// pin header, which is located on the fourth row, above one of
-// the Ground pins
+// GPIO numbers refer to different phyiscal pins on various boards
+// On the Raspberry Pi GPIO 4 is physical pin 7 on the header
 
 void setup() {
-  GPIO.pinMode(RPI.PIN7, GPIO.INPUT);
-  // this is equivalent to addressing the pin with its GPIO number:
-  // GPIO.pinMode(4, GPIO.INPUT);
+  GPIO.pinMode(4, GPIO.INPUT);
 }
 
 void draw() {
   // sense the input pin
-  if (GPIO.digitalRead(RPI.PIN7) == GPIO.HIGH) {
+  if (GPIO.digitalRead(4) == GPIO.HIGH) {
     fill(255);
   } else {
     fill(204);

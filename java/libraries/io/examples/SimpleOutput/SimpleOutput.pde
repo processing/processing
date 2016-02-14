@@ -1,14 +1,11 @@
 import processing.io.*;
 boolean ledOn = false;
 
-// RPI.PIN7 refers to the physical pin 7 on the Raspberry Pi's
-// pin header, which is located on the fourth row, above one of
-// the Ground pins
+// GPIO numbers refer to different phyiscal pins on various boards
+// On the Raspberry Pi GPIO 4 is physical pin 7 on the header
 
 void setup() {
-  GPIO.pinMode(RPI.PIN7, GPIO.OUTPUT);
-  // this is equivalent to addressing the pin with its GPIO number:
-  // GPIO.pinMode(4, GPIO.OUTPUT);
+  GPIO.pinMode(4, GPIO.OUTPUT);
   frameRate(0.5);
 }
 
@@ -16,10 +13,10 @@ void draw() {
   // make the LED blink
   ledOn = !ledOn;
   if (ledOn) {
-    GPIO.digitalWrite(RPI.PIN7, GPIO.LOW);
+    GPIO.digitalWrite(4, GPIO.LOW);
     fill(204);
   } else {
-    GPIO.digitalWrite(RPI.PIN7, GPIO.HIGH);
+    GPIO.digitalWrite(4, GPIO.HIGH);
     fill(255);
   }
   stroke(255);

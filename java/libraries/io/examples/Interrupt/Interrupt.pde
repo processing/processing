@@ -1,20 +1,19 @@
 import processing.io.*;
 color bgcolor = 0;
 
-// RPI.PIN7 refers to the physical pin 7 on the Raspberry Pi's
-// pin header, which is located on the fourth row, above one of
-// the Ground pins
+// GPIO numbers refer to different phyiscal pins on various boards
+// On the Raspberry Pi GPIO 4 is physical pin 7 on the header
 
 void setup() {
-  GPIO.pinMode(RPI.PIN7, GPIO.INPUT);
-  GPIO.attachInterrupt(RPI.PIN7, this, "pinEvent", GPIO.RISING);
+  GPIO.pinMode(4, GPIO.INPUT);
+  GPIO.attachInterrupt(4, this, "pinEvent", GPIO.RISING);
 }
 
 void draw() {
   background(bgcolor);
 }
 
-// this function will be called whenever pin 7 is brought from LOW to HIGH
+// this function will be called whenever GPIO 4 is brought from LOW to HIGH
 void pinEvent(int pin) {
   println("Received interrupt");
   if (bgcolor == 0) {
