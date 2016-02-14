@@ -1,3 +1,81 @@
+0248 (3.0.2)
+X move to Java 8u74, also fixes JavaFX issue
+X actually require OS X 10.8.5 (was set to 10.7)
+X   the Wiki said 10.8.3 required for 3.0, but has since been updated
+
+contribs
+X add "full screen" option to the Editor on OS X
+X   https://github.com/processing/processing/issues/3993
+X   https://github.com/processing/processing/pull/4078
+X add install script for site for ARM
+X   https://github.com/processing/processing/pull/4110
+X search/replace shouldn't include the string being replaced
+X   https://github.com/processing/processing/issues/4270
+X   https://github.com/processing/processing/pull/4271
+X 'Background Color when Presenting' not visible on Preferences window
+X   https://github.com/processing/processing/issues/4272
+X   https://github.com/processing/processing/pull/4278
+X Fix minor autoformatter bugs (enums not working)
+X   https://github.com/processing/processing/issues/4185
+X   https://github.com/processing/processing/pull/4200
+X Update Source Code Pro and Source Sans Pro fonts to the latest versions
+X   https://github.com/processing/processing/pull/4150
+X   https://github.com/processing/processing/issues/3836
+X Minor fixes for Java Mode
+X   https://github.com/processing/processing/pull/4114
+X Add i18n support for the PopUp menu
+X   https://github.com/processing/processing/pull/4060
+X Add Turkish to the list of languages
+X   https://github.com/processing/processing/pull/4073
+X Make the error message for stack overflows clearer 
+X   https://github.com/processing/processing/pull/4152
+X get rid of dt_socket message, making command line run a little better
+X   https://github.com/processing/processing/issues/4098
+X   https://github.com/processing/processing/pull/4103
+X message when reference is find out on nothing selected
+X   https://github.com/processing/processing/pull/4296
+X better handling of quotes in command line args
+X   https://github.com/processing/processing/pull/4145
+X   https://github.com/processing/processing/issues/3996
+X   https://github.com/processing/processing/issues/4119
+X fix crashing bugs when user's name has non-ASCII characters
+X   https://github.com/processing/processing/pull/4204
+X ARM updates to include GPIO numbers and images of wiring diagrams
+X   https://github.com/processing/processing/pull/4297
+X   https://github.com/processing/processing/pull/4298
+X Icon instead of an "X" for the "could not connect" message
+X   https://github.com/processing/processing/issues/3706
+X   https://github.com/processing/processing/pull/4096
+X   https://github.com/processing/processing/pull/4055
+X Several fixes for Chinese/Japanese/Korean InputMethod support
+X   https://github.com/processing/processing/pull/4293
+X   https://github.com/processing/processing/issues/2968
+X   https://github.com/processing/processing/issues/3475
+X   https://github.com/processing/processing/issues/3860
+X Add download indicator to the Contribution Manager
+X   https://github.com/processing/processing/pull/4154
+X   https://github.com/processing/processing/issues/4105
+
+jakub
+X Workaround for JRE bug freezing the PDE during code completion
+X   https://github.com/processing/processing/pull/4079
+X Debugger fixes
+X   prevent NPE because ui was not updated on AWT
+X   https://github.com/processing/processing/pull/4117
+X fix NPE when stepping into static method
+X   https://github.com/processing/processing/issues/3590
+X step button works correctly when SHIFT or ALT is pressed
+X   https://github.com/processing/processing/issues/4116
+X More editor fixes
+X   https://github.com/processing/processing/pull/4113
+X Tooltip over variable decl has wrong style and content
+X   https://github.com/processing/processing/issues/3940
+X May have fixed? NullPointerException in initiateToolTip()
+X   https://github.com/processing/processing/issues/3286
+X "String index out of range" error with bracket handling in the editor
+X   https://github.com/processing/processing/issues/1940
+
+
 0247 (3.0.1)
 X NullPointerException in ContributionManager.deleteTemp()
 X   https://github.com/processing/processing/issues/4026

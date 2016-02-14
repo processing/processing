@@ -1,3 +1,49 @@
+0248 (3.0.2)
+X Fix another "Zero length string passed to TextLayout constructor" error
+X Ambiguity on where to call smooth()
+X   https://github.com/processing/processing/issues/4211
+X   add additional clarification for Eclipse users
+X Flipped Y-axis in JavaFX is now done (JDK bug)
+X   https://github.com/processing/processing/issues/3795
+
+jakub
+X Initialize sketch args before calling settings() 
+X   https://github.com/processing/processing/issues/4219
+X   https://github.com/processing/processing/pull/4220
+
+andres
+X Stop button in OpenGL exported applications does not use preference settings
+X   https://github.com/processing/processing/issues/4064
+X Export without a stop button using P3D or P2D
+X   https://github.com/processing/processing/issues/4056
+X glClearDepthf() not available on older hardware
+X   https://github.com/processing/processing/issues/4106
+X Drawing a sphere with shape() first changes sphereDetail from default
+X   https://github.com/processing/processing/issues/4192
+X PShape.scale() affects strokeWeight differently in P2D and P3D
+X   https://github.com/processing/processing/issues/4231
+X createShape(GROUP) + textured child + non-textured child = P3D render problems
+X   https://github.com/processing/processing/issues/4176
+X pixelDensity() and createGraphics() with P3D
+X   https://github.com/processing/processing/issues/4039
+X Friendlier message when running drawing commands outside animation thread
+X   https://github.com/processing/processing/issues/4196
+X strokeWeight() not working properly with point() in P2D and P3D
+X   https://github.com/processing/processing/issues/4188
+X exit() is not called in P2D/P3D
+X   https://github.com/processing/processing/issues/4156
+X attrib*() function does not work well with PShape 
+X   https://github.com/processing/processing/issues/4048
+
+contribs
+X Fill out the Javadoc for PMatrix
+X   https://github.com/processing/processing/pull/4155
+X Have PSurfaceFX pay attention to the setVisible argument
+X   https://github.com/processing/processing/pull/4210
+X Use xdg-open in PApplet#launch(String)
+X   https://github.com/processing/processing/pull/4171
+
+
 0247 (3.0.1)
 X curveVertex() does not work with FX2D renderer
 X   https://github.com/processing/processing/issues/3960
