@@ -3,6 +3,7 @@ I2C i2c;
 
 // HMC6352 is a digital compass module using I2C
 // datasheet: https://www.sparkfun.com/datasheets/Components/HMC6352.pdf
+// see setup.png in the sketch folder for wiring details
 
 void setup() {
   //printArray(I2C.list());

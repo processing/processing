@@ -36,16 +36,7 @@
   <target name="check-linux-arm32" if="linux-arm32">
     <!-- there is currently no JRE available -->
     <property name="jre.download.jdk" value="true" />
-    <!-- temporary special case since the URL changed between 8u51 and 8u60 -->
-    <condition property="jre.downloader" value="linux-arm-vfp-hflt.tar.gz">
-      <equals arg1="${jdk.update}" arg2="51" />
-    </condition>
-    <condition property="jre.downloader" value="linux-arm32-vfp-hflt.tar.gz">
-      <not>
-        <equals arg1="${jdk.update}" arg2="51" />
-      </not>
-    </condition>
-    <!-- <property name="jre.downloader" value="linux-arm32-vfp-hflt.tar.gz" /> -->
+    <property name="jre.downloader" value="linux-arm32-vfp-hflt.tar.gz" />
     <property name="linux.dist" value="linux/processing-${version}-linux-armv6hf.tgz" />
   </target>
 
@@ -940,6 +931,8 @@
    <move file="linux/work" tofile="linux/debian/opt/processing" />
    <symlink link="linux/debian/usr/bin/processing" 
             resource="../../opt/processing/processing" />
+   <symlink link="linux/debian/usr/bin/processing-java"
+            resource="../../opt/processing/processing-java" />
 
    <!-- place .desktop and .sharedmimeinfo file -->
    <copy file="linux/processing.desktop" 
@@ -954,8 +947,15 @@
          tofile="linux/debian/usr/share/mime/packages/processing.xml" />
 
    <!-- Set properties for DEBIAN/control file -->
+   <condition property="linux.deb" value="linux/processing-${version}-linux-armv6hf.deb">
+     <equals arg1="linux-arm32" arg2="linux-arm32" />
+   </condition>
    <property name="linux.deb" value="linux/processing-${version}-linux${sun.arch.data.model}.deb" />
 
+   <!-- Raspbian seems to borrow armhf for armv6hf, so this works -->
+   <condition property="deb.arch" value="armhf">
+     <equals arg1="linux-arm32" arg2="linux-arm32" />
+   </condition>
    <condition property="deb.arch" value="i386"> 
      <equals arg1="${sun.arch.data.model}" arg2="32" />
    </condition>
