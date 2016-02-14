@@ -41,6 +41,7 @@ import com.sun.jdi.Value;
 
 import processing.app.Language;
 import processing.app.Mode;
+import processing.app.ui.Toolkit;
 import processing.mode.java.debug.VariableNode;
 
 
@@ -468,7 +469,9 @@ public class VariableInspector extends JDialog {
     static final int ICON_SIZE = 16;
 
     OutlineRenderer() {
-      icons = loadIcons("theme/variables-1x.png");
+      final int scale = Toolkit.highResDisplay() ? 2 : 1;
+      String filename = "theme/variables-" + scale + "x.png";
+      icons = loadIcons(filename);
     }
 
     /**
