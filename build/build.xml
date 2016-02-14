@@ -931,6 +931,8 @@
    <move file="linux/work" tofile="linux/debian/opt/processing" />
    <symlink link="linux/debian/usr/bin/processing" 
             resource="../../opt/processing/processing" />
+   <symlink link="linux/debian/usr/bin/processing-java"
+            resource="../../opt/processing/processing-java" />
 
    <!-- place .desktop and .sharedmimeinfo file -->
    <copy file="linux/processing.desktop" 
