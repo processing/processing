@@ -127,8 +127,6 @@ _   https://www.linkedin.com/pulse/oracle-just-removed-javafx-support-arm-jan-sn
 
 opengl questions
 _ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
-_ issues with how JOGL handles window layout/sizing
-_   https://github.com/processing/processing/issues/3401
 _ exitCalled() and exitActual made public by Andres, breaks Python
 _   also not API we want to expose, so sort this out
 _   or maybe we're fine b/c now FX2D needs it as well

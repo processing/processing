@@ -40,6 +40,23 @@ X better handling of quotes in command line args
 X   https://github.com/processing/processing/pull/4145
 X   https://github.com/processing/processing/issues/3996
 X   https://github.com/processing/processing/issues/4119
+X fix crashing bugs when user's name has non-ASCII characters
+X   https://github.com/processing/processing/pull/4204
+X ARM updates to include GPIO numbers and images of wiring diagrams
+X   https://github.com/processing/processing/pull/4297
+X   https://github.com/processing/processing/pull/4298
+X Icon instead of an "X" for the "could not connect" message
+X   https://github.com/processing/processing/issues/3706
+X   https://github.com/processing/processing/pull/4096
+X   https://github.com/processing/processing/pull/4055
+X Several fixes for Chinese/Japanese/Korean InputMethod support
+X   https://github.com/processing/processing/pull/4293
+X   https://github.com/processing/processing/issues/2968
+X   https://github.com/processing/processing/issues/3475
+X   https://github.com/processing/processing/issues/3860
+X Add download indicator to the Contribution Manager
+X   https://github.com/processing/processing/pull/4154
+X   https://github.com/processing/processing/issues/4105
 
 jakub
 X Workaround for JRE bug freezing the PDE during code completion
@@ -59,6 +76,13 @@ X May have fixed? NullPointerException in initiateToolTip()
 X   https://github.com/processing/processing/issues/3286
 X "String index out of range" error with bracket handling in the editor
 X   https://github.com/processing/processing/issues/1940
+
+
+_ tabs aren't working properly (several bugs?)
+_   https://github.com/processing/processing/issues/3975
+
+_ possible infinite loop on modified externally
+_   https://github.com/processing/processing/issues/3965
 
 _ spacing of the updates number/circle in the lower right is off
 _   https://github.com/processing/processing/issues/4094
