@@ -286,13 +286,13 @@ public class Platform {
       String decodedPath = PApplet.urlDecode(path);
 
       if (decodedPath.contains("/app/bin")) {  // This means we're in Eclipse
+        final File build = new File(decodedPath, "../../build").getAbsoluteFile();
         if (Platform.isMacOS()) {
-          processingRoot =
-            new File(path, "../../build/macosx/work/Processing.app/Contents/Java");
+          processingRoot = new File(build, "macosx/work/Processing.app/Contents/Java");
         } else if (Platform.isWindows()) {
-          processingRoot =  new File(path, "../../build/windows/work");
+          processingRoot =  new File(build, "windows/work");
         } else if (Platform.isLinux()) {
-          processingRoot =  new File(path, "../../build/linux/work");
+          processingRoot =  new File(build, "linux/work");
         }
       } else {
         // The .jar file will be in the lib folder
@@ -311,7 +311,8 @@ public class Platform {
           System.err.println("Could not find lib folder via " +
             jarFolder.getAbsolutePath() +
             ", switching to user.dir");
-          processingRoot = new File(System.getProperty("user.dir"));
+          final String userDir = System.getProperty("user.dir");
+          processingRoot = new File(PApplet.urlDecode(userDir));
         }
       }
     }
