@@ -18,8 +18,6 @@ X   https://github.com/processing/processing/pull/4278
 X Fix minor autoformatter bugs (enums not working)
 X   https://github.com/processing/processing/issues/4185
 X   https://github.com/processing/processing/pull/4200
-X Use xdg-open in PApplet#launch(String)
-X   https://github.com/processing/processing/pull/4171
 X Update Source Code Pro and Source Sans Pro fonts to the latest versions
 X   https://github.com/processing/processing/pull/4150
 X   https://github.com/processing/processing/issues/3836

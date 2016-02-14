@@ -1,3 +1,185 @@
+PROCESSING 3.0.2 (REV 0248) - 13 February 2016
+
+Happy Valentine's Day! Nothing says "I LOVE YOU" like a bouquet of bug fixes.
+And nothing says, "I LOVE YOU TOO" like the sampler box of contributed fixes 
+and pull requests that the community has put together since 3.0.1.
+
+
+[ editor contributions ] 
+
++ Add "full screen" option to the Editor on OS X
+  https://github.com/processing/processing/issues/3993
+  https://github.com/processing/processing/pull/4078
+
++ Add install script for site for ARM
+  https://github.com/processing/processing/pull/4110
+
++ Search/replace shouldn't include the string being replaced, 
+  otherwise it can get into an infinite loop. 
+  https://github.com/processing/processing/issues/4270
+  https://github.com/processing/processing/pull/4271
+
++ 'Background Color when Presenting' not visible on Preferences window
+  https://github.com/processing/processing/issues/4272
+  https://github.com/processing/processing/pull/4278
+
++ Fix minor autoformatter bugs (enums not working)
+  https://github.com/processing/processing/issues/4185
+  https://github.com/processing/processing/pull/4200
+
++ Update Source Code Pro and Source Sans Pro fonts to the latest versions
+  https://github.com/processing/processing/pull/4150
+  https://github.com/processing/processing/issues/3836
+
++ Minor fixes for Java Mode
+  https://github.com/processing/processing/pull/4114
+
++ Add i18n support for the PopUp menu
+  https://github.com/processing/processing/pull/4060
+
++ Add Turkish to the list of languages
+  https://github.com/processing/processing/pull/4073
+
++ Make the error message for stack overflows clearer 
+  https://github.com/processing/processing/pull/4152
+
++ Get rid of dt_socket message, making command line run a little better
+  https://github.com/processing/processing/issues/4098
+  https://github.com/processing/processing/pull/4103
+
++ Message when reference is find out on nothing selected
+  https://github.com/processing/processing/pull/4296
+
++ Better handling of quotes in command line args
+  https://github.com/processing/processing/pull/4145
+  https://github.com/processing/processing/issues/3996
+  https://github.com/processing/processing/issues/4119
+
++ Fix crashing bugs when user's name has non-ASCII characters
+  https://github.com/processing/processing/pull/4204
+
++ ARM updates to include GPIO numbers and images of wiring diagrams
+  https://github.com/processing/processing/pull/4297
+  https://github.com/processing/processing/pull/4298
+
++ Icon instead of an "X" for the "could not connect" message
+  https://github.com/processing/processing/issues/3706
+  https://github.com/processing/processing/pull/4096
+  https://github.com/processing/processing/pull/4055
+
++ Several fixes for Chinese/Japanese/Korean InputMethod support
+  https://github.com/processing/processing/pull/4293
+  https://github.com/processing/processing/issues/2968
+  https://github.com/processing/processing/issues/3475
+  https://github.com/processing/processing/issues/3860
+
++ Add 'downloading' indicator to the Contribution Manager
+  https://github.com/processing/processing/pull/4154
+  https://github.com/processing/processing/issues/4105
+
+
+[ more editor ] 
+
++ Move to Java 8u74, also fixes JavaFX issue.
+
++ Actually require OS X 10.8.5 (was set to 10.7). The Wiki said 10.8.3 
+  was required for 3.0 (it is), but has since been updated to 10.8.5. 
+  If you're gonna run Mountain Lion, at least make sure he's patched.
+
+
+[ graphics contributions ] 
+
++ Fill out the Javadoc for PMatrix
+  https://github.com/processing/processing/pull/4155
+
++ Have PSurfaceFX pay attention to the setVisible argument
+  https://github.com/processing/processing/pull/4210
+
++ Use xdg-open in PApplet#launch(String)
+  https://github.com/processing/processing/pull/4171
+
+
+[ moar graphics ] 
+
++ Fix another "Zero length string passed to TextLayout constructor" error
+
++ Add additional clarification for IDE users on where to call smooth()
+  https://github.com/processing/processing/issues/4211
+
++ Flipped Y-axis in JavaFX is now repaired (the JDK bug now fixed)
+  https://github.com/processing/processing/issues/3795
+
+
+[ Andres fires an arrow of love into the cold heart of OpenGL ]
+
++ Stop button in OpenGL exported applications does not use preference settings
+  https://github.com/processing/processing/issues/4064
+
++ Export without a stop button using P3D or P2D
+  https://github.com/processing/processing/issues/4056
+
++ glClearDepthf() not available on older hardware
+  https://github.com/processing/processing/issues/4106
+
++ Drawing a sphere with shape() first changes sphereDetail from default
+  https://github.com/processing/processing/issues/4192
+
++ PShape.scale() affects strokeWeight differently in P2D and P3D
+  https://github.com/processing/processing/issues/4231
+
++ createShape(GROUP) + textured child + non-textured child = P3D render problems
+  https://github.com/processing/processing/issues/4176
+
++ pixelDensity() and createGraphics() with P3D
+  https://github.com/processing/processing/issues/4039
+
++ Friendlier message when running drawing commands outside animation thread
+  https://github.com/processing/processing/issues/4196
+
++ strokeWeight() not working properly with point() in P2D and P3D
+  https://github.com/processing/processing/issues/4188
+
++ exit() is not called in P2D/P3D
+  https://github.com/processing/processing/issues/4156
+
++ attrib*() function does not work well with PShape 
+  https://github.com/processing/processing/issues/4048
+
+
+[ "Jakub" is just Czech for "cupid" ]
+
++ Initialize sketch args before calling settings() 
+  https://github.com/processing/processing/issues/4219
+  https://github.com/processing/processing/pull/4220
+
++ Workaround for JRE bug freezing the PDE during code completion
+  https://github.com/processing/processing/pull/4079
+
++ Prevent NPE because editor UI was not updated on AWT
+  https://github.com/processing/processing/pull/4117
+
++ Fix NPE when stepping into static method
+  https://github.com/processing/processing/issues/3590
+
++ Step button works correctly when SHIFT or ALT is pressed
+  https://github.com/processing/processing/issues/4116
+
++ More editor fixes
+  https://github.com/processing/processing/pull/4113
+
++ Tooltip over variable decl has wrong style and content
+  https://github.com/processing/processing/issues/3940
+
++ May have fixed this NullPointerException in initiateToolTip()
+  https://github.com/processing/processing/issues/3286
+
++ "String index out of range" error with bracket handling in the editor
+  https://github.com/processing/processing/issues/1940
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.0.1 (REV 0247) - 23 October 2015
 
 Lots and lots of bug fixes.

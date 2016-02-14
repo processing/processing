@@ -40,6 +40,8 @@ X Fill out the Javadoc for PMatrix
 X   https://github.com/processing/processing/pull/4155
 X Have PSurfaceFX pay attention to the setVisible argument
 X   https://github.com/processing/processing/pull/4210
+X Use xdg-open in PApplet#launch(String)
+X   https://github.com/processing/processing/pull/4171
 
 
 _ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
