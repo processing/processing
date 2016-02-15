@@ -1296,8 +1296,16 @@ public class ASTGenerator {
 
     for (ImportStatement impS : imports) {
       String temp = impS.getPackageName();
-      if (impS.isStarredImport() && className.indexOf('.') == -1) {
-        temp = impS.getPackageName() + "." + className;
+      if (impS.isStarredImport())  { // case of starred import: pkg.foo.*
+        if (className.indexOf('.') == -1) {
+          temp = impS.getPackageName() + "." + className;
+        } else {
+          continue;
+        }
+      } else { // case of class import: pkg.foo.MyClass
+        if (!impS.getImportedClassName().equals(className)) {
+          continue;
+        }
       }
       tehClass = loadClass(temp);
       if (tehClass != null) {
@@ -1309,8 +1317,16 @@ public class ASTGenerator {
 
     for (ImportStatement impS : errorCheckerService.codeFolderImports) {
       String temp = impS.getPackageName();
-      if (impS.isStarredImport() && className.indexOf('.') == -1) {
-        temp = impS.getPackageName() + "." + className;
+      if (impS.isStarredImport())  { // case of starred import: pkg.foo.*
+        if (className.indexOf('.') == -1) {
+          temp = impS.getPackageName() + "." + className;
+        } else {
+          continue;
+        }
+      } else { // case of class import: pkg.foo.MyClass
+        if (!impS.getImportedClassName().equals(className)) {
+          continue;
+        }
       }
       tehClass = loadClass(temp);
       if (tehClass != null) {
