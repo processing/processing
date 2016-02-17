@@ -1711,7 +1711,20 @@ public abstract class Editor extends JFrame implements RunnerListener {
     SyntaxDocument document = (SyntaxDocument) code.getDocument();
 
     if (document == null) {  // this document not yet inited
-      document = new SyntaxDocument();
+      document = new SyntaxDocument() {
+        @Override
+        public void beginCompoundEdit() {
+          if (compoundEdit == null)
+            startCompoundEdit();
+          super.beginCompoundEdit();
+        }
+        
+        @Override
+        public void endCompoundEdit() {
+          stopCompoundEdit();
+          super.endCompoundEdit();
+        }
+      };
       code.setDocument(document);
 
       // turn on syntax highlighting
