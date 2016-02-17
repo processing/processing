@@ -22,6 +22,7 @@
 
 package processing.app.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Point;
@@ -31,8 +32,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.border.EmptyBorder;
@@ -117,7 +121,28 @@ public class SketchbookFrame extends JFrame {
     treePane.setPreferredSize(new Dimension(250, 450));
     treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-    getContentPane().add(treePane);
+    JPanel msgPane = new JPanel();
+    msgPane.setBackground(Color.WHITE);
+    msgPane.setPreferredSize(new Dimension(250,450));
+
+    JLabel emptysb = new JLabel("Empty Sketchbook");
+    emptysb.setForeground(Color.gray);
+    msgPane.add(emptysb);
+
+    //Check whether sketch book is empty or not
+    DefaultMutableTreeNode checksb = new DefaultMutableTreeNode();
+    try {
+          if (base.addSketches(checksb, Base.getSketchbookFolder(), false)) {
+            //sketch book is not empty
+              getContentPane().add(treePane);
+          } else {
+            //sketch book is empty
+              setContentPane(msgPane);
+          }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
     pack();
   }
 
