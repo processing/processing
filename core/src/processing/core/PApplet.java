@@ -1867,8 +1867,9 @@ public class PApplet implements PConstants {
 
 
   /**
-   * @param display the screen to run the sketch on (1, 2, 3, etc.)
+   * @param display the screen to run the sketch on (1, 2, 3, etc. or on multiple screens using SPAN) 
    */
+
   public void fullScreen(String renderer, int display) {
     if (!fullScreen ||
         !renderer.equals(this.renderer) ||
