@@ -297,7 +297,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       String lastText = textarea.getText();
       public void caretUpdate(CaretEvent e) {
         String newText = textarea.getText();
-        if (lastText.equals(newText) && isDirectEdit()) {
+        if (lastText.equals(newText) && isDirectEdit() && !textarea.isOverwriteEnabled()) {
           endTextEditHistory();
         }
         lastText = newText;
@@ -1743,17 +1743,20 @@ public abstract class Editor extends JFrame implements RunnerListener {
       document.addDocumentListener(new DocumentListener() {
 
         public void removeUpdate(DocumentEvent e) {
-          if (isInserting && isDirectEdit()) {
+          if (isInserting && isDirectEdit() && !textarea.isOverwriteEnabled()) {
             endTextEditHistory();
           }
           isInserting = false;
         }
 
         public void insertUpdate(DocumentEvent e) {
-          if (!isInserting && isDirectEdit()) {
+          if (!isInserting && !textarea.isOverwriteEnabled() && isDirectEdit()) {
             endTextEditHistory();
           }
-          isInserting = true;
+          
+          if (!textarea.isOverwriteEnabled()) {
+            isInserting = true;
+          }
         }
 
         public void changedUpdate(DocumentEvent e) {

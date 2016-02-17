@@ -1597,11 +1597,9 @@ public class JEditTextArea extends JComponent
     int caretLineEnd = getLineStopOffset(getCaretLine());
     if(caretLineEnd - caret <= str.length())
     {
-      setSelectedText(str);
+      setSelectedText(str, false);
       return;
     }
-
-    document.beginCompoundEdit();
 
     try
     {
@@ -1611,10 +1609,6 @@ public class JEditTextArea extends JComponent
     catch(BadLocationException bl)
     {
       bl.printStackTrace();
-    }
-    finally
-    {
-      document.endCompoundEdit();
     }
   }
 
