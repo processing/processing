@@ -1572,6 +1572,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  public void setSelectedText(String what, boolean ever) {
+    textarea.setSelectedText(what, ever);
+  }
+
+
   public void setSelection(int start, int stop) {
     // make sure that a tool isn't asking for a bad location
     start = PApplet.constrain(start, 0, textarea.getDocumentLength());

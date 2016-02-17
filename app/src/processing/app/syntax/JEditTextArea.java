@@ -1429,7 +1429,6 @@ public class JEditTextArea extends JComponent
     }
   }
 
-
   /**
    * Replaces the selection with the specified text.
    * @param selectedText The replacement text for the selection

@@ -417,15 +417,27 @@ public class FindReplace extends JFrame {
     replaceAndFindButton.setEnabled(found);
   }
 
+/**
+ * Replace the current selection with whatever's in the
+   * replacement text field.
+ * @param isCompoundEdit True if the action is to be marked as a copmound edit
+ */
+  public void replace(boolean isCompoundEdit) {
+    editor.setSelectedText(replaceField.getText(), isCompoundEdit);
+    
+    editor.getSketch().setModified(true);  // This necessary- calling replace()
+    // doesn't seem to mark a sketch as modified
+    
+    setFound(false);
+  }
+
 
   /**
    * Replace the current selection with whatever's in the
-   * replacement text field.
+   * replacement text field, marking the action as a compound edit.
    */
   public void replace() {
-    editor.setSelectedText(replaceField.getText());
-    editor.getSketch().setModified(true);  // TODO is this necessary?
-    setFound(false);
+    replace(true);
   }
 
 
@@ -451,6 +463,8 @@ public class FindReplace extends JFrame {
     int startTab = -1;
     int startIndex = -1;
     int counter = 10000;  // prevent infinite loop
+
+    editor.startCompoundEdit();
     while (--counter > 0) {
       if (find(false, false)) {
         int caret = editor.getSelectionStart();
@@ -467,11 +481,12 @@ public class FindReplace extends JFrame {
           startTab = editor.getSketch().getCurrentCodeIndex();
           startIndex = editor.getSelectionStart();
         }
-        replace();
+        replace(false);
      } else {
         break;
       }
     }
+    editor.stopCompoundEdit();
     if (!foundAtLeastOne) {
       Toolkit.beep();
     }
