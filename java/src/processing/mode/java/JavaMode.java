@@ -181,6 +181,11 @@ public class JavaMode extends Mode {
     final JavaEditor editor = (JavaEditor) listener;
 //    editor.errorCheckerService.quickErrorCheck();  // done in prepareRun()
 
+    // Compilation passed, so deactivate the compile icon
+    // and enable run icon
+    editor.deactivateCompile();
+    editor.activateRun();
+
     if (isSketchModified(sketch)) {
       editor.deactivateRun();
       Messages.showMessage(Language.text("menu.file.save"),
@@ -196,11 +201,6 @@ public class JavaMode extends Mode {
       // unmodified build failed, so fail
       return null;
     }
-
-    // Compilation passed, so deactivate the compile icon
-    // and enable run icon
-    editor.deactivateCompile();
-    editor.activateRun();
 
     // if compilation passed, modify the code and build again
     // save the original sketch code of the user
