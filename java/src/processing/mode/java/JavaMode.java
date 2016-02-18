@@ -149,6 +149,7 @@ public class JavaMode extends Mode {
   public Runner handleLaunch(Sketch sketch, RunnerListener listener,
                              final boolean present) throws SketchException {
     JavaBuild build = new JavaBuild(sketch);
+    final JavaEditor editor = (JavaEditor) listener;
 //    String appletClassName = build.build(false);
     String appletClassName = build.build(true);
     if (appletClassName != null) {
@@ -163,6 +164,10 @@ public class JavaMode extends Mode {
           }
         }
       }).start();
+      // Compilation passed, so deactivate the compile icon
+      // and enable run icon
+      editor.deactivateCompile();
+      editor.activateRun();
       return runtime;
     }
     return null;
@@ -191,6 +196,11 @@ public class JavaMode extends Mode {
       // unmodified build failed, so fail
       return null;
     }
+
+    // Compilation passed, so deactivate the compile icon
+    // and enable run icon
+    editor.deactivateCompile();
+    editor.activateRun();
 
     // if compilation passed, modify the code and build again
     // save the original sketch code of the user

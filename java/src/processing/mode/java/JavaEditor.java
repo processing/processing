@@ -1096,7 +1096,7 @@ public class JavaEditor extends Editor {
         public void run() {
           prepareRun();
           try {
-            toolbar.activateRun();
+            toolbar.activateCompile();
             //runtime = jmode.handleRun(sketch, JavaEditor.this);
             runtime = jmode.handleLaunch(sketch, JavaEditor.this, false);
           } catch (Exception e) {
@@ -1113,7 +1113,7 @@ public class JavaEditor extends Editor {
       public void run() {
         prepareRun();
         try {
-          toolbar.activateRun();
+          toolbar.activateCompile();
           //runtime = jmode.handlePresent(sketch, JavaEditor.this);
           runtime = jmode.handleLaunch(sketch, JavaEditor.this, true);
         } catch (Exception e) {
@@ -1130,7 +1130,7 @@ public class JavaEditor extends Editor {
         prepareRun();
         try {
 //          toolbar.activate(JavaToolbar.RUN);
-          toolbar.activateRun();
+          toolbar.activateCompile();
           runtime = jmode.handleTweak(sketch, JavaEditor.this);
         } catch (Exception e) {
           statusError(e);
@@ -2068,13 +2068,27 @@ public class JavaEditor extends Editor {
     return inspector;
   }
 
-
-  protected void activateRun() {
+  public void activateRun() {
     debugItem.setEnabled(false);
 //    toolbar.activate(JavaToolbar.RUN);
     toolbar.activateRun();
   }
 
+  protected void activateCompile() {
+    debugItem.setEnabled(false);
+    toolbar.activateCompile();
+  }
+
+  /**
+   * Deactivate the Compile gif icon on Run button. This is called by
+   * handleLaunch() and handleTweak() to notify that the sketch has stopped
+   * compiling and is ready to run, usually in response to an error (or maybe
+   * the sketch completing and exiting?) Tools should not call this function.
+   */
+  public void deactivateCompile() {
+    debugItem.setEnabled(true);
+    toolbar.deactivateCompile();
+  }
 
   /**
    * Deactivate the Run button. This is called by Runner to notify that the
