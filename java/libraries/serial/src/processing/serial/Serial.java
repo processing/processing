@@ -343,6 +343,37 @@ public class Serial implements SerialPortEventListener {
 
   /**
    * <h3>Advanced</h3>
+   * Return a byte array of anything that's in the serial buffer
+   * up to the specified maximum number of bytes.
+   * Not particularly memory/speed efficient, because it creates
+   * a byte array on each read, but it's easier to use than
+   * readBytes(byte b[]) (see below).
+   *
+   * @param max the maximum number of bytes to read
+   */
+  public byte[] readBytes(int max) {
+    if (inBuffer == readOffset) {
+      return null;
+    }
+
+    synchronized (buffer) {
+      int length = inBuffer - readOffset;
+      if (length > max) length = max;
+      byte[] ret = new byte[length];
+      System.arraycopy(buffer, readOffset, ret, 0, length);
+
+      readOffset += length;
+      if (inBuffer == readOffset) {
+        inBuffer = 0;
+        readOffset = 0;
+      }
+      return ret;
+    }
+  }
+
+
+  /**
+   * <h3>Advanced</h3>
    * Grab whatever is in the serial buffer, and stuff it into a
    * byte buffer passed in by the user. This is more memory/time
    * efficient than readBytes() returning a byte[] array.
