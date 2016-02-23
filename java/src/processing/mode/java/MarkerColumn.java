@@ -99,13 +99,15 @@ public class MarkerColumn extends JPanel {
     g.drawImage(editor.getJavaTextArea().getGutterGradient(),
                 0, 0, getWidth(), getHeight(), this);
 
-    for (LineMarker m : errorPoints) {
-      if (m.getType() == LineMarker.ERROR) {
-        g.setColor(errorColor);
-      } else {
-        g.setColor(warningColor);
+    synchronized (errorPoints) {
+      for (LineMarker m : errorPoints) {
+        if (m.getType() == LineMarker.ERROR) {
+          g.setColor(errorColor);
+        } else {
+          g.setColor(warningColor);
+        }
+        g.drawLine(2, m.getY(), getWidth() - 2, m.getY());
       }
-      g.drawLine(2, m.getY(), getWidth() - 2, m.getY());
     }
   }
 
@@ -124,7 +126,7 @@ public class MarkerColumn extends JPanel {
 	      protected Object doInBackground() throws Exception {
 	        Sketch sketch = editor.getSketch();
 	        int currentTab = sketch.getCurrentCodeIndex();
-	        errorPoints = new ArrayList<>();
+	        errorPoints = Collections.synchronizedList(new ArrayList<LineMarker>());
 
 	        // Each problem.getSourceLine() will have an extra line added because
 	        // of class declaration in the beginning as well as default imports
@@ -207,14 +209,16 @@ public class MarkerColumn extends JPanel {
 	    int visibleLines = editor.getTextArea().getVisibleLines();
 	    totalLines = PApplet.max(totalLines, visibleLines);
 
-	    for (LineMarker m : errorPoints) {
-	      // Ratio of error line to total lines
-	      float y = (m.getLineNumber() + 1) / ((float) totalLines);
-	      // Ratio multiplied by height of the error bar
-	      y *= getHeight();
-	      y -= 15; // -15 is just a vertical offset
+	    synchronized (errorPoints) {
+	      for (LineMarker m : errorPoints) {
+	        // Ratio of error line to total lines
+	        float y = (m.getLineNumber() + 1) / ((float) totalLines);
+	        // Ratio multiplied by height of the error bar
+	        y *= getHeight();
+	        y -= 15; // -15 is just a vertical offset
 
-	      m.setY((int) y);
+	        m.setY((int) y);
+	      }
 	    }
 	  }
 	}
@@ -223,11 +227,13 @@ public class MarkerColumn extends JPanel {
 	private LineMarker findClosestMarker(final int y) {
 	  LineMarker closest = null;
 	  int closestDist = Integer.MAX_VALUE;
-	  for (LineMarker m : errorPoints) {
-	    int dist = Math.abs(y - m.getY());
-	    if (dist < 3 && dist < closestDist) {
-	      closest = m;
-	      closestDist = dist;
+	  synchronized (errorPoints) {
+	    for (LineMarker m : errorPoints) {
+	      int dist = Math.abs(y - m.getY());
+	      if (dist < 3 && dist < closestDist) {
+	        closest = m;
+	        closestDist = dist;
+	      }
 	    }
 	  }
 	  return closest;
