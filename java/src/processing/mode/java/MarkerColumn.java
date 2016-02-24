@@ -62,8 +62,7 @@ public class MarkerColumn extends JPanel {
 	private Color warningColor;
 
 	// Stores error markers displayed PER TAB along the error bar.
-	private List<LineMarker> errorPoints =
-	  Collections.synchronizedList(new ArrayList<LineMarker>());
+	private List<LineMarker> errorPoints = new ArrayList<LineMarker>();
 
 
 	public MarkerColumn(JavaEditor editor, int height) {
@@ -119,7 +118,7 @@ public class MarkerColumn extends JPanel {
 	  // index in the arraylist is LOCALIZED for current tab.
 	  Sketch sketch = editor.getSketch();
 	  int currentTab = sketch.getCurrentCodeIndex();
-	  errorPoints = Collections.synchronizedList(new ArrayList<LineMarker>());
+	  errorPoints.clear();
 	  // Each problem.getSourceLine() will have an extra line added because
 	  // of class declaration in the beginning as well as default imports
 	  for (Problem problem : problems) {
