@@ -1302,7 +1302,7 @@ public class JSONObject {
    * @throws JSONException If the value is non-finite number
    *  or if the key is null.
    */
-  private JSONObject put(String key, Object value) {
+  public JSONObject put(String key, Object value) {
     String pooled;
     if (key == null) {
       throw new RuntimeException("Null key.");
@@ -1335,7 +1335,7 @@ public class JSONObject {
    * @return his.
    * @throws JSONException if the key is a duplicate
    */
-  private JSONObject putOnce(String key, Object value) {
+  public JSONObject putOnce(String key, Object value) {
     if (key != null && value != null) {
       if (this.opt(key) != null) {
         throw new RuntimeException("Duplicate key \"" + key + "\"");
