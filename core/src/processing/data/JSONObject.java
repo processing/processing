@@ -540,7 +540,7 @@ public class JSONObject {
    * @return      The object associated with the key.
    * @throws      JSONException if the key is not found.
    */
-  private Object get(String key) {
+  public Object get(String key) {
     if (key == null) {
       throw new RuntimeException("Null key.");
     }

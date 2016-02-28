@@ -263,7 +263,7 @@ public class JSONArray {
    * @return An object value.
    * @throws JSONException If there is no value for the index.
    */
-  private Object get(int index) {
+  public Object get(int index) {
     Object object = opt(index);
     if (object == null) {
       throw new RuntimeException("JSONArray[" + index + "] not found.");
