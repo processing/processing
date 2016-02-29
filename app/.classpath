@@ -2,11 +2,29 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/processing-core"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/processing-core"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant-launcher.jar"/>
 	<classpathentry kind="lib" path="test/lib/junit-4.8.1.jar"/>
 	<classpathentry kind="lib" path="/processing-core/apple.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/antlr.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/classpath-explorer-1.0.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/com.ibm.icu.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/JavaMode.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/jdi.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/jdimodel.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/jdtCompilerAdapter.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/jsoup-1.7.1.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/org.eclipse.core.contenttype.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/org.eclipse.core.jobs.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/org.eclipse.core.resources.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/org.eclipse.core.runtime.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/org.eclipse.equinox.common.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/org.eclipse.equinox.preferences.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/org.eclipse.jdt.core.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/org.eclipse.osgi.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/org.eclipse.text.jar"/>
+	<classpathentry kind="lib" path="/processing-java/mode/org.netbeans.swing.outline.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
