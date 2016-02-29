@@ -42,7 +42,6 @@ public class ErrorMessageSimplifier {
    */
   private static TreeMap<Integer, String> constantsMap;
 
-
   public ErrorMessageSimplifier() {
 
     new Thread() {
@@ -85,7 +84,7 @@ public class ErrorMessageSimplifier {
   /**
    * Tones down the jargon in the ecj reported errors.
    */
-  public static String getSimplifiedErrorMessage(Problem problem) {
+  public static String getSimplifiedErrorMessage(Problem problem, String className) {
     if (problem == null) return null;
 
     IProblem iprob = problem.getIProblem();
@@ -257,7 +256,9 @@ public class ErrorMessageSimplifier {
     
     case IProblem.HidingEnclosingType:
       if (args.length > 0) {
-        result = Language.interpolate("editor.status.hiding_enclosing_type", args[0]);
+        if (args[0].equals(className)) {
+          result = Language.interpolate("editor.status.hiding_enclosing_type", args[0]);
+        }
       }
       break;
     }
