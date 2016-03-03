@@ -33,6 +33,7 @@ import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.Problem;
+import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.runner.Runner;
 import processing.mode.java.tweak.ColorControlBox;
 import processing.mode.java.tweak.Handle;
@@ -136,17 +137,7 @@ public class JavaEditor extends Editor {
     hasJavaTabs = checkForJavaTabs();
     //initializeErrorChecker();
 
-    { // Init error checker
-      errorCheckerService = new ErrorCheckerService(this);
-      for (SketchCode code : getSketch().getCode()) {
-        Document document = code.getDocument();
-        if (document != null) {
-          errorCheckerService.addListener(document);
-        }
-      }
-      errorCheckerService.start();
-      errorCheckerService.request();
-    }
+    initErrorChecker();
 
     // hack to add a JPanel to the right-hand side of the text area
     JPanel textAndError = new JPanel();
@@ -180,7 +171,25 @@ public class JavaEditor extends Editor {
     });
   }
 
-
+  
+  public PdePreprocessor createPreprocessor(final String sketchName) {
+    return new PdePreprocessor(sketchName);  
+  }
+  
+  
+  protected void initErrorChecker() {
+    errorCheckerService = new ErrorCheckerService(this);
+    for (SketchCode code : getSketch().getCode()) {
+      Document document = code.getDocument();
+      if (document != null) {
+        errorCheckerService.addListener(document);
+      }
+    }
+    errorCheckerService.start();
+    errorCheckerService.request();
+  }
+  
+  
   protected JEditTextArea createTextArea() {
     return new JavaTextArea(new PdeTextAreaDefaults(mode), this);
   }
