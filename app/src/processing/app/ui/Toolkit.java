@@ -54,6 +54,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import javax.swing.Action;
@@ -892,6 +893,16 @@ public class Toolkit {
             monoBoldFont = createFont("AnonymousPro-Bold.ttf", size);
           }
         }
+        // issue2886
+        // follback for Chinese, Korean, Japanese.
+        String lang = Language.getLanguage();
+        if (Locale.CHINESE.getLanguage().equals(lang) ||
+          Locale.JAPANESE.getLanguage().equals(lang) ||
+          Locale.KOREAN.getLanguage().equals(lang)) {
+          sansFont = new Font("Monospaced", Font.PLAIN, size);
+          sansBoldFont = new Font("Monospaced", Font.BOLD, size);
+          Messages.log("load Monospaced font for CJK.");
+        }
       } catch (Exception e) {
         Messages.loge("Could not load mono font", e);
         monoFont = new Font("Monospaced", Font.PLAIN, size);
@@ -927,6 +938,17 @@ public class Toolkit {
             sansFont = createFont("Carlito-Regular.ttf", size);
             sansBoldFont = createFont("Carlito-Bold.ttf", size);
           }
+        }
+        
+        // issue2886
+        // follback for Chinese, Korean, Japanese.
+        String lang = Language.getLanguage();
+        if (Locale.CHINESE.getLanguage().equals(lang) ||
+          Locale.JAPANESE.getLanguage().equals(lang) ||
+          Locale.KOREAN.getLanguage().equals(lang)) {
+          sansFont = new Font("SansSerif", Font.PLAIN, size);
+          sansBoldFont = new Font("SansSerif", Font.BOLD, size);
+          Messages.log("load sans font for CJK.");
         }
       } catch (Exception e) {
         Messages.loge("Could not load sans font", e);
