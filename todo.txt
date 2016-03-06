@@ -6,7 +6,13 @@ X   https://github.com/processing/processing/pull/4300
 X IDE code disappearing due to a concurrency bug
 X   https://github.com/processing/processing/issues/4322
 X   https://github.com/processing/processing/pull/4325
+X Fix non-ARM Linux deb build process
+X   https://github.com/processing/processing/issues/4308
+X   https://github.com/processing/processing/pull/4309
 
+
+_ createPreprocessor() added to JavaEditor
+https://github.com/processing/processing/commit/2ecdc36ac7c680eb36e271d17ad80b657b3ae6a0
 
 _ tabs aren't working properly (several bugs?)
 _   https://github.com/processing/processing/issues/3975

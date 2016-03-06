@@ -1,5 +1,8 @@
 0249 (3.0.3)
 
+andres
+X Change convention for directional lights in OpenGL-Binding for GLSL
+X   https://github.com/processing/processing/issues/4275
 
 _ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
 _   https://github.com/processing/processing/issues/4020
