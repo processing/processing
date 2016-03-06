@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JPanel;
-import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
 
 import processing.app.Mode;
@@ -63,8 +62,7 @@ public class MarkerColumn extends JPanel {
 	private Color warningColor;
 
 	// Stores error markers displayed PER TAB along the error bar.
-	private List<LineMarker> errorPoints =
-	  Collections.synchronizedList(new ArrayList<LineMarker>());
+	private List<LineMarker> errorPoints = new ArrayList<LineMarker>();
 
 
 	public MarkerColumn(JavaEditor editor, int height) {
@@ -115,40 +113,21 @@ public class MarkerColumn extends JPanel {
 	}
 
 
-	synchronized public void updateErrorPoints(final List<Problem> problems) {
-		// NOTE: ErrorMarkers are calculated for the present tab only Error Marker
-	  // index in the arraylist is LOCALIZED for current tab. Also, update is in
-	  // the UI thread via SwingWorker to prevent concurrency issues. [Manindra]
-	  try {
-	    new SwingWorker() {
-	      protected Object doInBackground() throws Exception {
-	        Sketch sketch = editor.getSketch();
-	        int currentTab = sketch.getCurrentCodeIndex();
-	        errorPoints = new ArrayList<>();
-
-	        // Each problem.getSourceLine() will have an extra line added because
-	        // of class declaration in the beginning as well as default imports
-	        synchronized (problems) {
-	          for (Problem problem : problems) {
-	            if (problem.getTabIndex() == currentTab) {
-	              errorPoints.add(new LineMarker(problem, problem.isError()));
-	            }
-	          }
-	        }
-
-	        recalculateMarkerPositions();
-	        return null;
-	      }
-
-	      protected void done() {
-	        repaint();
-					editor.getErrorChecker().updateEditorStatus();
-	      }
-	    }.execute();
-
-		} catch (Exception ex) {
-		  ex.printStackTrace();
-		}
+	public void updateErrorPoints(final List<Problem> problems) {
+	  // NOTE: ErrorMarkers are calculated for the present tab only Error Marker
+	  // index in the arraylist is LOCALIZED for current tab.
+	  Sketch sketch = editor.getSketch();
+	  int currentTab = sketch.getCurrentCodeIndex();
+	  errorPoints.clear();
+	  // Each problem.getSourceLine() will have an extra line added because
+	  // of class declaration in the beginning as well as default imports
+	  for (Problem problem : problems) {
+	    if (problem.getTabIndex() == currentTab) {
+	      errorPoints.add(new LineMarker(problem, problem.isError()));
+	    }
+	  }
+	  repaint();
+	  editor.getErrorChecker().updateEditorStatus();
 	}
 
 
