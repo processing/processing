@@ -106,7 +106,10 @@ public class Commander implements RunnerListener {
     try {
       systemOut = new PrintStream(System.out, true, "UTF-8");
       systemErr = new PrintStream(System.err, true, "UTF-8");
-
+      if (Platform.isWindows()) {
+        systemOut = new PrintStream(System.out, true);
+        systemErr = new PrintStream(System.err, true);
+      }
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
       System.exit(1);
