@@ -3,6 +3,9 @@
 contribs
 X Grab bag of smaller, mainly ARM-related updates
 X   https://github.com/processing/processing/pull/4300
+X IDE code disappearing due to a concurrency bug
+X   https://github.com/processing/processing/issues/4322
+X   https://github.com/processing/processing/pull/4325
 
 
 _ tabs aren't working properly (several bugs?)
