@@ -779,13 +779,13 @@ public class ErrorCheckerService {
     final String exclude = "exclude";
 
     if (impName.startsWith("processing")) {
-      if (JavaMode.suggestionsMap.get(include).contains(impName)) {
+      if (JavaMode.suggestionsMap.containsKey(include) && JavaMode.suggestionsMap.get(include).contains(impName)) {
         return false;
-      } else if (JavaMode.suggestionsMap.get(exclude).contains(impName)) {
+      } else if (JavaMode.suggestionsMap.containsKey(exclude) && JavaMode.suggestionsMap.get(exclude).contains(impName)) {
         return true;
       }
     } else if (impName.startsWith("java")) {
-      if (JavaMode.suggestionsMap.get(include).contains(impName)) {
+      if (JavaMode.suggestionsMap.containsKey(include) && JavaMode.suggestionsMap.get(include).contains(impName)) {
         return false;
       }
     }

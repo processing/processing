@@ -78,9 +78,26 @@ public class ImportStatement {
 	}
 
 	public boolean isStarredImport() {
-		String ret = new String(importName.trim());
-		if(ret.endsWith(";"))
+		String ret = importName.trim();
+		if(ret.endsWith(";")) {
 			ret = ret.substring(0, ret.length() - 1).trim();
+		}
 		return ret.endsWith(".*");
+	}
+
+	public String getImportedClassName() {
+		if (isStarredImport()) {
+			return null;
+		} else {
+			String ret = importName.trim();
+			if(ret.endsWith(";")) {
+				ret = ret.substring(0, ret.length() - 1).trim();
+			}
+			if (ret.lastIndexOf('.') != -1) {
+				return ret.substring(ret.lastIndexOf('.') + 1);
+			} else {
+				return null;
+			}
+		}
 	}
 }

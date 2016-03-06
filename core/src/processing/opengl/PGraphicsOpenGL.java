@@ -5171,7 +5171,7 @@ public class PGraphicsOpenGL extends PGraphics {
       x*modelview.m20 + y*modelview.m21 + z*modelview.m22 + modelview.m23;
 
     // Used to indicate if the light is directional or not.
-    lightPosition[4 * num + 3] = dir ? 1: 0;
+    lightPosition[4 * num + 3] = dir ? 0 : 1;
   }
 
 

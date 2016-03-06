@@ -54,9 +54,10 @@ public class XQPreprocessor {
 
   public XQPreprocessor(ErrorCheckerService ecs) {
     this.ecs = ecs;
-
+    
     // get parameters from the main preproc
-    PdePreprocessor p = new PdePreprocessor(null);
+//    PdePreprocessor p = new PdePreprocessor(null);
+    PdePreprocessor p = ecs.editor.createPreprocessor(null);
     defaultImports = p.getDefaultImports();
     coreImports = p.getCoreImports();
   }

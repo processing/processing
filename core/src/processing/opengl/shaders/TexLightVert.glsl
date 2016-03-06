@@ -101,7 +101,7 @@ void main() {
     if (lightCount == i) break;
     
     vec3 lightPos = lightPosition[i].xyz;
-    bool isDir = zero_float < lightPosition[i].w;
+    bool isDir = lightPosition[i].w < one_float;
     float spotCos = lightSpot[i].x;
     float spotExp = lightSpot[i].y;
     
