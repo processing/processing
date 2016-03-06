@@ -1,5 +1,9 @@
 0249 (3.0.3)
 
+contribs
+X Grab bag of smaller, mainly ARM-related updates
+X   https://github.com/processing/processing/pull/4300
+
 
 _ tabs aren't working properly (several bugs?)
 _   https://github.com/processing/processing/issues/3975
