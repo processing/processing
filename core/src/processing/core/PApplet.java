@@ -4073,12 +4073,12 @@ public class PApplet implements PConstants {
    * To come...
    *
    * ( end auto-generated )
- * @webref output:text_area
- * @param what one-dimensional array
- * @usage IDE
- * @see PApplet#print(byte)
- * @see PApplet#println()
- */
+   * @webref output:text_area
+   * @param what one-dimensional array
+   * @usage IDE
+   * @see PApplet#print(byte)
+   * @see PApplet#println()
+   */
   static public void printArray(Object what) {
     if (what == null) {
       // special case since this does fuggly things on > 1.1
@@ -4856,6 +4856,15 @@ public class PApplet implements PConstants {
   Random internalRandom;
 
   /**
+   * Sets internalRandom if necessary
+   */
+  protected final void setInternalRandom() {
+    if (internalRandom == null) {
+      internalRandom = new Random();
+    }
+  }
+
+  /**
    *
    */
   public final float random(float high) {
@@ -4864,9 +4873,7 @@ public class PApplet implements PConstants {
       return 0;
     }
 
-    if (internalRandom == null) {
-      internalRandom = new Random();
-    }
+    setInternalRandom();
 
     // for some reason (rounding error?) Math.random() * 3
     // can sometimes return '3' (once in ~30 million tries)
@@ -4896,9 +4903,7 @@ public class PApplet implements PConstants {
    * @see PApplet#noise(float, float, float)
    */
   public final float randomGaussian() {
-    if (internalRandom == null) {
-      internalRandom = new Random();
-    }
+    setInternalRandom();
     return (float) internalRandom.nextGaussian();
   }
 
@@ -4947,9 +4952,7 @@ public class PApplet implements PConstants {
    * @see PApplet#noiseSeed(long)
    */
   public final void randomSeed(long seed) {
-    if (internalRandom == null) {
-      internalRandom = new Random();
-    }
+    setInternalRandom();
     internalRandom.setSeed(seed);
   }
 
@@ -4986,6 +4989,15 @@ public class PApplet implements PConstants {
   float[] perlin;
 
   Random perlinRandom;
+
+  /**
+   * Sets perlinRandom if necessary
+   */
+  protected void setPerlinRandom() {
+    if (perlinRandom == null) {
+      perlinRandom = new Random();
+    }
+  }
 
 
   /**
@@ -5042,9 +5054,7 @@ public class PApplet implements PConstants {
    */
   public float noise(float x, float y, float z) {
     if (perlin == null) {
-      if (perlinRandom == null) {
-        perlinRandom = new Random();
-      }
+      setPerlinRandom();
       perlin = new float[PERLIN_SIZE + 1];
       for (int i = 0; i < PERLIN_SIZE + 1; i++) {
         perlin[i] = perlinRandom.nextFloat(); //(float)Math.random();
@@ -5172,7 +5182,7 @@ public class PApplet implements PConstants {
    * @see PApplet#randomSeed(long)
    */
   public void noiseSeed(long seed) {
-    if (perlinRandom == null) perlinRandom = new Random();
+    setPerlinRandom();
     perlinRandom.setSeed(seed);
     // force table reset after changing the random number seed [0122]
     perlin = null;
