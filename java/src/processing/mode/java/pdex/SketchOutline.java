@@ -269,28 +269,19 @@ public class SketchOutline {
 
 
   private void scrollToNode() {
-    SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+    if (soTree.getLastSelectedPathComponent() == null) {
+      return;
+    }
+    DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
+        .getLastSelectedPathComponent();
+    if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+      ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+      awrap.highlightNode(editor);
+      // log(awrap);
+      //errorCheckerService.highlightNode(awrap);
+      close();
+    }
 
-      protected Object doInBackground() throws Exception {
-        return null;
-      }
-
-      protected void done() {
-        if (soTree.getLastSelectedPathComponent() == null) {
-          return;
-        }
-        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
-            .getLastSelectedPathComponent();
-        if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-          ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-          awrap.highlightNode(editor);
-          // log(awrap);
-          //errorCheckerService.highlightNode(awrap);
-          close();
-        }
-      }
-    };
-    worker.execute();
   }
 
 

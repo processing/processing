@@ -221,31 +221,21 @@ public class TabOutline {
     tabTree.addTreeSelectionListener(new TreeSelectionListener() {
 
       public void valueChanged(TreeSelectionEvent e) {
-
         if (internalSelection) {
           //log("Internal selection");
           internalSelection = (false);
           return;
         }
         // log(e);
-        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
 
-          protected Object doInBackground() throws Exception {
-            return null;
-          }
-
-          protected void done() {
-            if (tabTree.getLastSelectedPathComponent() == null) {
-              return;
-            }
-            DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) tabTree
-                .getLastSelectedPathComponent();
-            //log("Clicked " + tnode);
-            switchToTab(tnode.toString());
-            close();
-          }
-        };
-        worker.execute();
+        if (tabTree.getLastSelectedPathComponent() == null) {
+          return;
+        }
+        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) tabTree
+            .getLastSelectedPathComponent();
+        //log("Clicked " + tnode);
+        switchToTab(tnode.toString());
+        close();
       }
     });
 
