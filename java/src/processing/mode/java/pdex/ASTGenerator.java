@@ -20,7 +20,6 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Rectangle;
@@ -41,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
@@ -49,16 +47,13 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.BadLocationException;
@@ -3074,15 +3069,6 @@ public class ASTGenerator {
       return null;
     }
 
-    if (ignoredImportSuggestions == null) {
-      ignoredImportSuggestions = new TreeSet<>();
-    } else {
-      if (ignoredImportSuggestions.contains(className)) {
-        log("Ignoring import suggestions for " + className);
-        return null;
-      }
-    }
-
     log("Looking for class " + className);
     RegExpResourceFilter regf = new RegExpResourceFilter(Pattern.compile(".*"),
                                                          Pattern.compile(className + ".class",
@@ -3127,150 +3113,6 @@ public class ASTGenerator {
 //    }
 
     return resources;
-  }
-
-  protected JFrame frmImportSuggest;
-  private TreeSet<String> ignoredImportSuggestions;
-
-  public void suggestImports(final String className){
-    if (ignoredImportSuggestions == null) {
-      ignoredImportSuggestions = new TreeSet<>();
-    } else {
-      if(ignoredImportSuggestions.contains(className)) {
-        log("Ignoring import suggestions for " + className);
-        return;
-      }
-    }
-    if (frmImportSuggest != null) {
-      if (frmImportSuggest.isVisible()) {
-        return;
-      }
-    }
-    log("Looking for class " + className);
-    RegExpResourceFilter regf =
-      new RegExpResourceFilter(Pattern.compile(".*"),
-                               Pattern.compile(className + ".class",
-                                               Pattern.CASE_INSENSITIVE));
-    String[] resources = classPath.findResources("", regf);
-    ArrayList<String> candidates = new ArrayList<>();
-    Collections.addAll(candidates, resources);
-
-    // log("Couldn't find import for class " + className);
-
-    for (Library lib : editor.getMode().contribLibraries) {
-      ClassPath cp = factory.createFromPath(lib.getClassPath());
-      resources = cp.findResources("", regf);
-      for (String res : resources) {
-        candidates.add(res);
-        log("Res: " + res);
-      }
-    }
-
-    if (editor.getSketch().hasCodeFolder()) {
-      File codeFolder = editor.getSketch().getCodeFolder();
-      // get a list of .jar files in the "code" folder
-      // (class files in subfolders should also be picked up)
-      ClassPath cp =
-        factory.createFromPath(Util.contentsToClassPath(codeFolder));
-      resources = cp.findResources("", regf);
-      for (String res : resources) {
-        candidates.add(res);
-        log("Res: " + res);
-      }
-    }
-
-    resources = new String[candidates.size()];
-    for (int i = 0; i < resources.length; i++) {
-      resources[i] = candidates.get(i).replace('/', '.')
-          .substring(0, candidates.get(i).length() - 6);
-    }
-    if (resources.length >= 1) {
-      final JList<String> classList = new JList<>(resources);
-      classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      frmImportSuggest = new JFrame();
-      frmImportSuggest.setSize(350, 200);
-      Toolkit.setIcon(frmImportSuggest);
-      frmImportSuggest.setLayout(new BoxLayout(frmImportSuggest
-          .getContentPane(), BoxLayout.Y_AXIS));
-      ((JComponent) frmImportSuggest.getContentPane()).setBorder(BorderFactory
-          .createEmptyBorder(5, 5, 5, 5));
-      JLabel lbl = new JLabel("<html>The class \"" + className
-          + "\" couldn't be determined. You are probably missing one of the following imports:</html>");
-      JScrollPane jsp = new JScrollPane();
-      jsp.setViewportView(classList);
-      JButton btnInsertImport = new JButton("Insert import");
-      btnInsertImport.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-          if (classList.getSelectedValue() != null) {
-            try {
-              String impString = "import " + classList.getSelectedValue()
-                  + ";\n";
-              int ct = editor.getSketch().getCurrentCodeIndex();
-              editor.getSketch().setCurrentCode(0);
-              editor.getTextArea().getDocument().insertString(0, impString, null);
-              editor.getSketch().setCurrentCode(ct);
-              errorCheckerService.request();
-              frmImportSuggest.setVisible(false);
-              frmImportSuggest = null;
-            } catch (BadLocationException e) {
-              log("Failed to insert import for " + className);
-              e.printStackTrace();
-            }
-          }
-        }
-      });
-
-      JButton btnCancel = new JButton("Cancel");
-      btnCancel.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          frmImportSuggest.setVisible(false);
-        }
-      });
-
-      JPanel panelTop = new JPanel(), panelBottom = new JPanel(), panelLabel = new JPanel();
-      panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
-      panelTop.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-      panelLabel.setLayout(new BorderLayout());
-      panelLabel.add(lbl,BorderLayout.CENTER);
-      panelTop.add(panelLabel);
-      panelTop.add(Box.createRigidArea(new Dimension(1, 5)));
-      panelTop.add(jsp);
-      panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
-      panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-      panelBottom .setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
-      panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-      panelBottom.add(Box.createHorizontalGlue());
-      panelBottom.add(btnInsertImport);
-      panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
-      panelBottom.add(btnCancel);
-      JButton btnIgnore = new JButton("Ignore \"" + className + "\"");
-      btnIgnore.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          ignoredImportSuggestions.add(className);
-          frmImportSuggest.setVisible(false);
-        }
-      });
-      panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
-      panelBottom.add(btnIgnore);
-
-//      frmImportSuggest.add(lbl);
-//      frmImportSuggest.add(jsp);
-//      frmImportSuggest.add(btnInsertImport);
-      frmImportSuggest.add(panelTop);
-      frmImportSuggest.add(panelBottom);
-      frmImportSuggest.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-      frmImportSuggest.setTitle("Import Suggestion");
-      frmImportSuggest.setLocation(editor.getX()
-                            + (editor.getWidth() - frmImportSuggest.getWidth()) / 2,
-                        editor.getY()
-                            + (editor.getHeight() - frmImportSuggest.getHeight())
-                            / 2);
-      hideSuggestion();
-      classList.setSelectedIndex(0);
-    }
   }
 
 
@@ -3605,8 +3447,7 @@ public class ASTGenerator {
 
   public void disposeAllWindows() {
     Messages.log("* disposeAllWindows");
-    disposeWindow(importSuggestionsWindow,
-                  showUsageWindow, renameWindow);
+    disposeWindow(showUsageWindow, renameWindow);
 
     if (debugTreeWindow != null) disposeWindow(debugTreeWindow);
   }
