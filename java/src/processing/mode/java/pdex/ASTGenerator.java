@@ -126,17 +126,6 @@ public class ASTGenerator {
 
   protected CompilationUnit compilationUnit;
 
-  // Rename window
-  protected JFrame renameWindow;
-  protected JTextField renameTextField;
-  protected JLabel renameOldNameLabel;
-  protected JButton showUsageButton;
-  protected JButton renameButton;
-
-  // Show usage window
-  protected JFrame showUsageWindow;
-  protected JTree showUsageTree;
-
 
   public ASTGenerator(JavaEditor editor, ErrorCheckerService ecs) {
     this.editor = editor;
@@ -145,74 +134,6 @@ public class ASTGenerator {
     //addCompletionPopupListner();
     addListeners();
     //loadJavaDoc();
-  }
-
-
-  protected void setupGUI() {
-
-    if (SHOW_DEBUG_TREE) initDebugWindow();
-
-    { // Rename window
-      renameWindow = new JFrame();
-      renameWindow.setTitle("Enter new name:");
-      renameWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-      renameWindow.setSize(250, 130);
-      renameWindow.setLayout(new BoxLayout(renameWindow.getContentPane(), BoxLayout.Y_AXIS));
-      Toolkit.setIcon(renameWindow);
-
-      { // Top panel
-
-        // Text field
-        renameTextField = new JTextField();
-        renameTextField.setPreferredSize(new Dimension(150, 60));
-
-        // Old name label
-        renameOldNameLabel = new JLabel();
-        renameOldNameLabel.setText("Old Name: ");
-
-        // Top panel
-        JPanel panelTop = new JPanel();
-        panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
-        panelTop.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        panelTop.add(renameTextField);
-        panelTop.add(Box.createRigidArea(new Dimension(0, 10)));
-        panelTop.add(renameOldNameLabel);
-        renameWindow.add(panelTop);
-      }
-
-      { // Bottom panel
-        showUsageButton = new JButton("Show Usage");
-        renameButton = new JButton("Rename");
-
-        JPanel panelBottom = new JPanel();
-        panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
-        panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        panelBottom.add(Box.createHorizontalGlue());
-        panelBottom.add(showUsageButton);
-        panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
-        panelBottom.add(renameButton);
-        renameWindow.add(panelBottom);
-      }
-
-      //renameWindow.setVisible(true);
-      renameWindow.setMinimumSize(renameWindow.getSize());
-      renameWindow.setLocation(editor.getX()
-                                   + (editor.getWidth() - renameWindow.getWidth()) / 2,
-                               editor.getY()
-                                   + (editor.getHeight() - renameWindow.getHeight())
-                                   / 2);
-    }
-
-    { // Show Usage window
-      showUsageWindow = new JFrame();
-      showUsageWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-      showUsageWindow.setSize(300, 400);
-      Toolkit.setIcon(showUsageWindow);
-      JScrollPane sp2 = new JScrollPane();
-      showUsageTree = new JTree();
-      sp2.setViewportView(showUsageTree);
-      showUsageWindow.add(sp2);
-    }
   }
 
 
@@ -1864,49 +1785,6 @@ public class ASTGenerator {
 //    }
 //  }
 
-  protected void addListeners() {
-
-    if (SHOW_DEBUG_TREE) addDebugTreeListener();
-
-    renameButton.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if(renameTextField.getText().length() == 0) {
-          return;
-        }
-        refactorIt();
-      }
-    });
-
-    showUsageButton.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        handleShowUsage();
-      }
-    });
-
-    showUsageTree.addTreeSelectionListener(new TreeSelectionListener() {
-
-      @Override
-      public void valueChanged(TreeSelectionEvent e) {
-        log(e);
-        if(showUsageTree
-            .getLastSelectedPathComponent() == null){
-          return;
-        }
-        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) showUsageTree
-            .getLastSelectedPathComponent();
-
-        if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-          ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-          //errorCheckerService.highlightNode(awrap);
-          awrap.highlightNode(editor);
-        }
-      }
-    });
-  }
 
   protected void refactorIt(){
     String newName = renameTextField.getText().trim();
@@ -3392,23 +3270,6 @@ public class ASTGenerator {
                             / 2);
       hideSuggestion();
       classList.setSelectedIndex(0);
-      frmImportSuggest.setVisible(true);
-    }
-  }
-
-
-  public void disposeAllWindows() {
-    disposeWindow(frmImportSuggest,
-                  showUsageWindow, renameWindow);
-
-    if (debugTreeWindow != null) disposeWindow(debugTreeWindow);
-  }
-
-
-  public static void disposeWindow(JFrame... f) {
-    for (JFrame jFrame : f) {
-      if(jFrame != null)
-        jFrame.dispose();
     }
   }
 
@@ -3612,6 +3473,150 @@ public class ASTGenerator {
 
   private void hideSuggestion() {
     ((JavaTextArea) editor.getTextArea()).hideSuggestion();
+  }
+
+
+  /// GUI ----------------------------------------------------------------------
+
+  // Rename window
+  protected JFrame renameWindow;
+  protected JTextField renameTextField;
+  protected JLabel renameOldNameLabel;
+  protected JButton showUsageButton;
+  protected JButton renameButton;
+
+  // Show usage window
+  protected JFrame showUsageWindow;
+  protected JTree showUsageTree;
+
+
+  protected void setupGUI() {
+
+    if (SHOW_DEBUG_TREE) initDebugWindow();
+
+    { // Rename window
+      renameWindow = new JFrame();
+      renameWindow.setTitle("Enter new name:");
+      renameWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+      renameWindow.setSize(250, 130);
+      renameWindow.setLayout(new BoxLayout(renameWindow.getContentPane(), BoxLayout.Y_AXIS));
+      Toolkit.setIcon(renameWindow);
+
+      { // Top panel
+
+        // Text field
+        renameTextField = new JTextField();
+        renameTextField.setPreferredSize(new Dimension(150, 60));
+
+        // Old name label
+        renameOldNameLabel = new JLabel();
+        renameOldNameLabel.setText("Old Name: ");
+
+        // Top panel
+        JPanel panelTop = new JPanel();
+        panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
+        panelTop.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        panelTop.add(renameTextField);
+        panelTop.add(Box.createRigidArea(new Dimension(0, 10)));
+        panelTop.add(renameOldNameLabel);
+        renameWindow.add(panelTop);
+      }
+
+      { // Bottom panel
+        showUsageButton = new JButton("Show Usage");
+        renameButton = new JButton("Rename");
+
+        JPanel panelBottom = new JPanel();
+        panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
+        panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        panelBottom.add(Box.createHorizontalGlue());
+        panelBottom.add(showUsageButton);
+        panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
+        panelBottom.add(renameButton);
+        renameWindow.add(panelBottom);
+      }
+
+      //renameWindow.setVisible(true);
+      renameWindow.setMinimumSize(renameWindow.getSize());
+      renameWindow.setLocation(editor.getX()
+                                   + (editor.getWidth() - renameWindow.getWidth()) / 2,
+                               editor.getY()
+                                   + (editor.getHeight() - renameWindow.getHeight())
+                                   / 2);
+    }
+
+    { // Show Usage window
+      showUsageWindow = new JFrame();
+      showUsageWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+      showUsageWindow.setSize(300, 400);
+      Toolkit.setIcon(showUsageWindow);
+      JScrollPane sp2 = new JScrollPane();
+      showUsageTree = new JTree();
+      sp2.setViewportView(showUsageTree);
+      showUsageWindow.add(sp2);
+    }
+  }
+
+
+  protected void addListeners() {
+
+    if (SHOW_DEBUG_TREE) addDebugTreeListener();
+
+    renameButton.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if(renameTextField.getText().length() == 0) {
+          return;
+        }
+        refactorIt();
+      }
+    });
+
+    showUsageButton.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        handleShowUsage();
+      }
+    });
+
+    showUsageTree.addTreeSelectionListener(new TreeSelectionListener() {
+
+      @Override
+      public void valueChanged(TreeSelectionEvent e) {
+        log(e);
+        if(showUsageTree
+            .getLastSelectedPathComponent() == null){
+          return;
+        }
+        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) showUsageTree
+            .getLastSelectedPathComponent();
+
+        if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+          ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+          //errorCheckerService.highlightNode(awrap);
+          awrap.highlightNode(editor);
+        }
+      }
+    });
+  }
+
+
+  public void disposeAllWindows() {
+    Messages.log("* disposeAllWindows");
+    disposeWindow(importSuggestionsWindow,
+                  showUsageWindow, renameWindow);
+
+    if (debugTreeWindow != null) disposeWindow(debugTreeWindow);
+  }
+
+
+  public static void disposeWindow(JFrame... f) {
+    for (JFrame jFrame : f) {
+      if(jFrame != null)
+        jFrame.dispose();
+    }
   }
 
 
