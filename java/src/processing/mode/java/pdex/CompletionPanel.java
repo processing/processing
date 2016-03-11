@@ -159,10 +159,7 @@ public class CompletionPanel {
     popupMenu.add(scrollPane, BorderLayout.CENTER);
     popupMenu.setPopupSize(calcWidth(), calcHeight(items.getSize())); //TODO: Eradicate this evil
     popupMenu.setFocusable(false);
-    ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
-    synchronized (astGenerator) {
-      astGenerator.updateJavaDoc(completionList.getSelectedValue());
-    }
+    // TODO: Update JavaDoc to completionList.getSelectedValue()
     popupMenu.show(textarea, location.x, textarea.getBaseline(0, 0) + location.y);
     //log("Suggestion shown: " + System.currentTimeMillis());
   }
@@ -517,10 +514,7 @@ public class CompletionPanel {
                                                  .getVerticalScrollBar()
                                                  .getValue()
                                                  - step);
-      ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
-      synchronized (astGenerator) {
-        astGenerator.updateJavaDoc(completionList.getSelectedValue());
-      }
+      // TODO: update JavaDoc to completionList.getSelectedValue()
     }
   }
 
@@ -537,10 +531,7 @@ public class CompletionPanel {
       int index = Math.min(completionList.getSelectedIndex() + 1,
                            completionList.getModel().getSize() - 1);
       selectIndex(index);
-      ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
-      synchronized (astGenerator) {
-        astGenerator.updateJavaDoc(completionList.getSelectedValue());
-      }
+      // TODO: update JavaDoc to completionList.getSelectedValue()
       int step = scrollPane.getVerticalScrollBar().getMaximum() / completionList.getModel().getSize();
       scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getValue() + step);
     }
