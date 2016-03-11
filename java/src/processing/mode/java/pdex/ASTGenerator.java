@@ -117,14 +117,12 @@ import com.google.classpath.RegExpResourceFilter;
 
 @SuppressWarnings({ "unchecked" })
 public class ASTGenerator {
+
+  public static final boolean SHOW_DEBUG_TREE = false;
+
   protected final ErrorCheckerService errorCheckerService;
   protected final JavaEditor editor;
   public DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode();
-
-  protected JFrame frmASTView;
-
-  /** Swing component wrapper for AST, used for internal testing */
-  protected JTree jtree;
 
   /** JTree used for testing refactoring operations */
   protected JTree refactorTree;
@@ -149,15 +147,8 @@ public class ASTGenerator {
 
 
   protected void setupGUI() {
-    frmASTView = new JFrame();
 
-    jtree = new JTree();
-    frmASTView.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    frmASTView.setBounds(new Rectangle(680, 100, 460, 620));
-    frmASTView.setTitle("AST View - " + editor.getSketch().getName());
-    JScrollPane sp = new JScrollPane();
-    sp.setViewportView(jtree);
-    frmASTView.add(sp);
+    if (SHOW_DEBUG_TREE) initDebugWindow();
 
     btnRename = new JButton("Rename");
     btnListOccurrence = new JButton("Show Usage");
@@ -205,8 +196,6 @@ public class ASTGenerator {
   }
 
 
-  public static final boolean SHOW_AST = false;
-
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
     if (cu == null) {
       ASTParser parser = ASTParser.newParser(AST.JLS8);
@@ -232,19 +221,19 @@ public class ASTGenerator {
       Messages.loge("No CU found!");
     }
     visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        if (codeTree != null) {
-          if (SHOW_AST) {
-            if (jtree.hasFocus() || frmASTView.hasFocus())
-              return;
-            jtree.setModel(new DefaultTreeModel(codeTree));
-            ((DefaultTreeModel) jtree.getModel()).reload();
-            jtree.validate();
-            if (!frmASTView.isVisible()) {
-              frmASTView.setVisible(true);
-            }
-          }
+
+    if (SHOW_DEBUG_TREE) {
+      EventQueue.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          updateDebugTree(codeTree);
+        }
+      });
+    }
+
+//    EventQueue.invokeLater(new Runnable() {
+//      public void run() {
+//        if (codeTree != null) {
 //          if (!frameAutoComp.isVisible()) {
 //
 //            frameAutoComp.setVisible(true);
@@ -261,9 +250,10 @@ public class ASTGenerator {
 //                                                   .getY(), 450, 600));
 //            frmJavaDoc.setVisible(true);
 //          }
-        }
-      }
-    });
+//        }
+//      }
+//    });
+
 //    Base.loge("++>" + System.getProperty("java.class.path"));
 //    log(System.getProperty("java.class.path"));
 //    log("-------------------------------");
@@ -284,6 +274,7 @@ public class ASTGenerator {
     jdocMap = new TreeMap<>();
 
     // presently loading only p5 reference for PApplet
+    // TODO: use something like ExecutorService here [jv]
     new Thread(new Runnable() {
       @Override
       public void run() {
@@ -1853,53 +1844,9 @@ public class ASTGenerator {
 //    }
 //  }
 
-  protected void addListeners(){
-    jtree.addTreeSelectionListener(new TreeSelectionListener() {
+  protected void addListeners() {
 
-      @Override
-      public void valueChanged(TreeSelectionEvent e) {
-        Messages.log(e.toString());
-
-        if(jtree.getLastSelectedPathComponent() == null) {
-          return;
-        }
-        DefaultMutableTreeNode tnode =
-            (DefaultMutableTreeNode) jtree.getLastSelectedPathComponent();
-        if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-          ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-          awrap.highlightNode(editor);
-          // errorCheckerService.highlightNode(awrap);
-
-          //--
-          try {
-            int javaLineNumber = getLineNumber(awrap.getNode());
-            int pdeOffs[] = errorCheckerService
-                .calculateTabIndexAndLineNumber(javaLineNumber);
-            PlainDocument javaSource = new PlainDocument();
-            javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
-            Element lineElement = javaSource.getDefaultRootElement()
-                .getElement(javaLineNumber-1);
-            if(lineElement == null) {
-              return;
-            }
-
-            String javaLine = javaSource.getText(lineElement.getStartOffset(),
-                                                 lineElement.getEndOffset()
-                                                     - lineElement.getStartOffset());
-            editor.getSketch().setCurrentCode(pdeOffs[0]);
-            String pdeLine = editor.getLineText(pdeOffs[1]);
-            //String lookingFor = nodeName.toString();
-            //log(lookingFor + ", " + nodeName.getStartPosition());
-            log("JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
-                + lineElement.getEndOffset());
-            log("PL " + pdeLine);
-          } catch (BadLocationException ex) {
-            ex.printStackTrace();
-          }
-        }
-      }
-
-    });
+    if (SHOW_DEBUG_TREE) addDebugTreeListener();
 
     btnRename.addActionListener(new ActionListener() {
 
@@ -3431,8 +3378,10 @@ public class ASTGenerator {
 
 
   public void disposeAllWindows() {
-    disposeWindow(frmASTView, frmImportSuggest,
+    disposeWindow(frmImportSuggest,
                   frmOccurenceList, frmRename);
+
+    if (debugTreeWindow != null) disposeWindow(debugTreeWindow);
   }
 
 
@@ -3644,4 +3593,86 @@ public class ASTGenerator {
   private void hideSuggestion() {
     ((JavaTextArea) editor.getTextArea()).hideSuggestion();
   }
+
+
+  /// DEBUG --------------------------------------------------------------------
+
+  protected JFrame debugTreeWindow;
+
+  /** Swing component wrapper for AST, used for internal testing */
+  protected JTree debugTree;
+
+  protected void initDebugWindow() {
+    debugTreeWindow = new JFrame();
+
+    debugTree = new JTree();
+    debugTreeWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    debugTreeWindow.setBounds(new Rectangle(680, 100, 460, 620));
+    debugTreeWindow.setTitle("AST View - " + editor.getSketch().getName());
+    JScrollPane sp = new JScrollPane();
+    sp.setViewportView(debugTree);
+    debugTreeWindow.add(sp);
+  }
+
+  protected void updateDebugTree(DefaultMutableTreeNode codeTree) {
+    if (debugTree.hasFocus() || debugTreeWindow.hasFocus()) {
+      return;
+    }
+    debugTree.setModel(new DefaultTreeModel(codeTree));
+    ((DefaultTreeModel) debugTree.getModel()).reload();
+    debugTree.validate();
+    if (!debugTreeWindow.isVisible()) {
+      debugTreeWindow.setVisible(true);
+    }
+  }
+
+  protected void addDebugTreeListener() {
+    debugTree.addTreeSelectionListener(new TreeSelectionListener() {
+
+      @Override
+      public void valueChanged(TreeSelectionEvent e) {
+        Messages.log(e.toString());
+
+        if (debugTree.getLastSelectedPathComponent() == null) {
+          return;
+        }
+        DefaultMutableTreeNode tnode =
+            (DefaultMutableTreeNode) debugTree.getLastSelectedPathComponent();
+        if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+          ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+          awrap.highlightNode(editor);
+          // errorCheckerService.highlightNode(awrap);
+
+          //--
+          try {
+            int javaLineNumber = getLineNumber(awrap.getNode());
+            int pdeOffs[] = errorCheckerService
+                .calculateTabIndexAndLineNumber(javaLineNumber);
+            PlainDocument javaSource = new PlainDocument();
+            javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
+            Element lineElement = javaSource.getDefaultRootElement()
+                .getElement(javaLineNumber - 1);
+            if (lineElement == null) {
+              return;
+            }
+
+            String javaLine = javaSource.getText(lineElement.getStartOffset(),
+                                                 lineElement.getEndOffset()
+                                                     - lineElement.getStartOffset());
+            editor.getSketch().setCurrentCode(pdeOffs[0]);
+            String pdeLine = editor.getLineText(pdeOffs[1]);
+            //String lookingFor = nodeName.toString();
+            //log(lookingFor + ", " + nodeName.getStartPosition());
+            log("JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
+                    + lineElement.getEndOffset());
+            log("PL " + pdeLine);
+          } catch (BadLocationException ex) {
+            ex.printStackTrace();
+          }
+        }
+      }
+
+    });
+  }
+
 }
