@@ -42,7 +42,6 @@ import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.Platform;
 import processing.app.syntax.JEditTextArea;
-import processing.app.syntax.PdeTextAreaDefaults;
 import processing.app.syntax.TextAreaDefaults;
 import processing.app.ui.Editor;
 
@@ -57,18 +56,17 @@ import processing.app.ui.Editor;
 //      changes into JEditTextArea (or a subclass in processing.app)
 
 public class JavaTextArea extends JEditTextArea {
-  protected PdeTextAreaDefaults defaults;
-  protected JavaEditor editor;
+  protected final JavaEditor editor;
 
 
   // contains line background colors
-  protected Map<Integer, Color> lineColors = new HashMap<Integer, Color>();
+  protected final Map<Integer, Color> lineColors = new HashMap<>();
 
   // [px] space added to the left and right of gutter chars
-  protected int gutterPadding; // = 3;
+  protected final int gutterPadding; // = 3;
   protected Image gutterGradient;
 //  protected Color gutterBgColor; // = new Color(252, 252, 252); // gutter background color
-  protected Color gutterLineColor; // = new Color(233, 233, 233); // color of vertical separation line
+  protected final Color gutterLineColor; // = new Color(233, 233, 233); // color of vertical separation line
 
   /// the text marker for highlighting breakpoints in the gutter
   static public final String BREAK_MARKER = "<>";
@@ -76,12 +74,11 @@ public class JavaTextArea extends JEditTextArea {
   static public final String STEP_MARKER = "->";
 
   /// maps line index to gutter text
-  protected Map<Integer, String> gutterText = new HashMap<Integer, String>();
+  protected final Map<Integer, String> gutterText = new HashMap<>();
 
   /// maps line index to gutter text color
-  protected Map<Integer, Color> gutterTextColors = new HashMap<Integer, Color>();
+  protected final Map<Integer, Color> gutterTextColors = new HashMap<>();
 
-//  protected ErrorCheckerService errorCheckerService;
   private CompletionPanel suggestion;
 
 
@@ -115,6 +112,7 @@ public class JavaTextArea extends JEditTextArea {
   }
 
 
+  @Override
   protected JavaTextAreaPainter createPainter(final TextAreaDefaults defaults) {
     return new JavaTextAreaPainter(this, defaults);
   }
@@ -133,6 +131,7 @@ public class JavaTextArea extends JEditTextArea {
   /**
    * Handles KeyEvents for TextArea (code completion begins from here).
    */
+  @Override
   public void processKeyEvent(KeyEvent evt) {
     if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
       if (suggestion != null){
@@ -345,9 +344,6 @@ public class JavaTextArea extends JEditTextArea {
 
   SwingWorker<Void, Void> suggestionWorker = null;
 
-  int lastCaretPosition = 0;
-  String lastPhrase = "";
-
   volatile boolean suggestionRunning = false;
   volatile boolean suggestionRequested = false;
 
@@ -418,7 +414,7 @@ public class JavaTextArea extends JEditTextArea {
         Messages.log("phrase: " + phrase);
         if (phrase == null) return null;
 
-        List<CompletionCandidate> candidates = null;
+        List<CompletionCandidate> candidates;
 
         ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
         synchronized (astGenerator) {
@@ -903,11 +899,11 @@ public class JavaTextArea extends JEditTextArea {
 
 
   // save input listeners to stop/start text edit
-  ComponentListener[] prevCompListeners;
-  MouseListener[] prevMouseListeners;
-  MouseMotionListener[] prevMMotionListeners;
-  KeyListener[] prevKeyListeners;
-  boolean tweakMode;
+  protected final ComponentListener[] prevCompListeners;
+  protected final MouseListener[] prevMouseListeners;
+  protected final MouseMotionListener[] prevMMotionListeners;
+  protected final KeyListener[] prevKeyListeners;
+  protected boolean tweakMode;
 
 
   /* remove all standard interaction listeners */
@@ -956,11 +952,6 @@ public class JavaTextArea extends JEditTextArea {
       setCaretVisible(true);
       tweakMode = false;
     }
-  }
-
-
-  public int getHorizontalScroll() {
-    return horizontal.getValue();
   }
 
 
