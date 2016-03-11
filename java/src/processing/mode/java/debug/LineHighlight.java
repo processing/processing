@@ -20,7 +20,6 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.debug;
 
-import java.awt.Color;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,25 +34,21 @@ import processing.mode.java.JavaEditor;
  */
 public class LineHighlight {
 
-  protected JavaEditor editor; // the view, used for highlighting lines by setting a background color
-  protected Color bgColor; // the background color for highlighting lines
-  protected LineID lineID; // the id of the line
+  protected final JavaEditor editor; // the view, used for highlighting lines by setting a background color
+  protected final LineID lineID; // the id of the line
   protected String marker; //
-  protected Color markerColor;
   protected int priority = 0;
-  protected static Set<LineHighlight> allHighlights = new HashSet<LineHighlight>();
+  protected static final Set<LineHighlight> allHighlights = new HashSet<>();
 
   
   /**
    * Create a {@link LineHighlight}.
    *
    * @param lineID the line id to highlight
-   * @param bgColor the background color used for highlighting
    * @param editor the {@link JavaEditor}
    */
-  public LineHighlight(LineID lineID, Color bgColor, JavaEditor editor) {
+  public LineHighlight(LineID lineID, JavaEditor editor) {
     this.lineID = lineID;
-    this.bgColor = bgColor;
     this.editor = editor;
     lineID.addListener(this);
     lineID.startTracking(editor.getTab(lineID.fileName()).getDocument()); // TODO: overwrite a previous doc?
@@ -87,12 +82,11 @@ public class LineHighlight {
      * Create a {@link LineHighlight} on the current tab.
      *
      * @param lineIdx the line index on the current tab to highlight
-     * @param bgColor the background color used for highlighting
      * @param editor the {@link JavaEditor}
      */
-    // TODO: Remove and replace by {@link #LineHighlight(LineID lineID, Color bgColor, JavaEditor editor)}
-    public LineHighlight(int lineIdx, Color bgColor, JavaEditor editor) {
-        this(editor.getLineIDInCurrentTab(lineIdx), bgColor, editor);
+    // TODO: Remove and replace by {@link #LineHighlight(LineID lineID, JavaEditor editor)}
+    public LineHighlight(int lineIdx, JavaEditor editor) {
+        this(editor.getLineIDInCurrentTab(lineIdx), editor);
     }
 
     /**
@@ -107,33 +101,12 @@ public class LineHighlight {
     }
 
     /**
-     * Set a text based marker displayed in the left hand gutter area of this
-     * highlighted line. Also use a custom text color.
-     *
-     * @param marker the marker text
-     * @param markerColor the text color
-     */
-    public void setMarker(String marker, Color markerColor) {
-        this.markerColor = markerColor;
-        setMarker(marker);
-    }
-
-    /**
      * Retrieve the line id of this {@link LineHighlight}.
      *
      * @return the line id
      */
     public LineID getLineID() {
         return lineID;
-    }
-
-    /**
-     * Retrieve the color for highlighting this line.
-     *
-     * @return the highlight color.
-     */
-    public Color getColor() {
-        return bgColor;
     }
 
     /**
@@ -157,7 +130,6 @@ public class LineHighlight {
     public void lineChanged(LineID line, int oldLineIdx, int newLineIdx) {
         // clear old line
         if (editor.isInCurrentTab(new LineID(line.fileName(), oldLineIdx))) {
-            editor.getJavaTextArea().clearLineBgColor(oldLineIdx);
             editor.getJavaTextArea().clearGutterText(oldLineIdx);
         }
 
@@ -184,13 +156,8 @@ public class LineHighlight {
      */
     public void paint() {
         if (editor.isInCurrentTab(lineID)) {
-            editor.getJavaTextArea().setLineBgColor(lineID.lineIdx(), bgColor);
             if (marker != null) {
-                if (markerColor != null) {
-                    editor.getJavaTextArea().setGutterText(lineID.lineIdx(), marker, markerColor);
-                } else {
-                    editor.getJavaTextArea().setGutterText(lineID.lineIdx(), marker);
-                }
+                editor.getJavaTextArea().setGutterText(lineID.lineIdx(), marker);
             }
         }
     }
@@ -200,7 +167,6 @@ public class LineHighlight {
      */
     public void clear() {
         if (editor.isInCurrentTab(lineID)) {
-            editor.getJavaTextArea().clearLineBgColor(lineID.lineIdx());
             editor.getJavaTextArea().clearGutterText(lineID.lineIdx());
         }
     }

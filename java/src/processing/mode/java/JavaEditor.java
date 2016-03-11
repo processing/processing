@@ -49,12 +49,6 @@ public class JavaEditor extends Editor {
 
   // Need to sort through the rest of these additions [fry]
 
-  // TODO these are all null, need to remove color support
-  protected Color breakpointColor;
-  protected Color currentLineColor;
-  protected Color breakpointMarkerColor;
-  protected Color currentLineMarkerColor;
-
   protected List<LineHighlight> breakpointedLines =
     new ArrayList<LineHighlight>();
   protected LineHighlight currentLine; // where the debugger is suspended
@@ -2213,8 +2207,8 @@ public class JavaEditor extends Editor {
     // scroll to line, by setting the cursor
     cursorToLineStart(line.lineIdx());
     // highlight line
-    currentLine = new LineHighlight(line.lineIdx(), currentLineColor, this);
-    currentLine.setMarker(JavaTextArea.STEP_MARKER, currentLineMarkerColor);
+    currentLine = new LineHighlight(line.lineIdx(), this);
+    currentLine.setMarker(JavaTextArea.STEP_MARKER);
     currentLine.setPriority(10); // fixes current line being hidden by the breakpoint when moved down
   }
 
@@ -2242,8 +2236,8 @@ public class JavaEditor extends Editor {
    * @param lineID the line id to highlight as breakpointed
    */
   public void addBreakpointedLine(LineID lineID) {
-    LineHighlight hl = new LineHighlight(lineID, breakpointColor, this);
-    hl.setMarker(JavaTextArea.BREAK_MARKER, breakpointMarkerColor);
+    LineHighlight hl = new LineHighlight(lineID, this);
+    hl.setMarker(JavaTextArea.BREAK_MARKER);
     breakpointedLines.add(hl);
     // repaint current line if it's on this line
     if (currentLine != null && currentLine.getLineID().equals(lineID)) {
@@ -2299,7 +2293,6 @@ public class JavaEditor extends Editor {
     breakpointedLines.clear(); // remove all breakpoints
     // fix highlights not being removed when tab names have
     // changed due to opening a new sketch in same editor
-    getJavaTextArea().clearLineBgColors(); // force clear all highlights
     getJavaTextArea().clearGutterText();
 
     // repaint current line
@@ -2364,11 +2357,8 @@ public class JavaEditor extends Editor {
     final JavaTextArea ta = getJavaTextArea();
     // can be null when setCode is called the first time (in constructor)
     if (ta != null) {
-      // clear all line backgrounds
-      ta.clearLineBgColors();
       // clear all gutter text
       ta.clearGutterText();
-      // load appropriate line backgrounds for tab
       // first paint breakpoints
       if (breakpointedLines != null) {
         for (LineHighlight hl : breakpointedLines) {

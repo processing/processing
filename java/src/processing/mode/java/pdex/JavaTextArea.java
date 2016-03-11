@@ -58,15 +58,7 @@ import processing.app.ui.Editor;
 public class JavaTextArea extends JEditTextArea {
   protected final JavaEditor editor;
 
-
-  // contains line background colors
-  protected final Map<Integer, Color> lineColors = new HashMap<>();
-
-  // [px] space added to the left and right of gutter chars
-  protected final int gutterPadding; // = 3;
   protected Image gutterGradient;
-//  protected Color gutterBgColor; // = new Color(252, 252, 252); // gutter background color
-  protected final Color gutterLineColor; // = new Color(233, 233, 233); // color of vertical separation line
 
   /// the text marker for highlighting breakpoints in the gutter
   static public final String BREAK_MARKER = "<>";
@@ -75,9 +67,6 @@ public class JavaTextArea extends JEditTextArea {
 
   /// maps line index to gutter text
   protected final Map<Integer, String> gutterText = new HashMap<>();
-
-  /// maps line index to gutter text color
-  protected final Map<Integer, Color> gutterTextColors = new HashMap<>();
 
   private CompletionPanel suggestion;
 
@@ -98,9 +87,6 @@ public class JavaTextArea extends JEditTextArea {
     // load settings from theme.txt
     Mode mode = editor.getMode();
     gutterGradient = mode.makeGradient("editor", Editor.LEFT_GUTTER, 500);
-    //gutterBgColor = mode.getColor("editor.gutter.bgcolor");
-    gutterLineColor = mode.getColor("editor.gutter.linecolor");
-    gutterPadding = mode.getInteger("editor.gutter.padding");
 
     // TweakMode code
     prevCompListeners = painter.getComponentListeners();
@@ -656,22 +642,6 @@ public class JavaTextArea extends JEditTextArea {
 
 
   /**
-   * Set the gutter text and color of a specific line.
-   *
-   * @param lineIdx
-   *          the line index (0-based)
-   * @param text
-   *          the text
-   * @param textColor
-   *          the text color
-   */
-  public void setGutterText(int lineIdx, String text, Color textColor) {
-    gutterTextColors.put(lineIdx, textColor);
-    setGutterText(lineIdx, text);
-  }
-
-
-  /**
    * Clear the gutter text of a specific line.
    *
    * @param lineIdx
@@ -703,67 +673,6 @@ public class JavaTextArea extends JEditTextArea {
    */
   public String getGutterText(int lineIdx) {
     return gutterText.get(lineIdx);
-  }
-
-
-  /**
-   * Retrieve the gutter text color for a specific line.
-   *
-   * @param lineIdx
-   *          the line index
-   * @return the gutter text color
-   */
-  public Color getGutterTextColor(int lineIdx) {
-    return gutterTextColors.get(lineIdx);
-  }
-
-
-  /**
-   * Set the background color of a line.
-   *
-   * @param lineIdx
-   *          0-based line number
-   * @param col
-   *          the background color to set
-   */
-  public void setLineBgColor(int lineIdx, Color col) {
-    lineColors.put(lineIdx, col);
-    painter.invalidateLine(lineIdx);
-  }
-
-
-  /**
-   * Clear the background color of a line.
-   *
-   * @param lineIdx
-   *          0-based line number
-   */
-  public void clearLineBgColor(int lineIdx) {
-    lineColors.remove(lineIdx);
-    painter.invalidateLine(lineIdx);
-  }
-
-
-  /**
-   * Clear all line background colors.
-   */
-  public void clearLineBgColors() {
-    for (int lineIdx : lineColors.keySet()) {
-      painter.invalidateLine(lineIdx);
-    }
-    lineColors.clear();
-  }
-
-
-  /**
-   * Get a lines background color.
-   *
-   * @param lineIdx
-   *          0-based line number
-   * @return the color or null if no color was set for the specified line
-   */
-  public Color getLineBgColor(int lineIdx) {
-    return lineColors.get(lineIdx);
   }
 
 
