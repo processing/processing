@@ -276,7 +276,7 @@ public class ErrorCheckerService {
       }
 
       synchronized (astGenerator) {
-        astGenerator.disposeAllWindows();
+        astGenerator.getGui().disposeAllWindows();
       }
       classLoader = null;
       Messages.loge("Thread stopped: " + editor.getSketch().getName());

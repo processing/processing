@@ -113,7 +113,7 @@ import com.google.classpath.RegExpResourceFilter;
 @SuppressWarnings({ "unchecked" })
 public class ASTGenerator {
 
-  public static final boolean SHOW_DEBUG_TREE = false;
+  public static final boolean SHOW_DEBUG_TREE = true;
 
   protected final ErrorCheckerService errorCheckerService;
   protected final JavaEditor editor;
@@ -121,18 +121,20 @@ public class ASTGenerator {
 
   protected CompilationUnit compilationUnit;
 
+  protected final GUI gui;
+
 
   public ASTGenerator(JavaEditor editor, ErrorCheckerService ecs) {
     this.editor = editor;
     this.errorCheckerService = ecs;
-    setupGUI();
+    gui = new GUI(editor, this);
     //addCompletionPopupListner();
-    addListeners();
     //loadJavaDoc();
   }
 
 
   protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
+    Messages.log("* buildAST");
     if (cu == null) {
       ASTParser parser = ASTParser.newParser(AST.JLS8);
       parser.setSource(source.toCharArray());
@@ -149,7 +151,6 @@ public class ASTGenerator {
     }
 //    OutlineVisitor visitor = new OutlineVisitor();
 //    compilationUnit.accept(visitor);
-    getCodeComments();
     codeTree = new DefaultMutableTreeNode(new ASTNodeWrapper((ASTNode) compilationUnit
                                               .types().get(0)));
     //log("Total CU " + compilationUnit.types().size());
@@ -162,7 +163,7 @@ public class ASTGenerator {
       EventQueue.invokeLater(new Runnable() {
         @Override
         public void run() {
-          updateDebugTree(codeTree);
+          gui.updateDebugTree(codeTree);
         }
       });
     }
@@ -202,66 +203,6 @@ public class ASTGenerator {
    * Used for searching for package declaration of a class
    */
   protected ClassPath classPath;
-
-
-  protected TreeMap<String, String> jdocMap;
-
-  protected void loadJavaDoc() {
-    jdocMap = new TreeMap<>();
-
-    // presently loading only p5 reference for PApplet
-    // TODO: use something like ExecutorService here [jv]
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          loadJavaDoc(jdocMap, editor.getMode().getReferenceFolder());
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    }).start();
-  }
-
-
-  static void loadJavaDoc(TreeMap<String, String> jdocMap,
-                          File referenceFolder) throws IOException {
-    Document doc;
-
-    FileFilter fileFilter = new FileFilter() {
-      @Override
-      public boolean accept(File file) {
-        if(!file.getName().endsWith("_.html"))
-          return false;
-        int k = 0;
-        for (int i = 0; i < file.getName().length(); i++) {
-          if(file.getName().charAt(i)== '_')
-            k++;
-          if(k > 1)
-            return false;
-        }
-        return true;
-      }
-    };
-
-    for (File docFile : referenceFolder.listFiles(fileFilter)) {
-      doc = Jsoup.parse(docFile, null);
-      Elements elm = doc.getElementsByClass("ref-item");
-      String msg = "";
-      String methodName = docFile.getName().substring(0, docFile.getName().indexOf('_'));
-      //System.out.println(methodName);
-      for (org.jsoup.nodes.Element ele : elm) {
-        msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"ref-item\">"
-            + ele.html() + "</table></div></html></body></html>";
-        //mat.replaceAll("");
-        msg = msg.replaceAll("img src=\"", "img src=\""
-            + referenceFolder.toURI().toURL().toString() + "/");
-        //System.out.println(ele.text());
-      }
-      jdocMap.put(methodName, msg);
-    }
-    //System.out.println("JDoc loaded " + jdocMap.size());
-  }
 
 
   public static CompletionCandidate[] checkForTypes(ASTNode node) {
@@ -704,271 +645,6 @@ public class ASTGenerator {
     return null;
   }
 
-  protected static List<CompletionCandidate> trimCandidates(String newWord, List<CompletionCandidate> candidates) {
-    ArrayList<CompletionCandidate> newCandidate = new ArrayList<>();
-    newWord = newWord.toLowerCase();
-    for (CompletionCandidate comp : candidates) {
-      if(comp.getNoHtmlLabel().toLowerCase().startsWith(newWord)){
-        newCandidate.add(comp);
-      }
-    }
-    return newCandidate;
-  }
-
-  protected List<CompletionCandidate> candidates;
-  protected String lastPredictedPhrase = " ";
-
-  /**
-   * The main function that calculates possible code completion candidates
-   *
-   * @param pdePhrase
-   * @param line
-   * @param lineStartNonWSOffset
-   */
-  public List<CompletionCandidate> preparePredictions(final String pdePhrase,
-                                                      final int line) {
-    ASTNode astRootNode = (ASTNode) errorCheckerService.getLatestCU().types().get(0);
-
-    // If the parsed code contains pde enhancements, take 'em out.
-    String phrase = ASTNodeWrapper.getJavaCode(pdePhrase);
-
-    //After typing 'arg.' all members of arg type are to be listed. This one is a flag for it
-    boolean noCompare = phrase.endsWith(".");
-
-    if (noCompare) {
-      phrase = phrase.substring(0, phrase.length() - 1);
-    }
-
-    boolean incremental = !noCompare &&
-        phrase.length() > lastPredictedPhrase.length() &&
-        phrase.startsWith(lastPredictedPhrase);
-
-
-    if (incremental) {
-      log(pdePhrase + " starts with " + lastPredictedPhrase);
-      log("Don't recalc");
-
-      if (phrase.contains(".")) {
-        int x = phrase.lastIndexOf('.');
-        candidates = trimCandidates(phrase.substring(x + 1), candidates);
-      } else {
-        candidates = trimCandidates(phrase, candidates);
-      }
-      lastPredictedPhrase = phrase;
-      return candidates;
-    }
-
-    int lineNumber = line;
-    // Adjust line number for tabbed sketches
-    int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
-    if (codeIndex > 0) {
-      for (int i = 0; i < codeIndex; i++) {
-        SketchCode sc = editor.getSketch().getCode(i);
-        int len = Util.countLines(sc.getProgram()) + 1;
-        lineNumber += len;
-      }
-    }
-
-    // Ensure that we're not inside a comment. TODO: Binary search
-
-    /*for (Comment comm : getCodeComments()) {
-      int commLineNo = PdeToJavaLineNumber(compilationUnit
-          .getLineNumber(comm.getStartPosition()));
-      if(commLineNo == lineNumber){
-        log("Found a comment line " + comm);
-        log("Comment LSO "
-            + javaCodeOffsetToLineStartOffset(compilationUnit
-          .getLineNumber(comm.getStartPosition()),
-                                              comm.getStartPosition()));
-        break;
-      }
-    }*/
-
-    // Now parse the expression into an ASTNode object
-    ASTNode nearestNode;
-    ASTParser parser = ASTParser.newParser(AST.JLS8);
-    parser.setKind(ASTParser.K_EXPRESSION);
-    parser.setSource(phrase.toCharArray());
-    ASTNode testnode = parser.createAST(null);
-    //Base.loge("PREDICTION PARSER PROBLEMS: " + parser);
-    // Find closest ASTNode of the document to this word
-    Messages.loge("Typed: " + phrase + "|" + " temp Node type: " + testnode.getClass().getSimpleName());
-    if(testnode instanceof MethodInvocation){
-      MethodInvocation mi = (MethodInvocation)testnode;
-      log(mi.getName() + "," + mi.getExpression() + "," + mi.typeArguments().size());
-    }
-
-    // find nearest ASTNode
-    nearestNode = findClosestNode(lineNumber, astRootNode);
-    if (nearestNode == null) {
-      // Make sure nearestNode is not NULL if couldn't find a closest node
-      nearestNode = astRootNode;
-    }
-    Messages.loge(lineNumber + " Nearest ASTNode to PRED "
-        + getNodeAsString(nearestNode));
-
-    candidates = new ArrayList<>();
-    lastPredictedPhrase = phrase;
-    // Determine the expression typed
-
-    if (testnode instanceof SimpleName && !noCompare) {
-      Messages.loge("One word expression " + getNodeAsString(testnode));
-      //==> Simple one word exprssion - so is just an identifier
-
-      // Bottom up traversal of the AST to look for possible definitions at
-      // higher levels.
-      //nearestNode = nearestNode.getParent();
-      while (nearestNode != null) {
-        // If the current class has a super class, look inside it for
-        // definitions.
-        if (nearestNode instanceof TypeDeclaration) {
-          TypeDeclaration td = (TypeDeclaration) nearestNode;
-          if (td.getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY) != null) {
-            SimpleType st = (SimpleType) td.getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY);
-            log("Superclass " + st.getName());
-            ArrayList<CompletionCandidate> tempCandidates =
-                getMembersForType(st.getName().toString(), phrase, false, false);
-            for (CompletionCandidate can : tempCandidates) {
-              candidates.add(can);
-            }
-            //findDeclaration(st.getName())
-          }
-        }
-        List<StructuralPropertyDescriptor> sprops =
-            nearestNode.structuralPropertiesForType();
-        for (StructuralPropertyDescriptor sprop : sprops) {
-          ASTNode cnode;
-          if (!sprop.isChildListProperty()) {
-            if (nearestNode.getStructuralProperty(sprop) instanceof ASTNode) {
-              cnode = (ASTNode) nearestNode.getStructuralProperty(sprop);
-              CompletionCandidate[] types = checkForTypes(cnode);
-              if (types != null) {
-                for (CompletionCandidate type : types) {
-                  if (type.getElementName().toLowerCase().startsWith(phrase.toLowerCase()))
-                    candidates.add(type);
-                }
-              }
-            }
-          } else {
-            // Childlist prop
-            List<ASTNode> nodelist =
-              (List<ASTNode>) nearestNode.getStructuralProperty(sprop);
-            for (ASTNode clnode : nodelist) {
-              CompletionCandidate[] types = checkForTypes(clnode);
-              if (types != null) {
-                for (CompletionCandidate type : types) {
-                  if (type.getElementName().toLowerCase().startsWith(phrase.toLowerCase()))
-                    candidates.add(type);
-                }
-              }
-            }
-          }
-        }
-        nearestNode = nearestNode.getParent();
-      }
-      // We're seeing a simple name that's not defined locally or in
-      // the parent class. So most probably a pre-defined type.
-      log("Empty can. " + phrase);
-      if (classPath != null) {
-        RegExpResourceFilter regExpResourceFilter =
-          new RegExpResourceFilter(Pattern.compile(".*"),
-                                   Pattern.compile(phrase + "[a-zA-Z_0-9]*.class",
-                                                   Pattern.CASE_INSENSITIVE));
-        String[] resources = classPath.findResources("", regExpResourceFilter);
-
-        for (String matchedClass2 : resources) {
-          matchedClass2 = matchedClass2.replace('/', '.'); //package name
-          String matchedClass = matchedClass2.substring(0, matchedClass2.length() - 6);
-          int d = matchedClass.lastIndexOf('.');
-          if (!errorCheckerService.ignorableSuggestionImport(matchedClass)) {
-            matchedClass = matchedClass.substring(d + 1); //class name
-            // display package name in grey
-            String html = "<html>" + matchedClass + " : <font color=#777777>" +
-              matchedClass2.substring(0, d) + "</font></html>";
-            candidates.add(new CompletionCandidate(matchedClass, html,
-                                                   matchedClass,
-                                                   CompletionCandidate.PREDEF_CLASS));
-          }
-        }
-      }
-    } else {
-      // ==> Complex expression of type blah.blah2().doIt,etc
-      // Have to resolve it by carefully traversing AST of testNode
-      Messages.loge("Complex expression " + getNodeAsString(testnode));
-      log("candidates empty");
-      ASTNode childExpr = getChildExpression(testnode);
-      log("Parent expression : " + getParentExpression(testnode));
-      log("Child expression : " + childExpr);
-      if (!noCompare) {
-        log("Original testnode " + getNodeAsString(testnode));
-        testnode = getParentExpression(testnode);
-        log("Corrected testnode " + getNodeAsString(testnode));
-      }
-      ClassMember expr =
-          resolveExpression3rdParty(nearestNode, testnode, noCompare);
-      if (expr == null) {
-        log("Expr is null");
-      } else {
-        boolean isArray = expr.thisclass != null && expr.thisclass.isArray();
-        boolean isSimpleType = (expr.astNode != null) &&
-            expr.astNode.getNodeType() == ASTNode.SIMPLE_TYPE;
-        boolean isMethod = expr.method != null;
-        boolean staticOnly = !isMethod && !isArray && !isSimpleType;
-        log("Expr is " + expr.toString());
-        String lookFor = (noCompare || (childExpr == null)) ?
-            "" : childExpr.toString();
-        candidates = getMembersForType(expr, lookFor, noCompare, staticOnly);
-      }
-    }
-    return candidates;
-  }
-
-
-  protected static DefaultListModel<CompletionCandidate> filterPredictions(List<CompletionCandidate> candidates){
-    DefaultListModel<CompletionCandidate> defListModel = new DefaultListModel<>();
-    if (candidates.isEmpty())
-      return defListModel;
-    // check if first & last CompCandidate are the same methods, only then show all overloaded methods
-    if (candidates.get(0).getElementName()
-        .equals(candidates.get(candidates.size() - 1).getElementName())) {
-      log("All CC are methods only: " + candidates.get(0).getElementName());
-      for (int i = 0; i < candidates.size(); i++) {
-        CompletionCandidate cc = candidates.get(i).withRegeneratedCompString();
-        candidates.set(i, cc);
-        defListModel.addElement(cc);
-      }
-    }
-    else {
-      boolean ignoredSome = false;
-      for (int i = 0; i < candidates.size(); i++) {
-        if(i > 0 && (candidates.get(i).getElementName()
-            .equals(candidates.get(i - 1).getElementName()))){
-          if (candidates.get(i).getType() == CompletionCandidate.LOCAL_METHOD
-              || candidates.get(i).getType() == CompletionCandidate.PREDEF_METHOD) {
-            CompletionCandidate cc = candidates.get(i - 1);
-            String label = cc.getLabel();
-            int x = label.lastIndexOf(')');
-            String newLabel;
-            if (candidates.get(i).getType() == CompletionCandidate.PREDEF_METHOD) {
-              newLabel = (cc.getLabel().contains("<html>") ? "<html>" : "")
-                  + cc.getElementName() + "(...)" + label.substring(x + 1);
-            } else {
-              newLabel = cc.getElementName() + "(...)" + label.substring(x + 1);
-            }
-            String newCompString = cc.getElementName() + "(";
-            candidates.set(i - 1, cc.withLabelAndCompString(newLabel, newCompString));
-            ignoredSome = true;
-            continue;
-          }
-        }
-        defListModel.addElement(candidates.get(i));
-      }
-      if (ignoredSome) {
-        log("Some suggestions hidden");
-      }
-    }
-    return defListModel;
-  }
 
   /**
    * Loads classes from .jar files in sketch classpath
@@ -1128,66 +804,6 @@ public class ASTGenerator {
     return false;
   }
 
-  public String getPDESourceCodeLine(int javaLineNumber) {
-    int res[] = errorCheckerService
-        .calculateTabIndexAndLineNumber(javaLineNumber);
-    if (res != null) {
-      return errorCheckerService.getPdeCodeAtLine(res[0], res[1]);
-    }
-    return null;
-  }
-
-  /**
-   * Returns the java source code line at the given line number
-   * @param javaLineNumber
-   * @return
-   */
-  public String getJavaSourceCodeLine(int javaLineNumber) {
-    try {
-      PlainDocument javaSource = new PlainDocument();
-      javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
-      Element lineElement = javaSource.getDefaultRootElement()
-          .getElement(javaLineNumber - 1);
-      if (lineElement == null) {
-        log("Couldn't fetch jlinenum " + javaLineNumber);
-        return null;
-      }
-      String javaLine = javaSource.getText(lineElement.getStartOffset(),
-                                           lineElement.getEndOffset()
-                                               - lineElement.getStartOffset());
-      return javaLine;
-    } catch (BadLocationException e) {
-      Messages.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
-    }
-    return null;
-  }
-
-  /**
-   * Returns the java source code line Element at the given line number.
-   * The Element object stores the offset data, but not the actual line
-   * of code.
-   * @param javaLineNumber
-   * @return
-   */
-  public Element getJavaSourceCodeElement(int javaLineNumber) {
-    try {
-      PlainDocument javaSource = new PlainDocument();
-      javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
-      Element lineElement = javaSource.getDefaultRootElement()
-          .getElement(javaLineNumber - 1);
-      if (lineElement == null) {
-        log("Couldn't fetch jlinenum " + javaLineNumber);
-        return null;
-      }
-//      String javaLine = javaSource.getText(lineElement.getStartOffset(),
-//                                           lineElement.getEndOffset()
-//                                               - lineElement.getStartOffset());
-      return lineElement;
-    } catch (BadLocationException e) {
-      Messages.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
-    }
-    return null;
-  }
 
   /**
    * Searches for the particular class in the default list of imports as well as
@@ -1366,47 +982,6 @@ public class ASTGenerator {
     return null;
   }
 
-  public void updateJavaDoc(final CompletionCandidate candidate) {
-    //TODO: Work on this later.
-      return;
-  /*  String methodmatch = candidate.toString();
-    if (methodmatch.indexOf('(') != -1) {
-      methodmatch = methodmatch.substring(0, methodmatch.indexOf('('));
-    }
-
-    //log("jdoc match " + methodmatch);
-    String temp = "<html> </html>";
-    for (final String key : jdocMap.keySet()) {
-      if (key.startsWith(methodmatch) && key.length() > 3) {
-        log("Matched jdoc " + key);
-        if (candidate.getWrappedObject() != null) {
-          String definingClass = "";
-          if (candidate.getWrappedObject() instanceof Field)
-            definingClass = ((Field) candidate.getWrappedObject())
-                .getDeclaringClass().getName();
-          else if (candidate.getWrappedObject() instanceof Method)
-            definingClass = ((Method) candidate.getWrappedObject())
-                .getDeclaringClass().getName();
-          if (definingClass.equals("processing.core.PApplet")) {
-            temp = (jdocMap.get(key));
-            break;
-          }
-        }
-      }
-    }
-
-    final String jdocString = temp;
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        javadocPane.setText(jdocString);
-        scrollPane.getVerticalScrollBar().setValue(0);
-        //frmJavaDoc.setVisible(!jdocString.equals("<html> </html>"));
-        editor.toFront();
-        editor.ta.requestFocus();
-      }
-    });
-*/
-  }
 
   protected static ASTNode findClosestParentNode(int lineNumber, ASTNode node) {
     // Base.loge("Props of " + node.getClass().getName());
@@ -1475,9 +1050,6 @@ public class ASTGenerator {
     return parent;
   }
 
-  public DefaultMutableTreeNode getAST() {
-    return codeTree;
-  }
 
   public String getLabelForASTNode(int lineNumber, String name, int offset) {
     return getASTNodeAt(lineNumber, name, offset, false).getLabel();
@@ -1545,10 +1117,6 @@ public class ASTGenerator {
 
 
     return "";
-  }
-
-  public void scrollToDeclaration(int lineNumber, String name, int offset) {
-    getASTNodeAt(lineNumber, name, offset, true);
   }
 
 
@@ -1781,8 +1349,7 @@ public class ASTGenerator {
 //  }
 
 
-  protected void refactorIt(){
-    String newName = renameTextField.getText().trim();
+  protected void refactorIt(String newName){
     String selText = lastClickedWord == null ? getSelectedText()
         : lastClickedWord;
     // Find all occurrences of last clicked word
@@ -1794,19 +1361,17 @@ public class ASTGenerator {
     }
 
     // Verify if the new name is a valid java identifier
-    if(!newName.matches("([a-zA-Z][a-zA-Z0-9_]*)|([_][a-zA-Z0-9_]+)"))
-    {
-      JOptionPane.showConfirmDialog(new JFrame(), newName
+    if(!newName.matches("([a-zA-Z][a-zA-Z0-9_]*)|([_][a-zA-Z0-9_]+)")) {
+      JOptionPane.showMessageDialog(new JFrame(), newName
           + " isn't a valid name.", "Uh oh..", JOptionPane.PLAIN_MESSAGE);
       return;
     }
     //else log("New name looks K.");
 
     errorCheckerService.cancel();
-    if(showUsageTree.isVisible()){
-      showUsageTree.setModel(new DefaultTreeModel(defCU));
-      ((DefaultTreeModel) showUsageTree.getModel()).reload();
-    }
+
+    gui.updateUsageTree(defCU);
+
 //    showUsageWindow.setTitle("Usage of \"" + selText + "\" : "
 //        + defCU.getChildCount() + " time(s)");
 //    showUsageWindow.setLocation(editor.getX() + editor.getWidth(),editor.getY());
@@ -1858,29 +1423,13 @@ public class ASTGenerator {
     editor.getSketch().setModified(true);
     errorCheckerService.request();
 //    showUsageWindow.setVisible(false);
-    renameWindow.setVisible(false);
     lastClickedWord = null;
     lastClickedWordNode = null;
   }
 
-  /**
-   * Highlights text in the editor
-   * @param tab
-   * @param lineNumber
-   * @param lineStartWSOffset - line start offset including initial white space
-   * @param length
-   */
-  public void highlightPDECode(int tab, int lineNumber, int lineStartWSOffset,
-                               int length) {
-//    log("ASTGen.highlightPDECode: T " + tab + ",L: " + lineNumber + ",LSO: "
-//        + lineStartWSOffset + ",Len: " + length);
-    editor.toFront();
-    editor.getSketch().setCurrentCode(tab);
-    lineStartWSOffset += editor.getTextArea().getLineStartOffset(lineNumber);
-    editor.getTextArea().select(lineStartWSOffset, lineStartWSOffset + length);
-  }
 
   public void handleShowUsage() {
+    Messages.log("* handleShowUsage");
     if (editor.hasJavaTabs()) return; // show usage disabled if java tabs
 
     log("Last clicked word:" + lastClickedWord);
@@ -1906,13 +1455,7 @@ public class ASTGenerator {
     }
     if(defCU.getChildCount() == 0)
       return;
-    showUsageTree.setModel(new DefaultTreeModel(defCU));
-    ((DefaultTreeModel) showUsageTree.getModel()).reload();
-    showUsageTree.setRootVisible(false);
-    showUsageWindow.setTitle("Usage of \"" + selText + "\" : "
-        + defCU.getChildCount() + " time(s)");
-    showUsageWindow.setLocation(editor.getX() + editor.getWidth(), editor.getY());
-    showUsageWindow.setVisible(true);
+    gui.handleShowUsage(selText, defCU);
     lastClickedWord = null;
     lastClickedWordNode = null;
   }
@@ -1925,6 +1468,7 @@ public class ASTGenerator {
   }
 
   public void setLastClickedWord(int lineNumber, String lastClickedWord, int offset) {
+    Messages.log("* setLastClickedWord");
     this.lastClickedWord = lastClickedWord;
     lastClickedWordNode = getASTNodeAt(lineNumber, lastClickedWord, offset, false);
     log("Last clicked node: " + lastClickedWordNode);
@@ -2141,51 +1685,6 @@ public class ASTGenerator {
   */
 
 
-  public int javaCodeOffsetToLineStartOffset(int line, int jOffset){
-    // Find the first node with this line number, return its offset - jOffset
-    line = pdeLineNumToJavaLineNum(line);
-    log("Looking for line: " + line + ", jOff " + jOffset);
-    Stack<DefaultMutableTreeNode> temp = new Stack<>();
-    temp.push(codeTree);
-
-    while (!temp.isEmpty()) {
-      DefaultMutableTreeNode cnode = temp.pop();
-      for (int i = 0; i < cnode.getChildCount(); i++) {
-        temp.push((DefaultMutableTreeNode) cnode.getChildAt(i));
-      }
-
-      if (!(cnode.getUserObject() instanceof ASTNodeWrapper))
-        continue;
-      ASTNodeWrapper awnode = (ASTNodeWrapper) cnode.getUserObject();
-//      log("Visiting: " + getNodeAsString(awnode.getNode()));
-      if (awnode.getLineNumber() == line) {
-        log("First element with this line no is: " + awnode
-            + "LSO: " + (jOffset - awnode.getNode().getStartPosition()));
-        return (jOffset - awnode.getNode().getStartPosition());
-      }
-    }
-    return -1;
-  }
-
-
-  /**
-   * Converts pde line number to java line number
-   * @param pdeLineNum - pde line number
-   * @return
-   */
-  protected int pdeLineNumToJavaLineNum(int pdeLineNum){
-    int javaLineNumber = pdeLineNum + errorCheckerService.getPdeImportsCount();
-    // Adjust line number for tabbed sketches
-    int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
-    if (codeIndex > 0)
-      for (int i = 0; i < codeIndex; i++) {
-        SketchCode sc = editor.getSketch().getCode(i);
-        int len = Util.countLines(sc.getProgram()) + 1;
-        javaLineNumber += len;
-      }
-    return javaLineNumber;
-  }
-
   protected boolean isInstanceOfType(ASTNode node,ASTNode decl, String name){
     if(node instanceof SimpleName){
       SimpleName sn = (SimpleName) node;
@@ -2218,6 +1717,7 @@ public class ASTGenerator {
   }
 
   public void handleRefactor() {
+    Messages.log("* handleRefactor");
     if (editor.hasJavaTabs()) return;  // refactoring disabled w/ java tabs
 
     log("Last clicked word:" + lastClickedWord);
@@ -2235,35 +1735,20 @@ public class ASTGenerator {
     }
 
     DefaultMutableTreeNode defCU = findAllOccurrences();
-    String selText = lastClickedWord == null ?
+    final String selText = lastClickedWord == null ?
         getSelectedText() : lastClickedWord;
     if (defCU == null) {
       editor.statusMessage(selText + " isn't defined in this sketch, " +
                            "so it cannot be renamed", EditorStatus.ERROR);
       return;
     }
-    if (!renameWindow.isVisible()){
-      renameWindow.setLocation(editor.getX()
-                            + (editor.getWidth() - renameWindow.getWidth()) / 2,
-                               editor.getY()
-                            + (editor.getHeight() - renameWindow.getHeight())
-                            / 2);
-      renameWindow.setVisible(true);
-      EventQueue.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          String selText = lastClickedWord == null ? getSelectedText()
-              : lastClickedWord;
-          showUsageWindow.setTitle("All occurrences of "
-              + selText);
-          renameOldNameLabel.setText("Current name: "
-              + selText);
-          renameTextField.setText("");
-          renameTextField.requestFocus();
-        }
-      });
-    }
-    renameWindow.toFront();
+
+    EventQueue.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        gui.handleRefactor(selText);
+      }
+    });
   }
 
 
@@ -2788,17 +2273,8 @@ public class ASTGenerator {
     return null;
   }
 
-
-  protected List<Comment> getCodeComments(){
-    List<Comment> commentList = compilationUnit.getCommentList();
-//    log("Total comments: " + commentList.size());
-//    int i = 0;
-//    for (Comment comment : commentList) {
-//      log(++i + ": "+comment + " Line:"
-//          + compilationUnit.getLineNumber(comment.getStartPosition()) + ", "
-//          + comment.getLength());
-//    }
-    return commentList;
+  public GUI getGui() {
+    return gui;
   }
 
 
@@ -2949,6 +2425,7 @@ public class ASTGenerator {
 
 
   static public Type extracTypeInfo2(ASTNode node) {
+    Messages.log("* extracTypeInfo2");
     if (node == null)
       return null;
     switch (node.getNodeType()) {
@@ -3065,6 +2542,7 @@ public class ASTGenerator {
   }
 
   public String[] getSuggestImports(final String className) {
+    Messages.log("* getSuggestImports");
     if (classPath == null) {
       return null;
     }
@@ -3308,6 +2786,396 @@ public class ASTGenerator {
   }
 
 
+  /// Predictions --------------------------------------------------------------
+
+
+  protected static List<CompletionCandidate> trimCandidates(String newWord, List<CompletionCandidate> candidates) {
+    ArrayList<CompletionCandidate> newCandidate = new ArrayList<>();
+    newWord = newWord.toLowerCase();
+    for (CompletionCandidate comp : candidates) {
+      if(comp.getNoHtmlLabel().toLowerCase().startsWith(newWord)){
+        newCandidate.add(comp);
+      }
+    }
+    return newCandidate;
+  }
+
+  protected List<CompletionCandidate> candidates;
+  protected String lastPredictedPhrase = " ";
+
+  /**
+   * The main function that calculates possible code completion candidates
+   *
+   * @param pdePhrase
+   * @param line
+   * @param lineStartNonWSOffset
+   */
+  public List<CompletionCandidate> preparePredictions(final String pdePhrase,
+                                                      final int line) {
+    Messages.log("* preparePredictions");
+    ASTNode astRootNode = (ASTNode) errorCheckerService.getLatestCU().types().get(0);
+
+    // If the parsed code contains pde enhancements, take 'em out.
+    String phrase = ASTNodeWrapper.getJavaCode(pdePhrase);
+
+    //After typing 'arg.' all members of arg type are to be listed. This one is a flag for it
+    boolean noCompare = phrase.endsWith(".");
+
+    if (noCompare) {
+      phrase = phrase.substring(0, phrase.length() - 1);
+    }
+
+    boolean incremental = !noCompare &&
+        phrase.length() > lastPredictedPhrase.length() &&
+        phrase.startsWith(lastPredictedPhrase);
+
+
+    if (incremental) {
+      log(pdePhrase + " starts with " + lastPredictedPhrase);
+      log("Don't recalc");
+
+      if (phrase.contains(".")) {
+        int x = phrase.lastIndexOf('.');
+        candidates = trimCandidates(phrase.substring(x + 1), candidates);
+      } else {
+        candidates = trimCandidates(phrase, candidates);
+      }
+      lastPredictedPhrase = phrase;
+      return candidates;
+    }
+
+    int lineNumber = line;
+    // Adjust line number for tabbed sketches
+    int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
+    if (codeIndex > 0) {
+      for (int i = 0; i < codeIndex; i++) {
+        SketchCode sc = editor.getSketch().getCode(i);
+        int len = Util.countLines(sc.getProgram()) + 1;
+        lineNumber += len;
+      }
+    }
+
+    // Ensure that we're not inside a comment. TODO: Binary search
+
+    /*for (Comment comm : getCodeComments()) {
+      int commLineNo = PdeToJavaLineNumber(compilationUnit
+          .getLineNumber(comm.getStartPosition()));
+      if(commLineNo == lineNumber){
+        log("Found a comment line " + comm);
+        log("Comment LSO "
+            + javaCodeOffsetToLineStartOffset(compilationUnit
+          .getLineNumber(comm.getStartPosition()),
+                                              comm.getStartPosition()));
+        break;
+      }
+    }*/
+
+    // Now parse the expression into an ASTNode object
+    ASTNode nearestNode;
+    ASTParser parser = ASTParser.newParser(AST.JLS8);
+    parser.setKind(ASTParser.K_EXPRESSION);
+    parser.setSource(phrase.toCharArray());
+    ASTNode testnode = parser.createAST(null);
+    //Base.loge("PREDICTION PARSER PROBLEMS: " + parser);
+    // Find closest ASTNode of the document to this word
+    Messages.loge("Typed: " + phrase + "|" + " temp Node type: " + testnode.getClass().getSimpleName());
+    if(testnode instanceof MethodInvocation){
+      MethodInvocation mi = (MethodInvocation)testnode;
+      log(mi.getName() + "," + mi.getExpression() + "," + mi.typeArguments().size());
+    }
+
+    // find nearest ASTNode
+    nearestNode = findClosestNode(lineNumber, astRootNode);
+    if (nearestNode == null) {
+      // Make sure nearestNode is not NULL if couldn't find a closest node
+      nearestNode = astRootNode;
+    }
+    Messages.loge(lineNumber + " Nearest ASTNode to PRED "
+                      + getNodeAsString(nearestNode));
+
+    candidates = new ArrayList<>();
+    lastPredictedPhrase = phrase;
+    // Determine the expression typed
+
+    if (testnode instanceof SimpleName && !noCompare) {
+      Messages.loge("One word expression " + getNodeAsString(testnode));
+      //==> Simple one word exprssion - so is just an identifier
+
+      // Bottom up traversal of the AST to look for possible definitions at
+      // higher levels.
+      //nearestNode = nearestNode.getParent();
+      while (nearestNode != null) {
+        // If the current class has a super class, look inside it for
+        // definitions.
+        if (nearestNode instanceof TypeDeclaration) {
+          TypeDeclaration td = (TypeDeclaration) nearestNode;
+          if (td.getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY) != null) {
+            SimpleType st = (SimpleType) td.getStructuralProperty(TypeDeclaration.SUPERCLASS_TYPE_PROPERTY);
+            log("Superclass " + st.getName());
+            ArrayList<CompletionCandidate> tempCandidates =
+                getMembersForType(st.getName().toString(), phrase, false, false);
+            for (CompletionCandidate can : tempCandidates) {
+              candidates.add(can);
+            }
+            //findDeclaration(st.getName())
+          }
+        }
+        List<StructuralPropertyDescriptor> sprops =
+            nearestNode.structuralPropertiesForType();
+        for (StructuralPropertyDescriptor sprop : sprops) {
+          ASTNode cnode;
+          if (!sprop.isChildListProperty()) {
+            if (nearestNode.getStructuralProperty(sprop) instanceof ASTNode) {
+              cnode = (ASTNode) nearestNode.getStructuralProperty(sprop);
+              CompletionCandidate[] types = checkForTypes(cnode);
+              if (types != null) {
+                for (CompletionCandidate type : types) {
+                  if (type.getElementName().toLowerCase().startsWith(phrase.toLowerCase()))
+                    candidates.add(type);
+                }
+              }
+            }
+          } else {
+            // Childlist prop
+            List<ASTNode> nodelist =
+                (List<ASTNode>) nearestNode.getStructuralProperty(sprop);
+            for (ASTNode clnode : nodelist) {
+              CompletionCandidate[] types = checkForTypes(clnode);
+              if (types != null) {
+                for (CompletionCandidate type : types) {
+                  if (type.getElementName().toLowerCase().startsWith(phrase.toLowerCase()))
+                    candidates.add(type);
+                }
+              }
+            }
+          }
+        }
+        nearestNode = nearestNode.getParent();
+      }
+      // We're seeing a simple name that's not defined locally or in
+      // the parent class. So most probably a pre-defined type.
+      log("Empty can. " + phrase);
+      if (classPath != null) {
+        RegExpResourceFilter regExpResourceFilter =
+            new RegExpResourceFilter(Pattern.compile(".*"),
+                                     Pattern.compile(phrase + "[a-zA-Z_0-9]*.class",
+                                                     Pattern.CASE_INSENSITIVE));
+        String[] resources = classPath.findResources("", regExpResourceFilter);
+
+        for (String matchedClass2 : resources) {
+          matchedClass2 = matchedClass2.replace('/', '.'); //package name
+          String matchedClass = matchedClass2.substring(0, matchedClass2.length() - 6);
+          int d = matchedClass.lastIndexOf('.');
+          if (!errorCheckerService.ignorableSuggestionImport(matchedClass)) {
+            matchedClass = matchedClass.substring(d + 1); //class name
+            // display package name in grey
+            String html = "<html>" + matchedClass + " : <font color=#777777>" +
+                matchedClass2.substring(0, d) + "</font></html>";
+            candidates.add(new CompletionCandidate(matchedClass, html,
+                                                   matchedClass,
+                                                   CompletionCandidate.PREDEF_CLASS));
+          }
+        }
+      }
+    } else {
+      // ==> Complex expression of type blah.blah2().doIt,etc
+      // Have to resolve it by carefully traversing AST of testNode
+      Messages.loge("Complex expression " + getNodeAsString(testnode));
+      log("candidates empty");
+      ASTNode childExpr = getChildExpression(testnode);
+      log("Parent expression : " + getParentExpression(testnode));
+      log("Child expression : " + childExpr);
+      if (!noCompare) {
+        log("Original testnode " + getNodeAsString(testnode));
+        testnode = getParentExpression(testnode);
+        log("Corrected testnode " + getNodeAsString(testnode));
+      }
+      ClassMember expr =
+          resolveExpression3rdParty(nearestNode, testnode, noCompare);
+      if (expr == null) {
+        log("Expr is null");
+      } else {
+        boolean isArray = expr.thisclass != null && expr.thisclass.isArray();
+        boolean isSimpleType = (expr.astNode != null) &&
+            expr.astNode.getNodeType() == ASTNode.SIMPLE_TYPE;
+        boolean isMethod = expr.method != null;
+        boolean staticOnly = !isMethod && !isArray && !isSimpleType;
+        log("Expr is " + expr.toString());
+        String lookFor = (noCompare || (childExpr == null)) ?
+            "" : childExpr.toString();
+        candidates = getMembersForType(expr, lookFor, noCompare, staticOnly);
+      }
+    }
+    return candidates;
+  }
+
+
+  protected static DefaultListModel<CompletionCandidate> filterPredictions(List<CompletionCandidate> candidates) {
+    Messages.log("* filterPredictions");
+    DefaultListModel<CompletionCandidate> defListModel = new DefaultListModel<>();
+    if (candidates.isEmpty())
+      return defListModel;
+    // check if first & last CompCandidate are the same methods, only then show all overloaded methods
+    if (candidates.get(0).getElementName()
+        .equals(candidates.get(candidates.size() - 1).getElementName())) {
+      log("All CC are methods only: " + candidates.get(0).getElementName());
+      for (int i = 0; i < candidates.size(); i++) {
+        CompletionCandidate cc = candidates.get(i).withRegeneratedCompString();
+        candidates.set(i, cc);
+        defListModel.addElement(cc);
+      }
+    }
+    else {
+      boolean ignoredSome = false;
+      for (int i = 0; i < candidates.size(); i++) {
+        if(i > 0 && (candidates.get(i).getElementName()
+            .equals(candidates.get(i - 1).getElementName()))){
+          if (candidates.get(i).getType() == CompletionCandidate.LOCAL_METHOD
+              || candidates.get(i).getType() == CompletionCandidate.PREDEF_METHOD) {
+            CompletionCandidate cc = candidates.get(i - 1);
+            String label = cc.getLabel();
+            int x = label.lastIndexOf(')');
+            String newLabel;
+            if (candidates.get(i).getType() == CompletionCandidate.PREDEF_METHOD) {
+              newLabel = (cc.getLabel().contains("<html>") ? "<html>" : "")
+                  + cc.getElementName() + "(...)" + label.substring(x + 1);
+            } else {
+              newLabel = cc.getElementName() + "(...)" + label.substring(x + 1);
+            }
+            String newCompString = cc.getElementName() + "(";
+            candidates.set(i - 1, cc.withLabelAndCompString(newLabel, newCompString));
+            ignoredSome = true;
+            continue;
+          }
+        }
+        defListModel.addElement(candidates.get(i));
+      }
+      if (ignoredSome) {
+        log("Some suggestions hidden");
+      }
+    }
+    return defListModel;
+  }
+
+
+
+  /// JavaDocs -----------------------------------------------------------------
+
+
+  protected TreeMap<String, String> jdocMap;
+
+
+  protected void loadJavaDoc() {
+    jdocMap = new TreeMap<>();
+
+    // presently loading only p5 reference for PApplet
+    // TODO: use something like ExecutorService here [jv]
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          loadJavaDoc(jdocMap, editor.getMode().getReferenceFolder());
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }).start();
+  }
+
+
+  static void loadJavaDoc(TreeMap<String, String> jdocMap,
+                          File referenceFolder) throws IOException {
+    Document doc;
+
+    FileFilter fileFilter = new FileFilter() {
+      @Override
+      public boolean accept(File file) {
+        if(!file.getName().endsWith("_.html"))
+          return false;
+        int k = 0;
+        for (int i = 0; i < file.getName().length(); i++) {
+          if(file.getName().charAt(i)== '_')
+            k++;
+          if(k > 1)
+            return false;
+        }
+        return true;
+      }
+    };
+
+    for (File docFile : referenceFolder.listFiles(fileFilter)) {
+      doc = Jsoup.parse(docFile, null);
+      Elements elm = doc.getElementsByClass("ref-item");
+      String msg = "";
+      String methodName = docFile.getName().substring(0, docFile.getName().indexOf('_'));
+      //System.out.println(methodName);
+      for (org.jsoup.nodes.Element ele : elm) {
+        msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"ref-item\">"
+            + ele.html() + "</table></div></html></body></html>";
+        //mat.replaceAll("");
+        msg = msg.replaceAll("img src=\"", "img src=\""
+            + referenceFolder.toURI().toURL().toString() + "/");
+        //System.out.println(ele.text());
+      }
+      jdocMap.put(methodName, msg);
+    }
+    //System.out.println("JDoc loaded " + jdocMap.size());
+  }
+
+
+  public void updateJavaDoc(final CompletionCandidate candidate) {
+    //TODO: Work on this later.
+    return;
+  /*  String methodmatch = candidate.toString();
+    if (methodmatch.indexOf('(') != -1) {
+      methodmatch = methodmatch.substring(0, methodmatch.indexOf('('));
+    }
+
+    //log("jdoc match " + methodmatch);
+    String temp = "<html> </html>";
+    for (final String key : jdocMap.keySet()) {
+      if (key.startsWith(methodmatch) && key.length() > 3) {
+        log("Matched jdoc " + key);
+        if (candidate.getWrappedObject() != null) {
+          String definingClass = "";
+          if (candidate.getWrappedObject() instanceof Field)
+            definingClass = ((Field) candidate.getWrappedObject())
+                .getDeclaringClass().getName();
+          else if (candidate.getWrappedObject() instanceof Method)
+            definingClass = ((Method) candidate.getWrappedObject())
+                .getDeclaringClass().getName();
+          if (definingClass.equals("processing.core.PApplet")) {
+            temp = (jdocMap.get(key));
+            break;
+          }
+        }
+      }
+    }
+
+    final String jdocString = temp;
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        javadocPane.setText(jdocString);
+        scrollPane.getVerticalScrollBar().setValue(0);
+        //frmJavaDoc.setVisible(!jdocString.equals("<html> </html>"));
+        editor.toFront();
+        editor.ta.requestFocus();
+      }
+    });
+*/
+  }
+
+
+
+  /// Editor stuff -------------------------------------------------------------
+
+
+  public void scrollToDeclaration(int lineNumber, String name, int offset) {
+    Messages.log("* scrollToDeclaration");
+    getASTNodeAt(lineNumber, name, offset, true);
+  }
+
+
   private String getSelectedText() {
     return editor.getTextArea().getSelectedText();
   }
@@ -3318,227 +3186,419 @@ public class ASTGenerator {
   }
 
 
+  public int javaCodeOffsetToLineStartOffset(int line, int jOffset){
+    // Find the first node with this line number, return its offset - jOffset
+    line = pdeLineNumToJavaLineNum(line);
+    log("Looking for line: " + line + ", jOff " + jOffset);
+    Stack<DefaultMutableTreeNode> temp = new Stack<>();
+    temp.push(codeTree);
+
+    while (!temp.isEmpty()) {
+      DefaultMutableTreeNode cnode = temp.pop();
+      for (int i = 0; i < cnode.getChildCount(); i++) {
+        temp.push((DefaultMutableTreeNode) cnode.getChildAt(i));
+      }
+
+      if (!(cnode.getUserObject() instanceof ASTNodeWrapper))
+        continue;
+      ASTNodeWrapper awnode = (ASTNodeWrapper) cnode.getUserObject();
+//      log("Visiting: " + getNodeAsString(awnode.getNode()));
+      if (awnode.getLineNumber() == line) {
+        log("First element with this line no is: " + awnode
+                + "LSO: " + (jOffset - awnode.getNode().getStartPosition()));
+        return (jOffset - awnode.getNode().getStartPosition());
+      }
+    }
+    return -1;
+  }
+
+
+  /**
+   * Highlights text in the editor
+   * @param tab
+   * @param lineNumber
+   * @param lineStartWSOffset - line start offset including initial white space
+   * @param length
+   */
+  public void highlightPDECode(int tab, int lineNumber, int lineStartWSOffset,
+                               int length) {
+    Messages.log("* highlightPDECode");
+
+//    log("ASTGen.highlightPDECode: T " + tab + ",L: " + lineNumber + ",LSO: "
+//        + lineStartWSOffset + ",Len: " + length);
+    editor.toFront();
+    editor.getSketch().setCurrentCode(tab);
+    lineStartWSOffset += editor.getTextArea().getLineStartOffset(lineNumber);
+    editor.getTextArea().select(lineStartWSOffset, lineStartWSOffset + length);
+  }
+
+
+  /**
+   * Converts pde line number to java line number
+   * @param pdeLineNum - pde line number
+   * @return
+   */
+  protected int pdeLineNumToJavaLineNum(int pdeLineNum){
+    int javaLineNumber = pdeLineNum + errorCheckerService.getPdeImportsCount();
+    // Adjust line number for tabbed sketches
+    int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
+    if (codeIndex > 0)
+      for (int i = 0; i < codeIndex; i++) {
+        SketchCode sc = editor.getSketch().getCode(i);
+        int len = Util.countLines(sc.getProgram()) + 1;
+        javaLineNumber += len;
+      }
+    return javaLineNumber;
+  }
+
+
+  public String getPDESourceCodeLine(int javaLineNumber) {
+    Messages.log("* getPDESourceCodeLine");
+    int res[] = errorCheckerService
+        .calculateTabIndexAndLineNumber(javaLineNumber);
+    if (res != null) {
+      return errorCheckerService.getPdeCodeAtLine(res[0], res[1]);
+    }
+    return null;
+  }
+
+
+  /**
+   * Returns the java source code line at the given line number
+   * @param javaLineNumber
+   * @return
+   */
+  public String getJavaSourceCodeLine(int javaLineNumber) {
+    Messages.log("* getJavaSourceCodeLine");
+    try {
+      PlainDocument javaSource = new PlainDocument();
+      javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
+      Element lineElement = javaSource.getDefaultRootElement()
+          .getElement(javaLineNumber - 1);
+      if (lineElement == null) {
+        log("Couldn't fetch jlinenum " + javaLineNumber);
+        return null;
+      }
+      String javaLine = javaSource.getText(lineElement.getStartOffset(),
+                                           lineElement.getEndOffset()
+                                               - lineElement.getStartOffset());
+      return javaLine;
+    } catch (BadLocationException e) {
+      Messages.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
+    }
+    return null;
+  }
+
+
+  /**
+   * Returns the java source code line Element at the given line number.
+   * The Element object stores the offset data, but not the actual line
+   * of code.
+   * @param javaLineNumber
+   * @return
+   */
+  public Element getJavaSourceCodeElement(int javaLineNumber) {
+    Messages.log("* getJavaSourceCodeElement");
+    try {
+      PlainDocument javaSource = new PlainDocument();
+      javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
+      Element lineElement = javaSource.getDefaultRootElement()
+          .getElement(javaLineNumber - 1);
+      if (lineElement == null) {
+        log("Couldn't fetch jlinenum " + javaLineNumber);
+        return null;
+      }
+//      String javaLine = javaSource.getText(lineElement.getStartOffset(),
+//                                           lineElement.getEndOffset()
+//                                               - lineElement.getStartOffset());
+      return lineElement;
+    } catch (BadLocationException e) {
+      Messages.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
+    }
+    return null;
+  }
+
+
+
   /// GUI ----------------------------------------------------------------------
 
-  // Rename window
-  protected JFrame renameWindow;
-  protected JTextField renameTextField;
-  protected JLabel renameOldNameLabel;
-  protected JButton showUsageButton;
-  protected JButton renameButton;
+  protected static class GUI {
 
-  // Show usage window
-  protected JFrame showUsageWindow;
-  protected JTree showUsageTree;
+    // Rename window
+    protected JFrame renameWindow;
+    protected JTextField renameTextField;
+    protected JLabel renameOldNameLabel;
+    protected JButton showUsageButton;
+    protected JButton renameButton;
+
+    // Show usage window
+    protected JFrame showUsageWindow;
+    protected JTree showUsageTree;
+
+    protected final JavaEditor editor;
+    protected final ASTGenerator astGen;
 
 
-  protected void setupGUI() {
-
-    if (SHOW_DEBUG_TREE) initDebugWindow();
-
-    { // Rename window
-      renameWindow = new JFrame();
-      renameWindow.setTitle("Enter new name:");
-      renameWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-      renameWindow.setSize(250, 130);
-      renameWindow.setLayout(new BoxLayout(renameWindow.getContentPane(), BoxLayout.Y_AXIS));
-      Toolkit.setIcon(renameWindow);
-
-      { // Top panel
-
-        // Text field
-        renameTextField = new JTextField();
-        renameTextField.setPreferredSize(new Dimension(150, 60));
-
-        // Old name label
-        renameOldNameLabel = new JLabel();
-        renameOldNameLabel.setText("Old Name: ");
-
-        // Top panel
-        JPanel panelTop = new JPanel();
-        panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
-        panelTop.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        panelTop.add(renameTextField);
-        panelTop.add(Box.createRigidArea(new Dimension(0, 10)));
-        panelTop.add(renameOldNameLabel);
-        renameWindow.add(panelTop);
-      }
-
-      { // Bottom panel
-        showUsageButton = new JButton("Show Usage");
-        renameButton = new JButton("Rename");
-
-        JPanel panelBottom = new JPanel();
-        panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
-        panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        panelBottom.add(Box.createHorizontalGlue());
-        panelBottom.add(showUsageButton);
-        panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
-        panelBottom.add(renameButton);
-        renameWindow.add(panelBottom);
-      }
-
-      //renameWindow.setVisible(true);
-      renameWindow.setMinimumSize(renameWindow.getSize());
-      renameWindow.setLocation(editor.getX()
-                                   + (editor.getWidth() - renameWindow.getWidth()) / 2,
-                               editor.getY()
-                                   + (editor.getHeight() - renameWindow.getHeight())
-                                   / 2);
+    protected GUI(JavaEditor editor, ASTGenerator astGen) {
+      this.editor = editor;
+      this.astGen = astGen;
+      setupGUI();
+      addListeners();
     }
 
-    { // Show Usage window
-      showUsageWindow = new JFrame();
-      showUsageWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-      showUsageWindow.setSize(300, 400);
-      Toolkit.setIcon(showUsageWindow);
-      JScrollPane sp2 = new JScrollPane();
-      showUsageTree = new JTree();
-      sp2.setViewportView(showUsageTree);
-      showUsageWindow.add(sp2);
-    }
-  }
 
+    protected void setupGUI() {
 
-  protected void addListeners() {
+      if (SHOW_DEBUG_TREE) initDebugWindow();
 
-    if (SHOW_DEBUG_TREE) addDebugTreeListener();
+      { // Rename window
+        renameWindow = new JFrame();
+        renameWindow.setTitle("Enter new name:");
+        renameWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        renameWindow.setSize(250, 130);
+        renameWindow.setLayout(new BoxLayout(renameWindow.getContentPane(), BoxLayout.Y_AXIS));
+        Toolkit.setIcon(renameWindow);
 
-    renameButton.addActionListener(new ActionListener() {
+        { // Top panel
 
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if(renameTextField.getText().length() == 0) {
-          return;
+          // Text field
+          renameTextField = new JTextField();
+          renameTextField.setPreferredSize(new Dimension(150, 60));
+
+          // Old name label
+          renameOldNameLabel = new JLabel();
+          renameOldNameLabel.setText("Old Name: ");
+
+          // Top panel
+          JPanel panelTop = new JPanel();
+          panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
+          panelTop.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+          panelTop.add(renameTextField);
+          panelTop.add(Box.createRigidArea(new Dimension(0, 10)));
+          panelTop.add(renameOldNameLabel);
+          renameWindow.add(panelTop);
         }
-        refactorIt();
-      }
-    });
 
-    showUsageButton.addActionListener(new ActionListener() {
+        { // Bottom panel
+          showUsageButton = new JButton("Show Usage");
+          renameButton = new JButton("Rename");
 
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        handleShowUsage();
-      }
-    });
-
-    showUsageTree.addTreeSelectionListener(new TreeSelectionListener() {
-
-      @Override
-      public void valueChanged(TreeSelectionEvent e) {
-        log(e);
-        if(showUsageTree
-            .getLastSelectedPathComponent() == null){
-          return;
+          JPanel panelBottom = new JPanel();
+          panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
+          panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+          panelBottom.add(Box.createHorizontalGlue());
+          panelBottom.add(showUsageButton);
+          panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
+          panelBottom.add(renameButton);
+          renameWindow.add(panelBottom);
         }
-        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) showUsageTree
-            .getLastSelectedPathComponent();
 
-        if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-          ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-          //errorCheckerService.highlightNode(awrap);
-          awrap.highlightNode(editor);
-        }
+        //renameWindow.setVisible(true);
+        renameWindow.setMinimumSize(renameWindow.getSize());
+        renameWindow.setLocation(editor.getX()
+                                     + (editor.getWidth() - renameWindow.getWidth()) / 2,
+                                 editor.getY()
+                                     + (editor.getHeight() - renameWindow.getHeight())
+                                     / 2);
       }
-    });
-  }
 
-
-  public void disposeAllWindows() {
-    Messages.log("* disposeAllWindows");
-    disposeWindow(showUsageWindow, renameWindow);
-
-    if (debugTreeWindow != null) disposeWindow(debugTreeWindow);
-  }
-
-
-  public static void disposeWindow(JFrame... f) {
-    for (JFrame jFrame : f) {
-      if(jFrame != null)
-        jFrame.dispose();
+      { // Show Usage window
+        showUsageWindow = new JFrame();
+        showUsageWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        showUsageWindow.setSize(300, 400);
+        Toolkit.setIcon(showUsageWindow);
+        JScrollPane sp2 = new JScrollPane();
+        showUsageTree = new JTree();
+        sp2.setViewportView(showUsageTree);
+        showUsageWindow.add(sp2);
+      }
     }
-  }
 
 
-  /// DEBUG --------------------------------------------------------------------
+    protected void addListeners() {
 
-  protected JFrame debugTreeWindow;
+      if (SHOW_DEBUG_TREE) addDebugTreeListener();
 
-  /** Swing component wrapper for AST, used for internal testing */
-  protected JTree debugTree;
+      renameButton.addActionListener(new ActionListener() {
 
-  protected void initDebugWindow() {
-    debugTreeWindow = new JFrame();
-
-    debugTree = new JTree();
-    debugTreeWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    debugTreeWindow.setBounds(new Rectangle(680, 100, 460, 620));
-    debugTreeWindow.setTitle("AST View - " + editor.getSketch().getName());
-    JScrollPane sp = new JScrollPane();
-    sp.setViewportView(debugTree);
-    debugTreeWindow.add(sp);
-  }
-
-  protected void updateDebugTree(DefaultMutableTreeNode codeTree) {
-    if (debugTree.hasFocus() || debugTreeWindow.hasFocus()) {
-      return;
-    }
-    debugTree.setModel(new DefaultTreeModel(codeTree));
-    ((DefaultTreeModel) debugTree.getModel()).reload();
-    debugTree.validate();
-    if (!debugTreeWindow.isVisible()) {
-      debugTreeWindow.setVisible(true);
-    }
-  }
-
-  protected void addDebugTreeListener() {
-    debugTree.addTreeSelectionListener(new TreeSelectionListener() {
-
-      @Override
-      public void valueChanged(TreeSelectionEvent e) {
-        Messages.log(e.toString());
-
-        if (debugTree.getLastSelectedPathComponent() == null) {
-          return;
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          if (renameTextField.getText().length() == 0) {
+            return;
+          }
+          String newName = renameTextField.getText().trim();
+          astGen.refactorIt(newName);
+          renameWindow.setVisible(false);
         }
-        DefaultMutableTreeNode tnode =
-            (DefaultMutableTreeNode) debugTree.getLastSelectedPathComponent();
-        if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-          ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-          awrap.highlightNode(editor);
-          // errorCheckerService.highlightNode(awrap);
+      });
 
-          //--
-          try {
-            int javaLineNumber = getLineNumber(awrap.getNode());
-            int pdeOffs[] = errorCheckerService
-                .calculateTabIndexAndLineNumber(javaLineNumber);
-            PlainDocument javaSource = new PlainDocument();
-            javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
-            Element lineElement = javaSource.getDefaultRootElement()
-                .getElement(javaLineNumber - 1);
-            if (lineElement == null) {
-              return;
-            }
+      showUsageButton.addActionListener(new ActionListener() {
 
-            String javaLine = javaSource.getText(lineElement.getStartOffset(),
-                                                 lineElement.getEndOffset()
-                                                     - lineElement.getStartOffset());
-            editor.getSketch().setCurrentCode(pdeOffs[0]);
-            String pdeLine = editor.getLineText(pdeOffs[1]);
-            //String lookingFor = nodeName.toString();
-            //log(lookingFor + ", " + nodeName.getStartPosition());
-            log("JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
-                    + lineElement.getEndOffset());
-            log("PL " + pdeLine);
-          } catch (BadLocationException ex) {
-            ex.printStackTrace();
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          astGen.handleShowUsage();
+        }
+      });
+
+      showUsageTree.addTreeSelectionListener(new TreeSelectionListener() {
+
+        @Override
+        public void valueChanged(TreeSelectionEvent e) {
+          log(e);
+          if (showUsageTree
+              .getLastSelectedPathComponent() == null) {
+            return;
+          }
+          DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) showUsageTree
+              .getLastSelectedPathComponent();
+
+          if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+            ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+            //errorCheckerService.highlightNode(awrap);
+            awrap.highlightNode(editor);
           }
         }
-      }
+      });
+    }
 
-    });
+
+    public void handleRefactor(String selText) {
+      if (!renameWindow.isVisible()){
+        renameWindow.setLocation(editor.getX()
+                                     + (editor.getWidth() - renameWindow.getWidth()) / 2,
+                                 editor.getY()
+                                     + (editor.getHeight() - renameWindow.getHeight())
+                                     / 2);
+        showUsageWindow.setTitle("All occurrences of "
+                                     + selText);
+        renameOldNameLabel.setText("Current name: "
+                                       + selText);
+        renameTextField.setText("");
+        renameWindow.setVisible(true);
+        renameTextField.requestFocus();
+        renameWindow.toFront();
+      }
+    }
+
+    public void handleShowUsage(String selText, DefaultMutableTreeNode defCU) {
+      showUsageWindow.setVisible(true);
+      updateUsageTree(defCU);
+      showUsageTree.setRootVisible(false);
+      showUsageWindow.setTitle("Usage of \"" + selText + "\" : "
+                                   + defCU.getChildCount() + " time(s)");
+      showUsageWindow.setLocation(editor.getX() + editor.getWidth(), editor.getY());
+    }
+
+
+    public void updateUsageTree(DefaultMutableTreeNode defCU) {
+      if(showUsageTree.isVisible()){
+        showUsageTree.setModel(new DefaultTreeModel(defCU));
+        ((DefaultTreeModel) showUsageTree.getModel()).reload();
+      }
+    }
+
+
+    public void disposeAllWindows() {
+      Messages.log("* disposeAllWindows");
+      disposeWindow(showUsageWindow, renameWindow);
+
+      if (debugTreeWindow != null) disposeWindow(debugTreeWindow);
+    }
+
+
+    public static void disposeWindow(JFrame... f) {
+      for (JFrame jFrame : f) {
+        if (jFrame != null)
+          jFrame.dispose();
+      }
+    }
+
+
+    /// DEBUG --------------------------------------------------------------------
+
+
+    protected JFrame debugTreeWindow;
+
+    /** Swing component wrapper for AST, used for internal testing */
+    protected JTree debugTree;
+
+
+    protected void initDebugWindow() {
+      debugTreeWindow = new JFrame();
+
+      debugTree = new JTree();
+      debugTreeWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+      debugTreeWindow.setBounds(new Rectangle(680, 100, 460, 620));
+      debugTreeWindow.setTitle("AST View - " + editor.getSketch().getName());
+      JScrollPane sp = new JScrollPane();
+      sp.setViewportView(debugTree);
+      debugTreeWindow.add(sp);
+    }
+
+
+    protected void updateDebugTree(DefaultMutableTreeNode codeTree) {
+      if (debugTree.hasFocus() || debugTreeWindow.hasFocus()) {
+        return;
+      }
+      debugTree.setModel(new DefaultTreeModel(codeTree));
+      ((DefaultTreeModel) debugTree.getModel()).reload();
+      debugTree.validate();
+      if (!debugTreeWindow.isVisible()) {
+        debugTreeWindow.setVisible(true);
+      }
+    }
+
+
+    protected void addDebugTreeListener() {
+      debugTree.addTreeSelectionListener(new TreeSelectionListener() {
+
+        @Override
+        public void valueChanged(TreeSelectionEvent e) {
+          Messages.log(e.toString());
+
+          if (debugTree.getLastSelectedPathComponent() == null) {
+            return;
+          }
+          DefaultMutableTreeNode tnode =
+              (DefaultMutableTreeNode) debugTree.getLastSelectedPathComponent();
+          if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+            ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+            awrap.highlightNode(editor);
+            // errorCheckerService.highlightNode(awrap);
+
+            //--
+            try {
+              int javaLineNumber = getLineNumber(awrap.getNode());
+              int pdeOffs[] = editor.getErrorChecker()
+                  .calculateTabIndexAndLineNumber(javaLineNumber);
+              PlainDocument javaSource = new PlainDocument();
+              javaSource.insertString(0, editor.getErrorChecker()
+                  .lastCodeCheckResult.sourceCode, null);
+              Element lineElement = javaSource.getDefaultRootElement()
+                  .getElement(javaLineNumber - 1);
+              if (lineElement == null) {
+                return;
+              }
+
+              String javaLine = javaSource.getText(lineElement.getStartOffset(),
+                                                   lineElement.getEndOffset()
+                                                       - lineElement.getStartOffset());
+              editor.getSketch().setCurrentCode(pdeOffs[0]);
+              String pdeLine = editor.getLineText(pdeOffs[1]);
+              //String lookingFor = nodeName.toString();
+              //log(lookingFor + ", " + nodeName.getStartPosition());
+              log("JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
+                      + lineElement.getEndOffset());
+              log("PL " + pdeLine);
+            } catch (BadLocationException ex) {
+              ex.printStackTrace();
+            }
+          }
+        }
+
+      });
+    }
+
   }
 
 }
