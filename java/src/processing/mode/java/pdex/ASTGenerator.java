@@ -124,16 +124,18 @@ public class ASTGenerator {
   protected final JavaEditor editor;
   public DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode();
 
-  /** JTree used for testing refactoring operations */
-  protected JTree refactorTree;
-
   protected CompilationUnit compilationUnit;
-  protected JFrame frmRename;
-  protected JButton btnRename;
-  protected JButton btnListOccurrence;
-  protected JTextField txtRenameField;
-  protected JFrame frmOccurenceList;
-  protected JLabel lblRefactorOldName;
+
+  // Rename window
+  protected JFrame renameWindow;
+  protected JTextField renameTextField;
+  protected JLabel renameOldNameLabel;
+  protected JButton showUsageButton;
+  protected JButton renameButton;
+
+  // Show usage window
+  protected JFrame showUsageWindow;
+  protected JTree showUsageTree;
 
 
   public ASTGenerator(JavaEditor editor, ErrorCheckerService ecs) {
@@ -150,49 +152,67 @@ public class ASTGenerator {
 
     if (SHOW_DEBUG_TREE) initDebugWindow();
 
-    btnRename = new JButton("Rename");
-    btnListOccurrence = new JButton("Show Usage");
-    frmRename = new JFrame();
-    frmRename.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    frmRename.setSize(250, 130);
-    frmRename.setLayout(new BoxLayout(frmRename.getContentPane(), BoxLayout.Y_AXIS));
-    Toolkit.setIcon(frmRename);
-    JPanel panelTop = new JPanel(), panelBottom = new JPanel();
-    panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
-    panelTop.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
-    panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    panelBottom.add(Box.createHorizontalGlue());
-    panelBottom.add(btnListOccurrence);
-    panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
-    panelBottom.add(btnRename);
-    frmRename.setTitle("Enter new name:");
-    txtRenameField = new JTextField();
-    txtRenameField.setPreferredSize(new Dimension(150, 60));
-    panelTop.add(txtRenameField);
-    //renameWindow.setVisible(true);
-    lblRefactorOldName = new JLabel();
-    lblRefactorOldName.setText("Old Name: ");
-    panelTop.add(Box.createRigidArea(new Dimension(0, 10)));
-    panelTop.add(lblRefactorOldName);
-    frmRename.add(panelTop);
-    frmRename.add(panelBottom);
-    frmRename.setMinimumSize(frmRename.getSize());
-    frmRename.setLocation(editor.getX()
-                              + (editor.getWidth() - frmRename.getWidth()) / 2,
-                          editor.getY()
-                              + (editor.getHeight() - frmRename.getHeight())
-                              / 2);
+    { // Rename window
+      renameWindow = new JFrame();
+      renameWindow.setTitle("Enter new name:");
+      renameWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+      renameWindow.setSize(250, 130);
+      renameWindow.setLayout(new BoxLayout(renameWindow.getContentPane(), BoxLayout.Y_AXIS));
+      Toolkit.setIcon(renameWindow);
 
+      { // Top panel
 
-    frmOccurenceList = new JFrame();
-    frmOccurenceList.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    frmOccurenceList.setSize(300, 400);
-    Toolkit.setIcon(frmOccurenceList);
-    JScrollPane sp2 = new JScrollPane();
-    refactorTree = new JTree();
-    sp2.setViewportView(refactorTree);
-    frmOccurenceList.add(sp2);
+        // Text field
+        renameTextField = new JTextField();
+        renameTextField.setPreferredSize(new Dimension(150, 60));
+
+        // Old name label
+        renameOldNameLabel = new JLabel();
+        renameOldNameLabel.setText("Old Name: ");
+
+        // Top panel
+        JPanel panelTop = new JPanel();
+        panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
+        panelTop.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        panelTop.add(renameTextField);
+        panelTop.add(Box.createRigidArea(new Dimension(0, 10)));
+        panelTop.add(renameOldNameLabel);
+        renameWindow.add(panelTop);
+      }
+
+      { // Bottom panel
+        showUsageButton = new JButton("Show Usage");
+        renameButton = new JButton("Rename");
+
+        JPanel panelBottom = new JPanel();
+        panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
+        panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        panelBottom.add(Box.createHorizontalGlue());
+        panelBottom.add(showUsageButton);
+        panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
+        panelBottom.add(renameButton);
+        renameWindow.add(panelBottom);
+      }
+
+      //renameWindow.setVisible(true);
+      renameWindow.setMinimumSize(renameWindow.getSize());
+      renameWindow.setLocation(editor.getX()
+                                   + (editor.getWidth() - renameWindow.getWidth()) / 2,
+                               editor.getY()
+                                   + (editor.getHeight() - renameWindow.getHeight())
+                                   / 2);
+    }
+
+    { // Show Usage window
+      showUsageWindow = new JFrame();
+      showUsageWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+      showUsageWindow.setSize(300, 400);
+      Toolkit.setIcon(showUsageWindow);
+      JScrollPane sp2 = new JScrollPane();
+      showUsageTree = new JTree();
+      sp2.setViewportView(showUsageTree);
+      showUsageWindow.add(sp2);
+    }
   }
 
 
@@ -1848,18 +1868,18 @@ public class ASTGenerator {
 
     if (SHOW_DEBUG_TREE) addDebugTreeListener();
 
-    btnRename.addActionListener(new ActionListener() {
+    renameButton.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        if(txtRenameField.getText().length() == 0) {
+        if(renameTextField.getText().length() == 0) {
           return;
         }
         refactorIt();
       }
     });
 
-    btnListOccurrence.addActionListener(new ActionListener() {
+    showUsageButton.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -1867,16 +1887,16 @@ public class ASTGenerator {
       }
     });
 
-    refactorTree.addTreeSelectionListener(new TreeSelectionListener() {
+    showUsageTree.addTreeSelectionListener(new TreeSelectionListener() {
 
       @Override
       public void valueChanged(TreeSelectionEvent e) {
         log(e);
-        if(refactorTree
+        if(showUsageTree
             .getLastSelectedPathComponent() == null){
           return;
         }
-        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) refactorTree
+        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) showUsageTree
             .getLastSelectedPathComponent();
 
         if (tnode.getUserObject() instanceof ASTNodeWrapper) {
@@ -1889,7 +1909,7 @@ public class ASTGenerator {
   }
 
   protected void refactorIt(){
-    String newName = txtRenameField.getText().trim();
+    String newName = renameTextField.getText().trim();
     String selText = lastClickedWord == null ? getSelectedText()
         : lastClickedWord;
     // Find all occurrences of last clicked word
@@ -1910,14 +1930,14 @@ public class ASTGenerator {
     //else log("New name looks K.");
 
     errorCheckerService.cancel();
-    if(refactorTree.isVisible()){
-      refactorTree.setModel(new DefaultTreeModel(defCU));
-      ((DefaultTreeModel) refactorTree.getModel()).reload();
+    if(showUsageTree.isVisible()){
+      showUsageTree.setModel(new DefaultTreeModel(defCU));
+      ((DefaultTreeModel) showUsageTree.getModel()).reload();
     }
-//    frmOccurenceList.setTitle("Usage of \"" + selText + "\" : "
+//    showUsageWindow.setTitle("Usage of \"" + selText + "\" : "
 //        + defCU.getChildCount() + " time(s)");
-//    frmOccurenceList.setLocation(editor.getX() + editor.getWidth(),editor.getY());
-//    frmOccurenceList.setVisible(true);
+//    showUsageWindow.setLocation(editor.getX() + editor.getWidth(),editor.getY());
+//    showUsageWindow.setVisible(true);
     int lineOffsetDisplacementConst = newName.length()
         - selText.length();
     HashMap<Integer, Integer> lineOffsetDisplacement = new HashMap<>();
@@ -1964,8 +1984,8 @@ public class ASTGenerator {
     errorCheckerService.request();
     editor.getSketch().setModified(true);
     errorCheckerService.request();
-//    frmOccurenceList.setVisible(false);
-    frmRename.setVisible(false);
+//    showUsageWindow.setVisible(false);
+    renameWindow.setVisible(false);
     lastClickedWord = null;
     lastClickedWordNode = null;
   }
@@ -2013,13 +2033,13 @@ public class ASTGenerator {
     }
     if(defCU.getChildCount() == 0)
       return;
-    refactorTree.setModel(new DefaultTreeModel(defCU));
-    ((DefaultTreeModel) refactorTree.getModel()).reload();
-    refactorTree.setRootVisible(false);
-    frmOccurenceList.setTitle("Usage of \"" + selText + "\" : "
+    showUsageTree.setModel(new DefaultTreeModel(defCU));
+    ((DefaultTreeModel) showUsageTree.getModel()).reload();
+    showUsageTree.setRootVisible(false);
+    showUsageWindow.setTitle("Usage of \"" + selText + "\" : "
         + defCU.getChildCount() + " time(s)");
-    frmOccurenceList.setLocation(editor.getX() + editor.getWidth(),editor.getY());
-    frmOccurenceList.setVisible(true);
+    showUsageWindow.setLocation(editor.getX() + editor.getWidth(), editor.getY());
+    showUsageWindow.setVisible(true);
     lastClickedWord = null;
     lastClickedWordNode = null;
   }
@@ -2349,28 +2369,28 @@ public class ASTGenerator {
                            "so it cannot be renamed", EditorStatus.ERROR);
       return;
     }
-    if (!frmRename.isVisible()){
-      frmRename.setLocation(editor.getX()
-                            + (editor.getWidth() - frmRename.getWidth()) / 2,
-                        editor.getY()
-                            + (editor.getHeight() - frmRename.getHeight())
+    if (!renameWindow.isVisible()){
+      renameWindow.setLocation(editor.getX()
+                            + (editor.getWidth() - renameWindow.getWidth()) / 2,
+                               editor.getY()
+                            + (editor.getHeight() - renameWindow.getHeight())
                             / 2);
-      frmRename.setVisible(true);
+      renameWindow.setVisible(true);
       EventQueue.invokeLater(new Runnable() {
         @Override
         public void run() {
           String selText = lastClickedWord == null ? getSelectedText()
               : lastClickedWord;
-          frmOccurenceList.setTitle("All occurrences of "
+          showUsageWindow.setTitle("All occurrences of "
               + selText);
-          lblRefactorOldName.setText("Current name: "
+          renameOldNameLabel.setText("Current name: "
               + selText);
-          txtRenameField.setText("");
-          txtRenameField.requestFocus();
+          renameTextField.setText("");
+          renameTextField.requestFocus();
         }
       });
     }
-    frmRename.toFront();
+    renameWindow.toFront();
   }
 
 
@@ -3379,7 +3399,7 @@ public class ASTGenerator {
 
   public void disposeAllWindows() {
     disposeWindow(frmImportSuggest,
-                  frmOccurenceList, frmRename);
+                  showUsageWindow, renameWindow);
 
     if (debugTreeWindow != null) disposeWindow(debugTreeWindow);
   }
