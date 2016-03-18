@@ -332,6 +332,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     });
 
+    // TODO: Subclasses can't initialize anything before Doc Open happens since
+    //       super() has to be the first line in subclass constructor; we might
+    //       want to keep constructor light and call methods later [jv 160318]
+
     // Open the document that was passed in
     handleOpenInternal(path);
 
