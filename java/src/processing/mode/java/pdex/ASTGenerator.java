@@ -37,7 +37,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
@@ -63,14 +62,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
@@ -132,70 +129,6 @@ public class ASTGenerator {
     //loadJavaDoc();
   }
 
-
-  protected DefaultMutableTreeNode buildAST(String source, CompilationUnit cu) {
-    Messages.log("* buildAST");
-    if (cu == null) {
-      ASTParser parser = ASTParser.newParser(AST.JLS8);
-      parser.setSource(source.toCharArray());
-      parser.setKind(ASTParser.K_COMPILATION_UNIT);
-
-      Map<String, String> options = JavaCore.getOptions();
-
-      JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, options);
-      parser.setCompilerOptions(options);
-      compilationUnit = (CompilationUnit) parser.createAST(null);
-    } else {
-      compilationUnit = cu;
-      //log("Other cu");
-    }
-//    OutlineVisitor visitor = new OutlineVisitor();
-//    compilationUnit.accept(visitor);
-    codeTree = new DefaultMutableTreeNode(new ASTNodeWrapper((ASTNode) compilationUnit
-                                              .types().get(0)));
-    //log("Total CU " + compilationUnit.types().size());
-    if(compilationUnit.types() == null || compilationUnit.types().isEmpty()){
-      Messages.loge("No CU found!");
-    }
-    visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
-
-    if (SHOW_DEBUG_TREE) {
-      EventQueue.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          gui.updateDebugTree(codeTree);
-        }
-      });
-    }
-
-//    EventQueue.invokeLater(new Runnable() {
-//      public void run() {
-//        if (codeTree != null) {
-//          if (!frameAutoComp.isVisible()) {
-//
-//            frameAutoComp.setVisible(true);
-//
-//          }
-//          if (!frmJavaDoc.isVisible()) {
-//            long t = System.currentTimeMillis();
-//            loadJavaDoc();
-//            log("Time taken: "
-//                + (System.currentTimeMillis() - t));
-//            frmJavaDoc.setBounds(new Rectangle(errorCheckerService.getEditor()
-//                .getX() + errorCheckerService.getEditor().getWidth(),
-//                                               errorCheckerService.getEditor()
-//                                                   .getY(), 450, 600));
-//            frmJavaDoc.setVisible(true);
-//          }
-//        }
-//      }
-//    });
-
-//    Base.loge("++>" + System.getProperty("java.class.path"));
-//    log(System.getProperty("java.class.path"));
-//    log("-------------------------------");
-    return codeTree;
-  }
 
   protected final ClassPathFactory factory = new ClassPathFactory();
 
@@ -3163,6 +3096,52 @@ public class ASTGenerator {
       }
     });
 */
+  }
+
+
+  /// Error checker ------------------------------------------------------------
+
+
+  protected static DefaultMutableTreeNode buildTree(CompilationUnit cu) {
+    if (cu.types().isEmpty()){
+      Messages.loge("No Type found in CU");
+      return null;
+    }
+
+    ASTNode type0 = (ASTNode) cu.types().get(0);
+    ASTNodeWrapper w = new ASTNodeWrapper(type0);
+    DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode(w);
+    visitRecur(type0, codeTree);
+    return codeTree;
+  }
+
+
+  protected void updateAST(CompilationUnit cu, DefaultMutableTreeNode tree) {
+    compilationUnit = cu;
+    codeTree = tree;
+
+    if (SHOW_DEBUG_TREE) {
+      gui.updateDebugTree(codeTree);
+    }
+
+//    if (codeTree != null) {
+//      if (!frameAutoComp.isVisible()) {
+//
+//        frameAutoComp.setVisible(true);
+//
+//      }
+//      if (!frmJavaDoc.isVisible()) {
+//        long t = System.currentTimeMillis();
+//        loadJavaDoc();
+//        log("Time taken: "
+//            + (System.currentTimeMillis() - t));
+//        frmJavaDoc.setBounds(new Rectangle(errorCheckerService.getEditor()
+//            .getX() + errorCheckerService.getEditor().getWidth(),
+//                                           errorCheckerService.getEditor()
+//                                               .getY(), 450, 600));
+//        frmJavaDoc.setVisible(true);
+//      }
+//    }
   }
 
 

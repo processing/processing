@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -49,6 +50,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.PlainDocument;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.CharOperation;
@@ -209,9 +211,19 @@ public class ErrorCheckerService {
       // This is when the loaded sketch already has syntax errors.
       // Completion wouldn't be complete, but it'd be still something
       // better than nothing
-      synchronized (astGenerator) {
-        astGenerator.buildAST(lastCodeCheckResult.sourceCode,
-                              lastCodeCheckResult.compilationUnit);
+      try {
+        final DefaultMutableTreeNode tree =
+            ASTGenerator.buildTree(lastCodeCheckResult.compilationUnit);
+        EventQueue.invokeAndWait(new Runnable() {
+          @Override
+          public void run() {
+            synchronized (astGenerator) {
+              astGenerator.updateAST(lastCodeCheckResult.compilationUnit, tree);
+            }
+          }
+        });
+      } catch (InterruptedException | InvocationTargetException e) {
+        Messages.loge("exception during initial AST update", e);
       }
 
       while (running) {
@@ -234,6 +246,9 @@ public class ErrorCheckerService {
 
           lastCodeCheckResult = result;
 
+          final DefaultMutableTreeNode tree =
+              ASTGenerator.buildTree(lastCodeCheckResult.compilationUnit);
+
           checkForMissingImports(lastCodeCheckResult);
 
           if (JavaMode.errorCheckEnabled) {
@@ -252,6 +267,9 @@ public class ErrorCheckerService {
                   EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                      synchronized (astGenerator) {
+                        astGenerator.updateAST(lastCodeCheckResult.compilationUnit, tree);
+                      }
                       calcPdeOffsetsForProbList(result);
                       updateErrorTable(result.problems);
                       editor.updateErrorBar(result.problems);
@@ -481,10 +499,6 @@ public class ErrorCheckerService {
         }
         result.problems.add(p);
       }
-    }
-
-    synchronized (astGenerator) {
-      astGenerator.buildAST(result.sourceCode, result.compilationUnit);
     }
 
     return result;
