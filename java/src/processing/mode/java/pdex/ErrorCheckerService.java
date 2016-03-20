@@ -128,11 +128,6 @@ public class ErrorCheckerService {
   public int mainClassOffset;
 
   /**
-   * Is the sketch running in static mode or active mode?
-   */
-  protected PdePreprocessor.Mode mode = PdePreprocessor.Mode.ACTIVE;
-
-  /**
    * If true, compilation checker will be reloaded with updated classpath
    * items.
    */
@@ -1212,6 +1207,7 @@ public class ErrorCheckerService {
     className = editor.getSketch().getName();
 
     // Check whether the code is being written in STATIC mode
+    PdePreprocessor.Mode mode;
     try {
       String uncommented = PdePreprocessor.scrubComments(sourceAlt);
       mode = PdePreprocessor.parseMode(uncommented);
