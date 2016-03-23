@@ -64,6 +64,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.plaf.basic.*;
 import javax.swing.text.*;
+import javax.swing.text.html.*;
 import javax.swing.undo.*;
 
 
@@ -2610,15 +2611,51 @@ public abstract class Editor extends JFrame implements RunnerListener {
    */
   public void handlePrint() {
     statusNotice(Language.text("editor.status.printing"));
+
+    StringBuilder html = new StringBuilder("<html><body>");
+    for (SketchCode tab : sketch.getCode()) {
+      html.append("<b>" + tab.getPrettyName() + "</b><br>");
+      html.append(textarea.getTextAsHtml((SyntaxDocument)tab.getDocument()));
+      html.append("<br>");
+    }
+    html.setLength(html.length() - 4); // Don't want last <br>.
+    html.append("</body></html>");
+    JTextPane jtp = new JTextPane();
+    // Needed for good line wrapping; otherwise one very long word breaks
+    // wrapping for the whole document.
+    jtp.setEditorKit(new HTMLEditorKit() {
+      public ViewFactory getViewFactory() {
+        return new HTMLFactory() {
+          public View create(Element e) {
+            View v = super.create(e);
+            if (!(v instanceof javax.swing.text.html.ParagraphView))
+              return v;
+            else
+              return new javax.swing.text.html.ParagraphView(e) {
+                protected SizeRequirements calculateMinorAxisRequirements(
+                    int axis, SizeRequirements r) {
+                  r = super.calculateMinorAxisRequirements(axis, r);
+                  r.minimum = 1;
+                  return r;
+                }
+              };
+          }
+        };
+      }
+    });
+    jtp.setFont(new Font(Preferences.get("editor.font.family"), Font.PLAIN, 10));
+    jtp.setText(html.toString().replace("\n", "<br>") // Not in a <pre>.
+        .replaceAll("(?<!&nbsp;)&nbsp;", " "));       // Allow line wrap.
+
     //printerJob = null;
     if (printerJob == null) {
       printerJob = PrinterJob.getPrinterJob();
     }
     if (pageFormat != null) {
       //System.out.println("setting page format " + pageFormat);
-      printerJob.setPrintable(textarea.getPrintable(), pageFormat);
+      printerJob.setPrintable(jtp.getPrintable(null, null), pageFormat);
     } else {
-      printerJob.setPrintable(textarea.getPrintable());
+      printerJob.setPrintable(jtp.getPrintable(null, null));
     }
     // set the name of the job to the code name
     printerJob.setJobName(sketch.getCurrentCode().getPrettyName());
