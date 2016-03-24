@@ -2158,6 +2158,15 @@ public class PShape implements PConstants {
     return getVertex(index, null);
   }
 
+  public float[] getVertexData(int index)
+  {
+    return vertices[index];
+  }
+
+  public PMatrix getMatrix()
+  {
+    return matrix;
+  }
 
   /**
    * @param vec PVector to assign the data to
@@ -2387,14 +2396,14 @@ public class PShape implements PConstants {
  /**
    * ( begin auto-generated from PShape_setFill.xml )
    *
-   * The <b>setFill()</b> method defines the fill color of a <b>PShape</b>. 
-   * This method is used after shapes are created or when a shape is defined explicitly 
-   * (e.g. <b>createShape(RECT, 20, 20, 80, 80)</b>) as shown in the above example. 
-   * When a shape is created with <b>beginShape()</b> and <b>endShape()</b>, its 
-   * attributes may be changed with <b>fill()</b> and <b>stroke()</b> within 
-   * <b>beginShape()</b> and <b>endShape()</b>. However, after the shape is 
-   * created, only the <b>setFill()</b> method can define a new fill value for 
-   * the <b>PShape</b>. 
+   * The <b>setFill()</b> method defines the fill color of a <b>PShape</b>.
+   * This method is used after shapes are created or when a shape is defined explicitly
+   * (e.g. <b>createShape(RECT, 20, 20, 80, 80)</b>) as shown in the above example.
+   * When a shape is created with <b>beginShape()</b> and <b>endShape()</b>, its
+   * attributes may be changed with <b>fill()</b> and <b>stroke()</b> within
+   * <b>beginShape()</b> and <b>endShape()</b>. However, after the shape is
+   * created, only the <b>setFill()</b> method can define a new fill value for
+   * the <b>PShape</b>.
    *
    * ( end auto-generated )
    *
@@ -2543,14 +2552,14 @@ public class PShape implements PConstants {
   /**
    * ( begin auto-generated from PShape_setStroke.xml )
    *
-   * The <b>setStroke()</b> method defines the outline color of a <b>PShape</b>. 
-   * This method is used after shapes are created or when a shape is defined 
-   * explicitly (e.g. <b>createShape(RECT, 20, 20, 80, 80)</b>) as shown in 
-   * the above example. When a shape is created with <b>beginShape()</b> and 
-   * <b>endShape()</b>, its attributes may be changed with <b>fill()</b> and 
-   * <b>stroke()</b> within <b>beginShape()</b> and <b>endShape()</b>. 
-   * However, after the shape is created, only the <b>setStroke()</b> method 
-   * can define a new stroke value for the <b>PShape</b>. 
+   * The <b>setStroke()</b> method defines the outline color of a <b>PShape</b>.
+   * This method is used after shapes are created or when a shape is defined
+   * explicitly (e.g. <b>createShape(RECT, 20, 20, 80, 80)</b>) as shown in
+   * the above example. When a shape is created with <b>beginShape()</b> and
+   * <b>endShape()</b>, its attributes may be changed with <b>fill()</b> and
+   * <b>stroke()</b> within <b>beginShape()</b> and <b>endShape()</b>.
+   * However, after the shape is created, only the <b>setStroke()</b> method
+   * can define a new stroke value for the <b>PShape</b>.
    *
    * ( end auto-generated )
    *
