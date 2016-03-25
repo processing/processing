@@ -106,11 +106,10 @@ import com.google.classpath.ClassPath;
 import com.google.classpath.ClassPathFactory;
 import com.google.classpath.RegExpResourceFilter;
 
-
 @SuppressWarnings({ "unchecked" })
 public class ASTGenerator {
 
-  public static final boolean SHOW_DEBUG_TREE = true;
+  public static final boolean SHOW_DEBUG_TREE = false;
 
   protected final ErrorCheckerService errorCheckerService;
   protected final JavaEditor editor;
@@ -143,7 +142,7 @@ public class ASTGenerator {
     List<VariableDeclarationFragment> vdfs = null;
     switch (node.getNodeType()) {
     case ASTNode.TYPE_DECLARATION:
-      return new CompletionCandidate[] { new CompletionCandidate((TypeDeclaration) node) };
+      return new CompletionCandidate[]{new CompletionCandidate((TypeDeclaration) node)};
 
     case ASTNode.METHOD_DECLARATION:
       MethodDeclaration md = (MethodDeclaration) node;
@@ -155,12 +154,12 @@ public class ASTGenerator {
       for (int i = 0; i < params.size(); i++) {
 //        cand[i + 1] = new CompletionCandidate(params.get(i).toString(), "", "",
 //                                              CompletionCandidate.LOCAL_VAR);
-        cand[i + 1] = new CompletionCandidate((SingleVariableDeclaration)params.get(i));
+        cand[i + 1] = new CompletionCandidate((SingleVariableDeclaration) params.get(i));
       }
       return cand;
 
     case ASTNode.SINGLE_VARIABLE_DECLARATION:
-      return new CompletionCandidate[] { new CompletionCandidate((SingleVariableDeclaration)node) };
+      return new CompletionCandidate[]{new CompletionCandidate((SingleVariableDeclaration) node)};
 
     case ASTNode.FIELD_DECLARATION:
       vdfs = ((FieldDeclaration) node).fragments();
@@ -757,8 +756,8 @@ public class ASTGenerator {
     }
 
     log("Looking in the classloader for " + className);
-    ArrayList<ImportStatement> imports = errorCheckerService
-        .getProgramImports();
+    // TODO: get this from last code check result
+    List<ImportStatement> imports = Collections.emptyList(); //errorCheckerService.getProgramImports();
 
     for (ImportStatement impS : imports) {
       String temp = impS.getPackageName();
@@ -769,7 +768,7 @@ public class ASTGenerator {
           continue;
         }
       } else { // case of class import: pkg.foo.MyClass
-        if (!impS.getImportedClassName().equals(className)) {
+        if (!impS.getClassName().equals(className)) {
           continue;
         }
       }
@@ -781,7 +780,9 @@ public class ASTGenerator {
       //log("Doesn't exist in imp package: " + impS.getImportName());
     }
 
-    for (ImportStatement impS : errorCheckerService.codeFolderImports) {
+    // TODO: get this from last code check result
+    List<ImportStatement> codeFolderImports = Collections.emptyList();
+    for (ImportStatement impS : codeFolderImports) {
       String temp = impS.getPackageName();
       if (impS.isStarredImport())  { // case of starred import: pkg.foo.*
         if (className.indexOf('.') == -1) {
@@ -790,7 +791,7 @@ public class ASTGenerator {
           continue;
         }
       } else { // case of class import: pkg.foo.MyClass
-        if (!impS.getImportedClassName().equals(className)) {
+        if (!impS.getClassName().equals(className)) {
           continue;
         }
       }
@@ -840,8 +841,10 @@ public class ASTGenerator {
     Class<?> tehClass = null;
     if (className != null) {
       try {
-        tehClass = Class.forName(className, false,
-                                 errorCheckerService.getSketchClassLoader());
+        // TODO: get the class loader from the last code check result
+        /*tehClass = Class.forName(className, false,
+                                 errorCheckerService.getSketchClassLoader());*/
+        tehClass = Class.forName(className);
       } catch (ClassNotFoundException e) {
         //log("Doesn't exist in package: ");
       }

@@ -25,7 +25,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -42,11 +41,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.PlainDocument;
@@ -73,15 +71,14 @@ import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
 
 import processing.app.Library;
 import processing.app.Messages;
-import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.SketchCode;
+import processing.app.SketchException;
 import processing.app.Util;
 import processing.app.ui.Editor;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.ErrorTable;
-import processing.core.PApplet;
 import processing.data.StringList;
 import processing.mode.java.JavaMode;
 import processing.mode.java.JavaEditor;
@@ -104,23 +101,6 @@ public class ErrorCheckerService {
    */
   private volatile boolean running;
 
-  //protected ErrorWindow errorWindow;
-
-  /**
-   * Class name of current sketch
-   */
-  protected String className;
-
-  /**
-   * URLs of extra imports jar files stored here.
-   */
-  protected URL[] classPath = {};
-
-  /**
-   * Class loader used by compiler check and ASTGenerator, based on classPath
-   */
-  protected URLClassLoader classLoader = new URLClassLoader(classPath);
-
   /**
    * How many lines are present till the initial class declaration? In static
    * mode, this would include imports, class declaration and setup
@@ -130,39 +110,6 @@ public class ErrorCheckerService {
   public int mainClassOffset;
 
   /**
-   * If true, compilation checker will be reloaded with updated classpath
-   * items.
-   */
-  protected boolean loadCompClass;
-
-  /**
-   * List of jar files to be present in compilation checker's classpath
-   */
-  protected List<URL> classpathJars = new ArrayList<>();
-
-  /**
-   * Stores the current import statements in the program. Used to compare for
-   * changed import statements and update classpath if needed.
-   */
-  protected ArrayList<ImportStatement> programImports = new ArrayList<>();
-
-  /**
-   * List of imports when sketch was last checked. Used for checking for
-   * changed imports
-   */
-  protected ArrayList<ImportStatement> previousImports = new ArrayList<>();
-
-  /**
-   * List of import statements for any .jar files in the code folder.
-   */
-  protected final ArrayList<ImportStatement> codeFolderImports = new ArrayList<>();
-
-  /**
-   * Teh Preprocessor
-   */
-  protected final XQPreprocessor xqpreproc;
-
-  /**
    * ASTGenerator for operations on AST
    */
   protected final ASTGenerator astGenerator;
@@ -170,15 +117,14 @@ public class ErrorCheckerService {
   /**
    * Regexp for import statements. (Used from Processing source)
    */
+  // TODO: merge this with SourceUtils one
   public static final String IMPORT_REGEX =
     "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
 
 
   public ErrorCheckerService(JavaEditor editor) {
     this.editor = editor;
-    xqpreproc = new XQPreprocessor(editor);
     astGenerator = new ASTGenerator(editor, this);
-    loadCompClass = true;
   }
 
 
@@ -211,19 +157,15 @@ public class ErrorCheckerService {
       // This is when the loaded sketch already has syntax errors.
       // Completion wouldn't be complete, but it'd be still something
       // better than nothing
-      try {
+      {
         final DefaultMutableTreeNode tree =
             ASTGenerator.buildTree(lastCodeCheckResult.compilationUnit);
-        EventQueue.invokeAndWait(new Runnable() {
+        EventQueue.invokeLater(new Runnable() {
           @Override
           public void run() {
-            synchronized (astGenerator) {
-              astGenerator.updateAST(lastCodeCheckResult.compilationUnit, tree);
-            }
+            astGenerator.updateAST(lastCodeCheckResult.compilationUnit, tree);
           }
         });
-      } catch (InterruptedException | InvocationTargetException e) {
-        Messages.loge("exception during initial AST update", e);
       }
 
       while (running) {
@@ -291,8 +233,9 @@ public class ErrorCheckerService {
       synchronized (astGenerator) {
         astGenerator.getGui().disposeAllWindows();
       }
-      classLoader = null;
       Messages.loge("Thread stopped: " + editor.getSketch().getName());
+
+      // TODO: clear last result
 
       running = false;
     }
@@ -391,10 +334,76 @@ public class ErrorCheckerService {
 
     CodeCheckResult result = new CodeCheckResult();
 
-    result.sourceCode = preprocessCode();
+    StringBuilder rawCode = new StringBuilder();
+    List<ImportStatement> coreAndDefaultImports = new ArrayList<>();
+    List<ImportStatement> codeFolderImports = new ArrayList<>();
+    List<ImportStatement> programImports = new ArrayList<>();
 
-    char[] sourceCodeArray = result.sourceCode.toCharArray();
+    Sketch sketch = editor.getSketch();
 
+    { // Combine code into one buffer
+      for (SketchCode sc : sketch.getCode()) {
+        if (sc.isExtension("pde")) {
+          if (sketch.getCurrentCode().equals(sc)) {
+            try {
+              rawCode.append(sc.getDocumentText());
+            } catch (BadLocationException e) {
+              e.printStackTrace();
+            }
+          } else {
+            rawCode.append(sc.getProgram());
+          }
+          rawCode.append('\n');
+        }
+      }
+    }
+    String className = sketch.getName();
+
+    { // Prepare core and default imports
+      PdePreprocessor p = editor.createPreprocessor(null);
+      String[] defaultImports = p.getDefaultImports();
+      String[] coreImports = p.getCoreImports();
+
+      for (String imp : coreImports) {
+        coreAndDefaultImports.add(ImportStatement.parse(imp));
+      }
+      for (String imp : defaultImports) {
+        coreAndDefaultImports.add(ImportStatement.parse(imp));
+      }
+    }
+
+    { // Prepare code folder imports & add to classpath
+      if (sketch.hasCodeFolder()) {
+        File codeFolder = sketch.getCodeFolder();
+        String codeFolderClassPath = Util.contentsToClassPath(codeFolder);
+        StringList codeFolderPackages = Util.packageListFromClassPath(codeFolderClassPath);
+        for (String item : codeFolderPackages) {
+          codeFolderImports.add(ImportStatement.wholePackage(item));
+        }
+      }
+    }
+
+    SourceUtils.substituteUnicode(rawCode);
+
+    try {
+      SourceUtils.scrubComments(rawCode);
+    } catch (RuntimeException e) {
+      // TODO: Unterminated block comment: add to errors
+      // Continue normally, comments were scrubbed
+    }
+
+    PdePreprocessor.Mode mode = PdePreprocessor.parseMode(rawCode);
+
+    SourceMapping mapping = new SourceMapping();
+
+    mapping.addAll(SourceUtils.insertImports(coreAndDefaultImports));
+    mapping.addAll(SourceUtils.insertImports(codeFolderImports));
+    mapping.addAll(SourceUtils.parseProgramImports(rawCode, programImports));
+    mapping.addAll(SourceUtils.replaceTypeConstructors(rawCode));
+    mapping.addAll(SourceUtils.replaceHexLiterals(rawCode));
+    mapping.addAll(SourceUtils.wrapSketch(mode, className, rawCode.length()));
+
+    result.sourceCode = mapping.apply(rawCode);
 
     List<IProblem> problems;
 
@@ -403,13 +412,12 @@ public class ErrorCheckerService {
       result.syntaxErrors = true;
       result.containsErrors = true;
 
-      parser.setSource(sourceCodeArray);
+      parser.setSource(result.sourceCode.toCharArray());
       parser.setKind(ASTParser.K_COMPILATION_UNIT);
       parser.setCompilerOptions(COMPILER_OPTIONS);
       parser.setStatementsRecovery(true);
 
       result.compilationUnit = (CompilationUnit) parser.createAST(null);
-
       // Store errors returned by the ast parser
       problems = Arrays.asList(result.compilationUnit.getProblems());
 
@@ -425,53 +433,60 @@ public class ErrorCheckerService {
 
     // No syntax errors, proceed for compilation check, Stage 2.
     if (problems.isEmpty() && !editor.hasJavaTabs()) {
-      String sourceCode = xqpreproc.handle(result.sourceCode, programImports);
-      prepareCompilerClasspath();
 
-      {{ // COMPILE CHECK
+      SourceMapping mapping2 = new SourceMapping();
 
-        parser.setSource(sourceCodeArray);
+      mapping2.addAll(SourceUtils.addPublicToTopLeveMethods(result.compilationUnit));
+      mapping2.addAll(SourceUtils.replaceColorAndFixFloats(result.compilationUnit));
+
+      result.sourceCode = mapping2.apply(result.sourceCode);
+
+      char[] chars = result.sourceCode.toCharArray();
+
+      { // Recreate the compilation unit for code completion, etc.
+        parser.setSource(chars);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
         parser.setCompilerOptions(COMPILER_OPTIONS);
         parser.setStatementsRecovery(true);
 
         result.compilationUnit = (CompilationUnit) parser.createAST(null);
-        result.sourceCode = sourceCode;
+      }
 
-        // Currently (Sept, 2012) I'm using Java's reflection api to load the
-        // CompilationChecker class(from CompilationChecker.jar) that houses the
-        // Eclispe JDT compiler, and call its getErrorsAsObj method to obtain
-        // errors. This way, I'm able to add the paths of contributed libraries
-        // to the classpath of CompilationChecker, dynamically. The eclipse compiler
-        // needs all referenced libraries in the classpath. Totally a hack. If you find
-        // a better method, do let me know.
+      // TODO: set astGenerator.classPath (do this probably on EDT in UI update)
+      //       new ClassPathFactory().createFromPath((String) classPath);
+
+      {{ // COMPILE CHECK
+
+        // TODO: get these form last result
+        //boolean importsChanged = checkIfImportsChanged(programImports, prevProgramImports);
+        //importsChanged &= checkIfImportsChanged(codeFolderImports, prevCodeFolderImports);
+
+        boolean importsChanged = true;
+
+        List<String> classPath;
+        URLClassLoader classLoader = null;
+        if (!importsChanged) {
+          // TODO: set classPath to previous classPath
+        } else {
+          classPath = prepareCompilerClasspath(programImports, sketch);
+          List<URL> urls = new ArrayList<>();
+          for (String path : classPath) {
+            try {
+              urls.add(new File(path).toURI().toURL());
+            } catch (MalformedURLException e) {
+              // Malformed, ignore
+            }
+          }
+          URL[] classPathArray = urls.toArray(new URL[urls.size()]);
+          classLoader = new URLClassLoader(classPathArray, null);
+        }
 
         try {
-          // NOTE TO SELF: If classpath contains null Strings
-          // URLClassLoader shoots NPE bullets.
-
-          // If imports have changed, reload classes with new classpath.
-          if (loadCompClass) {
-            classPath = new URL[classpathJars.size()];
-            /*System.out.println("CP Jars:");
-            for (URL u: classpathJars) {
-              String fn = u.getFile();
-              System.out.println(fn.substring(fn.lastIndexOf('/')));
-            }*/
-            classPath = classpathJars.toArray(classPath);
-            classLoader = new URLClassLoader(classPath, null);
-            loadCompClass = false;
-          }
-
-          problems = compileAndReturnProblems(className, sourceCode,
+          problems = compileAndReturnProblems(className, chars,
                                               COMPILER_OPTIONS, classLoader);
-        } catch (Exception e) {
-          System.err.println("compileCheck() problem." + e);
-          e.printStackTrace();
-          cancel();
         } catch (NoClassDefFoundError e) {
+          // TODO: do we need this?
           e.printStackTrace();
-          cancel();
         }
       }}
     }
@@ -521,7 +536,7 @@ public class ErrorCheckerService {
    * @return list of compiler errors and warnings
    */
   static public List<IProblem> compileAndReturnProblems(String sourceName,
-                                                        String source,
+                                                        char[] source,
                                                         Map<String, String> options,
                                                         URLClassLoader classLoader) {
     final List<IProblem> problems = new ArrayList<>();
@@ -533,7 +548,7 @@ public class ErrorCheckerService {
       }
     };
 
-    final char[] contents = source.toCharArray();
+    final char[] contents = source;
     final char[][] packageName = new char[][]{};
     final char[] mainTypeName = sourceName.toCharArray();
     final char[] fileName = (sourceName + ".java").toCharArray();
@@ -552,6 +567,7 @@ public class ErrorCheckerService {
                      new CompilerOptions(options),
                      requestor,
                      new DefaultProblemFactory(Locale.getDefault()));
+
     compiler.compile(new ICompilationUnit[]{unit});
     return problems;
   }
@@ -624,140 +640,83 @@ public class ErrorCheckerService {
   }
 
 
-  public URLClassLoader getSketchClassLoader() {
-    return classLoader;
-  }
-
-
   /**
    * Processes import statements to obtain class paths of contributed
    * libraries. This would be needed for compilation check. Also, adds
    * stuff(jar files, class files, candy) from the code folder. And it looks
    * messed up.
    */
-  protected void prepareCompilerClasspath() {
-    if (!loadCompClass) {
-      return;
-    }
+  protected List<String> prepareCompilerClasspath(List<ImportStatement> programImports, Sketch sketch) {
+    JavaMode mode = (JavaMode) editor.getMode();
 
-    // log("1..");
-    classpathJars = new ArrayList<>();
-    String entry;
-//      boolean codeFolderChecked = false;
+    StringBuilder classPath = new StringBuilder();
+
     for (ImportStatement impstat : programImports) {
-      String item = impstat.getImportName();
-      int dot = item.lastIndexOf('.');
-      entry = (dot == -1) ? item : item.substring(0, dot);
+      String entry = impstat.getPackageName();
+      if (!ignorableImport(entry)) {
 
-      entry = entry.substring(6).trim();
-      // log("Entry--" + entry);
-      if (ignorableImport(entry)) {
-        // log("Ignoring: " + entry);
-        continue;
-      }
-
-      // Try to get the library classpath and add it to the list
-      try {
-        Library library = editor.getMode().getLibrary(entry);
-        String[] libraryPath =
-          PApplet.split(library.getClassPath().substring(1).trim(),
-                        File.pathSeparatorChar);
-        for (String pathItem : libraryPath) {
-          classpathJars.add(new File(pathItem).toURI().toURL());
+        // Try to get the library classpath and add it to the list
+        try {
+          Library library = mode.getLibrary(entry);
+          classPath.append(library.getClassPath());
+        } catch (SketchException e) {
+          // More libraries competing, ignore
         }
-      } catch (Exception e) {
-        Messages.log("Encountered " + e + " while adding library to classpath");
       }
     }
 
-
-    // Look around in the code folder for jar files and them too
-    if (editor.getSketch().hasCodeFolder()) {
-      File codeFolder = editor.getSketch().getCodeFolder();
-
-      // get a list of .jar files in the "code" folder
-      // (class files in subfolders should also be picked up)
+    if (sketch.hasCodeFolder()) {
+      File codeFolder = sketch.getCodeFolder();
       String codeFolderClassPath = Util.contentsToClassPath(codeFolder);
-//        codeFolderChecked = true;
-      // huh? doesn't this mean .length() == 0? [fry]
-      if (!codeFolderClassPath.equalsIgnoreCase("")) {
-        Messages.log("Sketch has a code folder. Adding its jars");
-        String codeFolderPath[] =
-                PApplet.split(codeFolderClassPath.substring(1).trim(),
-                        File.pathSeparatorChar);
-        try {
-          for (String pathItem : codeFolderPath) {
-            classpathJars.add(new File(pathItem).toURI().toURL());
-            Messages.log("Addind cf jar: " + pathItem);
-          }
-        } catch (Exception e2) {
-          e2.printStackTrace();
-        }
-      }
+      classPath.append(codeFolderClassPath);
     }
 
     // Also add jars specified in mode's search path
-    String searchPath = ((JavaMode) editor.getMode()).getSearchPath();
+    // TODO: maybe we need mode.getCoreLibrary().getClassPath() here
+    String searchPath = mode.getSearchPath();
     if (searchPath != null) {
-      String[] modeJars = PApplet.split(searchPath, File.pathSeparatorChar);
-      for (String mj : modeJars) {
-        try {
-          classpathJars.add(new File(mj).toURI().toURL());
-        } catch (MalformedURLException e) {
-          e.printStackTrace();
-        }
+      if (!searchPath.startsWith(File.pathSeparator)) {
+        classPath.append(File.pathSeparator);
+      }
+      classPath.append(searchPath);
+    }
+
+    // TODO: maybe we need lib.getClassPath() here
+    for (Library lib : mode.coreLibraries) {
+      classPath.append(File.pathSeparator).append(lib.getJarPath());
+    }
+
+    String javaClassPath = System.getProperty("java.class.path");
+    if (!javaClassPath.startsWith(File.pathSeparator)) {
+      classPath.append(File.pathSeparator);
+    }
+    classPath.append(javaClassPath);
+
+    String rtPath = System.getProperty("java.home") +
+        File.separator + "lib" + File.separator + "rt.jar";
+    if (new File(rtPath).exists()) {
+      classPath.append(File.pathSeparator).append(rtPath);
+    } else {
+      rtPath = System.getProperty("java.home") + File.separator + "jre" +
+          File.separator + "lib" + File.separator + "rt.jar";
+      if (new File(rtPath).exists()) {
+        classPath.append(File.pathSeparator).append(rtPath);
       }
     }
 
-    for (Library lib : editor.getMode().coreLibraries) {
-      try {
-        classpathJars.add(new File(lib.getJarPath()).toURI().toURL());
-      } catch (MalformedURLException e) {
-        e.printStackTrace();
+    // Make sure class path does not contain empty string (home dir)
+    String[] paths = classPath.toString().split(File.pathSeparator);
+
+    List<String> entries = new ArrayList<>();
+
+    for (int i = 0; i < paths.length; i++) {
+      String path = paths[i];
+      if (path != null && !path.trim().isEmpty()) {
+        entries.add(path);
       }
     }
 
-    StringList entries = new StringList();
-    entries.append(System.getProperty("java.class.path").split(File.pathSeparator));
-    entries.append(System.getProperty("java.home") +
-                   File.separator + "lib" + File.separator + "rt.jar");
-
-    String modeClassPath = ((JavaMode) editor.getMode()).getSearchPath();
-    if (modeClassPath != null) {
-      entries.append(modeClassPath);
-    }
-
-    for (URL jarPath : classpathJars) {
-      entries.append(jarPath.getPath());
-    }
-
-//  // Just in case, make sure we don't run off into oblivion
-//  String workingDirectory = System.getProperty("user.dir");
-//  if (entries.removeValue(workingDirectory) != -1) {
-//    System.err.println("user.dir found in classpath");
-//  }
-
-//  // hm, these weren't problematic either
-//  entries.append(System.getProperty("user.dir"));
-//  entries.append("");
-//  entries.print();
-
-    synchronized (astGenerator) {
-      astGenerator.classPath = astGenerator.factory.createFromPath(entries.join(File.pathSeparator));
-      Messages.log("Classpath created " + (astGenerator.classPath != null));
-      Messages.log("Sketch classpath jars loaded.");
-      if (Platform.isMacOS()) {
-        File f = new File(System.getProperty("java.home") +
-                          File.separator + "bundle" +
-                          File.separator + "Classes" +
-                          File.separator + "classes.jar");
-        Messages.log(f.getAbsolutePath() + " | classes.jar found?" + f.exists());
-      } else {
-        File f = new File(System.getProperty("java.home") + File.separator +
-                          "lib" + File.separator + "rt.jar" + File.separator);
-        Messages.log(f.getAbsolutePath() + " | rt.jar found?" + f.exists());
-      }
-    }
+    return entries;
   }
 
 
@@ -771,7 +730,10 @@ public class ErrorCheckerService {
 
 
   protected boolean ignorableSuggestionImport(String impName) {
-    String impNameLc = impName.toLowerCase();
+
+    // TODO: propagate these from last result
+
+    /*String impNameLc = impName.toLowerCase();
 
     for (ImportStatement impS : programImports) {
       if (impNameLc.startsWith(impS.getPackageName().toLowerCase())) {
@@ -783,7 +745,7 @@ public class ErrorCheckerService {
       if (impNameLc.startsWith(impS.getPackageName().toLowerCase())) {
         return false;
       }
-    }
+    }*/
 
     final String include = "include";
     final String exclude = "exclude";
@@ -803,7 +765,7 @@ public class ErrorCheckerService {
     return true;
   }
 
-  static final Map<String, String> COMPILER_OPTIONS;
+  static private final Map<String, String> COMPILER_OPTIONS;
   static {
     Map<String, String> compilerOptions = new HashMap<>();
 
@@ -952,6 +914,10 @@ public class ErrorCheckerService {
    *         int[3] are on TODO
    */
   protected int[] JavaToPdeOffsets(int line, int offset) {
+
+    return new int[] { 0, 0 }; // TODO
+
+    /*
     int codeIndex = 0;
 
     int x = line - mainClassOffset;
@@ -964,7 +930,7 @@ public class ErrorCheckerService {
         ImportStatement is = programImports.get(x);
         // log(is.importName + ", " + is.tab + ", "
         // + is.lineNumber);
-        return new int[] { is.getTab(), is.getLineNumber() };
+        return new int[] { 0, 0 }; // TODO
       } else {
 
         // Some seriously ugly stray error, just can't find the source
@@ -1020,6 +986,7 @@ public class ErrorCheckerService {
       e.printStackTrace();
     }
     return new int[] { codeIndex, x };
+    */
   }
 
 
@@ -1039,6 +1006,11 @@ public class ErrorCheckerService {
    * @return int[0] - tab number, int[1] - line number
    */
   protected int[] calculateTabIndexAndLineNumber(int javalineNumber) {
+
+    return new int[] { 0, 0 }; // TODO
+
+    /*
+
     // String[] lines = {};// = PApplet.split(sourceString, '\n');
     int codeIndex = 0;
 
@@ -1052,7 +1024,7 @@ public class ErrorCheckerService {
         ImportStatement is = programImports.get(x);
         // log(is.importName + ", " + is.tab + ", "
         // + is.lineNumber);
-        return new int[] { is.getTab(), is.getLineNumber() };
+        return new int[] { 0, 0 }; // TODO
       } else {
 
         // Some seriously ugly stray error, just can't find the source
@@ -1105,6 +1077,8 @@ public class ErrorCheckerService {
       System.err.println("Things got messed up in ErrorCheckerService.calculateTabIndexAndLineNumber()");
     }
     return new int[] { codeIndex, x };
+
+    */
   }
 
 
@@ -1112,159 +1086,15 @@ public class ErrorCheckerService {
    * Returns line number of corresponding java source
    */
   protected int getJavaLineNumFromPDElineNum(int tab, int pdeLineNum){
-    int jLineNum = programImports.size() + 1;
+    return 0;
+
+    /*int jLineNum = programImports.size() + 1;
     for (int i = 0; i < tab; i++) {
       SketchCode sc = editor.getSketch().getCode(i);
       int len = Util.countLines(sc.getProgram()) + 1;
       jLineNum += len;
     }
-    return jLineNum;
-  }
-
-
-  /**
-   * Fetches code from the editor tabs and pre-processes it into parsable pure
-   * java source. And there's a difference between parsable and compilable.
-   * XQPrerocessor.java makes this code compilable. <br>
-   * Handles: <li>Removal of import statements <li>Conversion of int(),
-   * char(), etc to PApplet.parseInt(), etc. <li>Replacing '#' with 0xff for
-   * color representation<li>Converts all 'color' datatypes to int
-   * (experimental) <li>Appends class declaration statement after determining
-   * the mode the sketch is in - ACTIVE or STATIC
-   *
-   * @return String - Pure java representation of PDE code. Note that this
-   *         code is not yet compile ready.
-   */
-  protected String preprocessCode() {
-    ArrayList<ImportStatement> scrappedImports = new ArrayList<>();
-    StringBuilder rawCode = new StringBuilder();
-    final Sketch sketch = editor.getSketch();
-    try {
-      for (SketchCode sc : sketch.getCode()) {
-        if (sc.isExtension("pde")) {
-
-          try {
-            if (sketch.getCurrentCode().equals(sc)) {
-              rawCode.append(scrapImportStatements(sc.getDocumentText(),
-                                                   sketch.getCodeIndex(sc),
-                                                   scrappedImports));
-            } else {
-              rawCode.append(scrapImportStatements(sc.getProgram(),
-                                                   sketch.getCodeIndex(sc),
-                                                   scrappedImports));
-            }
-            rawCode.append('\n');
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-          rawCode.append('\n');
-        }
-      }
-
-    } catch (Exception e) {
-      Messages.log("Exception in preprocessCode()");
-    }
-
-    // Swap atomically, might blow up anyway
-    // TODO: this is iterated from multiple threads, synchronize properly
-    this.programImports = scrappedImports;
-
-    String sourceAlt = rawCode.toString();
-    // Replace comments with whitespaces
-    // sourceAlt = scrubComments(sourceAlt);
-
-    // Find all int(*), replace with PApplet.parseInt(*)
-
-    // \bint\s*\(\s*\b , i.e all exclusive "int("
-
-    String dataTypeFunc[] = { "int", "char", "float", "boolean", "byte" };
-
-    for (String dataType : dataTypeFunc) {
-      String dataTypeRegexp = "\\b" + dataType + "\\s*\\(";
-      Pattern pattern = Pattern.compile(dataTypeRegexp);
-      Matcher matcher = pattern.matcher(sourceAlt);
-
-      // while (matcher.find()) {
-      // System.out.print("Start index: " + matcher.start());
-      // log(" End index: " + matcher.end() + " ");
-      // log("-->" + matcher.group() + "<--");
-      // }
-      sourceAlt = matcher.replaceAll("PApplet.parse"
-        + Character.toUpperCase(dataType.charAt(0))
-        + dataType.substring(1) + "(");
-
-    }
-
-    // Find all #[web color] and replace with 0xff[webcolor]
-    // Should be 6 digits only.
-    final String webColorRegexp = "#[A-Fa-f0-9]{6}\\W";
-    Pattern webPattern = Pattern.compile(webColorRegexp);
-    Matcher webMatcher = webPattern.matcher(sourceAlt);
-    while (webMatcher.find()) {
-      // log("Found at: " + webMatcher.start());
-      String found = sourceAlt.substring(webMatcher.start(),
-                                         webMatcher.end());
-      // log("-> " + found);
-      sourceAlt = webMatcher.replaceFirst("0xff" + found.substring(1));
-      webMatcher = webPattern.matcher(sourceAlt);
-    }
-
-    // Replace all color data types with int
-    // Regex, Y U SO powerful?
-    final String colorTypeRegex = "color(?![a-zA-Z0-9_])(?=\\[*)(?!(\\s*\\())";
-    Pattern colorPattern = Pattern.compile(colorTypeRegex);
-    Matcher colorMatcher = colorPattern.matcher(sourceAlt);
-    sourceAlt = colorMatcher.replaceAll("int");
-
-    checkForChangedImports();
-
-    className = editor.getSketch().getName();
-
-    // Check whether the code is being written in STATIC mode
-    PdePreprocessor.Mode mode;
-    try {
-      String uncommented = PdePreprocessor.scrubComments(sourceAlt);
-      mode = PdePreprocessor.parseMode(uncommented);
-    } catch (RuntimeException r) {
-      String uncommented = PdePreprocessor.scrubComments(sourceAlt + "*/");
-      mode = PdePreprocessor.parseMode(uncommented);
-    }
-
-    StringBuilder sb = new StringBuilder();
-
-    // Imports
-    sb.append(xqpreproc.prepareImports(scrappedImports));
-
-    // Header
-    if (mode != PdePreprocessor.Mode.JAVA) {
-      sb.append("public class ").append(className).append(" extends PApplet {\n");
-      if (mode == PdePreprocessor.Mode.STATIC) {
-        sb.append("public void setup() {\n");
-      }
-    }
-
-    // Grab the offset before adding contents of the editor
-    mainClassOffset = 1;
-    for (int i = 0; i < sb.length(); i++) {
-      if (sb.charAt(i) == '\n') {
-        mainClassOffset++;
-      }
-    }
-
-    // Editor content
-    sb.append(sourceAlt);
-
-    // Footer
-    if (mode != PdePreprocessor.Mode.JAVA) {
-      if (mode == PdePreprocessor.Mode.STATIC) {
-        // no noLoop() here so it does not tell you
-        // "can't invoke noLoop() on obj" when you type "obj."
-        sb.append("\n}");
-      }
-      sb.append("\n}");
-    }
-
-    return substituteUnicode(sb.toString());
+    return jLineNum;*/
   }
 
 
@@ -1382,26 +1212,19 @@ public class ErrorCheckerService {
    * Checks if import statements in the sketch have changed. If they have,
    * compiler classpath needs to be updated.
    */
-  protected void checkForChangedImports() {
-//     log("Imports: " + programImports.size() +
-//     " Prev Imp: "
-//     + previousImports.size());
-    if (programImports.size() != previousImports.size()) {
-      // log(1);
-      loadCompClass = true;
-      previousImports = programImports;
+  protected static boolean checkIfImportsChanged(List<ImportStatement> prevImports,
+                                                 List<ImportStatement> imports) {
+    if (imports.size() != prevImports.size()) {
+      return true;
     } else {
-      for (int i = 0; i < programImports.size(); i++) {
-        if (!programImports.get(i).getImportName().equals(previousImports
-            .get(i).getImportName())) {
-          // log(2);
-          loadCompClass = true;
-          previousImports = programImports;
-          break;
+      int count = imports.size();
+      for (int i = 0; i < count; i++) {
+        if (!imports.get(i).isSameAs(prevImports.get(i))) {
+          return true;
         }
       }
     }
-    // log("load..? " + loadCompClass);
+    return false;
   }
 
   protected int pdeImportsCount;
@@ -1409,107 +1232,6 @@ public class ErrorCheckerService {
   public int getPdeImportsCount() {
     return pdeImportsCount;
   }
-
-  /**
-   * Removes import statements from tabSource, replaces each with white spaces
-   * and adds the import to the list of program imports
-   *
-   * @param tabProgram
-   *            - Code in a tab
-   * @param tabNumber
-   *            - index of the tab
-   * @return String - Tab code with imports replaced with white spaces
-   */
-  protected String scrapImportStatements(String tabProgram,
-                                         int tabNumber,
-                                         List<ImportStatement> outImports) {
-    //TODO: Commented out imports are still detected as main imports.
-    pdeImportsCount = 0;
-    String tabSource = tabProgram;
-    do {
-      // log("-->\n" + sourceAlt + "\n<--");
-      String[] pieces = PApplet.match(tabSource, IMPORT_REGEX);
-
-      // Stop the loop if we've removed all the import lines
-      if (pieces == null) {
-        break;
-      }
-
-      String piece = pieces[1] + pieces[2] + pieces[3];
-      int len = piece.length(); // how much to trim out
-
-      // programImports.add(piece); // the package name
-
-      // find index of this import in the program
-      int idx = tabSource.indexOf(piece);
-      // System.out.print("Import -> " + piece);
-      // log(" - "
-      // + Base.countLines(tabSource.substring(0, idx)) + " tab "
-      // + tabNumber);
-      int lineCount = Util.countLines(tabSource.substring(0, idx));
-      outImports.add(new ImportStatement(piece, tabNumber, lineCount));
-      // Remove the import from the main program
-      // Substitute with white spaces
-      String whiteSpace = "";
-      for (int j = 0; j < piece.length(); j++) {
-        whiteSpace += " ";
-      }
-      tabSource = tabSource.substring(0, idx) + whiteSpace
-        + tabSource.substring(idx + len);
-      pdeImportsCount++;
-    } while (true);
-    // log(tabSource);
-    return tabSource;
-  }
-
-  /**
-   * Replaces non-ascii characters with their unicode escape sequences and
-   * stuff. Used as it is from
-   * processing.src.processing.mode.java.preproc.PdePreprocessor
-   *
-   * @param program
-   *            - Input String containing non ascii characters
-   * @return String - Converted String
-   */
-  protected static String substituteUnicode(String program) {
-    // check for non-ascii chars (these will be/must be in unicode format)
-    char p[] = program.toCharArray();
-    int unicodeCount = 0;
-    for (int i = 0; i < p.length; i++) {
-      if (p[i] > 127) {
-        unicodeCount++;
-      }
-    }
-    if (unicodeCount == 0) {
-      return program;
-    }
-    // if non-ascii chars are in there, convert to unicode escapes
-    // add unicodeCount * 5.. replacing each unicode char
-    // with six digit uXXXX sequence (xxxx is in hex)
-    // (except for nbsp chars which will be a replaced with a space)
-    int index = 0;
-    char p2[] = new char[p.length + unicodeCount * 5];
-    for (int i = 0; i < p.length; i++) {
-      if (p[i] < 128) {
-        p2[index++] = p[i];
-      } else if (p[i] == 160) { // unicode for non-breaking space
-        p2[index++] = ' ';
-      } else {
-        int c = p[i];
-        p2[index++] = '\\';
-        p2[index++] = 'u';
-        char str[] = Integer.toHexString(c).toCharArray();
-        // add leading zeros, so that the length is 4
-        // for (int i = 0; i < 4 - str.length; i++) p2[index++] = '0';
-        for (int m = 0; m < 4 - str.length; m++)
-          p2[index++] = '0';
-        System.arraycopy(str, 0, p2, index, str.length);
-        index += str.length;
-      }
-    }
-    return new String(p2, 0, index);
-  }
-
 
   public void handleErrorCheckingToggle() {
     if (!JavaMode.errorCheckEnabled) {
@@ -1524,11 +1246,6 @@ public class ErrorCheckerService {
       Messages.log(editor.getSketch().getName() + " Error Checker enabled.");
       request();
     }
-  }
-
-
-  public ArrayList<ImportStatement> getProgramImports() {
-    return programImports;
   }
 
 
