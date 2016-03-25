@@ -229,9 +229,9 @@ public class SourceUtils {
   }
 
 
-  static public String scrubComments(String p) {
+  static public String scrubCommentsAndStrings(String p) {
     StringBuilder sb = new StringBuilder(p);
-    scrubComments(sb);
+    scrubCommentsAndStrings(sb);
     return sb.toString();
   }
 
@@ -239,7 +239,7 @@ public class SourceUtils {
    * Replace all commented portions of a given String as spaces.
    * Utility function used here and in the preprocessor.
    */
-  static public void scrubComments(StringBuilder p) {
+  static public void scrubCommentsAndStrings(StringBuilder p) {
     // Track quotes to avoid problems with code like: String t = "*/*";
     // http://code.google.com/p/processing/issues/detail?id=1435
     boolean insideQuote = false;
@@ -285,12 +285,23 @@ public class SourceUtils {
           throw new RuntimeException("Missing the */ from the end of a " +
                                          "/* comment */");
         }
-      } else if (p.charAt(index) == '"' && index > 0 && p.charAt(index-1) != '\\') {
-        insideQuote = !insideQuote;
-        index++;
-
-      } else {  // any old character, move along
-        index++;
+      } else {
+        boolean isChar = index > 0 && p.charAt(index-1) == '\\';
+        if ((insideQuote && p.charAt(index) == '\n') ||
+            (p.charAt(index) == '"' && !isChar)) {
+          insideQuote = !insideQuote;
+          index++;
+        } else if (insideQuote && index < p.length() - 1 &&
+            p.charAt(index) == '\\' && p.charAt(index+1) == '"') {
+          p.setCharAt(index, ' ');
+          p.setCharAt(index + 1, ' ');
+          index++;
+        } else if (insideQuote) {
+          p.setCharAt(index, ' ');
+          index++;
+        } else {  // any old character, move along
+          index++;
+        }
       }
     }
   }

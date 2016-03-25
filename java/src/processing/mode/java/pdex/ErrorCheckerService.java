@@ -386,7 +386,7 @@ public class ErrorCheckerService {
     SourceUtils.substituteUnicode(rawCode);
 
     try {
-      SourceUtils.scrubComments(rawCode);
+      SourceUtils.scrubCommentsAndStrings(rawCode);
     } catch (RuntimeException e) {
       // TODO: Unterminated block comment: add to errors
       // Continue normally, comments were scrubbed
