@@ -225,7 +225,7 @@ public class SourceMapping {
 
 
   private void checkApplied() {
-    if (applied) throw new RuntimeException("this mapping was not applied yet");
+    if (!applied) throw new RuntimeException("this mapping was not applied yet");
   }
 
 
