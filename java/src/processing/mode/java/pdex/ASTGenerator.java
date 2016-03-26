@@ -134,6 +134,7 @@ public class ASTGenerator {
   /**
    * Used for searching for package declaration of a class
    */
+  // TODO: get this from Error checker result
   protected ClassPath classPath;
 
 
@@ -3254,7 +3255,7 @@ public class ASTGenerator {
     Messages.log("* getJavaSourceCodeLine");
     try {
       PlainDocument javaSource = new PlainDocument();
-      javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
+      javaSource.insertString(0, errorCheckerService.latestResult.preprocessedCode, null);
       Element lineElement = javaSource.getDefaultRootElement()
           .getElement(javaLineNumber - 1);
       if (lineElement == null) {
@@ -3283,7 +3284,7 @@ public class ASTGenerator {
     Messages.log("* getJavaSourceCodeElement");
     try {
       PlainDocument javaSource = new PlainDocument();
-      javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
+      javaSource.insertString(0, errorCheckerService.latestResult.preprocessedCode, null);
       Element lineElement = javaSource.getDefaultRootElement()
           .getElement(javaLineNumber - 1);
       if (lineElement == null) {
@@ -3555,7 +3556,7 @@ public class ASTGenerator {
                   .calculateTabIndexAndLineNumber(javaLineNumber);
               PlainDocument javaSource = new PlainDocument();
               javaSource.insertString(0, editor.getErrorChecker()
-                  .lastCodeCheckResult.sourceCode, null);
+                  .latestResult.preprocessedCode, null);
               Element lineElement = javaSource.getDefaultRootElement()
                   .getElement(javaLineNumber - 1);
               if (lineElement == null) {
