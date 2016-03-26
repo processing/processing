@@ -54,6 +54,7 @@ import javax.swing.text.Element;
 import javax.swing.text.PlainDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -83,6 +84,7 @@ import processing.app.Util;
 import processing.app.ui.Editor;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.ErrorTable;
+import processing.core.PApplet;
 import processing.data.IntList;
 import processing.data.StringList;
 import processing.mode.java.JavaMode;
@@ -222,8 +224,8 @@ public class ErrorCheckerService {
                     public void run() {
                       synchronized (astGenerator) {
                         astGenerator.updateAST(latestResult.compilationUnit, tree);
+                        astGenerator.classPath = result.classPath;
                       }
-                      calcPdeOffsetsForProbList(result);
                       updateErrorTable(result.problems);
                       editor.updateErrorBar(result.problems);
                       editor.getTextArea().repaint();
@@ -358,9 +360,6 @@ public class ErrorCheckerService {
     final List<ImportStatement> programImports = new ArrayList<>();
     final List<ImportStatement> coreAndDefaultImports = new ArrayList<>();
     final List<ImportStatement> codeFolderImports = new ArrayList<>();
-
-
-
   }
 
   protected PreprocessedSketch checkCode() {
@@ -376,7 +375,6 @@ public class ErrorCheckerService {
     String className = result.className = sketch.getName();
 
     StringBuilder workBuffer = new StringBuilder();
-
 
     // Combine code into one buffer
     IntList tabStartsList = new IntList();
@@ -453,6 +451,8 @@ public class ErrorCheckerService {
       syntaxMapping.addAll(SourceUtils.replaceHexLiterals(workBuffer));
       syntaxMapping.addAll(SourceUtils.wrapSketch(mode, className, workBuffer.length()));
 
+      // TODO: all imports are parsed now, check if they need to be filtered somehow
+
       // Transform code
       syntaxStage = syntaxMapping.apply(pdeStage);
 
@@ -475,7 +475,7 @@ public class ErrorCheckerService {
 
     }}
 
-    if (result.hasSyntaxErrors) {
+    if (!result.hasSyntaxErrors) {
 
       {{ // COMPILATION CHECK
 
@@ -549,43 +549,69 @@ public class ErrorCheckerService {
       }}
     }
 
-    if (!syntaxProblems.isEmpty()) {
-      for (IProblem problem : syntaxProblems) {
+    List<Problem> mappedSyntaxProblems =
+        mapProblems(syntaxProblems, result.tabStarts, result.pdeCode,
+                    result.syntaxMapping);
 
-        // Hide a useless error which is produced when a line ends with
-        // an identifier without a semicolon. "Missing a semicolon" is
-        // also produced and is preferred over this one.
-        // (Syntax error, insert ":: IdentifierOrNew" to complete Expression)
-        // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=405780
-        if (problem.getMessage().contains("Syntax error, insert \":: IdentifierOrNew\"")) {
-          continue;
-        }
+    List<Problem> mappedCompilationProblems =
+        mapProblems(compilationProblems, result.tabStarts, result.pdeCode,
+                    result.compilationMapping, result.syntaxMapping);
 
-        int start = problem.getSourceStart();
-        int end = problem.getSourceEnd() - 1;
+    result.problems.addAll(mappedSyntaxProblems);
+    result.problems.addAll(mappedCompilationProblems);
 
-        int mappedStart = result.syntaxMapping.getInputOffset(start);
-        int mappedEnd = result.syntaxMapping.getInputOffset(end);
+    return result;
+  }
 
-        int tab = Arrays.binarySearch(result.tabStarts, mappedStart);
-        if (tab < 0) {
-          tab = -(tab + 1) - 1;
-        }
 
-        int tabStart = result.tabStarts[tab];
+  protected static List<Problem> mapProblems(List<IProblem> problems,
+                                             int[] tabStarts, String pdeCode,
+                                             SourceMapping... mappings) {
 
-        int line = Util.countLines(result.pdeCode.substring(tabStart, mappedStart));
+    List<Problem> result = new ArrayList<>();
 
-        Problem p = new Problem(problem, tab, line - 1);
-        if (p.isWarning() && !JavaMode.warningsEnabled) {
-          continue;
-        }
-        result.problems.add(p);
+    for (IProblem problem : problems) {
+      if (problem.isWarning() && !JavaMode.warningsEnabled) continue;
+
+      // Hide a useless error which is produced when a line ends with
+      // an identifier without a semicolon. "Missing a semicolon" is
+      // also produced and is preferred over this one.
+      // (Syntax error, insert ":: IdentifierOrNew" to complete Expression)
+      // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=405780
+      if (problem.getMessage().contains("Syntax error, insert \":: IdentifierOrNew\"")) {
+        continue;
       }
+
+      int start = problem.getSourceStart();
+      int stop = problem.getSourceEnd(); // inclusive
+
+      for (SourceMapping mapping : mappings) {
+        start = mapping.getInputOffset(start);
+        stop = mapping.getInputOffset(stop);
+      }
+
+      int pdeStart = PApplet.constrain(start, 0, pdeCode.length()-1);
+      int pdeStop = PApplet.constrain(stop + 1, 1, pdeCode.length()); // +1 for exclusive end
+
+      // TODO: maybe optimize this, some people use tons of tabs
+      int tab = Arrays.binarySearch(tabStarts, pdeStart);
+      if (tab < 0) {
+        tab = -(tab + 1) - 1;
+      }
+
+      int tabStart = tabStarts[tab];
+
+      // TODO: quick hack; make it smart, fast & beautiful later
+      int line = Util.countLines(pdeCode.substring(tabStart, pdeStart)) - 1;
+
+      Problem p = new Problem(problem, tab, line);
+      p.setPDEOffsets(pdeStart - tabStart, pdeStop - tabStart);
+      result.add(p);
     }
 
     return result;
   }
+
 
   protected static CompilationUnit makeAST(ASTParser parser,
                                            char[] source,
@@ -598,13 +624,11 @@ public class ErrorCheckerService {
     return (CompilationUnit) parser.createAST(null);
   }
 
+
   public boolean hasSyntaxErrors(){
     return latestResult.hasSyntaxErrors;
   }
 
-  public boolean hasErrors(){
-    return latestResult.hasSyntaxErrors || latestResult.hasCompilationErrors;
-  }
 
   /**
    * Performs compiler error check.
@@ -649,68 +673,6 @@ public class ErrorCheckerService {
 
     compiler.compile(new ICompilationUnit[]{unit});
     return problems;
-  }
-
-
-  /**
-   * Calculates PDE Offsets from Java Offsets for Problems
-   */
-  private void calcPdeOffsetsForProbList(PreprocessedSketch preprocessedSketch) {
-    try {
-      PlainDocument javaSource = new PlainDocument();
-
-      javaSource.insertString(0, preprocessedSketch.preprocessedCode, null);
-      // Code in pde tabs stored as PlainDocument
-      List<Document> pdeTabs = new ArrayList<>();
-      for (SketchCode sc : editor.getSketch().getCode()) {
-        PlainDocument tab = new PlainDocument();
-        if (editor.getSketch().getCurrentCode().equals(sc)) {
-          tab.insertString(0, sc.getDocumentText(), null);
-        } else {
-          tab.insertString(0, sc.getProgram(), null);
-        }
-        pdeTabs.add(tab);
-      }
-
-      for (Problem p : preprocessedSketch.problems) {
-        int prbStart = p.getIProblem().getSourceStart();
-        int prbEnd = p.getIProblem().getSourceEnd();
-        int javaLineNumber = p.getSourceLineNumber() - 1;
-        Element lineElement =
-          javaSource.getDefaultRootElement().getElement(javaLineNumber);
-        if (lineElement == null) {
-          Messages.log("calcPDEOffsetsForProbList(): " +
-                   "Couldn't fetch Java line number " +
-                   javaLineNumber + "\nProblem: " + p);
-          p.setPDEOffsets(-1, -1);
-          continue;
-        }
-        int lineStart = lineElement.getStartOffset();
-        int lineLength = lineElement.getEndOffset() - lineStart;
-        String javaLine = javaSource.getText(lineStart, lineLength);
-
-        Document doc = pdeTabs.get(p.getTabIndex());
-        Element pdeLineElement =
-          doc.getDefaultRootElement().getElement(p.getLineNumber());
-        if (pdeLineElement == null) {
-          Messages.log("calcPDEOffsetsForProbList(): " +
-                   "Couldn't fetch pde line number " +
-                   javaLineNumber + "\nProblem: " + p);
-          p.setPDEOffsets(-1,-1);
-          continue;
-        }
-        int pdeLineStart = pdeLineElement.getStartOffset();
-        int pdeLineLength = pdeLineElement.getEndOffset() - pdeLineStart;
-        String pdeLine =
-          pdeTabs.get(p.getTabIndex()).getText(pdeLineStart, pdeLineLength);
-        OffsetMatcher ofm = new OffsetMatcher(pdeLine, javaLine);
-        int pdeOffset =
-          ofm.getPdeOffForJavaOff(prbStart - lineStart, prbEnd - prbStart + 1);
-        p.setPDEOffsets(pdeOffset, pdeOffset + prbEnd - prbStart);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
 
@@ -1162,22 +1124,6 @@ public class ErrorCheckerService {
 
 
   /**
-   * Returns line number of corresponding java source
-   */
-  protected int getJavaLineNumFromPDElineNum(int tab, int pdeLineNum){
-    return 0;
-
-    /*int jLineNum = programImports.size() + 1;
-    for (int i = 0; i < tab; i++) {
-      SketchCode sc = editor.getSketch().getCode(i);
-      int len = Util.countLines(sc.getProgram()) + 1;
-      jLineNum += len;
-    }
-    return jLineNum;*/
-  }
-
-
-  /**
    * Now defunct.
    * The super method that highlights any ASTNode in the pde editor =D
    * @param awrap
@@ -1209,45 +1155,28 @@ public class ErrorCheckerService {
   }
 
 
+  // TODO: does this belong here?
+  // Thread: EDT
   public void scrollToErrorLine(Problem p) {
-    if (editor == null) {
-      return;
-    }
-    if (p == null)
-      return;
-    try {
-      if(p.getPDELineStartOffset() == -1 || p.getPDELineStopOffset() == -1){
-        // bad offsets, don't highlight, just scroll.
-        editor.toFront();
-        editor.getSketch().setCurrentCode(p.getTabIndex());
-      }
-      else {
-        astGenerator.highlightPDECode(p.getTabIndex(),
-                                      p.getLineNumber(),
-                                      p.getPDELineStartOffset(),
-                                      (p.getPDELineStopOffset()
-                                          - p.getPDELineStartOffset() + 1));
-      }
+    if (editor == null) return;
+    if (p == null) return;
 
-      // scroll, but within boundaries
-      // It's also a bit silly that if parameters to scrollTo() are out of range,
-      // a BadLocation Exception is thrown internally and caught in JTextArea AND
-      // even the stack trace gets printed! W/o letting me catch it later! SMH
-      // That's because 1) you can prevent it by not causing the BLE,
-      // and 2) there are so many JEditSyntax bugs that actually throwing the
-      // exception all the time would cause the editor to shut down over
-      // trivial/recoverable quirks. It's the least bad option. [fry]
-      final Document doc = editor.getTextArea().getDocument();
-      final int lineCount = countLines(doc.getText(0, doc.getLength()));
-      if (p.getLineNumber() < lineCount && p.getLineNumber() >= 0) {
-        editor.getTextArea().scrollTo(p.getLineNumber(), 0);
-      }
-      editor.repaint();
+    // Switch to tab
+    editor.toFront();
+    editor.getSketch().setCurrentCode(p.getTabIndex());
 
-    } catch (Exception e) {
-      Messages.loge("Error while selecting text in scrollToErrorLine(), for problem: " + p, e);
-    }
-    // log("---");
+    // Highlight the code
+    int startOffset = p.getStartOffset();
+    int stopOffset = p.getStopOffset();
+
+    int length = editor.getTextArea().getDocumentLength();
+    startOffset = PApplet.constrain(startOffset, 0, length);
+    stopOffset = PApplet.constrain(stopOffset, 0, length);
+    editor.getTextArea().select(startOffset, stopOffset);
+
+    // Scroll to error line
+    editor.getTextArea().scrollToCaret();
+    editor.repaint();
   }
 
   /**

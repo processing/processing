@@ -360,10 +360,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
     if (marker != null) {
       Problem problem = marker.getProblem();
 
-      int offset = textArea.getLineStartOffset(problem.getLineNumber());
-
-      int startOffset = offset + problem.getPDELineStartOffset();
-      int stopOffset = offset + problem.getPDELineStopOffset() + 1;
+      int startOffset = problem.getStartOffset();
+      int stopOffset = problem.getStopOffset();
 
       int lineOffset = textArea.getLineStartOffset(line);
 
@@ -450,13 +448,11 @@ public class JavaTextAreaPainter extends TextAreaPainter
       if (marker != null) {
         Problem problem = marker.getProblem();
 
-        int lineOffset = textArea.getLineStartOffset(problem.getLineNumber());
-
         int lineStart = textArea.getLineStartOffset(line);
         int lineEnd = textArea.getLineStopOffset(line);
 
-        int errorStart = lineOffset + problem.getPDELineStartOffset();
-        int errorEnd = lineOffset + problem.getPDELineStopOffset() + 1;
+        int errorStart = problem.getStartOffset();
+        int errorEnd = problem.getStopOffset() + 1;
 
         int startOffset = Math.max(errorStart, lineStart) - lineStart;
         int stopOffset = Math.min(errorEnd, lineEnd) - lineStart;

@@ -2519,7 +2519,7 @@ public class JavaEditor extends Editor {
     for (LineMarker emarker : errorPoints) {
       Problem p = emarker.getProblem();
       int pStartLine = p.getLineNumber();
-      int pEndOffset = textArea.getLineStartOffset(pStartLine) + p.getPDELineStopOffset() + 1;
+      int pEndOffset = p.getStopOffset();
       int pEndLine = textArea.getLineOfOffset(pEndOffset);
       if (line >= pStartLine && line <= pEndLine) {
         return emarker;

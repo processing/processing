@@ -99,6 +99,7 @@ import processing.app.Util;
 import processing.app.syntax.JEditTextArea;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.Toolkit;
+import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
 import processing.mode.java.preproc.PdePreprocessor;
 
@@ -134,7 +135,6 @@ public class ASTGenerator {
   /**
    * Used for searching for package declaration of a class
    */
-  // TODO: get this from Error checker result
   protected ClassPath classPath;
 
 
@@ -1348,10 +1348,11 @@ public class ASTGenerator {
       }
 //      Base.loge(getNodeAsString(awrap.getNode()) + ", T:" + pdeOffsets[i][0]
 //          + ", L:" + pdeOffsets[i][1] + ", O:" + pdeOffsets[i][2]);
-      highlightPDECode(pdeOffsets[i][0],
+      // TODO: fix this line after fixing offsets in node wrapper
+      /*highlightPDECode(pdeOffsets[i][0],
                        pdeOffsets[i][1], pdeOffsets[i][2]
                            + off, awrap.getNode()
-                           .toString().length());
+                           .toString().length());*/
       //int k = JOptionPane.showConfirmDialog(new JFrame(), "Rename?","", JOptionPane.INFORMATION_MESSAGE);
       editor.getTextArea().setSelectedText(newName);
     }
@@ -3194,27 +3195,6 @@ public class ASTGenerator {
     }
     return -1;
   }
-
-
-  /**
-   * Highlights text in the editor
-   * @param tab
-   * @param lineNumber
-   * @param lineStartWSOffset - line start offset including initial white space
-   * @param length
-   */
-  public void highlightPDECode(int tab, int lineNumber, int lineStartWSOffset,
-                               int length) {
-    Messages.log("* highlightPDECode");
-
-//    log("ASTGen.highlightPDECode: T " + tab + ",L: " + lineNumber + ",LSO: "
-//        + lineStartWSOffset + ",Len: " + length);
-    editor.toFront();
-    editor.getSketch().setCurrentCode(tab);
-    lineStartWSOffset += editor.getTextArea().getLineStartOffset(lineNumber);
-    editor.getTextArea().select(lineStartWSOffset, lineStartWSOffset + length);
-  }
-
 
   /**
    * Converts pde line number to java line number
