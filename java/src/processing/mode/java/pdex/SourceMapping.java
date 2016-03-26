@@ -29,27 +29,6 @@ public class SourceMapping {
     }
   };
 
-  private static final Comparator<Edit> INPUT_OFFSET_COMP_LEX = new Comparator<Edit>() {
-    @Override
-    public int compare(Edit o1, Edit o2) {
-      int off = Integer.compare(o1.fromOffset, o2.fromOffset);
-      return (off != 0)
-          ? off
-          : Integer.compare(o1.fromLength, o2.fromLength);
-    }
-  };
-
-  private static final Comparator<Edit> OUTPUT_OFFSET_COMP_LEX = new Comparator<Edit>() {
-    @Override
-    public int compare(Edit o1, Edit o2) {
-      int off = Integer.compare(o1.toOffset, o2.toOffset);
-      return (off != 0)
-          ? off
-          : Integer.compare(o1.toLength, o2.toLength);
-    }
-  };
-
-
   private boolean applied;
 
   private List<Edit> edits = new ArrayList<>();
