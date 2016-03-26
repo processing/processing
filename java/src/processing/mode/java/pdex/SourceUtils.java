@@ -136,7 +136,7 @@ public class SourceUtils {
   }
 
 
-  public static List<Edit> addPublicToTopLeveMethods(CompilationUnit cu) {
+  public static List<Edit> addPublicToTopLevelMethods(CompilationUnit cu) {
     List<Edit> edits = new ArrayList<>();
 
     // Add public modifier to top level methods

@@ -436,7 +436,7 @@ public class ErrorCheckerService {
 
       SourceMapping mapping2 = new SourceMapping();
 
-      mapping2.addAll(SourceUtils.addPublicToTopLeveMethods(result.compilationUnit));
+      mapping2.addAll(SourceUtils.addPublicToTopLevelMethods(result.compilationUnit));
       mapping2.addAll(SourceUtils.replaceColorAndFixFloats(result.compilationUnit));
 
       result.sourceCode = mapping2.apply(result.sourceCode);
