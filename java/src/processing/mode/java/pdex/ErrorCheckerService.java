@@ -529,7 +529,8 @@ public class ErrorCheckerService {
         try {
           compilationProblems =
               compileAndReturnProblems(className, javaStageChars,
-                                       COMPILER_OPTIONS, classLoader);
+                                       COMPILER_OPTIONS, classLoader,
+                                       classPath);
         } catch (NoClassDefFoundError e) {
           // TODO: can this happen?
           e.printStackTrace();
@@ -641,7 +642,8 @@ public class ErrorCheckerService {
   static public List<IProblem> compileAndReturnProblems(String sourceName,
                                                         char[] source,
                                                         Map<String, String> options,
-                                                        URLClassLoader classLoader) {
+                                                        URLClassLoader classLoader,
+                                                        ClassPath classPath) {
     final List<IProblem> problems = new ArrayList<>();
 
     ICompilerRequestor requestor = new ICompilerRequestor() {
@@ -665,7 +667,7 @@ public class ErrorCheckerService {
     };
 
     org.eclipse.jdt.internal.compiler.Compiler compiler =
-        new Compiler(new NameEnvironmentImpl(classLoader),
+        new Compiler(new NameEnvironmentImpl(classLoader, classPath),
                      DefaultErrorHandlingPolicies.proceedWithAllProblems(),
                      new CompilerOptions(options),
                      requestor,
@@ -1262,9 +1264,11 @@ public class ErrorCheckerService {
   private static class NameEnvironmentImpl implements INameEnvironment {
 
     private final ClassLoader classLoader;
+    private final ClassPath classPath;
 
-    NameEnvironmentImpl(ClassLoader classLoader) {
+    NameEnvironmentImpl(ClassLoader classLoader, ClassPath classPath) {
       this.classLoader = classLoader;
+      this.classPath = classPath;
     }
 
 
@@ -1292,12 +1296,7 @@ public class ErrorCheckerService {
         if (fullName.length() > 0) fullName += ".";
         fullName += new String(packageName);
       }
-      if (readClassFile(fullName, classLoader) != null) return false;
-      try {
-        return (classLoader.loadClass(fullName) == null);
-      } catch (ClassNotFoundException e) {
-        return true;
-      }
+      return classPath.isPackage(fullName.replace('.', '/'));
     }
 
 
