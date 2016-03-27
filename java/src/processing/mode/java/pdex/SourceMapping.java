@@ -85,15 +85,7 @@ public class SourceMapping {
     // Edits sorted by output offsets
     Collections.sort(outEdits, OUTPUT_OFFSET_COMP);
 
-    // Check input edits for overlaps
-    for (int i = 0, lastEnd = 0; i < editCount; i++) {
-      Edit ch = inEdits.get(i);
-      if (ch.fromOffset < lastEnd) {
-        String error = "Edits overlap in input! " + inEdits.get(i - 1) + ", " + ch;
-        throw new IndexOutOfBoundsException(error);
-      }
-      lastEnd = ch.fromOffset + ch.fromLength;
-    }
+    // TODO: add some validation
 
     // Input
     ListIterator<Edit> inIt = inEdits.listIterator();
