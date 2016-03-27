@@ -699,7 +699,9 @@ public class ErrorCheckerService {
         // Try to get the library classpath and add it to the list
         try {
           Library library = mode.getLibrary(entry);
-          classPath.append(library.getClassPath());
+          if (library != null) {
+            classPath.append(library.getClassPath());
+          }
         } catch (SketchException e) {
           // More libraries competing, ignore
         }
