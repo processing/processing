@@ -860,9 +860,8 @@ public class ErrorCheckerService {
       ErrorTable table = editor.getErrorTable();
       table.clearRows();
 
-//      String[][] errorData = new String[problemsList.size()][3];
-//      int index = 0;
-//      for (int i = 0; i < problemsList.size(); i++) {
+      Map<String, String[]> suggestions = new HashMap<>();
+
       Sketch sketch = editor.getSketch();
       for (Problem p : problems) {
         String message = p.getMessage();
@@ -871,14 +870,15 @@ public class ErrorCheckerService {
             String[] args = p.getIProblem().getArguments();
             if (args.length > 0) {
               String missingClass = args[0];
-              String[] si;
-              synchronized (astGenerator) {
-                si = astGenerator.getSuggestImports(missingClass);
+              String[] si = suggestions.get(missingClass);
+              if (si == null) {
+                synchronized (astGenerator) {
+                  si = astGenerator.getSuggestImports(missingClass);
+                }
+                suggestions.put(missingClass, si);
               }
               if (si != null && si.length > 0) {
                 p.setImportSuggestions(si);
-//                errorData[index][0] = "<html>" + p.getMessage() +
-//                  " (<font color=#0000ff><u>Import Suggestions available</u></font>)</html>";
                 message += " (double-click for suggestions)";
               }
             }

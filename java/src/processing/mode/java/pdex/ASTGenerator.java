@@ -99,8 +99,8 @@ import processing.app.Util;
 import processing.app.syntax.JEditTextArea;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.Toolkit;
-import processing.core.PApplet;
 import processing.mode.java.JavaEditor;
+import processing.mode.java.JavaMode;
 import processing.mode.java.preproc.PdePreprocessor;
 
 import com.google.classpath.ClassPath;
@@ -2485,20 +2485,54 @@ public class ASTGenerator {
       return null;
     }
 
-    log("Looking for class " + className);
-    RegExpResourceFilter regf = new RegExpResourceFilter(Pattern.compile(".*"),
-                                                         Pattern.compile(className + ".class",
-                                                                      Pattern.CASE_INSENSITIVE));
-    // TODO once saw NPE here...possible for classPath to be null? [fry 150808]
-    String[] resources = classPath.findResources("", regf);
-    List<String> candidates = new ArrayList<>();
-    Collections.addAll(candidates, resources);
+    // TODO: make sure search class path is complete,
+    //       prepare it beforehand and reuse it
+    //
+    //       this in not the same as sketch class path!
+    //       should include:
+    //       - all contributed libraries
+    //       - core libraries
+    //       - code folder
+    //       - mode search path
+    //       - Java classpath
 
-    // log("Couldn't find import for class " + className);
+    log("Looking for class " + className);
+    RegExpResourceFilter regf =
+        new RegExpResourceFilter(Pattern.compile(".*"),
+                                 Pattern.compile("(.*\\$)?" + className + "\\.class",
+                                 Pattern.CASE_INSENSITIVE));
+    // TODO once saw NPE here...possible for classPath to be null? [fry 150808]
+    List<String> candidates = new ArrayList<>();
+
+
+    { // Mode search path
+      String searchPath = ((JavaMode) editor.getMode()).getSearchPath();
+
+      // Make sure class path does not contain empty string (home dir)
+      String[] paths = searchPath.split(File.pathSeparator);
+
+      List<String> entries = new ArrayList<>();
+
+      for (int i = 0; i < paths.length; i++) {
+        String path = paths[i];
+        if (path != null && !path.trim().isEmpty()) {
+          entries.add(path);
+        }
+      }
+
+      String[] pathArray = entries.toArray(new String[entries.size()]);
+      classPath = factory.createFromPaths(pathArray);
+
+      String[] resources = classPath.findResources("", regf);
+      for (String res : resources) {
+        candidates.add(res);
+        log("Res: " + res);
+      }
+    }
 
     for (Library lib : editor.getMode().contribLibraries) {
       ClassPath cp = factory.createFromPath(lib.getClassPath());
-      resources = cp.findResources("", regf);
+      String[] resources = cp.findResources("", regf);
       for (String res : resources) {
         candidates.add(res);
         log("Res: " + res);
@@ -2510,23 +2544,18 @@ public class ASTGenerator {
       // get a list of .jar files in the "code" folder
       // (class files in subfolders should also be picked up)
       ClassPath cp = factory.createFromPath(Util.contentsToClassPath(codeFolder));
-      resources = cp.findResources("", regf);
+      String[] resources = cp.findResources("", regf);
       for (String res : resources) {
         candidates.add(res);
         log("Res: " + res);
       }
     }
 
-    resources = new String[candidates.size()];
+    String[] resources = new String[candidates.size()];
     for (int i = 0; i < resources.length; i++) {
-      resources[i] = candidates.get(i).replace('/', '.')
+      resources[i] = candidates.get(i).replace('/', '.').replace('$', '.')
           .substring(0, candidates.get(i).length() - 6);
     }
-
-//    ArrayList<String> ans = new ArrayList<String>();
-//    for (int i = 0; i < resources.length; i++) {
-//      ans.add(resources[i]);
-//    }
 
     return resources;
   }
