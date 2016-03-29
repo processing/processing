@@ -22,6 +22,7 @@ package processing.mode.java.pdex;
 
 import com.google.classpath.ClassPath;
 import com.google.classpath.ClassPathFactory;
+import com.google.classpath.RegExpResourceFilter;
 
 import java.awt.EventQueue;
 import java.io.ByteArrayOutputStream;
@@ -45,16 +46,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.PlainDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -91,8 +90,6 @@ import processing.mode.java.JavaMode;
 import processing.mode.java.JavaEditor;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PdePreprocessor.Mode;
-
-import static processing.app.Util.countLines;
 
 
 /**
@@ -204,8 +201,6 @@ public class ErrorCheckerService {
           final DefaultMutableTreeNode tree =
               ASTGenerator.buildTree(latestResult.compilationUnit);
 
-          checkForMissingImports(latestResult);
-
           if (JavaMode.errorCheckEnabled) {
             if (scheduledUiUpdate != null) {
               scheduledUiUpdate.cancel(true);
@@ -292,22 +287,6 @@ public class ErrorCheckerService {
   }
 
 
-  protected void checkForMissingImports(PreprocessedSketch result) {
-    if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
-      for (Problem p : result.problems) {
-        if (p.getIProblem().getID() == IProblem.UndefinedType) {
-          String args[] = p.getIProblem().getArguments();
-          if (args.length > 0) {
-            String missingClass = args[0];
-            Messages.log("Will suggest for type:" + missingClass);
-            //astGenerator.suggestImports(missingClass);
-          }
-        }
-      }
-    }
-  }
-
-
   public ASTGenerator getASTGenerator() {
     return astGenerator;
   }
@@ -365,7 +344,7 @@ public class ErrorCheckerService {
   protected PreprocessedSketch checkCode() {
 
     PreprocessedSketch result = new PreprocessedSketch();
-    PreprocessedSketch prevResult = null; // TODO: get previous result
+    PreprocessedSketch prevResult = latestResult;
 
     List<ImportStatement> coreAndDefaultImports = result.coreAndDefaultImports;
     List<ImportStatement> codeFolderImports = result.codeFolderImports;
@@ -426,9 +405,6 @@ public class ErrorCheckerService {
     // TODO: do we need to do this? why?
     //SourceUtils.substituteUnicode(rawCode);
 
-    List<IProblem> syntaxProblems = Collections.emptyList();
-    List<IProblem> compilationProblems = Collections.emptyList();
-
     CompilationUnit syntaxCU;
 
     {{ // SYNTAX CHECK
@@ -460,7 +436,7 @@ public class ErrorCheckerService {
       syntaxCU = makeAST(parser, syntaxStage.toCharArray(), COMPILER_OPTIONS);
 
       // Get syntax problems
-      syntaxProblems = Arrays.asList(syntaxCU.getProblems());
+      List<IProblem> syntaxProblems = Arrays.asList(syntaxCU.getProblems());
 
       // Update result
       result.mode = mode;
@@ -468,11 +444,12 @@ public class ErrorCheckerService {
       result.compilationUnit = syntaxCU;
       result.preprocessedCode = syntaxStage;
       for (IProblem problem : syntaxProblems) {
-        if (problem.isError()) {
-          result.hasSyntaxErrors = true;
-        }
+        result.hasSyntaxErrors |= problem.isError();
       }
-
+      List<Problem> mappedSyntaxProblems =
+          mapProblems(syntaxProblems, result.tabStarts, result.pdeCode,
+                      result.syntaxMapping);
+      result.problems.addAll(mappedSyntaxProblems);
     }}
 
     if (!result.hasSyntaxErrors) {
@@ -526,15 +503,10 @@ public class ErrorCheckerService {
         }
 
         // Compile it
-        try {
-          compilationProblems =
-              compileAndReturnProblems(className, javaStageChars,
-                                       COMPILER_OPTIONS, classLoader,
-                                       classPath);
-        } catch (NoClassDefFoundError e) {
-          // TODO: can this happen?
-          e.printStackTrace();
-        }
+        List<IProblem> compilationProblems =
+            compileAndReturnProblems(className, javaStageChars,
+                                     COMPILER_OPTIONS, classLoader,
+                                     classPath);
 
         // Update result
         result.compilationMapping = compilationMapping;
@@ -542,26 +514,115 @@ public class ErrorCheckerService {
         result.classLoader = classLoader;
         result.preprocessedCode = javaStage;
         result.compilationUnit = compilationCU;
-        for (IProblem problem : compilationProblems) {
-          if (problem.isError()) {
-            result.hasCompilationErrors = true;
+
+        Map<String, String[]> importSuggestions = new HashMap<>();
+        if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
+          for (IProblem problem : compilationProblems) {
+            if (problem.getID() == IProblem.UndefinedType) {
+              String missingClass = problem.getArguments()[0];
+              if (!importSuggestions.containsKey(missingClass)) {
+                importSuggestions.put(missingClass, getSuggestImports(missingClass));
+              }
+            }
           }
         }
+
+        boolean hasCompilationErrors = false;
+
+        List<Problem> mappedCompilationProblems =
+            mapProblems(compilationProblems, result.tabStarts, result.pdeCode,
+                        result.compilationMapping, result.syntaxMapping);
+
+        for (Problem p : mappedCompilationProblems) {
+          hasCompilationErrors |= p.isError();
+          IProblem ip = p.getIProblem();
+          if (ip.getID() == IProblem.UndefinedType) {
+            p.setImportSuggestions(importSuggestions.get(ip.getArguments()[0]));
+          }
+        }
+
+        result.problems.addAll(mappedCompilationProblems);
+        result.hasCompilationErrors = hasCompilationErrors;
+
       }}
     }
 
-    List<Problem> mappedSyntaxProblems =
-        mapProblems(syntaxProblems, result.tabStarts, result.pdeCode,
-                    result.syntaxMapping);
-
-    List<Problem> mappedCompilationProblems =
-        mapProblems(compilationProblems, result.tabStarts, result.pdeCode,
-                    result.compilationMapping, result.syntaxMapping);
-
-    result.problems.addAll(mappedSyntaxProblems);
-    result.problems.addAll(mappedCompilationProblems);
-
     return result;
+  }
+
+
+  public String[] getSuggestImports(final String className) {
+    Messages.log("* getSuggestImports");
+
+    // TODO: make sure search class path is complete,
+    //       prepare it beforehand and reuse it
+    //
+    //       this in not the same as sketch class path!
+    //       should include:
+    //       - all contributed libraries
+    //       - core libraries
+    //       - code folder
+    //       - mode search path
+    //       - Java classpath
+
+    RegExpResourceFilter regf =
+        new RegExpResourceFilter(Pattern.compile(".*"),
+                                 Pattern.compile("(.*\\$)?" + className + "\\.class",
+                                                 Pattern.CASE_INSENSITIVE));
+    // TODO once saw NPE here...possible for classPath to be null? [fry 150808]
+    List<String> candidates = new ArrayList<>();
+
+
+    { // Mode search path
+      String searchPath = ((JavaMode) editor.getMode()).getSearchPath();
+
+      // Make sure class path does not contain empty string (home dir)
+      String[] paths = searchPath.split(File.pathSeparator);
+
+      List<String> entries = new ArrayList<>();
+
+      for (int i = 0; i < paths.length; i++) {
+        String path = paths[i];
+        if (path != null && !path.trim().isEmpty()) {
+          entries.add(path);
+        }
+      }
+
+      String[] pathArray = entries.toArray(new String[entries.size()]);
+      ClassPath classPath = classPathFactory.createFromPaths(pathArray);
+
+      String[] resources = classPath.findResources("", regf);
+      for (String res : resources) {
+        candidates.add(res);
+      }
+    }
+
+    for (Library lib : editor.getMode().contribLibraries) {
+      ClassPath cp = classPathFactory.createFromPath(lib.getClassPath());
+      String[] resources = cp.findResources("", regf);
+      for (String res : resources) {
+        candidates.add(res);
+      }
+    }
+
+    if (editor.getSketch().hasCodeFolder()) {
+      File codeFolder = editor.getSketch().getCodeFolder();
+      // get a list of .jar files in the "code" folder
+      // (class files in subfolders should also be picked up)
+      ClassPath cp = classPathFactory.createFromPath(Util.contentsToClassPath(codeFolder));
+      String[] resources = cp.findResources("", regf);
+      for (String res : resources) {
+        candidates.add(res);
+      }
+    }
+
+    String[] resources = new String[candidates.size()];
+    for (int i = 0; i < resources.length; i++) {
+      resources[i] = candidates.get(i).replace('/', '.').replace('$', '.')
+          .substring(0, candidates.get(i).length() - 6);
+    }
+
+    return resources;
   }
 
 
@@ -860,29 +921,13 @@ public class ErrorCheckerService {
       ErrorTable table = editor.getErrorTable();
       table.clearRows();
 
-      Map<String, String[]> suggestions = new HashMap<>();
-
       Sketch sketch = editor.getSketch();
       for (Problem p : problems) {
         String message = p.getMessage();
-        if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
-          if (p.getIProblem().getID() == IProblem.UndefinedType) {
-            String[] args = p.getIProblem().getArguments();
-            if (args.length > 0) {
-              String missingClass = args[0];
-              String[] si = suggestions.get(missingClass);
-              if (si == null) {
-                synchronized (astGenerator) {
-                  si = astGenerator.getSuggestImports(missingClass);
-                }
-                suggestions.put(missingClass, si);
-              }
-              if (si != null && si.length > 0) {
-                p.setImportSuggestions(si);
-                message += " (double-click for suggestions)";
-              }
-            }
-          }
+        if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF) &&
+            p.getImportSuggestions() != null &&
+            p.getImportSuggestions().length > 0) {
+          message += " (double-click for suggestions)";
         }
 
         table.addRow(p, message,

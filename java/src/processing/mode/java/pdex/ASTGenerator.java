@@ -92,7 +92,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import processing.app.Library;
 import processing.app.Messages;
 import processing.app.SketchCode;
 import processing.app.Util;
@@ -100,11 +99,9 @@ import processing.app.syntax.JEditTextArea;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.Toolkit;
 import processing.mode.java.JavaEditor;
-import processing.mode.java.JavaMode;
 import processing.mode.java.preproc.PdePreprocessor;
 
 import com.google.classpath.ClassPath;
-import com.google.classpath.ClassPathFactory;
 import com.google.classpath.RegExpResourceFilter;
 
 @SuppressWarnings({ "unchecked" })
@@ -128,9 +125,6 @@ public class ASTGenerator {
     //addCompletionPopupListner();
     //loadJavaDoc();
   }
-
-
-  protected final ClassPathFactory factory = new ClassPathFactory();
 
   /**
    * Used for searching for package declaration of a class
@@ -2477,87 +2471,6 @@ public class ASTGenerator {
       }
     }
     return null;
-  }
-
-  public String[] getSuggestImports(final String className) {
-    Messages.log("* getSuggestImports");
-    if (classPath == null) {
-      return null;
-    }
-
-    // TODO: make sure search class path is complete,
-    //       prepare it beforehand and reuse it
-    //
-    //       this in not the same as sketch class path!
-    //       should include:
-    //       - all contributed libraries
-    //       - core libraries
-    //       - code folder
-    //       - mode search path
-    //       - Java classpath
-
-    log("Looking for class " + className);
-    RegExpResourceFilter regf =
-        new RegExpResourceFilter(Pattern.compile(".*"),
-                                 Pattern.compile("(.*\\$)?" + className + "\\.class",
-                                 Pattern.CASE_INSENSITIVE));
-    // TODO once saw NPE here...possible for classPath to be null? [fry 150808]
-    List<String> candidates = new ArrayList<>();
-
-
-    { // Mode search path
-      String searchPath = ((JavaMode) editor.getMode()).getSearchPath();
-
-      // Make sure class path does not contain empty string (home dir)
-      String[] paths = searchPath.split(File.pathSeparator);
-
-      List<String> entries = new ArrayList<>();
-
-      for (int i = 0; i < paths.length; i++) {
-        String path = paths[i];
-        if (path != null && !path.trim().isEmpty()) {
-          entries.add(path);
-        }
-      }
-
-      String[] pathArray = entries.toArray(new String[entries.size()]);
-      classPath = factory.createFromPaths(pathArray);
-
-      String[] resources = classPath.findResources("", regf);
-      for (String res : resources) {
-        candidates.add(res);
-        log("Res: " + res);
-      }
-    }
-
-    for (Library lib : editor.getMode().contribLibraries) {
-      ClassPath cp = factory.createFromPath(lib.getClassPath());
-      String[] resources = cp.findResources("", regf);
-      for (String res : resources) {
-        candidates.add(res);
-        log("Res: " + res);
-      }
-    }
-
-    if (editor.getSketch().hasCodeFolder()) {
-      File codeFolder = editor.getSketch().getCodeFolder();
-      // get a list of .jar files in the "code" folder
-      // (class files in subfolders should also be picked up)
-      ClassPath cp = factory.createFromPath(Util.contentsToClassPath(codeFolder));
-      String[] resources = cp.findResources("", regf);
-      for (String res : resources) {
-        candidates.add(res);
-        log("Res: " + res);
-      }
-    }
-
-    String[] resources = new String[candidates.size()];
-    for (int i = 0; i < resources.length; i++) {
-      resources[i] = candidates.get(i).replace('/', '.').replace('$', '.')
-          .substring(0, candidates.get(i).length() - 6);
-    }
-
-    return resources;
   }
 
 
