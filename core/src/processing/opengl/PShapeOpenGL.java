@@ -2013,13 +2013,31 @@ public class PShapeOpenGL extends PShape {
         PShapeOpenGL child = (PShapeOpenGL) children[i];
         child.setStroke(stroke);
       }
-    } else if (this.stroke != stroke) {
+      this.stroke = stroke;
+    } else {
+      setStrokeImpl(stroke);
+    }
+  }
+
+
+  protected void setStrokeImpl(boolean stroke) {
+    if (this.stroke != stroke) {
+      if (stroke) {
+        // Before there was no stroke, now there is stroke, so current stroke
+        // color should be copied to the input geometry, and geometry should
+        // be marked as modified in case it needs to be re-tessellated.
+        int color = strokeColor;
+        strokeColor += 1; // Forces a color change
+        setStrokeImpl(color);
+      }
+
       markForTessellation();
       if (is2D() && parent != null) {
         ((PShapeOpenGL)parent).strokedTexture(stroke && image != null);
       }
+      
+      this.stroke = stroke;      
     }
-    this.stroke = stroke;
   }
 
 
