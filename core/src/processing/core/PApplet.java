@@ -11139,9 +11139,9 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from clip.xml )
    *
-   * Limits the rendering to the boundaries of a rectangle defined
-   * by the parameters. The boundaries are drawn based on the state
-   * of the <b>imageMode()</b> fuction, either CORNER, CORNERS, or CENTER.
+   * Limits the rendering to the boundaries of a rectangle defined 
+   * by the parameters. The boundaries are drawn based on the state 
+   * of the <b>imageMode()</b> fuction, either CORNER, CORNERS, or CENTER. 
    *
    * ( end auto-generated )
    *

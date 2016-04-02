@@ -39,8 +39,8 @@
 
     <!-- link against apple.jar for the ThinkDifferent class -->
     <mkdir dir="bin" />
-    <javac source="1.7"
-	   target="1.7"
+    <javac source="1.8"
+	   target="1.8"
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   debug="true"

@@ -28,8 +28,8 @@
     <!-- env used to set classpath below -->
     <property environment="env" />
 
-    <javac source="1.7"
-	   target="1.7"
+    <javac source="1.8"
+	   target="1.8"
 	   destdir="bin" 
 	   excludes="**/tools/format/**" 
 	   encoding="UTF-8" 

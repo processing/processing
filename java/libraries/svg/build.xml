@@ -13,8 +13,8 @@
     <fail unless="core-built" message="Please build the core library first and make sure it sits in ../../../core/library/core.jar" />
     
     <mkdir dir="bin" />
-    <javac source="1.7"
-	   target="1.7"
+    <javac source="1.8"
+	   target="1.8"
 	   srcdir="src" destdir="bin" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
