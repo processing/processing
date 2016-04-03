@@ -211,18 +211,30 @@ public class I2C {
 
   /**
    *  Adds a byte to be written to the attached device
-   *  @param out single byte to be written (0-255)
+   *  @param out single byte to be written, e.g. numeric literal (0 to 255, or -128 to 127)
    *  @see beginTransmission
    *  @see read
    *  @see endTransmission
    */
   public void write(int out) {
-    if (out < 0 || 255 < out) {
-      System.err.println("The write function can only operate on a single byte at a time. Call it with a value from 0 to 255.");
+    if (out < -128 || 255 < out) {
+      System.err.println("The write function can only operate on a single byte at a time. Call it with a value from 0 to 255, or -128 to 127.");
       throw new RuntimeException("Argument does not fit into a single byte");
     }
     byte[] tmp = new byte[1];
     tmp[0] = (byte)out;
     write(tmp);
+  }
+
+  /**
+   *  Adds a byte to be written to the attached device
+   *  @param out single byte to be written
+   *  @see beginTransmission
+   *  @see read
+   *  @see endTransmission
+   */
+  public void write(byte out) {
+    // cast to (unsigned) int
+    write(out & 0xff);
   }
 }
