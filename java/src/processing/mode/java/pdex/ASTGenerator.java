@@ -119,7 +119,7 @@ import com.google.classpath.RegExpResourceFilter;
 @SuppressWarnings({ "unchecked" })
 public class ASTGenerator {
   protected final ErrorCheckerService errorCheckerService;
-  protected JavaEditor editor;
+  protected final JavaEditor editor;
   public DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode();
 
   protected JFrame frmASTView;
@@ -139,9 +139,9 @@ public class ASTGenerator {
   protected JLabel lblRefactorOldName;
 
 
-  public ASTGenerator(ErrorCheckerService ecs) {
+  public ASTGenerator(JavaEditor editor, ErrorCheckerService ecs) {
+    this.editor = editor;
     this.errorCheckerService = ecs;
-    this.editor = ecs.getEditor();
     setupGUI();
     //addCompletionPopupListner();
     addListeners();
@@ -809,7 +809,6 @@ public class ASTGenerator {
    */
   public List<CompletionCandidate> preparePredictions(final String pdePhrase,
                                                       final int line) {
-    ErrorCheckerService errorCheckerService = editor.getErrorChecker();
     ASTNode astRootNode = (ASTNode) errorCheckerService.getLatestCU().types().get(0);
 
     // If the parsed code contains pde enhancements, take 'em out.
@@ -1650,7 +1649,6 @@ public class ASTGenerator {
     int pdeLineNumber = lineNumber + errorCheckerService.mainClassOffset;
 //    log("----getASTNodeAt---- CU State: "
 //        + errorCheckerService.compilationUnitState);
-    editor = errorCheckerService.getEditor();
     int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
     if (codeIndex > 0) {
       for (int i = 0; i < codeIndex; i++) {
@@ -2349,15 +2347,15 @@ public class ASTGenerator {
   public void showSketchOutline() {
     if (editor.hasJavaTabs()) return;
 
-    sketchOutline = new SketchOutline(codeTree, errorCheckerService);
+    sketchOutline = new SketchOutline(editor, codeTree);
     sketchOutline.show();
   }
-  */
 
 
   public void showTabOutline() {
-    new TabOutline(errorCheckerService).show();
+    new TabOutline(editor).show();
   }
+  */
 
 
   public int javaCodeOffsetToLineStartOffset(int line, int jOffset){

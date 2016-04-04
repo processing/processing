@@ -1619,7 +1619,7 @@ public class JavaEditor extends Editor {
     item = Toolkit.newJMenuItem(Language.text("menu.debug.show_sketch_outline"), KeyEvent.VK_L);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Base.log("Show Sketch Outline:");
+          Messages.log("Show Sketch Outline:");
           errorCheckerService.getASTGenerator().showSketchOutline();
         }
       });
@@ -1628,7 +1628,7 @@ public class JavaEditor extends Editor {
     item = Toolkit.newJMenuItem(Language.text("menu.debug.show_tabs_list"), KeyEvent.VK_Y);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Base.log("Show Tab Outline:");
+          Messages.log("Show Tab Outline:");
           errorCheckerService.getASTGenerator().showTabOutline();
         }
       });

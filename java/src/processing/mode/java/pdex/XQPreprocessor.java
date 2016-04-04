@@ -37,6 +37,7 @@ import org.eclipse.text.edits.TextEdit;
 
 import processing.app.Util;
 import processing.data.StringList;
+import processing.mode.java.JavaEditor;
 import processing.mode.java.preproc.PdePreprocessor;
 
 
@@ -47,17 +48,17 @@ import processing.mode.java.preproc.PdePreprocessor;
 public class XQPreprocessor {
   private ASTRewrite rewrite = null;
   private List<ImportStatement> extraImports;
-  private ErrorCheckerService ecs;
+  private final JavaEditor editor;
   private String[] coreImports;
   private String[] defaultImports;
 
 
-  public XQPreprocessor(ErrorCheckerService ecs) {
-    this.ecs = ecs;
+  public XQPreprocessor(JavaEditor editor) {
+    this.editor = editor;
     
     // get parameters from the main preproc
 //    PdePreprocessor p = new PdePreprocessor(null);
-    PdePreprocessor p = ecs.editor.createPreprocessor(null);
+    PdePreprocessor p = editor.createPreprocessor(null);
     defaultImports = p.getDefaultImports();
     coreImports = p.getCoreImports();
   }
@@ -105,16 +106,16 @@ public class XQPreprocessor {
     for (String imp : defaultImports) {
       imports.append("import " + imp + ";");
     }
-    if (ecs.getEditor().getSketch().getCodeFolder().exists()) {
+    if (editor.getSketch().getCodeFolder().exists()) {
       StringList codeFolderPackages = null;
-      String codeFolderClassPath = Util.contentsToClassPath(ecs.getEditor().getSketch().getCodeFolder());
+      String codeFolderClassPath = Util.contentsToClassPath(editor.getSketch().getCodeFolder());
       codeFolderPackages = Util.packageListFromClassPath(codeFolderClassPath);
       if (codeFolderPackages != null) {
-        ecs.codeFolderImports.clear();
+        editor.getErrorChecker().codeFolderImports.clear();
         for (String item : codeFolderPackages) {
           // Messages.log("CF import " + item);
           imports.append("import " + item + ".*;");
-          ecs.codeFolderImports.add(new ImportStatement("import " + item + ".*;",0,0));
+          editor.getErrorChecker().codeFolderImports.add(new ImportStatement("import " + item + ".*;",0,0));
         }
       }
     }

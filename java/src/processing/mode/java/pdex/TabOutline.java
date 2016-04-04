@@ -63,13 +63,11 @@ public class TabOutline {
   protected JTextField searchField;
   protected JLabel lblCaption;
   protected JavaEditor editor;
-  protected ErrorCheckerService errorCheckerService;
   protected boolean internalSelection = false;
 
 
-  public TabOutline(ErrorCheckerService ecs) {
-    errorCheckerService = ecs;
-    editor = ecs.getEditor();
+  public TabOutline(JavaEditor editor) {
+    this.editor = editor;
     createGUI();
   }
 
@@ -78,7 +76,7 @@ public class TabOutline {
     frmOutlineView = new JFrame();
     frmOutlineView.setAlwaysOnTop(true);
     frmOutlineView.setUndecorated(true);
-    Point tp = errorCheckerService.getEditor().getTextArea().getLocationOnScreen();
+    Point tp = editor.getTextArea().getLocationOnScreen();
     lblCaption = new JLabel("Tabs List (type to filter)");
     int minWidth = estimateFrameWidth();
     int maxWidth = (int) (editor.getMinimumSize().width * 0.9f);
@@ -108,14 +106,14 @@ public class TabOutline {
     frmOutlineView.add(panelBottom);
     frmOutlineView.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frmOutlineView.pack();
-    frmOutlineView.setBounds(tp.x + errorCheckerService.getEditor().getTextArea().getWidth() - minWidth,
+    frmOutlineView.setBounds(tp.x + editor.getTextArea().getWidth() - minWidth,
                              tp.y,
                              minWidth,
                              estimateFrameHeight());
     frmOutlineView.setMinimumSize(new Dimension(minWidth, Math
-        .min(errorCheckerService.getEditor().getTextArea().getHeight(),
+        .min(editor.getTextArea().getHeight(),
              frmOutlineView.getHeight())));
-    frmOutlineView.setLocation(tp.x + errorCheckerService.getEditor().getTextArea().getWidth()/2 - frmOutlineView.getWidth()/2,
+    frmOutlineView.setLocation(tp.x + editor.getTextArea().getWidth()/2 - frmOutlineView.getWidth()/2,
                                frmOutlineView.getY() + (editor.getTextArea().getHeight() - frmOutlineView.getHeight()) / 2);
     DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tabTree.getCellRenderer();
     renderer.setLeafIcon(null);
@@ -202,7 +200,7 @@ public class TabOutline {
           protected Object doInBackground() throws Exception {
             String text = searchField.getText().toLowerCase();
             tempNode = new DefaultMutableTreeNode();
-            filterTree(text, tempNode, tabNode);
+            filterTree(text, tempNode, tabNode); // TODO: is using tabNode thread-safe? [jv]
             return null;
           }
 

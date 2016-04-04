@@ -176,10 +176,11 @@ public class ErrorCheckerService {
   public static final String IMPORT_REGEX =
     "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
 
-  public ErrorCheckerService(JavaEditor debugEditor) {
-    this.editor = debugEditor;
-    xqpreproc = new XQPreprocessor(this);
-    astGenerator = new ASTGenerator(this);
+
+  public ErrorCheckerService(JavaEditor editor) {
+    this.editor = editor;
+    xqpreproc = new XQPreprocessor(editor);
+    astGenerator = new ASTGenerator(editor, this);
     loadCompClass = true;
   }
 
@@ -318,7 +319,7 @@ public class ErrorCheckerService {
 
 
   public void addListener(Document doc) {
-    doc.addDocumentListener(sketchChangedListener);
+    if (doc != null) doc.addDocumentListener(sketchChangedListener);
   }
 
 
@@ -1515,10 +1516,6 @@ public class ErrorCheckerService {
     }
   }
 
-
-  public JavaEditor getEditor() {
-    return editor;
-  }
 
   public ArrayList<ImportStatement> getProgramImports() {
     return programImports;
