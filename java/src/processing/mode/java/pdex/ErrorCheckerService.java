@@ -47,6 +47,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -570,59 +571,80 @@ public class ErrorCheckerService {
                                  Pattern.compile("(.*\\$)?" + className + "\\.class",
                                                  Pattern.CASE_INSENSITIVE));
     // TODO once saw NPE here...possible for classPath to be null? [fry 150808]
-    List<String> candidates = new ArrayList<>();
 
+    JavaMode mode = (JavaMode) editor.getMode();
 
-    { // Mode search path
-      String searchPath = ((JavaMode) editor.getMode()).getSearchPath();
+    StringBuilder classPath = new StringBuilder();
 
-      // Make sure class path does not contain empty string (home dir)
-      String[] paths = searchPath.split(File.pathSeparator);
+    Sketch sketch = editor.getSketch();
 
-      List<String> entries = new ArrayList<>();
+    if (sketch.hasCodeFolder()) {
+      File codeFolder = sketch.getCodeFolder();
+      String codeFolderClassPath = Util.contentsToClassPath(codeFolder);
+      classPath.append(codeFolderClassPath);
+    }
 
-      for (int i = 0; i < paths.length; i++) {
-        String path = paths[i];
-        if (path != null && !path.trim().isEmpty()) {
-          entries.add(path);
-        }
+    // Also add jars specified in mode's search path
+    // TODO: maybe we need mode.getCoreLibrary().getClassPath() here
+    String searchPath = mode.getSearchPath();
+    if (searchPath != null) {
+      if (!searchPath.startsWith(File.pathSeparator)) {
+        classPath.append(File.pathSeparator);
       }
+      classPath.append(searchPath);
+    }
 
-      String[] pathArray = entries.toArray(new String[entries.size()]);
-      ClassPath classPath = classPathFactory.createFromPaths(pathArray);
+    // TODO: maybe we need lib.getClassPath() here
+    for (Library lib : mode.coreLibraries) {
+      classPath.append(File.pathSeparator).append(lib.getClassPath());
+    }
 
-      String[] resources = classPath.findResources("", regf);
-      for (String res : resources) {
-        candidates.add(res);
+    for (Library lib : mode.contribLibraries) {
+      classPath.append(File.pathSeparator).append(lib.getClassPath());
+    }
+
+    String javaClassPath = System.getProperty("java.class.path");
+    if (!javaClassPath.startsWith(File.pathSeparator)) {
+      classPath.append(File.pathSeparator);
+    }
+    classPath.append(javaClassPath);
+
+    String rtPath = System.getProperty("java.home") +
+        File.separator + "lib" + File.separator + "rt.jar";
+    if (new File(rtPath).exists()) {
+      classPath.append(File.pathSeparator).append(rtPath);
+    } else {
+      rtPath = System.getProperty("java.home") + File.separator + "jre" +
+          File.separator + "lib" + File.separator + "rt.jar";
+      if (new File(rtPath).exists()) {
+        classPath.append(File.pathSeparator).append(rtPath);
       }
     }
 
-    for (Library lib : editor.getMode().contribLibraries) {
-      ClassPath cp = classPathFactory.createFromPath(lib.getClassPath());
-      String[] resources = cp.findResources("", regf);
-      for (String res : resources) {
-        candidates.add(res);
-      }
-    }
+    // Make sure class path does not contain empty string (home dir)
+    String[] paths = classPath.toString().split(File.pathSeparator);
 
-    if (editor.getSketch().hasCodeFolder()) {
-      File codeFolder = editor.getSketch().getCodeFolder();
-      // get a list of .jar files in the "code" folder
-      // (class files in subfolders should also be picked up)
-      ClassPath cp = classPathFactory.createFromPath(Util.contentsToClassPath(codeFolder));
-      String[] resources = cp.findResources("", regf);
-      for (String res : resources) {
-        candidates.add(res);
-      }
-    }
+    String path = Arrays.stream(paths)
+        .filter(p -> p != null && !p.trim().isEmpty())
+        .collect(Collectors.joining(File.pathSeparator));
 
-    String[] resources = new String[candidates.size()];
-    for (int i = 0; i < resources.length; i++) {
-      resources[i] = candidates.get(i).replace('/', '.').replace('$', '.')
-          .substring(0, candidates.get(i).length() - 6);
-    }
-
-    return resources;
+    ClassPath cp = classPathFactory.createFromPath(path);
+    String[] resources = cp.findResources("", regf);
+    return Arrays.stream(resources)
+        .map(res -> res.substring(0, res.length() - 6))
+        .map(res -> res.replace('/', '.'))
+        .map(res -> res.replace('$', '.'))
+        .sorted((o1, o2) -> {
+          // put java.* first, should be prioritized more
+          boolean o1StartsWithJava = o1.startsWith("java");
+          boolean o2StartsWithJava = o2.startsWith("java");
+          if (o1StartsWithJava != o2StartsWithJava) {
+            if (o1StartsWithJava) return -1;
+            return 1;
+          }
+          return o1.compareTo(o2);
+        })
+        .toArray(String[]::new);
   }
 
 
