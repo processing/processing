@@ -21,11 +21,6 @@
     <cp>lib/antlr.jar</cp>
     <cp>lib/ant.jar</cp>
     <cp>lib/ant-launcher.jar</cp>
-    <cp>lib/org-netbeans-swing-outline.jar</cp>
-    <cp>lib/com.ibm.icu_4.4.2.v20110823.jar</cp>
-    <cp>lib/jdi.jar</cp>
-    <cp>lib/jdimodel.jar</cp>
-    <cp>lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar</cp>
     <!-- <cp>%EXEDIR%/java/lib/tools.jar</cp> -->
   </classPath>
   <jre>
