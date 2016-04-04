@@ -42,11 +42,7 @@
     <opt>-Djna.boot.library.path=lib</opt>
     <opt>-Djna.nounpack=true</opt>
     <!-- starting in 3.0, require Java 8 -->
-    <minVersion>1.8.0_51</minVersion>
-    <!-- TODO: remove the line below as soon as we are on 1.8.0_60 or newer,
-     see https://bugs.openjdk.java.net/browse/JDK-8060036 and
-     http://kingsfleet.blogspot.com.br/2014/11/but-thats-impossible-or-finding-out.html -->
-    <opt>-XX:CompileCommand=exclude,javax/swing/text/GlyphView,getBreakSpot</opt>
+    <minVersion>1.8.0_60</minVersion>
     <!-- increase available per PDE X request -->
     <maxHeapSize>256</maxHeapSize>
   </jre>

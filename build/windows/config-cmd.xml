@@ -33,7 +33,7 @@
          https://github.com/processing/processing/issues/2239 -->
     <opt>-Djna.nosys=true</opt>
     <!-- starting in 3.0, require Java 8 -->
-    <minVersion>1.8.0_51</minVersion>
+    <minVersion>1.8.0_60</minVersion>
     <!-- increase available per PDE X request -->
     <maxHeapSize>256</maxHeapSize>
   </jre>
