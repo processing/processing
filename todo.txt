@@ -1,5 +1,6 @@
 0249 (3.0.3)
 
+
 contribs
 X Grab bag of smaller, mainly ARM-related updates
 X   https://github.com/processing/processing/pull/4300
@@ -9,6 +10,18 @@ X   https://github.com/processing/processing/pull/4325
 X Fix non-ARM Linux deb build process
 X   https://github.com/processing/processing/issues/4308
 X   https://github.com/processing/processing/pull/4309
+
+jakub
+X Update app to Java 8
+X   https://github.com/processing/processing/pull/4383
+X more Java 8 updates
+X   https://github.com/processing/processing/pull/4388
+X update minimum JRE version for Windows
+X   https://github.com/processing/processing/pull/4389
+X update JDT to 4.5.2
+X   https://github.com/processing/processing/pull/4387
+X JavaMode cleanup
+X   https://github.com/processing/processing/pull/4390
 
 
 _ createPreprocessor() added to JavaEditor
