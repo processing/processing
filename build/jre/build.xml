@@ -3,8 +3,8 @@
   <target name="compile">
     <mkdir dir="bin" />
 
-    <javac source="1.7"
-           target="1.7" 
+    <javac source="1.8"
+           target="1.8" 
 	   srcdir="src" 
            destdir="bin" 
 	   debug="true" 

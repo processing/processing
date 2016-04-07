@@ -1273,7 +1273,7 @@ remove the spaces for depth since it should be double dash, but screws up commen
       <arg line="core -type f -exec rm -rf {} ';'" />
     </exec>
 
-    <javadoc access="public" author="false" classpath="../core/library/jogl-all.jar:../core/bin:../core/library/gluegen-rt.jar" destdir="javadoc/core" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.7" splitindex="false" use="false" version="false">
+    <javadoc access="public" author="false" classpath="../core/library/jogl-all.jar:../core/bin:../core/library/gluegen-rt.jar" destdir="javadoc/core" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.8" splitindex="false" use="false" version="false">
 
       <!-- provide links for java.* classes. 
            also suppresses the java.lang prefix in the text.  --> 

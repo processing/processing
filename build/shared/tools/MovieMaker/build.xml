@@ -8,8 +8,8 @@
 
   <target name="compile" description="Compile sources">   
     <mkdir dir="bin" />
-    <javac target="1.7"
-	   source="1.7"
+    <javac target="1.8"
+	   source="1.8"
 	   srcdir="src" 
 	   destdir="bin" 
 	   encoding="UTF-8"
