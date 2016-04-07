@@ -59,7 +59,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingWorker;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.BadLocationException;
@@ -119,7 +118,7 @@ import com.google.classpath.RegExpResourceFilter;
 @SuppressWarnings({ "unchecked" })
 public class ASTGenerator {
   protected final ErrorCheckerService errorCheckerService;
-  protected JavaEditor editor;
+  protected final JavaEditor editor;
   public DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode();
 
   protected JFrame frmASTView;
@@ -139,9 +138,9 @@ public class ASTGenerator {
   protected JLabel lblRefactorOldName;
 
 
-  public ASTGenerator(ErrorCheckerService ecs) {
+  public ASTGenerator(JavaEditor editor, ErrorCheckerService ecs) {
+    this.editor = editor;
     this.errorCheckerService = ecs;
-    this.editor = ecs.getEditor();
     setupGUI();
     //addCompletionPopupListner();
     addListeners();
@@ -233,19 +232,12 @@ public class ASTGenerator {
       Messages.loge("No CU found!");
     }
     visitRecur((ASTNode) compilationUnit.types().get(0), codeTree);
-    SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
-
-      @Override
-      protected Object doInBackground() throws Exception {
-        return null;
-      }
-
-      @Override
-      protected void done() {
+    EventQueue.invokeLater(new Runnable() {
+      public void run() {
         if (codeTree != null) {
-          if(SHOW_AST){
-  					if (jtree.hasFocus() || frmASTView.hasFocus())
-  						return;
+          if (SHOW_AST) {
+            if (jtree.hasFocus() || frmASTView.hasFocus())
+              return;
             jtree.setModel(new DefaultTreeModel(codeTree));
             ((DefaultTreeModel) jtree.getModel()).reload();
             jtree.validate();
@@ -271,8 +263,7 @@ public class ASTGenerator {
 //          }
         }
       }
-    };
-    worker.execute();
+    });
 //    Base.loge("++>" + System.getProperty("java.class.path"));
 //    log(System.getProperty("java.class.path"));
 //    log("-------------------------------");
@@ -809,7 +800,6 @@ public class ASTGenerator {
    */
   public List<CompletionCandidate> preparePredictions(final String pdePhrase,
                                                       final int line) {
-    ErrorCheckerService errorCheckerService = editor.getErrorChecker();
     ASTNode astRootNode = (ASTNode) errorCheckerService.getLatestCU().types().get(0);
 
     // If the parsed code contains pde enhancements, take 'em out.
@@ -1650,7 +1640,6 @@ public class ASTGenerator {
     int pdeLineNumber = lineNumber + errorCheckerService.mainClassOffset;
 //    log("----getASTNodeAt---- CU State: "
 //        + errorCheckerService.compilationUnitState);
-    editor = errorCheckerService.getEditor();
     int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
     if (codeIndex > 0) {
       for (int i = 0; i < codeIndex; i++) {
@@ -1871,79 +1860,55 @@ public class ASTGenerator {
       public void valueChanged(TreeSelectionEvent e) {
         Messages.log(e.toString());
 
-        // TODO: this should already run on EDT so why the SwingWorker?
-        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+        if(jtree.getLastSelectedPathComponent() == null) {
+          return;
+        }
+        DefaultMutableTreeNode tnode =
+            (DefaultMutableTreeNode) jtree.getLastSelectedPathComponent();
+        if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+          ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+          awrap.highlightNode(editor);
+          // errorCheckerService.highlightNode(awrap);
 
-          @Override
-          protected Object doInBackground() throws Exception {
-            return null;
-          }
-
-          @Override
-          protected void done() {
-            if(jtree
-                .getLastSelectedPathComponent() == null){
+          //--
+          try {
+            int javaLineNumber = getLineNumber(awrap.getNode());
+            int pdeOffs[] = errorCheckerService
+                .calculateTabIndexAndLineNumber(javaLineNumber);
+            PlainDocument javaSource = new PlainDocument();
+            javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
+            Element lineElement = javaSource.getDefaultRootElement()
+                .getElement(javaLineNumber-1);
+            if(lineElement == null) {
               return;
             }
-            DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) jtree
-                .getLastSelectedPathComponent();
-            if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-              ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-              awrap.highlightNode(editor);
-              // errorCheckerService.highlightNode(awrap);
 
-              //--
-              try {
-                int javaLineNumber = getLineNumber(awrap.getNode());
-                int pdeOffs[] = errorCheckerService
-                    .calculateTabIndexAndLineNumber(javaLineNumber);
-                PlainDocument javaSource = new PlainDocument();
-                javaSource.insertString(0, errorCheckerService.lastCodeCheckResult.sourceCode, null);
-                Element lineElement = javaSource.getDefaultRootElement()
-                    .getElement(javaLineNumber-1);
-                if(lineElement == null) {
-                  return;
-                }
-
-                String javaLine = javaSource.getText(lineElement.getStartOffset(),
-                                                     lineElement.getEndOffset()
-                                                         - lineElement.getStartOffset());
-                editor.getSketch().setCurrentCode(pdeOffs[0]);
-                String pdeLine = editor.getLineText(pdeOffs[1]);
-                //String lookingFor = nodeName.toString();
-                //log(lookingFor + ", " + nodeName.getStartPosition());
-                log("JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
-                    + lineElement.getEndOffset());
-                log("PL " + pdeLine);
-              } catch (BadLocationException e) {
-                e.printStackTrace();
-              }
-            }
+            String javaLine = javaSource.getText(lineElement.getStartOffset(),
+                                                 lineElement.getEndOffset()
+                                                     - lineElement.getStartOffset());
+            editor.getSketch().setCurrentCode(pdeOffs[0]);
+            String pdeLine = editor.getLineText(pdeOffs[1]);
+            //String lookingFor = nodeName.toString();
+            //log(lookingFor + ", " + nodeName.getStartPosition());
+            log("JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
+                + lineElement.getEndOffset());
+            log("PL " + pdeLine);
+          } catch (BadLocationException ex) {
+            ex.printStackTrace();
           }
-        };
-        worker.execute();
+        }
       }
+
     });
 
     btnRename.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        if(txtRenameField.getText().length() == 0)
+        if(txtRenameField.getText().length() == 0) {
           return;
-        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
-
-          @Override
-          protected Object doInBackground() throws Exception {
-            return null;
-          }
-
-          @Override
-          protected void done() {
-           refactorIt();
-          }
-        };
-        worker.execute();
+        }
+        refactorIt();
       }
     });
 
@@ -1951,19 +1916,7 @@ public class ASTGenerator {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
-
-          @Override
-          protected Object doInBackground() throws Exception {
-            return null;
-          }
-
-          @Override
-          protected void done() {
-            handleShowUsage();
-          }
-        };
-        worker.execute();
+        handleShowUsage();
       }
     });
 
@@ -1972,30 +1925,18 @@ public class ASTGenerator {
       @Override
       public void valueChanged(TreeSelectionEvent e) {
         log(e);
-        SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+        if(refactorTree
+            .getLastSelectedPathComponent() == null){
+          return;
+        }
+        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) refactorTree
+            .getLastSelectedPathComponent();
 
-          @Override
-          protected Object doInBackground() throws Exception {
-            return null;
-          }
-
-          @Override
-          protected void done() {
-            if(refactorTree
-                .getLastSelectedPathComponent() == null){
-              return;
-            }
-            DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) refactorTree
-                .getLastSelectedPathComponent();
-
-            if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-              ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-              //errorCheckerService.highlightNode(awrap);
-              awrap.highlightNode(editor);
-            }
-          }
-        };
-        worker.execute();
+        if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+          ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+          //errorCheckerService.highlightNode(awrap);
+          awrap.highlightNode(editor);
+        }
       }
     });
   }
@@ -2349,15 +2290,15 @@ public class ASTGenerator {
   public void showSketchOutline() {
     if (editor.hasJavaTabs()) return;
 
-    sketchOutline = new SketchOutline(codeTree, errorCheckerService);
+    sketchOutline = new SketchOutline(editor, codeTree);
     sketchOutline.show();
   }
-  */
 
 
   public void showTabOutline() {
-    new TabOutline(errorCheckerService).show();
+    new TabOutline(editor).show();
   }
+  */
 
 
   public int javaCodeOffsetToLineStartOffset(int line, int jOffset){

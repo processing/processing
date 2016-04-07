@@ -49,14 +49,7 @@ public class JavaEditor extends Editor {
 
   // Need to sort through the rest of these additions [fry]
 
-  // TODO these are all null, need to remove color support
-  protected Color breakpointColor;
-  protected Color currentLineColor;
-  protected Color breakpointMarkerColor;
-  protected Color currentLineMarkerColor;
-
-  protected List<LineHighlight> breakpointedLines =
-    new ArrayList<LineHighlight>();
+  protected final List<LineHighlight> breakpointedLines = new ArrayList<>();
   protected LineHighlight currentLine; // where the debugger is suspended
   protected final String breakpointMarkerComment = " //<>//";
 
@@ -983,7 +976,7 @@ public class JavaEditor extends Editor {
     Object value = optionPane.getValue();
     if (value.equals(exportButton)) {
       return jmode.handleExportApplication(sketch);
-    } else if (value.equals(cancelButton) || value.equals(Integer.valueOf(-1))) {
+    } else if (value.equals(cancelButton) || value.equals(-1)) {
       // closed window by hitting Cancel or ESC
       statusNotice(Language.text("export.notice.exporting.cancel"));
     }
@@ -1619,7 +1612,7 @@ public class JavaEditor extends Editor {
     item = Toolkit.newJMenuItem(Language.text("menu.debug.show_sketch_outline"), KeyEvent.VK_L);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Base.log("Show Sketch Outline:");
+          Messages.log("Show Sketch Outline:");
           errorCheckerService.getASTGenerator().showSketchOutline();
         }
       });
@@ -1628,7 +1621,7 @@ public class JavaEditor extends Editor {
     item = Toolkit.newJMenuItem(Language.text("menu.debug.show_tabs_list"), KeyEvent.VK_Y);
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Base.log("Show Tab Outline:");
+          Messages.log("Show Tab Outline:");
           errorCheckerService.getASTGenerator().showTabOutline();
         }
       });
@@ -1681,7 +1674,7 @@ public class JavaEditor extends Editor {
    * removed from.
    */
   protected List<LineID> stripBreakpointComments() {
-    List<LineID> bps = new ArrayList<LineID>();
+    List<LineID> bps = new ArrayList<>();
     // iterate over all tabs
     Sketch sketch = getSketch();
     for (int i = 0; i < sketch.getCodeCount(); i++) {
@@ -1757,7 +1750,7 @@ public class JavaEditor extends Editor {
   @Override
   public boolean handleSave(boolean immediately) {
     // note modified tabs
-    final List<String> modified = new ArrayList<String>();
+    final List<String> modified = new ArrayList<>();
     for (int i = 0; i < getSketch().getCodeCount(); i++) {
       SketchCode tab = getSketch().getCode(i);
       if (tab.isModified()) {
@@ -1915,7 +1908,7 @@ public class JavaEditor extends Editor {
           PApplet.matchAll(tabCode, ErrorCheckerService.IMPORT_REGEX);
 
         if (pieces != null) {
-          ArrayList<String> importHeaders = new ArrayList<String>();
+          ArrayList<String> importHeaders = new ArrayList<>();
           for (String[] importStatement : pieces) {
             importHeaders.add(importStatement[2]);
           }
@@ -1924,7 +1917,7 @@ public class JavaEditor extends Editor {
           if (!installLibsHeaders.isEmpty()) {
             StringBuilder libList = new StringBuilder("Would you like to install them now?");
             for (AvailableContribution ac : installLibsHeaders) {
-              libList.append("\n  • " + ac.getName());
+              libList.append("\n  • ").append(ac.getName());
             }
             int option = Messages.showYesNoQuestion(this,
                 Language.text("contrib.import.dialog.title"),
@@ -1950,7 +1943,7 @@ public class JavaEditor extends Editor {
   private List<AvailableContribution> getNotInstalledAvailableLibs(ArrayList<String> importHeadersList) {
     Map<String, Contribution> importMap =
       ContributionListing.getInstance().getLibrariesByImportHeader();
-    List<AvailableContribution> libList = new ArrayList<AvailableContribution>();
+    List<AvailableContribution> libList = new ArrayList<>();
     for (String importHeaders : importHeadersList) {
       int dot = importHeaders.lastIndexOf('.');
       String entry = (dot == -1) ? importHeaders : importHeaders.substring(0,
@@ -2148,7 +2141,7 @@ public class JavaEditor extends Editor {
 
     for (Component item : debugMenu.getMenuComponents()) {
       if (item instanceof JMenuItem && item != debugItem) {
-        ((JMenuItem) item).setEnabled(debugEnabled);
+        item.setEnabled(debugEnabled);
       }
     }
   }
@@ -2213,8 +2206,8 @@ public class JavaEditor extends Editor {
     // scroll to line, by setting the cursor
     cursorToLineStart(line.lineIdx());
     // highlight line
-    currentLine = new LineHighlight(line.lineIdx(), currentLineColor, this);
-    currentLine.setMarker(JavaTextArea.STEP_MARKER, currentLineMarkerColor);
+    currentLine = new LineHighlight(line.lineIdx(), this);
+    currentLine.setMarker(JavaTextArea.STEP_MARKER);
     currentLine.setPriority(10); // fixes current line being hidden by the breakpoint when moved down
   }
 
@@ -2242,24 +2235,13 @@ public class JavaEditor extends Editor {
    * @param lineID the line id to highlight as breakpointed
    */
   public void addBreakpointedLine(LineID lineID) {
-    LineHighlight hl = new LineHighlight(lineID, breakpointColor, this);
-    hl.setMarker(JavaTextArea.BREAK_MARKER, breakpointMarkerColor);
+    LineHighlight hl = new LineHighlight(lineID, this);
+    hl.setMarker(JavaTextArea.BREAK_MARKER);
     breakpointedLines.add(hl);
     // repaint current line if it's on this line
     if (currentLine != null && currentLine.getLineID().equals(lineID)) {
       currentLine.paint();
     }
-  }
-
-
-  /**
-   * Add highlight for a breakpointed line on the current tab.
-   * @param lineIdx the line index on the current tab to highlight as
-   * breakpointed
-   */
-  //TODO: remove and replace by {@link #addBreakpointedLine(LineID lineID)}
-  public void addBreakpointedLine(int lineIdx) {
-    addBreakpointedLine(getLineIDInCurrentTab(lineIdx));
   }
 
 
@@ -2299,7 +2281,6 @@ public class JavaEditor extends Editor {
     breakpointedLines.clear(); // remove all breakpoints
     // fix highlights not being removed when tab names have
     // changed due to opening a new sketch in same editor
-    getJavaTextArea().clearLineBgColors(); // force clear all highlights
     getJavaTextArea().clearGutterText();
 
     // repaint current line
@@ -2364,11 +2345,8 @@ public class JavaEditor extends Editor {
     final JavaTextArea ta = getJavaTextArea();
     // can be null when setCode is called the first time (in constructor)
     if (ta != null) {
-      // clear all line backgrounds
-      ta.clearLineBgColors();
       // clear all gutter text
       ta.clearGutterText();
-      // load appropriate line backgrounds for tab
       // first paint breakpoints
       if (breakpointedLines != null) {
         for (LineHighlight hl : breakpointedLines) {
@@ -2618,7 +2596,7 @@ public class JavaEditor extends Editor {
 //      frmImportSuggest = null;
       return;
     }
-    final JList<String> classList = new JList<String>(list);
+    final JList<String> classList = new JList<>(list);
     classList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     frmImportSuggest = new JFrame();
 
@@ -2876,7 +2854,7 @@ public class JavaEditor extends Editor {
 
     baseCode = new String[code.length];
     for (int i = 0; i < code.length; i++) {
-      baseCode[i] = new String(code[i].getSavedProgram());
+      baseCode[i] = code[i].getSavedProgram();
     }
   }
 

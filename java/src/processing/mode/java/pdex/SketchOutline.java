@@ -61,21 +61,20 @@ import processing.mode.java.JavaEditor;
 
 
 public class SketchOutline {
+  protected final JavaEditor editor;
+
   protected JFrame frmOutlineView;
-  protected ErrorCheckerService errorCheckerService;
   protected JScrollPane jsp;
   protected DefaultMutableTreeNode soNode, tempNode;
   protected final JTree soTree;
   protected JTextField searchField;
-  protected JavaEditor editor;
   protected boolean internalSelection = false;
 
   ImageIcon classIcon, fieldIcon, methodIcon;
 
 
-  public SketchOutline(DefaultMutableTreeNode codeTree, ErrorCheckerService ecs) {
-    errorCheckerService = ecs;
-    editor = ecs.getEditor();
+  public SketchOutline(JavaEditor editor, DefaultMutableTreeNode codeTree) {
+    this.editor = editor;
     soNode = new DefaultMutableTreeNode();
     generateSketchOutlineTree(soNode, codeTree);
     soNode = (DefaultMutableTreeNode) soNode.getChildAt(0);
@@ -95,7 +94,7 @@ public class SketchOutline {
     frmOutlineView = new JFrame();
     frmOutlineView.setAlwaysOnTop(true);
     frmOutlineView.setUndecorated(true);
-    Point tp = errorCheckerService.getEditor().getTextArea().getLocationOnScreen();
+    Point tp = editor.getTextArea().getLocationOnScreen();
 
     int minWidth = (int) (editor.getMinimumSize().width * 0.7f);
     int maxWidth = (int) (editor.getMinimumSize().width * 0.9f);
@@ -130,10 +129,10 @@ public class SketchOutline {
     frmOutlineView.add(panelBottom);
     frmOutlineView.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frmOutlineView.pack();
-    frmOutlineView.setBounds(tp.x + errorCheckerService.getEditor().getTextArea().getWidth() - minWidth, tp.y, minWidth,
+    frmOutlineView.setBounds(tp.x + editor.getTextArea().getWidth() - minWidth, tp.y, minWidth,
                              Math.min(editor.getTextArea().getHeight(), frmOutlineView.getHeight()));
-    frmOutlineView.setMinimumSize(new Dimension(minWidth, Math.min(errorCheckerService.getEditor().getTextArea().getHeight(), frmOutlineView.getHeight())));
-    frmOutlineView.setLocation(tp.x + errorCheckerService.getEditor().getTextArea().getWidth()/2 - frmOutlineView.getWidth()/2,
+    frmOutlineView.setMinimumSize(new Dimension(minWidth, Math.min(editor.getTextArea().getHeight(), frmOutlineView.getHeight())));
+    frmOutlineView.setLocation(tp.x + editor.getTextArea().getWidth()/2 - frmOutlineView.getWidth()/2,
                                frmOutlineView.getY() + (editor.getTextArea().getHeight() - frmOutlineView.getHeight()) / 2);
     addListeners();
   }
@@ -221,7 +220,7 @@ public class SketchOutline {
           protected Object doInBackground() throws Exception {
             String text = searchField.getText().toLowerCase();
             tempNode = new DefaultMutableTreeNode();
-            filterTree(text, tempNode, soNode);
+            filterTree(text, tempNode, soNode); // TODO: is using soNode thread-safe? [jv]
             return null;
           }
 
@@ -270,28 +269,19 @@ public class SketchOutline {
 
 
   private void scrollToNode() {
-    SwingWorker<Object, Object> worker = new SwingWorker<Object, Object>() {
+    if (soTree.getLastSelectedPathComponent() == null) {
+      return;
+    }
+    DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
+        .getLastSelectedPathComponent();
+    if (tnode.getUserObject() instanceof ASTNodeWrapper) {
+      ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
+      awrap.highlightNode(editor);
+      // log(awrap);
+      //errorCheckerService.highlightNode(awrap);
+      close();
+    }
 
-      protected Object doInBackground() throws Exception {
-        return null;
-      }
-
-      protected void done() {
-        if (soTree.getLastSelectedPathComponent() == null) {
-          return;
-        }
-        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
-            .getLastSelectedPathComponent();
-        if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-          ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-          awrap.highlightNode(editor);
-          // log(awrap);
-          //errorCheckerService.highlightNode(awrap);
-          close();
-        }
-      }
-    };
-    worker.execute();
   }
 
 
