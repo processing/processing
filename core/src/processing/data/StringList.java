@@ -655,6 +655,7 @@ public class StringList implements Iterable<String> {
     return new Iterator<String>() {
       int index = -1;
 
+      @Override
       public void remove() {
         StringList.this.remove(index);
       }
