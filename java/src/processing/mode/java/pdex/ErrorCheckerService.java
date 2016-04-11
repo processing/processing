@@ -62,10 +62,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.internal.compiler.CompilationResult;
 import org.eclipse.jdt.internal.compiler.Compiler;
 import org.eclipse.jdt.internal.compiler.DefaultErrorHandlingPolicies;
 import org.eclipse.jdt.internal.compiler.ICompilerRequestor;
@@ -84,7 +82,6 @@ import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.SketchException;
 import processing.app.Util;
-import processing.app.ui.Editor;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.ErrorTable;
 import processing.core.PApplet;
@@ -247,7 +244,7 @@ public class ErrorCheckerService {
       }
       Messages.loge("Thread stopped: " + editor.getSketch().getName());
 
-      // TODO: clear last result
+      latestResult = null;
 
       running = false;
     }
@@ -406,8 +403,7 @@ public class ErrorCheckerService {
       }
     }
 
-    // TODO: do we need to do this? why?
-    //SourceUtils.substituteUnicode(rawCode);
+    // TODO: convert unicode escapes to chars
 
     CompilationUnit syntaxCU;
 
@@ -447,14 +443,50 @@ public class ErrorCheckerService {
       result.syntaxMapping = syntaxMapping;
       result.compilationUnit = syntaxCU;
       result.preprocessedCode = syntaxStage;
-      for (IProblem problem : syntaxProblems) {
-        result.hasSyntaxErrors |= problem.isError();
-      }
+      result.hasSyntaxErrors = syntaxProblems.stream().anyMatch(IProblem::isError);
       List<Problem> mappedSyntaxProblems =
           mapProblems(syntaxProblems, result.tabStarts, result.pdeCode,
                       result.syntaxMapping);
       result.problems.addAll(mappedSyntaxProblems);
     }}
+
+    { // Prepare ClassLoader and ClassPath
+      final URLClassLoader classLoader;
+      final ClassPath classPath;
+
+      boolean importsChanged = prevResult == null ||
+          prevResult.classPath == null || prevResult.classLoader == null ||
+          checkIfImportsChanged(programImports, prevResult.programImports) ||
+          checkIfImportsChanged(codeFolderImports, prevResult.codeFolderImports);
+
+      if (!importsChanged) {
+        classLoader = prevResult.classLoader;
+        classPath = prevResult.classPath;
+      } else {
+        List<String> paths = prepareCompilerClasspath(programImports, sketch);
+
+        // ClassLoader
+        List<URL> urls = new ArrayList<>();
+        for (Iterator<String> it = paths.iterator(); it.hasNext(); ) {
+          String path = it.next();
+          try {
+            urls.add(new File(path).toURI().toURL());
+          } catch (MalformedURLException e) {
+            it.remove(); // malformed, get rid of it
+          }
+        }
+        URL[] classPathArray = urls.toArray(new URL[urls.size()]);
+        classLoader = new URLClassLoader(classPathArray, null);
+        // ClassPath
+        String[] pathArray = paths.toArray(new String[paths.size()]);
+        classPath = classPathFactory.createFromPaths(pathArray);
+      }
+
+      // Update result
+      result.classPath = classPath;
+      result.classLoader = classLoader;
+    }
+
 
     if (!result.hasSyntaxErrors) {
 
@@ -473,81 +505,50 @@ public class ErrorCheckerService {
         // Create AST
         CompilationUnit compilationCU = makeAST(parser, javaStageChars, COMPILER_OPTIONS);
 
-        // Prepare ClassLoader and ClassPath
-        final URLClassLoader classLoader;
-        final ClassPath classPath;
-
-        boolean importsChanged = prevResult == null ||
-            prevResult.classPath == null || prevResult.classLoader == null ||
-            checkIfImportsChanged(programImports, prevResult.programImports) ||
-            checkIfImportsChanged(codeFolderImports, prevResult.codeFolderImports);
-
-        if (!importsChanged) {
-          classLoader = result.classLoader = prevResult.classLoader;
-          classPath = prevResult.classPath;
-        } else {
-          List<String> paths = prepareCompilerClasspath(programImports, sketch);
-
-          // ClassLoader
-          List<URL> urls = new ArrayList<>();
-          for (Iterator<String> it = paths.iterator(); it.hasNext(); ) {
-            String path = it.next();
-            try {
-              urls.add(new File(path).toURI().toURL());
-            } catch (MalformedURLException e) {
-              it.remove(); // malformed, get rid of it
-            }
-          }
-          URL[] classPathArray = urls.toArray(new URL[urls.size()]);
-          classLoader = result.classLoader = new URLClassLoader(classPathArray, null);
-
-          // ClassPath
-          String[] pathArray = paths.toArray(new String[paths.size()]);
-          classPath = classPathFactory.createFromPaths(pathArray);
-        }
-
         // Compile it
         List<IProblem> compilationProblems =
             compileAndReturnProblems(className, javaStageChars,
-                                     COMPILER_OPTIONS, classLoader,
-                                     classPath);
+                                     COMPILER_OPTIONS, result.classLoader,
+                                     result.classPath);
 
         // Update result
         result.compilationMapping = compilationMapping;
-        result.classPath = classPath;
-        result.classLoader = classLoader;
         result.preprocessedCode = javaStage;
         result.compilationUnit = compilationCU;
-
-        Map<String, String[]> importSuggestions = new HashMap<>();
-        if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
-          for (IProblem problem : compilationProblems) {
-            if (problem.getID() == IProblem.UndefinedType) {
-              String missingClass = problem.getArguments()[0];
-              if (!importSuggestions.containsKey(missingClass)) {
-                importSuggestions.put(missingClass, getSuggestImports(missingClass));
-              }
-            }
-          }
-        }
-
-        boolean hasCompilationErrors = false;
 
         List<Problem> mappedCompilationProblems =
             mapProblems(compilationProblems, result.tabStarts, result.pdeCode,
                         result.compilationMapping, result.syntaxMapping);
 
-        for (Problem p : mappedCompilationProblems) {
-          hasCompilationErrors |= p.isError();
-          IProblem ip = p.getIProblem();
-          if (ip.getID() == IProblem.UndefinedType) {
-            p.setImportSuggestions(importSuggestions.get(ip.getArguments()[0]));
-          }
+        if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
+          Map<String, List<Problem>> undefinedTypeProblems = mappedCompilationProblems.stream()
+              // Get only problems with undefined types/names
+              .filter(p -> {
+                int id = p.getIProblem().getID();
+                return id == IProblem.UndefinedType || id == IProblem.UndefinedName;
+              })
+              // Group problems by the missing type/name
+              .collect(Collectors.groupingBy(p -> p.getIProblem().getArguments()[0]));
+
+          // TODO: cache this, invalidate if code folder or libraries change
+          final ClassPath cp = undefinedTypeProblems.isEmpty() ?
+              null :
+              buildImportSuggestionClassPath();
+
+          // Get suggestions for each missing type, update the problems
+          undefinedTypeProblems.entrySet().stream()
+              .forEach(entry -> {
+                String missingClass = entry.getKey();
+                List<Problem> problems = entry.getValue();
+                String[] suggestions = getImportSuggestions(cp, missingClass);
+                problems.forEach(p -> p.setImportSuggestions(suggestions));
+              });
         }
 
         result.problems.addAll(mappedCompilationProblems);
-        result.hasCompilationErrors = hasCompilationErrors;
 
+        result.hasCompilationErrors = mappedCompilationProblems.stream()
+            .anyMatch(Problem::isError);
       }}
     }
 
@@ -555,9 +556,7 @@ public class ErrorCheckerService {
   }
 
 
-  public String[] getSuggestImports(final String className) {
-    Messages.log("* getSuggestImports");
-
+  public ClassPath buildImportSuggestionClassPath() {
     // TODO: make sure search class path is complete,
     //       prepare it beforehand and reuse it
     //
@@ -569,11 +568,6 @@ public class ErrorCheckerService {
     //       - mode search path
     //       - Java classpath
 
-    RegExpResourceFilter regf =
-        new RegExpResourceFilter(Pattern.compile(".*"),
-                                 Pattern.compile("(.*\\$)?" + className + "\\.class",
-                                                 Pattern.CASE_INSENSITIVE));
-    // TODO once saw NPE here...possible for classPath to be null? [fry 150808]
 
     JavaMode mode = (JavaMode) editor.getMode();
 
@@ -591,13 +585,9 @@ public class ErrorCheckerService {
     // TODO: maybe we need mode.getCoreLibrary().getClassPath() here
     String searchPath = mode.getSearchPath();
     if (searchPath != null) {
-      if (!searchPath.startsWith(File.pathSeparator)) {
-        classPath.append(File.pathSeparator);
-      }
-      classPath.append(searchPath);
+      classPath.append(File.pathSeparator).append(searchPath);
     }
 
-    // TODO: maybe we need lib.getClassPath() here
     for (Library lib : mode.coreLibraries) {
       classPath.append(File.pathSeparator).append(lib.getClassPath());
     }
@@ -607,10 +597,7 @@ public class ErrorCheckerService {
     }
 
     String javaClassPath = System.getProperty("java.class.path");
-    if (!javaClassPath.startsWith(File.pathSeparator)) {
-      classPath.append(File.pathSeparator);
-    }
-    classPath.append(javaClassPath);
+    classPath.append(File.pathSeparator).append(javaClassPath);
 
     String rtPath = System.getProperty("java.home") +
         File.separator + "lib" + File.separator + "rt.jar";
@@ -631,12 +618,25 @@ public class ErrorCheckerService {
         .filter(p -> p != null && !p.trim().isEmpty())
         .collect(Collectors.joining(File.pathSeparator));
 
-    ClassPath cp = classPathFactory.createFromPath(path);
+    return classPathFactory.createFromPath(path);
+  }
+
+
+  public String[] getImportSuggestions(ClassPath cp, String className) {
+    RegExpResourceFilter regf = new RegExpResourceFilter(
+        Pattern.compile(".*"),
+        Pattern.compile("(.*\\$)?" + className + "\\.class",
+                        Pattern.CASE_INSENSITIVE));
+
     String[] resources = cp.findResources("", regf);
     return Arrays.stream(resources)
+        // remove ".class" suffix
         .map(res -> res.substring(0, res.length() - 6))
+        // replace path separators with dots
         .map(res -> res.replace('/', '.'))
+        // replace inner class separators with dots
         .map(res -> res.replace('$', '.'))
+        // sort, prioritize clases from java. package
         .sorted((o1, o2) -> {
           // put java.* first, should be prioritized more
           boolean o1StartsWithJava = o1.startsWith("java");
@@ -654,49 +654,53 @@ public class ErrorCheckerService {
   protected static List<Problem> mapProblems(List<IProblem> problems,
                                              int[] tabStarts, String pdeCode,
                                              SourceMapping... mappings) {
+    return problems.stream()
+        // Filter Warnings if they are not enabled
+        .filter(iproblem -> !(iproblem.isWarning() && !JavaMode.warningsEnabled))
+        // Hide a useless error which is produced when a line ends with
+        // an identifier without a semicolon. "Missing a semicolon" is
+        // also produced and is preferred over this one.
+        // (Syntax error, insert ":: IdentifierOrNew" to complete Expression)
+        // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=405780
+        .filter(iproblem -> !iproblem.getMessage()
+            .contains("Syntax error, insert \":: IdentifierOrNew\""))
+        // Transform into our Problems
+        .map(iproblem -> {
+          int start = iproblem.getSourceStart();
+          int stop = iproblem.getSourceEnd(); // inclusive
 
-    List<Problem> result = new ArrayList<>();
+          // Apply mappings
+          for (SourceMapping mapping : mappings) {
+            start = mapping.getInputOffset(start);
+            stop = mapping.getInputOffset(stop);
+          }
 
-    for (IProblem problem : problems) {
-      if (problem.isWarning() && !JavaMode.warningsEnabled) continue;
+          if (stop < start) {
+            // Should not happen, just to be sure
+            int temp = start;
+            start = stop;
+            stop = temp;
+          }
 
-      // Hide a useless error which is produced when a line ends with
-      // an identifier without a semicolon. "Missing a semicolon" is
-      // also produced and is preferred over this one.
-      // (Syntax error, insert ":: IdentifierOrNew" to complete Expression)
-      // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=405780
-      if (problem.getMessage().contains("Syntax error, insert \":: IdentifierOrNew\"")) {
-        continue;
-      }
+          int pdeStart = PApplet.constrain(start, 0, pdeCode.length()-1);
+          int pdeStop = PApplet.constrain(stop + 1, 1, pdeCode.length()); // +1 for exclusive end
 
-      int start = problem.getSourceStart();
-      int stop = problem.getSourceEnd(); // inclusive
+          int tab = Arrays.binarySearch(tabStarts, pdeStart);
+          if (tab < 0) {
+            tab = -(tab + 1) - 1;
+          }
 
-      for (SourceMapping mapping : mappings) {
-        start = mapping.getInputOffset(start);
-        stop = mapping.getInputOffset(stop);
-      }
+          int tabStart = tabStarts[tab];
 
-      int pdeStart = PApplet.constrain(start, 0, pdeCode.length()-1);
-      int pdeStop = PApplet.constrain(stop + 1, 1, pdeCode.length()); // +1 for exclusive end
+          // TODO: quick hack; make it smart, fast & beautiful later
+          int line = Util.countLines(pdeCode.substring(tabStart, pdeStart)) - 1;
 
-      // TODO: maybe optimize this, some people use tons of tabs
-      int tab = Arrays.binarySearch(tabStarts, pdeStart);
-      if (tab < 0) {
-        tab = -(tab + 1) - 1;
-      }
+          Problem problem = new Problem(iproblem, tab, line);
+          problem.setPDEOffsets(pdeStart - tabStart, pdeStop - tabStart);
 
-      int tabStart = tabStarts[tab];
-
-      // TODO: quick hack; make it smart, fast & beautiful later
-      int line = Util.countLines(pdeCode.substring(tabStart, pdeStart)) - 1;
-
-      Problem p = new Problem(problem, tab, line);
-      p.setPDEOffsets(pdeStart - tabStart, pdeStop - tabStart);
-      result.add(p);
-    }
-
-    return result;
+          return problem;
+        })
+        .collect(Collectors.toList());
   }
 
 
@@ -732,11 +736,8 @@ public class ErrorCheckerService {
                                                         ClassPath classPath) {
     final List<IProblem> problems = new ArrayList<>();
 
-    ICompilerRequestor requestor = new ICompilerRequestor() {
-      @Override
-      public void acceptResult(CompilationResult cr) {
-        if (cr.hasProblems()) Collections.addAll(problems, cr.getProblems());
-      }
+    ICompilerRequestor requestor = cr -> {
+      if (cr.hasProblems()) Collections.addAll(problems, cr.getProblems());
     };
 
     final char[] contents = source;
@@ -776,25 +777,26 @@ public class ErrorCheckerService {
    * messed up.
    */
   protected List<String> prepareCompilerClasspath(List<ImportStatement> programImports, Sketch sketch) {
+
+    // TODO: eliminate duplication in buildImportSuggestionClassPath
+
     JavaMode mode = (JavaMode) editor.getMode();
 
     StringBuilder classPath = new StringBuilder();
 
-    for (ImportStatement impstat : programImports) {
-      String entry = impstat.getPackageName();
-      if (!ignorableImport(entry)) {
-
-        // Try to get the library classpath and add it to the list
-        try {
-          Library library = mode.getLibrary(entry);
-          if (library != null) {
-            classPath.append(library.getClassPath());
+    programImports.stream()
+        .map(ImportStatement::getPackageName)
+        .filter(pckg -> !ignorableImport(pckg))
+        .map(pckg -> {
+          try {
+            return mode.getLibrary(pckg); // TODO: this may not be thread-safe
+          } catch (SketchException e) {
+            return null;
           }
-        } catch (SketchException e) {
-          // More libraries competing, ignore
-        }
-      }
-    }
+        })
+        .filter(lib -> lib != null)
+        .map(Library::getClassPath)
+        .forEach(cp -> classPath.append(File.pathSeparator).append(cp));
 
     if (sketch.hasCodeFolder()) {
       File codeFolder = sketch.getCodeFolder();
@@ -806,22 +808,19 @@ public class ErrorCheckerService {
     // TODO: maybe we need mode.getCoreLibrary().getClassPath() here
     String searchPath = mode.getSearchPath();
     if (searchPath != null) {
-      if (!searchPath.startsWith(File.pathSeparator)) {
-        classPath.append(File.pathSeparator);
-      }
-      classPath.append(searchPath);
+      classPath.append(File.pathSeparator).append(searchPath);
     }
 
-    // TODO: maybe we need lib.getClassPath() here
     for (Library lib : mode.coreLibraries) {
       classPath.append(File.pathSeparator).append(lib.getJarPath());
     }
 
-    String javaClassPath = System.getProperty("java.class.path");
-    if (!javaClassPath.startsWith(File.pathSeparator)) {
-      classPath.append(File.pathSeparator);
+    for (Library lib : mode.contribLibraries) {
+      classPath.append(File.pathSeparator).append(lib.getJarPath());
     }
-    classPath.append(javaClassPath);
+
+//    String javaClassPath = System.getProperty("java.class.path");
+//    classPath.append(File.pathSeparator).append(javaClassPath);
 
     String rtPath = System.getProperty("java.home") +
         File.separator + "lib" + File.separator + "rt.jar";
@@ -838,16 +837,10 @@ public class ErrorCheckerService {
     // Make sure class path does not contain empty string (home dir)
     String[] paths = classPath.toString().split(File.pathSeparator);
 
-    List<String> entries = new ArrayList<>();
-
-    for (int i = 0; i < paths.length; i++) {
-      String path = paths[i];
-      if (path != null && !path.trim().isEmpty()) {
-        entries.add(path);
-      }
-    }
-
-    return entries;
+    return Arrays.stream(paths)
+        .filter(p -> p != null && !p.trim().isEmpty())
+        .distinct()
+        .collect(Collectors.toList());
   }
 
 
@@ -862,21 +855,19 @@ public class ErrorCheckerService {
 
   protected boolean ignorableSuggestionImport(String impName) {
 
-    // TODO: propagate these from last result
+    String impNameLc = impName.toLowerCase();
 
-    /*String impNameLc = impName.toLowerCase();
-
-    for (ImportStatement impS : programImports) {
+    for (ImportStatement impS : latestResult.programImports) {
       if (impNameLc.startsWith(impS.getPackageName().toLowerCase())) {
         return false;
       }
     }
 
-    for (ImportStatement impS : codeFolderImports) {
+    for (ImportStatement impS : latestResult.codeFolderImports) {
       if (impNameLc.startsWith(impS.getPackageName().toLowerCase())) {
         return false;
       }
-    }*/
+    }
 
     final String include = "include";
     final String exclude = "exclude";
@@ -1091,11 +1082,6 @@ public class ErrorCheckerService {
     return false;
   }
 
-  protected int pdeImportsCount;
-
-  public int getPdeImportsCount() {
-    return pdeImportsCount;
-  }
 
   public void handleErrorCheckingToggle() {
     if (!JavaMode.errorCheckEnabled) {
