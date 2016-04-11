@@ -142,39 +142,32 @@ public class StringDict {
   }
 
 
-//  /**
-//   * Return the internal array being used to store the keys. Allocated but
-//   * unused entries will be removed. This array should not be modified.
-//   */
-//  public String[] keys() {
-//    crop();
-//    return keys;
-//  }
-
-  /**
-   * @webref stringdict:method
-   * @brief Return the internal array being used to store the keys
-   */
   public Iterable<String> keys() {
     return new Iterable<String>() {
 
       @Override
       public Iterator<String> iterator() {
-        return new Iterator<String>() {
-          int index = -1;
+        return keyIterator();
+      }
+    };
+  }
 
-          public void remove() {
-            removeIndex(index);
-          }
 
-          public String next() {
-            return key(++index);
-          }
+  // Use this to iterate when you want to be able to remove elements along the way
+  public Iterator<String> keyIterator() {
+    return new Iterator<String>() {
+      int index = -1;
 
-          public boolean hasNext() {
-            return index+1 < size();
-          }
-        };
+      public void remove() {
+        removeIndex(index);
+      }
+
+      public String next() {
+        return key(++index);
+      }
+
+      public boolean hasNext() {
+        return index+1 < size();
       }
     };
   }
@@ -187,6 +180,7 @@ public class StringDict {
    * @brief Return a copy of the internal keys array
    */
   public String[] keyArray() {
+    crop();
     return keyArray(null);
   }
 
@@ -213,21 +207,26 @@ public class StringDict {
 
       @Override
       public Iterator<String> iterator() {
-        return new Iterator<String>() {
-          int index = -1;
+        return valueIterator();
+      }
+    };
+  }
 
-          public void remove() {
-            removeIndex(index);
-          }
 
-          public String next() {
-            return value(++index);
-          }
+  public Iterator<String> valueIterator() {
+    return new Iterator<String>() {
+      int index = -1;
 
-          public boolean hasNext() {
-            return index+1 < size();
-          }
-        };
+      public void remove() {
+        removeIndex(index);
+      }
+
+      public String next() {
+        return value(++index);
+      }
+
+      public boolean hasNext() {
+        return index+1 < size();
       }
     };
   }
@@ -240,6 +239,7 @@ public class StringDict {
    * @brief Create a new array and copy each of the values into it
    */
   public String[] valueArray() {
+    crop();
     return valueArray(null);
   }
 
@@ -357,8 +357,8 @@ public class StringDict {
     keys[b] = tkey;
     values[b] = tvalue;
 
-    indices.put(keys[a], Integer.valueOf(a));
-    indices.put(keys[b], Integer.valueOf(b));
+//    indices.put(keys[a], Integer.valueOf(a));
+//    indices.put(keys[b], Integer.valueOf(b));
   }
 
 
@@ -375,7 +375,7 @@ public class StringDict {
 
   /**
    * @webref stringdict:method
-   * @brief Sort the keys alphabetially in reverse
+   * @brief Sort the keys alphabetically in reverse
    */
   public void sortKeysReverse() {
     sortImpl(true, true);
@@ -432,6 +432,12 @@ public class StringDict {
       }
     };
     s.run();
+
+    // Set the indices after sort/swaps (performance fix 160411)
+    indices = new HashMap<String, Integer>();
+    for (int i = 0; i < count; i++) {
+      indices.put(keys[i], i);
+    }
   }
 
 
@@ -448,6 +454,13 @@ public class StringDict {
   }
 
 
+  public void print() {
+    for (int i = 0; i < size(); i++) {
+      System.out.println(keys[i] + " = " + values[i]);
+    }
+  }
+
+
   /**
    * Write tab-delimited entries out to
    * @param writer
@@ -457,13 +470,6 @@ public class StringDict {
       writer.println(keys[i] + "\t" + values[i]);
     }
     writer.flush();
-  }
-
-
-  public void print() {
-    for (int i = 0; i < size(); i++) {
-      System.out.println(keys[i] + " = " + values[i]);
-    }
   }
 
 

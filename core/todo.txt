@@ -1,4 +1,13 @@
 0249 (3.0.3)
+X Float/IntDict changes
+X   minIndex() and maxIndex() return -1 when count is zero (rather than ex)
+X   bug fix to reverse sorts
+X   2x performance increase for sorting
+X   added optional "stable" parameter for sorting by values
+X     set to false for higher performance
+X   call crop() in keyArray() and valueArray() functions
+X     they're duplicates, their length is an implementation detail
+X   normalize features and error handling between all of them
 
 _ add push() and pop() methods to mirror js?
 

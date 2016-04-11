@@ -70,6 +70,22 @@ public class FloatDict {
 
 
   /**
+   * @nowebref
+   */
+  public FloatDict(String[] keys, float[] values) {
+    if (keys.length != values.length) {
+      throw new IllegalArgumentException("key and value arrays must be the same length");
+    }
+    this.keys = keys;
+    this.values = values;
+    count = keys.length;
+    for (int i = 0; i < count; i++) {
+      indices.put(keys[i], i);
+    }
+  }
+
+
+  /**
    * Constructor to allow (more intuitive) inline initialization, e.g.:
    * <pre>
    * new FloatDict(new Object[][] {
@@ -89,21 +105,6 @@ public class FloatDict {
     }
   }
 
-
-  /**
-   * @nowebref
-   */
-  public FloatDict(String[] keys, float[] values) {
-    if (keys.length != values.length) {
-      throw new IllegalArgumentException("key and value arrays must be the same length");
-    }
-    this.keys = keys;
-    this.values = values;
-    count = keys.length;
-    for (int i = 0; i < count; i++) {
-      indices.put(keys[i], i);
-    }
-  }
 
   /**
    * @webref floatdict:method
@@ -139,71 +140,35 @@ public class FloatDict {
   }
 
 
-//  /**
-//   * Return the internal array being used to store the keys. Allocated but
-//   * unused entries will be removed. This array should not be modified.
-//   */
-//  public String[] keys() {
-//    crop();
-//    return keys;
-//  }
-
-  /**
-   * @webref floatdict:method
-   * @brief Return the internal array being used to store the keys
-   */
   public Iterable<String> keys() {
     return new Iterable<String>() {
 
       @Override
       public Iterator<String> iterator() {
-        return new Iterator<String>() {
-          int index = -1;
-
-          public void remove() {
-            removeIndex(index);
-          }
-
-          public String next() {
-            return key(++index);
-          }
-
-          public boolean hasNext() {
-            return index+1 < size();
-          }
-        };
+        return keyIterator();
       }
     };
   }
+  
+  
+  // Use this to iterate when you want to be able to remove elements along the way
+  public Iterator<String> keyIterator() {
+    return new Iterator<String>() {
+      int index = -1;
 
+      public void remove() {
+        removeIndex(index);
+      }
 
-  /*
-  static class KeyIterator implements Iterator<String> {
-    FloatHash parent;
-    int index;
+      public String next() {
+        return key(++index);
+      }
 
-    public KeyIterator(FloatHash parent) {
-      this.parent = parent;
-      index = -1;
-    }
-
-    public void remove() {
-      parent.removeIndex(index);
-    }
-
-    public String next() {
-      return parent.key(++index);
-    }
-
-    public boolean hasNext() {
-      return index+1 < parent.size();
-    }
-
-    public void reset() {
-      index = -1;
-    }
+      public boolean hasNext() {
+        return index+1 < size();
+      }
+    };
   }
-  */
 
 
   /**
@@ -213,6 +178,7 @@ public class FloatDict {
    * @brief Return a copy of the internal keys array
    */
   public String[] keyArray() {
+    crop();
     return keyArray(null);
   }
 
@@ -231,11 +197,6 @@ public class FloatDict {
   }
 
 
-//  public float[] values() {
-//    crop();
-//    return values;
-//  }
-
   /**
    * @webref floatdict:method
    * @brief Return the internal array being used to store the values
@@ -245,21 +206,26 @@ public class FloatDict {
 
       @Override
       public Iterator<Float> iterator() {
-        return new Iterator<Float>() {
-          int index = -1;
+        return valueIterator();
+      }
+    };
+  }
+  
+  
+  public Iterator<Float> valueIterator() {
+    return new Iterator<Float>() {
+      int index = -1;
 
-          public void remove() {
-            removeIndex(index);
-          }
+      public void remove() {
+        removeIndex(index);
+      }
 
-          public Float next() {
-            return value(++index);
-          }
+      public Float next() {
+        return value(++index);
+      }
 
-          public boolean hasNext() {
-            return index+1 < size();
-          }
-        };
+      public boolean hasNext() {
+        return index+1 < size();
       }
     };
   }
@@ -272,6 +238,7 @@ public class FloatDict {
    * @brief Create a new array and copy each of the values into it
    */
   public float[] valueArray() {
+    crop();
     return valueArray(null);
   }
 
@@ -337,18 +304,6 @@ public class FloatDict {
   }
 
 
-//  /** Increase the value of a specific key by 1. */
-//  public void inc(String key) {
-//    inc(key, 1);
-////    int index = index(key);
-////    if (index == -1) {
-////      create(key, 1);
-////    } else {
-////      values[index]++;
-////    }
-//  }
-
-
   /**
    * @webref floatdict:method
    * @brief Add to a value
@@ -361,12 +316,6 @@ public class FloatDict {
       values[index] += amount;
     }
   }
-
-
-//  /** Decrease the value of a key by 1. */
-//  public void dec(String key) {
-//    inc(key, -1);
-//  }
 
 
   /**
@@ -417,8 +366,10 @@ public class FloatDict {
    * @brief Return the smallest value
    */
   public int minIndex() {
-    checkMinMax("minIndex");
-    // Will still return NaN if there is 1 or more entries, and they're all NaN
+    //checkMinMax("minIndex");
+    if (count == 0) return -1;
+    
+    // Will still return NaN if there are 1 or more entries, and they're all NaN
     float m = Float.NaN;
     int mi = -1;
     for (int i = 0; i < count; i++) {
@@ -430,7 +381,7 @@ public class FloatDict {
         // calculate the rest
         for (int j = i+1; j < count; j++) {
           float d = values[j];
-          if (!Float.isNaN(d) && (d < m)) {
+          if ((d == d) && (d < m)) {
             m = values[j];
             mi = j;
           }
@@ -442,6 +393,7 @@ public class FloatDict {
   }
 
 
+  // return the key for the minimum value
   public String minKey() {
     checkMinMax("minKey");
     int index = minIndex();
@@ -452,6 +404,7 @@ public class FloatDict {
   }
 
 
+  // return the minimum value, or throw an error if there are no values
   public float minValue() {
     checkMinMax("minValue");
     int index = minIndex();
@@ -468,7 +421,10 @@ public class FloatDict {
    */
   // The index of the entry that has the max value. Reference above is incorrect.
   public int maxIndex() {
-    checkMinMax("maxIndex");
+    //checkMinMax("maxIndex");
+    if (count == 0) {
+      return -1;
+    }
     // Will still return NaN if there is 1 or more entries, and they're all NaN
     float m = Float.NaN;
     int mi = -1;
@@ -493,9 +449,9 @@ public class FloatDict {
   }
 
 
-  /** The key for a max value, or null if everything is NaN (no max). */
+  /** The key for a max value; null if empty or everything is NaN (no max). */
   public String maxKey() {
-    checkMinMax("maxKey");
+    //checkMinMax("maxKey");
     int index = maxIndex();
     if (index == -1) {
       return null;
@@ -504,9 +460,9 @@ public class FloatDict {
   }
 
 
-  /** The max value. (Or NaN if they're all NaN.) */
+  /** The max value. (Or NaN if no entries or they're all NaN.) */
   public float maxValue() {
-    checkMinMax("maxValue");
+    //checkMinMax("maxValue");
     int index = maxIndex();
     if (index == -1) {
       return Float.NaN;
@@ -573,22 +529,9 @@ public class FloatDict {
     keys[b] = tkey;
     values[b] = tvalue;
 
-    indices.put(keys[a], Integer.valueOf(a));
-    indices.put(keys[b], Integer.valueOf(b));
+//    indices.put(keys[a], Integer.valueOf(a));
+//    indices.put(keys[b], Integer.valueOf(b));
   }
-
-
-//  abstract class InternalSort extends Sort {
-//    @Override
-//    public int size() {
-//      return count;
-//    }
-//
-//    @Override
-//    public void swap(int a, int b) {
-//      FloatHash.this.swap(a, b);
-//    }
-//  }
 
 
   /**
@@ -599,36 +542,16 @@ public class FloatDict {
    * @brief Sort the keys alphabetically
    */
   public void sortKeys() {
-    sortImpl(true, false);
-//    new InternalSort() {
-//      @Override
-//      public float compare(int a, int b) {
-//        int result = keys[a].compareToIgnoreCase(keys[b]);
-//        if (result != 0) {
-//          return result;
-//        }
-//        return values[b] - values[a];
-//      }
-//    }.run();
+    sortImpl(true, false, true);
   }
 
 
   /**
    * @webref floatdict:method
-   * @brief Sort the keys alphabetially in reverse
+   * @brief Sort the keys alphabetically in reverse
    */
   public void sortKeysReverse() {
-    sortImpl(true, true);
-//    new InternalSort() {
-//      @Override
-//      public float compare(int a, int b) {
-//        int result = keys[b].compareToIgnoreCase(keys[a]);
-//        if (result != 0) {
-//          return result;
-//        }
-//        return values[a] - values[b];
-//      }
-//    }.run();
+    sortImpl(true, true, true);
   }
 
 
@@ -639,13 +562,17 @@ public class FloatDict {
    * @brief Sort by values in ascending order
    */
   public void sortValues() {
-    sortImpl(false, false);
-//    new InternalSort() {
-//      @Override
-//      public float compare(int a, int b) {
-//
-//      }
-//    }.run();
+    sortValues(true);
+  }
+
+
+  /**
+   * Set true to ensure that the order returned is identical. Slightly
+   * slower because the tie-breaker for identical values compares the keys.
+   * @param stable
+   */
+  public void sortValues(boolean stable) {
+    sortImpl(false, false, stable);
   }
 
 
@@ -654,50 +581,17 @@ public class FloatDict {
    * @brief Sort by values in descending order
    */
   public void sortValuesReverse() {
-    sortImpl(false, true);
-//    new InternalSort() {
-//      @Override
-//      public float compare(int a, int b) {
-//        float diff = values[b] - values[a];
-//        if (diff == 0 && keys[a] != null && keys[b] != null) {
-//          diff = keys[a].compareToIgnoreCase(keys[b]);
-//        }
-//        return descending ? diff : -diff;
-//      }
-//    }.run();
+    sortValuesReverse(true);
   }
 
 
-//  // ascending puts the largest value at the end
-//  // descending puts the largest value at 0
-//  public void sortValues(final boolean descending, final boolean tiebreaker) {
-//    Sort s = new Sort() {
-//      @Override
-//      public int size() {
-//        return count;
-//      }
-//
-//      @Override
-//      public float compare(int a, int b) {
-//        float diff = values[b] - values[a];
-//        if (tiebreaker) {
-//          if (diff == 0) {
-//            diff = keys[a].compareToIgnoreCase(keys[b]);
-//          }
-//        }
-//        return descending ? diff : -diff;
-//      }
-//
-//      @Override
-//      public void swap(int a, int b) {
-//        FloatHash.this.swap(a, b);
-//      }
-//    };
-//    s.run();
-//  }
+  public void sortValuesReverse(boolean stable) {
+    sortImpl(false, true, stable);
+  }
 
 
-  protected void sortImpl(final boolean useKeys, final boolean reverse) {
+  protected void sortImpl(final boolean useKeys, final boolean reverse, 
+                          final boolean stable) {
     Sort s = new Sort() {
       @Override
       public int size() {
@@ -731,11 +625,11 @@ public class FloatDict {
         if (useKeys) {
           diff = keys[a].compareToIgnoreCase(keys[b]);
           if (diff == 0) {
-            return values[a] - values[b];
+            diff = values[a] - values[b];
           }
         } else {  // sort values
           diff = values[a] - values[b];
-          if (diff == 0) {
+          if (diff == 0 && stable) {
             diff = keys[a].compareToIgnoreCase(keys[b]);
           }
         }
@@ -748,18 +642,24 @@ public class FloatDict {
       }
     };
     s.run();
+
+    // Set the indices after sort/swaps (performance fix 160411)
+    indices = new HashMap<String, Integer>();
+    for (int i = 0; i < count; i++) {
+      indices.put(keys[i], i);
+    }
   }
 
 
   /**
    * Sum all of the values in this dictionary, then return a new FloatDict of
    * each key, divided by the total sum. The total for all values will be ~1.0.
-   * @return a Dict with the original keys, mapped to their pct of the total
+   * @return a FloatDict with the original keys, mapped to their pct of the total
    */
   public FloatDict getPercent() {
     double sum = 0;
-    for (float value : valueArray()) {
-      sum += value;
+    for (int i = 0; i < count; i++) {
+      sum += values[i];
     }
     FloatDict outgoing = new FloatDict();
     for (int i = 0; i < size(); i++) {
