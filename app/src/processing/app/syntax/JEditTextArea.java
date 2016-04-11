@@ -818,6 +818,7 @@ public class JEditTextArea extends JComponent
 
     document.addDocumentListener(documentHandler);
 
+    bracketHelper.invalidate();
     select(0, 0);
     updateScrollBars();
     painter.repaint();
@@ -838,6 +839,7 @@ public class JEditTextArea extends JComponent
 
     document.addDocumentListener(documentHandler);
 
+    bracketHelper.invalidate();
     select(start, stop);
     updateScrollBars();
     setVerticalScrollPosition(scroll);

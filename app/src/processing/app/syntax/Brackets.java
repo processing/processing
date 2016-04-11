@@ -51,7 +51,7 @@ public class Brackets {
       return -1;
     }
 
-    if (offsets == null || offsets.get(offsets.size()-1) >= text.length())
+    if (offsets == null)
       parse(text);
     
     // find this bracket
@@ -126,9 +126,9 @@ public class Brackets {
     for (pos++; pos < len; pos++) {
       final char c = text.charAt(pos);
       if (c == '*' && (pos < len - 1)) {
-        pos++;
-        final char d = text.charAt(pos);
+        final char d = text.charAt(pos + 1);
         if (d == '/') {
+          pos++;
           return;
         }
       }
