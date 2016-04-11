@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 import processing.app.Base;
 import processing.core.PApplet;
@@ -15,19 +16,11 @@ import static java.awt.SystemColor.text;
 
 public class SourceMapping {
 
-  private static final Comparator<Edit> INPUT_OFFSET_COMP = new Comparator<Edit>() {
-    @Override
-    public int compare(Edit o1, Edit o2) {
-      return Integer.compare(o1.fromOffset, o2.fromOffset);
-    }
-  };
+  private static final Comparator<Edit> INPUT_OFFSET_COMP =
+      (o1, o2) -> Integer.compare(o1.fromOffset, o2.fromOffset);
 
-  private static final Comparator<Edit> OUTPUT_OFFSET_COMP = new Comparator<Edit>() {
-    @Override
-    public int compare(Edit o1, Edit o2) {
-      return Integer.compare(o1.toOffset, o2.toOffset);
-    }
-  };
+  private static final Comparator<Edit> OUTPUT_OFFSET_COMP =
+      (o1, o2) -> Integer.compare(o1.toOffset, o2.toOffset);
 
   private boolean applied;
 
@@ -47,36 +40,13 @@ public class SourceMapping {
   }
 
 
-  public void insert(int offset, String text) {
-    edits.add(Edit.insert(offset, text));
-  }
-
-
-  public void delete(int offset, int length) {
-    edits.add(Edit.delete(offset, length));
-  }
-
-
-  public void replace(int offset, int length, String text) {
-    edits.add(Edit.replace(offset, length, text));
-  }
-
-
-  public void move(int fromOffset, int length, int toOffset) {
-    edits.add(Edit.move(fromOffset, length, toOffset));
-  }
-
   public String apply(CharSequence input) {
 
     final int inLength = input.length();
-    final int editCount = edits.size();
     final StringBuilder output = new StringBuilder(inLength);
 
     // Make copies of Edits to preserve original edits
-    List<Edit> inEdits = new ArrayList<>();
-    for (Edit edit : edits) {
-      inEdits.add(new Edit(edit));
-    }
+    List<Edit> inEdits = edits.stream().map(Edit::new).collect(Collectors.toList());
     List<Edit> outEdits = new ArrayList<>(inEdits);
 
     // Edits sorted by input offsets
