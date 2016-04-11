@@ -225,74 +225,82 @@ public class SourceUtils {
     return sb.toString();
   }
 
-  /**
-   * Replace all commented portions of a given String as spaces.
-   * Utility function used here and in the preprocessor.
-   */
   static public void scrubCommentsAndStrings(StringBuilder p) {
-    // Track quotes to avoid problems with code like: String t = "*/*";
-    // http://code.google.com/p/processing/issues/detail?id=1435
-    boolean insideQuote = false;
 
-    int length = p.length();
+    final int length = p.length();
 
-    int index = 0;
-    while (index < length) {
-      // for any double slash comments, ignore until the end of the line
-      if (!insideQuote &&
-          (p.charAt(index) == '/') &&
-          (index < length - 1) &&
-          (p.charAt(index+1) == '/')) {
-        p.setCharAt(index++, ' ');
-        p.setCharAt(index++, ' ');
-        while ((index < length) &&
-            (p.charAt(index) != '\n')) {
-          p.setCharAt(index++, ' ');
-        }
+    final int OUT = 0;
+    final int IN_BLOCK_COMMENT = 1;
+    final int IN_EOL_COMMENT = 2;
+    final int IN_STRING_LITERAL = 3;
+    final int IN_CHAR_LITERAL = 4;
 
-        // check to see if this is the start of a new multiline comment.
-        // if it is, then make sure it's actually terminated somewhere.
-      } else if (!insideQuote &&
-          (p.charAt(index) == '/') &&
-          (index < length - 1) &&
-          (p.charAt(index+1) == '*')) {
-        p.setCharAt(index++, ' ');
-        p.setCharAt(index++, ' ');
-        boolean endOfRainbow = false;
-        while (index < length - 1) {
-          if ((p.charAt(index) == '*') && (p.charAt(index+1) == '/')) {
-            p.setCharAt(index++, ' ');
-            p.setCharAt(index++, ' ');
-            endOfRainbow = true;
-            break;
+    int blockStart = -1;
 
-          } else {
-            // continue blanking this area
-            p.setCharAt(index++, ' ');
+    int prevState = OUT;
+    int state = OUT;
+
+    for (int i = 0; i <= length; i++) {
+      char ch = (i < length) ? p.charAt(i) : 0;
+      char pch = (i == 0) ? 0 : p.charAt(i-1);
+      switch (state) {
+        case OUT:
+          switch (ch) {
+            case '\'': state = IN_CHAR_LITERAL; break;
+            case '"': state = IN_STRING_LITERAL; break;
+            case '*': if (pch == '/') state = IN_BLOCK_COMMENT; break;
+            case '/': if (pch == '/') state = IN_EOL_COMMENT; break;
+          }
+          break;
+        case IN_BLOCK_COMMENT:
+          if (pch == '*' && ch == '/' && (i - blockStart) > 1) {
+            state = OUT;
+          }
+          break;
+        case IN_EOL_COMMENT:
+          if (ch == '\r' || ch == '\n') {
+            state = OUT;
+          }
+          break;
+        case IN_STRING_LITERAL:
+          if ((pch != '\\' && ch == '"') || ch == '\r' || ch == '\n') {
+            state = OUT;
+          }
+          break;
+        case IN_CHAR_LITERAL:
+          if ((pch != '\\' && ch == '\'') || ch == '\r' || ch == '\n') {
+            state = OUT;
+          }
+          break;
+      }
+
+      // Terminate ongoing block at last char
+      if (i == length) {
+        state = OUT;
+      }
+
+      // Handle state changes
+      if (state != prevState) {
+        if (state != OUT) {
+          // Entering block
+          blockStart = i + 1;
+        } else {
+          // Exiting block
+          int blockEnd = i;
+          if (prevState == IN_BLOCK_COMMENT && i < length) blockEnd--; // preserve star in '*/'
+          for (int j = blockStart; j < blockEnd; j++) {
+            char c = p.charAt(j);
+            if (c != '\n' && c != '\r') p.setCharAt(j, ' ');
           }
         }
-        if (!endOfRainbow) {
-          throw new RuntimeException("Missing the */ from the end of a " +
-                                         "/* comment */");
-        }
-      } else {
-        boolean isChar = index > 0 && p.charAt(index-1) == '\\';
-        if ((insideQuote && p.charAt(index) == '\n') ||
-            (p.charAt(index) == '"' && !isChar)) {
-          insideQuote = !insideQuote;
-          index++;
-        } else if (insideQuote && index < p.length() - 1 &&
-            p.charAt(index) == '\\' && p.charAt(index+1) == '"') {
-          p.setCharAt(index, ' ');
-          p.setCharAt(index + 1, ' ');
-          index++;
-        } else if (insideQuote) {
-          p.setCharAt(index, ' ');
-          index++;
-        } else {  // any old character, move along
-          index++;
-        }
       }
+
+      prevState = state;
     }
+
+  }
+
+  public static void main(String[] args) {
+    System.out.println();
   }
 }
