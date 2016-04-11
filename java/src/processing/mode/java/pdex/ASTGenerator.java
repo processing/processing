@@ -436,6 +436,7 @@ public class ASTGenerator {
         }
 
       }
+      break;
     case ASTNode.QUALIFIED_NAME:
       QualifiedName qn = (QualifiedName) astNode;
       ASTNode temp2 = findDeclaration2(qn.getName(), nearestNode);
@@ -752,7 +753,7 @@ public class ASTGenerator {
 
     log("Looking in the classloader for " + className);
     // TODO: get this from last code check result
-    List<ImportStatement> imports = Collections.emptyList(); //errorCheckerService.getProgramImports();
+    List<ImportStatement> imports = errorCheckerService.latestResult.programImports;
 
     for (ImportStatement impS : imports) {
       String temp = impS.getPackageName();
@@ -776,7 +777,7 @@ public class ASTGenerator {
     }
 
     // TODO: get this from last code check result
-    List<ImportStatement> codeFolderImports = Collections.emptyList();
+    List<ImportStatement> codeFolderImports = errorCheckerService.latestResult.codeFolderImports;
     for (ImportStatement impS : codeFolderImports) {
       String temp = impS.getPackageName();
       if (impS.isStarredImport())  { // case of starred import: pkg.foo.*
@@ -798,26 +799,28 @@ public class ASTGenerator {
       //log("Doesn't exist in (code folder) imp package: " + impS.getImportName());
     }
 
-//    PdePreprocessor p = new PdePreprocessor(null);
-    PdePreprocessor p = editor.createPreprocessor(null);
-    for (String impS : p.getCoreImports()) {
-      tehClass = loadClass(impS.substring(0,impS.length()-1) + className);
+    // TODO: get this from last code check result
+    List<ImportStatement> coreAndDefaultImports =
+        errorCheckerService.latestResult.coreAndDefaultImports;
+    for (ImportStatement impS : coreAndDefaultImports) {
+      String temp = impS.getPackageName();
+      if (impS.isStarredImport())  { // case of starred import: pkg.foo.*
+        if (className.indexOf('.') == -1) {
+          temp = impS.getPackageName() + "." + className;
+        } else {
+          continue;
+        }
+      } else { // case of class import: pkg.foo.MyClass
+        if (!impS.getClassName().equals(className)) {
+          continue;
+        }
+      }
+      tehClass = loadClass(temp);
       if (tehClass != null) {
         log(tehClass.getName() + " located.");
         return tehClass;
       }
-      //log("Doesn't exist in package: " + impS);
-    }
-
-    for (String impS : p.getDefaultImports()) {
-      if(className.equals(impS) || impS.endsWith(className)){
-        tehClass = loadClass(impS);
-        if (tehClass != null) {
-          log(tehClass.getName() + " located.");
-          return tehClass;
-        }
-       // log("Doesn't exist in package: " + impS);
-      }
+      //log("Doesn't exist in (code folder) imp package: " + impS.getImportName());
     }
 
     // And finally, the daddy
@@ -837,9 +840,8 @@ public class ASTGenerator {
     if (className != null) {
       try {
         // TODO: get the class loader from the last code check result
-        /*tehClass = Class.forName(className, false,
-                                 errorCheckerService.getSketchClassLoader());*/
-        tehClass = Class.forName(className);
+        tehClass = Class.forName(className, false,
+                                 errorCheckerService.latestResult.classLoader);
       } catch (ClassNotFoundException e) {
         //log("Doesn't exist in package: ");
       }
@@ -982,17 +984,12 @@ public class ASTGenerator {
   }
 
 
-  public String getLabelForASTNode(int lineNumber, String name, int offset) {
-    return getASTNodeAt(lineNumber, name, offset, false).getLabel();
-    //return "";
-  }
-
-  protected String getLabelIfType(ASTNodeWrapper node, SimpleName sn){
-    ASTNode current = node.getNode().getParent();
+  protected String getLabelIfType(ASTNode node){
+    ASTNode current = node.getParent();
     String type = "";
     StringBuilder fullName = new StringBuilder();
     Stack<String> parents = new Stack<>();
-    String simpleName = (sn == null) ? node.getNode().toString() : sn.toString();
+    String simpleName = node.toString();
     switch (node.getNodeType()) {
     case ASTNode.TYPE_DECLARATION:
     case ASTNode.METHOD_DECLARATION:
@@ -1007,8 +1004,8 @@ public class ASTGenerator {
         fullName.append(parents.pop()).append(".");
       }
       fullName.append(simpleName);
-      if (node.getNode() instanceof MethodDeclaration) {
-        MethodDeclaration md = (MethodDeclaration) node.getNode();
+      if (node instanceof MethodDeclaration) {
+        MethodDeclaration md = (MethodDeclaration) node;
         if (!md.isConstructor())
           type = md.getReturnType2().toString();
         fullName.append('(');
@@ -1025,22 +1022,22 @@ public class ASTGenerator {
           fullName.deleteCharAt(fullName.length() - 1);
         fullName.append(')');
       }
-      else if(node.getNode() instanceof FieldDeclaration){
-        type = ((FieldDeclaration) node.getNode()).getType().toString();
+      else if(node instanceof FieldDeclaration){
+        type = ((FieldDeclaration) node).getType().toString();
       }
       int x = fullName.indexOf(".");
       fullName.delete(0, x + 1);
       return type + " " + fullName;
 
     case ASTNode.SINGLE_VARIABLE_DECLARATION:
-      SingleVariableDeclaration svd = (SingleVariableDeclaration)node.getNode();
+      SingleVariableDeclaration svd = (SingleVariableDeclaration)node;
       return svd.getType() + " " + svd.getName();
 
     case ASTNode.VARIABLE_DECLARATION_STATEMENT:
-      return ((VariableDeclarationStatement) node.getNode()).getType() + " "
+      return ((VariableDeclarationStatement) node).getType() + " "
           + simpleName;
     case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
-      return ((VariableDeclarationExpression) node.getNode()).getType() + " "
+      return ((VariableDeclarationExpression) node).getType() + " "
           + simpleName;
     default:
       break;
@@ -1059,7 +1056,8 @@ public class ASTGenerator {
    * @param scrollOnly
    * @return
    */
-  public ASTNodeWrapper getASTNodeAt(int lineNumber, String name, int offset,
+  // TODO: nuke this in favor of NodeFinder
+  public ASTNode getASTNodeAt(int lineNumber, String name, int offset,
                                      boolean scrollOnly) {
 
     // Convert tab based pde line number to actual line number
@@ -1087,8 +1085,9 @@ public class ASTGenerator {
 
     // Obtain correspondin java code at that line, match offsets
     if (lineNode != null) {
-      String pdeCodeLine = errorCheckerService.getPdeCodeAtLine(editor
-          .getSketch().getCurrentCodeIndex(), lineNumber);
+      // TODO
+      String pdeCodeLine = ""; //errorCheckerService.getPdeCodeAtLine(editor
+         // .getSketch().getCurrentCodeIndex(), lineNumber);
       String javaCodeLine = getJavaSourceCodeLine(pdeLineNumber);
 
 //      log(lineNumber + " Original Line num.\nPDE :" + pdeCodeLine);
@@ -1115,8 +1114,7 @@ public class ASTGenerator {
         case ASTNode.FIELD_DECLARATION:
 
         case ASTNode.VARIABLE_DECLARATION_FRAGMENT:
-          decl = lineNode.getParent();
-          return new ASTNodeWrapper(decl, "");
+          return lineNode.getParent();
         default:
           break;
         }
@@ -1129,8 +1127,7 @@ public class ASTGenerator {
         decl = findDeclaration((SimpleName) simpName);
         if (decl != null) {
 //          Base.loge("DECLA: " + decl.getClass().getName());
-          nodeLabel = getLabelIfType(new ASTNodeWrapper(decl),
-                                     (SimpleName) simpName);
+          nodeLabel = getLabelIfType(decl);
           //retLabelString = getNodeAsString(decl);
         } else {
           if (scrollOnly) {
@@ -1166,18 +1163,11 @@ public class ASTGenerator {
        * since it contains all the properties.
        */
       ASTNode simpName2 = getNodeName(decl, nameOfNode);
-//      Base.loge("FINAL String decl: " + getNodeAsString(decl));
-//      Base.loge("FINAL String label: " + getNodeAsString(simpName2));
-      //errorCheckerService.highlightNode(simpName2);
-      ASTNodeWrapper declWrap = new ASTNodeWrapper(simpName2, nodeLabel);
-      //errorCheckerService.highlightNode(declWrap);
-      if (!declWrap.highlightNode(editor)) {
-        Messages.loge("Highlighting failed.");
-      }
+      // TODO: highlight ASTNode (should not be here though)
     }
 
     // Return the declaration wrapped as ASTNodeWrapper
-    return new ASTNodeWrapper(decl, nodeLabel);
+    return decl;
   }
 
   /**
@@ -1234,52 +1224,7 @@ public class ASTGenerator {
     return ((CompilationUnit) node.getRoot()).getLineNumber(pos);
   }
 
-//  public static void main(String[] args) {
-//    traversal2();
-//  }
-//
-//  public static void traversal2() {
-//    ASTParser parser = ASTParser.newParser(AST.JLS4);
-//    String source = readFile("/media/quarkninja/Work/TestStuff/low.java");
-////    String source = "package decl; \npublic class ABC{\n int ret(){\n}\n}";
-//    parser.setSource(source.toCharArray());
-//    parser.setKind(ASTParser.K_COMPILATION_UNIT);
-//
-//    Map<String, String> options = JavaCore.getOptions();
-//
-//    JavaCore.setComplianceOptions(JavaCore.VERSION_1_6, options);
-//    options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
-//    parser.setCompilerOptions(options);
-//
-//    CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-//    log(CompilationUnit.propertyDescriptors(AST.JLS4).size());
-//
-//    DefaultMutableTreeNode astTree = new DefaultMutableTreeNode("CompilationUnit");
-//    Base.loge("Errors: " + cu.getProblems().length);
-//    visitRecur(cu, astTree);
-//    Base.log("" + astTree.getChildCount());
-//
-//    try {
-//      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//      JFrame frame2 = new JFrame();
-//      JTree jtree = new JTree(astTree);
-//      frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//      frame2.setBounds(new Rectangle(100, 100, 460, 620));
-//      JScrollPane sp = new JScrollPane();
-//      sp.setViewportView(jtree);
-//      frame2.add(sp);
-//      frame2.setVisible(true);
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//    }
-//
-//    ASTNode found = NodeFinder.perform(cu, 468, 5);
-//    if (found != null) {
-//      Base.log(found.toString());
-//    }
-//  }
-
-
+  // TODO: nuke and reimplement
   protected void refactorIt(String newName){
     String selText = lastClickedWord == null ? getSelectedText()
         : lastClickedWord;
@@ -1316,22 +1261,22 @@ public class ASTGenerator {
     //int offsetsMap[][][] = new int[defCU.getChildCount()][2][];
     int pdeOffsets[][] = new int[defCU.getChildCount()][3];
     for (int i = 0; i < defCU.getChildCount(); i++) {
-      ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
+      ASTNode awrap = (ASTNode) ((DefaultMutableTreeNode) (defCU
           .getChildAt(i))).getUserObject();
-      int ans[] = errorCheckerService.calculateTabIndexAndLineNumber(awrap
+      /*int ans[] = errorCheckerService.calculateTabIndexAndLineNumber(awrap
           .getLineNumber());
       pdeOffsets[i][0] = ans[0];
       pdeOffsets[i][1] = ans[1];
-      pdeOffsets[i][2] = awrap.getPDECodeOffsetForSN(this);
+      pdeOffsets[i][2] = awrap.getPDECodeOffsetForSN(this);*/
     }
 
     editor.startCompoundEdit();
     for (int i = 0; i < defCU.getChildCount(); i++) {
-      ASTNodeWrapper awrap = (ASTNodeWrapper) ((DefaultMutableTreeNode) (defCU
+      ASTNode awrap = (ASTNode) ((DefaultMutableTreeNode) (defCU
           .getChildAt(i))).getUserObject();
       // correction for pde enhancements related displacement on a line
       int off = 0;
-      if (lineOffsetDisplacement.get(awrap.getLineNumber()) != null) {
+      /*if (lineOffsetDisplacement.get(awrap.getLineNumber()) != null) {
         off = lineOffsetDisplacement.get(awrap.getLineNumber());
 
         lineOffsetDisplacement.put(awrap.getLineNumber(),
@@ -1339,7 +1284,7 @@ public class ASTGenerator {
       } else {
         lineOffsetDisplacement.put(awrap.getLineNumber(),
                                    lineOffsetDisplacementConst);
-      }
+      }*/
 //      Base.loge(getNodeAsString(awrap.getNode()) + ", T:" + pdeOffsets[i][0]
 //          + ", L:" + pdeOffsets[i][1] + ", O:" + pdeOffsets[i][2]);
       // TODO: fix this line after fixing offsets in node wrapper
@@ -1393,7 +1338,7 @@ public class ASTGenerator {
   }
 
   protected String lastClickedWord = null;
-  protected ASTNodeWrapper lastClickedWordNode = null;
+  protected ASTNode lastClickedWordNode = null;
 
   public String getLastClickedWord() {
     return lastClickedWord;
@@ -1421,22 +1366,22 @@ public class ASTGenerator {
         + ", "
         + (ta.getSelectionStop() - ta.getLineStartOffset(line)));
     int offwhitespace = ta.getLineStartNonWhiteSpaceOffset(line);
-    ASTNodeWrapper wnode;
-    if (lastClickedWord == null || lastClickedWordNode.getNode() == null) {
+    ASTNode wnode;
+    if (lastClickedWord == null || lastClickedWordNode == null) {
       wnode = getASTNodeAt(line + errorCheckerService.mainClassOffset, selText,
                            ta.getSelectionStart() - offwhitespace, false);
     }
     else{
       wnode = lastClickedWordNode;
     }
-    if(wnode.getNode() == null){
+    if(wnode == null){
       return null;
     }
-    Messages.loge("Gonna find all occurrences of " + getNodeAsString(wnode.getNode()));
+    Messages.loge("Gonna find all occurrences of " + getNodeAsString(wnode));
 
     //If wnode is a constructor, find the TD instead.
     if (wnode.getNodeType() == ASTNode.METHOD_DECLARATION) {
-      MethodDeclaration md = (MethodDeclaration) wnode.getNode();
+      MethodDeclaration md = (MethodDeclaration) wnode;
       ASTNode node = md.getParent();
       while (node != null) {
         if (node instanceof TypeDeclaration) {
@@ -1449,14 +1394,14 @@ public class ASTGenerator {
         TypeDeclaration td = (TypeDeclaration) node;
         if(td.getName().toString().equals(md.getName().toString())){
           Messages.loge("Renaming constructor of " + getNodeAsString(td));
-          wnode = new ASTNodeWrapper(td);
+          wnode = td;
         }
       }
     }
 
     DefaultMutableTreeNode defCU =
-      new DefaultMutableTreeNode(new ASTNodeWrapper(wnode.getNode(), selText));
-    dfsNameOnly(defCU, wnode.getNode(), selText);
+      new DefaultMutableTreeNode(wnode);
+    dfsNameOnly(defCU, wnode, selText);
 
     // Reverse the list obtained via dfs
     Stack<Object> tempS = new Stack<>();
@@ -1493,9 +1438,7 @@ public class ASTGenerator {
           if (node.getStructuralProperty(prop) instanceof ASTNode) {
             ASTNode cnode = (ASTNode) node.getStructuralProperty(prop);
             if (isAddableASTNode(cnode)) {
-              ctnode = new DefaultMutableTreeNode(
-                                                  new ASTNodeWrapper((ASTNode) node
-                                                      .getStructuralProperty(prop)));
+              ctnode = new DefaultMutableTreeNode(node.getStructuralProperty(prop));
               tnode.add(ctnode);
               visitRecur(cnode, ctnode);
             }
@@ -1509,7 +1452,7 @@ public class ASTGenerator {
           node.getStructuralProperty(prop);
         for (ASTNode cnode : nodelist) {
           if (isAddableASTNode(cnode)) {
-            ctnode = new DefaultMutableTreeNode(new ASTNodeWrapper(cnode));
+            ctnode = new DefaultMutableTreeNode(cnode);
             tnode.add(ctnode);
             visitRecur(cnode, ctnode);
           } else {
@@ -1531,16 +1474,12 @@ public class ASTGenerator {
         temp.push((DefaultMutableTreeNode) cnode.getChildAt(i));
       }
 
-      if(!(cnode.getUserObject() instanceof ASTNodeWrapper))
+      if(!(cnode.getUserObject() instanceof ASTNode))
         continue;
-      ASTNodeWrapper awnode = (ASTNodeWrapper) cnode.getUserObject();
+      ASTNode awnode = (ASTNode) cnode.getUserObject();
 //      log("Visiting: " + getNodeAsString(awnode.getNode()));
-      if(isInstanceOfType(awnode.getNode(), decl, name)){
-        int val[] = errorCheckerService
-            .JavaToPdeOffsets(awnode.getLineNumber(), 0);
-        tnode.add(new DefaultMutableTreeNode(new ASTNodeWrapper(awnode
-            .getNode(), "Line " + (val[1] + 1) + " | Tab: "
-            + editor.getSketch().getCode(val[0]).getPrettyName())));
+      if(isInstanceOfType(awnode, decl, name)){
+        tnode.add(new DefaultMutableTreeNode(awnode));
       }
 
     }
@@ -1746,67 +1685,6 @@ public class ASTGenerator {
         for (ASTNode retNode : nodelist) {
 
           ASTNode rr = findLineOfNode(retNode, lineNumber, offset, name);
-          if (rr != null) {
-//              Base.loge(12 + getNodeAsString(rr));
-            return rr;
-          }
-        }
-      }
-    }
-//    Base.loge("-1");
-    return null;
-  }
-
-  /**
-   *
-   * @param node
-   * @param offset
-   *          - from textarea painter
-   * @param lineStartOffset
-   *          - obtained from findLineOfNode
-   * @param name
-   * @param root
-   * @return
-   */
-  public static ASTNode pinpointOnLine(ASTNode node, int offset,
-                                       int lineStartOffset, String name) {
-    //log("pinpointOnLine node class: " + node.getClass().getSimpleName());
-    if (node instanceof SimpleName) {
-      SimpleName sn = (SimpleName) node;
-      //log(offset+ "off,pol " + getNodeAsString(sn));
-      if ((lineStartOffset + offset) >= sn.getStartPosition()
-          && (lineStartOffset + offset) <= sn.getStartPosition()
-              + sn.getLength()) {
-        if (sn.toString().equals(name)) {
-          return sn;
-        }
-        else {
-          return null;
-        }
-      } else {
-        return null;
-      }
-    }
-    for (Object oprop : node.structuralPropertiesForType()) {
-      StructuralPropertyDescriptor prop = (StructuralPropertyDescriptor) oprop;
-      if (prop.isChildProperty() || prop.isSimpleProperty()) {
-        if (node.getStructuralProperty(prop) != null) {
-          if (node.getStructuralProperty(prop) instanceof ASTNode) {
-            ASTNode retNode = pinpointOnLine((ASTNode) node
-                                                 .getStructuralProperty(prop),
-                                             offset, lineStartOffset, name);
-            if (retNode != null) {
-//              Base.loge(11 + getNodeAsString(retNode));
-              return retNode;
-            }
-          }
-        }
-      } else if (prop.isChildListProperty()) {
-        List<ASTNode> nodelist = (List<ASTNode>) node
-            .getStructuralProperty(prop);
-        for (ASTNode retNode : nodelist) {
-
-          ASTNode rr = pinpointOnLine(retNode, offset, lineStartOffset, name);
           if (rr != null) {
 //              Base.loge(12 + getNodeAsString(rr));
             return rr;
@@ -2487,45 +2365,6 @@ public class ASTGenerator {
   }
 
 
-  /**
-   * For any line or expression, finds the line start offset(java code).
-   * @param node
-   * @return
-   */
-  public int getASTNodeLineStartOffset(ASTNode node){
-    int nodeLineNo = getLineNumber(node);
-    while(node.getParent() != null){
-      if (getLineNumber(node.getParent()) == nodeLineNo) {
-        node = node.getParent();
-      } else {
-        break;
-      }
-    }
-    return node.getStartPosition();
-  }
-
-
-  /**
-   * For any node, finds various offsets (java code).
-   *
-   * @param node
-   * @return int[]{line number, line number start offset, node start offset,
-   *         node length}
-   */
-  public int[] getASTNodeAllOffsets(ASTNode node){
-    int nodeLineNo = getLineNumber(node), nodeOffset = node.getStartPosition(), nodeLength = node
-        .getLength();
-    while(node.getParent() != null){
-      if (getLineNumber(node.getParent()) == nodeLineNo) {
-        node = node.getParent();
-      } else {
-        break;
-      }
-    }
-    return new int[]{nodeLineNo, node.getStartPosition(), nodeOffset,nodeLength};
-  }
-
-
   static protected String getNodeAsString(ASTNode node) {
     if (node == null)
       return "NULL";
@@ -2696,7 +2535,13 @@ public class ASTGenerator {
     ASTNode astRootNode = (ASTNode) errorCheckerService.getLatestCU().types().get(0);
 
     // If the parsed code contains pde enhancements, take 'em out.
-    String phrase = ASTNodeWrapper.getJavaCode(pdePhrase);
+    // TODO: test this
+    SourceMapping mapping = new SourceMapping();
+    mapping.addAll(SourceUtils.replaceTypeConstructors(pdePhrase));
+    mapping.addAll(SourceUtils.replaceHexLiterals(pdePhrase));
+    mapping.addAll(SourceUtils.replaceColorRegex(pdePhrase));
+    mapping.addAll(SourceUtils.fixFloatsRegex(pdePhrase));
+    String phrase = mapping.apply(pdePhrase);
 
     //After typing 'arg.' all members of arg type are to be listed. This one is a flag for it
     boolean noCompare = phrase.endsWith(".");
@@ -3056,8 +2901,7 @@ public class ASTGenerator {
     }
 
     ASTNode type0 = (ASTNode) cu.types().get(0);
-    ASTNodeWrapper w = new ASTNodeWrapper(type0);
-    DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode(w);
+    DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode(type0);
     visitRecur(type0, codeTree);
     return codeTree;
   }
@@ -3107,67 +2951,6 @@ public class ASTGenerator {
   }
 
 
-  private void hideSuggestion() {
-    ((JavaTextArea) editor.getTextArea()).hideSuggestion();
-  }
-
-
-  public int javaCodeOffsetToLineStartOffset(int line, int jOffset){
-    // Find the first node with this line number, return its offset - jOffset
-    line = pdeLineNumToJavaLineNum(line);
-    log("Looking for line: " + line + ", jOff " + jOffset);
-    Stack<DefaultMutableTreeNode> temp = new Stack<>();
-    temp.push(codeTree);
-
-    while (!temp.isEmpty()) {
-      DefaultMutableTreeNode cnode = temp.pop();
-      for (int i = 0; i < cnode.getChildCount(); i++) {
-        temp.push((DefaultMutableTreeNode) cnode.getChildAt(i));
-      }
-
-      if (!(cnode.getUserObject() instanceof ASTNodeWrapper))
-        continue;
-      ASTNodeWrapper awnode = (ASTNodeWrapper) cnode.getUserObject();
-//      log("Visiting: " + getNodeAsString(awnode.getNode()));
-      if (awnode.getLineNumber() == line) {
-        log("First element with this line no is: " + awnode
-                + "LSO: " + (jOffset - awnode.getNode().getStartPosition()));
-        return (jOffset - awnode.getNode().getStartPosition());
-      }
-    }
-    return -1;
-  }
-
-  /**
-   * Converts pde line number to java line number
-   * @param pdeLineNum - pde line number
-   * @return
-   */
-  protected int pdeLineNumToJavaLineNum(int pdeLineNum){
-    int javaLineNumber = pdeLineNum + errorCheckerService.getPdeImportsCount();
-    // Adjust line number for tabbed sketches
-    int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
-    if (codeIndex > 0)
-      for (int i = 0; i < codeIndex; i++) {
-        SketchCode sc = editor.getSketch().getCode(i);
-        int len = Util.countLines(sc.getProgram()) + 1;
-        javaLineNumber += len;
-      }
-    return javaLineNumber;
-  }
-
-
-  public String getPDESourceCodeLine(int javaLineNumber) {
-    Messages.log("* getPDESourceCodeLine");
-    int res[] = errorCheckerService
-        .calculateTabIndexAndLineNumber(javaLineNumber);
-    if (res != null) {
-      return errorCheckerService.getPdeCodeAtLine(res[0], res[1]);
-    }
-    return null;
-  }
-
-
   /**
    * Returns the java source code line at the given line number
    * @param javaLineNumber
@@ -3188,35 +2971,6 @@ public class ASTGenerator {
                                            lineElement.getEndOffset()
                                                - lineElement.getStartOffset());
       return javaLine;
-    } catch (BadLocationException e) {
-      Messages.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
-    }
-    return null;
-  }
-
-
-  /**
-   * Returns the java source code line Element at the given line number.
-   * The Element object stores the offset data, but not the actual line
-   * of code.
-   * @param javaLineNumber
-   * @return
-   */
-  public Element getJavaSourceCodeElement(int javaLineNumber) {
-    Messages.log("* getJavaSourceCodeElement");
-    try {
-      PlainDocument javaSource = new PlainDocument();
-      javaSource.insertString(0, errorCheckerService.latestResult.preprocessedCode, null);
-      Element lineElement = javaSource.getDefaultRootElement()
-          .getElement(javaLineNumber - 1);
-      if (lineElement == null) {
-        log("Couldn't fetch jlinenum " + javaLineNumber);
-        return null;
-      }
-//      String javaLine = javaSource.getText(lineElement.getStartOffset(),
-//                                           lineElement.getEndOffset()
-//                                               - lineElement.getStartOffset());
-      return lineElement;
     } catch (BadLocationException e) {
       Messages.loge(e + " in getJavaSourceCodeline() for jinenum: " + javaLineNumber);
     }
@@ -3357,10 +3111,8 @@ public class ASTGenerator {
           DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) showUsageTree
               .getLastSelectedPathComponent();
 
-          if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-            ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-            //errorCheckerService.highlightNode(awrap);
-            awrap.highlightNode(editor);
+          if (tnode.getUserObject() instanceof ASTNode) {
+            // TODO: highlight ASTNode
           }
         }
       });
@@ -3466,38 +3218,8 @@ public class ASTGenerator {
           }
           DefaultMutableTreeNode tnode =
               (DefaultMutableTreeNode) debugTree.getLastSelectedPathComponent();
-          if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-            ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-            awrap.highlightNode(editor);
-            // errorCheckerService.highlightNode(awrap);
-
-            //--
-            try {
-              int javaLineNumber = getLineNumber(awrap.getNode());
-              int pdeOffs[] = editor.getErrorChecker()
-                  .calculateTabIndexAndLineNumber(javaLineNumber);
-              PlainDocument javaSource = new PlainDocument();
-              javaSource.insertString(0, editor.getErrorChecker()
-                  .latestResult.preprocessedCode, null);
-              Element lineElement = javaSource.getDefaultRootElement()
-                  .getElement(javaLineNumber - 1);
-              if (lineElement == null) {
-                return;
-              }
-
-              String javaLine = javaSource.getText(lineElement.getStartOffset(),
-                                                   lineElement.getEndOffset()
-                                                       - lineElement.getStartOffset());
-              editor.getSketch().setCurrentCode(pdeOffs[0]);
-              String pdeLine = editor.getLineText(pdeOffs[1]);
-              //String lookingFor = nodeName.toString();
-              //log(lookingFor + ", " + nodeName.getStartPosition());
-              log("JL " + javaLine + " LSO " + lineElement.getStartOffset() + ","
-                      + lineElement.getEndOffset());
-              log("PL " + pdeLine);
-            } catch (BadLocationException ex) {
-              ex.printStackTrace();
-            }
+          if (tnode.getUserObject() instanceof ASTNode) {
+            // TODO: highlight ASTNode, print some info maybe
           }
         }
 

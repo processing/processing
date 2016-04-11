@@ -1,7 +1,5 @@
 package processing.mode.java.pdex;
 
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -180,52 +178,44 @@ public class SourceUtils {
     return edits;
   }
 
-  /**
-   * Replaces non-ascii characters with their unicode escape sequences and
-   * stuff. Used as it is from
-   * processing.src.processing.mode.java.preproc.PdePreprocessor
-   *
-   * @param program
-   *            - Input String containing non ascii characters
-   * @return String - Converted String
-   */
-  public static String substituteUnicode(String program) {
-    StringBuilder sb = new StringBuilder(program);
-    substituteUnicode(sb);
-    return sb.toString();
+
+  public static final Pattern COLOR_TYPE_REGEX =
+      Pattern.compile("(?:^|^\\p{javaJavaIdentifierPart})(color)\\s(?!\\s*\\()",
+                      Pattern.MULTILINE | Pattern.UNICODE_CHARACTER_CLASS);
+
+  public static List<Edit> replaceColorRegex(CharSequence source) {
+    final List<Edit> edits = new ArrayList<>();
+
+    Matcher matcher = COLOR_TYPE_REGEX.matcher(source);
+    while (matcher.find()) {
+      int offset = matcher.start(1);
+      edits.add(Edit.replace(offset, 5, "int"));
+    }
+
+    return edits;
   }
 
-  public static void substituteUnicode(StringBuilder p) {
-    // check for non-ascii chars (these will be/must be in unicode format)
-    int unicodeCount = 0;
-    for (int i = 0; i < p.length(); i++) {
-      if (p.charAt(i) > 127) {
-        unicodeCount++;
-      }
-    }
-    if (unicodeCount == 0) {
-      return;
-    }
+  public static final Pattern NUMBER_LITERAL_REGEX =
+      Pattern.compile("[-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?");
 
-    StringBuilder p2 = new StringBuilder(p.length() + 4 * unicodeCount);
+  public static List<Edit> fixFloatsRegex(CharSequence source) {
+    final List<Edit> edits = new ArrayList<>();
 
-    // if non-ascii chars are in there, convert to unicode escapes
-    // add unicodeCount * 5.. replacing each unicode char
-    // with six digit uXXXX sequence (xxxx is in hex)
-    // (except for nbsp chars which will be a replaced with a space)
-    for (int i = 0; i < p.length(); i++) {
-      int c = p.charAt(i);
-      if (c < 128) {
-        p2.append(c);
-      } else if (c == 160) { // unicode for non-breaking space
-        p2.append(' ');
-      } else if (c >= 128){
-        p2.append("\\u").append(String.format("%04X", c));
+    Matcher matcher = NUMBER_LITERAL_REGEX.matcher(source);
+    while (matcher.find()) {
+      int offset = matcher.start();
+      int end = matcher.end();
+      String group = matcher.group().toLowerCase();
+      boolean isFloatingPoint = group.contains(".") || group.contains("e");
+      boolean hasSuffix = end < source.length() &&
+          Character.toLowerCase(source.charAt(end)) != 'f' &&
+          Character.toLowerCase(source.charAt(end)) != 'd';
+      if (isFloatingPoint && !hasSuffix) {
+        edits.add(Edit.insert(offset, "f"));
       }
     }
 
-    p.setLength(0);
-    p.append(p2);
+    return edits;
   }
 
 

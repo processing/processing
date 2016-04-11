@@ -154,10 +154,9 @@ public class SketchOutline {
           if (soTree.getLastSelectedPathComponent() != null) {
             DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
                 .getLastSelectedPathComponent();
-            if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-              ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-              awrap.highlightNode(editor);
-              //errorCheckerService.highlightNode(awrap);
+            if (tnode.getUserObject() instanceof ASTNode) {
+              ASTNode awrap = (ASTNode) tnode.getUserObject();
+              // TODO: highlight ASTNode
               close();
             }
           }
@@ -274,11 +273,9 @@ public class SketchOutline {
     }
     DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) soTree
         .getLastSelectedPathComponent();
-    if (tnode.getUserObject() instanceof ASTNodeWrapper) {
-      ASTNodeWrapper awrap = (ASTNodeWrapper) tnode.getUserObject();
-      awrap.highlightNode(editor);
-      // log(awrap);
-      //errorCheckerService.highlightNode(awrap);
+    if (tnode.getUserObject() instanceof ASTNode) {
+      ASTNode awrap = (ASTNode) tnode.getUserObject();
+      // TODO: highlight ASTNode
       close();
     }
 
@@ -313,27 +310,19 @@ public class SketchOutline {
     if (codetree == null)
       return;
     //log("Visi " + codetree + codetree.getUserObject().getClass().getSimpleName());
-    if (!(codetree.getUserObject() instanceof ASTNodeWrapper))
+    if (!(codetree.getUserObject() instanceof ASTNode))
       return;
-    ASTNodeWrapper awnode = (ASTNodeWrapper) codetree.getUserObject(), aw2 = null;
+    ASTNode awnode = (ASTNode) codetree.getUserObject(), aw2 = null;
 
-    if (awnode.getNode() instanceof TypeDeclaration) {
-      aw2 = new ASTNodeWrapper( ((TypeDeclaration) awnode.getNode()).getName(),
-                               ((TypeDeclaration) awnode.getNode()).getName()
-                                   .toString());
-    } else if (awnode.getNode() instanceof MethodDeclaration) {
-      aw2 = new ASTNodeWrapper(
-                               ((MethodDeclaration) awnode.getNode()).getName(),
-                               new CompletionCandidate(
-                                                       ((MethodDeclaration) awnode
-                                                           .getNode()))
-                                   .toString());
-    } else if (awnode.getNode() instanceof FieldDeclaration) {
-      FieldDeclaration fd = (FieldDeclaration) awnode.getNode();
+    if (awnode instanceof TypeDeclaration) {
+      aw2 = ((TypeDeclaration) awnode).getName();
+    } else if (awnode instanceof MethodDeclaration) {
+      aw2 = ((MethodDeclaration) awnode).getName();
+    } else if (awnode instanceof FieldDeclaration) {
+      FieldDeclaration fd = (FieldDeclaration) awnode;
       for (VariableDeclarationFragment vdf : (List<VariableDeclarationFragment>) fd.fragments()) {
-        final String text = new CompletionCandidate(vdf).toString();
         DefaultMutableTreeNode newNode =
-          new DefaultMutableTreeNode(new ASTNodeWrapper(vdf.getName(), text));
+          new DefaultMutableTreeNode(vdf.getName());
         node.add(newNode);
       }
       return;
@@ -380,11 +369,11 @@ public class SketchOutline {
     }
 
     public Icon getTreeIcon(Object o) {
-      if (((DefaultMutableTreeNode) o).getUserObject() instanceof ASTNodeWrapper) {
-        ASTNodeWrapper awrap = (ASTNodeWrapper)
+      if (((DefaultMutableTreeNode) o).getUserObject() instanceof ASTNode) {
+        ASTNode awrap = (ASTNode)
           ((DefaultMutableTreeNode) o).getUserObject();
 
-        int type = awrap.getNode().getParent().getNodeType();
+        int type = awrap.getParent().getNodeType();
         if (type == ASTNode.METHOD_DECLARATION) {
           return methodIcon;
         } else if (type == ASTNode.TYPE_DECLARATION) {

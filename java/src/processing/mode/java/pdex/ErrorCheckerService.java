@@ -36,10 +36,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -48,6 +50,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -956,19 +959,7 @@ public class ErrorCheckerService {
                      sketch.getCode(p.getTabIndex()).getPrettyName(),
                      Integer.toString(p.getLineNumber() + 1));
         // Added +1 because lineNumbers internally are 0-indexed
-
-//        //TODO: This is temporary
-//        if (tempErrorLog.size() < 200) {
-//          tempErrorLog.put(p.getMessage(), p.getIProblem());
-//        }
-
       }
-//      table.updateColumns();
-
-//      DefaultTableModel tm =
-//        new DefaultTableModel(errorData, XQErrorTable.columnNames);
-//      editor.updateTable(tm);
-
     } catch (Exception e) {
       Messages.loge("Exception at updateErrorTable()", e);
       e.printStackTrace();
@@ -1014,215 +1005,45 @@ public class ErrorCheckerService {
   }
 
 
-  /**
-   * Maps offset from java code to pde code. Returns a bunch of offsets as array
-   *
-   * @param line
-   *          - line number in java code
-   * @param offset
-   *          - offset from the start of the 'line'
-   * @return int[0] - tab number, int[1] - line number in the int[0] tab, int[2]
-   *         - line start offset, int[3] - offset from line start. int[2] and
-   *         int[3] are on TODO
-   */
-  protected int[] JavaToPdeOffsets(int line, int offset) {
-
-    return new int[] { 0, 0 }; // TODO
-
-    /*
-    int codeIndex = 0;
-
-    int x = line - mainClassOffset;
-    if (x < 0) {
-      // log("Negative line number "
-      // + problem.getSourceLineNumber() + " , offset "
-      // + mainClassOffset);
-      x = line - 2; // Another -1 for 0 index
-      if (x < programImports.size() && x >= 0) {
-        ImportStatement is = programImports.get(x);
-        // log(is.importName + ", " + is.tab + ", "
-        // + is.lineNumber);
-        return new int[] { 0, 0 }; // TODO
-      } else {
-
-        // Some seriously ugly stray error, just can't find the source
-        // line! Simply return first line for first tab.
-        return  new int[] { 0, 1 };
-      }
-
+  protected static int mapJavaToTab(PreprocessedSketch sketch, int offset) {
+    int tab = Arrays.binarySearch(sketch.tabStarts, offset);
+    if (tab < 0) {
+      tab = -(tab + 1) - 1;
     }
 
-    try {
-      for (SketchCode sc : editor.getSketch().getCode()) {
-        if (sc.isExtension("pde")) {
-          int len;
-          if (editor.getSketch().getCurrentCode().equals(sc)) {
-            len = Util.countLines(sc.getDocumentText()) + 1;
-          } else {
-            len = Util.countLines(sc.getProgram()) + 1;
-          }
-
-          // log("x,len, CI: " + x + "," + len + ","
-          // + codeIndex);
-
-          if (x >= len) {
-
-            // We're in the last tab and the line count is greater
-            // than the no.
-            // of lines in the tab,
-            if (codeIndex >= editor.getSketch().getCodeCount() - 1) {
-              // log("Exceeds lc " + x + "," + len
-              // + problem.toString());
-              // x = len
-              x = editor.getSketch().getCode(codeIndex)
-                  .getLineCount();
-              // TODO: Obtain line having last non-white space
-              // character in the code.
-              break;
-            } else {
-              x -= len;
-              codeIndex++;
-            }
-          } else {
-
-            if (codeIndex >= editor.getSketch().getCodeCount()) {
-              codeIndex = editor.getSketch().getCodeCount() - 1;
-            }
-            break;
-          }
-
-        }
-      }
-    } catch (Exception e) {
-      System.err.println("Error inside ErrorCheckerService.JavaToPdeOffset()");
-      e.printStackTrace();
-    }
-    return new int[] { codeIndex, x };
-    */
+    return sketch.tabStarts[tab];
   }
 
 
-  protected String getPdeCodeAtLine(int tab, int linenumber){
-    if(linenumber < 0) return null;
-    editor.getSketch().setCurrentCode(tab);
-    return editor.getTextArea().getLineText(linenumber);
+  protected static int mapJavaToProcessing(PreprocessedSketch sketch, int offset) {
+    SourceMapping syntaxMapping = sketch.syntaxMapping;
+    SourceMapping compilationMapping = sketch.compilationMapping;
+
+    if (compilationMapping != null) {
+      offset = compilationMapping.getInputOffset(offset);
+    }
+
+    if (syntaxMapping != null) {
+      offset = syntaxMapping.getInputOffset(offset);
+    }
+
+    return offset;
   }
 
 
-  /**
-   * Calculates the tab number and line number of the error in that particular
-   * tab. Provides mapping between pure java and pde code.
-   *
-   * @param javalineNumber
-   *            - int
-   * @return int[0] - tab number, int[1] - line number
-   */
-  protected int[] calculateTabIndexAndLineNumber(int javalineNumber) {
+  protected static int mapProcessingToJava(PreprocessedSketch sketch, int offset) {
+    SourceMapping syntaxMapping = sketch.syntaxMapping;
+    SourceMapping compilationMapping = sketch.compilationMapping;
 
-    return new int[] { 0, 0 }; // TODO
-
-    /*
-
-    // String[] lines = {};// = PApplet.split(sourceString, '\n');
-    int codeIndex = 0;
-
-    int x = javalineNumber - mainClassOffset;
-    if (x < 0) {
-      // log("Negative line number "
-      // + problem.getSourceLineNumber() + " , offset "
-      // + mainClassOffset);
-      x = javalineNumber - 2; // Another -1 for 0 index
-      if (x < programImports.size() && x >= 0) {
-        ImportStatement is = programImports.get(x);
-        // log(is.importName + ", " + is.tab + ", "
-        // + is.lineNumber);
-        return new int[] { 0, 0 }; // TODO
-      } else {
-
-        // Some seriously ugly stray error, just can't find the source
-        // line! Simply return first line for first tab.
-        return new int[] { 0, 1 };
-      }
-
+    if (syntaxMapping != null) {
+      offset = syntaxMapping.getOutputOffset(offset);
     }
 
-    try {
-      for (SketchCode sc : editor.getSketch().getCode()) {
-        if (sc.isExtension("pde")) {
-          int len;
-          if (editor.getSketch().getCurrentCode().equals(sc)) {
-            len = Util.countLines(sc.getDocumentText()) + 1;
-          } else {
-            len = Util.countLines(sc.getProgram()) + 1;
-          }
-
-          // log("x,len, CI: " + x + "," + len + ","
-          // + codeIndex);
-
-          if (x >= len) {
-
-            // We're in the last tab and the line count is greater
-            // than the no.
-            // of lines in the tab,
-            if (codeIndex >= editor.getSketch().getCodeCount() - 1) {
-              // log("Exceeds lc " + x + "," + len
-              // + problem.toString());
-              // x = len
-              x = editor.getSketch().getCode(codeIndex)
-                  .getLineCount();
-              // TODO: Obtain line having last non-white space
-              // character in the code.
-              break;
-            } else {
-              x -= len;
-              codeIndex++;
-            }
-          } else {
-            if (codeIndex >= editor.getSketch().getCodeCount()) {
-              codeIndex = editor.getSketch().getCodeCount() - 1;
-            }
-            break;
-          }
-        }
-      }
-    } catch (Exception e) {
-      System.err.println("Things got messed up in ErrorCheckerService.calculateTabIndexAndLineNumber()");
+    if (compilationMapping != null) {
+      offset = compilationMapping.getOutputOffset(offset);
     }
-    return new int[] { codeIndex, x };
 
-    */
-  }
-
-
-  /**
-   * Now defunct.
-   * The super method that highlights any ASTNode in the pde editor =D
-   * @param awrap
-   * @return true - if highlighting happened correctly.
-   */
-  private boolean highlightNode(ASTNodeWrapper awrap){
-    Messages.log("Highlighting: " + awrap);
-    try {
-      int pdeoffsets[] = awrap.getPDECodeOffsets(this);
-      int javaoffsets[] = awrap.getJavaCodeOffsets(this);
-      Messages.log("offsets: " +pdeoffsets[0] + "," +
-          pdeoffsets[1]+ "," +javaoffsets[1]+ "," +
-          javaoffsets[2]);
-      scrollToErrorLine(editor, pdeoffsets[0],
-                                            pdeoffsets[1],javaoffsets[1],
-                                            javaoffsets[2]);
-      return true;
-    } catch (Exception e) {
-      Messages.loge("Scrolling failed for " + awrap);
-      // e.printStackTrace();
-    }
-    return false;
-  }
-
-
-  public boolean highlightNode(ASTNode node){
-    ASTNodeWrapper awrap = new ASTNodeWrapper(node);
-    return highlightNode(awrap);
+    return offset;
   }
 
 
@@ -1250,42 +1071,6 @@ public class ErrorCheckerService {
     editor.repaint();
   }
 
-  /**
-   * Static method for scroll to a particular line in the PDE. Also highlights
-   * the length of the text. Requires the editor instance as arguement.
-   *
-   * @param edt
-   * @param tabIndex
-   * @param lineNoInTab
-   *          - line number in the corresponding tab
-   * @param lineStartOffset
-   *          - selection start offset(from line start non-whitespace offset)
-   * @param length
-   *          - length of selection
-   * @return - true, if scroll was successful
-   */
-  protected static boolean scrollToErrorLine(Editor edt, int tabIndex, int lineNoInTab, int lineStartOffset, int length) {
-    if (edt == null) {
-      return false;
-    }
-    try {
-      edt.toFront();
-      edt.getSketch().setCurrentCode(tabIndex);
-      int lsno = edt.getTextArea()
-          .getLineStartNonWhiteSpaceOffset(lineNoInTab - 1) + lineStartOffset;
-      edt.setSelection(lsno, lsno + length);
-      edt.getTextArea().scrollTo(lineNoInTab - 1, 0);
-      edt.repaint();
-      Messages.log(lineStartOffset + " LSO,len " + length);
-
-    } catch (Exception e) {
-      System.err.println(e
-          + " : Error while selecting text in static scrollToErrorLine()");
-      e.printStackTrace();
-      return false;
-    }
-    return true;
-  }
 
   /**
    * Checks if import statements in the sketch have changed. If they have,
