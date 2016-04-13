@@ -1224,10 +1224,10 @@ public class Texture implements PConstants {
     // FBO copy:
     pg.pushFramebuffer();
     pg.setFramebuffer(tempFbo);
-    // Clear the color buffer to make sure that the alpha channel is set to
-    // full transparency
-    pgl.clearColor(0, 0, 0, 0);
-    pgl.clear(PGL.COLOR_BUFFER_BIT);
+    // Replaces anything that this texture might contain in the area being
+    // replaced by the new one.
+    pg.pushStyle();
+    pg.blendMode(REPLACE);
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
@@ -1243,8 +1243,10 @@ public class Texture implements PConstants {
                       0, 0, tempFbo.width, tempFbo.height, 1,
                       x, y, x + w, y + h, x, y, x + w, y + h);
     }
+    pgl.flush(); // Needed to make sure that the change in this texture is
+                 // available immediately.
+    pg.popStyle();
     pg.popFramebuffer();
-
     updateTexels(x, y, w, h);
   }
 
@@ -1264,6 +1266,10 @@ public class Texture implements PConstants {
     // FBO copy:
     pg.pushFramebuffer();
     pg.setFramebuffer(tempFbo);
+    // Replaces anything that this texture might contain in the area being
+    // replaced by the new one.
+    pg.pushStyle();
+    pg.blendMode(REPLACE);
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
@@ -1279,6 +1285,9 @@ public class Texture implements PConstants {
                       0, 0, tempFbo.width, tempFbo.height,
                       x, y, w, h, x, y, w, h);
     }
+    pgl.flush(); // Needed to make sure that the change in this texture is
+                 // available immediately.
+    pg.popStyle();
     pg.popFramebuffer();
     updateTexels(x, y, w, h);
   }
