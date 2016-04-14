@@ -1123,7 +1123,11 @@ public class JavaBuild {
     /// figure out run options for the VM
 
     List<String> runOptions = new ArrayList<String>();
-    if (Preferences.getBoolean("run.options.memory")) {
+
+    // set memory options, except for ARM where we're more memory-constrained compared
+    // to the machine the user might be building the sketch on
+    if (Preferences.getBoolean("run.options.memory") &&
+        !exportVariant.equals("armv6hf")) {
       runOptions.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
       runOptions.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
     }
