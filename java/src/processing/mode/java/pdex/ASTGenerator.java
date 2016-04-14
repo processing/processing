@@ -115,8 +115,6 @@ public class ASTGenerator {
   protected final JavaEditor editor;
   public DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode();
 
-  protected CompilationUnit compilationUnit;
-
   protected final GUI gui;
 
 
@@ -1049,6 +1047,8 @@ public class ASTGenerator {
 
     // Find closest ASTNode to the linenumber
 //    log("getASTNodeAt: Node line number " + pdeLineNumber);
+    CompilationUnit compilationUnit =
+        errorCheckerService.latestResult.compilationUnit;
     ASTNode lineNode = findLineOfNode(compilationUnit, pdeLineNumber, offset,
                                       name);
 
@@ -2882,8 +2882,7 @@ public class ASTGenerator {
   }
 
 
-  protected void updateAST(CompilationUnit cu, DefaultMutableTreeNode tree) {
-    compilationUnit = cu;
+  protected void updateAST(DefaultMutableTreeNode tree) {
     codeTree = tree;
 
     if (SHOW_DEBUG_TREE) {

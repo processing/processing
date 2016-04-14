@@ -174,7 +174,7 @@ public class ErrorCheckerService {
         EventQueue.invokeLater(new Runnable() {
           @Override
           public void run() {
-            astGenerator.updateAST(latestResult.compilationUnit, tree);
+            astGenerator.updateAST(tree);
           }
         });
       }
@@ -219,7 +219,7 @@ public class ErrorCheckerService {
                     @Override
                     public void run() {
                       synchronized (astGenerator) {
-                        astGenerator.updateAST(latestResult.compilationUnit, tree);
+                        astGenerator.updateAST(tree);
                       }
                       updateErrorTable(result.problems);
                       editor.updateErrorBar(result.problems);
