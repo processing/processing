@@ -37,9 +37,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -99,7 +101,7 @@ import processing.app.syntax.JEditTextArea;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.Toolkit;
 import processing.mode.java.JavaEditor;
-import processing.mode.java.preproc.PdePreprocessor;
+import processing.mode.java.pdex.ErrorCheckerService.PreprocessedSketch;
 
 import com.google.classpath.ClassPath;
 import com.google.classpath.RegExpResourceFilter;
@@ -740,9 +742,27 @@ public class ASTGenerator {
    * @return
    */
   protected Class<?> findClassIfExists(String className){
-    if(className == null){
+    if (className == null){
       return null;
     }
+
+    PreprocessedSketch ps = errorCheckerService.latestResult;
+
+    if (className.indexOf('.') >= 0) {
+      // Figure out what is package and what is class
+      String[] parts = className.split("\\.");
+      String newClassName = parts[0];
+      int i = 1;
+      while (i < parts.length &&
+          ps.classPath.isPackage(newClassName)) {
+        newClassName = newClassName + "/" + parts[i++];
+      }
+      while (i < parts.length) {
+        newClassName = newClassName + "$" + parts[i++];
+      }
+      className = newClassName.replace('/', '.');
+    }
+
     // First, see if the classname is a fully qualified name and loads straightaway
     Class<?> tehClass = loadClass(className);
 
@@ -751,95 +771,54 @@ public class ASTGenerator {
       return tehClass;
     }
 
+    // This name is qualified and it already had its chance
+    if (className.indexOf('.') >= 0) {
+      return null;
+    }
+
     log("Looking in the classloader for " + className);
-    // TODO: get this from last code check result
-    List<ImportStatement> imports = errorCheckerService.latestResult.programImports;
+    // Using ClassPath and RegExResourceFilter to find a matching class
+    // and then loading the thing might be simpler and faster
 
-    for (ImportStatement impS : imports) {
-      String temp = impS.getPackageName();
-      if (impS.isStarredImport())  { // case of starred import: pkg.foo.*
-        if (className.indexOf('.') == -1) {
-          temp = impS.getPackageName() + "." + className;
-        } else {
-          continue;
-        }
-      } else { // case of class import: pkg.foo.MyClass
-        if (!impS.getClassName().equals(className)) {
-          continue;
-        }
-      }
-      tehClass = loadClass(temp);
-      if (tehClass != null) {
-        log(tehClass.getName() + " located.");
-        return tehClass;
-      }
-      //log("Doesn't exist in imp package: " + impS.getImportName());
-    }
+    // These can be preprocessed during error check for performance
+    // (collect, split into starred and not starred)
+    List<ImportStatement> programImports = ps.programImports;
+    List<ImportStatement> codeFolderImports = ps.codeFolderImports;
+    List<ImportStatement> coreAndDefaultImports = ps.coreAndDefaultImports;
 
-    // TODO: get this from last code check result
-    List<ImportStatement> codeFolderImports = errorCheckerService.latestResult.codeFolderImports;
-    for (ImportStatement impS : codeFolderImports) {
-      String temp = impS.getPackageName();
-      if (impS.isStarredImport())  { // case of starred import: pkg.foo.*
-        if (className.indexOf('.') == -1) {
-          temp = impS.getPackageName() + "." + className;
-        } else {
-          continue;
-        }
-      } else { // case of class import: pkg.foo.MyClass
-        if (!impS.getClassName().equals(className)) {
-          continue;
-        }
-      }
-      tehClass = loadClass(temp);
-      if (tehClass != null) {
-        log(tehClass.getName() + " located.");
-        return tehClass;
-      }
-      //log("Doesn't exist in (code folder) imp package: " + impS.getImportName());
-    }
+    ImportStatement javaLang = ImportStatement.wholePackage("java.lang");
 
-    // TODO: get this from last code check result
-    List<ImportStatement> coreAndDefaultImports =
-        errorCheckerService.latestResult.coreAndDefaultImports;
-    for (ImportStatement impS : coreAndDefaultImports) {
-      String temp = impS.getPackageName();
-      if (impS.isStarredImport())  { // case of starred import: pkg.foo.*
-        if (className.indexOf('.') == -1) {
-          temp = impS.getPackageName() + "." + className;
-        } else {
-          continue;
-        }
-      } else { // case of class import: pkg.foo.MyClass
-        if (!impS.getClassName().equals(className)) {
-          continue;
-        }
-      }
-      tehClass = loadClass(temp);
-      if (tehClass != null) {
-        log(tehClass.getName() + " located.");
-        return tehClass;
-      }
-      //log("Doesn't exist in (code folder) imp package: " + impS.getImportName());
-    }
+    Stream<List<ImportStatement>> importListStream =
+        Stream.of(Collections.singletonList(javaLang), coreAndDefaultImports,
+                  programImports, codeFolderImports);
 
-    // And finally, the daddy
-    String daddy = "java.lang." + className;
-    tehClass = loadClass(daddy);
-    if (tehClass != null) {
-      log(tehClass.getName() + " located.");
-      return tehClass;
-    }
-    //log("Doesn't exist in java.lang");
+    final String finalClassName = className;
 
-    return null;
+    // These streams can be made unordered parallel if it helps performance
+    return importListStream
+        .map(list -> list.stream()
+            .map(is -> {
+              if (is.getClassName().equals(finalClassName)) {
+                return is.getFullClassName();
+              } else if (is.isStarredImport()) {
+                return is.getPackageName() + "." + finalClassName;
+              }
+              return null;
+            })
+            .filter(name -> name != null)
+            .map(this::loadClass)
+            .filter(cls -> cls != null)
+            .findAny())
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .findAny()
+        .orElse(null);
   }
 
   protected Class<?> loadClass(String className){
     Class<?> tehClass = null;
     if (className != null) {
       try {
-        // TODO: get the class loader from the last code check result
         tehClass = Class.forName(className, false,
                                  errorCheckerService.latestResult.classLoader);
       } catch (ClassNotFoundException e) {
