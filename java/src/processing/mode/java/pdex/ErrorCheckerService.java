@@ -220,7 +220,6 @@ public class ErrorCheckerService {
                     public void run() {
                       synchronized (astGenerator) {
                         astGenerator.updateAST(latestResult.compilationUnit, tree);
-                        astGenerator.classPath = result.classPath;
                       }
                       updateErrorTable(result.problems);
                       editor.updateErrorBar(result.problems);

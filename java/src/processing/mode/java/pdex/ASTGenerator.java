@@ -128,11 +128,6 @@ public class ASTGenerator {
     //loadJavaDoc();
   }
 
-  /**
-   * Used for searching for package declaration of a class
-   */
-  protected ClassPath classPath;
-
 
   public static CompletionCandidate[] checkForTypes(ASTNode node) {
 
@@ -2659,6 +2654,7 @@ public class ASTGenerator {
       // We're seeing a simple name that's not defined locally or in
       // the parent class. So most probably a pre-defined type.
       log("Empty can. " + phrase);
+      ClassPath classPath = errorCheckerService.latestResult.classPath;
       if (classPath != null) {
         RegExpResourceFilter regExpResourceFilter =
             new RegExpResourceFilter(Pattern.compile(".*"),
