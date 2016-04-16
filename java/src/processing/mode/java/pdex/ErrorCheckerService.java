@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -320,6 +321,7 @@ public class ErrorCheckerService {
 
     CompilationUnit compilationUnit;
 
+    String[] classPathArray;
     ClassPath classPath;
     URLClassLoader classLoader;
 
@@ -452,6 +454,7 @@ public class ErrorCheckerService {
     { // Prepare ClassLoader and ClassPath
       final URLClassLoader classLoader;
       final ClassPath classPath;
+      final String[] classPathArray;
 
       boolean importsChanged = prevResult == null ||
           prevResult.classPath == null || prevResult.classLoader == null ||
@@ -461,29 +464,31 @@ public class ErrorCheckerService {
       if (!importsChanged) {
         classLoader = prevResult.classLoader;
         classPath = prevResult.classPath;
+        classPathArray = prevResult.classPathArray;
       } else {
-        List<String> paths = prepareCompilerClasspath(programImports, sketch);
+        classPathArray = prepareCompilerClasspath(programImports, sketch);
 
         // ClassLoader
-        List<URL> urls = new ArrayList<>();
-        for (Iterator<String> it = paths.iterator(); it.hasNext(); ) {
-          String path = it.next();
-          try {
-            urls.add(new File(path).toURI().toURL());
-          } catch (MalformedURLException e) {
-            it.remove(); // malformed, get rid of it
-          }
-        }
-        URL[] classPathArray = urls.toArray(new URL[urls.size()]);
-        classLoader = new URLClassLoader(classPathArray, null);
+        URL[] urlArray = Arrays.stream(classPathArray)
+            .map(path -> {
+              try {
+                return Paths.get(path).toUri().toURL();
+              } catch (MalformedURLException e) {
+                Messages.loge("malformed URL when preparing sketch classloader", e);
+                return null;
+              }
+            })
+            .filter(url -> url != null)
+            .toArray(URL[]::new);
+        classLoader = new URLClassLoader(urlArray, null);
         // ClassPath
-        String[] pathArray = paths.toArray(new String[paths.size()]);
-        classPath = classPathFactory.createFromPaths(pathArray);
+        classPath = classPathFactory.createFromPaths(classPathArray);
       }
 
       // Update result
       result.classPath = classPath;
       result.classLoader = classLoader;
+      result.classPathArray = classPathArray;
     }
 
 
@@ -775,7 +780,7 @@ public class ErrorCheckerService {
    * stuff(jar files, class files, candy) from the code folder. And it looks
    * messed up.
    */
-  protected List<String> prepareCompilerClasspath(List<ImportStatement> programImports, Sketch sketch) {
+  protected String[] prepareCompilerClasspath(List<ImportStatement> programImports, Sketch sketch) {
 
     // TODO: eliminate duplication in buildImportSuggestionClassPath
 
@@ -839,7 +844,7 @@ public class ErrorCheckerService {
     return Arrays.stream(paths)
         .filter(p -> p != null && !p.trim().isEmpty())
         .distinct()
-        .collect(Collectors.toList());
+        .toArray(String[]::new);
   }
 
 
