@@ -318,8 +318,11 @@ public class JavaTextArea extends JEditTextArea {
       }
       Messages.log("Mouse click, word: " + word.trim());
       ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
+
+      int tabIndex = editor.getSketch().getCurrentCodeIndex();
+
       synchronized (astGenerator) {
-        astGenerator.setLastClickedWord(off, word);
+        astGenerator.setLastClickedWord(tabIndex, off, word);
       }
       return word.trim();
     }

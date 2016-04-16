@@ -1024,12 +1024,10 @@ public class ASTGenerator {
    * @param scrollOnly
    * @return
    */
-  public ASTNode getASTNodeAt(int offset) {
+  public ASTNode getASTNodeAt(int javaOffset) {
     Messages.log("* getASTNodeAt");
 
     PreprocessedSketch ps = errorCheckerService.latestResult;
-    int tabIndex = ps.sketch.getCodeIndex(editor.getCurrentTab());
-    int javaOffset = ps.tabOffsetToJavaOffset(tabIndex, offset);
     ASTNode node = NodeFinder.perform(ps.compilationUnit, javaOffset, 0);
 
     if (node == null) {
@@ -1235,10 +1233,11 @@ public class ASTGenerator {
     return lastClickedWord;
   }
 
-  public void setLastClickedWord(int offset, String lastClickedWord) {
+  public void setLastClickedWord(int tabIndex, int offset, String lastClickedWord) {
     Messages.log("* setLastClickedWord");
     this.lastClickedWord = lastClickedWord;
-    lastClickedWordNode = getASTNodeAt(offset);
+    int javaOffset = errorCheckerService.latestResult.tabOffsetToJavaOffset(tabIndex, offset);
+    lastClickedWordNode = getASTNodeAt(javaOffset); // TODO: don't call this on EDT
     log("Last clicked node: " + lastClickedWordNode);
   }
 
@@ -1256,9 +1255,13 @@ public class ASTGenerator {
         + (ta.getSelectionStart() - ta.getLineStartOffset(line))
         + ", "
         + (ta.getSelectionStop() - ta.getLineStartOffset(line)));
+    int tabIndex = editor.getSketch().getCurrentCodeIndex();
+    int offset = ta.getSelectionStart();
+    int javaOffset =
+        errorCheckerService.latestResult.tabOffsetToJavaOffset(tabIndex, offset);
     ASTNode wnode;
     if (lastClickedWord == null || lastClickedWordNode == null) {
-      wnode = getASTNodeAt(ta.getSelectionStart());
+      wnode = getASTNodeAt(javaOffset);
     }
     else{
       wnode = lastClickedWordNode;
@@ -2150,7 +2153,7 @@ public class ASTGenerator {
       value = ((MethodInvocation) node).getName().toString() + " | "
           + className;
     else if (node instanceof FieldDeclaration)
-      value = node.toString() + " FldDecl| ";
+      value = node.toString() + " FldDecl | ";
     else if (node instanceof SingleVariableDeclaration)
       value = ((SingleVariableDeclaration) node).getName() + " - "
           + ((SingleVariableDeclaration) node).getType() + " | SVD ";
@@ -2165,7 +2168,7 @@ public class ASTGenerator {
     else if (className.startsWith("Variable"))
       value = node.toString() + " | " + className;
     else if (className.endsWith("Type"))
-      value = node.toString() + " |" + className;
+      value = node.toString() + " | " + className;
     value += " [" + node.getStartPosition() + ","
         + (node.getStartPosition() + node.getLength()) + "]";
     value += " Line: "
@@ -2698,16 +2701,22 @@ public class ASTGenerator {
   /// Editor stuff -------------------------------------------------------------
 
 
-  public void scrollToDeclaration(int offset, String name) {
+  // Thread: EDT
+  public void scrollToDeclaration(int tabIndex, int offset, String name) {
     Messages.log("* scrollToDeclaration");
 
-    ASTNode node = getASTNodeAt(offset);
+    // TODO: don't run the heavy lifting on EDT
+
+    PreprocessedSketch ps = errorCheckerService.latestResult;
+
+    int javaOffset = ps.tabOffsetToJavaOffset(tabIndex, offset);
+
+    ASTNode node = getASTNodeAt(javaOffset);
 
     if (node == null) {
       return;
     }
 
-    PreprocessedSketch ps = errorCheckerService.latestResult;
 
     IBinding binding = resolveBinding(node);
     if (binding == null) {

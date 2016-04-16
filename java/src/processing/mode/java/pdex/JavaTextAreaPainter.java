@@ -176,9 +176,12 @@ public class JavaTextAreaPainter extends TextAreaPainter
         return;
 
       Messages.log(line + "|" + line + "| offset " + xLS + word + " <= \n");
+
+      int tabIndex = getEditor().getSketch().getCurrentCodeIndex();
+
       ASTGenerator astGenerator = getJavaEditor().getErrorChecker().getASTGenerator();
       synchronized (astGenerator) {
-        astGenerator.scrollToDeclaration(off, word);
+        astGenerator.scrollToDeclaration(tabIndex, off, word);
       }
     }
   }

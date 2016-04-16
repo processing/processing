@@ -1010,10 +1010,18 @@ public class ErrorCheckerService {
 
     int startPdeOffset = ps.javaOffsetToPdeOffset(startJavaOffset);
 
-    int stopPdeOffset = javaLength == 0 ?
-        startPdeOffset :
-        // Make the stop inclusive for the purpose of mapping
-        ps.javaOffsetToPdeOffset(stopJavaOffset - 1) + 1;
+    int stopPdeOffset;
+
+    if (javaLength == 0) {
+      stopPdeOffset = startPdeOffset;
+    } else {
+      // Subtract one for inclusive end
+      stopPdeOffset = ps.javaOffsetToPdeOffset(stopJavaOffset - 1);
+      if (javaLength == 1 || stopPdeOffset > startPdeOffset) {
+        // Add one back for exclusive end
+        stopPdeOffset += 1;
+      }
+    }
 
     int tabIndex = ps.pdeOffsetToTabIndex(startPdeOffset);
 

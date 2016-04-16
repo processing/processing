@@ -130,8 +130,9 @@ public class SourceMapping {
     int i = Collections.binarySearch(outMap, searchKey, OUTPUT_OFFSET_COMP);
     if (i < 0) {
       i = -(i + 1);
+      i -= 1;
     }
-    i = PApplet.constrain(i-1, 0, outMap.size()-1);
+    i = PApplet.constrain(i, 0, outMap.size()-1);
     Edit edit = outMap.get(i);
     int diff = outputOffset - edit.toOffset;
     return edit.fromOffset + Math.min(diff, Math.max(0, edit.fromLength - 1));
@@ -144,8 +145,9 @@ public class SourceMapping {
     int i = Collections.binarySearch(inMap, searchKey, INPUT_OFFSET_COMP);
     if (i < 0) {
       i = -(i + 1);
+      i -= 1;
     }
-    i = PApplet.constrain(i-1, 0, inMap.size()-1);
+    i = PApplet.constrain(i, 0, inMap.size()-1);
     Edit edit = inMap.get(i);
     int diff = inputOffset - edit.fromOffset;
     return edit.toOffset + Math.min(diff, Math.max(0, edit.toLength - 1));

@@ -44,9 +44,9 @@ public class PreprocessedSketch {
   public static int lineToOffset(String text, int line) {
     int lineOffset = 0;
     for (int i = 0; i < line && lineOffset >= 0; i++) {
-      lineOffset = text.indexOf('\n', lineOffset+1);
+      lineOffset = text.indexOf('\n', lineOffset) + 1;
     }
-    return lineOffset + 1;
+    return lineOffset;
   }
 
 
