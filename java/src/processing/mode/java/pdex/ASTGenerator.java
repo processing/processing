@@ -2881,7 +2881,10 @@ public class ASTGenerator {
               .getLastSelectedPathComponent();
 
           if (tnode.getUserObject() instanceof ASTNode) {
-            // TODO: highlight ASTNode
+            ASTNode node = (ASTNode) tnode.getUserObject();
+            int startOffset = node.getStartPosition();
+            int length = node.getLength();
+            astGen.errorCheckerService.highlightJavaRange(startOffset, length);
           }
         }
       });
@@ -2952,7 +2955,22 @@ public class ASTGenerator {
     protected void initDebugWindow() {
       debugTreeWindow = new JFrame();
 
-      debugTree = new JTree();
+      debugTree = new JTree() {
+        @Override
+        public String convertValueToText(Object value, boolean selected,
+                                         boolean expanded, boolean leaf,
+                                         int row, boolean hasFocus) {
+          if (value instanceof DefaultMutableTreeNode) {
+            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
+            Object o = treeNode.getUserObject();
+            if (o instanceof ASTNode) {
+              ASTNode node = (ASTNode) o;
+              return getNodeAsString(node);
+            }
+          }
+          return super.convertValueToText(value, selected, expanded, leaf, row, hasFocus);
+        }
+      };
       debugTreeWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
       debugTreeWindow.setBounds(new Rectangle(680, 100, 460, 620));
       debugTreeWindow.setTitle("AST View - " + editor.getSketch().getName());
@@ -2980,15 +2998,16 @@ public class ASTGenerator {
 
         @Override
         public void valueChanged(TreeSelectionEvent e) {
-          Messages.log(e.toString());
-
           if (debugTree.getLastSelectedPathComponent() == null) {
             return;
           }
           DefaultMutableTreeNode tnode =
               (DefaultMutableTreeNode) debugTree.getLastSelectedPathComponent();
           if (tnode.getUserObject() instanceof ASTNode) {
-            // TODO: highlight ASTNode, print some info maybe
+            ASTNode node = (ASTNode) tnode.getUserObject();
+            int startOffset = node.getStartPosition();
+            int length = node.getLength();
+            astGen.errorCheckerService.highlightJavaRange(startOffset, length);
           }
         }
 
