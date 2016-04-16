@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -112,14 +110,6 @@ public class ErrorCheckerService {
   private volatile boolean running;
 
   /**
-   * How many lines are present till the initial class declaration? In static
-   * mode, this would include imports, class declaration and setup
-   * declaration. In nomral mode, this would include imports, class
-   * declaration only. It's fate is decided inside preprocessCode()
-   */
-  public int mainClassOffset;
-
-  /**
    * ASTGenerator for operations on AST
    */
   protected final ASTGenerator astGenerator;
@@ -144,7 +134,7 @@ public class ErrorCheckerService {
    */
   private final static long errorCheckInterval = 650;
 
-  protected volatile PreprocessedSketch latestResult = new PreprocessedSketch();
+  protected volatile PreprocessedSketch latestResult = PreprocessedSketch.empty();
 
   private Thread errorCheckerThread;
   private final BlockingQueue<Boolean> requestQueue = new ArrayBlockingQueue<>(1);
@@ -309,41 +299,9 @@ public class ErrorCheckerService {
   };
 
 
-  public static class PreprocessedSketch {
-
-    Sketch sketch;
-
-    Mode mode;
-
-    String className;
-
-    CompilationUnit compilationUnit;
-
-    String[] classPathArray;
-    ClassPath classPath;
-    URLClassLoader classLoader;
-
-    int[] tabStarts;
-
-    String pdeCode;
-    String preprocessedCode;
-
-    SourceMapping syntaxMapping;
-    SourceMapping compilationMapping;
-
-    boolean hasSyntaxErrors;
-    boolean hasCompilationErrors;
-
-    final List<Problem> problems = new ArrayList<>();
-
-    final List<ImportStatement> programImports = new ArrayList<>();
-    final List<ImportStatement> coreAndDefaultImports = new ArrayList<>();
-    final List<ImportStatement> codeFolderImports = new ArrayList<>();
-  }
-
   protected PreprocessedSketch checkCode() {
 
-    PreprocessedSketch result = new PreprocessedSketch();
+    PreprocessedSketch.Builder result = new PreprocessedSketch.Builder();
     PreprocessedSketch prevResult = latestResult;
 
     List<ImportStatement> coreAndDefaultImports = result.coreAndDefaultImports;
@@ -351,7 +309,7 @@ public class ErrorCheckerService {
     List<ImportStatement> programImports = result.programImports;
 
     Sketch sketch = result.sketch = editor.getSketch();
-    String className = result.className = sketch.getName();
+    String className = sketch.getName();
 
     StringBuilder workBuffer = new StringBuilder();
 
@@ -438,7 +396,6 @@ public class ErrorCheckerService {
       List<IProblem> syntaxProblems = Arrays.asList(syntaxCU.getProblems());
 
       // Update result
-      result.mode = mode;
       result.syntaxMapping = syntaxMapping;
       result.compilationUnit = syntaxCU;
       result.preprocessedCode = syntaxStage;
@@ -489,7 +446,6 @@ public class ErrorCheckerService {
       result.classPathArray = classPathArray;
     }
 
-
     if (!result.hasSyntaxErrors) {
 
       {{ // COMPILATION CHECK
@@ -520,6 +476,7 @@ public class ErrorCheckerService {
         result.preprocessedCode = javaStage;
         result.compilationUnit = compilationCU;
 
+        // TODO: handle error stuff *after* building PreprocessedSketch
         List<Problem> mappedCompilationProblems =
             mapProblems(compilationProblems, result.tabStarts, result.pdeCode,
                         result.compilationMapping, result.syntaxMapping);
@@ -556,7 +513,7 @@ public class ErrorCheckerService {
       }}
     }
 
-    return result;
+    return result.build();
   }
 
 
@@ -1016,57 +973,11 @@ public class ErrorCheckerService {
   }
 
 
-  protected static int mapJavaToTab(PreprocessedSketch sketch, int offset) {
-    int tab = Arrays.binarySearch(sketch.tabStarts, offset);
-    if (tab < 0) {
-      tab = -(tab + 1) - 1;
-    }
-
-    return sketch.tabStarts[tab];
-  }
-
-
-  protected static int mapJavaToProcessing(PreprocessedSketch sketch, int offset) {
-    SourceMapping syntaxMapping = sketch.syntaxMapping;
-    SourceMapping compilationMapping = sketch.compilationMapping;
-
-    if (compilationMapping != null) {
-      offset = compilationMapping.getInputOffset(offset);
-    }
-
-    if (syntaxMapping != null) {
-      offset = syntaxMapping.getInputOffset(offset);
-    }
-
-    return offset;
-  }
-
-
-  protected static int mapProcessingToJava(PreprocessedSketch sketch, int offset) {
-    SourceMapping syntaxMapping = sketch.syntaxMapping;
-    SourceMapping compilationMapping = sketch.compilationMapping;
-
-    if (syntaxMapping != null) {
-      offset = syntaxMapping.getOutputOffset(offset);
-    }
-
-    if (compilationMapping != null) {
-      offset = compilationMapping.getOutputOffset(offset);
-    }
-
-    return offset;
-  }
-
-
   // TODO: does this belong here?
   // Thread: EDT
   public void scrollToErrorLine(Problem p) {
     if (editor == null) return;
     if (p == null) return;
-
-    // Switch to tab
-    editor.toFront();
-    editor.getSketch().setCurrentCode(p.getTabIndex());
 
     // Highlight the code
     int startOffset = p.getStartOffset();
@@ -1075,11 +986,44 @@ public class ErrorCheckerService {
     int length = editor.getTextArea().getDocumentLength();
     startOffset = PApplet.constrain(startOffset, 0, length);
     stopOffset = PApplet.constrain(stopOffset, 0, length);
-    editor.getTextArea().select(startOffset, stopOffset);
+
+    highlightTabRange(p.getTabIndex(), startOffset, stopOffset);
+  }
+
+  // TODO: does this belong here?
+  // Thread: EDT
+  public void highlightTabRange(int tabIndex, int startTabOffset, int stopTabOffset) {
+    // Switch to tab
+    editor.toFront();
+    editor.getSketch().setCurrentCode(tabIndex);
+
+    // Highlight the code
+    editor.getTextArea().select(startTabOffset, stopTabOffset);
 
     // Scroll to error line
     editor.getTextArea().scrollToCaret();
     editor.repaint();
+  }
+
+
+  public void highlightJavaRange(int startJavaOffset, int javaLength) {
+    PreprocessedSketch ps = latestResult;
+
+    int stopJavaOffset = startJavaOffset + javaLength;
+
+    int startPdeOffset = ps.javaOffsetToPdeOffset(startJavaOffset);
+
+    int stopPdeOffset = javaLength == 0 ?
+        startPdeOffset :
+        // Make the stop inclusive for the purpose of mapping
+        ps.javaOffsetToPdeOffset(stopJavaOffset - 1) + 1;
+
+    int tabIndex = ps.pdeOffsetToTabIndex(startPdeOffset);
+
+    int startTabOffset = ps.pdeOffsetToTabOffset(tabIndex, startPdeOffset);
+    int stopTabOffset = ps.pdeOffsetToTabOffset(tabIndex, stopPdeOffset);
+
+    EventQueue.invokeLater(() -> highlightTabRange(tabIndex, startTabOffset, stopTabOffset));
   }
 
 

@@ -277,7 +277,6 @@ public class JavaTextArea extends JEditTextArea {
       return null;
     else {
       int x = xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
-      int xLS = off - getLineStartNonWhiteSpaceOffset(line);
       Messages.log("x=" + x);
       if (x < 0 || x >= s.length())
         return null;
@@ -293,7 +292,6 @@ public class JavaTextArea extends JEditTextArea {
         if (x1 >= 0 && x1 < s.length()) {
           if (Character.isLetter(s.charAt(x1)) || s.charAt(x1) == '_') {
             word = s.charAt(x1--) + word;
-            xLS--;
           } else
             x1 = -1;
         } else
@@ -321,7 +319,7 @@ public class JavaTextArea extends JEditTextArea {
       Messages.log("Mouse click, word: " + word.trim());
       ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
       synchronized (astGenerator) {
-        astGenerator.setLastClickedWord(line, word, xLS);
+        astGenerator.setLastClickedWord(off, word);
       }
       return word.trim();
     }
@@ -404,8 +402,7 @@ public class JavaTextArea extends JEditTextArea {
 
         ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
         synchronized (astGenerator) {
-          int lineOffset = caretLineIndex +
-              editor.getErrorChecker().mainClassOffset;
+          int lineOffset = caretLineIndex;
 
           candidates = astGenerator.preparePredictions(phrase, lineOffset);
         }

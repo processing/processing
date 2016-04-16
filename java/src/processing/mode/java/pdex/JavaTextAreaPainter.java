@@ -175,10 +175,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
       if (Character.isDigit(word.charAt(0)))
         return;
 
-      Messages.log(getJavaEditor().getErrorChecker().mainClassOffset + line + "|" + line + "| offset " + xLS + word + " <= \n");
+      Messages.log(line + "|" + line + "| offset " + xLS + word + " <= \n");
       ASTGenerator astGenerator = getJavaEditor().getErrorChecker().getASTGenerator();
       synchronized (astGenerator) {
-        astGenerator.scrollToDeclaration(line, word, xLS);
+        astGenerator.scrollToDeclaration(off, word);
       }
     }
   }
