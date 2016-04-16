@@ -42,7 +42,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -51,7 +50,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -507,7 +505,9 @@ public class ErrorCheckerService {
         char[] javaStageChars = javaStage.toCharArray();
 
         // Create AST
-        CompilationUnit compilationCU = makeAST(parser, javaStageChars, COMPILER_OPTIONS);
+        CompilationUnit compilationCU = makeASTWithBindings(parser, javaStageChars,
+                                                            COMPILER_OPTIONS,
+                                                            className, result.classPathArray);
 
         // Compile it
         List<IProblem> compilationProblems =
@@ -715,6 +715,22 @@ public class ErrorCheckerService {
     parser.setKind(ASTParser.K_COMPILATION_UNIT);
     parser.setCompilerOptions(options);
     parser.setStatementsRecovery(true);
+
+    return (CompilationUnit) parser.createAST(null);
+  }
+
+  protected static CompilationUnit makeASTWithBindings(ASTParser parser,
+                                                       char[] source,
+                                                       Map<String, String> options,
+                                                       String className,
+                                                       String[] classPath) {
+    parser.setSource(source);
+    parser.setKind(ASTParser.K_COMPILATION_UNIT);
+    parser.setCompilerOptions(options);
+    parser.setStatementsRecovery(true);
+    parser.setUnitName(className);
+    parser.setEnvironment(classPath, null, null, false);
+    parser.setResolveBindings(true);
 
     return (CompilationUnit) parser.createAST(null);
   }
