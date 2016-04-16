@@ -976,26 +976,23 @@ public class ErrorCheckerService {
   // TODO: does this belong here?
   // Thread: EDT
   public void scrollToErrorLine(Problem p) {
-    if (editor == null) return;
     if (p == null) return;
-
-    // Highlight the code
-    int startOffset = p.getStartOffset();
-    int stopOffset = p.getStopOffset();
-
-    int length = editor.getTextArea().getDocumentLength();
-    startOffset = PApplet.constrain(startOffset, 0, length);
-    stopOffset = PApplet.constrain(stopOffset, 0, length);
-
-    highlightTabRange(p.getTabIndex(), startOffset, stopOffset);
+    highlightTabRange(p.getTabIndex(), p.getStartOffset(), p.getStopOffset());
   }
 
   // TODO: does this belong here?
   // Thread: EDT
   public void highlightTabRange(int tabIndex, int startTabOffset, int stopTabOffset) {
+    if (editor == null) return;
+
     // Switch to tab
     editor.toFront();
     editor.getSketch().setCurrentCode(tabIndex);
+
+    // Make sure offsets are in bounds
+    int length = editor.getTextArea().getDocumentLength();
+    startTabOffset = PApplet.constrain(startTabOffset, 0, length);
+    stopTabOffset = PApplet.constrain(stopTabOffset, 0, length);
 
     // Highlight the code
     editor.getTextArea().select(startTabOffset, stopTabOffset);
