@@ -157,15 +157,8 @@ public class ErrorCheckerService {
       // This is when the loaded sketch already has syntax errors.
       // Completion wouldn't be complete, but it'd be still something
       // better than nothing
-      {
-        final DefaultMutableTreeNode tree =
-            ASTGenerator.buildTree(latestResult.compilationUnit);
-        EventQueue.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            astGenerator.updateAST(tree);
-          }
-        });
+      if (ASTGenerator.SHOW_DEBUG_TREE) {
+        astGenerator.updateDebugTree(latestResult.compilationUnit);
       }
 
       while (running) {
@@ -188,8 +181,9 @@ public class ErrorCheckerService {
 
           latestResult = result;
 
-          final DefaultMutableTreeNode tree =
-              ASTGenerator.buildTree(latestResult.compilationUnit);
+          if (ASTGenerator.SHOW_DEBUG_TREE) {
+            astGenerator.updateDebugTree(latestResult.compilationUnit);
+          }
 
           if (JavaMode.errorCheckEnabled) {
             if (scheduledUiUpdate != null) {
@@ -207,9 +201,6 @@ public class ErrorCheckerService {
                   EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                      synchronized (astGenerator) {
-                        astGenerator.updateAST(tree);
-                      }
                       updateErrorTable(result.problems);
                       editor.updateErrorBar(result.problems);
                       editor.getTextArea().repaint();

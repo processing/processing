@@ -122,67 +122,13 @@ public class JavaTextAreaPainter extends TextAreaPainter
   void handleCtrlClick(MouseEvent evt) {
     Messages.log("--handleCtrlClick--");
     int off = textArea.xyToOffset(evt.getX(), evt.getY());
-    if (off < 0)
-      return;
-    int line = textArea.getLineOfOffset(off);
-    if (line < 0)
-      return;
-    String s = textArea.getLineText(line);
-    if (s == null)
-      return;
-    else if (s.length() == 0)
-      return;
-    else {
-      int x = textArea.xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
-      Messages.log("x="+x);
-      int xLS = off - textArea.getLineStartNonWhiteSpaceOffset(line);
-      if (x < 0 || x >= s.length())
-        return;
-      String word = s.charAt(x) + "";
-      if (s.charAt(x) == ' ')
-        return;
-      if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_' || s.charAt(x) == '$'))
-        return;
-      int i = 0;
-      while (true) {
-        i++;
-        if (x1 >= 0 && x1 < s.length()) {
-          if (Character.isLetter(s.charAt(x1)) || s.charAt(x1) == '_') {
-            word = s.charAt(x1--) + word;
-            xLS--;
-          } else
-            x1 = -1;
-        } else
-          x1 = -1;
+    if (off < 0) return;
 
-        if (x2 >= 0 && x2 < s.length()) {
-          if (Character.isLetterOrDigit(s.charAt(x2)) || s.charAt(x2) == '_'
-              || s.charAt(x2) == '$')
-            word = word + s.charAt(x2++);
-          else
-            x2 = -1;
-        } else
-          x2 = -1;
+    int tabIndex = getEditor().getSketch().getCurrentCodeIndex();
 
-        if (x1 < 0 && x2 < 0)
-          break;
-        if (i > 200) {
-          // time out!
-          // System.err.println("Whoopsy! :P");
-          break;
-        }
-      }
-      if (Character.isDigit(word.charAt(0)))
-        return;
-
-      Messages.log(line + "|" + line + "| offset " + xLS + word + " <= \n");
-
-      int tabIndex = getEditor().getSketch().getCurrentCodeIndex();
-
-      ASTGenerator astGenerator = getJavaEditor().getErrorChecker().getASTGenerator();
-      synchronized (astGenerator) {
-        astGenerator.scrollToDeclaration(tabIndex, off, word);
-      }
+    ASTGenerator astGenerator = getJavaEditor().getErrorChecker().getASTGenerator();
+    synchronized (astGenerator) {
+      astGenerator.scrollToDeclaration(tabIndex, off);
     }
   }
 

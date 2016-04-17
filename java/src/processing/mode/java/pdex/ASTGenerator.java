@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Stack;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -111,7 +110,6 @@ public class ASTGenerator {
 
   protected final ErrorCheckerService errorCheckerService;
   protected final JavaEditor editor;
-  public DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode();
 
   protected final GUI gui;
 
@@ -954,70 +952,6 @@ public class ASTGenerator {
   }
 
 
-  protected String getLabelIfType(ASTNode node){
-    ASTNode current = node.getParent();
-    String type = "";
-    StringBuilder fullName = new StringBuilder();
-    Stack<String> parents = new Stack<>();
-    String simpleName = node.toString();
-    switch (node.getNodeType()) {
-    case ASTNode.TYPE_DECLARATION:
-    case ASTNode.METHOD_DECLARATION:
-    case ASTNode.FIELD_DECLARATION:
-      while (current != null) {
-        if (current instanceof TypeDeclaration) {
-          parents.push(((TypeDeclaration) current).getName().toString());
-        }
-        current = current.getParent();
-      }
-      while (parents.size() > 0) {
-        fullName.append(parents.pop()).append(".");
-      }
-      fullName.append(simpleName);
-      if (node instanceof MethodDeclaration) {
-        MethodDeclaration md = (MethodDeclaration) node;
-        if (!md.isConstructor())
-          type = md.getReturnType2().toString();
-        fullName.append('(');
-        if (!md.parameters().isEmpty()) {
-          List<ASTNode> params = md.parameters();
-          for (ASTNode par : params) {
-            if (par instanceof SingleVariableDeclaration) {
-              SingleVariableDeclaration svd = (SingleVariableDeclaration) par;
-              fullName.append(svd.getType()).append(" ").append(svd.getName()).append(",");
-            }
-          }
-        }
-        if(fullName.charAt(fullName.length() - 1) == ',')
-          fullName.deleteCharAt(fullName.length() - 1);
-        fullName.append(')');
-      }
-      else if(node instanceof FieldDeclaration){
-        type = ((FieldDeclaration) node).getType().toString();
-      }
-      int x = fullName.indexOf(".");
-      fullName.delete(0, x + 1);
-      return type + " " + fullName;
-
-    case ASTNode.SINGLE_VARIABLE_DECLARATION:
-      SingleVariableDeclaration svd = (SingleVariableDeclaration)node;
-      return svd.getType() + " " + svd.getName();
-
-    case ASTNode.VARIABLE_DECLARATION_STATEMENT:
-      return ((VariableDeclarationStatement) node).getType() + " "
-          + simpleName;
-    case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
-      return ((VariableDeclarationExpression) node).getType() + " "
-          + simpleName;
-    default:
-      break;
-    }
-
-
-    return "";
-  }
-
-
   /**
    * Given a word(identifier) in pde code, finds its location in the ASTNode
    * @param lineNumber
@@ -1141,53 +1075,6 @@ public class ASTGenerator {
 
 
   /**
-   * Given a declaration type astnode, returns the SimpleName peroperty
-   * of that node.
-   * @param node
-   * @param name - The name we're looking for.
-   * @return SimpleName
-   */
-  protected static SimpleName getNodeName(ASTNode node, String name){
-    List<VariableDeclarationFragment> vdfs = null;
-    switch (node.getNodeType()) {
-    case ASTNode.SIMPLE_NAME:
-      return (SimpleName) node;
-    case ASTNode.TYPE_DECLARATION:
-      return ((TypeDeclaration) node).getName();
-    case ASTNode.METHOD_DECLARATION:
-      return ((MethodDeclaration) node).getName();
-    case ASTNode.SINGLE_VARIABLE_DECLARATION:
-      return ((SingleVariableDeclaration) node).getName();
-    case ASTNode.VARIABLE_DECLARATION_FRAGMENT:
-      return ((VariableDeclarationFragment) node).getName();
-    case ASTNode.FIELD_DECLARATION:
-      vdfs = ((FieldDeclaration) node).fragments();
-      break;
-    case ASTNode.VARIABLE_DECLARATION_STATEMENT:
-      vdfs = ((VariableDeclarationStatement) node).fragments();
-      break;
-    case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
-      vdfs = ((VariableDeclarationExpression) node).fragments();
-      break;
-    default:
-      break;
-    }
-
-    if (vdfs != null) {
-      if (vdfs.size() == 1) {
-        return vdfs.get(0).getName();
-      } else {
-        for (VariableDeclarationFragment vdf : vdfs) {
-          if (vdf.getName().toString().equals(name)) {
-            return vdf.getName();
-          }
-        }
-      }
-    }
-    return null;
-  }
-
-  /**
    * Fetches line number of the node in its CompilationUnit.
    * @param node
    * @return
@@ -1197,9 +1084,6 @@ public class ASTGenerator {
         .getStartPosition());
   }
 
-  public static int getLineNumber(ASTNode node, int pos) {
-    return ((CompilationUnit) node.getRoot()).getLineNumber(pos);
-  }
 
   // TODO: nuke and reimplement
   protected void refactorIt(String newName){
@@ -1350,74 +1234,6 @@ public class ASTGenerator {
   }
 
 
-  /**
-   * Generates AST Swing component
-   * @param node
-   * @param tnode
-   */
-  public static void visitRecur(ASTNode node, DefaultMutableTreeNode tnode) {
-    Iterator<StructuralPropertyDescriptor> it =
-        node.structuralPropertiesForType().iterator();
-    //Base.loge("Props of " + node.getClass().getName());
-    DefaultMutableTreeNode ctnode;
-    while (it.hasNext()) {
-      StructuralPropertyDescriptor prop = it.next();
-
-      if (prop.isChildProperty() || prop.isSimpleProperty()) {
-        if (node.getStructuralProperty(prop) != null) {
-//          System.out
-//              .println(node.getStructuralProperty(prop) + " -> " + (prop));
-          if (node.getStructuralProperty(prop) instanceof ASTNode) {
-            ASTNode cnode = (ASTNode) node.getStructuralProperty(prop);
-            if (isAddableASTNode(cnode)) {
-              ctnode = new DefaultMutableTreeNode(node.getStructuralProperty(prop));
-              tnode.add(ctnode);
-              visitRecur(cnode, ctnode);
-            }
-          } else {
-            tnode.add(new DefaultMutableTreeNode(node
-                .getStructuralProperty(prop)));
-          }
-        }
-      } else if (prop.isChildListProperty()) {
-        List<ASTNode> nodelist = (List<ASTNode>)
-          node.getStructuralProperty(prop);
-        for (ASTNode cnode : nodelist) {
-          if (isAddableASTNode(cnode)) {
-            ctnode = new DefaultMutableTreeNode(cnode);
-            tnode.add(ctnode);
-            visitRecur(cnode, ctnode);
-          } else {
-            visitRecur(cnode, tnode);
-          }
-        }
-      }
-    }
-  }
-
-
-  public void dfsNameOnly(DefaultMutableTreeNode tnode,ASTNode decl, String name) {
-    Stack<DefaultMutableTreeNode> temp = new Stack<>();
-    temp.push(codeTree);
-
-    while(!temp.isEmpty()){
-      DefaultMutableTreeNode cnode = temp.pop();
-      for (int i = 0; i < cnode.getChildCount(); i++) {
-        temp.push((DefaultMutableTreeNode) cnode.getChildAt(i));
-      }
-
-      if(!(cnode.getUserObject() instanceof ASTNode))
-        continue;
-      ASTNode awnode = (ASTNode) cnode.getUserObject();
-//      log("Visiting: " + getNodeAsString(awnode.getNode()));
-      if(isInstanceOfType(awnode, decl, name)){
-        tnode.add(new DefaultMutableTreeNode(awnode));
-      }
-
-    }
-  }
-
-
   /*
   protected SketchOutline sketchOutline;
 
@@ -1434,37 +1250,6 @@ public class ASTGenerator {
   }
   */
 
-
-  protected boolean isInstanceOfType(ASTNode node,ASTNode decl, String name){
-    if(node instanceof SimpleName){
-      SimpleName sn = (SimpleName) node;
-
-      if (sn.toString().equals(name)) {
-        ArrayList<ASTNode> nodesToBeMatched = new ArrayList<>();
-        nodesToBeMatched.add(decl);
-        if(decl instanceof TypeDeclaration){
-          log("decl is a TD");
-          TypeDeclaration td = (TypeDeclaration)decl;
-          MethodDeclaration[] mlist = td.getMethods();
-          for (MethodDeclaration md : mlist) {
-            if(md.getName().toString().equals(name)){
-              nodesToBeMatched.add(md);
-            }
-          }
-        }
-        log("Visiting: " + getNodeAsString(node));
-        ASTNode decl2 = findDeclaration(sn);
-        Messages.loge("It's decl: " + getNodeAsString(decl2));
-        log("But we need: "+getNodeAsString(decl));
-        for (ASTNode astNode : nodesToBeMatched) {
-          if(astNode.equals(decl2)){
-            return true;
-          }
-        }
-      }
-    }
-    return false;
-  }
 
   public void handleRefactor() {
     Messages.log("* handleRefactor");
@@ -2158,19 +1943,6 @@ public class ASTGenerator {
   }
 
 
-  public static boolean isAddableASTNode(ASTNode node) {
-    switch (node.getNodeType()) {
-//    case ASTNode.STRING_LITERAL:
-//    case ASTNode.NUMBER_LITERAL:
-//    case ASTNode.BOOLEAN_LITERAL:
-//    case ASTNode.NULL_LITERAL:
-//      return false;
-    default:
-      return true;
-    }
-  }
-
-
   static protected String getNodeAsString(ASTNode node) {
     if (node == null)
       return "NULL";
@@ -2217,57 +1989,6 @@ public class ASTGenerator {
     return value;
   }
 
-  /**
-   * CompletionPanel name
-   *
-   * @param node
-   * @return
-   */
-  static protected String getNodeAsString2(ASTNode node) {
-    if (node == null)
-      return "NULL";
-    String className = node.getClass().getName();
-    int index = className.lastIndexOf(".");
-    if (index > 0)
-      className = className.substring(index + 1);
-
-    // if(node instanceof BodyDeclaration)
-    // return className;
-
-    String value = className;
-
-    if (node instanceof TypeDeclaration)
-      value = ((TypeDeclaration) node).getName().toString();
-    else if (node instanceof MethodDeclaration)
-      value = ((MethodDeclaration) node).getName().toString();
-    else if (node instanceof MethodInvocation)
-      value = ((MethodInvocation) node).getName().toString() + " | "
-          + className;
-    else if (node instanceof FieldDeclaration)
-      value = node.toString();
-    else if (node instanceof SingleVariableDeclaration)
-      value = ((SingleVariableDeclaration) node).getName().toString();
-    else if (node instanceof ExpressionStatement)
-      value = node.toString() + className;
-    else if (node instanceof SimpleName)
-      value = ((SimpleName) node).getFullyQualifiedName() + " | " + className;
-    else if (node instanceof QualifiedName)
-      value = node.toString();
-    else if (node instanceof VariableDeclarationFragment)
-      value = ((VariableDeclarationFragment) node).getName().toString();
-    else if (className.startsWith("Variable"))
-      value = node.toString();
-    else if (node instanceof VariableDeclarationStatement)
-      value = node.toString();
-    else if (className.endsWith("Type"))
-      value = node.toString();
-//    value += " [" + node.getStartPosition() + ","
-//        + (node.getStartPosition() + node.getLength()) + "]";
-//    value += " Line: "
-//        + ((CompilationUnit) node.getRoot()).getLineNumber(node
-//            .getStartPosition());
-    return value;
-  }
 
 //  public void jdocWindowVisible(boolean visible) {
 //   // frmJavaDoc.setVisible(visible);
@@ -2650,10 +2371,11 @@ public class ASTGenerator {
   }
 
 
+/*
   public void updateJavaDoc(final CompletionCandidate candidate) {
     //TODO: Work on this later.
     return;
-  /*  String methodmatch = candidate.toString();
+    String methodmatch = candidate.toString();
     if (methodmatch.indexOf('(') != -1) {
       methodmatch = methodmatch.substring(0, methodmatch.indexOf('('));
     }
@@ -2689,33 +2411,26 @@ public class ASTGenerator {
         editor.ta.requestFocus();
       }
     });
-*/
   }
+*/
+
 
 
   /// Error checker ------------------------------------------------------------
 
 
-  protected static DefaultMutableTreeNode buildTree(CompilationUnit cu) {
+  protected void updateDebugTree(CompilationUnit cu) {
     if (cu.types().isEmpty()){
       Messages.loge("No Type found in CU");
-      return null;
+      return;
     }
 
     ASTNode type0 = (ASTNode) cu.types().get(0);
     DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode(type0);
     visitRecur(type0, codeTree);
-    return codeTree;
-  }
+    EventQueue.invokeLater(() -> gui.updateDebugTree(codeTree));
 
-
-  protected void updateAST(DefaultMutableTreeNode tree) {
-    codeTree = tree;
-
-    if (SHOW_DEBUG_TREE) {
-      gui.updateDebugTree(codeTree);
-    }
-
+    // TODO: figure out what this is
 //    if (codeTree != null) {
 //      if (!frameAutoComp.isVisible()) {
 //
@@ -2737,15 +2452,76 @@ public class ASTGenerator {
   }
 
 
+  /**
+   * Generates AST Swing component
+   * @param node
+   * @param tnode
+   */
+  public static void visitRecur(ASTNode node, DefaultMutableTreeNode tnode) {
+    Iterator<StructuralPropertyDescriptor> it =
+        node.structuralPropertiesForType().iterator();
+    //Base.loge("Props of " + node.getClass().getName());
+    DefaultMutableTreeNode ctnode;
+    while (it.hasNext()) {
+      StructuralPropertyDescriptor prop = it.next();
+
+      if (prop.isChildProperty() || prop.isSimpleProperty()) {
+        if (node.getStructuralProperty(prop) != null) {
+//          System.out
+//              .println(node.getStructuralProperty(prop) + " -> " + (prop));
+          if (node.getStructuralProperty(prop) instanceof ASTNode) {
+            ASTNode cnode = (ASTNode) node.getStructuralProperty(prop);
+            if (isAddableASTNode(cnode)) {
+              ctnode = new DefaultMutableTreeNode(node.getStructuralProperty(prop));
+              tnode.add(ctnode);
+              visitRecur(cnode, ctnode);
+            }
+          } else {
+            tnode.add(new DefaultMutableTreeNode(node
+                                                     .getStructuralProperty(prop)));
+          }
+        }
+      } else if (prop.isChildListProperty()) {
+        List<ASTNode> nodelist = (List<ASTNode>)
+            node.getStructuralProperty(prop);
+        for (ASTNode cnode : nodelist) {
+          if (isAddableASTNode(cnode)) {
+            ctnode = new DefaultMutableTreeNode(cnode);
+            tnode.add(ctnode);
+            visitRecur(cnode, ctnode);
+          } else {
+            visitRecur(cnode, tnode);
+          }
+        }
+      }
+    }
+  }
+
+
+  public static boolean isAddableASTNode(ASTNode node) {
+    switch (node.getNodeType()) {
+//    case ASTNode.STRING_LITERAL:
+//    case ASTNode.NUMBER_LITERAL:
+//    case ASTNode.BOOLEAN_LITERAL:
+//    case ASTNode.NULL_LITERAL:
+//      return false;
+      default:
+        return true;
+    }
+  }
+
+
 
   /// Editor stuff -------------------------------------------------------------
 
 
   // Thread: EDT
-  public void scrollToDeclaration(int tabIndex, int offset, String name) {
+  public void scrollToDeclaration(int tabIndex, int offset) {
     Messages.log("* scrollToDeclaration");
 
     // TODO: don't run the heavy lifting on EDT
+
+    // TODO: handle comments
 
     PreprocessedSketch ps = errorCheckerService.latestResult;
 
