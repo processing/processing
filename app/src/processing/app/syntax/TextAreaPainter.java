@@ -20,6 +20,7 @@ import javax.swing.JComponent;
 
 import processing.app.Preferences;
 import processing.app.syntax.im.CompositionTextPainter;
+import processing.app.ui.Editor;
 
 
 /**
@@ -670,14 +671,18 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 //    gfx.setFont(defaultFont);
 //    gfx.setColor(defaultColor);
 
+    int x0 = x - textArea.getHorizontalOffset();
+
     y += fm.getHeight();
     // doesn't respect fixed width like it should
 //    x = Utilities.drawTabbedText(currentLine, x, y, gfx, this, 0);
 //    int w = fm.charWidth(' ');
     for (int i = 0; i < currentLine.count; i++) {
       gfx.drawChars(currentLine.array, currentLine.offset+i, 1, x, y);
-      x = currentLine.array[currentLine.offset + i] == '\t' ? (int)nextTabStop(x, i) :
+      x = currentLine.array[currentLine.offset + i] == '\t' ?
+          x0 + (int)nextTabStop(x - x0, i) :
           x + fm.charWidth(currentLine.array[currentLine.offset+i]);
+      textArea.offsetToX(line, currentLine.offset + i);
     }
 
     // Draw characters via input method.
@@ -745,6 +750,8 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 //    Font defaultFont = gfx.getFont();
 //    Color defaultColor = gfx.getColor();
 
+    int x0 = x - textArea.getHorizontalOffset();
+
 //    for (byte id = tokens.id; id != Token.END; tokens = tokens.next) {
     for (;;) {
       byte id = tokens.id;
@@ -772,8 +779,9 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 //      int w = fm.charWidth(' ');
       for (int i = 0; i < line.count; i++) {
         gfx.drawChars(line.array, line.offset+i, 1, x, y);
-        x = line.array[line.offset + i] == '\t' ? (int)nextTabStop(x, i) :
-          x + fm.charWidth(line.array[line.offset+i]);
+        x = line.array[line.offset + i] == '\t' ?
+            x0 + (int)nextTabStop(x - x0, i) :
+            x + fm.charWidth(line.array[line.offset+i]);
       }
       //x += fm.charsWidth(line.array, line.offset, line.count);
       //x += fm.charWidth(' ') * line.count;
