@@ -133,6 +133,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 
     // moved from setFont() override (never quite comfortable w/ that override)
     fm = super.getFontMetrics(plainFont);
+    tabSize = fm.charWidth(' ') * Preferences.getInteger("editor.tabs.size");
     textArea.recalculateVisibleLines();
 
 //    fgcolor = mode.getColor("editor.fgcolor");
@@ -464,8 +465,6 @@ public class TextAreaPainter extends JComponent implements TabExpander {
     // no effect, one way or the other
 //    g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
 //                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-
-    tabSize = fm.charWidth(' ') * ((Integer)textArea.getDocument().getProperty(PlainDocument.tabSizeAttribute)).intValue();
 
     Rectangle clipRect = gfx.getClipBounds();
 
