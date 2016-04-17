@@ -5333,6 +5333,7 @@ public class PApplet implements PConstants {
 //          if (params != null) {
 //            image.setParams(g, params);
 //          }
+          image.parent = this;
           return image;
         }
       }
