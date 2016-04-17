@@ -20,7 +20,6 @@ import javax.swing.JComponent;
 
 import processing.app.Preferences;
 import processing.app.syntax.im.CompositionTextPainter;
-import processing.app.ui.Editor;
 
 
 /**
