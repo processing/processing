@@ -337,6 +337,11 @@ public class PSurfaceFX implements PSurface {
       // the stage, assign it only when it is all set up
       surface.stage = stage;
     }
+
+    @Override
+    public void stop() throws Exception {
+      surface.sketch.dispose();
+    }
   }
 
 
