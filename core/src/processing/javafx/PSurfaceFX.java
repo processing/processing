@@ -38,9 +38,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.scene.Cursor;
+import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.PixelFormat;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -590,28 +594,45 @@ public class PSurfaceFX implements PSurface {
 //    canvas.requestFocus();
 //  }
 
+  Cursor lastCursor = Cursor.DEFAULT;
 
   public void setCursor(int kind) {
-    // TODO Auto-generated method stub
-
+    Cursor c;
+    switch (kind) {
+      case PConstants.ARROW: c = Cursor.DEFAULT; break;
+      case PConstants.CROSS: c = Cursor.CROSSHAIR; break;
+      case PConstants.HAND: c = Cursor.HAND; break;
+      case PConstants.MOVE: c = Cursor.MOVE; break;
+      case PConstants.TEXT: c = Cursor.TEXT; break;
+      case PConstants.WAIT: c = Cursor.WAIT; break;
+      default: c = Cursor.DEFAULT; break;
+    }
+    lastCursor = c;
+    canvas.getScene().setCursor(c);
   }
 
 
   public void setCursor(PImage image, int hotspotX, int hotspotY) {
-    // TODO Auto-generated method stub
-
+    int w = image.pixelWidth;
+    int h = image.pixelHeight;
+    WritableImage im = new WritableImage(w, h);
+    im.getPixelWriter().setPixels(0, 0, w, h,
+                                  PixelFormat.getIntArgbInstance(),
+                                  image.pixels,
+                                  0, w);
+    ImageCursor c = new ImageCursor(im, hotspotX, hotspotY);
+    lastCursor = c;
+    canvas.getScene().setCursor(c);
   }
 
 
   public void showCursor() {
-    // TODO Auto-generated method stub
-
+    canvas.getScene().setCursor(lastCursor);
   }
 
 
   public void hideCursor() {
-    // TODO Auto-generated method stub
-
+    canvas.getScene().setCursor(Cursor.NONE);
   }
 
 
