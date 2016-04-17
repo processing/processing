@@ -41,6 +41,7 @@ import java.util.Optional;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
@@ -59,14 +60,15 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
@@ -86,6 +88,7 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
@@ -94,7 +97,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import processing.app.Messages;
-import processing.app.syntax.JEditTextArea;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.Toolkit;
 import processing.mode.java.JavaEditor;
@@ -1024,31 +1026,117 @@ public class ASTGenerator {
    * @param scrollOnly
    * @return
    */
-  public ASTNode getASTNodeAt(int javaOffset) {
-    Messages.log("* getASTNodeAt");
+  public SimpleName getSimpleNameAt(int javaOffset) {
+    return getSimpleNameAt(javaOffset, javaOffset);
+  }
 
-    PreprocessedSketch ps = errorCheckerService.latestResult;
-    ASTNode node = NodeFinder.perform(ps.compilationUnit, javaOffset, 0);
+  public SimpleName getSimpleNameAt(int startJavaOffset, int stopJavaOffset) {
+    Messages.log("* getSimpleNameAt");
+
+    // Find node at offset
+    ASTNode node = getASTNodeAt(startJavaOffset, stopJavaOffset);
+
+    SimpleName result = null;
 
     if (node == null) {
-      Messages.log("no node found");
-      return null;
+      result = null;
+    } else if (node.getNodeType() == ASTNode.SIMPLE_NAME) {
+      result = (SimpleName) node;
+    } else {
+      // Return SimpleName with highest coverage
+      List<SimpleName> simpleNames = getSimpleNameChildren(node);
+      if (!simpleNames.isEmpty()) {
+        // Compute coverage <selection x node>
+        int[] coverages = simpleNames.stream()
+            .mapToInt(name -> {
+              int start = name.getStartPosition();
+              int stop = start + name.getLength();
+              return Math.min(stop, stopJavaOffset) -
+                  Math.max(startJavaOffset, start);
+            })
+            .toArray();
+        // Select node with highest coverage
+        int maxIndex = IntStream.range(0, simpleNames.size())
+            .filter(i -> coverages[i] >= 0)
+            .reduce((i, j) -> coverages[i] > coverages[j] ? i : j)
+            .orElse(0);
+        result = simpleNames.get(maxIndex);
+      }
     }
 
-    Messages.log("found " + node.toString());
+    if (node == null) {
+      Messages.log("no simple name found");
+    } else {
+      Messages.log("found " + node.toString());
+    }
+    return result;
+  }
+
+
+  public ASTNode getASTNodeAt(int startJavaOffset, int stopJavaOffset) {
+    Messages.log("* getASTNodeAt");
+
+    ASTNode root = errorCheckerService.latestResult.compilationUnit;
+
+    int length = stopJavaOffset - startJavaOffset;
+
+    NodeFinder f = new NodeFinder(root, startJavaOffset, length);
+    ASTNode node = f.getCoveredNode();
+    if (node == null) {
+      node = f.getCoveringNode();
+    }
+    if (node == null) {
+      Messages.log("no node found");
+    } else {
+      Messages.log("found " + node.toString());
+    }
     return node;
   }
 
 
-  public static IBinding resolveBinding(ASTNode node) {
-    Messages.log("* resolveBinding " + node.getClass().getSimpleName());
-    switch (node.getNodeType()) {
-      case ASTNode.SIMPLE_NAME:
-        return ((SimpleName) node).resolveBinding();
-      // For now only used for SimpleNames, add more as needed
-      default:
-        return null;
+  public static List<SimpleName> getSimpleNameChildren(ASTNode node) {
+    List<SimpleName> simpleNames = new ArrayList<>();
+    node.accept(new ASTVisitor() {
+      @Override
+      public boolean visit(SimpleName simpleName) {
+        simpleNames.add(simpleName);
+        return super.visit(simpleName);
+      }
+    });
+    return simpleNames;
+  }
+
+
+  public static IBinding resolveBinding(SimpleName node) {
+    IBinding binding = node.resolveBinding();
+    if (binding == null) return null;
+
+    // Fix constructor call/declaration being resolved as type
+    if (binding.getKind() == IBinding.TYPE) {
+      ASTNode context = node;
+      while (isNameOrType(context)) {
+        context = context.getParent();
+      }
+      switch (context.getNodeType()) {
+        case ASTNode.METHOD_DECLARATION:
+          MethodDeclaration decl = (MethodDeclaration) context;
+          if (decl.isConstructor()) {
+            binding = decl.resolveBinding();
+          }
+          break;
+        case ASTNode.CLASS_INSTANCE_CREATION:
+          ClassInstanceCreation cic = (ClassInstanceCreation) context;
+          binding = cic.resolveConstructorBinding();
+          break;
+      }
     }
+
+    return binding;
+  }
+
+
+  public static boolean isNameOrType(ASTNode node) {
+    return node instanceof Name || node instanceof Type;
   }
 
 
@@ -1118,7 +1206,7 @@ public class ASTGenerator {
     String selText = lastClickedWord == null ? getSelectedText()
         : lastClickedWord;
     // Find all occurrences of last clicked word
-    DefaultMutableTreeNode defCU = findAllOccurrences(); //TODO: Repetition here
+    DefaultMutableTreeNode defCU = null;//findAllOccurrences(); //TODO: Repetition here
     if(defCU == null){
       editor.statusMessage("Can't locate definition of " + selText,
                            EditorStatus.ERROR);
@@ -1190,44 +1278,43 @@ public class ASTGenerator {
     errorCheckerService.request();
 //    showUsageWindow.setVisible(false);
     lastClickedWord = null;
-    lastClickedWordNode = null;
   }
 
-
-  public void handleShowUsage() {
+  public void handleShowUsage(int tabIndex, int startTabOffset, int stopTabOffset) {
     Messages.log("* handleShowUsage");
+
     if (editor.hasJavaTabs()) return; // show usage disabled if java tabs
 
-    log("Last clicked word:" + lastClickedWord);
-    if (lastClickedWord == null &&
-        getSelectedText() == null) {
-      editor.statusMessage("Highlight the class/function/variable name first",
-                           EditorStatus.NOTICE);
-      return;
-    }
+    PreprocessedSketch ps = errorCheckerService.latestResult;
+    if (ps.hasSyntaxErrors) return;
 
-    if (errorCheckerService.hasSyntaxErrors()){
-      editor.statusMessage("Can't perform action until errors are fixed",
-                           EditorStatus.WARNING);
-      return;
-    }
-    DefaultMutableTreeNode defCU = findAllOccurrences();
-    String selText = lastClickedWord == null ?
-      getSelectedText() : lastClickedWord;
-    if (defCU == null) {
-      editor.statusMessage("Can't locate definition of " + selText,
-                           EditorStatus.ERROR);
-      return;
-    }
-    if(defCU.getChildCount() == 0)
-      return;
-    gui.handleShowUsage(selText, defCU);
+    // Map offsets
+    int startJavaOffset = ps.tabOffsetToJavaOffset(tabIndex, startTabOffset);
+    int stopJavaOffset = ps.tabOffsetToJavaOffset(tabIndex, stopTabOffset);
+
+    // Find the node
+    SimpleName name = getSimpleNameAt(startJavaOffset, stopJavaOffset);
+    if (name == null) return;
+
+    // Find occurrences of the node
+    List<SimpleName> occurrences = findAllOccurrences(name);
+    if (occurrences == null) return;
+
+    // Build a simple list
+    DefaultMutableTreeNode defCU = new DefaultMutableTreeNode();
+    occurrences.stream()
+        .map(DefaultMutableTreeNode::new)
+        .forEach(defCU::add);
+
     lastClickedWord = null;
-    lastClickedWordNode = null;
+
+    // Send to gui
+    EventQueue.invokeLater(() -> gui.handleShowUsage(name.getIdentifier(), defCU));
   }
 
+  protected int lastClickedTab = 0;
+  protected int lastClickedOffset = 0;
   protected String lastClickedWord = null;
-  protected ASTNode lastClickedWordNode = null;
 
   public String getLastClickedWord() {
     return lastClickedWord;
@@ -1235,78 +1322,31 @@ public class ASTGenerator {
 
   public void setLastClickedWord(int tabIndex, int offset, String lastClickedWord) {
     Messages.log("* setLastClickedWord");
+    this.lastClickedTab = tabIndex;
+    this.lastClickedOffset = offset;
     this.lastClickedWord = lastClickedWord;
-    int javaOffset = errorCheckerService.latestResult.tabOffsetToJavaOffset(tabIndex, offset);
-    lastClickedWordNode = getASTNodeAt(javaOffset); // TODO: don't call this on EDT
-    log("Last clicked node: " + lastClickedWordNode);
+    log("Last clicked: " + lastClickedWord);
   }
 
-  protected DefaultMutableTreeNode findAllOccurrences(){
-    final JEditTextArea ta = editor.getTextArea();
 
-    log("Last clicked word:" + lastClickedWord);
-    String selText = lastClickedWord == null ? ta.getSelectedText() :
-        lastClickedWord;
-    int line = ta.getSelectionStartLine();
-    log(selText
-        + "<- offsets "
-        + (line)
-        + ", "
-        + (ta.getSelectionStart() - ta.getLineStartOffset(line))
-        + ", "
-        + (ta.getSelectionStop() - ta.getLineStartOffset(line)));
-    int tabIndex = editor.getSketch().getCurrentCodeIndex();
-    int offset = ta.getSelectionStart();
-    int javaOffset =
-        errorCheckerService.latestResult.tabOffsetToJavaOffset(tabIndex, offset);
-    ASTNode wnode;
-    if (lastClickedWord == null || lastClickedWordNode == null) {
-      wnode = getASTNodeAt(javaOffset);
-    }
-    else{
-      wnode = lastClickedWordNode;
-    }
-    if(wnode == null){
-      return null;
-    }
-    Messages.loge("Gonna find all occurrences of " + getNodeAsString(wnode));
+  protected List<SimpleName> findAllOccurrences(SimpleName name){
+    IBinding binding = resolveBinding(name);
+    if (binding == null) return null;
+    String key = binding.getKey();
 
-    //If wnode is a constructor, find the TD instead.
-    if (wnode.getNodeType() == ASTNode.METHOD_DECLARATION) {
-      MethodDeclaration md = (MethodDeclaration) wnode;
-      ASTNode node = md.getParent();
-      while (node != null) {
-        if (node instanceof TypeDeclaration) {
-          // log("Parent class " + getNodeAsString(node));
-          break;
+    List<SimpleName> occurences = new ArrayList<>();
+    name.getRoot().accept(new ASTVisitor() {
+      @Override
+      public boolean visit(SimpleName name) {
+        IBinding binding = resolveBinding(name);
+        if (binding != null && key.equals(binding.getKey())) {
+          occurences.add(name);
         }
-        node = node.getParent();
+        return super.visit(name);
       }
-      if(node != null && node instanceof TypeDeclaration){
-        TypeDeclaration td = (TypeDeclaration) node;
-        if(td.getName().toString().equals(md.getName().toString())){
-          Messages.loge("Renaming constructor of " + getNodeAsString(td));
-          wnode = td;
-        }
-      }
-    }
+    });
 
-    DefaultMutableTreeNode defCU =
-      new DefaultMutableTreeNode(wnode);
-    dfsNameOnly(defCU, wnode, selText);
-
-    // Reverse the list obtained via dfs
-    Stack<Object> tempS = new Stack<>();
-    for (int i = 0; i < defCU.getChildCount(); i++) {
-      tempS.push(defCU.getChildAt(i));
-    }
-    defCU.removeAllChildren();
-    while (!tempS.isEmpty()) {
-      defCU.add((MutableTreeNode) tempS.pop());
-    }
-    log(wnode);
-
-    return defCU;
+    return occurences;
   }
 
 
@@ -1444,7 +1484,7 @@ public class ASTGenerator {
       return;
     }
 
-    DefaultMutableTreeNode defCU = findAllOccurrences();
+    DefaultMutableTreeNode defCU = null; //findAllOccurrences();
     final String selText = lastClickedWord == null ?
         getSelectedText() : lastClickedWord;
     if (defCU == null) {
@@ -2711,14 +2751,14 @@ public class ASTGenerator {
 
     int javaOffset = ps.tabOffsetToJavaOffset(tabIndex, offset);
 
-    ASTNode node = getASTNodeAt(javaOffset);
+    SimpleName simpleName = getSimpleNameAt(javaOffset);
 
-    if (node == null) {
+    if (simpleName == null) {
+      Messages.log("nothing found");
       return;
     }
 
-
-    IBinding binding = resolveBinding(node);
+    IBinding binding = resolveBinding(simpleName);
     if (binding == null) {
       Messages.log("binding not resolved");
       return;
@@ -2731,13 +2771,18 @@ public class ASTGenerator {
       return;
     }
 
-    SimpleName declName = getNodeName(decl, name);
+    SimpleName declName = null;
+    switch (binding.getKind()) {
+      case IBinding.TYPE: declName = ((TypeDeclaration) decl).getName(); break;
+      case IBinding.METHOD: declName = ((MethodDeclaration) decl).getName(); break;
+      case IBinding.VARIABLE: declName = ((VariableDeclaration) decl).getName(); break;
+    }
     if (declName == null) {
       Messages.log("decl name not found " + decl);
       return;
     }
 
-    Messages.log("decl " + decl.getStartPosition() + " " + declName);
+    Messages.log("found declaration, offset " + decl.getStartPosition() + ", name: " + declName);
     errorCheckerService.highlightJavaRange(declName.getStartPosition(), declName.getLength());
   }
 
@@ -2864,7 +2909,10 @@ public class ASTGenerator {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-          astGen.handleShowUsage();
+          // TODO: not good
+          astGen.handleShowUsage(astGen.lastClickedTab,
+                                 astGen.lastClickedOffset,
+                                 astGen.lastClickedOffset);
         }
       });
 
@@ -2872,9 +2920,7 @@ public class ASTGenerator {
 
         @Override
         public void valueChanged(TreeSelectionEvent e) {
-          log(e);
-          if (showUsageTree
-              .getLastSelectedPathComponent() == null) {
+          if (showUsageTree.getLastSelectedPathComponent() == null) {
             return;
           }
           DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) showUsageTree
