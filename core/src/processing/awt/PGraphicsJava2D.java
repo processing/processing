@@ -337,7 +337,10 @@ public class PGraphicsJava2D extends PGraphics {
     if (fontObject != null) {
       g2.setFont(fontObject);
     }
-
+    // https://github.com/processing/processing/issues/4019
+    if (blendMode != 0) {
+      blendMode(blendMode);
+    }
     handleSmooth();
 
     /*
