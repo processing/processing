@@ -11,6 +11,14 @@ X   normalize features and error handling between all of them
 
 _ add push() and pop() methods to mirror js?
 
+jakub
+X several JavaFX fixes
+X   https://github.com/processing/processing/pull/4411
+X cursor() and noCursor() not working on FX2D
+X   https://github.com/processing/processing/issues/4405
+X Make sure PImage.parent is set in loadImage()
+X   https://github.com/processing/processing/pull/4412
+
 andres
 X Change convention for directional lights in OpenGL-Binding for GLSL
 X   https://github.com/processing/processing/issues/4275
