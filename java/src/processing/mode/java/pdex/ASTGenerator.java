@@ -995,7 +995,8 @@ public class ASTGenerator {
         int maxIndex = IntStream.range(0, simpleNames.size())
             .filter(i -> coverages[i] >= 0)
             .reduce((i, j) -> coverages[i] > coverages[j] ? i : j)
-            .orElse(0);
+            .orElse(-1);
+        if (maxIndex == -1) return null;
         result = simpleNames.get(maxIndex);
       }
     }
