@@ -25,6 +25,8 @@ import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -1164,6 +1166,7 @@ public class ASTGenerator {
     lastClickedWord = null;
   }
 
+
   public void handleShowUsage(int tabIndex, int startTabOffset, int stopTabOffset) {
     Messages.log("* handleShowUsage");
 
@@ -1180,20 +1183,11 @@ public class ASTGenerator {
     SimpleName name = getSimpleNameAt(startJavaOffset, stopJavaOffset);
     if (name == null) return;
 
-    // Find occurrences of the node
-    List<SimpleName> occurrences = findAllOccurrences(name);
-    if (occurrences == null) return;
+    // Find binding
+    IBinding binding = resolveBinding(name);
+    if (binding == null) return;
 
-    // Build a simple list
-    DefaultMutableTreeNode defCU = new DefaultMutableTreeNode();
-    occurrences.stream()
-        .map(DefaultMutableTreeNode::new)
-        .forEach(defCU::add);
-
-    lastClickedWord = null;
-
-    // Send to gui
-    EventQueue.invokeLater(() -> gui.handleShowUsage(name.getIdentifier(), defCU));
+    handleShowUsage(binding);
   }
 
   protected int lastClickedTab = 0;
@@ -1213,17 +1207,37 @@ public class ASTGenerator {
   }
 
 
-  protected List<SimpleName> findAllOccurrences(SimpleName name){
-    IBinding binding = resolveBinding(name);
-    if (binding == null) return null;
-    String key = binding.getKey();
+  public void handleShowUsage(IBinding binding) {
+    PreprocessedSketch ps = errorCheckerService.latestResult;
+    if (ps.hasSyntaxErrors) return;
 
+    String bindingKey = binding.getKey();
+
+    // Find occurrences of the node
+    List<SimpleName> occurrences = findAllOccurrences(ps.compilationUnit, bindingKey);
+    if (occurrences == null) return;
+
+    lastClickedWord = null;
+
+    // Send to gui
+    EventQueue.invokeLater(() -> gui.handleShowUsage(binding, occurrences));
+  }
+
+
+  public void reloadShowUsage() {
+    if (gui.showUsageBinding != null) {
+      handleShowUsage(gui.showUsageBinding);
+    }
+  }
+
+
+  protected List<SimpleName> findAllOccurrences(ASTNode root, String bindingKey) {
     List<SimpleName> occurences = new ArrayList<>();
-    name.getRoot().accept(new ASTVisitor() {
+    root.getRoot().accept(new ASTVisitor() {
       @Override
       public boolean visit(SimpleName name) {
         IBinding binding = resolveBinding(name);
-        if (binding != null && key.equals(binding.getKey())) {
+        if (binding != null && bindingKey.equals(binding.getKey())) {
           occurences.add(name);
         }
         return super.visit(name);
@@ -1278,12 +1292,12 @@ public class ASTGenerator {
       return;
     }
 
-    EventQueue.invokeLater(new Runnable() {
+    /*EventQueue.invokeLater(new Runnable() {
       @Override
       public void run() {
         gui.handleRefactor(selText);
       }
-    });
+    });*/
   }
 
 
@@ -2579,10 +2593,12 @@ public class ASTGenerator {
     protected JLabel renameOldNameLabel;
     protected JButton showUsageButton;
     protected JButton renameButton;
+    protected IBinding renameBinding;
 
     // Show usage window
     protected JFrame showUsageWindow;
     protected JTree showUsageTree;
+    protected IBinding showUsageBinding;
 
     protected final JavaEditor editor;
     protected final ASTGenerator astGen;
@@ -2604,6 +2620,12 @@ public class ASTGenerator {
         renameWindow = new JFrame();
         renameWindow.setTitle("Enter new name:");
         renameWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        renameWindow.addComponentListener(new ComponentAdapter() {
+          @Override
+          public void componentHidden(ComponentEvent e) {
+            renameBinding = null;
+          }
+        });
         renameWindow.setSize(250, 130);
         renameWindow.setLayout(new BoxLayout(renameWindow.getContentPane(), BoxLayout.Y_AXIS));
         Toolkit.setIcon(renameWindow);
@@ -2654,6 +2676,14 @@ public class ASTGenerator {
       { // Show Usage window
         showUsageWindow = new JFrame();
         showUsageWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        showUsageWindow.addComponentListener(new ComponentAdapter() {
+          @Override
+          public void componentHidden(ComponentEvent e) {
+            // Delete references to ASTNodes so that whole AST can be GC'd
+            showUsageBinding = null;
+            showUsageTree.setModel(null);
+          }
+        });
         showUsageWindow.setSize(300, 400);
         Toolkit.setIcon(showUsageWindow);
         JScrollPane sp2 = new JScrollPane();
@@ -2685,10 +2715,7 @@ public class ASTGenerator {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-          // TODO: not good
-          astGen.handleShowUsage(astGen.lastClickedTab,
-                                 astGen.lastClickedOffset,
-                                 astGen.lastClickedOffset);
+          astGen.handleShowUsage(renameBinding);
         }
       });
 
@@ -2713,31 +2740,45 @@ public class ASTGenerator {
     }
 
 
-    public void handleRefactor(String selText) {
+    public void handleRefactor(IBinding binding) {
       if (!renameWindow.isVisible()){
         renameWindow.setLocation(editor.getX()
                                      + (editor.getWidth() - renameWindow.getWidth()) / 2,
                                  editor.getY()
                                      + (editor.getHeight() - renameWindow.getHeight())
                                      / 2);
-        showUsageWindow.setTitle("All occurrences of "
-                                     + selText);
         renameOldNameLabel.setText("Current name: "
-                                       + selText);
-        renameTextField.setText("");
-        renameWindow.setVisible(true);
+                                       + binding.getName());
+        renameTextField.setText(binding.getName());
         renameTextField.requestFocus();
+        renameTextField.selectAll();
+        renameWindow.setVisible(true);
         renameWindow.toFront();
       }
     }
 
-    public void handleShowUsage(String selText, DefaultMutableTreeNode defCU) {
-      showUsageWindow.setVisible(true);
-      updateUsageTree(defCU);
+
+    public void handleShowUsage(IBinding binding, List<SimpleName> occurrences) {
+      showUsageBinding = binding;
+
+      // Build a simple list
+      DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+      occurrences.stream()
+          .map(DefaultMutableTreeNode::new)
+          .forEach(rootNode::add);
+
+      DefaultTreeModel model = new DefaultTreeModel(rootNode);
+      showUsageTree.setModel(model);
+
       showUsageTree.setRootVisible(false);
-      showUsageWindow.setTitle("Usage of \"" + selText + "\" : "
-                                   + defCU.getChildCount() + " time(s)");
-      showUsageWindow.setLocation(editor.getX() + editor.getWidth(), editor.getY());
+
+      if (!showUsageWindow.isVisible()) {
+        showUsageWindow.setVisible(true);
+        showUsageWindow.setLocation(editor.getX() + editor.getWidth(), editor.getY());
+      }
+
+      showUsageWindow.setTitle("Usage of \"" + binding.getName() + "\" : "
+                                   + rootNode.getChildCount() + " time(s)");
     }
 
 

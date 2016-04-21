@@ -53,7 +53,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.CharOperation;
@@ -184,6 +183,8 @@ public class ErrorCheckerService {
           if (ASTGenerator.SHOW_DEBUG_TREE) {
             astGenerator.updateDebugTree(latestResult.compilationUnit);
           }
+
+          astGenerator.reloadShowUsage();
 
           if (JavaMode.errorCheckEnabled) {
             if (scheduledUiUpdate != null) {
