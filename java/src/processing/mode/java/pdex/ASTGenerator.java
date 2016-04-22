@@ -22,6 +22,8 @@ package processing.mode.java.pdex;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -82,6 +84,7 @@ import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Name;
@@ -2738,7 +2741,25 @@ public class ASTGenerator {
 
       PreprocessedSketch ps = astGen.errorCheckerService.latestResult;
 
-      DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+      String bindingType = "";
+      switch (binding.getKind()) {
+        case IBinding.METHOD:
+          IMethodBinding method = (IMethodBinding) binding;
+          if (method.isConstructor()) bindingType = "Constructor";
+          else bindingType = "Method";
+          break;
+        case IBinding.TYPE: bindingType = "Type"; break;
+        case IBinding.VARIABLE:
+          IVariableBinding variable = (IVariableBinding) binding;
+          if (variable.isField()) bindingType = "Field";
+          else if (variable.isParameter()) bindingType = "Parameter";
+          else if (variable.isEnumConstant()) bindingType = "Enum constant";
+          else bindingType = "Local variable";
+          break;
+      }
+
+      DefaultMutableTreeNode rootNode =
+          new DefaultMutableTreeNode(bindingType + ": " + binding.getName());
 
       Map<Integer, List<ShowUsageTreeNode>> tabGroupedTreeNodes = occurrences.stream()
           // Convert to TreeNodes
@@ -2761,7 +2782,7 @@ public class ASTGenerator {
 
             // Create new DefaultMutableTreeNode for this tab
             String tabLabel = "<html><font color=#222222>" +
-                ps.sketch.getCode(tabIndex).getFileName() +
+                ps.sketch.getCode(tabIndex).getPrettyName() +
                 "</font> <font color=#999999>" + count + " " + usageLabel + "</font></html>";
             DefaultMutableTreeNode tabNode = new DefaultMutableTreeNode(tabLabel);
 
@@ -2784,24 +2805,30 @@ public class ASTGenerator {
           showUsageTree.expandRow(i);
         }
 
-        showUsageTree.setRootVisible(false);
+        showUsageTree.setRootVisible(true);
 
+        boolean setLocation = false;
+        if (showUsageWindow.getState() == JFrame.ICONIFIED) {
+          showUsageWindow.setState(JFrame.NORMAL);
+          setLocation = true;
+        }
         if (!showUsageWindow.isVisible()) {
           showUsageWindow.setVisible(true);
-          showUsageWindow.setLocation(editor.getX() + editor.getWidth(), editor.getY());
+          setLocation = true;
+        }
+        if (setLocation) {
+          GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+          GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
+          Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
+          int maxX = (int) rect.getMaxX() - showUsageWindow.getWidth();
+          int x = Math.min(editor.getX() + editor.getWidth(), maxX);
+          int y = (x == maxX) ? 10 : editor.getY();
+          showUsageWindow.setLocation(x, y);
         }
 
         showUsageWindow.setTitle("Usage of \"" + binding.getName() + "\" : "
                                      + occurrences.size() + " time(s)");
       });
-    }
-
-
-    public void updateUsageTree(DefaultMutableTreeNode defCU) {
-      if(showUsageTree.isVisible()){
-        showUsageTree.setModel(new DefaultTreeModel(defCU));
-        ((DefaultTreeModel) showUsageTree.getModel()).reload();
-      }
     }
 
 
