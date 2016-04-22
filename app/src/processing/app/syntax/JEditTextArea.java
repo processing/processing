@@ -2452,6 +2452,16 @@ public class JEditTextArea extends JComponent
 //      // Windows fires the popup trigger on release (see mouseReleased() below)(
 //      if (!Base.isWindows()) {
 //        if (event.isPopupTrigger() && (popup != null)) {
+
+        // If user right-clicked inside the selection, preserve it;
+        // move caret to click offset otherwise
+        int offset = xyToOffset(event.getX(), event.getY());
+        int selectionStart = getSelectionStart();
+        int selectionStop = getSelectionStop();
+        if (offset < selectionStart || offset >= selectionStop) {
+          select(offset, offset);
+        }
+
         popup.show(painter, event.getX(), event.getY());
         return;
 //        }

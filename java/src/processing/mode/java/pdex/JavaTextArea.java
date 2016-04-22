@@ -75,9 +75,6 @@ public class JavaTextArea extends JEditTextArea {
     super(defaults, new JavaInputHandler(editor));
     this.editor = editor;
 
-    // handle right click on a word
-    painter.addMouseListener(rightClickMouseAdapter);
-
     // change cursor to pointer in the gutter area
     painter.addMouseMotionListener(gutterCursorMouseAdapter);
 
@@ -254,77 +251,6 @@ public class JavaTextArea extends JEditTextArea {
         (suggestion != null && suggestion.isVisible()))) {
       Messages.log("[KeyEvent]" + evt.getKeyChar() + "  |Prediction started");
       fetchPhrase();
-    }
-  }
-
-
-  /**
-   * Retrieves the word on which the mouse pointer is present
-   * @param evt - the MouseEvent which triggered this method
-   */
-  private String fetchPhrase(MouseEvent evt) {
-    Messages.log("--handle Mouse Right Click--");
-    int off = xyToOffset(evt.getX(), evt.getY());
-    if (off < 0)
-      return null;
-    int line = getLineOfOffset(off);
-    if (line < 0)
-      return null;
-    String s = getLineText(line);
-    if (s == null)
-      return null;
-    else if (s.length() == 0)
-      return null;
-    else {
-      int x = xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
-      Messages.log("x=" + x);
-      if (x < 0 || x >= s.length())
-        return null;
-      String word = s.charAt(x) + "";
-      if (s.charAt(x) == ' ')
-        return null;
-      if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_' || s
-          .charAt(x) == '$'))
-        return null;
-      int i = 0;
-      while (true) {
-        i++;
-        if (x1 >= 0 && x1 < s.length()) {
-          if (Character.isLetter(s.charAt(x1)) || s.charAt(x1) == '_') {
-            word = s.charAt(x1--) + word;
-          } else
-            x1 = -1;
-        } else
-          x1 = -1;
-
-        if (x2 >= 0 && x2 < s.length()) {
-          if (Character.isLetterOrDigit(s.charAt(x2)) || s.charAt(x2) == '_'
-              || s.charAt(x2) == '$')
-            word = word + s.charAt(x2++);
-          else
-            x2 = -1;
-        } else
-          x2 = -1;
-
-        if (x1 < 0 && x2 < 0)
-          break;
-        if (i > 200) {
-          // time out!
-          break;
-        }
-      }
-      if (Character.isDigit(word.charAt(0))) {
-        return null;
-      }
-      Messages.log("Mouse click, word: " + word.trim());
-      ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
-
-      int tabIndex = editor.getSketch().getCurrentCodeIndex();
-
-      synchronized (astGenerator) {
-        astGenerator.setLastClickedWord(tabIndex, off, word);
-      }
-      return word.trim();
     }
   }
 
@@ -706,20 +632,6 @@ public class JavaTextArea extends JEditTextArea {
   public int xToOffset(int line, int x) {
     return super.xToOffset(line, x - Editor.LEFT_GUTTER);
   }
-
-
-  /**
-   * Fetches word under the cursor on right click
-   */
-  protected final MouseAdapter rightClickMouseAdapter = new MouseAdapter() {
-    @Override
-    public void mousePressed(MouseEvent me) {
-      if (me.getButton() == MouseEvent.BUTTON3 &&
-          !editor.hasJavaTabs()) { // tooltips, etc disabled for java tabs
-        fetchPhrase(me);
-      }
-    }
-  };
 
 
   /**

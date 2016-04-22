@@ -1185,22 +1185,6 @@ public class ASTGenerator {
     handleShowUsage(binding);
   }
 
-  protected int lastClickedTab = 0;
-  protected int lastClickedOffset = 0;
-  protected String lastClickedWord = null;
-
-  public String getLastClickedWord() {
-    return lastClickedWord;
-  }
-
-  public void setLastClickedWord(int tabIndex, int offset, String lastClickedWord) {
-    Messages.log("* setLastClickedWord");
-    this.lastClickedTab = tabIndex;
-    this.lastClickedOffset = offset;
-    this.lastClickedWord = lastClickedWord;
-    log("Last clicked: " + lastClickedWord);
-  }
-
 
   public void handleShowUsage(IBinding binding) {
     PreprocessedSketch ps = errorCheckerService.latestResult;
@@ -1211,8 +1195,6 @@ public class ASTGenerator {
     // Find occurrences of the node
     List<SimpleName> occurrences = findAllOccurrences(ps.compilationUnit, bindingKey);
     if (occurrences == null) return;
-
-    lastClickedWord = null;
 
     // Send to gui
     EventQueue.invokeLater(() -> gui.handleShowUsage(binding, occurrences));
@@ -2568,11 +2550,6 @@ public class ASTGenerator {
 
     Messages.log("found declaration, offset " + decl.getStartPosition() + ", name: " + declName);
     errorCheckerService.highlightJavaRange(declName.getStartPosition(), declName.getLength());
-  }
-
-
-  private String getSelectedText() {
-    return editor.getTextArea().getSelectedText();
   }
 
 
