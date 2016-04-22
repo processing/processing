@@ -37,12 +37,15 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -61,6 +64,7 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.eclipse.jdt.core.dom.AST;
@@ -2719,6 +2723,10 @@ public class ASTGenerator {
         Toolkit.setIcon(showUsageWindow);
         JScrollPane sp2 = new JScrollPane();
         showUsageTree = new JTree();
+        DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) showUsageTree.getCellRenderer();
+        renderer.setLeafIcon(null);
+        renderer.setClosedIcon(null);
+        renderer.setOpenIcon(null);
         sp2.setViewportView(showUsageTree);
         showUsageWindow.add(sp2);
       }
@@ -2760,11 +2768,11 @@ public class ASTGenerator {
           DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) showUsageTree
               .getLastSelectedPathComponent();
 
-          if (tnode.getUserObject() instanceof ASTNode) {
-            ASTNode node = (ASTNode) tnode.getUserObject();
-            int startOffset = node.getStartPosition();
-            int length = node.getLength();
-            astGen.errorCheckerService.highlightJavaRange(startOffset, length);
+          if (tnode.getUserObject() instanceof ShowUsageTreeNode) {
+            ShowUsageTreeNode node = (ShowUsageTreeNode) tnode.getUserObject();
+            astGen.errorCheckerService.highlightTabRange(node.tabIndex,
+                                                         node.startTabOffset,
+                                                         node.stopTabOffset);
           }
         }
       });
@@ -2792,24 +2800,64 @@ public class ASTGenerator {
     public void handleShowUsage(IBinding binding, List<SimpleName> occurrences) {
       showUsageBinding = binding;
 
-      // Build a simple list
+      PreprocessedSketch ps = astGen.errorCheckerService.latestResult;
+
       DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
-      occurrences.stream()
-          .map(DefaultMutableTreeNode::new)
+
+      Map<Integer, List<ShowUsageTreeNode>> tabGroupedTreeNodes = occurrences.stream()
+          // Convert to TreeNodes
+          .map(name -> ShowUsageTreeNode.fromSimpleName(ps, name))
+          // TODO: this has to be fixed with better token mapping
+          // remove occurrences which fall into generated header
+          .filter(node -> node.tabIndex != 0 || (node.startTabOffset >= 0 && node.stopTabOffset > 0))
+          // Group by tab
+          .collect(Collectors.groupingBy(node -> node.tabIndex));
+
+      tabGroupedTreeNodes.entrySet().stream()
+          // Sort by tab index
+          .sorted(Comparator.comparing(Map.Entry::getKey))
+          .map(entry -> {
+            Integer tabIndex = entry.getKey();
+            List<ShowUsageTreeNode> nodes = entry.getValue();
+
+            int count = nodes.size();
+            String usageLabel = count == 1 ? "usage" : "usages";
+
+            // Create new DefaultMutableTreeNode for this tab
+            String tabLabel = "<html><font color=#222222>" +
+                ps.sketch.getCode(tabIndex).getFileName() +
+                "</font> <font color=#999999>" + count + " " + usageLabel + "</font></html>";
+            DefaultMutableTreeNode tabNode = new DefaultMutableTreeNode(tabLabel);
+
+            nodes.stream()
+                // Convert TreeNodes to DefaultMutableTreeNodes
+                .map(DefaultMutableTreeNode::new)
+                // Add all as children of tab node
+                .forEach(tabNode::add);
+            return tabNode;
+          })
+          // Add all tab nodes as children of root node
           .forEach(rootNode::add);
 
-      DefaultTreeModel model = new DefaultTreeModel(rootNode);
-      showUsageTree.setModel(model);
+      EventQueue.invokeLater(() -> {
+        DefaultTreeModel model = new DefaultTreeModel(rootNode);
+        showUsageTree.setModel(model);
 
-      showUsageTree.setRootVisible(false);
+        // Expand all nodes
+        for (int i = 0; i < showUsageTree.getRowCount(); i++) {
+          showUsageTree.expandRow(i);
+        }
 
-      if (!showUsageWindow.isVisible()) {
-        showUsageWindow.setVisible(true);
-        showUsageWindow.setLocation(editor.getX() + editor.getWidth(), editor.getY());
-      }
+        showUsageTree.setRootVisible(false);
 
-      showUsageWindow.setTitle("Usage of \"" + binding.getName() + "\" : "
-                                   + rootNode.getChildCount() + " time(s)");
+        if (!showUsageWindow.isVisible()) {
+          showUsageWindow.setVisible(true);
+          showUsageWindow.setLocation(editor.getX() + editor.getWidth(), editor.getY());
+        }
+
+        showUsageWindow.setTitle("Usage of \"" + binding.getName() + "\" : "
+                                     + occurrences.size() + " time(s)");
+      });
     }
 
 
@@ -2908,6 +2956,64 @@ public class ASTGenerator {
       });
     }
 
+  }
+
+  protected static class ShowUsageTreeNode {
+
+    int tabIndex;
+    int tabLine;
+    int startTabOffset;
+    int stopTabOffset;
+
+    String text;
+
+    public static ShowUsageTreeNode fromSimpleName(PreprocessedSketch ps, SimpleName name) {
+      int startJavaOffset = name.getStartPosition();
+      int stopJavaOffset = startJavaOffset + name.getLength();
+
+      int startPdeOffset = ps.javaOffsetToPdeOffset(startJavaOffset);
+      int stopPdeOffset = ps.javaOffsetToPdeOffset(stopJavaOffset);
+
+      int tabIndex = ps.pdeOffsetToTabIndex(startPdeOffset);
+
+      int startTabOffset = ps.pdeOffsetToTabOffset(tabIndex, startPdeOffset);
+      int stopTabOffset = ps.pdeOffsetToTabOffset(tabIndex, stopPdeOffset);
+
+      int tabLine = ps.tabOffsetToTabLine(tabIndex, startTabOffset);
+
+      int lineStartPdeOffset = ps.pdeCode.lastIndexOf('\n', startPdeOffset) + 1;
+      int lineStopPdeOffset = ps.pdeCode.indexOf('\n', stopPdeOffset);
+
+      int snippetStartOffset = startPdeOffset - lineStartPdeOffset;
+      int snippetStopOffset = stopPdeOffset - lineStartPdeOffset;
+
+      // TODO: what a mess
+      String line = ps.pdeCode.substring(lineStartPdeOffset, lineStopPdeOffset);
+      String pre = line.substring(0, snippetStartOffset)
+          .replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;");
+      String highlight = line.substring(snippetStartOffset, snippetStopOffset)
+          .replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;");
+      String post = line.substring(snippetStopOffset)
+          .replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;");
+      line = pre + "<font color=#222222><b>" + highlight + "</b></font>" + post;
+      line = line.trim();
+
+      ShowUsageTreeNode node = new ShowUsageTreeNode();
+      node.tabIndex = tabIndex;
+      node.tabLine = tabLine;
+      node.startTabOffset = startTabOffset;
+      node.stopTabOffset = stopTabOffset;
+
+      node.text = "<html><font color=#bbbbbb>" +
+          (tabLine + 1) + "</font> <font color=#777777>" + line + "</font></html>";
+
+      return node;
+    }
+
+    @Override
+    public String toString() {
+      return text;
+    }
   }
 
 }

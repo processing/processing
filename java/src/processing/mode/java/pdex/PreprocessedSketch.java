@@ -51,13 +51,19 @@ public class PreprocessedSketch {
 
 
   // TODO: optimize
-  public static int offsetToLine(String text, int offset) {
+  public static int offsetToLine(String text, int start, int offset) {
     int line = 0;
-    while (offset >= 0) {
+    while (offset >= start) {
       offset = text.lastIndexOf('\n', offset-1);
       line++;
     }
     return line - 1;
+  }
+
+
+  // TODO: optimize
+  public static int offsetToLine(String text, int offset) {
+    return offsetToLine(text, 0, offset);
   }
 
 
@@ -120,6 +126,13 @@ public class PreprocessedSketch {
     int tabStartOffset = tabStarts[tabIndex];
     return pdeOffset - tabStartOffset;
   }
+
+
+  public int tabOffsetToTabLine(int tabIndex, int tabOffset) {
+    int tabStartOffset = tabStarts[tabIndex];
+    return offsetToLine(pdeCode, tabStartOffset, tabStartOffset + tabOffset);
+  }
+
 
 
   /// BUILDER BUSINESS /////////////////////////////////////////////////////////
