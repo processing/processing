@@ -25,6 +25,7 @@ import java.awt.EventQueue;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -55,6 +56,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -2565,7 +2567,7 @@ public class ASTGenerator {
   protected static class GUI {
 
     // Rename window
-    protected JFrame renameWindow;
+    protected JDialog renameWindow;
     protected JTextField renameTextField;
     protected JLabel renameOldNameLabel;
     protected JButton showUsageButton;
@@ -2594,9 +2596,10 @@ public class ASTGenerator {
       if (SHOW_DEBUG_TREE) initDebugWindow();
 
       { // Rename window
-        renameWindow = new JFrame();
+        renameWindow = new JDialog(editor);
         renameWindow.setTitle("Enter new name:");
         renameWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        renameWindow.setModal(true);
         renameWindow.addComponentListener(new ComponentAdapter() {
           @Override
           public void componentHidden(ComponentEvent e) {
@@ -2653,6 +2656,7 @@ public class ASTGenerator {
       { // Show Usage window
         showUsageWindow = new JFrame();
         showUsageWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        showUsageWindow.setAutoRequestFocus(false);
         showUsageWindow.addComponentListener(new ComponentAdapter() {
           @Override
           public void componentHidden(ComponentEvent e) {
@@ -2697,6 +2701,7 @@ public class ASTGenerator {
         @Override
         public void actionPerformed(ActionEvent e) {
           astGen.handleShowUsage(renameBinding);
+          renameWindow.setVisible(false);
         }
       });
 
@@ -2819,6 +2824,7 @@ public class ASTGenerator {
           showUsageWindow.setVisible(true);
           setLocation = true;
         }
+        showUsageWindow.toFront();
         if (setLocation) {
           GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
           GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
@@ -2843,10 +2849,10 @@ public class ASTGenerator {
     }
 
 
-    public static void disposeWindow(JFrame... f) {
-      for (JFrame jFrame : f) {
-        if (jFrame != null)
-          jFrame.dispose();
+    public static void disposeWindow(Window... w) {
+      for (Window window : w) {
+        if (window != null)
+          window.dispose();
       }
     }
 
