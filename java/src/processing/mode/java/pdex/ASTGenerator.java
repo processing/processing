@@ -2509,12 +2509,10 @@ public class ASTGenerator {
 
 
   // Thread: EDT
-  public void scrollToDeclaration(int tabIndex, int offset) {
+  public void handleCtrlClick(int tabIndex, int offset) {
     Messages.log("* scrollToDeclaration");
 
     // TODO: don't run the heavy lifting on EDT
-
-    // TODO: handle comments
 
     PreprocessedSketch ps = errorCheckerService.latestResult;
 
@@ -2536,7 +2534,8 @@ public class ASTGenerator {
     String key = binding.getKey();
     ASTNode decl = ps.compilationUnit.findDeclaringNode(key);
     if (decl == null) {
-      Messages.log("decl not found");
+      Messages.log("decl not found, showing usage instead");
+      handleShowUsage(binding);
       return;
     }
 
@@ -2551,8 +2550,12 @@ public class ASTGenerator {
       return;
     }
 
-    Messages.log("found declaration, offset " + decl.getStartPosition() + ", name: " + declName);
-    errorCheckerService.highlightJavaRange(declName.getStartPosition(), declName.getLength());
+    if (declName.equals(simpleName)) {
+      handleShowUsage(binding);
+    } else {
+      Messages.log("found declaration, offset " + decl.getStartPosition() + ", name: " + declName);
+      errorCheckerService.highlightJavaRange(declName.getStartPosition(), declName.getLength());
+    }
   }
 
 

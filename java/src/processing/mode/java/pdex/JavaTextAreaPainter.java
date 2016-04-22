@@ -78,7 +78,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
     super(textArea, defaults);
 
     addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent evt) {
+      public void mouseReleased(MouseEvent evt) {
         if (!getJavaEditor().hasJavaTabs()) { // Ctrl + Click disabled for java tabs
           if (evt.getButton() == MouseEvent.BUTTON1) {
             if ((evt.isControlDown() && !Platform.isMacOS()) || evt.isMetaDown()) {
@@ -130,7 +130,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
     ASTGenerator astGenerator = getJavaEditor().getErrorChecker().getASTGenerator();
     synchronized (astGenerator) {
-      astGenerator.scrollToDeclaration(tabIndex, off);
+      astGenerator.handleCtrlClick(tabIndex, off);
     }
   }
 
