@@ -35,6 +35,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -76,6 +77,8 @@ import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Name;
@@ -1051,7 +1054,8 @@ public class ASTGenerator {
     // Fix constructor call/declaration being resolved as type
     if (binding.getKind() == IBinding.TYPE) {
       ASTNode context = node;
-      while (isNameOrType(context)) {
+      while (isNameOrType(context) &&
+          !context.getLocationInParent().getId().equals("typeArguments")) {
         context = context.getParent();
       }
       switch (context.getNodeType()) {
@@ -1066,6 +1070,32 @@ public class ASTGenerator {
           binding = cic.resolveConstructorBinding();
           break;
       }
+    }
+
+    // Normalize parametrized and raw bindings into generic bindings
+    switch (binding.getKind()) {
+      case IBinding.TYPE:
+        ITypeBinding type = (ITypeBinding) binding;
+        if (type.isParameterizedType() || type.isRawType()) {
+          binding = type.getErasure();
+        }
+        break;
+      case IBinding.METHOD:
+        IMethodBinding method = (IMethodBinding) binding;
+        ITypeBinding declaringClass = method.getDeclaringClass();
+        if (declaringClass.isParameterizedType() ||
+            declaringClass.isRawType()) {
+          IMethodBinding[] methods = declaringClass.getErasure().getDeclaredMethods();
+          IMethodBinding generic = Arrays.stream(methods)
+              .filter(method::overrides)
+              .findAny().orElse(null);
+          if (generic != null) method = generic;
+        }
+        if (method.isParameterizedMethod() || method.isRawMethod()) {
+          method = method.getMethodDeclaration();
+        }
+        binding = method;
+        break;
     }
 
     return binding;
