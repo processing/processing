@@ -2690,8 +2690,11 @@ public class JavaEditor extends Editor {
   private void handleRefactor() {
     Messages.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
     ASTGenerator astGenerator = errorCheckerService.getASTGenerator();
+    int startOffset = getSelectionStart();
+    int stopOffset = getSelectionStop();
+    int tabIndex = sketch.getCurrentCodeIndex();
     synchronized (astGenerator) {
-      astGenerator.handleRefactor();
+      astGenerator.handleRename(tabIndex, startOffset, stopOffset);
     }
   }
 

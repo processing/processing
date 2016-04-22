@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1122,83 +1121,44 @@ public class ASTGenerator {
   }
 
 
-  // TODO: nuke and reimplement
-  protected void refactorIt(String newName){
-    String selText = lastClickedWord == null ? getSelectedText()
-        : lastClickedWord;
-    // Find all occurrences of last clicked word
-    DefaultMutableTreeNode defCU = null;//findAllOccurrences(); //TODO: Repetition here
-    if(defCU == null){
-      editor.statusMessage("Can't locate definition of " + selText,
-                           EditorStatus.ERROR);
-      return;
-    }
+  protected void handleRename(IBinding binding, String newName) {
 
-    // Verify if the new name is a valid java identifier
-    if(!newName.matches("([a-zA-Z][a-zA-Z0-9_]*)|([_][a-zA-Z0-9_]+)")) {
+    // TODO: get this off EDT
+
+    boolean isNewNameValid =
+        Character.isUnicodeIdentifierStart(newName.charAt(0)) &&
+        newName.substring(1).chars().allMatch(Character::isUnicodeIdentifierPart);
+    if (!isNewNameValid) {
       JOptionPane.showMessageDialog(new JFrame(), newName
           + " isn't a valid name.", "Uh oh..", JOptionPane.PLAIN_MESSAGE);
       return;
     }
-    //else log("New name looks K.");
 
-    errorCheckerService.cancel();
+    PreprocessedSketch ps = errorCheckerService.latestResult;
 
-    gui.updateUsageTree(defCU);
+    ASTNode decl = ps.compilationUnit.findDeclaringNode(binding.getKey());
+    if (decl == null) return;
 
-//    showUsageWindow.setTitle("Usage of \"" + selText + "\" : "
-//        + defCU.getChildCount() + " time(s)");
-//    showUsageWindow.setLocation(editor.getX() + editor.getWidth(),editor.getY());
-//    showUsageWindow.setVisible(true);
-    int lineOffsetDisplacementConst = newName.length()
-        - selText.length();
-    HashMap<Integer, Integer> lineOffsetDisplacement = new HashMap<>();
+    List<SimpleName> occurrences = findAllOccurrences(ps.compilationUnit, binding.getKey());
 
-    // I need to store the pde and java offsets beforehand because once
-    // the replace starts, all offsets returned are affected
-    //int offsetsMap[][][] = new int[defCU.getChildCount()][2][];
-    int pdeOffsets[][] = new int[defCU.getChildCount()][3];
-    for (int i = 0; i < defCU.getChildCount(); i++) {
-      ASTNode awrap = (ASTNode) ((DefaultMutableTreeNode) (defCU
-          .getChildAt(i))).getUserObject();
-      /*int ans[] = errorCheckerService.calculateTabIndexAndLineNumber(awrap
-          .getLineNumber());
-      pdeOffsets[i][0] = ans[0];
-      pdeOffsets[i][1] = ans[1];
-      pdeOffsets[i][2] = awrap.getPDECodeOffsetForSN(this);*/
-    }
+    List<ShowUsageTreeNode> mappedNodes = occurrences.stream()
+        .sorted(Comparator.comparing(ASTNode::getStartPosition).reversed())
+        .map(node -> ShowUsageTreeNode.fromSimpleName(ps, node))
+        .collect(Collectors.toList());
 
     editor.startCompoundEdit();
-    for (int i = 0; i < defCU.getChildCount(); i++) {
-      ASTNode awrap = (ASTNode) ((DefaultMutableTreeNode) (defCU
-          .getChildAt(i))).getUserObject();
-      // correction for pde enhancements related displacement on a line
-      int off = 0;
-      /*if (lineOffsetDisplacement.get(awrap.getLineNumber()) != null) {
-        off = lineOffsetDisplacement.get(awrap.getLineNumber());
-
-        lineOffsetDisplacement.put(awrap.getLineNumber(),
-                                   lineOffsetDisplacementConst + off);
-      } else {
-        lineOffsetDisplacement.put(awrap.getLineNumber(),
-                                   lineOffsetDisplacementConst);
-      }*/
-//      Base.loge(getNodeAsString(awrap.getNode()) + ", T:" + pdeOffsets[i][0]
-//          + ", L:" + pdeOffsets[i][1] + ", O:" + pdeOffsets[i][2]);
-      // TODO: fix this line after fixing offsets in node wrapper
-      /*highlightPDECode(pdeOffsets[i][0],
-                       pdeOffsets[i][1], pdeOffsets[i][2]
-                           + off, awrap.getNode()
-                           .toString().length());*/
-      //int k = JOptionPane.showConfirmDialog(new JFrame(), "Rename?","", JOptionPane.INFORMATION_MESSAGE);
+    for (ShowUsageTreeNode node : mappedNodes) {
+      int tabIndex = node.tabIndex;
+      int startTabOffset = node.startTabOffset;
+      int stopTabOffset = node.stopTabOffset;
+      errorCheckerService.highlightTabRange(tabIndex, startTabOffset, stopTabOffset);
       editor.getTextArea().setSelectedText(newName);
     }
     editor.stopCompoundEdit();
-    errorCheckerService.request();
+
     editor.getSketch().setModified(true);
+
     errorCheckerService.request();
-//    showUsageWindow.setVisible(false);
-    lastClickedWord = null;
   }
 
 
@@ -1300,39 +1260,38 @@ public class ASTGenerator {
   */
 
 
-  public void handleRefactor() {
-    Messages.log("* handleRefactor");
+  public void handleRename(int tabIndex, int startTabOffset, int stopTabOffset) {
+    Messages.log("* handleRename");
     if (editor.hasJavaTabs()) return;  // refactoring disabled w/ java tabs
 
-    log("Last clicked word:" + lastClickedWord);
-    if (lastClickedWord == null &&
-        getSelectedText() == null) {
-      editor.statusMessage("Highlight the class/function/variable name first",
-                           EditorStatus.NOTICE);
-      return;
-    }
-
-    if (errorCheckerService.hasSyntaxErrors()) {
+    PreprocessedSketch ps = errorCheckerService.latestResult;
+    if (ps.hasSyntaxErrors) {
       editor.statusMessage("Can't perform action until syntax errors are fixed :(",
                            EditorStatus.WARNING);
       return;
     }
 
-    DefaultMutableTreeNode defCU = null; //findAllOccurrences();
-    final String selText = lastClickedWord == null ?
-        getSelectedText() : lastClickedWord;
-    if (defCU == null) {
-      editor.statusMessage(selText + " isn't defined in this sketch, " +
+    // Map offsets
+    int startJavaOffset = ps.tabOffsetToJavaOffset(tabIndex, startTabOffset);
+    int stopJavaOffset = ps.tabOffsetToJavaOffset(tabIndex, stopTabOffset);
+
+    // Find the node
+    SimpleName name = getSimpleNameAt(startJavaOffset, stopJavaOffset);
+    if (name == null) {
+      editor.statusMessage("Highlight the class/function/variable name first",
+                           EditorStatus.NOTICE);
+      return;
+    }
+
+    // Find binding
+    IBinding binding = resolveBinding(name);
+    if (binding == null) {
+      editor.statusMessage(name.getIdentifier() + " isn't defined in this sketch, " +
                            "so it cannot be renamed", EditorStatus.ERROR);
       return;
     }
 
-    /*EventQueue.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        gui.handleRefactor(selText);
-      }
-    });*/
+    EventQueue.invokeLater(() -> gui.handleRename(binding));
   }
 
 
@@ -2745,7 +2704,7 @@ public class ASTGenerator {
             return;
           }
           String newName = renameTextField.getText().trim();
-          astGen.refactorIt(newName);
+          astGen.handleRename(renameBinding, newName);
           renameWindow.setVisible(false);
         }
       });
@@ -2779,15 +2738,15 @@ public class ASTGenerator {
     }
 
 
-    public void handleRefactor(IBinding binding) {
+    public void handleRename(IBinding binding) {
       if (!renameWindow.isVisible()){
+        renameBinding = binding;
         renameWindow.setLocation(editor.getX()
                                      + (editor.getWidth() - renameWindow.getWidth()) / 2,
                                  editor.getY()
                                      + (editor.getHeight() - renameWindow.getHeight())
                                      / 2);
-        renameOldNameLabel.setText("Current name: "
-                                       + binding.getName());
+        renameOldNameLabel.setText("Current name: " + binding.getName());
         renameTextField.setText(binding.getName());
         renameTextField.requestFocus();
         renameTextField.selectAll();
