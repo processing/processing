@@ -48,6 +48,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -510,23 +511,10 @@ public class ErrorCheckerService {
 
 
   public ClassPath buildImportSuggestionClassPath() {
-    // TODO: make sure search class path is complete,
-    //       prepare it beforehand and reuse it
-    //
-    //       this in not the same as sketch class path!
-    //       should include:
-    //       - all contributed libraries
-    //       - core libraries
-    //       - code folder
-    //       - mode search path
-    //       - Java classpath
-
-
     JavaMode mode = (JavaMode) editor.getMode();
+    Sketch sketch = editor.getSketch();
 
     StringBuilder classPath = new StringBuilder();
-
-    Sketch sketch = editor.getSketch();
 
     if (sketch.hasCodeFolder()) {
       File codeFolder = sketch.getCodeFolder();
@@ -534,11 +522,10 @@ public class ErrorCheckerService {
       classPath.append(codeFolderClassPath);
     }
 
-    // Also add jars specified in mode's search path
-    // TODO: maybe we need mode.getCoreLibrary().getClassPath() here
-    String searchPath = mode.getSearchPath();
-    if (searchPath != null) {
-      classPath.append(File.pathSeparator).append(searchPath);
+    // Also add jars specified in mode classpath
+    String coreClassPath = mode.getCoreLibrary().getClassPath();
+    if (coreClassPath != null) {
+      classPath.append(File.pathSeparator).append(coreClassPath);
     }
 
     for (Library lib : mode.coreLibraries) {
@@ -548,9 +535,6 @@ public class ErrorCheckerService {
     for (Library lib : mode.contribLibraries) {
       classPath.append(File.pathSeparator).append(lib.getClassPath());
     }
-
-    String javaClassPath = System.getProperty("java.class.path");
-    classPath.append(File.pathSeparator).append(javaClassPath);
 
     String rtPath = System.getProperty("java.home") +
         File.separator + "lib" + File.separator + "rt.jar";
@@ -685,11 +669,6 @@ public class ErrorCheckerService {
   }
 
 
-  public boolean hasSyntaxErrors(){
-    return latestResult.hasSyntaxErrors;
-  }
-
-
   /**
    * Performs compiler error check.
    * @param sourceName - name of the class
@@ -773,23 +752,15 @@ public class ErrorCheckerService {
       classPath.append(codeFolderClassPath);
     }
 
-    // Also add jars specified in mode's search path
-    // TODO: maybe we need mode.getCoreLibrary().getClassPath() here
-    String searchPath = mode.getSearchPath();
-    if (searchPath != null) {
-      classPath.append(File.pathSeparator).append(searchPath);
+    // Also add jars specified in mode classpath
+    String coreClassPath = mode.getCoreLibrary().getClassPath();
+    if (coreClassPath != null) {
+      classPath.append(File.pathSeparator).append(coreClassPath);
     }
 
     for (Library lib : mode.coreLibraries) {
-      classPath.append(File.pathSeparator).append(lib.getJarPath());
+      classPath.append(File.pathSeparator).append(lib.getClassPath());
     }
-
-    for (Library lib : mode.contribLibraries) {
-      classPath.append(File.pathSeparator).append(lib.getJarPath());
-    }
-
-//    String javaClassPath = System.getProperty("java.class.path");
-//    classPath.append(File.pathSeparator).append(javaClassPath);
 
     String rtPath = System.getProperty("java.home") +
         File.separator + "lib" + File.separator + "rt.jar";
@@ -826,17 +797,17 @@ public class ErrorCheckerService {
 
     String impNameLc = impName.toLowerCase();
 
-    for (ImportStatement impS : latestResult.programImports) {
-      if (impNameLc.startsWith(impS.getPackageName().toLowerCase())) {
-        return false;
-      }
-    }
+    List<ImportStatement> programImports = latestResult.programImports;
+    List<ImportStatement> codeFolderImports = latestResult.codeFolderImports;
 
-    for (ImportStatement impS : latestResult.codeFolderImports) {
-      if (impNameLc.startsWith(impS.getPackageName().toLowerCase())) {
-        return false;
-      }
-    }
+    boolean isImported = Stream
+        .concat(programImports.stream(), codeFolderImports.stream())
+        .anyMatch(impS -> {
+          String packageNameLc = impS.getPackageName().toLowerCase();
+          return impNameLc.startsWith(packageNameLc);
+        });
+
+    if (isImported) return false;
 
     final String include = "include";
     final String exclude = "exclude";
