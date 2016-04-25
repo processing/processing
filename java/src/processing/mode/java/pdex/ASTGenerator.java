@@ -109,6 +109,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import processing.app.Messages;
+import processing.app.Sketch;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.Toolkit;
 import processing.mode.java.JavaEditor;
@@ -1140,28 +1141,74 @@ public class ASTGenerator {
     }
 
     PreprocessedSketch ps = errorCheckerService.latestResult;
+    CompilationUnit root = ps.compilationUnit;
+
+    // Renaming constructor should rename class
+    if (binding.getKind() == IBinding.METHOD) {
+      IMethodBinding method = (IMethodBinding) binding;
+      if (method.isConstructor()) {
+        binding = method.getDeclaringClass();
+      }
+    }
 
     ASTNode decl = ps.compilationUnit.findDeclaringNode(binding.getKey());
     if (decl == null) return;
 
-    List<SimpleName> occurrences = findAllOccurrences(ps.compilationUnit, binding.getKey());
+    List<SimpleName> occurrences = new ArrayList<>();
+    occurrences.addAll(findAllOccurrences(root, binding.getKey()));
 
-    List<ShowUsageTreeNode> mappedNodes = occurrences.stream()
-        .sorted(Comparator.comparing(ASTNode::getStartPosition).reversed())
+    // Renaming class should rename all constructors
+    if (binding.getKind() == IBinding.TYPE) {
+      ITypeBinding type = (ITypeBinding) binding;
+      //type = type.getErasure();
+      IMethodBinding[] methods = type.getDeclaredMethods();
+      Arrays.stream(methods)
+          .filter(IMethodBinding::isConstructor)
+          .flatMap(c -> findAllOccurrences(root, c.getKey()).stream())
+          .forEach(occurrences::add);
+    }
+
+    // TODO: extract mapping from ShowUsageTreeNode to use here
+    Map<Integer, List<ShowUsageTreeNode>> mappedNodes = occurrences.stream()
         .map(node -> ShowUsageTreeNode.fromSimpleName(ps, node))
-        .collect(Collectors.toList());
+        .collect(Collectors.groupingBy(node -> node.tabIndex));
+
+    Sketch sketch = ps.sketch;
 
     editor.startCompoundEdit();
-    for (ShowUsageTreeNode node : mappedNodes) {
-      int tabIndex = node.tabIndex;
-      int startTabOffset = node.startTabOffset;
-      int stopTabOffset = node.stopTabOffset;
-      errorCheckerService.highlightTabRange(tabIndex, startTabOffset, stopTabOffset);
-      editor.getTextArea().setSelectedText(newName);
-    }
-    editor.stopCompoundEdit();
 
-    editor.getSketch().setModified(true);
+    int currentTabIndex = sketch.getCurrentCodeIndex();
+    final int currentOffset = editor.getCaretOffset();
+    mappedNodes.entrySet().forEach(entry -> {
+      int tabIndex = entry.getKey();
+      sketch.setCurrentCode(tabIndex);
+
+      List<ShowUsageTreeNode> nodes = entry.getValue();
+      nodes.stream()
+          .sorted(Comparator.comparing((ShowUsageTreeNode n) -> n.startTabOffset).reversed())
+          .forEach(n -> {
+            // Make sure offsets are in bounds
+            int length = editor.getTextArea().getDocumentLength();
+            if (n.startTabOffset >= 0 && n.startTabOffset <= length &&
+                n.stopTabOffset >= 0 && n.stopTabOffset <= length) {
+              // Replace the code
+              editor.getTextArea().select(n.startTabOffset, n.stopTabOffset);
+              editor.getTextArea().setSelectedText(newName);
+            }
+          });
+
+      sketch.setModified(true);
+    });
+
+    int precedingNodes = (int) mappedNodes.getOrDefault(currentTabIndex, Collections.emptyList()).stream()
+        .filter(node -> node.stopTabOffset < currentOffset)
+        .count();
+    int offsetDiff =  precedingNodes * (newName.length() - (binding.getName().length()));
+
+    sketch.setCurrentCode(currentTabIndex);
+    editor.getTextArea().setCaretPosition(currentOffset + offsetDiff);
+
+    editor.stopCompoundEdit();
 
     errorCheckerService.request();
   }
