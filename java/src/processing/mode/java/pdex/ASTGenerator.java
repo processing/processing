@@ -1276,6 +1276,13 @@ public class ASTGenerator {
       return;
     }
 
+    ASTNode decl = ps.compilationUnit.findDeclaringNode(binding.getKey());
+    if (decl == null) {
+      editor.statusMessage(name.getIdentifier() + " isn't defined in this sketch, " +
+                               "so it cannot be renamed", EditorStatus.ERROR);
+      return;
+    }
+
     EventQueue.invokeLater(() -> gui.handleRename(binding));
   }
 
