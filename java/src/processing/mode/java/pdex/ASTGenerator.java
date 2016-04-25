@@ -3008,16 +3008,16 @@ public class ASTGenerator {
       int lineStartPdeOffset = ps.pdeCode.lastIndexOf('\n', startPdeOffset) + 1;
       int lineStopPdeOffset = ps.pdeCode.indexOf('\n', stopPdeOffset);
 
-      int snippetStartOffset = startPdeOffset - lineStartPdeOffset;
-      int snippetStopOffset = stopPdeOffset - lineStartPdeOffset;
+      int highlightStartOffset = startPdeOffset - lineStartPdeOffset;
+      int highlightStopOffset = stopPdeOffset - lineStartPdeOffset;
 
       // TODO: what a mess
       String line = ps.pdeCode.substring(lineStartPdeOffset, lineStopPdeOffset);
-      String pre = line.substring(0, snippetStartOffset)
+      String pre = line.substring(0, highlightStartOffset)
           .replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;");
-      String highlight = line.substring(snippetStartOffset, snippetStopOffset)
+      String highlight = line.substring(highlightStartOffset, highlightStopOffset)
           .replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;");
-      String post = line.substring(snippetStopOffset)
+      String post = line.substring(highlightStopOffset)
           .replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;");
       line = pre + "<font color=#222222><b>" + highlight + "</b></font>" + post;
       line = line.trim();
