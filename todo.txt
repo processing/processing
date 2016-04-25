@@ -10,6 +10,9 @@ X   https://github.com/processing/processing/pull/4325
 X Fix non-ARM Linux deb build process
 X   https://github.com/processing/processing/issues/4308
 X   https://github.com/processing/processing/pull/4309
+_ processing-java output as UTF-8 makes Windows unhappy
+_   https://github.com/processing/processing/issues/1633
+_   includes possible fix for Windows
 
 jakub
 X Update app to Java 8
@@ -872,8 +875,6 @@ DIST / Windows
 
 _ PDE and sketches are 2x smaller on high-res Windows 8 machines
 _   https://github.com/processing/processing/issues/2411
-_ processing-java output as UTF-8 makes Windows unhappy
-_   https://github.com/processing/processing/issues/1633
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
 _   how can we provide an error message here?
 _ how to handle double-clicked files on windows?
