@@ -1173,7 +1173,6 @@ public class ASTGenerator {
     if (editor.hasJavaTabs()) return; // show usage disabled if java tabs
 
     PreprocessedSketch ps = errorCheckerService.latestResult;
-    if (ps.hasSyntaxErrors) return;
 
     // Map offsets
     int startJavaOffset = ps.tabOffsetToJavaOffset(tabIndex, startTabOffset);
@@ -1193,7 +1192,6 @@ public class ASTGenerator {
 
   public void handleShowUsage(IBinding binding) {
     PreprocessedSketch ps = errorCheckerService.latestResult;
-    if (ps.hasSyntaxErrors) return;
 
     String bindingKey = binding.getKey();
 

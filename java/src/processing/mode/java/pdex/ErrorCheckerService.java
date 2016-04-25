@@ -326,8 +326,7 @@ public class ErrorCheckerService {
     result.tabStarts = tabStartsList.array();
 
     String pdeStage = result.pdeCode = workBuffer.toString();
-    String syntaxStage;
-    String javaStage;
+    char[] javaStageChars;
 
     { // Prepare core and default imports
       // TODO: do this only once
@@ -355,8 +354,6 @@ public class ErrorCheckerService {
 
     // TODO: convert unicode escapes to chars
 
-    CompilationUnit syntaxCU;
-
     {{ // SYNTAX CHECK
 
       try {
@@ -377,46 +374,13 @@ public class ErrorCheckerService {
       syntaxMapping.addAll(SourceUtils.replaceHexLiterals(workBuffer));
       syntaxMapping.addAll(SourceUtils.wrapSketch(mode, className, workBuffer.length()));
 
-      // TODO: all imports are parsed now, check if they need to be filtered somehow
-
-      // Transform code
-      syntaxStage = syntaxMapping.apply(pdeStage);
-
-      // Create AST
-      syntaxCU = makeAST(parser, syntaxStage.toCharArray(), COMPILER_OPTIONS);
-
-      // Get syntax problems
-      List<IProblem> syntaxProblems = Arrays.asList(syntaxCU.getProblems());
-
-      // Update result
-      result.syntaxMapping = syntaxMapping;
-      result.compilationUnit = syntaxCU;
-      result.preprocessedCode = syntaxStage;
-      result.hasSyntaxErrors = syntaxProblems.stream().anyMatch(IProblem::isError);
-      List<Problem> mappedSyntaxProblems =
-          mapProblems(syntaxProblems, result.tabStarts, result.pdeCode,
-                      result.syntaxMapping);
-      result.problems.addAll(mappedSyntaxProblems);
-    }}
-
-    { // Prepare ClassLoader and ClassPath
-      final URLClassLoader classLoader;
-      final ClassPath classPath;
-      final String[] classPathArray;
-
       boolean importsChanged = prevResult == null ||
           prevResult.classPath == null || prevResult.classLoader == null ||
           checkIfImportsChanged(programImports, prevResult.programImports) ||
           checkIfImportsChanged(codeFolderImports, prevResult.codeFolderImports);
 
-      if (!importsChanged) {
-        classLoader = prevResult.classLoader;
-        classPath = prevResult.classPath;
-        classPathArray = prevResult.classPathArray;
-      } else {
-        classPathArray = prepareCompilerClasspath(programImports, sketch);
-
-        // ClassLoader
+      if (importsChanged) {
+        String[] classPathArray = prepareCompilerClasspath(programImports, sketch);
         URL[] urlArray = Arrays.stream(classPathArray)
             .map(path -> {
               try {
@@ -428,83 +392,90 @@ public class ErrorCheckerService {
             })
             .filter(url -> url != null)
             .toArray(URL[]::new);
-        classLoader = new URLClassLoader(urlArray, null);
-        // ClassPath
-        classPath = classPathFactory.createFromPaths(classPathArray);
+        result.classLoader = new URLClassLoader(urlArray, null);
+        result.classPath = classPathFactory.createFromPaths(classPathArray);
+        result.classPathArray = classPathArray;
+      } else {
+        result.classLoader = prevResult.classLoader;
+        result.classPath = prevResult.classPath;
+        result.classPathArray = prevResult.classPathArray;
       }
 
+      // Transform code
+      String syntaxStage = syntaxMapping.apply(pdeStage);
+
+      // Create AST
+      CompilationUnit syntaxCU =
+          makeAST(parser, syntaxStage.toCharArray(), COMPILER_OPTIONS);
+
+      // Prepare transforms
+      SourceMapping compilationMapping = new SourceMapping();
+      compilationMapping.addAll(SourceUtils.addPublicToTopLevelMethods(syntaxCU));
+      compilationMapping.addAll(SourceUtils.replaceColorAndFixFloats(syntaxCU));
+
+      // Transform code
+      String javaStage = compilationMapping.apply(syntaxStage);
+      javaStageChars = javaStage.toCharArray();
+
+      // Create AST
+      CompilationUnit compilationCU =
+          makeASTWithBindings(parser, javaStageChars, COMPILER_OPTIONS,
+                              className, result.classPathArray);
+
       // Update result
-      result.classPath = classPath;
-      result.classLoader = classLoader;
-      result.classPathArray = classPathArray;
-    }
+      result.syntaxMapping = syntaxMapping;
+      result.compilationMapping = compilationMapping;
+      result.javaCode = javaStage;
+      result.compilationUnit = compilationCU;
 
-    if (!result.hasSyntaxErrors) {
+      // Get syntax problems
+      List<IProblem> syntaxProblems = Arrays.asList(compilationCU.getProblems());
 
-      {{ // COMPILATION CHECK
+      result.hasSyntaxErrors = syntaxProblems.stream().anyMatch(IProblem::isError);
+    }}
 
-        // Prepare transforms
-        SourceMapping compilationMapping = new SourceMapping();
-        compilationMapping.addAll(SourceUtils.addPublicToTopLevelMethods(syntaxCU));
-        compilationMapping.addAll(SourceUtils.replaceColorAndFixFloats(syntaxCU));
+    {{ // COMPILATION CHECK
+      // Compile it
+      List<IProblem> compilationProblems =
+          compileAndReturnProblems(className, javaStageChars,
+                                   COMPILER_OPTIONS, result.classLoader,
+                                   result.classPath);
 
-        // Transform code
-        javaStage = compilationMapping.apply(syntaxStage);
+      // TODO: handle error stuff *after* building PreprocessedSketch
+      List<Problem> mappedCompilationProblems =
+          mapProblems(compilationProblems, result.tabStarts, result.pdeCode,
+                      result.compilationMapping, result.syntaxMapping);
 
-        char[] javaStageChars = javaStage.toCharArray();
+      if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
+        Map<String, List<Problem>> undefinedTypeProblems = mappedCompilationProblems.stream()
+            // Get only problems with undefined types/names
+            .filter(p -> {
+              int id = p.getIProblem().getID();
+              return id == IProblem.UndefinedType || id == IProblem.UndefinedName;
+            })
+            // Group problems by the missing type/name
+            .collect(Collectors.groupingBy(p -> p.getIProblem().getArguments()[0]));
 
-        // Create AST
-        CompilationUnit compilationCU = makeASTWithBindings(parser, javaStageChars,
-                                                            COMPILER_OPTIONS,
-                                                            className, result.classPathArray);
+        // TODO: cache this, invalidate if code folder or libraries change
+        final ClassPath cp = undefinedTypeProblems.isEmpty() ?
+            null :
+            buildImportSuggestionClassPath();
 
-        // Compile it
-        List<IProblem> compilationProblems =
-            compileAndReturnProblems(className, javaStageChars,
-                                     COMPILER_OPTIONS, result.classLoader,
-                                     result.classPath);
+        // Get suggestions for each missing type, update the problems
+        undefinedTypeProblems.entrySet().stream()
+            .forEach(entry -> {
+              String missingClass = entry.getKey();
+              List<Problem> problems = entry.getValue();
+              String[] suggestions = getImportSuggestions(cp, missingClass);
+              problems.forEach(p -> p.setImportSuggestions(suggestions));
+            });
+      }
 
-        // Update result
-        result.compilationMapping = compilationMapping;
-        result.preprocessedCode = javaStage;
-        result.compilationUnit = compilationCU;
+      result.problems.addAll(mappedCompilationProblems);
 
-        // TODO: handle error stuff *after* building PreprocessedSketch
-        List<Problem> mappedCompilationProblems =
-            mapProblems(compilationProblems, result.tabStarts, result.pdeCode,
-                        result.compilationMapping, result.syntaxMapping);
-
-        if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
-          Map<String, List<Problem>> undefinedTypeProblems = mappedCompilationProblems.stream()
-              // Get only problems with undefined types/names
-              .filter(p -> {
-                int id = p.getIProblem().getID();
-                return id == IProblem.UndefinedType || id == IProblem.UndefinedName;
-              })
-              // Group problems by the missing type/name
-              .collect(Collectors.groupingBy(p -> p.getIProblem().getArguments()[0]));
-
-          // TODO: cache this, invalidate if code folder or libraries change
-          final ClassPath cp = undefinedTypeProblems.isEmpty() ?
-              null :
-              buildImportSuggestionClassPath();
-
-          // Get suggestions for each missing type, update the problems
-          undefinedTypeProblems.entrySet().stream()
-              .forEach(entry -> {
-                String missingClass = entry.getKey();
-                List<Problem> problems = entry.getValue();
-                String[] suggestions = getImportSuggestions(cp, missingClass);
-                problems.forEach(p -> p.setImportSuggestions(suggestions));
-              });
-        }
-
-        result.problems.addAll(mappedCompilationProblems);
-
-        result.hasCompilationErrors = mappedCompilationProblems.stream()
-            .anyMatch(Problem::isError);
-      }}
-    }
+      result.hasCompilationErrors = mappedCompilationProblems.stream()
+          .anyMatch(Problem::isError);
+    }}
 
     return result.build();
   }

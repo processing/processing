@@ -25,7 +25,7 @@ public class PreprocessedSketch {
   public final int[] tabStarts;
 
   public final String pdeCode;
-  public final String preprocessedCode;
+  public final String javaCode;
 
   public final SourceMapping syntaxMapping;
   public final SourceMapping compilationMapping;
@@ -85,7 +85,7 @@ public class PreprocessedSketch {
     if (compilationMapping != null) {
       javaLineOffset = compilationMapping.getOutputOffset(javaLineOffset);
     }
-    return offsetToLine(preprocessedCode, javaLineOffset);
+    return offsetToLine(javaCode, javaLineOffset);
   }
 
 
@@ -155,7 +155,7 @@ public class PreprocessedSketch {
     public int[] tabStarts = new int[0];
 
     public String pdeCode;
-    public String preprocessedCode;
+    public String javaCode;
 
     public SourceMapping syntaxMapping;
     public SourceMapping compilationMapping;
@@ -190,7 +190,7 @@ public class PreprocessedSketch {
     tabStarts = b.tabStarts;
 
     pdeCode = b.pdeCode;
-    preprocessedCode = b.preprocessedCode;
+    javaCode = b.javaCode;
 
     syntaxMapping = b.syntaxMapping;
     compilationMapping = b.compilationMapping;
