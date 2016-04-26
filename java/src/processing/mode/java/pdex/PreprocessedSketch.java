@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import processing.app.Sketch;
+import processing.mode.java.pdex.TextTransform.OffsetMapper;
 
 public class PreprocessedSketch {
 
@@ -27,8 +28,7 @@ public class PreprocessedSketch {
   public final String pdeCode;
   public final String javaCode;
 
-  public final SourceMapping syntaxMapping;
-  public final SourceMapping compilationMapping;
+  public final OffsetMapper offsetMapper;
 
   public final boolean hasSyntaxErrors;
   public final boolean hasCompilationErrors;
@@ -81,10 +81,7 @@ public class PreprocessedSketch {
     int tabStartLine = tabIndexToTabStartLine(tabIndex);
     int pdeLine = tabStartLine + tabLine;
     int pdeLineOffset = lineToOffset(pdeCode, pdeLine);
-    int javaLineOffset = syntaxMapping.getOutputOffset(pdeLineOffset);
-    if (compilationMapping != null) {
-      javaLineOffset = compilationMapping.getOutputOffset(javaLineOffset);
-    }
+    int javaLineOffset = offsetMapper.getOutputOffset(pdeLineOffset);
     return offsetToLine(javaCode, javaLineOffset);
   }
 
@@ -93,23 +90,12 @@ public class PreprocessedSketch {
     int tabStartLine = tabIndexToTabStartLine(tabIndex);
     int tabStartOffset = lineToOffset(pdeCode, tabStartLine);
     int pdeOffset = tabStartOffset + tabOffset;
-    int javaOffset = syntaxMapping.getOutputOffset(pdeOffset);
-    if (compilationMapping != null) {
-      javaOffset = compilationMapping.getOutputOffset(javaOffset);
-    }
-    return javaOffset;
+    return offsetMapper.getOutputOffset(pdeOffset);
   }
 
 
   public int javaOffsetToPdeOffset(int javaOffset) {
-    int pdeOffset = javaOffset;
-    if (compilationMapping != null) {
-      pdeOffset = compilationMapping.getInputOffset(pdeOffset);
-    }
-    if (syntaxMapping != null) {
-      pdeOffset = syntaxMapping.getInputOffset(pdeOffset);
-    }
-    return pdeOffset;
+    return offsetMapper.getInputOffset(javaOffset);
   }
 
 
@@ -157,8 +143,7 @@ public class PreprocessedSketch {
     public String pdeCode;
     public String javaCode;
 
-    public SourceMapping syntaxMapping;
-    public SourceMapping compilationMapping;
+    public OffsetMapper offsetMapper;
 
     public boolean hasSyntaxErrors;
     public boolean hasCompilationErrors;
@@ -192,8 +177,7 @@ public class PreprocessedSketch {
     pdeCode = b.pdeCode;
     javaCode = b.javaCode;
 
-    syntaxMapping = b.syntaxMapping;
-    compilationMapping = b.compilationMapping;
+    offsetMapper = b.offsetMapper != null ? b.offsetMapper : OffsetMapper.EMPTY_MAPPER;
 
     hasSyntaxErrors = b.hasSyntaxErrors;
     hasCompilationErrors = b.hasCompilationErrors;

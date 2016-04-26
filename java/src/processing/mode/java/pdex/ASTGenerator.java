@@ -2110,12 +2110,12 @@ public class ASTGenerator {
 
     // If the parsed code contains pde enhancements, take 'em out.
     // TODO: test this
-    SourceMapping mapping = new SourceMapping();
-    mapping.addAll(SourceUtils.replaceTypeConstructors(pdePhrase));
-    mapping.addAll(SourceUtils.replaceHexLiterals(pdePhrase));
-    mapping.addAll(SourceUtils.replaceColorRegex(pdePhrase));
-    mapping.addAll(SourceUtils.fixFloatsRegex(pdePhrase));
-    String phrase = mapping.apply(pdePhrase);
+    TextTransform transform = new TextTransform(pdePhrase);
+    transform.addAll(SourceUtils.replaceTypeConstructors(pdePhrase));
+    transform.addAll(SourceUtils.replaceHexLiterals(pdePhrase));
+    transform.addAll(SourceUtils.replaceColorRegex(pdePhrase));
+    transform.addAll(SourceUtils.fixFloatsRegex(pdePhrase));
+    String phrase = transform.apply();
 
     //After typing 'arg.' all members of arg type are to be listed. This one is a flag for it
     boolean noCompare = phrase.endsWith(".");

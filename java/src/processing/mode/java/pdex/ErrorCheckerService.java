@@ -86,6 +86,7 @@ import processing.data.IntList;
 import processing.data.StringList;
 import processing.mode.java.JavaMode;
 import processing.mode.java.JavaEditor;
+import processing.mode.java.pdex.TextTransform.OffsetMapper;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PdePreprocessor.Mode;
 
@@ -356,23 +357,18 @@ public class ErrorCheckerService {
 
     {{ // SYNTAX CHECK
 
-      try {
-        SourceUtils.scrubCommentsAndStrings(workBuffer);
-      } catch (RuntimeException e) {
-        // Continue normally, comments were scrubbed
-        // Unterminated comment will get caught during syntax check
-      }
+      SourceUtils.scrubCommentsAndStrings(workBuffer);
 
       Mode mode = PdePreprocessor.parseMode(workBuffer);
 
       // Prepare transforms
-      SourceMapping syntaxMapping = new SourceMapping();
-      syntaxMapping.addAll(SourceUtils.insertImports(coreAndDefaultImports));
-      syntaxMapping.addAll(SourceUtils.insertImports(codeFolderImports));
-      syntaxMapping.addAll(SourceUtils.parseProgramImports(workBuffer, programImports));
-      syntaxMapping.addAll(SourceUtils.replaceTypeConstructors(workBuffer));
-      syntaxMapping.addAll(SourceUtils.replaceHexLiterals(workBuffer));
-      syntaxMapping.addAll(SourceUtils.wrapSketch(mode, className, workBuffer.length()));
+      TextTransform toParsable = new TextTransform(pdeStage);
+      toParsable.addAll(SourceUtils.insertImports(coreAndDefaultImports));
+      toParsable.addAll(SourceUtils.insertImports(codeFolderImports));
+      toParsable.addAll(SourceUtils.parseProgramImports(workBuffer, programImports));
+      toParsable.addAll(SourceUtils.replaceTypeConstructors(workBuffer));
+      toParsable.addAll(SourceUtils.replaceHexLiterals(workBuffer));
+      toParsable.addAll(SourceUtils.wrapSketch(mode, className, workBuffer.length()));
 
       boolean importsChanged = prevResult == null ||
           prevResult.classPath == null || prevResult.classLoader == null ||
@@ -402,34 +398,35 @@ public class ErrorCheckerService {
       }
 
       // Transform code
-      String syntaxStage = syntaxMapping.apply(pdeStage);
+      String parsableStage = toParsable.apply();
+      OffsetMapper parsableMapper = toParsable.getMapper();
 
       // Create AST
-      CompilationUnit syntaxCU =
-          makeAST(parser, syntaxStage.toCharArray(), COMPILER_OPTIONS);
+      CompilationUnit parsableCU =
+          makeAST(parser, parsableStage.toCharArray(), COMPILER_OPTIONS);
 
       // Prepare transforms
-      SourceMapping compilationMapping = new SourceMapping();
-      compilationMapping.addAll(SourceUtils.addPublicToTopLevelMethods(syntaxCU));
-      compilationMapping.addAll(SourceUtils.replaceColorAndFixFloats(syntaxCU));
+      TextTransform toCompilable = new TextTransform(parsableStage);
+      toCompilable.addAll(SourceUtils.addPublicToTopLevelMethods(parsableCU));
+      toCompilable.addAll(SourceUtils.replaceColorAndFixFloats(parsableCU));
 
       // Transform code
-      String javaStage = compilationMapping.apply(syntaxStage);
-      javaStageChars = javaStage.toCharArray();
+      String compilableStage = toCompilable.apply();
+      OffsetMapper compilableMapper = toCompilable.getMapper();
+      javaStageChars = compilableStage.toCharArray();
 
       // Create AST
-      CompilationUnit compilationCU =
+      CompilationUnit compilableCU =
           makeASTWithBindings(parser, javaStageChars, COMPILER_OPTIONS,
                               className, result.classPathArray);
 
       // Update result
-      result.syntaxMapping = syntaxMapping;
-      result.compilationMapping = compilationMapping;
-      result.javaCode = javaStage;
-      result.compilationUnit = compilationCU;
+      result.offsetMapper = parsableMapper.thenMapping(compilableMapper);
+      result.javaCode = compilableStage;
+      result.compilationUnit = compilableCU;
 
       // Get syntax problems
-      List<IProblem> syntaxProblems = Arrays.asList(compilationCU.getProblems());
+      List<IProblem> syntaxProblems = Arrays.asList(compilableCU.getProblems());
 
       result.hasSyntaxErrors = syntaxProblems.stream().anyMatch(IProblem::isError);
     }}
@@ -444,7 +441,7 @@ public class ErrorCheckerService {
       // TODO: handle error stuff *after* building PreprocessedSketch
       List<Problem> mappedCompilationProblems =
           mapProblems(compilationProblems, result.tabStarts, result.pdeCode,
-                      result.compilationMapping, result.syntaxMapping);
+                      result.offsetMapper);
 
       if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
         Map<String, List<Problem>> undefinedTypeProblems = mappedCompilationProblems.stream()
@@ -561,7 +558,7 @@ public class ErrorCheckerService {
 
   protected static List<Problem> mapProblems(List<IProblem> problems,
                                              int[] tabStarts, String pdeCode,
-                                             SourceMapping... mappings) {
+                                             OffsetMapper mapper) {
     return problems.stream()
         // Filter Warnings if they are not enabled
         .filter(iproblem -> !(iproblem.isWarning() && !JavaMode.warningsEnabled))
@@ -577,11 +574,9 @@ public class ErrorCheckerService {
           int start = iproblem.getSourceStart();
           int stop = iproblem.getSourceEnd(); // inclusive
 
-          // Apply mappings
-          for (SourceMapping mapping : mappings) {
-            start = mapping.getInputOffset(start);
-            stop = mapping.getInputOffset(stop);
-          }
+          // Apply mapping
+          start = mapper.getInputOffset(start);
+          stop = mapper.getInputOffset(stop);
 
           if (stop < start) {
             // Should not happen, just to be sure
