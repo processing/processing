@@ -365,7 +365,7 @@ public class ErrorCheckerService {
           checkIfImportsChanged(codeFolderImports, prevResult.codeFolderImports);
 
       if (importsChanged) {
-        String[] classPathArray = prepareCompilerClasspath(programImports, sketch);
+        String[] classPathArray = buildClassPath(programImports);
         URL[] urlArray = Arrays.stream(classPathArray)
             .map(path -> {
               try {
@@ -472,7 +472,7 @@ public class ErrorCheckerService {
         // TODO: cache this, invalidate if code folder or libraries change
         final ClassPath cp = undefinedTypeProblems.isEmpty() ?
             null :
-            buildImportSuggestionClassPath();
+            classPathFactory.createFromPaths(buildClassPath(null));
 
         // Get suggestions for each missing type, update the problems
         undefinedTypeProblems.entrySet().stream()
@@ -491,32 +491,31 @@ public class ErrorCheckerService {
   }
 
 
-  public ClassPath buildImportSuggestionClassPath() {
+  protected String[] buildClassPath(List<ImportStatement> neededImports) {
     JavaMode mode = (JavaMode) editor.getMode();
     Sketch sketch = editor.getSketch();
 
     StringBuilder classPath = new StringBuilder();
 
+    // Code folder
     if (sketch.hasCodeFolder()) {
       File codeFolder = sketch.getCodeFolder();
       String codeFolderClassPath = Util.contentsToClassPath(codeFolder);
       classPath.append(codeFolderClassPath);
     }
 
-    // Also add jars specified in mode classpath
+    // Mode class path
     String coreClassPath = mode.getCoreLibrary().getClassPath();
     if (coreClassPath != null) {
       classPath.append(File.pathSeparator).append(coreClassPath);
     }
 
+    // Core libraries
     for (Library lib : mode.coreLibraries) {
       classPath.append(File.pathSeparator).append(lib.getClassPath());
     }
 
-    for (Library lib : mode.contribLibraries) {
-      classPath.append(File.pathSeparator).append(lib.getClassPath());
-    }
-
+    // Java runtime
     String rtPath = System.getProperty("java.home") +
         File.separator + "lib" + File.separator + "rt.jar";
     if (new File(rtPath).exists()) {
@@ -529,18 +528,36 @@ public class ErrorCheckerService {
       }
     }
 
+    if (neededImports == null) {
+      for (Library lib : mode.contribLibraries) {
+        classPath.append(File.pathSeparator).append(lib.getClassPath());
+      }
+    } else {
+      neededImports.stream()
+          .map(ImportStatement::getPackageName)
+          .filter(pckg -> !ignorableImport(pckg))
+          .map(pckg -> {
+            try {
+              return mode.getLibrary(pckg); // TODO: this may not be thread-safe
+            } catch (SketchException e) {
+              return null;
+            }
+          })
+          .filter(lib -> lib != null)
+          .map(Library::getClassPath)
+          .forEach(cp -> classPath.append(File.pathSeparator).append(cp));
+    }
+
     // Make sure class path does not contain empty string (home dir)
     String[] paths = classPath.toString().split(File.pathSeparator);
-
-    String path = Arrays.stream(paths)
+    return Arrays.stream(paths)
         .filter(p -> p != null && !p.trim().isEmpty())
-        .collect(Collectors.joining(File.pathSeparator));
-
-    return classPathFactory.createFromPath(path);
+        .distinct()
+        .toArray(String[]::new);
   }
 
 
-  public String[] getImportSuggestions(ClassPath cp, String className) {
+  public static String[] getImportSuggestions(ClassPath cp, String className) {
     RegExpResourceFilter regf = new RegExpResourceFilter(
         Pattern.compile(".*"),
         Pattern.compile("(.*\\$)?" + className + "\\.class",
@@ -599,72 +616,6 @@ public class ErrorCheckerService {
 
   public CompilationUnit getLatestCU() {
     return latestResult.compilationUnit;
-  }
-
-
-  /**
-   * Processes import statements to obtain class paths of contributed
-   * libraries. This would be needed for compilation check. Also, adds
-   * stuff(jar files, class files, candy) from the code folder. And it looks
-   * messed up.
-   */
-  protected String[] prepareCompilerClasspath(List<ImportStatement> programImports, Sketch sketch) {
-
-    // TODO: eliminate duplication in buildImportSuggestionClassPath
-
-    JavaMode mode = (JavaMode) editor.getMode();
-
-    StringBuilder classPath = new StringBuilder();
-
-    programImports.stream()
-        .map(ImportStatement::getPackageName)
-        .filter(pckg -> !ignorableImport(pckg))
-        .map(pckg -> {
-          try {
-            return mode.getLibrary(pckg); // TODO: this may not be thread-safe
-          } catch (SketchException e) {
-            return null;
-          }
-        })
-        .filter(lib -> lib != null)
-        .map(Library::getClassPath)
-        .forEach(cp -> classPath.append(File.pathSeparator).append(cp));
-
-    if (sketch.hasCodeFolder()) {
-      File codeFolder = sketch.getCodeFolder();
-      String codeFolderClassPath = Util.contentsToClassPath(codeFolder);
-      classPath.append(codeFolderClassPath);
-    }
-
-    // Also add jars specified in mode classpath
-    String coreClassPath = mode.getCoreLibrary().getClassPath();
-    if (coreClassPath != null) {
-      classPath.append(File.pathSeparator).append(coreClassPath);
-    }
-
-    for (Library lib : mode.coreLibraries) {
-      classPath.append(File.pathSeparator).append(lib.getClassPath());
-    }
-
-    String rtPath = System.getProperty("java.home") +
-        File.separator + "lib" + File.separator + "rt.jar";
-    if (new File(rtPath).exists()) {
-      classPath.append(File.pathSeparator).append(rtPath);
-    } else {
-      rtPath = System.getProperty("java.home") + File.separator + "jre" +
-          File.separator + "lib" + File.separator + "rt.jar";
-      if (new File(rtPath).exists()) {
-        classPath.append(File.pathSeparator).append(rtPath);
-      }
-    }
-
-    // Make sure class path does not contain empty string (home dir)
-    String[] paths = classPath.toString().split(File.pathSeparator);
-
-    return Arrays.stream(paths)
-        .filter(p -> p != null && !p.trim().isEmpty())
-        .distinct()
-        .toArray(String[]::new);
   }
 
 
