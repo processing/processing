@@ -113,6 +113,7 @@ import processing.app.Sketch;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.Toolkit;
 import processing.mode.java.JavaEditor;
+import processing.mode.java.pdex.PreprocessedSketch.SketchInterval;
 
 import com.google.classpath.ClassPath;
 import com.google.classpath.RegExpResourceFilter;
@@ -966,18 +967,6 @@ public class ASTGenerator {
   }
 
 
-  /**
-   * Given a word(identifier) in pde code, finds its location in the ASTNode
-   * @param lineNumber
-   * @param name
-   * @param offset - line start nonwhitespace offset
-   * @param scrollOnly
-   * @return
-   */
-  public SimpleName getSimpleNameAt(int javaOffset) {
-    return getSimpleNameAt(javaOffset, javaOffset);
-  }
-
   public SimpleName getSimpleNameAt(int startJavaOffset, int stopJavaOffset) {
     Messages.log("* getSimpleNameAt");
 
@@ -1168,10 +1157,9 @@ public class ASTGenerator {
           .forEach(occurrences::add);
     }
 
-    // TODO: extract mapping from ShowUsageTreeNode to use here
-    Map<Integer, List<ShowUsageTreeNode>> mappedNodes = occurrences.stream()
-        .map(node -> ShowUsageTreeNode.fromSimpleName(ps, node))
-        .collect(Collectors.groupingBy(node -> node.tabIndex));
+    Map<Integer, List<SketchInterval>> mappedNodes = occurrences.stream()
+        .map(ps::mapJavaToSketch)
+        .collect(Collectors.groupingBy(interval -> interval.tabIndex));
 
     Sketch sketch = ps.sketch;
 
@@ -1183,9 +1171,10 @@ public class ASTGenerator {
       int tabIndex = entry.getKey();
       sketch.setCurrentCode(tabIndex);
 
-      List<ShowUsageTreeNode> nodes = entry.getValue();
+      List<SketchInterval> nodes = entry.getValue();
       nodes.stream()
-          .sorted(Comparator.comparing((ShowUsageTreeNode n) -> n.startTabOffset).reversed())
+          // Replace from the end so all unprocess offsets stay valid
+          .sorted(Comparator.comparing((SketchInterval n) -> n.startTabOffset).reversed())
           .forEach(n -> {
             // Make sure offsets are in bounds
             int length = editor.getTextArea().getDocumentLength();
@@ -1200,15 +1189,20 @@ public class ASTGenerator {
       sketch.setModified(true);
     });
 
-    int precedingNodes = (int) mappedNodes.getOrDefault(currentTabIndex, Collections.emptyList()).stream()
-        .filter(node -> node.stopTabOffset < currentOffset)
-        .count();
-    int offsetDiff =  precedingNodes * (newName.length() - (binding.getName().length()));
+    int precedingIntervals =
+        (int) mappedNodes.getOrDefault(currentTabIndex, Collections.emptyList())
+            .stream()
+            .filter(interval -> interval.stopTabOffset < currentOffset)
+            .count();
+    int intervalLengthDiff = newName.length() - binding.getName().length();
+    int offsetDiff = precedingIntervals * intervalLengthDiff;
 
     sketch.setCurrentCode(currentTabIndex);
     editor.getTextArea().setCaretPosition(currentOffset + offsetDiff);
 
     editor.stopCompoundEdit();
+
+    // TODO: update Show Usage window if shown
 
     errorCheckerService.request();
   }
@@ -1246,8 +1240,12 @@ public class ASTGenerator {
     List<SimpleName> occurrences = findAllOccurrences(ps.compilationUnit, bindingKey);
     if (occurrences == null) return;
 
+    List<SketchInterval> occurrenceIntervals = occurrences.stream()
+        .map(ps::mapJavaToSketch)
+        .collect(Collectors.toList());
+
     // Send to gui
-    EventQueue.invokeLater(() -> gui.handleShowUsage(binding, occurrences));
+    EventQueue.invokeLater(() -> gui.handleShowUsage(binding, occurrenceIntervals));
   }
 
 
@@ -2147,7 +2145,8 @@ public class ASTGenerator {
 
     // Adjust line number for tabbed sketches
     int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
-    int lineNumber = ps.tabLineToJavaLine(codeIndex, line);
+    int lineStartOffset = editor.getTextArea().getLineStartOffset(line);
+    int lineNumber = ps.tabOffsetToJavaLine(codeIndex, lineStartOffset);
 
     // Ensure that we're not inside a comment. TODO: Binary search
 
@@ -2572,7 +2571,7 @@ public class ASTGenerator {
 
     int javaOffset = ps.tabOffsetToJavaOffset(tabIndex, offset);
 
-    SimpleName simpleName = getSimpleNameAt(javaOffset);
+    SimpleName simpleName = getSimpleNameAt(javaOffset, javaOffset);
 
     if (simpleName == null) {
       Messages.log("nothing found");
@@ -2608,7 +2607,7 @@ public class ASTGenerator {
       handleShowUsage(binding);
     } else {
       Messages.log("found declaration, offset " + decl.getStartPosition() + ", name: " + declName);
-      errorCheckerService.highlightJavaRange(declName.getStartPosition(), declName.getLength());
+      errorCheckerService.highlightNode(declName);
     }
   }
 
@@ -2796,7 +2795,7 @@ public class ASTGenerator {
     }
 
 
-    public void handleShowUsage(IBinding binding, List<SimpleName> occurrences) {
+    public void handleShowUsage(IBinding binding, List<SketchInterval> occurrences) {
       showUsageBinding = binding;
 
       PreprocessedSketch ps = astGen.errorCheckerService.latestResult;
@@ -2822,11 +2821,12 @@ public class ASTGenerator {
           new DefaultMutableTreeNode(bindingType + ": " + binding.getName());
 
       Map<Integer, List<ShowUsageTreeNode>> tabGroupedTreeNodes = occurrences.stream()
-          // Convert to TreeNodes
-          .map(name -> ShowUsageTreeNode.fromSimpleName(ps, name))
           // TODO: this has to be fixed with better token mapping
           // remove occurrences which fall into generated header
-          .filter(node -> node.tabIndex != 0 || (node.startTabOffset >= 0 && node.stopTabOffset > 0))
+          .filter(in -> in.tabIndex != 0 ||
+              (in.startTabOffset >= 0 && in.stopTabOffset > 0))
+          // Convert to TreeNodes
+          .map(in -> ShowUsageTreeNode.fromSketchInterval(ps, in))
           // Group by tab
           .collect(Collectors.groupingBy(node -> node.tabIndex));
 
@@ -2971,9 +2971,7 @@ public class ASTGenerator {
               (DefaultMutableTreeNode) debugTree.getLastSelectedPathComponent();
           if (tnode.getUserObject() instanceof ASTNode) {
             ASTNode node = (ASTNode) tnode.getUserObject();
-            int startOffset = node.getStartPosition();
-            int length = node.getLength();
-            astGen.errorCheckerService.highlightJavaRange(startOffset, length);
+            astGen.errorCheckerService.highlightNode(node);
           }
         }
 
@@ -2985,31 +2983,19 @@ public class ASTGenerator {
   protected static class ShowUsageTreeNode {
 
     int tabIndex;
-    int tabLine;
     int startTabOffset;
     int stopTabOffset;
 
     String text;
 
-    public static ShowUsageTreeNode fromSimpleName(PreprocessedSketch ps, SimpleName name) {
-      int startJavaOffset = name.getStartPosition();
-      int stopJavaOffset = startJavaOffset + name.getLength();
+    public static ShowUsageTreeNode fromSketchInterval(PreprocessedSketch ps, SketchInterval in) {
+      int lineStartPdeOffset = ps.pdeCode.lastIndexOf('\n', in.startPdeOffset) + 1;
+      int lineStopPdeOffset = ps.pdeCode.indexOf('\n', in.stopPdeOffset);
 
-      int startPdeOffset = ps.javaOffsetToPdeOffset(startJavaOffset);
-      int stopPdeOffset = ps.javaOffsetToPdeOffset(stopJavaOffset);
+      int highlightStartOffset = in.startPdeOffset - lineStartPdeOffset;
+      int highlightStopOffset = in.stopPdeOffset - lineStartPdeOffset;
 
-      int tabIndex = ps.pdeOffsetToTabIndex(startPdeOffset);
-
-      int startTabOffset = ps.pdeOffsetToTabOffset(tabIndex, startPdeOffset);
-      int stopTabOffset = ps.pdeOffsetToTabOffset(tabIndex, stopPdeOffset);
-
-      int tabLine = ps.tabOffsetToTabLine(tabIndex, startTabOffset);
-
-      int lineStartPdeOffset = ps.pdeCode.lastIndexOf('\n', startPdeOffset) + 1;
-      int lineStopPdeOffset = ps.pdeCode.indexOf('\n', stopPdeOffset);
-
-      int highlightStartOffset = startPdeOffset - lineStartPdeOffset;
-      int highlightStopOffset = stopPdeOffset - lineStartPdeOffset;
+      int tabLine = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
 
       // TODO: what a mess
       String line = ps.pdeCode.substring(lineStartPdeOffset, lineStopPdeOffset);
@@ -3023,10 +3009,9 @@ public class ASTGenerator {
       line = line.trim();
 
       ShowUsageTreeNode node = new ShowUsageTreeNode();
-      node.tabIndex = tabIndex;
-      node.tabLine = tabLine;
-      node.startTabOffset = startTabOffset;
-      node.stopTabOffset = stopTabOffset;
+      node.tabIndex = in.tabIndex;
+      node.startTabOffset = in.startTabOffset;
+      node.stopTabOffset = in.stopTabOffset;
 
       node.text = "<html><font color=#bbbbbb>" +
           (tabLine + 1) + "</font> <font color=#777777>" + line + "</font></html>";

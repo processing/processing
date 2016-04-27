@@ -2,6 +2,7 @@ package processing.mode.java.pdex;
 
 import com.google.classpath.ClassPath;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import java.net.URLClassLoader;
@@ -23,7 +24,7 @@ public class PreprocessedSketch {
   public final ClassPath classPath;
   public final URLClassLoader classLoader;
 
-  public final int[] tabStarts;
+  public final int[] tabStartOffsets;
 
   public final String pdeCode;
   public final String javaCode;
@@ -40,67 +41,58 @@ public class PreprocessedSketch {
   public final List<ImportStatement> codeFolderImports;
 
 
-  // TODO: optimize
-  public static int lineToOffset(String text, int line) {
-    int lineOffset = 0;
-    for (int i = 0; i < line && lineOffset >= 0; i++) {
-      lineOffset = text.indexOf('\n', lineOffset) + 1;
+
+  /// JAVA -> SKETCH -----------------------------------------------------------
+
+
+  public static class SketchInterval {
+    private SketchInterval(int tabIndex,
+                           int startTabOffset, int stopTabOffset,
+                           int startPdeOffset, int stopPdeOffset) {
+      this.tabIndex = tabIndex;
+      this.startTabOffset = startTabOffset;
+      this.stopTabOffset = stopTabOffset;
+      this.startPdeOffset = startPdeOffset;
+      this.stopPdeOffset = stopPdeOffset;
     }
-    return lineOffset;
+
+    final int tabIndex;
+    final int startTabOffset;
+    final int stopTabOffset;
+
+    final int startPdeOffset;
+    final int stopPdeOffset;
   }
 
 
-  // TODO: optimize
-  public static int offsetToLine(String text, int start, int offset) {
-    int line = 0;
-    while (offset >= start) {
-      offset = text.lastIndexOf('\n', offset-1);
-      line++;
-    }
-    return line - 1;
+  public SketchInterval mapJavaToSketch(ASTNode node) {
+    return mapJavaToSketch(node.getStartPosition(),
+                           node.getStartPosition() + node.getLength());
   }
 
 
-  // TODO: optimize
-  public static int offsetToLine(String text, int offset) {
-    return offsetToLine(text, 0, offset);
+  public SketchInterval mapJavaToSketch(int startJavaOffset, int stopJavaOffset) {
+    boolean zeroLength = stopJavaOffset == startJavaOffset;
+    int startPdeOffset = javaOffsetToPdeOffset(startJavaOffset);
+    int stopPdeOffset = zeroLength ?
+        javaOffsetToPdeOffset(stopJavaOffset) :
+        javaOffsetToPdeOffset(stopJavaOffset-1)+1;
+    int tabIndex = pdeOffsetToTabIndex(startPdeOffset);
+
+    return new SketchInterval(tabIndex,
+                              pdeOffsetToTabOffset(tabIndex, startPdeOffset),
+                              pdeOffsetToTabOffset(tabIndex, stopPdeOffset),
+                              startPdeOffset, stopPdeOffset);
   }
 
 
-  // TODO: optimize, build lookup together with tabStarts
-  public int tabIndexToTabStartLine(int tabIndex) {
-    int pdeLineNumber = 0;
-    for (int i = 0; i < tabIndex; i++) {
-      pdeLineNumber += sketch.getCode(i).getLineCount();
-    }
-    return pdeLineNumber;
-  }
-
-
-  public int tabLineToJavaLine(int tabIndex, int tabLine) {
-    int tabStartLine = tabIndexToTabStartLine(tabIndex);
-    int pdeLine = tabStartLine + tabLine;
-    int pdeLineOffset = lineToOffset(pdeCode, pdeLine);
-    int javaLineOffset = offsetMapper.getOutputOffset(pdeLineOffset);
-    return offsetToLine(javaCode, javaLineOffset);
-  }
-
-
-  public int tabOffsetToJavaOffset(int tabIndex, int tabOffset) {
-    int tabStartLine = tabIndexToTabStartLine(tabIndex);
-    int tabStartOffset = lineToOffset(pdeCode, tabStartLine);
-    int pdeOffset = tabStartOffset + tabOffset;
-    return offsetMapper.getOutputOffset(pdeOffset);
-  }
-
-
-  public int javaOffsetToPdeOffset(int javaOffset) {
+  private int javaOffsetToPdeOffset(int javaOffset) {
     return offsetMapper.getInputOffset(javaOffset);
   }
 
 
-  public int pdeOffsetToTabIndex(int pdeOffset) {
-    int tab = Arrays.binarySearch(tabStarts, pdeOffset);
+  private int pdeOffsetToTabIndex(int pdeOffset) {
+    int tab = Arrays.binarySearch(tabStartOffsets, pdeOffset);
     if (tab < 0) {
       tab = -(tab + 1) - 1;
     }
@@ -108,15 +100,53 @@ public class PreprocessedSketch {
   }
 
 
-  public int pdeOffsetToTabOffset(int tabIndex, int pdeOffset) {
-    int tabStartOffset = tabStarts[tabIndex];
+  private int pdeOffsetToTabOffset(int tabIndex, int pdeOffset) {
+    int tabStartOffset = tabStartOffsets[tabIndex];
     return pdeOffset - tabStartOffset;
   }
 
 
+
+  /// SKETCH -> JAVA -----------------------------------------------------------
+
+
+  public int tabOffsetToJavaOffset(int tabIndex, int tabOffset) {
+    int tabStartOffset = tabStartOffsets[tabIndex];
+    int pdeOffset = tabStartOffset + tabOffset;
+    return offsetMapper.getOutputOffset(pdeOffset);
+  }
+
+
+
+  /// LINE NUMBERS -------------------------------------------------------------
+
+
+  public int tabOffsetToJavaLine(int tabIndex, int tabOffset) {
+    int javaOffset = tabOffsetToJavaOffset(tabIndex, tabOffset);
+    return offsetToLine(javaCode, javaOffset);
+  }
+
+
   public int tabOffsetToTabLine(int tabIndex, int tabOffset) {
-    int tabStartOffset = tabStarts[tabIndex];
+    int tabStartOffset = tabStartOffsets[tabIndex];
     return offsetToLine(pdeCode, tabStartOffset, tabStartOffset + tabOffset);
+  }
+
+
+  // TODO: optimize
+  private static int offsetToLine(String text, int offset) {
+    return offsetToLine(text, 0, offset);
+  }
+
+
+  // TODO: optimize
+  private static int offsetToLine(String text, int start, int offset) {
+    int line = 0;
+    while (offset >= start) {
+      offset = text.lastIndexOf('\n', offset-1);
+      line++;
+    }
+    return line - 1;
   }
 
 
@@ -138,7 +168,7 @@ public class PreprocessedSketch {
     public ClassPath classPath;
     public URLClassLoader classLoader;
 
-    public int[] tabStarts = new int[0];
+    public int[] tabStartOffsets = new int[0];
 
     public String pdeCode;
     public String javaCode;
@@ -147,8 +177,6 @@ public class PreprocessedSketch {
 
     public boolean hasSyntaxErrors;
     public boolean hasCompilationErrors;
-
-    public final List<Problem> problems = new ArrayList<>();
 
     public final List<ImportStatement> programImports = new ArrayList<>();
     public final List<ImportStatement> coreAndDefaultImports = new ArrayList<>();
@@ -172,7 +200,7 @@ public class PreprocessedSketch {
     classPath = b.classPath;
     classLoader = b.classLoader;
 
-    tabStarts = b.tabStarts;
+    tabStartOffsets = b.tabStartOffsets;
 
     pdeCode = b.pdeCode;
     javaCode = b.javaCode;
@@ -182,7 +210,7 @@ public class PreprocessedSketch {
     hasSyntaxErrors = b.hasSyntaxErrors;
     hasCompilationErrors = b.hasCompilationErrors;
 
-    problems = Collections.unmodifiableList(b.problems);
+    problems = new ArrayList<>();
 
     programImports = Collections.unmodifiableList(b.programImports);
     coreAndDefaultImports = Collections.unmodifiableList(b.coreAndDefaultImports);

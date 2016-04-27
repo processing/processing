@@ -25,10 +25,7 @@ import com.google.classpath.ClassPathFactory;
 import com.google.classpath.RegExpResourceFilter;
 
 import java.awt.EventQueue;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -38,7 +35,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -56,21 +52,11 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.internal.compiler.Compiler;
-import org.eclipse.jdt.internal.compiler.DefaultErrorHandlingPolicies;
-import org.eclipse.jdt.internal.compiler.ICompilerRequestor;
-import org.eclipse.jdt.internal.compiler.classfmt.ClassFileReader;
-import org.eclipse.jdt.internal.compiler.classfmt.ClassFormatException;
-import org.eclipse.jdt.internal.compiler.env.ICompilationUnit;
-import org.eclipse.jdt.internal.compiler.env.INameEnvironment;
-import org.eclipse.jdt.internal.compiler.env.NameEnvironmentAnswer;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
-import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
 
 import processing.app.Library;
 import processing.app.Messages;
@@ -86,6 +72,7 @@ import processing.data.IntList;
 import processing.data.StringList;
 import processing.mode.java.JavaMode;
 import processing.mode.java.JavaEditor;
+import processing.mode.java.pdex.PreprocessedSketch.SketchInterval;
 import processing.mode.java.pdex.TextTransform.OffsetMapper;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PdePreprocessor.Mode;
@@ -324,10 +311,10 @@ public class ErrorCheckerService {
         workBuffer.append('\n');
       }
     }
-    result.tabStarts = tabStartsList.array();
+    result.tabStartOffsets = tabStartsList.array();
 
     String pdeStage = result.pdeCode = workBuffer.toString();
-    char[] javaStageChars;
+    char[] compilableStageChars;
 
     { // Prepare core and default imports
       // TODO: do this only once
@@ -344,6 +331,7 @@ public class ErrorCheckerService {
     }
 
     // Prepare code folder imports
+    // TODO: do this only when code folder changes
     if (sketch.hasCodeFolder()) {
       File codeFolder = sketch.getCodeFolder();
       String codeFolderClassPath = Util.contentsToClassPath(codeFolder);
@@ -355,21 +343,22 @@ public class ErrorCheckerService {
 
     // TODO: convert unicode escapes to chars
 
-    {{ // SYNTAX CHECK
+    List<IProblem> problems = new ArrayList<>();
 
-      SourceUtils.scrubCommentsAndStrings(workBuffer);
+    SourceUtils.scrubCommentsAndStrings(workBuffer);
 
-      Mode mode = PdePreprocessor.parseMode(workBuffer);
+    Mode mode = PdePreprocessor.parseMode(workBuffer);
 
-      // Prepare transforms
-      TextTransform toParsable = new TextTransform(pdeStage);
-      toParsable.addAll(SourceUtils.insertImports(coreAndDefaultImports));
-      toParsable.addAll(SourceUtils.insertImports(codeFolderImports));
-      toParsable.addAll(SourceUtils.parseProgramImports(workBuffer, programImports));
-      toParsable.addAll(SourceUtils.replaceTypeConstructors(workBuffer));
-      toParsable.addAll(SourceUtils.replaceHexLiterals(workBuffer));
-      toParsable.addAll(SourceUtils.wrapSketch(mode, className, workBuffer.length()));
+    // Prepare transforms to convert pde code into parsable code
+    TextTransform toParsable = new TextTransform(pdeStage);
+    toParsable.addAll(SourceUtils.insertImports(coreAndDefaultImports));
+    toParsable.addAll(SourceUtils.insertImports(codeFolderImports));
+    toParsable.addAll(SourceUtils.parseProgramImports(workBuffer, programImports));
+    toParsable.addAll(SourceUtils.replaceTypeConstructors(workBuffer));
+    toParsable.addAll(SourceUtils.replaceHexLiterals(workBuffer));
+    toParsable.addAll(SourceUtils.wrapSketch(mode, className, workBuffer.length()));
 
+    { // Refresh sketch classloader and classpath if imports changed
       boolean importsChanged = prevResult == null ||
           prevResult.classPath == null || prevResult.classLoader == null ||
           checkIfImportsChanged(programImports, prevResult.programImports) ||
@@ -396,52 +385,79 @@ public class ErrorCheckerService {
         result.classPath = prevResult.classPath;
         result.classPathArray = prevResult.classPathArray;
       }
+    }
 
-      // Transform code
-      String parsableStage = toParsable.apply();
-      OffsetMapper parsableMapper = toParsable.getMapper();
+    // Transform code to parsable state
+    String parsableStage = toParsable.apply();
+    OffsetMapper parsableMapper = toParsable.getMapper();
 
-      // Create AST
-      CompilationUnit parsableCU =
-          makeAST(parser, parsableStage.toCharArray(), COMPILER_OPTIONS);
+    // Create intermediate AST for advanced preprocessing
+    CompilationUnit parsableCU =
+        makeAST(parser, parsableStage.toCharArray(), COMPILER_OPTIONS);
 
-      // Prepare transforms
-      TextTransform toCompilable = new TextTransform(parsableStage);
-      toCompilable.addAll(SourceUtils.addPublicToTopLevelMethods(parsableCU));
-      toCompilable.addAll(SourceUtils.replaceColorAndFixFloats(parsableCU));
+    // Prepare advanced transforms which operate on AST
+    TextTransform toCompilable = new TextTransform(parsableStage);
+    toCompilable.addAll(SourceUtils.addPublicToTopLevelMethods(parsableCU));
+    toCompilable.addAll(SourceUtils.replaceColorAndFixFloats(parsableCU));
 
-      // Transform code
-      String compilableStage = toCompilable.apply();
-      OffsetMapper compilableMapper = toCompilable.getMapper();
-      javaStageChars = compilableStage.toCharArray();
+    // Transform code to compilable state
+    String compilableStage = toCompilable.apply();
+    OffsetMapper compilableMapper = toCompilable.getMapper();
+    compilableStageChars = compilableStage.toCharArray();
 
-      // Create AST
-      CompilationUnit compilableCU =
-          makeASTWithBindings(parser, javaStageChars, COMPILER_OPTIONS,
-                              className, result.classPathArray);
+    // Create compilable AST to get syntax problems
+    CompilationUnit compilableCU =
+        makeAST(parser, compilableStageChars, COMPILER_OPTIONS);
 
-      // Update result
-      result.offsetMapper = parsableMapper.thenMapping(compilableMapper);
-      result.javaCode = compilableStage;
-      result.compilationUnit = compilableCU;
+    // Get syntax problems from compilable AST
+    List<IProblem> syntaxProblems = Arrays.asList(compilableCU.getProblems());
+    problems.addAll(syntaxProblems);
+    result.hasSyntaxErrors = syntaxProblems.stream().anyMatch(IProblem::isError);
 
-      // Get syntax problems
-      List<IProblem> syntaxProblems = Arrays.asList(compilableCU.getProblems());
+    // Generate bindings after getting problems - avoids
+    // 'missing type' errors when there are syntax problems
+    CompilationUnit bindingsCU =
+        makeASTWithBindings(parser, compilableStageChars, COMPILER_OPTIONS,
+                            className, result.classPathArray);
 
-      result.hasSyntaxErrors = syntaxProblems.stream().anyMatch(IProblem::isError);
-    }}
+    // Show compilation problems only when there are no syntax problems
+    if (!result.hasSyntaxErrors) {
+      problems.clear(); // clear warnings, they will be generated again
+      List<IProblem> bindingsProblems = Arrays.asList(bindingsCU.getProblems());
+      problems.addAll(bindingsProblems);
+      result.hasCompilationErrors = bindingsProblems.stream().anyMatch(IProblem::isError);
+    }
 
-    {{ // COMPILATION CHECK
-      // Compile it
-      List<IProblem> compilationProblems =
-          compileAndReturnProblems(className, javaStageChars,
-                                   COMPILER_OPTIONS, result.classLoader,
-                                   result.classPath);
+    // Update builder
+    result.offsetMapper = parsableMapper.thenMapping(compilableMapper);
+    result.javaCode = compilableStage;
+    result.compilationUnit = bindingsCU;
 
-      // TODO: handle error stuff *after* building PreprocessedSketch
-      List<Problem> mappedCompilationProblems =
-          mapProblems(compilationProblems, result.tabStarts, result.pdeCode,
-                      result.offsetMapper);
+    // Build it
+    PreprocessedSketch ps = result.build();
+
+    { // Process problems
+      List<Problem> mappedCompilationProblems = problems.stream()
+          // Filter Warnings if they are not enabled
+          .filter(iproblem -> !(iproblem.isWarning() && !JavaMode.warningsEnabled))
+          // Hide a useless error which is produced when a line ends with
+          // an identifier without a semicolon. "Missing a semicolon" is
+          // also produced and is preferred over this one.
+          // (Syntax error, insert ":: IdentifierOrNew" to complete Expression)
+          // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=405780
+          .filter(iproblem -> !iproblem.getMessage()
+              .contains("Syntax error, insert \":: IdentifierOrNew\""))
+          // Transform into our Problems
+          .map(iproblem -> {
+            int start = iproblem.getSourceStart();
+            int stop = iproblem.getSourceEnd() + 1; // make it exclusive
+            SketchInterval in = ps.mapJavaToSketch(start, stop);
+            int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
+            Problem p = new Problem(iproblem, in.tabIndex, line);
+            p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
+            return p;
+          })
+          .collect(Collectors.toList());
 
       if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
         Map<String, List<Problem>> undefinedTypeProblems = mappedCompilationProblems.stream()
@@ -462,19 +478,16 @@ public class ErrorCheckerService {
         undefinedTypeProblems.entrySet().stream()
             .forEach(entry -> {
               String missingClass = entry.getKey();
-              List<Problem> problems = entry.getValue();
+              List<Problem> affectedProblems = entry.getValue();
               String[] suggestions = getImportSuggestions(cp, missingClass);
-              problems.forEach(p -> p.setImportSuggestions(suggestions));
+              affectedProblems.forEach(p -> p.setImportSuggestions(suggestions));
             });
       }
 
-      result.problems.addAll(mappedCompilationProblems);
+      ps.problems.addAll(mappedCompilationProblems);
+    }
 
-      result.hasCompilationErrors = mappedCompilationProblems.stream()
-          .anyMatch(Problem::isError);
-    }}
-
-    return result.build();
+    return ps;
   }
 
 
@@ -556,57 +569,6 @@ public class ErrorCheckerService {
   }
 
 
-  protected static List<Problem> mapProblems(List<IProblem> problems,
-                                             int[] tabStarts, String pdeCode,
-                                             OffsetMapper mapper) {
-    return problems.stream()
-        // Filter Warnings if they are not enabled
-        .filter(iproblem -> !(iproblem.isWarning() && !JavaMode.warningsEnabled))
-        // Hide a useless error which is produced when a line ends with
-        // an identifier without a semicolon. "Missing a semicolon" is
-        // also produced and is preferred over this one.
-        // (Syntax error, insert ":: IdentifierOrNew" to complete Expression)
-        // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=405780
-        .filter(iproblem -> !iproblem.getMessage()
-            .contains("Syntax error, insert \":: IdentifierOrNew\""))
-        // Transform into our Problems
-        .map(iproblem -> {
-          int start = iproblem.getSourceStart();
-          int stop = iproblem.getSourceEnd(); // inclusive
-
-          // Apply mapping
-          start = mapper.getInputOffset(start);
-          stop = mapper.getInputOffset(stop);
-
-          if (stop < start) {
-            // Should not happen, just to be sure
-            int temp = start;
-            start = stop;
-            stop = temp;
-          }
-
-          int pdeStart = PApplet.constrain(start, 0, pdeCode.length()-1);
-          int pdeStop = PApplet.constrain(stop + 1, 1, pdeCode.length()); // +1 for exclusive end
-
-          int tab = Arrays.binarySearch(tabStarts, pdeStart);
-          if (tab < 0) {
-            tab = -(tab + 1) - 1;
-          }
-
-          int tabStart = tabStarts[tab];
-
-          // TODO: quick hack; make it smart, fast & beautiful later
-          int line = Util.countLines(pdeCode.substring(tabStart, pdeStart)) - 1;
-
-          Problem problem = new Problem(iproblem, tab, line);
-          problem.setPDEOffsets(pdeStart - tabStart, pdeStop - tabStart);
-
-          return problem;
-        })
-        .collect(Collectors.toList());
-  }
-
-
   protected static CompilationUnit makeAST(ASTParser parser,
                                            char[] source,
                                            Map<String, String> options) {
@@ -632,50 +594,6 @@ public class ErrorCheckerService {
     parser.setResolveBindings(true);
 
     return (CompilationUnit) parser.createAST(null);
-  }
-
-
-  /**
-   * Performs compiler error check.
-   * @param sourceName - name of the class
-   * @param source - source code
-   * @param options - compiler options
-   * @param classLoader - custom classloader which can load all dependencies
-   * @return list of compiler errors and warnings
-   */
-  static public List<IProblem> compileAndReturnProblems(String sourceName,
-                                                        char[] source,
-                                                        Map<String, String> options,
-                                                        URLClassLoader classLoader,
-                                                        ClassPath classPath) {
-    final List<IProblem> problems = new ArrayList<>();
-
-    ICompilerRequestor requestor = cr -> {
-      if (cr.hasProblems()) Collections.addAll(problems, cr.getProblems());
-    };
-
-    final char[] contents = source;
-    final char[][] packageName = new char[][]{};
-    final char[] mainTypeName = sourceName.toCharArray();
-    final char[] fileName = (sourceName + ".java").toCharArray();
-
-    ICompilationUnit unit = new ICompilationUnit() {
-      @Override public char[] getContents() { return contents; }
-      @Override public char[][] getPackageName() { return packageName; }
-      @Override public char[] getMainTypeName() { return mainTypeName; }
-      @Override public char[] getFileName() { return fileName; }
-      @Override public boolean ignoreOptionalProblems() { return false; }
-    };
-
-    org.eclipse.jdt.internal.compiler.Compiler compiler =
-        new Compiler(new NameEnvironmentImpl(classLoader, classPath),
-                     DefaultErrorHandlingPolicies.proceedWithAllProblems(),
-                     new CompilerOptions(options),
-                     requestor,
-                     new DefaultProblemFactory(Locale.getDefault()));
-
-    compiler.compile(new ICompilationUnit[]{unit});
-    return problems;
   }
 
 
@@ -932,32 +850,12 @@ public class ErrorCheckerService {
   }
 
 
-  public void highlightJavaRange(int startJavaOffset, int javaLength) {
+  public void highlightNode(ASTNode node) {
     PreprocessedSketch ps = latestResult;
-
-    int stopJavaOffset = startJavaOffset + javaLength;
-
-    int startPdeOffset = ps.javaOffsetToPdeOffset(startJavaOffset);
-
-    int stopPdeOffset;
-
-    if (javaLength == 0) {
-      stopPdeOffset = startPdeOffset;
-    } else {
-      // Subtract one for inclusive end
-      stopPdeOffset = ps.javaOffsetToPdeOffset(stopJavaOffset - 1);
-      if (javaLength == 1 || stopPdeOffset > startPdeOffset) {
-        // Add one back for exclusive end
-        stopPdeOffset += 1;
-      }
-    }
-
-    int tabIndex = ps.pdeOffsetToTabIndex(startPdeOffset);
-
-    int startTabOffset = ps.pdeOffsetToTabOffset(tabIndex, startPdeOffset);
-    int stopTabOffset = ps.pdeOffsetToTabOffset(tabIndex, stopPdeOffset);
-
-    EventQueue.invokeLater(() -> highlightTabRange(tabIndex, startTabOffset, stopTabOffset));
+    SketchInterval si = ps.mapJavaToSketch(node);
+    EventQueue.invokeLater(() -> {
+      highlightTabRange(si.tabIndex, si.startTabOffset, si.stopTabOffset);
+    });
   }
 
 
@@ -996,70 +894,4 @@ public class ErrorCheckerService {
     }
   }
 
-
-  private static class NameEnvironmentImpl implements INameEnvironment {
-
-    private final ClassLoader classLoader;
-    private final ClassPath classPath;
-
-    NameEnvironmentImpl(ClassLoader classLoader, ClassPath classPath) {
-      this.classLoader = classLoader;
-      this.classPath = classPath;
-    }
-
-
-    @Override
-    public NameEnvironmentAnswer findType(char[][] compoundTypeName) {
-      return readClassFile(CharOperation.toString(compoundTypeName), classLoader);
-    }
-
-
-    @Override
-    public NameEnvironmentAnswer findType(char[] typeName, char[][] packageName) {
-      String fullName = CharOperation.toString(packageName);
-      if (typeName != null) {
-        if (fullName.length() > 0) fullName += ".";
-        fullName += new String(typeName);
-      }
-      return readClassFile(fullName, classLoader);
-    }
-
-
-    @Override
-    public boolean isPackage(char[][] parentPackageName, char[] packageName) {
-      String fullName = CharOperation.toString(parentPackageName);
-      if (packageName != null) {
-        if (fullName.length() > 0) fullName += ".";
-        fullName += new String(packageName);
-      }
-      return classPath.isPackage(fullName.replace('.', '/'));
-    }
-
-
-    @Override
-    public void cleanup() { }
-
-
-    private static NameEnvironmentAnswer readClassFile(String fullName, ClassLoader classLoader) {
-      String classFileName = fullName.replace('.', '/') + ".class";
-
-      InputStream is = classLoader.getResourceAsStream(classFileName);
-      if (is == null) return null;
-
-      byte[] buffer = new byte[8192];
-      ByteArrayOutputStream os = new ByteArrayOutputStream(buffer.length);
-      try {
-        int bytes;
-        while ((bytes = is.read(buffer, 0, buffer.length)) > 0) {
-          os.write(buffer, 0, bytes);
-        }
-        os.flush();
-        ClassFileReader classFileReader =
-            new ClassFileReader(os.toByteArray(), fullName.toCharArray(), true);
-        return new NameEnvironmentAnswer(classFileReader, null);
-      } catch (IOException | ClassFormatException e) {
-        return null;
-      }
-    }
-  }
 }
