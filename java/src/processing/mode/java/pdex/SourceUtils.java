@@ -26,18 +26,25 @@ public class SourceUtils {
       Pattern.compile("^\\s*((?:(static)\\s+)?((?:\\w+\\s*\\.)*)\\s*(\\S+))",
                       Pattern.MULTILINE | Pattern.DOTALL);
 
-  public static List<Edit> parseProgramImports(CharSequence source,
-                                               List<ImportStatement> outImports) {
-
-    List<Edit> result = new ArrayList<>();
-
+  public static List<ImportStatement> parseProgramImports(CharSequence source) {
+    List<ImportStatement> result = new ArrayList<>();
     Matcher matcher = IMPORT_REGEX.matcher(source);
     while (matcher.find()) {
-      String piece = matcher.group(1);
+      ImportStatement is = ImportStatement.parse(matcher.toMatchResult());
+      result.add(is);
+    }
+    return result;
+  }
+
+  public static List<Edit> parseProgramImports(CharSequence source,
+                                               List<ImportStatement> outImports) {
+    List<Edit> result = new ArrayList<>();
+    Matcher matcher = IMPORT_REGEX.matcher(source);
+    while (matcher.find()) {
       ImportStatement is = ImportStatement.parse(matcher.toMatchResult());
       outImports.add(is);
-      int len = piece.length();
       int idx = matcher.start(1);
+      int len = matcher.end(1) - idx;
       // Remove the import from the main program
       // Substitute with white spaces
       result.add(Edit.move(idx, len, 0));

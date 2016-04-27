@@ -30,9 +30,11 @@ import processing.mode.java.debug.LineHighlight;
 import processing.mode.java.debug.LineID;
 import processing.mode.java.pdex.ASTGenerator;
 import processing.mode.java.pdex.ErrorCheckerService;
+import processing.mode.java.pdex.ImportStatement;
 import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.Problem;
+import processing.mode.java.pdex.SourceUtils;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.runner.Runner;
 import processing.mode.java.tweak.ColorControlBox;
@@ -1904,13 +1906,12 @@ public class JavaEditor extends Editor {
       if (sc.isExtension("pde")) {
         String tabCode = sc.getProgram();
 
-        String[][] pieces =
-          PApplet.matchAll(tabCode, ErrorCheckerService.IMPORT_REGEX);
+        List<ImportStatement> imports =  SourceUtils.parseProgramImports(tabCode);
 
-        if (pieces != null) {
+        if (!imports.isEmpty()) {
           ArrayList<String> importHeaders = new ArrayList<>();
-          for (String[] importStatement : pieces) {
-            importHeaders.add(importStatement[2]);
+          for (ImportStatement importStatement : imports) {
+            importHeaders.add(importStatement.getFullClassName());
           }
           List<AvailableContribution> installLibsHeaders =
             getNotInstalledAvailableLibs(importHeaders);

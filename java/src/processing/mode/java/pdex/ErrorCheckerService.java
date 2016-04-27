@@ -102,14 +102,6 @@ public class ErrorCheckerService {
    */
   protected final ASTGenerator astGenerator;
 
-  /**
-   * Regexp for import statements. (Used from Processing source)
-   */
-  // TODO: merge this with SourceUtils one
-  public static final String IMPORT_REGEX =
-    "(?:^|;)\\s*(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
-
-
   public ErrorCheckerService(JavaEditor editor) {
     this.editor = editor;
     astGenerator = new ASTGenerator(editor, this);
