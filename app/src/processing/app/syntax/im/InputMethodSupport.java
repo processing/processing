@@ -34,7 +34,7 @@ import processing.app.syntax.TextAreaPainter;
  * @see <a href="https://processing.org/bugs/bugzilla/1531.html">Bug 1531 : Can't input full-width space when Japanese IME is on.</a>
  * @see http://docs.oracle.com/javase/8/docs/technotes/guides/imf/index.html
  * @see http://docs.oracle.com/javase/tutorial/2d/text/index.html
- *  
+ *
  * @author Takashi Maekawa (takachin@generative.info)
  * @author Satoshi Okita
  */
@@ -44,11 +44,9 @@ public class InputMethodSupport implements InputMethodRequests,
   private static final Attribute[] CUSTOM_IM_ATTRIBUTES = {
     TextAttribute.INPUT_METHOD_HIGHLIGHT,
   };
-  
+
   private int committed_count = 0;
-  private TextHitInfo caret;
   private JEditTextArea textArea;
-  private AttributedCharacterIterator composedText;
   private AttributedString composedTextString;
 
   public InputMethodSupport(JEditTextArea textArea) {
@@ -70,10 +68,10 @@ public class InputMethodSupport implements InputMethodRequests,
     // '+1' mean textArea.lineToY(line) + textArea.getPainter().getFontMetrics().getHeight().
     // TextLayout#draw method need at least one height of font.
     Rectangle rectangle = new Rectangle(textArea.offsetToX(line, offsetX), textArea.lineToY(line + 1), 0, 0);
-    
+
     Point location = textArea.getPainter().getLocationOnScreen();
     rectangle.translate(location.x, location.y);
-    
+
     return rectangle;
   }
 
@@ -87,7 +85,7 @@ public class InputMethodSupport implements InputMethodRequests,
   public int getInsertPositionOffset() {
     return textArea.getCaretPosition() * -1;
   }
-  
+
   @Override
   public AttributedCharacterIterator getCommittedText(int beginIndex,
       int endIndex, AttributedCharacterIterator.Attribute[] attributes) {
@@ -118,12 +116,11 @@ public class InputMethodSupport implements InputMethodRequests,
   /////////////////////////////////////////////////////////////////////////////
   /**
    * Handles events from InputMethod.
-   * 
+   *
    * @param event event from Input Method.
    */
   @Override
-  public void inputMethodTextChanged(InputMethodEvent event) {    
-    composedText = null;
+  public void inputMethodTextChanged(InputMethodEvent event) {
     if (Base.DEBUG) {
       StringBuilder sb = new StringBuilder();
       sb.append("#Called inputMethodTextChanged");
@@ -132,16 +129,16 @@ public class InputMethodSupport implements InputMethodRequests,
       sb.append("\t parmString: " + event.paramString());
       Messages.log(sb.toString());
     }
-    
+
     AttributedCharacterIterator text = event.getText(); // text = composedText + commitedText
     committed_count = event.getCommittedCharacterCount();
-    
-    
+
+
     // The caret for Input Method.
     // if you type a character by a input method, original caret become off.
     // a JEditTextArea is not implemented by the AttributedStirng and TextLayout.
     // so JEditTextArea Caret On-off logic.
-    // 
+    //
     // japanese        : if the enter key pressed, event.getText is null.
     // japanese        : if first space key pressed, event.getText is null.
     // chinese(pinin)  : if a space key pressed, event.getText is null.
@@ -168,7 +165,7 @@ public class InputMethodSupport implements InputMethodRequests,
         this.insertCharacter(c);
         c = text.next();
       }
-      
+
       CompositionTextPainter compositionPainter = textArea.getPainter().getCompositionTextpainter();
       if (Base.DEBUG) {
         Messages.log(" textArea.getCaretPosition() + committed_count: " + (textArea.getCaretPosition() + committed_count));
@@ -181,15 +178,14 @@ public class InputMethodSupport implements InputMethodRequests,
       compositionPainter.setComposedTextLayout(null, 0);
       compositionPainter.setCaret(null);
     }
-    caret = event.getCaret();
     event.consume();
-    textArea.repaint(); 
+    textArea.repaint();
   }
-  
+
   private TextLayout getTextLayout(AttributedCharacterIterator text, int committedCount) {
     boolean antialias = Preferences.getBoolean("editor.smooth");
     TextAreaPainter painter = textArea.getPainter();
-    
+
     // create attributed string with font info.
     //if (text.getEndIndex() - (text.getBeginIndex() + committedCharacterCount) > 0) {
     if (text.getEndIndex() - (text.getBeginIndex() + committedCount) > 0) {
@@ -197,12 +193,11 @@ public class InputMethodSupport implements InputMethodRequests,
       Font font = painter.getFontMetrics().getFont();
       composedTextString.addAttribute(TextAttribute.FONT, font);
       composedTextString.addAttribute(TextAttribute.BACKGROUND, Color.WHITE);
-      composedText = composedTextString.getIterator();
     } else {
       composedTextString = new AttributedString("");
       return null;
     }
-    
+
     // set hint of antialiasing to render target.
     Graphics2D g2d = (Graphics2D)painter.getGraphics();
     g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -219,10 +214,9 @@ public class InputMethodSupport implements InputMethodRequests,
 
   @Override
   public void caretPositionChanged(InputMethodEvent event) {
-    caret = event.getCaret();
     event.consume();
   }
-  
+
   private void insertCharacter(char c) {
     if (Base.DEBUG) {
       Messages.log("debug: insertCharacter(char c) textArea.getCaretPosition()=" + textArea.getCaretPosition());
