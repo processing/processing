@@ -302,11 +302,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * @param x
    */
   protected void paintErrorLine(Graphics gfx, int line, int x) {
-    ErrorCheckerService ecs = getJavaEditor().getErrorChecker();
-    if (ecs == null || ecs.latestResult.problems.isEmpty()) {
-      return;
-    }
-
     LineMarker marker = getJavaEditor().findError(line);
     if (marker != null) {
       Problem problem = marker.getProblem();
