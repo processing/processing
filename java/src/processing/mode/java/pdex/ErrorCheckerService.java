@@ -214,7 +214,7 @@ public class ErrorCheckerService {
 
   public void start() {
     scheduler = Executors.newSingleThreadScheduledExecutor();
-    errorCheckerThread = new Thread(mainLoop);
+    errorCheckerThread = new Thread(mainLoop, "ECS");
     errorCheckerThread.start();
   }
 
