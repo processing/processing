@@ -84,7 +84,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
             if ((evt.isControlDown() && !Platform.isMacOS()) || evt.isMetaDown()) {
               handleCtrlClick(evt);
             }
-          } else if (!Platform.isMacOS() && evt.getButton() == MouseEvent.BUTTON2) {
+          } else if (evt.getButton() == MouseEvent.BUTTON2) {
             handleCtrlClick(evt);
           }
         }
