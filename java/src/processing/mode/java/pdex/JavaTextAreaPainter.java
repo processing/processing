@@ -122,16 +122,14 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 
   void handleCtrlClick(MouseEvent evt) {
-    Messages.log("--handleCtrlClick--");
     int off = textArea.xyToOffset(evt.getX(), evt.getY());
     if (off < 0) return;
 
     int tabIndex = getEditor().getSketch().getCurrentCodeIndex();
 
     ASTGenerator astGenerator = getJavaEditor().getErrorChecker().getASTGenerator();
-    synchronized (astGenerator) {
-      astGenerator.handleCtrlClick(tabIndex, off);
-    }
+
+    astGenerator.handleCtrlClick(tabIndex, off);
   }
 
 

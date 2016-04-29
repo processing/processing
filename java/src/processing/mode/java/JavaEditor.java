@@ -177,11 +177,11 @@ public class JavaEditor extends Editor {
     for (SketchCode code : getSketch().getCode()) {
       Document document = code.getDocument();
       if (document != null) {
-        errorCheckerService.addListener(document);
+        errorCheckerService.addDocumentListener(document);
       }
     }
     errorCheckerService.start();
-    errorCheckerService.request();
+    errorCheckerService.notifySketchChanged();
   }
   
   
@@ -2339,7 +2339,7 @@ public class JavaEditor extends Editor {
 
     Document newDoc = code.getDocument();
     if (oldDoc != newDoc && errorCheckerService != null) {
-      errorCheckerService.addListener(newDoc);
+      errorCheckerService.addDocumentListener(newDoc);
     }
 
     // set line background colors for tab
@@ -2366,12 +2366,8 @@ public class JavaEditor extends Editor {
     if (getDebugger() != null && getDebugger().isStarted()) {
       getDebugger().startTrackingLineChanges();
     }
-    if (errorCheckerService != null) {
-      if (errorColumn != null) {
-        getErrorPoints().clear();
-        statusEmpty();
-      }
-      errorCheckerService.request();
+    if (errorColumn != null) {
+      errorColumn.repaint();
     }
   }
 
@@ -2517,7 +2513,9 @@ public class JavaEditor extends Editor {
   public LineMarker findError(int line) {
     List<LineMarker> errorPoints = getErrorPoints();
     JavaTextArea textArea = getJavaTextArea();
+    int currentTab = getSketch().getCurrentCodeIndex();
     for (LineMarker emarker : errorPoints) {
+      if (emarker.getProblem().getTabIndex() != currentTab) continue;
       Problem p = emarker.getProblem();
       int pStartLine = p.getLineNumber();
       int pEndOffset = p.getStopOffset();
@@ -2694,9 +2692,8 @@ public class JavaEditor extends Editor {
     int startOffset = getSelectionStart();
     int stopOffset = getSelectionStop();
     int tabIndex = sketch.getCurrentCodeIndex();
-    synchronized (astGenerator) {
-      astGenerator.handleRename(tabIndex, startOffset, stopOffset);
-    }
+
+    astGenerator.handleRename(tabIndex, startOffset, stopOffset);
   }
 
 
@@ -2707,9 +2704,8 @@ public class JavaEditor extends Editor {
     int startOffset = getSelectionStart();
     int stopOffset = getSelectionStop();
     int tabIndex = sketch.getCurrentCodeIndex();
-    synchronized (astGenerator) {
-      astGenerator.handleShowUsage(tabIndex, startOffset, stopOffset);
-    }
+
+    astGenerator.handleShowUsage(tabIndex, startOffset, stopOffset);
   }
 
 

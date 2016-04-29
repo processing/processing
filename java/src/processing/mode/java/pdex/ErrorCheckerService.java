@@ -30,18 +30,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -70,8 +73,8 @@ import processing.app.ui.ErrorTable;
 import processing.core.PApplet;
 import processing.data.IntList;
 import processing.data.StringList;
-import processing.mode.java.JavaMode;
 import processing.mode.java.JavaEditor;
+import processing.mode.java.JavaMode;
 import processing.mode.java.pdex.PreprocessedSketch.SketchInterval;
 import processing.mode.java.pdex.TextTransform.OffsetMapper;
 import processing.mode.java.preproc.PdePreprocessor;
@@ -102,19 +105,11 @@ public class ErrorCheckerService {
    */
   protected final ASTGenerator astGenerator;
 
-  public ErrorCheckerService(JavaEditor editor) {
-    this.editor = editor;
-    astGenerator = new ASTGenerator(editor, this);
-  }
-
-
   /**
    * Error checking doesn't happen before this interval has ellapsed since the
    * last request() call.
    */
   private final static long errorCheckInterval = 650;
-
-  protected volatile PreprocessedSketch latestResult = PreprocessedSketch.empty();
 
   private Thread errorCheckerThread;
   private final BlockingQueue<Boolean> requestQueue = new ArrayBlockingQueue<>(1);
@@ -122,92 +117,57 @@ public class ErrorCheckerService {
   private volatile ScheduledFuture<?> scheduledUiUpdate = null;
   private volatile long nextUiUpdate = 0;
 
+  private final Object requestLock = new Object();
+  private final Object serialCallbackLock = new Object();
+  private boolean needsCheck = false;
+
+  private CompletableFuture<PreprocessedSketch> preprocessingTask =
+      new CompletableFuture<PreprocessedSketch>() {{
+        complete(PreprocessedSketch.empty()); // initialization block
+      }};
+
+  private CompletableFuture<?> lastErrorCheckTask =
+      new CompletableFuture() {{
+        complete(null); // initalization block
+      }};
+
+  private CompletableFuture<?> lastCallback =
+      new CompletableFuture() {{
+        complete(null); // initialization block
+      }};
+
+
+  public ErrorCheckerService(JavaEditor editor) {
+    this.editor = editor;
+    astGenerator = new ASTGenerator(editor, this);
+  }
+
+
   private final Runnable mainLoop = new Runnable() {
     @Override
     public void run() {
       running = true;
-
-      latestResult = checkCode();
-
-      if (!latestResult.hasSyntaxErrors && !latestResult.hasCompilationErrors) {
-//      editor.showProblemListView(Language.text("editor.footer.console"));
-        editor.showConsole();
-      }
-      // Make sure astGen has at least one CU to start with
-      // This is when the loaded sketch already has syntax errors.
-      // Completion wouldn't be complete, but it'd be still something
-      // better than nothing
-      if (ASTGenerator.SHOW_DEBUG_TREE) {
-        astGenerator.updateDebugTree(latestResult.compilationUnit);
-      }
-
+      PreprocessedSketch prevResult = PreprocessedSketch.empty();
       while (running) {
         try {
-          requestQueue.take(); // blocking until there is more work
+          requestQueue.take(); // blocking until check requested
         } catch (InterruptedException e) {
+          running = false;
           break;
         }
-        requestQueue.clear();
 
-        try {
+        Messages.log("Starting error check");
 
-          Messages.log("Starting error check");
-          PreprocessedSketch result = checkCode();
+        prevResult = preprocessSketch(prevResult);
 
-          if (!JavaMode.errorCheckEnabled) {
-            latestResult.problems.clear();
-            Messages.log("Error Check disabled, so not updating UI.");
+        synchronized (requestLock) {
+          if (requestQueue.isEmpty()) {
+            preprocessingTask.complete(prevResult);
           }
-
-          latestResult = result;
-
-          if (ASTGenerator.SHOW_DEBUG_TREE) {
-            astGenerator.updateDebugTree(latestResult.compilationUnit);
-          }
-
-          astGenerator.reloadShowUsage();
-
-          if (JavaMode.errorCheckEnabled) {
-            if (scheduledUiUpdate != null) {
-              scheduledUiUpdate.cancel(true);
-            }
-            // Update UI after a delay. See #2677
-            long delay = nextUiUpdate - System.currentTimeMillis();
-            Runnable uiUpdater = new Runnable() {
-              final PreprocessedSketch result = latestResult;
-
-              @Override
-              public void run() {
-                if (nextUiUpdate > 0 &&
-                    System.currentTimeMillis() >= nextUiUpdate) {
-                  EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                      updateErrorTable(result.problems);
-                      editor.updateErrorBar(result.problems);
-                      editor.getTextArea().repaint();
-                      editor.updateErrorToggle(result.hasSyntaxErrors || result.hasCompilationErrors);
-                    }
-                  });
-                }
-              }
-            };
-            scheduledUiUpdate = scheduler.schedule(uiUpdater, delay,
-                                                   TimeUnit.MILLISECONDS);
-          }
-        } catch (Exception e) {
-          e.printStackTrace();
         }
       }
 
-      synchronized (astGenerator) {
-        astGenerator.getGui().disposeAllWindows();
-      }
-      Messages.loge("Thread stopped: " + editor.getSketch().getName());
-
-      latestResult = null;
-
-      running = false;
+      astGenerator.getGui().disposeAllWindows();
     }
   };
 
@@ -222,7 +182,10 @@ public class ErrorCheckerService {
   public void stop() {
     cancel();
     running = false;
-    errorCheckerThread.interrupt();
+    if (errorCheckerThread != null) {
+      running = false;
+      errorCheckerThread.interrupt();
+    }
     if (scheduler != null) {
       scheduler.shutdownNow();
     }
@@ -238,13 +201,99 @@ public class ErrorCheckerService {
   }
 
 
-  public void request() {
-    nextUiUpdate = System.currentTimeMillis() + errorCheckInterval;
-    requestQueue.offer(Boolean.TRUE);
+  public void notifySketchChanged() {
+    if (editor.hasJavaTabs()) return;
+    synchronized (requestLock) {
+      if (preprocessingTask.isDone()) {
+        preprocessingTask = new CompletableFuture<>();
+        lastErrorCheckTask = preprocessingTask
+            // Run error handler after both preprocessing
+            // task and previous error handler completed
+            .thenAcceptBothAsync(lastErrorCheckTask,
+                                 (ps, a) -> handleSketchErrors(ps))
+            // Make sure exception in error handler won't spoil the chain
+            .handleAsync((res, e) -> {
+              if (e != null) Messages.loge("problem during error handling", e);
+              return res;
+            });
+        // Fire listeners, don't trigger check
+        acceptWhenDone(this::fireDoneListeners, false);
+      }
+      if (isContinuousCheckEnabled()) {
+        // Continuous check enabled, request
+        nextUiUpdate = System.currentTimeMillis() + errorCheckInterval;
+        requestQueue.offer(Boolean.TRUE);
+      } else {
+        // Continuous check not enabled, take note
+        needsCheck = true;
+      }
+    }
   }
 
 
-  public void addListener(Document doc) {
+  public void acceptWhenDone(Consumer<PreprocessedSketch> callback) {
+    // Public version always triggers check
+    acceptWhenDone(callback, true);
+  }
+
+
+  private void acceptWhenDone(Consumer<PreprocessedSketch> callback, boolean triggerCheck) {
+    if (editor.hasJavaTabs()) return;
+    if (triggerCheck) {
+      // Continuous check not enabled, request check now
+      synchronized (requestLock) {
+        if (!isContinuousCheckEnabled() && needsCheck) {
+          needsCheck = false;
+          requestQueue.offer(Boolean.TRUE);
+        }
+      }
+    }
+    synchronized (serialCallbackLock) {
+      lastCallback = preprocessingTask
+          // Run callback after both preprocessing task and previous callback
+          .thenAcceptBothAsync(lastCallback, (ps, a) -> callback.accept(ps))
+          // Make sure exception in callback won't cancel whole callback chain
+          .handleAsync((res, e) -> {
+            if (e != null) Messages.loge("problem during preprocessing callback", e);
+            return res;
+          });
+    }
+  }
+
+
+
+  /// LISTENERS ----------------------------------------------------------------
+
+
+  private Set<Consumer<PreprocessedSketch>> doneListeners = new CopyOnWriteArraySet<>();
+
+
+  public void registerDoneListener(Consumer<PreprocessedSketch> listener) {
+    if (listener != null) doneListeners.add(listener);
+  }
+
+
+  public void unregisterDoneListener(Consumer<PreprocessedSketch> listener) {
+    doneListeners.remove(listener);
+  }
+
+
+  private void fireDoneListeners(PreprocessedSketch ps) {
+    for (Consumer<PreprocessedSketch> listener : doneListeners) {
+      try {
+        listener.accept(ps);
+      } catch (Exception e) {
+        Messages.loge("error when firing ecs listener", e);
+      }
+    }
+  }
+
+
+  /// --------------------------------------------------------------------------
+
+
+
+  public void addDocumentListener(Document doc) {
     if (doc != null) doc.addDocumentListener(sketchChangedListener);
   }
 
@@ -257,25 +306,24 @@ public class ErrorCheckerService {
   protected final DocumentListener sketchChangedListener = new DocumentListener() {
     @Override
     public void insertUpdate(DocumentEvent e) {
-      if (JavaMode.errorCheckEnabled) request();
+      notifySketchChanged();
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
-      if (JavaMode.errorCheckEnabled) request();
+      notifySketchChanged();
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-      if (JavaMode.errorCheckEnabled) request();
+      notifySketchChanged();
     }
   };
 
 
-  protected PreprocessedSketch checkCode() {
+  protected PreprocessedSketch preprocessSketch(PreprocessedSketch prevResult) {
 
     PreprocessedSketch.Builder result = new PreprocessedSketch.Builder();
-    PreprocessedSketch prevResult = latestResult;
 
     List<ImportStatement> coreAndDefaultImports = result.coreAndDefaultImports;
     List<ImportStatement> codeFolderImports = result.codeFolderImports;
@@ -334,8 +382,6 @@ public class ErrorCheckerService {
     }
 
     // TODO: convert unicode escapes to chars
-
-    List<IProblem> problems = new ArrayList<>();
 
     SourceUtils.scrubCommentsAndStrings(workBuffer);
 
@@ -403,7 +449,7 @@ public class ErrorCheckerService {
 
     // Get syntax problems from compilable AST
     List<IProblem> syntaxProblems = Arrays.asList(compilableCU.getProblems());
-    problems.addAll(syntaxProblems);
+    result.problems.addAll(syntaxProblems);
     result.hasSyntaxErrors = syntaxProblems.stream().anyMatch(IProblem::isError);
 
     // Generate bindings after getting problems - avoids
@@ -414,9 +460,9 @@ public class ErrorCheckerService {
 
     // Show compilation problems only when there are no syntax problems
     if (!result.hasSyntaxErrors) {
-      problems.clear(); // clear warnings, they will be generated again
+      result.problems.clear(); // clear warnings, they will be generated again
       List<IProblem> bindingsProblems = Arrays.asList(bindingsCU.getProblems());
-      problems.addAll(bindingsProblems);
+      result.problems.addAll(bindingsProblems);
       result.hasCompilationErrors = bindingsProblems.stream().anyMatch(IProblem::isError);
     }
 
@@ -426,45 +472,51 @@ public class ErrorCheckerService {
     result.compilationUnit = bindingsCU;
 
     // Build it
-    PreprocessedSketch ps = result.build();
+    return result.build();
+  }
 
-    { // Process problems
-      List<Problem> mappedCompilationProblems = problems.stream()
-          // Filter Warnings if they are not enabled
-          .filter(iproblem -> !(iproblem.isWarning() && !JavaMode.warningsEnabled))
-          // Hide a useless error which is produced when a line ends with
-          // an identifier without a semicolon. "Missing a semicolon" is
-          // also produced and is preferred over this one.
-          // (Syntax error, insert ":: IdentifierOrNew" to complete Expression)
-          // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=405780
-          .filter(iproblem -> !iproblem.getMessage()
-              .contains("Syntax error, insert \":: IdentifierOrNew\""))
-          // Transform into our Problems
-          .map(iproblem -> {
-            int start = iproblem.getSourceStart();
-            int stop = iproblem.getSourceEnd() + 1; // make it exclusive
-            SketchInterval in = ps.mapJavaToSketch(start, stop);
-            int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
-            Problem p = new Problem(iproblem, in.tabIndex, line);
-            p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
-            return p;
+
+  private void handleSketchErrors(PreprocessedSketch ps) {
+    // Process problems
+    final List<Problem> problems = ps.problems.stream()
+        // Filter Warnings if they are not enabled
+        .filter(iproblem -> !(iproblem.isWarning() && !JavaMode.warningsEnabled))
+        // Hide a useless error which is produced when a line ends with
+        // an identifier without a semicolon. "Missing a semicolon" is
+        // also produced and is preferred over this one.
+        // (Syntax error, insert ":: IdentifierOrNew" to complete Expression)
+        // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=405780
+        .filter(iproblem -> !iproblem.getMessage()
+            .contains("Syntax error, insert \":: IdentifierOrNew\""))
+        // Transform into our Problems
+        .map(iproblem -> {
+          int start = iproblem.getSourceStart();
+          int stop = iproblem.getSourceEnd() + 1; // make it exclusive
+          SketchInterval in = ps.mapJavaToSketch(start, stop);
+          int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
+          Problem p = new Problem(iproblem, in.tabIndex, line);
+          p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
+          return p;
+        })
+        .collect(Collectors.toList());
+
+    // Handle import suggestions
+    if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
+      Map<String, List<Problem>> undefinedTypeProblems = problems.stream()
+          // Get only problems with undefined types/names
+          .filter(p -> {
+            int id = p.getIProblem().getID();
+            return id == IProblem.UndefinedType ||
+                id == IProblem.UndefinedName ||
+                id == IProblem.UnresolvedVariable;
           })
-          .collect(Collectors.toList());
+          // Group problems by the missing type/name
+          .collect(Collectors.groupingBy(p -> p.getIProblem().getArguments()[0]));
 
-      if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
-        Map<String, List<Problem>> undefinedTypeProblems = mappedCompilationProblems.stream()
-            // Get only problems with undefined types/names
-            .filter(p -> {
-              int id = p.getIProblem().getID();
-              return id == IProblem.UndefinedType || id == IProblem.UndefinedName;
-            })
-            // Group problems by the missing type/name
-            .collect(Collectors.groupingBy(p -> p.getIProblem().getArguments()[0]));
-
+      if (!undefinedTypeProblems.isEmpty()) {
         // TODO: cache this, invalidate if code folder or libraries change
-        final ClassPath cp = undefinedTypeProblems.isEmpty() ?
-            null :
-            classPathFactory.createFromPaths(buildClassPath(null));
+        String[] searchClassPath = buildClassPath(null);
+        final ClassPath cp = classPathFactory.createFromPaths(searchClassPath);
 
         // Get suggestions for each missing type, update the problems
         undefinedTypeProblems.entrySet().stream()
@@ -475,11 +527,30 @@ public class ErrorCheckerService {
               affectedProblems.forEach(p -> p.setImportSuggestions(suggestions));
             });
       }
-
-      ps.problems.addAll(mappedCompilationProblems);
     }
 
-    return ps;
+    final boolean updateErrorToggle = ps.hasSyntaxErrors ||
+        ps.hasCompilationErrors;
+
+    if (scheduledUiUpdate != null) {
+      scheduledUiUpdate.cancel(true);
+    }
+    // Update UI after a delay. See #2677
+    long delay = nextUiUpdate - System.currentTimeMillis();
+    Runnable uiUpdater = () -> {
+      if (nextUiUpdate > 0 && System.currentTimeMillis() >= nextUiUpdate) {
+        EventQueue.invokeLater(() -> {
+          if (JavaMode.errorCheckEnabled) {
+            updateErrorTable(problems);
+            editor.updateErrorBar(problems);
+            editor.getTextArea().repaint();
+            editor.updateErrorToggle(updateErrorToggle);
+          }
+        });
+      }
+    };
+    scheduledUiUpdate = scheduler.schedule(uiUpdater, delay,
+                                           TimeUnit.MILLISECONDS);
   }
 
 
@@ -589,6 +660,7 @@ public class ErrorCheckerService {
     return (CompilationUnit) parser.createAST(null);
   }
 
+
   protected static CompilationUnit makeASTWithBindings(ASTParser parser,
                                                        char[] source,
                                                        Map<String, String> options,
@@ -606,11 +678,6 @@ public class ErrorCheckerService {
   }
 
 
-  public CompilationUnit getLatestCU() {
-    return latestResult.compilationUnit;
-  }
-
-
   /**
    * Ignore processing packages, java.*.*. etc.
    */
@@ -620,12 +687,12 @@ public class ErrorCheckerService {
   }
 
 
-  protected boolean ignorableSuggestionImport(String impName) {
+  protected static boolean ignorableSuggestionImport(PreprocessedSketch ps, String impName) {
 
     String impNameLc = impName.toLowerCase();
 
-    List<ImportStatement> programImports = latestResult.programImports;
-    List<ImportStatement> codeFolderImports = latestResult.codeFolderImports;
+    List<ImportStatement> programImports = ps.programImports;
+    List<ImportStatement> codeFolderImports = ps.codeFolderImports;
 
     boolean isImported = Stream
         .concat(programImports.stream(), codeFolderImports.stream())
@@ -653,6 +720,7 @@ public class ErrorCheckerService {
 
     return true;
   }
+
 
   static private final Map<String, String> COMPILER_OPTIONS;
   static {
@@ -721,7 +789,6 @@ public class ErrorCheckerService {
     } catch (Exception e) {
       Messages.loge("Exception at updateErrorTable()", e);
       e.printStackTrace();
-      cancel();
     }
   }
 
@@ -793,8 +860,7 @@ public class ErrorCheckerService {
   }
 
 
-  public void highlightNode(ASTNode node) {
-    PreprocessedSketch ps = latestResult;
+  public void highlightNode(PreprocessedSketch ps, ASTNode node) {
     SketchInterval si = ps.mapJavaToSketch(node);
     EventQueue.invokeLater(() -> {
       highlightTabRange(si.tabIndex, si.startTabOffset, si.stopTabOffset);
@@ -822,18 +888,22 @@ public class ErrorCheckerService {
   }
 
 
+  private static boolean isContinuousCheckEnabled() {
+    return JavaMode.errorCheckEnabled;
+  }
+
+
   public void handleErrorCheckingToggle() {
     if (!JavaMode.errorCheckEnabled) {
       Messages.log(editor.getSketch().getName() + " Error Checker disabled.");
       editor.getErrorPoints().clear();
-      latestResult.problems.clear();
-      updateErrorTable(Collections.<Problem>emptyList());
+      updateErrorTable(Collections.emptyList());
       updateEditorStatus();
       editor.getTextArea().repaint();
       editor.repaintErrorBar();
     } else {
       Messages.log(editor.getSketch().getName() + " Error Checker enabled.");
-      request();
+      notifySketchChanged();
     }
   }
 

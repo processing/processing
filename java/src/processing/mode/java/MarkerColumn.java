@@ -31,12 +31,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
-import javax.swing.text.BadLocationException;
 
 import processing.app.Mode;
 import processing.app.Sketch;
 import processing.app.SketchCode;
-import processing.app.Util;
 import processing.app.ui.Editor;
 import processing.core.PApplet;
 import processing.mode.java.pdex.LineMarker;
@@ -96,7 +94,10 @@ public class MarkerColumn extends JPanel {
     g.drawImage(editor.getJavaTextArea().getGutterGradient(),
                 0, 0, getWidth(), getHeight(), this);
 
+    int currentTabIndex = editor.getSketch().getCurrentCodeIndex();
+
     for (LineMarker m : errorPoints) {
+      if (m.getProblem().getTabIndex() != currentTabIndex) continue;
       if (m.getType() == LineMarker.ERROR) {
         g.setColor(errorColor);
       } else {
@@ -113,17 +114,11 @@ public class MarkerColumn extends JPanel {
 
 
 	public void updateErrorPoints(final List<Problem> problems) {
-	  // NOTE: ErrorMarkers are calculated for the present tab only Error Marker
-	  // index in the arraylist is LOCALIZED for current tab.
-	  Sketch sketch = editor.getSketch();
-	  int currentTab = sketch.getCurrentCodeIndex();
 	  errorPoints.clear();
 	  // Each problem.getSourceLine() will have an extra line added because
 	  // of class declaration in the beginning as well as default imports
 	  for (Problem problem : problems) {
-	    if (problem.getTabIndex() == currentTab) {
-	      errorPoints.add(new LineMarker(problem, problem.isError()));
-	    }
+	    errorPoints.add(new LineMarker(problem, problem.isError()));
 	  }
 	  repaint();
 	  editor.getErrorChecker().updateEditorStatus();
@@ -175,22 +170,21 @@ public class MarkerColumn extends JPanel {
 	  if (errorPoints != null && errorPoints.size() > 0) {
 	    Sketch sketch = editor.getSketch();
 	    SketchCode code = sketch.getCurrentCode();
-	    int totalLines;
-	    try {
-	      totalLines = Util.countLines(code.getDocumentText());
-	    } catch (BadLocationException e) {
-	      e.printStackTrace();
-	      totalLines = 1; // do not divide by zero
-	    }
+	    int currentTab = sketch.getCurrentCodeIndex();
+	    int totalLines = PApplet.max(1, code.getLineCount()); // do not divide by zero
 	    int visibleLines = editor.getTextArea().getVisibleLines();
 	    totalLines = PApplet.max(totalLines, visibleLines);
 
+	    int topMargin = 20; // top scroll button
+	    int bottomMargin = 40; // bottom scroll button and horizontal scrollbar
+	    int height = getHeight() - topMargin - bottomMargin;
+
 	    for (LineMarker m : errorPoints) {
+	      if (m.getProblem().getTabIndex() != currentTab) continue;
 	      // Ratio of error line to total lines
-	      float y = (m.getLineNumber() + 1) / ((float) totalLines);
+	      float ratio = (m.getLineNumber() + 1) / ((float) totalLines);
 	      // Ratio multiplied by height of the error bar
-	      y *= getHeight();
-	      y -= 15; // -15 is just a vertical offset
+	      float y = topMargin + ratio * height;
 
 	      m.setY((int) y);
 	    }
