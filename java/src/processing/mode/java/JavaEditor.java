@@ -5,7 +5,6 @@ import java.awt.event.*;
 import java.beans.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -204,9 +203,15 @@ public class JavaEditor extends Editor {
         super.rebuild();
 
         // after Rename and New Tab, we may have new .java tabs
-        hasJavaTabs = checkForJavaTabs();
+        boolean newHasJavaTabs = checkForJavaTabs();
+        boolean hasJavaTabsChanged = hasJavaTabs != newHasJavaTabs;
+        hasJavaTabs = newHasJavaTabs;
 
         if (errorCheckerService != null) {
+          if (hasJavaTabsChanged) {
+            errorCheckerService.handleHasJavaTabsChange(hasJavaTabs);
+          }
+
           int currentTabCount = sketch.getCodeCount();
           if (currentTabCount != previousTabCount) {
             previousTabCount = currentTabCount;
@@ -2753,7 +2758,7 @@ public class JavaEditor extends Editor {
       jmode.loadPreferences();
       Messages.log("Applying prefs");
       // trigger it once to refresh UI
-      errorCheckerService.handleErrorCheckingToggle();
+      errorCheckerService.handlePreferencesChange();
     }
   }
 

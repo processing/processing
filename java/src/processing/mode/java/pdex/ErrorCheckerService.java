@@ -118,7 +118,6 @@ public class ErrorCheckerService {
   private volatile long nextUiUpdate = 0;
 
   private final Object requestLock = new Object();
-  private final Object serialCallbackLock = new Object();
   private boolean needsCheck = false;
 
   private CompletableFuture<PreprocessedSketch> preprocessingTask =
@@ -126,20 +125,23 @@ public class ErrorCheckerService {
         complete(PreprocessedSketch.empty()); // initialization block
       }};
 
-  private CompletableFuture<?> lastErrorCheckTask =
-      new CompletableFuture() {{
-        complete(null); // initalization block
-      }};
-
   private CompletableFuture<?> lastCallback =
       new CompletableFuture() {{
         complete(null); // initialization block
       }};
 
+  private final Consumer<PreprocessedSketch> errorHandlerListener = this::handleSketchErrors;
+
+  private volatile boolean isEnabled = true;
+  private volatile boolean isContinuousCheckEnabled = true;
+
 
   public ErrorCheckerService(JavaEditor editor) {
     this.editor = editor;
     astGenerator = new ASTGenerator(editor, this);
+    isEnabled = !editor.hasJavaTabs();
+    isContinuousCheckEnabled = JavaMode.errorCheckEnabled;
+    registerDoneListener(errorHandlerListener);
   }
 
 
@@ -202,24 +204,14 @@ public class ErrorCheckerService {
 
 
   public void notifySketchChanged() {
-    if (editor.hasJavaTabs()) return;
+    if (!isEnabled) return;
     synchronized (requestLock) {
       if (preprocessingTask.isDone()) {
         preprocessingTask = new CompletableFuture<>();
-        lastErrorCheckTask = preprocessingTask
-            // Run error handler after both preprocessing
-            // task and previous error handler completed
-            .thenAcceptBothAsync(lastErrorCheckTask,
-                                 (ps, a) -> handleSketchErrors(ps))
-            // Make sure exception in error handler won't spoil the chain
-            .handleAsync((res, e) -> {
-              if (e != null) Messages.loge("problem during error handling", e);
-              return res;
-            });
-        // Fire listeners, don't trigger check
-        acceptWhenDone(this::fireDoneListeners, false);
+        // Register callback which executes all listeners
+        registerCallback(this::fireDoneListeners);
       }
-      if (isContinuousCheckEnabled()) {
+      if (isContinuousCheckEnabled) {
         // Continuous check enabled, request
         nextUiUpdate = System.currentTimeMillis() + errorCheckInterval;
         requestQueue.offer(Boolean.TRUE);
@@ -231,24 +223,9 @@ public class ErrorCheckerService {
   }
 
 
-  public void acceptWhenDone(Consumer<PreprocessedSketch> callback) {
-    // Public version always triggers check
-    acceptWhenDone(callback, true);
-  }
-
-
-  private void acceptWhenDone(Consumer<PreprocessedSketch> callback, boolean triggerCheck) {
-    if (editor.hasJavaTabs()) return;
-    if (triggerCheck) {
-      // Continuous check not enabled, request check now
-      synchronized (requestLock) {
-        if (!isContinuousCheckEnabled() && needsCheck) {
-          needsCheck = false;
-          requestQueue.offer(Boolean.TRUE);
-        }
-      }
-    }
-    synchronized (serialCallbackLock) {
+  private void registerCallback(Consumer<PreprocessedSketch> callback) {
+    if (!isEnabled) return;
+    synchronized (requestLock) {
       lastCallback = preprocessingTask
           // Run callback after both preprocessing task and previous callback
           .thenAcceptBothAsync(lastCallback, (ps, a) -> callback.accept(ps))
@@ -257,6 +234,19 @@ public class ErrorCheckerService {
             if (e != null) Messages.loge("problem during preprocessing callback", e);
             return res;
           });
+    }
+  }
+
+
+  public void acceptWhenDone(Consumer<PreprocessedSketch> callback) {
+    if (!isEnabled) return;
+    synchronized (requestLock) {
+      // Continuous check not enabled, request check now
+      if (needsCheck && !isContinuousCheckEnabled) {
+        needsCheck = false;
+        requestQueue.offer(Boolean.TRUE);
+      }
+      registerCallback(callback);
     }
   }
 
@@ -529,7 +519,7 @@ public class ErrorCheckerService {
       }
     }
 
-    final boolean updateErrorToggle = ps.hasSyntaxErrors ||
+    final boolean hasErrors = ps.hasSyntaxErrors ||
         ps.hasCompilationErrors;
 
     if (scheduledUiUpdate != null) {
@@ -540,17 +530,22 @@ public class ErrorCheckerService {
     Runnable uiUpdater = () -> {
       if (nextUiUpdate > 0 && System.currentTimeMillis() >= nextUiUpdate) {
         EventQueue.invokeLater(() -> {
-          if (JavaMode.errorCheckEnabled) {
-            updateErrorTable(problems);
-            editor.updateErrorBar(problems);
-            editor.getTextArea().repaint();
-            editor.updateErrorToggle(updateErrorToggle);
+          if (isContinuousCheckEnabled) {
+            setProblemList(problems, hasErrors);
           }
         });
       }
     };
     scheduledUiUpdate = scheduler.schedule(uiUpdater, delay,
                                            TimeUnit.MILLISECONDS);
+  }
+
+
+  protected void setProblemList(List<Problem> problems, boolean hasErrors) {
+    updateErrorTable(problems);
+    editor.updateErrorBar(problems);
+    editor.getTextArea().repaint();
+    editor.updateErrorToggle(hasErrors);
   }
 
 
@@ -811,7 +806,7 @@ public class ErrorCheckerService {
 
     // editor.statusNotice("Position: " +
     // editor.getTextArea().getCaretLine());
-    if (JavaMode.errorCheckEnabled) {
+    if (isContinuousCheckEnabled) {
       LineMarker errorMarker = editor.findError(editor.getTextArea().getCaretLine());
       if (errorMarker != null) {
         if (errorMarker.getType() == LineMarker.WARNING) {
@@ -897,22 +892,28 @@ public class ErrorCheckerService {
   }
 
 
-  private static boolean isContinuousCheckEnabled() {
-    return JavaMode.errorCheckEnabled;
+  public void handlePreferencesChange() {
+    isContinuousCheckEnabled = JavaMode.errorCheckEnabled;
+    if (isContinuousCheckEnabled) {
+      Messages.log(editor.getSketch().getName() + " Error Checker enabled.");
+      notifySketchChanged();
+    } else {
+      Messages.log(editor.getSketch().getName() + " Error Checker disabled.");
+      setProblemList(Collections.emptyList(), false);
+    }
   }
 
 
-  public void handleErrorCheckingToggle() {
-    if (!JavaMode.errorCheckEnabled) {
-      Messages.log(editor.getSketch().getName() + " Error Checker disabled.");
-      editor.getErrorPoints().clear();
-      updateErrorTable(Collections.emptyList());
-      updateEditorStatus();
-      editor.getTextArea().repaint();
-      editor.repaintErrorBar();
-    } else {
-      Messages.log(editor.getSketch().getName() + " Error Checker enabled.");
+  public void handleHasJavaTabsChange(boolean hasJavaTabs) {
+    isEnabled = !hasJavaTabs;
+    if (isEnabled) {
       notifySketchChanged();
+    } else {
+      preprocessingTask.cancel(false);
+      setProblemList(Collections.emptyList(), false);
+      if (astGenerator.getGui().showUsageBinding != null) {
+        astGenerator.getGui().showUsageWindow.setVisible(false);
+      }
     }
   }
 

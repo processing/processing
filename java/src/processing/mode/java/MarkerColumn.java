@@ -29,6 +29,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
@@ -114,12 +115,9 @@ public class MarkerColumn extends JPanel {
 
 
 	public void updateErrorPoints(final List<Problem> problems) {
-	  errorPoints.clear();
-	  // Each problem.getSourceLine() will have an extra line added because
-	  // of class declaration in the beginning as well as default imports
-	  for (Problem problem : problems) {
-	    errorPoints.add(new LineMarker(problem, problem.isError()));
-	  }
+	  errorPoints = problems.stream()
+	      .map(problem -> new LineMarker(problem, problem.isError()))
+	      .collect(Collectors.toList());
 	  repaint();
 	  editor.getErrorChecker().updateEditorStatus();
 	}
@@ -166,7 +164,6 @@ public class MarkerColumn extends JPanel {
 
 
 	private void recalculateMarkerPositions() {
-	  List<LineMarker> errorPoints = getErrorPoints();
 	  if (errorPoints != null && errorPoints.size() > 0) {
 	    Sketch sketch = editor.getSketch();
 	    SketchCode code = sketch.getCurrentCode();
