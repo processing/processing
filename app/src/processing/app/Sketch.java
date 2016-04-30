@@ -673,11 +673,12 @@ public class Sketch {
         // remove code from the list
         removeCode(current);
 
+        // update the tabs
+        editor.rebuildHeader();
+
         // just set current tab to the main tab
         setCurrentCode(0);
 
-        // update the tabs
-        editor.rebuildHeader();
       }
     }
   }

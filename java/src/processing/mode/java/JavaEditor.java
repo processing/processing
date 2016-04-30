@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.beans.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -130,9 +131,6 @@ public class JavaEditor extends Editor {
     getSketch().setModified(false);
 
     hasJavaTabs = checkForJavaTabs();
-    //initializeErrorChecker();
-
-    initErrorChecker();
 
     // hack to add a JPanel to the right-hand side of the text area
     JPanel textAndError = new JPanel();
@@ -149,6 +147,8 @@ public class JavaEditor extends Editor {
     box.add(textAndError);
 
     getJavaTextArea().setMode(jmode);
+
+    initErrorChecker();
 
     // ensure completion is hidden when editor loses focus
     addWindowFocusListener(new WindowFocusListener() {
@@ -195,6 +195,8 @@ public class JavaEditor extends Editor {
   }
 
 
+  private int previousTabCount = 1;
+
   // Override the parent call to add hook to the rebuild() method
   public EditorHeader createHeader() {
     return new EditorHeader(this) {
@@ -203,6 +205,14 @@ public class JavaEditor extends Editor {
 
         // after Rename and New Tab, we may have new .java tabs
         hasJavaTabs = checkForJavaTabs();
+
+        if (errorCheckerService != null) {
+          int currentTabCount = sketch.getCodeCount();
+          if (currentTabCount != previousTabCount) {
+            previousTabCount = currentTabCount;
+            errorCheckerService.notifySketchChanged();
+          }
+        }
       }
     };
   }
