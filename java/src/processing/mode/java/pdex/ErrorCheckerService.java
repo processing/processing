@@ -57,7 +57,6 @@ import javax.swing.text.Document;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -68,9 +67,6 @@ import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.SketchException;
 import processing.app.Util;
-import processing.app.ui.EditorStatus;
-import processing.app.ui.ErrorTable;
-import processing.core.PApplet;
 import processing.data.IntList;
 import processing.data.StringList;
 import processing.mode.java.JavaEditor;
@@ -130,7 +126,7 @@ public class ErrorCheckerService {
         complete(null); // initialization block
       }};
 
-  private final Consumer<PreprocessedSketch> errorHandlerListener = this::handleSketchErrors;
+  private final Consumer<PreprocessedSketch> errorHandlerListener = this::handleSketchProblems;
 
   private volatile boolean isEnabled = true;
   private volatile boolean isContinuousCheckEnabled = true;
@@ -466,7 +462,7 @@ public class ErrorCheckerService {
   }
 
 
-  private void handleSketchErrors(PreprocessedSketch ps) {
+  private void handleSketchProblems(PreprocessedSketch ps) {
     // Process problems
     final List<Problem> problems = ps.problems.stream()
         // Filter Warnings if they are not enabled
@@ -519,9 +515,6 @@ public class ErrorCheckerService {
       }
     }
 
-    final boolean hasErrors = ps.hasSyntaxErrors ||
-        ps.hasCompilationErrors;
-
     if (scheduledUiUpdate != null) {
       scheduledUiUpdate.cancel(true);
     }
@@ -531,21 +524,13 @@ public class ErrorCheckerService {
       if (nextUiUpdate > 0 && System.currentTimeMillis() >= nextUiUpdate) {
         EventQueue.invokeLater(() -> {
           if (isContinuousCheckEnabled) {
-            setProblemList(problems, hasErrors);
+            editor.setProblemList(problems);
           }
         });
       }
     };
     scheduledUiUpdate = scheduler.schedule(uiUpdater, delay,
                                            TimeUnit.MILLISECONDS);
-  }
-
-
-  protected void setProblemList(List<Problem> problems, boolean hasErrors) {
-    updateErrorTable(problems);
-    editor.updateErrorBar(problems);
-    editor.getTextArea().repaint();
-    editor.updateErrorToggle(hasErrors);
   }
 
 
@@ -769,110 +754,6 @@ public class ErrorCheckerService {
 
 
   /**
-   * Updates the error table in the Error Window.
-   */
-  protected void updateErrorTable(List<Problem> problems) {
-    try {
-      ErrorTable table = editor.getErrorTable();
-      table.clearRows();
-
-      Sketch sketch = editor.getSketch();
-      for (Problem p : problems) {
-        String message = p.getMessage();
-        if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF) &&
-            p.getImportSuggestions() != null &&
-            p.getImportSuggestions().length > 0) {
-          message += " (double-click for suggestions)";
-        }
-
-        table.addRow(p, message,
-                     sketch.getCode(p.getTabIndex()).getPrettyName(),
-                     Integer.toString(p.getLineNumber() + 1));
-        // Added +1 because lineNumbers internally are 0-indexed
-      }
-    } catch (Exception e) {
-      Messages.loge("Exception at updateErrorTable()", e);
-      e.printStackTrace();
-    }
-  }
-
-
-  /**
-   * Updates editor status bar, depending on whether the caret is on an error
-   * line or not
-   */
-  public void updateEditorStatus() {
-//    if (editor.getStatusMode() == EditorStatus.EDIT) return;
-
-    // editor.statusNotice("Position: " +
-    // editor.getTextArea().getCaretLine());
-    if (isContinuousCheckEnabled) {
-      LineMarker errorMarker = editor.findError(editor.getTextArea().getCaretLine());
-      if (errorMarker != null) {
-        if (errorMarker.getType() == LineMarker.WARNING) {
-          editor.statusMessage(errorMarker.getProblem().getMessage(),
-                               EditorStatus.CURSOR_LINE_WARNING);
-        } else {
-          editor.statusMessage(errorMarker.getProblem().getMessage(),
-                               EditorStatus.CURSOR_LINE_ERROR);
-        }
-      } else {
-        switch (editor.getStatusMode()) {
-          case EditorStatus.CURSOR_LINE_ERROR:
-          case EditorStatus.CURSOR_LINE_WARNING:
-            editor.statusEmpty();
-            break;
-        }
-      }
-    }
-
-//    // This line isn't an error line anymore, so probably just clear it
-//    if (editor.statusMessageType == JavaEditor.STATUS_COMPILER_ERR) {
-//      editor.statusEmpty();
-//      return;
-//    }
-  }
-
-
-  // TODO: does this belong here?
-  // Thread: EDT
-  public void scrollToErrorLine(Problem p) {
-    if (p == null) return;
-    highlightTabRange(p.getTabIndex(), p.getStartOffset(), p.getStopOffset());
-  }
-
-  // TODO: does this belong here?
-  // Thread: EDT
-  public void highlightTabRange(int tabIndex, int startTabOffset, int stopTabOffset) {
-    if (editor == null) return;
-
-    // Switch to tab
-    editor.toFront();
-    editor.getSketch().setCurrentCode(tabIndex);
-
-    // Make sure offsets are in bounds
-    int length = editor.getTextArea().getDocumentLength();
-    startTabOffset = PApplet.constrain(startTabOffset, 0, length);
-    stopTabOffset = PApplet.constrain(stopTabOffset, 0, length);
-
-    // Highlight the code
-    editor.getTextArea().select(startTabOffset, stopTabOffset);
-
-    // Scroll to error line
-    editor.getTextArea().scrollToCaret();
-    editor.repaint();
-  }
-
-
-  public void highlightNode(PreprocessedSketch ps, ASTNode node) {
-    SketchInterval si = ps.mapJavaToSketch(node);
-    EventQueue.invokeLater(() -> {
-      highlightTabRange(si.tabIndex, si.startTabOffset, si.stopTabOffset);
-    });
-  }
-
-
-  /**
    * Checks if import statements in the sketch have changed. If they have,
    * compiler classpath needs to be updated.
    */
@@ -899,7 +780,6 @@ public class ErrorCheckerService {
       notifySketchChanged();
     } else {
       Messages.log(editor.getSketch().getName() + " Error Checker disabled.");
-      setProblemList(Collections.emptyList(), false);
     }
   }
 
@@ -910,7 +790,6 @@ public class ErrorCheckerService {
       notifySketchChanged();
     } else {
       preprocessingTask.cancel(false);
-      setProblemList(Collections.emptyList(), false);
       if (astGenerator.getGui().showUsageBinding != null) {
         astGenerator.getGui().showUsageWindow.setVisible(false);
       }

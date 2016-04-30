@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.beans.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,6 @@ import processing.mode.java.debug.LineID;
 import processing.mode.java.pdex.ASTGenerator;
 import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.ImportStatement;
-import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.Problem;
 import processing.mode.java.pdex.SourceUtils;
@@ -71,6 +71,8 @@ public class JavaEditor extends Editor {
   private boolean javaTabWarned;
 
   protected ErrorCheckerService errorCheckerService;
+
+  protected List<Problem> problems = Collections.emptyList();
 
 
   protected JavaEditor(Base base, String path, EditorState state,
@@ -160,7 +162,7 @@ public class JavaEditor extends Editor {
 
     textarea.addCaretListener(new CaretListener() {
       public void caretUpdate(CaretEvent e) {
-        errorCheckerService.updateEditorStatus();
+        updateEditorStatus();
       }
     });
   }
@@ -210,6 +212,9 @@ public class JavaEditor extends Editor {
         if (errorCheckerService != null) {
           if (hasJavaTabsChanged) {
             errorCheckerService.handleHasJavaTabsChange(hasJavaTabs);
+            if (hasJavaTabs) {
+              setProblemList(Collections.emptyList());
+            }
           }
 
           int currentTabCount = sketch.getCodeCount();
@@ -2512,31 +2517,106 @@ public class JavaEditor extends Editor {
 //  }
 
 
-  public void updateErrorBar(List<Problem> problems) {
+  public void setProblemList(List<Problem> problems) {
+    this.problems = problems;
+    boolean hasErrors = problems.stream().anyMatch(Problem::isError);
+    updateErrorTable(problems);
     errorColumn.updateErrorPoints(problems);
+    textarea.repaint();
+    updateErrorToggle(hasErrors);
+    updateEditorStatus();
   }
 
 
-  public List<LineMarker> getErrorPoints() {
-    return errorColumn.getErrorPoints();
+  /**
+   * Updates the error table in the Error Window.
+   */
+  public void updateErrorTable(List<Problem> problems) {
+    errorTable.clearRows();
+
+    for (Problem p : problems) {
+      String message = p.getMessage();
+      if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF) &&
+          p.getImportSuggestions() != null &&
+          p.getImportSuggestions().length > 0) {
+        message += " (double-click for suggestions)";
+      }
+
+      errorTable.addRow(p, message,
+                   sketch.getCode(p.getTabIndex()).getPrettyName(),
+                   Integer.toString(p.getLineNumber() + 1));
+      // Added +1 because lineNumbers internally are 0-indexed
+    }
+  }
+
+
+  public void highlight(Problem p) {
+    if (p != null) {
+      highlight(p.getTabIndex(), p.getStartOffset(), p.getStartOffset());
+    }
+  }
+
+
+  public void highlight(int tabIndex, int startOffset, int stopOffset) {
+    // Switch to tab
+    toFront();
+    sketch.setCurrentCode(tabIndex);
+
+    // Make sure offsets are in bounds
+    int length = textarea.getDocumentLength();
+    startOffset = PApplet.constrain(startOffset, 0, length);
+    stopOffset = PApplet.constrain(stopOffset, 0, length);
+
+    // Highlight the code
+    textarea.select(startOffset, stopOffset);
+
+    // Scroll to error line
+    textarea.scrollToCaret();
+    repaint();
+  }
+
+
+  public List<Problem> getProblems() {
+    return problems;
+  }
+
+
+  /**
+   * Updates editor status bar, depending on whether the caret is on an error
+   * line or not
+   */
+  public void updateEditorStatus() {
+    if (JavaMode.errorCheckEnabled) {
+      Problem problem = findError(textarea.getCaretLine());
+      if (problem != null) {
+        int type = problem.isError() ?
+            EditorStatus.CURSOR_LINE_ERROR : EditorStatus.CURSOR_LINE_WARNING;
+        statusMessage(problem.getMessage(), type);
+      } else {
+        switch (getStatusMode()) {
+          case EditorStatus.CURSOR_LINE_ERROR:
+          case EditorStatus.CURSOR_LINE_WARNING:
+            statusEmpty();
+            break;
+        }
+      }
+    }
   }
 
 
   /**
    * @return the LineMarker for the first error or warning on 'line'
    */
-  public LineMarker findError(int line) {
-    List<LineMarker> errorPoints = getErrorPoints();
+  public Problem findError(int line) {
     JavaTextArea textArea = getJavaTextArea();
     int currentTab = getSketch().getCurrentCodeIndex();
-    for (LineMarker emarker : errorPoints) {
-      if (emarker.getProblem().getTabIndex() != currentTab) continue;
-      Problem p = emarker.getProblem();
+    for (Problem p : problems) {
+      if (p.getTabIndex() != currentTab) continue;
       int pStartLine = p.getLineNumber();
       int pEndOffset = p.getStopOffset();
       int pEndLine = textArea.getLineOfOffset(pEndOffset);
       if (line >= pStartLine && line <= pEndLine) {
-        return emarker;
+        return p;
       }
     }
     return null;
@@ -2573,8 +2653,7 @@ public class JavaEditor extends Editor {
 
 
   public void errorTableClick(Object item) {
-    Problem p = (Problem) item;
-    errorCheckerService.scrollToErrorLine(p);
+    highlight((Problem) item);
   }
 
 
@@ -2598,6 +2677,8 @@ public class JavaEditor extends Editor {
       //        showImportSuggestion(temp, evt.getXOnScreen(), evt.getYOnScreen() - 3 * getFont().getSize());
       Point mouse = MouseInfo.getPointerInfo().getLocation();
       showImportSuggestion(temp, mouse.x, mouse.y);
+    } else {
+      errorTableClick(item);
     }
   }
 
@@ -2759,6 +2840,7 @@ public class JavaEditor extends Editor {
       Messages.log("Applying prefs");
       // trigger it once to refresh UI
       errorCheckerService.handlePreferencesChange();
+      setProblemList(Collections.emptyList());
     }
   }
 

@@ -300,10 +300,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * @param x
    */
   protected void paintErrorLine(Graphics gfx, int line, int x) {
-    LineMarker marker = getJavaEditor().findError(line);
-    if (marker != null) {
-      Problem problem = marker.getProblem();
-
+    Problem problem = getJavaEditor().findError(line);
+    if (problem != null) {
       int startOffset = problem.getStartOffset();
       int stopOffset = problem.getStopOffset();
 
@@ -347,7 +345,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
         x2 += Editor.LEFT_GUTTER;
 
         gfx.setColor(errorUnderlineColor);
-        if (marker.getType() == LineMarker.WARNING) {
+        if (problem.isWarning()) {
           gfx.setColor(warningUnderlineColor);
         }
         paintSquiggle(gfx, y1, x1, x2);
@@ -388,10 +386,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
   public String getToolTipText(MouseEvent evt) {
     int line = evt.getY() / getFontMetrics().getHeight() + textArea.getFirstLine();
     if (line >= 0 || line < textArea.getLineCount()) {
-      LineMarker marker = getJavaEditor().findError(line);
-      if (marker != null) {
-        Problem problem = marker.getProblem();
-
+      Problem problem = getJavaEditor().findError(line);
+      if (problem != null) {
         int lineStart = textArea.getLineStartOffset(line);
         int lineEnd = textArea.getLineStopOffset(line);
 

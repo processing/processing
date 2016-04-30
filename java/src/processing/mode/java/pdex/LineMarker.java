@@ -41,9 +41,9 @@ public class LineMarker {
   private Problem problem;
 
 
-  public LineMarker(Problem problem, boolean error) {
+  public LineMarker(Problem problem) {
     this.problem = problem;
-    this.type = error ? ERROR : WARNING;
+    this.type = problem.isError() ? ERROR : WARNING;
   }
 
 

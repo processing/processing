@@ -2583,8 +2583,16 @@ public class ASTGenerator {
         handleShowUsage(ps, binding);
       } else {
         Messages.log("found declaration, offset " + decl.getStartPosition() + ", name: " + declName);
-        ecs.highlightNode(ps, declName);
+        highlightNode(ps, declName);
       }
+    });
+  }
+
+
+  public void highlightNode(PreprocessedSketch ps, ASTNode node) {
+    SketchInterval si = ps.mapJavaToSketch(node);
+    EventQueue.invokeLater(() -> {
+      editor.highlight(si.tabIndex, si.startTabOffset, si.stopTabOffset);
     });
   }
 
@@ -2760,9 +2768,7 @@ public class ASTGenerator {
 
         if (tnode.getUserObject() instanceof ShowUsageTreeNode) {
           ShowUsageTreeNode node = (ShowUsageTreeNode) tnode.getUserObject();
-          astGen.ecs.highlightTabRange(node.tabIndex,
-                                       node.startTabOffset,
-                                       node.stopTabOffset);
+          editor.highlight(node.tabIndex, node.startTabOffset, node.stopTabOffset);
         }
       });
     }
@@ -2963,7 +2969,7 @@ public class ASTGenerator {
         if (tnode.getUserObject() instanceof ASTNode) {
           ASTNode node = (ASTNode) tnode.getUserObject();
 
-          astGen.ecs.acceptWhenDone(ps1 -> astGen.ecs.highlightNode(ps1, node));
+          astGen.ecs.acceptWhenDone(ps1 -> astGen.highlightNode(ps1, node));
         }
       });
     }

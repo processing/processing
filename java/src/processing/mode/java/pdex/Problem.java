@@ -157,10 +157,7 @@ public class Problem implements ErrorTable.Entry {
     importSuggestions = a;
   }
 
-  private static Pattern pattern;
-  private static Matcher matcher;
-
-  private static final String tokenRegExp = "\\b token\\b";
+  private static final Pattern tokenRegExp = Pattern.compile("\\b token\\b");
 
   public static String process(IProblem problem) {
     return process(problem.getMessage());
@@ -178,8 +175,7 @@ public class Problem implements ErrorTable.Entry {
     // Remove all instances of token
     // "Syntax error on token 'blah', delete this token"
 	if(message == null) return null;
-    pattern = Pattern.compile(tokenRegExp);
-    matcher = pattern.matcher(message);
+    Matcher matcher = tokenRegExp.matcher(message);
     message = matcher.replaceAll("");
 
     return message;

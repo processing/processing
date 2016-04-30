@@ -91,6 +91,7 @@ public class MarkerColumn extends JPanel {
 	}
 
 
+  @Override
   public void paintComponent(Graphics g) {
     g.drawImage(editor.getJavaTextArea().getGutterGradient(),
                 0, 0, getWidth(), getHeight(), this);
@@ -109,17 +110,11 @@ public class MarkerColumn extends JPanel {
   }
 
 
-	public List<LineMarker> getErrorPoints() {
-	  return errorPoints;
-	}
-
-
 	public void updateErrorPoints(final List<Problem> problems) {
 	  errorPoints = problems.stream()
-	      .map(problem -> new LineMarker(problem, problem.isError()))
+	      .map(LineMarker::new)
 	      .collect(Collectors.toList());
 	  repaint();
-	  editor.getErrorChecker().updateEditorStatus();
 	}
 
 
@@ -128,7 +123,7 @@ public class MarkerColumn extends JPanel {
 	  try {
       LineMarker m = findClosestMarker(y);
       if (m != null) {
-        editor.getErrorChecker().scrollToErrorLine(m.getProblem());
+        editor.highlight(m.getProblem());
       }
 	  } catch (Exception ex) {
 	    ex.printStackTrace();
