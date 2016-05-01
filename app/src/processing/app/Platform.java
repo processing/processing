@@ -26,6 +26,8 @@ package processing.app;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -281,9 +283,16 @@ public class Platform {
   static public File getContentFile(String name) {
     if (processingRoot == null) {
       // Get the path to the .jar file that contains Base.class
-      String path = Base.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-      // Path may have URL encoding, so remove it
-      String decodedPath = PApplet.urlDecode(path);
+      URL pathURL =
+          Base.class.getProtectionDomain().getCodeSource().getLocation();
+      // Decode URL
+      String decodedPath;
+      try {
+        decodedPath = pathURL.toURI().getPath();
+      } catch (URISyntaxException e) {
+        e.printStackTrace();
+        return null;
+      }
 
       if (decodedPath.contains("/app/bin")) {  // This means we're in Eclipse
         final File build = new File(decodedPath, "../../build").getAbsoluteFile();
@@ -311,8 +320,7 @@ public class Platform {
           System.err.println("Could not find lib folder via " +
             jarFolder.getAbsolutePath() +
             ", switching to user.dir");
-          final String userDir = System.getProperty("user.dir");
-          processingRoot = new File(PApplet.urlDecode(userDir));
+          processingRoot = new File(""); // resolves to "user.dir"
         }
       }
     }

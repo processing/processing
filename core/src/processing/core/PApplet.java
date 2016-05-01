@@ -7389,10 +7389,10 @@ public class PApplet implements PConstants {
     try {
       folder = System.getProperty("user.dir");
 
-      String jarPath =
-        PApplet.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-      // The jarPath from above will be URL encoded (%20 for spaces)
-      jarPath = urlDecode(jarPath);
+      URL jarURL =
+          PApplet.class.getProtectionDomain().getCodeSource().getLocation();
+      // Decode URL
+      String jarPath = jarURL.toURI().getPath();
 
       // Workaround for bug in Java for OS X from Oracle (7u51)
       // https://github.com/processing/processing/issues/2181
@@ -7543,12 +7543,17 @@ public class PApplet implements PConstants {
     File why = new File(where);
     if (why.isAbsolute()) return why;
 
-    String jarPath =
-      getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+    URL jarURL = getClass().getProtectionDomain().getCodeSource().getLocation();
+    // Decode URL
+    String jarPath;
+    try {
+      jarPath = jarURL.toURI().getPath();
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
+      return null;
+    }
     if (jarPath.contains("Contents/Java/")) {
-      // The path will be URL encoded (%20 for spaces) coming from above
-      // http://code.google.com/p/processing/issues/detail?id=1073
-      File containingFolder = new File(urlDecode(jarPath)).getParentFile();
+      File containingFolder = new File(jarPath).getParentFile();
       File dataFolder = new File(containingFolder, "data");
       return new File(dataFolder, where);
     }
@@ -7633,6 +7638,11 @@ public class PApplet implements PConstants {
   }
 
 
+  // DO NOT use for file paths, URLDecoder can't handle RFC2396
+  // "The recommended way to manage the encoding and decoding of
+  // URLs is to use URI, and to convert between these two classes
+  // using toURI() and URI.toURL()."
+  // https://docs.oracle.com/javase/8/docs/api/java/net/URL.html
   static public String urlDecode(String str) {
     try {
       return URLDecoder.decode(str, "UTF-8");
