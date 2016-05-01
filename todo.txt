@@ -28,6 +28,11 @@ X   https://github.com/processing/processing/pull/4390
 X tabs aren't working properly (several bugs?)
 X   https://github.com/processing/processing/issues/3975
 X   https://github.com/processing/processing/pull/4410
+X file paths not decoding properly
+X   https://github.com/processing/processing/issues/4417
+X   https://github.com/processing/processing/pull/4426
+_   double check that this is working on OS X
+
 
 _ arrow keys aren't working in the examples window
 
