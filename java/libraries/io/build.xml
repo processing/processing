@@ -29,4 +29,46 @@
   <target name="build" depends="compile" description="Build I/O library">
     <jar basedir="bin" destfile="library/io.jar" />
   </target>
+
+  <target name="dist" depends="build" description="Package standalone library">
+    <!-- set revision number as library version -->
+    <loadfile srcfile="../../../todo.txt" property="revision">
+      <filterchain>
+        <headfilter lines="1"/>
+        <tokenfilter>
+          <stringtokenizer suppressdelims="true"/>
+          <!-- grab the thing from the first line that's 4 digits -->
+          <containsregex pattern="(\d\d\d\d)" />
+        </tokenfilter>
+      </filterchain>
+    </loadfile>
+    <replaceregexp file="library.properties" match="version = .*" replace="version = ${revision}" flags="g" />
+    <replaceregexp file="library.properties" match="prettyVersion = .*" replace="prettyVersion = ${revision}" flags="g" />
+
+    <get src="http://download.processing.org/reference.zip"
+         dest="reference.zip"
+         usetimestamp="true" />
+    <mkdir dir="reference" />
+    <unzip dest="."
+           src="reference.zip"
+           overwrite="true">
+      <patternset>
+        <include name="reference/css/**" />
+        <include name="reference/img/**" />
+        <include name="reference/javascript/**" />
+        <include name="reference/libraries/io/**" />
+      </patternset>
+    </unzip>
+    <delete file="reference.zip" />
+    <echo file="reference/index.html" message="&lt;html&gt;&lt;head&gt;&lt;meta http-equiv='refresh' content='0; url=libraries/io/index.html'&gt;&lt;/head&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;" />
+
+    <zip destfile="../io.zip">
+      <zipfileset dir="." prefix="io">
+        <exclude name="bin/**"/>
+      </zipfileset>
+    </zip>
+
+    <copy file="library.properties"
+          toFile="../io.txt"/>
+  </target>
 </project>
