@@ -148,20 +148,25 @@ public class ErrorCheckerService {
       PreprocessedSketch prevResult = PreprocessedSketch.empty();
       while (running) {
         try {
-          requestQueue.take(); // blocking until check requested
-        } catch (InterruptedException e) {
-          running = false;
-          break;
-        }
-
-        Messages.log("Starting error check");
-
-        prevResult = preprocessSketch(prevResult);
-
-        synchronized (requestLock) {
-          if (requestQueue.isEmpty()) {
-            preprocessingTask.complete(prevResult);
+          try {
+            requestQueue.take(); // blocking until check requested
+          } catch (InterruptedException e) {
+            running = false;
+            break;
           }
+
+          Messages.log("Starting preprocessing");
+
+          prevResult = preprocessSketch(prevResult);
+
+          synchronized (requestLock) {
+            if (requestQueue.isEmpty()) {
+              Messages.log("Completing preprocessing");
+              preprocessingTask.complete(prevResult);
+            }
+          }
+        } catch (Exception e) {
+          Messages.loge("problem in error checker loop", e);
         }
       }
 
