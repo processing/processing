@@ -282,7 +282,7 @@ public abstract class Mode {
   public void rebuildLibraryList() {
     //new Exception("Rebuilding library list").printStackTrace(System.out);
     // reset the table mapping imports to libraries
-    importToLibraryTable = new HashMap<String, List<Library>>();
+    HashMap<String, List<Library>> importToLibraryTable = new HashMap<>();
 
     Library core = getCoreLibrary();
     if (core != null) {
@@ -323,6 +323,11 @@ public abstract class Mode {
     for (Library lib : contribLibraries) {
       lib.addPackageList(importToLibraryTable);
     }
+
+    // Make this Map thread-safe
+    this.importToLibraryTable = Collections.unmodifiableMap(importToLibraryTable);
+
+    base.getEditors().forEach(Editor::librariesChanged);
   }
 
 

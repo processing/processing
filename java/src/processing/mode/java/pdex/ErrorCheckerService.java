@@ -703,7 +703,7 @@ public class ErrorCheckerService {
         .filter(pckg -> !ignorableImport(pckg))
         .map(pckg -> {
           try {
-            return mode.getLibrary(pckg); // TODO: this may not be thread-safe
+            return mode.getLibrary(pckg);
           } catch (SketchException e) {
             return null;
           }
