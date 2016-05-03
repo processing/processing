@@ -1079,6 +1079,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   abstract public void handleImportLibrary(String name);
 
 
+  public void librariesChanged() { }
+
+  public void codeFolderChanged() { }
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 

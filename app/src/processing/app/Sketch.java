@@ -1235,6 +1235,8 @@ public class Sketch {
     String codeExtension = null;
     boolean replacement = false;
 
+    boolean isCode = false;
+
     // if the file appears to be code related, drop it
     // into the code folder, instead of the data folder
     if (filename.toLowerCase().endsWith(".class") ||
@@ -1247,7 +1249,7 @@ public class Sketch {
       //if (!codeFolder.exists()) codeFolder.mkdirs();
       prepareCodeFolder();
       destFile = new File(codeFolder, filename);
-
+      isCode = true;
     } else {
       for (String extension : mode.getExtensions()) {
         String lower = filename.toLowerCase();
@@ -1315,6 +1317,10 @@ public class Sketch {
                              Language.interpolate("add_file.messages.cannot_add.description", filename), e);
         return false;
       }
+    }
+
+    if (isCode) {
+      editor.codeFolderChanged();
     }
 
     if (codeExtension != null) {

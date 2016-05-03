@@ -1308,6 +1308,18 @@ public class JavaEditor extends Editor {
   }
 
 
+  @Override
+  public void librariesChanged() {
+    errorCheckerService.notifyLibrariesChanged();
+  }
+
+
+  @Override
+  public void codeFolderChanged() {
+    errorCheckerService.notifyCodeFolderChanged();
+  }
+
+
   public void statusError(String what) {
     super.statusError(what);
 //    new Exception("deactivating RUN").printStackTrace();

@@ -25,6 +25,8 @@ public class PreprocessedSketch {
   public final ClassPath classPath;
   public final URLClassLoader classLoader;
 
+  public final ClassPath searchClassPath;
+
   public final int[] tabStartOffsets;
 
   public final String pdeCode;
@@ -169,6 +171,8 @@ public class PreprocessedSketch {
     public ClassPath classPath;
     public URLClassLoader classLoader;
 
+    public ClassPath searchClassPath;
+
     public int[] tabStartOffsets = new int[0];
 
     public String pdeCode;
@@ -202,6 +206,8 @@ public class PreprocessedSketch {
     classPathArray = b.classPathArray;
     classPath = b.classPath;
     classLoader = b.classLoader;
+
+    searchClassPath = b.searchClassPath;
 
     tabStartOffsets = b.tabStartOffsets;
 

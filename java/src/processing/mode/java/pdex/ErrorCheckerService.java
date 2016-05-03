@@ -30,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,10 +45,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -116,10 +119,10 @@ public class ErrorCheckerService {
   private final Object requestLock = new Object();
   private boolean needsCheck = false;
 
-  private CompletableFuture<PreprocessedSketch> preprocessingTask =
-      new CompletableFuture<PreprocessedSketch>() {{
-        complete(PreprocessedSketch.empty()); // initialization block
-      }};
+  private AtomicBoolean codeFolderChanged = new AtomicBoolean(true);
+  private AtomicBoolean librariesChanged = new AtomicBoolean(true);
+
+  private CompletableFuture<PreprocessedSketch> preprocessingTask = new CompletableFuture<>();
 
   private CompletableFuture<?> lastCallback =
       new CompletableFuture() {{
@@ -141,43 +144,40 @@ public class ErrorCheckerService {
   }
 
 
-  private final Runnable mainLoop = new Runnable() {
-    @Override
-    public void run() {
-      running = true;
-      PreprocessedSketch prevResult = PreprocessedSketch.empty();
-      while (running) {
+  private void mainLoop() {
+    running = true;
+    PreprocessedSketch prevResult = null;
+    while (running) {
+      try {
         try {
-          try {
-            requestQueue.take(); // blocking until check requested
-          } catch (InterruptedException e) {
-            running = false;
-            break;
-          }
-
-          Messages.log("Starting preprocessing");
-
-          prevResult = preprocessSketch(prevResult);
-
-          synchronized (requestLock) {
-            if (requestQueue.isEmpty()) {
-              Messages.log("Completing preprocessing");
-              preprocessingTask.complete(prevResult);
-            }
-          }
-        } catch (Exception e) {
-          Messages.loge("problem in error checker loop", e);
+          requestQueue.take(); // blocking until check requested
+        } catch (InterruptedException e) {
+          running = false;
+          break;
         }
-      }
 
-      astGenerator.getGui().disposeAllWindows();
+        Messages.log("Starting preprocessing");
+
+        prevResult = preprocessSketch(prevResult);
+
+        synchronized (requestLock) {
+          if (requestQueue.isEmpty()) {
+            Messages.log("Completing preprocessing");
+            preprocessingTask.complete(prevResult);
+          }
+        }
+      } catch (Exception e) {
+        Messages.loge("problem in error checker loop", e);
+      }
     }
-  };
+
+    astGenerator.getGui().disposeAllWindows();
+  }
 
 
   public void start() {
     scheduler = Executors.newSingleThreadScheduledExecutor();
-    errorCheckerThread = new Thread(mainLoop, "ECS");
+    errorCheckerThread = new Thread(this::mainLoop, "ECS");
     errorCheckerThread.start();
   }
 
@@ -221,6 +221,20 @@ public class ErrorCheckerService {
         needsCheck = true;
       }
     }
+  }
+
+
+  public void notifyLibrariesChanged() {
+    librariesChanged.set(true);
+    Messages.log("Notify libraries changed");
+    notifySketchChanged();
+  }
+
+
+  public void notifyCodeFolderChanged() {
+    codeFolderChanged.set(true);
+    Messages.log("Notify code folder changed");
+    notifySketchChanged();
   }
 
 
@@ -312,14 +326,16 @@ public class ErrorCheckerService {
   };
 
 
-  protected PreprocessedSketch preprocessSketch(PreprocessedSketch prevResult) {
+  private PreprocessedSketch preprocessSketch(PreprocessedSketch prevResult) {
+
+    boolean firstCheck = prevResult == null;
 
     PreprocessedSketch.Builder result = new PreprocessedSketch.Builder();
 
-    List<ImportStatement> coreAndDefaultImports = result.coreAndDefaultImports;
     List<ImportStatement> codeFolderImports = result.codeFolderImports;
     List<ImportStatement> programImports = result.programImports;
 
+    JavaMode javaMode = (JavaMode) editor.getMode();
     Sketch sketch = result.sketch = editor.getSketch();
     String className = sketch.getName();
 
@@ -345,38 +361,30 @@ public class ErrorCheckerService {
     result.tabStartOffsets = tabStartsList.array();
 
     String pdeStage = result.pdeCode = workBuffer.toString();
-    char[] compilableStageChars;
 
-    { // Prepare core and default imports
-      // TODO: do this only once
+
+    boolean reloadCodeFolder = firstCheck || codeFolderChanged.getAndSet(false);
+    boolean reloadLibraries = firstCheck || librariesChanged.getAndSet(false);
+
+    // Core and default imports
+    if (coreAndDefaultImports == null) {
       PdePreprocessor p = editor.createPreprocessor(null);
-      String[] defaultImports = p.getDefaultImports();
-      String[] coreImports = p.getCoreImports();
-
-      for (String imp : coreImports) {
-        coreAndDefaultImports.add(ImportStatement.parse(imp));
-      }
-      for (String imp : defaultImports) {
-        coreAndDefaultImports.add(ImportStatement.parse(imp));
-      }
+      coreAndDefaultImports = buildCoreAndDefaultImports(p);
     }
+    result.coreAndDefaultImports.addAll(coreAndDefaultImports);
 
     // Prepare code folder imports
-    // TODO: do this only when code folder changes
-    if (sketch.hasCodeFolder()) {
-      File codeFolder = sketch.getCodeFolder();
-      String codeFolderClassPath = Util.contentsToClassPath(codeFolder);
-      StringList codeFolderPackages = Util.packageListFromClassPath(codeFolderClassPath);
-      for (String item : codeFolderPackages) {
-        codeFolderImports.add(ImportStatement.wholePackage(item));
-      }
+    if (reloadCodeFolder) {
+      codeFolderImports.addAll(buildCodeFolderImports(sketch));
+    } else {
+      codeFolderImports.addAll(prevResult.codeFolderImports);
     }
 
     // TODO: convert unicode escapes to chars
 
     SourceUtils.scrubCommentsAndStrings(workBuffer);
 
-    Mode mode = PdePreprocessor.parseMode(workBuffer);
+    Mode sketchMode = PdePreprocessor.parseMode(workBuffer);
 
     // Prepare transforms to convert pde code into parsable code
     TextTransform toParsable = new TextTransform(pdeStage);
@@ -385,33 +393,76 @@ public class ErrorCheckerService {
     toParsable.addAll(SourceUtils.parseProgramImports(workBuffer, programImports));
     toParsable.addAll(SourceUtils.replaceTypeConstructors(workBuffer));
     toParsable.addAll(SourceUtils.replaceHexLiterals(workBuffer));
-    toParsable.addAll(SourceUtils.wrapSketch(mode, className, workBuffer.length()));
+    toParsable.addAll(SourceUtils.wrapSketch(sketchMode, className, workBuffer.length()));
 
     { // Refresh sketch classloader and classpath if imports changed
-      boolean importsChanged = prevResult == null ||
-          prevResult.classPath == null || prevResult.classLoader == null ||
-          checkIfImportsChanged(programImports, prevResult.programImports) ||
-          checkIfImportsChanged(codeFolderImports, prevResult.codeFolderImports);
+      if (javaRuntimeClassPath == null) {
+        javaRuntimeClassPath = buildJavaRuntimeClassPath();
+        sketchModeClassPath = buildModeClassPath(javaMode, false);
+        searchModeClassPath = buildModeClassPath(javaMode, true);
+      }
 
-      if (importsChanged) {
-        String[] classPathArray = buildClassPath(programImports);
-        URL[] urlArray = Arrays.stream(classPathArray)
-            .map(path -> {
-              try {
-                return Paths.get(path).toUri().toURL();
-              } catch (MalformedURLException e) {
-                Messages.loge("malformed URL when preparing sketch classloader", e);
-                return null;
-              }
-            })
-            .filter(url -> url != null)
-            .toArray(URL[]::new);
-        result.classLoader = new URLClassLoader(urlArray, null);
-        result.classPath = classPathFactory.createFromPaths(classPathArray);
-        result.classPathArray = classPathArray;
+      if (reloadLibraries) {
+        coreLibraryClassPath = buildCoreLibraryClassPath(javaMode);
+      }
+
+      boolean rebuildLibraryClassPath = reloadLibraries ||
+          checkIfImportsChanged(programImports, prevResult.programImports);
+
+      if (rebuildLibraryClassPath) {
+        sketchLibraryClassPath = buildSketchLibraryClassPath(javaMode, programImports);
+        searchLibraryClassPath = buildSearchLibraryClassPath(javaMode);
+      }
+
+      boolean rebuildClassPath = reloadCodeFolder || rebuildLibraryClassPath ||
+          prevResult.classLoader == null || prevResult.classPath == null ||
+          prevResult.classPathArray == null || prevResult.searchClassPath == null;
+
+      if (reloadCodeFolder) {
+        codeFolderClassPath = buildCodeFolderClassPath(sketch);
+      }
+
+      if (rebuildClassPath) {
+        { // Sketch class path
+          List<String> sketchClassPath = new ArrayList<>();
+          sketchClassPath.addAll(javaRuntimeClassPath);
+          sketchClassPath.addAll(sketchModeClassPath);
+          sketchClassPath.addAll(sketchLibraryClassPath);
+          sketchClassPath.addAll(coreLibraryClassPath);
+          sketchClassPath.addAll(codeFolderClassPath);
+
+          String[] classPathArray = sketchClassPath.stream().toArray(String[]::new);
+          URL[] urlArray = Arrays.stream(classPathArray)
+              .map(path -> {
+                try {
+                  return Paths.get(path).toUri().toURL();
+                } catch (MalformedURLException e) {
+                  Messages.loge("malformed URL when preparing sketch classloader", e);
+                  return null;
+                }
+              })
+              .filter(url -> url != null)
+              .toArray(URL[]::new);
+          result.classLoader = new URLClassLoader(urlArray, null);
+          result.classPath = classPathFactory.createFromPaths(classPathArray);
+          result.classPathArray = classPathArray;
+        }
+
+        { // Search class path
+          List<String> searchClassPath = new ArrayList<>();
+          searchClassPath.addAll(javaRuntimeClassPath);
+          searchClassPath.addAll(searchModeClassPath);
+          searchClassPath.addAll(searchLibraryClassPath);
+          searchClassPath.addAll(coreLibraryClassPath);
+          searchClassPath.addAll(codeFolderClassPath);
+
+          String[] searchClassPathArray = searchClassPath.stream().toArray(String[]::new);
+          result.searchClassPath = classPathFactory.createFromPaths(searchClassPathArray);
+        }
       } else {
         result.classLoader = prevResult.classLoader;
         result.classPath = prevResult.classPath;
+        result.searchClassPath = prevResult.searchClassPath;
         result.classPathArray = prevResult.classPathArray;
       }
     }
@@ -432,7 +483,7 @@ public class ErrorCheckerService {
     // Transform code to compilable state
     String compilableStage = toCompilable.apply();
     OffsetMapper compilableMapper = toCompilable.getMapper();
-    compilableStageChars = compilableStage.toCharArray();
+    char[] compilableStageChars = compilableStage.toCharArray();
 
     // Create compilable AST to get syntax problems
     CompilationUnit compilableCU =
@@ -505,9 +556,7 @@ public class ErrorCheckerService {
           .collect(Collectors.groupingBy(p -> p.getIProblem().getArguments()[0]));
 
       if (!undefinedTypeProblems.isEmpty()) {
-        // TODO: cache this, invalidate if code folder or libraries change
-        String[] searchClassPath = buildClassPath(null);
-        final ClassPath cp = classPathFactory.createFromPaths(searchClassPath);
+        final ClassPath cp = ps.searchClassPath;
 
         // Get suggestions for each missing type, update the problems
         undefinedTypeProblems.entrySet().stream()
@@ -539,10 +588,57 @@ public class ErrorCheckerService {
   }
 
 
-  protected String[] buildClassPath(List<ImportStatement> neededImports) {
-    JavaMode mode = (JavaMode) editor.getMode();
-    Sketch sketch = editor.getSketch();
 
+  /// IMPORTS -----------------------------------------------------------------
+
+  private List<ImportStatement> coreAndDefaultImports;
+
+
+  private static List<ImportStatement> buildCoreAndDefaultImports(PdePreprocessor p) {
+    List<ImportStatement> result = new ArrayList<>();
+
+    for (String imp : p.getCoreImports()) {
+      result.add(ImportStatement.parse(imp));
+    }
+    for (String imp : p.getDefaultImports()) {
+      result.add(ImportStatement.parse(imp));
+    }
+
+    return result;
+  }
+
+
+  private static List<ImportStatement> buildCodeFolderImports(Sketch sketch) {
+    if (sketch.hasCodeFolder()) {
+      File codeFolder = sketch.getCodeFolder();
+      String codeFolderClassPath = Util.contentsToClassPath(codeFolder);
+      StringList codeFolderPackages = Util.packageListFromClassPath(codeFolderClassPath);
+      return StreamSupport.stream(codeFolderPackages.spliterator(), false)
+          .map(ImportStatement::wholePackage)
+          .collect(Collectors.toList());
+    }
+    return Collections.emptyList();
+  }
+
+
+
+  /// CLASSPATHS ---------------------------------------------------------------
+
+
+  private List<String> javaRuntimeClassPath;
+
+  private List<String> sketchModeClassPath;
+  private List<String> searchModeClassPath;
+
+  private List<String> coreLibraryClassPath;
+
+  private List<String> codeFolderClassPath;
+
+  private List<String> searchLibraryClassPath;
+  private List<String> sketchLibraryClassPath;
+
+
+  private static List<String> buildCodeFolderClassPath(Sketch sketch) {
     StringBuilder classPath = new StringBuilder();
 
     // Code folder
@@ -552,8 +648,14 @@ public class ErrorCheckerService {
       classPath.append(codeFolderClassPath);
     }
 
-    // Mode class path
-    if (neededImports == null) {
+    return sanitizeClassPath(classPath.toString());
+  }
+
+
+  private static List<String> buildModeClassPath(JavaMode mode, boolean search) {
+    StringBuilder classPath = new StringBuilder();
+
+    if (search) {
       String searchClassPath = mode.getSearchPath();
       if (searchClassPath != null) {
         classPath.append(File.pathSeparator).append(searchClassPath);
@@ -567,10 +669,55 @@ public class ErrorCheckerService {
       }
     }
 
-    // Core libraries
+    return sanitizeClassPath(classPath.toString());
+  }
+
+
+  private static List<String> buildCoreLibraryClassPath(JavaMode mode) {
+    StringBuilder classPath = new StringBuilder();
+
     for (Library lib : mode.coreLibraries) {
       classPath.append(File.pathSeparator).append(lib.getClassPath());
     }
+
+    return sanitizeClassPath(classPath.toString());
+  }
+
+  private static List<String> buildSearchLibraryClassPath(JavaMode mode) {
+    StringBuilder classPath = new StringBuilder();
+
+    for (Library lib : mode.contribLibraries) {
+      classPath.append(File.pathSeparator).append(lib.getClassPath());
+    }
+
+    return sanitizeClassPath(classPath.toString());
+  }
+
+
+  private List<String> buildSketchLibraryClassPath(JavaMode mode,
+                                                   List<ImportStatement> programImports) {
+    StringBuilder classPath = new StringBuilder();
+
+    programImports.stream()
+        .map(ImportStatement::getPackageName)
+        .filter(pckg -> !ignorableImport(pckg))
+        .map(pckg -> {
+          try {
+            return mode.getLibrary(pckg); // TODO: this may not be thread-safe
+          } catch (SketchException e) {
+            return null;
+          }
+        })
+        .filter(lib -> lib != null)
+        .map(Library::getClassPath)
+        .forEach(cp -> classPath.append(File.pathSeparator).append(cp));
+
+    return sanitizeClassPath(classPath.toString());
+  }
+
+
+  private List<String> buildJavaRuntimeClassPath() {
+    StringBuilder classPath = new StringBuilder();
 
     // Java runtime
     String rtPath = System.getProperty("java.home") +
@@ -585,33 +732,20 @@ public class ErrorCheckerService {
       }
     }
 
-    if (neededImports == null) {
-      for (Library lib : mode.contribLibraries) {
-        classPath.append(File.pathSeparator).append(lib.getClassPath());
-      }
-    } else {
-      neededImports.stream()
-          .map(ImportStatement::getPackageName)
-          .filter(pckg -> !ignorableImport(pckg))
-          .map(pckg -> {
-            try {
-              return mode.getLibrary(pckg); // TODO: this may not be thread-safe
-            } catch (SketchException e) {
-              return null;
-            }
-          })
-          .filter(lib -> lib != null)
-          .map(Library::getClassPath)
-          .forEach(cp -> classPath.append(File.pathSeparator).append(cp));
-    }
+    return sanitizeClassPath(classPath.toString());
+  }
 
+
+  private static List<String> sanitizeClassPath(String classPathString) {
     // Make sure class path does not contain empty string (home dir)
-    String[] paths = classPath.toString().split(File.pathSeparator);
-    return Arrays.stream(paths)
+    return Arrays.stream(classPathString.split(File.pathSeparator))
         .filter(p -> p != null && !p.trim().isEmpty())
         .distinct()
-        .toArray(String[]::new);
+        .collect(Collectors.toList());
   }
+
+  /// --------------------------------------------------------------------------
+
 
 
   public static String[] getImportSuggestions(ClassPath cp, String className) {
