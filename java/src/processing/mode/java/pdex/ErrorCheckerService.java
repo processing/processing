@@ -478,7 +478,7 @@ public class ErrorCheckerService {
         int sourceLine = problem.getSourceLineNumber();
         int[] a = calculateTabIndexAndLineNumber(sourceLine);
 
-        Problem p = new Problem(problem, a[0], a[1]);
+        Problem p = new Problem(problem, a[0], a[1], className);
         if (p.isError()) {
           result.containsErrors = true; // set flag
         } else if (p.isWarning() && !JavaMode.warningsEnabled) {
