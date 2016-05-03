@@ -111,6 +111,38 @@ public class JavaEditor extends Editor {
     //            }
     //        });
 
+    
+textarea.getRightClickPopup().addSeparator();
+    
+    // add run option
+	//should be 
+	//JMenuItem runItem = new JMenuItem(Language.text("editor.popup.run"));
+	//i added this tag to my PDE.propertise but i can not see if it will get pushed to the repo 
+	//because it is a builded file
+    JMenuItem runItem = new JMenuItem(Language.text("menu.sketch.run"));
+    runItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleRun();
+      }
+    });
+    
+    textarea.getRightClickPopup().add(runItem);
+    
+    // add stop option
+	//should be 
+	//JMenuItem stopItem = new JMenuItem(Language.text("editor.popup.stop"));
+	//i added this tag to my PDE.propertise but i can not see if it will get pushed to the repo 
+	//because it is a builded file
+    JMenuItem stopItem = new JMenuItem(Language.text("menu.sketch.stop"));
+    stopItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleStop();
+      }
+    });
+    
+    textarea.getRightClickPopup().add(stopItem);
+    
+    
     Toolkit.setMenuMnemonics(textarea.getRightClickPopup());
 
 //    // load settings from theme.txt

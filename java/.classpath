@@ -20,7 +20,7 @@
 	<classpathentry kind="lib" path="mode/org.eclipse.text.jar"/>
 	<classpathentry kind="lib" path="mode/org.netbeans.swing.outline.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/processing-app"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/processing-core"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/processing-app"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/processing-core"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
