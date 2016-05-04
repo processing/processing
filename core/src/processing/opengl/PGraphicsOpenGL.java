@@ -12481,8 +12481,8 @@ public class PGraphicsOpenGL extends PGraphics {
         } else {
           texCache.setLastIndex(lastIndex, lastCache);
         }
+        prevTexImage = newTexImage;
       }
-      prevTexImage = newTexImage;
     }
 
     // -----------------------------------------------------------------
