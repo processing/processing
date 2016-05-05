@@ -2987,6 +2987,7 @@ public class ASTGenerator {
     public static ShowUsageTreeNode fromSketchInterval(PreprocessedSketch ps, SketchInterval in) {
       int lineStartPdeOffset = ps.pdeCode.lastIndexOf('\n', in.startPdeOffset) + 1;
       int lineStopPdeOffset = ps.pdeCode.indexOf('\n', in.stopPdeOffset);
+      if (lineStopPdeOffset == -1) lineStopPdeOffset = ps.pdeCode.length();
 
       int highlightStartOffset = in.startPdeOffset - lineStartPdeOffset;
       int highlightStopOffset = in.stopPdeOffset - lineStartPdeOffset;
