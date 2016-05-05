@@ -942,6 +942,8 @@ public abstract class PGL {
 
 
   protected void restoreFirstFrame() {
+    if (firstFrame == null) return;
+
     IntBuffer tex = allocateIntBuffer(1);
     genTextures(1, tex);
 
