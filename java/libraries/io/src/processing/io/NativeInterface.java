@@ -26,15 +26,26 @@ package processing.io;
 public class NativeInterface {
 
   protected static boolean loaded = false;
+  protected static boolean alwaysSimulate = false;
 
   public static void loadLibrary() {
     if (!loaded) {
-      if (!"Linux".equals(System.getProperty("os.name"))) {
-        throw new RuntimeException("The Processing I/O library is only supported on Linux");
+      if (isSimulated()) {
+        System.err.println("The Processing I/O library is not supported on this platform. Instead of values from actual hardware ports, your sketch will only receive stand-in values that allow you to test the remainder of its functionality.");
+      } else {
+        System.loadLibrary("processing-io");
       }
-      System.loadLibrary("processing-io");
       loaded = true;
     }
+  }
+
+  public static void alwaysSimulate() {
+    alwaysSimulate = true;
+  }
+
+  public static boolean isSimulated() {
+    return alwaysSimulate ||
+           !"Linux".equals(System.getProperty("os.name"));
   }
 
 

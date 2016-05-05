@@ -50,6 +50,11 @@ public class I2C {
   public I2C(String dev) {
     NativeInterface.loadLibrary();
     this.dev = dev;
+
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     handle = NativeInterface.openDevice("/dev/" + dev);
     if (handle < 0) {
       throw new RuntimeException(NativeInterface.getError(handle));
@@ -81,6 +86,10 @@ public class I2C {
    *  @webref
    */
   public void close() {
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     NativeInterface.closeDevice(handle);
     handle = 0;
   }
@@ -107,6 +116,10 @@ public class I2C {
       return;
     }
 
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     // implement these flags if needed: https://github.com/raspberrypi/linux/blob/rpi-patches/Documentation/i2c/i2c-protocol
     int ret = NativeInterface.transferI2c(handle, slave, out, null);
     transmitting = false;
@@ -126,6 +139,11 @@ public class I2C {
    *  @webref
    */
   public static String[] list() {
+    if (NativeInterface.isSimulated()) {
+      // as on the Raspberry Pi
+      return new String[]{ "i2c-1" };
+    }
+
     ArrayList<String> devs = new ArrayList<String>();
     File dir = new File("/dev");
     File[] files = dir.listFiles();
@@ -158,6 +176,10 @@ public class I2C {
     }
 
     byte[] in = new byte[len];
+
+    if (NativeInterface.isSimulated()) {
+      return in;
+    }
 
     int ret = NativeInterface.transferI2c(handle, slave, out, in);
     transmitting = false;

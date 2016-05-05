@@ -78,6 +78,11 @@ public class SPI {
   public SPI(String dev) {
     NativeInterface.loadLibrary();
     this.dev = dev;
+
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     handle = NativeInterface.openDevice("/dev/" + dev);
     if (handle < 0) {
       throw new RuntimeException(NativeInterface.getError(handle));
@@ -90,6 +95,10 @@ public class SPI {
    *  @webref
    */
   public void close() {
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     NativeInterface.closeDevice(handle);
     handle = 0;
   }
@@ -110,6 +119,11 @@ public class SPI {
    *  @webref
    */
   public static String[] list() {
+    if (NativeInterface.isSimulated()) {
+      // as on the Raspberry Pi
+      return new String[]{ "spidev0.0", "spidev0.1" };
+    }
+
     ArrayList<String> devs = new ArrayList<String>();
     File dir = new File("/dev");
     File[] files = dir.listFiles();
@@ -148,6 +162,10 @@ public class SPI {
    *  @webref
    */
   public byte[] transfer(byte[] out) {
+    if (NativeInterface.isSimulated()) {
+      return new byte[out.length];
+    }
+
     // track the current setting per device across multiple instances
     String curSettings = maxSpeed + "-" + dataOrder + "-" + mode;
     if (!curSettings.equals(settings.get(dev))) {
