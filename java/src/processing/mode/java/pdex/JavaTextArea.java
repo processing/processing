@@ -372,7 +372,7 @@ public class JavaTextArea extends JEditTextArea {
           }
         });
       } catch (Exception e) {
-        Messages.loge("error while preparing suggestions", e.getCause());
+        Messages.loge("error while preparing suggestions", e);
       }
     });
   }
