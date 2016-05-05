@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import processing.app.Sketch;
+import processing.core.PApplet;
 import processing.mode.java.pdex.TextTransform.OffsetMapper;
 
 public class PreprocessedSketch {
@@ -104,7 +105,7 @@ public class PreprocessedSketch {
 
 
   private int pdeOffsetToTabOffset(int tabIndex, int pdeOffset) {
-    int tabStartOffset = tabStartOffsets[tabIndex];
+    int tabStartOffset = tabStartOffsets[clipTabIndex(tabIndex)];
     return pdeOffset - tabStartOffset;
   }
 
@@ -114,7 +115,7 @@ public class PreprocessedSketch {
 
 
   public int tabOffsetToJavaOffset(int tabIndex, int tabOffset) {
-    int tabStartOffset = tabStartOffsets[tabIndex];
+    int tabStartOffset = tabStartOffsets[clipTabIndex(tabIndex)];
     int pdeOffset = tabStartOffset + tabOffset;
     return offsetMapper.getOutputOffset(pdeOffset);
   }
@@ -131,7 +132,7 @@ public class PreprocessedSketch {
 
 
   public int tabOffsetToTabLine(int tabIndex, int tabOffset) {
-    int tabStartOffset = tabStartOffsets[tabIndex];
+    int tabStartOffset = tabStartOffsets[clipTabIndex(tabIndex)];
     return offsetToLine(pdeCode, tabStartOffset, tabStartOffset + tabOffset);
   }
 
@@ -150,6 +151,14 @@ public class PreprocessedSketch {
       line++;
     }
     return line - 1;
+  }
+
+
+
+  /// Util ---------------------------------------------------------------------
+
+  private int clipTabIndex(int tabIndex) {
+    return PApplet.constrain(tabIndex, 0, tabStartOffsets.length - 1);
   }
 
 
