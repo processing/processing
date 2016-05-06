@@ -305,8 +305,15 @@ public class JavaTextAreaPainter extends TextAreaPainter
         int rightTrimmedLength = trimRight(badCode).length();
         int leftTrimLength = rightTrimmedLength - trimmedLength;
 
+        // Fix offsets when bad code is just whitespace
+        if (trimmedLength == 0) {
+          leftTrimLength = 0;
+          rightTrimmedLength = badCode.length();
+        }
+
         int x1 = textArea.offsetToX(line, goodCode.length() + leftTrimLength);
         int x2 = textArea.offsetToX(line, goodCode.length() + rightTrimmedLength);
+        if (x1 == x2) x2 += fm.stringWidth(" ");
         int y1 = y + fm.getHeight() - 2;
 
         if (line != problem.getLineNumber()) {

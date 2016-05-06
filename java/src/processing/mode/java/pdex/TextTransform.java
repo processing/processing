@@ -132,7 +132,7 @@ public class TextTransform {
       // Process encountered input edits
       while (inEdit != null && inOffset >= inEditOff) {
         inOffset += inEdit.fromLength;
-        inMap.add(inEdit);
+        if (inEdit.fromLength > 0) inMap.add(inEdit);
         inEdit = inIt.hasNext() ? inIt.next() : null;
         inEditOff = inEdit != null ? inEdit.fromOffset : inLength;
       }
@@ -140,7 +140,7 @@ public class TextTransform {
       // Process encountered output edits
       while (outEdit != null && inOffset >= outEditOff) {
         outEdit.toOffset = outOffset;
-        outMap.add(outEdit);
+        if (outEdit.toLength > 0) outMap.add(outEdit);
         outOffset += outEdit.toLength;
         outEdit = outIt.hasNext() ? outIt.next() : null;
         outEditOff = outEdit != null ? outEdit.toOffset : inLength;
@@ -225,13 +225,31 @@ public class TextTransform {
     private List<Edit> inMap = new ArrayList<>();
     private List<Edit> outMap = new ArrayList<>();
 
+    private int outputOffsetOfInputStart;
+    private int inputOffsetOfOutputStart;
+
     private SimpleOffsetMapper(List<Edit> inMap, List<Edit> outMap) {
       this.inMap.addAll(inMap);
       this.outMap.addAll(outMap);
+
+      Edit inStart = null;
+      for (Edit in : this.inMap) {
+        inStart = in;
+        if (in.fromLength > 0) break;
+      }
+      outputOffsetOfInputStart = inStart == null ? 0 : inStart.toOffset;
+
+      Edit outStart = null;
+      for (Edit out : this.inMap) {
+        outStart = out;
+        if (out.toLength > 0) break;
+      }
+      inputOffsetOfOutputStart = outStart == null ? 0 : outStart.fromOffset;
     }
 
     @Override
     public int getInputOffset(int outputOffset) {
+      if (outputOffset < outputOffsetOfInputStart) return -1;
       Edit searchKey = new Edit(0, 0, outputOffset, Integer.MAX_VALUE, null);
       int i = Collections.binarySearch(outMap, searchKey, OUTPUT_OFFSET_COMP);
       if (i < 0) {
@@ -246,6 +264,7 @@ public class TextTransform {
 
     @Override
     public int getOutputOffset(int inputOffset) {
+      if (inputOffset < inputOffsetOfOutputStart) return -1;
       Edit searchKey = new Edit(inputOffset, Integer.MAX_VALUE, 0, 0, null);
       int i = Collections.binarySearch(inMap, searchKey, INPUT_OFFSET_COMP);
       if (i < 0) {

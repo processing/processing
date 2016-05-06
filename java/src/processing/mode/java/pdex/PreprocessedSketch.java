@@ -50,6 +50,9 @@ public class PreprocessedSketch {
 
 
   public static class SketchInterval {
+
+    public static final SketchInterval BEFORE_START = new SketchInterval(-1, -1, -1, -1, -1);
+
     private SketchInterval(int tabIndex,
                            int startTabOffset, int stopTabOffset,
                            int startPdeOffset, int stopPdeOffset) {
@@ -69,6 +72,12 @@ public class PreprocessedSketch {
   }
 
 
+  public boolean inRange(SketchInterval interval) {
+    return interval != SketchInterval.BEFORE_START &&
+        interval.stopPdeOffset < pdeCode.length();
+  }
+
+
   public SketchInterval mapJavaToSketch(ASTNode node) {
     return mapJavaToSketch(node.getStartPosition(),
                            node.getStartPosition() + node.getLength());
@@ -76,12 +85,28 @@ public class PreprocessedSketch {
 
 
   public SketchInterval mapJavaToSketch(int startJavaOffset, int stopJavaOffset) {
-    boolean zeroLength = stopJavaOffset == startJavaOffset;
+    int length = stopJavaOffset - startJavaOffset;
     int startPdeOffset = javaOffsetToPdeOffset(startJavaOffset);
-    int stopPdeOffset = zeroLength ?
-        javaOffsetToPdeOffset(stopJavaOffset) :
-        javaOffsetToPdeOffset(stopJavaOffset-1)+1;
+    int stopPdeOffset;
+    if (length == 0) {
+      stopPdeOffset = startPdeOffset;
+    } else {
+      stopPdeOffset = javaOffsetToPdeOffset(stopJavaOffset-1);
+      if (stopPdeOffset >= 0 && (stopPdeOffset > startPdeOffset || length == 1)) {
+        stopPdeOffset += 1;
+      }
+    }
+
+    if (startPdeOffset < 0 || stopPdeOffset < 0) {
+      return SketchInterval.BEFORE_START;
+    }
+
     int tabIndex = pdeOffsetToTabIndex(startPdeOffset);
+
+    if (startPdeOffset >= pdeCode.length()) {
+      startPdeOffset = pdeCode.length() - 1;
+      stopPdeOffset = startPdeOffset + 1;
+    }
 
     return new SketchInterval(tabIndex,
                               pdeOffsetToTabOffset(tabIndex, startPdeOffset),
@@ -96,6 +121,7 @@ public class PreprocessedSketch {
 
 
   private int pdeOffsetToTabIndex(int pdeOffset) {
+    pdeOffset = Math.max(0, pdeOffset);
     int tab = Arrays.binarySearch(tabStartOffsets, pdeOffset);
     if (tab < 0) {
       tab = -(tab + 1) - 1;

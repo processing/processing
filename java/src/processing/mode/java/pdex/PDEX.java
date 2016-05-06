@@ -188,6 +188,7 @@ public class PDEX {
     } else {
       Messages.log("found declaration, offset " + decl.getStartPosition() + ", name: " + declName);
       SketchInterval si = ps.mapJavaToSketch(declName);
+      if (!ps.inRange(si)) return;
       EventQueue.invokeLater(() -> {
         editor.highlight(si.tabIndex, si.startTabOffset, si.stopTabOffset);
       });
@@ -315,59 +316,59 @@ public class PDEX {
           break;
       }
 
-      String elementName = binding.getName();
+      // Find usages, map to tree nodes, add to root node
+      String bindingKey = binding.getKey();
+      List<SketchInterval> intervals =
+          findAllOccurrences(ps.compilationUnit, bindingKey).stream()
+              .map(ps::mapJavaToSketch)
+              // remove occurrences which fall into generated header
+              .filter(ps::inRange)
+              .collect(Collectors.toList());
+
+      int usageCount = intervals.size();
+
+      // Get element name from PDE code if possible, otherwise use one from Java
+      String elementName = intervals.stream()
+          .findAny()
+          .map(si -> ps.pdeCode.substring(si.startPdeOffset, si.stopPdeOffset))
+          .orElseGet(binding::getName);
 
       // Create root node
       DefaultMutableTreeNode rootNode =
           new DefaultMutableTreeNode(bindingType + ": " + elementName);
 
-      int usageCount;
+      intervals.stream()
+          // Convert to TreeNodes
+          .map(in -> ShowUsageTreeNode.fromSketchInterval(ps, in))
+          // Group by tab index
+          .collect(Collectors.groupingBy(node -> node.tabIndex))
+          // Stream Map Entries of (tab index) <-> (List<ShowUsageTreeNode>)
+          .entrySet().stream()
+          // Sort by tab index
+          .sorted(Comparator.comparing(Map.Entry::getKey))
+          .map(entry -> {
+            Integer tabIndex = entry.getKey();
+            List<ShowUsageTreeNode> nodes = entry.getValue();
 
-      { // Find usages, map to tree nodes, add to root node
-        String bindingKey = binding.getKey();
-        List<SketchInterval> intervals =
-            findAllOccurrences(ps.compilationUnit, bindingKey).stream()
-                .map(ps::mapJavaToSketch)
-                // TODO: this has to be fixed with better token mapping
-                // remove occurrences which fall into generated header
-                .filter(in -> in.tabIndex != 0 ||
-                    (in.startTabOffset >= 0 && in.stopTabOffset > 0))
-                .collect(Collectors.toList());
+            int count = nodes.size();
+            String usageLabel = count == 1 ? "usage" : "usages";
 
-        usageCount = intervals.size();
+            // Create new DefaultMutableTreeNode for this tab
+            String tabLabel = "<html><font color=#222222>" +
+                ps.sketch.getCode(tabIndex).getPrettyName() +
+                "</font> <font color=#999999>" + count + " " + usageLabel + "</font></html>";
+            DefaultMutableTreeNode tabNode = new DefaultMutableTreeNode(tabLabel);
 
-        Map<Integer, List<ShowUsageTreeNode>> tabGroupedTreeNodes = intervals.stream()
-            // Convert to TreeNodes
-            .map(in -> ShowUsageTreeNode.fromSketchInterval(ps, in))
-            // Group by tab
-            .collect(Collectors.groupingBy(node -> node.tabIndex));
-
-        tabGroupedTreeNodes.entrySet().stream()
-            // Sort by tab index
-            .sorted(Comparator.comparing(Map.Entry::getKey))
-            .map(entry -> {
-              Integer tabIndex = entry.getKey();
-              List<ShowUsageTreeNode> nodes = entry.getValue();
-
-              int count = nodes.size();
-              String usageLabel = count == 1 ? "usage" : "usages";
-
-              // Create new DefaultMutableTreeNode for this tab
-              String tabLabel = "<html><font color=#222222>" +
-                  ps.sketch.getCode(tabIndex).getPrettyName() +
-                  "</font> <font color=#999999>" + count + " " + usageLabel + "</font></html>";
-              DefaultMutableTreeNode tabNode = new DefaultMutableTreeNode(tabLabel);
-
-              nodes.stream()
-                  // Convert TreeNodes to DefaultMutableTreeNodes
-                  .map(DefaultMutableTreeNode::new)
-                  // Add all as children of tab node
-                  .forEach(tabNode::add);
-              return tabNode;
-            })
-            // Add all tab nodes as children of root node
-            .forEach(rootNode::add);
-      }
+            // Stream nodes belonging to this tab
+            nodes.stream()
+                // Convert TreeNodes to DefaultMutableTreeNodes
+                .map(DefaultMutableTreeNode::new)
+                // Add all as children of tab node
+                .forEach(tabNode::add);
+            return tabNode;
+          })
+          // Add all tab nodes as children of root node
+          .forEach(rootNode::add);
 
       TreeModel treeModel = new DefaultTreeModel(rootNode);
 
@@ -654,6 +655,7 @@ public class PDEX {
 
       Map<Integer, List<SketchInterval>> mappedNodes = occurrences.stream()
           .map(ps::mapJavaToSketch)
+          .filter(ps::inRange)
           .collect(Collectors.groupingBy(interval -> interval.tabIndex));
 
       Sketch sketch = ps.sketch;
@@ -774,6 +776,7 @@ public class PDEX {
           ASTNode node = (ASTNode) tnode.getUserObject();
           pps.whenDone(ps -> {
             SketchInterval si = ps.mapJavaToSketch(node);
+            if (!ps.inRange(si)) return;
             EventQueue.invokeLater(() -> {
               editor.highlight(si.tabIndex, si.startTabOffset, si.stopTabOffset);
             });
@@ -886,11 +889,13 @@ public class PDEX {
             int start = iproblem.getSourceStart();
             int stop = iproblem.getSourceEnd() + 1; // make it exclusive
             SketchInterval in = ps.mapJavaToSketch(start, stop);
+            if (in == SketchInterval.BEFORE_START) return null;
             int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
             Problem p = new Problem(iproblem, in.tabIndex, line);
             p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
             return p;
           })
+          .filter(p -> p != null)
           .collect(Collectors.toList());
 
       // Handle import suggestions
