@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GraphicsDevice;
@@ -232,6 +233,7 @@ public class PDEX {
           }
         });
         window.setSize(300, 400);
+        window.setFocusableWindowState(false);
         Toolkit.setIcon(window);
         JScrollPane sp2 = new JScrollPane();
         tree = new JTree();
@@ -239,6 +241,9 @@ public class PDEX {
         renderer.setLeafIcon(null);
         renderer.setClosedIcon(null);
         renderer.setOpenIcon(null);
+        renderer.setBackgroundSelectionColor(new Color(228, 248, 246));
+        renderer.setBorderSelectionColor(new Color(0, 0, 0, 0));
+        renderer.setTextSelectionColor(Color.BLACK);
         sp2.setViewportView(tree);
         window.add(sp2);
       }
