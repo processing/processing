@@ -29,17 +29,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
-import javax.swing.text.BadLocationException;
 
 import processing.app.Mode;
 import processing.app.Sketch;
 import processing.app.SketchCode;
-import processing.app.Util;
 import processing.app.ui.Editor;
 import processing.core.PApplet;
-import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.Problem;
 
 
@@ -57,19 +55,19 @@ public class MarkerColumn extends JPanel {
 
 //  static final int WIDE = 12;
 
-	private Color errorColor;
-	private Color warningColor;
+  private Color errorColor;
+  private Color warningColor;
 
-	// Stores error markers displayed PER TAB along the error bar.
-	private List<LineMarker> errorPoints = new ArrayList<LineMarker>();
+  // Stores error markers displayed PER TAB along the error bar.
+  private List<LineMarker> errorPoints = new ArrayList<LineMarker>();
 
 
-	public MarkerColumn(JavaEditor editor, int height) {
-		this.editor = editor;
+  public MarkerColumn(JavaEditor editor, int height) {
+    this.editor = editor;
 
-		Mode mode = editor.getMode();
-		errorColor = mode.getColor("editor.column.error.color");
-		warningColor = mode.getColor("editor.column.warning.color");
+    Mode mode = editor.getMode();
+    errorColor = mode.getColor("editor.column.error.color");
+    warningColor = mode.getColor("editor.column.warning.color");
 
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
@@ -82,65 +80,55 @@ public class MarkerColumn extends JPanel {
         showMarkerHover(e.getY());
       }
     });
-	}
+  }
 
 
-	@Override
-	public void repaint() {
-	  recalculateMarkerPositions();
-	  super.repaint();
-	}
+  @Override
+  public void repaint() {
+    recalculateMarkerPositions();
+    super.repaint();
+  }
 
 
+  @Override
   public void paintComponent(Graphics g) {
     g.drawImage(editor.getJavaTextArea().getGutterGradient(),
                 0, 0, getWidth(), getHeight(), this);
 
+    int currentTabIndex = editor.getSketch().getCurrentCodeIndex();
+
     for (LineMarker m : errorPoints) {
-      if (m.getType() == LineMarker.ERROR) {
+      Problem problem = m.problem;
+      if (problem.getTabIndex() != currentTabIndex) continue;
+      if (problem.isError()) {
         g.setColor(errorColor);
       } else {
         g.setColor(warningColor);
       }
-      g.drawLine(2, m.getY(), getWidth() - 2, m.getY());
+      g.drawLine(2, m.y, getWidth() - 2, m.y);
     }
   }
 
 
-	public List<LineMarker> getErrorPoints() {
-	  return errorPoints;
-	}
+  public void updateErrorPoints(final List<Problem> problems) {
+    errorPoints = problems.stream()
+        .map(LineMarker::new)
+        .collect(Collectors.toList());
+    repaint();
+  }
 
 
-	public void updateErrorPoints(final List<Problem> problems) {
-	  // NOTE: ErrorMarkers are calculated for the present tab only Error Marker
-	  // index in the arraylist is LOCALIZED for current tab.
-	  Sketch sketch = editor.getSketch();
-	  int currentTab = sketch.getCurrentCodeIndex();
-	  errorPoints.clear();
-	  // Each problem.getSourceLine() will have an extra line added because
-	  // of class declaration in the beginning as well as default imports
-	  for (Problem problem : problems) {
-	    if (problem.getTabIndex() == currentTab) {
-	      errorPoints.add(new LineMarker(problem, problem.isError()));
-	    }
-	  }
-	  repaint();
-	  editor.getErrorChecker().updateEditorStatus();
-	}
-
-
-	/** Find out which error/warning the user has clicked and scroll to it */
-	private void scrollToMarkerAt(final int y) {
-	  try {
+  /** Find out which error/warning the user has clicked and scroll to it */
+  private void scrollToMarkerAt(final int y) {
+    try {
       LineMarker m = findClosestMarker(y);
       if (m != null) {
-        editor.getErrorChecker().scrollToErrorLine(m.getProblem());
+        editor.highlight(m.problem);
       }
-	  } catch (Exception ex) {
-	    ex.printStackTrace();
-	  }
-	}
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+  }
 
 
 	/*
@@ -152,11 +140,11 @@ public class MarkerColumn extends JPanel {
 
 
   /** Show tooltip on hover. */
-	private void showMarkerHover(final int y) {
-	  try {
+  private void showMarkerHover(final int y) {
+    try {
       LineMarker m = findClosestMarker(y);
       if (m != null) {
-        Problem p = m.getProblem();
+        Problem p = m.problem;
 //	          String kind = p.isError() ?
 //	            Language.text("editor.status.error") :
 //	            Language.text("editor.status.warning");
@@ -164,60 +152,75 @@ public class MarkerColumn extends JPanel {
         editor.statusToolTip(MarkerColumn.this, p.getMessage(), p.isError());
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       }
-	  } catch (Exception ex) {
-	    ex.printStackTrace();
-	  }
-	}
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+  }
 
 
-	private void recalculateMarkerPositions() {
-	  List<LineMarker> errorPoints = getErrorPoints();
-	  if (errorPoints != null && errorPoints.size() > 0) {
-	    Sketch sketch = editor.getSketch();
-	    SketchCode code = sketch.getCurrentCode();
-	    int totalLines;
-	    try {
-	      totalLines = Util.countLines(code.getDocumentText());
-	    } catch (BadLocationException e) {
-	      e.printStackTrace();
-	      totalLines = 1; // do not divide by zero
-	    }
-	    int visibleLines = editor.getTextArea().getVisibleLines();
-	    totalLines = PApplet.max(totalLines, visibleLines);
+  private void recalculateMarkerPositions() {
+    if (errorPoints != null && errorPoints.size() > 0) {
+      Sketch sketch = editor.getSketch();
+      SketchCode code = sketch.getCurrentCode();
+      int currentTab = sketch.getCurrentCodeIndex();
+      int totalLines = PApplet.max(1, code.getLineCount()); // do not divide by zero
+      int visibleLines = editor.getTextArea().getVisibleLines();
+      totalLines = PApplet.max(totalLines, visibleLines);
 
-	    for (LineMarker m : errorPoints) {
-	      // Ratio of error line to total lines
-	      float y = (m.getLineNumber() + 1) / ((float) totalLines);
-	      // Ratio multiplied by height of the error bar
-	      y *= getHeight();
-	      y -= 15; // -15 is just a vertical offset
+      int topMargin = 20; // top scroll button
+      int bottomMargin = 40; // bottom scroll button and horizontal scrollbar
+      int height = getHeight() - topMargin - bottomMargin;
 
-	      m.setY((int) y);
-	    }
-	  }
-	}
+      for (LineMarker m : errorPoints) {
+        Problem problem = m.problem;
+        if (problem.getTabIndex() != currentTab) continue;
+        // Ratio of error line to total lines
+        float ratio = (problem.getLineNumber() + 1) / ((float) totalLines);
+        // Ratio multiplied by height of the error bar
+        float y = topMargin + ratio * height;
 
-
-	private LineMarker findClosestMarker(final int y) {
-	  LineMarker closest = null;
-	  int closestDist = Integer.MAX_VALUE;
-	  for (LineMarker m : errorPoints) {
-	    int dist = Math.abs(y - m.getY());
-	    if (dist < 3 && dist < closestDist) {
-	      closest = m;
-	      closestDist = dist;
-	    }
-	  }
-	  return closest;
-	}
+        m.y = (int) y;
+      }
+    }
+  }
 
 
-	public Dimension getPreferredSize() {
-	  return new Dimension(Editor.RIGHT_GUTTER, super.getPreferredSize().height);
-	}
+  private LineMarker findClosestMarker(final int y) {
+    LineMarker closest = null;
+    int closestDist = Integer.MAX_VALUE;
+    for (LineMarker m : errorPoints) {
+      int dist = Math.abs(y - m.y);
+      if (dist < 3 && dist < closestDist) {
+        closest = m;
+        closestDist = dist;
+      }
+    }
+    return closest;
+  }
 
 
-	public Dimension getMinimumSize() {
-	  return new Dimension(Editor.RIGHT_GUTTER, super.getMinimumSize().height);
-	}
+  public Dimension getPreferredSize() {
+    return new Dimension(Editor.RIGHT_GUTTER, super.getPreferredSize().height);
+  }
+
+
+  public Dimension getMinimumSize() {
+    return new Dimension(Editor.RIGHT_GUTTER, super.getMinimumSize().height);
+  }
+
+  /**
+   * Line markers displayed on the Error Column.
+   */
+  private static class LineMarker {
+    /** y co-ordinate of the marker */
+    int y;
+
+    /** Problem that the error marker represents */
+    final Problem problem;
+
+
+    LineMarker(Problem problem) {
+      this.problem = problem;
+    }
+  }
 }

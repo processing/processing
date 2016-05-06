@@ -96,7 +96,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate>{
       type = LOCAL_FIELD;
     else
       type = LOCAL_VAR;
-    label = vdf.getName() + " : " + ASTGenerator.extracTypeInfo2(vdf);
+    label = vdf.getName() + " : " + CompletionGenerator.extracTypeInfo2(vdf);
     wrappedObject = vdf;
   }
 

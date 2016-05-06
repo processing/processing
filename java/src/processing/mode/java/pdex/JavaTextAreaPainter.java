@@ -47,7 +47,6 @@ import javax.swing.text.Utilities;
 
 import processing.app.Messages;
 import processing.app.Mode;
-import processing.app.Platform;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
 import processing.app.syntax.TextAreaDefaults;
@@ -77,18 +76,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
   public JavaTextAreaPainter(final JavaTextArea textArea, TextAreaDefaults defaults) {
     super(textArea, defaults);
 
-    addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent evt) {
-        if (!getJavaEditor().hasJavaTabs()) { // Ctrl + Click disabled for java tabs
-          if (evt.getButton() == MouseEvent.BUTTON1) {
-            if ((evt.isControlDown() && !Platform.isMacOS()) || evt.isMetaDown()) {
-              handleCtrlClick(evt);
-            }
-          }
-        }
-      }
-    });
-
     // Handle mouse clicks to toggle breakpoints
     addMouseListener(new MouseAdapter() {
       long lastTime;  // OS X seems to be firing multiple mouse events
@@ -117,72 +104,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
     tweakMode = false;
     cursorType = Cursor.DEFAULT_CURSOR;
   }
-
-
-  void handleCtrlClick(MouseEvent evt) {
-    Messages.log("--handleCtrlClick--");
-    int off = textArea.xyToOffset(evt.getX(), evt.getY());
-    if (off < 0)
-      return;
-    int line = textArea.getLineOfOffset(off);
-    if (line < 0)
-      return;
-    String s = textArea.getLineText(line);
-    if (s == null)
-      return;
-    else if (s.length() == 0)
-      return;
-    else {
-      int x = textArea.xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
-      Messages.log("x="+x);
-      int xLS = off - textArea.getLineStartNonWhiteSpaceOffset(line);
-      if (x < 0 || x >= s.length())
-        return;
-      String word = s.charAt(x) + "";
-      if (s.charAt(x) == ' ')
-        return;
-      if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_' || s.charAt(x) == '$'))
-        return;
-      int i = 0;
-      while (true) {
-        i++;
-        if (x1 >= 0 && x1 < s.length()) {
-          if (Character.isLetter(s.charAt(x1)) || s.charAt(x1) == '_') {
-            word = s.charAt(x1--) + word;
-            xLS--;
-          } else
-            x1 = -1;
-        } else
-          x1 = -1;
-
-        if (x2 >= 0 && x2 < s.length()) {
-          if (Character.isLetterOrDigit(s.charAt(x2)) || s.charAt(x2) == '_'
-              || s.charAt(x2) == '$')
-            word = word + s.charAt(x2++);
-          else
-            x2 = -1;
-        } else
-          x2 = -1;
-
-        if (x1 < 0 && x2 < 0)
-          break;
-        if (i > 200) {
-          // time out!
-          // System.err.println("Whoopsy! :P");
-          break;
-        }
-      }
-      if (Character.isDigit(word.charAt(0)))
-        return;
-
-      Messages.log(getJavaEditor().getErrorChecker().mainClassOffset + line + "|" + line + "| offset " + xLS + word + " <= \n");
-      ASTGenerator astGenerator = getJavaEditor().getErrorChecker().getASTGenerator();
-      synchronized (astGenerator) {
-        astGenerator.scrollToDeclaration(line, word, xLS);
-      }
-    }
-  }
-
 
   /**
    * Paint a line. Paints the gutter (with background color and text) then the
@@ -351,19 +272,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * @param x
    */
   protected void paintErrorLine(Graphics gfx, int line, int x) {
-    ErrorCheckerService ecs = getJavaEditor().getErrorChecker();
-    if (ecs == null || ecs.lastCodeCheckResult.problems.isEmpty()) {
-      return;
-    }
-
-    LineMarker marker = getJavaEditor().findError(line);
-    if (marker != null) {
-      Problem problem = marker.getProblem();
-
-      int offset = textArea.getLineStartOffset(problem.getLineNumber());
-
-      int startOffset = offset + problem.getPDELineStartOffset();
-      int stopOffset = offset + problem.getPDELineStopOffset() + 1;
+    List<Problem> problems = getJavaEditor().findProblems(line);
+    for (Problem problem : problems) {
+      int startOffset = problem.getStartOffset();
+      int stopOffset = problem.getStopOffset();
 
       int lineOffset = textArea.getLineStartOffset(line);
 
@@ -393,8 +305,15 @@ public class JavaTextAreaPainter extends TextAreaPainter
         int rightTrimmedLength = trimRight(badCode).length();
         int leftTrimLength = rightTrimmedLength - trimmedLength;
 
+        // Fix offsets when bad code is just whitespace
+        if (trimmedLength == 0) {
+          leftTrimLength = 0;
+          rightTrimmedLength = badCode.length();
+        }
+
         int x1 = textArea.offsetToX(line, goodCode.length() + leftTrimLength);
         int x2 = textArea.offsetToX(line, goodCode.length() + rightTrimmedLength);
+        if (x1 == x2) x2 += fm.stringWidth(" ");
         int y1 = y + fm.getHeight() - 2;
 
         if (line != problem.getLineNumber()) {
@@ -402,7 +321,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
         }
 
         gfx.setColor(errorUnderlineColor);
-        if (marker.getType() == LineMarker.WARNING) {
+        if (problem.isWarning()) {
           gfx.setColor(warningUnderlineColor);
         }
         paintSquiggle(gfx, y1, x1, x2);
@@ -427,7 +346,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 
   /**
-   * Sets ErrorCheckerService and loads theme for TextAreaPainter(XQMode)
+   * Loads theme for TextAreaPainter(XQMode)
    */
   public void setMode(Mode mode) {
     errorUnderlineColor = mode.getColor("editor.error.underline.color");
@@ -443,17 +362,13 @@ public class JavaTextAreaPainter extends TextAreaPainter
   public String getToolTipText(MouseEvent evt) {
     int line = evt.getY() / getFontMetrics().getHeight() + textArea.getFirstLine();
     if (line >= 0 || line < textArea.getLineCount()) {
-      LineMarker marker = getJavaEditor().findError(line);
-      if (marker != null) {
-        Problem problem = marker.getProblem();
-
-        int lineOffset = textArea.getLineStartOffset(problem.getLineNumber());
-
+      List<Problem> problems = getJavaEditor().findProblems(line);
+      for (Problem problem : problems) {
         int lineStart = textArea.getLineStartOffset(line);
         int lineEnd = textArea.getLineStopOffset(line);
 
-        int errorStart = lineOffset + problem.getPDELineStartOffset();
-        int errorEnd = lineOffset + problem.getPDELineStopOffset() + 1;
+        int errorStart = problem.getStartOffset();
+        int errorEnd = problem.getStopOffset() + 1;
 
         int startOffset = Math.max(errorStart, lineStart) - lineStart;
         int stopOffset = Math.min(errorEnd, lineEnd) - lineStart;
@@ -472,96 +387,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
     setToolTipText(null);
     return super.getToolTipText(evt);
   }
-
-
-  /*
-  @Override
-  public String getToolTipText(MouseEvent event) {
-    if (!getJavaEditor().hasJavaTabs()) {
-      int off = textArea.xyToOffset(event.getX(), event.getY());
-      if (off < 0) {
-        setToolTipText(null);
-        return super.getToolTipText(event);
-      }
-      int line = textArea.getLineOfOffset(off);
-      if (line < 0) {
-        setToolTipText(null);
-        return super.getToolTipText(event);
-      }
-
-      String s = textArea.getLineText(line);
-      if (s == null || s.isEmpty()) {
-        setToolTipText(null);
-        return super.getToolTipText(event);
-
-      } else {
-        int x = textArea.xToOffset(line, event.getX()), x2 = x + 1, x1 = x - 1;
-        int xLS = off - textArea.getLineStartNonWhiteSpaceOffset(line);
-        if (x < 0 || x >= s.length()) {
-          setToolTipText(null);
-          return super.getToolTipText(event);
-        }
-        String word = s.charAt(x) + "";
-        if (s.charAt(x) == ' ') {
-          setToolTipText(null);
-          return super.getToolTipText(event);
-        }
-        if (!(Character.isLetterOrDigit(s.charAt(x)) ||
-            s.charAt(x) == '_' || s.charAt(x) == '$' || s.charAt(x) == '{' ||
-            s.charAt(x) == '}')) {
-          setToolTipText(null);
-          return super.getToolTipText(event);
-        }
-        int i = 0;
-        while (true) {
-          i++;
-          if (x1 >= 0 && x1 < s.length()) {
-            if (Character.isLetter(s.charAt(x1)) || s.charAt(x1) == '_') {
-              word = s.charAt(x1--) + word;
-              xLS--;
-            } else
-              x1 = -1;
-          } else
-            x1 = -1;
-
-          if (x2 >= 0 && x2 < s.length()) {
-            if (Character.isLetterOrDigit(s.charAt(x2)) || s.charAt(x2) == '_'
-                || s.charAt(x2) == '$')
-              word = word + s.charAt(x2++);
-            else
-              x2 = -1;
-          } else
-            x2 = -1;
-
-          if (x1 < 0 && x2 < 0)
-            break;
-          if (i > 200) {
-            // time out!
-            // System.err.println("Whoopsy! :P");
-            break;
-          }
-        }
-        if (Character.isDigit(word.charAt(0))) {
-          setToolTipText(null);
-          return super.getToolTipText(event);
-        }
-        ASTGenerator ast = getJavaEditor().getErrorChecker().getASTGenerator();
-        synchronized (ast) {
-          String tooltipText = ast.getLabelForASTNode(line, word, xLS);
-
-          //      log(errorCheckerService.mainClassOffset + " MCO "
-          //      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
-          if (tooltipText != null) {
-            return tooltipText;
-          }
-        }
-      }
-    }
-    // Used when there are Java tabs, but also the fall-through case from above
-//    setToolTipText(null);
-    return super.getToolTipText(event);
-  }
-  */
 
 
   // TweakMode code

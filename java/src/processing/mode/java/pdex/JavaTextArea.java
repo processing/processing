@@ -33,7 +33,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.DefaultListModel;
 import javax.swing.SwingWorker;
@@ -75,9 +74,6 @@ public class JavaTextArea extends JEditTextArea {
     super(defaults, new JavaInputHandler(editor));
     this.editor = editor;
 
-    // handle right click on a word
-    painter.addMouseListener(rightClickMouseAdapter);
-
     // change cursor to pointer in the gutter area
     painter.addMouseMotionListener(gutterCursorMouseAdapter);
 
@@ -93,6 +89,8 @@ public class JavaTextArea extends JEditTextArea {
     prevMouseListeners = painter.getMouseListeners();
     prevMMotionListeners = painter.getMouseMotionListeners();
     prevKeyListeners = editor.getKeyListeners();
+
+    suggestionGenerator = new CompletionGenerator();
 
     tweakMode = false;
   }
@@ -258,75 +256,7 @@ public class JavaTextArea extends JEditTextArea {
   }
 
 
-  /**
-   * Retrieves the word on which the mouse pointer is present
-   * @param evt - the MouseEvent which triggered this method
-   */
-  private String fetchPhrase(MouseEvent evt) {
-    Messages.log("--handle Mouse Right Click--");
-    int off = xyToOffset(evt.getX(), evt.getY());
-    if (off < 0)
-      return null;
-    int line = getLineOfOffset(off);
-    if (line < 0)
-      return null;
-    String s = getLineText(line);
-    if (s == null)
-      return null;
-    else if (s.length() == 0)
-      return null;
-    else {
-      int x = xToOffset(line, evt.getX()), x2 = x + 1, x1 = x - 1;
-      int xLS = off - getLineStartNonWhiteSpaceOffset(line);
-      Messages.log("x=" + x);
-      if (x < 0 || x >= s.length())
-        return null;
-      String word = s.charAt(x) + "";
-      if (s.charAt(x) == ' ')
-        return null;
-      if (!(Character.isLetterOrDigit(s.charAt(x)) || s.charAt(x) == '_' || s
-          .charAt(x) == '$'))
-        return null;
-      int i = 0;
-      while (true) {
-        i++;
-        if (x1 >= 0 && x1 < s.length()) {
-          if (Character.isLetter(s.charAt(x1)) || s.charAt(x1) == '_') {
-            word = s.charAt(x1--) + word;
-            xLS--;
-          } else
-            x1 = -1;
-        } else
-          x1 = -1;
-
-        if (x2 >= 0 && x2 < s.length()) {
-          if (Character.isLetterOrDigit(s.charAt(x2)) || s.charAt(x2) == '_'
-              || s.charAt(x2) == '$')
-            word = word + s.charAt(x2++);
-          else
-            x2 = -1;
-        } else
-          x2 = -1;
-
-        if (x1 < 0 && x2 < 0)
-          break;
-        if (i > 200) {
-          // time out!
-          break;
-        }
-      }
-      if (Character.isDigit(word.charAt(0))) {
-        return null;
-      }
-      Messages.log("Mouse click, word: " + word.trim());
-      ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
-      synchronized (astGenerator) {
-        astGenerator.setLastClickedWord(line, word, xLS);
-      }
-      return word.trim();
-    }
-  }
-
+  CompletionGenerator suggestionGenerator;
 
   SwingWorker<Void, Void> suggestionWorker = null;
 
@@ -388,73 +318,65 @@ public class JavaTextArea extends JEditTextArea {
       text = lineText.substring(0, caretLinePosition);
     }
 
-    suggestionWorker = new SwingWorker<Void, Void>() {
+    // Adjust line number for tabbed sketches
+    int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
+    int lineStartOffset = editor.getTextArea().getLineStartOffset(caretLineIndex);
+
+    editor.getPreprocessingService().whenDone(ps -> {
+      int lineNumber = ps.tabOffsetToJavaLine(codeIndex, lineStartOffset);
 
       String phrase = null;
       DefaultListModel<CompletionCandidate> defListModel = null;
 
-      @Override
-      protected Void doInBackground() throws Exception {
+      try {
         Messages.log("phrase parse start");
         phrase = parsePhrase(text);
         Messages.log("phrase: " + phrase);
-        if (phrase == null) return null;
+        if (phrase != null) {
+          List<CompletionCandidate> candidates;
 
-        List<CompletionCandidate> candidates;
+          candidates = suggestionGenerator.preparePredictions(ps, phrase, lineNumber);
 
-        ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
-        synchronized (astGenerator) {
-          int lineOffset = caretLineIndex +
-              editor.getErrorChecker().mainClassOffset;
+          if (!suggestionRequested) {
 
-          candidates = astGenerator.preparePredictions(phrase, lineOffset);
+    //        // don't show completions when the outline is visible
+    //        boolean showSuggestions =
+    //          astGenerator.sketchOutline == null || !astGenerator.sketchOutline.isVisible();
+
+    //        if (showSuggestions && phrase != null &&
+            if (candidates != null && !candidates.isEmpty()) {
+              Collections.sort(candidates);
+              defListModel = CompletionGenerator.filterPredictions(candidates);
+              Messages.log("Got: " + candidates.size() + " candidates, " + defListModel.size() + " filtered");
+            }
+          }
+
         }
 
-        if (suggestionRequested) return null;
+        final String finalPhrase = phrase;
+        final DefaultListModel<CompletionCandidate> finalDefListModel = defListModel;
 
-//        // don't show completions when the outline is visible
-//        boolean showSuggestions =
-//          astGenerator.sketchOutline == null || !astGenerator.sketchOutline.isVisible();
+        EventQueue.invokeLater(() -> {
 
-//        if (showSuggestions && phrase != null &&
-        if (phrase != null && candidates != null && !candidates.isEmpty()) {
-          Collections.sort(candidates);
-          defListModel = ASTGenerator.filterPredictions(candidates);
-          Messages.log("Got: " + candidates.size() + " candidates, " + defListModel.size() + " filtered");
-        }
-        return null;
+          suggestionRunning = false;
+          if (suggestionRequested) {
+            Messages.log("completion invalidated");
+            fetchPhrase();
+            return;
+          }
+
+          Messages.log("completion finishing");
+
+          if (finalDefListModel != null) {
+            showSuggestion(finalDefListModel, finalPhrase);
+          } else {
+            hideSuggestion();
+          }
+        });
+      } catch (Exception e) {
+        Messages.loge("error while preparing suggestions", e);
       }
-
-      @Override
-      protected void done() {
-
-        try {
-          get();
-        } catch (ExecutionException e) {
-          Messages.loge("error while preparing suggestions", e.getCause());
-        } catch (InterruptedException e) {
-          // don't care
-        }
-
-        suggestionRunning = false;
-        if (suggestionRequested) {
-          Messages.log("completion invalidated");
-          hideSuggestion();
-          fetchPhrase();
-          return;
-        }
-
-        Messages.log("completion finishing");
-
-        if (defListModel != null) {
-          showSuggestion(defListModel, phrase);
-        } else {
-          hideSuggestion();
-        }
-      }
-    };
-
-    suggestionWorker.execute();
+    });
   }
 
   protected static String parsePhrase(final String lineText) {
@@ -709,20 +631,6 @@ public class JavaTextArea extends JEditTextArea {
 
 
   /**
-   * Fetches word under the cursor on right click
-   */
-  protected final MouseAdapter rightClickMouseAdapter = new MouseAdapter() {
-    @Override
-    public void mousePressed(MouseEvent me) {
-      if (me.getButton() == MouseEvent.BUTTON3 &&
-          !editor.hasJavaTabs()) { // tooltips, etc disabled for java tabs
-        fetchPhrase(me);
-      }
-    }
-  };
-
-
-  /**
    * Sets default cursor (instead of text cursor) in the gutter area.
    */
   protected final MouseMotionAdapter gutterCursorMouseAdapter = new MouseMotionAdapter() {
@@ -765,7 +673,6 @@ public class JavaTextArea extends JEditTextArea {
    * @param subWord
    */
   protected void showSuggestion(DefaultListModel<CompletionCandidate> listModel, String subWord) {
-    //new Exception(System.currentTimeMillis() + "").printStackTrace(System.out);
     hideSuggestion();
 
     if (listModel.size() == 0) {

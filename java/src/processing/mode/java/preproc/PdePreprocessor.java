@@ -141,7 +141,7 @@ public class PdePreprocessor {
   protected final String indent;
   private final String name;
 
-  public static enum Mode {
+  public enum Mode {
     STATIC, ACTIVE, JAVA
   }
 
@@ -492,7 +492,7 @@ public class PdePreprocessor {
    * @param code code without comments
    * @return determined mode
    */
-  static public Mode parseMode(String code) {
+  static public Mode parseMode(CharSequence code) {
 
     // See if we can find any function in the global scope
     if (findInCurrentScope(FUNCTION_DECL, code) != null) {
@@ -512,7 +512,7 @@ public class PdePreprocessor {
    * Calls {@link #findInScope(Pattern, String, int, int, int, int) findInScope}
    * on the whole string with min and max target scopes set to zero.
    */
-  static protected MatchResult findInCurrentScope(Pattern pattern, String code) {
+  static protected MatchResult findInCurrentScope(Pattern pattern, CharSequence code) {
     return findInScope(pattern, code, 0, code.length(), 0, 0);
   }
 
@@ -521,7 +521,7 @@ public class PdePreprocessor {
    * Calls {@link #findInScope(Pattern, String, int, int, int, int) findInScope}
    * starting at start char with min and max target scopes set to zero.
    */
-  static protected MatchResult findInCurrentScope(Pattern pattern, String code,
+  static protected MatchResult findInCurrentScope(Pattern pattern, CharSequence code,
                                                   int start) {
     return findInScope(pattern, code, start, code.length(), 0, 0);
   }
@@ -550,7 +550,7 @@ public class PdePreprocessor {
    * @return first match at a desired relative scope depth,
    *         null if there isn't one
    */
-  static protected MatchResult findInScope(Pattern pattern, String code,
+  static protected MatchResult findInScope(Pattern pattern, CharSequence code,
                                            int start, int stop,
                                            int minTargetScopeDepth,
                                            int maxTargetScopeDepth) {
@@ -601,7 +601,7 @@ public class PdePreprocessor {
    *         Integer.MAX_VALUE if end is in string literal,
    *         char literal or second char of escaped sequence
    */
-  static protected int scopeDepthDiff(String code, int start, int stop) {
+  static protected int scopeDepthDiff(CharSequence code, int start, int stop) {
     boolean insideString = false;
     boolean insideChar = false;
     boolean escapedChar = false;

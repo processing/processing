@@ -1079,6 +1079,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   abstract public void handleImportLibrary(String name);
 
 
+  public void librariesChanged() { }
+
+  public void codeFolderChanged() { }
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -2664,7 +2669,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // make sure any edits have been stored
     //current.setProgram(editor.getText());
-    sketch.getCurrentCode().setProgram(getText());
+    for (SketchCode sc : sketch.getCode()) {
+      try {
+        sc.setProgram(sc.getDocumentText());
+      } catch (BadLocationException e) { }
+    }
 
 //    // if an external editor is being used, need to grab the
 //    // latest version of the code from the file.
