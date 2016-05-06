@@ -193,7 +193,7 @@ public class PDEX {
 
 
 
-  private class ShowUsage {
+  private static class ShowUsage {
 
     final JDialog window;
     final JTree tree;
