@@ -42,12 +42,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.mode.java.debug.*;
-import processing.mode.java.pdex.VMEventListener;
-import processing.mode.java.pdex.VMEventReader;
 import processing.mode.java.runner.Runner;
 
 
-public class Debugger implements VMEventListener {
+public class Debugger {
 
   /// editor window, acting as main view
   protected JavaEditor editor;
@@ -90,6 +88,9 @@ public class Debugger implements VMEventListener {
 
   /// tab filenames which already have been tracked for runtime changes
   protected Set<String> runtimeTabsTracked = new HashSet<>();
+
+  /// VM event listener
+  protected VMEventListener vmEventListener = this::vmEvent;
 
 
   public Debugger(JavaEditor editor) {
@@ -219,7 +220,7 @@ public class Debugger implements VMEventListener {
         }
 
         // start receiving vm events
-        VMEventReader eventThread = new VMEventReader(vm.eventQueue(), this);
+        VMEventReader eventThread = new VMEventReader(vm.eventQueue(), vmEventListener);
         eventThread.start();
 
         startTrackingLineChanges();
@@ -532,7 +533,6 @@ public class Debugger implements VMEventListener {
    * ({@link VMEventReader})
    * @param es Incoming set of events from VM
    */
-  @Override
   public synchronized void vmEvent(EventSet es) {
     for (Event e : es) {
       log(Level.INFO, "*** VM Event: {0}", e.toString());
@@ -1391,5 +1391,67 @@ public class Debugger implements VMEventListener {
 
   static private void log(Level level, String msg, Object obj) {
     Logger.getLogger(Debugger.class.getName()).log(level, msg, obj);
+  }
+
+
+  /**
+   * Interface for VM callbacks.
+   *
+   * @author Martin Leopold <m@martinleopold.com>
+   */
+  protected interface VMEventListener {
+
+      /**
+       * Receive an event from the VM. Events are sent in batches. See
+       * documentation of EventSet for more information.
+       *
+       * @param es Set of events
+       */
+      void vmEvent(EventSet es);
+  }
+
+
+  /**
+   * Reader Thread for VM Events. Constantly monitors a VMs EventQueue for new
+   * events and forwards them to an VMEventListener.
+   *
+   * @author Martin Leopold <m@martinleopold.com>
+   */
+  protected static class VMEventReader extends Thread {
+
+      EventQueue eventQueue;
+      VMEventListener listener;
+
+      /**
+       * Construct a VMEventReader. Needs to be kicked off with start() once
+       * constructed.
+       *
+       * @param eventQueue The queue to read events from. Can be obtained from a
+       * VirtualMachine via eventQueue().
+       * @param listener the listener to forward events to.
+       */
+      public VMEventReader(EventQueue eventQueue, VMEventListener listener) {
+          super("VM Event Thread");
+          this.eventQueue = eventQueue;
+          this.listener = listener;
+      }
+
+      @Override
+      public void run() {
+          try {
+              while (true) {
+                  EventSet eventSet = eventQueue.remove();
+                  listener.vmEvent(eventSet);
+                  /*
+                   * for (Event e : eventSet) { System.out.println("VM Event: " +
+                   * e.toString()); }
+                   */
+              }
+          } catch (VMDisconnectedException e) {
+              Logger.getLogger(VMEventReader.class.getName()).log(Level.INFO, "VMEventReader quit on VM disconnect");
+          } catch (Exception e) {
+              Logger.getLogger(VMEventReader.class.getName()).log(Level.SEVERE, "VMEventReader quit", e);
+          }
+      }
   }
 }
