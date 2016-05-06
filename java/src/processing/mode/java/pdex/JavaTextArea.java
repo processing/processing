@@ -90,6 +90,8 @@ public class JavaTextArea extends JEditTextArea {
     prevMMotionListeners = painter.getMouseMotionListeners();
     prevKeyListeners = editor.getKeyListeners();
 
+    suggestionGenerator = new ASTGenerator();
+
     tweakMode = false;
   }
 
@@ -254,6 +256,8 @@ public class JavaTextArea extends JEditTextArea {
   }
 
 
+  ASTGenerator suggestionGenerator;
+
   SwingWorker<Void, Void> suggestionWorker = null;
 
   volatile boolean suggestionRunning = false;
@@ -331,8 +335,7 @@ public class JavaTextArea extends JEditTextArea {
         if (phrase != null) {
           List<CompletionCandidate> candidates;
 
-          ASTGenerator astGenerator = editor.getErrorChecker().getASTGenerator();
-          candidates = astGenerator.preparePredictions(ps, phrase, lineNumber);
+          candidates = suggestionGenerator.preparePredictions(ps, phrase, lineNumber);
 
           if (!suggestionRequested) {
 

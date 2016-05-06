@@ -29,10 +29,10 @@ import processing.app.ui.Toolkit;
 import processing.mode.java.debug.LineBreakpoint;
 import processing.mode.java.debug.LineHighlight;
 import processing.mode.java.debug.LineID;
-import processing.mode.java.pdex.ASTGenerator;
 import processing.mode.java.pdex.ErrorCheckerService;
 import processing.mode.java.pdex.ImportStatement;
 import processing.mode.java.pdex.JavaTextArea;
+import processing.mode.java.pdex.PDEX;
 import processing.mode.java.pdex.Problem;
 import processing.mode.java.pdex.SourceUtils;
 import processing.mode.java.preproc.PdePreprocessor;
@@ -71,6 +71,7 @@ public class JavaEditor extends Editor {
   private boolean javaTabWarned;
 
   protected ErrorCheckerService errorCheckerService;
+  protected PDEX pdex;
 
   protected List<Problem> problems = Collections.emptyList();
 
@@ -183,6 +184,21 @@ public class JavaEditor extends Editor {
     }
     errorCheckerService.start();
     errorCheckerService.notifySketchChanged();
+
+    pdex = new PDEX(this, errorCheckerService);
+
+    // Add ctrl+click listener
+    getJavaTextArea().getPainter().addMouseListener(new MouseAdapter() {
+      public void mouseReleased(MouseEvent evt) {
+        if (evt.getButton() == MouseEvent.BUTTON1) {
+          if ((evt.isControlDown() && !Platform.isMacOS()) || evt.isMetaDown()) {
+            handleCtrlClick(evt);
+          }
+        } else if (evt.getButton() == MouseEvent.BUTTON2) {
+          handleCtrlClick(evt);
+        }
+      }
+    });
   }
   
   
@@ -212,6 +228,7 @@ public class JavaEditor extends Editor {
         if (errorCheckerService != null) {
           if (hasJavaTabsChanged) {
             errorCheckerService.handleHasJavaTabsChange(hasJavaTabs);
+            pdex.handleHasJavaTabsChange(hasJavaTabs);
             if (hasJavaTabs) {
               setProblemList(Collections.emptyList());
             }
@@ -1358,6 +1375,7 @@ public class JavaEditor extends Editor {
       inspector.dispose();
     }
     errorCheckerService.stop();
+    pdex.dispose();
     super.dispose();
   }
 
@@ -2795,25 +2813,31 @@ public class JavaEditor extends Editor {
 
   /** Handle refactor operation */
   private void handleRefactor() {
-    Messages.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
-    ASTGenerator astGenerator = errorCheckerService.getASTGenerator();
     int startOffset = getSelectionStart();
     int stopOffset = getSelectionStop();
     int tabIndex = sketch.getCurrentCodeIndex();
 
-    astGenerator.handleRename(tabIndex, startOffset, stopOffset);
+    pdex.handleRename(tabIndex, startOffset, stopOffset);
   }
 
 
   /** Handle show usage operation */
   private void handleShowUsage() {
-    Messages.log("Caret at:" + textarea.getLineText(textarea.getCaretLine()));
-    ASTGenerator astGenerator = errorCheckerService.getASTGenerator();
     int startOffset = getSelectionStart();
     int stopOffset = getSelectionStop();
     int tabIndex = sketch.getCurrentCodeIndex();
 
-    astGenerator.handleShowUsage(tabIndex, startOffset, stopOffset);
+    pdex.handleShowUsage(tabIndex, startOffset, stopOffset);
+  }
+
+
+  /** Handle ctrl+click */
+  private void handleCtrlClick(MouseEvent evt) {
+    int off = getJavaTextArea().xyToOffset(evt.getX(), evt.getY());
+    if (off < 0) return;
+    int tabIndex = sketch.getCurrentCodeIndex();
+
+    pdex.handleCtrlClick(tabIndex, off);
   }
 
 

@@ -47,7 +47,6 @@ import javax.swing.text.Utilities;
 
 import processing.app.Messages;
 import processing.app.Mode;
-import processing.app.Platform;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
 import processing.app.syntax.TextAreaDefaults;
@@ -77,20 +76,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
   public JavaTextAreaPainter(final JavaTextArea textArea, TextAreaDefaults defaults) {
     super(textArea, defaults);
 
-    addMouseListener(new MouseAdapter() {
-      public void mouseReleased(MouseEvent evt) {
-        if (!getJavaEditor().hasJavaTabs()) { // Ctrl + Click disabled for java tabs
-          if (evt.getButton() == MouseEvent.BUTTON1) {
-            if ((evt.isControlDown() && !Platform.isMacOS()) || evt.isMetaDown()) {
-              handleCtrlClick(evt);
-            }
-          } else if (evt.getButton() == MouseEvent.BUTTON2) {
-            handleCtrlClick(evt);
-          }
-        }
-      }
-    });
-
     // Handle mouse clicks to toggle breakpoints
     addMouseListener(new MouseAdapter() {
       long lastTime;  // OS X seems to be firing multiple mouse events
@@ -119,19 +104,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
     tweakMode = false;
     cursorType = Cursor.DEFAULT_CURSOR;
   }
-
-
-  void handleCtrlClick(MouseEvent evt) {
-    int off = textArea.xyToOffset(evt.getX(), evt.getY());
-    if (off < 0) return;
-
-    int tabIndex = getEditor().getSketch().getCurrentCodeIndex();
-
-    ASTGenerator astGenerator = getJavaEditor().getErrorChecker().getASTGenerator();
-
-    astGenerator.handleCtrlClick(tabIndex, off);
-  }
-
 
   /**
    * Paint a line. Paints the gutter (with background color and text) then the

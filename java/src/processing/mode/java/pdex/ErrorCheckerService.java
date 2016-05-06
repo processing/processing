@@ -100,11 +100,6 @@ public class ErrorCheckerService {
   private volatile boolean running;
 
   /**
-   * ASTGenerator for operations on AST
-   */
-  protected final ASTGenerator astGenerator;
-
-  /**
    * Error checking doesn't happen before this interval has ellapsed since the
    * last request() call.
    */
@@ -137,7 +132,6 @@ public class ErrorCheckerService {
 
   public ErrorCheckerService(JavaEditor editor) {
     this.editor = editor;
-    astGenerator = new ASTGenerator(editor, this);
     isEnabled = !editor.hasJavaTabs();
     isContinuousCheckEnabled = JavaMode.errorCheckEnabled;
     registerDoneListener(errorHandlerListener);
@@ -170,8 +164,6 @@ public class ErrorCheckerService {
         Messages.loge("problem in error checker loop", e);
       }
     }
-
-    astGenerator.getGui().disposeAllWindows();
   }
 
 
@@ -300,11 +292,6 @@ public class ErrorCheckerService {
 
   public void addDocumentListener(Document doc) {
     if (doc != null) doc.addDocumentListener(sketchChangedListener);
-  }
-
-
-  public ASTGenerator getASTGenerator() {
-    return astGenerator;
   }
 
 
@@ -929,9 +916,6 @@ public class ErrorCheckerService {
       notifySketchChanged();
     } else {
       preprocessingTask.cancel(false);
-      if (astGenerator.getGui().showUsageBinding != null) {
-        astGenerator.getGui().showUsageWindow.setVisible(false);
-      }
     }
   }
 
