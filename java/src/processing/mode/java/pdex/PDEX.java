@@ -274,7 +274,7 @@ public class PDEX {
       // Find the node
       SimpleName name = ASTUtils.getSimpleNameAt(ps.compilationUnit, startJavaOffset, stopJavaOffset);
       if (name == null) {
-        editor.statusMessage("Cannot find any name under cursor", EditorStatus.ERROR);
+        editor.statusMessage("Cannot find any name under cursor", EditorStatus.NOTICE);
         return;
       }
 
@@ -282,7 +282,7 @@ public class PDEX {
       IBinding binding = ASTUtils.resolveBinding(name);
       if (binding == null) {
         editor.statusMessage("Cannot find usages, try to fix errors in your code first",
-                             EditorStatus.ERROR);
+                             EditorStatus.NOTICE);
         return;
       }
 
