@@ -361,7 +361,6 @@ public class JavaTextArea extends JEditTextArea {
           suggestionRunning = false;
           if (suggestionRequested) {
             Messages.log("completion invalidated");
-            hideSuggestion();
             fetchPhrase();
             return;
           }
@@ -674,7 +673,6 @@ public class JavaTextArea extends JEditTextArea {
    * @param subWord
    */
   protected void showSuggestion(DefaultListModel<CompletionCandidate> listModel, String subWord) {
-    //new Exception(System.currentTimeMillis() + "").printStackTrace(System.out);
     hideSuggestion();
 
     if (listModel.size() == 0) {
