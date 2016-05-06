@@ -273,8 +273,6 @@ public class PDEX {
 
       // Find binding
       IBinding binding = ASTUtils.resolveBinding(name);
-
-      this.binding = binding;
       if (binding == null) {
         editor.statusMessage("Cannot find usages, try to fix errors in your code first",
                              EditorStatus.ERROR);
@@ -287,6 +285,8 @@ public class PDEX {
 
     // Thread: worker
     void findUsageAndUpdateTree(PreprocessedSketch ps, IBinding binding) {
+
+      this.binding = binding;
 
       // Get label
       String bindingType = "";
