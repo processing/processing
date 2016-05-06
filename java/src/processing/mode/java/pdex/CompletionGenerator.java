@@ -66,9 +66,9 @@ import com.google.classpath.ClassPath;
 import com.google.classpath.RegExpResourceFilter;
 
 @SuppressWarnings({ "unchecked" })
-public class ASTGenerator {
+public class CompletionGenerator {
 
-  public ASTGenerator() {
+  public CompletionGenerator() {
     //addCompletionPopupListner();
     //loadJavaDoc();
   }

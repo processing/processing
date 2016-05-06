@@ -703,7 +703,7 @@ public class PDEX {
             Object o = treeNode.getUserObject();
             if (o instanceof ASTNode) {
               ASTNode node = (ASTNode) o;
-              return ASTGenerator.getNodeAsString(node);
+              return CompletionGenerator.getNodeAsString(node);
             }
           }
           return super.convertValueToText(value, selected, expanded, leaf, row, hasFocus);

@@ -90,7 +90,7 @@ public class JavaTextArea extends JEditTextArea {
     prevMMotionListeners = painter.getMouseMotionListeners();
     prevKeyListeners = editor.getKeyListeners();
 
-    suggestionGenerator = new ASTGenerator();
+    suggestionGenerator = new CompletionGenerator();
 
     tweakMode = false;
   }
@@ -256,7 +256,7 @@ public class JavaTextArea extends JEditTextArea {
   }
 
 
-  ASTGenerator suggestionGenerator;
+  CompletionGenerator suggestionGenerator;
 
   SwingWorker<Void, Void> suggestionWorker = null;
 
@@ -346,7 +346,7 @@ public class JavaTextArea extends JEditTextArea {
     //        if (showSuggestions && phrase != null &&
             if (candidates != null && !candidates.isEmpty()) {
               Collections.sort(candidates);
-              defListModel = ASTGenerator.filterPredictions(candidates);
+              defListModel = CompletionGenerator.filterPredictions(candidates);
               Messages.log("Got: " + candidates.size() + " candidates, " + defListModel.size() + " filtered");
             }
           }
