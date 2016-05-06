@@ -401,9 +401,8 @@ public class PreprocessingService {
         makeAST(parser, compilableStageChars, COMPILER_OPTIONS);
 
     // Get syntax problems from compilable AST
-    List<IProblem> syntaxProblems = Arrays.asList(compilableCU.getProblems());
-    result.problems.addAll(syntaxProblems);
-    result.hasSyntaxErrors = syntaxProblems.stream().anyMatch(IProblem::isError);
+    result.hasSyntaxErrors = Arrays.stream(compilableCU.getProblems())
+        .anyMatch(IProblem::isError);
 
     // Generate bindings after getting problems - avoids
     // 'missing type' errors when there are syntax problems
@@ -411,13 +410,11 @@ public class PreprocessingService {
         makeASTWithBindings(parser, compilableStageChars, COMPILER_OPTIONS,
                             className, result.classPathArray);
 
-    // Show compilation problems only when there are no syntax problems
-    if (!result.hasSyntaxErrors) {
-      result.problems.clear(); // clear warnings, they will be generated again
-      List<IProblem> bindingsProblems = Arrays.asList(bindingsCU.getProblems());
-      result.problems.addAll(bindingsProblems);
-      result.hasCompilationErrors = bindingsProblems.stream().anyMatch(IProblem::isError);
-    }
+    // Get compilation problems
+    List<IProblem> bindingsProblems = Arrays.asList(bindingsCU.getProblems());
+    result.problems.addAll(bindingsProblems);
+    result.hasCompilationErrors = bindingsProblems.stream()
+        .anyMatch(IProblem::isError);
 
     // Update builder
     result.offsetMapper = parsableMapper.thenMapping(compilableMapper);
