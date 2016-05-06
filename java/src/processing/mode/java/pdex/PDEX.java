@@ -323,6 +323,8 @@ public class PDEX {
               .map(ps::mapJavaToSketch)
               // remove occurrences which fall into generated header
               .filter(ps::inRange)
+              // remove empty intervals (happens when occurence was inserted)
+              .filter(in -> in.startPdeOffset < in.stopPdeOffset)
               .collect(Collectors.toList());
 
       int usageCount = intervals.size();

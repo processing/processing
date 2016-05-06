@@ -68,9 +68,10 @@ public class SourceUtils {
       String match = matcher.group(1);
       int offset = matcher.start(1);
       int length = match.length();
-      String replace = "PApplet.parse"
-          + Character.toUpperCase(match.charAt(0));
-      result.add(Edit.replace(offset, length - (match.length() - 1), replace));
+      result.add(Edit.insert(offset, "PApplet."));
+      String replace = "parse"
+          + Character.toUpperCase(match.charAt(0)) + match.substring(1);
+      result.add(Edit.replace(offset, length, replace));
     }
 
     return result;
