@@ -65,7 +65,7 @@ public class PreferencesFrame {
 
   ColorChooser selector;
 
-  JCheckBox errorCheckerBox;
+//  JCheckBox errorCheckerBox;
   JCheckBox warningsCheckerBox;
   JCheckBox codeCompletionBox;
   JCheckBox importSuggestionsBox;
@@ -270,8 +270,8 @@ public class PreferencesFrame {
 
     // [ ] Continuously check for errors - PDE X
 
-    errorCheckerBox =
-      new JCheckBox(Language.text("preferences.continuously_check"));
+//    errorCheckerBox =
+//      new JCheckBox(Language.text("preferences.continuously_check"));
 
 
     // [ ] Show Warnings - PDE X
@@ -407,9 +407,10 @@ public class PreferencesFrame {
                       .addComponent(presentColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
           .addComponent(editorAntialiasBox)
           .addComponent(inputMethodBox)
-          .addGroup(layout.createSequentialGroup()
-                      .addComponent(errorCheckerBox)
-                      .addComponent(warningsCheckerBox))
+//          .addGroup(layout.createSequentialGroup()
+//                      .addComponent(errorCheckerBox)
+//                      .addComponent(warningsCheckerBox))
+          .addComponent(warningsCheckerBox)
           .addComponent(codeCompletionBox)
           .addComponent(importSuggestionsBox)
           .addGroup(layout.createSequentialGroup()
@@ -464,9 +465,10 @@ public class PreferencesFrame {
                   .addComponent(presentColor))
       .addComponent(editorAntialiasBox)
       .addComponent(inputMethodBox)
-      .addGroup(layout.createParallelGroup()
-                  .addComponent(errorCheckerBox)
-                  .addComponent(warningsCheckerBox))
+//      .addGroup(layout.createParallelGroup()
+//                  .addComponent(errorCheckerBox)
+//                  .addComponent(warningsCheckerBox))
+      .addComponent(warningsCheckerBox)
       .addComponent(codeCompletionBox)
       .addComponent(importSuggestionsBox)
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -653,7 +655,7 @@ public class PreferencesFrame {
                              autoAssociateBox.isSelected());
     }
 
-    Preferences.setBoolean("pdex.errorCheckEnabled", errorCheckerBox.isSelected());
+//    Preferences.setBoolean("pdex.errorCheckEnabled", errorCheckerBox.isSelected());
     Preferences.setBoolean("pdex.warningsEnabled", warningsCheckerBox.isSelected());
     Preferences.setBoolean("pdex.completion", codeCompletionBox.isSelected());
 //    Preferences.setBoolean("pdex.completion.trigger", codeCompletionTriggerBox.isSelected());
@@ -668,7 +670,7 @@ public class PreferencesFrame {
   public void showFrame() {
     editorAntialiasBox.setSelected(Preferences.getBoolean("editor.smooth")); //$NON-NLS-1$
     inputMethodBox.setSelected(Preferences.getBoolean("editor.input_method_support")); //$NON-NLS-1$
-    errorCheckerBox.setSelected(Preferences.getBoolean("pdex.errorCheckEnabled"));
+//    errorCheckerBox.setSelected(Preferences.getBoolean("pdex.errorCheckEnabled"));
     warningsCheckerBox.setSelected(Preferences.getBoolean("pdex.warningsEnabled"));
     codeCompletionBox.setSelected(Preferences.getBoolean("pdex.completion"));
     //codeCompletionTriggerBox.setSelected(Preferences.getBoolean("pdex.completion.trigger"));
