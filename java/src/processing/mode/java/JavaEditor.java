@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -195,9 +196,7 @@ public class JavaEditor extends Editor {
 
     for (SketchCode code : getSketch().getCode()) {
       Document document = code.getDocument();
-      if (document != null) {
-        addDocumentListener(document);
-      }
+      addDocumentListener(document);
     }
   }
 
@@ -2513,7 +2512,7 @@ public class JavaEditor extends Editor {
    * line or not
    */
   public void updateEditorStatus() {
-    Problem problem = findError(textarea.getCaretLine());
+    Problem problem = findProblem(textarea.getCaretLine());
     if (problem != null) {
       int type = problem.isError() ?
           EditorStatus.CURSOR_LINE_ERROR : EditorStatus.CURSOR_LINE_WARNING;
@@ -2530,21 +2529,36 @@ public class JavaEditor extends Editor {
 
 
   /**
-   * @return the LineMarker for the first error or warning on 'line'
+   * @return the Problem for the first error or warning on 'line'
    */
-  public Problem findError(int line) {
+  public Problem findProblem(int line) {
     JavaTextArea textArea = getJavaTextArea();
     int currentTab = getSketch().getCurrentCodeIndex();
-    for (Problem p : problems) {
-      if (p.getTabIndex() != currentTab) continue;
-      int pStartLine = p.getLineNumber();
-      int pEndOffset = p.getStopOffset();
-      int pEndLine = textArea.getLineOfOffset(pEndOffset);
-      if (line >= pStartLine && line <= pEndLine) {
-        return p;
-      }
-    }
-    return null;
+    return problems.stream()
+        .filter(p -> p.getTabIndex() == currentTab)
+        .filter(p -> {
+          int pStartLine = p.getLineNumber();
+          int pEndOffset = p.getStopOffset();
+          int pEndLine = textArea.getLineOfOffset(pEndOffset);
+          return line >= pStartLine && line <= pEndLine;
+        })
+        .findFirst()
+        .orElse(null);
+  }
+
+
+  public List<Problem> findProblems(int line) {
+    JavaTextArea textArea = getJavaTextArea();
+    int currentTab = getSketch().getCurrentCodeIndex();
+    return problems.stream()
+        .filter(p -> p.getTabIndex() == currentTab)
+        .filter(p -> {
+          int pStartLine = p.getLineNumber();
+          int pEndOffset = p.getStopOffset();
+          int pEndLine = textArea.getLineOfOffset(pEndOffset);
+          return line >= pStartLine && line <= pEndLine;
+        })
+        .collect(Collectors.toList());
   }
 
 

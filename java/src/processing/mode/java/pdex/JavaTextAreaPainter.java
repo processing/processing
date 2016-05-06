@@ -272,8 +272,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * @param x
    */
   protected void paintErrorLine(Graphics gfx, int line, int x) {
-    Problem problem = getJavaEditor().findError(line);
-    if (problem != null) {
+    List<Problem> problems = getJavaEditor().findProblems(line);
+    for (Problem problem : problems) {
       int startOffset = problem.getStartOffset();
       int stopOffset = problem.getStopOffset();
 
@@ -362,8 +362,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
   public String getToolTipText(MouseEvent evt) {
     int line = evt.getY() / getFontMetrics().getHeight() + textArea.getFirstLine();
     if (line >= 0 || line < textArea.getLineCount()) {
-      Problem problem = getJavaEditor().findError(line);
-      if (problem != null) {
+      List<Problem> problems = getJavaEditor().findProblems(line);
+      for (Problem problem : problems) {
         int lineStart = textArea.getLineStartOffset(line);
         int lineEnd = textArea.getLineStopOffset(line);
 
