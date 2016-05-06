@@ -38,7 +38,6 @@ import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.ui.Editor;
 import processing.core.PApplet;
-import processing.mode.java.pdex.LineMarker;
 import processing.mode.java.pdex.Problem;
 
 
@@ -99,13 +98,14 @@ public class MarkerColumn extends JPanel {
     int currentTabIndex = editor.getSketch().getCurrentCodeIndex();
 
     for (LineMarker m : errorPoints) {
-      if (m.getProblem().getTabIndex() != currentTabIndex) continue;
-      if (m.getType() == LineMarker.ERROR) {
+			Problem problem = m.problem;
+      if (problem.getTabIndex() != currentTabIndex) continue;
+      if (problem.isError()) {
         g.setColor(errorColor);
       } else {
         g.setColor(warningColor);
       }
-      g.drawLine(2, m.getY(), getWidth() - 2, m.getY());
+      g.drawLine(2, m.y, getWidth() - 2, m.y);
     }
   }
 
@@ -123,7 +123,7 @@ public class MarkerColumn extends JPanel {
 	  try {
       LineMarker m = findClosestMarker(y);
       if (m != null) {
-        editor.highlight(m.getProblem());
+        editor.highlight(m.problem);
       }
 	  } catch (Exception ex) {
 	    ex.printStackTrace();
@@ -144,7 +144,7 @@ public class MarkerColumn extends JPanel {
 	  try {
       LineMarker m = findClosestMarker(y);
       if (m != null) {
-        Problem p = m.getProblem();
+        Problem p = m.problem;
 //	          String kind = p.isError() ?
 //	            Language.text("editor.status.error") :
 //	            Language.text("editor.status.warning");
@@ -172,13 +172,14 @@ public class MarkerColumn extends JPanel {
 	    int height = getHeight() - topMargin - bottomMargin;
 
 	    for (LineMarker m : errorPoints) {
-	      if (m.getProblem().getTabIndex() != currentTab) continue;
+				Problem problem = m.problem;
+	      if (problem.getTabIndex() != currentTab) continue;
 	      // Ratio of error line to total lines
-	      float ratio = (m.getLineNumber() + 1) / ((float) totalLines);
+	      float ratio = (problem.getLineNumber() + 1) / ((float) totalLines);
 	      // Ratio multiplied by height of the error bar
 	      float y = topMargin + ratio * height;
 
-	      m.setY((int) y);
+	      m.y = (int) y;
 	    }
 	  }
 	}
@@ -188,7 +189,7 @@ public class MarkerColumn extends JPanel {
 	  LineMarker closest = null;
 	  int closestDist = Integer.MAX_VALUE;
 	  for (LineMarker m : errorPoints) {
-	    int dist = Math.abs(y - m.getY());
+	    int dist = Math.abs(y - m.y);
 	    if (dist < 3 && dist < closestDist) {
 	      closest = m;
 	      closestDist = dist;
@@ -206,4 +207,20 @@ public class MarkerColumn extends JPanel {
 	public Dimension getMinimumSize() {
 	  return new Dimension(Editor.RIGHT_GUTTER, super.getMinimumSize().height);
 	}
+
+	/**
+   * Line markers displayed on the Error Column.
+   */
+  private static class LineMarker {
+    /** y co-ordinate of the marker */
+    int y;
+
+    /** Problem that the error marker represents */
+    final Problem problem;
+
+
+    LineMarker(Problem problem) {
+      this.problem = problem;
+    }
+  }
 }
