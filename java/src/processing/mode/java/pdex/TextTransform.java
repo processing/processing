@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 
 import processing.core.PApplet;
 
-import static java.awt.SystemColor.text;
-
 
 public class TextTransform {
 
@@ -209,7 +207,7 @@ public class TextTransform {
       return "Edit{" +
           "from=" + fromOffset + ":" + fromLength +
           ", to=" + toOffset + ":" + toLength +
-          ((text != null) ? (", text='" + outputText + '\'') : "") +
+          ((outputText != null) ? (", text='" + outputText + '\'') : "") +
           '}';
     }
   }
