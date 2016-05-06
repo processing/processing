@@ -600,21 +600,15 @@ public class PDEX {
         if (!window.isVisible()) {
           this.ps = ps;
           this.binding = binding;
-          window.setLocation(editor.getX()
-                                       + (editor.getWidth() - window.getWidth()) / 2,
-                             editor.getY()
-                                       + (editor.getHeight() - window.getHeight())
-                                       / 2);
           oldNameLabel.setText("Current name: " + binding.getName());
           textField.setText(binding.getName());
           textField.requestFocus();
           textField.selectAll();
-          window.setVisible(true);
-          window.toFront();
-
           int x = editor.getX() + (editor.getWidth() - window.getWidth()) / 2;
           int y = editor.getY() + (editor.getHeight() - window.getHeight()) / 2;
           window.setLocation(x, y);
+          window.setVisible(true);
+          window.toFront();
         }
       });
     }
