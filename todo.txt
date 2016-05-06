@@ -10,6 +10,9 @@ X   https://github.com/processing/processing/pull/4325
 X Fix non-ARM Linux deb build process
 X   https://github.com/processing/processing/issues/4308
 X   https://github.com/processing/processing/pull/4309
+_ processing-java output as UTF-8 makes Windows unhappy
+_   https://github.com/processing/processing/issues/1633
+_   includes possible fix for Windows
 
 jakub
 X Update app to Java 8
@@ -22,13 +25,19 @@ X update JDT to 4.5.2
 X   https://github.com/processing/processing/pull/4387
 X JavaMode cleanup
 X   https://github.com/processing/processing/pull/4390
+X tabs aren't working properly (several bugs?)
+X   https://github.com/processing/processing/issues/3975
+X   https://github.com/processing/processing/pull/4410
+X file paths not decoding properly
+X   https://github.com/processing/processing/issues/4417
+X   https://github.com/processing/processing/pull/4426
+_   double check that this is working on OS X
 
+
+_ arrow keys aren't working in the examples window
 
 _ createPreprocessor() added to JavaEditor
 https://github.com/processing/processing/commit/2ecdc36ac7c680eb36e271d17ad80b657b3ae6a0
-
-_ tabs aren't working properly (several bugs?)
-_   https://github.com/processing/processing/issues/3975
 
 _ possible infinite loop on modified externally
 _   https://github.com/processing/processing/issues/3965
@@ -871,8 +880,6 @@ DIST / Windows
 
 _ PDE and sketches are 2x smaller on high-res Windows 8 machines
 _   https://github.com/processing/processing/issues/2411
-_ processing-java output as UTF-8 makes Windows unhappy
-_   https://github.com/processing/processing/issues/1633
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
 _   how can we provide an error message here?
 _ how to handle double-clicked files on windows?

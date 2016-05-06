@@ -301,20 +301,17 @@ public class JavaTextAreaPainter extends TextAreaPainter
           return;
         }
 
-        // Take care of offsets
-        int aw = fm.stringWidth(trimRight(badCode)) + textArea.getHorizontalOffset();
-        // to the left of line + text
-        // width
-        int rw = fm.stringWidth(badCode.trim()); // real width
-        int x1 = fm.stringWidth(goodCode) + (aw - rw);
-        int y1 = y + fm.getHeight() - 2, x2 = x1 + rw;
+        int trimmedLength = badCode.trim().length();
+        int rightTrimmedLength = trimRight(badCode).length();
+        int leftTrimLength = rightTrimmedLength - trimmedLength;
+
+        int x1 = textArea.offsetToX(line, goodCode.length() + leftTrimLength);
+        int x2 = textArea.offsetToX(line, goodCode.length() + rightTrimmedLength);
+        int y1 = y + fm.getHeight() - 2;
 
         if (line != problem.getLineNumber()) {
-          x1 = 0; // on the following lines, wiggle extends to the left border
+          x1 = Editor.LEFT_GUTTER; // on the following lines, wiggle extends to the left border
         }
-        // Adding offsets for the gutter
-        x1 += Editor.LEFT_GUTTER;
-        x2 += Editor.LEFT_GUTTER;
 
         gfx.setColor(errorUnderlineColor);
         if (problem.isWarning()) {
