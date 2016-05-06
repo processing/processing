@@ -1,6 +1,7 @@
 package processing.mode.java.pdex;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -8,7 +9,6 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 
@@ -19,11 +19,12 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -57,7 +58,7 @@ import static processing.mode.java.pdex.ASTUtils.*;
 
 public class PDEX {
 
-  private static final boolean SHOW_DEBUG_TREE = true;
+  private static final boolean SHOW_DEBUG_TREE = false;
 
   private boolean enabled = true;
 
@@ -760,9 +761,27 @@ public class PDEX {
         return;
       }
 
+      Deque<DefaultMutableTreeNode> treeNodeStack = new ArrayDeque<>();
+
       ASTNode type0 = (ASTNode) cu.types().get(0);
-      DefaultMutableTreeNode codeTree = new DefaultMutableTreeNode(type0);
-      visitRecur(type0, codeTree);
+      type0.accept(new ASTVisitor() {
+        @Override
+        public boolean preVisit2(ASTNode node) {
+          treeNodeStack.push(new DefaultMutableTreeNode(node));
+          return super.preVisit2(node);
+        }
+
+        @Override
+        public void postVisit(ASTNode node) {
+          if (treeNodeStack.size() > 1) {
+            DefaultMutableTreeNode treeNode = treeNodeStack.pop();
+            treeNodeStack.peek().add(treeNode);
+          }
+        }
+      });
+
+      DefaultMutableTreeNode codeTree = treeNodeStack.pop();
+
       EventQueue.invokeLater(() -> {
         if (tree.hasFocus() || window.hasFocus()) {
           return;
@@ -774,68 +793,6 @@ public class PDEX {
           window.setVisible(true);
         }
       });
-    }
-
-
-    // Thread: worker
-    /**
-     * Generates AST Swing component
-     * @param node
-     * @param tnode
-     */
-    void visitRecur(ASTNode node, DefaultMutableTreeNode tnode) {
-
-      // TODO: nuke this, use ASTVisitor
-
-      Iterator<StructuralPropertyDescriptor> it =
-          node.structuralPropertiesForType().iterator();
-      //Base.loge("Props of " + node.getClass().getName());
-      DefaultMutableTreeNode ctnode;
-      while (it.hasNext()) {
-        StructuralPropertyDescriptor prop = it.next();
-
-        if (prop.isChildProperty() || prop.isSimpleProperty()) {
-          if (node.getStructuralProperty(prop) != null) {
-//          System.out
-//              .println(node.getStructuralProperty(prop) + " -> " + (prop));
-            if (node.getStructuralProperty(prop) instanceof ASTNode) {
-              ASTNode cnode = (ASTNode) node.getStructuralProperty(prop);
-              if (isAddableASTNode(cnode)) {
-                ctnode = new DefaultMutableTreeNode(node.getStructuralProperty(prop));
-                tnode.add(ctnode);
-                visitRecur(cnode, ctnode);
-              }
-            } else {
-              tnode.add(new DefaultMutableTreeNode(node
-                                                       .getStructuralProperty(prop)));
-            }
-          }
-        } else if (prop.isChildListProperty()) {
-          List<ASTNode> nodelist = (List<ASTNode>) node.getStructuralProperty(prop);
-          for (ASTNode cnode : nodelist) {
-            if (isAddableASTNode(cnode)) {
-              ctnode = new DefaultMutableTreeNode(cnode);
-              tnode.add(ctnode);
-              visitRecur(cnode, ctnode);
-            } else {
-              visitRecur(cnode, tnode);
-            }
-          }
-        }
-      }
-    }
-
-
-    boolean isAddableASTNode(ASTNode node) {
-      switch (node.getNodeType()) {
-//    case ASTNode.STRING_LITERAL:
-//    case ASTNode.NUMBER_LITERAL:
-//    case ASTNode.BOOLEAN_LITERAL:
-//    case ASTNode.NULL_LITERAL:
-//      return false;
-        default:
-          return true;
-      }
     }
 
   }
