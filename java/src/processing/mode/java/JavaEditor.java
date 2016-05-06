@@ -2379,7 +2379,11 @@ public class JavaEditor extends Editor {
 
 
   public void statusMessage(String message, int type) {
-    status.message(message, type);
+    if (EventQueue.isDispatchThread()) {
+      status.message(message, type);
+    } else {
+      EventQueue.invokeLater(() -> statusMessage(message, type));
+    }
   }
 
 

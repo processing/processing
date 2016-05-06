@@ -219,7 +219,6 @@ public class PDEX {
         window.addComponentListener(new ComponentAdapter() {
           @Override
           public void componentHidden(ComponentEvent e) {
-            // Delete references to ASTNodes so that whole AST can be GC'd
             binding = null;
             tree.setModel(null);
             pps.unregisterListener(reloadListener);
@@ -267,13 +266,20 @@ public class PDEX {
 
       // Find the node
       SimpleName name = ASTUtils.getSimpleNameAt(ps.compilationUnit, startJavaOffset, stopJavaOffset);
-      if (name == null) return;
+      if (name == null) {
+        editor.statusMessage("Cannot find any name under cursor", EditorStatus.ERROR);
+        return;
+      }
 
       // Find binding
       IBinding binding = ASTUtils.resolveBinding(name);
-      if (binding == null) return;
 
       this.binding = binding;
+      if (binding == null) {
+        editor.statusMessage("Cannot find usages, try to fix errors in your code first",
+                             EditorStatus.ERROR);
+        return;
+      }
 
       findUsageAndUpdateTree(ps, binding);
     }
@@ -555,7 +561,7 @@ public class PDEX {
     // Thread: worker
     void handleRename(PreprocessedSketch ps, int tabIndex, int startTabOffset, int stopTabOffset) {
       if (ps.hasSyntaxErrors) {
-        editor.statusMessage("Can't perform action until syntax errors are fixed :(",
+        editor.statusMessage("Can't perform action until syntax errors are fixed",
                              EditorStatus.WARNING);
         return;
       }
