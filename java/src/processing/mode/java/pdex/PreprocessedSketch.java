@@ -2,7 +2,6 @@ package processing.mode.java.pdex;
 
 import com.google.classpath.ClassPath;
 
-import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -37,8 +36,6 @@ public class PreprocessedSketch {
 
   public final boolean hasSyntaxErrors;
   public final boolean hasCompilationErrors;
-
-  public final List<IProblem> problems;
 
   public final List<ImportStatement> programImports;
   public final List<ImportStatement> coreAndDefaultImports;
@@ -218,8 +215,6 @@ public class PreprocessedSketch {
     public boolean hasSyntaxErrors;
     public boolean hasCompilationErrors;
 
-    public List<IProblem> problems = new ArrayList<>();
-
     public final List<ImportStatement> programImports = new ArrayList<>();
     public final List<ImportStatement> coreAndDefaultImports = new ArrayList<>();
     public final List<ImportStatement> codeFolderImports = new ArrayList<>();
@@ -253,8 +248,6 @@ public class PreprocessedSketch {
 
     hasSyntaxErrors = b.hasSyntaxErrors;
     hasCompilationErrors = b.hasCompilationErrors;
-
-    problems = Collections.unmodifiableList(b.problems);
 
     programImports = Collections.unmodifiableList(b.programImports);
     coreAndDefaultImports = Collections.unmodifiableList(b.coreAndDefaultImports);

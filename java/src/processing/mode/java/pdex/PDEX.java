@@ -876,7 +876,8 @@ public class PDEX {
 
     private void handleSketchProblems(PreprocessedSketch ps) {
       // Process problems
-      final List<Problem> problems = ps.problems.stream()
+      IProblem[] iproblems = ps.compilationUnit.getProblems();
+      final List<Problem> problems = Arrays.stream(iproblems)
           // Filter Warnings if they are not enabled
           .filter(iproblem -> !(iproblem.isWarning() && !JavaMode.warningsEnabled))
           // Hide a useless error which is produced when a line ends with

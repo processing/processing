@@ -412,7 +412,6 @@ public class PreprocessingService {
 
     // Get compilation problems
     List<IProblem> bindingsProblems = Arrays.asList(bindingsCU.getProblems());
-    result.problems.addAll(bindingsProblems);
     result.hasCompilationErrors = bindingsProblems.stream()
         .anyMatch(IProblem::isError);
 
