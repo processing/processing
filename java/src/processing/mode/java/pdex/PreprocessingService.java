@@ -38,6 +38,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -125,7 +128,7 @@ public class PreprocessingService {
 
         synchronized (requestLock) {
           if (requestQueue.isEmpty()) {
-            Messages.log("PPS: Completed");
+            Messages.log("PPS: Done");
             preprocessingTask.complete(prevResult);
           }
         }
@@ -176,17 +179,33 @@ public class PreprocessingService {
   }
 
 
-  public void whenDone(Consumer<PreprocessedSketch> callback) {
-    if (!isEnabled) return;
+  private CompletableFuture<?> registerCallback(Consumer<PreprocessedSketch> callback) {
     synchronized (requestLock) {
       lastCallback = preprocessingTask
           // Run callback after both preprocessing task and previous callback
           .thenAcceptBothAsync(lastCallback, (ps, a) -> callback.accept(ps))
           // Make sure exception in callback won't cancel whole callback chain
           .handleAsync((res, e) -> {
-            if (e != null) Messages.loge("exception in preprocessing callback", e);
+            if (e != null) Messages.loge("PPS: exception in callback", e);
             return res;
           });
+      return lastCallback;
+    }
+  }
+
+
+  public void whenDone(Consumer<PreprocessedSketch> callback) {
+    if (!isEnabled) return;
+    registerCallback(callback);
+  }
+
+
+  public void whenDoneBlocking(Consumer<PreprocessedSketch> callback) {
+    if (!isEnabled) return;
+    try {
+      registerCallback(callback).get(3000, TimeUnit.SECONDS);
+    } catch (InterruptedException | ExecutionException | TimeoutException e) {
+      // Don't care
     }
   }
 

@@ -102,21 +102,21 @@ public class PDEX {
   public void handleShowUsage(int tabIndex, int startTabOffset, int stopTabOffset) {
     Messages.log("* handleShowUsage");
     if (!enabled) return; // show usage disabled if java tabs
-    pps.whenDone(ps -> showUsage.findUsageAndUpdateTree(ps, tabIndex, startTabOffset, stopTabOffset));
+    pps.whenDoneBlocking(ps -> showUsage.findUsageAndUpdateTree(ps, tabIndex, startTabOffset, stopTabOffset));
   }
 
 
   public void handleRename(int tabIndex, int startTabOffset, int stopTabOffset) {
     Messages.log("* handleRename");
     if (!enabled) return;  // refactoring disabled w/ java tabs
-    pps.whenDone(ps -> rename.handleRename(ps, tabIndex, startTabOffset, stopTabOffset));
+    pps.whenDoneBlocking(ps -> rename.handleRename(ps, tabIndex, startTabOffset, stopTabOffset));
   }
 
 
   public void handleCtrlClick(int tabIndex, int offset) {
     Messages.log("* handleCtrlClick");
     if (!enabled) return;  // disabled w/ java tabs
-    pps.whenDone(ps -> handleCtrlClick(ps, tabIndex, offset));
+    pps.whenDoneBlocking(ps -> handleCtrlClick(ps, tabIndex, offset));
   }
 
 
