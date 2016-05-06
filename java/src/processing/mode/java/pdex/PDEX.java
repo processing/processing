@@ -51,14 +51,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.text.BadLocationException;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
 import processing.app.Messages;
-import processing.app.Preferences;
 import processing.app.Sketch;
+import processing.app.SketchCode;
+import processing.app.syntax.SyntaxDocument;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.Toolkit;
 import processing.mode.java.JavaEditor;
@@ -657,7 +659,9 @@ public class PDEX {
       final int currentOffset = editor.getCaretOffset();
       mappedNodes.entrySet().forEach(entry -> {
         int tabIndex = entry.getKey();
-        sketch.setCurrentCode(tabIndex);
+        SketchCode sketchCode = sketch.getCode(tabIndex);
+
+        SyntaxDocument document = (SyntaxDocument) sketchCode.getDocument();
 
         List<SketchInterval> nodes = entry.getValue();
         nodes.stream()
@@ -665,16 +669,23 @@ public class PDEX {
             .sorted(Comparator.comparing((SketchInterval si) -> si.startTabOffset).reversed())
             .forEach(si -> {
               // Make sure offsets are in bounds
-              int length = editor.getTextArea().getDocumentLength();
-              if (si.startTabOffset >= 0 && si.startTabOffset <= length &&
-                  si.stopTabOffset >= 0 && si.stopTabOffset <= length) {
+              int documentLength = document.getLength();
+              if (si.startTabOffset >= 0 && si.startTabOffset <= documentLength &&
+                  si.stopTabOffset >= 0 && si.stopTabOffset <= documentLength) {
                 // Replace the code
-                editor.getTextArea().select(si.startTabOffset, si.stopTabOffset);
-                editor.getTextArea().setSelectedText(newName);
+                int length = si.stopTabOffset - si.startTabOffset;
+                try {
+                  document.remove(si.startTabOffset, length);
+                  document.insertString(si.startTabOffset, newName, null);
+                } catch (BadLocationException e) { /* Whatever */ }
               }
             });
 
-        sketch.setModified(true);
+        try {
+          sketchCode.setProgram(document.getText(0, document.getLength()));
+        } catch (BadLocationException e) { /* Whatever */ }
+        sketchCode.setModified(true);
+        editor.repaintHeader();
       });
 
       int precedingIntervals =

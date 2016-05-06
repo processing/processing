@@ -261,14 +261,10 @@ public class PreprocessingService {
     for (SketchCode sc : sketch.getCode()) {
       if (sc.isExtension("pde")) {
         tabStartsList.append(workBuffer.length());
-        if (sketch.getCurrentCode().equals(sc)) {
-          try {
-            workBuffer.append(sc.getDocumentText());
-          } catch (BadLocationException e) {
-            e.printStackTrace();
-          }
-        } else {
-          workBuffer.append(sc.getProgram());
+        try {
+          workBuffer.append(sc.getDocumentText());
+        } catch (BadLocationException e) {
+          e.printStackTrace();
         }
         workBuffer.append('\n');
       }
