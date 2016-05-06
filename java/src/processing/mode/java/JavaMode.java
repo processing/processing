@@ -117,33 +117,6 @@ public class JavaMode extends Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  /*
-  public Runner handleRun(Sketch sketch,
-                          RunnerListener listener) throws SketchException {
-    final JavaEditor editor = (JavaEditor) listener;
-    editor.errorCheckerService.quickErrorCheck();
-//    if (enableTweak) {
-//      enableTweak = false;
-//      return handleTweak(sketch, listener, false);
-//    } else {
-    return handleLaunch(sketch, listener, false);
-//    }
-  }
-
-
-  public Runner handlePresent(Sketch sketch,
-                              RunnerListener listener) throws SketchException {
-    final JavaEditor editor = (JavaEditor) listener;
-    editor.errorCheckerService.quickErrorCheck();
-//    if (enableTweak) {
-//      enableTweak = false;
-//      return handleTweak(sketch, listener, true);
-//    } else {
-    return handleLaunch(sketch, listener, true);
-//    }
-  }
-  */
-
 
   /** Handles the standard Java "Run" or "Present" */
   public Runner handleLaunch(Sketch sketch, RunnerListener listener,
@@ -174,7 +147,6 @@ public class JavaMode extends Mode {
                             RunnerListener listener) throws SketchException {
 //                            final boolean present) throws SketchException {
     final JavaEditor editor = (JavaEditor) listener;
-//    editor.errorCheckerService.quickErrorCheck();  // done in prepareRun()
 
     if (isSketchModified(sketch)) {
       editor.deactivateRun();
@@ -334,7 +306,7 @@ public class JavaMode extends Mode {
 //  }
 
 
-  static public volatile boolean errorCheckEnabled = true;
+//  static public volatile boolean errorCheckEnabled = true;
   static public volatile boolean warningsEnabled = true;
   static public volatile boolean codeCompletionsEnabled = true;
   static public volatile boolean debugOutputEnabled = false;
@@ -343,7 +315,7 @@ public class JavaMode extends Mode {
   static public volatile boolean autoSavePromptEnabled = true;
   static public volatile boolean defaultAutoSaveEnabled = true;
   static public volatile boolean ccTriggerEnabled = false;
-//  static public volatile boolean importSuggestEnabled = true;
+  static public volatile boolean importSuggestEnabled = true;
   static public int autoSaveInterval = 3; //in minutes
 
 
@@ -352,7 +324,7 @@ public class JavaMode extends Mode {
    */
   volatile public static int codeCompletionTriggerLength = 1;
 
-  static public final String prefErrorCheck = "pdex.errorCheckEnabled";
+//  static public final String prefErrorCheck = "pdex.errorCheckEnabled";
   static public final String prefWarnings = "pdex.warningsEnabled";
   static public final String prefDebugOP = "pdex.dbgOutput";
   static public final String prefErrorLogs = "pdex.writeErrorLogs";
@@ -377,7 +349,7 @@ public class JavaMode extends Mode {
   public void loadPreferences() {
     Messages.log("Load PDEX prefs");
     ensurePrefsExist();
-    errorCheckEnabled = Preferences.getBoolean(prefErrorCheck);
+//    errorCheckEnabled = Preferences.getBoolean(prefErrorCheck);
     warningsEnabled = Preferences.getBoolean(prefWarnings);
     codeCompletionsEnabled = Preferences.getBoolean(COMPLETION_PREF);
 //    DEBUG = Preferences.getBoolean(prefDebugOP);
@@ -388,14 +360,14 @@ public class JavaMode extends Mode {
     autoSavePromptEnabled = Preferences.getBoolean(prefAutoSavePrompt);
     defaultAutoSaveEnabled = Preferences.getBoolean(prefDefaultAutoSave);
     ccTriggerEnabled = Preferences.getBoolean(COMPLETION_TRIGGER_PREF);
-//    importSuggestEnabled = Preferences.getBoolean(prefImportSuggestEnabled);
+    importSuggestEnabled = Preferences.getBoolean(SUGGEST_IMPORTS_PREF);
     loadSuggestionsMap();
   }
 
 
   public void savePreferences() {
     Messages.log("Saving PDEX prefs");
-    Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
+//    Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
     Preferences.setBoolean(prefWarnings, warningsEnabled);
     Preferences.setBoolean(COMPLETION_PREF, codeCompletionsEnabled);
 //    Preferences.setBoolean(prefDebugOP, DEBUG);
@@ -406,7 +378,7 @@ public class JavaMode extends Mode {
     Preferences.setBoolean(prefAutoSavePrompt, autoSavePromptEnabled);
     Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
     Preferences.setBoolean(COMPLETION_TRIGGER_PREF, ccTriggerEnabled);
-//    Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
+    Preferences.setBoolean(SUGGEST_IMPORTS_PREF, importSuggestEnabled);
   }
 
   public void loadSuggestionsMap() {
@@ -453,8 +425,8 @@ public class JavaMode extends Mode {
 
   public void ensurePrefsExist() {
     //TODO: Need to do a better job of managing prefs. Think lists.
-    if (Preferences.get(prefErrorCheck) == null)
-      Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
+//    if (Preferences.get(prefErrorCheck) == null)
+//      Preferences.setBoolean(prefErrorCheck, errorCheckEnabled);
     if (Preferences.get(prefWarnings) == null)
       Preferences.setBoolean(prefWarnings, warningsEnabled);
     if (Preferences.get(COMPLETION_PREF) == null)
@@ -475,8 +447,8 @@ public class JavaMode extends Mode {
       Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
     if (Preferences.get(COMPLETION_TRIGGER_PREF) == null)
       Preferences.setBoolean(COMPLETION_TRIGGER_PREF, ccTriggerEnabled);
-//    if (Preferences.get(prefImportSuggestEnabled) == null)
-//      Preferences.setBoolean(prefImportSuggestEnabled, importSuggestEnabled);
+    if (Preferences.get(SUGGEST_IMPORTS_PREF) == null)
+      Preferences.setBoolean(SUGGEST_IMPORTS_PREF, importSuggestEnabled);
   }
 
 

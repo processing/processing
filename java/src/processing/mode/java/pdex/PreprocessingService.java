@@ -20,11 +20,8 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import com.google.classpath.ClassPath;
 import com.google.classpath.ClassPathFactory;
-import com.google.classpath.RegExpResourceFilter;
 
-import java.awt.EventQueue;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -41,21 +38,12 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -65,7 +53,6 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import processing.app.Library;
 import processing.app.Messages;
-import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.SketchException;
@@ -74,7 +61,6 @@ import processing.data.IntList;
 import processing.data.StringList;
 import processing.mode.java.JavaEditor;
 import processing.mode.java.JavaMode;
-import processing.mode.java.pdex.PreprocessedSketch.SketchInterval;
 import processing.mode.java.pdex.TextTransform.OffsetMapper;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PdePreprocessor.Mode;
@@ -84,39 +70,23 @@ import processing.mode.java.preproc.PdePreprocessor.Mode;
  * The main error checking service
  */
 @SuppressWarnings("unchecked")
-public class ErrorCheckerService {
+public class PreprocessingService {
 
   protected final JavaEditor editor;
 
-  /** The amazing eclipse ast parser */
   protected final ASTParser parser = ASTParser.newParser(AST.JLS8);
 
-  /** Class path factory for ASTGenerator */
-  protected final ClassPathFactory classPathFactory = new ClassPathFactory();
+  private final ClassPathFactory classPathFactory = new ClassPathFactory();
 
-  /**
-   * Used to indirectly stop the Error Checker Thread
-   */
-  private volatile boolean running;
-
-  /**
-   * Error checking doesn't happen before this interval has ellapsed since the
-   * last request() call.
-   */
-  private final static long errorCheckInterval = 650;
-
-  private Thread errorCheckerThread;
+  private final Thread preprocessingThread;
   private final BlockingQueue<Boolean> requestQueue = new ArrayBlockingQueue<>(1);
-  private ScheduledExecutorService scheduler;
-  private volatile ScheduledFuture<?> scheduledUiUpdate = null;
-  private volatile long nextUiUpdate = 0;
 
   private final Object requestLock = new Object();
-  private boolean needsCheck = false;
 
-  private AtomicBoolean codeFolderChanged = new AtomicBoolean(true);
-  private AtomicBoolean librariesChanged = new AtomicBoolean(true);
+  private final AtomicBoolean codeFolderChanged = new AtomicBoolean(true);
+  private final AtomicBoolean librariesChanged = new AtomicBoolean(true);
 
+  private volatile boolean running;
   private CompletableFuture<PreprocessedSketch> preprocessingTask = new CompletableFuture<>();
 
   private CompletableFuture<?> lastCallback =
@@ -124,75 +94,58 @@ public class ErrorCheckerService {
         complete(null); // initialization block
       }};
 
-  private final Consumer<PreprocessedSketch> errorHandlerListener = this::handleSketchProblems;
-
   private volatile boolean isEnabled = true;
-  private volatile boolean isContinuousCheckEnabled = true;
 
 
-  public ErrorCheckerService(JavaEditor editor) {
+  public PreprocessingService(JavaEditor editor) {
     this.editor = editor;
     isEnabled = !editor.hasJavaTabs();
-    isContinuousCheckEnabled = JavaMode.errorCheckEnabled;
-    registerDoneListener(errorHandlerListener);
+
+    preprocessingThread = new Thread(this::mainLoop, "ECS");
+    preprocessingThread.start();
   }
 
 
   private void mainLoop() {
     running = true;
     PreprocessedSketch prevResult = null;
+    Messages.log("PPS: Hi!");
     while (running) {
       try {
         try {
-          requestQueue.take(); // blocking until check requested
+          requestQueue.take(); // blocking until requested
         } catch (InterruptedException e) {
           running = false;
           break;
         }
 
-        Messages.log("Starting preprocessing");
+        Messages.log("PPS: Starting");
 
         prevResult = preprocessSketch(prevResult);
 
         synchronized (requestLock) {
           if (requestQueue.isEmpty()) {
-            Messages.log("Completing preprocessing");
+            Messages.log("PPS: Completed");
             preprocessingTask.complete(prevResult);
           }
         }
       } catch (Exception e) {
-        Messages.loge("problem in error checker loop", e);
+        Messages.loge("problem in preprocessor service loop", e);
       }
     }
+    Messages.log("PPS: Bye!");
   }
 
 
-  public void start() {
-    scheduler = Executors.newSingleThreadScheduledExecutor();
-    errorCheckerThread = new Thread(this::mainLoop, "ECS");
-    errorCheckerThread.start();
-  }
-
-
-  public void stop() {
+  public void dispose() {
     cancel();
     running = false;
-    if (errorCheckerThread != null) {
-      running = false;
-      errorCheckerThread.interrupt();
-    }
-    if (scheduler != null) {
-      scheduler.shutdownNow();
-    }
+    preprocessingThread.interrupt();
   }
 
 
   public void cancel() {
     requestQueue.clear();
-    nextUiUpdate = 0;
-    if (scheduledUiUpdate != null) {
-      scheduledUiUpdate.cancel(true);
-    }
   }
 
 
@@ -202,35 +155,28 @@ public class ErrorCheckerService {
       if (preprocessingTask.isDone()) {
         preprocessingTask = new CompletableFuture<>();
         // Register callback which executes all listeners
-        registerCallback(this::fireDoneListeners);
+        whenDone(this::fireListeners);
       }
-      if (isContinuousCheckEnabled) {
-        // Continuous check enabled, request
-        nextUiUpdate = System.currentTimeMillis() + errorCheckInterval;
-        requestQueue.offer(Boolean.TRUE);
-      } else {
-        // Continuous check not enabled, take note
-        needsCheck = true;
-      }
+      requestQueue.offer(Boolean.TRUE);
     }
   }
 
 
   public void notifyLibrariesChanged() {
+    Messages.log("PPS: notified libraries changed");
     librariesChanged.set(true);
-    Messages.log("Notify libraries changed");
     notifySketchChanged();
   }
 
 
   public void notifyCodeFolderChanged() {
+    Messages.log("PPS: snotified code folder changed");
     codeFolderChanged.set(true);
-    Messages.log("Notify code folder changed");
     notifySketchChanged();
   }
 
 
-  private void registerCallback(Consumer<PreprocessedSketch> callback) {
+  public void whenDone(Consumer<PreprocessedSketch> callback) {
     if (!isEnabled) return;
     synchronized (requestLock) {
       lastCallback = preprocessingTask
@@ -238,22 +184,9 @@ public class ErrorCheckerService {
           .thenAcceptBothAsync(lastCallback, (ps, a) -> callback.accept(ps))
           // Make sure exception in callback won't cancel whole callback chain
           .handleAsync((res, e) -> {
-            if (e != null) Messages.loge("problem during preprocessing callback", e);
+            if (e != null) Messages.loge("exception in preprocessing callback", e);
             return res;
           });
-    }
-  }
-
-
-  public void acceptWhenDone(Consumer<PreprocessedSketch> callback) {
-    if (!isEnabled) return;
-    synchronized (requestLock) {
-      // Continuous check not enabled, request check now
-      if (needsCheck && !isContinuousCheckEnabled) {
-        needsCheck = false;
-        requestQueue.offer(Boolean.TRUE);
-      }
-      registerCallback(callback);
     }
   }
 
@@ -262,55 +195,31 @@ public class ErrorCheckerService {
   /// LISTENERS ----------------------------------------------------------------
 
 
-  private Set<Consumer<PreprocessedSketch>> doneListeners = new CopyOnWriteArraySet<>();
+  private Set<Consumer<PreprocessedSketch>> listeners = new CopyOnWriteArraySet<>();
 
 
-  public void registerDoneListener(Consumer<PreprocessedSketch> listener) {
-    if (listener != null) doneListeners.add(listener);
+  public void registerListener(Consumer<PreprocessedSketch> listener) {
+    if (listener != null) listeners.add(listener);
   }
 
 
-  public void unregisterDoneListener(Consumer<PreprocessedSketch> listener) {
-    doneListeners.remove(listener);
+  public void unregisterListener(Consumer<PreprocessedSketch> listener) {
+    listeners.remove(listener);
   }
 
 
-  private void fireDoneListeners(PreprocessedSketch ps) {
-    for (Consumer<PreprocessedSketch> listener : doneListeners) {
+  private void fireListeners(PreprocessedSketch ps) {
+    for (Consumer<PreprocessedSketch> listener : listeners) {
       try {
         listener.accept(ps);
       } catch (Exception e) {
-        Messages.loge("error when firing ecs listener", e);
+        Messages.loge("error when firing preprocessing listener", e);
       }
     }
   }
 
 
   /// --------------------------------------------------------------------------
-
-
-
-  public void addDocumentListener(Document doc) {
-    if (doc != null) doc.addDocumentListener(sketchChangedListener);
-  }
-
-
-  protected final DocumentListener sketchChangedListener = new DocumentListener() {
-    @Override
-    public void insertUpdate(DocumentEvent e) {
-      notifySketchChanged();
-    }
-
-    @Override
-    public void removeUpdate(DocumentEvent e) {
-      notifySketchChanged();
-    }
-
-    @Override
-    public void changedUpdate(DocumentEvent e) {
-      notifySketchChanged();
-    }
-  };
 
 
   private PreprocessedSketch preprocessSketch(PreprocessedSketch prevResult) {
@@ -505,77 +414,6 @@ public class ErrorCheckerService {
   }
 
 
-  private void handleSketchProblems(PreprocessedSketch ps) {
-    // Process problems
-    final List<Problem> problems = ps.problems.stream()
-        // Filter Warnings if they are not enabled
-        .filter(iproblem -> !(iproblem.isWarning() && !JavaMode.warningsEnabled))
-        // Hide a useless error which is produced when a line ends with
-        // an identifier without a semicolon. "Missing a semicolon" is
-        // also produced and is preferred over this one.
-        // (Syntax error, insert ":: IdentifierOrNew" to complete Expression)
-        // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=405780
-        .filter(iproblem -> !iproblem.getMessage()
-            .contains("Syntax error, insert \":: IdentifierOrNew\""))
-        // Transform into our Problems
-        .map(iproblem -> {
-          int start = iproblem.getSourceStart();
-          int stop = iproblem.getSourceEnd() + 1; // make it exclusive
-          SketchInterval in = ps.mapJavaToSketch(start, stop);
-          int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
-          Problem p = new Problem(iproblem, in.tabIndex, line);
-          p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
-          return p;
-        })
-        .collect(Collectors.toList());
-
-    // Handle import suggestions
-    if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF)) {
-      Map<String, List<Problem>> undefinedTypeProblems = problems.stream()
-          // Get only problems with undefined types/names
-          .filter(p -> {
-            int id = p.getIProblem().getID();
-            return id == IProblem.UndefinedType ||
-                id == IProblem.UndefinedName ||
-                id == IProblem.UnresolvedVariable;
-          })
-          // Group problems by the missing type/name
-          .collect(Collectors.groupingBy(p -> p.getIProblem().getArguments()[0]));
-
-      if (!undefinedTypeProblems.isEmpty()) {
-        final ClassPath cp = ps.searchClassPath;
-
-        // Get suggestions for each missing type, update the problems
-        undefinedTypeProblems.entrySet().stream()
-            .forEach(entry -> {
-              String missingClass = entry.getKey();
-              List<Problem> affectedProblems = entry.getValue();
-              String[] suggestions = getImportSuggestions(cp, missingClass);
-              affectedProblems.forEach(p -> p.setImportSuggestions(suggestions));
-            });
-      }
-    }
-
-    if (scheduledUiUpdate != null) {
-      scheduledUiUpdate.cancel(true);
-    }
-    // Update UI after a delay. See #2677
-    long delay = nextUiUpdate - System.currentTimeMillis();
-    Runnable uiUpdater = () -> {
-      if (nextUiUpdate > 0 && System.currentTimeMillis() >= nextUiUpdate) {
-        EventQueue.invokeLater(() -> {
-          if (isContinuousCheckEnabled) {
-            editor.setProblemList(problems);
-          }
-        });
-      }
-    };
-    scheduledUiUpdate = scheduler.schedule(uiUpdater, delay,
-                                           TimeUnit.MILLISECONDS);
-  }
-
-
-
   /// IMPORTS -----------------------------------------------------------------
 
   private List<ImportStatement> coreAndDefaultImports;
@@ -608,6 +446,22 @@ public class ErrorCheckerService {
   }
 
 
+  private static boolean checkIfImportsChanged(List<ImportStatement> prevImports,
+                                                 List<ImportStatement> imports) {
+    if (imports.size() != prevImports.size()) {
+      return true;
+    } else {
+      int count = imports.size();
+      for (int i = 0; i < count; i++) {
+        if (!imports.get(i).isSameAs(prevImports.get(i))) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+
 
   /// CLASSPATHS ---------------------------------------------------------------
 
@@ -621,8 +475,8 @@ public class ErrorCheckerService {
 
   private List<String> codeFolderClassPath;
 
-  private List<String> searchLibraryClassPath;
   private List<String> sketchLibraryClassPath;
+  private List<String> searchLibraryClassPath;
 
 
   private static List<String> buildCodeFolderClassPath(Sketch sketch) {
@@ -669,6 +523,7 @@ public class ErrorCheckerService {
 
     return sanitizeClassPath(classPath.toString());
   }
+
 
   private static List<String> buildSearchLibraryClassPath(JavaMode mode) {
     StringBuilder classPath = new StringBuilder();
@@ -735,36 +590,7 @@ public class ErrorCheckerService {
 
 
 
-  public static String[] getImportSuggestions(ClassPath cp, String className) {
-    RegExpResourceFilter regf = new RegExpResourceFilter(
-        Pattern.compile(".*"),
-        Pattern.compile("(.*\\$)?" + className + "\\.class",
-                        Pattern.CASE_INSENSITIVE));
-
-    String[] resources = cp.findResources("", regf);
-    return Arrays.stream(resources)
-        // remove ".class" suffix
-        .map(res -> res.substring(0, res.length() - 6))
-        // replace path separators with dots
-        .map(res -> res.replace('/', '.'))
-        // replace inner class separators with dots
-        .map(res -> res.replace('$', '.'))
-        // sort, prioritize clases from java. package
-        .sorted((o1, o2) -> {
-          // put java.* first, should be prioritized more
-          boolean o1StartsWithJava = o1.startsWith("java");
-          boolean o2StartsWithJava = o2.startsWith("java");
-          if (o1StartsWithJava != o2StartsWithJava) {
-            if (o1StartsWithJava) return -1;
-            return 1;
-          }
-          return o1.compareTo(o2);
-        })
-        .toArray(String[]::new);
-  }
-
-
-  protected static CompilationUnit makeAST(ASTParser parser,
+  private static CompilationUnit makeAST(ASTParser parser,
                                            char[] source,
                                            Map<String, String> options) {
     parser.setSource(source);
@@ -776,7 +602,7 @@ public class ErrorCheckerService {
   }
 
 
-  protected static CompilationUnit makeASTWithBindings(ASTParser parser,
+  private static CompilationUnit makeASTWithBindings(ASTParser parser,
                                                        char[] source,
                                                        Map<String, String> options,
                                                        String className,
@@ -796,44 +622,9 @@ public class ErrorCheckerService {
   /**
    * Ignore processing packages, java.*.*. etc.
    */
-  protected boolean ignorableImport(String packageName) {
+  private boolean ignorableImport(String packageName) {
     return (packageName.startsWith("java.") ||
             packageName.startsWith("javax."));
-  }
-
-
-  protected static boolean ignorableSuggestionImport(PreprocessedSketch ps, String impName) {
-
-    String impNameLc = impName.toLowerCase();
-
-    List<ImportStatement> programImports = ps.programImports;
-    List<ImportStatement> codeFolderImports = ps.codeFolderImports;
-
-    boolean isImported = Stream
-        .concat(programImports.stream(), codeFolderImports.stream())
-        .anyMatch(impS -> {
-          String packageNameLc = impS.getPackageName().toLowerCase();
-          return impNameLc.startsWith(packageNameLc);
-        });
-
-    if (isImported) return false;
-
-    final String include = "include";
-    final String exclude = "exclude";
-
-    if (impName.startsWith("processing")) {
-      if (JavaMode.suggestionsMap.containsKey(include) && JavaMode.suggestionsMap.get(include).contains(impName)) {
-        return false;
-      } else if (JavaMode.suggestionsMap.containsKey(exclude) && JavaMode.suggestionsMap.get(exclude).contains(impName)) {
-        return true;
-      }
-    } else if (impName.startsWith("java")) {
-      if (JavaMode.suggestionsMap.containsKey(include) && JavaMode.suggestionsMap.get(include).contains(impName)) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
 
@@ -876,37 +667,6 @@ public class ErrorCheckerService {
     for (String s : warn)     compilerOptions.put(s, JavaCore.WARNING);
 
     COMPILER_OPTIONS = Collections.unmodifiableMap(compilerOptions);
-  }
-
-
-  /**
-   * Checks if import statements in the sketch have changed. If they have,
-   * compiler classpath needs to be updated.
-   */
-  protected static boolean checkIfImportsChanged(List<ImportStatement> prevImports,
-                                                 List<ImportStatement> imports) {
-    if (imports.size() != prevImports.size()) {
-      return true;
-    } else {
-      int count = imports.size();
-      for (int i = 0; i < count; i++) {
-        if (!imports.get(i).isSameAs(prevImports.get(i))) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-
-  public void handlePreferencesChange() {
-    isContinuousCheckEnabled = JavaMode.errorCheckEnabled;
-    if (isContinuousCheckEnabled) {
-      Messages.log(editor.getSketch().getName() + " Error Checker enabled.");
-      notifySketchChanged();
-    } else {
-      Messages.log(editor.getSketch().getName() + " Error Checker disabled.");
-    }
   }
 
 

@@ -322,7 +322,7 @@ public class JavaTextArea extends JEditTextArea {
     int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
     int lineStartOffset = editor.getTextArea().getLineStartOffset(caretLineIndex);
 
-    editor.getErrorChecker().acceptWhenDone(ps -> {
+    editor.getPreprocessingService().whenDone(ps -> {
       int lineNumber = ps.tabOffsetToJavaLine(codeIndex, lineStartOffset);
 
       String phrase = null;

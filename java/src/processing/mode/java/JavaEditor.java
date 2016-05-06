@@ -29,7 +29,7 @@ import processing.app.ui.Toolkit;
 import processing.mode.java.debug.LineBreakpoint;
 import processing.mode.java.debug.LineHighlight;
 import processing.mode.java.debug.LineID;
-import processing.mode.java.pdex.ErrorCheckerService;
+import processing.mode.java.pdex.PreprocessingService;
 import processing.mode.java.pdex.ImportStatement;
 import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.PDEX;
@@ -70,7 +70,7 @@ public class JavaEditor extends Editor {
   private boolean hasJavaTabs;
   private boolean javaTabWarned;
 
-  protected ErrorCheckerService errorCheckerService;
+  protected PreprocessingService preprocessingService;
   protected PDEX pdex;
 
   protected List<Problem> problems = Collections.emptyList();
@@ -150,7 +150,7 @@ public class JavaEditor extends Editor {
 
     getJavaTextArea().setMode(jmode);
 
-    initErrorChecker();
+    initPDEX();
 
     // ensure completion is hidden when editor loses focus
     addWindowFocusListener(new WindowFocusListener() {
@@ -174,18 +174,9 @@ public class JavaEditor extends Editor {
   }
   
   
-  protected void initErrorChecker() {
-    errorCheckerService = new ErrorCheckerService(this);
-    for (SketchCode code : getSketch().getCode()) {
-      Document document = code.getDocument();
-      if (document != null) {
-        errorCheckerService.addDocumentListener(document);
-      }
-    }
-    errorCheckerService.start();
-    errorCheckerService.notifySketchChanged();
-
-    pdex = new PDEX(this, errorCheckerService);
+  protected void initPDEX() {
+    preprocessingService = new PreprocessingService(this);
+    pdex = new PDEX(this, preprocessingService);
 
     // Add ctrl+click listener
     getJavaTextArea().getPainter().addMouseListener(new MouseAdapter() {
@@ -199,6 +190,44 @@ public class JavaEditor extends Editor {
         }
       }
     });
+
+    sketchChanged();
+
+    for (SketchCode code : getSketch().getCode()) {
+      Document document = code.getDocument();
+      if (document != null) {
+        addDocumentListener(document);
+      }
+    }
+  }
+
+
+  public void addDocumentListener(Document doc) {
+    if (doc != null) doc.addDocumentListener(sketchChangedListener);
+  }
+
+
+  protected final DocumentListener sketchChangedListener = new DocumentListener() {
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+      sketchChanged();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+      sketchChanged();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+      sketchChanged();
+    }
+  };
+
+
+  protected void sketchChanged() {
+    pdex.notifySketchChanged();
+    preprocessingService.notifySketchChanged();
   }
   
   
@@ -214,6 +243,7 @@ public class JavaEditor extends Editor {
 
   private int previousTabCount = 1;
 
+  // TODO: this is a clumsy way to get notified when tabs get added/deleted
   // Override the parent call to add hook to the rebuild() method
   public EditorHeader createHeader() {
     return new EditorHeader(this) {
@@ -225,9 +255,9 @@ public class JavaEditor extends Editor {
         boolean hasJavaTabsChanged = hasJavaTabs != newHasJavaTabs;
         hasJavaTabs = newHasJavaTabs;
 
-        if (errorCheckerService != null) {
+        if (preprocessingService != null) {
           if (hasJavaTabsChanged) {
-            errorCheckerService.handleHasJavaTabsChange(hasJavaTabs);
+            preprocessingService.handleHasJavaTabsChange(hasJavaTabs);
             pdex.handleHasJavaTabsChange(hasJavaTabs);
             if (hasJavaTabs) {
               setProblemList(Collections.emptyList());
@@ -237,7 +267,7 @@ public class JavaEditor extends Editor {
           int currentTabCount = sketch.getCodeCount();
           if (currentTabCount != previousTabCount) {
             previousTabCount = currentTabCount;
-            errorCheckerService.notifySketchChanged();
+            sketchChanged();
           }
         }
       }
@@ -1327,13 +1357,13 @@ public class JavaEditor extends Editor {
 
   @Override
   public void librariesChanged() {
-    errorCheckerService.notifyLibrariesChanged();
+    preprocessingService.notifyLibrariesChanged();
   }
 
 
   @Override
   public void codeFolderChanged() {
-    errorCheckerService.notifyCodeFolderChanged();
+    preprocessingService.notifyCodeFolderChanged();
   }
 
 
@@ -1374,110 +1404,11 @@ public class JavaEditor extends Editor {
     if (inspector != null) {
       inspector.dispose();
     }
-    errorCheckerService.stop();
+    preprocessingService.dispose();
     pdex.dispose();
     super.dispose();
   }
 
-
-  // Not sure how this was supposed to work, tempErrorLog is always empty [jv]
-  /**
-   * Writes all error messages to a csv file.
-   * For analytics purposes only.
-   */
-  /*
-  private void writeErrorsToFile() {
-    if (errorCheckerService.tempErrorLog.size() == 0) return;
-
-    try {
-      System.out.println("Writing errors");
-      StringBuilder sb = new StringBuilder();
-      sb.append("Sketch: " + getSketch().getFolder() + ", "
-                + new java.sql.Timestamp(new java.util.Date().getTime())
-                + "\nComma in error msg is substituted with ^ symbol\nFor separating arguments in error args | symbol is used\n");
-      sb.append("ERROR TYPE, ERROR ARGS, ERROR MSG\n");
-
-      for (String errMsg : errorCheckerService.tempErrorLog.keySet()) {
-        IProblem ip = errorCheckerService.tempErrorLog.get(errMsg);
-        if (ip != null) {
-          sb.append(ErrorMessageSimplifier.getIDName(ip.getID()));
-          sb.append(',');
-          sb.append("{");
-          for (int i = 0; i < ip.getArguments().length; i++) {
-            sb.append(ip.getArguments()[i]);
-            if (i < ip.getArguments().length-1)
-              sb.append("| ");
-          }
-          sb.append("}");
-          sb.append(',');
-          sb.append(ip.getMessage().replace(',', '^'));
-          sb.append("\n");
-        }
-      }
-      System.out.println(sb);
-      File opFile = new File(getSketch().getFolder(), "ErrorLogs"
-                             + File.separator + "ErrorLog_" + System.currentTimeMillis() + ".csv");
-      PApplet.saveStream(opFile, new ByteArrayInputStream(sb.toString()
-                                                          .getBytes(Charset.defaultCharset())));
-    } catch (Exception e) {
-      System.err.println("Failed to save log file for sketch " + getSketch().getName());
-      e.printStackTrace();
-    }
-  }*/
-
-
-  /*
-    private AtomicBoolean debugToolbarEnabled;
-
-    public boolean isDebugToolbarEnabled() {
-      return debugToolbarEnabled != null && debugToolbarEnabled.get();
-    }
-
-
-    /// Toggles between java mode and debug mode toolbar
-    protected void switchToolbars(){
-      final EditorToolbar nextToolbar;
-      if(debugToolbarEnabled.get()){
-        // switch to java
-        if(javaToolbar == null)
-          javaToolbar = createToolbar();
-        nextToolbar = javaToolbar;
-        debugToolbarEnabled.set(false);
-        Base.log("Switching to Java Mode Toolbar");
-      }
-      else{
-        // switch to debug
-        if(debugToolbar == null)
-          debugToolbar = new DebugToolbar(this, getBase());
-        nextToolbar = debugToolbar;
-        debugToolbarEnabled.set(true);
-        Base.log("Switching to Debugger Toolbar");
-      }
-
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          Box upper = (Box)splitPane.getComponent(0);
-          upper.remove(0);
-          upper.add(nextToolbar, 0);
-          upper.validate();
-          nextToolbar.repaint();
-          toolbar = nextToolbar;
-          // The toolbar responds to shift down/up events
-          // in order to show the alt version of toolbar buttons.
-          // With toolbar switch, KeyListener has to be changed as well
-          for (KeyListener kl : textarea.getKeyListeners()) {
-            if(kl instanceof EditorToolbar)
-            {
-              textarea.removeKeyListener(kl);
-              textarea.addKeyListener(toolbar);
-              break;
-            }
-          }
-          textarea.repaint();
-        }
-      });
-    }
-  */
 
   /**
    * Creates the debug menu. Includes ActionListeners for the menu items.
@@ -1659,26 +1590,6 @@ public class JavaEditor extends Editor {
 //        }
 //      });
 //    debugMenu.add(item);
-
-    /*
-    item = Toolkit.newJMenuItem(Language.text("menu.debug.show_sketch_outline"), KeyEvent.VK_L);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Messages.log("Show Sketch Outline:");
-          errorCheckerService.getASTGenerator().showSketchOutline();
-        }
-      });
-    debugMenu.add(item);
-
-    item = Toolkit.newJMenuItem(Language.text("menu.debug.show_tabs_list"), KeyEvent.VK_Y);
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Messages.log("Show Tab Outline:");
-          errorCheckerService.getASTGenerator().showTabOutline();
-        }
-      });
-    debugMenu.add(item);
-    */
 
     return debugMenu;
   }
@@ -1928,8 +1839,8 @@ public class JavaEditor extends Editor {
   }
 
 
-  public ErrorCheckerService getErrorChecker() {
-    return errorCheckerService;
+  public PreprocessingService getPreprocessingService() {
+    return preprocessingService;
   }
 
 
@@ -1942,7 +1853,7 @@ public class JavaEditor extends Editor {
     autoSave();
     super.prepareRun();
     downloadImports();
-    errorCheckerService.cancel();
+    preprocessingService.cancel();
   }
 
 
@@ -2388,8 +2299,8 @@ public class JavaEditor extends Editor {
     super.setCode(code);
 
     Document newDoc = code.getDocument();
-    if (oldDoc != newDoc && errorCheckerService != null) {
-      errorCheckerService.addDocumentListener(newDoc);
+    if (oldDoc != newDoc && preprocessingService != null) {
+      addDocumentListener(newDoc);
     }
 
     // set line background colors for tab
@@ -2529,24 +2440,6 @@ public class JavaEditor extends Editor {
   */
 
 
-//  /**
-//   * Initializes and starts Error Checker Service
-//   */
-//  private void initializeErrorChecker() {
-//    Thread errorCheckerThread = null;
-//
-//    if (errorCheckerThread == null) {
-//      errorCheckerService = new ErrorCheckerService(this);
-//      errorCheckerThread = new Thread(errorCheckerService);
-//      try {
-//        errorCheckerThread.start();
-//      } catch (Exception e) {
-//        Base.loge("Error Checker Service not initialized", e);
-//      }
-//    }
-//  }
-
-
   public void setProblemList(List<Problem> problems) {
     this.problems = problems;
     boolean hasErrors = problems.stream().anyMatch(Problem::isError);
@@ -2566,7 +2459,7 @@ public class JavaEditor extends Editor {
 
     for (Problem p : problems) {
       String message = p.getMessage();
-      if (Preferences.getBoolean(JavaMode.SUGGEST_IMPORTS_PREF) &&
+      if (JavaMode.importSuggestEnabled &&
           p.getImportSuggestions() != null &&
           p.getImportSuggestions().length > 0) {
         message += " (double-click for suggestions)";
@@ -2616,19 +2509,17 @@ public class JavaEditor extends Editor {
    * line or not
    */
   public void updateEditorStatus() {
-    if (JavaMode.errorCheckEnabled) {
-      Problem problem = findError(textarea.getCaretLine());
-      if (problem != null) {
-        int type = problem.isError() ?
-            EditorStatus.CURSOR_LINE_ERROR : EditorStatus.CURSOR_LINE_WARNING;
-        statusMessage(problem.getMessage(), type);
-      } else {
-        switch (getStatusMode()) {
-          case EditorStatus.CURSOR_LINE_ERROR:
-          case EditorStatus.CURSOR_LINE_WARNING:
-            statusEmpty();
-            break;
-        }
+    Problem problem = findError(textarea.getCaretLine());
+    if (problem != null) {
+      int type = problem.isError() ?
+          EditorStatus.CURSOR_LINE_ERROR : EditorStatus.CURSOR_LINE_WARNING;
+      statusMessage(problem.getMessage(), type);
+    } else {
+      switch (getStatusMode()) {
+        case EditorStatus.CURSOR_LINE_ERROR:
+        case EditorStatus.CURSOR_LINE_WARNING:
+          statusEmpty();
+          break;
       }
     }
   }
@@ -2797,16 +2688,13 @@ public class JavaEditor extends Editor {
    * the error button at the bottom of the PDE
    */
   public void updateErrorToggle(boolean hasErrors) {
-    footer.setNotification(errorTable.getParent(),  //errorTableScrollPane,
-                           JavaMode.errorCheckEnabled &&
-                           hasErrors);
+    footer.setNotification(errorTable.getParent(), hasErrors);
 //    String title = Language.text("editor.footer.errors");
-//    if (JavaMode.errorCheckEnabled && errorCheckerService.hasErrors()) {
+//    if (hasErrors) {
 //      title += "*";
 //    }
 //    ((JTabbedPane) footer).setTitleAt(ERROR_TAB_INDEX, title);
-////    btnShowErrors.updateMarker(JavaMode.errorCheckEnabled &&
-////                               errorCheckerService.hasErrors(),
+////    btnShowErrors.updateMarker(hasErrors,
 ////                               errorBar.errorColor);
   }
 
@@ -2875,8 +2763,7 @@ public class JavaEditor extends Editor {
       jmode.loadPreferences();
       Messages.log("Applying prefs");
       // trigger it once to refresh UI
-      errorCheckerService.handlePreferencesChange();
-      setProblemList(Collections.emptyList());
+      sketchChanged();
     }
   }
 

@@ -1,5 +1,9 @@
 package processing.mode.java.pdex;
 
+import com.google.classpath.ClassPath;
+import com.google.classpath.RegExpResourceFilter;
+
+import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -27,7 +31,12 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
@@ -48,10 +57,12 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
 import processing.app.Messages;
+import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.Toolkit;
 import processing.mode.java.JavaEditor;
+import processing.mode.java.JavaMode;
 import processing.mode.java.pdex.PreprocessedSketch.SketchInterval;
 
 import static processing.mode.java.pdex.ASTUtils.*;
@@ -62,24 +73,28 @@ public class PDEX {
 
   private boolean enabled = true;
 
+  private ErrorChecker errorChecker;
+
   private ShowUsage showUsage;
   private Rename rename;
   private DebugTree debugTree;
 
   private JavaEditor editor;
-  private ErrorCheckerService ecs;
+  private PreprocessingService pps;
 
 
-  public PDEX(JavaEditor editor, ErrorCheckerService ecs) {
+  public PDEX(JavaEditor editor, PreprocessingService pps) {
     this.editor = editor;
-    this.ecs = ecs;
+    this.pps = pps;
 
     this.enabled = !editor.hasJavaTabs();
 
-    showUsage = new ShowUsage(editor, ecs);
+    errorChecker = new ErrorChecker(editor, pps);
+
+    showUsage = new ShowUsage(editor, pps);
     rename = new Rename(editor);
     if (SHOW_DEBUG_TREE) {
-      debugTree = new DebugTree(editor, ecs);
+      debugTree = new DebugTree(editor, pps);
     }
   }
 
@@ -87,21 +102,21 @@ public class PDEX {
   public void handleShowUsage(int tabIndex, int startTabOffset, int stopTabOffset) {
     Messages.log("* handleShowUsage");
     if (!enabled) return; // show usage disabled if java tabs
-    ecs.acceptWhenDone(ps -> showUsage.findUsageAndUpdateTree(ps, tabIndex, startTabOffset, stopTabOffset));
+    pps.whenDone(ps -> showUsage.findUsageAndUpdateTree(ps, tabIndex, startTabOffset, stopTabOffset));
   }
 
 
   public void handleRename(int tabIndex, int startTabOffset, int stopTabOffset) {
     Messages.log("* handleRename");
     if (!enabled) return;  // refactoring disabled w/ java tabs
-    ecs.acceptWhenDone(ps -> rename.handleRename(ps, tabIndex, startTabOffset, stopTabOffset));
+    pps.whenDone(ps -> rename.handleRename(ps, tabIndex, startTabOffset, stopTabOffset));
   }
 
 
   public void handleCtrlClick(int tabIndex, int offset) {
     Messages.log("* handleCtrlClick");
     if (!enabled) return;  // disabled w/ java tabs
-    ecs.acceptWhenDone(ps -> handleCtrlClick(ps, tabIndex, offset));
+    pps.whenDone(ps -> handleCtrlClick(ps, tabIndex, offset));
   }
 
 
@@ -113,7 +128,13 @@ public class PDEX {
   }
 
 
+  public void notifySketchChanged() {
+    errorChecker.notifySketchChanged();
+  }
+
+
   public void dispose() {
+    errorChecker.dispose();
     showUsage.dispose();
     rename.dispose();
     if (debugTree != null) {
@@ -178,16 +199,16 @@ public class PDEX {
     final JTree tree;
 
     final JavaEditor editor;
-    final ErrorCheckerService ecs;
+    final PreprocessingService pps;
 
     final Consumer<PreprocessedSketch> reloadListener;
 
     IBinding binding;
 
 
-    ShowUsage(JavaEditor editor, ErrorCheckerService ecs) {
+    ShowUsage(JavaEditor editor, PreprocessingService pps) {
       this.editor = editor;
-      this.ecs = ecs;
+      this.pps = pps;
 
       reloadListener = this::reloadShowUsage;
 
@@ -201,12 +222,12 @@ public class PDEX {
             // Delete references to ASTNodes so that whole AST can be GC'd
             binding = null;
             tree.setModel(null);
-            ecs.unregisterDoneListener(reloadListener);
+            pps.unregisterListener(reloadListener);
           }
 
           @Override
           public void componentShown(ComponentEvent e) {
-            ecs.registerDoneListener(reloadListener);
+            pps.registerListener(reloadListener);
           }
         });
         window.setSize(300, 400);
@@ -689,7 +710,7 @@ public class PDEX {
     final Consumer<PreprocessedSketch> updateListener;
 
 
-    DebugTree(JavaEditor editor, ErrorCheckerService ecs) {
+    DebugTree(JavaEditor editor, PreprocessingService pps) {
       updateListener = this::buildAndUpdateTree;
 
       window = new JDialog(editor);
@@ -713,7 +734,7 @@ public class PDEX {
       window.addComponentListener(new ComponentAdapter() {
         @Override
         public void componentHidden(ComponentEvent e) {
-          ecs.unregisterDoneListener(updateListener);
+          pps.unregisterListener(updateListener);
           tree.setModel(null);
         }
       });
@@ -723,8 +744,8 @@ public class PDEX {
       JScrollPane sp = new JScrollPane();
       sp.setViewportView(tree);
       window.add(sp);
-      ecs.acceptWhenDone(updateListener);
-      ecs.registerDoneListener(updateListener);
+      pps.whenDone(updateListener);
+      pps.registerListener(updateListener);
 
 
       tree.addTreeSelectionListener(e -> {
@@ -735,7 +756,7 @@ public class PDEX {
             (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         if (tnode.getUserObject() instanceof ASTNode) {
           ASTNode node = (ASTNode) tnode.getUserObject();
-          ecs.acceptWhenDone(ps -> {
+          pps.whenDone(ps -> {
             SketchInterval si = ps.mapJavaToSketch(node);
             EventQueue.invokeLater(() -> {
               editor.highlight(si.tabIndex, si.startTabOffset, si.stopTabOffset);
@@ -797,4 +818,134 @@ public class PDEX {
 
   }
 
+
+
+  private static class ErrorChecker {
+
+    // Delay delivering error check result after last sketch change #2677
+    private final static long DELAY_BEFORE_UPDATE = 650;
+
+    private ScheduledExecutorService scheduler;
+    private volatile ScheduledFuture<?> scheduledUiUpdate = null;
+    private volatile long nextUiUpdate = 0;
+
+    private final Consumer<PreprocessedSketch> errorHandlerListener = this::handleSketchProblems;
+
+    private JavaEditor editor;
+
+
+    public ErrorChecker(JavaEditor editor, PreprocessingService pps) {
+      this.editor = editor;
+      scheduler = Executors.newSingleThreadScheduledExecutor();
+      pps.registerListener(errorHandlerListener);
+    }
+
+
+    public void notifySketchChanged() {
+      nextUiUpdate = System.currentTimeMillis() + DELAY_BEFORE_UPDATE;
+    }
+
+
+    public void dispose() {
+      if (scheduler != null) {
+        scheduler.shutdownNow();
+      }
+    }
+
+
+    private void handleSketchProblems(PreprocessedSketch ps) {
+      // Process problems
+      final List<Problem> problems = ps.problems.stream()
+          // Filter Warnings if they are not enabled
+          .filter(iproblem -> !(iproblem.isWarning() && !JavaMode.warningsEnabled))
+          // Hide a useless error which is produced when a line ends with
+          // an identifier without a semicolon. "Missing a semicolon" is
+          // also produced and is preferred over this one.
+          // (Syntax error, insert ":: IdentifierOrNew" to complete Expression)
+          // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=405780
+          .filter(iproblem -> !iproblem.getMessage()
+              .contains("Syntax error, insert \":: IdentifierOrNew\""))
+          // Transform into our Problems
+          .map(iproblem -> {
+            int start = iproblem.getSourceStart();
+            int stop = iproblem.getSourceEnd() + 1; // make it exclusive
+            SketchInterval in = ps.mapJavaToSketch(start, stop);
+            int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
+            Problem p = new Problem(iproblem, in.tabIndex, line);
+            p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
+            return p;
+          })
+          .collect(Collectors.toList());
+
+      // Handle import suggestions
+      if (JavaMode.importSuggestEnabled) {
+        Map<String, List<Problem>> undefinedTypeProblems = problems.stream()
+            // Get only problems with undefined types/names
+            .filter(p -> {
+              int id = p.getIProblem().getID();
+              return id == IProblem.UndefinedType ||
+                  id == IProblem.UndefinedName ||
+                  id == IProblem.UnresolvedVariable;
+            })
+            // Group problems by the missing type/name
+            .collect(Collectors.groupingBy(p -> p.getIProblem().getArguments()[0]));
+
+        if (!undefinedTypeProblems.isEmpty()) {
+          final ClassPath cp = ps.searchClassPath;
+
+          // Get suggestions for each missing type, update the problems
+          undefinedTypeProblems.entrySet().stream()
+              .forEach(entry -> {
+                String missingClass = entry.getKey();
+                List<Problem> affectedProblems = entry.getValue();
+                String[] suggestions = getImportSuggestions(cp, missingClass);
+                affectedProblems.forEach(p -> p.setImportSuggestions(suggestions));
+              });
+        }
+      }
+
+      if (scheduledUiUpdate != null) {
+        scheduledUiUpdate.cancel(true);
+      }
+      // Update UI after a delay. See #2677
+      long delay = nextUiUpdate - System.currentTimeMillis();
+      Runnable uiUpdater = () -> {
+        if (nextUiUpdate > 0 && System.currentTimeMillis() >= nextUiUpdate) {
+          EventQueue.invokeLater(() -> editor.setProblemList(problems));
+        }
+      };
+      scheduledUiUpdate = scheduler.schedule(uiUpdater, delay,
+                                             TimeUnit.MILLISECONDS);
+    }
+
+
+    public static String[] getImportSuggestions(ClassPath cp, String className) {
+      RegExpResourceFilter regf = new RegExpResourceFilter(
+          Pattern.compile(".*"),
+          Pattern.compile("(.*\\$)?" + className + "\\.class",
+                          Pattern.CASE_INSENSITIVE));
+
+      String[] resources = cp.findResources("", regf);
+      return Arrays.stream(resources)
+          // remove ".class" suffix
+          .map(res -> res.substring(0, res.length() - 6))
+          // replace path separators with dots
+          .map(res -> res.replace('/', '.'))
+          // replace inner class separators with dots
+          .map(res -> res.replace('$', '.'))
+          // sort, prioritize clases from java. package
+          .sorted((o1, o2) -> {
+            // put java.* first, should be prioritized more
+            boolean o1StartsWithJava = o1.startsWith("java");
+            boolean o2StartsWithJava = o2.startsWith("java");
+            if (o1StartsWithJava != o2StartsWithJava) {
+              if (o1StartsWithJava) return -1;
+              return 1;
+            }
+            return o1.compareTo(o2);
+          })
+          .toArray(String[]::new);
+    }
+
+  }
 }

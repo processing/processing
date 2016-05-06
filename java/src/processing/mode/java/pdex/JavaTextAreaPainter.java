@@ -342,7 +342,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 
   /**
-   * Sets ErrorCheckerService and loads theme for TextAreaPainter(XQMode)
+   * Loads theme for TextAreaPainter(XQMode)
    */
   public void setMode(Mode mode) {
     errorUnderlineColor = mode.getColor("editor.error.underline.color");
@@ -383,96 +383,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
     setToolTipText(null);
     return super.getToolTipText(evt);
   }
-
-
-  /*
-  @Override
-  public String getToolTipText(MouseEvent event) {
-    if (!getJavaEditor().hasJavaTabs()) {
-      int off = textArea.xyToOffset(event.getX(), event.getY());
-      if (off < 0) {
-        setToolTipText(null);
-        return super.getToolTipText(event);
-      }
-      int line = textArea.getLineOfOffset(off);
-      if (line < 0) {
-        setToolTipText(null);
-        return super.getToolTipText(event);
-      }
-
-      String s = textArea.getLineText(line);
-      if (s == null || s.isEmpty()) {
-        setToolTipText(null);
-        return super.getToolTipText(event);
-
-      } else {
-        int x = textArea.xToOffset(line, event.getX()), x2 = x + 1, x1 = x - 1;
-        int xLS = off - textArea.getLineStartNonWhiteSpaceOffset(line);
-        if (x < 0 || x >= s.length()) {
-          setToolTipText(null);
-          return super.getToolTipText(event);
-        }
-        String word = s.charAt(x) + "";
-        if (s.charAt(x) == ' ') {
-          setToolTipText(null);
-          return super.getToolTipText(event);
-        }
-        if (!(Character.isLetterOrDigit(s.charAt(x)) ||
-            s.charAt(x) == '_' || s.charAt(x) == '$' || s.charAt(x) == '{' ||
-            s.charAt(x) == '}')) {
-          setToolTipText(null);
-          return super.getToolTipText(event);
-        }
-        int i = 0;
-        while (true) {
-          i++;
-          if (x1 >= 0 && x1 < s.length()) {
-            if (Character.isLetter(s.charAt(x1)) || s.charAt(x1) == '_') {
-              word = s.charAt(x1--) + word;
-              xLS--;
-            } else
-              x1 = -1;
-          } else
-            x1 = -1;
-
-          if (x2 >= 0 && x2 < s.length()) {
-            if (Character.isLetterOrDigit(s.charAt(x2)) || s.charAt(x2) == '_'
-                || s.charAt(x2) == '$')
-              word = word + s.charAt(x2++);
-            else
-              x2 = -1;
-          } else
-            x2 = -1;
-
-          if (x1 < 0 && x2 < 0)
-            break;
-          if (i > 200) {
-            // time out!
-            // System.err.println("Whoopsy! :P");
-            break;
-          }
-        }
-        if (Character.isDigit(word.charAt(0))) {
-          setToolTipText(null);
-          return super.getToolTipText(event);
-        }
-        ASTGenerator ast = getJavaEditor().getErrorChecker().getASTGenerator();
-        synchronized (ast) {
-          String tooltipText = ast.getLabelForASTNode(line, word, xLS);
-
-          //      log(errorCheckerService.mainClassOffset + " MCO "
-          //      + "|" + line + "| offset " + xLS + word + " <= offf: "+off+ "\n");
-          if (tooltipText != null) {
-            return tooltipText;
-          }
-        }
-      }
-    }
-    // Used when there are Java tabs, but also the fall-through case from above
-//    setToolTipText(null);
-    return super.getToolTipText(event);
-  }
-  */
 
 
   // TweakMode code

@@ -61,6 +61,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 import processing.app.Messages;
+import processing.mode.java.JavaMode;
 
 import com.google.classpath.ClassPath;
 import com.google.classpath.RegExpResourceFilter;
@@ -686,8 +687,6 @@ public class CompletionGenerator {
     if (className == null){
       return null;
     }
-
-    //PreprocessedSketch ps = ecs.requestResult();
 
     if (className.indexOf('.') >= 0) {
       // Figure out what is package and what is class
@@ -1319,6 +1318,41 @@ public class CompletionGenerator {
   }
 
 
+  protected static boolean ignorableSuggestionImport(PreprocessedSketch ps, String impName) {
+
+    String impNameLc = impName.toLowerCase();
+
+    List<ImportStatement> programImports = ps.programImports;
+    List<ImportStatement> codeFolderImports = ps.codeFolderImports;
+
+    boolean isImported = Stream
+        .concat(programImports.stream(), codeFolderImports.stream())
+        .anyMatch(impS -> {
+          String packageNameLc = impS.getPackageName().toLowerCase();
+          return impNameLc.startsWith(packageNameLc);
+        });
+
+    if (isImported) return false;
+
+    final String include = "include";
+    final String exclude = "exclude";
+
+    if (impName.startsWith("processing")) {
+      if (JavaMode.suggestionsMap.containsKey(include) && JavaMode.suggestionsMap.get(include).contains(impName)) {
+        return false;
+      } else if (JavaMode.suggestionsMap.containsKey(exclude) && JavaMode.suggestionsMap.get(exclude).contains(impName)) {
+        return true;
+      }
+    } else if (impName.startsWith("java")) {
+      if (JavaMode.suggestionsMap.containsKey(include) && JavaMode.suggestionsMap.get(include).contains(impName)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+
   /**
    * A wrapper for java.lang.reflect types.
    * Will have to see if the usage turns out to be internal only here or not
@@ -1850,7 +1884,7 @@ public class CompletionGenerator {
           matchedClass2 = matchedClass2.replace('/', '.'); //package name
           String matchedClass = matchedClass2.substring(0, matchedClass2.length() - 6);
           int d = matchedClass.lastIndexOf('.');
-          if (!ErrorCheckerService.ignorableSuggestionImport(ps, matchedClass)) {
+          if (!ignorableSuggestionImport(ps, matchedClass)) {
             matchedClass = matchedClass.substring(d + 1); //class name
             // display package name in grey
             String html = "<html>" + matchedClass + " : <font color=#777777>" +
