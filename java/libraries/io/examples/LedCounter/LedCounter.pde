@@ -22,9 +22,9 @@ void draw() {
   // make the LEDs count in binary
   for (int i=0; i < leds.length; i++) {
     if ((frameCount & (1 << i)) != 0) {
-      leds[i].set(1.0);
+      leds[i].brightness(1.0);
     } else {
-      leds[i].set(0.0);
+      leds[i].brightness(0.0);
     }
   }
   println(frameCount);

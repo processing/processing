@@ -177,6 +177,10 @@ public class GPIO {
   public static int digitalRead(int pin) {
     checkValidPin(pin);
 
+    if (NativeInterface.isSimulated()) {
+      return LOW;
+    }
+
     String fn = String.format("/sys/class/gpio/gpio%d/value", pin);
     byte in[] = new byte[2];
     int ret = NativeInterface.readFile(fn, in);
@@ -220,6 +224,10 @@ public class GPIO {
     } else {
       System.err.println("Only GPIO.LOW and GPIO.HIGH, 0 and 1, or true and false, can be used.");
       throw new IllegalArgumentException("Illegal value");
+    }
+
+    if (NativeInterface.isSimulated()) {
+      return;
     }
 
     String fn = String.format("/sys/class/gpio/gpio%d/value", pin);
@@ -278,6 +286,10 @@ public class GPIO {
       throw new IllegalArgumentException("Unknown mode");
     }
 
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     String fn = String.format("/sys/class/gpio/gpio%d/edge", pin);
     int ret = NativeInterface.writeFile(fn, out);
     if (ret < 0) {
@@ -324,6 +336,10 @@ public class GPIO {
    */
   public static void pinMode(int pin, int mode) {
     checkValidPin(pin);
+
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
 
     // export pin through sysfs
     String fn = "/sys/class/gpio/export";
@@ -409,6 +425,10 @@ public class GPIO {
   public static void releasePin(int pin) {
     checkValidPin(pin);
 
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     String fn = "/sys/class/gpio/unexport";
     int ret = NativeInterface.writeFile(fn, Integer.toString(pin));
     if (ret < 0) {
@@ -450,6 +470,14 @@ public class GPIO {
    */
   protected static boolean waitForInterrupt(int pin, int timeout) {
     checkValidPin(pin);
+
+    if (NativeInterface.isSimulated()) {
+      // pretend the interrupt happens after 200ms
+      try {
+        Thread.sleep(200);
+      } catch (InterruptedException e) {}
+      return true;
+    }
 
     String fn = String.format("/sys/class/gpio/gpio%d/value", pin);
     int ret = NativeInterface.pollDevice(fn, timeout);

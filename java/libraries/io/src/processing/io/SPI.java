@@ -78,6 +78,11 @@ public class SPI {
   public SPI(String dev) {
     NativeInterface.loadLibrary();
     this.dev = dev;
+
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     handle = NativeInterface.openDevice("/dev/" + dev);
     if (handle < 0) {
       throw new RuntimeException(NativeInterface.getError(handle));
@@ -90,6 +95,10 @@ public class SPI {
    *  @webref
    */
   public void close() {
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     NativeInterface.closeDevice(handle);
     handle = 0;
   }
@@ -110,6 +119,11 @@ public class SPI {
    *  @webref
    */
   public static String[] list() {
+    if (NativeInterface.isSimulated()) {
+      // as on the Raspberry Pi
+      return new String[]{ "spidev0.0", "spidev0.1" };
+    }
+
     ArrayList<String> devs = new ArrayList<String>();
     File dir = new File("/dev");
     File[] files = dir.listFiles();
@@ -148,6 +162,10 @@ public class SPI {
    *  @webref
    */
   public byte[] transfer(byte[] out) {
+    if (NativeInterface.isSimulated()) {
+      return new byte[out.length];
+    }
+
     // track the current setting per device across multiple instances
     String curSettings = maxSpeed + "-" + dataOrder + "-" + mode;
     if (!curSettings.equals(settings.get(dev))) {
@@ -182,16 +200,27 @@ public class SPI {
 
   /**
    *  Transfers data over the SPI bus
-   *  @param out single byte to send
+   *  @param out single byte to send, e.g. numeric literal (0 to 255, or -128 to 127)
    *  @return bytes read in (array is the same length as out)
    */
   public byte[] transfer(int out) {
-    if (out < 0 || 255 < out) {
-      System.err.println("The transfer function can only operate on a single byte at a time. Call it with a value from 0 to 255.");
+    if (out < -128 || 255 < out) {
+      System.err.println("The transfer function can only operate on a single byte at a time. Call it with a value from 0 to 255, or -128 to 127.");
       throw new RuntimeException("Argument does not fit into a single byte");
     }
     byte[] tmp = new byte[1];
     tmp[0] = (byte)out;
     return transfer(tmp);
+  }
+
+
+  /**
+   *  Transfers data over the SPI bus
+   *  @param out single byte to send
+   *  @return bytes read in (array is the same length as out)
+   */
+  public byte[] transfer(byte out) {
+    // cast to (unsigned) int
+    return transfer(out & 0xff);
   }
 }

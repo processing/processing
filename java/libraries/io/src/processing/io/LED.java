@@ -53,6 +53,10 @@ public class LED {
     NativeInterface.loadLibrary();
     this.dev = dev;
 
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     // read maximum brightness
     try {
       Path path = Paths.get("/sys/class/leds/" + dev + "/max_brightness");
@@ -105,11 +109,16 @@ public class LED {
    *  @webref
    */
   public void brightness(float bright) {
-    String fn = "/sys/class/leds/" + dev + "/brightness";
     if (bright < 0.0 || 1.0 < bright) {
       System.err.println("Brightness must be between 0.0 and 1.0.");
       throw new IllegalArgumentException("Illegal argument");
     }
+
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
+    String fn = "/sys/class/leds/" + dev + "/brightness";
     int ret = NativeInterface.writeFile(fn, Integer.toString((int)(bright * maxBrightness)));
     if (ret < 0) {
       throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
@@ -122,6 +131,10 @@ public class LED {
    *  @webref
    */
   public void close() {
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     // restore previous settings
     String fn = "/sys/class/leds/" + dev + "/brightness";
     int ret = NativeInterface.writeFile(fn, Integer.toString(prevBrightness));
@@ -143,6 +156,11 @@ public class LED {
    *  @webref
    */
   public static String[] list() {
+    if (NativeInterface.isSimulated()) {
+      // as on the Raspberry Pi
+      return new String[]{ "led0", "led1" };
+    }
+
     ArrayList<String> devs = new ArrayList<String>();
     File dir = new File("/sys/class/leds");
     File[] files = dir.listFiles();

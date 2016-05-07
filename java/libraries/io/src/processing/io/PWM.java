@@ -57,6 +57,10 @@ public class PWM {
     chip = channel.substring(0, pos);
     this.channel = Integer.parseInt(channel.substring(pos+4));
 
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     // export channel through sysfs
     String fn = "/sys/class/pwm/" + chip + "/export";
     int ret = NativeInterface.writeFile(fn, Integer.toString(this.channel));
@@ -89,6 +93,10 @@ public class PWM {
    *  @webref
    */
   public void clear() {
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     String fn = String.format("/sys/class/pwm/%s/pwm%d/enable", chip, channel);
     int ret = NativeInterface.writeFile(fn, "0");
     if (ret < 0) {
@@ -102,6 +110,10 @@ public class PWM {
    *  @webref
    */
   public void close() {
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     // XXX: implicit clear()?
     // XXX: also check GPIO
 
@@ -124,6 +136,10 @@ public class PWM {
    *  @webref
    */
   public static String[] list() {
+    if (NativeInterface.isSimulated()) {
+      return new String[]{ "pwmchip0/pwm0", "pwmchip0/pwm1" };
+    }
+
     ArrayList<String> devs = new ArrayList<String>();
     File dir = new File("/sys/class/pwm");
     File[] chips = dir.listFiles();
@@ -155,6 +171,10 @@ public class PWM {
    *  @webref
    */
   public void set(int period, float duty) {
+    if (NativeInterface.isSimulated()) {
+      return;
+    }
+
     // set period
     String fn = fn = String.format("/sys/class/pwm/%s/pwm%d/period", chip, channel);
     // convert to nanoseconds
