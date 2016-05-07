@@ -112,6 +112,7 @@ public class PreprocessingService {
   private void mainLoop() {
     running = true;
     PreprocessedSketch prevResult = null;
+    CompletableFuture<?> runningCallbacks = null;
     Messages.log("PPS: Hi!");
     while (running) {
       try {
@@ -126,8 +127,18 @@ public class PreprocessingService {
 
         prevResult = preprocessSketch(prevResult);
 
+        // Wait until callbacks finish before firing new wave
+        // If new request arrives while waiting, break out and start preprocessing
+        while (requestQueue.isEmpty() && runningCallbacks != null) {
+          try {
+            runningCallbacks.get(10, TimeUnit.MILLISECONDS);
+            runningCallbacks = null;
+          } catch (TimeoutException e) { }
+        }
+
         synchronized (requestLock) {
           if (requestQueue.isEmpty()) {
+            runningCallbacks = lastCallback;
             Messages.log("PPS: Done");
             preprocessingTask.complete(prevResult);
           }
