@@ -32,6 +32,25 @@ X file paths not decoding properly
 X   https://github.com/processing/processing/issues/4417
 X   https://github.com/processing/processing/pull/4426
 _   double check that this is working on OS X
+X Java Mode refactoring
+X   https://github.com/processing/processing/pull/4440
+X Adding .java files to sketch causes the Error Checker to weird out
+X   https://github.com/processing/processing/issues/4368
+X "Show usage..." does not locate keywords on correct line
+X   https://github.com/processing/processing/issues/3988
+
+gottfried
+X Add automatic mipmap support to GLES2
+X   https://github.com/processing/processing/pull/4416
+X Add a few IO library examples
+X   https://github.com/processing/processing/pull/4384
+X Be more verbose with drawExceptions with cause null
+X   https://github.com/processing/processing/pull/4432
+
+_ Add two Raspberry Pi related fixes to JOGL
+_   https://github.com/processing/processing/pull/4379
+_ Ignore memory options when exporting for ARM
+_   https://github.com/processing/processing/pull/4406
 
 
 _ arrow keys aren't working in the examples window
