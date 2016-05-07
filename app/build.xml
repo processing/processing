@@ -38,7 +38,8 @@
                       ../core/apple.jar; 
                       lib/ant.jar; 
                       lib/ant-launcher.jar; 
-                      lib/jna.jar"
+                      lib/jna.jar;
+                      lib/jna-platform.jar"
 	   debug="on"
 	   nowarn="true"
 	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">

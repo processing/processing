@@ -109,6 +109,7 @@
                       ../app/lib/ant-launcher.jar; 
                       ../app/lib/apple.jar; 
                       ../app/lib/jna.jar; 
+                      ../app/lib/jna-platform.jar; 
 
                       mode/antlr.jar; 
                       mode/classpath-explorer-1.0.jar; 

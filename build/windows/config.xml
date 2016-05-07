@@ -18,6 +18,7 @@
     <cp>lib/pde.jar</cp>
     <cp>core/library/core.jar</cp>
     <cp>lib/jna.jar</cp>
+    <cp>lib/jna-platform.jar</cp>
     <cp>lib/antlr.jar</cp>
     <cp>lib/ant.jar</cp>
     <cp>lib/ant-launcher.jar</cp>
