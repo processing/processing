@@ -73,9 +73,9 @@ public class JavaToolbar extends EditorToolbar {
     if (debug) {
       stepButton = new EditorButton(this,
                                     "/lib/toolbar/step",
-                                    Language.text("menu.debug.step"),
-                                    Language.text("menu.debug.step_into"),
-                                    Language.text("menu.debug.step_out")) {
+                                    Language.text("toolbar.debug.step"),
+                                    Language.text("toolbar.debug.step_into"),
+                                    Language.text("toolbar.debug.step_out")) {
         @Override
         public void actionPerformed(ActionEvent e) {
           final int mask = ActionEvent.SHIFT_MASK | ActionEvent.ALT_MASK;
@@ -86,7 +86,7 @@ public class JavaToolbar extends EditorToolbar {
 
       continueButton = new EditorButton(this,
                                         "/lib/toolbar/continue",
-                                        Language.text("menu.debug.continue")) {
+                                        Language.text("toolbar.debug.continue")) {
         @Override
         public void actionPerformed(ActionEvent e) {
           jeditor.handleContinue();
