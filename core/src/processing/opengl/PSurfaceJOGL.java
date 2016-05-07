@@ -445,6 +445,8 @@ public class PSurfaceJOGL implements PSurface {
               throw (RuntimeException)cause;
             } else if (cause instanceof UnsatisfiedLinkError) {
               throw new UnsatisfiedLinkError(cause.getMessage());
+            } else if (cause == null) {
+              throw new RuntimeException(drawException.getMessage());
             } else {
               throw new RuntimeException(cause);
             }
