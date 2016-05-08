@@ -2590,6 +2590,19 @@ public class Table {
     public String[] getColumnTitles() {
       return table.getColumnTitles();
     }
+
+    public void print() {
+      write(new PrintWriter(System.out));
+    }
+
+    public void write(PrintWriter writer) {
+      for (int i = 0 ; i < getColumnCount(); i++) {
+        if (i != 0) {
+          writer.print('\t');
+        }
+        writer.print(getString(i));
+      }
+    }
   }
 
 
@@ -4570,5 +4583,15 @@ public class Table {
   /** Make a copy of the current table */
   public Table copy() {
     return new Table(rows());
+  }
+
+
+  public void write(PrintWriter writer) {
+    writeTSV(writer);
+  }
+
+
+  public void print() {
+    writeTSV(new PrintWriter(System.out));
   }
 }

@@ -9,6 +9,9 @@ X   call crop() in keyArray() and valueArray() functions
 X     they're duplicates, their length is an implementation detail
 X   normalize features and error handling between all of them
 
+X add print() and write(PrintWriter) methods to Table/TableRow
+X   https://github.com/processing/processing/issues/4396
+
 _ JSONObject get() method is private
 _   https://github.com/processing/processing/issues/4334
 _   https://github.com/processing/processing/pull/4336

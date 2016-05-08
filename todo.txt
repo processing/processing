@@ -48,6 +48,11 @@ X "Show usage..." does not locate keywords on correct line
 X   https://github.com/processing/processing/issues/3988
 X PPS: threading enhancement
 X   https://github.com/processing/processing/pull/4442
+X Move PDEX listeners from JavaEditor to PDEX
+X   https://github.com/processing/processing/pull/4446
+X   https://github.com/processing/processing/pull/4447
+X handleCtrlClick misbehaving
+X   https://github.com/processing/processing/issues/4281
 
 gottfried
 X Add automatic mipmap support to GLES2
