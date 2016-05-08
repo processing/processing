@@ -408,6 +408,36 @@ public class Client implements Runnable {
 
   /**
    * <h3>Advanced</h3>
+   * Return a byte array of anything that's in the serial buffer
+   * up to the specified maximum number of bytes.
+   * Not particularly memory/speed efficient, because it creates
+   * a byte array on each read, but it's easier to use than
+   * readBytes(byte b[]) (see below).
+   *
+   * @param max the maximum number of bytes to read
+   */
+  public byte[] readBytes(int max) {
+    if (bufferIndex == bufferLast) return null;
+
+    synchronized (buffer) {
+      int length = bufferLast - bufferIndex;
+      if (length > max) length = max;
+      byte outgoing[] = new byte[length];
+      System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
+
+      bufferIndex += length;
+      if (bufferIndex == bufferLast) {
+        bufferIndex = 0;  // rewind
+        bufferLast = 0;
+      }
+
+      return outgoing;
+    }
+  }
+
+
+  /**
+   * <h3>Advanced</h3>
    * Grab whatever is in the serial buffer, and stuff it into a
    * byte buffer passed in by the user. This is more memory/time
    * efficient than readBytes() returning a byte[] array.
