@@ -38,6 +38,10 @@ public class Problem implements ErrorTable.Entry {
    */
   private IProblem iProblem;
   /**
+   * The class name for the current sketch
+   */
+  private String className;
+  /**
    * The tab number to which the error belongs to
    */
   private int tabIndex;
@@ -83,6 +87,7 @@ public class Problem implements ErrorTable.Entry {
     }
     this.tabIndex = tabIndex;
     this.lineNumber = lineNumber;
+    this.className = iProblem.getArguments()[0];
     this.message = process(iProblem);
     this.message = ErrorMessageSimplifier.getSimplifiedErrorMessage(this);
     //ErrorMessageSimplifier.getSimplifiedErrorMessage(this);
@@ -121,6 +126,10 @@ public class Problem implements ErrorTable.Entry {
 
   public IProblem getIProblem() {
     return iProblem;
+  }
+
+  public String getClassName() {
+    return className;
   }
 
   public int getTabIndex() {
