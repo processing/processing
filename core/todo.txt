@@ -1,4 +1,4 @@
-0249 (3.0.3)
+0249 (3.1)
 X Float/IntDict changes
 X   minIndex() and maxIndex() return -1 when count is zero (rather than ex)
 X   bug fix to reverse sorts
@@ -8,15 +8,8 @@ X     set to false for higher performance
 X   call crop() in keyArray() and valueArray() functions
 X     they're duplicates, their length is an implementation detail
 X   normalize features and error handling between all of them
-
 X add print() and write(PrintWriter) methods to Table/TableRow
 X   https://github.com/processing/processing/issues/4396
-
-_ JSONObject get() method is private
-_   https://github.com/processing/processing/issues/4334
-_   https://github.com/processing/processing/pull/4336
-
-_ add push() and pop() methods to mirror js?
 
 jakub
 X several JavaFX fixes
@@ -42,6 +35,12 @@ X   https://github.com/processing/processing/issues/4019
 X   https://github.com/processing/processing/pull/4341
 X   https://github.com/processing/processing/issues/4376
 
+
+_ JSONObject get() method is private
+_   https://github.com/processing/processing/issues/4334
+_   https://github.com/processing/processing/pull/4336
+
+_ add push() and pop() methods to mirror js?
 
 _ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
 _   https://github.com/processing/processing/issues/4020

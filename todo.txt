@@ -1,7 +1,6 @@
-0249 (3.0.3)
+0249 (3.1)
 o arrow keys aren't working in the examples window
 X   was working fine with most recent build.. weird
-
 
 contribs
 X Grab bag of smaller, mainly ARM-related updates
@@ -31,7 +30,6 @@ X   https://github.com/processing/processing/pull/4320
 X Added readBytes(max) to serial library
 X   https://github.com/processing/processing/pull/4321
 
-
 jakub
 X Update app to Java 8
 X   https://github.com/processing/processing/pull/4383
@@ -49,7 +47,7 @@ X   https://github.com/processing/processing/pull/4410
 X file paths not decoding properly
 X   https://github.com/processing/processing/issues/4417
 X   https://github.com/processing/processing/pull/4426
-_   double check that this is working on OS X
+X   double check that this is working on OS X
 _   check whether it fixes the Windows startup problem
 X Java Mode refactoring
 X   https://github.com/processing/processing/pull/4440
@@ -84,6 +82,7 @@ X Add two Raspberry Pi related fixes to JOGL
 X   https://github.com/processing/processing/pull/4379
 X   https://github.com/sgothel/jogl/pull/96
 X   https://github.com/sgothel/jogl/pull/97
+
 
 needs more review
 _ createPreprocessor() added to JavaEditor, creating a mess
