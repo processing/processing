@@ -215,15 +215,15 @@ public class PDEX {
       editor.getJavaTextArea().addKeyListener(new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
-          isMetaDown = isMetaDown | e.getKeyCode() == KeyEvent.VK_META;
-          isCtrlDown = isCtrlDown | e.getKeyCode() == KeyEvent.VK_CONTROL;
+          isMetaDown = isMetaDown || e.getKeyCode() == KeyEvent.VK_META;
+          isCtrlDown = isCtrlDown || e.getKeyCode() == KeyEvent.VK_CONTROL;
           if (!inspectModeEnabled) checkInspectMode();
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
-          isMetaDown = isMetaDown & e.getKeyCode() != KeyEvent.VK_META;
-          isCtrlDown = isCtrlDown & e.getKeyCode() != KeyEvent.VK_CONTROL;
+          isMetaDown = isMetaDown && e.getKeyCode() != KeyEvent.VK_META;
+          isCtrlDown = isCtrlDown && e.getKeyCode() != KeyEvent.VK_CONTROL;
           if (inspectModeEnabled) checkInspectMode();
         }
       });
