@@ -232,7 +232,6 @@ public class PDEX {
 
 
     void checkInspectMode() {
-      System.out.println(isMouseDown + " " + isCtrlDown + " " + isMetaDown);
       inspectModeEnabled = !isMouseDown && (isCtrlDown && !Platform.isMacOS()) || isMetaDown;
     }
 
