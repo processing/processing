@@ -1280,7 +1280,8 @@ public class JavaBuild {
       // isn't used when exporting for Unix.
       pw.print("#!/bin/sh\n\n");
       //ps.print("APPDIR=`dirname $0`\n");
-      pw.print("APPDIR=$(dirname \"$0\")\n");  // more posix compliant
+      pw.print("APPDIR=$(readlink -f \"$0\")\n"); //Allow Symlinks
+      pw.print("APPDIR=$(dirname \"$APPDIR\")\n");  // more posix compliant
       // another fix for bug #234, LD_LIBRARY_PATH ignored on some platforms
       //ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
       if (embedJava) {

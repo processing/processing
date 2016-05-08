@@ -99,6 +99,7 @@ public class Language {
       "nl", // Dutch, Nederlands
       "pt", // Portuguese
       "tr", // Turkish
+      "uk", // Ukrainian
       "zh"  // Chinese
     };
     return SUPPORTED;

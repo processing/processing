@@ -24,6 +24,10 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,18 +51,24 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
+import processing.app.Language;
 import processing.app.Messages;
+import processing.app.Platform;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
@@ -78,6 +88,7 @@ public class PDEX {
 
   private ErrorChecker errorChecker;
 
+  private InspectMode inspectMode;
   private ShowUsage showUsage;
   private Rename rename;
   private DebugTree debugTree;
@@ -94,36 +105,57 @@ public class PDEX {
 
     errorChecker = new ErrorChecker(editor, pps);
 
+    inspectMode = new InspectMode(editor, pps);
     showUsage = new ShowUsage(editor, pps);
-    rename = new Rename(editor);
+    rename = new Rename(editor, pps);
     if (SHOW_DEBUG_TREE) {
       debugTree = new DebugTree(editor, pps);
     }
+
+    for (SketchCode code : editor.getSketch().getCode()) {
+      Document document = code.getDocument();
+      addDocumentListener(document);
+    }
+
+    sketchChanged();
   }
 
 
-  public void handleShowUsage(int tabIndex, int startTabOffset, int stopTabOffset) {
-    Messages.log("* handleShowUsage");
-    if (!enabled) return; // show usage disabled if java tabs
-    pps.whenDoneBlocking(ps -> showUsage.findUsageAndUpdateTree(ps, tabIndex, startTabOffset, stopTabOffset));
+  public void addDocumentListener(Document doc) {
+    if (doc != null) doc.addDocumentListener(sketchChangedListener);
   }
 
 
-  public void handleRename(int tabIndex, int startTabOffset, int stopTabOffset) {
-    Messages.log("* handleRename");
-    if (!enabled) return;  // refactoring disabled w/ java tabs
-    pps.whenDoneBlocking(ps -> rename.handleRename(ps, tabIndex, startTabOffset, stopTabOffset));
+  protected final DocumentListener sketchChangedListener = new DocumentListener() {
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+      sketchChanged();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+      sketchChanged();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+      sketchChanged();
+    }
+  };
+
+
+  public void sketchChanged() {
+    errorChecker.notifySketchChanged();
+    pps.notifySketchChanged();
   }
 
 
-  public void handleCtrlClick(int tabIndex, int offset) {
-    Messages.log("* handleCtrlClick");
-    if (!enabled) return;  // disabled w/ java tabs
-    pps.whenDoneBlocking(ps -> handleCtrlClick(ps, tabIndex, offset));
+  public void preferencesChanged() {
+    sketchChanged();
   }
 
 
-  public void handleHasJavaTabsChange(boolean hasJavaTabs) {
+  public void hasJavaTabsChanged(boolean hasJavaTabs) {
     enabled = !hasJavaTabs;
     if (!enabled) {
       showUsage.hide();
@@ -131,12 +163,8 @@ public class PDEX {
   }
 
 
-  public void notifySketchChanged() {
-    errorChecker.notifySketchChanged();
-  }
-
-
   public void dispose() {
+    inspectMode.dispose();
     errorChecker.dispose();
     showUsage.dispose();
     rename.dispose();
@@ -146,53 +174,132 @@ public class PDEX {
   }
 
 
-  // Thread: worker
-  private void handleCtrlClick(PreprocessedSketch ps, int tabIndex, int offset) {
-    ASTNode root = ps.compilationUnit;
-    int javaOffset = ps.tabOffsetToJavaOffset(tabIndex, offset);
+  public void documentChanged(Document newDoc) {
+    addDocumentListener(newDoc);
+  }
 
-    SimpleName simpleName = getSimpleNameAt(root, javaOffset, javaOffset);
 
-    if (simpleName == null) {
-      Messages.log("no simple name found at click location");
-      return;
-    }
+  private class InspectMode {
 
-    IBinding binding = resolveBinding(simpleName);
-    if (binding == null) {
-      Messages.log("binding not resolved");
-      return;
-    }
+    boolean isMouseDown;
+    boolean isCtrlDown;
+    boolean isMetaDown;
+    boolean inspectModeEnabled;
 
-    String key = binding.getKey();
-    ASTNode decl = ps.compilationUnit.findDeclaringNode(key);
-    if (decl == null) {
-      Messages.log("decl not found, showing usage instead");
-      showUsage.findUsageAndUpdateTree(ps, binding);
-      return;
-    }
+    JavaEditor editor;
+    PreprocessingService pps;
 
-    SimpleName declName = null;
-    switch (binding.getKind()) {
-      case IBinding.TYPE: declName = ((TypeDeclaration) decl).getName(); break;
-      case IBinding.METHOD: declName = ((MethodDeclaration) decl).getName(); break;
-      case IBinding.VARIABLE: declName = ((VariableDeclaration) decl).getName(); break;
-    }
-    if (declName == null) {
-      Messages.log("decl name not found " + decl);
-      return;
-    }
+    InspectMode(JavaEditor editor, PreprocessingService pps) {
+      this.editor = editor;
+      this.pps = pps;
 
-    if (declName.equals(simpleName)) {
-      showUsage.findUsageAndUpdateTree(ps, binding);
-    } else {
-      Messages.log("found declaration, offset " + decl.getStartPosition() + ", name: " + declName);
-      SketchInterval si = ps.mapJavaToSketch(declName);
-      if (!ps.inRange(si)) return;
-      EventQueue.invokeLater(() -> {
-        editor.highlight(si.tabIndex, si.startTabOffset, si.stopTabOffset);
+      // Add ctrl+click listener
+      editor.getJavaTextArea().getPainter().addMouseListener(new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+          isMouseDown = true;
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent evt) {
+          isMouseDown = false;
+          if (inspectModeEnabled && evt.getButton() == MouseEvent.BUTTON1) {
+            handleInspect(evt);
+          } else if (!inspectModeEnabled && evt.getButton() == MouseEvent.BUTTON2) {
+            handleInspect(evt);
+          }
+          checkInspectMode();
+        }
       });
+
+      editor.getJavaTextArea().addKeyListener(new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+          isMetaDown = isMetaDown || e.getKeyCode() == KeyEvent.VK_META;
+          isCtrlDown = isCtrlDown || e.getKeyCode() == KeyEvent.VK_CONTROL;
+          if (!inspectModeEnabled) checkInspectMode();
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+          isMetaDown = isMetaDown && e.getKeyCode() != KeyEvent.VK_META;
+          isCtrlDown = isCtrlDown && e.getKeyCode() != KeyEvent.VK_CONTROL;
+          if (inspectModeEnabled) checkInspectMode();
+        }
+      });
+
     }
+
+
+    void checkInspectMode() {
+      inspectModeEnabled = !isMouseDown && (isCtrlDown && !Platform.isMacOS()) || isMetaDown;
+    }
+
+
+    // Thread: EDT
+    void handleInspect(MouseEvent evt) {
+      int off = editor.getJavaTextArea().xyToOffset(evt.getX(), evt.getY());
+      if (off < 0) return;
+      int tabIndex = editor.getSketch().getCurrentCodeIndex();
+
+      pps.whenDoneBlocking(ps -> handleInspect(ps, tabIndex, off));
+    }
+
+
+    // Thread: worker
+    private void handleInspect(PreprocessedSketch ps, int tabIndex, int offset) {
+      ASTNode root = ps.compilationUnit;
+      int javaOffset = ps.tabOffsetToJavaOffset(tabIndex, offset);
+
+      SimpleName simpleName = getSimpleNameAt(root, javaOffset, javaOffset);
+
+      if (simpleName == null) {
+        Messages.log("no simple name found at click location");
+        return;
+      }
+
+      IBinding binding = resolveBinding(simpleName);
+      if (binding == null) {
+        Messages.log("binding not resolved");
+        return;
+      }
+
+      String key = binding.getKey();
+      ASTNode decl = ps.compilationUnit.findDeclaringNode(key);
+      if (decl == null) {
+        Messages.log("decl not found, showing usage instead");
+        showUsage.findUsageAndUpdateTree(ps, binding);
+        return;
+      }
+
+      SimpleName declName = null;
+      switch (binding.getKind()) {
+        case IBinding.TYPE: declName = ((TypeDeclaration) decl).getName(); break;
+        case IBinding.METHOD: declName = ((MethodDeclaration) decl).getName(); break;
+        case IBinding.VARIABLE: declName = ((VariableDeclaration) decl).getName(); break;
+      }
+      if (declName == null) {
+        Messages.log("decl name not found " + decl);
+        return;
+      }
+
+      if (declName.equals(simpleName)) {
+        showUsage.findUsageAndUpdateTree(ps, binding);
+      } else {
+        Messages.log("found declaration, offset " + decl.getStartPosition() + ", name: " + declName);
+        SketchInterval si = ps.mapJavaToSketch(declName);
+        if (!ps.inRange(si)) return;
+        EventQueue.invokeLater(() -> {
+          editor.highlight(si.tabIndex, si.startTabOffset, si.stopTabOffset);
+        });
+      }
+    }
+
+
+    void dispose() {
+      // Nothing to do
+    }
+
   }
 
 
@@ -213,6 +320,11 @@ public class PDEX {
     ShowUsage(JavaEditor editor, PreprocessingService pps) {
       this.editor = editor;
 //      this.pps = pps;
+
+      // Add show usage option
+      JMenuItem showUsageItem = new JMenuItem(Language.text("editor.popup.show_usage"));
+      showUsageItem.addActionListener(e -> handleShowUsage());
+      editor.getTextArea().getRightClickPopup().add(showUsageItem);
 
       reloadListener = this::reloadShowUsage;
 
@@ -265,9 +377,19 @@ public class PDEX {
     }
 
 
+    // Thread: EDT
+    void handleShowUsage() {
+      int startOffset = editor.getSelectionStart();
+      int stopOffset = editor.getSelectionStop();
+      int tabIndex = editor.getSketch().getCurrentCodeIndex();
+
+      pps.whenDoneBlocking(ps -> handleShowUsage(ps, tabIndex, startOffset, stopOffset));
+    }
+
+
     // Thread: worker
-    void findUsageAndUpdateTree(PreprocessedSketch ps, int tabIndex,
-                                int startTabOffset, int stopTabOffset) {
+    void handleShowUsage(PreprocessedSketch ps, int tabIndex,
+                         int startTabOffset, int stopTabOffset) {
       // Map offsets
       int startJavaOffset = ps.tabOffsetToJavaOffset(tabIndex, startTabOffset);
       int stopJavaOffset = ps.tabOffsetToJavaOffset(tabIndex, stopTabOffset);
@@ -484,13 +606,21 @@ public class PDEX {
     final JLabel oldNameLabel;
 
     final JavaEditor editor;
+    final PreprocessingService pps;
 
     IBinding binding;
     PreprocessedSketch ps;
 
 
-    Rename(JavaEditor editor) {
+    Rename(JavaEditor editor, PreprocessingService pps) {
       this.editor = editor;
+      this.pps = pps;
+
+      // Add rename option
+      JMenuItem renameItem = new JMenuItem(Language.text("editor.popup.rename"));
+      renameItem.addActionListener(e -> handleRename());
+      editor.getTextArea().getRightClickPopup().add(renameItem);
+
 
       window = new JDialog(editor);
       window.setTitle("Enter new name:");
@@ -566,6 +696,15 @@ public class PDEX {
       window.setMinimumSize(window.getSize());
     }
 
+
+    // Thread: EDT
+    void handleRename() {
+      int startOffset = editor.getSelectionStart();
+      int stopOffset = editor.getSelectionStop();
+      int tabIndex = editor.getSketch().getCurrentCodeIndex();
+
+      pps.whenDoneBlocking(ps -> handleRename(ps, tabIndex, startOffset, stopOffset));
+    }
 
 
     // Thread: worker

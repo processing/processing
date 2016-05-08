@@ -15,4 +15,5 @@ ko  # Korean
 nl  # Dutch, Nederlands
 pt  # Portuguese
 tr  # Turkish
+uk  # Ukrainian
 zh  # Chinese
