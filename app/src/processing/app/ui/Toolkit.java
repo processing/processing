@@ -882,7 +882,6 @@ public class Toolkit {
     if (monoFont == null) {
       try {
         monoFont = createFont("SourceCodePro-Regular.ttf", size);
-        //monoBoldFont = createFont("SourceCodePro-Semibold.ttf", size);
         monoBoldFont = createFont("SourceCodePro-Bold.ttf", size);
 
         // additional language constraints
@@ -893,15 +892,13 @@ public class Toolkit {
             monoBoldFont = createFont("AnonymousPro-Bold.ttf", size);
           }
         }
-        // issue2886
-        // follback for Chinese, Korean, Japanese.
+        // https://github.com/processing/processing/issues/2886
         String lang = Language.getLanguage();
         if (Locale.CHINESE.getLanguage().equals(lang) ||
-          Locale.JAPANESE.getLanguage().equals(lang) ||
-          Locale.KOREAN.getLanguage().equals(lang)) {
+            Locale.JAPANESE.getLanguage().equals(lang) ||
+            Locale.KOREAN.getLanguage().equals(lang)) {
           sansFont = new Font("Monospaced", Font.PLAIN, size);
           sansBoldFont = new Font("Monospaced", Font.BOLD, size);
-          Messages.log("load Monospaced font for CJK.");
         }
       } catch (Exception e) {
         Messages.loge("Could not load mono font", e);
@@ -939,16 +936,14 @@ public class Toolkit {
             sansBoldFont = createFont("Carlito-Bold.ttf", size);
           }
         }
-        
-        // issue2886
-        // follback for Chinese, Korean, Japanese.
+
+        // https://github.com/processing/processing/issues/2886
         String lang = Language.getLanguage();
         if (Locale.CHINESE.getLanguage().equals(lang) ||
-          Locale.JAPANESE.getLanguage().equals(lang) ||
-          Locale.KOREAN.getLanguage().equals(lang)) {
+            Locale.JAPANESE.getLanguage().equals(lang) ||
+            Locale.KOREAN.getLanguage().equals(lang)) {
           sansFont = new Font("SansSerif", Font.PLAIN, size);
           sansBoldFont = new Font("SansSerif", Font.BOLD, size);
-          Messages.log("load sans font for CJK.");
         }
       } catch (Exception e) {
         Messages.loge("Could not load sans font", e);

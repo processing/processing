@@ -17,6 +17,16 @@ X   https://github.com/processing/processing/pull/4311
 X processing-java output as UTF-8 makes Windows unhappy
 X   https://github.com/processing/processing/issues/1633
 X   https://github.com/processing/processing/pull/4350
+X Add support for symlinks to exported applications in linux
+X   https://github.com/processing/processing/issues/4318
+X   https://github.com/processing/processing/pull/4319
+X Added Ukrainian localization
+X   https://github.com/processing/processing/pull/4343
+X Non-western language hint text for toolbar buttons not correctly displayed
+X   https://github.com/processing/processing/issues/2886
+X load fallback font for CJK (Chinese, Japanese and Korean)
+X   https://github.com/processing/processing/pull/4348
+
 
 jakub
 X Update app to Java 8
@@ -187,8 +197,6 @@ _ how are we going to handle fonts for other languages?
 _   two new fonts have been added, other languages will need more
 _   need a decent sans with with Unicode coverage
 _   i.e. https://github.com/processing/processing/pull/3025
-_ Non-western language hint text for toolbar buttons not correctly displayed
-_   https://github.com/processing/processing/issues/2886
 
 
 pde/build
