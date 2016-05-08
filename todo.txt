@@ -1,4 +1,6 @@
 0249 (3.0.3)
+o arrow keys aren't working in the examples window
+X   was working fine with most recent build.. weird
 
 
 contribs
@@ -12,9 +14,9 @@ X   https://github.com/processing/processing/issues/4308
 X   https://github.com/processing/processing/pull/4309
 X Empty sketchbook message when sketchbook is empty
 X   https://github.com/processing/processing/pull/4311
-_ processing-java output as UTF-8 makes Windows unhappy
-_   https://github.com/processing/processing/issues/1633
-_   includes possible fix for Windows
+X processing-java output as UTF-8 makes Windows unhappy
+X   https://github.com/processing/processing/issues/1633
+X   https://github.com/processing/processing/pull/4350
 
 jakub
 X Update app to Java 8
@@ -36,6 +38,8 @@ X   https://github.com/processing/processing/pull/4426
 _   double check that this is working on OS X
 X Java Mode refactoring
 X   https://github.com/processing/processing/pull/4440
+X jump to variable declaration miss
+X   https://github.com/processing/processing/issues/4287
 X Numbers in scientific notation not recognized as floats in 3.0
 X   https://github.com/processing/processing/issues/4190
 X Adding .java files to sketch causes the Error Checker to weird out
@@ -59,8 +63,6 @@ _   https://github.com/processing/processing/pull/4379
 _ Ignore memory options when exporting for ARM
 _   https://github.com/processing/processing/pull/4406
 
-
-_ arrow keys aren't working in the examples window
 
 _ createPreprocessor() added to JavaEditor
 https://github.com/processing/processing/commit/2ecdc36ac7c680eb36e271d17ad80b657b3ae6a0

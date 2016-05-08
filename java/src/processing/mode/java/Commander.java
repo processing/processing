@@ -101,14 +101,18 @@ public class Commander implements RunnerListener {
     int task = HELP;
     boolean embedJava = true;
 
-    // Turns out the output goes as MacRoman or something else useless.
-    // http://code.google.com/p/processing/issues/detail?id=1418
     try {
-      systemOut = new PrintStream(System.out, true, "UTF-8");
-      systemErr = new PrintStream(System.err, true, "UTF-8");
       if (Platform.isWindows()) {
+        // On Windows, it needs to use the default system encoding.
+        // https://github.com/processing/processing/issues/1633
         systemOut = new PrintStream(System.out, true);
         systemErr = new PrintStream(System.err, true);
+      } else {
+        // On OS X, the output goes as MacRoman or something else useless.
+        // http://code.google.com/p/processing/issues/detail?id=1418
+        // (Not sure about Linux, but this has worked since 2.0)
+        systemOut = new PrintStream(System.out, true, "UTF-8");
+        systemErr = new PrintStream(System.err, true, "UTF-8");
       }
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
