@@ -10,6 +10,8 @@ X   https://github.com/processing/processing/pull/4325
 X Fix non-ARM Linux deb build process
 X   https://github.com/processing/processing/issues/4308
 X   https://github.com/processing/processing/pull/4309
+X Empty sketchbook message when sketchbook is empty
+X   https://github.com/processing/processing/pull/4311
 _ processing-java output as UTF-8 makes Windows unhappy
 _   https://github.com/processing/processing/issues/1633
 _   includes possible fix for Windows
@@ -34,10 +36,14 @@ X   https://github.com/processing/processing/pull/4426
 _   double check that this is working on OS X
 X Java Mode refactoring
 X   https://github.com/processing/processing/pull/4440
+X Numbers in scientific notation not recognized as floats in 3.0
+X   https://github.com/processing/processing/issues/4190
 X Adding .java files to sketch causes the Error Checker to weird out
 X   https://github.com/processing/processing/issues/4368
 X "Show usage..." does not locate keywords on correct line
 X   https://github.com/processing/processing/issues/3988
+X PPS: threading enhancement
+X   https://github.com/processing/processing/pull/4442
 
 gottfried
 X Add automatic mipmap support to GLES2
@@ -46,7 +52,8 @@ X Add a few IO library examples
 X   https://github.com/processing/processing/pull/4384
 X Be more verbose with drawExceptions with cause null
 X   https://github.com/processing/processing/pull/4432
-
+_ update JNA to 4.2.0
+_   https://github.com/processing/processing/pull/4443
 _ Add two Raspberry Pi related fixes to JOGL
 _   https://github.com/processing/processing/pull/4379
 _ Ignore memory options when exporting for ARM
@@ -760,6 +767,8 @@ _   need to talk to VM and read when 'finished' var is set
 _ does closing the window call stop()?
 _   need to make sure hitting stop button and closing window explicitly call
 _   set finished to true, then join() the animation thread
+_ dispose handlers not called when stop button pressed
+_   https://github.com/processing/processing/issues/4445
 _ need to set dock icon title on osx
 
 
@@ -907,7 +916,6 @@ _   this may already work with SingleInstance stuff
 
 
 DIST / Mac OS X
-
 
 _ client properties 
 _   https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html

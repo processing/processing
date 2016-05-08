@@ -9,6 +9,10 @@ X   call crop() in keyArray() and valueArray() functions
 X     they're duplicates, their length is an implementation detail
 X   normalize features and error handling between all of them
 
+_ JSONObject get() method is private
+_   https://github.com/processing/processing/issues/4334
+_   https://github.com/processing/processing/pull/4336
+
 _ add push() and pop() methods to mirror js?
 
 jakub

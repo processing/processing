@@ -121,24 +121,24 @@ public class SketchbookFrame extends JFrame {
     treePane.setPreferredSize(new Dimension(250, 450));
     treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-    JPanel msgPane = new JPanel();
-    msgPane.setBackground(Color.WHITE);
-    msgPane.setPreferredSize(new Dimension(250,450));
-
-    JLabel emptysb = new JLabel("Empty Sketchbook");
-    emptysb.setForeground(Color.gray);
-    msgPane.add(emptysb);
-
-    //Check whether sketch book is empty or not
-    DefaultMutableTreeNode checksb = new DefaultMutableTreeNode();
+    // Check whether sketch book is empty or not
     try {
-          if (base.addSketches(checksb, Base.getSketchbookFolder(), false)) {
-            //sketch book is not empty
-              getContentPane().add(treePane);
-          } else {
-            //sketch book is empty
-              setContentPane(msgPane);
-          }
+      DefaultMutableTreeNode checkNode = new DefaultMutableTreeNode();
+      if (base.addSketches(checkNode, Base.getSketchbookFolder(), false)) {
+        // sketch book is not empty
+        getContentPane().add(treePane);
+      } else {
+        // sketch book is empty
+        JPanel emptyPanel = new JPanel();
+        emptyPanel.setBackground(Color.WHITE);
+        emptyPanel.setPreferredSize(new Dimension(250,450));
+
+        JLabel emptyLabel = new JLabel("Empty Sketchbook");
+        emptyLabel.setForeground(Color.GRAY);
+        emptyPanel.add(emptyLabel);
+
+        setContentPane(emptyPanel);
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
