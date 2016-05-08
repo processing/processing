@@ -1124,8 +1124,9 @@ public class JavaBuild {
 
     List<String> runOptions = new ArrayList<String>();
 
-    // set memory options, except for ARM where we're more memory-constrained compared
-    // to the machine the user might be building the sketch on
+    // Set memory options, except for ARM where we're more memory-constrained
+    // compared to the machine being used to build/export the sketch
+    // https://github.com/processing/processing/pull/4406
     if (Preferences.getBoolean("run.options.memory") &&
         !exportVariant.equals("armv6hf")) {
       runOptions.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");

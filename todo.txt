@@ -26,6 +26,10 @@ X Non-western language hint text for toolbar buttons not correctly displayed
 X   https://github.com/processing/processing/issues/2886
 X load fallback font for CJK (Chinese, Japanese and Korean)
 X   https://github.com/processing/processing/pull/4348
+X Added readBytes(max) to net library
+X   https://github.com/processing/processing/pull/4320
+X Added readBytes(max) to serial library
+X   https://github.com/processing/processing/pull/4321
 
 
 jakub
@@ -46,6 +50,7 @@ X file paths not decoding properly
 X   https://github.com/processing/processing/issues/4417
 X   https://github.com/processing/processing/pull/4426
 _   double check that this is working on OS X
+_   check whether it fixes the Windows startup problem
 X Java Mode refactoring
 X   https://github.com/processing/processing/pull/4440
 X jump to variable declaration miss
@@ -71,16 +76,19 @@ X Add a few IO library examples
 X   https://github.com/processing/processing/pull/4384
 X Be more verbose with drawExceptions with cause null
 X   https://github.com/processing/processing/pull/4432
-_ update JNA to 4.2.0
-_   https://github.com/processing/processing/pull/4443
-_ Add two Raspberry Pi related fixes to JOGL
-_   https://github.com/processing/processing/pull/4379
-_ Ignore memory options when exporting for ARM
-_   https://github.com/processing/processing/pull/4406
+X Ignore memory options when exporting for ARM
+X   https://github.com/processing/processing/pull/4406
+X update JNA to 4.2.0
+X   https://github.com/processing/processing/pull/4443
+X Add two Raspberry Pi related fixes to JOGL
+X   https://github.com/processing/processing/pull/4379
+X   https://github.com/sgothel/jogl/pull/96
+X   https://github.com/sgothel/jogl/pull/97
 
-
-_ createPreprocessor() added to JavaEditor
-https://github.com/processing/processing/commit/2ecdc36ac7c680eb36e271d17ad80b657b3ae6a0
+needs more review
+_ createPreprocessor() added to JavaEditor, creating a mess
+_   https://github.com/processing/processing/commit/2ecdc36ac7c680eb36e271d17ad80b657b3ae6a0
+_ patch to core classpath by Manindra?
 
 _ possible infinite loop on modified externally
 _   https://github.com/processing/processing/issues/3965
@@ -97,8 +105,6 @@ _   https://github.com/processing/processing/issues/4085
 o   https://github.com/processing/processing/pull/4087
 
 _ add 2016 to about-1x and about-2x
-
-_ patch to core classpath by Manindra?
 
 shortcuts
 _ ctrl-J (for debugger) is inserting newline
