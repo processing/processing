@@ -85,30 +85,6 @@ public class JavaEditor extends Editor {
     debugger = new Debugger(this);
     inspector = new VariableInspector(this);
 
-    // Add show usage option
-    JMenuItem showUsageItem = new JMenuItem(Language.text("editor.popup.show_usage"));
-    showUsageItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        handleShowUsage();
-      }
-    });
-    getTextArea().getRightClickPopup().add(showUsageItem);
-
-    // add refactor option
-    JMenuItem renameItem = new JMenuItem(Language.text("editor.popup.rename"));
-    renameItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        handleRefactor();
-      }
-    });
-
-    // TODO: Add support for word select on right click and rename.
-    //        ta.customPainter.addMouseListener(new MouseAdapter() {
-    //          public void mouseClicked(MouseEvent evt) {
-    //            System.out.println(evt);
-    //          }
-    //        });
-    textarea.getRightClickPopup().add(renameItem);
     // set action on frame close
     //        addWindowListener(new WindowAdapter() {
     //            @Override
@@ -117,7 +93,6 @@ public class JavaEditor extends Editor {
     //            }
     //        });
 
-    Toolkit.setMenuMnemonics(textarea.getRightClickPopup());
 
 //    // load settings from theme.txt
 //    breakpointColor = mode.getColor("breakpoint.bgcolor");
@@ -153,6 +128,8 @@ public class JavaEditor extends Editor {
 
     initPDEX();
 
+    Toolkit.setMenuMnemonics(textarea.getRightClickPopup());
+
     // ensure completion is hidden when editor loses focus
     addWindowFocusListener(new WindowFocusListener() {
       public void windowLostFocus(WindowEvent e) {
@@ -173,60 +150,11 @@ public class JavaEditor extends Editor {
   public PdePreprocessor createPreprocessor(final String sketchName) {
     return new PdePreprocessor(sketchName);  
   }
-  
+
   
   protected void initPDEX() {
     preprocessingService = new PreprocessingService(this);
     pdex = new PDEX(this, preprocessingService);
-
-    // Add ctrl+click listener
-    getJavaTextArea().getPainter().addMouseListener(new MouseAdapter() {
-      public void mouseReleased(MouseEvent evt) {
-        if (evt.getButton() == MouseEvent.BUTTON1) {
-          if ((evt.isControlDown() && !Platform.isMacOS()) || evt.isMetaDown()) {
-            handleCtrlClick(evt);
-          }
-        } else if (evt.getButton() == MouseEvent.BUTTON2) {
-          handleCtrlClick(evt);
-        }
-      }
-    });
-
-    sketchChanged();
-
-    for (SketchCode code : getSketch().getCode()) {
-      Document document = code.getDocument();
-      addDocumentListener(document);
-    }
-  }
-
-
-  public void addDocumentListener(Document doc) {
-    if (doc != null) doc.addDocumentListener(sketchChangedListener);
-  }
-
-
-  protected final DocumentListener sketchChangedListener = new DocumentListener() {
-    @Override
-    public void insertUpdate(DocumentEvent e) {
-      sketchChanged();
-    }
-
-    @Override
-    public void removeUpdate(DocumentEvent e) {
-      sketchChanged();
-    }
-
-    @Override
-    public void changedUpdate(DocumentEvent e) {
-      sketchChanged();
-    }
-  };
-
-
-  protected void sketchChanged() {
-    pdex.notifySketchChanged();
-    preprocessingService.notifySketchChanged();
   }
   
   
@@ -257,7 +185,7 @@ public class JavaEditor extends Editor {
         if (preprocessingService != null) {
           if (hasJavaTabsChanged) {
             preprocessingService.handleHasJavaTabsChange(hasJavaTabs);
-            pdex.handleHasJavaTabsChange(hasJavaTabs);
+            pdex.hasJavaTabsChanged(hasJavaTabs);
             if (hasJavaTabs) {
               setProblemList(Collections.emptyList());
             }
@@ -266,7 +194,7 @@ public class JavaEditor extends Editor {
           int currentTabCount = sketch.getCodeCount();
           if (currentTabCount != previousTabCount) {
             previousTabCount = currentTabCount;
-            sketchChanged();
+            pdex.sketchChanged();
           }
         }
       }
@@ -2298,8 +2226,8 @@ public class JavaEditor extends Editor {
     super.setCode(code);
 
     Document newDoc = code.getDocument();
-    if (oldDoc != newDoc && preprocessingService != null) {
-      addDocumentListener(newDoc);
+    if (oldDoc != newDoc && pdex != null) {
+      pdex.documentChanged(newDoc);
     }
 
     // set line background colors for tab
@@ -2717,36 +2645,6 @@ public class JavaEditor extends Editor {
   }
 
 
-  /** Handle refactor operation */
-  private void handleRefactor() {
-    int startOffset = getSelectionStart();
-    int stopOffset = getSelectionStop();
-    int tabIndex = sketch.getCurrentCodeIndex();
-
-    pdex.handleRename(tabIndex, startOffset, stopOffset);
-  }
-
-
-  /** Handle show usage operation */
-  private void handleShowUsage() {
-    int startOffset = getSelectionStart();
-    int stopOffset = getSelectionStop();
-    int tabIndex = sketch.getCurrentCodeIndex();
-
-    pdex.handleShowUsage(tabIndex, startOffset, stopOffset);
-  }
-
-
-  /** Handle ctrl+click */
-  private void handleCtrlClick(MouseEvent evt) {
-    int off = getJavaTextArea().xyToOffset(evt.getX(), evt.getY());
-    if (off < 0) return;
-    int tabIndex = sketch.getCurrentCodeIndex();
-
-    pdex.handleCtrlClick(tabIndex, off);
-  }
-
-
   public boolean hasJavaTabs() {
     return hasJavaTabs;
   }
@@ -2781,7 +2679,7 @@ public class JavaEditor extends Editor {
       jmode.loadPreferences();
       Messages.log("Applying prefs");
       // trigger it once to refresh UI
-      sketchChanged();
+      pdex.preferencesChanged();
     }
   }
 
