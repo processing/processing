@@ -32,7 +32,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,6 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import processing.app.Base;
@@ -117,30 +117,25 @@ public class SketchbookFrame extends JFrame {
     } else {
       tree.setToggleClickCount(1);
     }
-    JScrollPane treePane = new JScrollPane(tree);
-    treePane.setPreferredSize(new Dimension(250, 450));
-    treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
 
     // Check whether sketch book is empty or not
-    try {
-      DefaultMutableTreeNode checkNode = new DefaultMutableTreeNode();
-      if (base.addSketches(checkNode, Base.getSketchbookFolder(), false)) {
-        // sketch book is not empty
-        getContentPane().add(treePane);
-      } else {
-        // sketch book is empty
-        JPanel emptyPanel = new JPanel();
-        emptyPanel.setBackground(Color.WHITE);
-        emptyPanel.setPreferredSize(new Dimension(250,450));
+    TreeModel treeModel = tree.getModel();
+    if (treeModel.getChildCount(treeModel.getRoot()) != 0) {
+      JScrollPane treePane = new JScrollPane(tree);
+      treePane.setPreferredSize(new Dimension(250, 450));
+      treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
+      getContentPane().add(treePane);
 
-        JLabel emptyLabel = new JLabel("Empty Sketchbook");
-        emptyLabel.setForeground(Color.GRAY);
-        emptyPanel.add(emptyLabel);
+    } else {
+      JPanel emptyPanel = new JPanel();
+      emptyPanel.setBackground(Color.WHITE);
+      emptyPanel.setPreferredSize(new Dimension(250,450));
 
-        setContentPane(emptyPanel);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
+      JLabel emptyLabel = new JLabel("Empty Sketchbook");
+      emptyLabel.setForeground(Color.GRAY);
+      emptyPanel.add(emptyLabel);
+
+      setContentPane(emptyPanel);
     }
 
     pack();
