@@ -256,7 +256,7 @@ public class ErrorMessageSimplifier {
       break;
 
     case IProblem.HidingEnclosingType:
-      if (args.length > 0 && args[0].equals(problem.getClassName())) {
+      if (args.length > 0) {
         result = Language.interpolate("editor.status.hiding_enclosing_type", args[0]);
       }
     }
