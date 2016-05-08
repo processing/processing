@@ -34,7 +34,7 @@ public class ImportStatement {
   private static final String importKw = "import";
   private static final String staticKw = "static";
 
-  private boolean isClass;
+//  private boolean isClass;
   private boolean isStarred;
   private boolean isStatic;
 
@@ -64,7 +64,7 @@ public class ImportStatement {
     int lastDot = cls.lastIndexOf('.');
     is.className = lastDot >= 0 ? cls.substring(lastDot+1) : cls;
     is.packageName = lastDot >= 0 ? cls.substring(0, lastDot) : "";
-    is.isClass = true;
+//    is.isClass = true;
     return is;
   }
 

@@ -203,7 +203,7 @@ public class PDEX {
     final JTree tree;
 
     final JavaEditor editor;
-    final PreprocessingService pps;
+//    final PreprocessingService pps;
 
     final Consumer<PreprocessedSketch> reloadListener;
 
@@ -212,7 +212,7 @@ public class PDEX {
 
     ShowUsage(JavaEditor editor, PreprocessingService pps) {
       this.editor = editor;
-      this.pps = pps;
+//      this.pps = pps;
 
       reloadListener = this::reloadShowUsage;
 
