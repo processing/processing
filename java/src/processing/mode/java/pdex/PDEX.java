@@ -93,12 +93,10 @@ public class PDEX {
   private Rename rename;
   private DebugTree debugTree;
 
-  private JavaEditor editor;
   private PreprocessingService pps;
 
 
   public PDEX(JavaEditor editor, PreprocessingService pps) {
-    this.editor = editor;
     this.pps = pps;
 
     this.enabled = !editor.hasJavaTabs();
@@ -803,8 +801,6 @@ public class PDEX {
 
       editor.startCompoundEdit();
 
-      int currentTabIndex = sketch.getCurrentCodeIndex();
-      final int currentOffset = editor.getCaretOffset();
       mappedNodes.entrySet().forEach(entry -> {
         int tabIndex = entry.getKey();
         SketchCode sketchCode = sketch.getCode(tabIndex);
@@ -833,8 +829,14 @@ public class PDEX {
           sketchCode.setProgram(document.getText(0, document.getLength()));
         } catch (BadLocationException e) { /* Whatever */ }
         sketchCode.setModified(true);
-        editor.repaintHeader();
       });
+
+      editor.stopCompoundEdit();
+
+      editor.repaintHeader();
+
+      int currentTabIndex = sketch.getCurrentCodeIndex();
+      final int currentOffset = editor.getCaretOffset();
 
       int precedingIntervals =
           (int) mappedNodes.getOrDefault(currentTabIndex, Collections.emptyList())
@@ -844,10 +846,8 @@ public class PDEX {
       int intervalLengthDiff = newName.length() - binding.getName().length();
       int offsetDiff = precedingIntervals * intervalLengthDiff;
 
-      sketch.setCurrentCode(currentTabIndex);
       editor.getTextArea().setCaretPosition(currentOffset + offsetDiff);
 
-      editor.stopCompoundEdit();
     }
 
 
