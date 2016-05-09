@@ -327,7 +327,9 @@ public abstract class Mode {
     // Make this Map thread-safe
     this.importToLibraryTable = Collections.unmodifiableMap(importToLibraryTable);
 
-    base.getEditors().forEach(Editor::librariesChanged);
+    if (base != null) {
+      base.getEditors().forEach(Editor::librariesChanged);
+    }
   }
 
 
