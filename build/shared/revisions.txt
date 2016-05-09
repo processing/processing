@@ -1,8 +1,195 @@
+PROCESSING 3.1 (REV 0249) - 8 May 2016
+
+Happy Mother's Day! I celebrated by kicking off a Processing release 
+while my beautiful wife and daughter took a well-deserved nap.
+
+This release includes several bug fixes, while some of your donation dollars 
+were fed through Jakub Valtar to produce bug fixes and code improvements, 
+including some serious reworking of the error checker. Meanwhile, the rest 
+of the community pitched in with several additional fixes to keep this 
+caravan rolling, and Gottfried brought up the rear with fistfuls of 
+improvements for Raspberry Pi and ARM support.
+
+
+[ contributed pde fixes ] 
+
++ Grab bag of smaller, mainly ARM-related updates
+  https://github.com/processing/processing/pull/4300
+
++ IDE code disappearing due to a concurrency bug
+  https://github.com/processing/processing/issues/4322
+  https://github.com/processing/processing/pull/4325
+
++ Fix non-ARM Linux deb build process
+  https://github.com/processing/processing/issues/4308
+  https://github.com/processing/processing/pull/4309
+
++ Sketchbook window shows "Empty sketchbook" when sketchbook is... empty
+  https://github.com/processing/processing/pull/4311
+
++ Change the command line version on Windows to use the default encoding
+  https://github.com/processing/processing/issues/1633
+  https://github.com/processing/processing/pull/4350
+
++ Add support for symlinks to exported applications in Linux
+  https://github.com/processing/processing/issues/4318
+  https://github.com/processing/processing/pull/4319
+
++ Added Ukrainian localization
+  https://github.com/processing/processing/pull/4343
+
++ Load fallback font for Chinese, Japanese and Korean
+  https://github.com/processing/processing/pull/4348
+
++ Fix hint text for toolbar buttons when Chinese, Japanese, Korean in use
+  https://github.com/processing/processing/issues/2886
+
++ Added readBytes(max) to net library
+  https://github.com/processing/processing/pull/4320
+
++ Added readBytes(max) to serial library
+  https://github.com/processing/processing/pull/4321
+
++ Improve error message "The nested type cannot hide an enclosing type"
+  https://github.com/processing/processing/issues/4228
+  https://github.com/processing/processing/pull/4337
+  https://github.com/processing/processing/pull/4451
+
++ Multi-line comments ending in '**/' cause ArrayIndexOutOfBoundsException
+  https://github.com/processing/processing/issues/4397
+  https://github.com/processing/processing/pull/4402
+
+
+[ jakub edits the editor ] 
+
++ Update app to Java 8
+  https://github.com/processing/processing/pull/4383
+
++ More Java 8 updates
+  https://github.com/processing/processing/pull/4388
+
++ Update minimum JRE version for Windows
+  https://github.com/processing/processing/pull/4389
+
++ Update JDT to 4.5.2
+  https://github.com/processing/processing/pull/4387
+
++ Java Mode cleanup
+  https://github.com/processing/processing/pull/4390
+
++ Several bugs with tabs not working properly
+  https://github.com/processing/processing/issues/3975
+  https://github.com/processing/processing/pull/4410
+
++ File paths not decoding properly, causing a NullPointerException
+  in LanguageBundle.read() on startup for some people
+  https://github.com/processing/processing/issues/4417
+  https://github.com/processing/processing/pull/4426
+
++ Java Mode refactoring
+  https://github.com/processing/processing/pull/4440
+
++ Fix jump to variable declaration
+  https://github.com/processing/processing/issues/4287
+
++ Numbers in scientific notation not recognized as floats in 3.0
+  https://github.com/processing/processing/issues/4190
+
++ Adding .java files to sketch causes the Error Checker to weird out
+  https://github.com/processing/processing/issues/4368
+
++ "Show usage..." does not locate keywords on correct line
+  https://github.com/processing/processing/issues/3988
+
++ Threading fixes
+  https://github.com/processing/processing/pull/4442
+
++ Move PDEX listeners from JavaEditor to PDEX
+  https://github.com/processing/processing/pull/4446
+  https://github.com/processing/processing/pull/4447
+
++ control-clicks misbehaving
+  https://github.com/processing/processing/issues/4281
+
++ Fix listeners not firing on first preprocessing run
+  https://github.com/processing/processing/pull/4450
+
++ Remove some unnecessary calls from rename
+  https://github.com/processing/processing/pull/4449
+
+
+[ gohaiv6 ] 
+
++ Add automatic mipmap support to GLES2
+  https://github.com/processing/processing/pull/4416
+
++ Add a few IO library examples
+  https://github.com/processing/processing/pull/4384
+
++ Be more verbose with drawExceptions with cause null
+  https://github.com/processing/processing/pull/4432
+
++ Ignore memory options when exporting for ARM
+  https://github.com/processing/processing/pull/4406
+
++ Update JNA to 4.2.0
+  https://github.com/processing/processing/pull/4443
+
++ Add two Raspberry Pi related fixes to JOGL
+  https://github.com/processing/processing/pull/4379
+  https://github.com/sgothel/jogl/pull/96
+  https://github.com/sgothel/jogl/pull/97
+
+
+[ core ]
+
++ Float/IntDict: minIndex() and maxIndex() return -1 when count is zero,
+  rather than throwing an exception
+
++ Couple bug fixes for sorting Float/IntDict
+
++ Add optional "stable" parameter to the Float/IntDict sort methods
+
++ Drastic (2x) performance increas for sorting Float/IntDict
+
++ Added print() and write(PrintWriter) methods to Table/TableRow
+  https://github.com/processing/processing/issues/4396
+
++ Several JavaFX fixes
+  https://github.com/processing/processing/pull/4411
+
++ cursor() and noCursor() not working on FX2D
+  https://github.com/processing/processing/issues/4405
+
++ Make sure PImage.parent is set in loadImage()
+  https://github.com/processing/processing/pull/4412
+
++ Change convention for directional lights in OpenGL-Binding for GLSL
+  https://github.com/processing/processing/issues/4275
+
++ Internal texture copy does not update immediately in GL
+  https://github.com/processing/processing/issues/4404
+
++ Font corruption issue in OpenGL
+  https://github.com/processing/processing/issues/4392
+
++ setStroke() does not work with imported OBJ Pshapes
+  https://github.com/processing/processing/issues/4377
+
++ blendMode() resetting with getGraphics()
+  https://github.com/processing/processing/issues/4019
+  https://github.com/processing/processing/pull/4341
+  https://github.com/processing/processing/issues/4376
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.0.2 (REV 0248) - 13 February 2016
 
 Happy Valentine's Day! Nothing says "I LOVE YOU" like a bouquet of bug fixes.
 And nothing says, "I LOVE YOU TOO" like the sampler box of contributed fixes 
-and pull requests that the community has put together since 3.0.1.
+and pull requests that the community has put together for me since 3.0.1.
 
 
 [ editor contributions ] 
