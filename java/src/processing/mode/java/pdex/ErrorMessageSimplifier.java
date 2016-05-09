@@ -254,6 +254,11 @@ public class ErrorMessageSimplifier {
         result = Language.interpolate("editor.status.no_effect_assignment", args[0]);
       }
       break;
+
+    case IProblem.HidingEnclosingType:
+      if (args.length > 0) {
+        result = Language.interpolate("editor.status.hiding_enclosing_type", args[0]);
+      }
     }
 
     //log("Simplified Error Msg: " + result);
