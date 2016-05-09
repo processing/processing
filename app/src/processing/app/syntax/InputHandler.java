@@ -424,9 +424,7 @@ public abstract class InputHandler extends KeyAdapter
         return;
       }
 
-      if (textArea.getSelectionStart() != textArea.getSelectionStop()) {
-        textArea.setSelectedText("");
-      } else {
+      if (!selectionBackspaceDelete(textArea, false)) {
         int caret = textArea.getCaretPosition();
         if (caret == 0) {
           textArea.getToolkit().beep();
@@ -498,9 +496,7 @@ public abstract class InputHandler extends KeyAdapter
         return;
       }
 
-      if (textArea.getSelectionStart() != textArea.getSelectionStop()) {
-        textArea.setSelectedText("");
-      } else {
+      if (!selectionBackspaceDelete(textArea, true)) {
         int caret = textArea.getCaretPosition();
         if (caret == textArea.getDocumentLength()) {
           textArea.getToolkit().beep();
@@ -1182,5 +1178,46 @@ public abstract class InputHandler extends KeyAdapter
       }
     }
     return wordEnd;
+  }
+
+  /**
+   * Called by the backspace and delete listeners to detect and handle
+   * selections, including rectangular ones.
+   * @return true iff this was a selection.
+   */
+  static public boolean selectionBackspaceDelete(JEditTextArea textArea,
+      boolean delete) {
+    final int selectionStart = textArea.getSelectionStart();
+    final int selectionStop  = textArea.getSelectionStop();
+    if (selectionStart == selectionStop) return false;
+
+    if (!textArea.rectSelect) {
+      textArea.setSelectedText("");
+      return true;
+    }
+
+    Element map = textArea.document.getDefaultRootElement();
+    Element startElement = map.getElement(textArea.getSelectionStartLine());
+    // Distance from start of line to the selection.
+    int start = selectionStart - startElement.getStartOffset();
+    int end = selectionStop -
+      map.getElement(textArea.getSelectionStopLine()).getStartOffset();
+
+    if (start != end) {
+      // Start and end of selection are not vertically aligned.
+      // Therefore there is a real rectangle selected, which we delete.
+      textArea.setSelectedText("");
+    } else if (delete && selectionStart != startElement.getEndOffset() - 1) {
+      // Widen the selection forwards one space, then clear it.
+      textArea.setSelectionStart(selectionStart + 1);
+      textArea.setSelectedText("");
+    } else if (!delete && start != 0) {
+      // Widen the selection backwards one space, then clear it.
+      textArea.setSelectionStart(selectionStart - 1);
+      textArea.setSelectedText("");
+    } else {
+      textArea.getToolkit().beep();
+    }
+    return true;
   }
 }

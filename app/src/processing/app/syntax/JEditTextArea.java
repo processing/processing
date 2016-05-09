@@ -1471,6 +1471,10 @@ public class JEditTextArea extends JComponent
           start = tmp;
         }
 
+        // Text with new lines gets pasted in with one line of source text
+        // to each line of the destination.
+        final boolean putBlockIntoBlock = selectedText != null
+          && selectedText.contains("\n");
         int lastNewline = 0;
         int currNewline = 0;
 
@@ -1482,28 +1486,45 @@ public class JEditTextArea extends JComponent
 
           document.remove(rectStart,Math.min(lineEnd - rectStart, end - start));
 
-          if (selectedText != null) {
+          if (selectedText == null) continue;
+
+          if (putBlockIntoBlock) {
             currNewline = selectedText.indexOf('\n', lastNewline);
             if (currNewline == -1) {
               currNewline = selectedText.length();
             }
             document.insertString(rectStart, selectedText.substring(lastNewline, currNewline), null);
             lastNewline = Math.min(selectedText.length(), currNewline + 1);
+          } else {
+            if (overwrite && end == start && selectedText.length() == 1) {
+              int newLineEnd = lineElement.getEndOffset() - 1;
+              document.remove(rectStart, Math.min(lineEnd - rectStart, selectedText.length()));
+            }
+            document.insertString(rectStart, selectedText, null);
           }
         }
 
-        if (selectedText != null &&
-            currNewline != selectedText.length()) {
+        if (putBlockIntoBlock && currNewline != selectedText.length()) {
           int offset = map.getElement(selectionEndLine).getEndOffset() - 1;
           document.insertString(offset, "\n", null);
           document.insertString(offset + 1,selectedText.substring(currNewline + 1), null);
+        }
+
+        if (putBlockIntoBlock) {
+          // Since what we've pasted in is not guaranteed to be perfectly
+          // rectangular, the right-hand edge of it can't be selected.
+          setCaretPosition(selectionEnd);
+        } else {
+          select(selectionStart + selectedText.length(), selectionEnd);
         }
       } else {
         document.remove(selectionStart, selectionEnd - selectionStart);
         if (selectedText != null) {
           document.insertString(selectionStart, selectedText,null);
         }
+        setCaretPosition(selectionEnd);
       }
+
     } catch(BadLocationException bl) {
       bl.printStackTrace();
       throw new InternalError("Cannot replace selection");
@@ -1515,7 +1536,6 @@ public class JEditTextArea extends JComponent
         document.endCompoundEdit();
       }
     }
-    setCaretPosition(selectionEnd);
   }
 
 
@@ -1583,6 +1603,7 @@ public class JEditTextArea extends JComponent
   public void overwriteSetSelectedText(String str)
   {
     // Don't overstrike if there is a selection
+    // Unless it's a rectangular one, which is handled in setSelectedText().
     if(!overwrite || selectionStart != selectionEnd)
     {
       // record the whole operation as a compound edit if 
@@ -2005,7 +2026,28 @@ public class JEditTextArea extends JComponent
         inputHandler.keyTyped(event);
         break;
       case KeyEvent.KEY_PRESSED:
-        inputHandler.keyPressed(event);
+        // Pressing enter with a rectangular selection handled here to avoid
+        // making it input handler-specific.
+        char c = event.getKeyChar();
+        if (!rectSelect || (c != '\n' && c != '\r') ||
+            (event.getModifiers() & InputEvent.META_MASK) != 0) {
+          inputHandler.keyPressed(event);
+          return;
+        }
+        document.beginCompoundEdit();
+        setSelectedText("");
+        Element map = document.getDefaultRootElement();
+        final int indent = selectionStart -
+          map.getElement(selectionStartLine).getStartOffset();
+        final int startLine = selectionStartLine;
+        final int endLine = 2*selectionEndLine - selectionStartLine;
+        for (int i = startLine; i <= endLine; i += 2) {
+          int caret = Math.min(map.getElement(i).getStartOffset() + indent,
+              map.getElement(i).getEndOffset());
+          select(caret, caret);
+          inputHandler.keyPressed(event);
+        }
+        document.endCompoundEdit();
         break;
       case KeyEvent.KEY_RELEASED:
         inputHandler.keyReleased(event);
