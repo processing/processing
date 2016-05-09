@@ -104,6 +104,9 @@ public class PreprocessingService {
     this.editor = editor;
     isEnabled = !editor.hasJavaTabs();
 
+    // Register listeners for first run
+    whenDone(this::fireListeners);
+
     preprocessingThread = new Thread(this::mainLoop, "ECS");
     preprocessingThread.start();
   }
