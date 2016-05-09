@@ -285,7 +285,7 @@ public class WindowsPlatform extends DefaultPlatform {
     } catch (UnsatisfiedLinkError ule) {
       String path = new File("lib").getCanonicalPath();
 
-      String msg = Util.hasNonAsciiChars(path) ?
+      String msg = Util.containsNonASCII(path) ?
         "Please move Processing to a location with only\n" +
         "ASCII characters in the path and try again.\n" +
         "https://github.com/processing/processing/issues/3543" :

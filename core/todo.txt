@@ -50,9 +50,6 @@ _ normalize error messages for missing files
 _   https://github.com/processing/processing/issues/4265
 _   https://github.com/processing/processing/pull/4268
 
-
-_ fix menu bar hiding in exported JavaFX apps
-_   just call it around setup time? 
 _ should fullScreen() set width and height to displayWidth/Height
 _   or is that being set/unset used for any state info?
 _ when calling exit(), if sketch has halted w/ exception, force the quit
@@ -94,6 +91,8 @@ _   https://github.com/processing/processing/issues/3753
 
 
 javafx
+_ fix menu bar hiding in exported JavaFX apps
+_   just call it around setup time? 
 _ make wiki about quirks
 _   starving the thread makes things really slow down
 _   keyPressed() is always uppercase, keyTyped() will be correct

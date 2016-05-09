@@ -991,7 +991,7 @@ public class Toolkit {
       // This gets the JAVA_HOME for the *local* copy of the JRE installed with
       // Processing. If it's not using the local JRE, it may be because of this
       // launch4j bug: https://github.com/processing/processing/issues/3543
-      if (Util.hasNonAsciiChars(Platform.getJavaHome().getAbsolutePath())) {
+      if (Util.containsNonASCII(Platform.getJavaHome().getAbsolutePath())) {
         msg += "Trying moving Processing\n" +
           "to a location with only ASCII characters in the path.";
       } else {
