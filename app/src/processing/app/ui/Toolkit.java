@@ -72,6 +72,7 @@ import processing.app.Language;
 import processing.app.Messages;
 import processing.app.Platform;
 import processing.app.Preferences;
+import processing.app.Util;
 
 
 /**
@@ -990,7 +991,7 @@ public class Toolkit {
       // This gets the JAVA_HOME for the *local* copy of the JRE installed with
       // Processing. If it's not using the local JRE, it may be because of this
       // launch4j bug: https://github.com/processing/processing/issues/3543
-      if (hasNonAsciiChars(Platform.getJavaHome().getAbsolutePath())) {
+      if (Util.hasNonAsciiChars(Platform.getJavaHome().getAbsolutePath())) {
         msg += "Trying moving Processing\n" +
           "to a location with only ASCII characters in the path.";
       } else {
@@ -1003,14 +1004,6 @@ public class Toolkit {
     Font font = Font.createFont(Font.TRUETYPE_FONT, input);
     input.close();
     return font.deriveFont((float) size);
-  }
-
-
-  static private final boolean hasNonAsciiChars(String what) {
-    for (char c : what.toCharArray()) {
-      if (c < 32 || c > 127) return true;
-    }
-    return false;
   }
 
 

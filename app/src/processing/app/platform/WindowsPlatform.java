@@ -34,6 +34,7 @@ import com.sun.jna.platform.win32.ShlObj;
 import processing.app.Base;
 import processing.app.Messages;
 import processing.app.Preferences;
+import processing.app.Util;
 import processing.app.platform.WindowsRegistry.REGISTRY_ROOT_KEY;
 
 import processing.core.PApplet;
@@ -255,29 +256,43 @@ public class WindowsPlatform extends DefaultPlatform {
 
   // looking for Documents and Settings/blah/Application Data/Processing
   public File getSettingsFolder() throws Exception {
-    String appDataRoaming = getAppDataPath();
-    if (appDataRoaming != null) {
-      File settingsFolder = new File(appDataRoaming, APP_NAME);
-      if (settingsFolder.exists() || settingsFolder.mkdirs()) {
-        return settingsFolder;
+    try {
+      String appDataRoaming = getAppDataPath();
+      if (appDataRoaming != null) {
+        File settingsFolder = new File(appDataRoaming, APP_NAME);
+        if (settingsFolder.exists() || settingsFolder.mkdirs()) {
+          return settingsFolder;
+        }
       }
-    }
 
-    String appDataLocal = getLocalAppDataPath();
-    if (appDataLocal != null) {
-      File settingsFolder = new File(appDataLocal, APP_NAME);
-      if (settingsFolder.exists() || settingsFolder.mkdirs()) {
-        return settingsFolder;
+      String appDataLocal = getLocalAppDataPath();
+      if (appDataLocal != null) {
+        File settingsFolder = new File(appDataLocal, APP_NAME);
+        if (settingsFolder.exists() || settingsFolder.mkdirs()) {
+          return settingsFolder;
+        }
       }
-    }
 
-    if (appDataRoaming == null && appDataLocal == null) {
-      throw new IOException("Could not get the AppData folder");
-    }
+      if (appDataRoaming == null && appDataLocal == null) {
+        throw new IOException("Could not get the AppData folder");
+      }
 
-    // https://github.com/processing/processing/issues/3838
-    throw new IOException("Please fix permissions for either " +
-                          appDataRoaming + " or " + appDataLocal);
+      // https://github.com/processing/processing/issues/3838
+      throw new IOException("Permissions error: make sure that " +
+                            appDataRoaming + " or " + appDataLocal +
+                            " is writable.");
+
+    } catch (UnsatisfiedLinkError ule) {
+      String path = new File("lib").getCanonicalPath();
+
+      String msg = Util.hasNonAsciiChars(path) ?
+        "Please move Processing to a location with only\n" +
+        "ASCII characters in the path and try again.\n" +
+        "https://github.com/processing/processing/issues/3543" :
+        "Could not find JNA support files, please reinstall Processing.";
+      Messages.showError("Windows JNA Problem", msg, ule);
+      return null;  // unreachable
+    }
   }
 
 
