@@ -1436,10 +1436,24 @@ public class JEditTextArea extends JComponent
    * @param selectedText The replacement text for the selection
    */
   public void setSelectedText(String selectedText) {
+    setSelectedText(selectedText, false);
+  }
+
+
+  /**
+   * Replaces the selection with the specified text.
+   * @param selectedText The replacement text for the selection
+   * @param recordCompoundEdit Whether the replacement should be 
+   * recorded as a compound edit
+   */
+  public void setSelectedText(String selectedText, boolean recordCompoundEdit) {
     if (!editable) {
       throw new InternalError("Text component read only");
     }
-    document.beginCompoundEdit();
+    
+    if (recordCompoundEdit) {
+      document.beginCompoundEdit();
+    }
 
     try {
       if (rectSelect) {
@@ -1496,7 +1510,10 @@ public class JEditTextArea extends JComponent
 
     } finally {
       // No matter what happens... stops us from leaving document in a bad state
-      document.endCompoundEdit();
+      // (provided this has to be recorded as a compound edit, of course...)
+      if (recordCompoundEdit) {
+        document.endCompoundEdit();
+      }
     }
     setCaretPosition(selectionEnd);
   }
@@ -1568,7 +1585,10 @@ public class JEditTextArea extends JComponent
     // Don't overstrike if there is a selection
     if(!overwrite || selectionStart != selectionEnd)
     {
-      setSelectedText(str);
+      // record the whole operation as a compound edit if 
+      // selected text is being replaced
+      boolean isSelectAndReplaceOp = (selectionStart != selectionEnd);
+      setSelectedText(str, isSelectAndReplaceOp);
       return;
     }
 
@@ -1578,11 +1598,9 @@ public class JEditTextArea extends JComponent
     int caretLineEnd = getLineStopOffset(getCaretLine());
     if(caretLineEnd - caret <= str.length())
     {
-      setSelectedText(str);
+      setSelectedText(str, false);
       return;
     }
-
-    document.beginCompoundEdit();
 
     try
     {
@@ -1592,10 +1610,6 @@ public class JEditTextArea extends JComponent
     catch(BadLocationException bl)
     {
       bl.printStackTrace();
-    }
-    finally
-    {
-      document.endCompoundEdit();
     }
   }
 
