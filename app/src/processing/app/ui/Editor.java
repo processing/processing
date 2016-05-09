@@ -2082,11 +2082,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         continue; //ignore blank lines
       if (commented) {
         // remove a comment
-        if (lineText.trim().startsWith(prefix + " ")) {
-          textarea.select(location, location + prefixLen + 1);
-        } else {
-          textarea.select(location, location + prefixLen);
-        }
+        textarea.select(location, location + prefixLen);
         textarea.setSelectedText("");
       } else {
         // add a comment
