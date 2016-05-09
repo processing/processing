@@ -1,6 +1,8 @@
 0249 (3.1)
 o arrow keys aren't working in the examples window
 X   was working fine with most recent build.. weird
+X spend a lot of time trying to get non-8bit charsets on Windows
+o   https://github.com/processing/processing/issues/3543
 
 contribs
 X Grab bag of smaller, mainly ARM-related updates
@@ -29,6 +31,13 @@ X Added readBytes(max) to net library
 X   https://github.com/processing/processing/pull/4320
 X Added readBytes(max) to serial library
 X   https://github.com/processing/processing/pull/4321
+X Improve error message "The nested type cannot hide an enclosing type"
+X   https://github.com/processing/processing/issues/4228
+X   https://github.com/processing/processing/pull/4337
+X   https://github.com/processing/processing/pull/4451
+X Multi-line comments ending in '**/' cause ArrayIndexOutOfBoundsException
+X   https://github.com/processing/processing/issues/4397
+X   https://github.com/processing/processing/pull/4402
 
 jakub
 X Update app to Java 8
@@ -48,7 +57,7 @@ X file paths not decoding properly
 X   https://github.com/processing/processing/issues/4417
 X   https://github.com/processing/processing/pull/4426
 X   double check that this is working on OS X
-_   check whether it fixes the Windows startup problem
+X   check whether it fixes the Windows startup problem
 X Java Mode refactoring
 X   https://github.com/processing/processing/pull/4440
 X jump to variable declaration miss
@@ -66,6 +75,10 @@ X   https://github.com/processing/processing/pull/4446
 X   https://github.com/processing/processing/pull/4447
 X handleCtrlClick misbehaving
 X   https://github.com/processing/processing/issues/4281
+X Fix listeners not firing on first preprocessing run
+X   https://github.com/processing/processing/pull/4450
+X Remove some unnecessary calls from rename
+X   https://github.com/processing/processing/pull/4449
 
 gottfried
 X Add automatic mipmap support to GLES2
