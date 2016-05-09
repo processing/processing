@@ -59,6 +59,15 @@
 
   <!-- Switching to 8 because updates for 7 ended April 2015 -->
   <property name="jdk.version" value="8" />
+
+  <!-- temporarily work around performance regression on ARM -->
+  <condition property="jdk.update" value="77">
+    <equals arg1="${linux-arm32}" arg2="linux-arm32" />
+  </condition>
+  <condition property="jdk.build" value="3">
+    <equals arg1="${linux-arm32}" arg2="linux-arm32" />
+  </condition>
+
   <property name="jdk.update" value="92" />
   <property name="jdk.build" value="14" />
 
