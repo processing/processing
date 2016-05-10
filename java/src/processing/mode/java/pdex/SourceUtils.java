@@ -159,6 +159,20 @@ public class SourceUtils {
     return edits;
   }
 
+
+  // Verifies that whole input String is floating point literal. Can't be used for searching.
+  // https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-DecimalFloatingPointLiteral
+  public static final Pattern FLOATING_POINT_LITERAL_VERIFIER;
+  static {
+    final String DIGITS = "(?:[0-9]|[0-9][0-9_]*[0-9])";
+    final String EXPONENT_PART = "(?:[eE][+-]?" + DIGITS + ")";
+    FLOATING_POINT_LITERAL_VERIFIER = Pattern.compile(
+        "(?:^" + DIGITS + "\\." + DIGITS + "?" + EXPONENT_PART + "?[fFdD]?$)|" +
+            "(?:^\\." + DIGITS + EXPONENT_PART + "?[fFdD]?$)|" +
+            "(?:^" + DIGITS + EXPONENT_PART + "[fFdD]?$)|" +
+            "(?:^" + DIGITS + EXPONENT_PART + "?[fFdD]$)");
+  }
+
   public static List<Edit> replaceColorAndFixFloats(CompilationUnit cu) {
     final List<Edit> edits = new ArrayList<>();
 
@@ -175,7 +189,7 @@ public class SourceUtils {
       @Override
       public boolean visit(NumberLiteral node) {
         String s = node.getToken().toLowerCase();
-        if (!s.endsWith("f") && !s.endsWith("d") && (s.contains(".") || s.contains("e"))) {
+        if (FLOATING_POINT_LITERAL_VERIFIER.matcher(s).matches() && !s.endsWith("f") && !s.endsWith("d")) {
           edits.add(Edit.insert(node.getStartPosition() + node.getLength(), "f"));
         }
         return super.visit(node);
@@ -201,6 +215,7 @@ public class SourceUtils {
 
     return edits;
   }
+
 
   public static final Pattern NUMBER_LITERAL_REGEX =
       Pattern.compile("[-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?");
