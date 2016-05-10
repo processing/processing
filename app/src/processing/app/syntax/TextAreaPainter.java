@@ -833,13 +833,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
       int lineStart = textArea.getLineStartOffset(line);
 
       int x1, x2;
-      if (textArea.isSelectionRectangular()) {
-        int lineLen = textArea.getLineLength(line);
-        x1 = textArea._offsetToX(line,Math.min(lineLen, selectionStart - textArea.getLineStartOffset(selectionStartLine)));
-        x2 = textArea._offsetToX(line,Math.min(lineLen, selectionEnd - textArea.getLineStartOffset(selectionEndLine)));
-        if (x1 == x2)
-          x2++;
-      } else if(selectionStartLine == selectionEndLine) {
+      if (selectionStartLine == selectionEndLine) {
         x1 = textArea._offsetToX(line, selectionStart - lineStart);
         x2 = textArea._offsetToX(line, selectionEnd - lineStart);
       } else if(line == selectionStartLine) {
