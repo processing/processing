@@ -95,7 +95,7 @@ import processing.core.PApplet;
  * <code>{ } [ ] / \ : , = ; #</code> and if they do not look like numbers and
  * if they are not the reserved words <code>true</code>, <code>false</code>, or
  * <code>null</code>.</li>
- * <li>Keys can be followed by <code>=</code> or <code>=></code> as well as by
+ * <li>Keys can be followed by <code>=</code> or {@code =>} as well as by
  * <code>:</code>.</li>
  * <li>Values can be followed by <code>;</code> <small>(semicolon)</small> as
  * well as by <code>,</code> <small>(comma)</small>.</li>
@@ -207,8 +207,6 @@ public class JSONObject {
 //   * Missing keys are ignored.
 //   * @param jo A JSONObject.
 //   * @param names An array of strings.
-//   * @throws JSONException
-//   * @exception JSONException If a value is a non-finite number or if a name is duplicated.
 //   */
 //  public JSONObject(JSONObject jo, String[] names) {
 //    this();
@@ -232,7 +230,7 @@ public class JSONObject {
   /**
    * Construct a JSONObject from a JSONTokener.
    * @param x A JSONTokener object containing the source string.
-   * @throws JSONException If there is a syntax error in the source string
+   * @throws RuntimeException If there is a syntax error in the source string
    *  or a duplicated key.
    */
   protected JSONObject(JSONTokener x) {
@@ -291,7 +289,6 @@ public class JSONObject {
    *
    * @param map A map object that can be used to initialize the contents of
    *  the JSONObject.
-   * @throws JSONException
    */
   protected JSONObject(HashMap<String, Object> map) {
     this.map = new HashMap<String, Object>();
@@ -397,7 +394,7 @@ public class JSONObject {
    * @param source    A string beginning
    *  with <code>{</code>&nbsp;<small>(left brace)</small> and ending
    *  with <code>}</code>&nbsp;<small>(right brace)</small>.
-   * @exception JSONException If there is a syntax error in the source
+   * @exception RuntimeException If there is a syntax error in the source
    *  string or a duplicated key.
    */
   static public JSONObject parse(String source) {
@@ -538,7 +535,7 @@ public class JSONObject {
    *
    * @param key   A key string.
    * @return      The object associated with the key.
-   * @throws      JSONException if the key is not found.
+   * @throws      RuntimeException if the key is not found.
    */
   private Object get(String key) {
     if (key == null) {
@@ -559,7 +556,7 @@ public class JSONObject {
    * @brief Gets the string value associated with a key
    * @param key a key string
    * @return A string which is the value.
-   * @throws JSONException if there is no string value for the key.
+   * @throws RuntimeException if there is no string value for the key.
    * @see JSONObject#getInt(String)
    * @see JSONObject#getFloat(String)
    * @see JSONObject#getBoolean(String)
@@ -594,7 +591,7 @@ public class JSONObject {
    * @brief Gets the int value associated with a key
    * @param key A key string.
    * @return The integer value.
-   * @throws JSONException if the key is not found or if the value cannot
+   * @throws RuntimeException if the key is not found or if the value cannot
    *  be converted to an integer.
    * @see JSONObject#getFloat(String)
    * @see JSONObject#getString(String)
@@ -636,7 +633,7 @@ public class JSONObject {
    *
    * @param key   A key string.
    * @return      The long value.
-   * @throws   JSONException if the key is not found or if the value cannot
+   * @throws   RuntimeException if the key is not found or if the value cannot
    *  be converted to a long.
    */
   public long getLong(String key) {
@@ -696,7 +693,7 @@ public class JSONObject {
    * Get the double value associated with a key.
    * @param key   A key string.
    * @return      The numeric value.
-   * @throws JSONException if the key is not found or
+   * @throws RuntimeException if the key is not found or
    *  if the value is not a Number object and cannot be converted to a number.
    */
   public double getDouble(String key) {
@@ -737,7 +734,7 @@ public class JSONObject {
    * @brief Gets the boolean value associated with a key
    * @param key a key string
    * @return The truth.
-   * @throws JSONException if the value is not a Boolean or the String "true" or "false".
+   * @throws RuntimeException if the value is not a Boolean or the String "true" or "false".
    * @see JSONObject#getInt(String)
    * @see JSONObject#getFloat(String)
    * @see JSONObject#getString(String)
@@ -782,7 +779,7 @@ public class JSONObject {
    * @brief Gets the JSONArray value associated with a key
    * @param key a key string
    * @return A JSONArray which is the value.
-   * @throws JSONException if the key is not found or if the value is not a JSONArray.
+   * @throws RuntimeException if the key is not found or if the value is not a JSONArray.
    * @see JSONObject#getJSONObject(String)
    * @see JSONObject#setJSONObject(String, JSONObject)
    * @see JSONObject#setJSONArray(String, JSONArray)
@@ -803,7 +800,7 @@ public class JSONObject {
    * @brief Gets the JSONObject value associated with a key
    * @param key a key string
    * @return A JSONObject which is the value.
-   * @throws JSONException if the key is not found or if the value is not a JSONObject.
+   * @throws RuntimeException if the key is not found or if the value is not a JSONObject.
    * @see JSONObject#getJSONArray(String)
    * @see JSONObject#setJSONObject(String, JSONObject)
    * @see JSONObject#setJSONArray(String, JSONArray)
@@ -964,7 +961,7 @@ public class JSONObject {
    * Produce a string from a Number.
    * @param  number A Number
    * @return A String.
-   * @throws JSONException If n is a non-finite number.
+   * @throws RuntimeException If number is null or a non-finite number.
    */
   private static String numberToString(Number number) {
     if (number == null) {
@@ -1164,7 +1161,7 @@ public class JSONObject {
    * @param key a key string
    * @param value the value to assign
    * @return this.
-   * @throws JSONException If the key is null.
+   * @throws RuntimeException If the key is null.
    * @see JSONObject#setFloat(String, float)
    * @see JSONObject#setString(String, String)
    * @see JSONObject#setBoolean(String, boolean)
@@ -1181,7 +1178,7 @@ public class JSONObject {
    * @param key   A key string.
    * @param value A long which is the value.
    * @return this.
-   * @throws JSONException If the key is null.
+   * @throws RuntimeException If the key is null.
    */
   public JSONObject setLong(String key, long value) {
     this.put(key, Long.valueOf(value));
@@ -1193,6 +1190,7 @@ public class JSONObject {
    * @brief Put a key/float pair in the JSONObject
    * @param key a key string
    * @param value the value to assign
+   * @throws RuntimeException If the key is null or if the number is NaN or infinite.
    * @see JSONObject#setInt(String, int)
    * @see JSONObject#setString(String, String)
    * @see JSONObject#setBoolean(String, boolean)
@@ -1209,7 +1207,7 @@ public class JSONObject {
    * @param key   A key string.
    * @param value A double which is the value.
    * @return this.
-   * @throws JSONException If the key is null or if the number is invalid.
+   * @throws RuntimeException If the key is null or if the number is NaN or infinite.
    */
   public JSONObject setDouble(String key, double value) {
     this.put(key, new Double(value));
@@ -1225,7 +1223,7 @@ public class JSONObject {
    * @param key a key string
    * @param value the value to assign
    * @return this.
-   * @throws JSONException If the key is null.
+   * @throws RuntimeException If the key is null.
    * @see JSONObject#setInt(String, int)
    * @see JSONObject#setFloat(String, float)
    * @see JSONObject#setString(String, String)
@@ -1299,7 +1297,7 @@ public class JSONObject {
    *  types: Boolean, Double, Integer, JSONArray, JSONObject, Long, String,
    *  or the JSONObject.NULL object.
    * @return this.
-   * @throws JSONException If the value is non-finite number
+   * @throws RuntimeException If the value is non-finite number
    *  or if the key is null.
    */
   private JSONObject put(String key, Object value) {
@@ -1332,8 +1330,9 @@ public class JSONObject {
    * with that name.
    * @param key
    * @param value
-   * @return his.
-   * @throws JSONException if the key is a duplicate
+   * @return {@code this}.
+   * @throws RuntimeException if the key is a duplicate, or if
+   * {@link #put(String,Object)} throws.
    */
   private JSONObject putOnce(String key, Object value) {
     if (key != null && value != null) {
@@ -1510,8 +1509,9 @@ public class JSONObject {
 
   /**
    * Throw an exception if the object is a NaN or infinite number.
-   * @param o The object to test.
-   * @throws JSONException If o is a non-finite number.
+   * @param o The object to test. If not Float or Double, accepted without
+   *    exceptions.
+   * @throws RuntimeException If o is infinite or NaN.
    */
   static protected void testValidity(Object o) {
     if (o != null) {
@@ -1616,7 +1616,7 @@ public class JSONObject {
    *  representation of the object, beginning
    *  with <code>{</code>&nbsp;<small>(left brace)</small> and ending
    *  with <code>}</code>&nbsp;<small>(right brace)</small>.
-   * @throws JSONException If the object contains an invalid number.
+   * @throws RuntimeException If the object contains an invalid number.
    */
   public String format(int indentFactor) {
     StringWriter w = new StringWriter();
@@ -1644,7 +1644,7 @@ public class JSONObject {
    *  representation of the object, beginning
    *  with <code>{</code>&nbsp;<small>(left brace)</small> and ending
    *  with <code>}</code>&nbsp;<small>(right brace)</small>.
-   * @throws JSONException If the value is or contains an invalid number.
+   * @throws RuntimeException If the value is or contains an invalid number.
    */
   static protected String valueToString(Object value) {
     if (value == null || value.equals(null)) {
@@ -1797,7 +1797,7 @@ public class JSONObject {
    * Warning: This method assumes that the data structure is acyclical.
    *
    * @return The writer.
-   * @throws JSONException
+   * @throws RuntimeException
    */
   protected Writer writeInternal(Writer writer, int indentFactor, int indent) {
     try {

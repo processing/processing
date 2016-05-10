@@ -125,7 +125,7 @@ public class JSONArray {
    * Construct a JSONArray from a JSONTokener.
    *
    * @param x A JSONTokener
-   * @throws JSONException If there is a syntax error.
+   * @throws RuntimeException If there is a syntax error.
    * @nowebref
    */
   protected JSONArray(JSONTokener x) {
@@ -199,7 +199,7 @@ public class JSONArray {
    * @param source     A string that begins with
    * <code>[</code>&nbsp;<small>(left bracket)</small>
    *  and ends with <code>]</code>&nbsp;<small>(right bracket)</small>.
-   *  @throws JSONException If there is a syntax error.
+   *  @return {@code null} if there is a syntax error.
    */
   static public JSONArray parse(String source) {
     try {
@@ -228,7 +228,7 @@ public class JSONArray {
   // TODO not decided whether we keep this one, but used heavily by JSONObject
   /**
    * Construct a JSONArray from an array
-   * @throws JSONException If not an array.
+   * @throws RuntimeException If not an array.
    */
   protected JSONArray(Object array) {
     this();
@@ -261,7 +261,7 @@ public class JSONArray {
    * Get the object value associated with an index.
    * @param index must be between 0 and length() - 1
    * @return An object value.
-   * @throws JSONException If there is no value for the index.
+   * @throws RuntimeException If there is no value for the index.
    */
   private Object get(int index) {
     Object object = opt(index);
@@ -279,7 +279,7 @@ public class JSONArray {
    * @brief Gets the String value associated with an index
    * @param index must be between 0 and length() - 1
    * @return      A string value.
-   * @throws JSONException If there is no string value for the index.
+   * @throws RuntimeException If there is no string value for the index.
    * @see JSONArray#getInt(int)
    * @see JSONArray#getFloat(int)
    * @see JSONArray#getBoolean(int)
@@ -314,7 +314,7 @@ public class JSONArray {
    * @brief Gets the int value associated with an index
    * @param index must be between 0 and length() - 1
    * @return The value.
-   * @throws JSONException If the key is not found or if the value is not a number.
+   * @throws RuntimeException If the key is not found or if the value is not a number.
    * @see JSONArray#getFloat(int)
    * @see JSONArray#getString(int)
    * @see JSONArray#getBoolean(int)
@@ -353,7 +353,7 @@ public class JSONArray {
    *
    * @param index The index must be between 0 and length() - 1
    * @return      The value.
-   * @throws   JSONException If the key is not found or if the value cannot
+   * @throws   RuntimeException If the key is not found or if the value cannot
    *  be converted to a number.
    */
   public long getLong(int index) {
@@ -415,7 +415,7 @@ public class JSONArray {
    *
    * @param index must be between 0 and length() - 1
    * @return      The value.
-   * @throws   JSONException If the key is not found or if the value cannot
+   * @throws   RuntimeException If the key is not found or if the value cannot
    *  be converted to a number.
    */
   public double getDouble(int index) {
@@ -456,7 +456,7 @@ public class JSONArray {
    * @brief Gets the boolean value associated with an index
    * @param index must be between 0 and length() - 1
    * @return      The truth.
-   * @throws JSONException If there is no value for the index or if the
+   * @throws RuntimeException If there is no value for the index or if the
    *  value is not convertible to boolean.
    * @see JSONArray#getInt(int)
    * @see JSONArray#getFloat(int)
@@ -502,7 +502,7 @@ public class JSONArray {
    * @brief Gets the JSONArray associated with an index value
    * @param index must be between 0 and length() - 1
    * @return A JSONArray value.
-   * @throws JSONException If there is no value for the index. or if the
+   * @throws RuntimeException If there is no value for the index. or if the
    * value is not a JSONArray
    * @see JSONArray#getJSONObject(int)
    * @see JSONArray#setJSONObject(int, JSONObject)
@@ -533,7 +533,7 @@ public class JSONArray {
    * @brief Gets the JSONObject associated with an index value
    * @param index the index value of the object to get
    * @return A JSONObject value.
-   * @throws JSONException If there is no value for the index or if the
+   * @throws RuntimeException If there is no value for the index or if the
    * value is not a JSONObject
    * @see JSONArray#getJSONArray(int)
    * @see JSONArray#setJSONObject(int, JSONObject)
@@ -740,7 +740,7 @@ public class JSONArray {
    * This will store the value as a double, since there are no floats in JSON.
    *
    * @param value a float value
-   * @throws JSONException if the value is not finite.
+   * @throws RuntimeException if the value is not finite.
    * @return this.
    */
   public JSONArray append(float value) {
@@ -753,7 +753,7 @@ public class JSONArray {
    *
    * @nowebref
    * @param value A double value.
-   * @throws JSONException if the value is not finite.
+   * @throws RuntimeException if the value is not finite.
    * @return this.
    */
   public JSONArray append(double value) {
@@ -837,7 +837,7 @@ public class JSONArray {
 //   * @param index The subscript.
 //   * @param value A Collection value.
 //   * @return      this.
-//   * @throws JSONException If the index is negative or if the value is
+//   * @throws RuntimeException If the index is negative or if the value is
 //   * not finite.
 //   */
 //  public JSONArray set(int index, Collection value) {
@@ -856,7 +856,7 @@ public class JSONArray {
    * @param index an index value
    * @param value the value to assign
    * @return this.
-   * @throws JSONException If the index is negative.
+   * @throws RuntimeException If the index is negative.
    * @see JSONArray#setInt(int, int)
    * @see JSONArray#setFloat(int, float)
    * @see JSONArray#setBoolean(int, boolean)
@@ -877,7 +877,7 @@ public class JSONArray {
    * @param index an index value
    * @param value the value to assign
    * @return this.
-   * @throws JSONException If the index is negative.
+   * @throws RuntimeException If the index is negative.
    * @see JSONArray#setFloat(int, float)
    * @see JSONArray#setString(int, String)
    * @see JSONArray#setBoolean(int, boolean)
@@ -895,7 +895,7 @@ public class JSONArray {
    * @param index The subscript.
    * @param value A long value.
    * @return this.
-   * @throws JSONException If the index is negative.
+   * @throws RuntimeException If the index is negative.
    */
   public JSONArray setLong(int index, long value) {
     return set(index, Long.valueOf(value));
@@ -931,7 +931,7 @@ public class JSONArray {
    * @param index The subscript.
    * @param value A double value.
    * @return this.
-   * @throws JSONException If the index is negative or if the value is
+   * @throws RuntimeException If the index is negative or if the value is
    * not finite.
    */
   public JSONArray setDouble(int index, double value) {
@@ -949,7 +949,7 @@ public class JSONArray {
    * @param index an index value
    * @param value the value to assign
    * @return this.
-   * @throws JSONException If the index is negative.
+   * @throws RuntimeException If the index is negative.
    * @see JSONArray#setInt(int, int)
    * @see JSONArray#setFloat(int, float)
    * @see JSONArray#setString(int, String)
@@ -965,7 +965,7 @@ public class JSONArray {
 //   * @param index The subscript.
 //   * @param value The Map value.
 //   * @return      this.
-//   * @throws JSONException If the index is negative or if the the value is
+//   * @throws RuntimeException If the index is negative or if the the value is
 //   *  an invalid number.
 //   */
 //  public JSONArray set(int index, Map value) {
@@ -1011,7 +1011,7 @@ public class JSONArray {
    *  Boolean, Double, Integer, JSONArray, JSONObject, Long, or String, or the
    *  JSONObject.NULL object.
    * @return this.
-   * @throws JSONException If the index is negative or if the the value is
+   * @throws RuntimeException If the index is negative or if the the value is
    *  an invalid number.
    */
   private JSONArray set(int index, Object value) {
@@ -1192,7 +1192,7 @@ public class JSONArray {
    * @param indent
    *            The indention of the top level.
    * @return The writer.
-   * @throws JSONException
+   * @throws RuntimeException
    */
   protected Writer writeInternal(Writer writer, int indentFactor, int indent) {
     try {
@@ -1243,7 +1243,7 @@ public class JSONArray {
    * Warning: This method assumes that the data structure is acyclic.
    * @param separator A string that will be inserted between the elements.
    * @return a string.
-   * @throws JSONException If the array contains an invalid number.
+   * @throws RuntimeException If the array contains an invalid number.
    */
   public String join(String separator) {
     int len = this.size();

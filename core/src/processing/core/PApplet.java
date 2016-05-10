@@ -339,8 +339,8 @@ public class PApplet implements PConstants {
    *
    * @webref environment
    * @see PApplet#pixelHeight
-   * @see pixelDensity()
-   * @see displayDensity()
+   * @see #pixelDensity(int)
+   * @see #displayDensity()
    */
   public int pixelWidth;
 
@@ -363,8 +363,8 @@ public class PApplet implements PConstants {
    *
    * @webref environment
    * @see PApplet#pixelWidth
-   * @see pixelDensity()
-   * @see displayDensity()
+   * @see #pixelDensity(int)
+   * @see #displayDensity()
    */
   public int pixelHeight;
 
@@ -1019,7 +1019,7 @@ public class PApplet implements PConstants {
   * @webref environment
   * @see PApplet#fullScreen()
   * @see PApplet#setup()
-  * @see PApplet#size()
+  * @see PApplet#size(int,int)
   * @see PApplet#smooth()
   */
   public void settings() {
@@ -1116,8 +1116,8 @@ public class PApplet implements PConstants {
   * ( end auto-generated )
   *
   * @webref environment
-  * @see PApplet#pixelDensity()
-  * @see PApplet#size()
+  * @see PApplet#pixelDensity(int)
+  * @see PApplet#size(int,int)
   */
   public int displayDensity() {
     if (display == SPAN) {
@@ -1855,7 +1855,7 @@ public class PApplet implements PConstants {
   * @param renderer the renderer to use, e.g. P2D, P3D, JAVA2D (default)
   * @see PApplet#settings()
   * @see PApplet#setup()
-  * @see PApplet#size()
+  * @see PApplet#size(int,int)
   * @see PApplet#smooth()
   */
   public void fullScreen(String renderer) {
@@ -3412,7 +3412,7 @@ public class PApplet implements PConstants {
    *
    * ( end auto-generated )
    * @webref input:files
-   * @param filename name of the file
+   * @param args arguments to the launcher, eg. a filename.
    * @usage Application
    */
   static public Process launch(String... args) {
@@ -4349,12 +4349,12 @@ public class PApplet implements PConstants {
   }
 
 
-  /**
-   * Find the maximum value in an array.
-   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
-   * @param list the source array
-   * @return The maximum value
-   */
+//  /**
+//   * Find the maximum value in an array.
+//   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
+//   * @param list the source array
+//   * @return The maximum value
+//   */
   /*
   static public final double max(double[] list) {
     if (list.length == 0) {
@@ -5134,7 +5134,6 @@ public class PApplet implements PConstants {
    * ( end auto-generated )
    * @webref math:random
    * @param lod number of octaves to be used by the noise
-   * @param falloff falloff factor for each octave
    * @see PApplet#noise(float, float, float)
    */
   public void noiseDetail(int lod) {
@@ -5142,6 +5141,8 @@ public class PApplet implements PConstants {
   }
 
   /**
+   * @see #noiseDetail(int)
+   * @param lod number of octaves to be used by the noise
    * @param falloff falloff factor for each octave
    */
   public void noiseDetail(int lod, float falloff) {
@@ -5796,7 +5797,7 @@ public class PApplet implements PConstants {
   /**
    * @webref input:files
    * @brief Converts String content to an XML object
-   * @param data the content to be parsed as XML
+   * @param xmlString the content to be parsed as XML
    * @return an XML object, or null
    * @see XML
    * @see PApplet#loadXML(String)
@@ -6687,8 +6688,8 @@ public class PApplet implements PConstants {
    * @webref input:files
    * @param filename the name of the file to use as input
    * @see PApplet#createOutput(String)
-   * @see PApplet#selectOutput(String)
-   * @see PApplet#selectInput(String)
+   * @see PApplet#selectOutput(String,String)
+   * @see PApplet#selectInput(String,String)
    *
    */
   public InputStream createInput(String filename) {
@@ -7121,7 +7122,7 @@ public class PApplet implements PConstants {
    * @webref output:files
    * @param filename name of the file to open
    * @see PApplet#createInput(String)
-   * @see PApplet#selectOutput()
+   * @see PApplet#selectOutput(String,String)
    */
   public OutputStream createOutput(String filename) {
     return createOutput(saveFile(filename));
@@ -9327,7 +9328,7 @@ public class PApplet implements PConstants {
    * @see PApplet#nfs(float, int, int)
    * @see PApplet#nfp(float, int, int)
    * @see PApplet#nfc(float, int)
-   * @see PApplet#int(float)
+   * @see <a href="https://processing.org/reference/intconvert_.html">int(float)</a>
    */
   static public String nf(int num, int digits) {
     if ((int_nf != null) &&
@@ -10024,9 +10025,9 @@ public class PApplet implements PConstants {
    * sketch, rather than having to wrap it into a String array, and appending
    * the 'args' array when not null.
    * @param mainClass name of the class to load (with package if any)
-   * @param args command line arguments to pass to the sketch's 'args' array.
-   *             Note that this is *not* the same as the args passed to (and
-   *             understood by) PApplet such as --display.
+   * @param sketchArgs command line arguments to pass to the sketch's 'args'
+   *             array. Note that this is <i>not</i> the same as the args passed
+   *             to (and understood by) PApplet such as --display.
    */
   static public void main(final String mainClass, final String[] sketchArgs) {
     String[] args = new String[] { mainClass };
@@ -15005,8 +15006,8 @@ public class PApplet implements PConstants {
    *
    * @webref pimage:method
    * @usage web_application
+   * @param img image to use as the mask
    * @brief Masks part of an image with another image as an alpha channel
-   * @param maskArray array of integers used as the alpha channel, needs to be the same length as the image's pixel array
    */
   public void mask(PImage img) {
     if (recorder != null) recorder.mask(img);

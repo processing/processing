@@ -3577,7 +3577,7 @@ public class Table {
   /**
    * Return a list of rows that contain the String passed in. If there are no
    * matches, a zero length array will be returned (not a null array).
-   * @param what the String to match
+   * @param regexp the String to match
    * @param column ID number of the column to search
    */
   public int[] matchRowIndices(String regexp, int column) {
@@ -3762,7 +3762,7 @@ public class Table {
   /**
    * Run String.replaceAll() on all entries in a column.
    * Only works with columns that are already String values.
-   * @param what the String to match
+   * @param regex the String to match
    * @param columnName title of the column to search
    */
   public void replaceAll(String regex, String replacement, String columnName) {

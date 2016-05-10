@@ -52,7 +52,7 @@ public class ExamplesContribution extends LocalContribution {
    * exampleLocation directory is compatible with the current mode.
    *
    * @param base
-   * @param exampleFolder
+   * @param props
    * @return true if the example is compatible with the mode of the currently
    *         active editor
    */
