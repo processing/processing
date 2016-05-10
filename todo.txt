@@ -3,14 +3,60 @@ X Prevent InvocationTargetException when running processing-java
 X   https://github.com/processing/processing/pull/4453
 X   https://github.com/processing/processing/issues/4452
 
+contribs
+X Undo is a little "jerky" in insert mode
+X   https://github.com/processing/processing/issues/4302
+X   https://github.com/processing/processing/pull/4310
+X "Replace" and "Replace All" do not undo in a single step
+X   https://github.com/processing/processing/issues/4303
+X   https://github.com/processing/processing/pull/4310
+X Comment/uncomment removes indenting
+X   https://github.com/processing/processing/issues/4249
+X   https://github.com/processing/processing/pull/4313
+X remove poorly implemented "rectangular selection" support from the editor
+X   https://github.com/processing/processing/pull/4462
+X   https://github.com/processing/processing/pull/4326
+X   https://github.com/processing/processing/issues/4250
+X Fix error messages from Javadocs
+X   https://github.com/processing/processing/pull/4191
+X   https://github.com/processing/processing/issues/1492
+
+jakub
+X Make Comment/Uncomment trigger on numpad slash
+X   https://github.com/processing/processing/pull/4457
+X Hex values throwing errors in 3.1
+X   https://github.com/processing/processing/issues/4458
+X   https://github.com/processing/processing/pull/4460
+
+gohai
+X Switch back to JRE 8u77 on ARM to fix GL video library performance
+X   https://github.com/processing/processing/pull/4454
+
+earlier
+X complex text input issues (may be fixed with PR)
+X   https://github.com/processing/processing/issues/3860
+X   https://github.com/processing/processing/issues/3475
+o   fixed in 3.0.2
+
+
+_ possible infinite loop on modified externally
+_   https://github.com/processing/processing/issues/3965
+
+shortcuts
+_ ctrl-J (for debugger) is inserting newline
+_   https://github.com/processing/processing/issues/3830
+_ problems with non-US keyboards and some shortcuts
+_   https://github.com/processing/processing/issues/2199
+_ Determine shortcut for Export vs Use Selection for Find
+_   https://github.com/processing/processing/issues/2985
+_ Determine new keyboard shortcut for Step Out
+_   https://github.com/processing/processing/issues/3538
+
 
 needs more review
 _ createPreprocessor() added to JavaEditor, creating a mess
 _   https://github.com/processing/processing/commit/2ecdc36ac7c680eb36e271d17ad80b657b3ae6a0
 _ patch to core classpath by Manindra?
-
-_ possible infinite loop on modified externally
-_   https://github.com/processing/processing/issues/3965
 
 _ spacing of the updates number/circle in the lower right is off
 _   https://github.com/processing/processing/issues/4094
@@ -25,16 +71,6 @@ o   https://github.com/processing/processing/pull/4087
 
 _ add 2016 to about-1x and about-2x
 
-shortcuts
-_ ctrl-J (for debugger) is inserting newline
-_   https://github.com/processing/processing/issues/3830
-_ problems with non-US keyboards and some shortcuts
-_   https://github.com/processing/processing/issues/2199
-_ Determine shortcut for Export vs Use Selection for Find
-_   https://github.com/processing/processing/issues/2985
-_ Determine new keyboard shortcut for Step Out
-_   https://github.com/processing/processing/issues/3538
-
 
 more contribs
 _ question about PDE_pt-br instead of PDE_pt
@@ -46,10 +82,6 @@ _   https://github.com/processing/processing/issues/3965
 _   https://github.com/processing/processing/pull/4037
 _ Pasting text into PDE results in "Clipboard does not contain a string"
 _   https://github.com/processing/processing/pull/4040
-
-_ complex text input issues (may be fixed with PR)
-_   https://github.com/processing/processing/issues/3860
-_   https://github.com/processing/processing/issues/3475
 
 known issues
 _ launch4j doesn't work from folders with non-native charsets
