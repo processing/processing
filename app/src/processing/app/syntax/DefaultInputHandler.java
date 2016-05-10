@@ -46,7 +46,6 @@ public class DefaultInputHandler extends InputHandler
                 addKeyBinding("TAB",INSERT_TAB);
 
                 addKeyBinding("INSERT",OVERWRITE);
-                addKeyBinding("C+\\",TOGGLE_RECT);
 
                 addKeyBinding("HOME",HOME);
                 addKeyBinding("END",END);

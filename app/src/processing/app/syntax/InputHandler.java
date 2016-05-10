@@ -84,7 +84,6 @@ public abstract class InputHandler extends KeyAdapter
   public static final ActionListener SELECT_PREV_PAGE = new prev_page(true);
   public static final ActionListener SELECT_PREV_WORD = new prev_word(true);
   public static final ActionListener REPEAT = new repeat();
-  public static final ActionListener TOGGLE_RECT = new toggle_rect();
   public static final ActionListener CLIPBOARD_CUT = new clipboard_cut();  // [fry]
   public static final ActionListener CLIPBOARD_COPY = new clipboard_copy();
   public static final ActionListener CLIPBOARD_PASTE = new clipboard_paste();
@@ -133,7 +132,6 @@ public abstract class InputHandler extends KeyAdapter
     actions.put("select-prev-page",SELECT_PREV_PAGE);
     actions.put("select-prev-word",SELECT_PREV_WORD);
     actions.put("repeat",REPEAT);
-    actions.put("toggle-rect",TOGGLE_RECT);
     actions.put("insert-char",INSERT_CHAR);
     actions.put("clipboard-cut",CLIPBOARD_CUT);
     actions.put("clipboard-copy",CLIPBOARD_COPY);
@@ -1056,14 +1054,6 @@ public abstract class InputHandler extends KeyAdapter
       if (actionCommand != null) {
         textArea.getInputHandler().setRepeatCount(Integer.parseInt(actionCommand));
       }
-    }
-  }
-
-
-  public static class toggle_rect implements ActionListener {
-    public void actionPerformed(ActionEvent evt) {
-      JEditTextArea textArea = getTextArea(evt);
-      textArea.setSelectionRectangular(!textArea.isSelectionRectangular());
     }
   }
 
