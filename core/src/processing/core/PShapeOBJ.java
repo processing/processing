@@ -216,7 +216,6 @@ public class PShapeOBJ extends PShape {
                                         1 - Float.valueOf(parts[2]).
                                         floatValue());
             texcoords.add(tempv);
-            PApplet.println(texcoords.size(), tempv);
             readvt = true;
           } else if (parts[0].equals("o")) {
             // Object name is ignored, for now.
@@ -229,7 +228,7 @@ public class PShapeOBJ extends PShape {
               }
               BufferedReader mreader = parent.createReader(fn);
               if (mreader != null) {
-                parseMTL(parent, path, mreader, materials, mtlTable);
+                parseMTL(parent, fn, path, mreader, materials, mtlTable);
                 mreader.close();
               }
             }
@@ -318,7 +317,7 @@ public class PShapeOBJ extends PShape {
   }
 
 
-  static protected void parseMTL(PApplet parent, String path,
+  static protected void parseMTL(PApplet parent, String mtlfn, String path,
                                  BufferedReader reader,
                                  ArrayList<OBJMaterial> materials,
                                  Map<String, Integer> materialsHash) {
@@ -347,7 +346,17 @@ public class PShapeOBJ extends PShape {
                 // Relative file name, adding the base path.
                 texname = path + File.separator + texname;
               }
-              currentMtl.kdMap = parent.loadImage(texname);
+
+              File file = new File(parent.dataPath(texname));
+              if (file.exists()) {
+                currentMtl.kdMap = parent.loadImage(texname);
+              } else {
+                System.err.println("The texture map \"" + texname + "\" " +
+                  "in the materials definition file \"" + mtlfn + "\" " +
+                  "is missing or inaccessible, make sure " +
+                  "the URL is valid or that the file has been " +
+                  "added to your sketch and is readable.");
+              }
             } else if (parts[0].equals("Ka") && parts.length > 3) {
               // The ambient color of the material
               currentMtl.ka.x = Float.valueOf(parts[1]).floatValue();
