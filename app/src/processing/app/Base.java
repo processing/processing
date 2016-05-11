@@ -397,13 +397,18 @@ public class Base {
             contribModes.add(new ModeContribution(this, folder, null));
           } catch (NoSuchMethodError nsme) {
             System.err.println(folder.getName() + " is not compatible with this version of Processing");
+            if (DEBUG) nsme.printStackTrace();
           } catch (NoClassDefFoundError ncdfe) {
             System.err.println(folder.getName() + " is not compatible with this version of Processing");
+            if (DEBUG) ncdfe.printStackTrace();
           } catch (InvocationTargetException ite) {
             System.err.println(folder.getName() + " could not be loaded and may not compatible with this version of Processing");
+            if (DEBUG) ite.printStackTrace();
           } catch (IgnorableException ig) {
             Messages.log(ig.getMessage());
+            if (DEBUG) ig.printStackTrace();
           } catch (Throwable e) {
+            System.err.println("Could not load Mode from " + folder);
             e.printStackTrace();
           }
         } else {

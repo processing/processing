@@ -137,11 +137,11 @@ public class ModeContribution extends LocalContribution {
     return loader.equals(other.loader) && mode.equals(other.getMode());
   }
 
-  public String initLoader(Base base, String className) throws Exception {
 
+  public String initLoader(Base base, String className) throws Exception {
     File modeDirectory = new File(folder, getTypeName());
     if (modeDirectory.exists()) {
-      Messages.log("checking mode folder regarding " + className);
+      Messages.log("checking mode folder regarding class name " + className);
       // If no class name specified, search the main <modename>.jar for the
       // full name package and mode name.
       if (className == null) {
@@ -170,7 +170,7 @@ public class ModeContribution extends LocalContribution {
           installedModes.put(m.getClass().getName(), m);
         }
 
-        for(String modeImport: imports){
+        for (String modeImport: imports) {
           if (installedModes.containsKey(modeImport)) {
             Messages.log("Found mode dependency " + modeImport);
             File modeFolder = installedModes.get(modeImport).getFolder();
@@ -182,8 +182,9 @@ public class ModeContribution extends LocalContribution {
               }
             }
           } else {
-            throw new IgnorableException("Dependency mode "+ modeImport + " could not be"
-              + " found. Can't load " + className);
+            throw new IgnorableException("Can't load " + className +
+                                         " because the import " + modeImport +
+                                         " could not be found. ");
           }
         }
       }
