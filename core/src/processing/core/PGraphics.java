@@ -32,6 +32,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.HashMap;
@@ -8290,7 +8291,7 @@ public class PGraphics extends PImage implements PConstants {
     if (target == null) return false;
     int count = PApplet.min(pixels.length, target.pixels.length);
     System.arraycopy(pixels, 0, target.pixels, 0, count);
-    asyncImageSaver.saveTargetAsync(this, target, parent.sketchPath(filename));
+    asyncImageSaver.saveTargetAsync(this, target, parent.sketchFile(filename));
 
     return true;
   }
@@ -8305,7 +8306,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   protected void awaitAsyncSaveCompletion(String filename) {
     if (asyncImageSaver != null) {
-      asyncImageSaver.awaitAsyncSaveCompletion(parent.sketchPath(filename));
+      asyncImageSaver.awaitAsyncSaveCompletion(parent.sketchFile(filename));
     }
   }
 
@@ -8322,7 +8323,7 @@ public class PGraphics extends PImage implements PConstants {
 
     int targetsCreated = 0;
 
-    Map<String, Future<?>> runningTasks = new HashMap<>();
+    Map<File, Future<?>> runningTasks = new HashMap<>();
     final Object runningTasksLock = new Object();
 
 
@@ -8384,7 +8385,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
     public void saveTargetAsync(final PGraphics renderer, final PImage target, // ignore
-                                final String absFilename) {
+                                final File file) {
       target.parent = renderer.parent;
 
       // if running every frame, smooth the framerate
@@ -8405,7 +8406,7 @@ public class PGraphics extends PImage implements PConstants {
       lastFrameCount = target.parent.frameCount;
       lastTime = System.nanoTime();
 
-      awaitAsyncSaveCompletion(absFilename);
+      awaitAsyncSaveCompletion(file);
 
       // Explicit lock, because submitting a task and putting it into map
       // has to be atomic (and happen before task tries to remove itself)
@@ -8415,7 +8416,7 @@ public class PGraphics extends PImage implements PConstants {
             try {
               long startTime = System.nanoTime();
               renderer.processImageBeforeAsyncSave(target);
-              target.save(absFilename);
+              target.save(file.getAbsolutePath());
               long saveNanos = System.nanoTime() - startTime;
               synchronized (AsyncImageSaver.this) {
                 if (avgNanos == 0) {
@@ -8430,11 +8431,11 @@ public class PGraphics extends PImage implements PConstants {
             } finally {
               targetPool.offer(target);
               synchronized (runningTasksLock) {
-                runningTasks.remove(absFilename);
+                runningTasks.remove(file);
               }
             }
           });
-          runningTasks.put(absFilename, task);
+          runningTasks.put(file, task);
         } catch (RejectedExecutionException e) {
           // the executor service was probably shut down, no more saving for us
         }
@@ -8442,10 +8443,10 @@ public class PGraphics extends PImage implements PConstants {
     }
 
 
-    public void awaitAsyncSaveCompletion(final String absFilename) { // ignore
+    public void awaitAsyncSaveCompletion(final File file) { // ignore
       Future<?> taskWithSameFilename;
       synchronized (runningTasksLock) {
-        taskWithSameFilename = runningTasks.get(absFilename);
+        taskWithSameFilename = runningTasks.get(file);
       }
 
       if (taskWithSameFilename != null) {

@@ -26,6 +26,7 @@ package processing.opengl;
 
 import processing.core.*;
 
+import java.io.File;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.net.URL;
@@ -730,7 +731,7 @@ public class PGraphicsOpenGL extends PGraphics {
       updatePixelSize();
 
       // get the whole async package
-      asyncPixelReader.readAndSaveAsync(parent.sketchPath(filename));
+      asyncPixelReader.readAndSaveAsync(parent.sketchFile(filename));
 
       if (needEndDraw) endDraw();
     } else {
@@ -743,7 +744,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (target == null) return false;
       int count = PApplet.min(pixels.length, target.pixels.length);
       System.arraycopy(pixels, 0, target.pixels, 0, count);
-      asyncImageSaver.saveTargetAsync(this, target, parent.sketchPath(filename));
+      asyncImageSaver.saveTargetAsync(this, target, parent.sketchFile(filename));
     }
 
     return true;
@@ -5608,9 +5609,9 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void awaitAsyncSaveCompletion(String filename) {
     if (asyncPixelReader != null) {
       ongoingPixelTransfersIterable.addAll(ongoingPixelTransfers);
-      String absFilename = parent.sketchPath(filename);
+      File file = parent.sketchFile(filename);
       for (AsyncPixelReader pixelReader : ongoingPixelTransfersIterable) {
-        pixelReader.awaitTransferCompletion(absFilename);
+        pixelReader.awaitTransferCompletion(file);
       }
       ongoingPixelTransfersIterable.clear();
     }
@@ -5629,7 +5630,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     int[] pbos;
     long[] fences;
-    String[] filenames;
+    File[] files;
     int[] widths;
     int[] heights;
 
@@ -5649,7 +5650,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (supportsAsyncTransfers) {
         pbos = new int[BUFFER_COUNT];
         fences = new long[BUFFER_COUNT];
-        filenames = new String[BUFFER_COUNT];
+        files = new File[BUFFER_COUNT];
         widths = new int[BUFFER_COUNT];
         heights = new int[BUFFER_COUNT];
 
@@ -5679,7 +5680,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         pbos = null;
       }
-      filenames = null;
+      files = null;
       widths = null;
       heights = null;
       size = 0;
@@ -5690,7 +5691,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
 
-    public void readAndSaveAsync(final String absFilename) {
+    public void readAndSaveAsync(final File file) {
       if (size > 0) {
         boolean shouldRead = (size == BUFFER_COUNT);
         if (!shouldRead) shouldRead = isLastTransferComplete();
@@ -5698,7 +5699,7 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         ongoingPixelTransfers.add(this);
       }
-      beginTransfer(absFilename);
+      beginTransfer(file);
       calledThisFrame = true;
     }
 
@@ -5756,14 +5757,14 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
 
-    protected void awaitTransferCompletion(String absFilename) {
+    protected void awaitTransferCompletion(File file) {
       if (size <= 0) return;
 
       int i = tail; // tail -> head, wraps around (we have circular queue)
       int j = 0; // 0 -> size, simple counter
       int lastIndex = 0;
       do {
-        if (absFilename.equals(filenames[i])) {
+        if (file.equals(files[i])) {
           lastIndex = j; // no 'break' here, we need last index for this filename
         }
         i = (i + 1) % BUFFER_COUNT;
@@ -5787,7 +5788,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
 
-    public void beginTransfer(String filename) {
+    public void beginTransfer(File file) {
       // check the size of the buffer
       if (widths[head] != pixelWidth || heights[head] != pixelHeight) {
         if (widths[head] * heights[head] != pixelWidth * pixelHeight) {
@@ -5806,7 +5807,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.bindBuffer(PGL.PIXEL_PACK_BUFFER, 0);
 
       fences[head] = pgl.fenceSync(PGL.SYNC_GPU_COMMANDS_COMPLETE, 0);
-      filenames[head] = filename;
+      files[head] = file;
 
       head = (head + 1) % BUFFER_COUNT;
       size++;
@@ -5828,7 +5829,7 @@ public class PGraphicsOpenGL extends PGraphics {
         readBuffer.asIntBuffer().get(target.pixels);
         pgl.unmapBuffer(PGL.PIXEL_PACK_BUFFER);
         asyncImageSaver.saveTargetAsync(PGraphicsOpenGL.this, target,
-                                        filenames[tail]);
+                                        files[tail]);
       }
 
       pgl.bindBuffer(PGL.PIXEL_PACK_BUFFER, 0);
