@@ -38,8 +38,10 @@ import java.util.HashMap;
 import java.util.WeakHashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -8288,12 +8290,24 @@ public class PGraphics extends PImage implements PConstants {
     if (target == null) return false;
     int count = PApplet.min(pixels.length, target.pixels.length);
     System.arraycopy(pixels, 0, target.pixels, 0, count);
-    asyncImageSaver.saveTargetAsync(this, target, filename);
+    asyncImageSaver.saveTargetAsync(this, target, parent.sketchPath(filename));
 
     return true;
   }
 
   protected void processImageBeforeAsyncSave(PImage image) { }
+
+
+  /**
+   * If there is running async save task for this file, blocks until it completes.
+   * Has to be called on main thread because OpenGL overrides this and calls GL.
+   * @param filename
+   */
+  protected void awaitAsyncSaveCompletion(String filename) {
+    if (asyncImageSaver != null) {
+      asyncImageSaver.awaitAsyncSaveCompletion(parent.sketchPath(filename));
+    }
+  }
 
 
   protected static AsyncImageSaver asyncImageSaver;
@@ -8307,6 +8321,9 @@ public class PGraphics extends PImage implements PConstants {
     ExecutorService saveExecutor = Executors.newFixedThreadPool(TARGET_COUNT);
 
     int targetsCreated = 0;
+
+    Map<String, Future<?>> runningTasks = new HashMap<>();
+    final Object runningTasksLock = new Object();
 
 
     static final int TIME_AVG_FACTOR = 32;
@@ -8367,7 +8384,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
     public void saveTargetAsync(final PGraphics renderer, final PImage target, // ignore
-                                final String filename) {
+                                final String absFilename) {
       target.parent = renderer.parent;
 
       // if running every frame, smooth the framerate
@@ -8388,14 +8405,17 @@ public class PGraphics extends PImage implements PConstants {
       lastFrameCount = target.parent.frameCount;
       lastTime = System.nanoTime();
 
-      try {
-        saveExecutor.submit(new Runnable() {
-          @Override
-          public void run() { // ignore
+      awaitAsyncSaveCompletion(absFilename);
+
+      // Explicit lock, because submitting a task and putting it into map
+      // has to be atomic (and happen before task tries to remove itself)
+      synchronized (runningTasksLock) {
+        try {
+          Future<?> task = saveExecutor.submit(() -> {
             try {
               long startTime = System.nanoTime();
               renderer.processImageBeforeAsyncSave(target);
-              target.save(filename);
+              target.save(absFilename);
               long saveNanos = System.nanoTime() - startTime;
               synchronized (AsyncImageSaver.this) {
                 if (avgNanos == 0) {
@@ -8409,13 +8429,32 @@ public class PGraphics extends PImage implements PConstants {
               }
             } finally {
               targetPool.offer(target);
+              synchronized (runningTasksLock) {
+                runningTasks.remove(absFilename);
+              }
             }
-          }
-        });
-      } catch (RejectedExecutionException e) {
-        // the executor service was probably shut down, no more saving for us
+          });
+          runningTasks.put(absFilename, task);
+        } catch (RejectedExecutionException e) {
+          // the executor service was probably shut down, no more saving for us
+        }
       }
     }
+
+
+    public void awaitAsyncSaveCompletion(final String absFilename) { // ignore
+      Future<?> taskWithSameFilename;
+      synchronized (runningTasksLock) {
+        taskWithSameFilename = runningTasks.get(absFilename);
+      }
+
+      if (taskWithSameFilename != null) {
+        try {
+          taskWithSameFilename.get();
+        } catch (InterruptedException | ExecutionException e) { }
+      }
+    }
+
   }
 
 }

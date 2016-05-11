@@ -730,7 +730,7 @@ public class PGraphicsOpenGL extends PGraphics {
       updatePixelSize();
 
       // get the whole async package
-      asyncPixelReader.readAndSaveAsync(filename);
+      asyncPixelReader.readAndSaveAsync(parent.sketchPath(filename));
 
       if (needEndDraw) endDraw();
     } else {
@@ -743,7 +743,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (target == null) return false;
       int count = PApplet.min(pixels.length, target.pixels.length);
       System.arraycopy(pixels, 0, target.pixels, 0, count);
-      asyncImageSaver.saveTargetAsync(this, target, filename);
+      asyncImageSaver.saveTargetAsync(this, target, parent.sketchPath(filename));
     }
 
     return true;
@@ -5584,8 +5584,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected static void completeFinishedPixelTransfers() {
     ongoingPixelTransfersIterable.addAll(ongoingPixelTransfers);
-    for (PGraphicsOpenGL.AsyncPixelReader pixelReader :
-        ongoingPixelTransfersIterable) {
+    for (AsyncPixelReader pixelReader : ongoingPixelTransfersIterable) {
       // if the getter was not called this frame,
       // tell it to check for completed transfers now
       if (!pixelReader.calledThisFrame) {
@@ -5598,11 +5597,24 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected static void completeAllPixelTransfers() {
     ongoingPixelTransfersIterable.addAll(ongoingPixelTransfers);
-    for (PGraphicsOpenGL.AsyncPixelReader pixelReader :
-        ongoingPixelTransfersIterable) {
+    for (AsyncPixelReader pixelReader : ongoingPixelTransfersIterable) {
       pixelReader.completeAllTransfers();
     }
     ongoingPixelTransfersIterable.clear();
+  }
+
+
+  @Override
+  protected void awaitAsyncSaveCompletion(String filename) {
+    if (asyncPixelReader != null) {
+      ongoingPixelTransfersIterable.addAll(ongoingPixelTransfers);
+      String absFilename = parent.sketchPath(filename);
+      for (AsyncPixelReader pixelReader : ongoingPixelTransfersIterable) {
+        pixelReader.awaitTransferCompletion(absFilename);
+      }
+      ongoingPixelTransfersIterable.clear();
+    }
+    super.awaitAsyncSaveCompletion(filename);
   }
 
 
@@ -5678,7 +5690,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
 
-    public void readAndSaveAsync(final String filename) {
+    public void readAndSaveAsync(final String absFilename) {
       if (size > 0) {
         boolean shouldRead = (size == BUFFER_COUNT);
         if (!shouldRead) shouldRead = isLastTransferComplete();
@@ -5686,7 +5698,7 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         ongoingPixelTransfers.add(this);
       }
-      beginTransfer(filename);
+      beginTransfer(absFilename);
       calledThisFrame = true;
     }
 
@@ -5715,6 +5727,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected void completeAllTransfers() {
       if (size <= 0) return;
+      completeTransfers(size);
+    }
+
+
+    protected void completeTransfers(int count) {
+      if (size <= 0) return;
+      if (count <= 0) return;
 
       boolean needEndDraw = false;
       if (!drawing) {
@@ -5722,15 +5741,39 @@ public class PGraphicsOpenGL extends PGraphics {
         needEndDraw = true;
       }
 
-      while (size > 0) {
+      while (size > 0 && count > 0) {
         endTransfer();
+        count--;
       }
 
       // make sure to always unregister if there are no ongoing transfers
       // so that PGraphics can be GC'd if needed
-      ongoingPixelTransfers.remove(this);
+      if (size <= 0) {
+        ongoingPixelTransfers.remove(this);
+      }
 
       if (needEndDraw) endDraw();
+    }
+
+
+    protected void awaitTransferCompletion(String absFilename) {
+      if (size <= 0) return;
+
+      int i = tail; // tail -> head, wraps around (we have circular queue)
+      int j = 0; // 0 -> size, simple counter
+      int lastIndex = 0;
+      do {
+        if (absFilename.equals(filenames[i])) {
+          lastIndex = j; // no 'break' here, we need last index for this filename
+        }
+        i = (i + 1) % BUFFER_COUNT;
+        j++;
+      } while (i != head);
+
+      if (lastIndex <= 0) return;
+
+      // Saving this file is in progress, block until transfers complete
+      completeTransfers(lastIndex + 1);
     }
 
 

@@ -5243,6 +5243,13 @@ public class PApplet implements PConstants {
    * @param extension type of image to load, for example "png", "gif", "jpg"
    */
   public PImage loadImage(String filename, String extension) { //, Object params) {
+
+    // await... has to run on the main thread, because P2D and P3D call GL functions
+    // If this runs on background, requestImage() already called await... on the main thread
+    if (!Thread.currentThread().getName().startsWith(ASYNC_IMAGE_LOADER_THREAD_PREFIX)) {
+      g.awaitAsyncSaveCompletion(filename);
+    }
+
     if (extension == null) {
       String lower = filename.toLowerCase();
       int dot = filename.lastIndexOf('.');
@@ -5394,6 +5401,9 @@ public class PApplet implements PConstants {
    * @see PApplet#loadImage(String, String)
    */
   public PImage requestImage(String filename, String extension) {
+    // Make sure saving to this file completes before trying to load it
+    // Has to be called on main thread, because P2D and P3D need GL functions
+    g.awaitAsyncSaveCompletion(filename);
     PImage vessel = createImage(0, 0, ARGB);
     AsyncImageLoader ail =
       new AsyncImageLoader(filename, extension, vessel);
@@ -5426,12 +5436,17 @@ public class PApplet implements PConstants {
   public int requestImageMax = 4;
   volatile int requestImageCount;
 
+  private static final String ASYNC_IMAGE_LOADER_THREAD_PREFIX = "ASYNC_IMAGE_LOADER";
+
   class AsyncImageLoader extends Thread {
     String filename;
     String extension;
     PImage vessel;
 
     public AsyncImageLoader(String filename, String extension, PImage vessel) {
+      // Give these threads distinct name so we can check whether we are loading
+      // on the main/background thread; for now they are all named the same
+      super(ASYNC_IMAGE_LOADER_THREAD_PREFIX);
       this.filename = filename;
       this.extension = extension;
       this.vessel = vessel;
