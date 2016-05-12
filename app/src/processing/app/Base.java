@@ -887,12 +887,13 @@ public class Base {
    * now change the mode.
    */
   public void changeMode(Mode mode) {
-    if (activeEditor.getMode() != mode) {
+    Mode oldMode = activeEditor.getMode();
+    if (oldMode != mode) {
       Sketch sketch = activeEditor.getSketch();
       nextMode = mode;
 
       if (sketch.isUntitled()) {
-        // If no changes have been made, just close and start fresh.
+        // The current sketch is empty, just close and start fresh.
         // (Otherwise the editor would lose its 'untitled' status.)
         handleClose(activeEditor, true);
         handleNew();
@@ -901,7 +902,7 @@ public class Base {
         // If the current editor contains file extensions that the new mode can handle, then
         // write a sketch.properties file with the new mode specified, and reopen.
         boolean newModeCanHandleCurrentSource = true;
-        for (final SketchCode code: sketch.getCode()) {
+        for (final SketchCode code : sketch.getCode()) {
           if (!mode.validExtension(code.getExtension())) {
             newModeCanHandleCurrentSource = false;
             break;
@@ -911,7 +912,13 @@ public class Base {
           final File props = new File(sketch.getCodeFolder(), "sketch.properties");
           saveModeSettings(props, nextMode);
           handleClose(activeEditor, true);
-          handleOpen(sketch.getMainFilePath());
+          Editor editor = handleOpen(sketch.getMainFilePath());
+          if (editor == null) {
+            // the Mode change failed (probably code that's out of date)
+            // re-open the sketch using the mode we were in before
+            saveModeSettings(props, oldMode);
+            handleOpen(sketch.getMainFilePath());
+          }
         }
       }
     }
@@ -1274,6 +1281,31 @@ public class Base {
                              "Try updating the Mode or contact its author for a new version.", t, false);
         }
       }
+      if (editors.isEmpty()) {
+        Mode defaultMode = getDefaultMode();
+        if (nextMode == defaultMode) {
+          // unreachable? hopefully?
+          Messages.showError("Editor Problems",
+                             "An error occurred while trying to change modes.\n" +
+                             "We'll have to quit for now because it's an\n" +
+                             "unfortunate bit of indigestion with the default Mode.",
+                             null);
+        } else {
+          // Don't leave the user hanging or the PDE locked up
+          // https://github.com/processing/processing/issues/4467
+          if (untitled) {
+            nextMode = defaultMode;
+            handleNew();
+            return null;  // ignored by any caller
+
+          } else {
+            // This null response will be kicked back to changeMode(),
+            // signaling it to re-open the sketch in the default Mode.
+            return null;
+          }
+        }
+      }
+
       /*
         if (editors.isEmpty()) {
           // if the bad mode is the default mode, don't go into an infinite loop

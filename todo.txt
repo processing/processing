@@ -2,6 +2,8 @@
 X Prevent InvocationTargetException when running processing-java
 X   https://github.com/processing/processing/pull/4453
 X   https://github.com/processing/processing/issues/4452
+X Prevent bad Mode from taking down the environment
+X   https://github.com/processing/processing/issues/4467
 
 contribs
 X Undo is a little "jerky" in insert mode
@@ -27,6 +29,10 @@ X   https://github.com/processing/processing/pull/4457
 X Hex values throwing errors in 3.1
 X   https://github.com/processing/processing/issues/4458
 X   https://github.com/processing/processing/pull/4460
+X InvocationTargetException when running processing-java
+X   https://github.com/processing/processing/issues/4452
+X   https://github.com/processing/processing/pull/4453
+X   
 
 gohai
 X Switch back to JRE 8u77 on ARM to fix GL video library performance
@@ -37,6 +43,10 @@ X complex text input issues (may be fixed with PR)
 X   https://github.com/processing/processing/issues/3860
 X   https://github.com/processing/processing/issues/3475
 o   fixed in 3.0.2
+X contrib: Allow Movie Maker to cope with bad files
+X   https://github.com/processing/processing/issues/2727
+X   https://github.com/processing/processing/pull/3635
+o   fixed prior to 3.0?
 
 
 _ possible infinite loop on modified externally
