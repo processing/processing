@@ -331,6 +331,7 @@ public class Table {
     boolean header = false;
     String extension = null;
     boolean binary = false;
+    String encoding = "UTF-8";
 
     String worksheet = null;
     final String sheetParam = "worksheet=";
@@ -357,6 +358,8 @@ public class Table {
           worksheet = opt.substring(sheetParam.length());
         } else if (opt.startsWith("dictionary=")) {
           // ignore option, this is only handled by PApplet
+        } else if (opt.startsWith("encoding=")) {
+          encoding = opt.substring(9);
         } else {
           throw new IllegalArgumentException("'" + opt + "' is not a valid option for loading a Table");
         }
@@ -374,7 +377,8 @@ public class Table {
       odsParse(input, worksheet, header);
 
     } else {
-      BufferedReader reader = PApplet.createReader(input);
+      InputStreamReader isr = new InputStreamReader(input, encoding);
+      BufferedReader reader = new BufferedReader(isr);
       if (awfulCSV) {
         parseAwfulCSV(reader, header);
       } else if ("tsv".equals(extension)) {

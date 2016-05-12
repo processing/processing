@@ -1,4 +1,5 @@
 0250 (3.1.1)
+X implement support for encoding= option in loadTable()
 
 jakub
 X Block loadImage and requestImage while images still being saved
