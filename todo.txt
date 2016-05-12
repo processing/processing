@@ -2,7 +2,8 @@
 X Prevent InvocationTargetException when running processing-java
 X   https://github.com/processing/processing/pull/4453
 X   https://github.com/processing/processing/issues/4452
-X Prevent bad Mode from taking down the environment
+X Out of date Modes will hang Processing 3 on startup or when changing Modes
+X   Prevent bad Mode from taking down the environment
 X   https://github.com/processing/processing/issues/4467
 
 contribs
@@ -22,6 +23,9 @@ X   https://github.com/processing/processing/issues/4250
 X Fix error messages from Javadocs
 X   https://github.com/processing/processing/pull/4191
 X   https://github.com/processing/processing/issues/1492
+X Loader is not visible when opening the Updates tab
+X   https://github.com/processing/processing/issues/4088
+X   https://github.com/processing/processing/pull/4089
 
 jakub
 X Make Comment/Uncomment trigger on numpad slash

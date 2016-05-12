@@ -41,7 +41,7 @@ public class UpdateContributionTab extends ContributionTab {
 
       buildErrorPanel();
 
-      loaderLabel = new JLabel(Toolkit.getLibIcon("icons/loader.gif"));
+      loaderLabel = new JLabel(Toolkit.getLibIcon("manager/loader.gif"));
       loaderLabel.setOpaque(false);
 //      loaderLabel.setBackground(Color.WHITE);
     }
