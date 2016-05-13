@@ -316,6 +316,7 @@ public class JavaMode extends Mode {
   static public volatile boolean defaultAutoSaveEnabled = true;
   static public volatile boolean ccTriggerEnabled = false;
   static public volatile boolean importSuggestEnabled = true;
+  static public volatile boolean inspectModeHotkeyEnabled = true;
   static public int autoSaveInterval = 3; //in minutes
 
 
@@ -337,6 +338,7 @@ public class JavaMode extends Mode {
   static public final String COMPLETION_PREF = "pdex.completion";
   static public final String COMPLETION_TRIGGER_PREF = "pdex.completion.trigger";
   static public final String SUGGEST_IMPORTS_PREF = "pdex.suggest.imports";
+  static public final String INSPECT_MODE_HOTKEY_PREF = "pdex.inspectMode.hotkey";
 
 //  static volatile public boolean enableTweak = false;
 
@@ -361,6 +363,7 @@ public class JavaMode extends Mode {
     defaultAutoSaveEnabled = Preferences.getBoolean(prefDefaultAutoSave);
     ccTriggerEnabled = Preferences.getBoolean(COMPLETION_TRIGGER_PREF);
     importSuggestEnabled = Preferences.getBoolean(SUGGEST_IMPORTS_PREF);
+    inspectModeHotkeyEnabled = Preferences.getBoolean(INSPECT_MODE_HOTKEY_PREF);
     loadSuggestionsMap();
   }
 
@@ -379,6 +382,7 @@ public class JavaMode extends Mode {
     Preferences.setBoolean(prefDefaultAutoSave, defaultAutoSaveEnabled);
     Preferences.setBoolean(COMPLETION_TRIGGER_PREF, ccTriggerEnabled);
     Preferences.setBoolean(SUGGEST_IMPORTS_PREF, importSuggestEnabled);
+    Preferences.setBoolean(INSPECT_MODE_HOTKEY_PREF, inspectModeHotkeyEnabled);
   }
 
   public void loadSuggestionsMap() {
@@ -449,6 +453,8 @@ public class JavaMode extends Mode {
       Preferences.setBoolean(COMPLETION_TRIGGER_PREF, ccTriggerEnabled);
     if (Preferences.get(SUGGEST_IMPORTS_PREF) == null)
       Preferences.setBoolean(SUGGEST_IMPORTS_PREF, importSuggestEnabled);
+    if (Preferences.get(INSPECT_MODE_HOTKEY_PREF) == null)
+      Preferences.setBoolean(INSPECT_MODE_HOTKEY_PREF, inspectModeHotkeyEnabled);
   }
 
 
