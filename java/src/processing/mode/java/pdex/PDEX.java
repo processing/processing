@@ -214,7 +214,8 @@ public class PDEX {
         public void mouseReleased(MouseEvent e) {
           boolean releasingMouse1 = e.getButton() == MouseEvent.BUTTON1;
           boolean releasingMouse2 = e.getButton() == MouseEvent.BUTTON2;
-          if (inspectModeEnabled && isMouse1Down && releasingMouse1) {
+          if (JavaMode.inspectModeHotkeyEnabled && inspectModeEnabled &&
+              isMouse1Down && releasingMouse1) {
             handleInspect(e);
           } else if (!inspectModeEnabled && isMouse2Down && releasingMouse2) {
             handleInspect(e);
