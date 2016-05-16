@@ -1,3 +1,105 @@
+PROCESSING 3.1.1 (REV 0250) - 16 May 2016
+
+Happy Day-after-my-Mother-in-Law's-birthday! (After the last two releases
+happened on holidays, I'm just gonna pushing the festive thing. Hard.)
+
+Most importantly, this release fixes a handful of bug fixes for regressions
+(a smart-sounding word for making dumb mistakes) in the last release, 
+plus a handful of other improvements we picked up along the way.
+
+
+[ the big ones ]
+
++ Fix InvocationTargetException when using the command line
+  https://github.com/processing/processing/issues/4452
+  https://github.com/processing/processing/pull/4453
+
++ Block loadImage() and requestImage() while images still being saved
+  https://github.com/processing/processing/issues/4218
+  https://github.com/processing/processing/pull/4465
+
+
+[ the editor ] 
+
++ Out of date Modes no longer hand Processing 3 on startup, 
+  and will cause less trouble when changing Modes
+  https://github.com/processing/processing/issues/4467
+
++ Undo is a little "jerky" in insert mode
+  https://github.com/processing/processing/issues/4302
+  https://github.com/processing/processing/pull/4310
+
++ "Replace" and "Replace All" do not undo in a single step
+  https://github.com/processing/processing/issues/4303
+  https://github.com/processing/processing/pull/4310
+
++ Comment/uncomment removes indenting
+  https://github.com/processing/processing/issues/4249
+  https://github.com/processing/processing/pull/4313
+
++ Remove poorly implemented "rectangular selection" support from the editor
+  https://github.com/processing/processing/pull/4462
+  https://github.com/processing/processing/pull/4326
+  https://github.com/processing/processing/issues/4250
+
++ Loader is not visible when opening the Updates tab
+  https://github.com/processing/processing/issues/4088
+  https://github.com/processing/processing/pull/4089
+
++ Make Comment/Uncomment trigger on numpad slash
+  https://github.com/processing/processing/pull/4457
+
++ Hex values throwing errors in 3.1
+  https://github.com/processing/processing/issues/4458
+  https://github.com/processing/processing/pull/4460
+
++ Fix up cmd-click/ctrl-click behavior, add preference to disable it
+  https://github.com/processing/processing/issues/4466
+  https://github.com/processing/processing/pull/4472
+
++ Make undo/redo mark all affected tabs as modified
+  https://github.com/processing/processing/pull/4479
+
++ Switch back to JRE 8u77 on ARM to fix GL video library performance
+  https://github.com/processing/processing/pull/4454
+
+
+[ the core ] 
+
++ Implement support for encoding= option in loadTable()
+
++ PShapeOBJ error String for missing MTL texture file
+  https://github.com/processing/processing/issues/3990
+  https://github.com/processing/processing/commit/49a4c815557214fc1bf92e381ffaa398f262361a
+
++ Shape (OBJ) import texture data is 0.0
+  https://github.com/processing/processing/issues/3156
+  https://github.com/processing/processing/commit/9f1d2988dc80ca7d5ee861b944cb59020ff771c5
+
+
+[ you'll never notice ] 
+
++ Fix 'ant clean' so that it actually... cleans.
+
++ Fix error messages from Javadocs
+  https://github.com/processing/processing/pull/4191
+  https://github.com/processing/processing/issues/1492
+
+
+[ fixed but forgot to tell you ] 
+
++ Complex text input issues (fixed in 3.0.2)
+  https://github.com/processing/processing/issues/3860
+  https://github.com/processing/processing/issues/3475
+
++ Allow Movie Maker to cope with bad files (fixed prior to 3.0?)
+  https://github.com/processing/processing/issues/2727
+  https://github.com/processing/processing/pull/3635
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.1 (REV 0249) - 8 May 2016
 
 Happy Mother's Day! I celebrated by kicking off a Processing release 

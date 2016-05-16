@@ -33,9 +33,6 @@ X   https://github.com/processing/processing/pull/4457
 X Hex values throwing errors in 3.1
 X   https://github.com/processing/processing/issues/4458
 X   https://github.com/processing/processing/pull/4460
-X InvocationTargetException when running processing-java
-X   https://github.com/processing/processing/issues/4452
-X   https://github.com/processing/processing/pull/4453
 X Fix up cmd-click/ctrl-click behavior, add preference to disable it
 X   https://github.com/processing/processing/issues/4466
 X   https://github.com/processing/processing/pull/4472

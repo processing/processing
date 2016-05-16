@@ -1,7 +1,5 @@
 0250 (3.1.1)
 X implement support for encoding= option in loadTable()
-_ Can't render PGraphics object using image() within a PDF
-_   https://github.com/processing/processing/issues/4473
 
 jakub
 X Block loadImage and requestImage while images still being saved
@@ -16,6 +14,9 @@ X Shape (OBJ) import texture data is 0.0
 X   https://github.com/processing/processing/issues/3156
 X   https://github.com/processing/processing/commit/9f1d2988dc80ca7d5ee861b944cb59020ff771c5
 
+
+_ Can't render PGraphics object using image() within a PDF
+_   https://github.com/processing/processing/issues/4473
 
 _ JSONObject get() method is private
 _   https://github.com/processing/processing/issues/4334
