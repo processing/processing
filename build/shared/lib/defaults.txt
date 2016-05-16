@@ -1,3 +1,4 @@
+
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -357,6 +358,8 @@ pdex.errorCheckEnabled=true
 pdex.warningsEnabled=true
 pdex.writeErrorLogs=false
 
+# Set to false to disable ctrl/cmd-click jump to definition
+pdex.inspectMode.hotkey=true
 # Enable auto-completion when hitting ctrl-space
 pdex.completion = false
 # Trigger happy version of completion that fires more often
