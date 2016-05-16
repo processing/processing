@@ -471,7 +471,9 @@
 
   <target name="macosx-clean" depends="subprojects-clean" description="Clean Mac OS X build">
     <delete dir="macosx/work" />
-    <delete file="macosx/processing-*.dmg" />
+    <delete>
+      <fileset dir="macosx" includes="processing-*zip" />
+    </delete>
   </target>
   
   <target name="macosx-check-os" unless="macosx">
@@ -736,8 +738,8 @@
   <!-- - - - - - - - -->
   
   <target name="linux-clean" depends="subprojects-clean" description="Clean linux version">
+    <delete dir="linux/work" />
     <delete>
-      <fileset dir="linux" includes="work" />
       <fileset dir="linux" includes="processing-*tgz" />
     </delete>
   </target>
@@ -1010,8 +1012,8 @@
   
   <target name="windows-clean" depends="subprojects-clean"
           description="Clean windows version">
+    <delete dir="windows/work" />
     <delete>
-      <fileset dir="windows" includes="work" />
       <fileset dir="windows" includes="processing-*zip" />
     </delete>
   </target>
