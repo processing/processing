@@ -1,10 +1,9 @@
 0250 (3.1.1)
-X Prevent InvocationTargetException when running processing-java
-X   https://github.com/processing/processing/pull/4453
-X   https://github.com/processing/processing/issues/4452
 X Out of date Modes will hang Processing 3 on startup or when changing Modes
 X   Prevent bad Mode from taking down the environment
 X   https://github.com/processing/processing/issues/4467
+
+_ remove work folder on linux/windows with ant clean
 
 contribs
 X Undo is a little "jerky" in insert mode
@@ -36,9 +35,16 @@ X   https://github.com/processing/processing/pull/4460
 X InvocationTargetException when running processing-java
 X   https://github.com/processing/processing/issues/4452
 X   https://github.com/processing/processing/pull/4453
-X   
+X Fix up cmd-click/ctrl-click behavior, add preference to disable it
+X   https://github.com/processing/processing/issues/4466
+X   https://github.com/processing/processing/pull/4472
+X Make undo/redo mark all affected tabs as modified
+X   https://github.com/processing/processing/pull/4479
 
 gohai
+X Prevent InvocationTargetException when running processing-java
+X   https://github.com/processing/processing/pull/4453
+X   https://github.com/processing/processing/issues/4452
 X Switch back to JRE 8u77 on ARM to fix GL video library performance
 X   https://github.com/processing/processing/pull/4454
 
