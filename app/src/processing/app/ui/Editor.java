@@ -1852,7 +1852,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   void startTimerEvent() {
     endUndoEvent = new TimerTask() {
       public void run() {
-        endTextEditHistory();
+        EventQueue.invokeLater(Editor.this::endTextEditHistory);
       }
     };
     timer.schedule(endUndoEvent, 3000);
