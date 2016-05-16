@@ -1,7 +1,7 @@
 PROCESSING 3.1.1 (REV 0250) - 16 May 2016
 
 Happy Day-after-my-Mother-in-Law's-birthday! (After the last two releases
-happened on holidays, I'm just gonna pushing the festive thing. Hard.)
+happened on holidays, I'm just gonna keep pushing the festive thing. Hard.)
 
 Most importantly, this release fixes a handful of bug fixes for regressions
 (a smart-sounding word for making dumb mistakes) in the last release, 
