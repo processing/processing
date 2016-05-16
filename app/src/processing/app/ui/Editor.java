@@ -1365,6 +1365,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
       redoAction.updateRedoState();
       if (sketch != null) {
         sketch.setModified(!getText().equals(sketch.getCurrentCode().getSavedProgram()));
+        for (SketchCode sc : sketch.getCode()) {
+          try {
+            sc.setModified(!sc.getDocumentText().equals(sc.getSavedProgram()));
+          } catch (BadLocationException ignore) { }
+        }
+        repaintHeader();
       }
     }
 
@@ -1421,6 +1427,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
       undoAction.updateUndoState();
       if (sketch != null) {
         sketch.setModified(!getText().equals(sketch.getCurrentCode().getSavedProgram()));
+        for (SketchCode sc : sketch.getCode()) {
+          try {
+            sc.setModified(!sc.getDocumentText().equals(sc.getSavedProgram()));
+          } catch (BadLocationException ignore) { }
+        }
+        repaintHeader();
       }
     }
 
@@ -1840,7 +1852,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   void startTimerEvent() {
     endUndoEvent = new TimerTask() {
       public void run() {
-        endTextEditHistory();
+        EventQueue.invokeLater(Editor.this::endTextEditHistory);
       }
     };
     timer.schedule(endUndoEvent, 3000);
