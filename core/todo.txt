@@ -1,18 +1,4 @@
-0250 (3.1.1)
-X implement support for encoding= option in loadTable()
-
-jakub
-X Block loadImage and requestImage while images still being saved
-X   https://github.com/processing/processing/issues/4218
-X   https://github.com/processing/processing/pull/4465
-
-andres
-X PShapeOBJ error String for missing MTL texture file
-X   https://github.com/processing/processing/issues/3990
-X   https://github.com/processing/processing/commit/49a4c815557214fc1bf92e381ffaa398f262361a
-X Shape (OBJ) import texture data is 0.0
-X   https://github.com/processing/processing/issues/3156
-X   https://github.com/processing/processing/commit/9f1d2988dc80ca7d5ee861b944cb59020ff771c5
+0241 (3.1.2)
 
 
 _ Can't render PGraphics object using image() within a PDF
