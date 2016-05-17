@@ -1,5 +1,9 @@
 0251 (3.1.2)
 
+gohai
+X IO: Fix drawing for SPIAnalogDigital examples
+X   https://github.com/processing/processing/pull/4480
+
 
 _ possible infinite loop on modified externally
 _   https://github.com/processing/processing/issues/3965
