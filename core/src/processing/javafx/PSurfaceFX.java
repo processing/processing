@@ -125,6 +125,15 @@ public class PSurfaceFX implements PSurface {
           sketch.setSize(newWidth.intValue(), sketch.height);
 //          draw();
           fx.setSize(sketch.width, sketch.height);
+          // On Linux, there are three resize events to get the right size.
+          // 100 → 1, 1 → 100, 100 → correct value; not tried other platforms.
+          // There isn't an event to say the window's maximized.
+          // So I'm just waiting until the sketch is at least 90% screen width.
+          if (sketch.sketchMaximize()
+              && stage != null && stage.isMaximized()
+              && newWidth.floatValue() > sketch.displayWidth * 0.9f) {
+            sketch.doneMaximizing();
+          }
         }
       });
       heightProperty().addListener(new ChangeListener<Number>() {
@@ -304,6 +313,8 @@ public class PSurfaceFX implements PSurface {
         stage.setY(screenRect.getMinY());
         stage.setWidth(screenRect.getWidth());
         stage.setHeight(screenRect.getHeight());
+      } else if (sketch.sketchMaximize()) {
+        stage.setMaximized(true);
       }
 
       Canvas canvas = surface.canvas;

@@ -381,9 +381,13 @@ public class PSurfaceJOGL implements PSurface {
                                            ScalableSurface.IDENTITY_PIXELSCALE };
     }
     window.setSurfaceScale(reqSurfacePixelScale);
-    window.setSize(sketchWidth, sketchHeight);
+    if (sketch.sketchMaximize()) {
+      window.setMaximized(true, true);
+    } else {
+      window.setSize(sketchWidth, sketchHeight);
+      setSize(sketchWidth, sketchHeight);
+    }
     window.setResizable(false);
-    setSize(sketchWidth, sketchHeight);
     sketchX = displayDevice.getViewportInWindowUnits().getX();
     sketchY = displayDevice.getViewportInWindowUnits().getY();
     if (fullScreen) {
@@ -908,6 +912,9 @@ public class PSurfaceJOGL implements PSurface {
 //                         nativeSurfacePixelScale[0]+"x"+nativeSurfacePixelScale[1]+" (native)");
 
 
+      if (window.isMaximizedHorz() && window.isMaximizedVert()) {
+        sketch.doneMaximizing();
+      }
 
 
 //      System.out.println("reshape: " + w + ", " + h);

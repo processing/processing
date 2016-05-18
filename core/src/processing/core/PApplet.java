@@ -59,6 +59,7 @@ import java.lang.reflect.*;
 import java.net.*;
 import java.text.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.regex.*;
 import java.util.zip.*;
 
@@ -897,6 +898,7 @@ public class PApplet implements PConstants {
   int smooth = 1;  // default smoothing (whatever that means for the renderer)
 
   boolean fullScreen;
+  boolean maximize;  // True if sketch should be created maximized.
   int display = -1;  // use default
   GraphicsDevice[] displayDevices;
   // Unlike the others above, needs to be public to support
@@ -1063,6 +1065,15 @@ public class PApplet implements PConstants {
   final public boolean sketchFullScreen() {
     //return false;
     return fullScreen;
+  }
+
+
+  /**
+   * Returns whether the sketch was/should be created maximized, not whether
+   * it is now.
+   */
+  final public boolean sketchMaximize() {
+    return maximize;
   }
 
 
@@ -1830,6 +1841,7 @@ public class PApplet implements PConstants {
     if (!fullScreen) {
       if (insideSettings("fullScreen")) {
         this.fullScreen = true;
+        this.maximize = false;
       }
     }
   }
@@ -1839,6 +1851,7 @@ public class PApplet implements PConstants {
     if (!fullScreen || display != this.display) {
       if (insideSettings("fullScreen", display)) {
         this.fullScreen = true;
+        this.maximize = false;
         this.display = display;
       }
     }
@@ -1863,6 +1876,7 @@ public class PApplet implements PConstants {
         !renderer.equals(this.renderer)) {
       if (insideSettings("fullScreen", renderer)) {
         this.fullScreen = true;
+        this.maximize = false;
         this.renderer = renderer;
       }
     }
@@ -1879,10 +1893,55 @@ public class PApplet implements PConstants {
         display != this.display) {
       if (insideSettings("fullScreen", renderer, display)) {
         this.fullScreen = true;
+        this.maximize = false;
         this.renderer = renderer;
         this.display = display;
       }
     }
+  }
+
+
+  /**
+   * ( begin auto-generated from maximize.xml )
+   *
+   * Create this sketch maximized.
+   * Description to come...
+   *
+   * ( end auto-generated )
+   * @webref environment
+   * @param renderer the renderer to use, e.g. P2D, P3D, JAVA2D (default)
+   * @see PApplet#settings()
+   * @see PApplet#setup()
+   * @see PApplet#size()
+   */
+  public void maximize(String renderer) {
+    if (!maximize && insideSettings("maximize")) {
+      this.maximize = true;
+      this.fullScreen = false;
+      this.renderer = renderer;
+    }
+  }
+
+
+  /**
+   * @see PApplet#maximize(String)
+   */
+  public void maximize() {
+    if (!maximize && insideSettings("maximize")) {
+      this.maximize = true;
+      this.fullScreen = false;
+    }
+  }
+
+
+  private CountDownLatch maximizeSignal = new CountDownLatch(1);
+
+
+  /**
+   * Called by a PSurface to indicate that the window has maximized.
+   */
+  public void doneMaximizing() {
+    maximizeSignal.countDown();
   }
 
 
@@ -10320,6 +10379,12 @@ public class PApplet implements PConstants {
     }
 
     sketch.showSurface();
+
+    if (sketch.sketchMaximize()) try {
+      if (!sketch.maximizeSignal.await(2500, TimeUnit.MILLISECONDS)) {
+        System.err.format("maximize() failed for %s.%n", sketch.renderer);
+      }
+    } catch (InterruptedException e) {}
     sketch.startSurface();
     /*
     if (sketch.getGraphics().displayable()) {
