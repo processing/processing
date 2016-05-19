@@ -152,6 +152,7 @@ public class PDEX {
 
 
   public void preferencesChanged() {
+    errorChecker.preferencesChanged();
     sketchChanged();
   }
 
@@ -1026,21 +1027,41 @@ public class PDEX {
     private ScheduledExecutorService scheduler;
     private volatile ScheduledFuture<?> scheduledUiUpdate = null;
     private volatile long nextUiUpdate = 0;
+    private volatile boolean enabled = true;
 
     private final Consumer<PreprocessedSketch> errorHandlerListener = this::handleSketchProblems;
 
     private JavaEditor editor;
+    private PreprocessingService pps;
 
 
     public ErrorChecker(JavaEditor editor, PreprocessingService pps) {
       this.editor = editor;
+      this.pps = pps;
       scheduler = Executors.newSingleThreadScheduledExecutor();
-      pps.registerListener(errorHandlerListener);
+      this.enabled = JavaMode.errorCheckEnabled;
+      if (enabled) {
+        pps.registerListener(errorHandlerListener);
+      }
     }
 
 
     public void notifySketchChanged() {
       nextUiUpdate = System.currentTimeMillis() + DELAY_BEFORE_UPDATE;
+    }
+
+
+    public void preferencesChanged() {
+      if (enabled != JavaMode.errorCheckEnabled) {
+        enabled = JavaMode.errorCheckEnabled;
+        if (enabled) {
+          pps.registerListener(errorHandlerListener);
+        } else {
+          pps.unregisterListener(errorHandlerListener);
+          editor.setProblemList(Collections.emptyList());
+          nextUiUpdate = 0;
+        }
+      }
     }
 
 
