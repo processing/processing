@@ -65,6 +65,30 @@ JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_transferI2c
 
 /*
  * Class:     processing_io_NativeInterface
+ * Method:    servoStartThread
+ * Signature: (III)J
+ */
+JNIEXPORT jlong JNICALL Java_processing_io_NativeInterface_servoStartThread
+  (JNIEnv *, jclass, jint, jint, jint);
+
+/*
+ * Class:     processing_io_NativeInterface
+ * Method:    servoUpdateThread
+ * Signature: (JII)I
+ */
+JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_servoUpdateThread
+  (JNIEnv *, jclass, jlong, jint, jint);
+
+/*
+ * Class:     processing_io_NativeInterface
+ * Method:    servoStopThread
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_servoStopThread
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     processing_io_NativeInterface
  * Method:    setSpiSettings
  * Signature: (IIII)I
  */

@@ -2,7 +2,8 @@ TARGET := libprocessing-io.so
 OBJS := impl.o
 CC := gcc
 
-CFLAGS := -std=c99 -fPIC -g
+# prefix with -m32 to compile for linux32
+CFLAGS := -std=gnu99 -fPIC -g
 CFLAGS += -I$(shell dirname $(shell realpath $(shell which javac)))/../include
 CFLAGS += -I$(shell dirname $(shell realpath $(shell which javac)))/../include/linux
 LDFLAGS := -shared
