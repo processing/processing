@@ -5246,7 +5246,7 @@ public class PApplet implements PConstants {
 
     // await... has to run on the main thread, because P2D and P3D call GL functions
     // If this runs on background, requestImage() already called await... on the main thread
-    if (!Thread.currentThread().getName().startsWith(ASYNC_IMAGE_LOADER_THREAD_PREFIX)) {
+    if (g != null && !Thread.currentThread().getName().startsWith(ASYNC_IMAGE_LOADER_THREAD_PREFIX)) {
       g.awaitAsyncSaveCompletion(filename);
     }
 
@@ -5403,7 +5403,9 @@ public class PApplet implements PConstants {
   public PImage requestImage(String filename, String extension) {
     // Make sure saving to this file completes before trying to load it
     // Has to be called on main thread, because P2D and P3D need GL functions
-    g.awaitAsyncSaveCompletion(filename);
+    if (g != null) {
+      g.awaitAsyncSaveCompletion(filename);
+    }
     PImage vessel = createImage(0, 0, ARGB);
     AsyncImageLoader ail =
       new AsyncImageLoader(filename, extension, vessel);
