@@ -133,6 +133,16 @@ public class PSurfaceJOGL implements PSurface {
   public void initFrame(PApplet sketch) {
     this.sketch = sketch;
     initIcons();
+
+    // https://jogamp.org/bugzilla/show_bug.cgi?id=1290
+    File mesaLib = new File("/usr/lib/arm-linux-gnueabihf/libGLESv2.so.2");
+    if (mesaLib.exists()) {
+      System.out.println("\nIf you are receiving an error regarding the undefined symbol bcm_host_init, " +
+                         "make sure you have the package libgles2-mesa deinstalled. This can be done " +
+                         "by executing \"sudo aptitude remove libgles2-mesa\" in the terminal, and is " +
+                         "a known issue with the Raspbian distribution.\n");
+    }
+
     initDisplay();
     initGL();
     initWindow();
