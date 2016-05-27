@@ -158,8 +158,10 @@ public class Downloader extends Task {
       }
       List<String> cookies = headers.get("Set-Cookie");
       conn = (HttpURLConnection) new URL(url).openConnection();
-      for (String cookie : cookies) {
-        conn.setRequestProperty("Cookie", cookie);
+      if (cookies != null) {
+        for (String cookie : cookies) {
+          conn.setRequestProperty("Cookie", cookie);
+        }
       }
       conn.setRequestProperty("Cookie", COOKIE);
       conn.connect();
