@@ -42,12 +42,12 @@ public class LinuxPlatform extends DefaultPlatform {
         (!javaVendor.contains("Sun") && !javaVendor.contains("Oracle")) ||
         javaVM == null || !javaVM.contains("Java")) {
       Messages.showWarning("Not fond of this Java VM",
-                           "Processing requires Java 8 from Sun (i.e. the sun-java-jdk\n" +
-                           "package on Ubuntu). Other versions such as OpenJDK, IcedTea,\n" +
+                           "Processing requires Java 8 from Oracle.\n" +
+                           "Other versions such as OpenJDK, IcedTea,\n" +
                            "and GCJ are strongly discouraged. Among other things, you're\n" +
                            "likely to run into problems with sketch window size and\n" +
                            "placement. For more background, please read the wiki:\n" +
-                           "https://github.com/processing/processing/wiki/Supported-Platforms#Linux", null);
+                           "https://github.com/processing/processing/wiki/Supported-Platforms#linux", null);
     }
 
     // Set x11 WM_CLASS property which is used as the application
