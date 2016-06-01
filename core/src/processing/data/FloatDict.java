@@ -158,6 +158,7 @@ public class FloatDict {
 
       public void remove() {
         removeIndex(index);
+        index--;
       }
 
       public String next() {
@@ -218,6 +219,7 @@ public class FloatDict {
 
       public void remove() {
         removeIndex(index);
+        index--;
       }
 
       public Float next() {
