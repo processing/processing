@@ -159,6 +159,7 @@ public class IntDict {
 
       public void remove() {
         removeIndex(index);
+        index--;
       }
 
       public String next() {
@@ -219,6 +220,7 @@ public class IntDict {
 
       public void remove() {
         removeIndex(index);
+        index--;
       }
 
       public Integer next() {
