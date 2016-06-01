@@ -160,6 +160,7 @@ public class StringDict {
 
       public void remove() {
         removeIndex(index);
+        index--;
       }
 
       public String next() {
@@ -219,6 +220,7 @@ public class StringDict {
 
       public void remove() {
         removeIndex(index);
+        index--;
       }
 
       public String next() {

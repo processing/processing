@@ -657,6 +657,7 @@ public class StringList implements Iterable<String> {
 
       public void remove() {
         StringList.this.remove(index);
+        index--;
       }
 
       public String next() {
