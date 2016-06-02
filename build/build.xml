@@ -848,8 +848,8 @@
     <exec executable="rsync" dir="linux">
       <arg value="-a" />
       <arg value="--delete" />
-      <arg value="${jre.dir}" />
-      <arg value="work/java" />
+      <arg value="${jre.dir}/" />
+      <arg value="work/java/" />
     </exec>
 
     <delete dir="linux/jre${jdk.esoteric}" failonerror="false" />
