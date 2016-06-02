@@ -1,5 +1,11 @@
 0241 (3.1.2)
 
+leslie
+X fixed iterator remove() methods so they dont skip container elements
+X   https://github.com/processing/processing/pull/4519
+X added a check for length 0 arrays in expand()
+X   https://github.com/processing/processing/pull/4520
+
 
 _ Can't render PGraphics object using image() within a PDF
 _   https://github.com/processing/processing/issues/4473

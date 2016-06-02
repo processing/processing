@@ -1,9 +1,19 @@
 0251 (3.1.2)
 
+
 gohai
 X IO: Fix drawing for SPIAnalogDigital examples
 X   https://github.com/processing/processing/pull/4480
+X Update JVM warning text on Linux
+X   https://github.com/processing/processing/pull/4512
 
+jakub
+X Return of the error check toggle
+X   https://github.com/processing/processing/pull/4491
+X   https://github.com/processing/processing/issues/4485
+
+_ Library path mismatch between processing-java and export
+_   https://github.com/processing/processing/issues/4493
 
 _ possible infinite loop on modified externally
 _   https://github.com/processing/processing/issues/3965
