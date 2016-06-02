@@ -6178,6 +6178,10 @@ public class PApplet implements PConstants {
    */
   public PFont createFont(String name, float size,
                           boolean smooth, char[] charset) {
+    if (g == null) {
+      System.err.println("The sketch is not initialized yet.");
+      throw new RuntimeException("Fonts must be created inside setup() or after it has been called.");
+    }
     return g.createFont(name, size, smooth, charset);
   }
 
