@@ -1870,7 +1870,7 @@ public class PApplet implements PConstants {
 
 
   /**
-   * @param display the screen to run the sketch on (1, 2, 3, etc. or on multiple screens using SPAN) 
+   * @param display the screen to run the sketch on (1, 2, 3, etc. or on multiple screens using SPAN)
    */
 
   public void fullScreen(String renderer, int display) {
@@ -7842,7 +7842,7 @@ public class PApplet implements PConstants {
    * @see PApplet#shorten(boolean[])
    */
   static public boolean[] expand(boolean list[]) {
-    return expand(list, list.length << 1);
+    return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
   /**
@@ -7855,7 +7855,7 @@ public class PApplet implements PConstants {
   }
 
   static public byte[] expand(byte list[]) {
-    return expand(list, list.length << 1);
+    return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
   static public byte[] expand(byte list[], int newSize) {
@@ -7865,7 +7865,7 @@ public class PApplet implements PConstants {
   }
 
   static public char[] expand(char list[]) {
-    return expand(list, list.length << 1);
+    return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
   static public char[] expand(char list[], int newSize) {
@@ -7875,7 +7875,7 @@ public class PApplet implements PConstants {
   }
 
   static public int[] expand(int list[]) {
-    return expand(list, list.length << 1);
+    return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
   static public int[] expand(int list[], int newSize) {
@@ -7885,7 +7885,7 @@ public class PApplet implements PConstants {
   }
 
   static public long[] expand(long list[]) {
-    return expand(list, list.length << 1);
+    return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
   static public long[] expand(long list[], int newSize) {
@@ -7895,7 +7895,7 @@ public class PApplet implements PConstants {
   }
 
   static public float[] expand(float list[]) {
-    return expand(list, list.length << 1);
+    return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
   static public float[] expand(float list[], int newSize) {
@@ -7905,7 +7905,7 @@ public class PApplet implements PConstants {
   }
 
   static public double[] expand(double list[]) {
-    return expand(list, list.length << 1);
+    return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
   static public double[] expand(double list[], int newSize) {
@@ -7915,7 +7915,7 @@ public class PApplet implements PConstants {
   }
 
   static public String[] expand(String list[]) {
-    return expand(list, list.length << 1);
+    return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
   static public String[] expand(String list[], int newSize) {
@@ -7929,7 +7929,8 @@ public class PApplet implements PConstants {
   * @nowebref
   */
   static public Object expand(Object array) {
-    return expand(array, Array.getLength(array) << 1);
+    int len = Array.getLength(array);
+    return expand(array, len > 0 ? len << 1 : 1);
   }
 
   static public Object expand(Object list, int newSize) {
