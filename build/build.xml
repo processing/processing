@@ -835,11 +835,11 @@
     -->
 
     <!-- use the jre subfolder when having downloaded a JDK file -->
-    <condition property="jre.dir" value="jdk${jdk.esoteric}/jre/">
+    <condition property="jre.dir" value="jdk${jdk.esoteric}/jre">
       <!-- property might not be set, but it is for arm -->
       <equals arg1="${jre.download.jdk}" arg2="true" />
     </condition>
-    <condition property="jre.dir" value="jre${jdk.esoteric}/">
+    <condition property="jre.dir" value="jre${jdk.esoteric}">
       <not>
         <equals arg1="${jre.download.jdk}" arg2="true" />
       </not>
