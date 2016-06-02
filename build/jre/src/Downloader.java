@@ -23,7 +23,7 @@ public class Downloader extends Task {
 //  private String platform;  // macosx, windows, linux
 //  private String bits;  // i586 or x64
   private String flavor;
-  
+
   private String path;  // target path
 //  private File baseDir;
 //  private boolean includeRecorder;
@@ -50,22 +50,22 @@ public class Downloader extends Task {
   public void setJDK(boolean jdk) {
     this.jdk = jdk;
   }
-  
-  
+
+
 //  public void setPlatform(String platform) {
 //    this.platform = platform;
 //  }
-  
-  
+
+
 //  public void setBits(String bits) {
 //    this.bits = bits;
 //  }
-  
+
   public void setFlavor(String flavor) {
     this.flavor = flavor;
   }
-  
-  
+
+
   public void setPath(String path) {
     this.path = path;
   }
@@ -75,15 +75,15 @@ public class Downloader extends Task {
     //if (baseDir == null) {
     //  throw new BuildException("dir parameter must be set!");
     //}
-    
+
     if (version == 0) {
       throw new BuildException("version (i.e. 7 or 8) must be set");
     }
-    
+
     if (build == 0) {
       throw new BuildException("build number must be set");
     }
-    
+
     if (flavor == null) {
       throw new BuildException("you've gotta choose a flavor (macosx-x64.dmg, windows-x64.exe...");
     }
@@ -97,7 +97,7 @@ public class Downloader extends Task {
     } catch (IOException e) {
       throw new BuildException(e);
     }
-    
+
     /*
     downloadJRE("linux-i586.tar.gz");
     downloadJRE("linux-x64.tar.gz");
@@ -126,7 +126,7 @@ public class Downloader extends Task {
       (update == 0 ?
        String.format("-%d-%s", version, flavor) :
        String.format("-%du%d-%s", version, update, flavor));
-    
+
     if (path == null) {
       path = filename;  //System.getProperty("user.dir");
     }
@@ -192,8 +192,8 @@ public class Downloader extends Task {
         }
       }
       if (!tempFile.renameTo(outputFile)) {
-        throw new BuildException(String.format("Could not rename %s to %s", 
-                                               tempFile.getAbsolutePath(), 
+        throw new BuildException(String.format("Could not rename %s to %s",
+                                               tempFile.getAbsolutePath(),
                                                outputFile.getAbsolutePath()));
       }
     } else {
