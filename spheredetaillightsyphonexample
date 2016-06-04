@@ -1,0 +1,60 @@
+import codeanticode.syphon.*;
+SFD send;//as a global
+
+
+float rotateInit = 0.01;
+float detailInit = 0.01;
+float rotateMax = 12;
+float detailMax = 25;
+
+void setup() {
+  size(800, 800, P3D);
+  frameRate(480);
+  send = new SFD(this);//in setup();
+}
+
+void draw() {
+  rotateInit+=9.01%1.0; if(rotateInit>rotateMax) {rotateInit=0.01;rotateMax=random(0, 12);}
+  detailInit+=0.01%25; if(detailInit>detailMax) {detailInit=0.01;detailMax=random(0,25);}
+  background(255);
+  stroke(255, width/2);
+  lightSpecular(255*0.5, 255*0.5, 255*0.5);
+  directionalLight(153, 153, 153, .5, 0, -1);
+  ambientLight(153, 102, 0);
+  ambient(51, 26, 0);
+  emissive(0, 26, 51);
+  specular(255*0.5, 255*0.5, 255*0.5);
+  translate(30, 50, 0);
+  shininess(1.0);
+  translate(width/2, width/2, 0);
+  rotateX(rotateInit);
+  rotateY(rotateInit);
+  ortho(-(detailMax)*200, (detailMax)*200, -(rotateMax)*200, (rotateMax)*200); // Same as ortho()
+  fill(detailInit*10, 0, 160);
+  sphereDetail((int)(detailInit));
+  sphere(width/2.5);
+  send.update();//in draw()
+
+}
+
+class SFD{
+  public PGraphics canvas;
+  public SyphonServer server;
+  PApplet that;
+  SFD(PApplet tthat){
+    that = tthat;
+    canvas = createGraphics(that.width, that.height, P3D);
+    // Create syhpon server to send frames out.
+    server = new SyphonServer(that, "Processing Syphon");
+  }
+ 
+  void update(){
+    that.loadPixels();
+    canvas.loadPixels();
+    for(int i=0;i<that.pixels.length;i++){
+      canvas.pixels[i] = that.pixels[i];
+    }
+    canvas.updatePixels();
+    server.sendImage(canvas);
+  }
+}
