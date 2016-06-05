@@ -14,8 +14,10 @@ void setup() {
 }
 
 void draw() {
-  rotateInit+=9.01%1.0; if(rotateInit>rotateMax) {rotateInit=0.01;rotateMax=random(0, 12);}
-  detailInit+=0.01%25; if(detailInit>detailMax) {detailInit=0.01;detailMax=random(0,25);}
+  rotateInit+=9.01%1.0; 
+  if(rotateInit>rotateMax) {rotateInit=0.01;rotateMax=random(0, 12);}
+  detailInit+=0.01%25; 
+  if(detailInit>detailMax) {detailInit=0.01;detailMax=random(0,25);}
   background(255);
   stroke(255, width/2);
   lightSpecular(255*0.5, 255*0.5, 255*0.5);
