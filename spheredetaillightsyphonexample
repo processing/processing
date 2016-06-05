@@ -1,3 +1,8 @@
+/* processing was developed by Ben Fry and Casey Reas 
+and is licensed under an MIT/CC license to Processing Foundation*/
+// code by Tiago Morais Morgado creative commons 2016
+// syphon is a development by Anton Marin aka Vade
+
 import codeanticode.syphon.*;
 SFD send;//as a global
 
