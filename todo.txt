@@ -6,11 +6,22 @@ X IO: Fix drawing for SPIAnalogDigital examples
 X   https://github.com/processing/processing/pull/4480
 X Update JVM warning text on Linux
 X   https://github.com/processing/processing/pull/4512
+X undo the 8u91 workaround, add Mesa warning for ARM
+X   https://github.com/processing/processing/pull/4508
 
 jakub
 X Return of the error check toggle
 X   https://github.com/processing/processing/pull/4491
 X   https://github.com/processing/processing/issues/4485
+
+fixed in 3.1.1
+X debugger deadlocks when choosing "Step Into" on println()
+X   https://github.com/processing/processing/issues/3923
+X Suggestions switch scope to first import
+X   https://github.com/processing/processing/issues/4016
+
+_ lots of reports about a failure to launch
+_   https://github.com/processing/processing/issues/4476
 
 _ Library path mismatch between processing-java and export
 _   https://github.com/processing/processing/issues/4493
@@ -70,8 +81,6 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
 run/debug
-_ debugger deadlocks when choosing "Step Into" on println()
-_   https://github.com/processing/processing/issues/3923
 _ Tweak Mode sometimes freezes while running, require a force quit
 _   https://github.com/processing/processing/issues/3928
 

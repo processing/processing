@@ -6,6 +6,9 @@ X   https://github.com/processing/processing/pull/4519
 X added a check for length 0 arrays in expand()
 X   https://github.com/processing/processing/pull/4520
 
+jakub
+X Prevent NPE in loadImage() when called before setup()
+X   https://github.com/processing/processing/pull/4505
 
 _ Can't render PGraphics object using image() within a PDF
 _   https://github.com/processing/processing/issues/4473
