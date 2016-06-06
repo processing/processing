@@ -1,5 +1,9 @@
 0241 (3.1.2)
 
+gohai
+X Fix GLExceptions on Raspberry Pi when using offscreen PGraphics 
+X   https://github.com/processing/processing/pull/4524
+
 leslie
 X fixed iterator remove() methods so they dont skip container elements
 X   https://github.com/processing/processing/pull/4519
