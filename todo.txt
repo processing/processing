@@ -5,7 +5,8 @@ _ Pasting code from editor to empty editor produces Exception
 _   https://github.com/processing/processing/issues/4522
 _ did we lose settings.path because it was too buggy?
 _   https://github.com/processing/processing/issues/3948
-_ lots of reports about a failure to launch
+_ lots of reports about a failure to launch on Windows
+_   seems related to running from network drives
 _   https://github.com/processing/processing/issues/4476
 _ possible infinite loop on modified externally
 _   https://github.com/processing/processing/issues/3965
