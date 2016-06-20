@@ -103,7 +103,7 @@ public class PShader implements PConstants {
 
   protected boolean bound;
 
-  protected HashMap<Integer, UniformValue> uniformValues = null;
+  protected HashMap<String, UniformValue> uniformValues = null;
 
   protected HashMap<Integer, Texture> textures;
   protected HashMap<Integer, Integer> texUnits;
@@ -730,25 +730,25 @@ public class PShader implements PConstants {
 
 
   protected void setUniformImpl(String name, int type, Object value) {
-    int loc = getUniformLoc(name);
-    if (-1 < loc) {
-      if (uniformValues == null) {
-        uniformValues = new HashMap<Integer, UniformValue>();
-      }
-      uniformValues.put(loc, new UniformValue(type, value));
-    } else {
-      PGraphics.showWarning("The shader doesn't have a uniform called \"" +
-                            name + "\" OR the uniform was removed during " +
-                            "compilation because it was unused.");
+    if (uniformValues == null) {
+      uniformValues = new HashMap<String, UniformValue>();
     }
+    uniformValues.put(name, new UniformValue(type, value));
   }
 
 
   protected void consumeUniforms() {
     if (uniformValues != null && 0 < uniformValues.size()) {
       int unit = 0;
-      for (Integer loc: uniformValues.keySet()) {
-        UniformValue val = uniformValues.get(loc);
+      for (String name: uniformValues.keySet()) {
+        int loc = getUniformLoc(name);
+        if (loc == -1) {
+          PGraphics.showWarning("The shader doesn't have a uniform called \"" +
+                                name + "\" OR the uniform was removed during " +
+                                "compilation because it was unused.");
+          continue;
+        }
+        UniformValue val = uniformValues.get(name);
         if (val.type == UniformValue.INT1) {
           int[] v = ((int[])val.value);
           pgl.uniform1i(loc, v[0]);
