@@ -2713,7 +2713,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
     //current.setProgram(editor.getText());
     for (SketchCode sc : sketch.getCode()) {
       try {
-        sc.setProgram(sc.getDocumentText());
+        try {
+          sc.setProgram(sc.getDocumentText());
+        } catch (NullPointerException e) {
+          // sc has no document because the tab has not been viewed;
+          // carry on because String 'program' has been set and no
+		  // document should mean no changes have been made
+        }
       } catch (BadLocationException e) { }
     }
 
