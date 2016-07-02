@@ -6,7 +6,7 @@ the “core” and the libraries that are included with the [download](http://pr
 
 __I've found a bug!__ 
 Let us know [here](https://github.com/processing/processing/issues) (after first checking if someone has already posted a similar problem). 
-If it's a documentation, web site, or examples problem, take that up with folks [here](https://github.com/processing/processing-docs/issues). 
+If it's a documentation, website, or examples problem, take that up with folks [here](https://github.com/processing/processing-docs/issues). 
 There are also separate locations for [Android Mode](https://github.com/processing/processing-android/issues), or the [Video](https://github.com/processing/processing-video/issues) and [Sound](https://github.com/processing/processing-sound/issues) libraries. 
 The [processing.js](http://processingjs.org) project is not affiliated with us, but you can find their issue tracker [here](https://github.com/processing-js/processing-js/issues).
 
