@@ -885,8 +885,9 @@ public class Base {
   /**
    * The call has already checked to make sure this sketch is not modified,
    * now change the mode.
+   * @return true if mode is changed.
    */
-  public void changeMode(Mode mode) {
+  public boolean changeMode(Mode mode) {
     Mode oldMode = activeEditor.getMode();
     if (oldMode != mode) {
       Sketch sketch = activeEditor.getSketch();
@@ -908,7 +909,9 @@ public class Base {
             break;
           }
         }
-        if (newModeCanHandleCurrentSource) {
+        if (!newModeCanHandleCurrentSource) {
+          return false;
+        } else {
           final File props = new File(sketch.getCodeFolder(), "sketch.properties");
           saveModeSettings(props, nextMode);
           handleClose(activeEditor, true);
@@ -918,10 +921,12 @@ public class Base {
             // re-open the sketch using the mode we were in before
             saveModeSettings(props, oldMode);
             handleOpen(sketch.getMainFilePath());
+            return false;
           }
         }
       }
     }
+    return true;
   }
 
 

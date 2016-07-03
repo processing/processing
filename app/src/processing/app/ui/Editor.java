@@ -505,22 +505,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if (!sketch.isModified()) {
-            base.changeMode(m);
+            if (!base.changeMode(m)) {
+              reselectMode();
+              Messages.showWarning(Language.text("warn.cannot_change_mode.title"),
+                                   Language.interpolate("warn.cannot_change_mode.body", m));
+            }
           } else {
+            reselectMode();
             Messages.showWarning("Save",
                                  "Please save the sketch before changing the mode.");
-
-            // Re-select the old checkbox, because it was automatically
-            // updated by Java, even though the Mode could not be changed.
-            // https://github.com/processing/processing/issues/2615
-            for (Component c : getModePopup().getComponents()) {
-              if (c instanceof JRadioButtonMenuItem) {
-                if (((JRadioButtonMenuItem)c).getText() == mode.getTitle()) {
-                  ((JRadioButtonMenuItem)c).setSelected(true);
-                  break;
-                }
-              }
-            }
           }
         }
       });
@@ -543,6 +536,19 @@ public abstract class Editor extends JFrame implements RunnerListener {
     Toolkit.setMenuMnemsInside(modePopup);
   }
 
+  // Re-select the old checkbox, because it was automatically
+  // updated by Java, even though the Mode could not be changed.
+  // https://github.com/processing/processing/issues/2615
+  private void reselectMode() {
+    for (Component c : getModePopup().getComponents()) {
+      if (c instanceof JRadioButtonMenuItem) {
+        if (((JRadioButtonMenuItem)c).getText() == mode.getTitle()) {
+          ((JRadioButtonMenuItem)c).setSelected(true);
+          break;
+        }
+      }
+    }
+  }
 
   public JPopupMenu getModePopup() {
     return modePopup.getPopupMenu();
