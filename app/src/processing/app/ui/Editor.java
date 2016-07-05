@@ -2713,7 +2713,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     //current.setProgram(editor.getText());
     for (SketchCode sc : sketch.getCode()) {
       try {
-        sc.setProgram(sc.getDocumentText());
+        String text = sc.getDocumentText();
+        if (text != null)
+          sc.setProgram(text);
       } catch (BadLocationException e) { }
     }
 

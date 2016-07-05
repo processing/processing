@@ -225,6 +225,8 @@ public class SketchCode {
 
 
   public String getDocumentText() throws BadLocationException {
+    if (document == null)
+      return null;
     return document.getText(0, document.getLength());
   }
 
