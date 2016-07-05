@@ -157,6 +157,9 @@ public class JavaTextAreaPainter extends TextAreaPainter
       gfx.setClip(null);  // reset
     }
 
+    if (line >= textArea.getLineCount())
+      return;
+
     String text = null;
     if (getJavaEditor().isDebuggerEnabled()) {
       text = getJavaTextArea().getGutterText(line);
