@@ -34,7 +34,7 @@ public class SoftwareServo {
   public static final int DEFAULT_MAX_PULSE = 2400;
 
   protected int pin = -1;           // gpio number (-1 .. not attached)
-  protected int handle = -1;        // native thread id (<0 .. not started)
+  protected long handle = -1;       // native thread id (<0 .. not started)
   protected int period = 20000;     // 20 ms (50 Hz)
   protected int minPulse = 0;       // minimum pulse width in microseconds
   protected int maxPulse = 0;       // maximum pulse width in microseconds
@@ -122,7 +122,7 @@ public class SoftwareServo {
       }
       handle = NativeInterface.servoStartThread(pin, pulse, period);
       if (handle < 0) {
-        throw new RuntimeException(NativeInterface.getError(handle));
+        throw new RuntimeException(NativeInterface.getError((int)handle));
       }
     } else {
       // thread already running
