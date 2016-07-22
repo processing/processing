@@ -288,7 +288,7 @@ public class Platform {
       // Decode URL
       String decodedPath;
       try {
-        decodedPath = pathURL.toURI().getPath();
+        decodedPath = pathURL.toURI().getSchemeSpecificPart();
       } catch (URISyntaxException e) {
         e.printStackTrace();
         return null;
