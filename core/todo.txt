@@ -1,4 +1,6 @@
 0241 (3.1.2)
+X rewrite csv handling
+X   fix parsing bugs, remove newlines option, improve performance
 
 gohai
 X Fix GLExceptions on Raspberry Pi when using offscreen PGraphics 

@@ -1,6 +1,7 @@
 0251 (3.1.2)
 
 high
+_ update to 8 102 14
 _ Pasting code from editor to empty editor produces Exception
 _   https://github.com/processing/processing/issues/4522
 _ did we lose settings.path because it was too buggy?
@@ -10,6 +11,14 @@ _   seems related to running from network drives
 _   https://github.com/processing/processing/issues/4476
 _ possible infinite loop on modified externally
 _   https://github.com/processing/processing/issues/3965
+
+lower
+_ make when opening new editor window, open on the same display as current
+_   https://github.com/processing/processing/issues/4526
+_ hi-dpi support on Linux
+_   https://github.com/processing/processing/issues/4183
+_ PDE and sketches are 2x smaller on high-res Windows machines
+_   https://github.com/processing/processing/issues/2411
 
 gohai
 X IO: Fix drawing for SPIAnalogDigital examples
