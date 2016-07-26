@@ -325,9 +325,7 @@ public class Table {
 
 
   protected void parse(InputStream input, String options) throws IOException {
-    //init();
-
-    boolean awfulCSV = false;
+//    boolean awfulCSV = false;
     boolean header = false;
     String extension = null;
     boolean binary = false;
@@ -347,8 +345,9 @@ public class Table {
         } else if (opt.equals("ods")) {
           extension = "ods";
         } else if (opt.equals("newlines")) {
-          awfulCSV = true;
-          extension = "csv";
+          //awfulCSV = true;
+          //extension = "csv";
+          throw new IllegalArgumentException("The 'newlines' option is no longer necessary.");
         } else if (opt.equals("bin")) {
           binary = true;
           extension = "bin";
@@ -379,13 +378,16 @@ public class Table {
     } else {
       InputStreamReader isr = new InputStreamReader(input, encoding);
       BufferedReader reader = new BufferedReader(isr);
-      if (awfulCSV) {
+      /*
+       if (awfulCSV) {
         parseAwfulCSV(reader, header);
       } else if ("tsv".equals(extension)) {
         parseBasic(reader, header, true);
       } else if ("csv".equals(extension)) {
         parseBasic(reader, header, false);
       }
+      */
+      parseBasic(reader, header, "tsv".equals(extension));
     }
   }
 
@@ -404,16 +406,16 @@ public class Table {
           setRowCount(row << 1);
         }
         if (row == 0 && header) {
-          setColumnTitles(tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+          setColumnTitles(tsv ? PApplet.split(line, '\t') : splitLineCSV(line, reader));
           header = false;
         } else {
-          setRow(row, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+          setRow(row, tsv ? PApplet.split(line, '\t') : splitLineCSV(line, reader));
           row++;
         }
 
-        // this is problematic unless we're going to calculate rowCount first
         if (row % 10000 == 0) {
         /*
+        // this is problematic unless we're going to calculate rowCount first
         if (row < rowCount) {
           int pct = (100 * row) / rowCount;
           if (pct != prev) {  // also prevents "0%" from showing up
@@ -445,6 +447,7 @@ public class Table {
 //  }
 
 
+  /*
   protected void parseAwfulCSV(BufferedReader reader,
                                boolean header) throws IOException {
     char[] c = new char[100];
@@ -542,7 +545,186 @@ public class Table {
       setRowCount(row);  // shrink to the actual size
     }
   }
+  */
 
+
+  class CommaSeparatedLine {
+    char[] c;
+    String[] pieces;
+    int pieceCount;
+
+//    int offset;
+    int start; //, stop;
+
+    String[] handle(String line, BufferedReader reader) throws IOException {
+//      PApplet.println("handle() called for: " + line);
+      start = 0;
+      pieceCount = 0;
+      c = line.toCharArray();
+
+      // get tally of number of columns and allocate the array
+      int cols = 1;  // the first comma indicates the second column
+      boolean quote = false;
+      for (int i = 0; i < c.length; i++) {
+        if (!quote && (c[i] == ',')) {
+          cols++;
+        } else if (c[i] == '\"') {
+          // double double quotes (escaped quotes like "") will simply toggle
+          // this back and forth, so it should remain accurate
+          quote = !quote;
+        }
+      }
+      pieces = new String[cols];
+
+//      while (offset < c.length) {
+//        start = offset;
+      while (start < c.length) {
+        boolean enough = ingest();
+        while (!enough) {
+          // found a newline inside the quote, grab another line
+          String nextLine = reader.readLine();
+//          System.out.println("extending to " + nextLine);
+          if (nextLine == null) {
+//            System.err.println(line);
+            throw new IOException("Found a quoted line that wasn't terminated properly.");
+          }
+          // for simplicity, not bothering to skip what's already been read
+          // from c (and reset the offset to 0), opting to make a bigger array
+          // with both lines.
+          char[] temp = new char[c.length + 1 + nextLine.length()];
+          PApplet.arrayCopy(c, temp, c.length);
+          // NOTE: we're converting to \n here, which isn't perfect
+          temp[c.length] = '\n';
+          nextLine.getChars(0, nextLine.length(), temp, c.length + 1);
+//          c = temp;
+          return handle(new String(temp), reader);
+          //System.out.println("  full line is now " + new String(c));
+          //stop = nextComma(c, offset);
+          //System.out.println("stop is now " + stop);
+          //enough = ingest();
+        }
+      }
+
+      // Make any remaining entries blanks instead of nulls. Empty columns from
+      // CSV are always "" not null, so this handles successive commas in a line
+      for (int i = pieceCount; i < pieces.length; i++) {
+        pieces[i] = "";
+      }
+//      PApplet.printArray(pieces);
+      return pieces;
+    }
+
+    protected void addPiece(int start, int stop, boolean quotes) {
+      if (quotes) {
+        int dest = start;
+        for (int i = start; i < stop; i++) {
+          if (c[i] == '\"') {
+            ++i;  // step over the quote
+          }
+          if (i != dest) {
+            c[dest] = c[i];
+          }
+          dest++;
+        }
+        pieces[pieceCount++] = new String(c, start, dest - start);
+
+      } else {
+        pieces[pieceCount++] = new String(c, start, stop - start);
+      }
+    }
+
+    /**
+     * Returns the next comma (not inside a quote) in the specified array.
+     * @param c array to search
+     * @param index offset at which to start looking
+     * @return index of the comma, or -1 if line ended inside an unclosed quote
+     */
+    protected boolean ingest() {
+      boolean hasEscapedQuotes = false;
+      // not possible
+//      if (index == c.length) {  // we're already at the end
+//        return c.length;
+//      }
+      boolean quoted = c[start] == '\"';
+      if (quoted) {
+        start++; // step over the quote
+      }
+      int i = start;
+      while (i < c.length) {
+//        PApplet.println(c[i] + " i=" + i);
+        if (c[i] == '\"') {
+          // if this fella started with a quote
+          if (quoted) {
+            if (i == c.length-1) {
+              // closing quote for field; last field on the line
+              addPiece(start, i, hasEscapedQuotes);
+              start = c.length;
+              return true;
+
+            } else if (c[i+1] == '\"') {
+              // an escaped quote inside a quoted field, step over it
+              hasEscapedQuotes = true;
+              i += 2;
+
+            } else if (c[i+1] == ',') {
+              // that was our closing quote, get outta here
+              addPiece(start, i, hasEscapedQuotes);
+              start = i+2;
+              return true;
+            }
+
+          } else {  // not a quoted line
+            if (i == c.length-1) {
+              // we're at the end of the line, can't have an unescaped quote
+              throw new RuntimeException("Unterminated quote at end of line");
+
+            } else if (c[i+1] == '\"') {
+              // step over this crummy quote escape
+              hasEscapedQuotes = true;
+              i += 2;
+
+            } else {
+              throw new RuntimeException("Unterminated quoted field mid-line");
+            }
+          }
+        } else if (!quoted && c[i] == ',') {
+          addPiece(start, i, hasEscapedQuotes);
+          start = i+1;
+          return true;
+
+        } else if (!quoted && i == c.length-1) {
+          addPiece(start, c.length, hasEscapedQuotes);
+          start = c.length;
+          return true;
+
+        } else {  // nothing all that interesting
+          i++;
+        }
+      }
+//      if (!quote && (c[i] == ',')) {
+//        // found a comma, return this location
+//        return i;
+//      } else if (c[i] == '\"') {
+//        // if it's a quote, then either the next char is another quote,
+//        // or if this is a quoted entry, it better be a comma
+//        quote = !quote;
+//      }
+//    }
+
+      // if still inside a quote, indicate that another line should be read
+      if (quoted) {
+        return false;
+      }
+
+//    // made it to the end of the array with no new comma
+//    return c.length;
+
+      throw new RuntimeException("not sure how...");
+    }
+  }
+
+
+  CommaSeparatedLine csl;
 
   /**
    * Parse a line of text as comma-separated values, returning each value as
@@ -551,23 +733,53 @@ public class Table {
    * @param line line of text to be parsed
    * @return an array of the individual values formerly separated by commas
    */
-  static protected String[] splitLineCSV(String line) {
+  protected String[] splitLineCSV(String line, BufferedReader reader) throws IOException {
+    if (csl == null) {
+      csl = new CommaSeparatedLine();
+    }
+    return csl.handle(line, reader);
+  }
+  /*
+  static protected String[] splitLineCSV(String line, BufferedReader reader) throws IOException {
     char[] c = line.toCharArray();
-    int rough = 1;  // at least one
+
+    // get tally of number of columns and allocate the array
+    int cols = 1;  // the first comma indicates the second column
     boolean quote = false;
     for (int i = 0; i < c.length; i++) {
       if (!quote && (c[i] == ',')) {
-        rough++;
+        cols++;
       } else if (c[i] == '\"') {
+        // double double quotes (escaped quotes like "") will simply toggle
+        // this back and forth, so it should remain accurate
         quote = !quote;
       }
     }
-    String[] pieces = new String[rough];
+    String[] pieces = new String[cols];
+
+    // now do actual parsing
     int pieceCount = 0;
     int offset = 0;
     while (offset < c.length) {
       int start = offset;
       int stop = nextComma(c, offset);
+      while (stop == -1) {
+        // found a newline inside the quote, grab another line
+        String nextLine = reader.readLine();
+        System.out.println("extending to " + nextLine);
+        if (nextLine == null) {
+          System.err.println(line);
+          throw new IOException("Found a quoted line that wasn't terminated properly.");
+        }
+        char[] temp = new char[c.length + 1 + nextLine.length()];
+        PApplet.arrayCopy(c, temp, c.length);
+        // NOTE: we're converting to \n here, which isn't perfect
+        temp[c.length] = '\n';
+        line.getChars(0, nextLine.length(), temp, c.length + 1);
+        c = temp;
+        stop = nextComma(c, offset);
+        System.out.println("stop is now " + stop);
+      }
       offset = stop + 1;  // next time around, need to step over the comment
       if (c[start] == '\"' && c[stop-1] == '\"') {
         start++;
@@ -588,26 +800,80 @@ public class Table {
       String s = new String(c, start, ii - start);
       pieces[pieceCount++] = s;
     }
-    // make any remaining entries blanks instead of nulls
+    // Make any remaining entries blanks instead of nulls. Empty columns from
+    // CSV are always "" not null, so this handles successive commas in a line
     for (int i = pieceCount; i < pieces.length; i++) {
       pieces[i] = "";
 
     }
     return pieces;
   }
+  */
 
 
+  /**
+   * Returns the next comma (not inside a quote) in the specified array.
+   * @param c array to search
+   * @param index offset at which to start looking
+   * @return index of the comma, or -1 if line ended inside an unclosed quote
+   */
+  /*
   static protected int nextComma(char[] c, int index) {
-    boolean quote = false;
+    if (index == c.length) {  // we're already at the end
+      return c.length;
+    }
+    boolean quoted = c[index] == '\"';
+    if (quoted) {
+      index++; // step over the quote
+    }
     for (int i = index; i < c.length; i++) {
+      if (c[i] == '\"') {
+        // if this fella started with a quote
+        if (quoted) {
+          if (i == c.length-1) {
+            //return -1;  // ran out of chars
+            // closing quote for field; last field on the line
+            return c.length;
+          } else if (c[i+1] == '\"') {
+            // an escaped quote inside a quoted field, step over it
+            i++;
+          } else if (c[i+1] == ',') {
+            // that's our closing quote, get outta here
+            return i+1;
+          }
+
+        } else {  // not a quoted line
+          if (i == c.length-1) {
+            // we're at the end of the line, can't have an unescaped quote
+            //return -1;  // ran out of chars
+            throw new RuntimeException("Unterminated quoted field at end of line");
+          } else if (c[i+1] == '\"') {
+            // step over this crummy quote escape
+            ++i;
+          } else {
+            throw new RuntimeException("Unterminated quoted field mid-line");
+          }
+        }
+      } else if (!quoted && c[i] == ',') {
+        return i;
+      }
       if (!quote && (c[i] == ',')) {
+        // found a comma, return this location
         return i;
       } else if (c[i] == '\"') {
+        // if it's a quote, then either the next char is another quote,
+        // or if this is a quoted entry, it better be a comma
         quote = !quote;
       }
     }
+    // if still inside a quote, indicate that another line should be read
+    if (quote) {
+      return -1;
+    }
+    // made it to the end of the array with no new comma
     return c.length;
   }
+  */
 
 
   /**
@@ -4429,7 +4695,7 @@ public class Table {
     int prev = -1;
     int row = 0;
     while ((line = reader.readLine()) != null) {
-      convertRow(output, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+      convertRow(output, tsv ? PApplet.split(line, '\t') : splitLineCSV(line, reader));
       row++;
 
       if (row % 10000 == 0) {
