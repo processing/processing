@@ -1482,6 +1482,13 @@ public class PSurfaceAWT extends PSurfaceNone {
     // Don't set cursorType, instead use cursorType to save the last
     // regular cursor type used for when cursor() is called.
     //cursor_type = Cursor.CUSTOM_CURSOR;
+
+    // this is a temporary workaround for the CHIP, will be removed
+    Dimension cursorSize = Toolkit.getDefaultToolkit().getBestCursorSize(img.width, img.height);
+    if (cursorSize.width == 0 || cursorSize.height == 0) {
+      return;
+    }
+
     Cursor cursor =
       canvas.getToolkit().createCustomCursor((Image) img.getNative(),
                                              new Point(x, y),
@@ -1511,8 +1518,14 @@ public class PSurfaceAWT extends PSurfaceNone {
     if (invisibleCursor == null) {
       BufferedImage cursorImg =
         new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-      invisibleCursor =
-        canvas.getToolkit().createCustomCursor(cursorImg, new Point(8, 8), "blank");
+      // this is a temporary workaround for the CHIP, will be removed
+      Dimension cursorSize = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
+      if (cursorSize.width == 0 || cursorSize.height == 0) {
+        invisibleCursor = Cursor.getDefaultCursor();
+      } else {
+        invisibleCursor =
+          canvas.getToolkit().createCustomCursor(cursorImg, new Point(8, 8), "blank");
+      }
     }
     canvas.setCursor(invisibleCursor);
     cursorVisible = false;

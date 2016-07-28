@@ -25,6 +25,7 @@ import processing.mode.java.tweak.*;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -401,8 +402,16 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 	int cursorType;
 	BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-	Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
-
+  Cursor blankCursor;
+  // this is a temporary workaround for the CHIP, will be removed
+  {
+    Dimension cursorSize = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
+    if (cursorSize.width == 0 || cursorSize.height == 0) {
+      blankCursor = Cursor.getDefaultCursor();
+    } else {
+      blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
+    }
+  }
 
 	@Override
 	synchronized public void paint(Graphics gfx) {
