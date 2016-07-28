@@ -25,13 +25,18 @@
 #include <linux/i2c-dev.h>
 #include <linux/spi/spidev.h>
 #include <poll.h>
+#include <pthread.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/param.h>
+#include <time.h>
 #include <unistd.h>
 #include "iface.h"
+
+
+static const int servo_pulse_oversleep = 35;  // amount of uS to account for when sleeping
 
 
 JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_openDevice
@@ -189,6 +194,104 @@ JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_transferI2c
 	}
 
 	return ret;
+}
+
+
+typedef struct {
+	int fd;
+	pthread_t thread;
+	int pulse;
+	int period;
+} SERVO_STATE_T;
+
+
+static void* servoThread(void *ptr) {
+	SERVO_STATE_T *state = (SERVO_STATE_T*)ptr;
+	struct timespec on, off;
+	on.tv_sec = 0;
+	off.tv_sec = 0;
+
+	do {
+		write(state->fd, "1", 1);
+
+		on.tv_nsec = state->pulse * 1000;
+		nanosleep(&on, NULL);
+
+		write(state->fd, "0", 1);
+
+		off.tv_nsec = (state->period - state->pulse) * 1000;
+		nanosleep(&off, NULL);
+	} while (1);
+}
+
+
+JNIEXPORT jlong JNICALL Java_processing_io_NativeInterface_servoStartThread
+  (JNIEnv *env, jclass cls, jint gpio, jint pulse, jint period)
+{
+	char path[26 + 19 + 1];
+	int fd;
+	pthread_t thread;
+
+	// setup struct holding our state
+	SERVO_STATE_T *state = malloc(sizeof(SERVO_STATE_T));
+	if (!state) {
+		return -ENOMEM;
+	}
+	memset(state, 0, sizeof(*state));
+	state->pulse = (pulse - servo_pulse_oversleep > 0) ? pulse - servo_pulse_oversleep : 0;
+	// we're obviously also oversleeping in the general period case
+	// but other than the pulse, this doesn't seem to be crucial with servos
+	state->period = period;
+
+	// open gpio
+	sprintf(path, "/sys/class/gpio/gpio%d/value", gpio);
+	state->fd = open(path, O_WRONLY);
+	if (state->fd < 0) {
+		free(state);
+		return -errno;
+	}
+
+	// start thread
+	int ret = pthread_create(&state->thread, NULL, servoThread, state);
+	if (ret != 0) {
+		free(state);
+		return -ret;
+	}
+
+	// set scheduling policy and priority
+	struct sched_param param;
+	param.sched_priority = 75;
+	ret = pthread_setschedparam(state->thread, SCHED_FIFO, &param);
+	if (ret != 0) {
+		fprintf(stderr, "Error setting thread policy: %s\n", strerror(ret));
+	}
+
+	return (intptr_t)state;
+}
+
+
+JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_servoUpdateThread
+  (JNIEnv *env, jclass cls, jlong handle, jint pulse, jint period)
+{
+	SERVO_STATE_T *state = (SERVO_STATE_T*)(intptr_t)handle;
+	state->pulse = (pulse - servo_pulse_oversleep > 0) ? pulse - servo_pulse_oversleep : 0;
+	state->period = period;
+	return 0;
+}
+
+
+JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_servoStopThread
+  (JNIEnv *env, jclass cls, jlong handle)
+{
+	SERVO_STATE_T *state = (SERVO_STATE_T*)(intptr_t)handle;
+
+	// signal thread to stop
+	pthread_cancel(state->thread);
+	pthread_join(state->thread, NULL);
+
+	close(state->fd);
+	free(state);
+	return 0;
 }
 
 

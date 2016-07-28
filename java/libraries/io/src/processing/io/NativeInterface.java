@@ -65,6 +65,10 @@ public class NativeInterface {
   public static native int pollDevice(String fn, int timeout);
   /* I2C */
   public static native int transferI2c(int handle, int slave, byte[] out, byte[] in);
+  /* SoftwareServo */
+  public static native long servoStartThread(int gpio, int pulse, int period);
+  public static native int servoUpdateThread(long handle, int pulse, int period);
+  public static native int servoStopThread(long handle);
   /* SPI */
   public static native int setSpiSettings(int handle, int maxSpeed, int dataOrder, int mode);
   public static native int transferSpi(int handle, byte[] out, byte[] in);
