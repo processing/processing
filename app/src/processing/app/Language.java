@@ -316,6 +316,9 @@ public class Language {
 
     void read(File additions) {
       String[] lines = PApplet.loadStrings(additions);
+      if (lines == null) {
+        throw new NullPointerException("File not found:\n" + additions.getAbsolutePath());
+      }
       //for (String line : lines) {
       for (int i = 0; i < lines.length; i++) {
         String line = lines[i];
