@@ -64,7 +64,7 @@ public class CompletionPanel {
   private String subWord;
 
   /**
-   * Postion where the completion has to be inserted
+   * Position where the completion has to be inserted
    */
   private int insertionPosition;
 
