@@ -6,9 +6,6 @@ _ Pasting code from editor to empty editor produces Exception
 _   https://github.com/processing/processing/issues/4522
 _ did we lose settings.path because it was too buggy?
 _   https://github.com/processing/processing/issues/3948
-_ lots of reports about a failure to launch on Windows
-_   seems related to running from network drives
-_   https://github.com/processing/processing/issues/4476
 _ possible infinite loop on modified externally
 _   https://github.com/processing/processing/issues/3965
 
@@ -32,6 +29,12 @@ jakub
 X Return of the error check toggle
 X   https://github.com/processing/processing/pull/4491
 X   https://github.com/processing/processing/issues/4485
+X problems when running PDE from network locations
+X   lots of reports about a failure to launch on Windows
+X   seems related to running from network drives
+X   https://github.com/processing/processing/issues/4417
+X   https://github.com/processing/processing/pull/4582
+_   https://github.com/processing/processing/issues/4476
 
 fixed in 3.1.1
 X debugger deadlocks when choosing "Step Into" on println()
