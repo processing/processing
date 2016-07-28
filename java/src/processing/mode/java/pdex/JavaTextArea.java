@@ -634,7 +634,7 @@ public class JavaTextArea extends JEditTextArea {
    * Sets default cursor (instead of text cursor) in the gutter area.
    */
   protected final MouseMotionAdapter gutterCursorMouseAdapter = new MouseMotionAdapter() {
-    private int lastX; // previous horizontal positon of the mouse cursor
+    private int lastX; // previous horizontal position of the mouse cursor
 
     @Override
     public void mouseMoved(MouseEvent me) {
