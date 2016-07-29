@@ -160,7 +160,7 @@ public class JavaInputHandler extends PdeInputHandler {
         textarea.setSelectedText(spaces(tabSize));
         event.consume();
 
-      } else if (!Preferences.getBoolean("editor.tabs.expand")) {
+      } else {  // !Preferences.getBoolean("editor.tabs.expand")
         textarea.setSelectedText("\t");
         event.consume();
       }
