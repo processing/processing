@@ -1,48 +1,4 @@
-0251 (3.1.2)
-X update to Java 8u102 build 14
-
-gohai
-X IO: Fix drawing for SPIAnalogDigital examples
-X   https://github.com/processing/processing/pull/4480
-X Update JVM warning text on Linux
-X   https://github.com/processing/processing/pull/4512
-X undo the 8u91 workaround, add Mesa warning for ARM
-X   https://github.com/processing/processing/pull/4508
-X IO: We want motors, they said (implements SoftwareServo)
-X   https://github.com/processing/processing/pull/4546
-X Add a temporary workaround for the CHIP to deal with cursor problems
-X   https://github.com/processing/processing/pull/4554
-X Fix the Downloader so that builds work again
-X   https://github.com/processing/processing/issues/4496
-X   https://github.com/processing/processing/pull/4511
-
-jakub
-X Return of the error check toggle
-X   https://github.com/processing/processing/pull/4491
-X   https://github.com/processing/processing/issues/4485
-X problems when running PDE from network locations
-X   lots of reports about a failure to launch on Windows
-X   seems related to running from network drives
-X   https://github.com/processing/processing/issues/4417
-X   https://github.com/processing/processing/pull/4582
-X   https://github.com/processing/processing/issues/4476
-
-contrib
-X updates to Japanese translation
-X   https://github.com/processing/processing/pull/4564
-X Make preferences button wider for Japanese
-X   https://github.com/processing/processing/pull/4558
-X Show warning message if Mode cannot be changed
-X   https://github.com/processing/processing/pull/4559
-
-fixed in 3.1.1
-X debugger deadlocks when choosing "Step Into" on println()
-X   https://github.com/processing/processing/issues/3923
-X Suggestions switch scope to first import
-X   https://github.com/processing/processing/issues/4016
-X loadImage() immediately after saveFrame() foiled by async default
-X   https://github.com/processing/processing/issues/4218
-X   the hint() mostly works, but gross to use a hint frequently
+0252 (3.1.3?)
 
 
 high

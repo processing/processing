@@ -1,32 +1,4 @@
-0241 (3.1.2)
-X rewrite csv handling
-X   fix parsing bugs, remove newlines option, improve performance
-X prevent random(low, high) from returning 'high'
-X   https://github.com/processing/processing/issues/4551
-X disable async saveFrame() by default
-X   https://github.com/processing/processing/issues/4578
-
-gohai
-X Fix GLExceptions on Raspberry Pi when using offscreen PGraphics 
-X   https://github.com/processing/processing/pull/4524
-
-leslie
-X fixed iterator remove() methods so they dont skip container elements
-X   https://github.com/processing/processing/pull/4519
-X added a check for length 0 arrays in expand()
-X   https://github.com/processing/processing/pull/4520
-
-jakub
-X Prevent NPE in loadImage() when called before setup()
-X   https://github.com/processing/processing/pull/4505
-
-andres
-X fix crash when calling getUniformLoc() called in PShader.set()
-X   https://github.com/processing/processing/issues/4542
-
-earlier
-X see if 8u65 or 8u66 fix the JavaFX problem
-X   if not, need to add them to the block list
+0252 (3.1.3?)
 
 
 _ Can't render PGraphics object using image() within a PDF
