@@ -1,5 +1,5 @@
 0251 (3.1.2)
-
+X update to Java 8u102 build 14
 
 gohai
 X IO: Fix drawing for SPIAnalogDigital examples
@@ -12,6 +12,9 @@ X IO: We want motors, they said (implements SoftwareServo)
 X   https://github.com/processing/processing/pull/4546
 X Add a temporary workaround for the CHIP to deal with cursor problems
 X   https://github.com/processing/processing/pull/4554
+X Fix the Downloader so that builds work again
+X   https://github.com/processing/processing/issues/4496
+X   https://github.com/processing/processing/pull/4511
 
 jakub
 X Return of the error check toggle
@@ -29,16 +32,23 @@ X updates to Japanese translation
 X   https://github.com/processing/processing/pull/4564
 X Make preferences button wider for Japanese
 X   https://github.com/processing/processing/pull/4558
+X Show warning message if mode cannot be changed
+X   https://github.com/processing/processing/pull/4559
 
 fixed in 3.1.1
 X debugger deadlocks when choosing "Step Into" on println()
 X   https://github.com/processing/processing/issues/3923
 X Suggestions switch scope to first import
 X   https://github.com/processing/processing/issues/4016
+X loadImage() immediately after saveFrame() foiled by async default
+X   https://github.com/processing/processing/issues/4218
+X   the hint() mostly works, but gross to use a hint frequently
 
 
 high
-_ update to 8 102 14
+_ NullPointerException in SketchCode.getDocumentText()
+_   https://github.com/processing/processing/issues/4555
+_   https://github.com/processing/processing/pull/4547
 _ Pasting code from editor to empty editor produces Exception
 _   https://github.com/processing/processing/issues/4522
 _ did we lose settings.path because it was too buggy?
@@ -111,13 +121,6 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 run/debug
 _ Tweak Mode sometimes freezes while running, require a force quit
 _   https://github.com/processing/processing/issues/3928
-
-
-discussion
-_ loadImage() immediately after saveFrame() foiled by async default
-_   https://github.com/processing/processing/issues/4218
-_   the hint() mostly works, but gross to use a hint frequently
-_ how to handle the touch api
 
 
 gui

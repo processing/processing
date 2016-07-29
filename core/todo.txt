@@ -3,6 +3,8 @@ X rewrite csv handling
 X   fix parsing bugs, remove newlines option, improve performance
 X prevent random(low, high) from returning 'high'
 X   https://github.com/processing/processing/issues/4551
+X disable async saveFrame() by default
+X   https://github.com/processing/processing/issues/4578
 
 gohai
 X Fix GLExceptions on Raspberry Pi when using offscreen PGraphics 
@@ -23,17 +25,12 @@ X fix crash when calling getUniformLoc() called in PShader.set()
 X   https://github.com/processing/processing/issues/4542
 
 
-_ disable async saveFrame() by default? 
-_   https://github.com/processing/processing/issues/4578
-
 _ Can't render PGraphics object using image() within a PDF
 _   https://github.com/processing/processing/issues/4473
 
 _ JSONObject get() method is private
 _   https://github.com/processing/processing/issues/4334
 _   https://github.com/processing/processing/pull/4336
-
-_ add push() and pop() methods to mirror js?
 
 _ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
 _   https://github.com/processing/processing/issues/4020
@@ -56,6 +53,11 @@ _   hideMenuBar() called from setup() works fine
 _ see if 8u65 or 8u66 fix the JavaFX problem
 _   if not, need to add them to the block list
 _ the --hide-stop option not working (FX only? traces?)
+
+
+discussion
+_ add push() and pop() methods to mirror js?
+_ how to handle the touch api
 
 
 known
