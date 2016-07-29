@@ -1,3 +1,108 @@
+PROCESSING 3.1.2 (REV 0251) - 29 July 2016
+
+Happy Fathom Fiesta Day! We'll be taking the afternoon off to enjoy 
+the summer, maybe you should take the afternoon off and dive into 
+a new Processing release?
+
+
+[ pde fixes ] 
+
++ NullPointerException in LanguageBundle.read() on startup that prevented
+  Processing from starting up on Windows machines. Network drive issue.
+  https://github.com/processing/processing/issues/4417
+  https://github.com/processing/processing/pull/4582
+  https://github.com/processing/processing/issues/4476
+
++ Bring back preference to hide the error checking. Error checking will 
+  continue in the background because it's needed for parsing/preprocessing,
+  but some were complaining about the error checker messages.
+  https://github.com/processing/processing/pull/4491
+  https://github.com/processing/processing/issues/4485
+
++ Updates to Japanese translation
+  https://github.com/processing/processing/pull/4564
+
++ Make preferences button wider for Japanese
+  https://github.com/processing/processing/pull/4558
+
++ Fix logic for warning message when the Mode cannot be changed
+  https://github.com/processing/processing/pull/4559
+
++ Update to Java 8u102 build 14
+
+
+[ api fixes ] 
+
++ Rewrite CSV handling to take care of some parsing bugs and improve
+  performance. Note that the 'newlines' option is no longer necessary 
+  when loading files that contain newline characters mid-field.
+
++ Prevent random(low, high) from returning 'high'
+  https://github.com/processing/processing/issues/4551
+
++ Fixed iterator remove() methods so they don't skip container elements
+  https://github.com/processing/processing/pull/4519
+
++ Added a check for length 0 arrays in expand()
+  https://github.com/processing/processing/pull/4520
+
+
+[ graphics ] 
+
++ Disable asynchronous saveFrame() by default. This can really improve
+  performance, but can cause weird glitches. Bring it back by using
+  hint(ENABLE_ASYNC_SAVEFRAME) in your code to blissfully and speedily
+  create image sequences. 
+  https://github.com/processing/processing/issues/4578
+
++ Prevent NPE in loadImage() when called before setup()
+  https://github.com/processing/processing/pull/4505
+
++ Fix crash when calling getUniformLoc() called in PShader.set()
+  https://github.com/processing/processing/issues/4542
+
+
+[ raspberry pi ]
+
++ IO: Fix drawing for SPIAnalogDigital examples
+  https://github.com/processing/processing/pull/4480
+
++ Update JVM warning text on Linux
+  https://github.com/processing/processing/pull/4512
+
++ Undo the 8u91 workaround, add Mesa warning for ARM
+  https://github.com/processing/processing/pull/4508
+
++ IO: We want motors, they said (implements SoftwareServo)
+  https://github.com/processing/processing/pull/4546
+
++ Add a temporary workaround for the CHIP to deal with cursor problems
+  https://github.com/processing/processing/pull/4554
+
++ Fix GLExceptions on Raspberry Pi when using offscreen PGraphics 
+  https://github.com/processing/processing/pull/4524
+
+
+[ fixed earlier ] 
+
++ Debugger deadlocks when choosing "Step Into" on println()
+  https://github.com/processing/processing/issues/3923
+
++ Suggestions switch scope to first import
+  https://github.com/processing/processing/issues/4016
+
++ loadImage() immediately after saveFrame() foiled by async default
+  https://github.com/processing/processing/issues/4218
+  the hint() mostly works, but gross to use a hint frequently
+
++ Fix the Downloader so that builds work again
+  https://github.com/processing/processing/issues/4496
+  https://github.com/processing/processing/pull/4511
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.1.1 (REV 0250) - 16 May 2016
 
 Happy Day-after-my-Mother-in-Law's-birthday! (After the last two releases

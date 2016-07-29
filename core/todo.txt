@@ -24,6 +24,10 @@ andres
 X fix crash when calling getUniformLoc() called in PShader.set()
 X   https://github.com/processing/processing/issues/4542
 
+earlier
+X see if 8u65 or 8u66 fix the JavaFX problem
+X   if not, need to add them to the block list
+
 
 _ Can't render PGraphics object using image() within a PDF
 _   https://github.com/processing/processing/issues/4473
@@ -45,19 +49,14 @@ _   or is that being set/unset used for any state info?
 _ when calling exit(), if sketch has halted w/ exception, force the quit
 _   otherwise have to double-quit with cmd-q on OS X
 _   simple test case: using size() inside setup() from Eclipse
-_ figure our size(img.width, img.height) situation
-_   just make loadImage() work in settings
-_   update the wiki and reference
-_ menu bar not hiding properly in exported applications with FX2D
-_   hideMenuBar() called from setup() works fine
-_ see if 8u65 or 8u66 fix the JavaFX problem
-_   if not, need to add them to the block list
-_ the --hide-stop option not working (FX only? traces?)
 
 
 discussion
 _ add push() and pop() methods to mirror js?
 _ how to handle the touch api
+_ figure our size(img.width, img.height) situation
+_   just make loadImage() work in settings
+_   update the wiki and reference
 
 
 known
@@ -86,8 +85,10 @@ _   https://github.com/processing/processing/issues/3753
 
 
 javafx
-_ fix menu bar hiding in exported JavaFX apps
+_ menu bar not hiding properly in exported applications with FX2D
+_   hideMenuBar() called from setup() works fine
 _   just call it around setup time? 
+_ the --hide-stop option not working (FX only? traces?)
 _ make wiki about quirks
 _   starving the thread makes things really slow down
 _   keyPressed() is always uppercase, keyTyped() will be correct

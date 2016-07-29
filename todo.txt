@@ -32,7 +32,7 @@ X updates to Japanese translation
 X   https://github.com/processing/processing/pull/4564
 X Make preferences button wider for Japanese
 X   https://github.com/processing/processing/pull/4558
-X Show warning message if mode cannot be changed
+X Show warning message if Mode cannot be changed
 X   https://github.com/processing/processing/pull/4559
 
 fixed in 3.1.1
