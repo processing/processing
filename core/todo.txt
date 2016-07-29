@@ -18,6 +18,14 @@ jakub
 X Prevent NPE in loadImage() when called before setup()
 X   https://github.com/processing/processing/pull/4505
 
+andres
+X fix crash when calling getUniformLoc() called in PShader.set()
+X   https://github.com/processing/processing/issues/4542
+
+
+_ disable async saveFrame() by default? 
+_   https://github.com/processing/processing/issues/4578
+
 _ Can't render PGraphics object using image() within a PDF
 _   https://github.com/processing/processing/issues/4473
 
