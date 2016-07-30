@@ -71,6 +71,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
   protected Font gutterTextFont;
   protected Color gutterTextColor;
+  protected Color gutterPastColor;
   protected Color gutterLineHighlightColor;
 
 
@@ -163,7 +164,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
       text = getJavaTextArea().getGutterText(line);
     }
 
-    gfx.setColor(gutterTextColor);
+    gfx.setColor(line < textArea.getLineCount() ? gutterTextColor : gutterPastColor);
+//    if (line >= textArea.getLineCount()) {
+//      //gfx.setColor(new Color(gutterTextColor.getRGB(), );
+//    }
     int textRight = Editor.LEFT_GUTTER - Editor.GUTTER_MARGIN;
     int textBaseline = textArea.lineToY(line) + fm.getHeight();
 
@@ -355,6 +359,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
     gutterTextFont = mode.getFont("editor.gutter.text.font");
     gutterTextColor = mode.getColor("editor.gutter.text.color");
+    gutterPastColor = new Color(gutterTextColor.getRed(),
+                                gutterTextColor.getGreen(),
+                                gutterTextColor.getBlue(),
+                                96);
     gutterLineHighlightColor = mode.getColor("editor.gutter.linehighlight.color");
   }
 
