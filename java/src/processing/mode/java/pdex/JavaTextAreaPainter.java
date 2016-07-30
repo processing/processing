@@ -46,7 +46,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Segment;
 import javax.swing.text.Utilities;
 
-import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
@@ -183,6 +182,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
       //text = makeOSF(String.valueOf(line + 1));
 
       gfx.setFont(gutterTextFont);
+//      ((Graphics2D) gfx).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+//                                          RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
       // Right-align the text
       char[] txt = text.toCharArray();
       int tx = textRight - gfx.getFontMetrics().charsWidth(txt, 0, txt.length);
