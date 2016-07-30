@@ -155,10 +155,9 @@ public class InputMethodSupport implements InputMethodRequests,
       textArea.setCaretVisible(true);
     }
 
-    char c;
     if (text != null) {
       int toCopy = committed_count;
-      c = text.first();
+      char c = text.first();
       while (toCopy-- > 0) {
         if (Base.DEBUG) {
           Messages.log("INSERT:'" + c + "'");
