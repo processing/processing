@@ -111,13 +111,10 @@ public class JavaTextAreaPainter extends TextAreaPainter
    * Paint a line. Paints the gutter (with background color and text) then the
    * line (background color and text).
    *
-   * @param gfx
-   *          the graphics context
+   * @param gfx the graphics context
    * @param tokenMarker
-   * @param line
-   *          0-based line number
-   * @param x
-   *          horizontal position
+   * @param line 0-based line number
+   * @param x horizontal position
    */
   @Override
   protected void paintLine(Graphics gfx, int line, int x,
@@ -128,7 +125,8 @@ public class JavaTextAreaPainter extends TextAreaPainter
       super.paintLine(gfx, line, x + Editor.LEFT_GUTTER, tokenMarker);
 
     } catch (Exception e) {
-      Messages.log(e.getMessage());
+      //Messages.log(e.getMessage());
+      e.printStackTrace();
     }
 
     // formerly only when in debug mode
