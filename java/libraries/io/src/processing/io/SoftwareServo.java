@@ -83,8 +83,7 @@ public class SoftwareServo {
 
 
   /**
-   *  Attaches a servo motor to a GPIO pin
-   *  @param pin GPIO pin
+   *  Attaches a servo motor to a GPIO pin using custom pulse widths
    *  @param minPulse minimum pulse width in microseconds (default: 544, same as on Arduino)
    *  @param maxPulse maximum pulse width in microseconds (default: 2400, same as on Arduino)
    *  @webref
@@ -98,7 +97,7 @@ public class SoftwareServo {
 
 
   /**
-   *  Move a servo motor to a given orientation
+   *  Moves a servo motor to a given orientation
    *  @param angle angle in degrees (controls speed and direction on continuous-rotation servos)
    *  @webref
    */
