@@ -156,9 +156,8 @@ public class InputMethodSupport implements InputMethodRequests,
     }
 
     if (text != null) {
-      int toCopy = committed_count;
       char c = text.first();
-      while (toCopy-- > 0) {
+      for (int i = 0; i < committed_count; ++i) {
         if (Base.DEBUG) {
           Messages.log("INSERT:'" + c + "'");
         }
