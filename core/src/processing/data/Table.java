@@ -548,7 +548,7 @@ public class Table {
   */
 
 
-  class CommaSeparatedLine {
+  static class CommaSeparatedLine {
     char[] c;
     String[] pieces;
     int pieceCount;
@@ -797,6 +797,23 @@ public class Table {
         i++;
         ii++;
       }
+      /*
+      if (autoTyping) {
+        if (autoTypes == null) {
+          autoTypes = new int[pieces.length];
+
+        } else {
+          if (autoTypes.length < pieces.length) {
+
+          }
+          Double.parseDouble("");
+          Float.parseFloat("blah");
+//          if (autoTypes[pieceCount]) {
+//
+//          }
+        }
+      }
+      */
       String s = new String(c, start, ii - start);
       pieces[pieceCount++] = s;
     }
@@ -2000,12 +2017,7 @@ public class Table {
   }
 
 
-  /**
-   * Set the data type for a column so that using it is more efficient.
-   * @param column the column to change
-   * @param columnType One of int, long, float, double, string, or category.
-   */
-  public void setColumnType(int column, String columnType) {
+  static int parseColumnType(String columnType) {
     columnType = columnType.toLowerCase();
     int type = -1;
     if (columnType.equals("string")) {
@@ -2023,7 +2035,17 @@ public class Table {
     } else {
       throw new IllegalArgumentException("'" + columnType + "' is not a valid column type.");
     }
-    setColumnType(column, type);
+    return type;
+  }
+
+
+  /**
+   * Set the data type for a column so that using it is more efficient.
+   * @param column the column to change
+   * @param columnType One of int, long, float, double, string, or category.
+   */
+  public void setColumnType(int column, String columnType) {
+    setColumnType(column, parseColumnType(columnType));
   }
 
 
