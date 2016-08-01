@@ -5,8 +5,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.SimpleType;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -141,25 +141,6 @@ public class SourceUtils {
   }
 
 
-  public static List<Edit> addPublicToTopLevelMethods(CompilationUnit cu) {
-    List<Edit> edits = new ArrayList<>();
-
-    // Add public modifier to top level methods
-    for (Object node : cu.types()) {
-      if (node instanceof TypeDeclaration) {
-        TypeDeclaration type = (TypeDeclaration) node;
-        for (MethodDeclaration method : type.getMethods()) {
-          if (method.modifiers().isEmpty() && !method.isConstructor()) {
-            edits.add(Edit.insert(method.getStartPosition(), "public "));
-          }
-        }
-      }
-    }
-
-    return edits;
-  }
-
-
   // Verifies that whole input String is floating point literal. Can't be used for searching.
   // https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-DecimalFloatingPointLiteral
   public static final Pattern FLOATING_POINT_LITERAL_VERIFIER;
@@ -173,13 +154,18 @@ public class SourceUtils {
             "(?:^" + DIGITS + EXPONENT_PART + "?[fFdD]$)");
   }
 
-  public static List<Edit> replaceColorAndFixFloats(CompilationUnit cu) {
+  // Mask to quickly resolve whether there are any access modifiers present
+  private static final int ACCESS_MODIFIERS_MASK =
+      Modifier.PUBLIC | Modifier.PRIVATE | Modifier.PROTECTED;
+
+  public static List<Edit> preprocessAST(CompilationUnit cu) {
     final List<Edit> edits = new ArrayList<>();
 
-    // Walk the tree, replace "color" with "int" and add 'f' to floats
+    // Walk the tree
     cu.accept(new ASTVisitor() {
       @Override
       public boolean visit(SimpleType node) {
+        // replace "color" with "int"
         if ("color".equals(node.getName().toString())) {
           edits.add(Edit.replace(node.getStartPosition(), node.getLength(), "int"));
         }
@@ -188,9 +174,20 @@ public class SourceUtils {
 
       @Override
       public boolean visit(NumberLiteral node) {
+        // add 'f' to floats
         String s = node.getToken().toLowerCase();
         if (FLOATING_POINT_LITERAL_VERIFIER.matcher(s).matches() && !s.endsWith("f") && !s.endsWith("d")) {
           edits.add(Edit.insert(node.getStartPosition() + node.getLength(), "f"));
+        }
+        return super.visit(node);
+      }
+
+      @Override
+      public boolean visit(MethodDeclaration node) {
+        // add 'public' to methods with default visibility
+        int accessModifiers = node.getModifiers() & ACCESS_MODIFIERS_MASK;
+        if (accessModifiers == 0) {
+          edits.add(Edit.insert(node.getStartPosition(), "public "));
         }
         return super.visit(node);
       }
