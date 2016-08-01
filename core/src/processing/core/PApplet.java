@@ -10038,8 +10038,8 @@ public class PApplet implements PConstants {
    * Convenience method so that PApplet.main(YourSketch.class)
    * launches a sketch, rather than having to call getName() on it.
    */
-  static public void main(final Class<?> mainClass) {
-    main(mainClass.getName(), null);
+  static public void main(final Class<?> mainClass, String... args) {
+    main(mainClass.getName(), args);
   }
 
 
