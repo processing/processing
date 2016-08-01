@@ -1,4 +1,6 @@
 0252 (3.1.3?)
+X some Table cleanup based on other CSV parsing work
+X use StandardCharsets.UTF_8 instead of getting encoding by name
 
 
 _ Can't render PGraphics object using image() within a PDF
