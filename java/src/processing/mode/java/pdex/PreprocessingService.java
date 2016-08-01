@@ -402,8 +402,7 @@ public class PreprocessingService {
 
     // Prepare advanced transforms which operate on AST
     TextTransform toCompilable = new TextTransform(parsableStage);
-    toCompilable.addAll(SourceUtils.addPublicToTopLevelMethods(parsableCU));
-    toCompilable.addAll(SourceUtils.replaceColorAndFixFloats(parsableCU));
+    toCompilable.addAll(SourceUtils.preprocessAST(parsableCU));
 
     // Transform code to compilable state
     String compilableStage = toCompilable.apply();
