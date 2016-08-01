@@ -32,8 +32,8 @@ import processing.app.ui.Editor;
 public class PdeKeywords extends TokenMarker {
   protected KeywordMap keywordColoring;
 
-  protected int lastOffset;
-  protected int lastKeyword;
+//  protected int lastOffset;
+//  protected int lastKeyword;
 
 
   /**
@@ -71,11 +71,23 @@ public class PdeKeywords extends TokenMarker {
   }
 
 
+  class MarkerState {
+    int lastOffset;
+    int lastKeyword;
+
+    MarkerState(int offset) {
+      lastOffset = offset;
+      lastKeyword = offset;
+    }
+  }
+
+
   public byte markTokensImpl(byte token, Segment line, int lineIndex) {
     char[] array = line.array;
     int offset = line.offset;
-    lastOffset = offset;
-    lastKeyword = offset;
+//    lastOffset = offset;
+//    lastKeyword = offset;
+    MarkerState ms = new MarkerState(offset);
     int mlength = offset + line.count;
     boolean backslash = false;
 
@@ -96,52 +108,52 @@ public class PdeKeywords extends TokenMarker {
             backslash = false;
           break;
         case '"':
-          doKeyword(line, i, c);
+          doKeyword(ms, line, i, c);
           if (backslash)
             backslash = false;
           else {
-            addToken(i - lastOffset, token);
+            addToken(i - ms.lastOffset, token);
             token = Token.LITERAL1;
-            lastOffset = lastKeyword = i;
+            ms.lastOffset = ms.lastKeyword = i;
           }
           break;
         case '\'':
-          doKeyword(line, i, c);
+          doKeyword(ms, line, i, c);
           if (backslash)
             backslash = false;
           else {
-            addToken(i - lastOffset, token);
+            addToken(i - ms.lastOffset, token);
             token = Token.LITERAL2;
-            lastOffset = lastKeyword = i;
+            ms.lastOffset = ms.lastKeyword = i;
           }
           break;
         case ':':
-          if (lastKeyword == offset) {
-            if (doKeyword(line, i, c))
+          if (ms.lastKeyword == offset) {
+            if (doKeyword(ms, line, i, c))
               break;
             backslash = false;
-            addToken(i1 - lastOffset, Token.LABEL);
-            lastOffset = lastKeyword = i1;
-          } else if (doKeyword(line, i, c))
+            addToken(i1 - ms.lastOffset, Token.LABEL);
+            ms.lastOffset = ms.lastKeyword = i1;
+          } else if (doKeyword(ms, line, i, c))
             break;
           break;
         case '/':
           backslash = false;
-          doKeyword(line, i, c);
+          doKeyword(ms, line, i, c);
           if (mlength - i > 1) {
             switch (array[i1]) {
             case '*':
-              addToken(i - lastOffset, token);
-              lastOffset = lastKeyword = i;
+              addToken(i - ms.lastOffset, token);
+              ms.lastOffset = ms.lastKeyword = i;
               if (mlength - i > 2 && array[i + 2] == '*')
                 token = Token.COMMENT2;
               else
                 token = Token.COMMENT1;
               break;
             case '/':
-              addToken(i - lastOffset, token);
+              addToken(i - ms.lastOffset, token);
               addToken(mlength - i, Token.COMMENT1);
-              lastOffset = lastKeyword = mlength;
+              ms.lastOffset = ms.lastKeyword = mlength;
               break loop;
             }
             // https://github.com/processing/processing/issues/1681
@@ -153,7 +165,7 @@ public class PdeKeywords extends TokenMarker {
         default:
           backslash = false;
           if (!Character.isLetterOrDigit(c) && c != '_') {
-            doKeyword(line, i, c);
+            doKeyword(ms, line, i, c);
           }
           break;
         }
@@ -164,9 +176,9 @@ public class PdeKeywords extends TokenMarker {
         if (c == '*' && mlength - i > 1) {
           if (array[i1] == '/') {
             i++;
-            addToken((i + 1) - lastOffset, token);
+            addToken((i + 1) - ms.lastOffset, token);
             token = Token.NULL;
-            lastOffset = lastKeyword = i + 1;
+            ms.lastOffset = ms.lastKeyword = i + 1;
           }
         }
         break;
@@ -174,18 +186,18 @@ public class PdeKeywords extends TokenMarker {
         if (backslash)
           backslash = false;
         else if (c == '"') {
-          addToken(i1 - lastOffset, token);
+          addToken(i1 - ms.lastOffset, token);
           token = Token.NULL;
-          lastOffset = lastKeyword = i1;
+          ms.lastOffset = ms.lastKeyword = i1;
         }
         break;
       case Token.LITERAL2:
         if (backslash)
           backslash = false;
         else if (c == '\'') {
-          addToken(i1 - lastOffset, Token.LITERAL1);
+          addToken(i1 - ms.lastOffset, Token.LITERAL1);
           token = Token.NULL;
-          lastOffset = lastKeyword = i1;
+          ms.lastOffset = ms.lastKeyword = i1;
         }
         break;
       default:
@@ -194,44 +206,44 @@ public class PdeKeywords extends TokenMarker {
     }
 
     if (token == Token.NULL) {
-      doKeyword(line, mlength, '\0');
+      doKeyword(ms, line, mlength, '\0');
     }
 
     switch (token) {
     case Token.LITERAL1:
     case Token.LITERAL2:
-      addToken(mlength - lastOffset, Token.INVALID);
+      addToken(mlength - ms.lastOffset, Token.INVALID);
       token = Token.NULL;
       break;
     case Token.KEYWORD2:
-      addToken(mlength - lastOffset, token);
+      addToken(mlength - ms.lastOffset, token);
       if (!backslash)
         token = Token.NULL;
-      addToken(mlength - lastOffset, token);
+      addToken(mlength - ms.lastOffset, token);
       break;
     default:
-      addToken(mlength - lastOffset, token);
+      addToken(mlength - ms.lastOffset, token);
       break;
     }
     return token;
   }
 
 
-  protected boolean doKeyword(Segment line, int i, char c) {
+  protected boolean doKeyword(MarkerState ms, Segment line, int i, char c) {
     int i1 = i + 1;
-    int len = i - lastKeyword;
+    int len = i - ms.lastKeyword;
 
     boolean paren = Editor.checkParen(line.array, i, line.array.length);
 
-    byte id = keywordColoring.lookup(line, lastKeyword, len, paren);
+    byte id = keywordColoring.lookup(line, ms.lastKeyword, len, paren);
     if (id != Token.NULL) {
-      if (lastKeyword != lastOffset) {
-        addToken(lastKeyword - lastOffset, Token.NULL);
+      if (ms.lastKeyword != ms.lastOffset) {
+        addToken(ms.lastKeyword - ms.lastOffset, Token.NULL);
       }
       addToken(len, id);
-      lastOffset = i;
+      ms.lastOffset = i;
     }
-    lastKeyword = i1;
+    ms.lastKeyword = i1;
     return false;
   }
 }
