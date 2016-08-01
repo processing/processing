@@ -23,6 +23,7 @@ import processing.app.Messages;
 import processing.app.Preferences;
 import processing.app.syntax.InputHandler;
 import processing.app.syntax.JEditTextArea;
+import processing.app.syntax.TextAreaDefaults;
 import processing.app.syntax.TextAreaPainter;
 
 
@@ -52,13 +53,16 @@ public class InputMethodSupport implements InputMethodRequests, InputMethodListe
   };
 
   private JEditTextArea textArea;
+  private TextAreaDefaults defaults;
   private InputHandler inputHandler;
 
   private int committedCount = 0;
   private AttributedString composedTextString;
 
-  public InputMethodSupport(JEditTextArea textArea, InputHandler inputHandler) {
+  public InputMethodSupport(JEditTextArea textArea, TextAreaDefaults defaults,
+                            InputHandler inputHandler) {
     this.textArea = textArea;
+    this.defaults = defaults;
     this.inputHandler = inputHandler;
 
     textArea.enableInputMethods(true);
@@ -220,8 +224,15 @@ public class InputMethodSupport implements InputMethodRequests, InputMethodListe
     if (text.getEndIndex() - (text.getBeginIndex() + committedCount) > 0) {
       composedTextString = new AttributedString(text, committedCount, text.getEndIndex(), CUSTOM_IM_ATTRIBUTES);
       Font font = painter.getFontMetrics().getFont();
+      Color bgColor;
+      if (defaults.lineHighlight) {
+        bgColor = defaults.lineHighlightColor;
+      } else {
+        bgColor = defaults.bgcolor;
+      }
       composedTextString.addAttribute(TextAttribute.FONT, font);
-      composedTextString.addAttribute(TextAttribute.BACKGROUND, Color.WHITE);
+      composedTextString.addAttribute(TextAttribute.FOREGROUND, defaults.fgcolor);
+      composedTextString.addAttribute(TextAttribute.BACKGROUND, bgColor);
     } else {
       composedTextString = new AttributedString("");
       return null;

@@ -80,6 +80,7 @@ public class JEditTextArea extends JComponent
   private InputMethodSupport inputMethodSupport = null;
 
   private Brackets bracketHelper = new Brackets();
+  private TextAreaDefaults defaults;
 
 
   /**
@@ -87,6 +88,8 @@ public class JEditTextArea extends JComponent
    * @param defaults The default settings
    */
   public JEditTextArea(TextAreaDefaults defaults, InputHandler inputHandler) {
+    this.defaults = defaults;
+
     // Enable the necessary events
     enableEvents(AWTEvent.KEY_EVENT_MASK);
 
@@ -192,7 +195,7 @@ public class JEditTextArea extends JComponent
   public InputMethodRequests getInputMethodRequests() {
     if (Preferences.getBoolean("editor.input_method_support")) {
       if (inputMethodSupport == null) {
-        inputMethodSupport = new InputMethodSupport(this, inputHandler);
+        inputMethodSupport = new InputMethodSupport(this, defaults, inputHandler);
         /*
         inputMethodSupport.setCallback(new InputMethodSupport.Callback() {
           @Override
