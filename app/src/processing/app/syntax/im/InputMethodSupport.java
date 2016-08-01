@@ -155,16 +155,15 @@ public class InputMethodSupport implements InputMethodRequests,
       textArea.setCaretVisible(true);
     }
 
-    char c;
     if (text != null) {
-      int toCopy = committed_count;
-      c = text.first();
-      while (toCopy-- > 0) {
-        if (Base.DEBUG) {
-          Messages.log("INSERT:'" + c + "'");
+      if (committed_count > 0) {
+        char committedChars[] = new char[committed_count];
+        char c = text.first();
+        for (int i = 0; i < committed_count; ++i) {
+          committedChars[i] = c;
+          c = text.next();
         }
-        this.insertCharacter(c);
-        c = text.next();
+        insertCharacters(committedChars);
       }
 
       CompositionTextPainter compositionPainter = textArea.getPainter().getCompositionTextpainter();
@@ -218,14 +217,14 @@ public class InputMethodSupport implements InputMethodRequests,
     event.consume();
   }
 
-  private void insertCharacter(char c) {
+  private void insertCharacters(char[] chars) {
     if (Base.DEBUG) {
-      Messages.log("debug: insertCharacter(char c) textArea.getCaretPosition()=" + textArea.getCaretPosition());
+      Messages.log("debug: insertCharacters(char[] chars) textArea.getCaretPosition()=" + textArea.getCaretPosition());
     }
     try {
-      textArea.getDocument().insertString(textArea.getCaretPosition(), Character.toString(c), null);
+      textArea.getDocument().insertString(textArea.getCaretPosition(), new String(chars), null);
       if (Base.DEBUG) {
-        Messages.log("debug: \t after:insertCharacter(char c) textArea.getCaretPosition()=" + textArea.getCaretPosition());
+        Messages.log("debug: \t after:insertCharacters(char[] chars) textArea.getCaretPosition()=" + textArea.getCaretPosition());
       }
     } catch (BadLocationException e) {
       e.printStackTrace();
