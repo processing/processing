@@ -9,11 +9,17 @@ contrib
 X Simplify conditional branch
 X   https://github.com/processing/processing/pull/4589
 
+jakub
+X NullPointerException in SketchCode.getDocumentText()
+X   https://github.com/processing/processing/issues/4555
+o   https://github.com/processing/processing/pull/4547
+X   https://github.com/processing/processing/pull/4596
+X Error checker now adds 'public' to all default access methods
+X   https://github.com/processing/processing/pull/4597
+X   https://github.com/processing/processing/issues/4583
+
 
 high
-_ NullPointerException in SketchCode.getDocumentText()
-_   https://github.com/processing/processing/issues/4555
-_   https://github.com/processing/processing/pull/4547
 _ Pasting code from editor to empty editor produces Exception
 _   https://github.com/processing/processing/issues/4522
 _ did we lose settings.path because it was too buggy?

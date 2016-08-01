@@ -26,27 +26,25 @@ import processing.app.Preferences;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaPainter;
 
+
 /**
- * on-the-spot style input support for CJK.(Chinese, Japanese, Korean).
- * This class is implemented to fix Bug #854 from 2010-02-16.
+ * On-the-spot style input support for CJK (Chinese, Japanese, Korean).
  *
- * @see <a href="https://processing.org/bugs/bugzilla/854.html">Bug 854 : implement input method support for Japanese (and other languages)</a>
- * @see <a href="https://processing.org/bugs/bugzilla/1531.html">Bug 1531 : Can't input full-width space when Japanese IME is on.</a>
- * @see <a href="http://docs.oracle.com/javase/8/docs/technotes/guides/imf/index.html">Java Input Method Framework
- * (IMF) Technology</a>
+ * @see <a href="https://processing.org/bugs/bugzilla/854.html">Bugzilla 854: implement input method support for Japanese (and other languages)</a>
+ * @see <a href="https://processing.org/bugs/bugzilla/1531.html">Bugzilla 1531: Can't input full-width space when Japanese IME is on.</a>
+ * @see <a href="http://docs.oracle.com/javase/8/docs/technotes/guides/imf/index.html">Java Input Method Framework (IMF) Technology</a>
  * @see <a href="http://docs.oracle.com/javase/tutorial/2d/text/index.html">The Java Tutorials</a>
  *
  * @author Takashi Maekawa (takachin@generative.info)
  * @author Satoshi Okita
  */
-public class InputMethodSupport implements InputMethodRequests,
-    InputMethodListener {
+public class InputMethodSupport implements InputMethodRequests, InputMethodListener {
 
-  private static final Attribute[] CUSTOM_IM_ATTRIBUTES = {
+  static private final Attribute[] CUSTOM_IM_ATTRIBUTES = {
     TextAttribute.INPUT_METHOD_HIGHLIGHT,
   };
 
-  private int committed_count = 0;
+  private int committedCount = 0;
   private JEditTextArea textArea;
   private AttributedString composedTextString;
 
@@ -56,9 +54,13 @@ public class InputMethodSupport implements InputMethodRequests,
     this.textArea.addInputMethodListener(this);
   }
 
+
   /////////////////////////////////////////////////////////////////////////////
+
   // InputMethodRequest
+
   /////////////////////////////////////////////////////////////////////////////
+
   @Override
   public Rectangle getTextLocation(TextHitInfo offset) {
     if (Base.DEBUG) {
@@ -82,10 +84,12 @@ public class InputMethodSupport implements InputMethodRequests,
     return null;
   }
 
+
   @Override
   public int getInsertPositionOffset() {
-    return textArea.getCaretPosition() * -1;
+    return -textArea.getCaretPosition();
   }
+
 
   @Override
   public AttributedCharacterIterator getCommittedText(int beginIndex,
@@ -95,10 +99,12 @@ public class InputMethodSupport implements InputMethodRequests,
     return new AttributedString(textAreaString).getIterator();
   }
 
+
   @Override
   public int getCommittedTextLength() {
-    return committed_count;
+    return committedCount;
   }
+
 
   @Override
   public AttributedCharacterIterator cancelLatestCommittedText(
@@ -106,15 +112,20 @@ public class InputMethodSupport implements InputMethodRequests,
     return null;
   }
 
+
   @Override
   public AttributedCharacterIterator getSelectedText(
       AttributedCharacterIterator.Attribute[] attributes) {
     return null;
   }
 
+
   /////////////////////////////////////////////////////////////////////////////
+
   // InputMethodListener
+
   /////////////////////////////////////////////////////////////////////////////
+
   /**
    * Handles events from InputMethod.
    *
@@ -132,22 +143,21 @@ public class InputMethodSupport implements InputMethodRequests,
     }
 
     AttributedCharacterIterator text = event.getText(); // text = composedText + commitedText
-    committed_count = event.getCommittedCharacterCount();
+    committedCount = event.getCommittedCharacterCount();
 
-
-    // The caret for Input Method.
-    // if you type a character by a input method, original caret become off.
-    // a JEditTextArea is not implemented by the AttributedStirng and TextLayout.
-    // so JEditTextArea Caret On-off logic.
-    //
-    // japanese        : if the enter key pressed, event.getText is null.
-    // japanese        : if first space key pressed, event.getText is null.
-    // chinese(pinin)  : if a space key pressed, event.getText is null.
-    // taiwan(bopomofo): ?
-    // korean          : ?
+    // The caret for Input Method. If you type a character by a input method,
+    // original caret position will be incorrect. JEditTextArea is not
+    // implemented using AttributedString and TextLayout.
     textArea.setCaretVisible(false);
+
+    // Japanese         : if the enter key pressed, event.getText is null.
+    // Japanese         : if first space key pressed, event.getText is null.
+    // Chinese (pinin)  : if a space key pressed, event.getText is null.
+    // Taiwan (bopomofo): ?
+    // Korean           : ?
+
     // Korean Input Method
-    if (text != null && text.getEndIndex() - (text.getBeginIndex() + committed_count) <= 0) {
+    if (text != null && text.getEndIndex() - (text.getBeginIndex() + committedCount) <= 0) {
       textArea.setCaretVisible(true);
     }
     // Japanese Input Method
@@ -155,26 +165,22 @@ public class InputMethodSupport implements InputMethodRequests,
       textArea.setCaretVisible(true);
     }
 
-    char c;
     if (text != null) {
-      int toCopy = committed_count;
-      c = text.first();
-      while (toCopy-- > 0) {
-        if (Base.DEBUG) {
-          Messages.log("INSERT:'" + c + "'");
-        }
-        this.insertCharacter(c);
+      int remaining = committedCount;
+      char c = text.first();
+      while (remaining-- > 0) {
+        insertCharacter(c);
         c = text.next();
       }
 
       CompositionTextPainter compositionPainter = textArea.getPainter().getCompositionTextpainter();
       if (Base.DEBUG) {
-        Messages.log(" textArea.getCaretPosition() + committed_count: " + (textArea.getCaretPosition() + committed_count));
+        Messages.log(" textArea.getCaretPosition() + committed_count: " + (textArea.getCaretPosition() + committedCount));
       }
-      compositionPainter.setComposedTextLayout(getTextLayout(text, committed_count), textArea.getCaretPosition() + committed_count);
+      compositionPainter.setComposedTextLayout(getTextLayout(text, committedCount), textArea.getCaretPosition() + committedCount);
       compositionPainter.setCaret(event.getCaret());
-    } else {
-      // hide input method.
+
+    } else {  // otherwise hide the input method
       CompositionTextPainter compositionPainter = textArea.getPainter().getCompositionTextpainter();
       compositionPainter.setComposedTextLayout(null, 0);
       compositionPainter.setCaret(null);
@@ -182,6 +188,7 @@ public class InputMethodSupport implements InputMethodRequests,
     event.consume();
     textArea.repaint();
   }
+
 
   private TextLayout getTextLayout(AttributedCharacterIterator text, int committedCount) {
     boolean antialias = Preferences.getBoolean("editor.smooth");
@@ -213,10 +220,12 @@ public class InputMethodSupport implements InputMethodRequests,
     return new TextLayout(composedTextString.getIterator(), frc);
   }
 
+
   @Override
   public void caretPositionChanged(InputMethodEvent event) {
     event.consume();
   }
+
 
   private void insertCharacter(char c) {
     if (Base.DEBUG) {
