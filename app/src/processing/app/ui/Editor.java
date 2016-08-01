@@ -1371,10 +1371,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
       redoAction.updateRedoState();
       if (sketch != null) {
         sketch.setModified(!getText().equals(sketch.getCurrentCode().getSavedProgram()));
+        // Go through all tabs; Replace All, Rename or Undo could have changed them
         for (SketchCode sc : sketch.getCode()) {
-          try {
-            sc.setModified(!sc.getDocumentText().equals(sc.getSavedProgram()));
-          } catch (BadLocationException ignore) { }
+          if (sc.getDocument() != null) {
+            try {
+              sc.setModified(!sc.getDocumentText().equals(sc.getSavedProgram()));
+            } catch (BadLocationException ignore) { }
+          }
         }
         repaintHeader();
       }
@@ -1433,10 +1436,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
       undoAction.updateUndoState();
       if (sketch != null) {
         sketch.setModified(!getText().equals(sketch.getCurrentCode().getSavedProgram()));
+        // Go through all tabs; Replace All, Rename or Undo could have changed them
         for (SketchCode sc : sketch.getCode()) {
-          try {
-            sc.setModified(!sc.getDocumentText().equals(sc.getSavedProgram()));
-          } catch (BadLocationException ignore) { }
+          if (sc.getDocument() != null) {
+            try {
+              sc.setModified(!sc.getDocumentText().equals(sc.getSavedProgram()));
+            } catch (BadLocationException ignore) {
+            }
+          }
         }
         repaintHeader();
       }
@@ -2717,10 +2724,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // make sure any edits have been stored
     //current.setProgram(editor.getText());
+    // Go through all tabs; Replace All, Rename or Undo could have changed them
     for (SketchCode sc : sketch.getCode()) {
-      try {
-        sc.setProgram(sc.getDocumentText());
-      } catch (BadLocationException e) { }
+      if (sc.getDocument() != null) {
+        try {
+          sc.setProgram(sc.getDocumentText());
+        } catch (BadLocationException e) {
+        }
+      }
     }
 
 //    // if an external editor is being used, need to grab the
