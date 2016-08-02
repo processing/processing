@@ -334,6 +334,13 @@ public class JavaInputHandler extends PdeInputHandler {
   }
 
 
+  @Override
+  public void onCommittedFromInputMethodSupport(char c) {
+    Sketch sketch = editor.getSketch();
+    sketch.setModified(true);
+  }
+
+
   /**
    * Return the index for the first character on this line.
    */
