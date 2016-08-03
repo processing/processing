@@ -2,6 +2,10 @@
 X some Table cleanup based on other CSV parsing work
 X use StandardCharsets.UTF_8 instead of getting encoding by name
 X PApplet.main(Blah.class) now works
+X add toJSON() method to IntDict
+_   do the same for the other data classes
+_   note the difference between this and toJSONObject() or toJSONArray()
+_   or is that the better way to handle it? hm
 
 
 _ Can't render PGraphics object using image() within a PDF
