@@ -166,12 +166,14 @@ public class InputMethodSupport implements InputMethodRequests, InputMethodListe
     }
 
     if (text != null) {
-      int remaining = committedCount;
+      char[] insertion = new char[committedCount];
       char c = text.first();
-      while (remaining-- > 0) {
-        insertCharacter(c);
+      for (int i = 0; i < committedCount; i++) {
+        insertion[i] = c;
         c = text.next();
       }
+      // Insert this as a compound edit
+      textArea.setSelectedText(new String(insertion), true);
 
       CompositionTextPainter compositionPainter = textArea.getPainter().getCompositionTextpainter();
       if (Base.DEBUG) {
@@ -227,6 +229,7 @@ public class InputMethodSupport implements InputMethodRequests, InputMethodListe
   }
 
 
+  /*
   private void insertCharacter(char c) {
     if (Base.DEBUG) {
       Messages.log("debug: insertCharacter(char c) textArea.getCaretPosition()=" + textArea.getCaretPosition());
@@ -240,4 +243,5 @@ public class InputMethodSupport implements InputMethodRequests, InputMethodListe
       e.printStackTrace();
     }
   }
+  */
 }

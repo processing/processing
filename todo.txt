@@ -1,16 +1,19 @@
 0252 (3.1.3?)
-X Enable input method support by default on Japanese/Korean/Chinese systems
-X   https://github.com/processing/processing/pull/4598
-
 _ modify line number color when no lines extend that far?
 _   https://github.com/processing/processing/pull/4560
 _ text gutter doesn't seem to be hidpi 
 X   or is it b/c screen not quite 2x? (nope)
 _ swap out the fonts?
+_ Set text color for InputMethod
+_   https://github.com/processing/processing/pull/4593
 
 contrib
 X Simplify conditional branch
 X   https://github.com/processing/processing/pull/4589
+X Enable input method support by default on Japanese/Korean/Chinese systems
+X   https://github.com/processing/processing/pull/4598
+X Set sketch as modified when any character committed using input method
+X   https://github.com/processing/processing/pull/4599
 
 jakub
 X NullPointerException in SketchCode.getDocumentText()
