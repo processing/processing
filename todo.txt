@@ -1,4 +1,7 @@
 0252 (3.1.3?)
+X Enable input method support by default on Japanese/Korean/Chinese systems
+X   https://github.com/processing/processing/pull/4598
+
 _ modify line number color when no lines extend that far?
 _   https://github.com/processing/processing/pull/4560
 _ text gutter doesn't seem to be hidpi 
