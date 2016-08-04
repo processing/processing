@@ -335,9 +335,8 @@ public class JavaInputHandler extends PdeInputHandler {
 
 
   @Override
-  public void onCommittedFromInputMethodSupport(char c) {
-    Sketch sketch = editor.getSketch();
-    sketch.setModified(true);
+  public void handleInputMethodCommit() {
+    editor.getSketch().setModified(true);
   }
 
 

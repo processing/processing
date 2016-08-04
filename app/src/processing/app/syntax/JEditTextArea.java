@@ -192,13 +192,15 @@ public class JEditTextArea extends JComponent
   public InputMethodRequests getInputMethodRequests() {
     if (Preferences.getBoolean("editor.input_method_support")) {
       if (inputMethodSupport == null) {
-        inputMethodSupport = new InputMethodSupport(this);
+        inputMethodSupport = new InputMethodSupport(this, inputHandler);
+        /*
         inputMethodSupport.setCallback(new InputMethodSupport.Callback() {
           @Override
           public void onCommitted(char c) {
-            inputHandler.onCommittedFromInputMethodSupport(c);
+            inputHandler.onInputMethodCommit(c);
           }
         });
+        */
       }
       return inputMethodSupport;
     }
@@ -1379,14 +1381,14 @@ public class JEditTextArea extends JComponent
   /**
    * Replaces the selection with the specified text.
    * @param selectedText The replacement text for the selection
-   * @param recordCompoundEdit Whether the replacement should be 
+   * @param recordCompoundEdit Whether the replacement should be
    * recorded as a compound edit
    */
   public void setSelectedText(String selectedText, boolean recordCompoundEdit) {
     if (!editable) {
       throw new InternalError("Text component read only");
     }
-    
+
     if (recordCompoundEdit) {
       document.beginCompoundEdit();
     }
@@ -1477,7 +1479,7 @@ public class JEditTextArea extends JComponent
     // Don't overstrike if there is a selection
     if(!overwrite || selectionStart != selectionEnd)
     {
-      // record the whole operation as a compound edit if 
+      // record the whole operation as a compound edit if
       // selected text is being replaced
       boolean isSelectAndReplaceOp = (selectionStart != selectionEnd);
       setSelectedText(str, isSelectAndReplaceOp);

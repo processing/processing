@@ -21,6 +21,7 @@ import java.text.AttributedString;
 import processing.app.Base;
 import processing.app.Messages;
 import processing.app.Preferences;
+import processing.app.syntax.InputHandler;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaPainter;
 
@@ -38,29 +39,38 @@ import processing.app.syntax.TextAreaPainter;
  */
 public class InputMethodSupport implements InputMethodRequests, InputMethodListener {
 
+  /*
   public interface Callback {
     public void onCommitted(char c);
   }
+
+  private Callback callback;
+  */
 
   static private final Attribute[] CUSTOM_IM_ATTRIBUTES = {
     TextAttribute.INPUT_METHOD_HIGHLIGHT,
   };
 
-  private int committedCount = 0;
   private JEditTextArea textArea;
-  private AttributedString composedTextString;
-  private Callback callback;
+  private InputHandler inputHandler;
 
-  public InputMethodSupport(JEditTextArea textArea) {
+  private int committedCount = 0;
+  private AttributedString composedTextString;
+
+  public InputMethodSupport(JEditTextArea textArea, InputHandler inputHandler) {
     this.textArea = textArea;
-    this.textArea.enableInputMethods(true);
-    this.textArea.addInputMethodListener(this);
+    this.inputHandler = inputHandler;
+
+    textArea.enableInputMethods(true);
+    textArea.addInputMethodListener(this);
   }
 
 
+  /*
   public void setCallback(Callback callback) {
     this.callback = callback;
   }
+  */
 
 
   /////////////////////////////////////////////////////////////////////////////
@@ -182,9 +192,7 @@ public class InputMethodSupport implements InputMethodRequests, InputMethodListe
       }
       // Insert this as a compound edit
       textArea.setSelectedText(new String(insertion), true);
-      if (callback != null) {
-        callback.onCommitted(c);
-      }
+      inputHandler.handleInputMethodCommit();
 
       CompositionTextPainter compositionPainter = textArea.getPainter().getCompositionTextpainter();
       if (Base.DEBUG) {
