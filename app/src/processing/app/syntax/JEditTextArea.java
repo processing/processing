@@ -193,6 +193,12 @@ public class JEditTextArea extends JComponent
     if (Preferences.getBoolean("editor.input_method_support")) {
       if (inputMethodSupport == null) {
         inputMethodSupport = new InputMethodSupport(this);
+        inputMethodSupport.setCallback(new InputMethodSupport.Callback() {
+          @Override
+          public void onCommitted(char c) {
+            inputHandler.onCommittedFromInputMethodSupport(c);
+          }
+        });
       }
       return inputMethodSupport;
     }

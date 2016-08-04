@@ -16,8 +16,6 @@ import java.awt.im.InputMethodRequests;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedCharacterIterator.Attribute;
 
-import javax.swing.text.BadLocationException;
-
 import java.text.AttributedString;
 
 import processing.app.Base;
@@ -40,6 +38,10 @@ import processing.app.syntax.TextAreaPainter;
  */
 public class InputMethodSupport implements InputMethodRequests, InputMethodListener {
 
+  public interface Callback {
+    public void onCommitted(char c);
+  }
+
   static private final Attribute[] CUSTOM_IM_ATTRIBUTES = {
     TextAttribute.INPUT_METHOD_HIGHLIGHT,
   };
@@ -47,11 +49,17 @@ public class InputMethodSupport implements InputMethodRequests, InputMethodListe
   private int committedCount = 0;
   private JEditTextArea textArea;
   private AttributedString composedTextString;
+  private Callback callback;
 
   public InputMethodSupport(JEditTextArea textArea) {
     this.textArea = textArea;
     this.textArea.enableInputMethods(true);
     this.textArea.addInputMethodListener(this);
+  }
+
+
+  public void setCallback(Callback callback) {
+    this.callback = callback;
   }
 
 
@@ -174,6 +182,9 @@ public class InputMethodSupport implements InputMethodRequests, InputMethodListe
       }
       // Insert this as a compound edit
       textArea.setSelectedText(new String(insertion), true);
+      if (callback != null) {
+        callback.onCommitted(c);
+      }
 
       CompositionTextPainter compositionPainter = textArea.getPainter().getCompositionTextpainter();
       if (Base.DEBUG) {
