@@ -236,6 +236,16 @@ public class Language {
   }
 
 
+  /**
+   * Returns whether the current language needs input method support.
+   * @return true if input method support is needed
+   */
+  static public boolean isNeedInputMethodSupport() {
+    String language = getLanguage();
+    return language.equals("ja") || language.equals("ko") || language.equals("zh");
+  }
+
+
 //  /** Set new language (called by Preferences) */
 //  static public void setLanguage(String language) {
 //    this.language = language;
