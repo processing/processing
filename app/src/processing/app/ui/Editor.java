@@ -389,7 +389,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   protected JEditTextArea createTextArea() {
     return new JEditTextArea(new PdeTextAreaDefaults(mode),
-                             new PdeInputHandler());
+                             new PdeInputHandler(this));
   }
 
 
@@ -1770,7 +1770,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
             startCompoundEdit();
           super.beginCompoundEdit();
         }
-        
+
         @Override
         public void endCompoundEdit() {
           stopCompoundEdit();
@@ -1805,7 +1805,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           if (!isInserting && !textarea.isOverwriteEnabled() && isDirectEdit()) {
             endTextEditHistory();
           }
-          
+
           if (!textarea.isOverwriteEnabled()) {
             isInserting = true;
           }

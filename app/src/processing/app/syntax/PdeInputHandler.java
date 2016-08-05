@@ -30,6 +30,7 @@ import java.awt.event.KeyEvent;
 
 import processing.app.Platform;
 import processing.app.Preferences;
+import processing.app.ui.Editor;
 
 
 /**
@@ -39,7 +40,17 @@ import processing.app.Preferences;
  */
 public class PdeInputHandler extends DefaultInputHandler {
 
-  public PdeInputHandler() {
+  /**
+   * Need the Editor object for Input Method changes, plus most subclasses
+   * will want a local copy anyway. Changed after Processing 3.1.2, need to
+   * see if this breaks any other Modes before releasing.
+   */
+  protected Editor editor;
+
+
+  public PdeInputHandler(Editor editor) {
+    this.editor = editor;
+
     // Use option on mac for text edit controls that are ctrl on Windows/Linux.
     // (i.e. ctrl-left/right is option-left/right on OS X)
     String mod = Platform.isMacOS() ? "A" : "C";
@@ -252,5 +263,10 @@ public class PdeInputHandler extends DefaultInputHandler {
    */
   public boolean handleTyped(KeyEvent event) {
     return false;
+  }
+
+
+  public void handleInputMethodCommit() {
+    editor.getSketch().setModified(true);
   }
 }
