@@ -184,15 +184,17 @@ public class InputMethodSupport implements InputMethodRequests, InputMethodListe
     }
 
     if (text != null) {
-      char[] insertion = new char[committedCount];
-      char c = text.first();
-      for (int i = 0; i < committedCount; i++) {
-        insertion[i] = c;
-        c = text.next();
+      if (committedCount > 0) {
+        char[] insertion = new char[committedCount];
+        char c = text.first();
+        for (int i = 0; i < committedCount; i++) {
+          insertion[i] = c;
+          c = text.next();
+        }
+        // Insert this as a compound edit
+        textArea.setSelectedText(new String(insertion), true);
+        inputHandler.handleInputMethodCommit();
       }
-      // Insert this as a compound edit
-      textArea.setSelectedText(new String(insertion), true);
-      inputHandler.handleInputMethodCommit();
 
       CompositionTextPainter compositionPainter = textArea.getPainter().getCompositionTextpainter();
       if (Base.DEBUG) {
