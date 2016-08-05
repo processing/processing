@@ -10,6 +10,8 @@ _ Processing .jar files in CLASSPATH can cause startup crash
 _   https://github.com/processing/processing/issues/4128
 
 contrib
+
+input method work
 X Simplify conditional branch
 X   https://github.com/processing/processing/pull/4589
 X Enable input method support by default on Japanese/Korean/Chinese systems
@@ -18,6 +20,10 @@ X Set sketch as modified when any character committed using input method
 X   https://github.com/processing/processing/pull/4599
 X Insert characters by InputMethod at one time
 X   https://github.com/processing/processing/pull/4594
+X Insert string when it is committed
+X   https://github.com/processing/processing/pull/4602
+_ Set text color for InputMethod
+_   https://github.com/processing/processing/pull/4593
 
 jakub
 X NullPointerException in SketchCode.getDocumentText()

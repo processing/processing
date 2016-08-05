@@ -77,7 +77,9 @@ public class JEditTextArea extends JComponent
   /** The size of the offset between the leftmost padding and the code */
   public static final int leftHandGutter = 6;
 
-  private InputMethodSupport inputMethodSupport = null;
+  private InputMethodSupport inputMethodSupport;
+
+  private TextAreaDefaults defaults;
 
   private Brackets bracketHelper = new Brackets();
 
@@ -87,6 +89,8 @@ public class JEditTextArea extends JComponent
    * @param defaults The default settings
    */
   public JEditTextArea(TextAreaDefaults defaults, InputHandler inputHandler) {
+    this.defaults = defaults;
+
     // Enable the necessary events
     enableEvents(AWTEvent.KEY_EVENT_MASK);
 
@@ -192,15 +196,7 @@ public class JEditTextArea extends JComponent
   public InputMethodRequests getInputMethodRequests() {
     if (Preferences.getBoolean("editor.input_method_support")) {
       if (inputMethodSupport == null) {
-        inputMethodSupport = new InputMethodSupport(this, inputHandler);
-        /*
-        inputMethodSupport.setCallback(new InputMethodSupport.Callback() {
-          @Override
-          public void onCommitted(char c) {
-            inputHandler.onInputMethodCommit(c);
-          }
-        });
-        */
+        inputMethodSupport = new InputMethodSupport(this);
       }
       return inputMethodSupport;
     }
@@ -268,6 +264,11 @@ public class JEditTextArea extends JComponent
 
   public final Printable getPrintable() {
     return painter.getPrintable();
+  }
+
+
+  public TextAreaDefaults getDefaults() {
+    return defaults;
   }
 
 
