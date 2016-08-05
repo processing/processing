@@ -22,8 +22,8 @@ X Insert characters by InputMethod at one time
 X   https://github.com/processing/processing/pull/4594
 X Insert string when it is committed
 X   https://github.com/processing/processing/pull/4602
-_ Set text color for InputMethod
-_   https://github.com/processing/processing/pull/4593
+X Set text color for InputMethod
+X   https://github.com/processing/processing/pull/4593
 
 jakub
 X NullPointerException in SketchCode.getDocumentText()
