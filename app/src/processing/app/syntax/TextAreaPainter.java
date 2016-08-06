@@ -438,6 +438,12 @@ public class TextAreaPainter extends JComponent implements TabExpander {
   }
 
 
+  // fry [160806 for 3.2]
+  public int getLineHeight() {
+    return fm.getHeight() + fm.getDescent();
+  }
+
+
 //  /**
 //   * Sets the font for this component. This is overridden to update the
 //   * cached font metrics and to recalculate which lines are visible.

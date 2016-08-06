@@ -1,4 +1,4 @@
-0252 (3.1.3?)
+0252 (3.2)
 X change PdeInputHandler constructor
 _   check whether this breaks other Modes before releasing
 _ modify line number color when no lines extend that far?
@@ -10,6 +10,9 @@ _ Set text color for InputMethod
 _   https://github.com/processing/processing/pull/4593
 _ Processing .jar files in CLASSPATH can cause startup crash
 _   https://github.com/processing/processing/issues/4128
+
+_ Help Menu disabled on OS X
+_   https://github.com/processing/processing/issues/43503#issuecomment-237715947
 
 contrib
 
@@ -44,6 +47,10 @@ _ did we lose settings.path because it was too buggy?
 _   https://github.com/processing/processing/issues/3948
 _ possible infinite loop on modified externally
 _   https://github.com/processing/processing/issues/3965
+
+medium
+_ Move general PDE code out of JavaMode and into general base classes
+_   https://github.com/processing/processing/issues/4606
 
 lower
 _ make when opening new editor window, open on the same display as current
@@ -110,6 +117,8 @@ _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 run/debug
 _ Tweak Mode sometimes freezes while running, require a force quit
 _   https://github.com/processing/processing/issues/3928
+_ TweakMode listener mess in JavaTextArea
+_   https://github.com/processing/processing/issues/4605
 
 
 gui

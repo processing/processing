@@ -2358,6 +2358,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //  }
 
 
+  public boolean isDebuggerEnabled() {
+    return false;
+  }
+
+
+  public void toggleBreakpoint(int lineIndex) { }
+
+
   /**
    * Check if the sketch is modified and ask user to save changes.
    * @return false if canceling the close/quit operation
@@ -2928,18 +2936,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
   static Color textColor;
   static Color bgColorWarning;
   static Color bgColorError;
-
-
-  /*
-  public void toolTipError(JComponent comp, String message) {
-    setToolTip(comp, message, true);
-  }
-
-
-  public void toolTipWarning(JComponent comp, String message) {
-    setToolTip(comp, message, false);
-  }
-  */
 
 
   public void statusToolTip(JComponent comp, String message, boolean error) {

@@ -1,4 +1,4 @@
-0252 (3.1.3?)
+0252 (3.2)
 X some Table cleanup based on other CSV parsing work
 X use StandardCharsets.UTF_8 instead of getting encoding by name
 X PApplet.main(Blah.class) now works
@@ -6,6 +6,14 @@ X add toJSON() method to IntDict
 _   do the same for the other data classes
 _   note the difference between this and toJSONObject() or toJSONArray()
 _   or is that the better way to handle it? hm
+
+jakub
+X Fix resizing targets for async save
+X   https://github.com/processing/processing/pull/4607
+X   https://github.com/processing/processing/issues/4578
+
+_ disable OpenGL ES on Linux? 
+_   https://github.com/processing/processing/issues/4584
 
 
 _ Can't render PGraphics object using image() within a PDF

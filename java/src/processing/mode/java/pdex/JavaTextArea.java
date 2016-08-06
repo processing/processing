@@ -2,7 +2,7 @@
 
 /*
 Part of the Processing project - http://processing.org
-Copyright (c) 2012-15 The Processing Foundation
+Copyright (c) 2012-16 The Processing Foundation
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 2
@@ -41,48 +41,19 @@ import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.Platform;
 import processing.app.syntax.JEditTextArea;
+import processing.app.syntax.PdeTextArea;
 import processing.app.syntax.TextAreaDefaults;
 import processing.app.ui.Editor;
 
 
-// TODO The way listeners are added/removed here is fragile and
-//      likely to cause bugs that are very difficult to find.
-//      We shouldn't be re-inventing the wheel with how listeners are handled.
-// TODO We're overriding more things in JEditTextArea than we should, which
-//      makes it trickier for other Modes (Python, etc) to subclass because
-//      they'll need to re-implement what's in here, but first wade through it.
-//      To fix, we need to clean this up and put the appropriate cross-Mode
-//      changes into JEditTextArea (or a subclass in processing.app)
-
-public class JavaTextArea extends JEditTextArea {
-  protected final JavaEditor editor;
-
-  protected Image gutterGradient;
-
-  /// the text marker for highlighting breakpoints in the gutter
-  static public final String BREAK_MARKER = "<>";
-  /// the text marker for highlighting the current line in the gutter
-  static public final String STEP_MARKER = "->";
-
-  /// maps line index to gutter text
-  protected final Map<Integer, String> gutterText = new HashMap<>();
+public class JavaTextArea extends PdeTextArea {
+  //protected final JavaEditor editor;
 
   private CompletionPanel suggestion;
 
 
   public JavaTextArea(TextAreaDefaults defaults, JavaEditor editor) {
-    super(defaults, new JavaInputHandler(editor));
-    this.editor = editor;
-
-    // change cursor to pointer in the gutter area
-    painter.addMouseMotionListener(gutterCursorMouseAdapter);
-
-    //addCompletionPopupListner();
-    add(CENTER, painter);
-
-    // load settings from theme.txt
-    Mode mode = editor.getMode();
-    gutterGradient = mode.makeGradient("editor", Editor.LEFT_GUTTER, 500);
+    super(defaults, new JavaInputHandler(editor), editor);
 
     // TweakMode code
     prevCompListeners = painter.getComponentListeners();
@@ -102,13 +73,8 @@ public class JavaTextArea extends JEditTextArea {
   }
 
 
-  protected JavaTextAreaPainter getCustomPainter() {
+  protected JavaTextAreaPainter getJavaPainter() {
     return (JavaTextAreaPainter) painter;
-  }
-
-
-  public void setMode(JavaMode mode) {
-    getCustomPainter().setMode(mode);
   }
 
 
@@ -120,7 +86,7 @@ public class JavaTextArea extends JEditTextArea {
     if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
       if (suggestion != null){
         if (suggestion.isVisible()){
-          Messages.log("esc key");
+          Messages.log("ESC key");
           hideSuggestion();
           evt.consume();
           return;
@@ -544,114 +510,6 @@ public class JavaTextArea extends JEditTextArea {
   }
 
 
-  public Image getGutterGradient() {
-    return gutterGradient;
-  }
-
-
-  /**
-   * Set the gutter text of a specific line.
-   *
-   * @param lineIdx
-   *          the line index (0-based)
-   * @param text
-   *          the text
-   */
-  public void setGutterText(int lineIdx, String text) {
-    gutterText.put(lineIdx, text);
-    painter.invalidateLine(lineIdx);
-  }
-
-
-  /**
-   * Clear the gutter text of a specific line.
-   *
-   * @param lineIdx
-   *          the line index (0-based)
-   */
-  public void clearGutterText(int lineIdx) {
-    gutterText.remove(lineIdx);
-    painter.invalidateLine(lineIdx);
-  }
-
-
-  /**
-   * Clear all gutter text.
-   */
-  public void clearGutterText() {
-    for (int lineIdx : gutterText.keySet()) {
-      painter.invalidateLine(lineIdx);
-    }
-    gutterText.clear();
-  }
-
-
-  /**
-   * Retrieve the gutter text of a specific line.
-   *
-   * @param lineIdx
-   *          the line index (0-based)
-   * @return the gutter text
-   */
-  public String getGutterText(int lineIdx) {
-    return gutterText.get(lineIdx);
-  }
-
-
-  /**
-   * Convert a character offset to a horizontal pixel position inside the text
-   * area. Overridden to take gutter width into account.
-   *
-   * @param line
-   *          the 0-based line number
-   * @param offset
-   *          the character offset (0 is the first character on a line)
-   * @return the horizontal position
-   */
-  @Override
-  public int _offsetToX(int line, int offset) {
-    return super._offsetToX(line, offset) + Editor.LEFT_GUTTER;
-  }
-
-
-  /**
-   * Convert a horizontal pixel position to a character offset. Overridden to
-   * take gutter width into account.
-   *
-   * @param line
-   *          the 0-based line number
-   * @param x
-   *          the horizontal pixel position
-   * @return he character offset (0 is the first character on a line)
-   */
-  @Override
-  public int xToOffset(int line, int x) {
-    return super.xToOffset(line, x - Editor.LEFT_GUTTER);
-  }
-
-
-  /**
-   * Sets default cursor (instead of text cursor) in the gutter area.
-   */
-  protected final MouseMotionAdapter gutterCursorMouseAdapter = new MouseMotionAdapter() {
-    private int lastX; // previous horizontal position of the mouse cursor
-
-    @Override
-    public void mouseMoved(MouseEvent me) {
-      if (me.getX() < Editor.LEFT_GUTTER) {
-        if (lastX >= Editor.LEFT_GUTTER) {
-          painter.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        }
-      } else {
-        if (lastX < Editor.LEFT_GUTTER) {
-          painter.setCursor(new Cursor(Cursor.TEXT_CURSOR));
-        }
-      }
-      lastX = me.getX();
-    }
-  };
-
-
   // appears unused, removed when looking to change completion trigger [fry 140801]
   /*
   public void showSuggestionLater(final DefaultListModel defListModel, final String word) {
@@ -667,10 +525,7 @@ public class JavaTextArea extends JEditTextArea {
 
 
   /**
-   * Calculates location of caret and displays the suggestion popup at the location.
-   *
-   * @param listModel
-   * @param subWord
+   * Calculates location of caret and displays the suggestion popup.
    */
   protected void showSuggestion(DefaultListModel<CompletionCandidate> listModel, String subWord) {
     hideSuggestion();
@@ -682,10 +537,9 @@ public class JavaTextArea extends JEditTextArea {
       int position = getCaretPosition();
       Point location = new Point();
       try {
-        location.x = offsetToX(getCaretLine(), position
-                               - getLineStartOffset(getCaretLine()));
-        location.y = lineToY(getCaretLine())
-            + getPainter().getFontMetrics().getHeight() + getPainter().getFontMetrics().getDescent();
+        location.x = offsetToX(getCaretLine(),
+                               position - getLineStartOffset(getCaretLine()));
+        location.y = lineToY(getCaretLine()) + getPainter().getLineHeight();
         //log("TA position: " + location);
       } catch (Exception e2) {
         e2.printStackTrace();
@@ -748,7 +602,7 @@ public class JavaTextArea extends JEditTextArea {
     // ignore if we are already in interactiveMode
     if (!tweakMode) {
       removeAllListeners();
-      getCustomPainter().startTweakMode();
+      getJavaPainter().startTweakMode();
       this.editable = false;
       this.caretBlinks = false;
       this.setCaretVisible(false);
@@ -762,7 +616,7 @@ public class JavaTextArea extends JEditTextArea {
     if (tweakMode) {
       removeAllListeners();
       addPrevListeners();
-      getCustomPainter().stopTweakMode();
+      getJavaPainter().stopTweakMode();
       editable = true;
       caretBlinks = true;
       setCaretVisible(true);
@@ -790,6 +644,6 @@ public class JavaTextArea extends JEditTextArea {
 
   public void updateInterface(List<List<Handle>> handles,
                               List<List<ColorControlBox>> colorBoxes) {
-    getCustomPainter().updateInterface(handles, colorBoxes);
+    getJavaPainter().updateInterface(handles, colorBoxes);
   }
 }

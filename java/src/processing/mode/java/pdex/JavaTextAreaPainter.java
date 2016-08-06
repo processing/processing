@@ -2,7 +2,7 @@
 
 /*
 Part of the Processing project - http://processing.org
-Copyright (c) 2012-15 The Processing Foundation
+Copyright (c) 2012-16 The Processing Foundation
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 2
@@ -26,13 +26,11 @@ import processing.mode.java.tweak.*;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -48,58 +46,21 @@ import javax.swing.text.Utilities;
 
 import processing.app.Mode;
 import processing.app.SketchCode;
+import processing.app.syntax.PdeTextAreaPainter;
 import processing.app.syntax.SyntaxDocument;
 import processing.app.syntax.TextAreaDefaults;
-import processing.app.syntax.TextAreaPainter;
 import processing.app.syntax.TokenMarker;
 import processing.app.ui.Editor;
 
-
-// TODO Most of this needs to be merged into the main TextAreaPainter,
-//      since it's not specific to Java. [fry 150821]
 
 /**
  * Customized line painter. Adds support for background colors,
  * left hand gutter area with background color and text.
  */
-public class JavaTextAreaPainter extends TextAreaPainter
-	implements MouseListener, MouseMotionListener {
-
-  public Color errorUnderlineColor;
-  public Color warningUnderlineColor;
-
-  protected Font gutterTextFont;
-  protected Color gutterTextColor;
-  protected Color gutterPastColor;
-  protected Color gutterLineHighlightColor;
-
+public class JavaTextAreaPainter extends PdeTextAreaPainter {
 
   public JavaTextAreaPainter(final JavaTextArea textArea, TextAreaDefaults defaults) {
     super(textArea, defaults);
-
-    // Handle mouse clicks to toggle breakpoints
-    addMouseListener(new MouseAdapter() {
-      long lastTime;  // OS X seems to be firing multiple mouse events
-
-      public void mousePressed(MouseEvent event) {
-        JavaEditor javaEditor = getJavaEditor();
-        // Don't toggle breakpoints when the debugger isn't enabled
-        // https://github.com/processing/processing/issues/3306
-        if (javaEditor.isDebuggerEnabled()) {
-          long thisTime = event.getWhen();
-          if (thisTime - lastTime > 100) {
-            if (event.getX() < Editor.LEFT_GUTTER) {
-              int offset = getJavaTextArea().xyToOffset(event.getX(), event.getY());
-              if (offset >= 0) {
-                int lineIndex = getJavaTextArea().getLineOfOffset(offset);
-                javaEditor.toggleBreakpoint(lineIndex);
-              }
-            }
-            lastTime = thisTime;
-          }
-        }
-      }
-    });
 
     // TweakMode code
     tweakMode = false;
@@ -349,23 +310,6 @@ public class JavaTextAreaPainter extends TextAreaPainter
   }
 
 
-  /**
-   * Loads theme for TextAreaPainter(XQMode)
-   */
-  public void setMode(Mode mode) {
-    errorUnderlineColor = mode.getColor("editor.error.underline.color");
-    warningUnderlineColor = mode.getColor("editor.warning.underline.color");
-
-    gutterTextFont = mode.getFont("editor.gutter.text.font");
-    gutterTextColor = mode.getColor("editor.gutter.text.color");
-    gutterPastColor = new Color(gutterTextColor.getRed(),
-                                gutterTextColor.getGreen(),
-                                gutterTextColor.getBlue(),
-                                96);
-    gutterLineHighlightColor = mode.getColor("editor.gutter.linehighlight.color");
-  }
-
-
   @Override
   public String getToolTipText(MouseEvent evt) {
     int line = evt.getY() / getFontMetrics().getHeight() + textArea.getFirstLine();
@@ -385,9 +329,7 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
         if (x >= getJavaTextArea().offsetToX(line, startOffset) &&
             x <= getJavaTextArea().offsetToX(line, stopOffset)) {
-          getJavaEditor().statusToolTip(JavaTextAreaPainter.this,
-                                        problem.getMessage(),
-                                        problem.isError());
+          getEditor().statusToolTip(this, problem.getMessage(), problem.isError());
           return super.getToolTipText(evt);
         }
       }
@@ -455,8 +397,93 @@ public class JavaTextAreaPainter extends TextAreaPainter
 
 
 	protected void startTweakMode() {
-	  addMouseListener(this);
-	  addMouseMotionListener(this);
+	  addMouseListener(new MouseListener() {
+
+	    @Override
+	    public void mouseReleased(MouseEvent e) {
+	      if (mouseHandle != null) {
+	        mouseHandle.resetProgress();
+	        mouseHandle = null;
+
+	        updateCursor(e.getX(), e.getY());
+	        repaint();
+	      }
+	    }
+
+	    @Override
+	    public void mousePressed(MouseEvent e) {
+	      int currentTab = getCurrentCodeIndex();
+	      // check for clicks on number handles
+	      for (Handle n : handles.get(currentTab)) {
+	        if (n.pick(e.getX(), e.getY())) {
+	          cursorType = -1;
+	          JavaTextAreaPainter.this.setCursor(blankCursor);
+	          mouseHandle = n;
+	          mouseHandle.setCenterX(e.getX());
+	          repaint();
+	          return;
+	        }
+	      }
+
+	      // check for clicks on color boxes
+	      for (ColorControlBox box : colorBoxes.get(currentTab)) {
+	        if (box.pick(e.getX(), e.getY())) {
+	          if (colorSelector != null) {
+	            // we already show a color selector, close it
+	            colorSelector.frame.dispatchEvent(new WindowEvent(colorSelector.frame, WindowEvent.WINDOW_CLOSING));
+	          }
+
+	          colorSelector = new ColorSelector(box);
+	          colorSelector.frame.addWindowListener(new WindowAdapter() {
+	            public void windowClosing(WindowEvent e) {
+	              colorSelector.frame.setVisible(false);
+	              colorSelector = null;
+	            }
+	          });
+	          colorSelector.show(getLocationOnScreen().x + e.getX() + 30,
+	                             getLocationOnScreen().y + e.getY() - 130);
+	        }
+	      }
+	    }
+
+      @Override
+      public void mouseExited(MouseEvent e) { }
+
+      @Override
+      public void mouseEntered(MouseEvent e) { }
+
+      @Override
+      public void mouseClicked(MouseEvent e) { }
+    });
+
+	  addMouseMotionListener(new MouseMotionListener() {
+
+	    @Override
+	    public void mouseMoved(MouseEvent e) {
+	      updateCursor(e.getX(), e.getY());
+
+	      if (!Settings.alwaysShowColorBoxes) {
+	        showHideColorBoxes(e.getY());
+	      }
+	    }
+
+	    @Override
+	    public void mouseDragged(MouseEvent e) {
+	      if (mouseHandle != null) {
+	        // set the current drag amount of the arrows
+	        mouseHandle.setCurrentX(e.getX());
+
+	        // update code text with the new value
+	        updateCodeText();
+
+	        if (colorSelector != null) {
+	          colorSelector.refreshColor();
+	        }
+
+	        repaint();
+	      }
+	    }
+    });
 	  tweakMode = true;
 	  setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		repaint();
@@ -613,126 +640,20 @@ public class JavaTextAreaPainter extends TextAreaPainter
 	}
 
 
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		if (mouseHandle != null) {
-			// set the current drag amount of the arrows
-			mouseHandle.setCurrentX(e.getX());
-
-			// update code text with the new value
-			updateCodeText();
-
-			if (colorSelector != null) {
-				colorSelector.refreshColor();
-			}
-
-			repaint();
-		}
-	}
-
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-	}
-
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		int currentTab = getCurrentCodeIndex();
-		// check for clicks on number handles
-		for (Handle n : handles.get(currentTab)) {
-			if (n.pick(e.getX(), e.getY())) {
-				cursorType = -1;
-				this.setCursor(blankCursor);
-				mouseHandle = n;
-				mouseHandle.setCenterX(e.getX());
-				repaint();
-				return;
-			}
-		}
-
-		// check for clicks on color boxes
-		for (ColorControlBox box : colorBoxes.get(currentTab)) {
-			if (box.pick(e.getX(), e.getY())) {
-				if (colorSelector != null) {
-					// we already show a color selector, close it
-					colorSelector.frame.dispatchEvent(new WindowEvent(colorSelector.frame, WindowEvent.WINDOW_CLOSING));
-				}
-
-				colorSelector = new ColorSelector(box);
-				colorSelector.frame.addWindowListener(new WindowAdapter() {
-				  public void windowClosing(WindowEvent e) {
-				    colorSelector.frame.setVisible(false);
-				    colorSelector = null;
-				  }
-				});
-				colorSelector.show(getLocationOnScreen().x + e.getX() + 30,
-				                   getLocationOnScreen().y + e.getY() - 130);
-			}
-		}
-	}
-
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (mouseHandle != null) {
-			mouseHandle.resetProgress();
-			mouseHandle = null;
-
-			updateCursor(e.getX(), e.getY());
-			repaint();
-		}
-	}
-
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		updateCursor(e.getX(), e.getY());
-
-		if (!Settings.alwaysShowColorBoxes) {
-			showHideColorBoxes(e.getY());
-		}
-	}
-
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-	}
-
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-	}
-
-
 	// . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-	@Override
-	public int getScrollWidth() {
-	  // https://github.com/processing/processing/issues/3591
-	  return super.getWidth() - Editor.LEFT_GUTTER;
-	}
-
-
-  public Editor getEditor() {
-    return ((JavaTextArea) textArea).editor;
-  }
-
-
 	private JavaEditor getJavaEditor() {
-	  return ((JavaTextArea) textArea).editor;
+	  return (JavaEditor) getEditor();
 	}
-
-
-	private int getCurrentCodeIndex() {
-    return getEditor().getSketch().getCurrentCodeIndex();
-  }
 
 
 	private JavaTextArea getJavaTextArea() {
 	  return (JavaTextArea) textArea;
+	}
+
+
+	private int getCurrentCodeIndex() {
+	  return getEditor().getSketch().getCurrentCodeIndex();
 	}
 }

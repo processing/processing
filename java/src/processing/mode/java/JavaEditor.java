@@ -126,7 +126,8 @@ public class JavaEditor extends Editor {
 
     getJavaTextArea().setMode(jmode);
 
-    initPDEX();
+    preprocessingService = new PreprocessingService(this);
+    pdex = new PDEX(this, preprocessingService);
 
     Toolkit.setMenuMnemonics(textarea.getRightClickPopup());
 
@@ -146,18 +147,12 @@ public class JavaEditor extends Editor {
     });
   }
 
-  
+
   public PdePreprocessor createPreprocessor(final String sketchName) {
-    return new PdePreprocessor(sketchName);  
+    return new PdePreprocessor(sketchName);
   }
 
-  
-  protected void initPDEX() {
-    preprocessingService = new PreprocessingService(this);
-    pdex = new PDEX(this, preprocessingService);
-  }
-  
-  
+
   protected JEditTextArea createTextArea() {
     return new JavaTextArea(new PdeTextAreaDefaults(mode), this);
   }
@@ -1195,12 +1190,13 @@ public class JavaEditor extends Editor {
   }
 
 
-  /** Toggle a breakpoint on the current line. */
-  public void toggleBreakpoint() {
-    debugger.toggleBreakpoint(getCurrentLineID().lineIdx());
-  }
+//  /** Toggle a breakpoint on the current line. */
+//  public void toggleBreakpoint() {
+//    toggleBreakpoint(getCurrentLineID().lineIdx());
+//  }
 
 
+  @Override
   public void toggleBreakpoint(int lineIndex) {
     debugger.toggleBreakpoint(lineIndex);
   }
@@ -1430,7 +1426,8 @@ public class JavaEditor extends Editor {
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Breakpoint' menu item");
-          toggleBreakpoint();
+          // TODO wouldn't getCaretLine() do the same thing with less effort?
+          toggleBreakpoint(getCurrentLineID().lineIdx());
         }
       });
     debugMenu.add(item);
@@ -1522,8 +1519,8 @@ public class JavaEditor extends Editor {
   }
 
 
+  @Override
   public boolean isDebuggerEnabled() {
-    //return enableDebug.isSelected();
     return debugEnabled;
   }
 
