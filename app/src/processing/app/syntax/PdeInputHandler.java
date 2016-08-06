@@ -48,6 +48,10 @@ public class PdeInputHandler extends DefaultInputHandler {
   protected Editor editor;
 
 
+  /** Not recommended, but included for compatibility. */
+  public PdeInputHandler() { }
+
+
   public PdeInputHandler(Editor editor) {
     this.editor = editor;
 

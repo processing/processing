@@ -1,4 +1,6 @@
 0252 (3.2)
+_ Move general PDE code out of JavaMode and into general base classes
+_   https://github.com/processing/processing/issues/4606
 X change PdeInputHandler constructor
 _   check whether this breaks other Modes before releasing
 _ modify line number color when no lines extend that far?
@@ -6,8 +8,6 @@ _   https://github.com/processing/processing/pull/4560
 _ text gutter doesn't seem to be hidpi 
 X   or is it b/c screen not quite 2x? (nope)
 _ swap out the fonts?
-_ Set text color for InputMethod
-_   https://github.com/processing/processing/pull/4593
 _ Processing .jar files in CLASSPATH can cause startup crash
 _   https://github.com/processing/processing/issues/4128
 
@@ -16,7 +16,7 @@ _   https://github.com/processing/processing/issues/43503#issuecomment-237715947
 
 contrib
 
-input method work
+input method work from tyfkda
 X Simplify conditional branch
 X   https://github.com/processing/processing/pull/4589
 X Enable input method support by default on Japanese/Korean/Chinese systems
@@ -49,8 +49,6 @@ _ possible infinite loop on modified externally
 _   https://github.com/processing/processing/issues/3965
 
 medium
-_ Move general PDE code out of JavaMode and into general base classes
-_   https://github.com/processing/processing/issues/4606
 _ detect changes in case with libraries
 _   https://github.com/processing/processing/issues/4507
 
