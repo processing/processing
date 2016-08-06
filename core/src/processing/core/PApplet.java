@@ -6532,7 +6532,10 @@ public class PApplet implements PConstants {
   public BufferedReader createReader(String filename) {
     InputStream is = createInput(filename);
     if (is == null) {
-      System.err.println(filename + " does not exist or could not be read");
+      System.err.println("The file \"" + filename + "\" " +
+                       "is missing or inaccessible, make sure " +
+                       "the URL is valid or that the file has been " +
+                       "added to your sketch and is readable.");
       return null;
     }
     return createReader(is);
