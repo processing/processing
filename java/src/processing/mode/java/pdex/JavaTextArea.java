@@ -45,9 +45,11 @@ import processing.mode.java.tweak.ColorControlBox;
 import processing.mode.java.tweak.Handle;
 
 
+/**
+ * TextArea implementation for Java Mode. Primary differences from PdeTextArea
+ * are completions, suggestions, and tweak handling.
+ */
 public class JavaTextArea extends PdeTextArea {
-  //protected final JavaEditor editor;
-
   private CompletionPanel suggestion;
 
 
@@ -79,6 +81,8 @@ public class JavaTextArea extends PdeTextArea {
 
   /**
    * Handles KeyEvents for TextArea (code completion begins from here).
+   * TODO Needs explanation of why this implemented with an override
+   *      of processKeyEvent() instead of using listeners.
    */
   @Override
   public void processKeyEvent(KeyEvent evt) {
@@ -234,7 +238,6 @@ public class JavaTextArea extends PdeTextArea {
    * @param evt - the KeyEvent which triggered this method
    */
   protected void fetchPhrase() {
-
     if (suggestionRunning) {
       suggestionRequested = true;
       return;
@@ -345,8 +348,8 @@ public class JavaTextArea extends PdeTextArea {
     });
   }
 
-  protected static String parsePhrase(final String lineText) {
 
+  protected static String parsePhrase(final String lineText) {
     boolean overloading = false;
 
     { // Check if we can provide suggestions for this phrase ending
@@ -505,23 +508,8 @@ public class JavaTextArea extends PdeTextArea {
     if (phrase.length() == 0 || Character.isDigit(phrase.charAt(0))) {
       return null; // Can't suggest for numbers or empty phrases
     }
-
     return phrase;
   }
-
-
-  // appears unused, removed when looking to change completion trigger [fry 140801]
-  /*
-  public void showSuggestionLater(final DefaultListModel defListModel, final String word) {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        showSuggestion(defListModel,word);
-      }
-
-    });
-  }
-  */
 
 
   /**
@@ -651,6 +639,6 @@ public class JavaTextArea extends PdeTextArea {
 
   public void updateInterface(List<List<Handle>> handles,
                               List<List<ColorControlBox>> colorBoxes) {
-    getJavaPainter().updateInterface(handles, colorBoxes);
+    getJavaPainter().updateTweakInterface(handles, colorBoxes);
   }
 }

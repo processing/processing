@@ -20,9 +20,6 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import processing.mode.java.JavaEditor;
-import processing.mode.java.tweak.*;
-
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -35,26 +32,21 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Segment;
-import javax.swing.text.Utilities;
-
-import processing.app.Problem;
 import processing.app.SketchCode;
 import processing.app.syntax.PdeTextAreaPainter;
-import processing.app.syntax.SyntaxDocument;
 import processing.app.syntax.TextAreaDefaults;
-import processing.app.syntax.TokenMarker;
-import processing.app.ui.Editor;
+import processing.mode.java.JavaEditor;
+import processing.mode.java.tweak.ColorControlBox;
+import processing.mode.java.tweak.ColorSelector;
+import processing.mode.java.tweak.Handle;
+import processing.mode.java.tweak.Settings;
 
 
 /**
- * Customized line painter. Adds support for background colors,
- * left hand gutter area with background color and text.
+ * Customized line painter to handle tweak mode features.
  */
 public class JavaTextAreaPainter extends PdeTextAreaPainter {
 
@@ -66,272 +58,12 @@ public class JavaTextAreaPainter extends PdeTextAreaPainter {
     cursorType = Cursor.DEFAULT_CURSOR;
   }
 
-  /**
-   * Paint a line. Paints the gutter (with background color and text) then the
-   * line (background color and text).
-   *
-   * @param gfx the graphics context
-   * @param tokenMarker
-   * @param line 0-based line number
-   * @param x horizontal position
-   */
-  @Override
-  protected void paintLine(Graphics gfx, int line, int x,
-                           TokenMarker tokenMarker) {
-    try {
-      // TODO This line is causing NPEs randomly ever since I added the
-      // toggle for Java Mode/Debugger toolbar. [Manindra]
-      super.paintLine(gfx, line, x + Editor.LEFT_GUTTER, tokenMarker);
 
-    } catch (Exception e) {
-      //Messages.log(e.getMessage());
-      e.printStackTrace();
-    }
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-    // formerly only when in debug mode
-    paintLeftGutter(gfx, line, x);
-//    paintGutterBg(gfx, line, x);
-//    paintGutterLine(gfx, line, x);
-//    paintGutterText(gfx, line, x);
-
-    paintErrorLine(gfx, line, x);
-  }
+  // TWEAK MODE
 
 
-  /**
-   * Paint the gutter: draw the background, draw line numbers, break points.
-   * @param gfx the graphics context
-   * @param line 0-based line number
-   * @param x horizontal position
-   */
-  protected void paintLeftGutter(Graphics gfx, int line, int x) {
-    int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
-    if (line == textArea.getSelectionStopLine()) {
-      gfx.setColor(gutterLineHighlightColor);
-      gfx.fillRect(0, y, Editor.LEFT_GUTTER, fm.getHeight());
-    } else {
-      //gfx.setColor(getJavaTextArea().gutterBgColor);
-      gfx.setClip(0, y, Editor.LEFT_GUTTER, fm.getHeight());
-      gfx.drawImage(getJavaTextArea().getGutterGradient(), 0, 0, getWidth(), getHeight(), this);
-      gfx.setClip(null);  // reset
-    }
-
-    String text = null;
-    if (getJavaEditor().isDebuggerEnabled()) {
-      text = getJavaTextArea().getGutterText(line);
-    }
-
-    gfx.setColor(line < textArea.getLineCount() ? gutterTextColor : gutterPastColor);
-//    if (line >= textArea.getLineCount()) {
-//      //gfx.setColor(new Color(gutterTextColor.getRGB(), );
-//    }
-    int textRight = Editor.LEFT_GUTTER - Editor.GUTTER_MARGIN;
-    int textBaseline = textArea.lineToY(line) + fm.getHeight();
-
-    if (text != null) {
-      if (text.equals(JavaTextArea.BREAK_MARKER)) {
-        drawDiamond(gfx, textRight - 8, textBaseline - 8, 8, 8);
-
-      } else if (text.equals(JavaTextArea.STEP_MARKER)) {
-        //drawRightArrow(gfx, textRight - 7, textBaseline - 7, 7, 6);
-        drawRightArrow(gfx, textRight - 7, textBaseline - 7.5f, 7, 7);
-      }
-    } else {
-      // if no special text for a breakpoint, just show the line number
-      text = String.valueOf(line + 1);
-      //text = makeOSF(String.valueOf(line + 1));
-
-      gfx.setFont(gutterTextFont);
-//      ((Graphics2D) gfx).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-//                                          RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-      // Right-align the text
-      char[] txt = text.toCharArray();
-      int tx = textRight - gfx.getFontMetrics().charsWidth(txt, 0, txt.length);
-      // Using 'fm' here because it's relative to the editor text size,
-      // not the numbers in the gutter
-      Utilities.drawTabbedText(new Segment(txt, 0, text.length()),
-                               tx, textBaseline, gfx, this, 0);
-    }
-  }
-
-
-  private void drawDiamond(Graphics g, float x, float y, float w, float h) {
-    Graphics2D g2 = (Graphics2D) g;
-    GeneralPath path = new GeneralPath();
-    path.moveTo(x + w/2, y);
-    path.lineTo(x + w, y + h/2);
-    path.lineTo(x + w/2, y + h);
-    path.lineTo(x, y + h/2);
-    path.closePath();
-    g2.fill(path);
-  }
-
-
-  private void drawRightArrow(Graphics g, float x, float y, float w, float h) {
-    Graphics2D g2 = (Graphics2D) g;
-    GeneralPath path = new GeneralPath();
-    path.moveTo(x, y);
-    path.lineTo(x + w, y + h/2);
-    path.lineTo(x, y + h);
-    path.closePath();
-    g2.fill(path);
-  }
-
-
-  /*
-  // Failed attempt to switch line numbers to old-style figures
-  String makeOSF(String what) {
-    char[] c = what.toCharArray();
-    for (int i = 0; i < c.length; i++) {
-      c[i] += (char) (c[i] - '0' + 0x362);
-    }
-    return new String(c);
-  }
-  */
-
-
-  /**
-   * Paint the background color of a line.
-   *
-   * @param gfx
-   *          the graphics context
-   * @param line
-   *          0-based line number
-   * @param x
-  private void paintLineBgColor(Graphics gfx, int line, int x) {
-    int y = textArea.lineToY(line);
-    y += fm.getLeading() + fm.getMaxDescent();
-    int height = fm.getHeight();
-
-    Color col = getJavaTextArea().getLineBgColor(line);
-    if (col != null) {
-      // paint line background
-      gfx.setColor(col);
-      gfx.fillRect(0, y, getWidth(), height);
-    }
-  }
-   */
-
-
-  /**
-   * Remove all trailing whitespace from a line
-   */
-  static private String trimRight(String str) {
-    int i = str.length() - 1;
-    while (i >= 0 && Character.isWhitespace(str.charAt(i))) {
-      i--;
-    }
-    return str.substring(0, i+1);
-  }
-
-
-  /**
-   * Paints the underline for an error/warning line
-   */
-  protected void paintErrorLine(Graphics gfx, int line, int x) {
-    List<Problem> problems = getEditor().findProblems(line);
-    for (Problem problem : problems) {
-      int startOffset = problem.getStartOffset();
-      int stopOffset = problem.getStopOffset();
-
-      int lineOffset = textArea.getLineStartOffset(line);
-
-      int wiggleStart = Math.max(startOffset, lineOffset);
-      int wiggleStop = Math.min(stopOffset, textArea.getLineStopOffset(line));
-
-      int y = textArea.lineToY(line) + fm.getLeading() + fm.getMaxDescent();
-
-      try {
-        String badCode = null;
-        String goodCode = null;
-        try {
-          SyntaxDocument doc = textArea.getDocument();
-          badCode = doc.getText(wiggleStart, wiggleStop - wiggleStart);
-          goodCode = doc.getText(lineOffset, wiggleStart - lineOffset);
-          //log("paintErrorLine() LineText GC: " + goodCode);
-          //log("paintErrorLine() LineText BC: " + badCode);
-        } catch (BadLocationException bl) {
-          // Error in the import statements or end of code.
-          // System.out.print("BL caught. " + ta.getLineCount() + " ,"
-          // + line + " ,");
-          // log((ta.getLineStopOffset(line) - start - 1));
-          return;
-        }
-
-        int trimmedLength = badCode.trim().length();
-        int rightTrimmedLength = trimRight(badCode).length();
-        int leftTrimLength = rightTrimmedLength - trimmedLength;
-
-        // Fix offsets when bad code is just whitespace
-        if (trimmedLength == 0) {
-          leftTrimLength = 0;
-          rightTrimmedLength = badCode.length();
-        }
-
-        int x1 = textArea.offsetToX(line, goodCode.length() + leftTrimLength);
-        int x2 = textArea.offsetToX(line, goodCode.length() + rightTrimmedLength);
-        if (x1 == x2) x2 += fm.stringWidth(" ");
-        int y1 = y + fm.getHeight() - 2;
-
-        if (line != problem.getLineNumber()) {
-          x1 = Editor.LEFT_GUTTER; // on the following lines, wiggle extends to the left border
-        }
-
-        gfx.setColor(errorUnderlineColor);
-        if (problem.isWarning()) {
-          gfx.setColor(warningUnderlineColor);
-        }
-        paintSquiggle(gfx, y1, x1, x2);
-
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-
-  static private void paintSquiggle(Graphics g, int y, int x1, int x2) {
-    int xx = x1;
-
-    while (xx < x2) {
-      g.drawLine(xx, y, xx + 2, y + 1);
-      xx += 2;
-      g.drawLine(xx, y + 1, xx + 2, y);
-      xx += 2;
-    }
-  }
-
-
-  @Override
-  public String getToolTipText(MouseEvent evt) {
-    int line = evt.getY() / getFontMetrics().getHeight() + textArea.getFirstLine();
-    if (line >= 0 || line < textArea.getLineCount()) {
-      List<Problem> problems = getEditor().findProblems(line);
-      for (Problem problem : problems) {
-        int lineStart = textArea.getLineStartOffset(line);
-        int lineEnd = textArea.getLineStopOffset(line);
-
-        int errorStart = problem.getStartOffset();
-        int errorEnd = problem.getStopOffset() + 1;
-
-        int startOffset = Math.max(errorStart, lineStart) - lineStart;
-        int stopOffset = Math.min(errorEnd, lineEnd) - lineStart;
-
-        int x = evt.getX();
-
-        if (x >= getJavaTextArea().offsetToX(line, startOffset) &&
-            x <= getJavaTextArea().offsetToX(line, stopOffset)) {
-          getEditor().statusToolTip(this, problem.getMessage(), problem.isError());
-          return super.getToolTipText(evt);
-        }
-      }
-    }
-    setToolTipText(null);
-    return super.getToolTipText(evt);
-  }
-
-
-  // TweakMode code
 	protected int horizontalAdjustment = 0;
 
 	public boolean tweakMode = false;
@@ -497,12 +229,12 @@ public class JavaTextAreaPainter extends PdeTextAreaPainter {
 	}
 
 
-	protected void updateInterface(List<List<Handle>> handles,
-	                               List<List<ColorControlBox>> colorBoxes) {
+	protected void updateTweakInterface(List<List<Handle>> handles,
+	                                    List<List<ColorControlBox>> colorBoxes) {
 		this.handles = handles;
 		this.colorBoxes = colorBoxes;
 
-		initInterfacePositions();
+		initTweakInterfacePositions();
 		repaint();
 	}
 
@@ -512,7 +244,7 @@ public class JavaTextAreaPainter extends PdeTextAreaPainter {
 	* synchronize this method to prevent the execution of 'paint' in the middle.
 	* (don't paint while we make changes to the text of the editor)
 	*/
-	private synchronized void initInterfacePositions() {
+	private synchronized void initTweakInterfacePositions() {
 		SketchCode[] code = getEditor().getSketch().getCode();
 		int prevScroll = textArea.getVerticalScrollPosition();
 		String prevText = textArea.getText();
@@ -637,11 +369,6 @@ public class JavaTextAreaPainter extends PdeTextAreaPainter {
 
 	private JavaEditor getJavaEditor() {
 	  return (JavaEditor) getEditor();
-	}
-
-
-	private JavaTextArea getJavaTextArea() {
-	  return (JavaTextArea) textArea;
 	}
 
 

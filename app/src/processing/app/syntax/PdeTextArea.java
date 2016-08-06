@@ -66,7 +66,13 @@ public class PdeTextArea extends JEditTextArea {
   }
 
 
-    public Image getGutterGradient() {
+  @Override
+  protected TextAreaPainter createPainter(final TextAreaDefaults defaults) {
+    return new PdeTextAreaPainter(this, defaults);
+  }
+
+
+  public Image getGutterGradient() {
     return gutterGradient;
   }
 
