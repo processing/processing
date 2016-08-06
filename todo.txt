@@ -8,6 +8,10 @@ X Processing .jar files in CLASSPATH can cause startup crash
 X   https://github.com/processing/processing/issues/4128
 X Remove java.ext.dirs on startup to avoid conflicts and startup errors
 X   https://github.com/processing/processing/issues/4608
+X   https://github.com/processing/processing/issues/4470
+X   https://github.com/processing/processing/issues/4566
+X   https://github.com/processing/processing/issues/4492
+X   https://github.com/processing/processing/issues/4128
 
 _ modify line number color when no lines extend that far?
 _   https://github.com/processing/processing/pull/4560
