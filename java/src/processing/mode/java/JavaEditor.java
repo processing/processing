@@ -2210,7 +2210,6 @@ public class JavaEditor extends Editor {
    */
   @Override
   public void setCode(SketchCode code) {
-
     Document oldDoc = code.getDocument();
 
     //System.out.println("tab switch: " + code.getFileName());
@@ -2254,14 +2253,13 @@ public class JavaEditor extends Editor {
 
   /**
    * Get a tab by its file name.
-   * @param fileName the filename to search for.
-   * @return the {@link SketchCode} object representing the tab, or null if
-   * not found
+   * @param filename the filename to search for.
+   * @return the {@link SketchCode} object for the tab, or null if not found
    */
-  public SketchCode getTab(String fileName) {
+  public SketchCode getTab(String filename) {
     Sketch s = getSketch();
     for (SketchCode c : s.getCode()) {
-      if (c.getFileName().equals(fileName)) {
+      if (c.getFileName().equals(filename)) {
         return c;
       }
     }
@@ -2295,72 +2293,6 @@ public class JavaEditor extends Editor {
   public void statusHalted() {
     statusNotice(Language.text("editor.status.debug.halt"));
   }
-
-
-  public void statusMessage(String message, int type) {
-    if (EventQueue.isDispatchThread()) {
-      status.message(message, type);
-    } else {
-      EventQueue.invokeLater(() -> statusMessage(message, type));
-    }
-  }
-
-
-  /*
-  static final int STATUS_EMPTY = 100;
-  static final int STATUS_COMPILER_ERR = 200;
-  static final int STATUS_WARNING = 300;
-  static final int STATUS_INFO = 400;
-  static final int STATUS_ERR = 500;
-
-  int statusMessageType = STATUS_EMPTY;
-  String statusMessage;
-
-  public void statusMessage(final String what, int type){
-    // Don't re-display the old message again
-    if (type != STATUS_EMPTY) {
-      if (what.equals(statusMessage) && type == statusMessageType) {
-        return;
-      }
-    }
-    statusMessage = new String(what);
-    statusMessageType = type;
-    switch (type) {
-    case STATUS_COMPILER_ERR:
-    case STATUS_ERR:
-      super.statusError(what);
-      break;
-    case STATUS_INFO:
-    case STATUS_WARNING:
-      statusNotice(what);
-      break;
-    }
-    // Don't need to clear compiler error messages
-    if (type == STATUS_COMPILER_ERR) return;
-
-    // Clear the message after a delay
-    SwingWorker<Object, Object> s = new SwingWorker<Object, Object>() {
-      @Override
-      protected Object doInBackground() throws Exception {
-        try {
-          Thread.sleep(2 * 1000);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-        statusEmpty();
-        return null;
-      }
-    };
-    s.execute();
-  }
-
-
-  public void statusEmpty(){
-    statusMessage = null;
-    statusMessageType = STATUS_EMPTY;
-    super.statusEmpty();
-  }
-  */
 
 
   /**
