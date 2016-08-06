@@ -8364,12 +8364,10 @@ public class PGraphics extends PImage implements PConstants {
           targetsCreated++;
         } else {
           target = targetPool.take();
-          if (target.width != requestedWidth ||
-              target.height != requestedHeight) {
-            target.width = requestedWidth;
-            target.height = requestedHeight;
+          if (target.pixelWidth != requestedWidth ||
+              target.pixelHeight != requestedHeight) {
             // TODO: this kills performance when saving different sizes
-            target.pixels = new int[requestedWidth * requestedHeight];
+            target = new PImage(requestedWidth, requestedHeight);
           }
         }
         target.format = format;
