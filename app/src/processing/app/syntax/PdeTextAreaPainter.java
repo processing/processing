@@ -81,7 +81,10 @@ public class PdeTextAreaPainter extends TextAreaPainter {
 
 
   /**
-   * Loads theme for TextAreaPainter
+   * Loads theme for TextAreaPainter. This is handled here because in the olden
+   * days, Modes had different visual design. Now, these are just pulling the
+   * defaults from the standard theme, though there may be minor additions or
+   * overrides added in a Mode's own theme.txt file.
    */
   public void setMode(Mode mode) {
     errorUnderlineColor = mode.getColor("editor.error.underline.color");
@@ -101,8 +104,8 @@ public class PdeTextAreaPainter extends TextAreaPainter {
 
 
   /**
-   * Paint a line. Paints the gutter (with background color and text) then the
-   * line (background color and text).
+   * Paint a line. Paints the gutter (with background color and text)
+   * then the line (background color and text).
    *
    * @param gfx the graphics context
    * @param tokenMarker

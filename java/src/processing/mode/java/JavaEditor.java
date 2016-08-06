@@ -106,8 +106,6 @@ public class JavaEditor extends Editor {
     box.add(textAndError);
     */
 
-    getPdeTextArea().setMode(jmode);
-
     preprocessingService = new PreprocessingService(this);
     pdex = new PDEX(this, preprocessingService);
 

@@ -294,6 +294,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     editorPanel.add(textarea);
     upper.add(editorPanel);
 
+    // set colors and fonts for the painter object
+    getPdeTextArea().setMode(mode);
+
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, footer);
 
     // disable this because it hides the message area (Google Code issue #745)

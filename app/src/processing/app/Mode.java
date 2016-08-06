@@ -209,8 +209,6 @@ public abstract class Mode {
       // other things that have to be set explicitly for the defaults
       theme.setColor("run.window.bgcolor", SystemColor.control);
 
-//      loadBackground();
-
     } catch (IOException e) {
       Messages.showError("Problem loading theme.txt",
                          "Could not load theme.txt, please re-install Processing", e);
