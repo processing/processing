@@ -2,7 +2,7 @@
 
 /*
 Part of the Processing project - http://processing.org
-Copyright (c) 2012-15 The Processing Foundation
+Copyright (c) 2012-16 The Processing Foundation
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 2
@@ -18,7 +18,7 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-package processing.mode.java;
+package processing.app.ui;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -39,7 +39,6 @@ import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.ui.Editor;
 import processing.core.PApplet;
-import processing.mode.java.pdex.JavaProblem;
 
 
 /**
@@ -63,7 +62,7 @@ public class MarkerColumn extends JPanel {
   private List<LineMarker> errorPoints = new ArrayList<LineMarker>();
 
 
-  public MarkerColumn(JavaEditor editor, int height) {
+  public MarkerColumn(Editor editor, int height) {
     this.editor = editor;
 
     Mode mode = editor.getMode();
@@ -111,7 +110,7 @@ public class MarkerColumn extends JPanel {
   }
 
 
-  public void updateErrorPoints(final List<JavaProblem> problems) {
+  public void updateErrorPoints(final List<Problem> problems) {
     errorPoints = problems.stream()
         .map(LineMarker::new)
         .collect(Collectors.toList());
@@ -196,6 +195,7 @@ public class MarkerColumn extends JPanel {
   public Dimension getMinimumSize() {
     return new Dimension(Editor.RIGHT_GUTTER, super.getMinimumSize().height);
   }
+
 
   /**
    * Line markers displayed on the Error Column.

@@ -39,10 +39,6 @@ import processing.app.Util;
 import processing.app.contrib.ContributionManager;
 import processing.app.syntax.*;
 import processing.core.*;
-import processing.mode.java.JavaMode;
-import processing.mode.java.MarkerColumn;
-import processing.mode.java.pdex.JavaProblem;
-import processing.mode.java.pdex.JavaTextArea;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -86,7 +82,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   static public final int RIGHT_GUTTER = 12;
   static public final int GUTTER_MARGIN = 3;
 
-  private MarkerColumn errorColumn;
+  protected MarkerColumn errorColumn;
 
   // Otherwise, if the window is resized with the message label
   // set to blank, its preferredSize() will be fuckered
@@ -2931,6 +2927,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
    */
   public void statusEmpty() {
     statusNotice(EMPTY);
+  }
+
+
+  public void statusMessage(String message, int type) {
+    if (EventQueue.isDispatchThread()) {
+      status.message(message, type);
+    } else {
+      EventQueue.invokeLater(() -> statusMessage(message, type));
+    }
   }
 
 

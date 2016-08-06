@@ -63,8 +63,6 @@ public class JavaEditor extends Editor {
   protected VariableInspector inspector;
   protected JMenuItem inspectorItem;
 
-  private MarkerColumn errorColumn;
-
   static final int ERROR_TAB_INDEX = 0;
 
   private boolean hasJavaTabs;
