@@ -104,7 +104,7 @@ cmd_name='processing-java'
 
 if [ $current_name = $cmd_name ]
 then
-    java -Djna.nosys=true -Xmx256m processing.mode.java.Commander "$@"
+    java -Djna.nosys=true -Djava.ext.dirs=lib/ext -Xmx256m processing.mode.java.Commander "$@"
     exit $?
 else
   # Start Processing in the same directory as this script
@@ -115,5 +115,5 @@ else
   fi
   cd "$APPDIR"
 
-  java -splash:lib/about-1x.png -Djna.nosys=true -Xmx256m processing.app.Base "$SKETCH" &
+  java -splash:lib/about-1x.png -Djna.nosys=true -Djava.ext.dirs=lib/ext -Xmx256m processing.app.Base "$SKETCH" &
 fi
