@@ -12,6 +12,9 @@ X   https://github.com/processing/processing/issues/4470
 X   https://github.com/processing/processing/issues/4566
 X   https://github.com/processing/processing/issues/4492
 X   https://github.com/processing/processing/issues/4128
+X   https://github.com/processing/processing/issues/4503
+
+_ see if CLASSPATH can be set to screw up p5
 
 _ modify line number color when no lines extend that far?
 _   https://github.com/processing/processing/pull/4560
