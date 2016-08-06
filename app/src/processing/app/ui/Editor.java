@@ -286,11 +286,17 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     footer = createFooter();
 
-    upper.add(textarea);
+    // build the central panel with the text area & error marker column
+    JPanel editorPanel = new JPanel(new BorderLayout());
+    errorColumn =  new MarkerColumn(this, textarea.getMinimumSize().height);
+    editorPanel.add(errorColumn, BorderLayout.EAST);
+    textarea.setBounds(0, 0, errorColumn.getX() - 1, textarea.getHeight());
+    editorPanel.add(textarea);
+    upper.add(editorPanel);
 
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, footer);
 
-    // disable this because it hides the message area, which is essential (issue #745)
+    // disable this because it hides the message area (Google Code issue #745)
     splitPane.setOneTouchExpandable(false);
     // repaint child panes while resizing
     splitPane.setContinuousLayout(true);

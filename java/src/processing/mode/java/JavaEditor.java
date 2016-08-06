@@ -90,6 +90,7 @@ public class JavaEditor extends Editor {
 
     hasJavaTabs = checkForJavaTabs();
 
+    /*
     // hack to add a JPanel to the right-hand side of the text area
     JPanel textAndError = new JPanel();
     // parent is a vertical box with the toolbar, the header, and the text area
@@ -103,6 +104,7 @@ public class JavaEditor extends Editor {
     textAndError.add(textarea);
     // add our hacked version back to the editor
     box.add(textAndError);
+    */
 
     getPdeTextArea().setMode(jmode);
 
