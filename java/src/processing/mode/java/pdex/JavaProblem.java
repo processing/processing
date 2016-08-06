@@ -25,14 +25,14 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jdt.core.compiler.IProblem;
 
-import processing.app.ui.ErrorTable;
+import processing.app.Problem;
 
 
 /**
  * Wrapper class for IProblem that stores the tabIndex and line number
  * according to its tab, including the original IProblem object
  */
-public class Problem implements ErrorTable.Entry {
+public class JavaProblem implements Problem {
   /**
    * The IProblem which is being wrapped
    */
@@ -73,7 +73,7 @@ public class Problem implements ErrorTable.Entry {
    * @param tabIndex - The tab number to which the error belongs to
    * @param lineNumber - Line number(pde code) of the error
    */
-  public Problem(IProblem iProblem, int tabIndex, int lineNumber) {
+  public JavaProblem(IProblem iProblem, int tabIndex, int lineNumber) {
     this.iProblem = iProblem;
     if(iProblem.isError()) {
       type = ERROR;

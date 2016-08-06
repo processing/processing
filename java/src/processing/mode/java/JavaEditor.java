@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -34,7 +33,7 @@ import processing.mode.java.pdex.PreprocessingService;
 import processing.mode.java.pdex.ImportStatement;
 import processing.mode.java.pdex.JavaTextArea;
 import processing.mode.java.pdex.PDEX;
-import processing.mode.java.pdex.Problem;
+import processing.mode.java.pdex.JavaProblem;
 import processing.mode.java.pdex.SourceUtils;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.runner.Runner;
@@ -73,8 +72,6 @@ public class JavaEditor extends Editor {
 
   protected PreprocessingService preprocessingService;
   protected PDEX pdex;
-
-  protected List<Problem> problems = Collections.emptyList();
 
 
   protected JavaEditor(Base base, String path, EditorState state,
@@ -2368,161 +2365,34 @@ public class JavaEditor extends Editor {
   */
 
 
-  public void setProblemList(List<Problem> problems) {
-    this.problems = problems;
-    boolean hasErrors = problems.stream().anyMatch(Problem::isError);
-    updateErrorTable(problems);
-    errorColumn.updateErrorPoints(problems);
-    textarea.repaint();
-    updateErrorToggle(hasErrors);
-    updateEditorStatus();
-  }
-
-
   /**
    * Updates the error table in the Error Window.
+   * Overridden to handle the fugly import suggestions text.
    */
+  @Override
   public void updateErrorTable(List<Problem> problems) {
     errorTable.clearRows();
 
     for (Problem p : problems) {
+      JavaProblem jp = (JavaProblem) p;
       String message = p.getMessage();
       if (JavaMode.importSuggestEnabled &&
-          p.getImportSuggestions() != null &&
-          p.getImportSuggestions().length > 0) {
+          jp.getImportSuggestions() != null &&
+          jp.getImportSuggestions().length > 0) {
         message += " (double-click for suggestions)";
       }
 
       errorTable.addRow(p, message,
-                   sketch.getCode(p.getTabIndex()).getPrettyName(),
+                   sketch.getCode(jp.getTabIndex()).getPrettyName(),
                    Integer.toString(p.getLineNumber() + 1));
       // Added +1 because lineNumbers internally are 0-indexed
     }
   }
 
 
-  public void highlight(Problem p) {
-    if (p != null) {
-      highlight(p.getTabIndex(), p.getStartOffset(), p.getStartOffset());
-    }
-  }
-
-
-  public void highlight(int tabIndex, int startOffset, int stopOffset) {
-    // Switch to tab
-    toFront();
-    sketch.setCurrentCode(tabIndex);
-
-    // Make sure offsets are in bounds
-    int length = textarea.getDocumentLength();
-    startOffset = PApplet.constrain(startOffset, 0, length);
-    stopOffset = PApplet.constrain(stopOffset, 0, length);
-
-    // Highlight the code
-    textarea.select(startOffset, stopOffset);
-
-    // Scroll to error line
-    textarea.scrollToCaret();
-    repaint();
-  }
-
-
-  public List<Problem> getProblems() {
-    return problems;
-  }
-
-
-  /**
-   * Updates editor status bar, depending on whether the caret is on an error
-   * line or not
-   */
-  public void updateEditorStatus() {
-    Problem problem = findProblem(textarea.getCaretLine());
-    if (problem != null) {
-      int type = problem.isError() ?
-          EditorStatus.CURSOR_LINE_ERROR : EditorStatus.CURSOR_LINE_WARNING;
-      statusMessage(problem.getMessage(), type);
-    } else {
-      switch (getStatusMode()) {
-        case EditorStatus.CURSOR_LINE_ERROR:
-        case EditorStatus.CURSOR_LINE_WARNING:
-          statusEmpty();
-          break;
-      }
-    }
-  }
-
-
-  /**
-   * @return the Problem for the first error or warning on 'line'
-   */
-  public Problem findProblem(int line) {
-    JavaTextArea textArea = getJavaTextArea();
-    int currentTab = getSketch().getCurrentCodeIndex();
-    return problems.stream()
-        .filter(p -> p.getTabIndex() == currentTab)
-        .filter(p -> {
-          int pStartLine = p.getLineNumber();
-          int pEndOffset = p.getStopOffset();
-          int pEndLine = textArea.getLineOfOffset(pEndOffset);
-          return line >= pStartLine && line <= pEndLine;
-        })
-        .findFirst()
-        .orElse(null);
-  }
-
-
-  public List<Problem> findProblems(int line) {
-    JavaTextArea textArea = getJavaTextArea();
-    int currentTab = getSketch().getCurrentCodeIndex();
-    return problems.stream()
-        .filter(p -> p.getTabIndex() == currentTab)
-        .filter(p -> {
-          int pStartLine = p.getLineNumber();
-          int pEndOffset = p.getStopOffset();
-          int pEndLine = textArea.getLineOfOffset(pEndOffset);
-          return line >= pStartLine && line <= pEndLine;
-        })
-        .collect(Collectors.toList());
-  }
-
-
-  /*
-  public void clearErrorPoints() {
-    List<LineMarker> errorPoints = getErrorPoints();
-    synchronized (errorPoints) {  // necessary?
-      errorPoints.clear();
-    }
-  }
-  */
-
-
-  public void repaintErrorBar() {
-    errorColumn.repaint();
-  }
-
-
-  public void showConsole() {
-    footer.setPanel(console);
-  }
-
-
-//  /** Toggle between Console and Errors List */
-//  public void showProblemListView(String buttonName) {
-////    CardLayout cl = (CardLayout) consoleProblemsPane.getLayout();
-////    cl.show(consoleProblemsPane, buttonName);
-////    ((JTabbedPane) consolePanel).setSelectedIndex(ERROR_TAB_INDEX);
-//    footer.setPanel(errorTableScrollPane);
-//  }
-
-
-  public void errorTableClick(Object item) {
-    highlight((Problem) item);
-  }
-
-
+  @Override
   public void errorTableDoubleClick(Object item) {
-    Problem p = (Problem) item;
+    JavaProblem p = (JavaProblem) item;
 
 //    MouseEvent evt = null;
     String[] suggs = p.getImportSuggestions();
@@ -2617,28 +2487,6 @@ public class JavaEditor extends Editor {
     frmImportSuggest.setBounds(x, y, 250, 100);
     frmImportSuggest.pack();
     frmImportSuggest.setVisible(true);
-  }
-
-
-//  /** Updates the error table */
-//  synchronized public boolean updateTable(final TableModel tableModel) {
-//    return errorTable.updateTable(tableModel);
-//  }
-
-
-  /**
-   * Handle whether the tiny red error indicator is shown near
-   * the error button at the bottom of the PDE
-   */
-  public void updateErrorToggle(boolean hasErrors) {
-    footer.setNotification(errorTable.getParent(), hasErrors);
-//    String title = Language.text("editor.footer.errors");
-//    if (hasErrors) {
-//      title += "*";
-//    }
-//    ((JTabbedPane) footer).setTitleAt(ERROR_TAB_INDEX, title);
-////    btnShowErrors.updateMarker(hasErrors,
-////                               errorBar.errorColor);
   }
 
 

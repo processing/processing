@@ -20,30 +20,29 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import processing.mode.java.JavaInputHandler;
-import processing.mode.java.JavaMode;
-import processing.mode.java.JavaEditor;
-import processing.mode.java.tweak.ColorControlBox;
-import processing.mode.java.tweak.Handle;
-
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.EventQueue;
+import java.awt.Point;
+import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.BitSet;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.DefaultListModel;
 import javax.swing.SwingWorker;
 
 import processing.app.Messages;
-import processing.app.Mode;
 import processing.app.Platform;
-import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.PdeTextArea;
 import processing.app.syntax.TextAreaDefaults;
-import processing.app.ui.Editor;
+import processing.mode.java.JavaEditor;
+import processing.mode.java.JavaInputHandler;
+import processing.mode.java.JavaMode;
+import processing.mode.java.tweak.ColorControlBox;
+import processing.mode.java.tweak.Handle;
 
 
 public class JavaTextArea extends PdeTextArea {
@@ -55,15 +54,14 @@ public class JavaTextArea extends PdeTextArea {
   public JavaTextArea(TextAreaDefaults defaults, JavaEditor editor) {
     super(defaults, new JavaInputHandler(editor), editor);
 
-    // TweakMode code
-    prevCompListeners = painter.getComponentListeners();
-    prevMouseListeners = painter.getMouseListeners();
-    prevMMotionListeners = painter.getMouseMotionListeners();
-    prevKeyListeners = editor.getKeyListeners();
-
     suggestionGenerator = new CompletionGenerator();
 
     tweakMode = false;
+  }
+
+
+  public JavaEditor getJavaEditor() {
+    return (JavaEditor) editor;
   }
 
 
@@ -73,6 +71,7 @@ public class JavaTextArea extends PdeTextArea {
   }
 
 
+  // used by Tweak Mode
   protected JavaTextAreaPainter getJavaPainter() {
     return (JavaTextAreaPainter) painter;
   }
@@ -142,7 +141,7 @@ public class JavaTextArea extends PdeTextArea {
     super.processKeyEvent(evt);
 
     // code completion disabled if Java tabs present
-    if (!editor.hasJavaTabs()) {
+    if (!getJavaEditor().hasJavaTabs()) {
       if (evt.getID() == KeyEvent.KEY_TYPED) {
         processCompletionKeys(evt);
       } else if (!Platform.isMacOS() && evt.getID() == KeyEvent.KEY_RELEASED) {
@@ -285,10 +284,11 @@ public class JavaTextArea extends PdeTextArea {
     }
 
     // Adjust line number for tabbed sketches
-    int codeIndex = editor.getSketch().getCodeIndex(editor.getCurrentTab());
+    //int codeIndex = editor.getSketch().getCodeIndex(getJavaEditor().getCurrentTab());
+    int codeIndex = editor.getSketch().getCurrentCodeIndex();
     int lineStartOffset = editor.getTextArea().getLineStartOffset(caretLineIndex);
 
-    editor.getPreprocessingService().whenDone(ps -> {
+    getJavaEditor().getPreprocessingService().whenDone(ps -> {
       int lineNumber = ps.tabOffsetToJavaLine(codeIndex, lineStartOffset);
 
       String phrase = null;
@@ -525,30 +525,29 @@ public class JavaTextArea extends PdeTextArea {
 
 
   /**
-   * Calculates location of caret and displays the suggestion popup.
+   * Calculates location of caret and displays the suggestion pop-up.
    */
   protected void showSuggestion(DefaultListModel<CompletionCandidate> listModel, String subWord) {
+    // TODO can this be ListModel instead? why is size() in DefaultListModel
+    // different from getSize() in ListModel (or are they, really?)
     hideSuggestion();
 
-    if (listModel.size() == 0) {
-      Messages.log("TextArea: No suggestions to show.");
-
-    } else {
+    if (listModel.size() != 0) {
       int position = getCaretPosition();
-      Point location = new Point();
       try {
-        location.x = offsetToX(getCaretLine(),
-                               position - getLineStartOffset(getCaretLine()));
-        location.y = lineToY(getCaretLine()) + getPainter().getLineHeight();
-        //log("TA position: " + location);
-      } catch (Exception e2) {
-        e2.printStackTrace();
-        return;
-      }
+        Point location =
+          new Point(offsetToX(getCaretLine(),
+                              position - getLineStartOffset(getCaretLine())),
+                    lineToY(getCaretLine()) + getPainter().getLineHeight());
+        suggestion = new CompletionPanel(this, position, subWord,
+                                         listModel, location, getJavaEditor());
+        requestFocusInWindow();
 
-      suggestion = new CompletionPanel(this, position, subWord,
-                                       listModel, location, editor);
-      requestFocusInWindow();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    } else {
+      Messages.log("TextArea: No suggestions to show.");
     }
   }
 
@@ -569,15 +568,23 @@ public class JavaTextArea extends PdeTextArea {
 
 
   // save input listeners to stop/start text edit
-  protected final ComponentListener[] prevCompListeners;
-  protected final MouseListener[] prevMouseListeners;
-  protected final MouseMotionListener[] prevMMotionListeners;
-  protected final KeyListener[] prevKeyListeners;
+  protected ComponentListener[] baseCompListeners;
+  protected MouseListener[] baseMouseListeners;
+  protected MouseMotionListener[] baseMotionListeners;
+  protected KeyListener[] baseKeyListeners;
   protected boolean tweakMode;
 
 
   /* remove all standard interaction listeners */
-  public void removeAllListeners() {
+  public void tweakRemoveListeners() {
+    if (baseCompListeners == null) {
+      // First time in tweak mode, grab the default listeners. Moved from the
+      // constructor since not all listeners may have been added at that point.
+      baseCompListeners = painter.getComponentListeners();
+      baseMouseListeners = painter.getMouseListeners();
+      baseMotionListeners = painter.getMouseMotionListeners();
+      baseKeyListeners = editor.getKeyListeners();
+    }
     ComponentListener[] componentListeners = painter.getComponentListeners();
     MouseListener[] mouseListeners = painter.getMouseListeners();
     MouseMotionListener[] mouseMotionListeners = painter.getMouseMotionListeners();
@@ -601,7 +608,7 @@ public class JavaTextArea extends PdeTextArea {
   public void startTweakMode() {
     // ignore if we are already in interactiveMode
     if (!tweakMode) {
-      removeAllListeners();
+      tweakRemoveListeners();
       getJavaPainter().startTweakMode();
       this.editable = false;
       this.caretBlinks = false;
@@ -614,8 +621,8 @@ public class JavaTextArea extends PdeTextArea {
   public void stopTweakMode() {
     // ignore if we are not in interactive mode
     if (tweakMode) {
-      removeAllListeners();
-      addPrevListeners();
+      tweakRemoveListeners();
+      tweakRestoreBaseListeners();
       getJavaPainter().stopTweakMode();
       editable = true;
       caretBlinks = true;
@@ -625,18 +632,18 @@ public class JavaTextArea extends PdeTextArea {
   }
 
 
-  private void addPrevListeners() {
+  private void tweakRestoreBaseListeners() {
     // add the original text-edit listeners
-    for (ComponentListener cl : prevCompListeners) {
+    for (ComponentListener cl : baseCompListeners) {
       painter.addComponentListener(cl);
     }
-    for (MouseListener ml : prevMouseListeners) {
+    for (MouseListener ml : baseMouseListeners) {
       painter.addMouseListener(ml);
     }
-    for (MouseMotionListener mml : prevMMotionListeners) {
+    for (MouseMotionListener mml : baseMotionListeners) {
       painter.addMouseMotionListener(mml);
     }
-    for (KeyListener kl : prevKeyListeners) {
+    for (KeyListener kl : baseKeyListeners) {
       editor.addKeyListener(kl);
     }
   }

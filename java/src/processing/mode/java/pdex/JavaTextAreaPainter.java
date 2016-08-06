@@ -23,7 +23,6 @@ package processing.mode.java.pdex;
 import processing.mode.java.JavaEditor;
 import processing.mode.java.tweak.*;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -44,7 +43,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Segment;
 import javax.swing.text.Utilities;
 
-import processing.app.Mode;
+import processing.app.Problem;
 import processing.app.SketchCode;
 import processing.app.syntax.PdeTextAreaPainter;
 import processing.app.syntax.SyntaxDocument;
@@ -228,16 +227,9 @@ public class JavaTextAreaPainter extends PdeTextAreaPainter {
 
   /**
    * Paints the underline for an error/warning line
-   *
-   * @param gfx
-   *          the graphics context
-   * @param tokenMarker
-   * @param line
-   *          0-based line number: NOTE
-   * @param x
    */
   protected void paintErrorLine(Graphics gfx, int line, int x) {
-    List<Problem> problems = getJavaEditor().findProblems(line);
+    List<Problem> problems = getEditor().findProblems(line);
     for (Problem problem : problems) {
       int startOffset = problem.getStartOffset();
       int stopOffset = problem.getStopOffset();
@@ -314,7 +306,7 @@ public class JavaTextAreaPainter extends PdeTextAreaPainter {
   public String getToolTipText(MouseEvent evt) {
     int line = evt.getY() / getFontMetrics().getHeight() + textArea.getFirstLine();
     if (line >= 0 || line < textArea.getLineCount()) {
-      List<Problem> problems = getJavaEditor().findProblems(line);
+      List<Problem> problems = getEditor().findProblems(line);
       for (Problem problem : problems) {
         int lineStart = textArea.getLineStartOffset(line);
         int lineEnd = textArea.getLineStopOffset(line);

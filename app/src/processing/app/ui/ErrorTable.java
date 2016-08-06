@@ -39,16 +39,12 @@ import javax.swing.table.TableColumn;
 
 import processing.app.Language;
 import processing.app.Mode;
+import processing.app.Problem;
 import processing.app.ui.Editor;
 
 
 public class ErrorTable extends JTable {
   Editor editor;
-
-  public interface Entry {
-    public boolean isError();
-    public boolean isWarning();
-  }
 
   static final String[] columnNames = {
     "",  // the blank column used for spacing
@@ -131,9 +127,9 @@ public class ErrorTable extends JTable {
   }
 
 
-  public void addRow(Entry data, String message, String filename, String line) {
+  public void addRow(Problem data, String msg, String filename, String line) {
     DefaultTableModel dtm = (DefaultTableModel) getModel();
-    dtm.addRow(new Object[] { data, message, filename, line });
+    dtm.addRow(new Object[] { data, msg, filename, line });
   }
 
 
@@ -206,7 +202,7 @@ public class ErrorTable extends JTable {
                                                    boolean selected,
                                                    boolean focused,
                                                    int row, int column) {
-      Entry entry = (Entry) table.getValueAt(row, DATA_COLUMN);
+      Problem entry = (Problem) table.getValueAt(row, DATA_COLUMN);
 
       if (selected) {
         setForeground(textColorSelected);

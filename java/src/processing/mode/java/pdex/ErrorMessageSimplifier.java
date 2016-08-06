@@ -85,7 +85,7 @@ public class ErrorMessageSimplifier {
   /**
    * Tones down the jargon in the ecj reported errors.
    */
-  public static String getSimplifiedErrorMessage(Problem problem) {
+  public static String getSimplifiedErrorMessage(JavaProblem problem) {
     if (problem == null) return null;
 
     IProblem iprob = problem.getIProblem();

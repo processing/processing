@@ -34,11 +34,12 @@ import java.util.stream.Collectors;
 import javax.swing.JPanel;
 
 import processing.app.Mode;
+import processing.app.Problem;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.ui.Editor;
 import processing.core.PApplet;
-import processing.mode.java.pdex.Problem;
+import processing.mode.java.pdex.JavaProblem;
 
 
 /**
@@ -51,7 +52,7 @@ import processing.mode.java.pdex.Problem;
  * which displays the overall errors in a document
  */
 public class MarkerColumn extends JPanel {
-  protected JavaEditor editor;
+  protected Editor editor;
 
 //  static final int WIDE = 12;
 
@@ -92,7 +93,7 @@ public class MarkerColumn extends JPanel {
 
   @Override
   public void paintComponent(Graphics g) {
-    g.drawImage(editor.getJavaTextArea().getGutterGradient(),
+    g.drawImage(editor.getPdeTextArea().getGutterGradient(),
                 0, 0, getWidth(), getHeight(), this);
 
     int currentTabIndex = editor.getSketch().getCurrentCodeIndex();
@@ -110,7 +111,7 @@ public class MarkerColumn extends JPanel {
   }
 
 
-  public void updateErrorPoints(final List<Problem> problems) {
+  public void updateErrorPoints(final List<JavaProblem> problems) {
     errorPoints = problems.stream()
         .map(LineMarker::new)
         .collect(Collectors.toList());
@@ -131,24 +132,12 @@ public class MarkerColumn extends JPanel {
   }
 
 
-	/*
-  @Override
-  public JToolTip createToolTip() {
-    return new ErrorToolTip(editor.getMode(), this);
-  }
-  */
-
-
   /** Show tooltip on hover. */
   private void showMarkerHover(final int y) {
     try {
       LineMarker m = findClosestMarker(y);
       if (m != null) {
         Problem p = m.problem;
-//	          String kind = p.isError() ?
-//	            Language.text("editor.status.error") :
-//	            Language.text("editor.status.warning");
-//	          setToolTipText(kind + ": " + p.getMessage());
         editor.statusToolTip(MarkerColumn.this, p.getMessage(), p.isError());
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       }

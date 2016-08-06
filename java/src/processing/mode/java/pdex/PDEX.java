@@ -72,6 +72,7 @@ import javax.swing.tree.TreeModel;
 import processing.app.Language;
 import processing.app.Messages;
 import processing.app.Platform;
+import processing.app.Problem;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
@@ -1092,7 +1093,7 @@ public class PDEX {
             SketchInterval in = ps.mapJavaToSketch(start, stop);
             if (in == SketchInterval.BEFORE_START) return null;
             int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
-            Problem p = new Problem(iproblem, in.tabIndex, line);
+            JavaProblem p = new JavaProblem(iproblem, in.tabIndex, line);
             p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
             return p;
           })
@@ -1104,13 +1105,13 @@ public class PDEX {
         Map<String, List<Problem>> undefinedTypeProblems = problems.stream()
             // Get only problems with undefined types/names
             .filter(p -> {
-              int id = p.getIProblem().getID();
+              int id = ((JavaProblem) p).getIProblem().getID();
               return id == IProblem.UndefinedType ||
                   id == IProblem.UndefinedName ||
                   id == IProblem.UnresolvedVariable;
             })
             // Group problems by the missing type/name
-            .collect(Collectors.groupingBy(p -> p.getIProblem().getArguments()[0]));
+            .collect(Collectors.groupingBy(p -> ((JavaProblem) p).getIProblem().getArguments()[0]));
 
         if (!undefinedTypeProblems.isEmpty()) {
           final ClassPath cp = ps.searchClassPath;
@@ -1121,7 +1122,7 @@ public class PDEX {
                 String missingClass = entry.getKey();
                 List<Problem> affectedProblems = entry.getValue();
                 String[] suggestions = getImportSuggestions(cp, missingClass);
-                affectedProblems.forEach(p -> p.setImportSuggestions(suggestions));
+                affectedProblems.forEach(p -> ((JavaProblem) p).setImportSuggestions(suggestions));
               });
         }
       }

@@ -30,6 +30,7 @@ import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.Platform;
 import processing.app.Preferences;
+import processing.app.Problem;
 import processing.app.RunnerListener;
 import processing.app.Sketch;
 import processing.app.SketchCode;
@@ -38,6 +39,10 @@ import processing.app.Util;
 import processing.app.contrib.ContributionManager;
 import processing.app.syntax.*;
 import processing.core.*;
+import processing.mode.java.JavaMode;
+import processing.mode.java.MarkerColumn;
+import processing.mode.java.pdex.JavaProblem;
+import processing.mode.java.pdex.JavaTextArea;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -55,10 +60,12 @@ import java.awt.print.*;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -79,6 +86,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   static public final int RIGHT_GUTTER = 12;
   static public final int GUTTER_MARGIN = 3;
 
+  private MarkerColumn errorColumn;
 
   // Otherwise, if the window is resized with the message label
   // set to blank, its preferredSize() will be fuckered
@@ -147,6 +155,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
   JMenu modePopup;
 
   Image backgroundGradient;
+
+  protected List<Problem> problems = Collections.emptyList();
 
 
   protected Editor(final Base base, String path, final EditorState state,
@@ -1572,6 +1582,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
+  public PdeTextArea getPdeTextArea() {
+    return (PdeTextArea) textarea;
+  }
+
+
   /**
    * Get the contents of the current buffer. Used by the Sketch class.
    */
@@ -2772,11 +2787,21 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Called by ErrorTable when a row is selected. Action taken is specific
    * to each Mode, based on the object passed in.
    */
-  public void errorTableClick(Object item) { }
+  public void errorTableClick(Object item) {
+    highlight((Problem) item);
+  }
 
 
   public void errorTableDoubleClick(Object item) { }
 
+
+  /**
+   * Handle whether the tiny red error indicator is shown near
+   * the error button at the bottom of the PDE
+   */
+  public void updateErrorToggle(boolean hasErrors) {
+    footer.setNotification(errorTable.getParent(), hasErrors);
+  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -2926,6 +2951,130 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   public boolean isHalted() {
     return false;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public void setProblemList(List<Problem> problems) {
+    this.problems = problems;
+    boolean hasErrors = problems.stream().anyMatch(Problem::isError);
+    updateErrorTable(problems);
+    errorColumn.updateErrorPoints(problems);
+    textarea.repaint();
+    updateErrorToggle(hasErrors);
+    updateEditorStatus();
+  }
+
+
+  /**
+   * Updates the error table in the Error Window.
+   */
+  public void updateErrorTable(List<Problem> problems) {
+    errorTable.clearRows();
+
+    for (Problem p : problems) {
+      String message = p.getMessage();
+      errorTable.addRow(p, message,
+                   sketch.getCode(p.getTabIndex()).getPrettyName(),
+                   Integer.toString(p.getLineNumber() + 1));
+      // Added +1 because lineNumbers internally are 0-indexed
+    }
+  }
+
+
+    public void highlight(Problem p) {
+    if (p != null) {
+      highlight(p.getTabIndex(), p.getStartOffset(), p.getStartOffset());
+    }
+  }
+
+
+  public void highlight(int tabIndex, int startOffset, int stopOffset) {
+    // Switch to tab
+    toFront();
+    sketch.setCurrentCode(tabIndex);
+
+    // Make sure offsets are in bounds
+    int length = textarea.getDocumentLength();
+    startOffset = PApplet.constrain(startOffset, 0, length);
+    stopOffset = PApplet.constrain(stopOffset, 0, length);
+
+    // Highlight the code
+    textarea.select(startOffset, stopOffset);
+
+    // Scroll to error line
+    textarea.scrollToCaret();
+    repaint();
+  }
+
+
+  public List<Problem> getProblems() {
+    return problems;
+  }
+
+
+  /**
+   * Updates editor status bar, depending on whether the caret is on an error
+   * line or not
+   */
+  public void updateEditorStatus() {
+    Problem problem = findProblem(textarea.getCaretLine());
+    if (problem != null) {
+      int type = problem.isError() ?
+        EditorStatus.CURSOR_LINE_ERROR : EditorStatus.CURSOR_LINE_WARNING;
+      statusMessage(problem.getMessage(), type);
+    } else {
+      switch (getStatusMode()) {
+        case EditorStatus.CURSOR_LINE_ERROR:
+        case EditorStatus.CURSOR_LINE_WARNING:
+          statusEmpty();
+          break;
+      }
+    }
+  }
+
+
+  /**
+   * @return the Problem for the first error or warning on 'line'
+   */
+  Problem findProblem(int line) {
+    int currentTab = getSketch().getCurrentCodeIndex();
+    return problems.stream()
+        .filter(p -> p.getTabIndex() == currentTab)
+        .filter(p -> {
+          int pStartLine = p.getLineNumber();
+          int pEndOffset = p.getStopOffset();
+          int pEndLine = textarea.getLineOfOffset(pEndOffset);
+          return line >= pStartLine && line <= pEndLine;
+        })
+        .findFirst()
+        .orElse(null);
+  }
+
+
+  public List<Problem> findProblems(int line) {
+    int currentTab = getSketch().getCurrentCodeIndex();
+    return problems.stream()
+        .filter(p -> p.getTabIndex() == currentTab)
+        .filter(p -> {
+          int pStartLine = p.getLineNumber();
+          int pEndOffset = p.getStopOffset();
+          int pEndLine = textarea.getLineOfOffset(pEndOffset);
+          return line >= pStartLine && line <= pEndLine;
+        })
+        .collect(Collectors.toList());
+  }
+
+
+  public void repaintErrorBar() {
+    errorColumn.repaint();
+  }
+
+
+  public void showConsole() {
+    footer.setPanel(console);
   }
 
 

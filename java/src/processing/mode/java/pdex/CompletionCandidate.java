@@ -32,7 +32,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 
-public class CompletionCandidate implements Comparable<CompletionCandidate>{
+public class CompletionCandidate implements Comparable<CompletionCandidate> {
   private final String elementName;
   private final String label; // the toString value
   private final String completionString;
