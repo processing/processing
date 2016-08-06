@@ -12,9 +12,14 @@ X Fix resizing targets for async save
 X   https://github.com/processing/processing/pull/4607
 X   https://github.com/processing/processing/issues/4578
 
+contrib
+X Make loadStrings() and loadJSONObject/loadJSONArray() error msgs consistent
+X   https://github.com/processing/processing/issues/4265
+X   https://github.com/processing/processing/pull/4268
+
+
 _ disable OpenGL ES on Linux? 
 _   https://github.com/processing/processing/issues/4584
-
 
 _ Can't render PGraphics object using image() within a PDF
 _   https://github.com/processing/processing/issues/4473

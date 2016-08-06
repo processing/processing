@@ -278,6 +278,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
       });
     }
+    textarea.addCaretListener(new CaretListener() {
+      public void caretUpdate(CaretEvent e) {
+        updateEditorStatus();
+      }
+    });
 
     footer = createFooter();
 

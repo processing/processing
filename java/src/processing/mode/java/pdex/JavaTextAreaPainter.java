@@ -234,7 +234,7 @@ public class JavaTextAreaPainter extends PdeTextAreaPainter {
 		this.handles = handles;
 		this.colorBoxes = colorBoxes;
 
-		initTweakInterfacePositions();
+		updateTweakInterfacePositions();
 		repaint();
 	}
 
@@ -244,7 +244,7 @@ public class JavaTextAreaPainter extends PdeTextAreaPainter {
 	* synchronize this method to prevent the execution of 'paint' in the middle.
 	* (don't paint while we make changes to the text of the editor)
 	*/
-	private synchronized void initTweakInterfacePositions() {
+	private synchronized void updateTweakInterfacePositions() {
 		SketchCode[] code = getEditor().getSketch().getCode();
 		int prevScroll = textArea.getVerticalScrollPosition();
 		String prevText = textArea.getText();

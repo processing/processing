@@ -80,21 +80,6 @@ public class JavaEditor extends Editor {
     debugger = new Debugger(this);
     inspector = new VariableInspector(this);
 
-    // set action on frame close
-    //        addWindowListener(new WindowAdapter() {
-    //            @Override
-    //            public void windowClosing(WindowEvent e) {
-    //                onWindowClosing(e);
-    //            }
-    //        });
-
-
-//    // load settings from theme.txt
-//    breakpointColor = mode.getColor("breakpoint.bgcolor");
-//    breakpointMarkerColor = mode.getColor("breakpoint.marker.color");
-//    currentLineColor = mode.getColor("currentline.bgcolor");
-//    currentLineMarkerColor = mode.getColor("currentline.marker.color");
-
     // set breakpoints from marker comments
     for (LineID lineID : stripBreakpointComments()) {
       //System.out.println("setting: " + lineID);
@@ -119,7 +104,7 @@ public class JavaEditor extends Editor {
     // add our hacked version back to the editor
     box.add(textAndError);
 
-    getJavaTextArea().setMode(jmode);
+    getPdeTextArea().setMode(jmode);
 
     preprocessingService = new PreprocessingService(this);
     pdex = new PDEX(this, preprocessingService);
@@ -133,12 +118,6 @@ public class JavaEditor extends Editor {
       }
 
       public void windowGainedFocus(WindowEvent e) { }
-    });
-
-    textarea.addCaretListener(new CaretListener() {
-      public void caretUpdate(CaretEvent e) {
-        updateEditorStatus();
-      }
     });
   }
 

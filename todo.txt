@@ -51,6 +51,8 @@ _   https://github.com/processing/processing/issues/3965
 medium
 _ Move general PDE code out of JavaMode and into general base classes
 _   https://github.com/processing/processing/issues/4606
+_ detect changes in case with libraries
+_   https://github.com/processing/processing/issues/4507
 
 lower
 _ make when opening new editor window, open on the same display as current
