@@ -922,9 +922,12 @@ public class Sketch {
           return false;
         }
         // list of files/folders to be ignored during "save as"
-        for (String ignorable : mode.getIgnorable()) {
-          if (name.equals(ignorable)) {
-            return false;
+        String[] ignorable = mode.getIgnorable();
+        if (ignorable != null) {
+          for (String ignore : ignorable) {
+            if (name.equals(ignore)) {
+              return false;
+            }
           }
         }
         // ignore the extensions for code, since that'll be copied below
