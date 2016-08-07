@@ -560,7 +560,7 @@
       <option value="-Djna.nosys=true" />
 
       <!-- deal with jokers who install JOGL, ANTLR, etc system-wide -->
-      <option value="-Djava.ext.dirs=lib/ext" />
+      <option value="-Djava.ext.dirs=$APP_ROOT/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/lib/ext" />
 
       <option value="-Dapple.laf.useScreenMenuBar=true" />
       <option value="-Dcom.apple.macos.use-file-dialog-packages=true" />
