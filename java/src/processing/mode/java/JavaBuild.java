@@ -1134,6 +1134,8 @@ public class JavaBuild {
     }
     // https://github.com/processing/processing/issues/2239
     runOptions.add("-Djna.nosys=true");
+    // https://github.com/processing/processing/issues/4608
+    runOptions.add("-Djava.ext.dirs=lib/ext");
     // https://github.com/processing/processing/issues/2559
     if (exportPlatform == PConstants.WINDOWS) {
       runOptions.add("-Djava.library.path=\"%EXEDIR%\\lib\"");
@@ -1238,7 +1240,9 @@ public class JavaBuild {
       if (embedJava) {
         jre.addChild("path").setContent("java");
       }
-      jre.addChild("minVersion").setContent("1.7.0_40");
+      // Need u74 for a major JavaFX issue (upside-down display)
+      // https://github.com/processing/processing/issues/3795
+      jre.addChild("minVersion").setContent("1.8.0_74");
       for (String opt : runOptions) {
         jre.addChild("opt").setContent(opt);
       }
