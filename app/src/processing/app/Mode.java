@@ -227,6 +227,43 @@ public abstract class Mode {
 
 
   /**
+   * Add files to a folder to create an empty sketch. This can be overridden
+   * to add template files to a sketch for Modes that need them.
+   *
+   * @param sketchFolder the directory where the new sketch should live
+   * @param sketchName the name of the new sketch
+   * @return the main file for the sketch to be opened via handleOpen()
+   * @throws IOException if the file somehow already exists
+   */
+  public File addTemplateFiles(File sketchFolder,
+                               String sketchName) throws IOException {
+    // Make an empty .pde file
+    File newbieFile =
+      new File(sketchFolder, sketchName + "." + getDefaultExtension());
+
+    File templateFolder = getTemplateFolder();
+    if (templateFolder.exists()) {
+      Util.copyDir(templateFolder, sketchFolder);
+      File templateFile =
+        new File(sketchFolder, "sketch." + getDefaultExtension());
+      if (!templateFile.renameTo(newbieFile)) {
+        throw new IOException("Error while assigning the sketch template.");
+      }
+    } else {
+      if (!newbieFile.createNewFile()) {
+        throw new IOException(newbieFile + " already exists.");
+      }
+    }
+    return newbieFile;
+  }
+
+
+  public File getTemplateFolder() {
+    return getContentFile("template");
+  }
+
+
+  /**
    * Return the pretty/printable/menu name for this mode. This is separate from
    * the single word name of the folder that contains this mode. It could even
    * have spaces, though that might result in sheer madness or total mayhem.

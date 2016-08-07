@@ -1945,13 +1945,8 @@ public class JavaEditor extends Editor {
    * To initiate a "stop" action, call handleStop() instead.
    */
   public void deactivateRun() {
-//    if (toolbar instanceof DebugToolbar){
-//      toolbar.deactivate(DebugToolbar.RUN);
-//    } else {
-//    toolbar.deactivate(JavaToolbar.RUN);
     toolbar.deactivateRun();
     debugItem.setEnabled(true);
-//    }
   }
 
 

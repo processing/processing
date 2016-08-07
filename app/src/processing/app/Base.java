@@ -1094,12 +1094,17 @@ public class Base {
       // Make the directory for the new sketch
       newbieDir.mkdirs();
 
+      // Add any template files from the Mode itself
+      File newbieFile = nextMode.addTemplateFiles(newbieDir, newbieName);
+
+      /*
       // Make an empty pde file
       File newbieFile =
         new File(newbieDir, newbieName + "." + nextMode.getDefaultExtension()); //$NON-NLS-1$
       if (!newbieFile.createNewFile()) {
         throw new IOException(newbieFile + " already exists.");
       }
+      */
 
       // Create sketch properties file if it's not the default mode.
       if (!nextMode.equals(getDefaultMode())) {
