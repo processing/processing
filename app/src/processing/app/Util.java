@@ -25,7 +25,6 @@ package processing.app;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.Enumeration;
-import java.util.Vector;
 import java.util.zip.*;
 
 import processing.core.PApplet;
@@ -379,61 +378,55 @@ public class Util {
   }
 
 
-//  /**
-//   * Recursively creates a list of all files within the specified folder,
-//   * and returns a list of their relative paths.
-//   * Ignores any files/folders prefixed with a dot.
-//   */
-//  static public String[] listFiles(String path, boolean relative) {
-//    return listFiles(new File(path), relative);
-//  }
-
-
+  /**
+   * Recursively creates a list of all files within the specified folder,
+   * and returns a list of their relative paths.
+   * Ignores any files/folders prefixed with a dot.
+   * @param relative true return relative paths instead of absolute paths
+   */
   static public String[] listFiles(File folder, boolean relative) {
-    String path = folder.getAbsolutePath();
-    Vector<String> vector = new Vector<String>();
-    listFiles(relative ? (path + File.separator) : "", path, null, vector);
-    String outgoing[] = new String[vector.size()];
-    vector.copyInto(outgoing);
-    return outgoing;
+    return listFiles(folder, relative, null);
   }
 
 
-  static public String[] listFiles(File folder, boolean relative, String extension) {
-    String path = folder.getAbsolutePath();
-    Vector<String> vector = new Vector<String>();
+  static public String[] listFiles(File folder, boolean relative,
+                                   String extension) {
     if (extension != null) {
       if (!extension.startsWith(".")) {
         extension = "." + extension;
       }
     }
-    listFiles(relative ? (path + File.separator) : "", path, extension, vector);
-    String outgoing[] = new String[vector.size()];
-    vector.copyInto(outgoing);
-    return outgoing;
+
+    StringList list = new StringList();
+    listFilesImpl(folder, relative, extension, list);
+
+    if (relative) {
+      String[] outgoing = new String[list.size()];
+      // remove the slash (or backslash) as well
+      int prefixLength = folder.getAbsolutePath().length() + 1;
+      for (int i = 0; i < outgoing.length; i++) {
+        outgoing[i] = list.get(i).substring(prefixLength);
+      }
+      return outgoing;
+    }
+    return list.array();
   }
 
 
-  static protected void listFiles(String basePath,
-                                  String path, String extension,
-                                  Vector<String> vector) {
-    File folder = new File(path);
-    String[] list = folder.list();
-    if (list != null) {
-      for (String item : list) {
-        if (item.charAt(0) == '.') continue;
-        if (extension == null || item.toLowerCase().endsWith(extension)) {
-          File file = new File(path, item);
-          String newPath = file.getAbsolutePath();
-          if (newPath.startsWith(basePath)) {
-            newPath = newPath.substring(basePath.length());
-          }
-          // only add if no ext or match
-          if (extension == null || item.toLowerCase().endsWith(extension)) {
-            vector.add(newPath);
-          }
-          if (file.isDirectory()) {  // use absolute path
-            listFiles(basePath, file.getAbsolutePath(), extension, vector);
+  static void listFilesImpl(File folder, boolean relative,
+                            String extension, StringList list) {
+    File[] items = folder.listFiles();
+    if (items != null) {
+      for (File item : items) {
+        String name = item.getName();
+        if (name.charAt(0) != '.') {
+          if (item.isDirectory()) {
+            listFilesImpl(item, relative, extension, list);
+
+          } else {  // a file
+            if (extension == null || name.endsWith(extension)) {
+              list.append(item.getAbsolutePath());
+            }
           }
         }
       }

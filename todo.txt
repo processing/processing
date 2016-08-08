@@ -10,6 +10,7 @@ X   https://github.com/processing/processing/issues/4128
 X   https://github.com/processing/processing/issues/4503
 X see if CLASSPATH can be set to screw up p5
 X   works fine on OS X, couldn't reproduce on Linux
+X rewrite Util.listFiles() because it wasn't working recursively
 
 mode work
 X add template support for Modes
