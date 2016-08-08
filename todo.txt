@@ -8,6 +8,10 @@ X   https://github.com/processing/processing/issues/4566
 X   https://github.com/processing/processing/issues/4492
 X   https://github.com/processing/processing/issues/4128
 X   https://github.com/processing/processing/issues/4503
+_   test ext.dirs working on Linux (use js example)
+_   test ext.dirs on exported app on Linux
+_   test ext.dirs working on Windows (use js example)
+_   test ext.dirs on exported app on Windows
 X see if CLASSPATH can be set to screw up p5
 X   works fine on OS X, couldn't reproduce on Linux
 X rewrite Util.listFiles() because it wasn't working properly
