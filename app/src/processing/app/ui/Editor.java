@@ -2810,7 +2810,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * the error button at the bottom of the PDE
    */
   public void updateErrorToggle(boolean hasErrors) {
-    footer.setNotification(errorTable.getParent(), hasErrors);
+    if (errorTable != null) {
+      footer.setNotification(errorTable.getParent(), hasErrors);
+    }
   }
 
 
@@ -2991,14 +2993,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Updates the error table in the Error Window.
    */
   public void updateErrorTable(List<Problem> problems) {
-    errorTable.clearRows();
+    if (errorTable != null) {
+      errorTable.clearRows();
 
-    for (Problem p : problems) {
-      String message = p.getMessage();
-      errorTable.addRow(p, message,
-                   sketch.getCode(p.getTabIndex()).getPrettyName(),
-                   Integer.toString(p.getLineNumber() + 1));
-      // Added +1 because lineNumbers internally are 0-indexed
+      for (Problem p : problems) {
+        String message = p.getMessage();
+        errorTable.addRow(p, message,
+                          sketch.getCode(p.getTabIndex()).getPrettyName(),
+                          Integer.toString(p.getLineNumber() + 1));
+        // Added +1 because lineNumbers internally are 0-indexed
+      }
     }
   }
 
