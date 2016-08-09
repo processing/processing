@@ -734,13 +734,21 @@ public abstract class Mode {
   }
 
 
-  //public TokenMarker getTokenMarker() throws IOException {
-  //  File keywordsFile = new File(folder, "keywords.txt");
-  //  return new PdeKeywords(keywordsFile);
-  //}
+  /**
+   * Specialized version of getTokenMarker() that can be overridden to
+   * provide different TokenMarker objects for different file types.
+   * @since 3.2
+   * @param code the code for which we need a TokenMarker
+   */
+  public TokenMarker getTokenMarker(SketchCode code) {
+    return getTokenMarker();
+  }
+
+
   public TokenMarker getTokenMarker() {
     return tokenMarker;
   }
+
 
   protected TokenMarker createTokenMarker() {
     return new PdeKeywords();

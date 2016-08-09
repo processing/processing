@@ -1805,7 +1805,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       code.setDocument(document);
 
       // turn on syntax highlighting
-      document.setTokenMarker(mode.getTokenMarker());
+      document.setTokenMarker(mode.getTokenMarker(code));
 
       // insert the program text into the document object
       try {
