@@ -41,6 +41,7 @@ import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -977,6 +978,13 @@ public class Sketch {
   }
 
 
+  AtomicBoolean saving = new AtomicBoolean();
+
+  public boolean isSaving() {
+    return saving.get();
+  }
+
+
   /**
    * Kick off a background thread to copy everything *but* the .pde files.
    * Due to the poor way (dating back to the late 90s with DBN) that our
@@ -986,15 +994,16 @@ public class Sketch {
    * As a result, this method will return 'true' before the full "Save As"
    * has completed, which will cause problems in weird cases.
    *
-   * For instance, saving an untitled sketch that has an enormous data
-   * folder while quitting. The save thread to move those data folder files
-   * won't have finished before this returns true, and the PDE may quit
-   * before the SwingWorker completes its job.
+   * For instance, the threading will cause problems while saving an untitled
+   * sketch that has an enormous data folder while quitting. The save thread to
+   * move those data folder files won't have finished before this returns true,
+   * and the PDE may quit before the SwingWorker completes its job.
    *
    * <a href="https://github.com/processing/processing/issues/3843">3843</a>
    */
   void startSaveAsThread(final String oldName, final String newName,
                          final File newFolder, final File[] copyItems) {
+    saving.set(true);
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         final JFrame frame =
@@ -1064,6 +1073,7 @@ public class Sketch {
                 }
               }
             }
+            saving.set(false);
             return null;
           }
 
