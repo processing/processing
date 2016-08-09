@@ -43,7 +43,7 @@ _   https://github.com/processing/processing/issues/43503#issuecomment-237715947
 
 contrib
 
-input method work from tyfkda
+input method work from Tsuyoshi Fukuda (tyfkda)
 X Simplify conditional branch
 X   https://github.com/processing/processing/pull/4589
 X Enable input method support by default on Japanese/Korean/Chinese systems
