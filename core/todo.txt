@@ -3,6 +3,7 @@ X some Table cleanup based on other CSV parsing work
 X use StandardCharsets.UTF_8 instead of getting encoding by name
 X PApplet.main(Blah.class) now works
 X add toJSON() method to IntDict
+X   had to use JSONObject.quote() to wrap the text
 _   do the same for the other data classes
 _   note the difference between this and toJSONObject() or toJSONArray()
 _   or is that the better way to handle it? hm
