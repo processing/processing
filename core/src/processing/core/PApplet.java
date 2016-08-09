@@ -14833,6 +14833,12 @@ public class PApplet implements PConstants {
   }
 
 
+  public void resize(int width, int height) {
+    if (recorder != null) recorder.resize(width, height);
+    g.resize(width, height);
+  }
+
+
   /**
    * Display a warning that the specified method is only available with 3D.
    * @param method The method name (no parentheses)

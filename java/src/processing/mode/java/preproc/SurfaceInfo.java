@@ -1,7 +1,7 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
 /*
-  SizeInfo - parsed elements of a size() or fullScreen() call
+  SurfaceInfo - parsed elements of a size() or fullScreen() call
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2015 The Processing Foundation
