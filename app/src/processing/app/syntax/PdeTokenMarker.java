@@ -29,7 +29,7 @@ import javax.swing.text.Segment;
 import processing.app.ui.Editor;
 
 
-public class PdeKeywords extends TokenMarker {
+public class PdeTokenMarker extends TokenMarker {
   protected KeywordMap keywordColoring;
 
 //  protected int lastOffset;

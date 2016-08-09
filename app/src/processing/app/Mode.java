@@ -751,7 +751,7 @@ public abstract class Mode {
 
 
   protected TokenMarker createTokenMarker() {
-    return new PdeKeywords();
+    return new PdeTokenMarker();
   }
 
 
