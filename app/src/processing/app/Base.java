@@ -1874,6 +1874,7 @@ public class Base {
     getSketchbookToolsFolder().mkdirs();
     getSketchbookModesFolder().mkdirs();
     getSketchbookExamplesFolder().mkdirs();
+    getSketchbookTemplatesFolder().mkdirs();
   }
 
 
