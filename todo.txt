@@ -23,15 +23,20 @@ X   https://github.com/processing/processing/issues/4606
 X change PdeInputHandler constructor
 X   check whether this breaks other Modes before releasing
 X   added extra constructor to keep things working
-_ allow modes to specify their own base file name
-_   need to move "is this a sketch?" handling into Mode
-_ favicon handling for p5jsMode
-_ move template subst code to Util
-_ in Mode: TokenMarker getTokenMarker(SketchCode code)
-_   passes through to no args version if not overridden
 X change PdeKeywords to PdeTokenMarker
 X   doesn't seem to cause any breakage, but will keep an eye out
 X added getSketchbookTemplatesFolder() to Base
+o move template subst code to Util
+X in Mode: TokenMarker getTokenMarker(SketchCode code)
+X   passes through to no args version if not overridden
+_   note this in the docs
+X implement templates
+_   write short docs
+_   https://github.com/processing/processing/issues/4306
+_   https://github.com/processing/processing/issues/4352
+
+_ allow modes to specify their own base file name
+_   need to move "is this a sketch?" handling into Mode
 
 _ modify line number color when no lines extend that far?
 _   https://github.com/processing/processing/pull/4560

@@ -241,30 +241,48 @@ public abstract class Mode {
     File newbieFile =
       new File(sketchFolder, sketchName + "." + getDefaultExtension());
 
-    // First see if the user has overridden the default template
-    File templateFolder = getUserTemplateFolder();
-    if (!templateFolder.exists()) {
-      // If not, see if the Mode has its own template
-      templateFolder = getTemplateFolder();
-    }
-    if (templateFolder.exists()) {
-      Util.copyDir(templateFolder, sketchFolder);
-      File templateFile =
-        new File(sketchFolder, "sketch." + getDefaultExtension());
-      if (!templateFile.renameTo(newbieFile)) {
-        throw new IOException("Error while assigning the sketch template.");
+    try {
+      // First see if the user has overridden the default template
+      File templateFolder = checkSketchbookTemplate();
+
+      // Next see if the Mode has its own template
+      if (templateFolder == null) {
+        templateFolder = getTemplateFolder();
       }
-    } else {
-      if (!newbieFile.createNewFile()) {
-        throw new IOException(newbieFile + " already exists.");
+      if (templateFolder.exists()) {
+        Util.copyDir(templateFolder, sketchFolder);
+        File templateFile =
+          new File(sketchFolder, "sketch." + getDefaultExtension());
+        if (!templateFile.renameTo(newbieFile)) {
+          System.err.println("Error while assigning the sketch template.");
+        }
+      } else {
+        if (!newbieFile.createNewFile()) {
+          System.err.println(newbieFile + " already exists.");
+        }
       }
+    } catch (Exception e) {
+      // just spew out this error and try to recover below
+      e.printStackTrace();
     }
     return newbieFile;
   }
 
 
-  public File getUserTemplateFolder() {
-    return new File(Base.getSketchbookTemplatesFolder(), getTitle());
+  /**
+   * See if the user has their own template for this Mode. If the default
+   * extension is "pde", this will look for a file called sketch.pde to use
+   * as the template for all sketches.
+   */
+  protected File checkSketchbookTemplate() {
+    File user = new File(Base.getSketchbookTemplatesFolder(), getTitle());
+    if (user.exists()) {
+      File template = new File(user, "sketch." + getDefaultExtension());
+      if (template.exists() && template.canRead()) {
+        return user;
+      }
+    }
+    return null;
   }
 
 
