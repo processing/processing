@@ -1902,6 +1902,11 @@ public class Base {
   }
 
 
+  static public File getSketchbookTemplatesFolder() {
+    return new File(sketchbookFolder, "templates");
+  }
+
+
   static protected File getDefaultSketchbookFolder() {
     File sketchbookFolder = null;
     try {

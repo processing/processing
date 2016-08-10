@@ -31,6 +31,7 @@ _ in Mode: TokenMarker getTokenMarker(SketchCode code)
 _   passes through to no args version if not overridden
 X change PdeKeywords to PdeTokenMarker
 X   doesn't seem to cause any breakage, but will keep an eye out
+X added getSketchbookTemplatesFolder() to Base
 
 _ modify line number color when no lines extend that far?
 _   https://github.com/processing/processing/pull/4560

@@ -241,7 +241,12 @@ public abstract class Mode {
     File newbieFile =
       new File(sketchFolder, sketchName + "." + getDefaultExtension());
 
-    File templateFolder = getTemplateFolder();
+    // First see if the user has overridden the default template
+    File templateFolder = getUserTemplateFolder();
+    if (!templateFolder.exists()) {
+      // If not, see if the Mode has its own template
+      templateFolder = getTemplateFolder();
+    }
     if (templateFolder.exists()) {
       Util.copyDir(templateFolder, sketchFolder);
       File templateFile =
@@ -255,6 +260,11 @@ public abstract class Mode {
       }
     }
     return newbieFile;
+  }
+
+
+  public File getUserTemplateFolder() {
+    return new File(Base.getSketchbookTemplatesFolder(), getTitle());
   }
 
 
