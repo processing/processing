@@ -975,27 +975,6 @@ public class JavaBuild {
     if (!jarFolder.exists()) jarFolder.mkdirs();
 
 
-    /*
-    /// on windows, copy the exe file
-
-    if (exportPlatform == PConstants.WINDOWS) {
-      if (exportBits == 64) {
-        // We don't yet have a 64-bit launcher, so this is a workaround for now.
-        File batFile = new File(destFolder, sketch.getName() + ".bat");
-        PrintWriter writer = PApplet.createWriter(batFile);
-        writer.println("@echo off");
-        String javaPath = embedJava ? ".\\java\\bin\\java.exe" : "java";
-        writer.println(javaPath + " -Djna.nosys=true -Djava.ext.dirs=lib -Djava.library.path=lib " + sketch.getName());
-        writer.flush();
-        writer.close();
-      } else {
-        Base.copyFile(mode.getContentFile("application/template.exe"),
-                      new File(destFolder, sketch.getName() + ".exe"));
-      }
-    }
-    */
-
-
     /// start copying all jar files
 
     Vector<String> jarListVector = new Vector<String>();
@@ -1135,12 +1114,15 @@ public class JavaBuild {
     // https://github.com/processing/processing/issues/2239
     runOptions.add("-Djna.nosys=true");
     // https://github.com/processing/processing/issues/4608
-    if (exportPlatform == PConstants.MACOSX) {
-      runOptions.add("-Djava.ext.dirs=$APP_ROOT/Contents/PlugIns/jdk" + PApplet.javaVersionName + ".jdk/Contents/Home/jre/lib/ext");
-    } else if (exportPlatform == PConstants.WINDOWS) {
-      runOptions.add("-Djava.ext.dirs=%EXEDIR%/java/lib/ext");
-    } else if (exportPlatform == PConstants.LINUX) {
-      runOptions.add("-Djava.ext.dirs=$APPDIR/java/lib/ext");
+    if (embedJava) {
+      // if people don't embed Java, it might be a mess, but what can we do
+      if (exportPlatform == PConstants.MACOSX) {
+        runOptions.add("-Djava.ext.dirs=$APP_ROOT/Contents/PlugIns/jdk" + PApplet.javaVersionName + ".jdk/Contents/Home/jre/lib/ext");
+      } else if (exportPlatform == PConstants.WINDOWS) {
+        runOptions.add("-Djava.ext.dirs=%EXEDIR%/java/lib/ext");
+      } else if (exportPlatform == PConstants.LINUX) {
+        runOptions.add("-Djava.ext.dirs=$APPDIR/java/lib/ext");
+      }
     }
 
     // https://github.com/processing/processing/issues/2559
