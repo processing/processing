@@ -1101,33 +1101,33 @@ public class JavaBuild {
 
     /// figure out run options for the VM
 
-    List<String> runOptions = new ArrayList<String>();
+    StringList runOptions = new StringList();
 
     // Set memory options, except for ARM where we're more memory-constrained
     // compared to the machine being used to build/export the sketch
     // https://github.com/processing/processing/pull/4406
     if (Preferences.getBoolean("run.options.memory") &&
         !exportVariant.equals("armv6hf")) {
-      runOptions.add("-Xms" + Preferences.get("run.options.memory.initial") + "m");
-      runOptions.add("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
+      runOptions.append("-Xms" + Preferences.get("run.options.memory.initial") + "m");
+      runOptions.append("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
     }
     // https://github.com/processing/processing/issues/2239
-    runOptions.add("-Djna.nosys=true");
+    runOptions.append("-Djna.nosys=true");
     // https://github.com/processing/processing/issues/4608
     if (embedJava) {
       // if people don't embed Java, it might be a mess, but what can we do
       if (exportPlatform == PConstants.MACOSX) {
-        runOptions.add("-Djava.ext.dirs=$APP_ROOT/Contents/PlugIns/jdk" + PApplet.javaVersionName + ".jdk/Contents/Home/jre/lib/ext");
+        runOptions.append("-Djava.ext.dirs=$APP_ROOT/Contents/PlugIns/jdk" + PApplet.javaVersionName + ".jdk/Contents/Home/jre/lib/ext");
       } else if (exportPlatform == PConstants.WINDOWS) {
-        runOptions.add("-Djava.ext.dirs=%EXEDIR%/java/lib/ext");
+        runOptions.append("-Djava.ext.dirs=%EXEDIR%/java/lib/ext");
       } else if (exportPlatform == PConstants.LINUX) {
-        runOptions.add("-Djava.ext.dirs=$APPDIR/java/lib/ext");
+        runOptions.append("-Djava.ext.dirs=$APPDIR/java/lib/ext");
       }
     }
 
     // https://github.com/processing/processing/issues/2559
     if (exportPlatform == PConstants.WINDOWS) {
-      runOptions.add("-Djava.library.path=\"%EXEDIR%\\lib\"");
+      runOptions.append("-Djava.library.path=\"%EXEDIR%\\lib\"");
     }
 
 
@@ -1286,8 +1286,7 @@ public class JavaBuild {
         // https://github.com/processing/processing/issues/2349
         pw.print("$APPDIR/java/bin/");
       }
-      String runOptionsStr =
-        PApplet.join(runOptions.toArray(new String[0]), " ");
+      String runOptionsStr = runOptions.join(" ");
       pw.print("java " + runOptionsStr +
                " -Djava.library.path=\"$APPDIR:$APPDIR/lib\"" +
                " -cp \"" + exportClassPath + "\"" +
