@@ -17,6 +17,8 @@ X   works fine on OS X, couldn't reproduce on Linux
 X rewrite Util.listFiles() because it wasn't working properly
 X add 2016 to about-1x and about-2x
 
+_ saying "no" to save changes is the same as "cancel" on windows?
+
 mode work
 X add template support for Modes
 X Move general PDE code out of JavaMode and into general base classes
