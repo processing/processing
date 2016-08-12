@@ -3,6 +3,7 @@
 /*
 Part of the Processing project - http://processing.org
 
+Copyright (c) 2012-16 The Processing Foundation
 Copyright (c) 2004-12 Ben Fry and Casey Reas
 Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -23,20 +24,37 @@ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package processing.mode.java;
 
 import java.io.*;
-import java.util.*;
-import java.util.zip.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 
-import processing.app.*;
+import processing.app.Base;
+import processing.app.Library;
+import processing.app.Messages;
+import processing.app.Mode;
+import processing.app.Platform;
+import processing.app.Preferences;
+import processing.app.Sketch;
+import processing.app.SketchCode;
+import processing.app.SketchException;
+import processing.app.Util;
 import processing.app.exec.ProcessHelper;
-import processing.core.*;
+import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.data.StringList;
 import processing.data.XML;
-import processing.mode.java.preproc.*;
+import processing.mode.java.preproc.PdePreprocessor;
+import processing.mode.java.preproc.PreprocessorResult;
+import processing.mode.java.preproc.SurfaceInfo;
 
 // Would you believe there's a java.lang.Compiler class? I wouldn't.
 
@@ -78,51 +96,6 @@ public class JavaBuild {
 
 
   /**
-   * Cleanup temporary files used during a build/run.
-   */
-//  protected void cleanup() {
-//    // if the java runtime is holding onto any files in the build dir, we
-//    // won't be able to delete them, so we need to force a gc here
-//    System.gc();
-//
-//    // note that we can't remove the builddir itself, otherwise
-//    // the next time we start up, internal runs using Runner won't
-//    // work because the build dir won't exist at startup, so the classloader
-//    // will ignore the fact that that dir is in the CLASSPATH in run.sh
-//    Base.removeDescendants(tempBuildFolder);
-//  }
-
-
-  /**
-   * Preprocess, Compile, and Run the current code.
-   * <P>
-   * There are three main parts to this process:
-   * <PRE>
-   *   (0. if not java, then use another 'engine'.. i.e. python)
-   *
-   *    1. do the p5 language preprocessing
-   *       this creates a working .java file in a specific location
-   *       better yet, just takes a chunk of java code and returns a
-   *       new/better string editor can take care of saving this to a
-   *       file location
-   *
-   *    2. compile the code from that location
-   *       catching errors along the way
-   *       placing it in a ready classpath, or .. ?
-   *
-   *    3. run the code
-   *       needs to communicate location for window
-   *       and maybe setup presentation space as well
-   *       run externally if a code folder exists,
-   *       or if more than one file is in the project
-   *
-   *    X. afterwards, some of these steps need a cleanup function
-   * </PRE>
-   */
-  //protected String compile() throws RunnerException {
-
-
-  /**
    * Run the build inside a temporary build folder. Used for run/present.
    * @return null if compilation failed, main class name if not
    * @throws RunnerException
@@ -145,17 +118,11 @@ public class JavaBuild {
     this.srcFolder = srcFolder;
     this.binFolder = binFolder;
 
-//    Base.openFolder(srcFolder);
-//    Base.openFolder(binFolder);
-
     // run the preprocessor
     String classNameFound = preprocess(srcFolder, sizeWarning);
 
     // compile the program. errors will happen as a RunnerException
     // that will bubble up to whomever called build().
-//    Compiler compiler = new Compiler(this);
-//    String bootClasses = System.getProperty("sun.boot.class.path");
-//    if (compiler.compile(this, srcFolder, binFolder, primaryClassName, getClassPath(), bootClasses)) {
     if (Compiler.compile(this)) {
       sketchClassName = classNameFound;
       return classNameFound;
@@ -184,11 +151,6 @@ public class JavaBuild {
    * @param buildPath Location to copy all the .java files
    * @return null if compilation failed, main class name if not
    */
-//  public String preprocess() throws SketchException {
-//    return preprocess(sketch.makeTempFolder());
-//  }
-
-
   public String preprocess(File srcFolder, boolean sizeWarning) throws SketchException {
     return preprocess(srcFolder, null, new PdePreprocessor(sketch.getName()), sizeWarning);
   }
@@ -564,20 +526,6 @@ public class JavaBuild {
     if (pkg.startsWith("processing.event.")) return true;
     if (pkg.startsWith("processing.opengl.")) return true;
 
-//    if (pkg.startsWith("com.jogamp.")) return true;
-
-//    // ignore core, data, and opengl packages
-//    String[] coreImports = preprocessor.getCoreImports();
-//    for (int i = 0; i < coreImports.length; i++) {
-//      String imp = coreImports[i];
-//      if (imp.endsWith(".*")) {
-//        imp = imp.substring(0, imp.length() - 2);
-//      }
-//      if (pkg.startsWith(imp)) {
-//        return true;
-//      }
-//    }
-
     return false;
   }
 
@@ -647,56 +595,6 @@ public class JavaBuild {
   public List<Library> getImportedLibraries() {
     return importedLibraries;
   }
-
-
-  /**
-   * Map an error from a set of processed .java files back to its location
-   * in the actual sketch.
-   * @param message The error message.
-   * @param filename The .java file where the exception was found.
-   * @param line Line number of the .java file for the exception (1-indexed)
-   * @return A RunnerException to be sent to the editor, or null if it wasn't
-   *         possible to place the exception to the sketch code.
-   */
-//  public RunnerException placeExceptionAlt(String message,
-//                                        String filename, int line) {
-//    String appletJavaFile = appletClassName + ".java";
-//    SketchCode errorCode = null;
-//    if (filename.equals(appletJavaFile)) {
-//      for (SketchCode code : getCode()) {
-//        if (code.isExtension("pde")) {
-//          if (line >= code.getPreprocOffset()) {
-//            errorCode = code;
-//          }
-//        }
-//      }
-//    } else {
-//      for (SketchCode code : getCode()) {
-//        if (code.isExtension("java")) {
-//          if (filename.equals(code.getFileName())) {
-//            errorCode = code;
-//          }
-//        }
-//      }
-//    }
-//    int codeIndex = getCodeIndex(errorCode);
-//
-//    if (codeIndex != -1) {
-//      //System.out.println("got line num " + lineNumber);
-//      // in case this was a tab that got embedded into the main .java
-//      line -= getCode(codeIndex).getPreprocOffset();
-//
-//      // lineNumber is 1-indexed, but editor wants zero-indexed
-//      line--;
-//
-//      // getMessage() will be what's shown in the editor
-//      RunnerException exception =
-//        new RunnerException(message, codeIndex, line, -1);
-//      exception.hideStackTrace();
-//      return exception;
-//    }
-//    return null;
-//  }
 
 
   /**
@@ -822,31 +720,6 @@ public class JavaBuild {
       }
     }
 
-    /*
-    File folder = null;
-    String platformName = Base.getPlatformName();
-    boolean embedJava = Preferences.getBoolean("export.application.embed_java");
-    if (Library.hasMultipleArch(PApplet.platform, importedLibraries)) {
-      if (Base.getNativeBits() == 32) {
-        // export the 32-bit version
-        folder = new File(sketch.getFolder(), "application." + platformName + "32");
-        if (!exportApplication(folder, PApplet.platform, 32, embedJava)) {
-          return false;
-        }
-      } else if (Base.getNativeBits() == 64) {
-        // export the 64-bit version
-        folder = new File(sketch.getFolder(), "application." + platformName + "64");
-        if (!exportApplication(folder, PApplet.platform, 64, embedJava)) {
-          return false;
-        }
-      }
-    } else { // just make a single one for this platform
-      folder = new File(sketch.getFolder(), "application." + platformName);
-      if (!exportApplication(folder, PApplet.platform, 0, embedJava)) {
-        return false;
-      }
-    }
-    */
     return true;  // all good
   }
 
@@ -934,30 +807,6 @@ public class JavaBuild {
       Util.copyFile(mode.getContentFile("application/sketch.icns"),
                     new File(resourcesFolder, "sketch.icns"));
 
-      /*
-      String stubName = "Contents/MacOS/JavaApplicationStub";
-      // need to set the stub to executable
-      // will work on osx or *nix, but just dies on windows, oh well..
-      if (Base.isWindows()) {
-        File warningFile = new File(destFolder, "readme.txt");
-        PrintWriter pw = PApplet.createWriter(warningFile);
-        pw.println("This application was created on Windows, which does not");
-        pw.println("properly support setting files as \"executable\",");
-        pw.println("a necessity for applications on Mac OS X.");
-        pw.println();
-        pw.println("To fix this, use the Terminal on Mac OS X, and from this");
-        pw.println("directory, type the following:");
-        pw.println();
-        pw.println("chmod +x " + dotAppFolder.getName() + "/" + stubName);
-        pw.flush();
-        pw.close();
-
-      } else {
-        File stubFile = new File(dotAppFolder, stubName);
-        String stubPath = stubFile.getAbsolutePath();
-        Runtime.getRuntime().exec(new String[] { "chmod", "+x", stubPath });
-      }
-      */
     } else if (exportPlatform == PConstants.LINUX) {
       if (embedJava) {
         Util.copyDirNative(Platform.getJavaHome(), new File(destFolder, "java"));
@@ -977,7 +826,7 @@ public class JavaBuild {
 
     /// start copying all jar files
 
-    Vector<String> jarListVector = new Vector<String>();
+    StringList jarList = new StringList();
 
 
     /// create the main .jar file
@@ -1034,7 +883,7 @@ public class JavaBuild {
           File exportFile = new File(codeList[i]);
           String exportFilename = exportFile.getName();
           Util.copyFile(exportFile, new File(jarFolder, exportFilename));
-          jarListVector.add(exportFilename);
+          jarList.append(exportFilename);
         } else {
 //          cp += codeList[i] + File.pathSeparator;
         }
@@ -1044,7 +893,7 @@ public class JavaBuild {
     zos.flush();
     zos.close();
 
-    jarListVector.add(sketch.getName() + ".jar");
+    jarList.append(sketch.getName() + ".jar");
 
 
     /// add contents of 'library' folders to the export
@@ -1064,7 +913,7 @@ public class JavaBuild {
         } else if (exportName.toLowerCase().endsWith(".zip") ||
                    exportName.toLowerCase().endsWith(".jar")) {
           Util.copyFile(exportFile, new File(jarFolder, exportName));
-          jarListVector.add(exportName);
+          jarList.append(exportName);
 
         } else {
           // Starting with 2.0a2 put extra export files (DLLs, plugins folder,
@@ -1077,25 +926,15 @@ public class JavaBuild {
 
     /// create platform-specific CLASSPATH based on included jars
 
-    String jarList[] = new String[jarListVector.size()];
-    jarListVector.copyInto(jarList);
-    StringBuilder exportClassPath = new StringBuilder();
-
+    String exportClassPath = null;
     if (exportPlatform == PConstants.MACOSX) {
-      for (int i = 0; i < jarList.length; i++) {
-        if (i != 0) exportClassPath.append(":");
-        exportClassPath.append("$JAVAROOT/" + jarList[i]);
-      }
+      exportClassPath = "$JAVAROOT/" + jarList.join(":$JAVAROOT/");
     } else if (exportPlatform == PConstants.WINDOWS) {
-      for (int i = 0; i < jarList.length; i++) {
-        if (i != 0) exportClassPath.append(",");
-        exportClassPath.append(jarList[i]);
-      }
+      exportClassPath = jarList.join(",");
     } else if (exportPlatform == PConstants.LINUX) {
-      exportClassPath.append("$APPDIR");
-      for (int i = 0; i < jarList.length; i++) {
-        exportClassPath.append(":$APPDIR/lib/" + jarList[i]);
-      }
+      // why is $APPDIR at the front of this list?
+      exportClassPath = "$APPDIR" +
+        ":$APPDIR/lib/" + jarList.join(":$APPDIR/lib/");
     }
 
 
@@ -1115,9 +954,11 @@ public class JavaBuild {
     runOptions.append("-Djna.nosys=true");
     // https://github.com/processing/processing/issues/4608
     if (embedJava) {
-      // if people don't embed Java, it might be a mess, but what can we do
+      // if people don't embed Java, it might be a mess, but what can we do?
       if (exportPlatform == PConstants.MACOSX) {
-        runOptions.append("-Djava.ext.dirs=$APP_ROOT/Contents/PlugIns/jdk" + PApplet.javaVersionName + ".jdk/Contents/Home/jre/lib/ext");
+        runOptions.append("-Djava.ext.dirs=$APP_ROOT/Contents/PlugIns/jdk" +
+                          PApplet.javaVersionName +
+                          ".jdk/Contents/Home/jre/lib/ext");
       } else if (exportPlatform == PConstants.WINDOWS) {
         runOptions.append("-Djava.ext.dirs=%EXEDIR%/java/lib/ext");
       } else if (exportPlatform == PConstants.LINUX) {
@@ -1235,31 +1076,6 @@ public class JavaBuild {
       for (String opt : runOptions) {
         jre.addChild("opt").setContent(opt);
       }
-
-      /*
-      XML config = launch4j.addChild("config");
-      config.setString("headerType", "gui");
-      File exeFile = new File(destFolder, sketch.getName() + ".exe");
-      config.setString("outfile", exeFile.getAbsolutePath());
-      config.setString("dontWrapJar", "true");
-      config.setString("jarPath", "lib\\" + jarList[0]);
-
-      File iconFile = mode.getContentFile("application/sketch.ico");
-      config.addChild("icon").setContent(iconFile.getAbsolutePath());
-
-      XML clazzPath = config.addChild("classPath");
-      clazzPath.setString("mainClass", sketch.getName());
-      for (int i = 1; i < jarList.length; i++) {
-        String jarName = jarList[i];
-        clazzPath.addChild("cp").setContent("lib\\" + jarName);
-      }
-      XML jre = config.addChild("jre");
-      jre.setString("minVersion", "1.7.0_40");
-      //PApplet.join(runOptions.toArray(new String[0]), " ")
-      for (String opt : runOptions) {
-        jre.addChild("opt").setContent(opt);
-      }
-      */
 
       config.save(configFile);
       project.save(buildFile);
