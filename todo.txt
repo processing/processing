@@ -8,16 +8,16 @@ X   https://github.com/processing/processing/issues/4566
 X   https://github.com/processing/processing/issues/4492
 X   https://github.com/processing/processing/issues/4128
 X   https://github.com/processing/processing/issues/4503
-_   test ext.dirs working on Linux (use js example)
-_   test ext.dirs on exported app on Linux
+X   test ext.dirs working on Linux (use js example)
+X   test ext.dirs on exported app on Linux
 X   test ext.dirs working on Windows (use js example)
 X   modify ext.dirs for exported apps on Windows
 X see if CLASSPATH can be set to screw up p5
 X   works fine on OS X, couldn't reproduce on Linux
 X rewrite Util.listFiles() because it wasn't working properly
 X add 2016 to about-1x and about-2x
-
-_ saying "no" to save changes is the same as "cancel" on windows?
+o saying "no" to save changes is the same as "cancel" on windows?
+X   can't reproduce
 
 mode work
 X add template support for Modes

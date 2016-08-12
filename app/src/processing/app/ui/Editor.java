@@ -2449,7 +2449,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
                         JOptionPane.QUESTION_MESSAGE);
 
       String[] options = new String[] {
-        Language.text("save.btn.save"), Language.text("prompt.cancel"), Language.text("save.btn.dont_save")
+        Language.text("save.btn.save"),
+        Language.text("prompt.cancel"),
+        Language.text("save.btn.dont_save")
       };
       pane.setOptions(options);
 
