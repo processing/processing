@@ -1135,7 +1135,14 @@ public class JavaBuild {
     // https://github.com/processing/processing/issues/2239
     runOptions.add("-Djna.nosys=true");
     // https://github.com/processing/processing/issues/4608
-    runOptions.add("-Djava.ext.dirs=%EXEDIR%/java/lib/ext");
+    if (exportPlatform == PConstants.MACOSX) {
+      runOptions.add("-Djava.ext.dirs=$APP_ROOT/Contents/PlugIns/jdk" + PApplet.javaVersionName + ".jdk/Contents/Home/jre/lib/ext");
+    } else if (exportPlatform == PConstants.WINDOWS) {
+      runOptions.add("-Djava.ext.dirs=%EXEDIR%/java/lib/ext");
+    } else if (exportPlatform == PConstants.LINUX) {
+      runOptions.add("-Djava.ext.dirs=$APPDIR/java/lib/ext");
+    }
+
     // https://github.com/processing/processing/issues/2559
     if (exportPlatform == PConstants.WINDOWS) {
       runOptions.add("-Djava.library.path=\"%EXEDIR%\\lib\"");

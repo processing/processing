@@ -15,6 +15,9 @@ X   modify ext.dirs for exported apps on Windows
 X see if CLASSPATH can be set to screw up p5
 X   works fine on OS X, couldn't reproduce on Linux
 X rewrite Util.listFiles() because it wasn't working properly
+X add 2016 to about-1x and about-2x
+
+_ saying "no" to save changes is the same as "cancel" on windows?
 
 mode work
 X add template support for Modes
@@ -92,6 +95,8 @@ _ hi-dpi support on Linux
 _   https://github.com/processing/processing/issues/4183
 _ PDE and sketches are 2x smaller on high-res Windows machines
 _   https://github.com/processing/processing/issues/2411
+_   System.setProperty("sun.java2d.dpiaware", "false");
+_   though that seems broken in Java 8: http://superuser.com/a/1007783
 
 _ Library path mismatch between processing-java and export
 _   https://github.com/processing/processing/issues/4493
@@ -122,8 +127,6 @@ _   https://github.com/processing/processing/issues/4018
 _ setting a bad font/size causes a crash on startup
 _   https://github.com/processing/processing/issues/4085
 o   https://github.com/processing/processing/pull/4087
-
-_ add 2016 to about-1x and about-2x
 
 
 more contribs
