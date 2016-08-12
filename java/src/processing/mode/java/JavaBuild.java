@@ -1112,7 +1112,7 @@ public class JavaBuild {
         if (i != 0) exportClassPath.append(",");
         exportClassPath.append(jarList[i]);
       }
-    } else {
+    } else if (exportPlatform == PConstants.LINUX) {
       exportClassPath.append("$APPDIR");
       for (int i = 0; i < jarList.length; i++) {
         exportClassPath.append(":$APPDIR/lib/" + jarList[i]);
