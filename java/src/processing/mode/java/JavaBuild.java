@@ -1135,7 +1135,7 @@ public class JavaBuild {
     // https://github.com/processing/processing/issues/2239
     runOptions.add("-Djna.nosys=true");
     // https://github.com/processing/processing/issues/4608
-    runOptions.add("-Djava.ext.dirs=lib/ext");
+    runOptions.add("-Djava.ext.dirs=%EXEDIR%/java/lib/ext");
     // https://github.com/processing/processing/issues/2559
     if (exportPlatform == PConstants.WINDOWS) {
       runOptions.add("-Djava.library.path=\"%EXEDIR%\\lib\"");
