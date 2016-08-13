@@ -42,6 +42,12 @@ _   write short docs
 _   https://github.com/processing/processing/issues/4306
 _   https://github.com/processing/processing/issues/4352
 
+contrib
+X use HTML to print
+X   https://github.com/processing/processing/pull/4369
+X   https://github.com/processing/processing/issues/213
+X   https://github.com/processing/processing/issues/50
+
 earlier
 X display "1" is not correct in 2.1.2
 X   https://github.com/processing/processing/issues/2502
@@ -614,13 +620,8 @@ _   can also cause problems with opening multiple copies of same sketch
 _ after fixing name of sketch, ensure sketch of that name does not exist
 _ add auto-save to the editor
 _   https://github.com/processing/processing/issues/131
-_ option to just print all code in project
-_   https://github.com/processing/processing/issues/50
-_   or option to export all the code as colored html?
 _ implement better method of showing curly brace closure
 _   https://github.com/processing/processing/issues/94
-_ problems with file/print
-_   https://github.com/processing/processing/issues/213
 _ setModified() getting called on Windows (probably Linux) for key cmds
 
 
