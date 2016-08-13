@@ -2,6 +2,7 @@
 X some Table cleanup based on other CSV parsing work
 X use StandardCharsets.UTF_8 instead of getting encoding by name
 X PApplet.main(Blah.class) now works
+o add push() and pop() methods to mirror js?
 X add toJSON() method to IntDict
 X   had to use JSONObject.quote() to wrap the text
 _   do the same for the other data classes
@@ -19,7 +20,7 @@ X   https://github.com/processing/processing/issues/4265
 X   https://github.com/processing/processing/pull/4268
 
 
-_ disable OpenGL ES on Linux? 
+_ option to disable OpenGL ES on Linux? 
 _   https://github.com/processing/processing/issues/4584
 
 _ Can't render PGraphics object using image() within a PDF
@@ -33,10 +34,6 @@ _ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
 _   https://github.com/processing/processing/issues/4020
 _ add increment() that takes IntDict to merge things
 
-_ normalize error messages for missing files
-_   https://github.com/processing/processing/issues/4265
-_   https://github.com/processing/processing/pull/4268
-
 _ should fullScreen() set width and height to displayWidth/Height
 _   or is that being set/unset used for any state info?
 _ when calling exit(), if sketch has halted w/ exception, force the quit
@@ -45,7 +42,6 @@ _   simple test case: using size() inside setup() from Eclipse
 
 
 discussion
-_ add push() and pop() methods to mirror js?
 _ how to handle the touch api
 _ figure our size(img.width, img.height) situation
 _   just make loadImage() work in settings

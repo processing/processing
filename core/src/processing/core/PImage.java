@@ -345,8 +345,8 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Use the getNative() method instead, which allows library interfaces to be
    * written in a cross-platform fashion for desktop, Android, and others.
+   * This is still included for PGraphics objects, which may need the image.
    */
-  @Deprecated
   public Image getImage() {  // ignore
     return (Image) getNative();
   }

@@ -423,7 +423,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     scale((x2 - x1) / imageWidth,
           (y2 - y1) / imageHeight);
     if (u2-u1 == imageWidth && v2-v1 == imageHeight) {
-      g2.drawImage((Image) image.getNative(), 0, 0, null);
+      g2.drawImage(image.getImage(), 0, 0, null);
     } else {
       PImage tmp = image.get(u1, v1, u2-u1, v2-v1);
       g2.drawImage((Image) tmp.getNative(), 0, 0, null);
