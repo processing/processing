@@ -20,6 +20,9 @@ o saying "no" to save changes is the same as "cancel" on windows?
 X   can't reproduce
 X add printStackTrace() method that can be overridden
 X   https://github.com/processing/processing/issues/222
+X write preferences.txt using a temporary file
+X   also save the previous version as preferences.old
+X   https://github.com/processing/processing/issues/4614
 _ update launch4j to 3.9
 _   https://sourceforge.net/projects/launch4j/files/launch4j-3/3.9/
 
@@ -41,6 +44,7 @@ X implement templates
 _   write short docs
 _   https://github.com/processing/processing/issues/4306
 _   https://github.com/processing/processing/issues/4352
+X add Mode.requireExampleCompatibility()
 
 contrib
 X use HTML to print

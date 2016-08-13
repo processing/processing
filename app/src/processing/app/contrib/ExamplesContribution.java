@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import processing.app.Base;
+import processing.app.Mode;
 import processing.core.PApplet;
 import processing.data.StringDict;
 import processing.data.StringList;
@@ -57,11 +58,16 @@ public class ExamplesContribution extends LocalContribution {
    *         active editor
    */
   static public boolean isCompatible(Base base, StringDict props) {
-    String currentIdentifier =
-      base.getActiveEditor().getMode().getIdentifier();
+    Mode mode = base.getActiveEditor().getMode();
+    String currentIdentifier = mode.getIdentifier();
     StringList compatibleList = parseModeList(props);
     if (compatibleList.size() == 0) {
-      return true;  // if no mode specified, assume compatible everywhere
+      if (mode.requireExampleCompatibility()) {
+        // for p5js (and maybe Python), examples must specify that they work
+        return false;
+      }
+      // if no Mode specified, assume compatible everywhere
+      return true;
     }
     for (String c : compatibleList) {
       if (c.equals(currentIdentifier)) {

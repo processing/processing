@@ -342,8 +342,7 @@ public class ExamplesFrame extends JFrame {
       e.printStackTrace();
     }
 
-    DefaultMutableTreeNode contributedExamplesNode =
-      buildContribTree();
+    DefaultMutableTreeNode contributedExamplesNode = buildContribTree();
     if (contributedExamplesNode.getChildCount() > 0) {
       root.add(contributedExamplesNode);
     }

@@ -345,11 +345,11 @@ public abstract class Mode {
   public void rebuildLibraryList() {
     //new Exception("Rebuilding library list").printStackTrace(System.out);
     // reset the table mapping imports to libraries
-    HashMap<String, List<Library>> importToLibraryTable = new HashMap<>();
+    Map<String, List<Library>> newTable = new HashMap<>();
 
     Library core = getCoreLibrary();
     if (core != null) {
-      core.addPackageList(importToLibraryTable);
+      core.addPackageList(newTable);
     }
 
     coreLibraries = Library.list(librariesFolder);
@@ -367,28 +367,16 @@ public abstract class Mode {
     coreLibraries.addAll(foundationLibraries);
     contribLibraries.removeAll(foundationLibraries);
 
-    /*
-    File sketchbookLibs = Base.getSketchbookLibrariesFolder();
-    File videoFolder = new File(sketchbookLibs, "video");
-    if (videoFolder.exists()) {
-      coreLibraries.add(new Library(videoFolder));
-    }
-    File soundFolder = new File(sketchbookLibs, "sound");
-    if (soundFolder.exists()) {
-      coreLibraries.add(new Library(soundFolder));
-    }
-    */
-
     for (Library lib : coreLibraries) {
-      lib.addPackageList(importToLibraryTable);
+      lib.addPackageList(newTable);
     }
 
     for (Library lib : contribLibraries) {
-      lib.addPackageList(importToLibraryTable);
+      lib.addPackageList(newTable);
     }
 
     // Make this Map thread-safe
-    this.importToLibraryTable = Collections.unmodifiableMap(importToLibraryTable);
+    importToLibraryTable = Collections.unmodifiableMap(newTable);
 
     if (base != null) {
       base.getEditors().forEach(Editor::librariesChanged);
@@ -627,6 +615,18 @@ public abstract class Mode {
         }
       }
     }
+  }
+
+
+  /**
+   * Require examples to explicitly state that they're compatible with this
+   * Mode before they're included. Helpful for Modes like p5js or Python
+   * where the .java examples cannot be used.
+   * @since 3.2
+   * @return true if an examples package must list this Mode's identifier
+   */
+  public boolean requireExampleCompatibility() {
+    return false;
   }
 
 
