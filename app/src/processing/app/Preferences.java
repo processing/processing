@@ -207,23 +207,46 @@ public class Preferences {
 
 
   static public void save() {
-    // on startup, don't worry about it
-    // this is trying to update the prefs for who is open
-    // before Preferences.init() has been called.
-    if (preferencesFile == null) return;
+    // On startup it'll be null, don't worry about it. It's trying to update
+    // the prefs for the open sketch before Preferences.init() has been called.
+    if (preferencesFile != null) {
+      try {
+        File dir = preferencesFile.getParentFile();
+        File preferencesTemp = File.createTempFile("preferences", ".txt", dir);
 
-    // Fix for 0163 to properly use Unicode when writing preferences.txt
-    PrintWriter writer = PApplet.createWriter(preferencesFile);
+        // Fix for 0163 to properly use Unicode when writing preferences.txt
+        PrintWriter writer = PApplet.createWriter(preferencesTemp);
 
-    String[] keyList = table.keySet().toArray(new String[table.size()]);
-    // Sorting is really helpful for debugging, diffing, and finding keys
-    keyList = PApplet.sort(keyList);
-    for (String key : keyList) {
-      writer.println(key + "=" + table.get(key)); //$NON-NLS-1$
+        String[] keyList = table.keySet().toArray(new String[table.size()]);
+        // Sorting is really helpful for debugging, diffing, and finding keys
+        keyList = PApplet.sort(keyList);
+        for (String key : keyList) {
+          writer.println(key + "=" + table.get(key)); //$NON-NLS-1$
+        }
+        writer.flush();
+        writer.close();
+
+        // Rename preferences.txt to preferences.old
+        File oldPreferences = new File(dir, "preferences.old");
+        if (oldPreferences.exists()) {
+          if (!oldPreferences.delete()) {
+            throw new IOException("Could not delete preferences.old");
+          }
+        }
+        if (!preferencesFile.renameTo(oldPreferences)) {
+          throw new IOException("Could not replace preferences.old");
+        }
+
+        // Make the temporary file into the real preferences
+        if (!preferencesTemp.renameTo(preferencesFile)) {
+          throw new IOException("Could not move preferences file into place");
+        }
+
+      } catch (IOException e) {
+        Messages.showWarning("Preferences",
+                             "Could not save the Preferences file.", e);
+      }
     }
-
-    writer.flush();
-    writer.close();
   }
 
 
