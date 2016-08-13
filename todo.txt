@@ -51,6 +51,11 @@ X   https://github.com/processing/processing/issues/50
 earlier
 X display "1" is not correct in 2.1.2
 X   https://github.com/processing/processing/issues/2502
+o cut/copy/paste while saving a sketch on goes to the editor, not save dialog
+o   https://github.com/processing/processing/issues/1035
+o   problem with focus traversal and native windows on OS X
+o   using JFileChooser fixes the problem (but is ugly)
+X   can't find this one anymore
 
 
 _ editor windows always open on display 1
@@ -984,10 +989,6 @@ _   otherwise updates are going to require reinstall..
 _   or that it's gonna need to parse and say "update command line?" 
 _ look into LCD rendering problems w/ Java (see if Lion still a problem)
 _   fonts were showing up with very different fatness
-_ cut/copy/paste while saving a sketch on goes to the editor, not save dialog
-_   https://github.com/processing/processing/issues/1035
-_   problem with focus traversal and native windows on OS X
-_   using JFileChooser fixes the problem (but is ugly)
 _ we're breaking some mac human interface guidelines
 _   should be using a menu factory to create menubar for all sub-windows
 _   http://developer.apple.com/technotes/tn/tn2042.html
