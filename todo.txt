@@ -18,6 +18,10 @@ X rewrite Util.listFiles() because it wasn't working properly
 X add 2016 to about-1x and about-2x
 o saying "no" to save changes is the same as "cancel" on windows?
 X   can't reproduce
+X add printStackTrace() method that can be overridden
+X   https://github.com/processing/processing/issues/222
+_ update launch4j to 3.9
+_   https://sourceforge.net/projects/launch4j/files/launch4j-3/3.9/
 
 mode work
 X add template support for Modes
@@ -38,8 +42,19 @@ _   write short docs
 _   https://github.com/processing/processing/issues/4306
 _   https://github.com/processing/processing/issues/4352
 
+earlier
+X display "1" is not correct in 2.1.2
+X   https://github.com/processing/processing/issues/2502
+
+
+_ editor windows always open on display 1
+_   https://github.com/processing/processing/issues/1566
+
 _ allow modes to specify their own base file name
 _   need to move "is this a sketch?" handling into Mode
+
+_ blank window on startup where the "welcome" screen should be
+_   https://github.com/processing/processing/issues/3933
 
 _ modify line number color when no lines extend that far?
 _   https://github.com/processing/processing/pull/4560
@@ -87,10 +102,10 @@ _   https://github.com/processing/processing/issues/3965
 medium
 _ detect changes in case with libraries
 _   https://github.com/processing/processing/issues/4507
-
-lower
 _ make when opening new editor window, open on the same display as current
 _   https://github.com/processing/processing/issues/4526
+_ hidpi scaling via font changes?
+_   http://stackoverflow.com/a/34152675
 _ hi-dpi support on Linux
 _   https://github.com/processing/processing/issues/4183
 _ PDE and sketches are 2x smaller on high-res Windows machines
@@ -288,8 +303,6 @@ _   when run from Eclipse, the single instance thing punts
 _ 'recent' menu needs to recognize the p5 app folder
 _   also should recognize the user's home dir
 _ possibility of libraries folder inside a particular sketch?
-_ display "1" is not correct in 2.1.2
-_   https://github.com/processing/processing/issues/2502
 _ add font fixes to the rest of the API
 _   https://github.com/processing/processing/commit/eaff673d173b2d27f276cf5c59e3abf6c0fab86b
 _   g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
