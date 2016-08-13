@@ -26,7 +26,6 @@ import javax.swing.undo.*;
 import javax.swing.*;
 
 import java.awt.im.InputMethodRequests;
-import java.awt.print.Printable;
 
 import processing.app.syntax.im.InputMethodSupport;
 import processing.core.PApplet;
@@ -259,11 +258,6 @@ public class JEditTextArea extends JComponent
    */
   public final TextAreaPainter getPainter() {
     return painter;
-  }
-
-
-  public final Printable getPrintable() {
-    return painter.getPrintable();
   }
 
 
