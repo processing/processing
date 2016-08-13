@@ -3,6 +3,8 @@ X some Table cleanup based on other CSV parsing work
 X use StandardCharsets.UTF_8 instead of getting encoding by name
 X PApplet.main(Blah.class) now works
 o add push() and pop() methods to mirror js?
+X Can't render PGraphics object using image() within a PDF
+X   https://github.com/processing/processing/issues/4473
 X add toJSON() method to IntDict
 X   had to use JSONObject.quote() to wrap the text
 _   do the same for the other data classes
@@ -22,9 +24,6 @@ X   https://github.com/processing/processing/pull/4268
 
 _ option to disable OpenGL ES on Linux? 
 _   https://github.com/processing/processing/issues/4584
-
-_ Can't render PGraphics object using image() within a PDF
-_   https://github.com/processing/processing/issues/4473
 
 _ JSONObject get() method is private
 _   https://github.com/processing/processing/issues/4334
