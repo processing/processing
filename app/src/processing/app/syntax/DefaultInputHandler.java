@@ -279,8 +279,9 @@ public class DefaultInputHandler extends InputHandler {
    * @param keyStroke A string description of the key stroke
    */
   public static KeyStroke parseKeyStroke(String keyStroke) {
-    if (keyStroke == null)
+    if (keyStroke == null) {
       return null;
+    }
     int modifiers = 0;
     int index = keyStroke.indexOf('+');
     if (index != -1) {
