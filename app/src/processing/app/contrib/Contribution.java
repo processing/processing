@@ -316,6 +316,27 @@ abstract public class Contribution {
   }
 
 
+  /**
+   * Helper function that creates a StringList of the compatible Modes
+   * for this Contribution.
+   */
+  static StringList parseModeList(StringDict properties) {
+    String unparsedModes = properties.get(MODES_PROPERTY);
+
+    // Workaround for 3.0 alpha/beta bug for 3.0b2
+    if ("null".equals(unparsedModes)) {
+      properties.remove(MODES_PROPERTY);
+      unparsedModes = null;
+    }
+
+    StringList outgoing = new StringList();
+    if (unparsedModes != null) {
+      outgoing.append(PApplet.trim(PApplet.split(unparsedModes, ',')));
+    }
+    return outgoing;
+  }
+
+
   static private String translateCategory(String cat) {
     // Converts Other to other, I/O to i_o, Video & Vision to video_vision
     String cleaned = cat.replaceAll("[\\W]+", "_").toLowerCase();
