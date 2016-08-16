@@ -114,7 +114,13 @@ public class Library extends LocalContribution {
     libraryFolder = new File(folder, "library");
     examplesFolder = new File(folder, "examples");
     referenceFile = new File(folder, "reference/index.html");
+  }
 
+
+  /**
+   * Handles all the Java-specific parsing for library handling.
+   */
+  protected void handle() {
     File exportSettings = new File(libraryFolder, "export.txt");
     StringDict exportTable = exportSettings.exists() ?
       Util.readSettings(exportSettings) : new StringDict();
