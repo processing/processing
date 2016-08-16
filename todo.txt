@@ -23,8 +23,6 @@ X   https://github.com/processing/processing/issues/222
 X write preferences.txt using a temporary file
 X   also save the previous version as preferences.old
 X   https://github.com/processing/processing/issues/4614
-_ update launch4j to 3.9
-_   https://sourceforge.net/projects/launch4j/files/launch4j-3/3.9/
 
 mode work
 X add template support for Modes
@@ -37,50 +35,21 @@ X change PdeKeywords to PdeTokenMarker
 X   doesn't seem to cause any breakage, but will keep an eye out
 X added getSketchbookTemplatesFolder() to Base
 o move template subst code to Util
+X add Mode.requireExampleCompatibility()
 X in Mode: TokenMarker getTokenMarker(SketchCode code)
 X   passes through to no args version if not overridden
-_   note this in the docs
+X   note this in revisions.txt
 X implement templates
-_   write short docs
-_   https://github.com/processing/processing/issues/4306
-_   https://github.com/processing/processing/issues/4352
-X add Mode.requireExampleCompatibility()
+X   write short docs
+X     https://github.com/processing/processing/wiki/Templates
+X   https://github.com/processing/processing/issues/4306
+X   https://github.com/processing/processing/issues/4352
 
 contrib
 X use HTML to print
 X   https://github.com/processing/processing/pull/4369
 X   https://github.com/processing/processing/issues/213
 X   https://github.com/processing/processing/issues/50
-
-earlier
-X display "1" is not correct in 2.1.2
-X   https://github.com/processing/processing/issues/2502
-o cut/copy/paste while saving a sketch on goes to the editor, not save dialog
-o   https://github.com/processing/processing/issues/1035
-o   problem with focus traversal and native windows on OS X
-o   using JFileChooser fixes the problem (but is ugly)
-X   can't find this one anymore
-
-
-_ editor windows always open on display 1
-_   https://github.com/processing/processing/issues/1566
-
-_ allow modes to specify their own base file name
-_   need to move "is this a sketch?" handling into Mode
-
-_ blank window on startup where the "welcome" screen should be
-_   https://github.com/processing/processing/issues/3933
-
-_ modify line number color when no lines extend that far?
-_   https://github.com/processing/processing/pull/4560
-_ text gutter doesn't seem to be hidpi 
-X   or is it b/c screen not quite 2x? (nope)
-_ swap out the fonts?
-
-_ Help Menu disabled on OS X
-_   https://github.com/processing/processing/issues/43503#issuecomment-237715947
-
-contrib
 
 input method work from Tsuyoshi Fukuda (tyfkda)
 X Simplify conditional branch
@@ -104,6 +73,37 @@ X   https://github.com/processing/processing/pull/4596
 X Error checker now adds 'public' to all default access methods
 X   https://github.com/processing/processing/pull/4597
 X   https://github.com/processing/processing/issues/4583
+
+earlier
+X display "1" is not correct in 2.1.2
+X   https://github.com/processing/processing/issues/2502
+o cut/copy/paste while saving a sketch on goes to the editor, not save dialog
+o   https://github.com/processing/processing/issues/1035
+o   problem with focus traversal and native windows on OS X
+o   using JFileChooser fixes the problem (but is ugly)
+X   can't find this one anymore
+
+
+_ update launch4j to 3.9
+_   https://sourceforge.net/projects/launch4j/files/launch4j-3/3.9/
+
+_ editor windows always open on display 1
+_   https://github.com/processing/processing/issues/1566
+
+_ allow modes to specify their own base file name
+_   need to move "is this a sketch?" handling into Mode
+
+_ blank window on startup where the "welcome" screen should be
+_   https://github.com/processing/processing/issues/3933
+
+_ modify line number color when no lines extend that far?
+_   https://github.com/processing/processing/pull/4560
+_ text gutter doesn't seem to be hidpi 
+X   or is it b/c screen not quite 2x? (nope)
+_ swap out the fonts?
+
+_ Help Menu disabled on OS X
+_   https://github.com/processing/processing/issues/43503#issuecomment-237715947
 
 
 high

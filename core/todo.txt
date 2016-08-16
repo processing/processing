@@ -5,11 +5,6 @@ X PApplet.main(Blah.class) now works
 o add push() and pop() methods to mirror js?
 X Can't render PGraphics object using image() within a PDF
 X   https://github.com/processing/processing/issues/4473
-X add toJSON() method to IntDict
-X   had to use JSONObject.quote() to wrap the text
-_   do the same for the other data classes
-_   note the difference between this and toJSONObject() or toJSONArray()
-_   or is that the better way to handle it? hm
 
 jakub
 X Fix resizing targets for async save
@@ -21,6 +16,13 @@ X Make loadStrings() and loadJSONObject/loadJSONArray() error msgs consistent
 X   https://github.com/processing/processing/issues/4265
 X   https://github.com/processing/processing/pull/4268
 
+
+started
+X add toJSON() method to IntDict
+X   had to use JSONObject.quote() to wrap the text
+_   do the same for the other data classes
+_   note the difference between this and toJSONObject() or toJSONArray()
+_   or is that the better way to handle it? hm
 
 _ option to disable OpenGL ES on Linux? 
 _   https://github.com/processing/processing/issues/4584
