@@ -1,3 +1,124 @@
+PROCESSING 3.2 (REV 0252) - 16 August 2016
+
+This release includes a handful of fixes to deal with startup bugs, 
+plus several internal changes for how Modes are implemented.
+
+For those semantic versioning enthusiasts keeping track at home, the version
+has been bumped from 3.1.x to 3.2.x to denote the internal API changes.
+
+
+[ bug fixes ] 
+
++ Processing .jar files in CLASSPATH can cause startup crash
+  https://github.com/processing/processing/issues/4128
+
++ Remove java.ext.dirs on startup to avoid conflicts and startup errors
+  https://github.com/processing/processing/issues/4608
+  https://github.com/processing/processing/issues/4470
+  https://github.com/processing/processing/issues/4566
+  https://github.com/processing/processing/issues/4492
+  https://github.com/processing/processing/issues/4128
+  https://github.com/processing/processing/issues/4503
+
++ Add 2016 to the About screen.
+
++ Write preferences.txt using a temporary file (and save the previous
+  version as preferences.old)
+  https://github.com/processing/processing/issues/4614
+
++ Some Table cleanup based on other CSV parsing work
+
++ Can't render PGraphics object using image() within a PDF
+  https://github.com/processing/processing/issues/4473
+
+
+[ contributed fixes ]
+
++ Use HTML to print (a contributed fix for a handful of printing issues)
+  https://github.com/processing/processing/pull/4369
+  https://github.com/processing/processing/issues/213
+  https://github.com/processing/processing/issues/50
+
++ NullPointerException in SketchCode.getDocumentText()
+  https://github.com/processing/processing/issues/4555
+  https://github.com/processing/processing/pull/4547
+  https://github.com/processing/processing/pull/4596
+  
++ Error checker now adds 'public' to all default access methods
+  https://github.com/processing/processing/pull/4597
+  https://github.com/processing/processing/issues/4583
+
++ Fix resizing targets for async save
+  https://github.com/processing/processing/pull/4607
+  https://github.com/processing/processing/issues/4578
+
++ Make loadStrings() and loadJSONObject/loadJSONArray() error msgs consistent
+  https://github.com/processing/processing/issues/4265
+  https://github.com/processing/processing/pull/4268
+
+
+[ changes ]
+
++ Implement template sketches
+  https://github.com/processing/processing/wiki/Templates
+  https://github.com/processing/processing/issues/4306
+  https://github.com/processing/processing/issues/4352
+
++ PApplet.main(Blah.class) now works (for easy refactoring)
+
++ Rewrite Util.listFiles() because it wasn't working properly
+
++ Add printStackTrace() method in PApplet that can be overridden
+  https://github.com/processing/processing/issues/222
+
+
+[ depeche modes ]
+
++ Add template support for Modes
+
++ Added getSketchbookTemplatesFolder() to Base
+
++ Move general PDE code out of JavaMode and into general base classes
+  https://github.com/processing/processing/issues/4606
+  
++ Change default PdeInputHandler constructor slightly (added another
+  copy so that older Modes will still work properly)
+  
++ Change PdeKeywords to PdeTokenMarker (please notify us if this 
+  breaks anything).
+
++ Added Mode.requireExampleCompatibility() so that Modes can specify
+  whether example packages should specifically mention their Mode
+  in order to be visible when that Mode is in use.
+
++ Mode.getTokenMarker(SketchCode code) passes through to 
+  no arg version if not overridden.
+
+
+[ input method work from Tsuyoshi Fukuda (tyfkda) ]
+  
++ Enable input method support by default on Japanese/Korean/Chinese systems
+  https://github.com/processing/processing/pull/4598
+  
++ Set text color for InputMethod
+  https://github.com/processing/processing/pull/4593
+  
++ Set sketch as modified when any character committed using input method
+  https://github.com/processing/processing/pull/4599
+  
++ Insert characters by InputMethod at one time
+  https://github.com/processing/processing/pull/4594
+  
++ Insert string when it is committed
+  https://github.com/processing/processing/pull/4602
+
++ Simplify conditional branch
+  https://github.com/processing/processing/pull/4589
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.1.2 (REV 0251) - 29 July 2016
 
 Happy Fathom Fiesta Day! We'll be taking the afternoon off to enjoy 
