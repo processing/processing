@@ -87,14 +87,14 @@ public class DefaultInputHandler extends InputHandler {
     Map current = bindings;
 
     StringTokenizer st = new StringTokenizer(keyBinding);
-    while(st.hasMoreTokens()) {
+    while (st.hasMoreTokens()) {
       KeyStroke keyStroke = parseKeyStroke(st.nextToken());
-      if(keyStroke == null)
+      if (keyStroke == null)
         return;
 
-      if(st.hasMoreTokens()) {
+      if (st.hasMoreTokens()) {
         Object o = current.get(keyStroke);
-        if(o instanceof Map) {
+        if (o instanceof Map) {
           current = (Map)o;
         } else {
           o = new HashMap();
@@ -166,14 +166,14 @@ public class DefaultInputHandler extends InputHandler {
       KeyEvent.VK_META);
     */
 
-    if((modifiers & ~InputEvent.SHIFT_MASK) != 0
+    if ((modifiers & ~InputEvent.SHIFT_MASK) != 0
        || evt.isActionKey()
        || keyCode == KeyEvent.VK_BACK_SPACE
        || keyCode == KeyEvent.VK_DELETE
        || keyCode == KeyEvent.VK_ENTER
        || keyCode == KeyEvent.VK_TAB
        || keyCode == KeyEvent.VK_ESCAPE) {
-      if(grabAction != null) {
+      if (grabAction != null) {
         handleGrabAction(evt);
         return;
       }
@@ -181,12 +181,12 @@ public class DefaultInputHandler extends InputHandler {
       KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode,
                                                    modifiers);
       Object o = currentBindings.get(keyStroke);
-      if(o == null) {
+      if (o == null) {
         // Don't beep if the user presses some
         // key we don't know about unless a
         // prefix is active. Otherwise it will
         // beep when caps lock is pressed, etc.
-        if(currentBindings != bindings) {
+        if (currentBindings != bindings) {
           Toolkit.getDefaultToolkit().beep();
           // F10 should be passed on, but C+e F10
           // shouldn't
@@ -196,7 +196,7 @@ public class DefaultInputHandler extends InputHandler {
         }
         currentBindings = bindings;
         return;
-      } else if(o instanceof ActionListener) {
+      } else if (o instanceof ActionListener) {
         currentBindings = bindings;
 
         executeAction(((ActionListener)o),
@@ -204,7 +204,7 @@ public class DefaultInputHandler extends InputHandler {
 
         evt.consume();
         return;
-      } else if(o instanceof Map) {
+      } else if (o instanceof Map) {
         currentBindings = (Map)o;
         evt.consume();
         return;
@@ -231,14 +231,14 @@ public class DefaultInputHandler extends InputHandler {
     if (c != KeyEvent.CHAR_UNDEFINED // &&
         //        (modifiers & KeyEvent.ALT_MASK) == 0
         ) {
-      if(c >= 0x20 && c != 0x7f) {
+      if (c >= 0x20 && c != 0x7f) {
         KeyStroke keyStroke = KeyStroke.getKeyStroke(Character.toUpperCase(c));
         Object o = currentBindings.get(keyStroke);
 
-        if(o instanceof Map) {
+        if (o instanceof Map) {
           currentBindings = (Map)o;
           return;
-        } else if(o instanceof ActionListener) {
+        } else if (o instanceof ActionListener) {
           currentBindings = bindings;
           executeAction((ActionListener)o,
                         evt.getSource(),
@@ -248,13 +248,13 @@ public class DefaultInputHandler extends InputHandler {
 
         currentBindings = bindings;
 
-        if(grabAction != null) {
+        if (grabAction != null) {
           handleGrabAction(evt);
           return;
         }
 
         // 0-9 adds another 'digit' to the repeat number
-        if(repeat && Character.isDigit(c)) {
+        if (repeat && Character.isDigit(c)) {
           repeatCount *= 10;
           repeatCount += (c - '0');
           return;
@@ -279,13 +279,13 @@ public class DefaultInputHandler extends InputHandler {
    * @param keyStroke A string description of the key stroke
    */
   public static KeyStroke parseKeyStroke(String keyStroke) {
-    if(keyStroke == null)
+    if (keyStroke == null)
       return null;
     int modifiers = 0;
     int index = keyStroke.indexOf('+');
-    if(index != -1) {
-      for(int i = 0; i < index; i++) {
-        switch(Character.toUpperCase(keyStroke.charAt(i))) {
+    if (index != -1) {
+      for (int i = 0; i < index; i++) {
+        switch (Character.toUpperCase(keyStroke.charAt(i))) {
         case 'A':
           modifiers |= InputEvent.ALT_MASK;
           break;
@@ -302,13 +302,13 @@ public class DefaultInputHandler extends InputHandler {
       }
     }
     String key = keyStroke.substring(index + 1);
-    if(key.length() == 1) {
+    if (key.length() == 1) {
       char ch = Character.toUpperCase(key.charAt(0));
-      if(modifiers == 0)
+      if (modifiers == 0)
         return KeyStroke.getKeyStroke(ch);
       else
         return KeyStroke.getKeyStroke(ch,modifiers);
-    } else if(key.length() == 0) {
+    } else if (key.length() == 0) {
       System.err.println("Invalid key stroke: " + keyStroke);
       return null;
     } else {
