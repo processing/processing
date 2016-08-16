@@ -486,6 +486,14 @@ public class Library extends LocalContribution {
             Messages.showMessage("Ignoring bad library name", mess);
             continue;
           }
+          /*
+        } else {  // maybe it's a JS library
+          // TODO this should be in a better location
+          File jsLibrary = new File(libraryFolder, potentialName + ".js");
+          if (jsLibrary.exists()) {
+            libraries.add(baseFolder);
+          }
+          */
         }
       }
     }
