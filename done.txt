@@ -1,3 +1,89 @@
+0252 (3.2)
+X Processing .jar files in CLASSPATH can cause startup crash
+X   https://github.com/processing/processing/issues/4128
+X Remove java.ext.dirs on startup to avoid conflicts and startup errors
+X   https://github.com/processing/processing/issues/4608
+X   https://github.com/processing/processing/issues/4470
+X   https://github.com/processing/processing/issues/4566
+X   https://github.com/processing/processing/issues/4492
+X   https://github.com/processing/processing/issues/4128
+X   https://github.com/processing/processing/issues/4503
+X   test ext.dirs working on Linux (use js example)
+X   test ext.dirs on exported app on Linux
+X   test ext.dirs working on Windows (use js example)
+X   modify ext.dirs for exported apps on Windows
+X see if CLASSPATH can be set to screw up p5
+X   works fine on OS X, couldn't reproduce on Linux
+X rewrite Util.listFiles() because it wasn't working properly
+X add 2016 to about-1x and about-2x
+o saying "no" to save changes is the same as "cancel" on windows?
+X   can't reproduce
+X add printStackTrace() method that can be overridden
+X   https://github.com/processing/processing/issues/222
+X write preferences.txt using a temporary file
+X   also save the previous version as preferences.old
+X   https://github.com/processing/processing/issues/4614
+
+mode work
+X add template support for Modes
+X Move general PDE code out of JavaMode and into general base classes
+X   https://github.com/processing/processing/issues/4606
+X change PdeInputHandler constructor
+X   check whether this breaks other Modes before releasing
+X   added extra constructor to keep things working
+X change PdeKeywords to PdeTokenMarker
+X   doesn't seem to cause any breakage, but will keep an eye out
+X added getSketchbookTemplatesFolder() to Base
+o move template subst code to Util
+X add Mode.requireExampleCompatibility()
+X in Mode: TokenMarker getTokenMarker(SketchCode code)
+X   passes through to no args version if not overridden
+X   note this in revisions.txt
+X implement templates
+X   write short docs
+X     https://github.com/processing/processing/wiki/Templates
+X   https://github.com/processing/processing/issues/4306
+X   https://github.com/processing/processing/issues/4352
+
+contrib
+X use HTML to print
+X   https://github.com/processing/processing/pull/4369
+X   https://github.com/processing/processing/issues/213
+X   https://github.com/processing/processing/issues/50
+
+input method work from Tsuyoshi Fukuda (tyfkda)
+X Simplify conditional branch
+X   https://github.com/processing/processing/pull/4589
+X Enable input method support by default on Japanese/Korean/Chinese systems
+X   https://github.com/processing/processing/pull/4598
+X Set sketch as modified when any character committed using input method
+X   https://github.com/processing/processing/pull/4599
+X Insert characters by InputMethod at one time
+X   https://github.com/processing/processing/pull/4594
+X Insert string when it is committed
+X   https://github.com/processing/processing/pull/4602
+X Set text color for InputMethod
+X   https://github.com/processing/processing/pull/4593
+
+jakub
+X NullPointerException in SketchCode.getDocumentText()
+X   https://github.com/processing/processing/issues/4555
+o   https://github.com/processing/processing/pull/4547
+X   https://github.com/processing/processing/pull/4596
+X Error checker now adds 'public' to all default access methods
+X   https://github.com/processing/processing/pull/4597
+X   https://github.com/processing/processing/issues/4583
+
+earlier
+X display "1" is not correct in 2.1.2
+X   https://github.com/processing/processing/issues/2502
+o cut/copy/paste while saving a sketch on goes to the editor, not save dialog
+o   https://github.com/processing/processing/issues/1035
+o   problem with focus traversal and native windows on OS X
+o   using JFileChooser fixes the problem (but is ugly)
+X   can't find this one anymore
+
+
 0251 (3.1.2)
 X update to Java 8u102 build 14
 
