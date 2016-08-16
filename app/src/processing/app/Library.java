@@ -114,6 +114,8 @@ public class Library extends LocalContribution {
     libraryFolder = new File(folder, "library");
     examplesFolder = new File(folder, "examples");
     referenceFile = new File(folder, "reference/index.html");
+
+    handle();
   }
 
 
