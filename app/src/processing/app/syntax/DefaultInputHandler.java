@@ -159,11 +159,11 @@ public class DefaultInputHandler extends InputHandler {
     }
 
     /*
-      char keyChar = evt.getKeyChar();
-      System.out.println("code=" + keyCode + " char=" + keyChar +
-      " charint=" + ((int)keyChar));
-      System.out.println("other codes " + KeyEvent.VK_ALT + " " +
-      KeyEvent.VK_META);
+    char keyChar = evt.getKeyChar();
+    System.out.println("code=" + keyCode + " char=" + keyChar +
+                       " charint=" + ((int)keyChar));
+    System.out.println("other codes " + KeyEvent.VK_ALT + " " +
+                       KeyEvent.VK_META);
     */
 
     if ((modifiers & ~InputEvent.SHIFT_MASK) != 0
