@@ -732,6 +732,9 @@ public class PApplet implements PConstants {
   /** true if the sketch has stopped permanently. */
   public volatile boolean finished;
 
+  /** used by the UncaughtExceptionHandler, so has to be static */
+  static Throwable uncaughtThrowable;
+
   // public, but undocumented.. removing for 3.0a5
 //  /**
 //   * true if the animation thread is paused.
@@ -5297,7 +5300,7 @@ public class PApplet implements PConstants {
 //        }
         return image;
       } catch (IOException e) {
-        e.printStackTrace();
+        printStackTrace(e);
         return null;
       }
     }
@@ -5367,7 +5370,7 @@ public class PApplet implements PConstants {
       }
     } catch (Exception e) {
       // show error, but move on to the stuff below, see if it'll work
-      e.printStackTrace();
+      printStackTrace(e);
     }
 
     if (loadImageFormats == null) {
@@ -5557,7 +5560,7 @@ public class PApplet implements PConstants {
       return outgoing;
 
     } catch (Exception e) {
-      e.printStackTrace();
+      printStackTrace(e);
       return null;
     }
   }
@@ -6029,7 +6032,7 @@ public class PApplet implements PConstants {
       return new Table(input, optionStr);
 
     } catch (IOException e) {
-      e.printStackTrace();
+      printStackTrace(e);
       return null;
     }
   }
@@ -6069,7 +6072,7 @@ public class PApplet implements PConstants {
       return table.save(outputFile, options);
 
     } catch (IOException e) {
-      e.printStackTrace();
+      printStackTrace(e);
       return false;
     }
   }
@@ -6739,7 +6742,7 @@ public class PApplet implements PConstants {
       try {
         return new GZIPInputStream(input);
       } catch (IOException e) {
-        e.printStackTrace();
+        printStackTrace(e);
         return null;
       }
     }
@@ -6794,7 +6797,7 @@ public class PApplet implements PConstants {
 
       } catch (IOException e) {
         // changed for 0117, shouldn't be throwing exception
-        e.printStackTrace();
+        printStackTrace(e);
         //System.err.println("Error downloading from URL " + filename);
         return null;
         //throw new RuntimeException("Error downloading from URL " + filename);
@@ -6900,8 +6903,7 @@ public class PApplet implements PConstants {
       } catch (SecurityException se) { }  // online, whups
 
     } catch (Exception e) {
-      //die(e.getMessage(), e);
-      e.printStackTrace();
+      printStackTrace(e);
     }
 
     return null;
@@ -6957,7 +6959,7 @@ public class PApplet implements PConstants {
       try {
         is.close();
       } catch (IOException e) {
-        e.printStackTrace();  // shouldn't happen
+        printStackTrace(e);  // shouldn't happen
       }
       return outgoing;
     }
@@ -7073,7 +7075,7 @@ public class PApplet implements PConstants {
       try {
         is.close();
       } catch (IOException e) {
-        e.printStackTrace();
+        printStackTrace(e);
       }
       return strArr;
     }
@@ -10113,6 +10115,13 @@ public class PApplet implements PConstants {
 
     // Remove 60fps limit on the JavaFX "pulse" timer
     System.setProperty("javafx.animation.fullspeed", "true");
+
+    Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+      public void uncaughtException(Thread t, Throwable e) {
+        e.printStackTrace();
+        uncaughtThrowable = e;
+      }
+    });
 
     // This doesn't work, need to mess with Info.plist instead
     /*

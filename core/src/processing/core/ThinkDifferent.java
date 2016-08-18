@@ -60,7 +60,8 @@ public class ThinkDifferent {
     application.setQuitHandler(new QuitHandler() {
       public void handleQuitRequestWith(QuitEvent event, QuitResponse response) {
         sketch.exit();
-        if (!attemptedQuit) {
+        if (PApplet.uncaughtThrowable == null &&  // no known crash
+            !attemptedQuit) {  // haven't tried yet
           response.cancelQuit();  // tell OS X we'll handle this
           attemptedQuit = true;
         } else {

@@ -1,4 +1,6 @@
 0253 (3.2.1)
+_ listPaths(), listFiles()? 
+_   https://github.com/processing/processing/issues/4622
 
 
 started
