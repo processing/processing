@@ -1,4 +1,8 @@
 0253 (3.2.1)
+_ “Could not replace preferences.old” error message
+_   https://github.com/processing/processing/issues/4626
+_ 3.2 not starting up on Windows 10 (64-bit)
+_   https://github.com/processing/processing/issues/4623
 
 
 _ update launch4j to 3.9
@@ -20,7 +24,7 @@ X   or is it b/c screen not quite 2x? (nope)
 _ swap out the fonts?
 
 _ Help Menu disabled on OS X
-_   https://github.com/processing/processing/issues/43503#issuecomment-237715947
+_   https://github.com/processing/processing/issues/4353#issuecomment-237715947
 
 
 high

@@ -1,4 +1,7 @@
 0253 (3.2.1)
+X implement defaultUncaughtExceptionHandler
+_   or should we drop the 'default' prefix so it's not static?
+_   http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Thread.html
 _ listPaths(), listFiles()? 
 _   https://github.com/processing/processing/issues/4622
 
