@@ -233,10 +233,10 @@ public class Preferences {
             throw new IOException("Could not delete preferences.old");
           }
         }
-        if (!preferencesFile.renameTo(oldPreferences)) {
+        if (preferencesFile.exists() &&
+            !preferencesFile.renameTo(oldPreferences)) {
           throw new IOException("Could not replace preferences.old");
         }
-
         // Make the temporary file into the real preferences
         if (!preferencesTemp.renameTo(preferencesFile)) {
           throw new IOException("Could not move preferences file into place");
