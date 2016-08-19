@@ -693,21 +693,25 @@ public class JavaBuild {
         Preferences.getBoolean("export.application.embed_java");
 
       if (Preferences.getBoolean(JavaEditor.EXPORT_PREFIX + platformName)) {
+        final int bits = Platform.getNativeBits();
+        final String arch = Platform.getNativeArch();
+
         if (Library.hasMultipleArch(platform, importedLibraries)) {
           // export the 32-bit version
           folder = new File(sketch.getFolder(), "application." + platformName + "32");
-          if (!exportApplication(folder, platform, "32", embedJava && Platform.getNativeBits() == 32 && "x86".equals(Platform.getNativeArch()))) {
+
+          if (!exportApplication(folder, platform, "32", embedJava && (bits == 32) && ("x86".equals(arch) || "i386".equals(arch)))) {
             return false;
           }
           // export the 64-bit version
           folder = new File(sketch.getFolder(), "application." + platformName + "64");
-          if (!exportApplication(folder, platform, "64", embedJava && Platform.getNativeBits() == 64 && "amd64".equals(Platform.getNativeArch()))) {
+          if (!exportApplication(folder, platform, "64", embedJava && (bits == 64) && "amd64".equals(arch))) {
             return false;
           }
           if (platform == PConstants.LINUX) {
             // export the armv6hf version as well
             folder = new File(sketch.getFolder(), "application.linux-armv6hf");
-            if (!exportApplication(folder, platform, "armv6hf", embedJava && Platform.getNativeBits() == 32 && "arm".equals(Platform.getNativeArch()))) {
+            if (!exportApplication(folder, platform, "armv6hf", embedJava && (bits == 32) && "arm".equals(arch))) {
               return false;
             }
           }
