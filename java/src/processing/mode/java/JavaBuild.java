@@ -960,7 +960,7 @@ public class JavaBuild {
                           PApplet.javaVersionName +
                           ".jdk/Contents/Home/jre/lib/ext");
       } else if (exportPlatform == PConstants.WINDOWS) {
-        runOptions.append("-Djava.ext.dirs=\"%EXEDIR%/java/lib/ext\"");
+        runOptions.append("-Djava.ext.dirs=\"%EXEDIR%\\java\\lib\\ext\"");
       } else if (exportPlatform == PConstants.LINUX) {
         runOptions.append("-Djava.ext.dirs=\"$APPDIR/java/lib/ext\"");
       }
