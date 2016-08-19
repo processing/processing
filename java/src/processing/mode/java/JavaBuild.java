@@ -1110,8 +1110,10 @@ public class JavaBuild {
       String runOptionsStr = runOptions.join(" ");
       pw.print("java " + runOptionsStr +
                " -Djava.library.path=\"$APPDIR:$APPDIR/lib\"" +
-               " -Djava.ext.dirs=\"$APPDIR/java/lib/ext\"" +
-               " -Djna.nosys=true" +
+               // these aren't included here since they're added elsewhere
+               // (and only included when Java is embedded)
+               //" -Djava.ext.dirs=\"$APPDIR/java/lib/ext\"" +
+               //" -Djna.nosys=true" +
                " -cp \"" + exportClassPath + "\"" +
                " " + sketch.getName() + " \"$@\"\n");
 
