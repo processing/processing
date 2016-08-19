@@ -1093,11 +1093,12 @@ public class JavaBuild {
       // Do the newlines explicitly so that Windows CRLF
       // isn't used when exporting for Unix.
       pw.print("#!/bin/sh\n\n");
-      //ps.print("APPDIR=`dirname $0`\n");
-      pw.print("APPDIR=$(readlink -f \"$0\")\n"); //Allow Symlinks
-      pw.print("APPDIR=$(dirname \"$APPDIR\")\n");  // more posix compliant
+      pw.print("APPDIR=$(readlink -f \"$0\")\n");   // allow symlinks
+      pw.print("APPDIR=$(dirname \"$APPDIR\")\n");  // more POSIX compliant
+
       // another fix for bug #234, LD_LIBRARY_PATH ignored on some platforms
       //ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
+
       if (embedJava) {
         // https://github.com/processing/processing/issues/2349
         pw.print("$APPDIR/java/bin/");
@@ -1105,6 +1106,8 @@ public class JavaBuild {
       String runOptionsStr = runOptions.join(" ");
       pw.print("java " + runOptionsStr +
                " -Djava.library.path=\"$APPDIR:$APPDIR/lib\"" +
+               " -Djava.ext.dirs=\"$APPDIR/java/lib/ext\"" +
+               " -Djna.nosys=true" +
                " -cp \"" + exportClassPath + "\"" +
                " " + sketch.getName() + " \"$@\"\n");
 

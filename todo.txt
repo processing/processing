@@ -6,6 +6,7 @@ X   https://github.com/processing/processing/issues/4623
 _   might be ext.dirs trouble with spaces in path names?
 _     or the backwards slashes?
 X fixes for Python Mode crashing on startup
+X disable ext.dirs on Linux export and set jna.nosys as well
 _ JavaInputHandler not registering
 
 _ library compilations handled oddly
