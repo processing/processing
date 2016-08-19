@@ -1,9 +1,6 @@
 0253 (3.2.1)
 X implement defaultUncaughtExceptionHandler
-_   or should we drop the 'default' prefix so it's not static?
-_   http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Thread.html
-_ listPaths(), listFiles()? 
-_   https://github.com/processing/processing/issues/4622
+X   helps avoid needing to double-quit OS X applications
 
 
 started
@@ -12,6 +9,11 @@ X   had to use JSONObject.quote() to wrap the text
 _   do the same for the other data classes
 _   note the difference between this and toJSONObject() or toJSONArray()
 _   or is that the better way to handle it? hm
+
+_ should we drop the 'default' prefix from the ex handler so it's not static?
+_   http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Thread.html
+_ listPaths(), listFiles()? 
+_   https://github.com/processing/processing/issues/4622
 
 _ option to disable OpenGL ES on Linux? 
 _   https://github.com/processing/processing/issues/4584
@@ -34,7 +36,7 @@ _   simple test case: using size() inside setup() from Eclipse
 discussion
 _ how to handle the touch api
 _ figure our size(img.width, img.height) situation
-_   just make loadImage() work in settings
+X   just make loadImage() work in settings
 _   update the wiki and reference
 
 

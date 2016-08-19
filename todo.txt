@@ -1,14 +1,15 @@
 0253 (3.2.1)
 X “Could not replace preferences.old” error message
 X   https://github.com/processing/processing/issues/4626
-_ Version 3.2 won't run from paths with spaces on Windows
+X Version 3.2 won't run from paths with spaces on Windows
 X   https://github.com/processing/processing/issues/4623
-_   might be ext.dirs trouble with spaces in path names?
-_     or the backwards slashes?
+X   might be ext.dirs trouble with spaces in path names?
+X   or the backwards slashes?
 X fixes for Python Mode crashing on startup
 X disable ext.dirs on Linux export and set jna.nosys as well
 X Java not included properly with 32-bit Linux export
-_ JavaInputHandler not registering
+X JavaInputHandler not registering
+
 
 _ library compilations handled oddly
 _   https://github.com/processing/processing/issues/4630
@@ -38,8 +39,6 @@ _   https://github.com/processing/processing/issues/4353#issuecomment-237715947
 high
 _ Pasting code from editor to empty editor produces Exception
 _   https://github.com/processing/processing/issues/4522
-_ did we lose settings.path because it was too buggy?
-_   https://github.com/processing/processing/issues/3948
 _ possible infinite loop on modified externally
 _   https://github.com/processing/processing/issues/3965
 
@@ -56,7 +55,8 @@ _ PDE and sketches are 2x smaller on high-res Windows machines
 _   https://github.com/processing/processing/issues/2411
 _   System.setProperty("sun.java2d.dpiaware", "false");
 _   though that seems broken in Java 8: http://superuser.com/a/1007783
-
+_ did we lose settings.path because it was too buggy?
+_   https://github.com/processing/processing/issues/3948
 _ Library path mismatch between processing-java and export
 _   https://github.com/processing/processing/issues/4493
 
