@@ -266,11 +266,23 @@ public class Runner implements MessageConsumer {
       }
     }
 
-//    params.add("-Djava.ext.dirs=nuffing");
-
     if (Preferences.getBoolean("run.options.memory")) {
       params.append("-Xms" + Preferences.get("run.options.memory.initial") + "m");
       params.append("-Xmx" + Preferences.get("run.options.memory.maximum") + "m");
+    }
+
+    // Surprised this wasn't here before; added for 3.2.1
+    params.append("-Djna.nosys=true");
+
+    // Added for 3.2.1, was still using the default ext.dirs in the PDE
+    try {
+      String extPath =
+        new File(Platform.getJavaHome(), "lib/ext").getCanonicalPath();
+      // quoting this on OS X causes it to fail
+      //params.append("-Djava.ext.dirs=\"" + extPath + "\"");
+      params.append("-Djava.ext.dirs=" + extPath);
+    } catch (IOException e) {
+      e.printStackTrace();
     }
 
     if (Platform.isMacOS()) {
