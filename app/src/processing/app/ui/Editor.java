@@ -296,7 +296,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
     upper.add(editorPanel);
 
     // set colors and fonts for the painter object
-    getPdeTextArea().setMode(mode);
+    PdeTextArea pta = getPdeTextArea();
+    if (pta != null) {
+      pta.setMode(mode);
+    }
 
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, footer);
 
@@ -1594,7 +1597,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   public PdeTextArea getPdeTextArea() {
-    return (PdeTextArea) textarea;
+    return (textarea instanceof PdeTextArea) ? (PdeTextArea) textarea : null;
   }
 
 

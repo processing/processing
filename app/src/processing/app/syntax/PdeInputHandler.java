@@ -48,13 +48,19 @@ public class PdeInputHandler extends DefaultInputHandler {
   protected Editor editor;
 
 
-  /** Not recommended, but included for compatibility. */
-  public PdeInputHandler() { }
-
-
+  /**
+   * Recommended constructor.
+   * @since 3.2
+   */
   public PdeInputHandler(Editor editor) {
     this.editor = editor;
+  }
 
+
+  /**
+   * Not recommended, but included for API compatibility.
+   */
+  public PdeInputHandler() {
     // Use option on mac for text edit controls that are ctrl on Windows/Linux.
     // (i.e. ctrl-left/right is option-left/right on OS X)
     String mod = Platform.isMacOS() ? "A" : "C";

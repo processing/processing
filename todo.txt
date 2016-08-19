@@ -1,10 +1,14 @@
 0253 (3.2.1)
 X “Could not replace preferences.old” error message
 X   https://github.com/processing/processing/issues/4626
-o 3.2 not starting up on Windows 10 (64-bit)
+_ Version 3.2 won't run from paths with spaces on Windows
 X   https://github.com/processing/processing/issues/4623
-o   can't reproduce; might be #4626?
+_   might be ext.dirs trouble with spaces in path names?
+_     or the backwards slashes?
+X fixes for Python Mode crashing on startup
 
+_ library compilations handled oddly
+_   https://github.com/processing/processing/issues/4630
 
 _ update launch4j to 3.9
 _   https://sourceforge.net/projects/launch4j/files/launch4j-3/3.9/
