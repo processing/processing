@@ -53,6 +53,9 @@ public class PdeInputHandler extends DefaultInputHandler {
    * @since 3.2
    */
   public PdeInputHandler(Editor editor) {
+    // Make sure the default constructor is called to set up the basics
+    this();
+
     this.editor = editor;
   }
 
