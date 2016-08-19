@@ -956,9 +956,9 @@ public class JavaBuild {
     if (embedJava) {
       // if people don't embed Java, it might be a mess, but what can we do?
       if (exportPlatform == PConstants.MACOSX) {
-        runOptions.append("-Djava.ext.dirs=\"$APP_ROOT/Contents/PlugIns/jdk" +
+        runOptions.append("-Djava.ext.dirs=$APP_ROOT/Contents/PlugIns/jdk" +
                           PApplet.javaVersionName +
-                          ".jdk/Contents/Home/jre/lib/ext\"");
+                          ".jdk/Contents/Home/jre/lib/ext");
       } else if (exportPlatform == PConstants.WINDOWS) {
         runOptions.append("-Djava.ext.dirs=\"%EXEDIR%/java/lib/ext\"");
       } else if (exportPlatform == PConstants.LINUX) {
