@@ -4418,19 +4418,39 @@ public class Table {
 
   public FloatDict getFloatDict(int keyColumn, int valueColumn) {
     return new FloatDict(getStringColumn(keyColumn),
-                       getFloatColumn(valueColumn));
+                         getFloatColumn(valueColumn));
   }
 
 
   public StringDict getStringDict(String keyColumnName, String valueColumnName) {
     return new StringDict(getStringColumn(keyColumnName),
-                         getStringColumn(valueColumnName));
+                          getStringColumn(valueColumnName));
   }
 
 
   public StringDict getStringDict(int keyColumn, int valueColumn) {
     return new StringDict(getStringColumn(keyColumn),
                           getStringColumn(valueColumn));
+  }
+
+
+  public Map<String, TableRow> getRowMap(String columnName) {
+    int col = getColumnIndex(columnName);
+    return (col == -1) ? null : getRowMap(col);
+  }
+
+
+  public Map<String, TableRow> getRowMap(int column) {
+    Map<String, TableRow> outgoing = new HashMap<>();
+    for (int row = 0; row < getRowCount(); row++) {
+      String id = getString(row, column);
+      outgoing.put(id, new RowPointer(this, row));
+    }
+//    for (TableRow row : rows()) {
+//      String id = row.getString(column);
+//      outgoing.put(id, row);
+//    }
+    return outgoing;
   }
 
 

@@ -1,6 +1,8 @@
 0253 (3.2.1)
 X implement defaultUncaughtExceptionHandler
 X   helps avoid needing to double-quit OS X applications
+X add getRowMap() function
+_   do we want rows() to not be transient?
 
 
 started
