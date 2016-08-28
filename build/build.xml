@@ -611,15 +611,8 @@
     <copy todir="macosx/work/Processing.app/Contents/Java">
       <fileset dir=".." includes="core/library/**" /> <!-- why this? -->
       <!--<fileset dir="shared" includes="launch4j/**" />-->
-      <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
+      <fileset dir="shared" includes="lib/**" />
       <fileset file="shared/revisions.txt" />
-    </copy>
-
-    <!--
-    Processing.app/Contents/PlugIns/jdk1.7.0_40.jdk/Contents/Home/jre/lib/fonts
-    -->
-    <copy todir="macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/lib/fonts">
-      <fileset dir="shared/lib/fonts" includes="*" />
     </copy>
 
     <antcall target="assemble">
@@ -756,7 +749,7 @@
     <copy todir="linux/work">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
-      <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
+      <fileset dir="shared" includes="lib/**"  />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
@@ -857,11 +850,6 @@
       -->
       <fileset refid="jre-optional-linux" />
     </delete>
-
-    <copy todir="linux/work/java/lib/fonts">
-      <fileset dir="shared/lib/fonts" includes="*" />
-    </copy>
-
   </target>
   
   <target name="linux-run" depends="linux-build" 
@@ -1053,7 +1041,7 @@
     <copy todir="windows/work">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
-      <fileset dir="shared" includes="lib/**" excludes="lib/fonts/**" />
+      <fileset dir="shared" includes="lib/**" />
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
@@ -1119,10 +1107,6 @@
       -->
       <fileset refid="jre-optional-windows" />
     </delete>
-
-    <copy todir="windows/work/java/lib/fonts">
-      <fileset dir="shared/lib/fonts" includes="*" />
-    </copy>
   </target>
   
   <target name="windows-run" depends="windows-build" 
