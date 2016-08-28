@@ -10,8 +10,15 @@
  */
 package processing.app.syntax;
 
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
-import java.awt.*;
 
 import javax.swing.ToolTipManager;
 import javax.swing.text.*;
@@ -19,6 +26,7 @@ import javax.swing.JComponent;
 
 import processing.app.Preferences;
 import processing.app.syntax.im.CompositionTextPainter;
+import processing.app.ui.Toolkit;
 
 
 /**
@@ -107,11 +115,12 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 
 
   public void updateAppearance() {
-//    // unfortunately probably can't just do setDefaults() since things aren't quite set up
-//    setFont(defaults.plainFont);
-////    System.out.println("defaults font is " + defaults.font);
     setForeground(defaults.fgcolor);
     setBackground(defaults.bgcolor);
+
+    // Ensure that our monospaced font is loaded
+    // https://github.com/processing/processing/pull/4639
+    Toolkit.getMonoFontName();
 
     String fontFamily = Preferences.get("editor.font.family");
     int fontSize = Preferences.getInteger("editor.font.size");
@@ -124,16 +133,11 @@ public class TextAreaPainter extends JComponent implements TabExpander {
     }
     boldFont = new Font(fontFamily, Font.BOLD, fontSize);
     antialias = Preferences.getBoolean("editor.smooth");
-//    System.out.println(plainFont.getFamily());
-//    System.out.println(plainFont);
 
     // moved from setFont() override (never quite comfortable w/ that override)
     fm = super.getFontMetrics(plainFont);
     tabSize = fm.charWidth(' ') * Preferences.getInteger("editor.tabs.size");
     textArea.recalculateVisibleLines();
-
-//    fgcolor = mode.getColor("editor.fgcolor");
-//    bgcolor = mode.getColor("editor.bgcolor");
   }
 
 
