@@ -55,6 +55,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.swing.Action;
@@ -763,47 +764,6 @@ public class Toolkit {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-//  static Font monoFont;
-//  static Font plainFont;
-//  static Font boldFont;
-//
-//
-//  static public Font getMonoFont(int size) {
-//    if (monoFont == null) {
-//      try {
-//        monoFont = createFont("DroidSansMono.ttf", size);
-//      } catch (Exception e) {
-//        monoFont = new Font("Monospaced", Font.PLAIN, size);
-//      }
-//    }
-//    return monoFont;
-//  }
-//
-//
-//  static public Font getPlainFont(int size) {
-//    if (plainFont == null) {
-//      try {
-//        plainFont = createFont("DroidSans.ttf", size);
-//      } catch (Exception e) {
-//        plainFont = new Font("SansSerif", Font.PLAIN, size);
-//      }
-//    }
-//    return plainFont;
-//  }
-//
-//
-//  static public Font getBoldFont(int size) {
-//    if (boldFont == null) {
-//      try {
-//        boldFont = createFont("DroidSans-Bold.ttf", size);
-//      } catch (Exception e) {
-//        boldFont = new Font("SansSerif", Font.BOLD, size);
-//      }
-//    }
-//    return boldFont;
-//  }
-
-
   static final char GREEK_SMALL_LETTER_ALPHA = '\u03B1';  // α
   static final char GREEK_CAPITAL_LETTER_OMEGA = '\u03A9';  // ω
 
@@ -813,7 +773,7 @@ public class Toolkit {
     GraphicsEnvironment ge =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
     Font[] fonts = ge.getAllFonts();
-    ArrayList<Font> outgoing = new ArrayList<Font>();
+    List<Font> outgoing = new ArrayList<Font>();
     // Using AffineTransform.getScaleInstance(100, 100) doesn't change sizes
     FontRenderContext frc =
       new FontRenderContext(new AffineTransform(),
@@ -855,7 +815,7 @@ public class Toolkit {
 
 
   static public String[] getMonoFontFamilies() {
-    HashSet<String> families = new HashSet<String>();
+    Set<String> families = new HashSet<>();
     for (Font font : getMonoFontList()) {
       families.add(font.getFamily());
     }
