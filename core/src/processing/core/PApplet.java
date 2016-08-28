@@ -2547,10 +2547,10 @@ public class PApplet implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  InternalEventQueue eventQueue = new InternalEventQueue();
+  public InternalEventQueue eventQueue = new InternalEventQueue();
 
 
-  static class InternalEventQueue {
+  public static class InternalEventQueue {
     protected Event queue[] = new Event[10];
     protected int offset;
     protected int count;
@@ -2562,7 +2562,7 @@ public class PApplet implements PConstants {
       queue[count++] = e;
     }
 
-    synchronized Event remove() {
+    synchronized public  Event remove() {
       if (offset == count) {
         throw new RuntimeException("Nothing left on the event queue.");
       }
@@ -2575,7 +2575,7 @@ public class PApplet implements PConstants {
       return outgoing;
     }
 
-    synchronized boolean available() {
+    synchronized public boolean available() {
       return count != 0;
     }
   }
