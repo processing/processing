@@ -4,6 +4,8 @@
 gohai
 X Simplify font situation to make it possible to use vanilla JRE trees
 X   https://github.com/processing/processing/pull/4639
+X Trivial updates for ARM
+X   https://github.com/processing/processing/pull/4640
 
 
 _ library compilations handled oddly
