@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact name="processing-core:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/processing_core_jar</output-path>
+    <root id="root">
+      <element id="archive" name="processing-core.jar">
+        <element id="module-output" name="processing-core" />
+      </element>
+      <element id="library" level="project" name="ant" />
+      <element id="library" level="module" name="jogl-all.jar" module-name="processing-core" />
+      <element id="library" level="module" name="gluegen-rt.jar" module-name="processing-core" />
+      <element id="library" level="module" name="apple.jar" module-name="processing-core" />
+    </root>
+  </artifact>
+</component>
