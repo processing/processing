@@ -16,3 +16,5 @@ iface.h:
 
 clean:
 	rm -f $(TARGET) $(OBJS)
+
+.PHONY: iface.h clean
