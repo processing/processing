@@ -74,6 +74,7 @@ import processing.app.Messages;
 import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.Util;
+import processing.data.StringList;
 
 
 /**
@@ -815,13 +816,12 @@ public class Toolkit {
 
 
   static public String[] getMonoFontFamilies() {
-    Set<String> families = new HashSet<>();
+    StringList families = new StringList();
     for (Font font : getMonoFontList()) {
-      families.add(font.getFamily());
+      families.appendUnique(font.getFamily());
     }
-    String[] names = families.toArray(new String[0]);
-    Arrays.sort(names);
-    return names;
+    families.sort();
+    return families.array();
   }
 
 
