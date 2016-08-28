@@ -1,3 +1,8 @@
+0253 (3.2.1)
+X implement defaultUncaughtExceptionHandler
+X   helps avoid needing to double-quit OS X applications
+
+
 0252 (3.2)
 X some Table cleanup based on other CSV parsing work
 X use StandardCharsets.UTF_8 instead of getting encoding by name

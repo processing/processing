@@ -1,14 +1,9 @@
-0253 (3.2.1)
-X "Could not replace preferences.old" error message
-X   https://github.com/processing/processing/issues/4626
-X Version 3.2 won't run from paths with spaces on Windows
-X   https://github.com/processing/processing/issues/4623
-X   might be ext.dirs trouble with spaces in path names?
-X   or the backwards slashes?
-X fixes for Python Mode crashing on startup
-X disable ext.dirs on Linux export and set jna.nosys as well
-X Java not included properly with 32-bit Linux export
-X JavaInputHandler not registering
+0254 (3.2.2 or 3.3)
+
+
+gohai
+X Simplify font situation to make it possible to use vanilla JRE trees
+X   https://github.com/processing/processing/pull/4639
 
 
 _ library compilations handled oddly
