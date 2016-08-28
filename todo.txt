@@ -1,5 +1,7 @@
 0254 (3.2.2 or 3.3)
-
+X more font tweaks to make mono fonts work properly after #4639
+_   update the Linux notes based on where we land on this
+_   https://github.com/processing/processing/wiki/Supported-Platforms#linux
 
 gohai
 X Simplify font situation to make it possible to use vanilla JRE trees
