@@ -10,5 +10,5 @@
 *.rar
 *.tar
 *.zip
-.idea
+.idea/
 *.iml
