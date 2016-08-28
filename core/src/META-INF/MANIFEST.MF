@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: ant.jar jogl-all.jar gluegen-rt.jar apple.jar
+Main-Class: 
+
