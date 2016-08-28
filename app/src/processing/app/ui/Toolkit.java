@@ -52,10 +52,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.swing.Action;
@@ -81,17 +79,8 @@ import processing.data.StringList;
  * Utility functions for base that require a java.awt.Toolkit object. These
  * are broken out from Base as we start moving toward the possibility of the
  * code running in headless mode.
- * @author fry
  */
 public class Toolkit {
-  /*
-  static public final String PROMPT_YES     = Language.text("prompt.yes");
-  static public final String PROMPT_NO      = Language.text("prompt.no");
-  static public final String PROMPT_CANCEL  = Language.text("prompt.cancel");
-  static public final String PROMPT_OK      = Language.text("prompt.ok");
-  static public final String PROMPT_BROWSE  = Language.text("prompt.browse");
-  */
-
   static final java.awt.Toolkit awtToolkit =
     java.awt.Toolkit.getDefaultToolkit();
 
