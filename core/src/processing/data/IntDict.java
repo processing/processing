@@ -666,7 +666,7 @@ public class IntDict {
   public String toJSON() {
     StringList items = new StringList();
     for (int i = 0; i < size(); i++) {
-      items.append("\"" + JSONObject.quote(keys[i]) + "\": " + values[i]);
+      items.append(JSONObject.quote(keys[i])+ ": " + values[i]);
     }
     return "{ " + items.join(", ") + " }";
   }

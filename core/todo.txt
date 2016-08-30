@@ -1,7 +1,11 @@
 0254 (3.2.2 or 3.3)
+X fix quoting problem in IntDict.toJSON()
 X add getRowMap() function
 _   do we want rows() to not be transient?
 
+andres
+X Automatic handling of screen FBOs breaks readPixels() for user-provided FBO
+X   https://github.com/processing/processing/issues/4643
 
 started
 X add toJSON() method to IntDict
