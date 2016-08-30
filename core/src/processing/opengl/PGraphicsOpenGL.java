@@ -1667,42 +1667,51 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void beginPixelsOp(int op) {
     FrameBuffer pixfb = null;
+    FrameBuffer currfb = getCurrentFB();
     if (primaryGraphics) {
-      if (op == OP_READ) {
-        if (pgl.isFBOBacked() && pgl.isMultisampled()) {
-          // Making sure the back texture is up-to-date...
-          pgl.syncBackTexture();
-          // ...because the read framebuffer uses it as the color buffer (the
-          // draw framebuffer is MSAA so it cannot be read from it).
-          pixfb = readFramebuffer;
-        } else {
-          pixfb = drawFramebuffer;
+      FrameBuffer rfb = readFramebuffer;
+      FrameBuffer dfb = drawFramebuffer;
+      if ((currfb == rfb) || (currfb == dfb)) {
+        // Not user-provided FB, need to check if the correct FB is current.
+        if (op == OP_READ) {
+          if (pgl.isFBOBacked() && pgl.isMultisampled()) {
+            // Making sure the back texture is up-to-date...
+            pgl.syncBackTexture();
+            // ...because the read framebuffer uses it as the color buffer (the
+            // draw framebuffer is MSAA so it cannot be read from it).
+            pixfb = rfb;
+          } else {
+            pixfb = dfb;
+          }
+        } else if (op == OP_WRITE) {
+          // We can write to the draw framebuffer irrespective of whether is
+          // FBO-baked or multisampled.
+          pixfb = dfb;
         }
-      } else if (op == OP_WRITE) {
-        // We can write to the draw framebuffer irrespective of whether is
-        // FBO-baked or multisampled.
-        pixfb = drawFramebuffer;
       }
     } else {
       FrameBuffer ofb = offscreenFramebuffer;
       FrameBuffer mfb = multisampleFramebuffer;
-      if (op == OP_READ) {
-        if (offscreenMultisample) {
-          // Making sure the offscreen FBO is up-to-date
-          int mask = PGL.COLOR_BUFFER_BIT;
-          if (hints[ENABLE_BUFFER_READING]) {
-            mask |= PGL.DEPTH_BUFFER_BIT | PGL.STENCIL_BUFFER_BIT;
+      if ((currfb == ofb) || (currfb == mfb)) {
+        // Not user-provided FB, need to check if the correct FB is current.
+        if (op == OP_READ) {
+          if (offscreenMultisample) {
+            // Making sure the offscreen FBO is up-to-date
+            int mask = PGL.COLOR_BUFFER_BIT;
+            if (hints[ENABLE_BUFFER_READING]) {
+              mask |= PGL.DEPTH_BUFFER_BIT | PGL.STENCIL_BUFFER_BIT;
+            }
+            if (ofb != null && mfb != null) {
+              mfb.copy(ofb, mask);
+            }
           }
-          if (ofb != null && mfb != null) {
-            mfb.copy(ofb, mask);
-          }
+          // We always read the screen pixels from the color FBO.
+          pixfb = ofb;
+        } else if (op == OP_WRITE) {
+          // We can write directly to the color FBO, or to the multisample FBO
+          // if multisampling is enabled.
+          pixfb = offscreenMultisample ? mfb : ofb;
         }
-        // We always read the screen pixels from the color FBO.
-        pixfb = ofb;
-      } else if (op == OP_WRITE) {
-        // We can write directly to the color FBO, or to the multisample FBO
-        // if multisampling is enabled.
-        pixfb = offscreenMultisample ? mfb : ofb;
       }
     }
 
