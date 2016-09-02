@@ -1,5 +1,7 @@
 0254 (3.2.2 or 3.3)
 X fix quoting problem in IntDict.toJSON()
+X add getRenderer() to SurfaceInfo
+X   https://github.com/processing/processing/issues/4441
 X add getRowMap() function
 _   do we want rows() to not be transient?
 

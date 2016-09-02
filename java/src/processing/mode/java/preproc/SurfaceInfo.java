@@ -138,4 +138,15 @@ public class SurfaceInfo {
   public String getSettings() {
     return statements.join(" ");
   }
+
+
+  // Added for Android Mode to check whether OpenGL is in use
+  // https://github.com/processing/processing/issues/4441
+  /**
+   * Return the renderer specified (null if none specified).
+   * @since 3.2.2
+   */
+  public String getRenderer() {
+    return renderer;
+  }
 }
