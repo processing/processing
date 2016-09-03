@@ -51,7 +51,7 @@ public class BundleDocument {
         
         extensions = extensionsList.split(",");
         for (String extension : extensions) {
-            extension.trim().toLowerCase();
+            extension = extension.trim().toLowerCase();
         }
     }
     
