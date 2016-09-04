@@ -918,7 +918,7 @@ public class Toolkit {
 
 
   /**
-   * Get a font from the JRE lib/fonts folder. Our default fonts are also
+   * Get a font from the lib/fonts folder. Our default fonts are also
    * installed there so that the monospace (and others) can be used by other
    * font listing calls (i.e. it appears in the list of monospace fonts in
    * the Preferences window, and can be used by HTMLEditorKit for WebFrame).
@@ -926,23 +926,15 @@ public class Toolkit {
   static private Font createFont(String filename, int size) throws IOException, FontFormatException {
     boolean registerFont = false;
 
-    // Can't use Base.getJavaHome(), because if we're not using our local JRE,
-    // we likely have bigger problems with how things are running.
+    // try the JRE font directory first
     File fontFile = new File(System.getProperty("java.home"), "lib/fonts/" + filename);
+
+    // else fall back to our own content dir
     if (!fontFile.exists()) {
-      // any of the fallbacks below is a custom location, so try to register the font as well
-      registerFont = true;
-      // if we're debugging from Eclipse, grab it from the work folder (user.dir is /app)
-      fontFile = new File(System.getProperty("user.dir"), "../build/shared/lib/fonts/" + filename);
-    }
-    if (!fontFile.exists()) {
-      // if we're debugging the new Java Mode from Eclipse, paths are different
-      fontFile = new File(System.getProperty("user.dir"), "../../shared/lib/fonts/" + filename);
-    }
-    if (!fontFile.exists()) {
-      // this if for Linux, where we're shipping a second copy of the fonts outside of java
       fontFile = Platform.getContentFile("lib/fonts/" + filename);
+      registerFont = true;
     }
+
     if (!fontFile.exists()) {
       String msg = "Could not find required fonts. ";
       // This gets the JAVA_HOME for the *local* copy of the JRE installed with
@@ -957,11 +949,11 @@ public class Toolkit {
       Messages.showError("Font Sadness", msg, null);
     }
 
+
     BufferedInputStream input = new BufferedInputStream(new FileInputStream(fontFile));
     Font font = Font.createFont(Font.TRUETYPE_FONT, input);
     input.close();
 
-    // this makes Font() work for font files in custom locations
     if (registerFont) {
       GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
       ge.registerFont(font);
