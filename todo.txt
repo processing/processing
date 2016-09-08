@@ -8,6 +8,8 @@ X Simplify font situation to make it possible to use vanilla JRE trees
 X   https://github.com/processing/processing/pull/4639
 X Trivial updates for ARM
 X   https://github.com/processing/processing/pull/4640
+X Remove all the extra hoops for loading fonts
+X   https://github.com/processing/processing/pull/4641
 
 
 _ library compilations handled oddly
@@ -40,6 +42,14 @@ _ Pasting code from editor to empty editor produces Exception
 _   https://github.com/processing/processing/issues/4522
 _ possible infinite loop on modified externally
 _   https://github.com/processing/processing/issues/3965
+_ PDE and sketches are 2x smaller on high-res Windows machines
+_   https://github.com/processing/processing/issues/2411
+_   System.setProperty("sun.java2d.dpiaware", "false");
+_   though that seems broken in Java 8: http://superuser.com/a/1007783
+_   modi
+_   until we fix it..
+_     call this from JNA? https://msdn.microsoft.com/en-us/library/windows/desktop/dn302122(v=vs.85).aspx
+_     or modify the manifest/app? https://msdn.microsoft.com/en-us/library/windows/desktop/dn469266%28v=vs.85%29.aspx
 
 medium
 _ detect changes in case with libraries
@@ -50,10 +60,6 @@ _ hidpi scaling via font changes?
 _   http://stackoverflow.com/a/34152675
 _ hi-dpi support on Linux
 _   https://github.com/processing/processing/issues/4183
-_ PDE and sketches are 2x smaller on high-res Windows machines
-_   https://github.com/processing/processing/issues/2411
-_   System.setProperty("sun.java2d.dpiaware", "false");
-_   though that seems broken in Java 8: http://superuser.com/a/1007783
 _ did we lose settings.path because it was too buggy?
 _   https://github.com/processing/processing/issues/3948
 _ Library path mismatch between processing-java and export
@@ -879,8 +885,6 @@ _ p5 assets need to be licensed differently from the source
 
 DIST / Windows
 
-_ PDE and sketches are 2x smaller on high-res Windows 8 machines
-_   https://github.com/processing/processing/issues/2411
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
 _   how can we provide an error message here?
 _ how to handle double-clicked files on windows?
