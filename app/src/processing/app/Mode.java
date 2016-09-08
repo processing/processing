@@ -166,7 +166,13 @@ public abstract class Mode {
               if (htmlFilename.endsWith("_")) {
                 keyword += "_";
               }
-              keywordToReference.put(keyword, htmlFilename);
+              // Allow the bare size() command to override the lookup
+              // for StringList.size() and others, but not vice-versa.
+              // https://github.com/processing/processing/issues/4224
+              boolean seen = keywordToReference.containsKey(keyword);
+              if (!seen || (seen && keyword.equals(htmlFilename))) {
+                keywordToReference.put(keyword, htmlFilename);
+              }
             }
           }
         }
