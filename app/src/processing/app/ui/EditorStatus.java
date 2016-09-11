@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012-15 The Processing Foundation
+  Copyright (c) 2012-16 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -87,10 +87,6 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   Image offscreen;
   int sizeW, sizeH;
 
-//  JButton cancelButton;
-//  JButton okButton;
-//  JTextField editField;
-
   int response;
 
   boolean indeterminate;
@@ -112,7 +108,6 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        //if (url != null) {
         if (inside) {
           Platform.openURL(url);
         }
