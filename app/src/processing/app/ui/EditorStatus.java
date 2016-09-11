@@ -33,6 +33,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
@@ -50,6 +51,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   static final int LEFT_MARGIN = Editor.LEFT_GUTTER;
   static final int RIGHT_MARGIN = 20;
 
+  Color urlColor;
   Color[] fgColor;
   Color[] bgColor;
   Image[] bgImage;
@@ -72,7 +74,11 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
   int mode;
   String message;
+
   String url;
+  int rightEdge;
+  int mouseX;
+  boolean inside;
 
   Font font;
   FontMetrics metrics;
@@ -98,18 +104,45 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     updateMode();
 
     addMouseListener(new MouseAdapter() {
+
+      @Override
       public void mouseEntered(MouseEvent e) {
-        if (url != null) {
-          setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        }
+        updateMouse();
       }
 
+      @Override
       public void mousePressed(MouseEvent e) {
-        if (url != null) {
+        //if (url != null) {
+        if (inside) {
           Platform.openURL(url);
         }
       }
+
+      @Override
+      public void mouseExited(MouseEvent e) {
+        updateMouse();
+      }
+
     });
+
+    addMouseMotionListener(new MouseMotionAdapter() {
+
+      @Override
+      public void mouseMoved(MouseEvent e) {
+        mouseX = e.getX();
+        updateMouse();
+      }
+    });
+  }
+
+
+  void updateMouse() {
+    if (inside) {
+      setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    } else {
+      setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+    }
+    repaint();
   }
 
 
@@ -124,6 +157,8 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
   public void updateMode() {
     Mode mode = editor.getMode();
+
+    urlColor = mode.getColor("status.url.fgcolor");
 
     fgColor = new Color[] {
       mode.getColor("status.notice.fgcolor"),
@@ -240,7 +275,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     if (offscreen == null) {
       sizeW = size.width;
       sizeH = size.height;
-//      setButtonBounds();
+
       if (Toolkit.highResDisplay()) {
         offscreen = createImage(sizeW*2, sizeH*2);
       } else {
@@ -257,15 +292,18 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
       ascent = metrics.getAscent();
     }
 
-    //g.setColor(bgColor[mode]);
-    //g.fillRect(0, 0, sizeW, sizeH);
     g.drawImage(bgImage[mode], 0, 0, sizeW, sizeH, this);
 
     g.setColor(fgColor[mode]);
     // https://github.com/processing/processing/issues/3265
     if (message != null) {
       g.setFont(font); // needs to be set each time on osx
+      inside = (mouseX > LEFT_MARGIN && mouseX < rightEdge);
+      if (inside) {
+        g.setColor(urlColor);
+      }
       g.drawString(message, LEFT_MARGIN, (sizeH + ascent) / 2);
+      rightEdge = LEFT_MARGIN + g.getFontMetrics().stringWidth(message);
     }
 
     if (indeterminate) {

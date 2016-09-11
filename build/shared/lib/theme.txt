@@ -6,6 +6,7 @@ status.error.fgcolor = #ffffff
 status.error.bgcolor = #9E0A0A
 status.warning.bgcolor = #EF8115
 status.warning.fgcolor = #FFFFFF
+status.url.fgcolor = #cccccc
 status.font = processing.sans,plain,13
 
 # HEADER TABS

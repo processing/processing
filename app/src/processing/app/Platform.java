@@ -150,7 +150,7 @@ public class Platform {
 
     } catch (Exception e) {
       Messages.showWarning("Problem Opening URL",
-                       "Could not open the URL\n" + url, e);
+                           "Could not open the URL\n" + url, e);
     }
   }
 

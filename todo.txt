@@ -3,6 +3,7 @@ X Find in reference for size() opens StringList.size()
 X   https://github.com/processing/processing/issues/4224
 X   though that's still imperfect:
 X   https://github.com/processing/processing/issues/4655
+X limit rollovers on EditorStatus to the text portion
 X more font tweaks to make mono fonts work properly after #4639
 _   update the Linux notes based on where we land on this
 _   https://github.com/processing/processing/wiki/Supported-Platforms#linux
