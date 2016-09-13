@@ -4,6 +4,10 @@ X   https://github.com/processing/processing/issues/4224
 X   though that's still imperfect:
 X   https://github.com/processing/processing/issues/4655
 X limit rollovers on EditorStatus to the text portion
+X   clicking the status area when it has a url is problematic
+X   because it's also the vertical separator
+X   at least change it to only cover the text?
+X   add a rollover so people know what it's doing?
 X more font tweaks to make mono fonts work properly after #4639
 _   update the Linux notes based on where we land on this
 _   https://github.com/processing/processing/wiki/Supported-Platforms#linux
@@ -16,6 +20,9 @@ X   https://github.com/processing/processing/pull/4640
 X Remove all the extra hoops for loading fonts
 X   https://github.com/processing/processing/pull/4641
 
+contrib
+X Chinese translation updates
+X   https://github.com/processing/processing/pull/4661
 
 _ library compilations handled oddly
 _   https://github.com/processing/processing/issues/4630
