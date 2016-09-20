@@ -2,6 +2,18 @@
 
   <target name="compile">
     <mkdir dir="bin" />
+    
+    <!-- Check for JDT compiler, since this is likely a PDE build. Using
+	 it allows us to build the PDE with only a JRE on Windows and Linux.
+	 So that the core can be built independently of the PDE, 
+	 use javac (the "modern" compiler) if ecj is not present. -->
+    <property name="jdt.jar" value="../java/mode/org.eclipse.jdt.core.jar" />
+    <condition property="build.compiler" 
+	       value="org.eclipse.jdt.core.JDTCompilerAdapter"
+	       else="modern">
+      <available file="${jdt.jar}" />
+    </condition>
+    <!--<echo message="compiler is ${build.compiler}" />-->
 
     <javac source="1.8"
            target="1.8" 
@@ -9,10 +21,8 @@
            destdir="bin" 
 	   debug="true" 
 	   includeantruntime="true"
-	   nowarn="true"
-	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
-      <compilerclasspath path="../../java/mode/org.eclipse.jdt.core.jar; 
-                               ../../java/mode/jdtCompilerAdapter.jar" />
+	   nowarn="true">
+      <compilerclasspath path="${jdt.jar}; ../../java/mode/jdtCompilerAdapter.jar" />
     </javac>
   </target>
   
