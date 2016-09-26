@@ -21,6 +21,9 @@ _   do the same for the other data classes
 _   note the difference between this and toJSONObject() or toJSONArray()
 _   or is that the better way to handle it? hm
 
+_ TRIANGLE_STRIP not working correctly with createShape() and default renderer
+_   https://github.com/processing/processing/issues/4678
+
 _ should we drop the 'default' prefix from the ex handler so it's not static?
 _   http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Thread.html
 _ listPaths(), listFiles()? 
