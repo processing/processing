@@ -2,6 +2,8 @@
 X fix quoting problem in IntDict.toJSON()
 X add getRenderer() to SurfaceInfo
 X   https://github.com/processing/processing/issues/4441
+X Exceptions thrown in OpenGL apps when hitting window close box
+X   https://github.com/processing/processing/issues/4690
 X add getRowMap() function
 _   do we want rows() to not be transient?
 

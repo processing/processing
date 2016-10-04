@@ -58,6 +58,7 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.nativewindow.MutableGraphicsConfiguration;
+import com.jogamp.nativewindow.WindowClosingProtocol;
 import com.jogamp.newt.Display;
 import com.jogamp.newt.Display.PointerIcon;
 import com.jogamp.newt.MonitorDevice;
@@ -67,6 +68,7 @@ import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.event.InputEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.util.FPSAnimator;
+
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -313,6 +315,12 @@ public class PSurfaceJOGL implements PSurface {
 
   protected void initWindow() {
     window = GLWindow.create(screen, pgl.getCaps());
+
+    // Make sure that we pass the window close through to exit(), otherwise
+    // we're likely to have OpenGL try to shut down halfway through rendering
+    // a frame. Particularly problematic for complex/slow apps.
+    // https://github.com/processing/processing/issues/4690
+    window.setDefaultCloseOperation(WindowClosingProtocol.WindowClosingMode.DO_NOTHING_ON_CLOSE);
 
 //    if (displayDevice == null) {
 //
@@ -955,6 +963,7 @@ public class PSurfaceJOGL implements PSurface {
 
     @Override
     public void windowDestroyed(com.jogamp.newt.event.WindowEvent arg0) {
+      sketch.exit();
     }
 
     @Override
