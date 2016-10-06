@@ -1410,7 +1410,7 @@ public class PShapeOpenGL extends PShape {
       }
       break;
     }
-    matrix.apply(transform);
+    matrix.preApply(transform);
     pushTransform();
     if (tessellated) applyMatrixImpl(transform);
   }
@@ -2035,8 +2035,8 @@ public class PShapeOpenGL extends PShape {
       if (is2D() && parent != null) {
         ((PShapeOpenGL)parent).strokedTexture(stroke && image != null);
       }
-      
-      this.stroke = stroke;      
+
+      this.stroke = stroke;
     }
   }
 
