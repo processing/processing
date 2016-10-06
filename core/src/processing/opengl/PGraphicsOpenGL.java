@@ -8423,9 +8423,9 @@ public class PGraphicsOpenGL extends PGraphics {
         int i1 = 3 * i + 1;
         int i2 = 3 * i + 2;
 
-        addEdge(i0, i1,  true, false);
+        addEdge(i0, i1, true, false);
         addEdge(i1, i2, false, false);
-        addEdge(i2, i0, false,  false);
+        addEdge(i2, i0, false, false);
         closeEdge(i2, i0);
       }
     }
@@ -8436,9 +8436,9 @@ public class PGraphicsOpenGL extends PGraphics {
         int i1 = i;
         int i2 = i + 1;
 
-        addEdge(i0, i1,  true, false);
+        addEdge(i0, i1, true, false);
         addEdge(i1, i2, false, false);
-        addEdge(i2, i0, false,  false);
+        addEdge(i2, i0, false, false);
         closeEdge(i2, i0);
       }
     }
@@ -8455,9 +8455,9 @@ public class PGraphicsOpenGL extends PGraphics {
           i2 = i - 1;
         }
 
-        addEdge(i0, i1,  true, false);
+        addEdge(i0, i1, true, false);
         addEdge(i1, i2, false, false);
-        addEdge(i2, i0, false,  false);
+        addEdge(i2, i0, false, false);
         closeEdge(i2, i0);
       }
     }
@@ -8469,7 +8469,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int i2 = 4 * i + 2;
         int i3 = 4 * i + 3;
 
-        addEdge(i0, i1,  true, false);
+        addEdge(i0, i1, true, false);
         addEdge(i1, i2, false, false);
         addEdge(i2, i3, false,  false);
         addEdge(i3, i0, false,  false);
@@ -8484,10 +8484,10 @@ public class PGraphicsOpenGL extends PGraphics {
         int i2 = 2 * qd + 1;
         int i3 = 2 * qd;
 
-        addEdge(i0, i1,  true, false);
+        addEdge(i0, i1, true, false);
         addEdge(i1, i2, false, false);
-        addEdge(i2, i3, false,  false);
-        addEdge(i3, i0, false,  true);
+        addEdge(i2, i3, false, false);
+        addEdge(i3, i0, false, false);
         closeEdge(i3, i0);
       }
     }
