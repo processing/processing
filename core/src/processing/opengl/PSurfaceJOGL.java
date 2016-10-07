@@ -894,7 +894,7 @@ public class PSurfaceJOGL implements PSurface {
       }
     }
     public void dispose(GLAutoDrawable drawable) {
-      sketch.dispose();
+//      sketch.dispose();
     }
     public void init(GLAutoDrawable drawable) {
       pgl.getGL(drawable);
