@@ -2135,6 +2135,7 @@ public class PGraphicsFX2D extends PGraphics {
       }
 
       SnapshotParameters sp = new SnapshotParameters();
+      sp.setFill(Color.TRANSPARENT); // Alpha channel should not be made white.
       if (pixelDensity != 1) {
         sp.setTransform(Transform.scale(pixelDensity, pixelDensity));
       }
