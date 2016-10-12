@@ -1645,6 +1645,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
     pgl.activeTexture(PGL.TEXTURE0);
 
+    pgl.clearDepthStencil();
+
     if (hints[DISABLE_DEPTH_MASK]) {
       pgl.depthMask(false);
     } else {

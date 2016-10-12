@@ -272,6 +272,13 @@ public abstract class PGL {
   protected boolean clearColor = false;
   protected boolean pclearColor;
 
+  protected boolean clearDepth = false;
+  protected boolean pclearDepth;
+
+  protected boolean clearStencil = false;
+  protected boolean pclearStencil;
+
+
   // ........................................................
 
   // Error messages
@@ -636,6 +643,23 @@ public abstract class PGL {
   // Frame rendering
 
 
+  protected void clearDepthStencil() {
+    if (!pclearDepth && !pclearStencil) {
+      depthMask(true);
+      clearDepth(1);
+      clearStencil(0);
+      clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT);
+    } else if (!pclearDepth) {
+      depthMask(true);
+      clearDepth(1);
+      clear(DEPTH_BUFFER_BIT);
+    } else if (!pclearStencil) {
+      clearStencil(0);
+      clear(STENCIL_BUFFER_BIT);
+    }
+  }
+
+
   protected void clearBackground(float r, float g, float b, float a,
                                  boolean depth, boolean stencil) {
     clearColor(r, g, b, a);
@@ -643,12 +667,22 @@ public abstract class PGL {
       clearDepth(1);
       clearStencil(0);
       clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
+      if (0 < sketch.frameCount) {
+        clearDepth = true;
+        clearStencil = true;
+      }
     } else if (depth) {
       clearDepth(1);
       clear(DEPTH_BUFFER_BIT | COLOR_BUFFER_BIT);
+      if (0 < sketch.frameCount) {
+        clearDepth = true;
+      }
     } else if (stencil) {
       clearStencil(0);
       clear(STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
+      if (0 < sketch.frameCount) {
+        clearStencil = true;
+      }
     } else {
       clear(PGL.COLOR_BUFFER_BIT);
     }
@@ -668,6 +702,12 @@ public abstract class PGL {
 
     pclearColor = clearColor;
     clearColor = false;
+
+    pclearDepth = clearDepth;
+    clearColor = false;
+
+    pclearStencil = clearStencil;
+    clearStencil = false;
 
     if (SINGLE_BUFFERED && sketch.frameCount == 1) {
       restoreFirstFrame();
