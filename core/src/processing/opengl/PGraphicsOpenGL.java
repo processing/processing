@@ -5325,7 +5325,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void backgroundImpl() {
     flush();
     pgl.clearBackground(backgroundR, backgroundG, backgroundB, backgroundA,
-                        !hints[DISABLE_DEPTH_MASK]);
+                        !hints[DISABLE_DEPTH_MASK], true);
     loaded = false;
   }
 
@@ -6887,12 +6887,6 @@ public class PGraphicsOpenGL extends PGraphics {
     // The current normal vector is set to be parallel to the Z axis.
     normalX = normalY = 0;
     normalZ = 1;
-
-    // Clear depth and stencil buffers.
-    pgl.depthMask(true);
-    pgl.clearDepth(1);
-    pgl.clearStencil(0);
-    pgl.clear(PGL.DEPTH_BUFFER_BIT | PGL.STENCIL_BUFFER_BIT);
 
     if (hints[DISABLE_DEPTH_MASK]) {
       pgl.depthMask(false);

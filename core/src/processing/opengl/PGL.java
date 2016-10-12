@@ -636,13 +636,22 @@ public abstract class PGL {
   // Frame rendering
 
 
-  protected void clearBackground(float r, float g, float b, float a, boolean depth) {
-    if (depth) {
-      clearDepth(1);
-      clear(PGL.DEPTH_BUFFER_BIT);
-    }
+  protected void clearBackground(float r, float g, float b, float a,
+                                 boolean depth, boolean stencil) {
     clearColor(r, g, b, a);
-    clear(PGL.COLOR_BUFFER_BIT);
+    if (depth && stencil) {
+      clearDepth(1);
+      clearStencil(0);
+      clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
+    } else if (depth) {
+      clearDepth(1);
+      clear(DEPTH_BUFFER_BIT | COLOR_BUFFER_BIT);
+    } else if (stencil) {
+      clearStencil(0);
+      clear(STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
+    } else {
+      clear(PGL.COLOR_BUFFER_BIT);
+    }
     if (0 < sketch.frameCount) {
       clearColor = true;
     }
