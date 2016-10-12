@@ -1645,8 +1645,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     pgl.activeTexture(PGL.TEXTURE0);
 
-    pgl.clearDepthStencil();
-
     if (hints[DISABLE_DEPTH_MASK]) {
       pgl.depthMask(false);
     } else {
@@ -6889,6 +6887,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // The current normal vector is set to be parallel to the Z axis.
     normalX = normalY = 0;
     normalZ = 1;
+
+    pgl.clearDepthStencil();
 
     if (hints[DISABLE_DEPTH_MASK]) {
       pgl.depthMask(false);
