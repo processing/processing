@@ -122,6 +122,7 @@ public class PShader implements PConstants {
   protected int ppixelsLoc;
   protected int ppixelsUnit;
   protected int viewportLoc;
+  protected int resolutionLoc;
 
   // Uniforms only for lines and points
   protected int perspectiveLoc;
@@ -1148,6 +1149,7 @@ public class PShader implements PConstants {
       projectionMatLoc = getUniformLoc("projectionMatrix");
 
     viewportLoc = getUniformLoc("viewport");
+    resolutionLoc = getUniformLoc("resolution");
     ppixelsLoc = getUniformLoc("ppixels");
 
     normalMatLoc = getUniformLoc("normalMatrix");
@@ -1197,6 +1199,12 @@ public class PShader implements PConstants {
       float w = currentPG.viewport.get(2);
       float h = currentPG.viewport.get(3);
       setUniformValue(viewportLoc, x, y, w, h);
+    }
+
+    if (-1 < resolutionLoc) {
+      float w = currentPG.viewport.get(2);
+      float h = currentPG.viewport.get(3);
+      setUniformValue(resolutionLoc, w, h);
     }
 
     if (-1 < ppixelsLoc) {
