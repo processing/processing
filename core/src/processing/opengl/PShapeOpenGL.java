@@ -4675,6 +4675,8 @@ public class PShapeOpenGL extends PShape {
 
 
   private void inGeoToVertices() {
+    vertexCount = 0;
+    vertexCodeCount = 0;
     if (inGeo.codeCount == 0) {
       for (int i = 0; i < inGeo.vertexCount; i++) {
         int index = 3 * i;
@@ -4688,21 +4690,15 @@ public class PShapeOpenGL extends PShape {
       float cx, cy;
       float x2, y2, x3, y3, x4, y4;
       int idx = 0;
-      boolean brk = false;
+      boolean insideContour = false;
 
       for (int j = 0; j < inGeo.codeCount; j++) {
-        if (brk) {
-          brk = false;
-          super.endContour();
-        }
-
         switch (inGeo.codes[j]) {
 
         case VERTEX:
           v = 3 * idx;
           x = inGeo.vertices[v++];
           y = inGeo.vertices[v  ];
-
           super.vertex(x, y);
 
           idx++;
@@ -4751,9 +4747,15 @@ public class PShapeOpenGL extends PShape {
           break;
 
         case BREAK:
-          brk = true;
-          super.beginContour();
+          if (insideContour) {
+            super.endContourImpl();
+          }
+          super.beginContourImpl();
+          insideContour = true;
         }
+      }
+      if (insideContour) {
+        super.endContourImpl();
       }
     }
   }
