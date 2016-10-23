@@ -461,7 +461,7 @@ class DetailPanel extends JPanel {
     desc.append("</font> ");
 
     String version = contrib.getPrettyVersion();
-    if (version != null) {
+    if (version != null && !version.equals("null")) {
       desc.append(version);
     }
     desc.append(" <br/>");
