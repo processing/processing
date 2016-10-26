@@ -16,6 +16,8 @@ _ "Could not open the url" when clicking on the error message
 _   https://github.com/processing/processing/issues/4695
 _ launch4j bug with minimum JRE version (set to 102 for folks who have 101?)
 _   https://github.com/processing/processing/issues/4682
+_ sharing usage metrics about libraries
+_   https://github.com/processing/processing/issues/4708
 
 gohai
 X Simplify font situation to make it possible to use vanilla JRE trees
@@ -32,11 +34,15 @@ X Spanish translation updates
 X   https://github.com/processing/processing/pull/4697
 
 
+_ clicking "Update" button in contrib manager shows non-retina version of icon
+_   https://github.com/processing/processing/issues/4715
+
 _ library compilations handled oddly
 _   https://github.com/processing/processing/issues/4630
 _ missing version number putting 'null' in the ui
 _   https://github.com/processing/processing-docs/issues/478
 _   https://github.com/processing/processing/issues/4696
+_   https://github.com/processing/processing/pull/4712
 
 _ update launch4j to 3.9
 _   https://sourceforge.net/projects/launch4j/files/launch4j-3/3.9/
