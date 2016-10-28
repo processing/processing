@@ -2408,6 +2408,7 @@ public class PGraphics extends PImage implements PConstants {
    * @webref shape:2d_primitives
    * @param x x-coordinate of the point
    * @param y y-coordinate of the point
+   * @see PGraphics#stroke(int)
    */
   public void point(float x, float y) {
     beginShape(POINTS);
