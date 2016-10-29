@@ -265,14 +265,14 @@ class StatusPanel extends JPanel {
           updateLabel.setText("Available");
         }
       } else {
-        if (currentVersion != null && !currentVersion.equals("null")) {
+        if (currentVersion != null) {
           updateLabel.setText(currentVersion + " installed");
         } else {
           updateLabel.setText("Installed");
         }
       }
     } else {
-      if (currentVersion != null && !currentVersion.equals("null")) {
+      if (currentVersion != null) {
         updateLabel.setText(currentVersion + " not compatible");
       } else {
         updateLabel.setText("Not compatible");

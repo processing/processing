@@ -158,20 +158,23 @@ abstract public class Contribution {
   }
 
 
-  // "1.0.2"
+  // "1.0.2" or null if not present
   public String getPrettyVersion() {
     return prettyVersion;
   }
+
 
   // 1402805757
   public long getLastUpdated() {
     return lastUpdated;
   }
 
+
   // 0
   public int getMinRevision() {
     return minRevision;
   }
+
 
   // 227
   public int getMaxRevision() {

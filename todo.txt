@@ -39,6 +39,10 @@ X Chinese translation updates
 X   https://github.com/processing/processing/pull/4661
 X Spanish translation updates
 X   https://github.com/processing/processing/pull/4697
+X Spanish "open sketch folder" fix
+X   https://github.com/processing/processing/pull/4710
+X Contribution Manager showing 'null' for PeasyCam version
+X   https://github.com/processing/processing/pull/4712
 
 
 _ clicking "Update" button in contrib manager shows non-retina version of icon
