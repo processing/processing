@@ -12,11 +12,16 @@ o   https://github.com/processing/processing/issues/4683
 X   made note in the docs repo
 X go back to textMode(MODEL) is native font not available for textMode(SHAPE)
 X   https://github.com/processing/processing/issues/4680
+X NPE thrown when using textMode(SHAPE) with a .vlw font
+X   https://github.com/processing/processing/issues/4680
 
 contrib
 X Call glGetProgramiv to retrieve program log length
 X   https://github.com/processing/processing/issues/4659
 X   https://github.com/processing/processing/pull/4660
+X JSONObject get() method is private
+X   https://github.com/processing/processing/issues/4334
+X   https://github.com/processing/processing/pull/4336
 
 andres
 X Automatic handling of screen FBOs breaks readPixels() for user-provided FBO
@@ -39,9 +44,6 @@ _   do the same for the other data classes
 _   note the difference between this and toJSONObject() or toJSONArray()
 _   or is that the better way to handle it? hm
 
-_ NPE thrown when using textMode(SHAPE) with a .vlw font
-_   https://github.com/processing/processing/issues/4680
-
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
 _   https://github.com/processing/processing/issues/4678
 
@@ -52,10 +54,6 @@ _   https://github.com/processing/processing/issues/4622
 
 _ option to disable OpenGL ES on Linux? 
 _   https://github.com/processing/processing/issues/4584
-
-_ JSONObject get() method is private
-_   https://github.com/processing/processing/issues/4334
-_   https://github.com/processing/processing/pull/4336
 
 _ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
 _   https://github.com/processing/processing/issues/4020

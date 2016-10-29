@@ -40,7 +40,11 @@ X Spanish "open sketch folder" fix
 X   https://github.com/processing/processing/pull/4710
 X Contribution Manager showing 'null' for PeasyCam version
 X   https://github.com/processing/processing/pull/4712
+X   https://github.com/processing/processing/issues/4696
 
+
+_ Application Exports report as "Damaged" on macOS Sierra
+_   https://github.com/processing/processing/issues/4705
 
 _ fix the library reporting scripts on the server
 _ sharing usage metrics about libraries

@@ -897,9 +897,9 @@ public class JSONObject {
 
 
   /**
-   * Determine if the value associated with the key is null or if there is 
+   * Determine if the value associated with the key is null or if there is
    * no value.
-   * 
+   *
    * @webref
    * @param key   A key string.
    * @return      true if there is no value associated with the key or if
@@ -1334,7 +1334,7 @@ public class JSONObject {
    * @throws RuntimeException if the key is a duplicate, or if
    * {@link #put(String,Object)} throws.
    */
-  public JSONObject putOnce(String key, Object value) {
+  private JSONObject putOnce(String key, Object value) {
     if (key != null && value != null) {
       if (this.opt(key) != null) {
         throw new RuntimeException("Duplicate key \"" + key + "\"");
