@@ -3567,6 +3567,12 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
+
+    if (textMode == SHAPE && textFont.getNative() == null) {
+      showWarning("textMode(SHAPE) not available for .vlw fonts, " +
+                  "use an .otf or .ttf instead.");
+      textMode(MODEL);
+    }
     if (textMode == MODEL) {
       textTex = getFontTexture(textFont);
 

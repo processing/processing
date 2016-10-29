@@ -10,6 +10,8 @@ X   write docs for getRowMap()
 o Add options to saveJSONArray documentation (enhancement)
 o   https://github.com/processing/processing/issues/4683
 X   made note in the docs repo
+X go back to textMode(MODEL) is native font not available for textMode(SHAPE)
+X   https://github.com/processing/processing/issues/4680
 
 contrib
 X Call glGetProgramiv to retrieve program log length
