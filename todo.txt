@@ -23,10 +23,6 @@ X   https://sourceforge.net/projects/launch4j/files/launch4j-3/3.9/
 X launch4j bug with minimum JRE version (set to 102 for folks who have 101?)
 X   https://github.com/processing/processing/issues/4682
 
-_ fix the library reporting scripts on the server
-_ sharing usage metrics about libraries
-_   https://github.com/processing/processing/issues/4708
-
 gohai
 X Simplify font situation to make it possible to use vanilla JRE trees
 X   https://github.com/processing/processing/pull/4639
@@ -46,6 +42,10 @@ X Contribution Manager showing 'null' for PeasyCam version
 X   https://github.com/processing/processing/pull/4712
 
 
+_ fix the library reporting scripts on the server
+_ sharing usage metrics about libraries
+_   https://github.com/processing/processing/issues/4708
+
 _ clicking "Update" button in contrib manager shows non-retina version of icon
 _   https://github.com/processing/processing/issues/4715
 
@@ -55,7 +55,6 @@ _ missing version number putting 'null' in the ui
 _   https://github.com/processing/processing-docs/issues/478
 _   https://github.com/processing/processing/issues/4696
 _   https://github.com/processing/processing/pull/4712
-
 
 _ editor windows always open on display 1
 _   https://github.com/processing/processing/issues/1566
