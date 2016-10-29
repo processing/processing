@@ -4440,6 +4440,19 @@ public class Table {
   }
 
 
+  /**
+   * Return a mapping that connects the entry from a column back to the row
+   * from which it came. For instance:
+   * <pre>
+   * Table t = loadTable("country-data.tsv", "header");
+   * // use the contents of the 'country' column to index the table
+   * Map<String, TableRow> lookup = t.getRowMap("country");
+   * // get the row that has "us" in the "country" column:
+   * TableRow usRow = lookup.get("us");
+   * // get an entry from the 'population' column
+   * int population = usRow.getInt("population");
+   * </pre>
+   */
   public Map<String, TableRow> getRowMap(int column) {
     Map<String, TableRow> outgoing = new HashMap<>();
     for (int row = 0; row < getRowCount(); row++) {

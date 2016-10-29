@@ -20,7 +20,7 @@ X fix extensions handling in CFBundleDocument code from appbundler
 X   https://github.com/processing/processing/issues/4615
 X update launch4j to 3.9
 X   https://sourceforge.net/projects/launch4j/files/launch4j-3/3.9/
-X launch4j bug with minimum JRE version (set to 102 for folks who have 101?)
+X exported application doesn't work with latest jre
 X   https://github.com/processing/processing/issues/4682
 
 gohai
