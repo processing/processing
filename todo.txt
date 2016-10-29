@@ -22,6 +22,8 @@ X update launch4j to 3.9
 X   https://sourceforge.net/projects/launch4j/files/launch4j-3/3.9/
 X exported application doesn't work with latest jre
 X   https://github.com/processing/processing/issues/4682
+X string comparison fix
+X   https://github.com/processing/processing/issues/4670
 
 gohai
 X Simplify font situation to make it possible to use vanilla JRE trees

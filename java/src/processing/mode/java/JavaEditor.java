@@ -2764,11 +2764,9 @@ public class JavaEditor extends Editor {
   //private int howManyInts(ArrayList<Handle> handles[])
   static private int howManyInts(List<List<Handle>> handles) {
     int count = 0;
-    //for (int i=0; i<handles.length; i++) {
     for (List<Handle> list : handles) {
-      //for (Handle n : handles[i]) {
       for (Handle n : list) {
-        if (n.type == "int" || n.type == "hex" || n.type == "webcolor") {
+        if ("int".equals(n.type) || "hex".equals(n.type) || "webcolor".equals(n.type)) {
           count++;
         }
       }
@@ -2780,11 +2778,9 @@ public class JavaEditor extends Editor {
   //private int howManyFloats(ArrayList<Handle> handles[])
   static private int howManyFloats(List<List<Handle>> handles) {
     int count = 0;
-    //for (int i=0; i<handles.length; i++) {
     for (List<Handle> list : handles) {
-      //for (Handle n : handles[i]) {
       for (Handle n : list) {
-        if (n.type == "float") {
+        if ("float".equals(n.type)) {
           count++;
         }
       }
