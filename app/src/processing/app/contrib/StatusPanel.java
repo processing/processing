@@ -259,12 +259,24 @@ class StatusPanel extends JPanel {
 
     if (panel.getContrib().isCompatible(Base.getRevision())) {
       if (installButton.isEnabled()) {
-        updateLabel.setText(latestVersion + " available");
+        if (latestVersion != null) {
+          updateLabel.setText(latestVersion + " available");
+        } else {
+          updateLabel.setText("Available");
+        }
       } else {
-        updateLabel.setText(currentVersion + " installed");
+        if (currentVersion != null && !currentVersion.equals("null")) {
+          updateLabel.setText(currentVersion + " installed");
+        } else {
+          updateLabel.setText("Installed");
+        }
       }
     } else {
-      updateLabel.setText(currentVersion + " not compatible");
+      if (currentVersion != null && !currentVersion.equals("null")) {
+        updateLabel.setText(currentVersion + " not compatible");
+      } else {
+        updateLabel.setText("Not compatible");
+      }
     }
 
     if (latestVersion != null) {
