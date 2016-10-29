@@ -9,6 +9,8 @@ X   because it's also the vertical separator
 X   at least change it to only cover the text?
 X   add a rollover so people know what it's doing?
 X switch to 8u112 for building
+X   switch down to 8u111 because of different build numbers
+X   https://github.com/processing/processing/commit/8a3a183f327a5ee680e1932dd9f123491f75a8b9
 X more font tweaks to make mono fonts work properly after #4639
 _   update the Linux notes based on where we land on this
 _   https://github.com/processing/processing/wiki/Supported-Platforms#linux
