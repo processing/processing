@@ -78,7 +78,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   String url;
   int rightEdge;
   int mouseX;
-  boolean inside;
+  boolean urlRollover;
 
   Font font;
   FontMetrics metrics;
@@ -108,7 +108,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        if (inside) {
+        if (urlRollover) {
           Platform.openURL(url);
         }
       }
@@ -132,7 +132,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
 
   void updateMouse() {
-    if (inside) {
+    if (urlRollover) {
       setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     } else {
       setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
@@ -292,13 +292,19 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     g.setColor(fgColor[mode]);
     // https://github.com/processing/processing/issues/3265
     if (message != null) {
-      g.setFont(font); // needs to be set each time on osx
-      inside = (mouseX > LEFT_MARGIN && mouseX < rightEdge);
-      if (inside) {
+      // needs to be set each time on osx
+      g.setFont(font);
+      // calculate right edge of the text for rollovers (otherwise the pane
+      // cannot be resized up or down whenever a URL is being displayed)
+      rightEdge = LEFT_MARGIN + g.getFontMetrics().stringWidth(message);
+      // set the highlight color on rollover so that the user's not surprised
+      // to see the web browser open when they click
+      urlRollover = (url != null) &&
+        (mouseX > LEFT_MARGIN && mouseX < rightEdge);
+      if (urlRollover) {
         g.setColor(urlColor);
       }
       g.drawString(message, LEFT_MARGIN, (sizeH + ascent) / 2);
-      rightEdge = LEFT_MARGIN + g.getFontMetrics().stringWidth(message);
     }
 
     if (indeterminate) {
