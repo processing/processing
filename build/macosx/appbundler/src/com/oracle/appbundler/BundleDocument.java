@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License version
  * 2 along with this work; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- * 
+ *
  */
 
 package com.oracle.appbundler;
@@ -43,22 +43,22 @@ public class BundleDocument {
         stringArray[0] = Character.toUpperCase(stringArray[0]);
         return new String(stringArray);
     }
-    
+
     public void setExtensions(String extensionsList) {
         if(extensionsList == null) {
             throw new BuildException("Extensions can't be null");
         }
-        
+
         extensions = extensionsList.split(",");
-        for (String extension : extensions) {
-            extension.trim().toLowerCase();
+        for (int i = 0; i < extensions.length; i++) {
+          extensions[i] = extensions[i].trim().toLowerCase();
         }
     }
-    
+
     public void setIcon(File icon) {
       this.icon = icon;
     }
-    
+
     public void setName(String name) {
       this.name = name;
     }
@@ -66,7 +66,7 @@ public class BundleDocument {
     public void setRole(String role) {
       this.role = capitalizeFirst(role);
     }
-    
+
     public void setIsPackage(String isPackageString) {
         if(isPackageString.trim().equalsIgnoreCase("true")) {
             this.isPackage = true;
@@ -74,20 +74,20 @@ public class BundleDocument {
             this.isPackage = false;
         }
     }
-    
+
 //    public String getIcon() {
 //        return icon;
 //    }
-    
+
     public String getIconName() {
         return icon.getName();
     }
-    
-    
+
+
     public File getIconFile() {
         return icon;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -95,15 +95,15 @@ public class BundleDocument {
     public String getRole() {
         return role;
     }
-    
+
     public String[] getExtensions() {
         return extensions;
     }
-    
+
     public boolean hasIcon() {
         return icon != null;
     }
-    
+
     public boolean isPackage() {
         return isPackage;
     }
@@ -115,7 +115,7 @@ public class BundleDocument {
         for(String extension : extensions) {
             s.append(extension).append(" ");
         }
-        
+
         return s.toString();
     }
 }
