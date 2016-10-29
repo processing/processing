@@ -537,7 +537,7 @@ public class JSONObject {
    * @return      The object associated with the key.
    * @throws      RuntimeException if the key is not found.
    */
-  private Object get(String key) {
+  public Object get(String key) {
     if (key == null) {
       throw new RuntimeException("Null key.");
     }
@@ -1300,7 +1300,7 @@ public class JSONObject {
    * @throws RuntimeException If the value is non-finite number
    *  or if the key is null.
    */
-  private JSONObject put(String key, Object value) {
+  public JSONObject put(String key, Object value) {
     String pooled;
     if (key == null) {
       throw new RuntimeException("Null key.");
@@ -1334,7 +1334,7 @@ public class JSONObject {
    * @throws RuntimeException if the key is a duplicate, or if
    * {@link #put(String,Object)} throws.
    */
-  private JSONObject putOnce(String key, Object value) {
+  public JSONObject putOnce(String key, Object value) {
     if (key != null && value != null) {
       if (this.opt(key) != null) {
         throw new RuntimeException("Duplicate key \"" + key + "\"");
