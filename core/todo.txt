@@ -44,24 +44,27 @@ X   https://github.com/processing/processing/issues/4722
 started
 X add toJSON() method to IntDict
 X   had to use JSONObject.quote() to wrap the text
-_   do the same for the other data classes
-_   note the difference between this and toJSONObject() or toJSONArray()
-_   or is that the better way to handle it? hm
+X   do the same for the other data classes
+o   note the difference between this and toJSONObject() or toJSONArray()
+o   or is that the better way to handle it? hm
+X   we can add JSONObject and JSONArray later perhaps
+X     keep toJSONObject() for turning XxxxList into a numbered lookup
 
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
 _   https://github.com/processing/processing/issues/4678
 
 _ should we drop the 'default' prefix from the ex handler so it's not static?
 _   http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Thread.html
+
 _ listPaths(), listFiles()? 
 _   https://github.com/processing/processing/issues/4622
+_ add increment() that takes IntDict to merge things
 
 _ option to disable OpenGL ES on Linux? 
 _   https://github.com/processing/processing/issues/4584
 
 _ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
 _   https://github.com/processing/processing/issues/4020
-_ add increment() that takes IntDict to merge things
 
 _ should fullScreen() set width and height to displayWidth/Height
 _   or is that being set/unset used for any state info?

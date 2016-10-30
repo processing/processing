@@ -149,8 +149,8 @@ public class FloatDict {
       }
     };
   }
-  
-  
+
+
   // Use this to iterate when you want to be able to remove elements along the way
   public Iterator<String> keyIterator() {
     return new Iterator<String>() {
@@ -211,8 +211,8 @@ public class FloatDict {
       }
     };
   }
-  
-  
+
+
   public Iterator<Float> valueIterator() {
     return new Iterator<Float>() {
       int index = -1;
@@ -370,7 +370,7 @@ public class FloatDict {
   public int minIndex() {
     //checkMinMax("minIndex");
     if (count == 0) return -1;
-    
+
     // Will still return NaN if there are 1 or more entries, and they're all NaN
     float m = Float.NaN;
     int mi = -1;
@@ -592,7 +592,7 @@ public class FloatDict {
   }
 
 
-  protected void sortImpl(final boolean useKeys, final boolean reverse, 
+  protected void sortImpl(final boolean useKeys, final boolean reverse,
                           final boolean stable) {
     Sort s = new Sort() {
       @Override
@@ -704,17 +704,20 @@ public class FloatDict {
   }
 
 
+  /**
+   * Return this dictionary as a String in JSON format.
+   */
+  public String toJSON() {
+    StringList items = new StringList();
+    for (int i = 0; i < count; i++) {
+      items.append(JSONObject.quote(keys[i])+ ": " + values[i]);
+    }
+    return "{ " + items.join(", ") + " }";
+  }
+
+
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(getClass().getSimpleName() + " size=" + size() + " { ");
-    for (int i = 0; i < size(); i++) {
-      if (i != 0) {
-        sb.append(", ");
-      }
-      sb.append("\"" + keys[i] + "\": " + values[i]);
-    }
-    sb.append(" }");
-    return sb.toString();
+    return getClass().getSimpleName() + " size=" + size() + " " + toJSON();
   }
 }
