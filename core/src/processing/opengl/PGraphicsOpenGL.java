@@ -9131,7 +9131,6 @@ public class PGraphicsOpenGL extends PGraphics {
         indices[indCount + 3 * i + 1] = i0;
         indices[indCount + 3 * i + 2] = i0 + 1;
 
-        addEdge(i0, i0 + 1, true, true);
         addEdge(i0, i1, true, true);
       }
       indCount += 3 * detailU;
