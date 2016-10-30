@@ -36,6 +36,10 @@ X remove extra glClear() calls
 X   https://github.com/processing/processing/issues/4694
 X PShapes do not show up in PDF with P2D renderer
 X   https://github.com/processing/processing/issues/4647
+X Some semi-transparent edges of sphere() meshes rendered in higher density
+X   https://github.com/processing/processing/issues/4720
+X P2D and P3D not stopping with empty draw() blocks
+X   https://github.com/processing/processing/issues/4722
 
 started
 X add toJSON() method to IntDict
