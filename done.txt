@@ -1,3 +1,50 @@
+0254 (3.2.2)
+X Find in reference for size() opens StringList.size()
+X   https://github.com/processing/processing/issues/4224
+X   though that's still imperfect:
+X   https://github.com/processing/processing/issues/4655
+X limit rollovers on EditorStatus to the text portion
+X   clicking the status area when it has a url is problematic
+X   because it's also the vertical separator
+X   at least change it to only cover the text?
+X   add a rollover so people know what it's doing?
+X switch to 8u112 for building
+X   switch down to 8u111 because of different build numbers
+X   https://github.com/processing/processing/commit/8a3a183f327a5ee680e1932dd9f123491f75a8b9
+X more font tweaks to make mono fonts work properly after #4639
+X   update the Linux notes based on where we land on this
+X   https://github.com/processing/processing/wiki/Supported-Platforms#linux
+X "Could not open the url" when clicking on the error message
+X   https://github.com/processing/processing/issues/4695
+X fix extensions handling in CFBundleDocument code from appbundler
+X   https://github.com/processing/processing/issues/4615
+X update launch4j to 3.9
+X   https://sourceforge.net/projects/launch4j/files/launch4j-3/3.9/
+X exported application doesn't work with latest jre
+X   https://github.com/processing/processing/issues/4682
+X string comparison fix
+X   https://github.com/processing/processing/issues/4670
+
+gohai
+X Simplify font situation to make it possible to use vanilla JRE trees
+X   https://github.com/processing/processing/pull/4639
+X Trivial updates for ARM
+X   https://github.com/processing/processing/pull/4640
+X Remove all the extra hoops for loading fonts
+X   https://github.com/processing/processing/pull/4641
+
+contrib
+X Chinese translation updates
+X   https://github.com/processing/processing/pull/4661
+X Spanish translation updates
+X   https://github.com/processing/processing/pull/4697
+X Spanish "open sketch folder" fix
+X   https://github.com/processing/processing/pull/4710
+X Contribution Manager showing 'null' for PeasyCam version
+X   https://github.com/processing/processing/pull/4712
+X   https://github.com/processing/processing/issues/4696
+
+
 0253 (3.2.1)
 X "Could not replace preferences.old" error message
 X   https://github.com/processing/processing/issues/4626

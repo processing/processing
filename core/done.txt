@@ -1,3 +1,54 @@
+0254 (3.2.2)
+X fix quoting problem in IntDict.toJSON()
+X add getRenderer() to SurfaceInfo
+X   https://github.com/processing/processing/issues/4441
+X Exceptions thrown in OpenGL apps when hitting window close box
+X   https://github.com/processing/processing/issues/4690
+X add getRowMap() function
+o   do we want rows() to not be transient?
+X   write docs for getRowMap()
+o Add options to saveJSONArray documentation (enhancement)
+o   https://github.com/processing/processing/issues/4683
+X   made note in the docs repo
+X go back to textMode(MODEL) is native font not available for textMode(SHAPE)
+X   https://github.com/processing/processing/issues/4680
+X NPE thrown when using textMode(SHAPE) with a .vlw font
+X   https://github.com/processing/processing/issues/4680
+X add toJSON() method to IntDict
+X   had to use JSONObject.quote() to wrap the text
+X   do the same for the other data classes
+o   note the difference between this and toJSONObject() or toJSONArray()
+o   or is that the better way to handle it? hm
+X   we can add JSONObject and JSONArray later perhaps
+X     keep toJSONObject() for turning XxxxList into a numbered lookup
+
+contrib
+X Call glGetProgramiv to retrieve program log length
+X   https://github.com/processing/processing/issues/4659
+X   https://github.com/processing/processing/pull/4660
+X JSONObject get() method is private
+X   https://github.com/processing/processing/issues/4334
+X   https://github.com/processing/processing/pull/4336
+
+andres
+X Automatic handling of screen FBOs breaks readPixels() for user-provided FBO
+X   https://github.com/processing/processing/issues/4643
+X PGraphicsOpenGL: camera info not updated
+X   https://github.com/processing/processing/issues/4609
+X Fix PShape, updateTessellation, matrix transformations
+X   https://github.com/processing/processing/issues/4662
+X QUAD_STRIP as child shape draws extra lines
+X   https://github.com/processing/processing/issues/4656
+X remove extra glClear() calls
+X   https://github.com/processing/processing/issues/4694
+X PShapes do not show up in PDF with P2D renderer
+X   https://github.com/processing/processing/issues/4647
+X Some semi-transparent edges of sphere() meshes rendered in higher density
+X   https://github.com/processing/processing/issues/4720
+X P2D and P3D not stopping with empty draw() blocks
+X   https://github.com/processing/processing/issues/4722
+
+
 0253 (3.2.1)
 X implement defaultUncaughtExceptionHandler
 X   helps avoid needing to double-quit OS X applications
