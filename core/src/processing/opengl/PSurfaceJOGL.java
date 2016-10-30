@@ -874,17 +874,19 @@ public class PSurfaceJOGL implements PSurface {
         requestFocus();
       }
 
-      pgl.getGL(drawable);
-      int pframeCount = sketch.frameCount;
-      sketch.handleDraw();
-      if (pframeCount == sketch.frameCount) {
-        // This hack allows the FBO layer to be swapped normally even if
-        // the sketch is no looping, otherwise background artifacts will occur.
-        pgl.beginRender();
-        pgl.endRender(sketch.sketchWindowColor());
+      if (!sketch.finished) {
+        pgl.getGL(drawable);
+        int pframeCount = sketch.frameCount;
+        sketch.handleDraw();
+        if (pframeCount == sketch.frameCount || sketch.finished) {
+          // This hack allows the FBO layer to be swapped normally even if
+          // the sketch is no looping or finished because it does not call draw(),
+          // otherwise background artifacts may occur (depending on the hardware/drivers).
+          pgl.beginRender();
+          pgl.endRender(sketch.sketchWindowColor());
+        }
+        PGraphicsOpenGL.completeFinishedPixelTransfers();
       }
-
-      PGraphicsOpenGL.completeFinishedPixelTransfers();
 
       if (sketch.exitCalled()) {
         PGraphicsOpenGL.completeAllPixelTransfers();
