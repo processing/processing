@@ -1,3 +1,121 @@
+PROCESSING 3.2.2 (REV 0254) - 30 October 2016
+
+Lots of bug fixes.
+
+
+[ fixes ] 
+
++ Find in reference for size() opens StringList.size()
+  https://github.com/processing/processing/issues/4224
+  https://github.com/processing/processing/issues/4655
+
++ Limit rollovers on EditorStatus to the text portion. Clicking the status
+  area when a URL was showing was problematic because it's also the separator
+  used to adjust the relative size of the two panels.
+
++ Switch to Java 8u111. Not using 8u112 because the build numbers are
+  different depending on the platform, and no 112 fixes are known useful.
+
++ Errant "Could not open the URL" when clicking on error messages
+  https://github.com/processing/processing/issues/4695
+  
++ Fix extensions handling in CFBundleDocument code from appbundler
+  https://github.com/processing/processing/issues/4615
+  
++ Update launch4j to 3.9, fixing a problem with exported applications
+  on Windows reporting "This application requires a Java Runtime Environment
+  1.8.0_74", when 1.8.0_101 or later were installed.
+  https://github.com/processing/processing/issues/4682
+
++ Minor String comparison fix for Tweak mode
+  https://github.com/processing/processing/issues/4670
+
++ Fix quoting problem in IntDict.toJSON()
+
++ Add getRenderer() to SurfaceInfo for Andres
+  https://github.com/processing/processing/issues/4441
+  
++ Exceptions thrown in OpenGL apps when hitting the window's close box
+  https://github.com/processing/processing/issues/4690
+  
++ Add getRowMap() function to Table
+
++ Go back to textMode(MODEL) is native font not available for textMode(SHAPE)
+  https://github.com/processing/processing/issues/4680
+  
++ NPE thrown when using textMode(SHAPE) with a .vlw font
+  https://github.com/processing/processing/issues/4680
+  
++ Add toJSON() method to the data classes (IntDict, FloatDict, StringDict,
+  IntList, FloatList, and StringList). Returns an object of one of those
+  six types as a JSON-formatted String. For something more like the old
+  toString() behavior, use print().
+
+
+[ gottfried's goodness ] 
+
++ Simplify font situation to make it possible to use vanilla JRE trees
+  https://github.com/processing/processing/pull/4639
+  https://github.com/processing/processing/pull/4641
+  
++ Updates for ARM
+  https://github.com/processing/processing/pull/4640
+
+
+[ andres can do anything ]
+
++ Automatic handling of screen FBOs breaks readPixels() for user-provided FBO
+  https://github.com/processing/processing/issues/4643
+  
++ PGraphicsOpenGL: camera info not updated
+  https://github.com/processing/processing/issues/4609
+  
++ Fix PShape, updateTessellation, matrix transformations
+  https://github.com/processing/processing/issues/4662
+  
++ QUAD_STRIP as child shape draws extra lines
+  https://github.com/processing/processing/issues/4656
+  
++ Remove extra glClear() calls
+  https://github.com/processing/processing/issues/4694
+  
++ PShapes do not show up in PDF with P2D renderer
+  https://github.com/processing/processing/issues/4647
+  
++ Some semi-transparent edges of sphere() meshes rendered in higher density
+  https://github.com/processing/processing/issues/4720
+  
++ P2D and P3D not stopping with empty draw() blocks
+  https://github.com/processing/processing/issues/4722
+
+
+[ other contributed fixes ] 
+
++ Chinese translation updates
+  https://github.com/processing/processing/pull/4661
+  
++ Spanish translation updates
+  https://github.com/processing/processing/pull/4697
+  
++ Spanish "open sketch folder" fix
+  https://github.com/processing/processing/pull/4710
+  
++ Contribution Manager showing 'null' for PeasyCam version
+  https://github.com/processing/processing/pull/4712
+  https://github.com/processing/processing/issues/4696
+
++ Call glGetProgramiv to retrieve program log length
+  https://github.com/processing/processing/issues/4659
+  https://github.com/processing/processing/pull/4660
+  
++ JSONObject get() method is private
+  https://github.com/processing/processing/issues/4334
+  https://github.com/processing/processing/pull/4336
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.2.1 (REV 0253) - 19 August 2016
 
 Fixes for a couple major bugs that showed up in the last release.

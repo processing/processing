@@ -1,4 +1,4 @@
-0254 (3.2.2 or 3.3)
+0254 (3.2.2)
 X Find in reference for size() opens StringList.size()
 X   https://github.com/processing/processing/issues/4224
 X   though that's still imperfect:

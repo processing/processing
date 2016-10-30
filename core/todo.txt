@@ -1,4 +1,4 @@
-0254 (3.2.2 or 3.3)
+0254 (3.2.2)
 X fix quoting problem in IntDict.toJSON()
 X add getRenderer() to SurfaceInfo
 X   https://github.com/processing/processing/issues/4441
@@ -14,6 +14,13 @@ X go back to textMode(MODEL) is native font not available for textMode(SHAPE)
 X   https://github.com/processing/processing/issues/4680
 X NPE thrown when using textMode(SHAPE) with a .vlw font
 X   https://github.com/processing/processing/issues/4680
+X add toJSON() method to IntDict
+X   had to use JSONObject.quote() to wrap the text
+X   do the same for the other data classes
+o   note the difference between this and toJSONObject() or toJSONArray()
+o   or is that the better way to handle it? hm
+X   we can add JSONObject and JSONArray later perhaps
+X     keep toJSONObject() for turning XxxxList into a numbered lookup
 
 contrib
 X Call glGetProgramiv to retrieve program log length
@@ -41,14 +48,6 @@ X   https://github.com/processing/processing/issues/4720
 X P2D and P3D not stopping with empty draw() blocks
 X   https://github.com/processing/processing/issues/4722
 
-started
-X add toJSON() method to IntDict
-X   had to use JSONObject.quote() to wrap the text
-X   do the same for the other data classes
-o   note the difference between this and toJSONObject() or toJSONArray()
-o   or is that the better way to handle it? hm
-X   we can add JSONObject and JSONArray later perhaps
-X     keep toJSONObject() for turning XxxxList into a numbered lookup
 
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
 _   https://github.com/processing/processing/issues/4678
@@ -65,6 +64,7 @@ _   https://github.com/processing/processing/issues/4584
 
 _ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
 _   https://github.com/processing/processing/issues/4020
+_   calling textSize() fixes it
 
 _ should fullScreen() set width and height to displayWidth/Height
 _   or is that being set/unset used for any state info?
