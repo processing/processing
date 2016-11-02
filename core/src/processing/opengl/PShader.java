@@ -51,8 +51,12 @@ public class PShader implements PConstants {
 
   static protected String pointShaderAttrRegexp =
     "attribute *vec2 *offset";
+  static protected String pointShaderAttrRegexp2 =
+    "in *vec2 *offset;";
   static protected String lineShaderAttrRegexp =
     "attribute *vec4 *direction";
+  static protected String lineShaderAttrRegexp2 =
+    "in *vec4 *direction";
   static protected String pointShaderDefRegexp =
     "#define *PROCESSING_POINT_SHADER";
   static protected String lineShaderDefRegexp =
@@ -1016,9 +1020,11 @@ public class PShader implements PConstants {
   static protected int getShaderType(String[] source, int defaultType) {
     for (int i = 0; i < source.length; i++) {
       String line = source[i].trim();
-      if (PApplet.match(line, pointShaderAttrRegexp) != null)
+      if (PApplet.match(line, pointShaderAttrRegexp) != null ||
+          PApplet.match(line, pointShaderAttrRegexp2) != null)
         return PShader.POINT;
-      else if (PApplet.match(line, lineShaderAttrRegexp) != null)
+      else if (PApplet.match(line, lineShaderAttrRegexp) != null ||
+               PApplet.match(line, lineShaderAttrRegexp2) != null)
         return PShader.LINE;
       else if (PApplet.match(line, pointShaderDefRegexp) != null)
         return PShader.POINT;
