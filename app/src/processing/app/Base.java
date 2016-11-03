@@ -823,7 +823,7 @@ public class Base {
       String entry = c.getTypeName() + "=" +
         PApplet.urlEncode(String.format("name=%s\nurl=%s\nrevision=%d\nversion=%s",
                                         c.getName(), c.getUrl(),
-                                        c.getVersion(), c.getPrettyVersion()));
+                                        c.getVersion(), c.getBenignVersion()));
       entries.append(entry);
     }
     String joined =

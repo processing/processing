@@ -209,8 +209,8 @@ public class UpdateListPanel extends ListPanel {
         icon,
         "<html>" + fontFace + entry.getName() + "</font></html>",
         name,
-        entry.getPrettyVersion(),
-        contributionTab.contribListing.getLatestVersion(entry)
+        entry.getBenignVersion(),
+        contributionTab.contribListing.getLatestPrettyVersion(entry)
       });
     }
     UpdateContributionTab tab = (UpdateContributionTab) contributionTab;

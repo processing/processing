@@ -460,9 +460,9 @@ class DetailPanel extends JPanel {
     }
     desc.append("</font> ");
 
-    String version = contrib.getPrettyVersion();
-    if (version != null) {
-      desc.append(version);
+    String prettyVersion = contrib.getPrettyVersion();
+    if (prettyVersion != null) {
+      desc.append(prettyVersion);
     }
     desc.append(" <br/>");
 
@@ -493,8 +493,9 @@ class DetailPanel extends JPanel {
     if (lastUpdatedUTC != 0) {
       DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM);
       Date lastUpdatedDate = new Date(lastUpdatedUTC);
-      if (version != null && !version.isEmpty())
+      if (prettyVersion != null) {
         desc.append(", ");
+      }
       desc.append("Last Updated on " + dateFormatter.format(lastUpdatedDate));
     }
 
@@ -510,7 +511,7 @@ class DetailPanel extends JPanel {
         // versionText.append("To finish an update, reinstall this contribution after restarting.");
         ;
       } else {
-        String latestVersion = contribListing.getLatestVersion(contrib);
+        String latestVersion = contribListing.getLatestPrettyVersion(contrib);
         if (latestVersion != null) {
           versionText.append("New version (" + latestVersion + ") available.");
         } else {

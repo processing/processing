@@ -1,6 +1,11 @@
 0255 (3.2.3 or 3.3)
 X if prettyVersion is blank (or null?), just use version (Firmata)
 
+      // Use the version number if they've left the prettyVersion field blank
+      if (prettyVersion == null || prettyVersion.length() == 0) {
+        prettyVersion = Integer.toString(version);
+      }
+
 
 contribs
 _ 'version' should be x.y or x.y.z, not some extra long string

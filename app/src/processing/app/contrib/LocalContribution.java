@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013-15 The Processing Foundation
+  Copyright (c) 2013-16 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -72,9 +72,9 @@ public abstract class LocalContribution extends Contribution {
       }
       // changing to 'authors' in 3.0a11
       authors = properties.get(AUTHORS_PROPERTY);
-      if (authors == null) {
-        authors = properties.get("authorList");
-      }
+//      if (authors == null) {
+//        authors = properties.get("authorList");
+//      }
       url = properties.get("url");
       sentence = properties.get("sentence");
       paragraph = properties.get("paragraph");
@@ -86,10 +86,9 @@ public abstract class LocalContribution extends Contribution {
         System.err.println("Please contact the library author to fix it according to the guidelines.");
       }
 
-      // Use the version number if they've left the prettyVersion field blank
       prettyVersion = properties.get("prettyVersion");
-      if (prettyVersion == null || prettyVersion.length() == 0) {
-        prettyVersion = Integer.toString(version);
+      if (prettyVersion != null && prettyVersion.length() == 0) {
+        prettyVersion = null;
       }
 
       try {

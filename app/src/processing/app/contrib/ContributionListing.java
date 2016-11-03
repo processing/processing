@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013-15 The Processing Foundation
+  Copyright (c) 2013-16 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -500,14 +500,13 @@ public class ContributionListing {
   }
 
 
-  protected String getLatestVersion(Contribution contribution) {
+  protected String getLatestPrettyVersion(Contribution contribution) {
     Contribution newestContrib = getAvailableContribution(contribution);
     if (newestContrib == null) {
       return null;
     }
     return newestContrib.getPrettyVersion();
   }
-
 
 
   protected boolean hasDownloadedLatestList() {
