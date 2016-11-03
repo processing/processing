@@ -538,7 +538,7 @@ implements Scrollable, ContributionListing.ChangeListener {
 //      for (Contribution contribution : filteredContributions) {
 //        if (contribution.getType() == contributionTab.contribType) {
 //          if(panelByContribution.keySet().contains(contribution)){
-//           visibleContributions.add(contribution); 
+//           visibleContributions.add(contribution);
 //          }
 //        }
 //      }

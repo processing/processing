@@ -1,24 +1,34 @@
 0255 (3.2.3 or 3.3)
 X ensure that update.id is set before checking for contrib updates
 X if prettyVersion is blank (or null?), just use version (Firmata)
+X clicking "Update" button in contrib manager shows non-retina version of icon
+X   https://github.com/processing/processing/issues/4715
+o   problem is because AquaButtonUI is calling getImage() (not getIcon())
+o   can be debugging from inside the getIconX() code in Toolkit
+X   just needed to use setPressedIcon(), setDisabledIcon()
+X   also found some other issues around the icon handling
 
 contribs
+X Up-to-date status disappears after filter is removed
+X   https://github.com/processing/processing/issues/4084
+X Updates tab blank after adding, removing, updating a contribution
+X   https://github.com/processing/processing/issues/4082
+X   https://github.com/processing/processing/issues/4704
+X Fixes the removal of redundant contribution and update related issues
+X   https://github.com/processing/processing/pull/4086
+
+
 _ 'version' should be x.y or x.y.z, not some extra long string
 _   enforce this by disallowing spaces? on the import script?
-_ why is the updates panel completely empty?
-_   was there already a bug filed for this?
 
 _ Application Exports report as "Damaged" on macOS Sierra
 _   https://github.com/processing/processing/issues/4705
+_   could provide script to un-quarrantine
+_   xattr -d -r com.apple.quarantine
 
 _ fix the library reporting scripts on the server
 _ sharing usage metrics about libraries
 _   https://github.com/processing/processing/issues/4708
-
-_ clicking "Update" button in contrib manager shows non-retina version of icon
-_   https://github.com/processing/processing/issues/4715
-_   problem is because AquaButtonUI is calling getImage() (not getIcon())
-_   can be debugging from inside the getIconX() code in Toolkit
 
 _ library compilations handled oddly
 _   https://github.com/processing/processing/issues/4630

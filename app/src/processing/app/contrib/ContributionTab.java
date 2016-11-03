@@ -74,18 +74,6 @@ public class ContributionTab extends JPanel {
     this.contribDialog = dialog;
     this.contribType = type;
 
-    /*
-    if (type == ContributionType.MODE) {
-      title = Language.text("contrib.manager_title.mode");
-    } else if (type == ContributionType.TOOL) {
-      title = Language.text("contrib.manager_title.tool");
-    } else if (type == ContributionType.LIBRARY) {
-      title = Language.text("contrib.manager_title.library");
-    } else if (type == ContributionType.EXAMPLES) {
-      title = Language.text("contrib.manager_title.examples");
-    }
-    */
-
     filter = new Contribution.Filter() {
       public boolean matches(Contribution contrib) {
         return contrib.getType() == contribType;
@@ -228,7 +216,7 @@ public class ContributionTab extends JPanel {
     StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
     doc.setParagraphAttributes(0, doc.getLength(), center, false);
 
-    closeButton = new JButton(Toolkit.getLibIconX("manager/close"));
+    closeButton = Toolkit.createIconButton("manager/close");
     closeButton.setContentAreaFilled(false);
     closeButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -354,7 +342,6 @@ public class ContributionTab extends JPanel {
 
   //TODO: this is causing a lot of bugs as the hint is wrongly firing applyFilter()
   class FilterField extends JTextField {
-    Icon searchIcon;
     List<String> filters;
     JLabel filterLabel;
 
@@ -366,11 +353,8 @@ public class ContributionTab extends JPanel {
       filterLabel.setOpaque(false);
 
       setFont(Toolkit.getSansFont(14, Font.PLAIN));
-      searchIcon = Toolkit.getLibIconX("manager/search");
-      filterLabel.setIcon(searchIcon);
-      //searchIcon = new ImageIcon(java.awt.Toolkit.getDefaultToolkit().getImage("NSImage://NSComputerTemplate"));
+      filterLabel.setIcon(Toolkit.getLibIconX("manager/search"));
       setOpaque(false);
-      //setBorder(BorderFactory.createMatteBorder(0, 33, 0, 0, searchIcon));
 
       GroupLayout fl = new GroupLayout(this);
       setLayout(fl);
@@ -387,13 +371,11 @@ public class ContributionTab extends JPanel {
       addFocusListener(new FocusListener() {
         public void focusLost(FocusEvent focusEvent) {
           if (getText().isEmpty()) {
-//            setBorder(BorderFactory.createMatteBorder(0, 33, 0, 0, searchIcon));
             filterLabel.setVisible(true);
           }
         }
 
         public void focusGained(FocusEvent focusEvent) {
-//          setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 0));
           filterLabel.setVisible(false);
         }
       });

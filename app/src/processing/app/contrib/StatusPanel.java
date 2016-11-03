@@ -104,8 +104,8 @@ class StatusPanel extends JPanel {
         }
       }
     });
-    installButton = new JButton("Install", installIcon);
-    installButton.setDisabledIcon(installIcon);
+    installButton = Toolkit.createIconButton("Install", installIcon);
+    //installButton.setDisabledIcon(installIcon);
     installButton.setFont(buttonFont);
     installButton.setHorizontalAlignment(SwingConstants.LEFT);
     installButton.addActionListener(new ActionListener() {
@@ -126,8 +126,7 @@ class StatusPanel extends JPanel {
     updateLabel.setFont(buttonFont);
     updateLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-    updateButton = new JButton("Update", updateIcon);
-    updateButton.setDisabledIcon(updateIcon);
+    updateButton = Toolkit.createIconButton("Update", updateIcon);
     updateButton.setFont(buttonFont);
     updateButton.setHorizontalAlignment(SwingConstants.LEFT);
     updateButton.addActionListener(new ActionListener() {
@@ -140,8 +139,7 @@ class StatusPanel extends JPanel {
       }
     });
 
-    removeButton = new JButton("Remove", removeIcon);
-    removeButton.setDisabledIcon(removeIcon);
+    removeButton = Toolkit.createIconButton("Remove", removeIcon);
     removeButton.setFont(buttonFont);
     removeButton.setHorizontalAlignment(SwingConstants.LEFT);
     removeButton.addActionListener(new ActionListener() {

@@ -57,7 +57,9 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -517,6 +519,20 @@ public class Toolkit {
       /*
       @Override
       public Image getImage() {
+        //javax.swing.LookAndFeel -> creates a synthetic disabled icon
+        //com.apple.laf.AquaButtonUI
+        new Exception().printStackTrace();
+        return super.getImage();
+      }
+
+      private Image getImageImpl() {
+        return super.getImage();
+      }
+      */
+
+      /*
+      @Override
+      public Image getImage() {
         Image actual = super.getImage();
 
         return new Image() {
@@ -573,6 +589,33 @@ public class Toolkit {
   static public ImageIcon getLibIconX(String base, int size) {
     return getIconX(Platform.getContentFile("lib"), base, size);
   }
+
+
+  /**
+   * Create a JButton with an icon, and set its disabled and pressed images
+   * to be the same image, so that 2x versions of the icon work properly.
+   */
+  static public JButton createIconButton(String title, String base) {
+    ImageIcon icon = Toolkit.getLibIconX(base);
+    return createIconButton(title, icon);
+  }
+
+
+  /** Same as above, but with no text title (follows JButton constructor) */
+  static public JButton createIconButton(String base) {
+    return createIconButton(null, base);
+  }
+
+
+  static public JButton createIconButton(String title, Icon icon) {
+    JButton button = new JButton(title, icon);
+    button.setDisabledIcon(icon);
+    button.setPressedIcon(icon);
+    return button;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   static List<Image> iconImages;
