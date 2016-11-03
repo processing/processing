@@ -2,12 +2,6 @@
 X ensure that update.id is set before checking for contrib updates
 X if prettyVersion is blank (or null?), just use version (Firmata)
 
-      // Use the version number if they've left the prettyVersion field blank
-      if (prettyVersion == null || prettyVersion.length() == 0) {
-        prettyVersion = Integer.toString(version);
-      }
-
-
 contribs
 _ 'version' should be x.y or x.y.z, not some extra long string
 _   enforce this by disallowing spaces? on the import script?
@@ -23,6 +17,8 @@ _   https://github.com/processing/processing/issues/4708
 
 _ clicking "Update" button in contrib manager shows non-retina version of icon
 _   https://github.com/processing/processing/issues/4715
+_   problem is because AquaButtonUI is calling getImage() (not getIcon())
+_   can be debugging from inside the getIconX() code in Toolkit
 
 _ library compilations handled oddly
 _   https://github.com/processing/processing/issues/4630
