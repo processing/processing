@@ -83,6 +83,11 @@ public class UpdateCheck {
   }
 
 
+  /**
+   * Turned into a separate method so that anyone needed update.id will get
+   * a legit answer. Had a problem with the contribs script where the id
+   * wouldn't be set so a null id would be sent to the contribs server.
+   */
   static public long getUpdateID() {
     // generate a random id in case none exists yet
     Random r = new Random();
