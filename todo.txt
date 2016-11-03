@@ -8,6 +8,10 @@ o   can be debugging from inside the getIconX() code in Toolkit
 X   just needed to use setPressedIcon(), setDisabledIcon()
 X   also found some other issues around the icon handling
 X fix the library reporting scripts on the server
+X missing version number putting 'null' in the ui
+X   https://github.com/processing/processing-docs/issues/478
+X   https://github.com/processing/processing/issues/4696
+X   https://github.com/processing/processing/pull/4712
 
 contribs
 X Up-to-date status disappears after filter is removed
@@ -32,10 +36,6 @@ _   https://github.com/processing/processing/issues/4708
 
 _ library compilations handled oddly
 _   https://github.com/processing/processing/issues/4630
-_ missing version number putting 'null' in the ui
-_   https://github.com/processing/processing-docs/issues/478
-_   https://github.com/processing/processing/issues/4696
-_   https://github.com/processing/processing/pull/4712
 
 _ editor windows always open on display 1
 _   https://github.com/processing/processing/issues/1566
