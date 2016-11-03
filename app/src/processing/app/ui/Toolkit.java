@@ -502,6 +502,7 @@ public class Toolkit {
 //      System.err.println("does not exist: " + file);
       return null;
     }
+
     ImageIcon outgoing = new ImageIcon(file.getAbsolutePath()) {
       @Override
       public int getIconWidth() {
@@ -512,6 +513,40 @@ public class Toolkit {
       public int getIconHeight() {
         return super.getIconHeight() / scale;
       }
+
+      /*
+      @Override
+      public Image getImage() {
+        Image actual = super.getImage();
+
+        return new Image() {
+          @Override
+          public int getWidth(ImageObserver observer) {
+            return actual.getWidth(observer) / scale;
+          }
+
+          @Override
+          public int getHeight(ImageObserver observer) {
+            return actual.getHeight(observer) / scale;
+          }
+
+          @Override
+          public ImageProducer getSource() {
+            return actual.getSource();
+          }
+
+          @Override
+          public Graphics getGraphics() {
+            return actual.getGraphics();
+          }
+
+          @Override
+          public Object getProperty(String name, ImageObserver observer) {
+            return actual.getProperty(filename, observer);
+          }
+        };
+      }
+      */
 
       @Override
       public synchronized void paintIcon(Component c, Graphics g, int x, int y) {
