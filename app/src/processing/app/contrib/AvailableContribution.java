@@ -61,10 +61,7 @@ public class AvailableContribution extends Contribution {
       version = PApplet.parseInt(versionStr, 0);
     }
 
-    prettyVersion = params.get("prettyVersion");
-    if (prettyVersion != null && prettyVersion.length() == 0) {
-      prettyVersion = null;
-    }
+    setPrettyVersion(params.get("prettyVersion"));
 
     String lastUpdatedStr = params.get("lastUpdated");
     if (lastUpdatedStr != null) {
@@ -337,7 +334,9 @@ public class AvailableContribution extends Contribution {
         writer.println("sentence=" + sentence);
         writer.println("paragraph=" + paragraph);
         writer.println("version=" + version);
-        writer.println("prettyVersion=" + prettyVersion);
+        if (prettyVersion != null) {
+          writer.println("prettyVersion=" + prettyVersion);
+        }
         writer.println("lastUpdated=" + lastUpdated);
         writer.println("minRevision=" + minRev);
         writer.println("maxRevision=" + maxRev);

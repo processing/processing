@@ -7,6 +7,7 @@ o   problem is because AquaButtonUI is calling getImage() (not getIcon())
 o   can be debugging from inside the getIconX() code in Toolkit
 X   just needed to use setPressedIcon(), setDisabledIcon()
 X   also found some other issues around the icon handling
+X fix the library reporting scripts on the server
 
 contribs
 X Up-to-date status disappears after filter is removed
@@ -26,7 +27,6 @@ _   https://github.com/processing/processing/issues/4705
 _   could provide script to un-quarrantine
 _   xattr -d -r com.apple.quarantine
 
-_ fix the library reporting scripts on the server
 _ sharing usage metrics about libraries
 _   https://github.com/processing/processing/issues/4708
 

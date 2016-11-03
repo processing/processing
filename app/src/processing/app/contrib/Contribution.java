@@ -158,6 +158,17 @@ abstract public class Contribution {
   }
 
 
+  public void setPrettyVersion(String pretty) {
+    if (pretty != null) {
+      // some entries were written as "null", causing that to show in the ui
+      if (pretty.equals("null") || pretty.length() == 0) {
+        pretty = null;
+      }
+    }
+    prettyVersion = pretty;
+  }
+
+
   // "1.0.2" or null if not present
   public String getPrettyVersion() {
     return prettyVersion;
