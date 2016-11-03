@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013-15 The Processing Foundation
+  Copyright (c) 2013-16 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -284,13 +284,6 @@ class StatusPanel extends JPanel {
     } else {
       latestVersion = "Update";
     }
-
-    // why was this here? [fry 161103]
-    /*
-    if (currentVersion == null) {
-      currentVersion = "";
-    }
-    */
 
     if (updateButton.isEnabled()) {
       updateButton.setText(latestVersion);
