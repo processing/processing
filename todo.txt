@@ -1,4 +1,5 @@
 0255 (3.2.3 or 3.3)
+X ensure that update.id is set before checking for contrib updates
 X if prettyVersion is blank (or null?), just use version (Firmata)
 
       // Use the version number if they've left the prettyVersion field blank

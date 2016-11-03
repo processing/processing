@@ -827,7 +827,7 @@ public class Base {
       entries.append(entry);
     }
     String joined =
-      "id=" + Preferences.get("update.id") + "&" + entries.join("&");
+      "id=" + UpdateCheck.getUpdateID() + "&" + entries.join("&");
 //    StringBuilder sb = new StringBuilder();
 //    try {
 //      // Truly ridiculous attempt to shove everything into a GET request.
