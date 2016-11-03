@@ -1,6 +1,11 @@
 0255 (3.2.3 or 3.3)
 
 
+andres
+X automatic detection of POINT and LINE shaders fails
+X   https://github.com/processing/processing/issues/4725
+
+
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
 _   https://github.com/processing/processing/issues/4678
 

@@ -1,5 +1,12 @@
 0255 (3.2.3 or 3.3)
+X if prettyVersion is blank (or null?), just use version (Firmata)
 
+
+contribs
+_ 'version' should be x.y or x.y.z, not some extra long string
+_   enforce this by disallowing spaces? on the import script?
+_ why is the updates panel completely empty?
+_   was there already a bug filed for this?
 
 _ Application Exports report as "Damaged" on macOS Sierra
 _   https://github.com/processing/processing/issues/4705

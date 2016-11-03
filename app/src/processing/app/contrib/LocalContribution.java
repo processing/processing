@@ -86,7 +86,11 @@ public abstract class LocalContribution extends Contribution {
         System.err.println("Please contact the library author to fix it according to the guidelines.");
       }
 
+      // Use the version number if they've left the prettyVersion field blank
       prettyVersion = properties.get("prettyVersion");
+      if (prettyVersion == null || prettyVersion.length() == 0) {
+        prettyVersion = Integer.toString(version);
+      }
 
       try {
         lastUpdated = Long.parseLong(properties.get("lastUpdated"));
