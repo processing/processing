@@ -839,6 +839,10 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void setFrameRate(float fps) {
+    if (fps < 1) {
+      PGraphics.showWarning("The OpenGL renderers cannot have a frame rate lower than 1.\nYour sketch will run at 1 frame per second.");
+      fps = 1;
+    }
     if (animator != null) {
       animator.stop();
       animator.setFPS((int)fps);
