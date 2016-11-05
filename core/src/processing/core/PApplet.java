@@ -1194,6 +1194,7 @@ public class PApplet implements PConstants {
   *
   */
   public void pixelDensity(int density) {
+    println(density + " " + this.pixelDensity);
     if (density != this.pixelDensity) {
       if (insideSettings("pixelDensity", density)) {
         if (density != 1 && density != 2) {
@@ -1205,6 +1206,11 @@ public class PApplet implements PConstants {
         } else {
           this.pixelDensity = density;
         }
+      } else {
+        System.err.println("not inside settings");
+        // this should only be reachable when not running in the PDE,
+        // so saying it's a settings()--not just setup()--issue should be ok
+        throw new RuntimeException("pixelDensity() can only be used inside settings()");
       }
     }
   }

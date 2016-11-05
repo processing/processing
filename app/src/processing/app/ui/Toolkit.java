@@ -900,7 +900,8 @@ public class Toolkit {
 
   static public String getMonoFontName() {
     if (monoFont == null) {
-      getMonoFont(12, Font.PLAIN);  // load a dummy version
+      // create a dummy version if the font has never been loaded (rare)
+      getMonoFont(12, Font.PLAIN);
     }
     return monoFont.getName();
   }
@@ -947,6 +948,15 @@ public class Toolkit {
         return monoFont.deriveFont((float) size);
       }
     }
+  }
+
+
+  static public String getSansFontName() {
+    if (sansFont == null) {
+      // create a dummy version if the font has never been loaded (rare)
+      getSansFont(12, Font.PLAIN);
+    }
+    return sansFont.getName();
   }
 
 

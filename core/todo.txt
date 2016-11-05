@@ -4,6 +4,8 @@
 andres
 X automatic detection of POINT and LINE shaders fails
 X   https://github.com/processing/processing/issues/4725
+X show warning when frameRate() less than 1 is called with P2D and P3D
+X   https://github.com/processing/processing/issues/4716
 
 
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer

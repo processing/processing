@@ -12,6 +12,9 @@ X missing version number putting 'null' in the ui
 X   https://github.com/processing/processing-docs/issues/478
 X   https://github.com/processing/processing/issues/4696
 X   https://github.com/processing/processing/pull/4712
+o replace appbundler with the Java 8 packager
+o   appbundler is no longer being developed by Oracle, switch to "packager"
+X   https://github.com/processing/processing/issues/3071
 
 contribs
 X Up-to-date status disappears after filter is removed
@@ -21,6 +24,15 @@ X   https://github.com/processing/processing/issues/4082
 X   https://github.com/processing/processing/issues/4704
 X Fixes the removal of redundant contribution and update related issues
 X   https://github.com/processing/processing/pull/4086
+
+_ fix appbundler problems due to rollback
+_   https://github.com/processing/processing/issues/3790
+_   the rollback re-introduces two bugs (serial export and scrolling)
+_   and any other changes later than 16 November 2014:
+_   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
+_   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
+_   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
+_   https://bitbucket.org/infinitekind/appbundler
 
 
 _ 'version' should be x.y or x.y.z, not some extra long string
@@ -916,16 +928,6 @@ DIST / Mac OS X
 _ client properties 
 _   https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html
 _ built-in images: http://nadeausoftware.com/articles/2008/12/mac_java_tip_how_access_mac_specific_nsimage_icons
-_ replace appbundler with the Java 8 packager
-_   https://github.com/processing/processing/issues/3071
-_ fix appbundler problems due to rollback
-_   https://github.com/processing/processing/issues/3790
-_   appbundler is no longer being developed by Oracle, switch to "packager"
-_   this re-introduces two bugs (serial export and scrolling)
-_   and any other changes later than 16 November 2014:
-_   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
-_   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
-_   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
 _ Update QuickLook plugin for Processing 3
 _   https://github.com/processing/processing/issues/3261
 _ Find a long-term solution for OS X bundler to address signing/symlink issues

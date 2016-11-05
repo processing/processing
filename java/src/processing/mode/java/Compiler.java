@@ -211,8 +211,8 @@ public class Compiler {
             String suggestion = importSuggestions.get(what);
             if (suggestion != null) {
               System.err.println("You may need to add \"import " + suggestion + ";\" to the top of your sketch.");
-              System.err.println("To make sketches more portable, imports that are not part of the Processing API have been removed from Processing 2.0.");
-              System.err.println("See the changes page for more information: http://wiki.processing.org/w/Changes");
+              System.err.println("To make sketches more portable, imports that are not part of the Processing API were removed in Processing 2.");
+              System.err.println("See the changes page for more information: https://github.com/processing/processing/wiki/Changes");
             }
           }
 
