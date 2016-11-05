@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013-15 The Processing Foundation
+  Copyright (c) 2013-16 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -48,22 +48,16 @@ import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
 
-// TODO clean up accessors (too many cases of several de-references for basic tasks
-// TODO hyperlink listener seems far too complicated for what it does,
-//      and why have a 'null' version rather than detecting whether selected or not
 // TODO don't add/remove listeners for install/remove/undo based on function,
 //      just keep track of current behavior and call that. too many things can go wrong.
 // TODO get rid of huge actionPerformed() blocks with anonymous classes,
 //      just make handleInstall(), etc methods and a single actionPerformed
 //      for the button that calls the necessary behavior (see prev note)
-// TODO switch to the built-in fonts (available from Toolkit) rather than verdana et al
 
 /**
  * Panel that expands and gives a brief overview of a library when clicked.
  */
 class DetailPanel extends JPanel {
-  Base base;
-
   static public final String REMOVE_RESTART_MESSAGE =
     String.format("<i>%s</i>", Language.text("contrib.messages.remove_restart"));
 
@@ -102,7 +96,7 @@ class DetailPanel extends JPanel {
 
   private boolean alreadySelected;
   private boolean enableHyperlinks;
-  private HyperlinkListener conditionalHyperlinkOpener;
+  //private HyperlinkListener conditionalHyperlinkOpener;
   private JTextPane descriptionPane;
   private JLabel notificationLabel;
   private JButton updateButton;
@@ -131,21 +125,7 @@ class DetailPanel extends JPanel {
     }
 
     listPanel = contributionListPanel;
-    // TODO this accessor is dreadful
-    base = listPanel.contributionTab.editor.getBase();
     barButtonCardPane = new JPanel();
-
-    enableHyperlinks = false;
-    alreadySelected = false;
-    conditionalHyperlinkOpener = new HyperlinkListener() {
-      public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          if (enableHyperlinks && e.getURL() != null) {
-            Platform.openURL(e.getURL().toString());
-          }
-        }
-      }
-    };
 
     installActionListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -238,6 +218,20 @@ class DetailPanel extends JPanel {
 
     descriptionPane.setBorder(new EmptyBorder(4, 7, 7, 7));
     descriptionPane.setHighlighter(null);
+    descriptionPane.addHyperlinkListener(new HyperlinkListener() {
+      public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          // for 3.2.3, added the isSelected() prompt here, rather than
+          // adding/removing the listener repeatedly
+          if (isSelected()) {
+            if (enableHyperlinks && e.getURL() != null) {
+              Platform.openURL(e.getURL().toString());
+            }
+          }
+        }
+      }
+    });
+
     add(descriptionPane, BorderLayout.CENTER);
 
     JPanel updateBox = new JPanel();
@@ -642,7 +636,7 @@ class DetailPanel extends JPanel {
         }
       };
 
-      ContributionManager.downloadAndInstall(base, downloadUrl, ad,
+      ContributionManager.downloadAndInstall(getBase(), downloadUrl, ad,
                                              downloadProgress, installProgress,
                                              getStatusPanel());
 
@@ -663,9 +657,11 @@ class DetailPanel extends JPanel {
   }
 
 
+  /*
   static final HyperlinkListener NULL_HYPERLINK_LISTENER = new HyperlinkListener() {
     public void hyperlinkUpdate(HyperlinkEvent e) { }
   };
+  */
 
 
   /**
@@ -686,6 +682,7 @@ class DetailPanel extends JPanel {
     installRemoveButton.setEnabled(installRemoveButton.getText().equals(Language.text("contrib.remove")) ||!contribListing.hasListDownloadFailed());
     reorganizePaneComponents();
 
+    /*
     descriptionPane.removeHyperlinkListener(NULL_HYPERLINK_LISTENER);
     descriptionPane.removeHyperlinkListener(conditionalHyperlinkOpener);
     if (isSelected()) {
@@ -695,6 +692,7 @@ class DetailPanel extends JPanel {
       descriptionPane.addHyperlinkListener(NULL_HYPERLINK_LISTENER);
 //      descriptionPane.setEditable(true);
     }
+    */
 
     // Update style of hyperlinks
     setSelectionStyle(descriptionPane, isSelected());
@@ -855,17 +853,7 @@ class DetailPanel extends JPanel {
             contribListing.replaceContribution(contrib, contrib);
           }
 
-          boolean isModeActive = false;
-          if (contrib.getType() == ContributionType.MODE) {
-            ModeContribution m = (ModeContribution) contrib;
-            for (Editor e : base.getEditors()) {
-              if (e.getMode().equals(m.getMode())) {
-                isModeActive = true;
-                break;
-              }
-            }
-          }
-          if (isModeActive) {
+          if (isModeActive(contrib)) {
             updateButton.setEnabled(true);
           } else {
             // TODO: remove or uncomment if the button was added
@@ -873,7 +861,7 @@ class DetailPanel extends JPanel {
           }
         }
       };
-      getLocalContrib().removeContribution(base, progress, getStatusPanel());
+      getLocalContrib().removeContribution(getBase(), progress, getStatusPanel());
     } else {
       updateButton.setEnabled(false);
       installRemoveButton.setEnabled(false);
@@ -881,7 +869,6 @@ class DetailPanel extends JPanel {
         contribListing.getAvailableContribution(contrib);
       installContribution(ad, ad.link);
     }
-
   }
 
 
@@ -912,17 +899,7 @@ class DetailPanel extends JPanel {
         public void cancelAction() {
           preAction();
 
-          boolean isModeActive = false;
-          if (contrib.getType() == ContributionType.MODE) {
-            ModeContribution m = (ModeContribution) contrib;
-            for (Editor e : base.getEditors()) {
-              if (e.getMode().equals(m.getMode())) {
-                isModeActive = true;
-                break;
-              }
-            }
-          }
-          if (isModeActive) {
+          if (isModeActive(contrib)) {
             updateButton.setEnabled(true);
           } else {
             // TODO: remove or uncomment if the button was added
@@ -930,14 +907,38 @@ class DetailPanel extends JPanel {
           }
         }
       };
-      getLocalContrib().removeContribution(base, monitor, getStatusPanel());
+      getLocalContrib().removeContribution(getBase(), monitor, getStatusPanel());
     }
   }
 
 
-  // TODO this is gross [fry 161105]
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  // Can't be called from the constructor because the path isn't set all the
+  // way down. However, it's not Base changes over time. More importantly,
+  // though, is that the functions being called in Base are somewhat suspect
+  // since they're contribution-related, and should perhaps live closer.
+  private Base getBase() {
+    return listPanel.contributionTab.editor.getBase();
+  }
+
+
+  private boolean isModeActive(Contribution contrib) {
+    if (contrib.getType() == ContributionType.MODE) {
+      ModeContribution m = (ModeContribution) contrib;
+      for (Editor e : getBase().getEditors()) {
+        if (e.getMode().equals(m.getMode())) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+
   private StatusPanel getStatusPanel() {
-    return listPanel.contributionTab.statusPanel;
+    return listPanel.contributionTab.statusPanel;  // TODO this is gross [fry]
   }
 
 
