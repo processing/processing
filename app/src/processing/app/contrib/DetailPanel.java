@@ -96,6 +96,10 @@ class DetailPanel extends JPanel {
     return contrib;
   }
 
+  private LocalContribution getLocalContrib() {
+    return (LocalContribution) contrib;
+  }
+
   private boolean alreadySelected;
   private boolean enableHyperlinks;
   private HyperlinkListener conditionalHyperlinkOpener;
@@ -151,9 +155,9 @@ class DetailPanel extends JPanel {
 
     undoActionListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        listPanel.contributionTab.statusPanel.clearMessage();
+        clearStatusMessage();
         if (contrib instanceof LocalContribution) {
-          LocalContribution installed = (LocalContribution) contrib;
+          LocalContribution installed = getLocalContrib();
           installed.setDeletionFlag(false);
           contribListing.replaceContribution(contrib, contrib);  // ??
           Iterator<Contribution> contribsListIter = contribListing.allContributions.iterator();
@@ -204,9 +208,8 @@ class DetailPanel extends JPanel {
         if (contrib.isCompatible(Base.getRevision())) {
           listPanel.setSelectedPanel(DetailPanel.this);
         } else {
-          final String msg = contrib.getName()
-            + " is not compatible with this version of Processing";
-          listPanel.contributionTab.statusPanel.setErrorMessage(msg);
+          setErrorMessage(contrib.getName() +
+                          " cannot be used with this version of Processing");
         }
       }
     });
@@ -557,10 +560,28 @@ class DetailPanel extends JPanel {
 
   private void installContribution(AvailableContribution info) {
     if (info.link == null) {
-      listPanel.contributionTab.statusPanel.setErrorMessage(Language.interpolate("contrib.unsupported_operating_system", info.getType()));
+      setErrorMessage(Language.interpolate("contrib.unsupported_operating_system", info.getType()));
     } else {
       installContribution(info, info.link);
     }
+  }
+
+
+  private void finishInstall(boolean error) {
+    // Finished installing library
+    resetInstallProgressBarState();
+    installRemoveButton.setEnabled(!contrib.isUpdateFlagged());
+
+    if (error) {
+      setErrorMessage(Language.text("contrib.download_error"));
+    }
+    barButtonCardLayout.show(barButtonCardPane, BUTTON_CONSTRAINT);
+    installInProgress = false;
+    if (updateInProgress) {
+      updateInProgress = !updateInProgress;
+    }
+    updateButton.setVisible(contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
+    setSelected(true);
   }
 
 
@@ -577,6 +598,8 @@ class DetailPanel extends JPanel {
         }
 
         public void cancelAction() {
+          finishInstall(false);
+          /*
           // Finished installing library
           resetInstallProgressBarState();
           installRemoveButton.setEnabled(!contrib.isUpdateFlagged());
@@ -588,15 +611,19 @@ class DetailPanel extends JPanel {
           }
           updateButton.setVisible(contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
           setSelected(true);
+          */
         }
       };
 
       ContribProgressBar installProgress = new ContribProgressBar(installProgressBar) {
         public void finishedAction() {
+          finishInstall(isError());
+          /*
           // Finished installing library
           resetInstallProgressBarState();
           installRemoveButton.setEnabled(!contrib.isUpdateFlagged());
 
+          // fwiw, this block wasn't part of the cancelAction() code
           if (isError()) {
             listPanel.contributionTab.statusPanel.setErrorMessage(Language.text("contrib.download_error"));
           }
@@ -607,6 +634,7 @@ class DetailPanel extends JPanel {
           }
           updateButton.setVisible(contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
           setSelected(true);
+          */
         }
 
         public void cancelAction() {
@@ -616,7 +644,7 @@ class DetailPanel extends JPanel {
 
       ContributionManager.downloadAndInstall(base, downloadUrl, ad,
                                              downloadProgress, installProgress,
-                                             listPanel.contributionTab.statusPanel);
+                                             getStatusPanel());
 
     } catch (MalformedURLException e) {
       Messages.showWarning(Language.text("contrib.errors.install_failed"),
@@ -785,7 +813,7 @@ class DetailPanel extends JPanel {
 
 
   public void install() {
-    listPanel.contributionTab.statusPanel.clearMessage();
+    clearStatusMessage();
     installInProgress = true;
     barButtonCardLayout.show(barButtonCardPane, PROGRESS_BAR_CONSTRAINT);
     if (contrib instanceof AvailableContribution) {
@@ -796,7 +824,7 @@ class DetailPanel extends JPanel {
 
 
   public void update() {
-    listPanel.contributionTab.statusPanel.clearMessage();
+    clearStatusMessage();
     updateInProgress = true;
     if (contrib.getType().requiresRestart()) {
       installRemoveButton.setEnabled(false);
@@ -817,13 +845,14 @@ class DetailPanel extends JPanel {
         @Override
         public void cancelAction() {
           resetInstallProgressBarState();
-          listPanel.contributionTab.statusPanel.setMessage("");
+          //listPanel.contributionTab.statusPanel.setMessage("");
+          clearStatusMessage();
           updateInProgress = false;
           installRemoveButton.setEnabled(true);
           if (contrib.isDeletionFlagged()) {
-            ((LocalContribution)contrib).setUpdateFlag(true);
-            ((LocalContribution)contrib).setDeletionFlag(false);
-            contribListing.replaceContribution(contrib,contrib);
+            getLocalContrib().setUpdateFlag(true);
+            getLocalContrib().setDeletionFlag(false);
+            contribListing.replaceContribution(contrib, contrib);
           }
 
           boolean isModeActive = false;
@@ -844,58 +873,49 @@ class DetailPanel extends JPanel {
           }
         }
       };
-      ((LocalContribution) contrib)
-        .removeContribution(base,  progress, listPanel.contributionTab.statusPanel);
+      getLocalContrib().removeContribution(base, progress, getStatusPanel());
     } else {
       updateButton.setEnabled(false);
       installRemoveButton.setEnabled(false);
-      AvailableContribution ad = contribListing.getAvailableContribution(contrib);
-      String url = ad.link;
-      installContribution(ad, url);
+      AvailableContribution ad =
+        contribListing.getAvailableContribution(contrib);
+      installContribution(ad, ad.link);
     }
 
   }
 
 
   public void remove() {
-
-    listPanel.contributionTab.statusPanel.clearMessage();
+    clearStatusMessage();
     if (contrib.isInstalled() && contrib instanceof LocalContribution) {
       removeInProgress = true;
-      ((CardLayout) barButtonCardPane.getLayout()).show(barButtonCardPane, PROGRESS_BAR_CONSTRAINT);
+      barButtonCardLayout.show(barButtonCardPane, PROGRESS_BAR_CONSTRAINT);
       updateButton.setEnabled(false);
       installRemoveButton.setEnabled(false);
       installProgressBar.setVisible(true);
       installProgressBar.setIndeterminate(true);
 
       ContribProgressBar monitor = new ContribProgressBar(installProgressBar) {
-        public void finishedAction() {
-          // Finished uninstalling the library
+        private void preAction() {
           resetInstallProgressBarState();
           removeInProgress = false;
           installRemoveButton.setEnabled(true);
-
           reorganizePaneComponents();
           setSelected(true); // Needed for smooth working. Dunno why, though...
         }
 
+        public void finishedAction() {
+          // Finished uninstalling the library
+          preAction();
+        }
+
         public void cancelAction() {
-          resetInstallProgressBarState();
-          removeInProgress = false;
-          installRemoveButton.setEnabled(true);
+          preAction();
 
-          reorganizePaneComponents();
-          setSelected(true);
-
-          ContributionTab contributionTab = listPanel.contributionTab;
           boolean isModeActive = false;
           if (contrib.getType() == ContributionType.MODE) {
             ModeContribution m = (ModeContribution) contrib;
-            // TODO there's gotta be a cleaner way to do this accessor
-            for (Editor e : contributionTab.editor.getBase().getEditors()) {
-            //Iterator<Editor> iter = listPanel.contribManager.editor.getBase().getEditors().iterator();
-            //while (iter.hasNext()) {
-              //Editor e = iter.next();
+            for (Editor e : base.getEditors()) {
               if (e.getMode().equals(m.getMode())) {
                 isModeActive = true;
                 break;
@@ -910,10 +930,23 @@ class DetailPanel extends JPanel {
           }
         }
       };
-      ContributionTab contributionTab = listPanel.contributionTab;
-      LocalContribution localContrib = (LocalContribution) contrib;
-      localContrib.removeContribution(contributionTab.editor.getBase(), monitor, contributionTab.statusPanel);
+      getLocalContrib().removeContribution(base, monitor, getStatusPanel());
     }
+  }
 
+
+  // TODO this is gross [fry 161105]
+  private StatusPanel getStatusPanel() {
+    return listPanel.contributionTab.statusPanel;
+  }
+
+
+  private void clearStatusMessage() {
+    getStatusPanel().clearMessage();
+  }
+
+
+  private void setErrorMessage(String message) {
+    getStatusPanel().setErrorMessage(message);
   }
 }
