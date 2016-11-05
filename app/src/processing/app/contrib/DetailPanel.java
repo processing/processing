@@ -48,10 +48,6 @@ import processing.app.ui.Editor;
 import processing.app.ui.Toolkit;
 
 
-// TODO get rid of huge actionPerformed() blocks with anonymous classes,
-//      just make handleInstall(), etc methods and a single actionPerformed
-//      for the button that calls the necessary behavior (see prev note)
-
 /**
  * Panel that expands and gives a brief overview of a library when clicked.
  */
@@ -124,10 +120,6 @@ class DetailPanel extends JPanel {
 
     listPanel = contributionListPanel;
     barButtonCardPane = new JPanel();
-
-//    installText = Language.text("contrib.install");
-//    removeText = Language.text("contrib.remove");
-//    undoText = Language.text("contrib.undo");
 
     contextMenu = new JPopupMenu();
     openFolder = new JMenuItem("Open Folder");
@@ -558,47 +550,17 @@ class DetailPanel extends JPanel {
 
       ContribProgressBar downloadProgress = new ContribProgressBar(installProgressBar) {
         public void finishedAction() {
-          // Finished downloading library
+          // nothing?
         }
 
         public void cancelAction() {
           finishInstall(false);
-          /*
-          // Finished installing library
-          resetInstallProgressBarState();
-          installRemoveButton.setEnabled(!contrib.isUpdateFlagged());
-
-          barButtonCardLayout.show(barButtonCardPane, BUTTON_CONSTRAINT);
-          installInProgress = false;
-          if (updateInProgress) {
-            updateInProgress = !updateInProgress;
-          }
-          updateButton.setVisible(contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
-          setSelected(true);
-          */
         }
       };
 
       ContribProgressBar installProgress = new ContribProgressBar(installProgressBar) {
         public void finishedAction() {
           finishInstall(isError());
-          /*
-          // Finished installing library
-          resetInstallProgressBarState();
-          installRemoveButton.setEnabled(!contrib.isUpdateFlagged());
-
-          // fwiw, this block wasn't part of the cancelAction() code
-          if (isError()) {
-            listPanel.contributionTab.statusPanel.setErrorMessage(Language.text("contrib.download_error"));
-          }
-          barButtonCardLayout.show(barButtonCardPane, BUTTON_CONSTRAINT);
-          installInProgress = false;
-          if (updateInProgress) {
-            updateInProgress = !updateInProgress;
-          }
-          updateButton.setVisible(contribListing.hasUpdates(contrib) && !contrib.isUpdateFlagged());
-          setSelected(true);
-          */
         }
 
         public void cancelAction() {
