@@ -36,6 +36,9 @@ _   https://github.com/processing/processing/commits/master/build/macosx/appbund
 _   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
 _   https://bitbucket.org/infinitekind/appbundler
 
+_ settings() present and pixelDensity() is in setup(), nothing set/no error
+_   https://github.com/processing/processing/issues/4703
+
 _ 'version' should be x.y or x.y.z, not some extra long string
 _   enforce this by disallowing spaces? on the import script?
 
@@ -695,6 +698,8 @@ _   e.g. ocd is broken in 0125 because of method signature changes
 
 PDE / Manager
 
+_ proper error handling when downloading contribs listing
+_   https://github.com/processing/processing/issues/4732
 _ update CM entries when sketchbook location changes
 _   https://github.com/processing/processing/issues/3927
 _ ugly white gap at the top of scroll bar

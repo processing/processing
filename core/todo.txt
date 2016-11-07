@@ -1,4 +1,5 @@
 0255 (3.2.3 or 3.3)
+_ add StringDict.Entry class for iterating
 
 
 andres
