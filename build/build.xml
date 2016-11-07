@@ -305,7 +305,7 @@
     <exec executable="git" dir="${examples.dir}">
       <arg line="pull" />
     </exec>
-
+   
     <antcall target="${platform}-dist" />
   </target>
 
@@ -382,9 +382,15 @@
       <fileset dir="${examples.dir}" />
     </copy>
 
-    <!-- removed ignoreerrors="true" for 3.0 release process -->
+    <!-- if we're creating a dist, the reference is required -->
+    <condition property="reference.ignorable" value="false" else="true">
+      <isset property="version" />
+    </condition>
+
+    <echo message="ref ignoreable? ${reference.ignorable}" />
     <get src="http://download.processing.org/reference.zip" 
-         dest="../java/reference.zip" 
+         dest="../java/reference.zip"
+         ignoreerrors="${reference.ignorable}"
          usetimestamp="true" />
 
     <unzip dest="${target.path}/modes/java" 
