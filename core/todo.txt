@@ -1,6 +1,4 @@
 0255 (3.2.3 or 3.3)
-_ add StringDict.Entry class for iterating
-
 
 andres
 X automatic detection of POINT and LINE shaders fails
@@ -8,6 +6,8 @@ X   https://github.com/processing/processing/issues/4725
 X show warning when frameRate() less than 1 is called with P2D and P3D
 X   https://github.com/processing/processing/issues/4716
 
+
+_ add StringDict.Entry class for iterating
 
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
 _   https://github.com/processing/processing/issues/4678

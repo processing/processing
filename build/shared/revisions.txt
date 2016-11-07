@@ -1,3 +1,59 @@
+PROCESSING 3.2.3 (REV 0255) - 7 November 2016
+
+Lots of fixes to the Contribution Manager and a couple OpenGL tweaks.
+
+
+[ contributions manager ]
+
++ If prettyVersion isn't present, just use version number
+
++ Ensure that update.id is set before checking for contrib updates
+
++ Clicking "Update" button in contrib manager shows non-retina version of icon
+  https://github.com/processing/processing/issues/4715
+  Other instances of the double-size icon found, should be fixed now
+
++ Fix the library reporting scripts on the server
+
++ Missing version number putting 'null' in the UI
+  https://github.com/processing/processing-docs/issues/478
+  https://github.com/processing/processing/issues/4696
+  https://github.com/processing/processing/pull/4712
+  
++ Major clean-ups to the Contribution Manager code
+
+
+[ contributions to the manager ]
+
++ Up-to-date status disappears after filter is removed (contributed)
+  https://github.com/processing/processing/issues/4084
+  
++ Updates tab blank after adding, removing, updating a contribution
+  https://github.com/processing/processing/issues/4082
+  https://github.com/processing/processing/issues/4704
+  
++ Fixes the removal of redundant contribution and update related issues
+  https://github.com/processing/processing/pull/4086
+
+
+[ another fix ]
+
++ Warn user to restart browser when it hangs on macOS
+  https://github.com/fathominfo/processing-p5js-mode/issues/4
+
+
+[ opengl improvements ]
+
++ Automatic detection of POINT and LINE shaders fails
+  https://github.com/processing/processing/issues/4725
+  
++ Show warning when frameRate() less than 1 is called with P2D and P3D
+  https://github.com/processing/processing/issues/4716
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.2.2 (REV 0254) - 30 October 2016
 
 Lots of bug fixes.

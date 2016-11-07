@@ -1,4 +1,4 @@
-0255 (3.2.3 or 3.3)
+0255 (3.2.3)
 X ensure that update.id is set before checking for contrib updates
 X if prettyVersion is blank (or null?), just use version (Firmata)
 X clicking "Update" button in contrib manager shows non-retina version of icon
@@ -27,6 +27,8 @@ X   https://github.com/processing/processing/issues/4082
 X   https://github.com/processing/processing/issues/4704
 X Fixes the removal of redundant contribution and update related issues
 X   https://github.com/processing/processing/pull/4086
+
+0256 (3.2.4 or 3.3)
 
 
 _ fix appbundler problems due to rollback
