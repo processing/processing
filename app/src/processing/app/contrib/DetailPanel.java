@@ -167,7 +167,7 @@ class DetailPanel extends JPanel {
     margin.bottom = 0;
     descriptionPane.setMargin(margin);
     descriptionPane.setContentType("text/html");
-    setTextStyle(descriptionPane);
+    setTextStyle(descriptionPane, "0.95em");
     descriptionPane.setOpaque(false);
     if (UIManager.getLookAndFeel().getID().equals("Nimbus")) {
       descriptionPane.setBackground(new Color(0, 0, 0, 0));
@@ -714,7 +714,7 @@ class DetailPanel extends JPanel {
   }
 
 
-  static void setTextStyle(JTextPane textPane) {
+  static void setTextStyle(JTextPane textPane, String fontSize) {
     Document doc = textPane.getDocument();
     if (doc instanceof HTMLDocument) {
       HTMLDocument html = (HTMLDocument) doc;
@@ -722,7 +722,7 @@ class DetailPanel extends JPanel {
       stylesheet.addRule("body { " +
                          "  margin: 0; padding: 0;" +
                          "  font-family: " + Toolkit.getSansFontName() + ", Arial, Helvetica, sans-serif;" +
-                         "  font-size: 100%;" + "font-size: 0.95em; " +
+                         "  font-size: 100%;" + "font-size: " + fontSize + "; " +
                          "}");
     }
   }

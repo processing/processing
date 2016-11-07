@@ -1,4 +1,6 @@
 0256 (3.2.4 or 3.3)
+X only require reference.zip (and internet connection) when building dist
+X set text style properly for Contribution Manager error message
 
 
 _ fix appbundler problems due to rollback

@@ -30,7 +30,6 @@ import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.text.*;
 
 import processing.app.*;
 import processing.app.ui.Editor;
@@ -200,21 +199,24 @@ public class ContributionTab extends JPanel {
     layout.setAutoCreateGaps(true);
     layout.setAutoCreateContainerGaps(true);
     errorPanel.setLayout(layout);
-//    errorPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
     errorMessage = new JTextPane();
     errorMessage.setEditable(false);
     errorMessage.setContentType("text/html");
-    errorMessage.setText("<html><body>Could not connect to the Processing server.<br>"
+    errorMessage.setText("<html><body><center>Could not connect to the Processing server.<br>"
       + "Contributions cannot be installed or updated without an Internet connection.<br>"
-      + "Please verify your network connection again, then try connecting again.</body></html>");
-    errorMessage.setFont(Toolkit.getSansFont(14, Font.PLAIN));
-    errorMessage.setMaximumSize(new Dimension(550, 50));
+      + "Please verify your network connection again, then try connecting again.</center></body></html>");
+    DetailPanel.setTextStyle(errorMessage, "1em");
+    Dimension dim = new Dimension(550, 60);
+    errorMessage.setMaximumSize(dim);
+    errorMessage.setMinimumSize(dim);
     errorMessage.setOpaque(false);
 
+    /*
     StyledDocument doc = errorMessage.getStyledDocument();
     SimpleAttributeSet center = new SimpleAttributeSet();
     StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
     doc.setParagraphAttributes(0, doc.getLength(), center, false);
+    */
 
     closeButton = Toolkit.createIconButton("manager/close");
     closeButton.setContentAreaFilled(false);
