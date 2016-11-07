@@ -1,3 +1,34 @@
+0255 (3.2.3)
+X ensure that update.id is set before checking for contrib updates
+X if prettyVersion is blank (or null?), just use version (Firmata)
+X clicking "Update" button in contrib manager shows non-retina version of icon
+X   https://github.com/processing/processing/issues/4715
+o   problem is because AquaButtonUI is calling getImage() (not getIcon())
+o   can be debugging from inside the getIconX() code in Toolkit
+X   just needed to use setPressedIcon(), setDisabledIcon()
+X   also found some other issues around the icon handling
+X fix the library reporting scripts on the server
+X missing version number putting 'null' in the ui
+X   https://github.com/processing/processing-docs/issues/478
+X   https://github.com/processing/processing/issues/4696
+X   https://github.com/processing/processing/pull/4712
+o replace appbundler with the Java 8 packager
+o   appbundler is no longer being developed by Oracle, switch to "packager"
+X   https://github.com/processing/processing/issues/3071
+X major clean-ups to the Contribution Manager code
+X warn user to restart browser when it hangs on macOS
+X   https://github.com/fathominfo/processing-p5js-mode/issues/4
+
+contribs
+X Up-to-date status disappears after filter is removed
+X   https://github.com/processing/processing/issues/4084
+X Updates tab blank after adding, removing, updating a contribution
+X   https://github.com/processing/processing/issues/4082
+X   https://github.com/processing/processing/issues/4704
+X Fixes the removal of redundant contribution and update related issues
+X   https://github.com/processing/processing/pull/4086
+
+
 0254 (3.2.2)
 X Find in reference for size() opens StringList.size()
 X   https://github.com/processing/processing/issues/4224
