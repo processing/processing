@@ -22,9 +22,11 @@
 
 package processing.app.platform;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 
 import com.apple.eio.FileManager;
 
@@ -61,6 +63,7 @@ public class MacPlatform extends DefaultPlatform {
       Messages.log("Error saving platform language: " + e.getMessage());
     }
   }
+
 
   public void initBase(Base base) {
     super.initBase(base);
@@ -125,6 +128,21 @@ public class MacPlatform extends DefaultPlatform {
 //  public boolean deleteFile(File file) throws IOException {
 //    return FileManager.moveToTrash(file);
 //  }
+
+
+  public void openURL(String url) throws Exception {
+    try {
+      Desktop.getDesktop().browse(new URI(url));
+    } catch (IOException e) {
+      // Deal with a situation where the browser hangs on macOS
+      // https://github.com/fathominfo/processing-p5js-mode/issues/4
+      if (e.getMessage().contains("Error code: -600")) {
+        throw new RuntimeException("Could not open the sketch, please restart your browser or computer");
+      } else {
+        throw e;
+      }
+    }
+  }
 
 
   /*

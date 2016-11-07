@@ -2579,6 +2579,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     Preferences.save();
   }
 
+
   /**
    * Set the title of the PDE window based on the current sketch, i.e.
    * something like "sketch_070752a - Processing 0126"
