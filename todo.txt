@@ -16,7 +16,7 @@ o replace appbundler with the Java 8 packager
 o   appbundler is no longer being developed by Oracle, switch to "packager"
 X   https://github.com/processing/processing/issues/3071
 X major clean-ups to the Contribution Manager code
-X Deal with a situation where the browser hangs on macOS
+X warn user to restart browser when it hangs on macOS
 X   https://github.com/fathominfo/processing-p5js-mode/issues/4
 
 contribs
