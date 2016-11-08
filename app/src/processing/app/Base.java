@@ -61,8 +61,8 @@ public class Base {
   /** Set true if this a proper release rather than a numbered revision. */
 
   /** True if heavy debugging error/log messages are enabled */
-  static public boolean DEBUG = false;
-//  static public boolean DEBUG = true;
+//  static public boolean DEBUG = false;
+  static public boolean DEBUG = true;
 
   static private boolean commandLine;
 
@@ -185,7 +185,6 @@ public class Base {
       // Get the sketchbook path, and make sure it's set properly
       locateSketchbookFolder();
 
-
       // Create a location for untitled sketches
       try {
         untitledFolder = Util.createTempFolder("untitled", "sketches", null);
@@ -196,9 +195,11 @@ public class Base {
                            "That's gonna prevent us from continuing.", e);
       }
 
-      Messages.log("about to create base..."); //$NON-NLS-1$
+      Messages.log("About to create Base..."); //$NON-NLS-1$
       try {
         final Base base = new Base(args);
+        Messages.log("Base() constructor succeeded");
+
         // Prevent more than one copy of the PDE from running.
         SingleInstance.startServer(base);
 
@@ -206,18 +207,18 @@ public class Base {
         // shows up on top, and doesn't prevent an editor window from opening.
         if (Preferences.getBoolean("welcome.show")) {
           final boolean prompt = sketchbookPrompt;
-          EventQueue.invokeLater(new Runnable() {
-            public void run() {
-              try {
-                new Welcome(base, prompt);
-              } catch (IOException e) {
-                Messages.showTrace("Unwelcoming",
-                                   "Please report this error to\n" +
-                                   "https://github.com/processing/processing/issues", e, false);
-              }
-            }
-          });
+//          EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+          try {
+            new Welcome(base, prompt);
+          } catch (IOException e) {
+            Messages.showTrace("Unwelcoming",
+                               "Please report this error to\n" +
+                               "https://github.com/processing/processing/issues", e, false);
+          }
         }
+//          });
+//        }
 
       } catch (Throwable t) {
         // Catch-all to pick up badness during startup.
@@ -229,7 +230,7 @@ public class Base {
         Messages.showTrace("We're off on the wrong foot",
                            "An error occurred during startup.", t, true);
       }
-      Messages.log("done creating base..."); //$NON-NLS-1$
+      Messages.log("Done creating Base..."); //$NON-NLS-1$
     }
   }
 
@@ -314,6 +315,8 @@ public class Base {
 
     // Check if any files were passed in on the command line
     for (int i = 0; i < args.length; i++) {
+      Messages.logf("Parsing command line... args[%d] = '%s'", i, args[i]);
+
       String path = args[i];
       // Fix a problem with systems that use a non-ASCII languages. Paths are
       // being passed in with 8.3 syntax, which makes the sketch loader code
@@ -323,6 +326,7 @@ public class Base {
         try {
           File file = new File(args[i]);
           path = file.getCanonicalPath();
+          Messages.logf("Changing %s to canonical %s", i, args[i], path);
         } catch (IOException e) {
           e.printStackTrace();
         }
@@ -334,10 +338,10 @@ public class Base {
 
     // Create a new empty window (will be replaced with any files to be opened)
     if (!opened) {
-//      System.out.println("opening a new window");
+      Messages.log("Calling handleNew() to open a new window");
       handleNew();
-//    } else {
-//      System.out.println("something else was opened");
+    } else {
+      Messages.log("No handleNew(), something passed on the command line");
     }
 
     // check for updates
