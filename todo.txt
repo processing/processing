@@ -3,6 +3,11 @@ X only require reference.zip (and internet connection) when building dist
 X set text style properly for Contribution Manager error message
 
 
+_ Export Application fails on machines w/ non-ASCII chars in user name
+_   at least give a warning about this? 
+_   https://github.com/processing/processing/issues/4736
+_   related: https://github.com/processing/processing/issues/3543
+
 _ move the DEBUG flag into an external file or preferences.txt
 _   will help us with debugging w/ others as well
 

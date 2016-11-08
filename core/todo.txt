@@ -60,7 +60,12 @@ _   https://github.com/processing/processing/issues/3753
 
 
 javafx
+_ mouseWheel() not working with FX2D
+_   https://github.com/processing/processing/issues/4169
+_ wrong window size with fullScreen()
+_   https://github.com/processing/processing/issues/4737
 _ menu bar not hiding properly in exported applications with FX2D
+_   https://github.com/processing/processing/issues/4527
 _   hideMenuBar() called from setup() works fine
 _   just call it around setup time? 
 _ the --hide-stop option not working (FX only? traces?)
