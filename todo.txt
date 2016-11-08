@@ -12,6 +12,10 @@ _   https://github.com/processing/processing/commits/master/build/macosx/appbund
 _   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
 _   https://bitbucket.org/infinitekind/appbundler
 
+_ Drew's freeze on startup
+_   No PDE window opens when started on MacOS X 10.11
+_   https://github.com/processing/processing/issues/4735
+
 _ settings() present and pixelDensity() is in setup(), nothing set/no error
 _   https://github.com/processing/processing/issues/4703
 
@@ -674,6 +678,8 @@ _   e.g. ocd is broken in 0125 because of method signature changes
 
 PDE / Manager
 
+_ Progress bar height on macOS is too thin
+_   https://github.com/processing/processing/issues/4734
 _ proper error handling when downloading contribs listing
 _   https://github.com/processing/processing/issues/4732
 _ update CM entries when sketchbook location changes
