@@ -33,6 +33,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.io.*;
+import java.net.ConnectException;
 import java.util.*;
 
 import com.sun.jdi.*;
@@ -220,21 +221,29 @@ public class Runner implements MessageConsumer {
 //      while (!available) {
       while (true) {
         try {
+          Messages.log(getClass().getName() + " attempting to attach to VM");
           vm = connector.attach(arguments);
 //          vm = connector.attach(arguments);
           if (vm != null) {
+            Messages.log(getClass().getName() + " attached to the VM");
 //            generateTrace();
 //            available = true;
             return true;
           }
-        } catch (IOException e) {
+        } catch (ConnectException ce) {
+          // This will fire ConnectException (socket not available) until
+          // the VM finishes starting up and opens its socket for us.
+          Messages.log(getClass().getName() + " socket for VM not ready");
 //          System.out.println("waiting");
 //          e.printStackTrace();
           try {
             Thread.sleep(100);
-          } catch (InterruptedException e1) {
-            e1.printStackTrace(sketchErr);
+          } catch (InterruptedException ie) {
+            Messages.loge(getClass().getName() + " interrupted", ie);
+//            ie.printStackTrace(sketchErr);
           }
+        } catch (IOException e) {
+          Messages.loge(getClass().getName() + " while attaching to VM", e);
         }
       }
 //    } catch (IOException exc) {
