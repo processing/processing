@@ -1,6 +1,12 @@
 0256 (3.2.4 or 3.3)
 X only require reference.zip (and internet connection) when building dist
 X set text style properly for Contribution Manager error message
+X Detect changes to 'hosts' file in case users modify/remove localhost 
+_   No sketch window opens after hitting Run if hosts file changed
+_   https://github.com/processing/processing/issues/4738
+_   https://github.com/processing/processing/issues/4735
+X   https://github.com/processing/processing/issues/1868
+X   https://github.com/processing/processing/issues/3123
 
 
 _ Export Application fails on machines w/ non-ASCII chars in user name
@@ -19,10 +25,6 @@ _   https://github.com/processing/processing/commits/master/build/macosx/appbund
 _   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
 _   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
 _   https://bitbucket.org/infinitekind/appbundler
-
-_ Drew's freeze on startup
-_   No PDE window opens when started on MacOS X 10.11
-_   https://github.com/processing/processing/issues/4735
 
 _ settings() present and pixelDensity() is in setup(), nothing set/no error
 _   https://github.com/processing/processing/issues/4703
