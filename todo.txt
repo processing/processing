@@ -2,11 +2,11 @@
 X only require reference.zip (and internet connection) when building dist
 X set text style properly for Contribution Manager error message
 X Detect changes to 'hosts' file in case users modify/remove localhost 
-_   No sketch window opens after hitting Run if hosts file changed
-_   https://github.com/processing/processing/issues/4738
-_   https://github.com/processing/processing/issues/4735
+X   https://github.com/processing/processing/issues/4738
+X No sketch window opens after hitting Run if hosts file changed
 X   https://github.com/processing/processing/issues/1868
 X   https://github.com/processing/processing/issues/3123
+X   https://github.com/processing/processing/issues/4735
 
 
 _ Export Application fails on machines w/ non-ASCII chars in user name
