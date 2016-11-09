@@ -44,6 +44,7 @@ import processing.app.tools.Tool;
 import processing.app.ui.*;
 import processing.core.*;
 import processing.data.StringList;
+import sun.security.x509.IssuingDistributionPointExtension;
 
 
 /**
@@ -60,9 +61,12 @@ public class Base {
   static private String VERSION_NAME = "0256"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 
-  /** True if heavy debugging error/log messages are enabled */
-  static public boolean DEBUG = false;
-//  static public boolean DEBUG = true;
+  /**
+   * True if heavy debugging error/log messages are enabled. Set to true
+   * if an empty file named 'debug' is found in the settings folder.
+   * See implementation in createAndShowGUI().
+   */
+  static public boolean DEBUG;
 
   static private boolean commandLine;
 
@@ -129,7 +133,6 @@ public class Base {
         String version = PApplet.loadStrings(versionFile)[0];
         if (!version.equals(VERSION_NAME)) {
           VERSION_NAME = version;
-//          RELEASE = true;
         }
       }
     } catch (Exception e) {
@@ -137,6 +140,11 @@ public class Base {
     }
 
     Platform.init();
+
+    // Set the debug flag based on a file being present in the settings folder
+    File debugFile = getSettingsFile("debug");
+    // if it's a directory, it's a leftover from older releases
+    DEBUG = debugFile.exists() && !debugFile.isDirectory();
 
     // Use native popups so they don't look so crappy on OS X
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);

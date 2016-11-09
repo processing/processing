@@ -335,7 +335,7 @@ public class Messages {
 
   static public void loge(String message) {
     if (Base.DEBUG) {
-      System.out.println(message);
+      System.err.println(message);
     }
   }
 }
