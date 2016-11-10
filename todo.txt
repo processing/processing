@@ -7,15 +7,15 @@ X No sketch window opens after hitting Run if hosts file changed
 X   https://github.com/processing/processing/issues/1868
 X   https://github.com/processing/processing/issues/3123
 X   https://github.com/processing/processing/issues/4735
+X move the DEBUG flag into an external file or preferences.txt
+X   will help us with debugging w/ others as well
+X replace java.util.logging code with built-in logging
 
 
 _ Export Application fails on machines w/ non-ASCII chars in user name
 _   at least give a warning about this? 
 _   https://github.com/processing/processing/issues/4736
 _   related: https://github.com/processing/processing/issues/3543
-
-_ move the DEBUG flag into an external file or preferences.txt
-_   will help us with debugging w/ others as well
 
 _ fix appbundler problems due to rollback
 _   https://github.com/processing/processing/issues/3790
