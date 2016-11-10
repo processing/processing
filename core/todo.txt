@@ -1,5 +1,8 @@
 0256 (3.2.4 or 3.3)
 
+contribs
+X Adding missing docs and keywords for TableRow
+X   https://github.com/processing/processing/pull/4333
 
 _ add StringDict.Entry class for iterating
 
