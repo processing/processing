@@ -327,7 +327,9 @@ public class Messages {
 
   static public void loge(String message, Throwable e) {
     if (Base.DEBUG) {
-      System.err.println(message);
+      if (message != null) {
+        System.err.println(message);
+      }
       e.printStackTrace();
     }
   }
