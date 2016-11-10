@@ -315,6 +315,14 @@ substring	FUNCTION2	String_substring_
 toLowerCase	FUNCTION2	String_toLowerCase_
 toUpperCase	FUNCTION2	String_toUpperCase_
 
+getDouble	FUNCTION2
+getLong	FUNCTION2
+getColumnTitles	FUNCTION2
+getColumnTypes	FUNCTION2
+getColumnType	FUNCTION2
+setDouble	FUNCTION2
+setLong	FUNCTION2
+
 length	KEYWORD2	String
 
 
@@ -441,6 +449,7 @@ curveTightness	FUNCTION1	curveTightness_
 curveVertex	FUNCTION1	curveVertex_
 day	FUNCTION1	day_
 degrees	FUNCTION1	degrees_
+delay	FUNCTION1	delay_
 directionalLight	FUNCTION1	directionalLight_
 displayDensity	FUNCTION1	displayDensity_
 displayHeight	KEYWORD4	displayHeight
@@ -565,6 +574,7 @@ getJSONArray	FUNCTION2	JSONArray_getJSONArray_
 getJSONObject	FUNCTION2	JSONArray_getJSONObject_
 getString	FUNCTION2	JSONArray_getString_
 getStringArray	FUNCTION2	JSONArray_getStringArray_
+isNull	FUNCTION2	JSONArray_isNull_
 remove	FUNCTION2	JSONArray_remove_
 setBoolean	FUNCTION2	JSONArray_setBoolean_
 setFloat	FUNCTION2	JSONArray_setFloat_
@@ -580,6 +590,7 @@ getInt	FUNCTION2	JSONObject_getInt_
 getJSONArray	FUNCTION2	JSONObject_getJSONArray_
 getJSONObject	FUNCTION2	JSONObject_getJSONObject_
 getString	FUNCTION2	JSONObject_getString_
+isNull	FUNCTION2	JSONObject_isNull_
 setBoolean	FUNCTION2	JSONObject_setBoolean_
 setFloat	FUNCTION2	JSONObject_setFloat_
 setInt	FUNCTION2	JSONObject_setInt_
@@ -863,6 +874,8 @@ setInt	FUNCTION2	Table_setInt_
 setString	FUNCTION2	Table_setString_
 trim	FUNCTION2	Table_trim_
 TableRow	KEYWORD5	TableRow
+getColumnCount	FUNCTION2	TableRow_getColumnCount_
+getColumnTitle	FUNCTION2	TableRow_getColumnTitle_
 getFloat	FUNCTION2	TableRow_getFloat_
 getInt	FUNCTION2	TableRow_getInt_
 getString	FUNCTION2	TableRow_getString_
