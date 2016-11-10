@@ -10,6 +10,9 @@ X   https://github.com/processing/processing/issues/4735
 X move the DEBUG flag into an external file or preferences.txt
 X   will help us with debugging w/ others as well
 X replace java.util.logging code with built-in logging
+_ blank window on startup where the "welcome" screen should be
+_   https://github.com/processing/processing/issues/3933
+_   this may be fixed (removed invokeLater() on startup), unconfirmed
 
 
 _ Export Application fails on machines w/ non-ASCII chars in user name
@@ -29,9 +32,6 @@ _   https://bitbucket.org/infinitekind/appbundler
 _ settings() present and pixelDensity() is in setup(), nothing set/no error
 _   https://github.com/processing/processing/issues/4703
 
-_ 'version' should be x.y or x.y.z, not some extra long string
-_   enforce this by disallowing spaces? on the import script?
-
 _ Application Exports report as "Damaged" on macOS Sierra
 _   https://github.com/processing/processing/issues/4705
 _   could provide script to un-quarrantine
@@ -48,9 +48,6 @@ _   https://github.com/processing/processing/issues/1566
 
 _ allow modes to specify their own base file name
 _   need to move "is this a sketch?" handling into Mode
-
-_ blank window on startup where the "welcome" screen should be
-_   https://github.com/processing/processing/issues/3933
 
 _ modify line number color when no lines extend that far?
 _   https://github.com/processing/processing/pull/4560
@@ -688,6 +685,8 @@ _   e.g. ocd is broken in 0125 because of method signature changes
 
 PDE / Manager
 
+_ 'version' should be x.y or x.y.z, not some extra long string
+_   enforce this by disallowing spaces? on the import script?
 _ Progress bar height on macOS is too thin
 _   https://github.com/processing/processing/issues/4734
 _ proper error handling when downloading contribs listing
