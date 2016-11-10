@@ -344,22 +344,18 @@ public class ContributionTab extends JPanel {
 
 
   class FilterField extends JTextField {
-    Icon searchIcon;
-    JButton removeFilter;
     List<String> filters;
-    JLabel filterLabel;
 
     public FilterField () {
       super("");
 
-      filterLabel = new JLabel("Filter");
+      JLabel filterLabel = new JLabel("Filter");
       filterLabel.setFont(Toolkit.getSansFont(14, Font.PLAIN));
       filterLabel.setOpaque(false);
 
       setFont(Toolkit.getSansFont(14, Font.PLAIN));
-      searchIcon = Toolkit.getLibIconX("manager/search");
-      filterLabel.setIcon(searchIcon);
-      removeFilter = new JButton(Toolkit.getLibIconX("manager/remove"));
+      filterLabel.setIcon(Toolkit.getLibIconX("manager/search"));
+      JButton removeFilter = Toolkit.createIconButton("manager/remove");
       removeFilter.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 2));
       removeFilter.setBorderPainted(false);
       removeFilter.setContentAreaFilled(false);
