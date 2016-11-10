@@ -5936,6 +5936,8 @@ public class PApplet implements PConstants {
 
   /**
    * @webref output:files
+   * @param json the JSONObject to save
+   * @param filename the name of the file to save to
    * @see JSONObject
    * @see JSONArray
    * @see PApplet#loadJSONObject(String)
@@ -5947,7 +5949,7 @@ public class PApplet implements PConstants {
   }
 
   /**
-   * @nowebref
+   * @param options "compact" and "indent=N", replace N with the number of spaces 
    */
   public boolean saveJSONObject(JSONObject json, String filename, String options) {
     return json.save(saveFile(filename), options);
@@ -5985,6 +5987,8 @@ public class PApplet implements PConstants {
 
   /**
    * @webref output:files
+   * @param json the JSONArray to save
+   * @param filename the name of the file to save to
    * @see JSONObject
    * @see JSONArray
    * @see PApplet#loadJSONObject(String)
@@ -5995,7 +5999,9 @@ public class PApplet implements PConstants {
     return saveJSONArray(json, filename, null);
   }
 
-
+  /**
+   * @param options "compact" and "indent=N", replace N with the number of spaces 
+   */
   public boolean saveJSONArray(JSONArray json, String filename, String options) {
     return json.save(saveFile(filename), options);
   }
