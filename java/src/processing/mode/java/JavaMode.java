@@ -30,10 +30,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -56,7 +52,7 @@ public class JavaMode extends Mode {
   public JavaMode(Base base, File folder) {
     super(base, folder);
 
-    initLogger();
+//    initLogger();
     loadPreferences();
   }
 
@@ -263,7 +259,7 @@ public class JavaMode extends Mode {
 
   // Merged from ExperimentalMode
 
-
+  /*
   void initLogger() {
     final boolean VERBOSE_LOGGING = true;
     final int LOG_SIZE = 512 * 1024; // max log file size (in bytes)
@@ -293,6 +289,7 @@ public class JavaMode extends Mode {
       Logger.getLogger(JavaMode.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
+  */
 
 
   //ImageIcon classIcon, fieldIcon, methodIcon, localVarIcon;

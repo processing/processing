@@ -9,8 +9,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -220,7 +218,7 @@ public class JavaEditor extends Editor {
     stopItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (isDebuggerEnabled()) {
-          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Stop' menu item");
+          Messages.log("Invoked 'Stop' menu item");
           debugger.stopDebug();
         } else {
           handleStop();
@@ -1144,22 +1142,22 @@ public class JavaEditor extends Editor {
 
   public void handleStep(int modifiers) {
     if (modifiers == 0) {
-      Logger.getLogger(getClass().getName()).log(Level.INFO, "Invoked 'Step Over' menu item");
+      Messages.log("Invoked 'Step Over' menu item");
       debugger.stepOver();
 
     } else if ((modifiers & ActionEvent.SHIFT_MASK) != 0) {
-      Logger.getLogger(getClass().getName()).log(Level.INFO, "Invoked 'Step Into' menu item");
+      Messages.log("Invoked 'Step Into' menu item");
       debugger.stepInto();
 
     } else if ((modifiers & ActionEvent.ALT_MASK) != 0) {
-      Logger.getLogger(getClass().getName()).log(Level.INFO, "Invoked 'Step Out' menu item");
+      Messages.log("Invoked 'Step Out' menu item");
       debugger.stepOut();
     }
   }
 
 
   public void handleContinue() {
-    Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Continue' menu item");
+    Messages.log("Invoked 'Continue' menu item");
     debugger.continueDebug();
   }
 
@@ -1399,7 +1397,7 @@ public class JavaEditor extends Editor {
       Toolkit.newJMenuItem(Language.text("menu.debug.toggle_breakpoint"), 'B');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          Logger.getLogger(JavaEditor.class.getName()).log(Level.INFO, "Invoked 'Toggle Breakpoint' menu item");
+          Messages.log("Invoked 'Toggle Breakpoint' menu item");
           // TODO wouldn't getCaretLine() do the same thing with less effort?
           toggleBreakpoint(getCurrentLineID().lineIdx());
         }
@@ -1603,7 +1601,7 @@ public class JavaEditor extends Editor {
       tab.setProgram(code);
       tab.save();
     } catch (IOException ex) {
-      Logger.getLogger(JavaEditor.class.getName()).log(Level.SEVERE, null, ex);
+      Messages.loge(null, ex);
     }
   }
 
