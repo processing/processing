@@ -44,7 +44,6 @@ import processing.app.tools.Tool;
 import processing.app.ui.*;
 import processing.core.*;
 import processing.data.StringList;
-import sun.security.x509.IssuingDistributionPointExtension;
 
 
 /**
