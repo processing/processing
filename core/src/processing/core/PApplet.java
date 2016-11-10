@@ -3482,6 +3482,27 @@ public class PApplet implements PConstants {
   }
 
 
+  /**
+   * Pass a set of arguments directly to the command line. Uses Java's
+   * <A HREF="https://docs.oracle.com/javase/8/docs/api/java/lang/Runtime.html#exec-java.lang.String:A-">Runtime.exec()</A>
+   * method. This is different from the <A HREF="https://processing.org/reference/launch_.html">launch()</A>
+   * method, which uses the operating system's launcher to open the files.
+   * It's always a good idea to use a full path to the executable here.
+   * <pre>
+   * exec("/usr/bin/say", "-v", "Pipe Organ", "welcome to the command line");
+   * </pre>
+   * Or if you want to wait until it's completed, something like this:
+   * <pre>
+   * Process p = exec("/usr/bin/say", "waiting until done");
+   * try {
+   *   int result = p.waitFor();
+   *   println("the process returned " + result);
+   * } catch (InterruptedException e) { }
+   * </pre>
+   * You can also get the system output and error streams from the Process
+   * object, but that's more that we'd like to cover here.
+   * @return a <A HREF="https://docs.oracle.com/javase/8/docs/api/java/lang/Process.html">Process</A> object
+   */
   static public Process exec(String... args) {
     try {
       return Runtime.getRuntime().exec(args);
