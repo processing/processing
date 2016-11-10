@@ -174,7 +174,7 @@ public interface TableRow {
   public int getColumnType(int column);
   
   /**
-   * @brief Get the all column types.
+   * @brief Get the all column types
    * @return list of all column types
    */
   public int[] getColumnTypes();
@@ -188,7 +188,7 @@ public interface TableRow {
   public String getColumnTitle(int column);
 
   /**
-   * @brief Get the all column titles.
+   * @brief Get the all column titles
    * @return list of all column titles
    */
   public String[] getColumnTitles();
