@@ -142,8 +142,12 @@ public class Base {
 
     // Set the debug flag based on a file being present in the settings folder
     File debugFile = getSettingsFile("debug");
-    // if it's a directory, it's a leftover from older releases
-    DEBUG = debugFile.exists() && !debugFile.isDirectory();
+    if (debugFile.isDirectory()) {
+      // if it's a directory, it's a leftover from older releases, clear it
+      Util.removeDir(debugFile);
+    } else if (debugFile.exists()) {
+      DEBUG = true;
+    }
 
     // Use native popups so they don't look so crappy on OS X
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);

@@ -387,7 +387,7 @@
       <isset property="version" />
     </condition>
 
-    <echo message="ref ignoreable? ${reference.ignorable}" />
+    <!--<echo message="ref ignoreable? ${reference.ignorable}" />-->
     <get src="http://download.processing.org/reference.zip" 
          dest="../java/reference.zip"
          ignoreerrors="${reference.ignorable}"
