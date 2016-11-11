@@ -9588,7 +9588,6 @@ public class PApplet implements PConstants {
   }
 
 /**
- * @param num[] the number(s) to format
  * @param right number of digits to the right of the decimal point
  */
   static public String[] nfc(float num[], int right) {
