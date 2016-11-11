@@ -1194,7 +1194,7 @@ public class PApplet implements PConstants {
   *
   */
   public void pixelDensity(int density) {
-    println(density + " " + this.pixelDensity);
+    //println(density + " " + this.pixelDensity);
     if (density != this.pixelDensity) {
       if (insideSettings("pixelDensity", density)) {
         if (density != 1 && density != 2) {
