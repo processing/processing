@@ -4214,12 +4214,21 @@ public class Table {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-
+  /**
+   * Sorts (orders) a table based on the values in a column.
+   *
+   * @webref table:method
+   * @brief Orders a table based on the values in a column
+   * @param columnName the name of the column to sort
+   * @see Table#trim()
+   */
   public void sort(String columnName) {
     sort(getColumnIndex(columnName), false);
   }
 
-
+  /**
+   * @param column the column ID, e.g. 0, 1, 2
+   */
   public void sort(int column) {
     sort(column, false);
   }
