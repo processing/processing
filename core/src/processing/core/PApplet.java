@@ -5949,7 +5949,7 @@ public class PApplet implements PConstants {
   }
 
   /**
-   * @param options "compact" and "indent=N", replace N with the number of spaces 
+   * @param options "compact" and "indent=N", replace N with the number of spaces
    */
   public boolean saveJSONObject(JSONObject json, String filename, String options) {
     return json.save(saveFile(filename), options);
@@ -6000,7 +6000,7 @@ public class PApplet implements PConstants {
   }
 
   /**
-   * @param options "compact" and "indent=N", replace N with the number of spaces 
+   * @param options "compact" and "indent=N", replace N with the number of spaces
    */
   public boolean saveJSONArray(JSONArray json, String filename, String options) {
     return json.save(saveFile(filename), options);
@@ -6524,6 +6524,133 @@ public class PApplet implements PConstants {
 
     } catch (NoSuchMethodException nsme) {
       System.err.println(callbackMethod + "() could not be found");
+    }
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // LISTING DIRECTORIES
+
+
+  public String[] listPaths(String path, String... options) {
+    File[] list = listFiles(path, options);
+
+    int offset = 0;
+    for (String opt : options) {
+      if (opt.equals("relative")) {
+        if (!path.endsWith(File.pathSeparator)) {
+          path += File.pathSeparator;
+        }
+        offset = path.length();
+        break;
+      }
+    }
+    String[] outgoing = new String[list.length];
+    for (int i = 0; i < list.length; i++) {
+      // as of Java 1.8, substring(0) returns the original object
+      outgoing[i] = list[i].getAbsolutePath().substring(offset);
+    }
+    return outgoing;
+  }
+
+
+  public File[] listFiles(String path, String... options) {
+    File file = new File(path);
+    // if not an absolute path, make it relative to the sketch folder
+    if (!file.isAbsolute()) {
+      file = sketchFile(path);
+    }
+    return listFiles(file, options);
+  }
+
+
+  // "relative" -> no effect with the Files version, but important for listPaths
+  // "recursive"
+  // "extension=js" or "extensions=js|csv|txt" (no dot)
+  // "directories" -> only directories
+  // "files" -> only files
+  // "hidden" -> include hidden files (prefixed with .) disabled by default
+  static public File[] listFiles(File base, String... options) {
+    boolean recursive = false;
+    String[] extensions = null;
+    boolean directories = true;
+    boolean files = true;
+    boolean hidden = false;
+
+    for (String opt : options) {
+      if (opt.equals("recursive")) {
+        recursive = true;
+      } else if (opt.startsWith("extension=")) {
+        extensions = new String[] { opt.substring(10) };
+      } else if (opt.startsWith("extensions=")) {
+        extensions = split(opt.substring(10), ',');
+      } else if (opt.equals("files")) {
+        directories = false;
+      } else if (opt.equals("directories")) {
+        files = false;
+      } else if (opt.equals("hidden")) {
+        hidden = true;
+      } else if (opt.equals("relative")) {
+        // ignored
+      } else {
+        throw new RuntimeException(opt + " is not a listFiles() option");
+      }
+    }
+
+    if (extensions != null) {
+      for (int i = 0; i < extensions.length; i++) {
+        extensions[i] = "." + extensions[i];
+      }
+    }
+
+    if (!files && !directories) {
+      // just make "only files" and "only directories" mean... both
+      files = true;
+      directories = true;
+    }
+
+    if (!base.canRead()) {
+      return null;
+    }
+
+    List<File> outgoing = new ArrayList<>();
+    listFilesImpl(base, recursive, extensions, hidden, directories, files, outgoing);
+    return outgoing.toArray(new File[0]);
+  }
+
+
+  static void listFilesImpl(File folder, boolean recursive,
+                            String[] extensions, boolean hidden,
+                            boolean directories, boolean files,
+                            List<File> list) {
+    File[] items = folder.listFiles();
+    if (items != null) {
+      for (File item : items) {
+        String name = item.getName();
+        if (!hidden && name.charAt(0) == '.') {
+          continue;
+        }
+        if (item.isDirectory()) {
+          if (recursive) {
+            listFilesImpl(item, recursive, extensions, hidden, directories, files, list);
+          }
+          if (directories) {
+            list.add(item);
+          }
+        } else if (files) {
+          if (extensions == null) {
+            list.add(item);
+          } else {
+            for (String ext : extensions) {
+              if (item.getName().toLowerCase().endsWith(ext)) {
+                list.add(item);
+              }
+            }
+          }
+        }
+      }
     }
   }
 

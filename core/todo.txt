@@ -1,11 +1,15 @@
 0256 (3.2.4 or 3.3)
 X write exec() documentation
 X   https://github.com/processing/processing/issues/4740
+X add listPaths(), listFiles()
+X   https://github.com/processing/processing/issues/4622
+_   needs documentation
 
 contribs
 X Adding missing docs and keywords for TableRow
 X   https://github.com/processing/processing/pull/4333
 
+_ add increment() that takes IntDict to merge things
 _ add StringDict.Entry class for iterating
 
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
@@ -13,10 +17,6 @@ _   https://github.com/processing/processing/issues/4678
 
 _ should we drop the 'default' prefix from the ex handler so it's not static?
 _   http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Thread.html
-
-_ listPaths(), listFiles()? 
-_   https://github.com/processing/processing/issues/4622
-_ add increment() that takes IntDict to merge things
 
 _ option to disable OpenGL ES on Linux? 
 _   https://github.com/processing/processing/issues/4584
