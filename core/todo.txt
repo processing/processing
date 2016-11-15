@@ -4,12 +4,14 @@ X   https://github.com/processing/processing/issues/4740
 X add listPaths(), listFiles()
 X   https://github.com/processing/processing/issues/4622
 _   needs documentation
+X add increment() method that takes IntDict to merge another dictionary
+X   Calling this increment() since it doesn't make sense in practice for
+X   the other dictionary types, even though it's technically an add()
 
 contribs
 X Adding missing docs and keywords for TableRow
 X   https://github.com/processing/processing/pull/4333
 
-_ add increment() that takes IntDict to merge things
 _ add StringDict.Entry class for iterating
 
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer

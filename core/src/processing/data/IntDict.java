@@ -320,6 +320,18 @@ public class IntDict {
 
 
   /**
+   * Merge another dictionary into this one. Calling this increment()
+   * since it doesn't make sense in practice for the other dictionary types,
+   * even though it's technically an add().
+   */
+  public void increment(IntDict dict) {
+    for (int i = 0; i < dict.count; i++) {
+      add(dict.key(i), dict.value(i));
+    }
+  }
+
+
+  /**
    * @webref intdict:method
    * @brief Add to a value
    */
