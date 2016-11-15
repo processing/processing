@@ -39,6 +39,7 @@ _ how to handle the touch api
 _ figure our size(img.width, img.height) situation
 X   just make loadImage() work in settings
 _   update the wiki and reference
+_ size() function that scales to screen, keeps aspect, re-scales mouse coords
 
 
 known
