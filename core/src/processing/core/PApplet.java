@@ -9502,14 +9502,6 @@ public class PApplet implements PConstants {
   static private int int_nf_digits;
   static private boolean int_nf_commas;
 
-  static public String[] nf(int num[], int digits) {
-    String formatted[] = new String[num.length];
-    for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nf(num[i], digits);
-    }
-    return formatted;
-  }
-
   /**
    * ( begin auto-generated from nf.xml )
    *
@@ -9525,12 +9517,24 @@ public class PApplet implements PConstants {
    *
    * ( end auto-generated )
    * @webref data:string_functions
-   * @param num the number(s) to format
+   * @param nums the numbers to format
    * @param digits number of digits to pad with zero
    * @see PApplet#nfs(float, int, int)
    * @see PApplet#nfp(float, int, int)
    * @see PApplet#nfc(float, int)
    * @see <a href="https://processing.org/reference/intconvert_.html">int(float)</a>
+   */
+  static public String[] nf(int nums[], int digits) {
+    String formatted[] = new String[nums.length];
+    for (int i = 0; i < formatted.length; i++) {
+      formatted[i] = nf(nums[i], digits);
+    }
+    return formatted;
+  }
+
+  /**
+   * @param num the number to format
+   * @param digits number of digits to pad with zero
    */
   static public String nf(int num, int digits) {
     if ((int_nf != null) &&
@@ -9547,38 +9551,35 @@ public class PApplet implements PConstants {
     return int_nf.format(num);
   }
 
-/**
+  /**
    * ( begin auto-generated from nfc.xml )
    *
    * Utility function for formatting numbers into strings and placing
    * appropriate commas to mark units of 1000. There are two versions, one
    * for formatting ints and one for formatting an array of ints. The value
    * for the <b>digits</b> parameter should always be a positive integer.
-   * <br/> <br/>
+   * <br/><br/>
    * For a non-US locale, this will insert periods instead of commas, or
    * whatever is apprioriate for that region.
    *
    * ( end auto-generated )
- * @webref data:string_functions
- * @param num the number(s) to format
- * @see PApplet#nf(float, int, int)
- * @see PApplet#nfp(float, int, int)
- * @see PApplet#nfs(float, int, int)
- */
-  static public String[] nfc(int num[]) {
-    String formatted[] = new String[num.length];
+   * @webref data:string_functions
+   * @param nums the numbers to format
+   * @see PApplet#nf(float, int, int)
+   * @see PApplet#nfp(float, int, int)
+   * @see PApplet#nfs(float, int, int)
+   */
+  static public String[] nfc(int nums[]) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfc(num[i]);
+      formatted[i] = nfc(nums[i]);
     }
     return formatted;
   }
 
 
   /**
-   * nfc() or "number format with commas". This is an unfortunate misnomer
-   * because in locales where a comma is not the separator for numbers, it
-   * won't actually be outputting a comma, it'll use whatever makes sense for
-   * the locale.
+   * @param num the number to format
    */
   static public String nfc(int num) {
     if ((int_nf != null) &&
@@ -9615,7 +9616,7 @@ public class PApplet implements PConstants {
    *
    * ( end auto-generated )
   * @webref data:string_functions
-  * @param num the number(s) to format
+  * @param num the number to format
   * @param digits number of digits to pad with zeroes
   * @see PApplet#nf(float, int, int)
   * @see PApplet#nfp(float, int, int)
@@ -9625,10 +9626,14 @@ public class PApplet implements PConstants {
     return (num < 0) ? nf(num, digits) : (' ' + nf(num, digits));
   }
 
-  static public String[] nfs(int num[], int digits) {
-    String formatted[] = new String[num.length];
+  /**
+   * @param nums the numbers to format
+   * @param digits number of digits to pad with zeroes
+   */
+  static public String[] nfs(int nums[], int digits) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfs(num[i], digits);
+      formatted[i] = nfs(nums[i], digits);
     }
     return formatted;
   }
@@ -9651,7 +9656,7 @@ public class PApplet implements PConstants {
    *
    * ( end auto-generated )
   * @webref data:string_functions
-  * @param num the number(s) to format
+  * @param num the number to format
   * @param digits number of digits to pad with zeroes
   * @see PApplet#nf(float, int, int)
   * @see PApplet#nfs(float, int, int)
@@ -9660,11 +9665,14 @@ public class PApplet implements PConstants {
   static public String nfp(int num, int digits) {
     return (num < 0) ? nf(num, digits) : ('+' + nf(num, digits));
   }
-
-  static public String[] nfp(int num[], int digits) {
-    String formatted[] = new String[num.length];
+  /**
+   * @param nums the numbers to format
+   * @param digits number of digits to pad with zeroes
+   */
+  static public String[] nfp(int nums[], int digits) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfp(num[i], digits);
+      formatted[i] = nfp(nums[i], digits);
     }
     return formatted;
   }
@@ -9680,18 +9688,24 @@ public class PApplet implements PConstants {
   static private int float_nf_left, float_nf_right;
   static private boolean float_nf_commas;
 
-  static public String[] nf(float num[], int left, int right) {
-    String formatted[] = new String[num.length];
+  /**
+   * @param nums the numbers to format
+   * @param left number of digits to the left of the decimal point
+   * @param right number of digits to the right of the decimal point
+   */
+  static public String[] nf(float nums[], int left, int right) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nf(num[i], left, right);
+      formatted[i] = nf(nums[i], left, right);
     }
     return formatted;
   }
-/**
- * @param num[] the number(s) to format
- * @param left number of digits to the left of the decimal point
- * @param right number of digits to the right of the decimal point
- */
+
+  /**
+   * @param num the number to format
+   * @param left number of digits to the left of the decimal point
+   * @param right number of digits to the right of the decimal point
+   */
   static public String nf(float num, int left, int right) {
     if ((float_nf != null) &&
         (float_nf_left == left) &&
@@ -9714,18 +9728,22 @@ public class PApplet implements PConstants {
     return float_nf.format(num);
   }
 
-/**
- * @param right number of digits to the right of the decimal point
- */
-  static public String[] nfc(float num[], int right) {
-    String formatted[] = new String[num.length];
+  /**
+   * @param nums the numbers to format
+   * @param right number of digits to the right of the decimal point
+  */
+  static public String[] nfc(float nums[], int right) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfc(num[i], right);
+      formatted[i] = nfc(nums[i], right);
     }
     return formatted;
   }
 
-
+  /**
+   * @param num the number to format
+   * @param right number of digits to the right of the decimal point
+  */
   static public String nfc(float num, int right) {
     if ((float_nf != null) &&
         (float_nf_left == 0) &&
@@ -9749,34 +9767,45 @@ public class PApplet implements PConstants {
 
 
  /**
-  * @param num[] the number(s) to format
+  * @param nums the numbers to format
   * @param left the number of digits to the left of the decimal point
   * @param right the number of digits to the right of the decimal point
   */
-  static public String[] nfs(float num[], int left, int right) {
-    String formatted[] = new String[num.length];
+  static public String[] nfs(float nums[], int left, int right) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfs(num[i], left, right);
+      formatted[i] = nfs(nums[i], left, right);
     }
     return formatted;
   }
 
+ /**
+  * @param num the number to format
+  * @param left the number of digits to the left of the decimal point
+  * @param right the number of digits to the right of the decimal point
+  */
   static public String nfs(float num, int left, int right) {
     return (num < 0) ? nf(num, left, right) :  (' ' + nf(num, left, right));
   }
 
  /**
+  * @param nums the number to format
   * @param left the number of digits to the left of the decimal point
   * @param right the number of digits to the right of the decimal point
   */
-  static public String[] nfp(float num[], int left, int right) {
-    String formatted[] = new String[num.length];
+  static public String[] nfp(float nums[], int left, int right) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfp(num[i], left, right);
+      formatted[i] = nfp(nums[i], left, right);
     }
     return formatted;
   }
 
+ /**
+  * @param num the number to format
+  * @param left the number of digits to the left of the decimal point
+  * @param right the number of digits to the right of the decimal point
+  */
   static public String nfp(float num, int left, int right) {
     return (num < 0) ? nf(num, left, right) :  ('+' + nf(num, left, right));
   }
