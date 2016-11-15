@@ -9751,7 +9751,6 @@ public class PApplet implements PConstants {
 
 
  /**
-  * @param nums the numbers to format
   * @param left the number of digits to the left of the decimal point
   * @param right the number of digits to the right of the decimal point
   */
@@ -9763,10 +9762,6 @@ public class PApplet implements PConstants {
     return formatted;
   }
 
- /**
-  * @param left the number of digits to the left of the decimal point
-  * @param right the number of digits to the right of the decimal point
-  */
   static public String nfs(float num, int left, int right) {
     return (num < 0) ? nf(num, left, right) :  (' ' + nf(num, left, right));
   }
