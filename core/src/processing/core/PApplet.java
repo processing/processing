@@ -9476,28 +9476,6 @@ public class PApplet implements PConstants {
 
   // INT NUMBER FORMATTING
 
-
-  static public String nf(float num) {
-    int inum = (int) num;
-    if (num == inum) {
-      return str(inum);
-    }
-    return str(num);
-  }
-
-
-  static public String[] nf(float[] num) {
-    String[] outgoing = new String[num.length];
-    for (int i = 0; i < num.length; i++) {
-      outgoing[i] = nf(num[i]);
-    }
-    return outgoing;
-  }
-
-
-  /**
-   * Integer number formatter.
-   */
   static private NumberFormat int_nf;
   static private int int_nf_digits;
   static private boolean int_nf_commas;
@@ -9517,12 +9495,33 @@ public class PApplet implements PConstants {
    *
    * ( end auto-generated )
    * @webref data:string_functions
-   * @param nums the numbers to format
-   * @param digits number of digits to pad with zero
+   * @param num the number to format
    * @see PApplet#nfs(float, int, int)
    * @see PApplet#nfp(float, int, int)
    * @see PApplet#nfc(float, int)
    * @see <a href="https://processing.org/reference/intconvert_.html">int(float)</a>
+   */
+  static public String nf(float num) {
+    int inum = (int) num;
+    if (num == inum) {
+      return str(inum);
+    }
+    return str(num);
+  }
+
+  /**
+   * @param nums the numbers to format
+   */
+  static public String[] nf(int[] nums) {
+    String[] outgoing = new String[nums.length];
+    for (int i = 0; i < nums.length; i++) {
+      outgoing[i] = nf(nums[i]);
+    }
+    return outgoing;
+  }
+
+  /**
+   * @param digits number of digits to pad with zero
    */
   static public String[] nf(int nums[], int digits) {
     String formatted[] = new String[nums.length];
@@ -9532,10 +9531,6 @@ public class PApplet implements PConstants {
     return formatted;
   }
 
-  /**
-   * @param num the number to format
-   * @param digits number of digits to pad with zero
-   */
   static public String nf(int num, int digits) {
     if ((int_nf != null) &&
         (int_nf_digits == digits) &&
@@ -9703,8 +9698,6 @@ public class PApplet implements PConstants {
 
   /**
    * @param num the number to format
-   * @param left number of digits to the left of the decimal point
-   * @param right number of digits to the right of the decimal point
    */
   static public String nf(float num, int left, int right) {
     if ((float_nf != null) &&
