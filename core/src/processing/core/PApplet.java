@@ -9626,7 +9626,6 @@ public class PApplet implements PConstants {
 
   /**
    * @param nums the numbers to format
-   * @param digits number of digits to pad with zeroes
    */
   static public String[] nfs(int nums[], int digits) {
     String formatted[] = new String[nums.length];
@@ -9665,7 +9664,6 @@ public class PApplet implements PConstants {
   }
   /**
    * @param nums the numbers to format
-   * @param digits number of digits to pad with zeroes
    */
   static public String[] nfp(int nums[], int digits) {
     String formatted[] = new String[nums.length];
@@ -9720,7 +9718,6 @@ public class PApplet implements PConstants {
   }
 
   /**
-   * @param nums the numbers to format
    * @param right number of digits to the right of the decimal point
   */
   static public String[] nfc(float nums[], int right) {
@@ -9731,10 +9728,6 @@ public class PApplet implements PConstants {
     return formatted;
   }
 
-  /**
-   * @param num the number to format
-   * @param right number of digits to the right of the decimal point
-  */
   static public String nfc(float num, int right) {
     if ((float_nf != null) &&
         (float_nf_left == 0) &&
@@ -9771,7 +9764,6 @@ public class PApplet implements PConstants {
   }
 
  /**
-  * @param num the number to format
   * @param left the number of digits to the left of the decimal point
   * @param right the number of digits to the right of the decimal point
   */
@@ -9780,7 +9772,6 @@ public class PApplet implements PConstants {
   }
 
  /**
-  * @param nums the number to format
   * @param left the number of digits to the left of the decimal point
   * @param right the number of digits to the right of the decimal point
   */
@@ -9792,11 +9783,6 @@ public class PApplet implements PConstants {
     return formatted;
   }
 
- /**
-  * @param num the number to format
-  * @param left the number of digits to the left of the decimal point
-  * @param right the number of digits to the right of the decimal point
-  */
   static public String nfp(float num, int left, int right) {
     return (num < 0) ? nf(num, left, right) :  ('+' + nf(num, left, right));
   }
