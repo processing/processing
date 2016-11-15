@@ -127,6 +127,55 @@ public class FloatDict {
   }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public class Entry {
+    public String key;
+    public float value;
+
+    Entry(String key, float value) {
+      this.key = key;
+      this.value = value;
+    }
+  }
+
+
+  public Iterable<Entry> entries() {
+    return new Iterable<Entry>() {
+
+      public Iterator<Entry> iterator() {
+        return entryIterator();
+      }
+    };
+  }
+
+
+  public Iterator<Entry> entryIterator() {
+    return new Iterator<Entry>() {
+      int index = -1;
+
+      public void remove() {
+        removeIndex(index);
+        index--;
+      }
+
+      public Entry next() {
+        Entry e = new Entry(keys[index], values[index]);
+        index++;
+        return e;
+      }
+
+      public boolean hasNext() {
+        return index+1 < size();
+      }
+    };
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   public String key(int index) {
     return keys[index];
   }

@@ -1,18 +1,19 @@
 0256 (3.2.4 or 3.3)
 X write exec() documentation
 X   https://github.com/processing/processing/issues/4740
+
+api additions
 X add listPaths(), listFiles()
 X   https://github.com/processing/processing/issues/4622
-_   needs documentation
 X add increment() method that takes IntDict to merge another dictionary
 X   Calling this increment() since it doesn't make sense in practice for
 X   the other dictionary types, even though it's technically an add()
+X add Entry class for iterating StringDict, IntDict, FloatDict
 
 contribs
 X Adding missing docs and keywords for TableRow
 X   https://github.com/processing/processing/pull/4333
 
-_ add StringDict.Entry class for iterating
 
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
 _   https://github.com/processing/processing/issues/4678
@@ -109,7 +110,6 @@ _   https://www.linkedin.com/pulse/oracle-just-removed-javafx-support-arm-jan-sn
 
 
 opengl questions
-_ hard crash at 1920x1080, mirrored, Casey's GT 650M 1GB
 _ exitCalled() and exitActual made public by Andres, breaks Python
 _   also not API we want to expose, so sort this out
 _   or maybe we're fine b/c now FX2D needs it as well
@@ -189,11 +189,6 @@ _   may be related to full-screen bug filed recently
 _ closing a sketch window manually (not hitting Stop) not killing sketch
 _   at least with the Java2D renderer
 _ don't override the window icon w/ p5 logo if already set
-
-
-retina/hidpi
-_ no high-dpi support for core on Windows
-_   https://github.com/processing/processing/issues/2411
 
 
 decisions/misc
