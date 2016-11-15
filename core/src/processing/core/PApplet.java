@@ -9684,7 +9684,6 @@ public class PApplet implements PConstants {
   static private boolean float_nf_commas;
 
   /**
-   * @param nums the numbers to format
    * @param left number of digits to the left of the decimal point
    * @param right number of digits to the right of the decimal point
    */
@@ -9696,9 +9695,6 @@ public class PApplet implements PConstants {
     return formatted;
   }
 
-  /**
-   * @param num the number to format
-   */
   static public String nf(float num, int left, int right) {
     if ((float_nf != null) &&
         (float_nf_left == left) &&
