@@ -55,8 +55,12 @@ public class SourceUtils {
 
 
 
+  // Positive lookahead and lookbehind are needed to match all type constructors
+  // in code like `int(byte(245))` where first bracket matches as last
+  // group in "^int(" but also as a first group in "(byte(". Lookahead and
+  // lookbehind won't consume the shared character.
   public static final Pattern TYPE_CONSTRUCTOR_REGEX =
-      Pattern.compile("(?:^|\\W)(int|char|float|boolean|byte)(?:\\s*\\()",
+      Pattern.compile("(?<=^|\\W)(int|char|float|boolean|byte)(?=\\s*\\()",
                       Pattern.MULTILINE);
 
   public static List<Edit> replaceTypeConstructors(CharSequence source) {
