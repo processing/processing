@@ -231,7 +231,18 @@ public class XML implements Serializable {
   protected XML(XML parent, Node node) {
     this.node = node;
     this.parent = parent;
-//    this.name = node.getNodeName();
+
+    for (String attr : parent.listAttributes()) {
+      if (attr.startsWith("xmlns")) {
+        // Copy namespace attributes to the kids, otherwise this XML
+        // can no longer be printed (or manipulated in most ways).
+        // Only do this when it's an Element, otherwise it's trying to set
+        // attributes on text notes (interstitial content).
+        if (node instanceof Element) {
+          setString(attr, parent.getString(attr));
+        }
+      }
+    }
   }
 
 
@@ -1094,16 +1105,29 @@ public class XML implements Serializable {
       String outgoing = stringWriter.toString();
 
       // Add the XML declaration to the top if it's not there already
-      if (!outgoing.startsWith(decl)) {
-        return decl + sep + outgoing;
-      } else {
+      if (outgoing.startsWith(decl)) {
+        int declen = decl.length();
+        int seplen = sep.length();
+        if (outgoing.length() > declen + seplen &&
+            !outgoing.substring(declen, declen + seplen).equals(sep)) {
+          // make sure there's a line break between the XML decl and the code
+          return outgoing.substring(0, decl.length()) +
+            sep + outgoing.substring(decl.length());
+        }
         return outgoing;
+      } else {
+        return decl + sep + outgoing;
       }
 
     } catch (Exception e) {
       e.printStackTrace();
     }
     return null;
+  }
+
+
+  public void print() {
+    PApplet.println(format(2));
   }
 
 

@@ -1,6 +1,8 @@
 0256 (3.2.4 or 3.3)
 X write exec() documentation
 X   https://github.com/processing/processing/issues/4740
+X add xmlns to elements procured from getChild()
+X make sure newline is added after XML header when formatting
 
 api additions
 X add listPaths(), listFiles()
@@ -9,10 +11,15 @@ X add increment() method that takes IntDict to merge another dictionary
 X   Calling this increment() since it doesn't make sense in practice for
 X   the other dictionary types, even though it's technically an add()
 X add Entry class for iterating StringDict, IntDict, FloatDict
+X add XML.print() method (prints with indent of 2)
 
 contribs
 X Adding missing docs and keywords for TableRow
 X   https://github.com/processing/processing/pull/4333
+
+cleaning
+o probably should also check to make sure PApplet running JVM 8
+X   or compile against 1.8 and force it?
 
 
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
@@ -299,11 +306,6 @@ _   will need documentation
 _ negative indices so that we can work relative to the end in data classes?
 _ add Double and Long versions of the data classes?
 _ add requestFocus() method to PApplet (or surface?)
-o destroy() removed, but bring back? is that better than dispose()?
-_   destroy() only called dispose(), so no difference
-_   Python Mode has a hook for when it's called
-_ probably should also check to make sure PApplet running JVM 8
-_   or compile against 1.8 and force it?
 
 
 
@@ -371,6 +373,9 @@ _   is there a way to catch cmd-q when running a sketch?
 _     so that it could avoid quitting if the sketch hasn't been stopped
 _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
+o destroy() removed, but bring back? is that better than dispose()?
+_   destroy() only called dispose(), so no difference
+_   Python Mode has a hook for when it's called
 
 
 CORE / PFont and text()
@@ -701,9 +706,6 @@ _   . Textblock
 _   \ Knob
 _   \ Progress bar
 _   \ Toggle
-_ implement JSON class
-_   http://www.xml.com/lpt/a/1658
-_   http://www.json.org/java/
 _ add shader support
 _ createColor() instead of color()?
 _ route all exceptions through PException and catch method

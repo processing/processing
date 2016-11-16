@@ -18,6 +18,12 @@ contrib
 X Added the remove filter feature
 X   https://github.com/processing/processing/pull/3890
 
+jakub
+X println(int(byte(245))) throwing error
+X   https://github.com/processing/processing/issues/4652
+X   https://github.com/processing/processing/pull/4744
+
+
 _ Export Application fails on machines w/ non-ASCII chars in user name
 _   at least give a warning about this? 
 _   https://github.com/processing/processing/issues/4736
@@ -34,6 +40,9 @@ _   https://bitbucket.org/infinitekind/appbundler
 
 _ settings() present and pixelDensity() is in setup(), nothing set/no error
 _   https://github.com/processing/processing/issues/4703
+
+_ right bracket missing error
+_   https://github.com/processing/processing/issues/4702
 
 _ Application Exports report as "Damaged" on macOS Sierra
 _   https://github.com/processing/processing/issues/4705
