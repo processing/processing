@@ -1790,7 +1790,7 @@ public class Table {
 
 
   /**
-   * @param type the type to be used for the new column: INT, LONG, FLOAT, DOUBLE, STRING, or CATEGORY
+   * @param type the type to be used for the new column: INT, LONG, FLOAT, DOUBLE, or STRING
    */
   public void addColumn(String title, int type) {
     insertColumn(columns.length, title, type);
