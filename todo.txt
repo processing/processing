@@ -22,7 +22,17 @@ jakub
 X println(int(byte(245))) throwing error
 X   https://github.com/processing/processing/issues/4652
 X   https://github.com/processing/processing/pull/4744
+X 'web colors' next to each other fail to parse in certain situations
+X   https://github.com/processing/processing/issues/4752
+X   https://github.com/processing/processing/pull/4753
 
+_ Broken characters in the Welcome Page and the Contribution Manager
+_   looks like a failure to load the Source Sans font
+_   https://github.com/processing/processing/issues/4747
+_   what happens if font loading fails?
+_   are there conflicts between version in lib and OS?
+_   are we still installing fonts into ext?
+_   fixed by rolling back to 8u92, broken since 8u102 in 3.1.2
 
 _ Export Application fails on machines w/ non-ASCII chars in user name
 _   at least give a warning about this? 
