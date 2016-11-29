@@ -84,7 +84,7 @@ public class SourceUtils {
 
 
   public static final Pattern HEX_LITERAL_REGEX =
-      Pattern.compile("(?:^|\\W)(#[A-Fa-f0-9]{6})(?:\\W|$)");
+      Pattern.compile("(?<=^|\\W)(#[A-Fa-f0-9]{6})(?=\\W|$)");
 
   public static List<Edit> replaceHexLiterals(CharSequence source) {
     // Find all #[webcolor] and replace with 0xff[webcolor]
