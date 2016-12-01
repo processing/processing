@@ -68,7 +68,7 @@ public class Preferences {
       load(Base.getLibStream(DEFAULTS_FILE));
     } catch (Exception e) {
       Messages.showError(null, "Could not read default settings.\n" +
-                           "You'll need to reinstall Processing.", e);
+                         "You'll need to reinstall Processing.", e);
     }
 
     // Clone the defaults, then override any them with the user's preferences.
@@ -109,9 +109,12 @@ public class Preferences {
     PApplet.useNativeSelect =
       Preferences.getBoolean("chooser.files.native"); //$NON-NLS-1$
 
-    // Use the system proxy settings by default
-    // https://github.com/processing/processing/issues/2643
-    System.setProperty("java.net.useSystemProxies", "true");
+    // Adding option to disable this in case it's getting in the way
+    if (get("proxy.system").equals("true")) {
+      // Use the system proxy settings by default
+      // https://github.com/processing/processing/issues/2643
+      System.setProperty("java.net.useSystemProxies", "true");
+    }
 
     // Set HTTP, HTTPS, and SOCKS proxies for individuals
     // who want/need to override the system setting

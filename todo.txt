@@ -9,6 +9,7 @@ X   https://github.com/processing/processing/issues/3123
 X   https://github.com/processing/processing/issues/4735
 X move the DEBUG flag into an external file or preferences.txt
 X   will help us with debugging w/ others as well
+X   change to debug.txt; too confusing with the folder thing
 X replace java.util.logging code with built-in logging
 _ blank window on startup where the "welcome" screen should be
 _   https://github.com/processing/processing/issues/3933

@@ -141,11 +141,13 @@ public class Base {
     Platform.init();
 
     // Set the debug flag based on a file being present in the settings folder
-    File debugFile = getSettingsFile("debug");
+    File debugFile = getSettingsFile("debug.txt");
+    /*
     if (debugFile.isDirectory()) {
       // if it's a directory, it's a leftover from older releases, clear it
       Util.removeDir(debugFile);
-    } else if (debugFile.exists()) {
+    } else*/
+    if (debugFile.exists()) {
       DEBUG = true;
     }
 

@@ -347,6 +347,8 @@ proxy.socks.port=
 # Example of usage (replace 'http' with 'https' or 'socks' as needed)
 #proxy.http.host=proxy.example.com
 #proxy.http.port=8080
+# Whether to use the system proxy by default
+proxy.system=true
 
 # PDE X
 pdex.autoSave.autoSaveByDefault=true
