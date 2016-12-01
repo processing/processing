@@ -57,12 +57,15 @@ public class SingleInstance {
 
   static void startServer(final Base base) {
     try {
-      final ServerSocket ss = new ServerSocket(0, 0, InetAddress.getByName(null));
+      Messages.log("Opening SingleInstance socket");
+      final ServerSocket ss =
+        new ServerSocket(0, 0, InetAddress.getLoopbackAddress());
       Preferences.set(SERVER_PORT, "" + ss.getLocalPort());
       final String key = "" + Math.random();
       Preferences.set(SERVER_KEY, key);
       Preferences.save();
 
+      Messages.log("Starting SingleInstance thread");
       new Thread(new Runnable() {
         public void run() {
           while (true) {
@@ -119,15 +122,17 @@ public class SingleInstance {
 
   static boolean sendArguments(String[] args) {  //, long timeout) {
     try {
+      Messages.log("Checking to see if Processing is already running");
       int port = Preferences.getInteger(SERVER_PORT);
       String key = Preferences.get(SERVER_KEY);
 
       Socket socket = null;
       try {
-        socket = new Socket(InetAddress.getByName(null), port);
+        socket = new Socket(InetAddress.getLoopbackAddress(), port);
       } catch (Exception ignored) { }
 
       if (socket != null) {
+        Messages.log("Processing is already running, sending command line");
         PrintWriter writer = PApplet.createWriter(socket.getOutputStream());
         writer.println(key);
         for (String arg : args) {
@@ -138,9 +143,9 @@ public class SingleInstance {
         return true;
       }
     } catch (IOException e) {
-      System.err.println("Error sending commands to other instance.");
-      e.printStackTrace();
+      Messages.loge("Error sending commands to other instance", e);
     }
+    Messages.log("Processing is not already running (or could not connect)");
     return false;
   }
 }

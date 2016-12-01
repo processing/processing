@@ -13,6 +13,8 @@ X replace java.util.logging code with built-in logging
 _ blank window on startup where the "welcome" screen should be
 _   https://github.com/processing/processing/issues/3933
 _   this may be fixed (removed invokeLater() on startup), unconfirmed
+_ could not write to temporary directory
+_   https://github.com/processing/processing/issues/4757
 
 contrib
 X Added the remove filter feature
