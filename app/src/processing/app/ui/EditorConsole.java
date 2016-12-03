@@ -3,7 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-10 Ben Fry and Casey Reas
+  Copyright (c) 2012-16 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -27,19 +28,20 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.event.*;
-import java.io.*;
-import java.text.SimpleDateFormat;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import javax.swing.text.*;
 
-import processing.app.*;
-import processing.core.PApplet;
+import processing.app.Console;
+import processing.app.Mode;
+import processing.app.Preferences;
 
 
 /**
@@ -71,6 +73,7 @@ public class EditorConsole extends JScrollPane {
   PrintStream sketchOut;
   PrintStream sketchErr;
 
+  /*
   // Single static instance shared because there's only one real System.out.
   // Within the input handlers, the currentConsole variable will be used to
   // echo things to the correct location.
@@ -83,9 +86,11 @@ public class EditorConsole extends JScrollPane {
 
   static OutputStream stdoutFile;
   static OutputStream stderrFile;
+  */
 
-  static EditorConsole currentConsole;
+  static EditorConsole current;
 
+  /*
   // For 0185, moved the first init to this static { } block, so that we never
   // have a situation that causes systemOut/Err to not be set properly.
   static {
@@ -138,6 +143,7 @@ public class EditorConsole extends JScrollPane {
       e.printStackTrace(systemErr);
     }
   }
+  */
 
 
   public EditorConsole(Editor editor) {
@@ -154,8 +160,10 @@ public class EditorConsole extends JScrollPane {
     // add the jtextpane to this scrollpane
     this.setViewportView(consoleTextPane);
 
-    sketchOut = new PrintStream(new EditorConsoleStream(false, this));
-    sketchErr = new PrintStream(new EditorConsoleStream(true, this));
+//    sketchOut = new PrintStream(new EditorConsoleStream(false, this));
+//    sketchErr = new PrintStream(new EditorConsoleStream(true, this));
+    sketchOut = new PrintStream(new EditorConsoleStream(false));
+    sketchErr = new PrintStream(new EditorConsoleStream(true));
 
     startTimer();
   }
@@ -282,49 +290,58 @@ public class EditorConsole extends JScrollPane {
 
 
   static public void setEditor(Editor editor) {
-    if (currentConsole != null) {
-      currentConsole.stopTimer();  // allow to be garbage collected
+    if (current != null) {
+      current.stopTimer();  // allow to be garbage collected
     }
-    currentConsole = editor.console;
-    currentConsole.startTimer();
+    editor.console.setCurrent();
   }
 
 
-  /**
-   * Close the streams so that the temporary files can be deleted.
-   * <p/>
-   * File.deleteOnExit() cannot be used because the stdout and stderr
-   * files are inside a folder, and have to be deleted before the
-   * folder itself is deleted, which can't be guaranteed when using
-   * the deleteOnExit() method.
-   */
-  public static void handleQuit() {
-    // replace original streams to remove references to console's streams
-    System.setOut(systemOut);
-    System.setErr(systemErr);
-
-    try {
-      // close the PrintStream
-      if (consoleOut != null) consoleOut.close();
-      if (consoleErr != null) consoleErr.close();
-
-      // also have to close the original FileOutputStream
-      // otherwise it won't be shut down completely
-      if (stdoutFile != null) stdoutFile.close();
-      if (stderrFile != null) stderrFile.close();
-
-    } catch (IOException e) {
-      e.printStackTrace(systemErr);
-    }
+  void setCurrent() {
+    current = this;  //editor.console;
+    startTimer();
+    Console.setEditor(sketchOut, sketchErr);
   }
+
+
+//  /**
+//   * Close the streams so that the temporary files can be deleted.
+//   * <p/>
+//   * File.deleteOnExit() cannot be used because the stdout and stderr
+//   * files are inside a folder, and have to be deleted before the
+//   * folder itself is deleted, which can't be guaranteed when using
+//   * the deleteOnExit() method.
+//   */
+//  public static void handleQuit() {
+//    // replace original streams to remove references to console's streams
+//    System.setOut(systemOut);
+//    System.setErr(systemErr);
+//
+//    try {
+//      // close the PrintStream
+//      if (consoleOut != null) consoleOut.close();
+//      if (consoleErr != null) consoleErr.close();
+//
+//      // also have to close the original FileOutputStream
+//      // otherwise it won't be shut down completely
+//      if (stdoutFile != null) stdoutFile.close();
+//      if (stderrFile != null) stderrFile.close();
+//
+//    } catch (IOException e) {
+//      e.printStackTrace(systemErr);
+//    }
+//  }
 
 
   synchronized public void message(String what, boolean err) {
+    // now handled in Console
+    /*
     if (err) {
-      systemErr.print(what);
+      Console.systemErr.print(what);
     } else {
-      systemOut.print(what);
+      Console.systemOut.print(what);
     }
+    */
 
     if (err && (what.contains("invalid context 0x0") || (what.contains("invalid drawable")))) {
       // Respectfully declining... This is a quirk of more recent releases of
@@ -362,25 +379,18 @@ public class EditorConsole extends JScrollPane {
   }
 
 
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  private static class EditorConsoleStream extends OutputStream {
-    final boolean err; // whether stderr or stdout
-    final byte single[] = new byte[1];
+  /*
+  static class EditorConsoleStream extends OutputStream {
+    boolean err;
     EditorConsole console;
 
     public EditorConsoleStream(boolean err, EditorConsole console) {
       this.err = err;
       this.console = console;
-    }
-
-    public void close() { }
-
-    public void flush() { }
-
-    public void write(byte b[]) {  // appears never to be used
-      write(b, 0, b.length);
     }
 
     public void write(byte b[], int offset, int length) {
@@ -397,21 +407,26 @@ public class EditorConsole extends JScrollPane {
           systemOut.write(b, offset, length);
         }
       }
+      writeEcho(b, offset, length);
+    }
+  }
+  */
 
-      final OutputStream echo = err ? stderrFile : stdoutFile;
-      if (echo != null) {
-        try {
-          echo.write(b, offset, length);
-          echo.flush();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
+
+  class EditorConsoleStream extends OutputStream {
+    boolean err;
+
+    public EditorConsoleStream(boolean err) {
+      this.err = err;
     }
 
+    public void write(byte b[], int offset, int length) {
+      message(new String(b, offset, length), err);
+    }
+
+    // doesn't appear to be called (but must be implemented)
     public void write(int b) {
-      single[0] = (byte) b;
-      write(single, 0, 1);
+      write(new byte[] { (byte) b }, 0, 1);
     }
   }
 }

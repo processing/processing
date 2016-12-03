@@ -21,6 +21,8 @@ cleaning
 o probably should also check to make sure PApplet running JVM 8
 X   or compile against 1.8 and force it?
 
+_ no prompt shows with selectInput() on 10.11 and 10.12
+_   https://github.com/processing/processing/issues/4758
 
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
 _   https://github.com/processing/processing/issues/4678

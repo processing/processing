@@ -182,25 +182,21 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // When bringing a window to front, let the Base know
     addWindowListener(new WindowAdapter() {
-//      int importIndex;
 
         public void windowActivated(WindowEvent e) {
           base.handleActivated(Editor.this);
           fileMenu.insert(Recent.getMenu(), 2);
           Toolkit.setMenuMnemsInside(fileMenu);
 
-          //sketchMenu.insert(mode.getImportMenu(), 5);
           mode.insertImportMenu(sketchMenu);
-          //sketchMenu.insert(mode.getImportMenu(), importIndex);
           Toolkit.setMenuMnemsInside(sketchMenu);
           mode.insertToolbarRecentMenu();
         }
 
         public void windowDeactivated(WindowEvent e) {
+          // TODO call handleActivated(null)? or do we run the risk of the
+          // deactivate call for old window being called after the activate?
           fileMenu.remove(Recent.getMenu());
-//          JMenu importMenu = mode.getImportMenu();
-//          importIndex = sketchMenu.getComponentZOrder(mode.getImportMenu());
-//          sketchMenu.remove(mode.getImportMenu());
           mode.removeImportMenu(sketchMenu);
           mode.removeToolbarRecentMenu();
         }

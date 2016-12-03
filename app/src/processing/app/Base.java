@@ -139,6 +139,8 @@ public class Base {
     }
 
     Platform.init();
+    // call after Platform.init() because we need the settings folder
+    Console.startup();
 
     // Set the debug flag based on a file being present in the settings folder
     File debugFile = getSettingsFile("debug.txt");
@@ -1473,6 +1475,9 @@ public class Base {
       }
       // Save out the current prefs state
       Preferences.save();
+
+      // Finished with this guy
+      Console.shutdown();
 
       if (!Platform.isMacOS()) {
         // If this was fired from the menu or an AppleEvent (the Finder),
