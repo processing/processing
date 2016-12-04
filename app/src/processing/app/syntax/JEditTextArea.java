@@ -620,7 +620,7 @@ public class JEditTextArea extends JComponent
    * @param offset The offset, from the start of the line
    */
   public int _offsetToX(int line, int offset) {
-    TokenMarker tokenMarker = getTokenMarker();
+    TokenMarkerState tokenMarker = getTokenMarker();
 
     // Use painter's cached info for speed
     FontMetrics fm = painter.getFontMetrics();
@@ -682,7 +682,7 @@ public class JEditTextArea extends JComponent
    * @param x The x co-ordinate
    */
   public int xToOffset(int line, int x) {
-    TokenMarker tokenMarker = getTokenMarker();
+    TokenMarkerState tokenMarker = getTokenMarker();
 
     /* Use painter's cached info for speed */
     FontMetrics fm = painter.getFontMetrics();
@@ -855,7 +855,7 @@ public class JEditTextArea extends JComponent
    * Returns the document's token marker. Equivalent to calling
    * <code>getDocument().getTokenMarker()</code>.
    */
-  public final TokenMarker getTokenMarker() {
+  public final TokenMarkerState getTokenMarker() {
     return document.getTokenMarker();
   }
 
@@ -1680,7 +1680,7 @@ public class JEditTextArea extends JComponent
     int segmentOffset = segment.offset;
     int segmentCount = segment.count;
 
-    TokenMarker tokenMarker = doc.getTokenMarker();
+    TokenMarkerState tokenMarker = doc.getTokenMarker();
     // If syntax coloring is disabled, do simple translation
     if (tokenMarker == null) {
       for (int j = 0; j < segmentCount; j++) {

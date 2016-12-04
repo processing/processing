@@ -113,7 +113,7 @@ public class PdeTextAreaPainter extends TextAreaPainter {
    * @param x horizontal position
    */
   @Override
-  protected void paintLine(Graphics gfx, int line, int x, TokenMarker marker) {
+  protected void paintLine(Graphics gfx, int line, int x, TokenMarkerState marker) {
     try {
       // TODO This line is causing NPEs randomly ever since I added the
       //      toggle for Java Mode/Debugger toolbar. [Manindra]
