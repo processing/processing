@@ -29,6 +29,10 @@ X   https://github.com/processing/processing/pull/4744
 X 'web colors' next to each other fail to parse in certain situations
 X   https://github.com/processing/processing/issues/4752
 X   https://github.com/processing/processing/pull/4753
+X Pasting code from editor to empty editor produces Exception
+X   https://github.com/processing/processing/issues/4522
+X   https://github.com/processing/processing/pull/4761
+
 
 _ Broken characters in the Welcome Page and the Contribution Manager
 _   looks like a failure to load the Source Sans font
@@ -86,8 +90,6 @@ _   https://github.com/processing/processing/issues/4353#issuecomment-237715947
 
 
 high
-_ Pasting code from editor to empty editor produces Exception
-_   https://github.com/processing/processing/issues/4522
 _ possible infinite loop on modified externally
 _   https://github.com/processing/processing/issues/3965
 _ PDE and sketches are 2x smaller on high-res Windows machines
