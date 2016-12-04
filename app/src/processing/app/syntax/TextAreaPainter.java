@@ -488,7 +488,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
     int lastInvalid = firstLine + (clipRect.y + clipRect.height - 1) / height;
 
     try {
-      TokenMarker tokenMarker = textArea.getDocument().getTokenMarker();
+      TokenMarkerState tokenMarker = textArea.getDocument().getTokenMarker();
       int x = textArea.getHorizontalOffset();
 
       for (int line = firstInvalid; line <= lastInvalid; line++) {
@@ -611,7 +611,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 //    Font defaultFont = getFont();
 //    Color defaultColor = getForeground();
   protected void paintLine(Graphics gfx, int line, int x,
-                           TokenMarker tokenMarker) {
+                           TokenMarkerState tokenMarker) {
     currentLineIndex = line;
     int y = textArea.lineToY(line);
 
@@ -671,7 +671,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 //                                 int line, Font defaultFont,
 //                                 Color defaultColor, int x, int y) {
   protected void paintSyntaxLine(Graphics gfx, int line, int x, int y,
-                                 TokenMarker tokenMarker) {
+                                 TokenMarkerState tokenMarker) {
     textArea.getLineText(currentLineIndex, currentLine);
     currentLineTokens = tokenMarker.markTokens(currentLine, currentLineIndex);
 
