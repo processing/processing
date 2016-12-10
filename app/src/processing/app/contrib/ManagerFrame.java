@@ -383,7 +383,7 @@ public class ManagerFrame {
         activeTab.updateCategoryChooser();
 
         if (error) {
-          exception.printStackTrace();
+          // Show the tab with error panel
           makeAndShowTab(true, false);
         } else {
           makeAndShowTab(false, false);
