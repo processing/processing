@@ -130,7 +130,7 @@ import processing.opengl.PShader;
    * et al.) are handled in PGraphics because they use the standard colorMode()
    * logic. Subclasses should override methods like emissiveFromCalc(), which
    * is a point where a valid color has been defined internally, and can be
-   * applied in some manner based on the calcXxxx values.
+   * applied in some manner.
    *
    * <h2>What's in the PGraphics documentation, what ain't</h2>
    * Some things are noted here, some things are not. For public API, always
@@ -358,6 +358,7 @@ public class PGraphics extends PImage implements PConstants {
   protected boolean tintAlpha;
   protected float tintR, tintG, tintB, tintA;
   protected int tintRi, tintGi, tintBi, tintAi;
+  protected final float[] tintArray = new float[4];
 
   // ........................................................
 
@@ -372,6 +373,7 @@ public class PGraphics extends PImage implements PConstants {
   protected boolean fillAlpha;
   protected float fillR, fillG, fillB, fillA;
   protected int fillRi, fillGi, fillBi, fillAi;
+  protected final float[] fillArray = new float[4];
 
   // ........................................................
 
@@ -386,6 +388,7 @@ public class PGraphics extends PImage implements PConstants {
   protected boolean strokeAlpha;
   protected float strokeR, strokeG, strokeB, strokeA;
   protected int strokeRi, strokeGi, strokeBi, strokeAi;
+  protected final float[] strokeArray = new float[4];
 
   // ........................................................
 
@@ -469,13 +472,16 @@ public class PGraphics extends PImage implements PConstants {
 
   public int ambientColor;
   public float ambientR, ambientG, ambientB;
+  protected final float[] ambientArray = new float[4];
   public boolean setAmbient;
 
   public int specularColor;
   public float specularR, specularG, specularB;
+  protected final float[] specularArray = new float[4];
 
   public int emissiveColor;
   public float emissiveR, emissiveG, emissiveB;
+  protected final float[] emissiveArray = new float[4];
 
   public float shininess;
 
@@ -496,6 +502,7 @@ public class PGraphics extends PImage implements PConstants {
   protected boolean backgroundAlpha;
   protected float backgroundR, backgroundG, backgroundB, backgroundA;
   protected int backgroundRi, backgroundGi, backgroundBi, backgroundAi;
+  protected final float[] backgroundArray = new float[4];
 
   static final protected String ERROR_BACKGROUND_IMAGE_SIZE =
     "background image must be the same size as your application";
@@ -545,12 +552,6 @@ public class PGraphics extends PImage implements PConstants {
   protected PSurface surface;
 
   // ........................................................
-
-  // internal color for setting/calculating
-  protected float calcR, calcG, calcB, calcA;
-  protected int calcRi, calcGi, calcBi, calcAi;
-  protected int calcColor;
-  protected boolean calcAlpha;
 
   /** The last RGB value converted to HSB */
   int cacheHsbKey;
@@ -6424,8 +6425,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#colorMode(int, float, float, float, float)
    */
   public void stroke(int rgb) {
-    colorCalc(rgb);
-    strokeFromCalc();
+    strokeFromCalc(colorCalc(strokeArray, rgb));
   }
 
 
@@ -6433,8 +6433,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param alpha opacity of the stroke
    */
   public void stroke(int rgb, float alpha) {
-    colorCalc(rgb, alpha);
-    strokeFromCalc();
+    strokeFromCalc(colorCalc(strokeArray, rgb, alpha));
   }
 
 
@@ -6442,14 +6441,12 @@ public class PGraphics extends PImage implements PConstants {
    * @param gray specifies a value between white and black
    */
   public void stroke(float gray) {
-    colorCalc(gray);
-    strokeFromCalc();
+    strokeFromCalc(colorCalc(strokeArray, gray));
   }
 
 
   public void stroke(float gray, float alpha) {
-    colorCalc(gray, alpha);
-    strokeFromCalc();
+    strokeFromCalc(colorCalc(strokeArray, gray, alpha));
   }
 
 
@@ -6460,29 +6457,27 @@ public class PGraphics extends PImage implements PConstants {
    * @webref color:setting
    */
   public void stroke(float v1, float v2, float v3) {
-    colorCalc(v1, v2, v3);
-    strokeFromCalc();
+    strokeFromCalc(colorCalc(strokeArray, v1, v2, v3));
   }
 
 
   public void stroke(float v1, float v2, float v3, float alpha) {
-    colorCalc(v1, v2, v3, alpha);
-    strokeFromCalc();
+    strokeFromCalc(colorCalc(strokeArray, v1, v2, v3, alpha));
   }
 
 
-  protected void strokeFromCalc() {
+  protected void strokeFromCalc(int argb) {
     stroke = true;
-    strokeR = calcR;
-    strokeG = calcG;
-    strokeB = calcB;
-    strokeA = calcA;
-    strokeRi = calcRi;
-    strokeGi = calcGi;
-    strokeBi = calcBi;
-    strokeAi = calcAi;
-    strokeColor = calcColor;
-    strokeAlpha = calcAlpha;
+    strokeR = strokeArray[0];
+    strokeG = strokeArray[1];
+    strokeB = strokeArray[2];
+    strokeA = strokeArray[3];
+    strokeRi = 255 & (argb >>> 16);
+    strokeGi = 255 & (argb >>> 8);
+    strokeBi = 255 & (argb);
+    strokeAi = 255 & (argb >>> 24);
+    strokeColor = argb;
+    strokeAlpha = (strokeAi < 255);
   }
 
 
@@ -6545,8 +6540,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#image(PImage, float, float, float, float)
    */
   public void tint(int rgb) {
-    colorCalc(rgb);
-    tintFromCalc();
+    tintFromCalc(colorCalc(tintArray, rgb));
   }
 
 
@@ -6554,8 +6548,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param alpha opacity of the image
    */
   public void tint(int rgb, float alpha) {
-    colorCalc(rgb, alpha);
-    tintFromCalc();
+    tintFromCalc(colorCalc(tintArray, rgb, alpha));
   }
 
 
@@ -6563,14 +6556,12 @@ public class PGraphics extends PImage implements PConstants {
    * @param gray specifies a value between white and black
    */
   public void tint(float gray) {
-    colorCalc(gray);
-    tintFromCalc();
+    tintFromCalc(colorCalc(tintArray, gray));
   }
 
 
   public void tint(float gray, float alpha) {
-    colorCalc(gray, alpha);
-    tintFromCalc();
+    tintFromCalc(colorCalc(tintArray, gray, alpha));
   }
 
 /**
@@ -6579,29 +6570,27 @@ public class PGraphics extends PImage implements PConstants {
  * @param v3 blue or brightness value (depending on current color mode)
  */
   public void tint(float v1, float v2, float v3) {
-    colorCalc(v1, v2, v3);
-    tintFromCalc();
+    tintFromCalc(colorCalc(tintArray, v1, v2, v3));
   }
 
 
   public void tint(float v1, float v2, float v3, float alpha) {
-    colorCalc(v1, v2, v3, alpha);
-    tintFromCalc();
+    tintFromCalc(colorCalc(tintArray, v1, v2, v3, alpha));
   }
 
 
-  protected void tintFromCalc() {
+  protected void tintFromCalc(int argb) {
     tint = true;
-    tintR = calcR;
-    tintG = calcG;
-    tintB = calcB;
-    tintA = calcA;
-    tintRi = calcRi;
-    tintGi = calcGi;
-    tintBi = calcBi;
-    tintAi = calcAi;
-    tintColor = calcColor;
-    tintAlpha = calcAlpha;
+    tintR = tintArray[0];
+    tintG = tintArray[1];
+    tintB = tintArray[2];
+    tintA = tintArray[3];
+    tintRi = 255 & (argb >>> 16);
+    tintGi = 255 & (argb >>> 8);
+    tintBi = 255 & (argb);
+    tintAi = 255 & (argb >>> 24);
+    tintColor = argb;
+    tintAlpha = (tintAi < 255);
   }
 
 
@@ -6666,16 +6655,14 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#colorMode(int, float, float, float, float)
    */
   public void fill(int rgb) {
-    colorCalc(rgb);
-    fillFromCalc();
+    fillFromCalc(colorCalc(fillArray, rgb));
   }
 
   /**
    * @param alpha opacity of the fill
    */
   public void fill(int rgb, float alpha) {
-    colorCalc(rgb, alpha);
-    fillFromCalc();
+    fillFromCalc(colorCalc(fillArray, rgb, alpha));
   }
 
 
@@ -6683,14 +6670,12 @@ public class PGraphics extends PImage implements PConstants {
    * @param gray number specifying value between white and black
    */
   public void fill(float gray) {
-    colorCalc(gray);
-    fillFromCalc();
+    fillFromCalc(colorCalc(fillArray, gray));
   }
 
 
   public void fill(float gray, float alpha) {
-    colorCalc(gray, alpha);
-    fillFromCalc();
+    fillFromCalc(colorCalc(fillArray, gray, alpha));
   }
 
 
@@ -6700,29 +6685,27 @@ public class PGraphics extends PImage implements PConstants {
    * @param v3 blue or brightness value (depending on current color mode)
    */
   public void fill(float v1, float v2, float v3) {
-    colorCalc(v1, v2, v3);
-    fillFromCalc();
+    fillFromCalc(colorCalc(fillArray, v1, v2, v3));
   }
 
 
   public void fill(float v1, float v2, float v3, float alpha) {
-    colorCalc(v1, v2, v3, alpha);
-    fillFromCalc();
+    fillFromCalc(colorCalc(fillArray, v1, v2, v3, alpha));
   }
 
 
-  protected void fillFromCalc() {
+  protected void fillFromCalc(int argb) {
     fill = true;
-    fillR = calcR;
-    fillG = calcG;
-    fillB = calcB;
-    fillA = calcA;
-    fillRi = calcRi;
-    fillGi = calcGi;
-    fillBi = calcBi;
-    fillAi = calcAi;
-    fillColor = calcColor;
-    fillAlpha = calcAlpha;
+    fillR = fillArray[0];
+    fillG = fillArray[1];
+    fillB = fillArray[2];
+    fillA = fillArray[3];
+    fillRi = 255 & (argb >>> 16);
+    fillGi = 255 & (argb >>> 8);
+    fillBi = 255 & (argb);
+    fillAi = 255 & (argb >>> 24);
+    fillColor = argb;
+    fillAlpha = (fillAi < 255);
   }
 
 
@@ -6759,16 +6742,14 @@ public class PGraphics extends PImage implements PConstants {
 //      colorCalcARGB(rgb, colorModeA);
 //      ambientFromCalc();
 //    }
-    colorCalc(rgb);
-    ambientFromCalc();
+    ambientFromCalc(colorCalc(ambientArray, rgb));
   }
 
 /**
  * @param gray number specifying value between white and black
  */
   public void ambient(float gray) {
-    colorCalc(gray);
-    ambientFromCalc();
+    ambientFromCalc(colorCalc(ambientArray, gray));
   }
 
 /**
@@ -6777,16 +6758,15 @@ public class PGraphics extends PImage implements PConstants {
  * @param v3 blue or brightness value (depending on current color mode)
  */
   public void ambient(float v1, float v2, float v3) {
-    colorCalc(v1, v2, v3);
-    ambientFromCalc();
+    ambientFromCalc(colorCalc(ambientArray, v1, v2, v3));
   }
 
 
-  protected void ambientFromCalc() {
-    ambientColor = calcColor;
-    ambientR = calcR;
-    ambientG = calcG;
-    ambientB = calcB;
+  protected void ambientFromCalc(int argb) {
+    ambientColor = argb;
+    ambientR = ambientArray[0];
+    ambientG = ambientArray[1];
+    ambientB = ambientArray[2];
     setAmbient = true;
   }
 
@@ -6818,8 +6798,7 @@ public class PGraphics extends PImage implements PConstants {
 //      colorCalcARGB(rgb, colorModeA);
 //      specularFromCalc();
 //    }
-    colorCalc(rgb);
-    specularFromCalc();
+    specularFromCalc(colorCalc(specularArray, rgb));
   }
 
 
@@ -6827,8 +6806,7 @@ public class PGraphics extends PImage implements PConstants {
  * gray number specifying value between white and black
  */
   public void specular(float gray) {
-    colorCalc(gray);
-    specularFromCalc();
+    specularFromCalc(colorCalc(specularArray, gray));
   }
 
 
@@ -6838,16 +6816,15 @@ public class PGraphics extends PImage implements PConstants {
  * @param v3 blue or brightness value (depending on current color mode)
  */
   public void specular(float v1, float v2, float v3) {
-    colorCalc(v1, v2, v3);
-    specularFromCalc();
+    specularFromCalc(colorCalc(specularArray, v1, v2, v3));
   }
 
 
-  protected void specularFromCalc() {
-    specularColor = calcColor;
-    specularR = calcR;
-    specularG = calcG;
-    specularB = calcB;
+  protected void specularFromCalc(int argb) {
+    specularColor = argb;
+    specularR = specularArray[0];
+    specularG = specularArray[1];
+    specularB = specularArray[2];
   }
 
 
@@ -6896,16 +6873,14 @@ public class PGraphics extends PImage implements PConstants {
 //      colorCalcARGB(rgb, colorModeA);
 //      emissiveFromCalc();
 //    }
-    colorCalc(rgb);
-    emissiveFromCalc();
+    emissiveFromCalc(colorCalc(emissiveArray, rgb));
   }
 
   /**
    * gray number specifying value between white and black
    */
   public void emissive(float gray) {
-    colorCalc(gray);
-    emissiveFromCalc();
+    emissiveFromCalc(colorCalc(emissiveArray, gray));
   }
 
   /**
@@ -6914,16 +6889,15 @@ public class PGraphics extends PImage implements PConstants {
    * @param v3 blue or brightness value (depending on current color mode)
    */
   public void emissive(float v1, float v2, float v3) {
-    colorCalc(v1, v2, v3);
-    emissiveFromCalc();
+    emissiveFromCalc(colorCalc(emissiveArray, v1, v2, v3));
   }
 
 
-  protected void emissiveFromCalc() {
-    emissiveColor = calcColor;
-    emissiveR = calcR;
-    emissiveG = calcG;
-    emissiveB = calcB;
+  protected void emissiveFromCalc(int argb) {
+    emissiveColor = argb;
+    emissiveR = emissiveArray[0];
+    emissiveG = emissiveArray[1];
+    emissiveB = emissiveArray[2];
   }
 
 
@@ -7240,8 +7214,7 @@ public class PGraphics extends PImage implements PConstants {
 //      backgroundFromCalc();
 //      backgroundImpl();
 //    }
-    colorCalc(rgb);
-    backgroundFromCalc();
+    backgroundFromCalc(colorCalc(backgroundArray, rgb));
   }
 
 
@@ -7262,8 +7235,7 @@ public class PGraphics extends PImage implements PConstants {
 //        backgroundImpl();
 //      }
 //    }
-    colorCalc(rgb, alpha);
-    backgroundFromCalc();
+    backgroundFromCalc(colorCalc(backgroundArray, rgb, alpha));
   }
 
 
@@ -7271,8 +7243,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param gray specifies a value between white and black
    */
   public void background(float gray) {
-    colorCalc(gray);
-    backgroundFromCalc();
+    backgroundFromCalc(colorCalc(backgroundArray, gray));
 //    backgroundImpl();
   }
 
@@ -7282,8 +7253,7 @@ public class PGraphics extends PImage implements PConstants {
       background(gray);  // ignore alpha for main drawing surface
 
     } else {
-      colorCalc(gray, alpha);
-      backgroundFromCalc();
+      backgroundFromCalc(colorCalc(backgroundArray, gray, alpha));
 //      backgroundImpl();
     }
   }
@@ -7295,15 +7265,13 @@ public class PGraphics extends PImage implements PConstants {
    * @param v3 blue or brightness value (depending on the current color mode)
    */
   public void background(float v1, float v2, float v3) {
-    colorCalc(v1, v2, v3);
-    backgroundFromCalc();
+    backgroundFromCalc(colorCalc(backgroundArray, v1, v2, v3));
 //    backgroundImpl();
   }
 
 
   public void background(float v1, float v2, float v3, float alpha) {
-    colorCalc(v1, v2, v3, alpha);
-    backgroundFromCalc();
+    backgroundFromCalc(colorCalc(backgroundArray, v1, v2, v3, alpha));
   }
 
   /**
@@ -7314,19 +7282,19 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  protected void backgroundFromCalc() {
-    backgroundR = calcR;
-    backgroundG = calcG;
-    backgroundB = calcB;
+  protected void backgroundFromCalc(int argb) {
+    backgroundR = backgroundArray[0];
+    backgroundG = backgroundArray[1];
+    backgroundB = backgroundArray[2];
     //backgroundA = (format == RGB) ? colorModeA : calcA;
     // If drawing surface is opaque, this maxes out at 1.0. [fry 150513]
-    backgroundA = (format == RGB) ? 1 : calcA;
-    backgroundRi = calcRi;
-    backgroundGi = calcGi;
-    backgroundBi = calcBi;
-    backgroundAi = (format == RGB) ? 255 : calcAi;
-    backgroundAlpha = (format == RGB) ? false : calcAlpha;
-    backgroundColor = calcColor;
+    backgroundA = (format == RGB) ? 1 : backgroundArray[3];
+    backgroundRi = 255 & (argb >>> 16);
+    backgroundGi = 255 & (argb >>> 8);
+    backgroundBi = 255 & (argb);
+    backgroundAi = 255 & (argb >>> 24);
+    backgroundColor = argb;
+    backgroundAlpha = (backgroundAi < 255);
 
     backgroundImpl();
   }
@@ -7488,9 +7456,9 @@ public class PGraphics extends PImage implements PConstants {
 
   // COLOR CALCULATIONS
 
-  // Given input values for coloring, these functions will fill the calcXxxx
-  // variables with values that have been properly filtered through the
-  // current colorMode settings.
+  // Given input values for coloring, these functions will fill a
+  // float[] {r, g, b, a} array with values in the range [0..1] that have been
+  // properly filtered through the current colorMode settings.
 
   // Renderers that need to subclass any drawing properties such as fill or
   // stroke will usally want to override methods like fillFromCalc (or the
@@ -7500,7 +7468,9 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the fill to either a grayscale value or an ARGB int.
+   * Return an AARRGGBB int from either a grayscale value or an AARRGGBB int,
+   * and optionally fill a {@code float[] {r, g, b, a}} array with values in
+   * the range [0..1].
    * <P>
    * The problem with this code is that it has to detect between these two
    * situations automatically. This is done by checking to see if the high bits
@@ -7518,57 +7488,59 @@ public class PGraphics extends PImage implements PConstants {
    * itself is zero (black) then it would appear indistinguishable from code
    * that reads "fill(0)". The solution is to use the four parameter versions
    * of stroke or fill to more directly specify the desired result.
+   * @param out A four-value array to be filled with the resulting color,
+   *            or null.
    */
-  protected void colorCalc(int rgb) {
+  protected int colorCalc(float[] out, int rgb) {
     if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
-      colorCalc((float) rgb);
+      return colorCalc(out, (float) rgb);
 
     } else {
-      colorCalcARGB(rgb, colorModeA);
+      return colorCalcARGB(out, rgb, colorModeA);
     }
   }
 
 
-  protected void colorCalc(int rgb, float alpha) {
+  protected int colorCalc(float[] out, int rgb, float alpha) {
     if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
-      colorCalc((float) rgb, alpha);
+      return colorCalc(out, (float) rgb, alpha);
 
     } else {
-      colorCalcARGB(rgb, alpha);
+      return colorCalcARGB(out, rgb, alpha);
     }
   }
 
 
-  protected void colorCalc(float gray) {
-    colorCalc(gray, colorModeA);
+  protected int colorCalc(float[] out, float gray) {
+    return colorCalc(out, gray, colorModeA);
   }
 
 
-  protected void colorCalc(float gray, float alpha) {
+  protected int colorCalc(float[] out, float gray, float alpha) {
     if (gray > colorModeX) gray = colorModeX;
     if (alpha > colorModeA) alpha = colorModeA;
 
     if (gray < 0) gray = 0;
     if (alpha < 0) alpha = 0;
 
-    calcR = colorModeScale ? (gray / colorModeX) : gray;
-    calcG = calcR;
-    calcB = calcR;
-    calcA = colorModeScale ? (alpha / colorModeA) : alpha;
-
-    calcRi = (int)(calcR*255); calcGi = (int)(calcG*255);
-    calcBi = (int)(calcB*255); calcAi = (int)(calcA*255);
-    calcColor = (calcAi << 24) | (calcRi << 16) | (calcGi << 8) | calcBi;
-    calcAlpha = (calcAi != 255);
+    float calcR = colorModeScale ? (gray / colorModeX) : gray;
+    float calcA = colorModeScale ? (alpha / colorModeA) : alpha;
+    if (out != null) {
+      out[0] = calcR;
+      out[1] = calcR;
+      out[2] = calcR;
+      out[3] = calcA;
+    }
+    return (0x010101 * (int)(calcR * 255)) | (int)(calcA*255) << 24;
   }
 
 
-  protected void colorCalc(float x, float y, float z) {
-    colorCalc(x, y, z, colorModeA);
+  protected int colorCalc(float[] out, float x, float y, float z) {
+    return colorCalc(out, x, y, z, colorModeA);
   }
 
 
-  protected void colorCalc(float x, float y, float z, float a) {
+  protected int colorCalc(float[] out, float x, float y, float z, float a) {
     if (x > colorModeX) x = colorModeX;
     if (y > colorModeY) y = colorModeY;
     if (z > colorModeZ) z = colorModeZ;
@@ -7579,27 +7551,35 @@ public class PGraphics extends PImage implements PConstants {
     if (z < 0) z = 0;
     if (a < 0) a = 0;
 
+    if (colorModeScale) {
+      x /= colorModeX;
+      y /= colorModeY;
+      z /= colorModeZ;
+      a /= colorModeA;
+    }
+
     switch (colorMode) {
     case RGB:
-      if (colorModeScale) {
-        calcR = x / colorModeX;
-        calcG = y / colorModeY;
-        calcB = z / colorModeZ;
-        calcA = a / colorModeA;
-      } else {
-        calcR = x; calcG = y; calcB = z; calcA = a;
+      if (out != null) {
+        out[0] = x;
+        out[1] = y;
+        out[2] = z;
+        out[3] = a;
       }
-      break;
+      return ((int)(x * 255) << 16)
+        | ((int)(y * 255) << 8)
+        | ((int)(z * 255))
+        | ((int)(a * 255) << 24);
+      // break;
 
     case HSB:
-      x /= colorModeX; // h
-      y /= colorModeY; // s
-      z /= colorModeZ; // b
-
-      calcA = colorModeScale ? (a/colorModeA) : a;
 
       if (y == 0) {  // saturation == 0
-        calcR = calcG = calcB = z;
+        if (out != null) {
+          out[0] = out[1] = out[2] = z;
+          out[3] = a;
+        }
+        return (0x010101 * (int)(z * 255)) | ((int)(a * 255) << 24);
 
       } else {
         float which = (x - (int)x) * 6.0f;
@@ -7607,6 +7587,7 @@ public class PGraphics extends PImage implements PConstants {
         float p = z * (1.0f - y);
         float q = z * (1.0f - y * f);
         float t = z * (1.0f - (y * (1.0f - f)));
+        float calcR, calcG, calcB;
 
         switch ((int)which) {
         case 0: calcR = z; calcG = t; calcB = p; break;
@@ -7614,15 +7595,24 @@ public class PGraphics extends PImage implements PConstants {
         case 2: calcR = p; calcG = z; calcB = t; break;
         case 3: calcR = p; calcG = q; calcB = z; break;
         case 4: calcR = t; calcG = p; calcB = z; break;
+        default: // makes compiler happy to know calcX are always initialized.
         case 5: calcR = z; calcG = p; calcB = q; break;
         }
+        if (out != null) {
+          out[0] = calcR;
+          out[1] = calcG;
+          out[2] = calcB;
+          out[3] = a;
+        }
+        return ((int)(calcR * 255) << 16)
+          | ((int)(calcG * 255) << 8)
+          | ((int)(calcB * 255))
+          | ((int)(a * 255) << 24);
       }
-      break;
+      // break;
+    default:
+      return 0; // Panic! Unreachable with valid colorMode.
     }
-    calcRi = (int)(255*calcR); calcGi = (int)(255*calcG);
-    calcBi = (int)(255*calcB); calcAi = (int)(255*calcA);
-    calcColor = (calcAi << 24) | (calcRi << 16) | (calcGi << 8) | calcBi;
-    calcAlpha = (calcAi != 255);
   }
 
 
@@ -7638,22 +7628,17 @@ public class PGraphics extends PImage implements PConstants {
    * Note, no need for a bounds check for 'argb' since it's a 32 bit number.
    * Bounds now checked on alpha, however (rev 0225).
    */
-  protected void colorCalcARGB(int argb, float alpha) {
-    if (alpha == colorModeA) {
-      calcAi = (argb >> 24) & 0xff;
-      calcColor = argb;
-    } else {
-      calcAi = (int) (((argb >> 24) & 0xff) * PApplet.constrain((alpha / colorModeA), 0, 1));
-      calcColor = (calcAi << 24) | (argb & 0xFFFFFF);
+  protected int colorCalcARGB(float[] out, int argb, float alpha) {
+    float calcA255 = (((argb >> 24) & 0xff) *
+          PApplet.constrain(alpha / colorModeA, 0, 1));
+
+    if (out != null)  {
+      out[0] = ((argb >> 16) & 0xff) / 255f;
+      out[1] = ((argb >>  8) & 0xff) / 255f;
+      out[2] = ( argb        & 0xff) / 255f;
+      out[3] = calcA255 / 255f;
     }
-    calcRi = (argb >> 16) & 0xff;
-    calcGi = (argb >> 8) & 0xff;
-    calcBi = argb & 0xff;
-    calcA = calcAi / 255.0f;
-    calcR = calcRi / 255.0f;
-    calcG = calcGi / 255.0f;
-    calcB = calcBi / 255.0f;
-    calcAlpha = (calcAi != 255);
+    return ((int)calcA255 << 24) | (argb & 0xFFFFFF);
   }
 
 
@@ -7672,25 +7657,24 @@ public class PGraphics extends PImage implements PConstants {
 
 
   public final int color(int c) {  // ignore
-//    if (((c & 0xff000000) == 0) && (c <= colorModeX)) {
-//      if (colorModeDefault) {
-//        // bounds checking to make sure the numbers aren't to high or low
-//        if (c > 255) c = 255; else if (c < 0) c = 0;
-//        return 0xff000000 | (c << 16) | (c << 8) | c;
-//      } else {
-//        colorCalc(c);
-//      }
-//    } else {
-//      colorCalcARGB(c, colorModeA);
-//    }
-    colorCalc(c);
-    return calcColor;
+    if (((c & 0xff000000) == 0) && (c <= colorModeX)) {
+      if (!colorModeDefault) {
+        c = (int)(255f * c / colorModeX);
+      }
+      // bounds checking to make sure the numbers aren't too high or low
+      if (c > 255) c = 255; else if (c < 0) c = 0;
+      return 0xff000000 | (c << 16) | (c << 8) | c;
+    } else {
+      return c;
+    }
   }
 
 
   public final int color(float gray) {  // ignore
-    colorCalc(gray);
-    return calcColor;
+    int c = (int)(255f * gray / colorModeX);
+    // bounds checking to make sure the numbers aren't too high or low
+    if (c > 255) c = 255; else if (c < 0) c = 0;
+    return 0xff000000 | (c << 16) | (c << 8) | c;
   }
 
 
@@ -7698,15 +7682,10 @@ public class PGraphics extends PImage implements PConstants {
    * @param c can be packed ARGB or a gray in this case
    */
   public final int color(int c, int alpha) {  // ignore
-//    if (colorModeDefault) {
-//      // bounds checking to make sure the numbers aren't to high or low
-//      if (c > 255) c = 255; else if (c < 0) c = 0;
-//      if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
-//
-//      return ((alpha & 0xff) << 24) | (c << 16) | (c << 8) | c;
-//    }
-    colorCalc(c, alpha);
-    return calcColor;
+    c = color(c);
+    alpha = (int)((alpha / colorModeA) * (c >>> 24));
+    if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
+    return (alpha << 24) | (c & 0xFFFFFF);
   }
 
 
@@ -7714,42 +7693,37 @@ public class PGraphics extends PImage implements PConstants {
    * @param c can be packed ARGB or a gray in this case
    */
   public final int color(int c, float alpha) {  // ignore
-//    if (((c & 0xff000000) == 0) && (c <= colorModeX)) {
-    colorCalc(c, alpha);
-//  } else {
-//    colorCalcARGB(c, alpha);
-//  }
-    return calcColor;
+    c = color(c);
+    int a = (int)((alpha / colorModeA) * (c >>> 24));
+    if (a > 255) a = 255; else if (a < 0) a = 0;
+    return (a << 24) | (c & 0xFFFFFF);
   }
 
 
   public final int color(float gray, float alpha) {  // ignore
-    colorCalc(gray, alpha);
-    return calcColor;
+    int a = (int)(255f * alpha / colorModeA);
+    if (a > 255) a = 255; else if (a < 0) a = 0;
+    return (a << 24) | (color(gray) & 0xFFFFFF);
   }
 
 
   public final int color(int v1, int v2, int v3) {  // ignore
-    colorCalc(v1, v2, v3);
-    return calcColor;
+    return colorCalc(null, v1, v2, v3, colorModeA);
   }
 
 
   public final int color(float v1, float v2, float v3) {  // ignore
-    colorCalc(v1, v2, v3);
-    return calcColor;
+    return colorCalc(null, v1, v2, v3, colorModeA);
   }
 
 
   public final int color(int v1, int v2, int v3, int a) {  // ignore
-    colorCalc(v1, v2, v3, a);
-    return calcColor;
+    return colorCalc(null, v1, v2, v3, a);
   }
 
 
   public final int color(float v1, float v2, float v3, float a) {  // ignore
-    colorCalc(v1, v2, v3, a);
-    return calcColor;
+    return colorCalc(null, v1, v2, v3, a);
   }
 
 

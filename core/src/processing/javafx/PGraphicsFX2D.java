@@ -1,4 +1,4 @@
-/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
 
 /*
   Part of the Processing project - http://processing.org
@@ -1917,8 +1917,8 @@ public class PGraphicsFX2D extends PGraphics {
 
 
   @Override
-  protected void strokeFromCalc() {
-    super.strokeFromCalc();
+  protected void strokeFromCalc(int c) {
+    super.strokeFromCalc(c);
     context.setStroke(new Color(strokeR, strokeG, strokeB, strokeA));
   }
 
@@ -1946,8 +1946,8 @@ public class PGraphicsFX2D extends PGraphics {
 
 
   @Override
-  protected void fillFromCalc() {
-    super.fillFromCalc();
+  protected void fillFromCalc(int c) {
+    super.fillFromCalc(c);
     context.setFill(new Color(fillR, fillG, fillB, fillA));
   }
 
