@@ -2460,8 +2460,8 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   @Override
-  protected void strokeFromCalc() {
-    super.strokeFromCalc();
+  protected void strokeFromCalc(float[] c) {
+    super.strokeFromCalc(c);
     strokeColorObject = new Color(strokeColor, true);
     strokeGradient = false;
   }
@@ -2476,8 +2476,8 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   @Override
-  protected void tintFromCalc() {
-    super.tintFromCalc();
+  protected void tintFromCalc(float[] c) {
+    super.tintFromCalc(c);
     // TODO actually implement tinted images
     tintColorObject = new Color(tintColor, true);
   }
@@ -2492,8 +2492,8 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   @Override
-  protected void fillFromCalc() {
-    super.fillFromCalc();
+  protected void fillFromCalc(float[] c) {
+    super.fillFromCalc(c);
     fillColorObject = new Color(fillColor, true);
     fillGradient = false;
   }

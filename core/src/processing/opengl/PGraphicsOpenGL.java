@@ -4891,15 +4891,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   @Override
-  protected void fillFromCalc() {
-    super.fillFromCalc();
+  protected void fillFromCalc(float[] rgba) {
+    super.fillFromCalc(rgba);
 
     if (!setAmbient) {
       // Setting the ambient color from the current fill
       // is what the old P3D did and allows to have an
       // default ambient color when the user doesn't specify
       // it explicitly.
-      ambientFromCalc();
+      ambientFromCalc(rgba);
       // ambientFromCalc sets setAmbient to true, but it hasn't been
       // set by the user so put back to false.
       setAmbient = false;

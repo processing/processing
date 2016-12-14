@@ -1917,8 +1917,8 @@ public class PGraphicsFX2D extends PGraphics {
 
 
   @Override
-  protected void strokeFromCalc() {
-    super.strokeFromCalc();
+  protected void strokeFromCalc(float[] c) {
+    super.strokeFromCalc(c);
     context.setStroke(new Color(strokeR, strokeG, strokeB, strokeA));
   }
 
@@ -1946,8 +1946,8 @@ public class PGraphicsFX2D extends PGraphics {
 
 
   @Override
-  protected void fillFromCalc() {
-    super.fillFromCalc();
+  protected void fillFromCalc(float[] c) {
+    super.fillFromCalc(c);
     context.setFill(new Color(fillR, fillG, fillB, fillA));
   }
 
