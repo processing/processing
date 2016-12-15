@@ -31,10 +31,6 @@ import processing.app.Problem;
  */
 public class JavaProblem implements Problem {
   /**
-   * The IProblem which is being wrapped
-   */
-  private IProblem iProblem;
-  /**
    * The tab number to which the error belongs to
    */
   private int tabIndex;
@@ -71,11 +67,9 @@ public class JavaProblem implements Problem {
    * @param lineNumber - Line number(pde code) of the error
    */
   public JavaProblem(IProblem iProblem, int tabIndex, int lineNumber) {
-    this.iProblem = iProblem;
     if(iProblem.isError()) {
       type = ERROR;
-    }
-    else if(iProblem.isWarning()) {
+    } else if (iProblem.isWarning()) {
       type = WARNING;
     }
     this.tabIndex = tabIndex;
@@ -88,60 +82,39 @@ public class JavaProblem implements Problem {
     this.stopOffset = stopOffset;
   }
 
+  @Override
   public int getStartOffset() {
     return startOffset;
   }
 
+  @Override
   public int getStopOffset() {
     return stopOffset;
   }
 
-  public String toString() {
-    return new String("TAB " + tabIndex + ",LN " + lineNumber + "LN START OFF: "
-        + startOffset + ",LN STOP OFF: " + stopOffset + ",PROB: "
-        + message);
-  }
-
+  @Override
   public boolean isError() {
     return type == ERROR;
   }
 
+  @Override
   public boolean isWarning() {
     return type == WARNING;
   }
 
+  @Override
   public String getMessage() {
     return message;
   }
 
-  public IProblem getIProblem() {
-    return iProblem;
-  }
-
+  @Override
   public int getTabIndex() {
     return tabIndex;
   }
 
+  @Override
   public int getLineNumber() {
     return lineNumber;
-  }
-
-  /**
-   * Remember to subtract a -1 to line number because in compile check code an
-   * extra package statement is added, so all line numbers are increased by 1
-   *
-   * @return
-   */
-  public int getSourceLineNumber() {
-    return iProblem.getSourceLineNumber();
-  }
-
-  public void setType(int ProblemType){
-    if(ProblemType == ERROR)
-      type = ERROR;
-    else if(ProblemType == WARNING)
-      type = WARNING;
-    else throw new IllegalArgumentException("Illegal Problem type passed to Problem.setType(int)");
   }
 
   public String[] getImportSuggestions() {
@@ -152,23 +125,11 @@ public class JavaProblem implements Problem {
     importSuggestions = a;
   }
 
-  // Split camel case words into separate words.
-  // "VaraibleDeclaration" becomes "Variable Declaration"
-  // But sadly "PApplet" become "P Applet" and so on.
-  public static String splitCamelCaseWord(String word) {
-    String newWord = "";
-    for (int i = 1; i < word.length(); i++) {
-      if (Character.isUpperCase(word.charAt(i))) {
-        // System.out.println(word.substring(0, i) + " "
-        // + word.substring(i));
-        newWord += word.substring(0, i) + " ";
-        word = word.substring(i);
-        i = 1;
-      }
-    }
-    newWord += word;
-    // System.out.println(newWord);
-    return newWord.trim();
+  @Override
+  public String toString() {
+    return "TAB " + tabIndex + ",LN " + lineNumber + "LN START OFF: "
+        + startOffset + ",LN STOP OFF: " + stopOffset + ",PROB: "
+        + message;
   }
 
 }
