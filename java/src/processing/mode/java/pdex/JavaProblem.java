@@ -20,9 +20,6 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.eclipse.jdt.core.compiler.IProblem;
 
 import processing.app.Problem;
@@ -83,9 +80,7 @@ public class JavaProblem implements Problem {
     }
     this.tabIndex = tabIndex;
     this.lineNumber = lineNumber;
-    this.message = process(iProblem);
-    this.message = ErrorMessageSimplifier.getSimplifiedErrorMessage(this);
-    //ErrorMessageSimplifier.getSimplifiedErrorMessage(this);
+    this.message = ErrorMessageSimplifier.getSimplifiedErrorMessage(iProblem);
   }
 
   public void setPDEOffsets(int startOffset, int stopOffset){
@@ -155,30 +150,6 @@ public class JavaProblem implements Problem {
 
   public void setImportSuggestions(String[] a) {
     importSuggestions = a;
-  }
-
-  private static final Pattern tokenRegExp = Pattern.compile("\\b token\\b");
-
-  public static String process(IProblem problem) {
-    return process(problem.getMessage());
-  }
-
-  /**
-   * Processes error messages and attempts to make them a bit more english like.
-   * Currently performs:
-   * <li>Remove all instances of token. "Syntax error on token 'blah', delete this token"
-   * becomes "Syntax error on 'blah', delete this"
-   * @param message - The message to be processed
-   * @return String - The processed message
-   */
-  public static String process(String message) {
-    // Remove all instances of token
-    // "Syntax error on token 'blah', delete this token"
-	if(message == null) return null;
-    Matcher matcher = tokenRegExp.matcher(message);
-    message = matcher.replaceAll("");
-
-    return message;
   }
 
   // Split camel case words into separate words.

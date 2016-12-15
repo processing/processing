@@ -23,11 +23,14 @@ package processing.mode.java.pdex;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblem;
 
 import processing.app.Language;
+import processing.app.Messages;
 import processing.core.PApplet;
 import processing.data.StringList;
 
@@ -42,25 +45,20 @@ public class ErrorMessageSimplifier {
    */
   private static TreeMap<Integer, String> constantsMap;
 
+  private static final boolean DEBUG = false;
 
-  public ErrorMessageSimplifier() {
-
-    new Thread() {
-      public void run() {
-        prepareConstantsList();
-      }
-    }.start();
-  }
-
+  private static final Pattern tokenRegExp = Pattern.compile("\\b token\\b");
 
   private static void prepareConstantsList() {
-    constantsMap = new TreeMap<Integer, String>();
+    constantsMap = new TreeMap<>();
     Class<DefaultProblem> probClass = DefaultProblem.class;
     Field f[] = probClass.getFields();
     for (Field field : f) {
       if (Modifier.isStatic(field.getModifiers()))
         try {
-          //System.out.println(field.getName() + " :" + field.get(null));
+          if (DEBUG) {
+            Messages.log(field.getName() + " :" + field.get(null));
+          }
           Object val = field.get(null);
           if (val instanceof Integer) {
             constantsMap.put((Integer) (val), field.getName());
@@ -70,7 +68,9 @@ public class ErrorMessageSimplifier {
           break;
         }
     }
-    //System.out.println("Total items: " + constantsMap.size());
+    if (DEBUG) {
+      Messages.log("Total items: " + constantsMap.size());
+    }
   }
 
 
@@ -85,17 +85,19 @@ public class ErrorMessageSimplifier {
   /**
    * Tones down the jargon in the ecj reported errors.
    */
-  public static String getSimplifiedErrorMessage(JavaProblem problem) {
-    if (problem == null) return null;
+  public static String getSimplifiedErrorMessage(IProblem iprob) {
+    if (iprob == null) return null;
 
-    IProblem iprob = problem.getIProblem();
     String args[] = iprob.getArguments();
-//    Base.log("Simplifying message: " + problem.getMessage() + " ID: "
-//        + getIDName(iprob.getID()));
-//    Base.log("Arg count: " + args.length);
-//    for (int i = 0; i < args.length; i++) {
-//      Base.log("Arg " + args[i]);
-//    }
+
+    if (DEBUG) {
+      Messages.log("Simplifying message: " + iprob.getMessage() +
+                       " ID: " + getIDName(iprob.getID()));
+      Messages.log("Arg count: " + args.length);
+      for (String arg : args) {
+        Messages.log("Arg " + arg);
+      }
+    }
 
     String result = null;
 
@@ -259,10 +261,24 @@ public class ErrorMessageSimplifier {
       if (args.length > 0) {
         result = Language.interpolate("editor.status.hiding_enclosing_type", args[0]);
       }
+      break;
+
+    default:
+      String message = iprob.getMessage();
+      if (message != null) {
+        // Remove all instances of token
+        // "Syntax error on token 'blah', delete this token"
+        Matcher matcher = tokenRegExp.matcher(message);
+        message = matcher.replaceAll("");
+        result = message;
+      }
     }
 
-    //log("Simplified Error Msg: " + result);
-    return (result == null) ? problem.getMessage() : result;
+    if (DEBUG) {
+      Messages.log("Simplified Error Msg: " + result);
+    }
+
+    return result;
   }
 
 
