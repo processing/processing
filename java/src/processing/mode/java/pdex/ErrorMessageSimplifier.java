@@ -75,7 +75,7 @@ public class ErrorMessageSimplifier {
 
 
   public static String getIDName(int id) {
-    if (constantsMap == null){
+    if (constantsMap == null) {
       prepareConstantsList();
     }
     return constantsMap.get(id);
@@ -103,175 +103,174 @@ public class ErrorMessageSimplifier {
 
     switch (iprob.getID()) {
 
-    case IProblem.ParsingError:
-      if (args.length > 0) {
-        result = Language.interpolate("editor.status.error_on", args[0]);
-      }
-      break;
+      case IProblem.ParsingError:
+        if (args.length > 0) {
+          result = Language.interpolate("editor.status.error_on", args[0]);
+        }
+        break;
 
-    case IProblem.ParsingErrorDeleteToken:
-      if (args.length > 0) {
-        result = Language.interpolate("editor.status.error_on", args[0]);
-      }
-      break;
+      case IProblem.ParsingErrorDeleteToken:
+        if (args.length > 0) {
+          result = Language.interpolate("editor.status.error_on", args[0]);
+        }
+        break;
 
-    case IProblem.ParsingErrorInsertToComplete:
-      if (args.length > 0) {
-        if (args[0].length() == 1) {
-          result = getErrorMessageForBracket(args[0].charAt(0));
-
-        } else {
-          if (args[0].equals("AssignmentOperator Expression")) {
-            result = Language.interpolate("editor.status.missing.add", "=");
-
-          } else if (args[0].equalsIgnoreCase(") Statement")) {
+      case IProblem.ParsingErrorInsertToComplete:
+        if (args.length > 0) {
+          if (args[0].length() == 1) {
             result = getErrorMessageForBracket(args[0].charAt(0));
 
           } else {
-            result = Language.interpolate("editor.status.error_on", args[0]);
+            if (args[0].equals("AssignmentOperator Expression")) {
+              result = Language.interpolate("editor.status.missing.add", "=");
+
+            } else if (args[0].equalsIgnoreCase(") Statement")) {
+              result = getErrorMessageForBracket(args[0].charAt(0));
+
+            } else {
+              result = Language.interpolate("editor.status.error_on", args[0]);
+            }
           }
         }
-      }
-      break;
+        break;
 
-    case IProblem.ParsingErrorInvalidToken:
-      if (args.length > 0) {
-        if (args[1].equals("VariableDeclaratorId")) {
-          if (args[0].equals("int")) {
-            result = Language.text ("editor.status.reserved_words");
+      case IProblem.ParsingErrorInvalidToken:
+        if (args.length > 0) {
+          if (args[1].equals("VariableDeclaratorId")) {
+            if (args[0].equals("int")) {
+              result = Language.text("editor.status.reserved_words");
+            } else {
+              result = Language.interpolate("editor.status.error_on", args[0]);
+            }
           } else {
             result = Language.interpolate("editor.status.error_on", args[0]);
           }
-        } else {
-          result = Language.interpolate("editor.status.error_on", args[0]);
         }
-      }
-      break;
+        break;
 
-    case IProblem.ParsingErrorInsertTokenAfter:
-      if (args.length > 0) {
-        if (args[1].length() == 1) {
-          result = getErrorMessageForBracket(args[1].charAt(0));
-        }
-        else {
-          // https://github.com/processing/processing/issues/3104
-          if (args[1].equalsIgnoreCase("Statement")) {
-            result = Language.interpolate("editor.status.error_on", args[0]);
+      case IProblem.ParsingErrorInsertTokenAfter:
+        if (args.length > 0) {
+          if (args[1].length() == 1) {
+            result = getErrorMessageForBracket(args[1].charAt(0));
           } else {
-            result =
-              Language.interpolate("editor.status.error_on", args[0]) + " " +
-              Language.interpolate("editor.status.missing.add", args[1]);
+            // https://github.com/processing/processing/issues/3104
+            if (args[1].equalsIgnoreCase("Statement")) {
+              result = Language.interpolate("editor.status.error_on", args[0]);
+            } else {
+              result =
+                  Language.interpolate("editor.status.error_on", args[0]) + " " +
+                      Language.interpolate("editor.status.missing.add", args[1]);
+            }
           }
         }
-      }
-      break;
+        break;
 
-    case IProblem.UndefinedConstructor:
-      if (args.length == 2) {
-        String constructorName = args[0];
-        // For messages such as "contructor sketch_name.ClassXYZ() is undefined", change
-        // constructor name to "ClassXYZ()". See #3434
-        if (constructorName.contains(".")) {
-          // arg[0] contains sketch name twice: sketch_150705a.sketch_150705a.Thing
-          constructorName = constructorName.substring(constructorName.indexOf('.') + 1);
-          constructorName = constructorName.substring(constructorName.indexOf('.') + 1);
+      case IProblem.UndefinedConstructor:
+        if (args.length == 2) {
+          String constructorName = args[0];
+          // For messages such as "contructor sketch_name.ClassXYZ() is undefined", change
+          // constructor name to "ClassXYZ()". See #3434
+          if (constructorName.contains(".")) {
+            // arg[0] contains sketch name twice: sketch_150705a.sketch_150705a.Thing
+            constructorName = constructorName.substring(constructorName.indexOf('.') + 1);
+            constructorName = constructorName.substring(constructorName.indexOf('.') + 1);
+          }
+          String constructorArgs = removePackagePrefixes(args[args.length - 1]);
+          result = Language.interpolate("editor.status.undefined_constructor", constructorName, constructorArgs);
         }
-        String constructorArgs = removePackagePrefixes(args[args.length - 1]);
-        result = Language.interpolate("editor.status.undefined_constructor", constructorName, constructorArgs);
-      }
-      break;
+        break;
 
-    case IProblem.UndefinedMethod:
-      if (args.length > 2) {
-        String methodName = args[args.length - 2];
-        String methodArgs = removePackagePrefixes(args[args.length - 1]);
-        result = Language.interpolate("editor.status.undefined_method", methodName, methodArgs);
-      }
-      break;
+      case IProblem.UndefinedMethod:
+        if (args.length > 2) {
+          String methodName = args[args.length - 2];
+          String methodArgs = removePackagePrefixes(args[args.length - 1]);
+          result = Language.interpolate("editor.status.undefined_method", methodName, methodArgs);
+        }
+        break;
 
-    case IProblem.ParameterMismatch:
-      if (args.length > 3) {
-        // 2nd arg is method name, 3rd arg is correct param list
-        if (args[2].trim().length() == 0) {
-          // the case where no params are needed.
-          result = Language.interpolate("editor.status.empty_param", args[1]);
+      case IProblem.ParameterMismatch:
+        if (args.length > 3) {
+          // 2nd arg is method name, 3rd arg is correct param list
+          if (args[2].trim().length() == 0) {
+            // the case where no params are needed.
+            result = Language.interpolate("editor.status.empty_param", args[1]);
 
-        } else {
-          result = Language.interpolate("editor.status.wrong_param",
-                                 args[1], args[1], removePackagePrefixes(args[2]));
+          } else {
+            result = Language.interpolate("editor.status.wrong_param",
+                                          args[1], args[1], removePackagePrefixes(args[2]));
 //          String method = q(args[1]);
 //          String methodDef = " \"" + args[1] + "(" + getSimpleName(args[2]) + ")\"";
 //          result = result.replace("method", method);
 //          result += methodDef;
+          }
         }
-      }
-      break;
+        break;
 
-    case IProblem.UndefinedField:
-      if (args.length > 0) {
-        result = Language.interpolate("editor.status.undef_global_var", args[0]);
-      }
-      break;
+      case IProblem.UndefinedField:
+        if (args.length > 0) {
+          result = Language.interpolate("editor.status.undef_global_var", args[0]);
+        }
+        break;
 
-    case IProblem.UndefinedType:
-      if (args.length > 0) {
-        result = Language.interpolate("editor.status.undef_class", args[0]);
-      }
-      break;
+      case IProblem.UndefinedType:
+        if (args.length > 0) {
+          result = Language.interpolate("editor.status.undef_class", args[0]);
+        }
+        break;
 
-    case IProblem.UnresolvedVariable:
-      if (args.length > 0) {
-        result = Language.interpolate("editor.status.undef_var", args[0]);
-      }
-      break;
+      case IProblem.UnresolvedVariable:
+        if (args.length > 0) {
+          result = Language.interpolate("editor.status.undef_var", args[0]);
+        }
+        break;
 
-    case IProblem.UndefinedName:
-      if (args.length > 0) {
-        result = Language.interpolate("editor.status.undef_name", args[0]);
-      }
-      break;
+      case IProblem.UndefinedName:
+        if (args.length > 0) {
+          result = Language.interpolate("editor.status.undef_name", args[0]);
+        }
+        break;
 
-    case IProblem.TypeMismatch:
-      if (args.length > 1) {
-        result = Language.interpolate("editor.status.type_mismatch", args[0], args[1]);
+      case IProblem.TypeMismatch:
+        if (args.length > 1) {
+          result = Language.interpolate("editor.status.type_mismatch", args[0], args[1]);
 //        result = result.replace("typeA", q(args[0]));
 //        result = result.replace("typeB", q(args[1]));
-      }
-      break;
+        }
+        break;
 
-    case IProblem.LocalVariableIsNeverUsed:
-      if (args.length > 0) {
-        result = Language.interpolate("editor.status.unused_variable", args[0]);
-      }
-      break;
+      case IProblem.LocalVariableIsNeverUsed:
+        if (args.length > 0) {
+          result = Language.interpolate("editor.status.unused_variable", args[0]);
+        }
+        break;
 
-    case IProblem.UninitializedLocalVariable:
-      if (args.length > 0) {
-        result = Language.interpolate("editor.status.uninitialized_variable", args[0]);
-      }
-      break;
+      case IProblem.UninitializedLocalVariable:
+        if (args.length > 0) {
+          result = Language.interpolate("editor.status.uninitialized_variable", args[0]);
+        }
+        break;
 
-    case IProblem.AssignmentHasNoEffect:
-      if (args.length > 0) {
-        result = Language.interpolate("editor.status.no_effect_assignment", args[0]);
-      }
-      break;
+      case IProblem.AssignmentHasNoEffect:
+        if (args.length > 0) {
+          result = Language.interpolate("editor.status.no_effect_assignment", args[0]);
+        }
+        break;
 
-    case IProblem.HidingEnclosingType:
-      if (args.length > 0) {
-        result = Language.interpolate("editor.status.hiding_enclosing_type", args[0]);
-      }
-      break;
+      case IProblem.HidingEnclosingType:
+        if (args.length > 0) {
+          result = Language.interpolate("editor.status.hiding_enclosing_type", args[0]);
+        }
+        break;
 
-    default:
-      String message = iprob.getMessage();
-      if (message != null) {
-        // Remove all instances of token
-        // "Syntax error on token 'blah', delete this token"
-        Matcher matcher = tokenRegExp.matcher(message);
-        message = matcher.replaceAll("");
-        result = message;
-      }
+      default:
+        String message = iprob.getMessage();
+        if (message != null) {
+          // Remove all instances of token
+          // "Syntax error on token 'blah', delete this token"
+          Matcher matcher = tokenRegExp.matcher(message);
+          message = matcher.replaceAll("");
+          result = message;
+        }
     }
 
     if (DEBUG) {
