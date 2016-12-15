@@ -36,8 +36,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -1074,6 +1076,9 @@ public class PDEX {
 
 
     private void handleSketchProblems(PreprocessedSketch ps) {
+      Map<String, String[]> suggCache =
+          JavaMode.importSuggestEnabled ? new HashMap<>() : Collections.emptyMap();
+
       // Process problems
       IProblem[] iproblems = ps.compilationUnit.getProblems();
       final List<Problem> problems = Arrays.stream(iproblems)
@@ -1095,37 +1100,19 @@ public class PDEX {
             int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
             JavaProblem p = new JavaProblem(iproblem, in.tabIndex, line);
             p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
+
+            // Handle import suggestions
+            if (JavaMode.importSuggestEnabled && isUndefinedTypeProblem(iproblem)) {
+              ClassPath cp = ps.searchClassPath;
+              String[] s = suggCache.computeIfAbsent(iproblem.getArguments()[0],
+                                                     name -> getImportSuggestions(cp, name));
+              p.setImportSuggestions(s);
+            }
+
             return p;
           })
-          .filter(p -> p != null)
+          .filter(Objects::nonNull)
           .collect(Collectors.toList());
-
-      // Handle import suggestions
-      if (JavaMode.importSuggestEnabled) {
-        Map<String, List<Problem>> undefinedTypeProblems = problems.stream()
-            // Get only problems with undefined types/names
-            .filter(p -> {
-              int id = ((JavaProblem) p).getIProblem().getID();
-              return id == IProblem.UndefinedType ||
-                  id == IProblem.UndefinedName ||
-                  id == IProblem.UnresolvedVariable;
-            })
-            // Group problems by the missing type/name
-            .collect(Collectors.groupingBy(p -> ((JavaProblem) p).getIProblem().getArguments()[0]));
-
-        if (!undefinedTypeProblems.isEmpty()) {
-          final ClassPath cp = ps.searchClassPath;
-
-          // Get suggestions for each missing type, update the problems
-          undefinedTypeProblems.entrySet().stream()
-              .forEach(entry -> {
-                String missingClass = entry.getKey();
-                List<Problem> affectedProblems = entry.getValue();
-                String[] suggestions = getImportSuggestions(cp, missingClass);
-                affectedProblems.forEach(p -> ((JavaProblem) p).setImportSuggestions(suggestions));
-              });
-        }
-      }
 
       if (scheduledUiUpdate != null) {
         scheduledUiUpdate.cancel(true);
@@ -1139,6 +1126,14 @@ public class PDEX {
       };
       scheduledUiUpdate = scheduler.schedule(uiUpdater, delay,
                                              TimeUnit.MILLISECONDS);
+    }
+
+
+    private boolean isUndefinedTypeProblem(IProblem iproblem) {
+      int id = iproblem.getID();
+      return id == IProblem.UndefinedType ||
+          id == IProblem.UndefinedName ||
+          id == IProblem.UnresolvedVariable;
     }
 
 
