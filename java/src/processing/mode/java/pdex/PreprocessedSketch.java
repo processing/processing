@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import processing.app.Problem;
 import processing.app.Sketch;
 import processing.core.PApplet;
 import processing.mode.java.pdex.TextTransform.OffsetMapper;
@@ -33,6 +34,8 @@ public class PreprocessedSketch {
   public final String javaCode;
 
   public final OffsetMapper offsetMapper;
+
+  public final List<Problem> missingBraceProblems;
 
   public final boolean hasSyntaxErrors;
   public final boolean hasCompilationErrors;
@@ -212,6 +215,8 @@ public class PreprocessedSketch {
 
     public OffsetMapper offsetMapper;
 
+    public final List<Problem> missingBraceProblems = new ArrayList<>(0);
+
     public boolean hasSyntaxErrors;
     public boolean hasCompilationErrors;
 
@@ -245,6 +250,8 @@ public class PreprocessedSketch {
     javaCode = b.javaCode;
 
     offsetMapper = b.offsetMapper != null ? b.offsetMapper : OffsetMapper.EMPTY_MAPPER;
+
+    missingBraceProblems = Collections.unmodifiableList(b.missingBraceProblems);
 
     hasSyntaxErrors = b.hasSyntaxErrors;
     hasCompilationErrors = b.hasCompilationErrors;

@@ -60,21 +60,28 @@ public class JavaProblem implements Problem {
 
   public static final int ERROR = 1, WARNING = 2;
 
+  public JavaProblem(String message, int type, int tabIndex, int lineNumber) {
+    this.message = message;
+    this.type = type;
+    this.tabIndex = tabIndex;
+    this.lineNumber = lineNumber;
+  }
+
   /**
    *
    * @param iProblem - The IProblem which is being wrapped
    * @param tabIndex - The tab number to which the error belongs to
    * @param lineNumber - Line number(pde code) of the error
    */
-  public JavaProblem(IProblem iProblem, int tabIndex, int lineNumber) {
+  public static JavaProblem fromIProblem(IProblem iProblem, int tabIndex, int lineNumber) {
+    int type = 0;
     if(iProblem.isError()) {
       type = ERROR;
     } else if (iProblem.isWarning()) {
       type = WARNING;
     }
-    this.tabIndex = tabIndex;
-    this.lineNumber = lineNumber;
-    this.message = ErrorMessageSimplifier.getSimplifiedErrorMessage(iProblem);
+    String message = ErrorMessageSimplifier.getSimplifiedErrorMessage(iProblem);
+    return new JavaProblem(message, type, tabIndex, lineNumber);
   }
 
   public void setPDEOffsets(int startOffset, int stopOffset){

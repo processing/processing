@@ -392,6 +392,15 @@ public class PreprocessingService {
       }
     }
 
+    { // Check for missing braces
+      List<JavaProblem> missingBraceProblems =
+          SourceUtils.checkForMissingBraces(workBuffer, result.tabStartOffsets);
+      if (!missingBraceProblems.isEmpty()) {
+        result.missingBraceProblems.addAll(missingBraceProblems);
+        result.hasSyntaxErrors = true;
+      }
+    }
+
     // Transform code to parsable state
     String parsableStage = toParsable.apply();
     OffsetMapper parsableMapper = toParsable.getMapper();
@@ -414,7 +423,7 @@ public class PreprocessingService {
         makeAST(parser, compilableStageChars, COMPILER_OPTIONS);
 
     // Get syntax problems from compilable AST
-    result.hasSyntaxErrors = Arrays.stream(compilableCU.getProblems())
+    result.hasSyntaxErrors |= Arrays.stream(compilableCU.getProblems())
         .anyMatch(IProblem::isError);
 
     // Generate bindings after getting problems - avoids
