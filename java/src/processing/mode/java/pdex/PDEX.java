@@ -1,6 +1,7 @@
 package processing.mode.java.pdex;
 
 import com.google.classpath.ClassPath;
+import com.google.classpath.ClassPathFactory;
 import com.google.classpath.RegExpResourceFilter;
 
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -44,6 +45,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -1106,6 +1108,8 @@ public class PDEX {
         }
       }
 
+      AtomicReference<ClassPath> searchClassPath = new AtomicReference<>(null);
+
       if (problems.isEmpty()) {
         List<Problem> cuProblems = Arrays.stream(iproblems)
             // Filter Warnings if they are not enabled
@@ -1129,7 +1133,8 @@ public class PDEX {
 
               // Handle import suggestions
               if (JavaMode.importSuggestEnabled && isUndefinedTypeProblem(iproblem)) {
-                ClassPath cp = ps.searchClassPath;
+                ClassPath cp = searchClassPath.updateAndGet(prev -> prev != null ?
+                    prev : new ClassPathFactory().createFromPaths(ps.searchClassPathArray));
                 String[] s = suggCache.computeIfAbsent(iproblem.getArguments()[0],
                                                        name -> getImportSuggestions(cp, name));
                 p.setImportSuggestions(s);
