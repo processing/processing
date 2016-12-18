@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import processing.app.Problem;
 import processing.app.Sketch;
 import processing.core.PApplet;
 import processing.mode.java.pdex.TextTransform.OffsetMapper;
@@ -25,7 +26,7 @@ public class PreprocessedSketch {
   public final ClassPath classPath;
   public final URLClassLoader classLoader;
 
-  public final ClassPath searchClassPath;
+  public final String[] searchClassPathArray;
 
   public final int[] tabStartOffsets;
 
@@ -33,6 +34,8 @@ public class PreprocessedSketch {
   public final String javaCode;
 
   public final OffsetMapper offsetMapper;
+
+  public final List<Problem> missingBraceProblems;
 
   public final boolean hasSyntaxErrors;
   public final boolean hasCompilationErrors;
@@ -203,7 +206,7 @@ public class PreprocessedSketch {
     public ClassPath classPath;
     public URLClassLoader classLoader;
 
-    public ClassPath searchClassPath;
+    public String[] searchClassPathArray;
 
     public int[] tabStartOffsets = new int[0];
 
@@ -211,6 +214,8 @@ public class PreprocessedSketch {
     public String javaCode;
 
     public OffsetMapper offsetMapper;
+
+    public final List<Problem> missingBraceProblems = new ArrayList<>(0);
 
     public boolean hasSyntaxErrors;
     public boolean hasCompilationErrors;
@@ -237,7 +242,7 @@ public class PreprocessedSketch {
     classPath = b.classPath;
     classLoader = b.classLoader;
 
-    searchClassPath = b.searchClassPath;
+    searchClassPathArray = b.searchClassPathArray;
 
     tabStartOffsets = b.tabStartOffsets;
 
@@ -245,6 +250,8 @@ public class PreprocessedSketch {
     javaCode = b.javaCode;
 
     offsetMapper = b.offsetMapper != null ? b.offsetMapper : OffsetMapper.EMPTY_MAPPER;
+
+    missingBraceProblems = Collections.unmodifiableList(b.missingBraceProblems);
 
     hasSyntaxErrors = b.hasSyntaxErrors;
     hasCompilationErrors = b.hasCompilationErrors;

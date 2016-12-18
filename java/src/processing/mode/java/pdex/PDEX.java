@@ -1,6 +1,7 @@
 package processing.mode.java.pdex;
 
 import com.google.classpath.ClassPath;
+import com.google.classpath.ClassPathFactory;
 import com.google.classpath.RegExpResourceFilter;
 
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -36,12 +37,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -1074,57 +1078,74 @@ public class PDEX {
 
 
     private void handleSketchProblems(PreprocessedSketch ps) {
-      // Process problems
+      Map<String, String[]> suggCache =
+          JavaMode.importSuggestEnabled ? new HashMap<>() : Collections.emptyMap();
+
+      final List<Problem> problems = new ArrayList<>();
+
       IProblem[] iproblems = ps.compilationUnit.getProblems();
-      final List<Problem> problems = Arrays.stream(iproblems)
-          // Filter Warnings if they are not enabled
-          .filter(iproblem -> !(iproblem.isWarning() && !JavaMode.warningsEnabled))
-          // Hide a useless error which is produced when a line ends with
-          // an identifier without a semicolon. "Missing a semicolon" is
-          // also produced and is preferred over this one.
-          // (Syntax error, insert ":: IdentifierOrNew" to complete Expression)
-          // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=405780
-          .filter(iproblem -> !iproblem.getMessage()
-              .contains("Syntax error, insert \":: IdentifierOrNew\""))
-          // Transform into our Problems
-          .map(iproblem -> {
-            int start = iproblem.getSourceStart();
-            int stop = iproblem.getSourceEnd() + 1; // make it exclusive
-            SketchInterval in = ps.mapJavaToSketch(start, stop);
-            if (in == SketchInterval.BEFORE_START) return null;
-            int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
-            JavaProblem p = new JavaProblem(iproblem, in.tabIndex, line);
-            p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
-            return p;
-          })
-          .filter(p -> p != null)
-          .collect(Collectors.toList());
 
-      // Handle import suggestions
-      if (JavaMode.importSuggestEnabled) {
-        Map<String, List<Problem>> undefinedTypeProblems = problems.stream()
-            // Get only problems with undefined types/names
-            .filter(p -> {
-              int id = ((JavaProblem) p).getIProblem().getID();
-              return id == IProblem.UndefinedType ||
-                  id == IProblem.UndefinedName ||
-                  id == IProblem.UnresolvedVariable;
-            })
-            // Group problems by the missing type/name
-            .collect(Collectors.groupingBy(p -> ((JavaProblem) p).getIProblem().getArguments()[0]));
+      { // Handle missing brace problems
+        IProblem missingBraceProblem = Arrays.stream(iproblems)
+            .filter(ErrorChecker::isMissingBraceProblem)
+            .findFirst()
+            // Ignore if it is at the end of file
+            .filter(p -> p.getSourceEnd() + 1 < ps.javaCode.length())
+            // Ignore if the tab number does not match our detected tab number
+            .filter(p -> ps.missingBraceProblems.isEmpty() ||
+                ps.missingBraceProblems.get(0).getTabIndex() ==
+                    ps.mapJavaToSketch(p.getSourceStart(), p.getSourceEnd()+1).tabIndex
+            )
+            .orElse(null);
 
-        if (!undefinedTypeProblems.isEmpty()) {
-          final ClassPath cp = ps.searchClassPath;
-
-          // Get suggestions for each missing type, update the problems
-          undefinedTypeProblems.entrySet().stream()
-              .forEach(entry -> {
-                String missingClass = entry.getKey();
-                List<Problem> affectedProblems = entry.getValue();
-                String[] suggestions = getImportSuggestions(cp, missingClass);
-                affectedProblems.forEach(p -> ((JavaProblem) p).setImportSuggestions(suggestions));
-              });
+        // If there is missing brace ignore all other problems
+        if (missingBraceProblem != null) {
+          // Prefer ECJ problem, shows location more accurately
+          iproblems = new IProblem[]{missingBraceProblem};
+        } else if (!ps.missingBraceProblems.isEmpty()) {
+          // Fallback to manual detection
+          problems.addAll(ps.missingBraceProblems);
         }
+      }
+
+      AtomicReference<ClassPath> searchClassPath = new AtomicReference<>(null);
+
+      if (problems.isEmpty()) {
+        List<Problem> cuProblems = Arrays.stream(iproblems)
+            // Filter Warnings if they are not enabled
+            .filter(iproblem -> !(iproblem.isWarning() && !JavaMode.warningsEnabled))
+            // Hide a useless error which is produced when a line ends with
+            // an identifier without a semicolon. "Missing a semicolon" is
+            // also produced and is preferred over this one.
+            // (Syntax error, insert ":: IdentifierOrNew" to complete Expression)
+            // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=405780
+            .filter(iproblem -> !iproblem.getMessage()
+                .contains("Syntax error, insert \":: IdentifierOrNew\""))
+            // Transform into our Problems
+            .map(iproblem -> {
+              int start = iproblem.getSourceStart();
+              int stop = iproblem.getSourceEnd() + 1; // make it exclusive
+              SketchInterval in = ps.mapJavaToSketch(start, stop);
+              if (in == SketchInterval.BEFORE_START) return null;
+              int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
+              JavaProblem p = JavaProblem.fromIProblem(iproblem, in.tabIndex, line);
+              p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
+
+              // Handle import suggestions
+              if (JavaMode.importSuggestEnabled && isUndefinedTypeProblem(iproblem)) {
+                ClassPath cp = searchClassPath.updateAndGet(prev -> prev != null ?
+                    prev : new ClassPathFactory().createFromPaths(ps.searchClassPathArray));
+                String[] s = suggCache.computeIfAbsent(iproblem.getArguments()[0],
+                                                       name -> getImportSuggestions(cp, name));
+                p.setImportSuggestions(s);
+              }
+
+              return p;
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        problems.addAll(cuProblems);
       }
 
       if (scheduledUiUpdate != null) {
@@ -1139,6 +1160,29 @@ public class PDEX {
       };
       scheduledUiUpdate = scheduler.schedule(uiUpdater, delay,
                                              TimeUnit.MILLISECONDS);
+    }
+
+
+    static private boolean isUndefinedTypeProblem(IProblem iproblem) {
+      int id = iproblem.getID();
+      return id == IProblem.UndefinedType ||
+          id == IProblem.UndefinedName ||
+          id == IProblem.UnresolvedVariable;
+    }
+
+    static private boolean isMissingBraceProblem(IProblem iproblem) {
+      switch (iproblem.getID()) {
+        case IProblem.ParsingErrorInsertToComplete: {
+          char brace = iproblem.getArguments()[0].charAt(0);
+          return brace == '{' || brace == '}';
+        }
+        case IProblem.ParsingErrorInsertTokenAfter: {
+          char brace = iproblem.getArguments()[1].charAt(0);
+          return brace == '{' || brace == '}';
+        }
+        default:
+          return false;
+      }
     }
 
 

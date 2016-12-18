@@ -20,9 +20,6 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.eclipse.jdt.core.compiler.IProblem;
 
 import processing.app.Problem;
@@ -33,10 +30,6 @@ import processing.app.Problem;
  * according to its tab, including the original IProblem object
  */
 public class JavaProblem implements Problem {
-  /**
-   * The IProblem which is being wrapped
-   */
-  private IProblem iProblem;
   /**
    * The tab number to which the error belongs to
    */
@@ -67,25 +60,28 @@ public class JavaProblem implements Problem {
 
   public static final int ERROR = 1, WARNING = 2;
 
+  public JavaProblem(String message, int type, int tabIndex, int lineNumber) {
+    this.message = message;
+    this.type = type;
+    this.tabIndex = tabIndex;
+    this.lineNumber = lineNumber;
+  }
+
   /**
    *
    * @param iProblem - The IProblem which is being wrapped
    * @param tabIndex - The tab number to which the error belongs to
    * @param lineNumber - Line number(pde code) of the error
    */
-  public JavaProblem(IProblem iProblem, int tabIndex, int lineNumber) {
-    this.iProblem = iProblem;
+  public static JavaProblem fromIProblem(IProblem iProblem, int tabIndex, int lineNumber) {
+    int type = 0;
     if(iProblem.isError()) {
       type = ERROR;
-    }
-    else if(iProblem.isWarning()) {
+    } else if (iProblem.isWarning()) {
       type = WARNING;
     }
-    this.tabIndex = tabIndex;
-    this.lineNumber = lineNumber;
-    this.message = process(iProblem);
-    this.message = ErrorMessageSimplifier.getSimplifiedErrorMessage(this);
-    //ErrorMessageSimplifier.getSimplifiedErrorMessage(this);
+    String message = ErrorMessageSimplifier.getSimplifiedErrorMessage(iProblem);
+    return new JavaProblem(message, type, tabIndex, lineNumber);
   }
 
   public void setPDEOffsets(int startOffset, int stopOffset){
@@ -93,60 +89,39 @@ public class JavaProblem implements Problem {
     this.stopOffset = stopOffset;
   }
 
+  @Override
   public int getStartOffset() {
     return startOffset;
   }
 
+  @Override
   public int getStopOffset() {
     return stopOffset;
   }
 
-  public String toString() {
-    return new String("TAB " + tabIndex + ",LN " + lineNumber + "LN START OFF: "
-        + startOffset + ",LN STOP OFF: " + stopOffset + ",PROB: "
-        + message);
-  }
-
+  @Override
   public boolean isError() {
     return type == ERROR;
   }
 
+  @Override
   public boolean isWarning() {
     return type == WARNING;
   }
 
+  @Override
   public String getMessage() {
     return message;
   }
 
-  public IProblem getIProblem() {
-    return iProblem;
-  }
-
+  @Override
   public int getTabIndex() {
     return tabIndex;
   }
 
+  @Override
   public int getLineNumber() {
     return lineNumber;
-  }
-
-  /**
-   * Remember to subtract a -1 to line number because in compile check code an
-   * extra package statement is added, so all line numbers are increased by 1
-   *
-   * @return
-   */
-  public int getSourceLineNumber() {
-    return iProblem.getSourceLineNumber();
-  }
-
-  public void setType(int ProblemType){
-    if(ProblemType == ERROR)
-      type = ERROR;
-    else if(ProblemType == WARNING)
-      type = WARNING;
-    else throw new IllegalArgumentException("Illegal Problem type passed to Problem.setType(int)");
   }
 
   public String[] getImportSuggestions() {
@@ -157,47 +132,11 @@ public class JavaProblem implements Problem {
     importSuggestions = a;
   }
 
-  private static final Pattern tokenRegExp = Pattern.compile("\\b token\\b");
-
-  public static String process(IProblem problem) {
-    return process(problem.getMessage());
-  }
-
-  /**
-   * Processes error messages and attempts to make them a bit more english like.
-   * Currently performs:
-   * <li>Remove all instances of token. "Syntax error on token 'blah', delete this token"
-   * becomes "Syntax error on 'blah', delete this"
-   * @param message - The message to be processed
-   * @return String - The processed message
-   */
-  public static String process(String message) {
-    // Remove all instances of token
-    // "Syntax error on token 'blah', delete this token"
-	if(message == null) return null;
-    Matcher matcher = tokenRegExp.matcher(message);
-    message = matcher.replaceAll("");
-
-    return message;
-  }
-
-  // Split camel case words into separate words.
-  // "VaraibleDeclaration" becomes "Variable Declaration"
-  // But sadly "PApplet" become "P Applet" and so on.
-  public static String splitCamelCaseWord(String word) {
-    String newWord = "";
-    for (int i = 1; i < word.length(); i++) {
-      if (Character.isUpperCase(word.charAt(i))) {
-        // System.out.println(word.substring(0, i) + " "
-        // + word.substring(i));
-        newWord += word.substring(0, i) + " ";
-        word = word.substring(i);
-        i = 1;
-      }
-    }
-    newWord += word;
-    // System.out.println(newWord);
-    return newWord.trim();
+  @Override
+  public String toString() {
+    return "TAB " + tabIndex + ",LN " + lineNumber + "LN START OFF: "
+        + startOffset + ",LN STOP OFF: " + stopOffset + ",PROB: "
+        + message;
   }
 
 }

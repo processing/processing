@@ -341,7 +341,7 @@ public class PreprocessingService {
 
       boolean rebuildClassPath = reloadCodeFolder || rebuildLibraryClassPath ||
           prevResult.classLoader == null || prevResult.classPath == null ||
-          prevResult.classPathArray == null || prevResult.searchClassPath == null;
+          prevResult.classPathArray == null || prevResult.searchClassPathArray == null;
 
       if (reloadCodeFolder) {
         codeFolderClassPath = buildCodeFolderClassPath(sketch);
@@ -381,14 +381,22 @@ public class PreprocessingService {
           searchClassPath.addAll(coreLibraryClassPath);
           searchClassPath.addAll(codeFolderClassPath);
 
-          String[] searchClassPathArray = searchClassPath.stream().toArray(String[]::new);
-          result.searchClassPath = classPathFactory.createFromPaths(searchClassPathArray);
+          result.searchClassPathArray = searchClassPath.stream().toArray(String[]::new);
         }
       } else {
         result.classLoader = prevResult.classLoader;
         result.classPath = prevResult.classPath;
-        result.searchClassPath = prevResult.searchClassPath;
+        result.searchClassPathArray = prevResult.searchClassPathArray;
         result.classPathArray = prevResult.classPathArray;
+      }
+    }
+
+    { // Check for missing braces
+      List<JavaProblem> missingBraceProblems =
+          SourceUtils.checkForMissingBraces(workBuffer, result.tabStartOffsets);
+      if (!missingBraceProblems.isEmpty()) {
+        result.missingBraceProblems.addAll(missingBraceProblems);
+        result.hasSyntaxErrors = true;
       }
     }
 
@@ -414,7 +422,7 @@ public class PreprocessingService {
         makeAST(parser, compilableStageChars, COMPILER_OPTIONS);
 
     // Get syntax problems from compilable AST
-    result.hasSyntaxErrors = Arrays.stream(compilableCU.getProblems())
+    result.hasSyntaxErrors |= Arrays.stream(compilableCU.getProblems())
         .anyMatch(IProblem::isError);
 
     // Generate bindings after getting problems - avoids

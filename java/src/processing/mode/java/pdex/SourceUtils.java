@@ -323,4 +323,45 @@ public class SourceUtils {
 
   }
 
+  static public List<JavaProblem> checkForMissingBraces(StringBuilder p, int[] tabStartOffsets) {
+    List<JavaProblem> problems = new ArrayList<>(0);
+    tabLoop: for (int tabIndex = 0; tabIndex < tabStartOffsets.length; tabIndex++) {
+      int tabStartOffset = tabStartOffsets[tabIndex];
+      int tabEndOffset = (tabIndex < tabStartOffsets.length - 1) ?
+          tabStartOffsets[tabIndex + 1] : p.length();
+      int depth = 0;
+      int lineNumber = 0;
+      for (int i = tabStartOffset; i < tabEndOffset; i++) {
+        char ch = p.charAt(i);
+        switch (ch) {
+          case '{':
+            depth++;
+            break;
+          case '}':
+            depth--;
+            break;
+          case '\n':
+            lineNumber++;
+            break;
+        }
+        if (depth < 0) {
+          JavaProblem problem =
+              new JavaProblem("Found one too many } characters without { to match it.",
+                              JavaProblem.ERROR, tabIndex, lineNumber);
+          problem.setPDEOffsets(i - tabStartOffset, i - tabStartOffset + 1);
+          problems.add(problem);
+          continue tabLoop;
+        }
+      }
+      if (depth > 0) {
+        JavaProblem problem =
+            new JavaProblem("Found one too many { characters without } to match it.",
+                            JavaProblem.ERROR, tabIndex, lineNumber - 1);
+        problem.setPDEOffsets(tabEndOffset - tabStartOffset - 2, tabEndOffset - tabStartOffset - 1);
+        problems.add(problem);
+      }
+    }
+    return problems;
+  }
+
 }
