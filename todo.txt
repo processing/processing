@@ -12,11 +12,15 @@ X   will help us with debugging w/ others as well
 X   change to debug.txt; too confusing with the folder thing
 X replace java.util.logging code with built-in logging
 X split gui and non-gui portions of console for earlier startup
+X split EditorConsole into gui and non-gui code?
+X   otherwise System.err/out not going to a file unless we have GUI
+X   also can't debug before the GUI shows up
+o gracefully recover from proxy problems
+X   https://github.com/processing/processing/issues/1601
+_ changed headerType to console (make sure changed back)
 _ blank window on startup where the "welcome" screen should be
 _   https://github.com/processing/processing/issues/3933
 _   this may be fixed (removed invokeLater() on startup), unconfirmed
-_ could not write to temporary directory
-_   https://github.com/processing/processing/issues/4757
 
 contrib
 X Added the remove filter feature
@@ -35,7 +39,23 @@ X   https://github.com/processing/processing/pull/4761
 X possible infinite loop on modified externally
 X   https://github.com/processing/processing/issues/3965
 X   https://github.com/processing/processing/pull/4762
+X Report missing brace in correct tab, suppress other errors until fixed
+X   https://github.com/processing/processing/pull/4777
 
+
+_ did we lose settings.path because it was too buggy?
+_   https://github.com/processing/processing/issues/3948
+
+_ proxy trouble with p5? since adding the system proxy?
+_   https://github.com/processing/processing/pull/3251/files
+_   larger problem thread https://github.com/processing/processing/issues/3891
+_   ideen2011.blogspot.de/2011/08/java-proxyselector-usesystemproxies-and.html
+_   malformed proxy issues http://stackoverflow.com/q/376101
+_   docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html
+_   https://github.com/processing/processing/issues/1476#issuecomment-23229990
+
+_ could not write to temporary directory
+_   https://github.com/processing/processing/issues/4757
 
 _ Broken characters in the Welcome Page and the Contribution Manager
 _   looks like a failure to load the Source Sans font
@@ -111,8 +131,6 @@ _ hidpi scaling via font changes?
 _   http://stackoverflow.com/a/34152675
 _ hi-dpi support on Linux
 _   https://github.com/processing/processing/issues/4183
-_ did we lose settings.path because it was too buggy?
-_   https://github.com/processing/processing/issues/3948
 _ Library path mismatch between processing-java and export
 _   https://github.com/processing/processing/issues/4493
 
@@ -762,8 +780,6 @@ _   "Update 4 items" as a button name
 _ new libraries not picked up when changing sketchbook location
 _ make sure contrib manager can run w/o a network connection
 _   or if a bad document comes through, it can recover
-_ gracefully recover from proxy problems
-_   https://github.com/processing/processing/issues/1601
 _ alternating blue/white backgrounds aren't updated after changing filter
 _   just need to call a repaint() after a filter change?
 _ check with Casey about coloring for error messages
