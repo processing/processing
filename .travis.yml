@@ -1,0 +1,5 @@
+language: generic
+services: docker
+script: >
+        docker run --volume=$(pwd):/app --workdir=/app coala/base:pre
+        coala --min-severity NORMAL --non-interactive
