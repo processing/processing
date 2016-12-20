@@ -1664,7 +1664,10 @@ public class PShapeOpenGL extends PShape {
       }
       vertices[index][X] = x;
       vertices[index][Y] = y;
-      if (is3D) vertices[index][Z] = z;
+      if (is3D && vertices[index].length > 2) {
+        // P3D allows to modify 2D shapes, ignoring the Z coordinate.
+        vertices[index][Z] = z;
+      }
     } else {
       inGeo.vertices[3 * index + 0] = x;
       inGeo.vertices[3 * index + 1] = y;
@@ -1681,9 +1684,22 @@ public class PShapeOpenGL extends PShape {
       return;
     }
 
-    inGeo.vertices[3 * index + 0] = vec.x;
-    inGeo.vertices[3 * index + 1] = vec.y;
-    inGeo.vertices[3 * index + 2] = vec.z;
+    if (family == PATH) {
+      if (vertexCodes != null && vertexCodeCount > 0 &&
+          vertexCodes[index] != VERTEX) {
+        PGraphics.showWarning(NOT_A_SIMPLE_VERTEX, "setVertex()");
+        return;
+      }
+      vertices[index][X] = vec.x;
+      vertices[index][Y] = vec.y;
+      if (is3D && vertices[index].length > 2) {
+        vertices[index][Z] = vec.z;
+      }
+    } else {
+      inGeo.vertices[3 * index + 0] = vec.x;
+      inGeo.vertices[3 * index + 1] = vec.y;
+      inGeo.vertices[3 * index + 2] = vec.z;
+    }
     markForTessellation();
   }
 
