@@ -21,6 +21,10 @@ cleaning
 o probably should also check to make sure PApplet running JVM 8
 X   or compile against 1.8 and force it?
 
+andres
+X PShape array index out of bounds when using P3D 
+X   https://github.com/processing/processing/issues/4773
+
 _ no prompt shows with selectInput() on 10.11 and 10.12
 _   https://github.com/processing/processing/issues/4758
 

@@ -69,6 +69,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
+import processing.app.Base;
 import processing.app.Language;
 import processing.app.Messages;
 import processing.app.Platform;
@@ -963,8 +964,25 @@ public class Toolkit {
   static public Font getSansFont(int size, int style) {
     if (sansFont == null) {
       try {
-        sansFont = createFont("SourceSansPro-Regular.ttf", size);
-        sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
+        // check for an installed version, because they cause nasty conflicts
+        // https://github.com/processing/processing/issues/4747
+        if (Platform.isWindows()) {
+          sansFont = new Font("Source Sans Pro", Font.PLAIN, size);
+          // the ps name will be Dialog.plain (or similar) if not installed
+          if (!sansFont.getPSName().startsWith("Source")) {
+            sansFont = null;
+          }
+          sansBoldFont = new Font("Source Sans Pro Semibold", Font.PLAIN, size);
+          if (!sansBoldFont.getPSName().startsWith("Source")) {
+            sansBoldFont = null;
+          }
+        }
+        if (sansFont == null) {
+          sansFont = createFont("SourceSansPro-Regular.ttf", size);
+        }
+        if (sansBoldFont == null) {
+          sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
+        }
 
         // additional language constraints
         if ("el".equals(Language.getLanguage())) {
