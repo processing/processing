@@ -15,11 +15,11 @@ import java.text.CharacterIterator;
 
 import javax.swing.text.BadLocationException;
 
-import processing.app.Base;
 import processing.app.Messages;
 import processing.app.Preferences;
 import processing.app.syntax.JEditTextArea;
 import processing.app.syntax.TextAreaPainter;
+
 
 /**
  * This class Manage texts from input method
@@ -156,16 +156,16 @@ public class CompositionTextManager {
       e.printStackTrace();
     }
   }
-  
+
   private TextLayout getTextLayout(AttributedCharacterIterator text, int committedCount) {
     boolean antialias = Preferences.getBoolean("editor.smooth");
     TextAreaPainter painter = textArea.getPainter();
-    
+
     // create attributed string with font info.
     AttributedString composed = new AttributedString(text, committedCount, text.getEndIndex());
     Font font = painter.getFontMetrics().getFont();
     composed.addAttribute(TextAttribute.FONT, font);
-    
+
     // set hint of antialiasing to render target.
     Graphics2D g2d = (Graphics2D)painter.getGraphics();
     g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -173,9 +173,7 @@ public class CompositionTextManager {
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
                         RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     FontRenderContext frc = g2d.getFontRenderContext();
-    if (Base.DEBUG) {
-      Messages.log("debug: FontRenderContext is Antialiased = " + frc.getAntiAliasingHint());
-    }
+    Messages.log("debug: FontRenderContext is Antialiased = " + frc.getAntiAliasingHint());
 
     return new TextLayout(composed.getIterator(), frc);
   }

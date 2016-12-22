@@ -74,7 +74,7 @@ public class Util {
    */
   static public StringDict readSettings(File inputFile) {
     if (!inputFile.exists()) {
-      if (Base.DEBUG) System.err.println(inputFile + " does not exist.");
+      Messages.loge(inputFile + " does not exist inside readSettings()");
       return null;
     }
     String lines[] = PApplet.loadStrings(inputFile);
