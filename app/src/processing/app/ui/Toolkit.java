@@ -69,7 +69,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
-import processing.app.Base;
 import processing.app.Language;
 import processing.app.Messages;
 import processing.app.Platform;
