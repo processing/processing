@@ -2012,15 +2012,20 @@ public class PGraphicsFX2D extends PGraphics {
     modified = false;
     loaded = false;
 
+    // Save drawing context (transform, fill, blend mode, etc.)
+    context.save();
+
+    // Reset transform to identity
+    context.setTransform(new Affine());
+
     // This only takes into account cases where this is the primary surface.
     // Not sure what we do with offscreen anyway.
-    Paint savedFill = context.getFill();
-    BlendMode savedBlend = context.getGlobalBlendMode();
     context.setFill(new Color(backgroundR, backgroundG, backgroundB, backgroundA));
     context.setGlobalBlendMode(BlendMode.SRC_OVER);
     context.fillRect(0, 0, width, height);
-    context.setFill(savedFill);
-    context.setGlobalBlendMode(savedBlend);
+
+    // Restore drawing context (transform, fill, blend mode, etc.)
+    context.restore();
   }
 
 
