@@ -806,11 +806,6 @@ public class PSurfaceFX implements PSurface {
     int count = fxEvent.getClickCount();
 
     int action = mouseMap.get(fxEvent.getEventType());
-    //EventType<? extends MouseEvent> et = nativeEvent.getEventType();
-//    if (et == MouseEvent.MOUSE_PRESSED) {
-//      peAction = processing.event.MouseEvent.PRESS;
-//    } else if (et == MouseEvent.MOUSE_RELEASED) {
-//      peAction = processing.event.MouseEvent.RELEASE;
 
     int modifiers = 0;
     if (fxEvent.isShiftDown()) {
@@ -827,12 +822,16 @@ public class PSurfaceFX implements PSurface {
     }
 
     int button = 0;
-    if (fxEvent.isPrimaryButtonDown()) {
-      button = PConstants.LEFT;
-    } else if (fxEvent.isSecondaryButtonDown()) {
-      button = PConstants.RIGHT;
-    } else if (fxEvent.isMiddleButtonDown()) {
-      button = PConstants.CENTER;
+    switch (fxEvent.getButton()) {
+      case PRIMARY:
+        button = PConstants.LEFT;
+        break;
+      case SECONDARY:
+        button = PConstants.RIGHT;
+        break;
+      case MIDDLE:
+        button = PConstants.CENTER;
+        break;
     }
 
     // If running on Mac OS, allow ctrl-click as right mouse.

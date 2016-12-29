@@ -1060,12 +1060,16 @@ public class PSurfaceJOGL implements PSurface {
                        InputEvent.ALT_MASK);
 
     int peButton = 0;
-    if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
-      peButton = PConstants.LEFT;
-    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
-      peButton = PConstants.CENTER;
-    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
-      peButton = PConstants.RIGHT;
+    switch (nativeEvent.getButton()) {
+      case com.jogamp.newt.event.MouseEvent.BUTTON1:
+        peButton = PConstants.LEFT;
+        break;
+      case com.jogamp.newt.event.MouseEvent.BUTTON2:
+        peButton = PConstants.CENTER;
+        break;
+      case com.jogamp.newt.event.MouseEvent.BUTTON3:
+        peButton = PConstants.RIGHT;
+        break;
     }
 
     if (PApplet.platform == PConstants.MACOSX) {
