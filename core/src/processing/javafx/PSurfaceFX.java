@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.SynchronousQueue;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -71,6 +72,8 @@ public class PSurfaceFX implements PSurface {
   final Animation animation;
   float frameRate = 60;
 
+  private SynchronousQueue<Throwable> drawExceptionQueue = new SynchronousQueue<>();
+
   public PSurfaceFX(PGraphicsFX2D graphics) {
     fx = graphics;
     canvas = new ResizableCanvas();
@@ -80,7 +83,16 @@ public class PSurfaceFX implements PSurface {
                                      new EventHandler<ActionEvent>() {
       public void handle(ActionEvent event) {
         long startNanoTime = System.nanoTime();
-        sketch.handleDraw();
+        try {
+          sketch.handleDraw();
+        } catch (Throwable e) {
+          // Let exception handler thread crash with our exception
+          drawExceptionQueue.offer(e);
+          // Stop animating right now so nothing runs afterwards
+          // and crash frame can be for example traced by println()
+          animation.stop();
+          return;
+        }
         long drawNanos = System.nanoTime() - startNanoTime;
 
         if (sketch.exitCalled()) {
@@ -366,7 +378,37 @@ public class PSurfaceFX implements PSurface {
       } catch (InterruptedException e) { }
     }
 
+    startExceptionHandlerThread();
+
     setProcessingIcon(stage);
+  }
+
+
+  private void startExceptionHandlerThread() {
+    Thread exceptionHandlerThread = new Thread(() -> {
+      Throwable drawException;
+      try {
+        drawException = drawExceptionQueue.take();
+      } catch (InterruptedException e) {
+        return;
+      }
+      // Adapted from PSurfaceJOGL
+      if (drawException != null) {
+        if (drawException instanceof ThreadDeath) {
+//            System.out.println("caught ThreadDeath");
+//            throw (ThreadDeath)cause;
+        } else if (drawException instanceof RuntimeException) {
+          throw (RuntimeException) drawException;
+        } else if (drawException instanceof UnsatisfiedLinkError) {
+          throw new UnsatisfiedLinkError(drawException.getMessage());
+        } else {
+          throw new RuntimeException(drawException);
+        }
+      }
+    });
+    exceptionHandlerThread.setDaemon(true);
+    exceptionHandlerThread.setName("Processing-FX-ExceptionHandler");
+    exceptionHandlerThread.start();
   }
 
 
