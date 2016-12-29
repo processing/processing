@@ -207,6 +207,7 @@ public class PGraphicsFX2D extends PGraphics {
   public void beginShape(int kind) {
     shape = kind;
     vertexCount = 0;
+    curveVertexCount = 0;
 
     workPath.reset();
     auxPath.reset();
