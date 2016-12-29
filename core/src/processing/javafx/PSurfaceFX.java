@@ -853,23 +853,37 @@ public class PSurfaceFX implements PSurface {
                                                      x, y, button, count));
   }
 
+  // https://docs.oracle.com/javase/8/javafx/api/javafx/scene/input/ScrollEvent.html
+  protected void fxScrollEvent(ScrollEvent fxEvent) {
+    // the number of steps/clicks on the wheel for a mouse wheel event.
+    int count = (int) -(fxEvent.getDeltaY() / fxEvent.getMultiplierY());
 
-  // https://docs.oracle.com/javafx/2/api/javafx/scene/input/ScrollEvent.html
-  protected void fxScrollEvent(ScrollEvent event) {
-//   //case java.awt.event.MouseWheelEvent.WHEEL_UNIT_SCROLL:
-//    case java.awt.event.MouseEvent.MOUSE_WHEEL:
-//      peAction = MouseEvent.WHEEL;
-//      /*
-//      if (preciseWheelMethod != null) {
-//        try {
-//          peAmount = ((Double) preciseWheelMethod.invoke(nativeEvent, (Object[]) null)).floatValue();
-//        } catch (Exception e) {
-//          preciseWheelMethod = null;
-//        }
-//      }
-//      */
-//      peCount = ((MouseWheelEvent) nativeEvent).getWheelRotation();
-//      break;
+    int action = processing.event.MouseEvent.WHEEL;
+
+    int modifiers = 0;
+    if (fxEvent.isShiftDown()) {
+      modifiers |= processing.event.Event.SHIFT;
+    }
+    if (fxEvent.isControlDown()) {
+      modifiers |= processing.event.Event.CTRL;
+    }
+    if (fxEvent.isMetaDown()) {
+      modifiers |= processing.event.Event.META;
+    }
+    if (fxEvent.isAltDown()) {
+      modifiers |= processing.event.Event.ALT;
+    }
+
+    // FX does not supply button info
+    int button = 0;
+
+    long when = System.currentTimeMillis();
+    int x = (int) fxEvent.getX();  // getSceneX()?
+    int y = (int) fxEvent.getY();
+
+    sketch.postEvent(new processing.event.MouseEvent(fxEvent, when,
+                                                     action, modifiers,
+                                                     x, y, button, count));
   }
 
 
