@@ -164,7 +164,7 @@ public class JavaInputHandler extends PdeInputHandler {
         event.consume();
       }
 
-    } else if (c == 10 || c == 13) {  // auto-indent
+    } else if (code == 10 || code == 13) {  // auto-indent
       if (Preferences.getBoolean("editor.indent")) {
         char contents[] = textarea.getText().toCharArray();
         int tabSize = Preferences.getInteger("editor.tabs.size");
