@@ -14,8 +14,10 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
+import processing.app.Language;
 import processing.app.Messages;
 import processing.app.Preferences;
 import processing.app.Sketch;
@@ -51,9 +53,18 @@ public class ChangeDetector implements WindowFocusListener {
   public void windowGainedFocus(WindowEvent e) {
     if (Preferences.getBoolean("editor.watcher")) {
       if (sketch != null) {
-        // make sure the sketch folder exists at all.
-        // if it does not, it will be re-saved, and no changes will be detected
-        sketch.ensureExistence(); // <- touches UI, stay on EDT
+        // This resolves #4805. The ensureExistence() method does not need to be called if the sketch gains focus
+        // from the dialog box that informs the user about a missing sketch- if the missing sketch was saved
+        // successfully, all is well; if not, the user has been warned and asked to save it manually. Similarly,
+        // if processing could not re-save the sketch, don't call ensureExistence(), but allow the user to save
+        // manually.
+        if (!(e.getOppositeWindow() instanceof JDialog &&
+          (((JDialog)e.getOppositeWindow()).getTitle().equals(Language.text("ensure_exist.messages.missing_sketch")) ||
+            ((JDialog)e.getOppositeWindow()).getTitle().equals(Language.text("ensure_exist.messages.unrecoverable"))))) {
+          // make sure the sketch folder exists at all.
+          // if it does not, it will be re-saved, and no changes will be detected
+          sketch.ensureExistence(); // <- touches UI, stay on EDT
+        }
 
         // TODO: Not sure if we even need to run this async. Usually takes
         //   just a few ms and we probably want to prevent any changes from
