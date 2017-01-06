@@ -64,6 +64,7 @@ public class PGraphicsFX2D extends PGraphics {
   Path2D workPath = new Path2D();
   Path2D auxPath = new Path2D();
   boolean openContour;
+  boolean adjustedForThinLines;
   /// break the shape at the next vertex (next vertex() call is a moveto())
   boolean breakShape;
 
@@ -214,7 +215,7 @@ public class PGraphicsFX2D extends PGraphics {
     flushPixels();
 
     if (drawingThinLines()) {
-      pushMatrix();
+      adjustedForThinLines = true;
       translate(0.5f, 0.5f);
     }
   }
@@ -420,8 +421,9 @@ public class PGraphicsFX2D extends PGraphics {
       }
     }
     shape = 0;
-    if (drawingThinLines()) {
-      popMatrix();
+    if (adjustedForThinLines) {
+      adjustedForThinLines = false;
+      translate(-0.5f, -0.5f);
     }
     loaded = false;
   }
