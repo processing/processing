@@ -1914,7 +1914,7 @@ public abstract class PGL {
       Pattern[] search = new Pattern[] {
           Pattern.compile(String.format(GLSL_ID_REGEX, "varying|attribute")),
           Pattern.compile(String.format(GLSL_ID_REGEX, "texture")),
-          Pattern.compile(String.format(GLSL_FN_REGEX, "textureRect|texture2D|texture3D|textureCube")),
+          Pattern.compile(String.format(GLSL_FN_REGEX, "texture2DRect|texture2D|texture3D|textureCube")),
           Pattern.compile(String.format(GLSL_ID_REGEX, "gl_FragColor"))
       };
       String[] replace = new String[] {
@@ -1954,7 +1954,7 @@ public abstract class PGL {
           Pattern.compile(String.format(GLSL_ID_REGEX, "varying")),
           Pattern.compile(String.format(GLSL_ID_REGEX, "attribute")),
           Pattern.compile(String.format(GLSL_ID_REGEX, "texture")),
-          Pattern.compile(String.format(GLSL_FN_REGEX, "textureRect|texture2D|texture3D|textureCube"))
+          Pattern.compile(String.format(GLSL_FN_REGEX, "texture2DRect|texture2D|texture3D|textureCube"))
       };
       String[] replace = new String[] {
           "out", "in", "texMap", "texture",
