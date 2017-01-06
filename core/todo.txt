@@ -25,6 +25,26 @@ andres
 X PShape array index out of bounds when using P3D 
 X   https://github.com/processing/processing/issues/4773
 
+jakub
+X FX: Prevent matrix stack overflow
+X   https://github.com/processing/processing/pull/4799
+X   https://github.com/processing/processing/issues/4206
+X FX: Reset transform to identity before drawing background
+X   https://github.com/processing/processing/pull/4795
+X FX: Implement mouse wheel event
+X   https://github.com/processing/processing/issues/4169
+X   https://github.com/processing/processing/pull/4796
+X FX: Fix curveVertex drawing all curves together as one long curve
+X   https://github.com/processing/processing/pull/4800
+X   https://github.com/processing/processing/issues/4382
+X FX: Add exception handler which reports exceptions from user code
+X   https://github.com/processing/processing/pull/4798
+X   https://github.com/processing/processing/issues/4339
+X Unify mouse pressed/released events across renderers
+X   https://github.com/processing/processing/issues/4361
+X   https://github.com/processing/processing/pull/4797
+
+
 _ no prompt shows with selectInput() on 10.11 and 10.12
 _   https://github.com/processing/processing/issues/4758
 
@@ -82,8 +102,6 @@ _   https://github.com/processing/processing/issues/3753
 
 
 javafx
-_ mouseWheel() not working with FX2D
-_   https://github.com/processing/processing/issues/4169
 _ wrong window size with fullScreen()
 _   https://github.com/processing/processing/issues/4737
 _ menu bar not hiding properly in exported applications with FX2D
