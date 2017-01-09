@@ -251,6 +251,31 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
+  //////////////////////////////////////////////////////////////
+
+  // SCREEN TRANSFORMS
+
+
+  @Override
+  public float modelX(float x, float y, float z) {
+    showDepthWarning("modelX");
+    return 0;
+  }
+
+
+  @Override
+  public float modelY(float x, float y, float z) {
+    showDepthWarning("modelY");
+    return 0;
+  }
+
+
+  @Override
+  public float modelZ(float x, float y, float z) {
+    showDepthWarning("modelZ");
+    return 0;
+  }
+
 
   //////////////////////////////////////////////////////////////
 
