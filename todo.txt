@@ -24,6 +24,15 @@ _   this may be fixed (removed invokeLater() on startup), unconfirmed
 _ "error during export" message, but no error message contents come through
 _   e.g. https://github.com/processing/processing/issues/4792
 
+_ report of a library or tool (probably includes 2.x? 1.x?) breaking things
+_   NoSuchFieldError: useNativeSelect
+_   https://github.com/processing/processing/issues/4821
+
+_ allow modes to specify their own base file name
+_   need to move "is this a sketch?" handling into Mode
+_ fix extension check for other modes
+_   https://github.com/processing/processing/issues/3980
+
 _ Spaces not handled correctly in when installing "processing-java" on macOS
 _   https://github.com/processing/processing/issues/4779
 
@@ -115,9 +124,6 @@ _   https://github.com/processing/processing/issues/4630
 
 _ editor windows always open on display 1
 _   https://github.com/processing/processing/issues/1566
-
-_ allow modes to specify their own base file name
-_   need to move "is this a sketch?" handling into Mode
 
 _ modify line number color when no lines extend that far?
 _   https://github.com/processing/processing/pull/4560

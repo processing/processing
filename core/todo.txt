@@ -24,6 +24,8 @@ X   or compile against 1.8 and force it?
 andres
 X PShape array index out of bounds when using P3D 
 X   https://github.com/processing/processing/issues/4773
+X modelX/Y/Z() should be disabled in P2D
+X   https://github.com/processing/processing/issues/4813
 
 jakub
 X FX: Prevent matrix stack overflow
@@ -43,6 +45,9 @@ X   https://github.com/processing/processing/issues/4339
 X Unify mouse pressed/released events across renderers
 X   https://github.com/processing/processing/issues/4361
 X   https://github.com/processing/processing/pull/4797
+X Fix typo in GLSL preprocessor
+X   https://github.com/processing/processing/issues/4810
+X   https://github.com/processing/processing/pull/4816
 
 
 _ no prompt shows with selectInput() on 10.11 and 10.12
