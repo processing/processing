@@ -477,49 +477,53 @@ implements Scrollable, ContributionListing.ChangeListener {
 
   public void contributionRemoved(final Contribution contribution) {
     // TODO: this should already be on EDT, check it [jv]
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        synchronized (panelByContribution) {
-          DetailPanel panel = panelByContribution.get(contribution);
-          if (panel != null) {
-            remove(panel);
-            panelByContribution.remove(contribution);
+    if (filter.matches(contribution)) {
+      EventQueue.invokeLater(new Runnable() {
+        public void run() {
+          synchronized (panelByContribution) {
+            DetailPanel panel = panelByContribution.get(contribution);
+            if (panel != null) {
+              remove(panel);
+              panelByContribution.remove(contribution);
+            }
           }
+          synchronized (visibleContributions) {
+            visibleContributions.remove(contribution);
+          }
+          updatePanelOrdering(visibleContributions);
+          updateColors();
+          updateUI();
         }
-        synchronized (visibleContributions) {
-          visibleContributions.remove(contribution);
-        }
-        updatePanelOrdering(visibleContributions);
-        updateColors();
-        updateUI();
-      }
-    });
+      });
+    }
   }
 
   public void contributionChanged(final Contribution oldContrib,
                                   final Contribution newContrib) {
-    // TODO: this should already be on EDT, check it [jv]
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        synchronized (panelByContribution) {
-          DetailPanel panel = panelByContribution.get(oldContrib);
-          if (panel == null) {
-            contributionAdded(newContrib);
-          } else {
-            panelByContribution.remove(oldContrib);
-            panel.setContribution(newContrib);
-            panelByContribution.put(newContrib, panel);
+    if (filter.matches(newContrib) || filter.matches(oldContrib)) {
+      // TODO: this should already be on EDT, check it [jv]
+      EventQueue.invokeLater(new Runnable() {
+        public void run() {
+          synchronized (panelByContribution) {
+            DetailPanel panel = panelByContribution.get(oldContrib);
+            if (panel == null) {
+              contributionAdded(newContrib);
+            } else {
+              panelByContribution.remove(oldContrib);
+              panel.setContribution(newContrib);
+              panelByContribution.put(newContrib, panel);
+            }
+          }
+          synchronized (visibleContributions) {
+            if (visibleContributions.contains(oldContrib)) {
+              visibleContributions.remove(oldContrib);
+              visibleContributions.add(newContrib);
+            }
+            updatePanelOrdering(visibleContributions);
           }
         }
-        synchronized (visibleContributions) {
-          if (visibleContributions.contains(oldContrib)) {
-            visibleContributions.remove(oldContrib);
-            visibleContributions.add(newContrib);
-          }
-          updatePanelOrdering(visibleContributions);
-        }
-      }
-    });
+      });
+    }
   }
 
   public void filterLibraries(List<Contribution> filteredContributions) {
