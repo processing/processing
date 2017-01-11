@@ -362,8 +362,10 @@ public class Base {
     // check for updates
     new UpdateCheck(this);
 
-    ContributionListing cl = ContributionListing.getInstance();
-    cl.downloadAvailableList(this, new ContribProgressMonitor() { });
+    // Download the list of contribution so that the
+    // Contribution Manager can be filled with entries
+    // and updates count can be shown
+    ManagerFrame.downloadAndUpdateContributionListing(this);
   }
 
 

@@ -35,9 +35,7 @@ public class UpdateContributionTab extends ContributionTab {
 
   @Override
   protected void setLayout(boolean error, boolean loading) {
-    if (progressBar == null) {
-      progressBar = new JProgressBar();
-      progressBar.setVisible(false);
+    if (loaderLabel == null) {
 
       buildErrorPanel();
 

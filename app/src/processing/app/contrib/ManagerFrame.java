@@ -23,6 +23,8 @@ package processing.app.contrib;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -45,28 +47,29 @@ public class ManagerFrame {
 
   static final String title = "Contribution Manager";
 
-  Base base;
-  JFrame frame;
+  static Base base;
+  static JFrame frame;
 //  JTabbedPane tabbedPane;
   ManagerTabs tabs;
 
   // the calling editor, so updates can be applied
 //  Editor editor;
 
-  ContributionTab librariesTab;
-  ContributionTab modesTab;
-  ContributionTab toolsTab;
-  ContributionTab examplesTab;
-  UpdateContributionTab updatesTab;
+  static ContributionTab librariesTab;
+  static ContributionTab modesTab;
+  static ContributionTab toolsTab;
+  static ContributionTab examplesTab;
+  static UpdateContributionTab updatesTab;
 //  JLabel numberLabel;
+
+  static ContribProgressMonitor progress;
 
 //  private JLabel[] tabLabels;
 //  private JPanel updateTabPanel;
 //  private JLabel updateTabLabel;
 
-
   public ManagerFrame(Base base) {
-    this.base = base;
+    ManagerFrame.base = base;
 
 //    numberLabel = new JLabel(Toolkit.getLibIconX("manager/notification"));
     librariesTab = new ContributionTab(this, ContributionType.LIBRARY);
@@ -85,13 +88,9 @@ public class ManagerFrame {
     ContributionTab showTab = getTab(contributionType);
     if (frame == null) {
       makeFrame();
-      // done before as downloadAndUpdateContributionListing()
-      // requires the current selected tab
-      tabs.setPanel(showTab);
-      downloadAndUpdateContributionListing(base);
-    } else {
-      tabs.setPanel(showTab);
     }
+    tabs.setPanel(showTab);
+
     frame.setVisible(true);
     // Avoid the search box taking focus and hiding the 'search' text
     tabs.requestFocusInWindow();
@@ -103,7 +102,7 @@ public class ManagerFrame {
     frame.setMinimumSize(new Dimension(750, 500));
     tabs = new ManagerTabs(base);
 
-    makeAndShowTab(false, true);
+    makeTab(progress.error, !progress.finished);
 
     tabs.addPanel(librariesTab, "Libraries");
     tabs.addPanel(modesTab, "Modes");
@@ -353,58 +352,17 @@ public class ManagerFrame {
   }
 
 
-  // TODO move this to ContributionTab (this is handled weirdly, period) [fry]
-  void downloadAndUpdateContributionListing(Base base) {
-    //activeTab is required now but should be removed
-    //as there is only one instance of contribListing and it should be present in this class
-    final ContributionTab activeTab = getActiveTab();
-
-    ContribProgressMonitor progress =
-      new ContribProgressBar(activeTab.progressBar) {
-
-      @Override
-      public void startTask(String name, int maxValue) {
-        super.startTask(name, maxValue);
-        progressBar.setVisible(true);
-        progressBar.setString(null);
-      }
-
-      @Override
-      public void setProgress(int value) {
-        super.setProgress(value);
-//        int percent = 100 * value / this.max;
-        progressBar.setValue(value);
-      }
-
-      @Override
-      public void finishedAction() {
-        progressBar.setVisible(false);
-        activeTab.updateContributionListing();
-        activeTab.updateCategoryChooser();
-
-        if (error) {
-          exception.printStackTrace();
-          makeAndShowTab(true, false);
-        } else {
-          makeAndShowTab(false, false);
-        }
-      }
-    };
-    activeTab.contribListing.downloadAvailableList(base, progress);
-  }
-
-
-  void makeAndShowTab(boolean error, boolean loading) {
+  static void makeTab(boolean error, boolean loading) {
     Editor editor = base.getActiveEditor();
-    librariesTab.showFrame(editor, error, loading);
-    modesTab.showFrame(editor, error, loading);
-    toolsTab.showFrame(editor, error, loading);
-    examplesTab.showFrame(editor, error, loading);
-    updatesTab.showFrame(editor, error, loading);
+    librariesTab.makeFrame(editor, error, loading);
+    modesTab.makeFrame(editor, error, loading);
+    toolsTab.makeFrame(editor, error, loading);
+    examplesTab.makeFrame(editor, error, loading);
+    updatesTab.makeFrame(editor, error, loading);
   }
 
 
-  protected ContributionTab getTab(ContributionType contributionType) {
+  protected static ContributionTab getTab(ContributionType contributionType) {
     if (contributionType == ContributionType.LIBRARY) {
       return librariesTab;
     } else if (contributionType == ContributionType.MODE) {
@@ -434,5 +392,91 @@ public class ManagerFrame {
       return updatesTab;
     }
     */
+  }
+  
+  /**
+   * Updates the listing of the contribution that are shown
+   * in the Contribution Manager
+   */
+  protected static void updateContributionListing() {
+    if (base.getActiveEditor() != null) {
+      List<Contribution> contributions = new ArrayList<Contribution>();
+
+      List<Library> libraries =
+        new ArrayList<Library>(base.getActiveEditor().getMode().contribLibraries);
+
+      // Only add core libraries that are installed in the sketchbook
+      // https://github.com/processing/processing/issues/3688
+      //libraries.addAll(editor.getMode().coreLibraries);
+      final String sketchbookPath =
+        Base.getSketchbookLibrariesFolder().getAbsolutePath();
+      for (Library lib : base.getActiveEditor().getMode().coreLibraries) {
+        if (lib.getLibraryPath().startsWith(sketchbookPath)) {
+          libraries.add(lib);
+        }
+      }
+
+      contributions.addAll(libraries);
+
+      Base base = ManagerFrame.base.getActiveEditor().getBase();
+
+      List<ToolContribution> tools = base.getToolContribs();
+      contributions.addAll(tools);
+
+      List<ModeContribution> modes = base.getModeContribs();
+      contributions.addAll(modes);
+
+      List<ExamplesContribution> examples = base.getExampleContribs();
+      contributions.addAll(examples);
+
+//    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
+//
+//    // Remove libraries from the list that are part of a compilations
+//    for (LibraryCompilation compilation : compilations) {
+//      Iterator<Library> it = libraries.iterator();
+//      while (it.hasNext()) {
+//        Library current = it.next();
+//        if (compilation.getFolder().equals(current.getFolder().getParentFile())) {
+//          it.remove();
+//        }
+//      }
+//    }
+
+      ContributionListing.singleInstance.updateInstalledList(contributions);
+    }
+  }
+
+  /**
+   * Updates the categoryChooser of the Libraries tab in
+   * Contribution Manager
+   */
+  public static void updateCategoryChooser() {
+    getTab(ContributionType.LIBRARY).updateCategoryChooser();
+  }
+
+  /**
+   * Function to download the list of contributions and then set them to
+   * the respective tab in Contribution Manager
+   * Also refreshes the Update count on the main editor window
+   *
+   * @param base
+   */
+  public static void downloadAndUpdateContributionListing(Base base) {
+    progress = new ContribProgressMonitor() {
+
+      @Override
+      public void finished() {
+        finished = true;
+        updateContributionListing();
+        updateCategoryChooser();
+        if (error) {
+          exception.printStackTrace();
+          makeTab(true, false);
+        } else {
+          makeTab(false, false);
+        }
+      }
+    };
+    ContributionListing.getInstance().downloadAvailableList(base, progress);
   }
 }
