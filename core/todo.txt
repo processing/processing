@@ -16,6 +16,9 @@ X add XML.print() method (prints with indent of 2)
 contribs
 X Adding missing docs and keywords for TableRow
 X   https://github.com/processing/processing/pull/4333
+X PShape in Java2D wasn't respecting 'kind'
+X   https://github.com/processing/processing/issues/4826
+X   https://github.com/processing/processing/pull/4834
 
 cleaning
 o probably should also check to make sure PApplet running JVM 8
