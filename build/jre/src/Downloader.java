@@ -11,7 +11,7 @@ import org.apache.tools.ant.Task;
  */
 public class Downloader extends Task {
   static final String COOKIE =
-    "gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; " +
+    //"gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; " +
     "oraclelicense=accept-securebackup-cookie";
 
   private int version;  // Java 8
@@ -133,8 +133,8 @@ public class Downloader extends Task {
 
     //String url = "http://download.oracle.com/otn-pub/java/jdk/" +
     // https://edelivery.oracle.com/otn-pub/java/jdk/7u45-b18/jre-7u45-linux-i586.tar.gz
-    String url = "https://edelivery.oracle.com/otn-pub/java/jdk/" +
-    //String url = "https://download.oracle.com/otn-pub/java/jdk/" +
+    //String url = "https://edelivery.oracle.com/otn-pub/java/jdk/" +
+    String url = "http://download.oracle.com/otn-pub/java/jdk/" +
       (update == 0 ?
        String.format("%d-b%02d/", version, build) :
        String.format("%du%d-b%02d/", version, update, build)) + filename;
@@ -148,11 +148,12 @@ public class Downloader extends Task {
 
     //printHeaders(conn);
     //conn.connect();
-    if (conn.getResponseCode() == 302) {
+    while (conn.getResponseCode() == 302) {
       Map<String, List<String>> headers = conn.getHeaderFields();
       List<String> location = headers.get("Location");
       if (location.size() == 1) {
         url = location.get(0);
+        System.out.println("Redirecting to " + url);
       } else {
         throw new BuildException("Got " + location.size() + " locations.");
       }
