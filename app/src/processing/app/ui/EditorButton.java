@@ -26,6 +26,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import processing.app.Mode;
+import processing.app.ui.Toolkit;
 
 
 abstract public class EditorButton extends JComponent
@@ -42,6 +43,7 @@ implements MouseListener, MouseMotionListener, ActionListener {
   protected boolean pressed;
   protected boolean selected;
   protected boolean rollover;
+  protected boolean compiling;
 //  protected JLabel rolloverLabel;
   protected boolean shift;
 
@@ -50,6 +52,8 @@ implements MouseListener, MouseMotionListener, ActionListener {
   protected Image selectedImage;
   protected Image rolloverImage;
   protected Image pressedImage;
+  protected Image compileImageBg;
+  protected ImageIcon compileImage;
 
   protected Image gradient;
 
@@ -82,6 +86,9 @@ implements MouseListener, MouseMotionListener, ActionListener {
     selectedImage = mode.loadImageX(name + "-selected");
     pressedImage = mode.loadImageX(name + "-pressed");
     rolloverImage = mode.loadImageX(name + "-rollover");
+    // Compile ImageIcon gif and it's background
+    compileImage = Toolkit.getLibIcon("toolbar/loader.gif");
+    compileImageBg = mode.loadImageX("/lib/toolbar/compiling-background");
 
     if (disabledImage == null) {
       disabledImage = enabledImage;
@@ -94,6 +101,9 @@ implements MouseListener, MouseMotionListener, ActionListener {
     }
     if (rolloverImage == null) {
       rolloverImage = enabledImage;  // could be pressed image
+    }
+    if (compileImage == null) {
+      compileImage = new ImageIcon(enabledImage);
     }
     addMouseListener(this);
     addMouseMotionListener(this);
@@ -111,9 +121,15 @@ implements MouseListener, MouseMotionListener, ActionListener {
       image = pressedImage;
     } else if (rollover) {
       image = rolloverImage;
+    } else if (compiling) {
+      image = compileImage.getImage();
     }
     if (gradient != null) {
       g.drawImage(gradient, 0, 0, DIM, DIM, this);
+    }
+    if (compiling) {
+      // Sets white background to the compile gif icon
+      g.drawImage(compileImageBg, 0, 0, DIM, DIM, this);
     }
     g.drawImage(image, 0, 0, DIM, DIM, this);
   }
@@ -199,6 +215,11 @@ implements MouseListener, MouseMotionListener, ActionListener {
 
   public void setSelected(boolean selected) {
     this.selected = selected;
+  }
+
+  public void setCompile(boolean compiling) {
+    // Sets the button image to spinner.gif
+    this.compiling = compiling;
   }
 
 

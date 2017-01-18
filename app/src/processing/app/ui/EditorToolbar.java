@@ -208,6 +208,18 @@ abstract public class EditorToolbar extends JPanel implements KeyListener {
   }
 
 
+  public void activateCompile() {
+    runButton.setCompile(true);
+    repaint();
+  }
+
+
+  public void deactivateCompile() {
+    runButton.setCompile(false);
+    repaint();
+  }
+
+
   public void activateStop() {
     stopButton.setSelected(true);
     repaint();
