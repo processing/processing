@@ -17,6 +17,8 @@ X   otherwise System.err/out not going to a file unless we have GUI
 X   also can't debug before the GUI shows up
 o gracefully recover from proxy problems
 X   https://github.com/processing/processing/issues/1601
+X JRE download fails during ant build
+X   https://github.com/processing/processing/issues/4823
 _ changed headerType to console (make sure changed back)
 _ blank window on startup where the "welcome" screen should be
 _   https://github.com/processing/processing/issues/3933
@@ -24,9 +26,15 @@ _   this may be fixed (removed invokeLater() on startup), unconfirmed
 _ "error during export" message, but no error message contents come through
 _   e.g. https://github.com/processing/processing/issues/4792
 
+_ Mode, requiring update, appears in Updates tab but not in Modes tab
+_   https://github.com/processing/processing/issues/4822
+
 _ report of a library or tool (probably includes 2.x? 1.x?) breaking things
 _   NoSuchFieldError: useNativeSelect
 _   https://github.com/processing/processing/issues/4821
+
+_ turn off the old code that does unicode escapes in preproc
+_   https://github.com/processing/processing/issues/4788
 
 _ allow modes to specify their own base file name
 _   need to move "is this a sketch?" handling into Mode
