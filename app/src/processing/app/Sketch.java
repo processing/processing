@@ -657,9 +657,10 @@ public class Sketch {
         // get the changes into the sketchbook menu
         //sketchbook.rebuildMenus();
 
-        // make a new sketch, and i think this will rebuild the sketch menu
+        // make a new sketch and rebuild the sketch menu
         //editor.handleNewUnchecked();
         //editor.handleClose2();
+        editor.getBase().rebuildSketchbookMenus();
         editor.getBase().handleClose(editor, false);
 
       } else {
