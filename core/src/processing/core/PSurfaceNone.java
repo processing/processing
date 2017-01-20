@@ -207,7 +207,7 @@ public class PSurfaceNone implements PSurface {
 
 
   public boolean isStopped() {
-    return thread == null;
+    return thread == null || !thread.isAlive();
   }
 
 
