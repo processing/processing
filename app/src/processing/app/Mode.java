@@ -656,6 +656,7 @@ public abstract class Mode {
       if (visible) {
         bounds = examplesFrame.getBounds();
         examplesFrame.setVisible(false);
+        examplesFrame.dispose();
       }
       examplesFrame = null;
       if (visible) {
@@ -697,6 +698,7 @@ public abstract class Mode {
       if (visible) {
         bounds = sketchbookFrame.getBounds();
         sketchbookFrame.setVisible(false);
+        sketchbookFrame.dispose();
       }
       sketchbookFrame = null;
       if (visible) {
