@@ -363,6 +363,21 @@ abstract public class Contribution {
     return Language.text("contrib.category." + cleaned);
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Contribution)) return false;
+
+    Contribution that = (Contribution) o;
+
+    return name.toLowerCase().equals(that.name.toLowerCase());
+  }
+
+  @Override
+  public int hashCode() {
+    return name.toLowerCase().hashCode();
+  }
+
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
