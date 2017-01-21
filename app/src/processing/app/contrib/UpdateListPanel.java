@@ -158,7 +158,6 @@ public class UpdateListPanel extends ListPanel {
 //    (UpdateContributionTab) contributionTab
 
     model.getDataVector().removeAllElements();
-    model.fireTableDataChanged();
     ContributionType currentType = null;
 
     // Avoid ugly synthesized bold
@@ -213,6 +212,7 @@ public class UpdateListPanel extends ListPanel {
         contributionTab.contribListing.getLatestPrettyVersion(entry)
       });
     }
+    model.fireTableDataChanged();
     UpdateContributionTab tab = (UpdateContributionTab) contributionTab;
     ((UpdateStatusPanel) tab.statusPanel).update();
   }

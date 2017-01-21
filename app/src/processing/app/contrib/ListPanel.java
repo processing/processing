@@ -433,7 +433,6 @@ implements Scrollable, ContributionListing.ChangeListener {
 
   void updatePanelOrdering(Set<Contribution> contributionsSet) {
     model.getDataVector().removeAllElements();
-    model.fireTableDataChanged();
     int rowCount = 0;
     synchronized (contributionsSet) {
       for (Contribution entry : contributionsSet) {
@@ -445,6 +444,7 @@ implements Scrollable, ContributionListing.ChangeListener {
         rowCount++;
       }
     }
+    model.fireTableDataChanged();
   }
 
 
