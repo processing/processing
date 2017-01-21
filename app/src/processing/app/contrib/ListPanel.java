@@ -45,6 +45,8 @@ import processing.app.ui.Toolkit;
 public class ListPanel extends JPanel
 implements Scrollable, ContributionListing.ChangeListener {
   ContributionTab contributionTab;
+
+  // If you're gonna use a Comparator it has to be consistent with Contribution.equals()
   TreeMap<Contribution, DetailPanel> panelByContribution = new TreeMap<Contribution, DetailPanel>(ContributionListing.COMPARATOR);
   Set<Contribution> visibleContributions = new TreeSet<Contribution>(ContributionListing.COMPARATOR);
 
