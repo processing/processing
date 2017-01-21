@@ -218,58 +218,50 @@ public class UpdateListPanel extends ListPanel {
   }
 
 
+  // Thread: EDT
   @Override
   public void contributionAdded(final Contribution contribution) {
     if (filter.matches(contribution)) {
-      // TODO: this should already be on EDT, check it [jv]
-      EventQueue.invokeLater(new Runnable() {
-        public void run() {
-          // TODO make this longer and more contorted [fry]
-          DetailPanel newPanel =
-            contributionTab.contribDialog.getTab(contribution.getType()).contributionListPanel.panelByContribution.get(contribution);
-          if (newPanel == null) {
-            newPanel = new DetailPanel(UpdateListPanel.this);
-          }
-          synchronized (panelByContribution) {
-            if (!panelByContribution.containsKey(contribution)) {
-              panelByContribution.put(contribution, newPanel);
-            }
-            synchronized (visibleContributions) {
-              visibleContributions.add(contribution);
-            }
-            if (newPanel != null) {
-              newPanel.setContribution(contribution);
-              add(newPanel);
-              updatePanelOrdering(panelByContribution.keySet());
-              updateColors(); // XXX this is the place
-            }
-          }
+      // TODO make this longer and more contorted [fry]
+      DetailPanel newPanel =
+        contributionTab.contribDialog.getTab(contribution.getType()).contributionListPanel.panelByContribution.get(contribution);
+      if (newPanel == null) {
+        newPanel = new DetailPanel(UpdateListPanel.this);
+      }
+      synchronized (panelByContribution) {
+        if (!panelByContribution.containsKey(contribution)) {
+          panelByContribution.put(contribution, newPanel);
         }
-      });
+        synchronized (visibleContributions) {
+          visibleContributions.add(contribution);
+        }
+        if (newPanel != null) {
+          newPanel.setContribution(contribution);
+          add(newPanel);
+          updatePanelOrdering(panelByContribution.keySet());
+          updateColors(); // XXX this is the place
+        }
+      }
     }
   }
-  
+
+  // Thread: EDT
   @Override
   public void contributionChanged(final Contribution oldContrib,
                                   final Contribution newContrib) {
-    // TODO: this should already be on EDT, check it [jv]
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        synchronized (panelByContribution) {
-          DetailPanel panel = panelByContribution.get(oldContrib);
-          if (panel == null) {
-            contributionAdded(newContrib);
-          } else {
-            panelByContribution.remove(oldContrib);
-          }
-        }
-        synchronized (visibleContributions) {
-          if (visibleContributions.contains(oldContrib)) {
-            visibleContributions.remove(oldContrib);
-          }
-          updatePanelOrdering(visibleContributions);
-        }
+    synchronized (panelByContribution) {
+      DetailPanel panel = panelByContribution.get(oldContrib);
+      if (panel == null) {
+        contributionAdded(newContrib);
+      } else {
+        panelByContribution.remove(oldContrib);
       }
-    });
+    }
+    synchronized (visibleContributions) {
+      if (visibleContributions.contains(oldContrib)) {
+        visibleContributions.remove(oldContrib);
+      }
+      updatePanelOrdering(visibleContributions);
+    }
   }
 }

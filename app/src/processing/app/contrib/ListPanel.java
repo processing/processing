@@ -448,81 +448,70 @@ implements Scrollable, ContributionListing.ChangeListener {
   }
 
 
+  // Thread: EDT
   public void contributionAdded(final Contribution contribution) {
     if (filter.matches(contribution)) {
-      // TODO: this should already be on EDT, check it [jv]
-      EventQueue.invokeLater(new Runnable() {
-        public void run() {
-          if (!panelByContribution.containsKey(contribution)) {
-            DetailPanel newPanel =
-              new DetailPanel(ListPanel.this);
-            synchronized (panelByContribution) {
-              panelByContribution.put(contribution, newPanel);
-            }
-            synchronized (visibleContributions) {
-              visibleContributions.add(contribution);
-            }
-            if (newPanel != null) {
-              newPanel.setContribution(contribution);
-              add(newPanel);
-              updatePanelOrdering(visibleContributions);
-              updateColors();  // XXX this is the place
-            }
-          }
+      if (!panelByContribution.containsKey(contribution)) {
+        DetailPanel newPanel =
+          new DetailPanel(ListPanel.this);
+        synchronized (panelByContribution) {
+          panelByContribution.put(contribution, newPanel);
         }
-      });
+        synchronized (visibleContributions) {
+          visibleContributions.add(contribution);
+        }
+        if (newPanel != null) {
+          newPanel.setContribution(contribution);
+          add(newPanel);
+          updatePanelOrdering(visibleContributions);
+          updateColors();  // XXX this is the place
+        }
+      }
     }
   }
 
 
+  // Thread: EDT
   public void contributionRemoved(final Contribution contribution) {
     if (filter.matches(contribution)) {
-      // TODO: this should already be on EDT, check it [jv]
-      EventQueue.invokeLater(new Runnable() {
-        public void run() {
-          synchronized (panelByContribution) {
-            DetailPanel panel = panelByContribution.get(contribution);
-            if (panel != null) {
-              remove(panel);
-              panelByContribution.remove(contribution);
-            }
-          }
-          synchronized (visibleContributions) {
-            visibleContributions.remove(contribution);
-          }
-          updatePanelOrdering(visibleContributions);
-          updateColors();
-          updateUI();
+      synchronized (panelByContribution) {
+        DetailPanel panel = panelByContribution.get(contribution);
+        if (panel != null) {
+          remove(panel);
+          panelByContribution.remove(contribution);
         }
-      });
+      }
+      synchronized (visibleContributions) {
+        visibleContributions.remove(contribution);
+      }
+      updatePanelOrdering(visibleContributions);
+      updateColors();
+      updateUI();
     }
   }
 
+
+  // Thread: EDT
   public void contributionChanged(final Contribution oldContrib,
                                   final Contribution newContrib) {
     if (filter.matches(oldContrib) || filter.matches(newContrib)) {
-      // TODO: this should already be on EDT, check it [jv]
-      EventQueue.invokeLater(new Runnable() {
-        public void run() {
-          synchronized (panelByContribution) {
-            DetailPanel panel = panelByContribution.get(oldContrib);
-            if (panel == null) {
-              contributionAdded(newContrib);
-            } else {
-              panelByContribution.remove(oldContrib);
-              panel.setContribution(newContrib);
-              panelByContribution.put(newContrib, panel);
-            }
-          }
-          synchronized (visibleContributions) {
-            if (visibleContributions.contains(oldContrib)) {
-              visibleContributions.remove(oldContrib);
-              visibleContributions.add(newContrib);
-            }
-            updatePanelOrdering(visibleContributions);
-          }
+      synchronized (panelByContribution) {
+        DetailPanel panel = panelByContribution.get(oldContrib);
+        if (panel == null) {
+          contributionAdded(newContrib);
+        } else {
+          panelByContribution.remove(oldContrib);
+          panel.setContribution(newContrib);
+          panelByContribution.put(newContrib, panel);
         }
-      });
+      }
+      synchronized (visibleContributions) {
+        if (visibleContributions.contains(oldContrib)) {
+          visibleContributions.remove(oldContrib);
+          visibleContributions.add(newContrib);
+        }
+        updatePanelOrdering(visibleContributions);
+      }
     }
   }
 
