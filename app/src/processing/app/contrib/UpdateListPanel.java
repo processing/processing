@@ -151,6 +151,7 @@ public class UpdateListPanel extends ListPanel {
     });
   }
 
+  // Thread: EDT
   @Override
   void updatePanelOrdering(Set<Contribution> contributionsSet) {
 //    int updateCount = panelByContribution.size();
@@ -228,19 +229,15 @@ public class UpdateListPanel extends ListPanel {
       if (newPanel == null) {
         newPanel = new DetailPanel(UpdateListPanel.this);
       }
-      synchronized (panelByContribution) {
-        if (!panelByContribution.containsKey(contribution)) {
-          panelByContribution.put(contribution, newPanel);
-        }
-        synchronized (visibleContributions) {
-          visibleContributions.add(contribution);
-        }
-        if (newPanel != null) {
-          newPanel.setContribution(contribution);
-          add(newPanel);
-          updatePanelOrdering(panelByContribution.keySet());
-          updateColors(); // XXX this is the place
-        }
+      if (!panelByContribution.containsKey(contribution)) {
+        panelByContribution.put(contribution, newPanel);
+      }
+      visibleContributions.add(contribution);
+      if (newPanel != null) {
+        newPanel.setContribution(contribution);
+        add(newPanel);
+        updatePanelOrdering(panelByContribution.keySet());
+        updateColors(); // XXX this is the place
       }
     }
   }
@@ -249,19 +246,15 @@ public class UpdateListPanel extends ListPanel {
   @Override
   public void contributionChanged(final Contribution oldContrib,
                                   final Contribution newContrib) {
-    synchronized (panelByContribution) {
-      DetailPanel panel = panelByContribution.get(oldContrib);
-      if (panel == null) {
-        contributionAdded(newContrib);
-      } else {
-        panelByContribution.remove(oldContrib);
-      }
+    DetailPanel panel = panelByContribution.get(oldContrib);
+    if (panel == null) {
+      contributionAdded(newContrib);
+    } else {
+      panelByContribution.remove(oldContrib);
     }
-    synchronized (visibleContributions) {
-      if (visibleContributions.contains(oldContrib)) {
-        visibleContributions.remove(oldContrib);
-      }
-      updatePanelOrdering(visibleContributions);
+    if (visibleContributions.contains(oldContrib)) {
+      visibleContributions.remove(oldContrib);
     }
+    updatePanelOrdering(visibleContributions);
   }
 }

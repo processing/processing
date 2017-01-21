@@ -430,19 +430,17 @@ implements Scrollable, ContributionListing.ChangeListener {
     return name.toString();
   }
 
-
+  // Thread: EDT
   void updatePanelOrdering(Set<Contribution> contributionsSet) {
     model.getDataVector().removeAllElements();
     int rowCount = 0;
-    synchronized (contributionsSet) {
-      for (Contribution entry : contributionsSet) {
-        model.addRow(new Object[]{entry, entry, entry});
-        if (selectedPanel != null &&
-            entry.getName().equals(selectedPanel.getContrib().getName())) {
-          table.setRowSelectionInterval(rowCount, rowCount);
-        }
-        rowCount++;
+    for (Contribution entry : contributionsSet) {
+      model.addRow(new Object[]{entry, entry, entry});
+      if (selectedPanel != null &&
+          entry.getName().equals(selectedPanel.getContrib().getName())) {
+        table.setRowSelectionInterval(rowCount, rowCount);
       }
+      rowCount++;
     }
     model.fireTableDataChanged();
   }
@@ -454,12 +452,8 @@ implements Scrollable, ContributionListing.ChangeListener {
       if (!panelByContribution.containsKey(contribution)) {
         DetailPanel newPanel =
           new DetailPanel(ListPanel.this);
-        synchronized (panelByContribution) {
-          panelByContribution.put(contribution, newPanel);
-        }
-        synchronized (visibleContributions) {
-          visibleContributions.add(contribution);
-        }
+        panelByContribution.put(contribution, newPanel);
+        visibleContributions.add(contribution);
         if (newPanel != null) {
           newPanel.setContribution(contribution);
           add(newPanel);
@@ -474,16 +468,12 @@ implements Scrollable, ContributionListing.ChangeListener {
   // Thread: EDT
   public void contributionRemoved(final Contribution contribution) {
     if (filter.matches(contribution)) {
-      synchronized (panelByContribution) {
-        DetailPanel panel = panelByContribution.get(contribution);
-        if (panel != null) {
-          remove(panel);
-          panelByContribution.remove(contribution);
-        }
+      DetailPanel panel = panelByContribution.get(contribution);
+      if (panel != null) {
+        remove(panel);
+        panelByContribution.remove(contribution);
       }
-      synchronized (visibleContributions) {
-        visibleContributions.remove(contribution);
-      }
+      visibleContributions.remove(contribution);
       updatePanelOrdering(visibleContributions);
       updateColors();
       updateUI();
@@ -495,51 +485,48 @@ implements Scrollable, ContributionListing.ChangeListener {
   public void contributionChanged(final Contribution oldContrib,
                                   final Contribution newContrib) {
     if (filter.matches(oldContrib) || filter.matches(newContrib)) {
-      synchronized (panelByContribution) {
-        DetailPanel panel = panelByContribution.get(oldContrib);
-        if (panel == null) {
-          contributionAdded(newContrib);
-        } else {
-          panelByContribution.remove(oldContrib);
-          panel.setContribution(newContrib);
-          panelByContribution.put(newContrib, panel);
-        }
+      DetailPanel panel = panelByContribution.get(oldContrib);
+      if (panel == null) {
+        contributionAdded(newContrib);
+      } else {
+        panelByContribution.remove(oldContrib);
+        panel.setContribution(newContrib);
+        panelByContribution.put(newContrib, panel);
       }
-      synchronized (visibleContributions) {
-        if (visibleContributions.contains(oldContrib)) {
-          visibleContributions.remove(oldContrib);
-          visibleContributions.add(newContrib);
-        }
-        updatePanelOrdering(visibleContributions);
+      if (visibleContributions.contains(oldContrib)) {
+        visibleContributions.remove(oldContrib);
+        visibleContributions.add(newContrib);
       }
-    }
-  }
-
-  public void filterLibraries(List<Contribution> filteredContributions) {
-    synchronized (visibleContributions) {
-      visibleContributions.clear();
-      for (Contribution contribution : panelByContribution.keySet()) {
-        if (contribution.getType() == contributionTab.contribType) {
-          if (filteredContributions.contains(contribution)) {
-            if (panelByContribution.keySet().contains(contribution)) {
-              visibleContributions.add(contribution);
-            }
-          }
-        }
-      }
-      // TODO: Make the following loop work for optimization
-//      for (Contribution contribution : filteredContributions) {
-//        if (contribution.getType() == contributionTab.contribType) {
-//          if(panelByContribution.keySet().contains(contribution)){
-//           visibleContributions.add(contribution);
-//          }
-//        }
-//      }
       updatePanelOrdering(visibleContributions);
     }
   }
 
 
+  // Thread: EDT
+  public void filterLibraries(List<Contribution> filteredContributions) {
+    visibleContributions.clear();
+    for (Contribution contribution : panelByContribution.keySet()) {
+      if (contribution.getType() == contributionTab.contribType) {
+        if (filteredContributions.contains(contribution)) {
+          if (panelByContribution.keySet().contains(contribution)) {
+            visibleContributions.add(contribution);
+          }
+        }
+      }
+    }
+    // TODO: Make the following loop work for optimization
+//  for (Contribution contribution : filteredContributions) {
+//    if (contribution.getType() == contributionTab.contribType) {
+//      if(panelByContribution.keySet().contains(contribution)){
+//       visibleContributions.add(contribution);
+//      }
+//    }
+//  }
+    updatePanelOrdering(visibleContributions);
+  }
+
+
+  // Thread: EDT
   protected void setSelectedPanel(DetailPanel contributionPanel) {
     contributionTab.updateStatusPanel(contributionPanel);
 
@@ -566,46 +553,45 @@ implements Scrollable, ContributionListing.ChangeListener {
   }
 
 
+  // Thread: EDT
   /**
    * Updates the colors of all library panels that are visible.
    */
   protected void updateColors() {
     int count = 0;
-    synchronized (panelByContribution) {
-      for (Entry<Contribution, DetailPanel> entry : panelByContribution.entrySet()) {
-        DetailPanel panel = entry.getValue();
+    for (Entry<Contribution, DetailPanel> entry : panelByContribution.entrySet()) {
+      DetailPanel panel = entry.getValue();
 
-        if (panel.isVisible() && panel.isSelected()) {
-          panel.setBackground(UIManager.getColor("List.selectionBackground"));
-          panel.setForeground(UIManager.getColor("List.selectionForeground"));
-          panel.setBorder(UIManager.getBorder("List.focusCellHighlightBorder"));
-          count++;
+      if (panel.isVisible() && panel.isSelected()) {
+        panel.setBackground(UIManager.getColor("List.selectionBackground"));
+        panel.setForeground(UIManager.getColor("List.selectionForeground"));
+        panel.setBorder(UIManager.getBorder("List.focusCellHighlightBorder"));
+        count++;
 
-        } else {
-          Border border = null;
-          if (panel.isVisible()) {
-            if (Platform.isMacOS()) {
-              if (count % 2 == 1) {
-                border = UIManager.getBorder("List.oddRowBackgroundPainter");
-              } else {
-                border = UIManager.getBorder("List.evenRowBackgroundPainter");
-              }
+      } else {
+        Border border = null;
+        if (panel.isVisible()) {
+          if (Platform.isMacOS()) {
+            if (count % 2 == 1) {
+              border = UIManager.getBorder("List.oddRowBackgroundPainter");
             } else {
-              if (count % 2 == 1) {
-                panel.setBackground(new Color(219, 224, 229));
-              } else {
-                panel.setBackground(new Color(241, 241, 241));
-              }
+              border = UIManager.getBorder("List.evenRowBackgroundPainter");
             }
-            count++;
+          } else {
+            if (count % 2 == 1) {
+              panel.setBackground(new Color(219, 224, 229));
+            } else {
+              panel.setBackground(new Color(241, 241, 241));
+            }
           }
-
-          if (border == null) {
-            border = BorderFactory.createEmptyBorder(1, 1, 1, 1);
-          }
-          panel.setBorder(border);
-          panel.setForeground(UIManager.getColor("List.foreground"));
+          count++;
         }
+
+        if (border == null) {
+          border = BorderFactory.createEmptyBorder(1, 1, 1, 1);
+        }
+        panel.setBorder(border);
+        panel.setForeground(UIManager.getColor("List.foreground"));
       }
     }
   }
