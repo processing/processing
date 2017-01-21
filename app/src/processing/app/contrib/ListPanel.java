@@ -378,7 +378,7 @@ implements Scrollable, ContributionListing.ChangeListener {
         }
         String authorList = contribution.getAuthorList();
         String name = getAuthorNameWithoutMarkup(authorList);
-        label.setText(name.toString());
+        label.setText(name);
         label.setHorizontalAlignment(SwingConstants.LEFT);
         if(!contribution.isCompatible(Base.getRevision())){
           label.setForeground(Color.LIGHT_GRAY);
@@ -454,12 +454,10 @@ implements Scrollable, ContributionListing.ChangeListener {
           new DetailPanel(ListPanel.this);
         panelByContribution.put(contribution, newPanel);
         visibleContributions.add(contribution);
-        if (newPanel != null) {
-          newPanel.setContribution(contribution);
-          add(newPanel);
-          updatePanelOrdering(visibleContributions);
-          updateColors();  // XXX this is the place
-        }
+        newPanel.setContribution(contribution);
+        add(newPanel);
+        updatePanelOrdering(visibleContributions);
+        updateColors();  // XXX this is the place
       }
     }
   }

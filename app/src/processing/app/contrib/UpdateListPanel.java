@@ -233,12 +233,10 @@ public class UpdateListPanel extends ListPanel {
         panelByContribution.put(contribution, newPanel);
       }
       visibleContributions.add(contribution);
-      if (newPanel != null) {
-        newPanel.setContribution(contribution);
-        add(newPanel);
-        updatePanelOrdering(panelByContribution.keySet());
-        updateColors(); // XXX this is the place
-      }
+      newPanel.setContribution(contribution);
+      add(newPanel);
+      updatePanelOrdering(panelByContribution.keySet());
+      updateColors(); // XXX this is the place
     }
   }
 
