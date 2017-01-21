@@ -1057,15 +1057,15 @@ public class JavaEditor extends Editor {
       debugger.continueDebug();
 
     } else {
+      prepareRun();
+      toolbar.activateRun();
       new Thread(new Runnable() {
         public void run() {
-          prepareRun();
           try {
-            toolbar.activateRun();
             //runtime = jmode.handleRun(sketch, JavaEditor.this);
             runtime = jmode.handleLaunch(sketch, JavaEditor.this, false);
           } catch (Exception e) {
-            statusError(e);
+            EventQueue.invokeLater(() -> statusError(e));
           }
         }
       }).start();
@@ -1074,15 +1074,15 @@ public class JavaEditor extends Editor {
 
 
   public void handlePresent() {
+    prepareRun();
+    toolbar.activateRun();
     new Thread(new Runnable() {
       public void run() {
-        prepareRun();
         try {
-          toolbar.activateRun();
           //runtime = jmode.handlePresent(sketch, JavaEditor.this);
           runtime = jmode.handleLaunch(sketch, JavaEditor.this, true);
         } catch (Exception e) {
-          statusError(e);
+          EventQueue.invokeLater(() -> statusError(e));
         }
       }
     }).start();
@@ -1090,15 +1090,23 @@ public class JavaEditor extends Editor {
 
 
   public void handleTweak() {
+    prepareRun();
+    //toolbar.activate(JavaToolbar.RUN);
+    toolbar.activateRun();
+
+    if (sketch.isModified()) {
+      toolbar.deactivateRun();
+      Messages.showMessage(Language.text("menu.file.save"),
+                           Language.text("tweak_mode.save_before_tweak"));
+      return;
+    }
+
     new Thread(new Runnable() {
       public void run() {
-        prepareRun();
         try {
-//          toolbar.activate(JavaToolbar.RUN);
-          toolbar.activateRun();
           runtime = jmode.handleTweak(sketch, JavaEditor.this);
         } catch (Exception e) {
-          statusError(e);
+          EventQueue.invokeLater(() -> statusError(e));
         }
       }
     }).start();
