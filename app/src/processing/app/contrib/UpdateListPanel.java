@@ -247,10 +247,8 @@ public class UpdateListPanel extends ListPanel {
     DetailPanel panel = panelByContribution.get(oldContrib);
     if (panel == null) {
       contributionAdded(newContrib);
-    } else {
+    } else if (newContrib.isInstalled()) {
       panelByContribution.remove(oldContrib);
-    }
-    if (visibleContributions.contains(oldContrib)) {
       visibleContributions.remove(oldContrib);
     }
     updatePanelOrdering(visibleContributions);
