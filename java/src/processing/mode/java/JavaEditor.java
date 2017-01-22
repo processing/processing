@@ -1170,6 +1170,13 @@ public class JavaEditor extends Editor {
   }
 
 
+  public void onRunnerExiting(Runner runner) {
+    if (this.runtime == runner) {
+      deactivateRun();
+    }
+  }
+
+
 //  /** Toggle a breakpoint on the current line. */
 //  public void toggleBreakpoint() {
 //    toggleBreakpoint(getCurrentLineID().lineIdx());

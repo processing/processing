@@ -24,10 +24,10 @@ package processing.mode.java.runner;
 
 import processing.app.*;
 import processing.app.exec.StreamRedirectThread;
-import processing.app.ui.Editor;
 import processing.core.*;
 import processing.data.StringList;
 import processing.mode.java.JavaBuild;
+import processing.mode.java.JavaEditor;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -71,7 +71,7 @@ public class Runner implements MessageConsumer {
   protected Thread outThread = null;
 
   protected SketchException exception;
-  protected Editor editor;
+  protected JavaEditor editor;
   protected JavaBuild build;
   protected Process process;
 
@@ -86,8 +86,8 @@ public class Runner implements MessageConsumer {
 
     checkLocalHost();
 
-    if (listener instanceof Editor) {
-      this.editor = (Editor) listener;
+    if (listener instanceof JavaEditor) {
+      this.editor = (JavaEditor) listener;
       sketchErr = editor.getConsole().getErr();
       sketchOut = editor.getConsole().getOut();
     } else {
@@ -610,7 +610,9 @@ public class Runner implements MessageConsumer {
       // or the user manually closes the sketch window.
       // TODO this should be handled better, should it not?
       if (editor != null) {
-        editor.deactivateRun();
+        java.awt.EventQueue.invokeLater(() -> {
+          editor.onRunnerExiting(Runner.this);
+        });
       }
     } catch (InterruptedException exc) {
       // we don't interrupt
@@ -679,7 +681,9 @@ public class Runner implements MessageConsumer {
     handleCommonErrors(exceptionName, message, listener, sketchErr);
 
     if (editor != null) {
-      editor.deactivateRun();
+      java.awt.EventQueue.invokeLater(() -> {
+        editor.onRunnerExiting(Runner.this);
+      });
     }
   }
 
