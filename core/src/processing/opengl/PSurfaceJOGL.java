@@ -431,6 +431,20 @@ public class PSurfaceJOGL implements PSurface {
 
 
   protected void initAnimator() {
+    if (PApplet.platform == PConstants.WINDOWS) {
+      // Force Windows to keep timer resolution high by
+      // sleeping for time which is not a multiple of 10 ms.
+      // See section "Clocks and Timers on Windows":
+      //   https://blogs.oracle.com/dholmes/entry/inside_the_hotspot_vm_clocks
+      Thread highResTimerThread = new Thread(() -> {
+        try {
+          Thread.sleep(Long.MAX_VALUE);
+        } catch (InterruptedException ignore) { }
+      }, "HighResTimerThread");
+      highResTimerThread.setDaemon(true);
+      highResTimerThread.start();
+    }
+
     animator = new FPSAnimator(window, 60);
     drawException = null;
     animator.setUncaughtExceptionHandler(new GLAnimatorControl.UncaughtExceptionHandler() {
