@@ -19,7 +19,8 @@ o gracefully recover from proxy problems
 X   https://github.com/processing/processing/issues/1601
 X JRE download fails during ant build
 X   https://github.com/processing/processing/issues/4823
-_ changed headerType to console (make sure changed back)
+X changed headerType to console (make sure changed back)
+
 _ blank window on startup where the "welcome" screen should be
 _   https://github.com/processing/processing/issues/3933
 _   this may be fixed (removed invokeLater() on startup), unconfirmed
@@ -27,15 +28,9 @@ _ "error during export" message, but no error message contents come through
 _   e.g. https://github.com/processing/processing/issues/4792
 _ 'run sketches on display' message shows up on clean install
 
-_ Mode, requiring update, appears in Updates tab but not in Modes tab
-_   https://github.com/processing/processing/issues/4822
-
 _ report of a library or tool (probably includes 2.x? 1.x?) breaking things
 _   NoSuchFieldError: useNativeSelect
 _   https://github.com/processing/processing/issues/4821
-
-_ turn off the old code that does unicode escapes in preproc
-_   https://github.com/processing/processing/issues/4788
 
 _ allow modes to specify their own base file name
 _   need to move "is this a sketch?" handling into Mode
@@ -48,11 +43,11 @@ _   https://github.com/processing/processing/issues/4779
 contrib
 X Added the remove filter feature
 X   https://github.com/processing/processing/pull/3890
-_ ctrl-J (for debugger) is inserting newline
-_   https://github.com/processing/processing/issues/3830
-_   Replace keyChar with keyCode to prevent new line error when debugging
-_   https://github.com/processing/processing/pull/4806
-_   https://github.com/processing/processing/issues/4804
+X ctrl-J (for debugger) is inserting newline
+X   https://github.com/processing/processing/issues/3830
+X   Replace keyChar with keyCode to prevent new line error when debugging
+X   https://github.com/processing/processing/pull/4806
+X   https://github.com/processing/processing/issues/4804
 _ "Sketch disappeared" infinite pop up dialogs
 _   https://github.com/processing/processing/pull/4808
 _   https://github.com/processing/processing/issues/4805
@@ -85,6 +80,9 @@ X   https://github.com/processing/processing/pull/4843
 X Contribution Manager does not show all libraries until filter cleared
 X   https://github.com/processing/processing/pull/4843
 X   https://github.com/processing/processing/issues/4840
+X Mode, requiring update, appears in Updates tab but not in Modes tab
+X   https://github.com/processing/processing/issues/4822
+X   also fixed w/ https://github.com/processing/processing/pull/4843
 X Syntax highlighting issues (fixed with #4761)
 X   https://github.com/processing/processing/issues/4286
 X sketchbook window doesn't update when sketches are added, renamed, etc
