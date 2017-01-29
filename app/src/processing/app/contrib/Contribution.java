@@ -367,6 +367,27 @@ abstract public class Contribution {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+
+    if (o instanceof Contribution) {
+      Contribution that = (Contribution) o;
+      return name.toLowerCase().equals(that.name.toLowerCase());
+    }
+    return false;
+  }
+
+
+  @Override
+  public int hashCode() {
+    return name.toLowerCase().hashCode();
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   public interface Filter {
     boolean matches(Contribution contrib);
   }

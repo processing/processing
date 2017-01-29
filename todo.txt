@@ -25,6 +25,7 @@ _   https://github.com/processing/processing/issues/3933
 _   this may be fixed (removed invokeLater() on startup), unconfirmed
 _ "error during export" message, but no error message contents come through
 _   e.g. https://github.com/processing/processing/issues/4792
+_ 'run sketches on display' message shows up on clean install
 
 _ Mode, requiring update, appears in Updates tab but not in Modes tab
 _   https://github.com/processing/processing/issues/4822
@@ -75,6 +76,12 @@ X   https://github.com/processing/processing/issues/3965
 X   https://github.com/processing/processing/pull/4762
 X Report missing brace in correct tab, suppress other errors until fixed
 X   https://github.com/processing/processing/pull/4777
+X Improvements to sketch launching and stopping
+X   https://github.com/processing/processing/pull/4848
+X several Contribution Manager fixes
+X   https://github.com/processing/processing/pull/4844
+X Add missing equals() and hashCode() to Contribution
+X   
 
 
 _ did we lose settings.path because it was too buggy?

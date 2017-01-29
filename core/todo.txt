@@ -51,6 +51,10 @@ X   https://github.com/processing/processing/pull/4797
 X Fix typo in GLSL preprocessor
 X   https://github.com/processing/processing/issues/4810
 X   https://github.com/processing/processing/pull/4816
+X Keep Windows timer resolution high for OpenGL sketches
+X   prevents frame rate in OpenGL hovering around 30 instead of 60
+X   https://github.com/processing/processing/pull/4847
+X   https://github.com/processing/processing/issues/4846
 
 
 _ no prompt shows with selectInput() on 10.11 and 10.12
