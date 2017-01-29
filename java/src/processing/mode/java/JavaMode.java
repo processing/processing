@@ -144,13 +144,6 @@ public class JavaMode extends Mode {
 //                            final boolean present) throws SketchException {
     final JavaEditor editor = (JavaEditor) listener;
 
-    if (isSketchModified(sketch)) {
-      editor.deactivateRun();
-      Messages.showMessage(Language.text("menu.file.save"),
-                           Language.text("tweak_mode.save_before_tweak"));
-      return null;
-    }
-
     // first try to build the unmodified code
     JavaBuild build = new JavaBuild(sketch);
 //    String appletClassName = build.build(false);

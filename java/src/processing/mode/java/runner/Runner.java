@@ -24,10 +24,10 @@ package processing.mode.java.runner;
 
 import processing.app.*;
 import processing.app.exec.StreamRedirectThread;
-import processing.app.ui.Editor;
 import processing.core.*;
 import processing.data.StringList;
 import processing.mode.java.JavaBuild;
+import processing.mode.java.JavaEditor;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -61,7 +61,7 @@ public class Runner implements MessageConsumer {
   protected RunnerListener listener;
 
   // Running remote VM
-  protected VirtualMachine vm;
+  protected volatile VirtualMachine vm;
   protected boolean vmReturnedError;
 
   // Thread transferring remote error stream to our error stream
@@ -71,12 +71,15 @@ public class Runner implements MessageConsumer {
   protected Thread outThread = null;
 
   protected SketchException exception;
-  protected Editor editor;
+  protected JavaEditor editor;
   protected JavaBuild build;
   protected Process process;
 
   protected PrintStream sketchErr;
   protected PrintStream sketchOut;
+
+  protected volatile boolean cancelled;
+  protected final Object cancelLock = new Object[0];
 
 
   public Runner(JavaBuild build, RunnerListener listener) throws SketchException {
@@ -86,8 +89,8 @@ public class Runner implements MessageConsumer {
 
     checkLocalHost();
 
-    if (listener instanceof Editor) {
-      this.editor = (Editor) listener;
+    if (listener instanceof JavaEditor) {
+      this.editor = (JavaEditor) listener;
       sketchErr = editor.getConsole().getErr();
       sketchOut = editor.getConsole().getOut();
     } else {
@@ -218,6 +221,13 @@ public class Runner implements MessageConsumer {
 
     commandArgs.append(vmParams);
     commandArgs.append(sketchParams);
+
+    // Opportunistically quit if the launch was cancelled,
+    // the next chance to cancel will be after connecting to the VM
+    if (cancelled) {
+      return false;
+    }
+
     launchJava(commandArgs.array());
 
     AttachingConnector connector = (AttachingConnector)
@@ -249,7 +259,15 @@ public class Runner implements MessageConsumer {
       while (true) {
         try {
           Messages.log(getClass().getName() + " attempting to attach to VM");
-          vm = connector.attach(arguments);
+          synchronized (cancelLock) {
+            vm = connector.attach(arguments);
+            if (cancelled && vm != null) {
+              // cancelled and connected to the VM, handle closing now
+              Messages.log(getClass().getName() + " aborting, launch cancelled");
+              close();
+              return false;
+            }
+          }
 //          vm = connector.attach(arguments);
           if (vm != null) {
             Messages.log(getClass().getName() + " attached to the VM");
@@ -523,29 +541,28 @@ public class Runner implements MessageConsumer {
     //vm.setDebugTraceMode(debugTraceMode);
 //    vm.setDebugTraceMode(VirtualMachine.TRACE_ALL);
 //    vm.setDebugTraceMode(VirtualMachine.TRACE_NONE);  // formerly, seems to have no effect
+    try {
+      // Calling this seems to set something internally to make the
+      // Eclipse JDI wake up. Without it, an ObjectCollectedException
+      // is thrown on excReq.enable(). No idea why this works,
+      // but at least exception handling has returned. (Suspect that it may
+      // block until all or at least some threads are available, meaning
+      // that the app has launched and we have legit objects to talk to).
+      vm.allThreads();
+      // The bug may not have been noticed because the test suite waits for
+      // a thread to be available, and queries it by calling allThreads().
+      // See org.eclipse.debug.jdi.tests.AbstractJDITest for the example.
 
-    // Calling this seems to set something internally to make the
-    // Eclipse JDI wake up. Without it, an ObjectCollectedException
-    // is thrown on excReq.enable(). No idea why this works,
-    // but at least exception handling has returned. (Suspect that it may
-    // block until all or at least some threads are available, meaning
-    // that the app has launched and we have legit objects to talk to).
-    vm.allThreads();
-    // The bug may not have been noticed because the test suite waits for
-    // a thread to be available, and queries it by calling allThreads().
-    // See org.eclipse.debug.jdi.tests.AbstractJDITest for the example.
-
-    EventRequestManager mgr = vm.eventRequestManager();
-    // get only the uncaught exceptions
-    ExceptionRequest excReq = mgr.createExceptionRequest(null, false, true);
-//    System.out.println(excReq);
-    // this version reports all exceptions, caught or uncaught
-//  ExceptionRequest excReq = mgr.createExceptionRequest(null, true, true);
-    // suspend so we can step
-    excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
-//    excReq.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-//    excReq.setSuspendPolicy(EventRequest.SUSPEND_NONE);  // another option?
-    excReq.enable();
+      EventRequestManager mgr = vm.eventRequestManager();
+      // get only the uncaught exceptions
+      ExceptionRequest excReq = mgr.createExceptionRequest(null, false, true);
+      // this version reports all exceptions, caught or uncaught
+      // suspend so we can step
+      excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
+      excReq.enable();
+    } catch (VMDisconnectedException ignore) {
+      return;
+    }
 
     Thread eventThread = new Thread() {
       public void run() {
@@ -610,7 +627,9 @@ public class Runner implements MessageConsumer {
       // or the user manually closes the sketch window.
       // TODO this should be handled better, should it not?
       if (editor != null) {
-        editor.deactivateRun();
+        java.awt.EventQueue.invokeLater(() -> {
+          editor.onRunnerExiting(Runner.this);
+        });
       }
     } catch (InterruptedException exc) {
       // we don't interrupt
@@ -679,7 +698,9 @@ public class Runner implements MessageConsumer {
     handleCommonErrors(exceptionName, message, listener, sketchErr);
 
     if (editor != null) {
-      editor.deactivateRun();
+      java.awt.EventQueue.invokeLater(() -> {
+        editor.onRunnerExiting(Runner.this);
+      });
     }
   }
 
@@ -847,19 +868,22 @@ public class Runner implements MessageConsumer {
 
 
   public void close() {
-    // TODO make sure stop() has already been called to exit the sketch
+    synchronized (cancelLock) {
+      cancelled = true;
 
-    // TODO actually kill off the vm here
-    if (vm != null) {
-      try {
-        vm.exit(0);
+      // TODO make sure stop() has already been called to exit the sketch
 
-      } catch (com.sun.jdi.VMDisconnectedException vmde) {
-        // if the vm has disconnected on its own, ignore message
-        //System.out.println("harmless disconnect " + vmde.getMessage());
-        // TODO shouldn't need to do this, need to do more cleanup
+      // TODO actually kill off the vm here
+      if (vm != null) {
+        try {
+          vm.exit(0);
+
+        } catch (com.sun.jdi.VMDisconnectedException vmde) {
+          // if the vm has disconnected on its own, ignore message
+          //System.out.println("harmless disconnect " + vmde.getMessage());
+          // TODO shouldn't need to do this, need to do more cleanup
+        }
       }
-      vm = null;
     }
   }
 
@@ -880,7 +904,9 @@ public class Runner implements MessageConsumer {
       if (editor != null) {
 //        editor.internalCloseRunner();  // [091124]
 //        editor.handleStop();  // prior to 0192
-        editor.internalCloseRunner();  // 0192
+        java.awt.EventQueue.invokeLater(() -> {
+          editor.internalCloseRunner();  // 0192
+        });
       }
       return;
     }

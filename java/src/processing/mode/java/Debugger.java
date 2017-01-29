@@ -533,6 +533,12 @@ public class Debugger {
    * @param es Incoming set of events from VM
    */
   public synchronized void vmEvent(EventSet es) {
+    VirtualMachine vm = vm();
+    if (vm != null && vm != es.virtualMachine()) {
+      // This is no longer VM we are interested in,
+      // we already cleaned up and run different VM now.
+      return;
+    }
     for (Event e : es) {
       log("*** VM Event: " + e);
       if (e instanceof VMStartEvent) {

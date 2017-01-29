@@ -47,6 +47,9 @@ public class JavaEditor extends Editor {
   // Runner associated with this editor window
   private Runner runtime;
 
+  private boolean runtimeLaunchRequested;
+  private final Object runtimeLock = new Object[0];
+
   // Need to sort through the rest of these additions [fry]
 
   protected final List<LineHighlight> breakpointedLines = new ArrayList<>();
@@ -1057,49 +1060,48 @@ public class JavaEditor extends Editor {
       debugger.continueDebug();
 
     } else {
-      new Thread(new Runnable() {
-        public void run() {
-          prepareRun();
-          try {
-            toolbar.activateRun();
-            //runtime = jmode.handleRun(sketch, JavaEditor.this);
-            runtime = jmode.handleLaunch(sketch, JavaEditor.this, false);
-          } catch (Exception e) {
-            statusError(e);
-          }
-        }
-      }).start();
+      handleLaunch(false, false);
     }
   }
 
 
   public void handlePresent() {
-    new Thread(new Runnable() {
-      public void run() {
-        prepareRun();
-        try {
-          toolbar.activateRun();
-          //runtime = jmode.handlePresent(sketch, JavaEditor.this);
-          runtime = jmode.handleLaunch(sketch, JavaEditor.this, true);
-        } catch (Exception e) {
-          statusError(e);
-        }
-      }
-    }).start();
+    handleLaunch(true, false);
   }
 
 
   public void handleTweak() {
-    new Thread(new Runnable() {
-      public void run() {
-        prepareRun();
-        try {
-//          toolbar.activate(JavaToolbar.RUN);
-          toolbar.activateRun();
-          runtime = jmode.handleTweak(sketch, JavaEditor.this);
-        } catch (Exception e) {
-          statusError(e);
+    autoSave();
+
+    if (sketch.isModified()) {
+      Messages.showMessage(Language.text("menu.file.save"),
+                           Language.text("tweak_mode.save_before_tweak"));
+      return;
+    }
+
+    handleLaunch(false, true);
+  }
+
+  protected void handleLaunch(boolean present, boolean tweak) {
+    prepareRun();
+    toolbar.activateRun();
+    synchronized (runtimeLock) {
+      runtimeLaunchRequested = true;
+    }
+    new Thread(() -> {
+      try {
+        synchronized (runtimeLock) {
+          if (runtimeLaunchRequested) {
+            runtimeLaunchRequested = false;
+            if (!tweak) {
+              runtime = jmode.handleLaunch(sketch, JavaEditor.this, present);
+            } else {
+              runtime = jmode.handleTweak(sketch, JavaEditor.this);
+            }
+          }
         }
+      } catch (Exception e) {
+        EventQueue.invokeLater(() -> statusError(e));
       }
     }).start();
   }
@@ -1114,23 +1116,24 @@ public class JavaEditor extends Editor {
       debugger.stopDebug();
 
     } else {
-//      toolbar.activate(JavaToolbar.STOP);
       toolbar.activateStop();
 
       try {
-        //jmode.handleStop();
-        if (runtime != null) {
-          runtime.close();  // kills the window
-          runtime = null;
-          //      } else {
-          //        System.out.println("runtime is null");
+        synchronized (runtimeLock) {
+          if (runtimeLaunchRequested) {
+            // Cancel the launch before the runtime was created
+            runtimeLaunchRequested = false;
+          }
+          if (runtime != null) {
+            // Cancel the launch after the runtime was created
+            runtime.close();  // kills the window
+            runtime = null;
+          }
         }
       } catch (Exception e) {
         statusError(e);
       }
 
-//      toolbar.deactivate(JavaToolbar.RUN);
-//      toolbar.deactivate(JavaToolbar.STOP);
       toolbar.deactivateStop();
       toolbar.deactivateRun();
 
@@ -1159,6 +1162,15 @@ public class JavaEditor extends Editor {
   public void handleContinue() {
     Messages.log("Invoked 'Continue' menu item");
     debugger.continueDebug();
+  }
+
+
+  public void onRunnerExiting(Runner runner) {
+    synchronized (runtimeLock) {
+      if (this.runtime == runner) {
+        deactivateRun();
+      }
+    }
   }
 
 
