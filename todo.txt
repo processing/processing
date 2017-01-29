@@ -23,22 +23,6 @@ X changed headerType to console (make sure changed back)
 X Spaces not handled correctly in when installing "processing-java" on macOS
 X   https://github.com/processing/processing/issues/4779
 
-_ blank window on startup where the "welcome" screen should be
-_   https://github.com/processing/processing/issues/3933
-_   this may be fixed (removed invokeLater() on startup), unconfirmed
-_ "error during export" message, but no error message contents come through
-_   e.g. https://github.com/processing/processing/issues/4792
-_ 'run sketches on display' message shows up on clean install
-
-_ report of a library or tool (probably includes 2.x? 1.x?) breaking things
-_   NoSuchFieldError: useNativeSelect
-_   https://github.com/processing/processing/issues/4821
-
-_ allow modes to specify their own base file name
-_   need to move "is this a sketch?" handling into Mode
-_ fix extension check for other modes
-_   https://github.com/processing/processing/issues/3980
-
 contrib
 X Added the remove filter feature
 X   https://github.com/processing/processing/pull/3890
@@ -50,10 +34,6 @@ X   https://github.com/processing/processing/issues/4804
 _ "Sketch disappeared" infinite pop up dialogs
 _   https://github.com/processing/processing/pull/4808
 _   https://github.com/processing/processing/issues/4805
-
-andres
-_ update list of optional JRE files for Java 8
-_   https://github.com/processing/processing/issues/3288
 
 jakub
 X println(int(byte(245))) throwing error
@@ -88,8 +68,29 @@ X sketchbook window doesn't update when sketches are added, renamed, etc
 X   https://github.com/processing/processing/issues/2944
 X   https://github.com/processing/processing/pull/4842
 
+
+_ blank window on startup where the "welcome" screen should be
+_   https://github.com/processing/processing/issues/3933
+_   this may be fixed (removed invokeLater() on startup), unconfirmed
+_ "error during export" message, but no error message contents come through
+_   e.g. https://github.com/processing/processing/issues/4792
+_ 'run sketches on display' message shows up on clean install
+
+_ report of a library or tool (probably includes 2.x? 1.x?) breaking things
+_   NoSuchFieldError: useNativeSelect
+_   https://github.com/processing/processing/issues/4821
+
+_ allow modes to specify their own base file name
+_   need to move "is this a sketch?" handling into Mode
+_ fix extension check for other modes
+_   https://github.com/processing/processing/issues/3980
+
 _ did we lose settings.path because it was too buggy?
 _   https://github.com/processing/processing/issues/3948
+
+_ update list of optional JRE files for Java 8
+_   Andres provided some updates
+_   https://github.com/processing/processing/issues/3288
 
 _ proxy trouble with p5? since adding the system proxy?
 _   https://github.com/processing/processing/pull/3251/files
@@ -152,7 +153,6 @@ _ swap out the fonts?
 
 _ Help Menu disabled on OS X
 _   https://github.com/processing/processing/issues/4353#issuecomment-237715947
-
 
 high
 _ PDE and sketches are 2x smaller on high-res Windows machines
