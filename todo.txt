@@ -1,4 +1,4 @@
-0256 (3.2.4 or 3.3)
+0256 (3.2.4)
 X only require reference.zip (and internet connection) when building dist
 X set text style properly for Contribution Manager error message
 X Detect changes to 'hosts' file in case users modify/remove localhost 

@@ -1,4 +1,4 @@
-0256 (3.2.4 or 3.3)
+0256 (3.2.4)
 X write exec() documentation
 X   https://github.com/processing/processing/issues/4740
 X add xmlns to elements procured from getChild()
