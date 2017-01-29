@@ -39,7 +39,7 @@ import processing.data.StringDict;
 
 
 public class ContributionManager {
-  static final ContributionListing listing = ContributionListing.getInstance();
+  static ContributionListing listing;
 
 
   /**
@@ -543,6 +543,8 @@ public class ContributionManager {
       @Override
       protected Void doInBackground() throws Exception {
         try {
+          // TODO: pls explain the sleep and why this runs on a worker thread,
+          //   but a couple of lines above on EDT [jv]
           Thread.sleep(1000);
           installPreviouslyFailed(base, Base.getSketchbookToolsFolder());
         } catch (InterruptedException e) {
@@ -610,7 +612,9 @@ public class ContributionManager {
         if (file.getName().equals(contrib.getName())) {
           file.delete();
           installOnStartUp(base, contrib);
-          listing.replaceContribution(contrib, contrib);
+          EventQueue.invokeAndWait(() -> {
+            listing.replaceContribution(contrib, contrib);
+          });
         }
       }
     }
@@ -700,6 +704,7 @@ public class ContributionManager {
 
 
   static public void init(Base base) throws Exception {
+    listing = ContributionListing.getInstance(); // Moved here to make sure it runs on EDT [jv 170121]
     managerDialog = new ManagerFrame(base);
     cleanup(base);
   }
