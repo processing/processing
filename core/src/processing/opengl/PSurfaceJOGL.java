@@ -89,6 +89,8 @@ public class PSurfaceJOGL implements PSurface {
   protected FPSAnimator animator;
   protected Rectangle screenRect;
 
+  private Thread drawExceptionHandler;
+
   protected PApplet sketch;
   protected PGraphics graphics;
 
@@ -104,7 +106,7 @@ public class PSurfaceJOGL implements PSurface {
   protected List<MonitorDevice> monitors;
   protected MonitorDevice displayDevice;
   protected Throwable drawException;
-  protected Object waitObject = new Object();
+  private final Object drawExceptionMutex = new Object();
 
   protected NewtCanvasAWT canvas;
 
@@ -431,20 +433,6 @@ public class PSurfaceJOGL implements PSurface {
 
 
   protected void initAnimator() {
-    if (PApplet.platform == PConstants.WINDOWS) {
-      // Force Windows to keep timer resolution high by
-      // sleeping for time which is not a multiple of 10 ms.
-      // See section "Clocks and Timers on Windows":
-      //   https://blogs.oracle.com/dholmes/entry/inside_the_hotspot_vm_clocks
-      Thread highResTimerThread = new Thread(() -> {
-        try {
-          Thread.sleep(Long.MAX_VALUE);
-        } catch (InterruptedException ignore) { }
-      }, "HighResTimerThread");
-      highResTimerThread.setDaemon(true);
-      highResTimerThread.start();
-    }
-
     animator = new FPSAnimator(window, 60);
     drawException = null;
     animator.setUncaughtExceptionHandler(new GLAnimatorControl.UncaughtExceptionHandler() {
@@ -452,40 +440,43 @@ public class PSurfaceJOGL implements PSurface {
       public void uncaughtException(final GLAnimatorControl animator,
                                     final GLAutoDrawable drawable,
                                     final Throwable cause) {
-        synchronized (waitObject) {
+        synchronized (drawExceptionMutex) {
           drawException = cause;
-          waitObject.notify();
+          drawExceptionMutex.notify();
         }
       }
     });
 
-    new Thread(new Runnable() {
+    drawExceptionHandler = new Thread(new Runnable() {
       public void run() {
-        synchronized (waitObject) {
+        synchronized (drawExceptionMutex) {
           try {
-            if (drawException == null) waitObject.wait();
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-//        System.err.println("Caught exception: " + drawException.getMessage());
-          if (drawException != null) {
-            Throwable cause = drawException.getCause();
-            if (cause instanceof ThreadDeath) {
-//            System.out.println("caught ThreadDeath");
-//            throw (ThreadDeath)cause;
-            } else if (cause instanceof RuntimeException) {
-              throw (RuntimeException)cause;
-            } else if (cause instanceof UnsatisfiedLinkError) {
-              throw new UnsatisfiedLinkError(cause.getMessage());
-            } else if (cause == null) {
-              throw new RuntimeException(drawException.getMessage());
-            } else {
-              throw new RuntimeException(cause);
+            while (drawException == null) {
+              drawExceptionMutex.wait();
             }
+            // System.err.println("Caught exception: " + drawException.getMessage());
+            if (drawException != null) {
+              Throwable cause = drawException.getCause();
+              if (cause instanceof ThreadDeath) {
+                // System.out.println("caught ThreadDeath");
+                // throw (ThreadDeath)cause;
+              } else if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+              } else if (cause instanceof UnsatisfiedLinkError) {
+                throw new UnsatisfiedLinkError(cause.getMessage());
+              } else if (cause == null) {
+                throw new RuntimeException(drawException.getMessage());
+              } else {
+                throw new RuntimeException(cause);
+              }
+            }
+          } catch (InterruptedException e) {
+            return;
           }
         }
       }
-    }).start();
+    });
+    drawExceptionHandler.start();
   }
 
 
@@ -777,6 +768,10 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public boolean stopThread() {
+    if (drawExceptionHandler != null) {
+      drawExceptionHandler.interrupt();
+      drawExceptionHandler = null;
+    }
     if (animator != null) {
       return animator.stop();
     } else {
@@ -1074,16 +1069,12 @@ public class PSurfaceJOGL implements PSurface {
                        InputEvent.ALT_MASK);
 
     int peButton = 0;
-    switch (nativeEvent.getButton()) {
-      case com.jogamp.newt.event.MouseEvent.BUTTON1:
-        peButton = PConstants.LEFT;
-        break;
-      case com.jogamp.newt.event.MouseEvent.BUTTON2:
-        peButton = PConstants.CENTER;
-        break;
-      case com.jogamp.newt.event.MouseEvent.BUTTON3:
-        peButton = PConstants.RIGHT;
-        break;
+    if ((modifiers & InputEvent.BUTTON1_MASK) != 0) {
+      peButton = PConstants.LEFT;
+    } else if ((modifiers & InputEvent.BUTTON2_MASK) != 0) {
+      peButton = PConstants.CENTER;
+    } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
+      peButton = PConstants.RIGHT;
     }
 
     if (PApplet.platform == PConstants.MACOSX) {

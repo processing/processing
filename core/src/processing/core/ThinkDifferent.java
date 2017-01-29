@@ -71,6 +71,12 @@ public class ThinkDifferent {
     });
   }
 
+  static public void cleanup() {
+    if (application == null) {
+      application = Application.getApplication();
+    }
+    application.setQuitHandler(null);
+  }
 
   // Called via reflection from PSurfaceAWT and others
   static public void setIconImage(Image image) {
