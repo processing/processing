@@ -656,6 +656,7 @@ public abstract class Mode {
       if (visible) {
         bounds = examplesFrame.getBounds();
         examplesFrame.setVisible(false);
+        examplesFrame.dispose();
       }
       examplesFrame = null;
       if (visible) {
@@ -691,11 +692,19 @@ public abstract class Mode {
 
   /** Sketchbook has changed, update it on next viewing. */
   public void rebuildSketchbookFrame() {
-    boolean wasVisible =
-      (sketchbookFrame == null) ? false : sketchbookFrame.isVisible();
-    sketchbookFrame = null;  // Force a rebuild
-    if (wasVisible) {
-      showSketchbookFrame();
+    if (sketchbookFrame != null) {
+      boolean visible = sketchbookFrame.isVisible();
+      Rectangle bounds = null;
+      if (visible) {
+        bounds = sketchbookFrame.getBounds();
+        sketchbookFrame.setVisible(false);
+        sketchbookFrame.dispose();
+      }
+      sketchbookFrame = null;
+      if (visible) {
+        showSketchbookFrame();
+        sketchbookFrame.setBounds(bounds);
+      }
     }
   }
 
