@@ -874,6 +874,9 @@ public class PSurfaceFX implements PSurface {
       case MIDDLE:
         button = PConstants.CENTER;
         break;
+      case NONE:
+        // not currently handled
+        break;
     }
 
     // If running on Mac OS, allow ctrl-click as right mouse.
