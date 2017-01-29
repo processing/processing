@@ -129,15 +129,6 @@ public class ModeContribution extends LocalContribution {
   }
 
 
-  public boolean equals(Object o) {
-    if (o == null || !(o instanceof ModeContribution)) {
-      return false;
-    }
-    ModeContribution other = (ModeContribution) o;
-    return loader.equals(other.loader) && mode.equals(other.getMode());
-  }
-
-
   public String initLoader(Base base, String className) throws Exception {
     File modeDirectory = new File(folder, getTypeName());
     if (modeDirectory.exists()) {

@@ -81,8 +81,15 @@ X   https://github.com/processing/processing/pull/4848
 X several Contribution Manager fixes
 X   https://github.com/processing/processing/pull/4844
 X Add missing equals() and hashCode() to Contribution
-X   
-
+X   https://github.com/processing/processing/pull/4843
+X Contribution Manager does not show all libraries until filter cleared
+X   https://github.com/processing/processing/pull/4843
+X   https://github.com/processing/processing/issues/4840
+X Syntax highlighting issues (fixed with #4761)
+X   https://github.com/processing/processing/issues/4286
+X sketchbook window doesn't update when sketches are added, renamed, etc
+X   https://github.com/processing/processing/issues/2944
+X   https://github.com/processing/processing/pull/4842
 
 _ did we lose settings.path because it was too buggy?
 _   https://github.com/processing/processing/issues/3948
@@ -324,8 +331,6 @@ _   makes saving *really* slow with a lot of libraries
 _ need to handle the 2.x to 3.x sketchbook transition
 _   prefs are the same file, but sketchbook location pref is different
 _ New/Rename/Save As is reloading the whole sketchbook, argh
-_ sketchbook window doesn't update when sketches are added, renamed, etc
-_   https://github.com/processing/processing/issues/2944
 _ possible PR for updating sketchbook stuff
 _   https://github.com/processing/processing/pull/3081
 _ improve start time by populating sketchbook/libraries on threads

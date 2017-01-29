@@ -505,6 +505,8 @@ implements Scrollable, ContributionListing.ChangeListener {
     visibleContributions.clear();
     for (Contribution contribution : panelByContribution.keySet()) {
       if (contribution.getType() == contributionTab.contribType) {
+        // contains() uses equals() and there can be multiple instances,
+        // so Contribution.equals() has to be overridden
         if (filteredContributions.contains(contribution)) {
           if (panelByContribution.keySet().contains(contribution)) {
             visibleContributions.add(contribution);

@@ -55,6 +55,10 @@ X Keep Windows timer resolution high for OpenGL sketches
 X   prevents frame rate in OpenGL hovering around 30 instead of 60
 X   https://github.com/processing/processing/pull/4847
 X   https://github.com/processing/processing/issues/4846
+X Sketches still running in the background after closing
+X   https://github.com/processing/processing/issues/4831
+X   (needed to allow JAVA2D to terminate when animation thread dies)
+X   https://github.com/processing/processing/pull/4839
 
 
 _ no prompt shows with selectInput() on 10.11 and 10.12
