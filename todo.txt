@@ -31,9 +31,6 @@ X   https://github.com/processing/processing/issues/3830
 X   Replace keyChar with keyCode to prevent new line error when debugging
 X   https://github.com/processing/processing/pull/4806
 X   https://github.com/processing/processing/issues/4804
-_ "Sketch disappeared" infinite pop up dialogs
-_   https://github.com/processing/processing/pull/4808
-_   https://github.com/processing/processing/issues/4805
 
 jakub
 X println(int(byte(245))) throwing error
@@ -104,6 +101,10 @@ X   https://github.com/processing/processing/issues/3965
 o   https://github.com/processing/processing/pull/4037
 X   https://github.com/processing/processing/pull/4037
 
+
+_ "Sketch disappeared" infinite pop up dialogs
+_   https://github.com/processing/processing/pull/4808
+_   https://github.com/processing/processing/issues/4805
 
 _ blank window on startup where the "welcome" screen should be
 _   https://github.com/processing/processing/issues/3933

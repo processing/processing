@@ -1,3 +1,180 @@
+PROCESSING 3.2.4 (REV 0256) - 29 January 2017
+
+Just getting in as many bug fixes as we can before the end of days.
+
+The majority of these are from Jakub Valtar, plus a handful of other
+contributors are noted below. Read all the way to the end for fun
+new features.
+
+  
+[ the pde & the editor ]
+
++ Detect changes to 'hosts' file in case users modify/remove localhost.
+  No sketch window would open after hitting Run if someone had monkeyed
+  with their /etc/hosts file.
+  https://github.com/processing/processing/issues/4738
+  https://github.com/processing/processing/issues/1868
+  https://github.com/processing/processing/issues/3123
+  https://github.com/processing/processing/issues/4735
+
++ Ctrl-J (for debugger) is inserting newline
+  https://github.com/processing/processing/issues/3830
+  https://github.com/processing/processing/pull/4806
+  https://github.com/processing/processing/issues/4804
+
++ Spaces not handled correctly in when installing "processing-java" on macOS
+  https://github.com/processing/processing/issues/4779
+
++ println(int(byte(245))) throwing error
+  https://github.com/processing/processing/issues/4652
+  https://github.com/processing/processing/pull/4744
+  
++ 'web colors' next to each other fail to parse in certain situations
+  https://github.com/processing/processing/issues/4752
+  https://github.com/processing/processing/pull/4753
+  
++ Pasting code from editor to empty editor produces Exception
+  https://github.com/processing/processing/issues/4522
+  https://github.com/processing/processing/pull/4761
+  
++ possible infinite loop on modified externally
+  https://github.com/processing/processing/issues/3965
+  https://github.com/processing/processing/pull/4762
+  
++ Report missing brace in correct tab, suppress other errors until fixed
+  https://github.com/processing/processing/pull/4777
+  
++ Improvements to sketch launching and stopping
+  https://github.com/processing/processing/pull/4848
+
++ Syntax highlighting issues (fixed with #4761)
+  https://github.com/processing/processing/issues/4286
+  
++ Sketchbook window wasn't updating when sketches added, renamed, etc
+  https://github.com/processing/processing/issues/2944
+  https://github.com/processing/processing/pull/4842
+
+
+[ contribution manager ]
+
++ Set text style properly for Contribution Manager error message
+
++ Added the remove filter feature (Akarshit)
+  https://github.com/processing/processing/pull/3890
+
++ Several Contribution Manager fixes
+  https://github.com/processing/processing/pull/4844
+
++ Add missing equals() and hashCode() to Contribution
+  https://github.com/processing/processing/pull/4843
+
++ Contribution Manager does not show all libraries until filter cleared
+  https://github.com/processing/processing/pull/4843
+  https://github.com/processing/processing/issues/4840
+  
++ Mode, requiring update, appears in Updates tab but not in Modes tab
+  https://github.com/processing/processing/issues/4822
+  also fixed w/ https://github.com/processing/processing/pull/4843
+
+
+[ internal changes ]
+
++ Only require reference.zip to be present for build
+
++ Move the DEBUG flag into an external file or preferences.txt.
+  Replace java.util.logging code with built-in logging.
+
++ Split GUI and non-GUI portions of console for earlier startup.
+  (Otherwise System.err/out not going to a file unless we have a GUI,
+   which means we couldn't debug before the GUI shows up)
+   
++ Fix JRE download failure during ant build due to Oracle change
+  https://github.com/processing/processing/issues/4823
+
+
+[ the core ]
+
++ Write exec() documentation
+  https://github.com/processing/processing/issues/4740
+
++ XML fixes for getChild() producing valid XML. Add xmlns to
+  elements procured from getChild(), and making sure newline
+  is added after XML header when formatting.
+
++ Adding missing docs and keywords for TableRow
+  https://github.com/processing/processing/pull/4333
+  
++ PShape in Java2D wasn't respecting 'kind'
+  https://github.com/processing/processing/issues/4826
+  https://github.com/processing/processing/pull/4834
+  
++ Sketches still running in the background after closing
+  https://github.com/processing/processing/issues/4831
+  (needed to allow JAVA2D to terminate when animation thread dies)
+  https://github.com/processing/processing/pull/4839
+
+
+[ closing bugs in opengl ]
+
++ PShape array index out of bounds when using P3D 
+  https://github.com/processing/processing/issues/4773
+  
++ Disable modelX/Y/Z() in P2D because they don't exist in 2D
+  https://github.com/processing/processing/issues/4813
+  
++ Fix typo in GLSL preprocessor
+  https://github.com/processing/processing/issues/4810
+  https://github.com/processing/processing/pull/4816
+  
++ Keep Windows timer resolution high for OpenGL sketches.
+  Prevents frame rate in OpenGL hovering around 30 instead of 60.
+  https://github.com/processing/processing/pull/4847
+  https://github.com/processing/processing/issues/4846
+
+
+[ the jakubfx renderer ]
+
++ FX: Prevent matrix stack overflow
+  https://github.com/processing/processing/pull/4799
+  https://github.com/processing/processing/issues/4206
+  
++ FX: Reset transform to identity before drawing background
+  https://github.com/processing/processing/pull/4795
+  
++ FX: Implement mouse wheel event
+  https://github.com/processing/processing/issues/4169
+  https://github.com/processing/processing/pull/4796
+  
++ FX: Fix curveVertex drawing all curves together as one long curve
+  https://github.com/processing/processing/pull/4800
+  https://github.com/processing/processing/issues/4382
+  
++ FX: Add exception handler which reports exceptions from user code
+  https://github.com/processing/processing/pull/4798
+  https://github.com/processing/processing/issues/4339
+  
++ Unify mouse pressed/released events across renderers
+  https://github.com/processing/processing/issues/4361
+  https://github.com/processing/processing/pull/4797
+
+
+[ new features ]
+
++ Add listPaths(), listFiles()
+  https://github.com/processing/processing/issues/4622
+  
++ Add increment() method that takes IntDict to merge another dictionary.
+  Calling this increment() since it doesn't make sense in practice for
+  the other dictionary types, even though it's technically an add().
+  
++ Added Entry class for iterating StringDict, IntDict, FloatDict
+
++ Added XML.print() method (prints with indent of 2)
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.2.3 (REV 0255) - 7 November 2016
 
 Lots of fixes to the Contribution Manager and a couple OpenGL tweaks.
