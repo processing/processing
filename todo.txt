@@ -68,6 +68,42 @@ X sketchbook window doesn't update when sketches are added, renamed, etc
 X   https://github.com/processing/processing/issues/2944
 X   https://github.com/processing/processing/pull/4842
 
+cleaning
+X clean up 'ant doc' target to remove warnings
+X   https://github.com/processing/processing/issues/1492
+X   fixed in 3.1.1
+X Horizontal scrollbar does not scroll textarea all the way
+X   https://github.com/processing/processing/issues/3591
+X   mostly fixed in 3.0b7, opting to wait for RSyntaxArea or whatever
+X possible PR for updating sketchbook stuff
+o   https://github.com/processing/processing/pull/3081
+X   should be covered by other fixes
+X longer PR about sketchbook stuff, but closed
+X   https://github.com/processing/processing/pull/3178
+X   closed back in April 2015, issue was all over the place
+X fix encodings, line endings, and mime types in the repo
+X   https://github.com/processing/processing/issues/2955
+X   fixed 2015-11 https://github.com/processing/processing/pull/2977
+X need to handle the 2.x to 3.x sketchbook transition
+X   prefs are the same file, but sketchbook location pref is different
+o performance 
+o   video stinks.. java2d stinks.. macs stink
+o   note in the 'drawing in 2d' section of faq
+o fastest machine possible
+o   turn off hyperthreading in the bios
+o   nice gfx card only helps opengl
+o   dual processor not particularly useful, unless you make more threads
+o     but making more threads is often more work than is useful
+X   too out of date
+X why adding .0001 to a float doesn't work
+X   and how they're imprecise in general (use nf)
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130877990
+X   long since added to the FAQ
+X infinite "file changed" popups
+X   https://github.com/processing/processing/issues/3965
+o   https://github.com/processing/processing/pull/4037
+X   https://github.com/processing/processing/pull/4037
+
 
 _ blank window on startup where the "welcome" screen should be
 _   https://github.com/processing/processing/issues/3933
@@ -209,9 +245,6 @@ _ question about PDE_pt-br instead of PDE_pt
 _   https://github.com/processing/processing/issues/4018
 _ Saving sketch with the same name as a class
 _   https://github.com/processing/processing/pull/4033
-_ infinite "file changed" popups
-_   https://github.com/processing/processing/issues/3965
-_   https://github.com/processing/processing/pull/4037
 _ Pasting text into PDE results in "Clipboard does not contain a string"
 _   https://github.com/processing/processing/pull/4040
 
@@ -325,24 +358,12 @@ sketchbook
 _ Mode.rebuildLibraryList() called too many times on startup? 
 _   and when sketches saved as well?
 _   makes saving *really* slow with a lot of libraries
-_ need to handle the 2.x to 3.x sketchbook transition
-_   prefs are the same file, but sketchbook location pref is different
 _ New/Rename/Save As is reloading the whole sketchbook, argh
-_ possible PR for updating sketchbook stuff
-_   https://github.com/processing/processing/pull/3081
 _ improve start time by populating sketchbook/libraries on threads
 _   https://github.com/processing/processing/issues/2945
-_ longer PR about sketchbook stuff, but closed
-_   https://github.com/processing/processing/pull/3178
 
 
 help me
-_ Horizontal scrollbar does not scroll textarea all the way
-_   https://github.com/processing/processing/issues/3591
-_ clean up 'ant doc' target to remove warnings
-_   https://github.com/processing/processing/issues/1492
-_ fix encodings, line endings, and mime types in the repo
-_   https://github.com/processing/processing/issues/2955
 _ Add support for localizing contributions
 _   https://github.com/processing/processing/pull/2833
 _   https://github.com/processing/processing/issues/3154
@@ -469,9 +490,6 @@ _   fonts by default not working that well?
 
 DOC / Other
 
-_ why adding .0001 to a float doesn't work
-_   and how they're imprecise in general (use nf)
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130877990
 _ why strong typing? (link also to language thing on main page)
 _ we cannot commit to any sort of timeframe on releases
 _ under the hood - basic
@@ -488,14 +506,6 @@ _     in doing so, you'll lose access to 'g'
 _   add main() to your app to make it run on its own
 _   preproc stuff.. have to make setup() into public void setup()
 _     (same for key events and all that)
-_ performance 
-_   video stinks.. java2d stinks.. macs stink
-_   note in the 'drawing in 2d' section of faq
-_ fastest machine possible
-_   turn off hyperthreading in the bios
-_   nice gfx card only helps opengl
-_   dual processor not particularly useful, unless you make more threads
-_     but making more threads is often more work than is useful
 _ is there a way to do xxx?
 _   advanced users who are outgrowing the basic reference: 
 _   be sure to check the "complete" reference
