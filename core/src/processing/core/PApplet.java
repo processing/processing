@@ -1194,7 +1194,7 @@ public class PApplet implements PConstants {
   *
   */
   public void pixelDensity(int density) {
-    println(density + " " + this.pixelDensity);
+    //println(density + " " + this.pixelDensity);
     if (density != this.pixelDensity) {
       if (insideSettings("pixelDensity", density)) {
         if (density != 1 && density != 2) {
@@ -3482,6 +3482,27 @@ public class PApplet implements PConstants {
   }
 
 
+  /**
+   * Pass a set of arguments directly to the command line. Uses Java's
+   * <A HREF="https://docs.oracle.com/javase/8/docs/api/java/lang/Runtime.html#exec-java.lang.String:A-">Runtime.exec()</A>
+   * method. This is different from the <A HREF="https://processing.org/reference/launch_.html">launch()</A>
+   * method, which uses the operating system's launcher to open the files.
+   * It's always a good idea to use a full path to the executable here.
+   * <pre>
+   * exec("/usr/bin/say", "-v", "Pipe Organ", "welcome to the command line");
+   * </pre>
+   * Or if you want to wait until it's completed, something like this:
+   * <pre>
+   * Process p = exec("/usr/bin/say", "waiting until done");
+   * try {
+   *   int result = p.waitFor();
+   *   println("the process returned " + result);
+   * } catch (InterruptedException e) { }
+   * </pre>
+   * You can also get the system output and error streams from the Process
+   * object, but that's more that we'd like to cover here.
+   * @return a <A HREF="https://docs.oracle.com/javase/8/docs/api/java/lang/Process.html">Process</A> object
+   */
   static public Process exec(String... args) {
     try {
       return Runtime.getRuntime().exec(args);
@@ -5927,6 +5948,8 @@ public class PApplet implements PConstants {
 
   /**
    * @webref output:files
+   * @param json the JSONObject to save
+   * @param filename the name of the file to save to
    * @see JSONObject
    * @see JSONArray
    * @see PApplet#loadJSONObject(String)
@@ -5938,7 +5961,7 @@ public class PApplet implements PConstants {
   }
 
   /**
-   * @nowebref
+   * @param options "compact" and "indent=N", replace N with the number of spaces
    */
   public boolean saveJSONObject(JSONObject json, String filename, String options) {
     return json.save(saveFile(filename), options);
@@ -5976,6 +5999,8 @@ public class PApplet implements PConstants {
 
   /**
    * @webref output:files
+   * @param json the JSONArray to save
+   * @param filename the name of the file to save to
    * @see JSONObject
    * @see JSONArray
    * @see PApplet#loadJSONObject(String)
@@ -5986,7 +6011,9 @@ public class PApplet implements PConstants {
     return saveJSONArray(json, filename, null);
   }
 
-
+  /**
+   * @param options "compact" and "indent=N", replace N with the number of spaces
+   */
   public boolean saveJSONArray(JSONArray json, String filename, String options) {
     return json.save(saveFile(filename), options);
   }
@@ -6509,6 +6536,133 @@ public class PApplet implements PConstants {
 
     } catch (NoSuchMethodException nsme) {
       System.err.println(callbackMethod + "() could not be found");
+    }
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
+  // LISTING DIRECTORIES
+
+
+  public String[] listPaths(String path, String... options) {
+    File[] list = listFiles(path, options);
+
+    int offset = 0;
+    for (String opt : options) {
+      if (opt.equals("relative")) {
+        if (!path.endsWith(File.pathSeparator)) {
+          path += File.pathSeparator;
+        }
+        offset = path.length();
+        break;
+      }
+    }
+    String[] outgoing = new String[list.length];
+    for (int i = 0; i < list.length; i++) {
+      // as of Java 1.8, substring(0) returns the original object
+      outgoing[i] = list[i].getAbsolutePath().substring(offset);
+    }
+    return outgoing;
+  }
+
+
+  public File[] listFiles(String path, String... options) {
+    File file = new File(path);
+    // if not an absolute path, make it relative to the sketch folder
+    if (!file.isAbsolute()) {
+      file = sketchFile(path);
+    }
+    return listFiles(file, options);
+  }
+
+
+  // "relative" -> no effect with the Files version, but important for listPaths
+  // "recursive"
+  // "extension=js" or "extensions=js|csv|txt" (no dot)
+  // "directories" -> only directories
+  // "files" -> only files
+  // "hidden" -> include hidden files (prefixed with .) disabled by default
+  static public File[] listFiles(File base, String... options) {
+    boolean recursive = false;
+    String[] extensions = null;
+    boolean directories = true;
+    boolean files = true;
+    boolean hidden = false;
+
+    for (String opt : options) {
+      if (opt.equals("recursive")) {
+        recursive = true;
+      } else if (opt.startsWith("extension=")) {
+        extensions = new String[] { opt.substring(10) };
+      } else if (opt.startsWith("extensions=")) {
+        extensions = split(opt.substring(10), ',');
+      } else if (opt.equals("files")) {
+        directories = false;
+      } else if (opt.equals("directories")) {
+        files = false;
+      } else if (opt.equals("hidden")) {
+        hidden = true;
+      } else if (opt.equals("relative")) {
+        // ignored
+      } else {
+        throw new RuntimeException(opt + " is not a listFiles() option");
+      }
+    }
+
+    if (extensions != null) {
+      for (int i = 0; i < extensions.length; i++) {
+        extensions[i] = "." + extensions[i];
+      }
+    }
+
+    if (!files && !directories) {
+      // just make "only files" and "only directories" mean... both
+      files = true;
+      directories = true;
+    }
+
+    if (!base.canRead()) {
+      return null;
+    }
+
+    List<File> outgoing = new ArrayList<>();
+    listFilesImpl(base, recursive, extensions, hidden, directories, files, outgoing);
+    return outgoing.toArray(new File[0]);
+  }
+
+
+  static void listFilesImpl(File folder, boolean recursive,
+                            String[] extensions, boolean hidden,
+                            boolean directories, boolean files,
+                            List<File> list) {
+    File[] items = folder.listFiles();
+    if (items != null) {
+      for (File item : items) {
+        String name = item.getName();
+        if (!hidden && name.charAt(0) == '.') {
+          continue;
+        }
+        if (item.isDirectory()) {
+          if (recursive) {
+            listFilesImpl(item, recursive, extensions, hidden, directories, files, list);
+          }
+          if (directories) {
+            list.add(item);
+          }
+        } else if (files) {
+          if (extensions == null) {
+            list.add(item);
+          } else {
+            for (String ext : extensions) {
+              if (item.getName().toLowerCase().endsWith(ext)) {
+                list.add(item);
+              }
+            }
+          }
+        }
+      }
     }
   }
 
@@ -9334,7 +9488,6 @@ public class PApplet implements PConstants {
 
   // INT NUMBER FORMATTING
 
-
   static public String nf(float num) {
     int inum = (int) num;
     if (num == inum) {
@@ -9343,30 +9496,21 @@ public class PApplet implements PConstants {
     return str(num);
   }
 
-
-  static public String[] nf(float[] num) {
-    String[] outgoing = new String[num.length];
-    for (int i = 0; i < num.length; i++) {
-      outgoing[i] = nf(num[i]);
+  static public String[] nf(float[] nums) {
+    String[] outgoing = new String[nums.length];
+    for (int i = 0; i < nums.length; i++) {
+      outgoing[i] = nf(nums[i]);
     }
     return outgoing;
   }
 
-
   /**
    * Integer number formatter.
    */
+
   static private NumberFormat int_nf;
   static private int int_nf_digits;
   static private boolean int_nf_commas;
-
-  static public String[] nf(int num[], int digits) {
-    String formatted[] = new String[num.length];
-    for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nf(num[i], digits);
-    }
-    return formatted;
-  }
 
   /**
    * ( begin auto-generated from nf.xml )
@@ -9383,12 +9527,24 @@ public class PApplet implements PConstants {
    *
    * ( end auto-generated )
    * @webref data:string_functions
-   * @param num the number(s) to format
+   * @param nums the numbers to format
    * @param digits number of digits to pad with zero
    * @see PApplet#nfs(float, int, int)
    * @see PApplet#nfp(float, int, int)
    * @see PApplet#nfc(float, int)
    * @see <a href="https://processing.org/reference/intconvert_.html">int(float)</a>
+   */
+
+  static public String[] nf(int nums[], int digits) {
+    String formatted[] = new String[nums.length];
+    for (int i = 0; i < formatted.length; i++) {
+      formatted[i] = nf(nums[i], digits);
+    }
+    return formatted;
+  }
+
+  /**
+   * @param num the number to format
    */
   static public String nf(int num, int digits) {
     if ((int_nf != null) &&
@@ -9405,38 +9561,35 @@ public class PApplet implements PConstants {
     return int_nf.format(num);
   }
 
-/**
+  /**
    * ( begin auto-generated from nfc.xml )
    *
    * Utility function for formatting numbers into strings and placing
    * appropriate commas to mark units of 1000. There are two versions, one
    * for formatting ints and one for formatting an array of ints. The value
    * for the <b>digits</b> parameter should always be a positive integer.
-   * <br/> <br/>
+   * <br/><br/>
    * For a non-US locale, this will insert periods instead of commas, or
    * whatever is apprioriate for that region.
    *
    * ( end auto-generated )
- * @webref data:string_functions
- * @param num the number(s) to format
- * @see PApplet#nf(float, int, int)
- * @see PApplet#nfp(float, int, int)
- * @see PApplet#nfs(float, int, int)
- */
-  static public String[] nfc(int num[]) {
-    String formatted[] = new String[num.length];
+   * @webref data:string_functions
+   * @param nums the numbers to format
+   * @see PApplet#nf(float, int, int)
+   * @see PApplet#nfp(float, int, int)
+   * @see PApplet#nfs(float, int, int)
+   */
+  static public String[] nfc(int nums[]) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfc(num[i]);
+      formatted[i] = nfc(nums[i]);
     }
     return formatted;
   }
 
 
   /**
-   * nfc() or "number format with commas". This is an unfortunate misnomer
-   * because in locales where a comma is not the separator for numbers, it
-   * won't actually be outputting a comma, it'll use whatever makes sense for
-   * the locale.
+   * @param num the number to format
    */
   static public String nfc(int num) {
     if ((int_nf != null) &&
@@ -9473,7 +9626,7 @@ public class PApplet implements PConstants {
    *
    * ( end auto-generated )
   * @webref data:string_functions
-  * @param num the number(s) to format
+  * @param num the number to format
   * @param digits number of digits to pad with zeroes
   * @see PApplet#nf(float, int, int)
   * @see PApplet#nfp(float, int, int)
@@ -9483,10 +9636,13 @@ public class PApplet implements PConstants {
     return (num < 0) ? nf(num, digits) : (' ' + nf(num, digits));
   }
 
-  static public String[] nfs(int num[], int digits) {
-    String formatted[] = new String[num.length];
+  /**
+   * @param nums the numbers to format
+   */
+  static public String[] nfs(int nums[], int digits) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfs(num[i], digits);
+      formatted[i] = nfs(nums[i], digits);
     }
     return formatted;
   }
@@ -9509,7 +9665,7 @@ public class PApplet implements PConstants {
    *
    * ( end auto-generated )
   * @webref data:string_functions
-  * @param num the number(s) to format
+  * @param num the number to format
   * @param digits number of digits to pad with zeroes
   * @see PApplet#nf(float, int, int)
   * @see PApplet#nfs(float, int, int)
@@ -9518,11 +9674,13 @@ public class PApplet implements PConstants {
   static public String nfp(int num, int digits) {
     return (num < 0) ? nf(num, digits) : ('+' + nf(num, digits));
   }
-
-  static public String[] nfp(int num[], int digits) {
-    String formatted[] = new String[num.length];
+  /**
+   * @param nums the numbers to format
+   */
+  static public String[] nfp(int nums[], int digits) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfp(num[i], digits);
+      formatted[i] = nfp(nums[i], digits);
     }
     return formatted;
   }
@@ -9533,23 +9691,22 @@ public class PApplet implements PConstants {
 
   // FLOAT NUMBER FORMATTING
 
-
   static private NumberFormat float_nf;
   static private int float_nf_left, float_nf_right;
   static private boolean float_nf_commas;
 
-  static public String[] nf(float num[], int left, int right) {
-    String formatted[] = new String[num.length];
+  /**
+   * @param left number of digits to the left of the decimal point
+   * @param right number of digits to the right of the decimal point
+   */
+  static public String[] nf(float nums[], int left, int right) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nf(num[i], left, right);
+      formatted[i] = nf(nums[i], left, right);
     }
     return formatted;
   }
-/**
- * @param num[] the number(s) to format
- * @param left number of digits to the left of the decimal point
- * @param right number of digits to the right of the decimal point
- */
+
   static public String nf(float num, int left, int right) {
     if ((float_nf != null) &&
         (float_nf_left == left) &&
@@ -9572,18 +9729,16 @@ public class PApplet implements PConstants {
     return float_nf.format(num);
   }
 
-/**
- * @param num[] the number(s) to format
- * @param right number of digits to the right of the decimal point
- */
-  static public String[] nfc(float num[], int right) {
-    String formatted[] = new String[num.length];
+  /**
+   * @param right number of digits to the right of the decimal point
+  */
+  static public String[] nfc(float nums[], int right) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfc(num[i], right);
+      formatted[i] = nfc(nums[i], right);
     }
     return formatted;
   }
-
 
   static public String nfc(float num, int right) {
     if ((float_nf != null) &&
@@ -9608,14 +9763,13 @@ public class PApplet implements PConstants {
 
 
  /**
-  * @param num[] the number(s) to format
   * @param left the number of digits to the left of the decimal point
   * @param right the number of digits to the right of the decimal point
   */
-  static public String[] nfs(float num[], int left, int right) {
-    String formatted[] = new String[num.length];
+  static public String[] nfs(float nums[], int left, int right) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfs(num[i], left, right);
+      formatted[i] = nfs(nums[i], left, right);
     }
     return formatted;
   }
@@ -9628,10 +9782,10 @@ public class PApplet implements PConstants {
   * @param left the number of digits to the left of the decimal point
   * @param right the number of digits to the right of the decimal point
   */
-  static public String[] nfp(float num[], int left, int right) {
-    String formatted[] = new String[num.length];
+  static public String[] nfp(float nums[], int left, int right) {
+    String formatted[] = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
-      formatted[i] = nfp(num[i], left, right);
+      formatted[i] = nfp(nums[i], left, right);
     }
     return formatted;
   }
@@ -12180,8 +12334,8 @@ public class PApplet implements PConstants {
    *
    * @webref image:loading_displaying
    * @param img the image to display
-   * @param a x-coordinate of the image
-   * @param b y-coordinate of the image
+   * @param a x-coordinate of the image by default
+   * @param b y-coordinate of the image by default
    * @see PApplet#loadImage(String, String)
    * @see PImage
    * @see PGraphics#imageMode(int)
@@ -12196,8 +12350,8 @@ public class PApplet implements PConstants {
 
 
   /**
-   * @param c width to display the image
-   * @param d height to display the image
+   * @param c width to display the image by default
+   * @param d height to display the image by default
    */
   public void image(PImage img, float a, float b, float c, float d) {
     if (recorder != null) recorder.image(img, a, b, c, d);
