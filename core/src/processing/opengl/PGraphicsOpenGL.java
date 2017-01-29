@@ -76,7 +76,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public void dispose() {
-      System.err.println("disposing " + this);
       disposeNative();
     }
 
