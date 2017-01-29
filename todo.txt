@@ -20,6 +20,8 @@ X   https://github.com/processing/processing/issues/1601
 X JRE download fails during ant build
 X   https://github.com/processing/processing/issues/4823
 X changed headerType to console (make sure changed back)
+X Spaces not handled correctly in when installing "processing-java" on macOS
+X   https://github.com/processing/processing/issues/4779
 
 _ blank window on startup where the "welcome" screen should be
 _   https://github.com/processing/processing/issues/3933
@@ -36,9 +38,6 @@ _ allow modes to specify their own base file name
 _   need to move "is this a sketch?" handling into Mode
 _ fix extension check for other modes
 _   https://github.com/processing/processing/issues/3980
-
-_ Spaces not handled correctly in when installing "processing-java" on macOS
-_   https://github.com/processing/processing/issues/4779
 
 contrib
 X Added the remove filter feature

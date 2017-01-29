@@ -105,7 +105,7 @@ public class InstallCommander implements Tool {
       String classPath = jarList.join(":").replaceAll(javaRoot + "\\/?", "");
 
       writer.println("cd \"" + javaRoot + "\" && " +
-                     Platform.getJavaPath() +
+                     Platform.getJavaPath().replaceAll(" ", "\\\\ ") +
                      " -Djna.nosys=true" +
                      " $OPTION_FOR_HEADLESS_RUN" +
       		           " -cp \"" + classPath + "\"" +
