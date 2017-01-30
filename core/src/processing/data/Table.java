@@ -4045,6 +4045,7 @@ public class Table {
    * @see Table#removeTokens(String)
    */
   public void trim() {
+    columnTitles = PApplet.trim(columnTitles);
     for (int col = 0; col < getColumnCount(); col++) {
       trim(col);
     }

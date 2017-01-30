@@ -8673,6 +8673,9 @@ public class PApplet implements PConstants {
   * @param array a String array
   */
   static public String[] trim(String[] array) {
+    if (array == null) {
+      return null;
+    }
     String[] outgoing = new String[array.length];
     for (int i = 0; i < array.length; i++) {
       if (array[i] != null) {
