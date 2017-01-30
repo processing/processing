@@ -8662,6 +8662,9 @@ public class PApplet implements PConstants {
    * @see PApplet#join(String[], char)
    */
   static public String trim(String str) {
+    if (str == null) {
+      return null;
+    }
     return str.replace('\u00A0', ' ').trim();
   }
 
@@ -8673,7 +8676,7 @@ public class PApplet implements PConstants {
     String[] outgoing = new String[array.length];
     for (int i = 0; i < array.length; i++) {
       if (array[i] != null) {
-        outgoing[i] = array[i].replace('\u00A0', ' ').trim();
+        outgoing[i] = trim(array[i]);
       }
     }
     return outgoing;
