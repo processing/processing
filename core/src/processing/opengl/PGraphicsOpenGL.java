@@ -53,6 +53,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // Using the technique alternative to finalization described in:
   // http://www.oracle.com/technetwork/articles/java/finalization-137655.html
   static private ReferenceQueue<Object> refQueue = new ReferenceQueue<>();
+  static private List<Disposable<? extends Object>> reachableWeakReferences = new LinkedList<>();
 
   static final private int MAX_DRAIN_GLRES_ITERATIONS = 10;
 
@@ -73,9 +74,11 @@ public class PGraphicsOpenGL extends PGraphics {
     protected Disposable(T obj) {
       super(obj, refQueue);
       drainRefQueueBounded();
+      reachableWeakReferences.add(this);
     }
 
     public void dispose() {
+      reachableWeakReferences.remove(this);
       disposeNative();
     }
 
