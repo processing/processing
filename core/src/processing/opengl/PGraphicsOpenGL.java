@@ -890,6 +890,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     @Override
     public boolean equals(Object obj) {
+      if (!(obj instanceof GLResourceTexture)) {
+        return false;
+      }
       GLResourceTexture other = (GLResourceTexture)obj;
       return other.glName == glName &&
              other.context == context;
@@ -936,6 +939,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     @Override
     public boolean equals(Object obj) {
+      if (!(obj instanceof GLResourceVertexBuffer)) {
+        return false;
+      }
       GLResourceVertexBuffer other = (GLResourceVertexBuffer)obj;
       return other.glId == glId &&
              other.context == context;
@@ -995,6 +1001,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     @Override
     public boolean equals(Object obj) {
+      if (!(obj instanceof GLResourceShader)) {
+        return false;
+      }
       GLResourceShader other = (GLResourceShader)obj;
       return other.glProgram == glProgram &&
              other.glVertex == glVertex &&
@@ -1095,6 +1104,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     @Override
     public boolean equals(Object obj) {
+      if (!(obj instanceof GLResourceFrameBuffer)) {
+        return false;
+      }
       GLResourceFrameBuffer other = (GLResourceFrameBuffer)obj;
       return other.glFbo == glFbo &&
              other.glDepth == glDepth &&
