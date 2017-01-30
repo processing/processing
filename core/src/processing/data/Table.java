@@ -671,6 +671,12 @@ public class Table {
               addPiece(start, i, hasEscapedQuotes);
               start = i+2;
               return true;
+
+            } else {
+              // This is a lone-wolf quote, occasionally seen in exports.
+              // It's a single quote in the middle of some other text,
+              // and not escaped properly. Pray for the best!
+              i++;
             }
 
           } else {  // not a quoted line

@@ -109,6 +109,21 @@ public class StringDict {
 
 
   /**
+   * Create a dictionary that maps between column titles and cell entries
+   * in a TableRow.
+   */
+  public StringDict(TableRow row) {
+    String[] titles = row.getColumnTitles();
+    if (titles == null) {
+      titles = new StringList(IntList.fromRange(row.getColumnCount())).array();
+    }
+    for (int col = 0; col < row.getColumnCount(); col++) {
+      set(titles[col], row.getString(col));
+    }
+  }
+
+
+  /**
    * @webref stringdict:method
    * @brief Returns the number of key/value pairs
    */

@@ -1,4 +1,7 @@
 0257 (3.2.5)
+X StringDict(TableRow) constructor
+X allow lone double quotes in the midst of csv strings
+_ make trim() work on column titles as well
 
 
 _ no prompt shows with selectInput() on 10.11 and 10.12
