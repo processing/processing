@@ -52,7 +52,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // Disposal of native resources
   // Using the technique alternative to finalization described in:
   // http://www.oracle.com/technetwork/articles/java/finalization-137655.html
-  static private ReferenceQueue<Object> refQueue = new ReferenceQueue<>();
+  private static ReferenceQueue<Object> refQueue = new ReferenceQueue<>();
   private static List<Disposable<? extends Object>> reachableWeakReferences =
     new LinkedList<>();
 
@@ -79,6 +79,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public void dispose() {
+      System.err.println("disposing " + this );
       reachableWeakReferences.remove(this);
       disposeNative();
     }
