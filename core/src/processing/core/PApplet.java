@@ -6744,7 +6744,20 @@ public class PApplet implements PConstants {
   static public BufferedReader createReader(InputStream input) {
     InputStreamReader isr =
       new InputStreamReader(input, StandardCharsets.UTF_8);
-    return new BufferedReader(isr);
+
+    BufferedReader reader = new BufferedReader(isr);
+    // consume the Unicode BOM (byte order marker) if present
+    try {
+      reader.mark(1);
+      int c = reader.read();
+      // if not the BOM, back up to the beginning again
+      if (c != '\uFEFF') {
+        reader.reset();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return reader;
   }
 
 

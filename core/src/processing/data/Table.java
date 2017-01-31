@@ -378,6 +378,15 @@ public class Table {
     } else {
       InputStreamReader isr = new InputStreamReader(input, encoding);
       BufferedReader reader = new BufferedReader(isr);
+
+      // strip out the Unicode BOM, if present
+      reader.mark(1);
+      int c = reader.read();
+      // if not the BOM, back up to the beginning again
+      if (c != '\uFEFF') {
+        reader.reset();
+      }
+
       /*
        if (awfulCSV) {
         parseAwfulCSV(reader, header);
@@ -4038,6 +4047,7 @@ public class Table {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
 
   /**
    * @webref table:method
