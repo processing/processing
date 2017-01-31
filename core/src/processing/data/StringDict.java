@@ -110,9 +110,12 @@ public class StringDict {
 
   /**
    * Create a dictionary that maps between column titles and cell entries
-   * in a TableRow.
+   * in a TableRow. If two columns have the same name, the later column's
+   * values will override the earlier values.
    */
   public StringDict(TableRow row) {
+    this(row.getColumnCount());
+
     String[] titles = row.getColumnTitles();
     if (titles == null) {
       titles = new StringList(IntList.fromRange(row.getColumnCount())).array();
@@ -120,6 +123,8 @@ public class StringDict {
     for (int col = 0; col < row.getColumnCount(); col++) {
       set(titles[col], row.getString(col));
     }
+    // remove unused and overwritten entries
+    crop();
   }
 
 

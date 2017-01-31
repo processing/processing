@@ -4059,7 +4059,57 @@ public class Table {
     for (int col = 0; col < getColumnCount(); col++) {
       trim(col);
     }
+    // remove empty columns
+    int lastColumn = getColumnCount() - 1;
+    //while (isEmptyColumn(lastColumn) && lastColumn >= 0) {
+    while (isEmptyArray(getStringColumn(lastColumn)) && lastColumn >= 0) {
+      lastColumn--;
+    }
+    setColumnCount(lastColumn + 1);
+
+    // remove empty rows (starting from the end)
+    int lastRow = lastRowIndex();
+    //while (isEmptyRow(lastRow) && lastRow >= 0) {
+    while (isEmptyArray(getStringRow(lastRow)) && lastRow >= 0) {
+      lastRow--;
+    }
+    setRowCount(lastRow + 1);
   }
+
+
+  protected boolean isEmptyArray(String[] contents) {
+    for (String entry : contents) {
+      if (entry != null && entry.length() > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  /*
+  protected boolean isEmptyColumn(int column) {
+    String[] contents = getStringColumn(column);
+    for (String entry : contents) {
+      if (entry != null && entry.length() > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  protected boolean isEmptyRow(int row) {
+    String[] contents = getStringRow(row);
+    for (String entry : contents) {
+      if (entry != null && entry.length() > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+  */
+
 
   /**
    * @param column ID number of the column to trim
