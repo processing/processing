@@ -1,10 +1,13 @@
 0257 (3.2.5)
+X check for already-exported folders before trying to remove them
+X   was spewing 'file not found' errors into the console
 
 
 cleaning
 X Contribution Manager does not show all libraries until filter cleared
 X   https://github.com/processing/processing/issues/4840
 X   fixed in 3.2.4
+
 
 _ NVIDIA driver problems (and means to check)
 _   https://github.com/processing/processing/issues/4853
