@@ -4067,6 +4067,11 @@ public class Table {
     }
     setColumnCount(lastColumn + 1);
 
+    // trim() works from both sides
+    while (getColumnCount() > 0 && isEmptyArray(getStringColumn(0))) {
+      removeColumn(0);
+    }
+
     // remove empty rows (starting from the end)
     int lastRow = lastRowIndex();
     //while (isEmptyRow(lastRow) && lastRow >= 0) {
@@ -4074,6 +4079,10 @@ public class Table {
       lastRow--;
     }
     setRowCount(lastRow + 1);
+
+    while (getRowCount() > 0 && isEmptyArray(getStringRow(0))) {
+      removeRow(0);
+    }
   }
 
 

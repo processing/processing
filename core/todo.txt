@@ -6,6 +6,8 @@ X make trim() work on column titles as well
 o add trimRows() and trimColumns()
 o   would you ever use one w/o the other?
 X   just make this part of trim()
+X also remove rows/columns from beginning
+X   since that's what trim() on strings does
 X consume Unicode BOM (0xFEFF) in createReader() and Table parser
 o no prompt shows with selectInput() on 10.11 and 10.12
 X   https://github.com/processing/processing/issues/4758
