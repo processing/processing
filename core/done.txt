@@ -1,3 +1,66 @@
+0256 (3.2.4)
+X write exec() documentation
+X   https://github.com/processing/processing/issues/4740
+X add xmlns to elements procured from getChild()
+X make sure newline is added after XML header when formatting
+
+api additions
+X add listPaths(), listFiles()
+X   https://github.com/processing/processing/issues/4622
+X add increment() method that takes IntDict to merge another dictionary
+X   Calling this increment() since it doesn't make sense in practice for
+X   the other dictionary types, even though it's technically an add()
+X add Entry class for iterating StringDict, IntDict, FloatDict
+X add XML.print() method (prints with indent of 2)
+
+contribs
+X Adding missing docs and keywords for TableRow
+X   https://github.com/processing/processing/pull/4333
+X PShape in Java2D wasn't respecting 'kind'
+X   https://github.com/processing/processing/issues/4826
+X   https://github.com/processing/processing/pull/4834
+
+cleaning
+o probably should also check to make sure PApplet running JVM 8
+X   or compile against 1.8 and force it?
+
+andres
+X PShape array index out of bounds when using P3D 
+X   https://github.com/processing/processing/issues/4773
+X modelX/Y/Z() should be disabled in P2D
+X   https://github.com/processing/processing/issues/4813
+
+jakub
+X FX: Prevent matrix stack overflow
+X   https://github.com/processing/processing/pull/4799
+X   https://github.com/processing/processing/issues/4206
+X FX: Reset transform to identity before drawing background
+X   https://github.com/processing/processing/pull/4795
+X FX: Implement mouse wheel event
+X   https://github.com/processing/processing/issues/4169
+X   https://github.com/processing/processing/pull/4796
+X FX: Fix curveVertex drawing all curves together as one long curve
+X   https://github.com/processing/processing/pull/4800
+X   https://github.com/processing/processing/issues/4382
+X FX: Add exception handler which reports exceptions from user code
+X   https://github.com/processing/processing/pull/4798
+X   https://github.com/processing/processing/issues/4339
+X Unify mouse pressed/released events across renderers
+X   https://github.com/processing/processing/issues/4361
+X   https://github.com/processing/processing/pull/4797
+X Fix typo in GLSL preprocessor
+X   https://github.com/processing/processing/issues/4810
+X   https://github.com/processing/processing/pull/4816
+X Keep Windows timer resolution high for OpenGL sketches
+X   prevents frame rate in OpenGL hovering around 30 instead of 60
+X   https://github.com/processing/processing/pull/4847
+X   https://github.com/processing/processing/issues/4846
+X Sketches still running in the background after closing
+X   https://github.com/processing/processing/issues/4831
+X   (needed to allow JAVA2D to terminate when animation thread dies)
+X   https://github.com/processing/processing/pull/4839
+
+
 0255 (3.2.3)
 
 andres

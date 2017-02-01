@@ -1,106 +1,15 @@
-0256 (3.2.4)
-X only require reference.zip (and internet connection) when building dist
-X set text style properly for Contribution Manager error message
-X Detect changes to 'hosts' file in case users modify/remove localhost 
-X   https://github.com/processing/processing/issues/4738
-X No sketch window opens after hitting Run if hosts file changed
-X   https://github.com/processing/processing/issues/1868
-X   https://github.com/processing/processing/issues/3123
-X   https://github.com/processing/processing/issues/4735
-X move the DEBUG flag into an external file or preferences.txt
-X   will help us with debugging w/ others as well
-X   change to debug.txt; too confusing with the folder thing
-X replace java.util.logging code with built-in logging
-X split gui and non-gui portions of console for earlier startup
-X split EditorConsole into gui and non-gui code?
-X   otherwise System.err/out not going to a file unless we have GUI
-X   also can't debug before the GUI shows up
-o gracefully recover from proxy problems
-X   https://github.com/processing/processing/issues/1601
-X JRE download fails during ant build
-X   https://github.com/processing/processing/issues/4823
-X changed headerType to console (make sure changed back)
-X Spaces not handled correctly in when installing "processing-java" on macOS
-X   https://github.com/processing/processing/issues/4779
-
-contrib
-X Added the remove filter feature
-X   https://github.com/processing/processing/pull/3890
-X ctrl-J (for debugger) is inserting newline
-X   https://github.com/processing/processing/issues/3830
-X   Replace keyChar with keyCode to prevent new line error when debugging
-X   https://github.com/processing/processing/pull/4806
-X   https://github.com/processing/processing/issues/4804
-
-jakub
-X println(int(byte(245))) throwing error
-X   https://github.com/processing/processing/issues/4652
-X   https://github.com/processing/processing/pull/4744
-X 'web colors' next to each other fail to parse in certain situations
-X   https://github.com/processing/processing/issues/4752
-X   https://github.com/processing/processing/pull/4753
-X Pasting code from editor to empty editor produces Exception
-X   https://github.com/processing/processing/issues/4522
-X   https://github.com/processing/processing/pull/4761
-X possible infinite loop on modified externally
-X   https://github.com/processing/processing/issues/3965
-X   https://github.com/processing/processing/pull/4762
-X Report missing brace in correct tab, suppress other errors until fixed
-X   https://github.com/processing/processing/pull/4777
-X Improvements to sketch launching and stopping
-X   https://github.com/processing/processing/pull/4848
-X several Contribution Manager fixes
-X   https://github.com/processing/processing/pull/4844
-X Add missing equals() and hashCode() to Contribution
-X   https://github.com/processing/processing/pull/4843
-X Contribution Manager does not show all libraries until filter cleared
-X   https://github.com/processing/processing/pull/4843
-X   https://github.com/processing/processing/issues/4840
-X Mode, requiring update, appears in Updates tab but not in Modes tab
-X   https://github.com/processing/processing/issues/4822
-X   also fixed w/ https://github.com/processing/processing/pull/4843
-X Syntax highlighting issues (fixed with #4761)
-X   https://github.com/processing/processing/issues/4286
-X sketchbook window doesn't update when sketches are added, renamed, etc
-X   https://github.com/processing/processing/issues/2944
-X   https://github.com/processing/processing/pull/4842
+0257 (3.2.5)
+X check for already-exported folders before trying to remove them
+X   was spewing 'file not found' errors into the console
 
 cleaning
-X clean up 'ant doc' target to remove warnings
-X   https://github.com/processing/processing/issues/1492
-X   fixed in 3.1.1
-X Horizontal scrollbar does not scroll textarea all the way
-X   https://github.com/processing/processing/issues/3591
-X   mostly fixed in 3.0b7, opting to wait for RSyntaxArea or whatever
-X possible PR for updating sketchbook stuff
-o   https://github.com/processing/processing/pull/3081
-X   should be covered by other fixes
-X longer PR about sketchbook stuff, but closed
-X   https://github.com/processing/processing/pull/3178
-X   closed back in April 2015, issue was all over the place
-X fix encodings, line endings, and mime types in the repo
-X   https://github.com/processing/processing/issues/2955
-X   fixed 2015-11 https://github.com/processing/processing/pull/2977
-X need to handle the 2.x to 3.x sketchbook transition
-X   prefs are the same file, but sketchbook location pref is different
-o performance 
-o   video stinks.. java2d stinks.. macs stink
-o   note in the 'drawing in 2d' section of faq
-o fastest machine possible
-o   turn off hyperthreading in the bios
-o   nice gfx card only helps opengl
-o   dual processor not particularly useful, unless you make more threads
-o     but making more threads is often more work than is useful
-X   too out of date
-X why adding .0001 to a float doesn't work
-X   and how they're imprecise in general (use nf)
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130877990
-X   long since added to the FAQ
-X infinite "file changed" popups
-X   https://github.com/processing/processing/issues/3965
-o   https://github.com/processing/processing/pull/4037
-X   https://github.com/processing/processing/pull/4037
+X Contribution Manager does not show all libraries until filter cleared
+X   https://github.com/processing/processing/issues/4840
+X   fixed in 3.2.4
 
+
+_ NVIDIA driver problems (and means to check)
+_   https://github.com/processing/processing/issues/4853
 
 _ "Sketch disappeared" infinite pop up dialogs
 _   https://github.com/processing/processing/pull/4808

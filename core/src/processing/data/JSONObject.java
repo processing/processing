@@ -539,11 +539,15 @@ public class JSONObject {
    */
   public Object get(String key) {
     if (key == null) {
-      throw new RuntimeException("Null key.");
+      throw new RuntimeException("JSONObject.get(null) called");
     }
     Object object = this.opt(key);
     if (object == null) {
-      throw new RuntimeException("JSONObject[" + quote(key) + "] not found.");
+      // Adding for rev 0257 in line with other p5 api
+      return null;
+    }
+    if (object == null) {
+      throw new RuntimeException("JSONObject[" + quote(key) + "] not found");
     }
     return object;
   }
@@ -563,10 +567,14 @@ public class JSONObject {
    */
   public String getString(String key) {
     Object object = this.get(key);
+    if (object == null) {
+      // Adding for rev 0257 in line with other p5 api
+      return null;
+    }
     if (object instanceof String) {
       return (String)object;
     }
-    throw new RuntimeException("JSONObject[" + quote(key) + "] not a string.");
+    throw new RuntimeException("JSONObject[" + quote(key) + "] is not a string");
   }
 
 
@@ -599,10 +607,12 @@ public class JSONObject {
    */
   public int getInt(String key) {
     Object object = this.get(key);
+    if (object == null) {
+      throw new RuntimeException("JSONObject[" + quote(key) + "] not found");
+    }
     try {
-      return object instanceof Number
-        ? ((Number)object).intValue()
-          : Integer.parseInt((String)object);
+      return object instanceof Number ?
+        ((Number)object).intValue() : Integer.parseInt((String)object);
     } catch (Exception e) {
       throw new RuntimeException("JSONObject[" + quote(key) + "] is not an int.");
     }
@@ -778,14 +788,17 @@ public class JSONObject {
    * @webref jsonobject:method
    * @brief Gets the JSONArray value associated with a key
    * @param key a key string
-   * @return A JSONArray which is the value.
-   * @throws RuntimeException if the key is not found or if the value is not a JSONArray.
+   * @return A JSONArray which is the value, or null if not present
+   * @throws RuntimeException if the value is not a JSONArray.
    * @see JSONObject#getJSONObject(String)
    * @see JSONObject#setJSONObject(String, JSONObject)
    * @see JSONObject#setJSONArray(String, JSONArray)
    */
   public JSONArray getJSONArray(String key) {
     Object object = this.get(key);
+    if (object == null) {
+      return null;
+    }
     if (object instanceof JSONArray) {
       return (JSONArray)object;
     }
@@ -799,14 +812,17 @@ public class JSONObject {
    * @webref jsonobject:method
    * @brief Gets the JSONObject value associated with a key
    * @param key a key string
-   * @return A JSONObject which is the value.
-   * @throws RuntimeException if the key is not found or if the value is not a JSONObject.
+   * @return A JSONObject which is the value or null if not available.
+   * @throws RuntimeException if the value is not a JSONObject.
    * @see JSONObject#getJSONArray(String)
    * @see JSONObject#setJSONObject(String, JSONObject)
    * @see JSONObject#setJSONArray(String, JSONArray)
    */
   public JSONObject getJSONObject(String key) {
     Object object = this.get(key);
+    if (object == null) {
+      return null;
+    }
     if (object instanceof JSONObject) {
       return (JSONObject)object;
     }
@@ -864,7 +880,7 @@ public class JSONObject {
    * @return      true if the key exists in the JSONObject.
    */
   public boolean hasKey(String key) {
-    return this.map.containsKey(key);
+    return map.containsKey(key);
   }
 
 

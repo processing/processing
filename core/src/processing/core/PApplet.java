@@ -6756,7 +6756,20 @@ public class PApplet implements PConstants {
   static public BufferedReader createReader(InputStream input) {
     InputStreamReader isr =
       new InputStreamReader(input, StandardCharsets.UTF_8);
-    return new BufferedReader(isr);
+
+    BufferedReader reader = new BufferedReader(isr);
+    // consume the Unicode BOM (byte order marker) if present
+    try {
+      reader.mark(1);
+      int c = reader.read();
+      // if not the BOM, back up to the beginning again
+      if (c != '\uFEFF') {
+        reader.reset();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return reader;
   }
 
 
@@ -8674,6 +8687,9 @@ public class PApplet implements PConstants {
    * @see PApplet#join(String[], char)
    */
   static public String trim(String str) {
+    if (str == null) {
+      return null;
+    }
     return str.replace('\u00A0', ' ').trim();
   }
 
@@ -8682,10 +8698,13 @@ public class PApplet implements PConstants {
   * @param array a String array
   */
   static public String[] trim(String[] array) {
+    if (array == null) {
+      return null;
+    }
     String[] outgoing = new String[array.length];
     for (int i = 0; i < array.length; i++) {
       if (array[i] != null) {
-        outgoing[i] = array[i].replace('\u00A0', ' ').trim();
+        outgoing[i] = trim(array[i]);
       }
     }
     return outgoing;

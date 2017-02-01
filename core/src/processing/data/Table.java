@@ -378,6 +378,15 @@ public class Table {
     } else {
       InputStreamReader isr = new InputStreamReader(input, encoding);
       BufferedReader reader = new BufferedReader(isr);
+
+      // strip out the Unicode BOM, if present
+      reader.mark(1);
+      int c = reader.read();
+      // if not the BOM, back up to the beginning again
+      if (c != '\uFEFF') {
+        reader.reset();
+      }
+
       /*
        if (awfulCSV) {
         parseAwfulCSV(reader, header);
@@ -671,6 +680,12 @@ public class Table {
               addPiece(start, i, hasEscapedQuotes);
               start = i+2;
               return true;
+
+            } else {
+              // This is a lone-wolf quote, occasionally seen in exports.
+              // It's a single quote in the middle of some other text,
+              // and not escaped properly. Pray for the best!
+              i++;
             }
 
           } else {  // not a quoted line
@@ -4033,16 +4048,77 @@ public class Table {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+
   /**
    * @webref table:method
    * @brief Trims whitespace from values
    * @see Table#removeTokens(String)
    */
   public void trim() {
+    columnTitles = PApplet.trim(columnTitles);
     for (int col = 0; col < getColumnCount(); col++) {
       trim(col);
     }
+    // remove empty columns
+    int lastColumn = getColumnCount() - 1;
+    //while (isEmptyColumn(lastColumn) && lastColumn >= 0) {
+    while (isEmptyArray(getStringColumn(lastColumn)) && lastColumn >= 0) {
+      lastColumn--;
+    }
+    setColumnCount(lastColumn + 1);
+
+    // trim() works from both sides
+    while (getColumnCount() > 0 && isEmptyArray(getStringColumn(0))) {
+      removeColumn(0);
+    }
+
+    // remove empty rows (starting from the end)
+    int lastRow = lastRowIndex();
+    //while (isEmptyRow(lastRow) && lastRow >= 0) {
+    while (isEmptyArray(getStringRow(lastRow)) && lastRow >= 0) {
+      lastRow--;
+    }
+    setRowCount(lastRow + 1);
+
+    while (getRowCount() > 0 && isEmptyArray(getStringRow(0))) {
+      removeRow(0);
+    }
   }
+
+
+  protected boolean isEmptyArray(String[] contents) {
+    for (String entry : contents) {
+      if (entry != null && entry.length() > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  /*
+  protected boolean isEmptyColumn(int column) {
+    String[] contents = getStringColumn(column);
+    for (String entry : contents) {
+      if (entry != null && entry.length() > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  protected boolean isEmptyRow(int row) {
+    String[] contents = getStringRow(row);
+    for (String entry : contents) {
+      if (entry != null && entry.length() > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+  */
+
 
   /**
    * @param column ID number of the column to trim
