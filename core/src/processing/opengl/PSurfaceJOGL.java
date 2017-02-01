@@ -89,6 +89,8 @@ public class PSurfaceJOGL implements PSurface {
   protected FPSAnimator animator;
   protected Rectangle screenRect;
 
+  private Thread drawExceptionHandler;
+
   protected PApplet sketch;
   protected PGraphics graphics;
 
@@ -104,7 +106,7 @@ public class PSurfaceJOGL implements PSurface {
   protected List<MonitorDevice> monitors;
   protected MonitorDevice displayDevice;
   protected Throwable drawException;
-  protected Object waitObject = new Object();
+  private final Object drawExceptionMutex = new Object();
 
   protected NewtCanvasAWT canvas;
 
@@ -452,40 +454,43 @@ public class PSurfaceJOGL implements PSurface {
       public void uncaughtException(final GLAnimatorControl animator,
                                     final GLAutoDrawable drawable,
                                     final Throwable cause) {
-        synchronized (waitObject) {
+        synchronized (drawExceptionMutex) {
           drawException = cause;
-          waitObject.notify();
+          drawExceptionMutex.notify();
         }
       }
     });
 
-    new Thread(new Runnable() {
+    drawExceptionHandler = new Thread(new Runnable() {
       public void run() {
-        synchronized (waitObject) {
+        synchronized (drawExceptionMutex) {
           try {
-            if (drawException == null) waitObject.wait();
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
-//        System.err.println("Caught exception: " + drawException.getMessage());
-          if (drawException != null) {
-            Throwable cause = drawException.getCause();
-            if (cause instanceof ThreadDeath) {
-//            System.out.println("caught ThreadDeath");
-//            throw (ThreadDeath)cause;
-            } else if (cause instanceof RuntimeException) {
-              throw (RuntimeException)cause;
-            } else if (cause instanceof UnsatisfiedLinkError) {
-              throw new UnsatisfiedLinkError(cause.getMessage());
-            } else if (cause == null) {
-              throw new RuntimeException(drawException.getMessage());
-            } else {
-              throw new RuntimeException(cause);
+            while (drawException == null) {
+              drawExceptionMutex.wait();
             }
+            // System.err.println("Caught exception: " + drawException.getMessage());
+            if (drawException != null) {
+              Throwable cause = drawException.getCause();
+              if (cause instanceof ThreadDeath) {
+                // System.out.println("caught ThreadDeath");
+                // throw (ThreadDeath)cause;
+              } else if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+              } else if (cause instanceof UnsatisfiedLinkError) {
+                throw new UnsatisfiedLinkError(cause.getMessage());
+              } else if (cause == null) {
+                throw new RuntimeException(drawException.getMessage());
+              } else {
+                throw new RuntimeException(cause);
+              }
+            }
+          } catch (InterruptedException e) {
+            return;
           }
         }
       }
-    }).start();
+    });
+    drawExceptionHandler.start();
   }
 
 
@@ -777,6 +782,10 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public boolean stopThread() {
+    if (drawExceptionHandler != null) {
+      drawExceptionHandler.interrupt();
+      drawExceptionHandler = null;
+    }
     if (animator != null) {
       return animator.stop();
     } else {

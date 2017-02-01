@@ -3634,6 +3634,18 @@ public class PApplet implements PConstants {
       // run dispose() methods registered by libraries
       handleMethods("dispose");
     }
+
+    if (platform == MACOSX) {
+      try {
+        final String td = "processing.core.ThinkDifferent";
+        final Class<?> thinkDifferent =
+          Thread.currentThread().getContextClassLoader().loadClass(td);
+        thinkDifferent.getMethod("cleanup").invoke(null);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
   }
 
 
