@@ -12,6 +12,13 @@ X consume Unicode BOM (0xFEFF) in createReader() and Table parser
 o no prompt shows with selectInput() on 10.11 and 10.12
 X   https://github.com/processing/processing/issues/4758
 X   can't fix, seems embedded in the Java implementation
+X return null for getString(), getJSONObject(), and getJSONArray()
+X   when key is not present, more in line w/ other p5 api
+
+contrib
+X Fix a number of memory leaks (jdf)
+X   https://github.com/processing/processing/pull/4862
+
 
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
 _   https://github.com/processing/processing/issues/4678
