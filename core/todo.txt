@@ -18,6 +18,8 @@ X   when key is not present, more in line w/ other p5 api
 contrib
 X Fix a number of memory leaks (jdf)
 X   https://github.com/processing/processing/pull/4862
+X   https://github.com/jdf/processing.py/issues/233
+X   https://github.com/processing/processing/pull/4873
 
 
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
