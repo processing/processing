@@ -127,7 +127,7 @@ public class Runner implements MessageConsumer {
    * Has the user screwed up their hosts file?
    * https://github.com/processing/processing/issues/4738
    */
-  private void checkLocalHost() throws SketchException {
+  static private void checkLocalHost() throws SketchException {
     try {
       InetAddress address = InetAddress.getByName("localhost");
       if (!address.getHostAddress().equals("127.0.0.1")) {

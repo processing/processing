@@ -1407,7 +1407,7 @@ public class Debugger {
   }
 
 
-  private void logitse(Throwable t) {
+  static private void logitse(Throwable t) {
     Messages.loge("incompatible thread state?", t);
   }
 

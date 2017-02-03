@@ -72,7 +72,6 @@ import processing.mode.java.preproc.PdePreprocessor.Mode;
 /**
  * The main error checking service
  */
-@SuppressWarnings("unchecked")
 public class PreprocessingService {
 
   protected final JavaEditor editor;
@@ -93,7 +92,7 @@ public class PreprocessingService {
   private CompletableFuture<PreprocessedSketch> preprocessingTask = new CompletableFuture<>();
 
   private CompletableFuture<?> lastCallback =
-      new CompletableFuture() {{
+      new CompletableFuture<Object>() {{
         complete(null); // initialization block
       }};
 
@@ -568,8 +567,8 @@ public class PreprocessingService {
   }
 
 
-  private List<String> buildSketchLibraryClassPath(JavaMode mode,
-                                                   List<ImportStatement> programImports) {
+  static private List<String> buildSketchLibraryClassPath(JavaMode mode,
+                                                          List<ImportStatement> programImports) {
     StringBuilder classPath = new StringBuilder();
 
     programImports.stream()
@@ -590,7 +589,7 @@ public class PreprocessingService {
   }
 
 
-  private List<String> buildJavaRuntimeClassPath() {
+  static private List<String> buildJavaRuntimeClassPath() {
     StringBuilder classPath = new StringBuilder();
 
     // Java runtime
@@ -654,7 +653,7 @@ public class PreprocessingService {
   /**
    * Ignore processing packages, java.*.*. etc.
    */
-  private boolean ignorableImport(String packageName) {
+  static private boolean ignorableImport(String packageName) {
     return (packageName.startsWith("java.") ||
             packageName.startsWith("javax."));
   }
