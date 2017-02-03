@@ -694,7 +694,7 @@ public class MovieMaker extends JFrame implements Tool {
   }
 
 
-  private void cannotRead(File file) {
+  static private void cannotRead(File file) {
     String path = file.getAbsolutePath();
     String msg = Language.interpolate("movie_maker.error.cannot_read", path);
     System.err.println(msg);
