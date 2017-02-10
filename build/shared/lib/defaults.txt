@@ -105,6 +105,9 @@ editor.window.height.min.windows = 530
 # tested with Raspberry Pi display
 editor.window.height.min.linux = 480
 
+# scaling for the interface (to handle Windows and Linux HiDPI displays)
+editor.zoom = 100%
+
 # font size for editor
 #editor.font = Monospaced,plain,12
 # Monaco is nicer on Mac OS X, so use that explicitly

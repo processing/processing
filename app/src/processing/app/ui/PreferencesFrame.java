@@ -49,7 +49,6 @@ public class PreferencesFrame {
   GroupLayout layout;
 
   static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 };
-  static final String[] ZOOM_OPTIONS = { "100%", "150%", "200%", "300%" };
 
   JTextField sketchbookLocationField;
   JTextField presentColor;
@@ -167,7 +166,7 @@ public class PreferencesFrame {
 
     JLabel zoomLabel = new JLabel(Language.text("preferences.zoom") + ": ");
     zoomSelectionBox = new JComboBox<String>();
-    zoomSelectionBox.setModel(new DefaultComboBoxModel<String>(ZOOM_OPTIONS));
+    zoomSelectionBox.setModel(new DefaultComboBoxModel<String>(Toolkit.zoomOptions.array()));
     zoomRestartLabel = new JLabel(" (" + Language.text("preferences.requires_restart") + ")");
 
 
@@ -658,6 +657,9 @@ public class PreferencesFrame {
       fontSizeField.setSelectedItem(Preferences.getInteger("editor.font.size"));
     }
 
+    Preferences.set("editor.zoom",
+                    String.valueOf(zoomSelectionBox.getSelectedItem()));
+
     try {
       Object selection = consoleFontSizeField.getSelectedItem();
       if (selection instanceof String) {
@@ -726,6 +728,14 @@ public class PreferencesFrame {
 
     fontSizeField.setSelectedItem(Preferences.getInteger("editor.font.size"));
     consoleFontSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
+
+    String zoomSel = Preferences.get("editor.zoom");
+    int zoomIndex = Toolkit.zoomOptions.index(zoomSel);
+    if (zoomIndex != -1) {
+      zoomSelectionBox.setSelectedIndex(zoomIndex);
+    } else {
+      zoomSelectionBox.setSelectedIndex(0);
+    }
 
     presentColor.setBackground(Preferences.getColor("run.present.bgcolor"));
     presentColorHex.setText(Preferences.get("run.present.bgcolor").substring(1));
