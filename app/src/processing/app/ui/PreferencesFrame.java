@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012-15 The Processing Foundation
+  Copyright (c) 2012-17 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -96,7 +96,7 @@ public class PreferencesFrame {
 
     pain.setLayout(layout);
 
-    final int BORDER = Platform.isMacOS() ? 20 : 13;
+    final int BORDER = Toolkit.zoom(Platform.isMacOS() ? 20 : 13);
 
     JLabel sketchbookLocationLabel, restartProcessingLabel;
     JButton browseButton; //, button2;
