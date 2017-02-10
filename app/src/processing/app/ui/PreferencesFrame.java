@@ -49,6 +49,7 @@ public class PreferencesFrame {
   GroupLayout layout;
 
   static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 };
+  static final String[] ZOOM_OPTIONS = { "100%", "150%", "200%", "300%" };
 
   JTextField sketchbookLocationField;
   JTextField presentColor;
@@ -71,6 +72,7 @@ public class PreferencesFrame {
   JCheckBox importSuggestionsBox;
   //JCheckBox codeCompletionTriggerBox;
 
+  JComboBox<String> zoomSelectionBox;
   JComboBox<String> displaySelectionBox;
   JComboBox<String> languageSelectionBox;
 
@@ -98,7 +100,9 @@ public class PreferencesFrame {
 
     final int BORDER = Toolkit.zoom(Platform.isMacOS() ? 20 : 13);
 
-    JLabel sketchbookLocationLabel, restartProcessingLabel;
+    JLabel sketchbookLocationLabel;
+    JLabel languageRestartLabel;
+    JLabel zoomRestartLabel;
     JButton browseButton; //, button2;
 
 
@@ -135,7 +139,7 @@ public class PreferencesFrame {
       }
     }
     languageSelectionBox.setModel(new DefaultComboBoxModel<String>(languageSelection));
-    restartProcessingLabel = new JLabel(" (" + Language.text("preferences.requires_restart") + ")");
+    languageRestartLabel = new JLabel(" (" + Language.text("preferences.requires_restart") + ")");
 
 
     // Editor and console font [ Source Code Pro ]
@@ -157,6 +161,17 @@ public class PreferencesFrame {
     JLabel consoleFontSizeLabel = new JLabel(Language.text("preferences.console_font_size")+": ");
     consoleFontSizeField = new JComboBox<Integer>(FONT_SIZES);
     fontSizeField.setSelectedItem(Preferences.getFont("editor.font.size"));
+
+
+    // Interface scale: [ 100% ] (requires restart of Processing)
+
+    JLabel zoomLabel = new JLabel(Language.text("preferences.zoom") + ": ");
+    zoomSelectionBox = new JComboBox<String>();
+    zoomSelectionBox.setModel(new DefaultComboBoxModel<String>(ZOOM_OPTIONS));
+    zoomRestartLabel = new JLabel(" (" + Language.text("preferences.requires_restart") + ")");
+
+
+    //
 
     JLabel backgroundColorLabel = new JLabel(Language.text("preferences.background_color")+": ");
 
@@ -392,7 +407,7 @@ public class PreferencesFrame {
           .addGroup(layout.createSequentialGroup()
                       .addComponent(languageLabel)
                       .addComponent(languageSelectionBox,GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE) // This makes the component non-resizable in the X direction
-                      .addComponent(restartProcessingLabel))
+                      .addComponent(languageRestartLabel))
           .addGroup(layout.createSequentialGroup()
                       .addComponent(fontLabel)
                       .addComponent(fontSelectionBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -402,6 +417,10 @@ public class PreferencesFrame {
                       .addComponent(fontSizeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                       .addComponent(consoleFontSizeLabel)
                       .addComponent(consoleFontSizeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+          .addGroup(layout.createSequentialGroup()
+                      .addComponent(zoomLabel)
+                      .addComponent(zoomSelectionBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                      .addComponent(zoomRestartLabel))
           .addGroup(layout.createSequentialGroup()
                       .addComponent(backgroundColorLabel)
                       .addComponent(hashLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -452,7 +471,7 @@ public class PreferencesFrame {
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(languageLabel)
                   .addComponent(languageSelectionBox)
-                  .addComponent(restartProcessingLabel))
+                  .addComponent(languageRestartLabel))
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER).
                   addComponent(fontLabel)
                   .addComponent(fontSelectionBox))
@@ -461,6 +480,10 @@ public class PreferencesFrame {
                   .addComponent(fontSizeField)
                   .addComponent(consoleFontSizeLabel)
                   .addComponent(consoleFontSizeField))
+      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                  .addComponent(zoomLabel)
+                  .addComponent(zoomSelectionBox)
+                  .addComponent(zoomRestartLabel))
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(backgroundColorLabel)
                   .addComponent(hashLabel)

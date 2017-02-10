@@ -111,7 +111,7 @@ public class Toolkit {
   static public int getButtonWidth() {
     // Made into a method so that calling Toolkit methods doesn't require
     // the languages to be loaded, and with that, Base initialized completely
-    return Integer.parseInt(Language.text("preferences.button.width"));
+    return zoom(Integer.parseInt(Language.text("preferences.button.width")));
   }
 
 
