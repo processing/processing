@@ -735,6 +735,10 @@ public class Toolkit {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /**
+   * Create an Image to be used as an offscreen drawing context,
+   * automatically doubling the size if running on a retina display.
+   */
   static public Image offscreenGraphics(Component comp, int width, int height) {
     int m = Toolkit.isRetina() ? 2 : 1;
     //return comp.createImage(m * dpi(width), m * dpi(height));
@@ -855,7 +859,9 @@ public class Toolkit {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  static Boolean highResProp;
+  // Changed to retinaProp instead of highResProp because only Mac
+  // "retina" displays use this mechanism for high-resolution scaling.
+  static Boolean retinaProp;
 
 
   static public boolean highResImages() {
@@ -864,10 +870,10 @@ public class Toolkit {
 
 
   static public boolean isRetina() {
-    if (highResProp == null) {
-      highResProp = checkRetina();
+    if (retinaProp == null) {
+      retinaProp = checkRetina();
     }
-    return highResProp;
+    return retinaProp;
   }
 
 
