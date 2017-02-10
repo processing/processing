@@ -194,7 +194,7 @@ public class EditorHeader extends JComponent {
     }
 
     Graphics2D g2 = Toolkit.prepareGraphics(g);
-    Toolkit.dpiStroke(g2);
+//    Toolkit.dpiStroke(g2);
 
     g.drawImage(gradient, 0, 0, imageW, imageH, this);
 

@@ -352,7 +352,7 @@ abstract public class EditorToolbar extends JPanel implements KeyListener {
 
       // draw the outline for this feller
       g.setColor(outlineColor);
-      Toolkit.dpiStroke(g2);
+      //Toolkit.dpiStroke(g2);
       g2.draw(Toolkit.createRoundRect(1, 1, width-1, height-1,
                                       RADIUS, RADIUS, RADIUS, RADIUS));
 

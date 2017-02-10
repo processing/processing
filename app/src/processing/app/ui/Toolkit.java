@@ -766,6 +766,7 @@ public class Toolkit {
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                           RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
     }
+    zoomStroke(g2);
     return g2;
   }
 
@@ -832,14 +833,14 @@ public class Toolkit {
   }
 
 
-  static BasicStroke dpiStroke;
+  static BasicStroke zoomStroke;
 
-  static public void dpiStroke(Graphics2D g2) {
+  static private void zoomStroke(Graphics2D g2) {
     if (zoom != 1) {
-      if (dpiStroke == null || dpiStroke.getLineWidth() != zoom) {
-        dpiStroke = new BasicStroke(zoom);
+      if (zoomStroke == null || zoomStroke.getLineWidth() != zoom) {
+        zoomStroke = new BasicStroke(zoom);
       }
-      g2.setStroke(dpiStroke);
+      g2.setStroke(zoomStroke);
     }
   }
 
