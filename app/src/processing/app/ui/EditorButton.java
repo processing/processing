@@ -30,7 +30,7 @@ import processing.app.Mode;
 
 abstract public class EditorButton extends JComponent
 implements MouseListener, MouseMotionListener, ActionListener {
-  static public final int DIM = Toolkit.dpi(30);
+  static public final int DIM = Toolkit.zoom(30);
 
   /** Button's description. */
   protected String title;

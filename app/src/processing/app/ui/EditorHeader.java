@@ -44,24 +44,24 @@ import processing.app.SketchCode;
  */
 public class EditorHeader extends JComponent {
   // height of this tab bar
-  static final int HIGH = Toolkit.dpi(29);
+  static final int HIGH = Toolkit.zoom(29);
 
-  static final int ARROW_TAB_WIDTH = Toolkit.dpi(18);
-  static final int ARROW_TOP = Toolkit.dpi(11);
-  static final int ARROW_BOTTOM = Toolkit.dpi(18);
-  static final int ARROW_WIDTH = Toolkit.dpi(6);
+  static final int ARROW_TAB_WIDTH = Toolkit.zoom(18);
+  static final int ARROW_TOP = Toolkit.zoom(11);
+  static final int ARROW_BOTTOM = Toolkit.zoom(18);
+  static final int ARROW_WIDTH = Toolkit.zoom(6);
 
-  static final int CURVE_RADIUS = Toolkit.dpi(6);
+  static final int CURVE_RADIUS = Toolkit.zoom(6);
 
   static final int TAB_TOP = 0;
-  static final int TAB_BOTTOM = Toolkit.dpi(27);
+  static final int TAB_BOTTOM = Toolkit.zoom(27);
   // amount of extra space between individual tabs
-  static final int TAB_BETWEEN = Toolkit.dpi(3);
+  static final int TAB_BETWEEN = Toolkit.zoom(3);
   // amount of margin on the left/right for the text on the tab
-  static final int TEXT_MARGIN = Toolkit.dpi(16);
+  static final int TEXT_MARGIN = Toolkit.zoom(16);
   // width of the tab when no text visible
   // (total tab width will be this plus TEXT_MARGIN*2)
-  static final int NO_TEXT_WIDTH = Toolkit.dpi(16);
+  static final int NO_TEXT_WIDTH = Toolkit.zoom(16);
 
   Color textColor[] = new Color[2];
   Color tabColor[] = new Color[2];
@@ -262,7 +262,7 @@ public class EditorHeader extends JComponent {
     // can't be done with lines, b/c retina leaves tiny hairlines
     g.fillRect(Editor.LEFT_GUTTER, TAB_BOTTOM,
                editor.getTextArea().getWidth() - Editor.LEFT_GUTTER,
-               Toolkit.dpi(2));
+               Toolkit.zoom(2));
 
     // draw the tab for the menu
     g.setColor(tabColor[UNSELECTED]);

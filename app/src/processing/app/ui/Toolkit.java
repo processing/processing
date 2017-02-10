@@ -827,7 +827,7 @@ public class Toolkit {
   */
 
 
-  static public int dpi(int pixels) {
+  static public int zoom(int pixels) {
     return (int) (zoom * pixels);
   }
 
@@ -845,7 +845,7 @@ public class Toolkit {
 
 
   static Dimension zoom(int w, int h) {
-    return new Dimension(dpi(w), dpi(h));
+    return new Dimension(zoom(w), zoom(h));
   }
 
 

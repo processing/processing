@@ -47,9 +47,9 @@ import processing.core.PApplet;
  * Panel just below the editing area that contains status messages.
  */
 public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
-  static final int HIGH = Toolkit.dpi(28);
+  static final int HIGH = Toolkit.zoom(28);
   static final int LEFT_MARGIN = Editor.LEFT_GUTTER;
-  static final int RIGHT_MARGIN = Toolkit.dpi(20);
+  static final int RIGHT_MARGIN = Toolkit.zoom(20);
 
   Color urlColor;
   Color[] fgColor;

@@ -123,7 +123,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
     Toolkit.getMonoFontName();
 
     String fontFamily = Preferences.get("editor.font.family");
-    int fontSize = Preferences.getInteger("editor.font.size");
+    final int fontSize = Toolkit.zoom(Preferences.getInteger("editor.font.size"));
     plainFont = new Font(fontFamily, Font.PLAIN, fontSize);
     if (!fontFamily.equals(plainFont.getFamily())) {
       System.err.println(fontFamily + " not available, resetting to monospaced");
