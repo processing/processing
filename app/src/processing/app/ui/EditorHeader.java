@@ -44,26 +44,25 @@ import processing.app.SketchCode;
  */
 public class EditorHeader extends JComponent {
   // height of this tab bar
-  static final int HIGH = 29;
+  static final int HIGH = Toolkit.dpi(29);
 
-  static final int ARROW_TAB_WIDTH = 18;
-  static final int ARROW_TOP = 11;
-  static final int ARROW_BOTTOM = 18;
-  static final int ARROW_WIDTH = 6;
+  static final int ARROW_TAB_WIDTH = Toolkit.dpi(18);
+  static final int ARROW_TOP = Toolkit.dpi(11);
+  static final int ARROW_BOTTOM = Toolkit.dpi(18);
+  static final int ARROW_WIDTH = Toolkit.dpi(6);
 
-  static final int CURVE_RADIUS = 6;
+  static final int CURVE_RADIUS = Toolkit.dpi(6);
 
   static final int TAB_TOP = 0;
-  static final int TAB_BOTTOM = 27;
+  static final int TAB_BOTTOM = Toolkit.dpi(27);
   // amount of extra space between individual tabs
-  static final int TAB_BETWEEN = 3;
+  static final int TAB_BETWEEN = Toolkit.dpi(3);
   // amount of margin on the left/right for the text on the tab
-  static final int TEXT_MARGIN = 16;
+  static final int TEXT_MARGIN = Toolkit.dpi(16);
   // width of the tab when no text visible
   // (total tab width will be this plus TEXT_MARGIN*2)
-  static final int NO_TEXT_WIDTH = 16;
+  static final int NO_TEXT_WIDTH = Toolkit.dpi(16);
 
-//  Color bgColor;
   Color textColor[] = new Color[2];
   Color tabColor[] = new Color[2];
   Color modifiedColor;
@@ -185,11 +184,7 @@ public class EditorHeader extends JComponent {
       sizeH = size.height;
       imageW = sizeW;
       imageH = sizeH;
-      if (Toolkit.highResDisplay()) {
-        offscreen = createImage(imageW*2, imageH*2);
-      } else {
-        offscreen = createImage(imageW, imageH);
-      }
+      offscreen = Toolkit.offscreenGraphics(this, imageW, imageH);
     }
 
     Graphics g = offscreen.getGraphics();
@@ -199,6 +194,7 @@ public class EditorHeader extends JComponent {
     }
 
     Graphics2D g2 = Toolkit.prepareGraphics(g);
+    Toolkit.dpiStroke(g2);
 
     g.drawImage(gradient, 0, 0, imageW, imageH, this);
 
@@ -265,7 +261,8 @@ public class EditorHeader extends JComponent {
     g.setColor(tabColor[SELECTED]);
     // can't be done with lines, b/c retina leaves tiny hairlines
     g.fillRect(Editor.LEFT_GUTTER, TAB_BOTTOM,
-               editor.getTextArea().getWidth() - Editor.LEFT_GUTTER, 2);
+               editor.getTextArea().getWidth() - Editor.LEFT_GUTTER,
+               Toolkit.dpi(2));
 
     // draw the tab for the menu
     g.setColor(tabColor[UNSELECTED]);

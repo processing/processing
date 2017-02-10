@@ -47,9 +47,9 @@ import processing.core.PApplet;
  * Panel just below the editing area that contains status messages.
  */
 public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
-  static final int HIGH = 28;
+  static final int HIGH = Toolkit.dpi(28);
   static final int LEFT_MARGIN = Editor.LEFT_GUTTER;
-  static final int RIGHT_MARGIN = 20;
+  static final int RIGHT_MARGIN = Toolkit.dpi(20);
 
   Color urlColor;
   Color[] fgColor;
@@ -271,11 +271,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
       sizeW = size.width;
       sizeH = size.height;
 
-      if (Toolkit.highResDisplay()) {
-        offscreen = createImage(sizeW*2, sizeH*2);
-      } else {
-        offscreen = createImage(sizeW, sizeH);
-      }
+      offscreen = Toolkit.offscreenGraphics(this, sizeW, sizeH);
     }
 
     Graphics g = offscreen.getGraphics();
@@ -332,11 +328,11 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
 
   public Dimension getMinimumSize() {
-    return new Dimension(300, HIGH);
+    return Toolkit.zoom(300, HIGH);
   }
 
 
   public Dimension getMaximumSize() {
-    return new Dimension(super.getMaximumSize().width, HIGH);
+    return Toolkit.zoom(super.getMaximumSize().width, HIGH);
   }
 }

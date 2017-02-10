@@ -205,6 +205,7 @@ public class Settings {
         style |= Font.ITALIC;
       }
       int size = PApplet.parseInt(pieces[2], 12);
+      size = Toolkit.dpi(size);
 
       // replace bad font with the default from lib/preferences.txt
       if (replace) {

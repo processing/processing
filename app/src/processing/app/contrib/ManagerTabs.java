@@ -217,11 +217,7 @@ public class ManagerTabs extends Box {
         sizeH = size.height;
         imageW = sizeW;
         imageH = sizeH;
-        if (Toolkit.highResDisplay()) {
-          offscreen = createImage(imageW*2, imageH*2);
-        } else {
-          offscreen = createImage(imageW, imageH);
-        }
+        offscreen = Toolkit.offscreenGraphics(this, imageW, imageH);
       }
 
       Graphics g = offscreen.getGraphics();

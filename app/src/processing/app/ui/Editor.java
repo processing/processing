@@ -43,7 +43,6 @@ import processing.core.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Frame;
@@ -79,9 +78,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
   protected EditorState state;
   protected Mode mode;
 
-  static public final int LEFT_GUTTER = 44;
-  static public final int RIGHT_GUTTER = 12;
-  static public final int GUTTER_MARGIN = 3;
+  static public final int LEFT_GUTTER = Toolkit.dpi(44);
+  static public final int RIGHT_GUTTER = Toolkit.dpi(12);
+  static public final int GUTTER_MARGIN = Toolkit.dpi(3);
 
   protected MarkerColumn errorColumn;
 
@@ -350,7 +349,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // Set the minimum size for the editor window
     int minWidth = Preferences.getInteger("editor.window.width.min");
     int minHeight = Preferences.getInteger("editor.window.height.min");
-    setMinimumSize(new Dimension(minWidth, minHeight));
+    //setMinimumSize(new Dimension(minWidth, minHeight));
+    setMinimumSize(Toolkit.zoom(minWidth, minHeight));
 
     // Bring back the general options for the editor
     applyPreferences();

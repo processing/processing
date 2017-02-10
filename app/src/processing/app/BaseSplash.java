@@ -9,7 +9,7 @@ import processing.app.ui.Toolkit;
 public class BaseSplash {
   static public void main(String[] args) {
     try {
-      final boolean hidpi = Toolkit.highResDisplay();
+      final boolean hidpi = Toolkit.highResImages();
       final String filename = "lib/about-" + (hidpi ? 2 : 1) + "x.png";
       File splashFile = Platform.getContentFile(filename);
       SplashWindow.splash(splashFile.toURI().toURL(), hidpi);

@@ -30,7 +30,7 @@ import processing.app.Mode;
 
 abstract public class EditorButton extends JComponent
 implements MouseListener, MouseMotionListener, ActionListener {
-  static public final int DIM = 30;
+  static public final int DIM = Toolkit.dpi(30);
 
   /** Button's description. */
   protected String title;
@@ -112,10 +112,13 @@ implements MouseListener, MouseMotionListener, ActionListener {
     } else if (rollover) {
       image = rolloverImage;
     }
+    int dim = getSize().width;  // width == height
     if (gradient != null) {
-      g.drawImage(gradient, 0, 0, DIM, DIM, this);
+      //g.drawImage(gradient, 0, 0, DIM, DIM, this);
+      g.drawImage(gradient, 0, 0, dim, dim, this);
     }
-    g.drawImage(image, 0, 0, DIM, DIM, this);
+    //g.drawImage(image, 0, 0, DIM, DIM, this);
+    g.drawImage(image, 0, 0, dim, dim, this);
   }
 
 

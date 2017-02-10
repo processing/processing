@@ -21,6 +21,7 @@
 
 package processing.app.ui;
 
+import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -494,7 +495,7 @@ public class Toolkit {
    * a hidpi display, get the NN*2 version automatically, sized at NN
    */
   static public ImageIcon getIconX(File dir, String base, int size) {
-    final int scale = Toolkit.highResDisplay() ? 2 : 1;
+    final int scale = Toolkit.highResImages() ? 2 : 1;
     String filename = (size == 0) ?
       (base + "-" + scale + "x.png") :
       (base + "-" + (size*scale) + ".png");
@@ -734,6 +735,13 @@ public class Toolkit {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  static public Image offscreenGraphics(Component comp, int width, int height) {
+    int m = Toolkit.isRetina() ? 2 : 1;
+    //return comp.createImage(m * dpi(width), m * dpi(height));
+    return comp.createImage(m * width, m * height);
+  }
+
+
   /**
    * Handles scaling for high-res displays, also sets text anti-aliasing
    * options to be far less ugly than the defaults.
@@ -743,15 +751,17 @@ public class Toolkit {
   static public Graphics2D prepareGraphics(Graphics g) {
     Graphics2D g2 = (Graphics2D) g;
 
-    if (Toolkit.highResDisplay()) {
+    //float z = zoom * (Toolkit.isRetina() ? 2 : 1);
+    if (Toolkit.isRetina()) {
       // scale everything 2x, will be scaled down when drawn to the screen
       g2.scale(2, 2);
     }
+    //g2.scale(z, z);
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
     g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    if (Toolkit.highResDisplay()) {
+    if (Toolkit.isRetina()) {
       // Looks great on retina, not so great (with our font) on 1x
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                           RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
@@ -794,10 +804,63 @@ public class Toolkit {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  static float zoom = 3;
+
+
+  /*
+  // http://stackoverflow.com/a/35029265
+  static public void zoomSwingFonts() {
+    Set<Object> keySet = UIManager.getLookAndFeelDefaults().keySet();
+    Object[] keys = keySet.toArray(new Object[keySet.size()]);
+
+    for (Object key : keys) {
+      if (key != null && key.toString().toLowerCase().contains("font")) {
+        System.out.println(key);
+        Font font = UIManager.getDefaults().getFont(key);
+        if (font != null) {
+          font = font.deriveFont(font.getSize() * zoom);
+          UIManager.put(key, font);
+        }
+      }
+    }
+  }
+  */
+
+
+  static public int dpi(int pixels) {
+    return (int) (zoom * pixels);
+  }
+
+
+  static BasicStroke dpiStroke;
+
+  static public void dpiStroke(Graphics2D g2) {
+    if (zoom != 1) {
+      if (dpiStroke == null || dpiStroke.getLineWidth() != zoom) {
+        dpiStroke = new BasicStroke(zoom);
+      }
+      g2.setStroke(dpiStroke);
+    }
+  }
+
+
+  static Dimension zoom(int w, int h) {
+    return new Dimension(dpi(w), dpi(h));
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   static Boolean highResProp;
 
 
-  static public boolean highResDisplay() {
+  static public boolean highResImages() {
+    return isRetina() || (zoom > 1);
+  }
+
+
+  static public boolean isRetina() {
     if (highResProp == null) {
       highResProp = checkRetina();
     }
