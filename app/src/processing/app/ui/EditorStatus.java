@@ -328,11 +328,11 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
 
   public Dimension getMinimumSize() {
-    return Toolkit.zoom(300, HIGH);
+    return new Dimension(Toolkit.zoom(300), HIGH);
   }
 
 
   public Dimension getMaximumSize() {
-    return Toolkit.zoom(super.getMaximumSize().width, HIGH);
+    return new Dimension(super.getMaximumSize().width, HIGH);
   }
 }

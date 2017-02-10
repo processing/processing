@@ -43,6 +43,7 @@ import processing.core.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Frame;
@@ -347,10 +348,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
     state.apply(this);
 
     // Set the minimum size for the editor window
-    int minWidth = Preferences.getInteger("editor.window.width.min");
-    int minHeight = Preferences.getInteger("editor.window.height.min");
-    //setMinimumSize(new Dimension(minWidth, minHeight));
-    setMinimumSize(Toolkit.zoom(minWidth, minHeight));
+    int minWidth =
+      Toolkit.zoom(Preferences.getInteger("editor.window.width.min"));
+    int minHeight =
+      Toolkit.zoom(Preferences.getInteger("editor.window.height.min"));
+    setMinimumSize(new Dimension(minWidth, minHeight));
 
     // Bring back the general options for the editor
     applyPreferences();
