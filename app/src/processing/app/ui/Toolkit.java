@@ -500,71 +500,22 @@ public class Toolkit {
     String filename = (size == 0) ?
       (base + "-" + scale + "x.png") :
       (base + "-" + (size*scale) + ".png");
-//    File file = Platform.getContentFile("lib/" + filename);
     File file = new File(dir, filename);
     if (!file.exists()) {
-//      System.err.println("does not exist: " + file);
       return null;
     }
 
     ImageIcon outgoing = new ImageIcon(file.getAbsolutePath()) {
+
       @Override
       public int getIconWidth() {
-        return super.getIconWidth() / scale;
+        return Toolkit.zoom(super.getIconWidth()) / scale;
       }
 
       @Override
       public int getIconHeight() {
-        return super.getIconHeight() / scale;
+        return Toolkit.zoom(super.getIconHeight()) / scale;
       }
-
-      /*
-      @Override
-      public Image getImage() {
-        //javax.swing.LookAndFeel -> creates a synthetic disabled icon
-        //com.apple.laf.AquaButtonUI
-        new Exception().printStackTrace();
-        return super.getImage();
-      }
-
-      private Image getImageImpl() {
-        return super.getImage();
-      }
-      */
-
-      /*
-      @Override
-      public Image getImage() {
-        Image actual = super.getImage();
-
-        return new Image() {
-          @Override
-          public int getWidth(ImageObserver observer) {
-            return actual.getWidth(observer) / scale;
-          }
-
-          @Override
-          public int getHeight(ImageObserver observer) {
-            return actual.getHeight(observer) / scale;
-          }
-
-          @Override
-          public ImageProducer getSource() {
-            return actual.getSource();
-          }
-
-          @Override
-          public Graphics getGraphics() {
-            return actual.getGraphics();
-          }
-
-          @Override
-          public Object getProperty(String name, ImageObserver observer) {
-            return actual.getProperty(filename, observer);
-          }
-        };
-      }
-      */
 
       @Override
       public synchronized void paintIcon(Component c, Graphics g, int x, int y) {
