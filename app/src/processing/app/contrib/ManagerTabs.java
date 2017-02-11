@@ -48,26 +48,24 @@ import processing.app.ui.Toolkit;
  */
 public class ManagerTabs extends Box {
   // height of this tab bar
-  static final int HIGH = 34;
-//  static final int HIGH = 29;
+  static final int HIGH = Toolkit.zoom(34);
 
   // amount of space around the entire window
-  static final int BORDER = 8;
-//  static final int BORDER = 12;
+  static final int BORDER = Toolkit.zoom(8);
 
-  static final int CURVE_RADIUS = 6;
+  static final int CURVE_RADIUS = Toolkit.zoom(6);
 
-  static final int TAB_TOP = 0;
-  static final int TAB_BOTTOM = HIGH - 2;
+  static final int TAB_TOP = Toolkit.zoom(0);
+  static final int TAB_BOTTOM = HIGH - Toolkit.zoom(2);
   // amount of extra space between individual tabs
-  static final int TAB_BETWEEN = 2; //4;
+  static final int TAB_BETWEEN = Toolkit.zoom(2);
   // amount of margin on the left/right for the text on the tab
-  static final int MARGIN = 14;
+  static final int MARGIN = Toolkit.zoom(14);
 
-  static final int ICON_WIDTH = 16;
-  static final int ICON_HEIGHT = 16;
-  static final int ICON_TOP = 7;
-  static final int ICON_MARGIN = 7;
+  static final int ICON_WIDTH = Toolkit.zoom(16);
+  static final int ICON_HEIGHT = Toolkit.zoom(16);
+  static final int ICON_TOP = Toolkit.zoom(7);
+  static final int ICON_MARGIN = Toolkit.zoom(7);
 
   static final int UNSELECTED = 0;
   static final int SELECTED = 1;
@@ -109,7 +107,7 @@ public class ManagerTabs extends Box {
     tabColor[SELECTED] = mode.getColor("manager.tab.selected.color");
     tabColor[UNSELECTED] = mode.getColor("manager.tab.unselected.color");
 
-    gradient = mode.makeGradient("manager.tab", 400, HIGH);
+    gradient = mode.makeGradient("manager.tab", Toolkit.zoom(400), HIGH);
 
     setBorder(new EmptyBorder(BORDER, BORDER, BORDER, BORDER));
 
@@ -231,7 +229,9 @@ public class ManagerTabs extends Box {
       g.drawImage(gradient, 0, 0, imageW, imageH, this);
 
       g.setColor(tabColor[SELECTED]);
-      g.fillRect(0, TAB_BOTTOM, imageW, 2);
+      // draw the two pixel line that extends left/right below the tabs
+      // can't be done with lines, b/c retina leaves tiny hairlines
+      g.fillRect(0, TAB_BOTTOM, imageW, Toolkit.zoom(2));
 
       // reset all tab positions
       for (Tab tab : tabList) {
@@ -239,15 +239,9 @@ public class ManagerTabs extends Box {
           font.getStringBounds(tab.name, g2.getFontRenderContext()).getWidth();
       }
 
-      placeTabs(0); //Editor.LEFT_GUTTER);
+      placeTabs(0);
       // now actually draw the tabs
       drawTabs(g2);
-
-//      // draw the two pixel line that extends left/right below the tabs
-//      g.setColor(tabColor[SELECTED]);
-//      // can't be done with lines, b/c retina leaves tiny hairlines
-//      g.fillRect(Editor.LEFT_GUTTER, TAB_BOTTOM,
-//                 editor.getTextArea().getWidth() - Editor.LEFT_GUTTER, 2);
 
       screen.drawImage(offscreen, 0, 0, imageW, imageH, null);
     }
