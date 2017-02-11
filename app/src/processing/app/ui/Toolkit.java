@@ -844,6 +844,11 @@ public class Toolkit {
   }
 
 
+  static public Dimension zoom(int w, int h) {
+    return new Dimension(zoom(w), zoom(h));
+  }
+
+
   static private float parseZoom() {
     String zoomSel = Preferences.get("editor.zoom");
     if (zoomOptions.hasValue(zoomSel)) {
@@ -868,13 +873,6 @@ public class Toolkit {
       g2.setStroke(zoomStroke);
     }
   }
-
-
-  /*
-  static Dimension zoom(int w, int h) {
-    return new Dimension(zoom(w), zoom(h));
-  }
-  */
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
