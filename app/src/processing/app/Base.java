@@ -221,19 +221,16 @@ public class Base {
         // Needs to be shown after the first editor window opens, so that it
         // shows up on top, and doesn't prevent an editor window from opening.
         if (Preferences.getBoolean("welcome.show")) {
-          final boolean prompt = sketchbookPrompt;
-//          EventQueue.invokeLater(new Runnable() {
-//            public void run() {
           try {
-            new Welcome(base, prompt);
+            new Welcome(base, sketchbookPrompt);
           } catch (IOException e) {
             Messages.showTrace("Unwelcoming",
                                "Please report this error to\n" +
                                "https://github.com/processing/processing/issues", e, false);
           }
         }
-//          });
-//        }
+
+        checkDriverBug();
 
       } catch (Throwable t) {
         // Catch-all to pick up badness during startup.
@@ -246,6 +243,38 @@ public class Base {
                            "An error occurred during startup.", t, true);
       }
       Messages.log("Done creating Base..."); //$NON-NLS-1$
+    }
+  }
+
+
+  // Remove this code in a couple months [fry 170211]
+  // https://github.com/processing/processing/issues/4853
+  static private void checkDriverBug() {
+    if (Platform.isWindows()) {
+      new Thread(new Runnable() {
+        public void run() {
+          try {
+            Process p = Runtime.getRuntime().exec("powershell Get-WmiObject Win32_PnPSignedDriver| select devicename, driverversion | where {$_.devicename -like \\\"*nvidia*\\\"}");
+            String[] lines = PApplet.loadStrings(PApplet.createReader(p.getInputStream()));
+            for (String line : lines) {
+              if (line.contains("3.7849")) {
+                EventQueue.invokeLater(new Runnable() {
+                  public void run() {
+                    Messages.showWarning("NVIDIA screwed up",
+                                         "Due to an NVIDIA bug, you need to update your graphics drivers,\n" +
+                                         "otherwise you won't be able to run any sketches. Update here:\n" +
+                                         "http://nvidia.custhelp.com/app/answers/detail/a_id/4378\n" +
+                                         "or read background about the issue at this link:\n" +
+                                         "https://github.com/processing/processing/issues/4853");
+                  }
+                });
+              }
+            }
+          } catch (Exception e) {
+            Messages.loge("Problem checking NVIDIA driver", e);
+          }
+        }
+      }).start();
     }
   }
 
