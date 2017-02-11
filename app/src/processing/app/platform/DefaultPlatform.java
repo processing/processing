@@ -153,4 +153,12 @@ public class DefaultPlatform {
     CLibrary clib = CLibrary.INSTANCE;
     return clib.unsetenv(variable);
   }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public int getSystemDPI() {
+    return 96;
+  }
 }

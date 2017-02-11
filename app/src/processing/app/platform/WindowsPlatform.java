@@ -28,8 +28,11 @@ import java.io.UnsupportedEncodingException;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Shell32Util;
 import com.sun.jna.platform.win32.ShlObj;
+import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.W32APIOptions;
 
 import processing.app.Base;
 import processing.app.Messages;
@@ -602,56 +605,57 @@ public class WindowsPlatform extends DefaultPlatform {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  // JNA code for using SHGetFolderPath to fix Issue 410
-  // https://code.google.com/p/processing/issues/detail?id=410
-  // Based on answer provided by McDowell at
-  // http://stackoverflow.com/questions/585534/what-is-the-best-way-to-find-the-users-home-directory-in-java/586917#586917
 
-//  private static Map<String, Object> OPTIONS = new HashMap<String, Object>();
-//
-//  static {
-//    OPTIONS.put(Library.OPTION_TYPE_MAPPER, W32APITypeMapper.UNICODE);
-//    OPTIONS.put(Library.OPTION_FUNCTION_MAPPER, W32APIFunctionMapper.UNICODE);
-//  }
-//
-//
-//  static class HANDLE extends PointerType implements NativeMapped {
-//    public HANDLE() { }
-//  }
-//
-//  static class HWND extends HANDLE { }
-//
-//
-//  public interface Shell32 extends Library {
-//
-//    public static final int MAX_PATH = 260;
-//    public static final int SHGFP_TYPE_CURRENT = 0;
-//    public static final int SHGFP_TYPE_DEFAULT = 1;
-//    public static final int S_OK = 0;
-//
-//    // KNOWNFOLDERIDs are preferred to CSDIL values
-//    // but Windows XP only supports CSDIL so thats what we have to use
-//    public static final int CSIDL_APPDATA = 0x001a; // "Application Data"
-//    public static final int CSIDL_PERSONAL = 0x0005;      // "My Documents"
-//
-//    static Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32", Shell32.class, OPTIONS);
-//
-//    /**
-//     * see http://msdn.microsoft.com/en-us/library/bb762181(VS.85).aspx
-//     *
-//     * HRESULT SHGetFolderPath( HWND hwndOwner, int nFolder, HANDLE hToken,
-//     * DWORD dwFlags, LPTSTR pszPath);
-//     */
-//    public int SHGetFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken,
-//                               int dwFlags, char[] pszPath);
-//
-//    /**
-//     * This function can be used to copy, move, rename,
-//     * or delete a file system object.
-//     * @param fileop Address of an SHFILEOPSTRUCT structure that contains
-//     * information this function needs to carry out the specified operation.
-//     * @return Returns zero if successful, or nonzero otherwise.
-//     */
-//    public int SHFileOperation(SHFILEOPSTRUCT fileop);
-//  }
+  // Need to extend com.sun.jna.platform.win32.User32 to access
+  // Win32 function GetDpiForSystem()
+  interface ExtUser32 extends StdCallLibrary, com.sun.jna.platform.win32.User32 {
+    ExtUser32 INSTANCE = (ExtUser32) Native.loadLibrary("user32", ExtUser32.class, W32APIOptions.DEFAULT_OPTIONS);
+
+    public int GetDpiForSystem();
+
+    public int SetProcessDpiAwareness(int value);
+
+    public final int DPI_AWARENESS_INVALID = -1;
+    public final int DPI_AWARENESS_UNAWARE = 0;
+    public final int DPI_AWARENESS_SYSTEM_AWARE = 1;
+    public final int DPI_AWARENESS_PER_MONITOR_AWARE = 2;
+
+    public Pointer SetThreadDpiAwarenessContext(Pointer dpiContext);
+
+    public final Pointer DPI_AWARENESS_CONTEXT_UNAWARE = new Pointer(-1);
+    public final Pointer DPI_AWARENESS_CONTEXT_SYSTEM_AWARE = new Pointer(-2);
+    public final Pointer DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE = new Pointer(-3);
+  }
+
+
+  static private int detected = detectSystemDPI();
+
+
+  public int getSystemDPI() {
+    if (detected == -1) {
+      return super.getSystemDPI();
+    }
+    return detected;
+  }
+
+
+  public static int detectSystemDPI() {
+    try {
+      ExtUser32.INSTANCE.SetProcessDpiAwareness(ExtUser32.DPI_AWARENESS_SYSTEM_AWARE);
+    } catch (Throwable e) {
+      // Ignore error
+    }
+    try {
+      ExtUser32.INSTANCE.SetThreadDpiAwarenessContext(ExtUser32.DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
+    } catch (Throwable e) {
+      // Ignore error (call valid only on Windows 10)
+    }
+    try {
+      return ExtUser32.INSTANCE.GetDpiForSystem();
+    } catch (Throwable e) {
+      // DPI detection failed, fall back with default
+      System.out.println("DPI detection failed, fallback to 96 dpi");
+      return -1;
+    }
+  }
 }
