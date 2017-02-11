@@ -221,6 +221,8 @@ public class EditorState {
     editor.setBounds(editorBounds);
     if (dividerLocation != 0) {
       editor.setDividerLocation(dividerLocation);
+    } else {
+      editor.setDividerLocation(2 * editor.getSize().height / 3);
     }
     if (isMaximized) {
       editor.setExtendedState(Frame.MAXIMIZED_BOTH);

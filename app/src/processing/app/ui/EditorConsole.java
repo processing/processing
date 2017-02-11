@@ -223,7 +223,8 @@ public class EditorConsole extends JScrollPane {
    */
   protected void updateAppearance() {
     String fontFamily = Preferences.get("editor.font.family");
-    int fontSize = Preferences.getInteger("console.font.size");
+    int fontSize =
+      Toolkit.zoom(Preferences.getInteger("console.font.size"));
     StyleConstants.setFontFamily(stdStyle, fontFamily);
     StyleConstants.setFontSize(stdStyle, fontSize);
     StyleConstants.setFontFamily(errStyle, fontFamily);
