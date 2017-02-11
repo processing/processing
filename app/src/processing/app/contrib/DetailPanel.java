@@ -71,7 +71,7 @@ class DetailPanel extends JPanel {
   private final ListPanel listPanel;
   private final ContributionListing contribListing = ContributionListing.getInstance();
 
-  static final int BUTTON_WIDTH = 100;
+  static final int BUTTON_WIDTH = Toolkit.zoom(100);
   static Icon foundationIcon;
 
   /**
@@ -227,14 +227,14 @@ class DetailPanel extends JPanel {
     rightPane.setInheritsPopupMenu(true);
     rightPane.setOpaque(false);
     rightPane.setLayout(new BoxLayout(rightPane, BoxLayout.Y_AXIS));
-    rightPane.setMinimumSize(new Dimension(DetailPanel.BUTTON_WIDTH, 1));
+    rightPane.setMinimumSize(new Dimension(BUTTON_WIDTH, 1));
     add(rightPane, BorderLayout.EAST);
 
     barButtonCardLayout = new CardLayout();
     barButtonCardPane.setLayout(barButtonCardLayout);
     barButtonCardPane.setInheritsPopupMenu(true);
     barButtonCardPane.setOpaque(false);
-    barButtonCardPane.setMinimumSize(new Dimension(DetailPanel.BUTTON_WIDTH, 1));
+    barButtonCardPane.setMinimumSize(new Dimension(BUTTON_WIDTH, 1));
 
     {
       installProgressBar = new JProgressBar();
@@ -242,7 +242,7 @@ class DetailPanel extends JPanel {
       installProgressBar.setStringPainted(true);
       resetInstallProgressBarState();
       Dimension dim =
-        new Dimension(DetailPanel.BUTTON_WIDTH,
+        new Dimension(BUTTON_WIDTH,
                       installProgressBar.getPreferredSize().height);
       installProgressBar.setPreferredSize(dim);
       installProgressBar.setMaximumSize(dim);
@@ -267,7 +267,7 @@ class DetailPanel extends JPanel {
     });
 
     Dimension installButtonDimensions = installRemoveButton.getPreferredSize();
-    installButtonDimensions.width = DetailPanel.BUTTON_WIDTH;
+    installButtonDimensions.width = BUTTON_WIDTH;
     installRemoveButton.setPreferredSize(installButtonDimensions);
     installRemoveButton.setMaximumSize(installButtonDimensions);
     installRemoveButton.setMinimumSize(installButtonDimensions);
@@ -290,7 +290,7 @@ class DetailPanel extends JPanel {
     // Set the minimum size of this pane to be the sum of the height of the
     // progress bar and install button
     Dimension dim =
-      new Dimension(DetailPanel.BUTTON_WIDTH,
+      new Dimension(BUTTON_WIDTH,
                     installRemoveButton.getPreferredSize().height);
     rightPane.setMinimumSize(dim);
     rightPane.setPreferredSize(dim);
@@ -314,7 +314,7 @@ class DetailPanel extends JPanel {
     rightPane.setInheritsPopupMenu(true);
     rightPane.setOpaque(false);
     rightPane.setLayout(new BoxLayout(rightPane, BoxLayout.Y_AXIS));
-    rightPane.setMinimumSize(new Dimension(DetailPanel.BUTTON_WIDTH, 1));
+    rightPane.setMinimumSize(new Dimension(BUTTON_WIDTH, 1));
     add(rightPane, BorderLayout.EAST);
 
     if (updateButton.isVisible() && !removeInProgress && !contrib.isDeletionFlagged()) {
@@ -359,7 +359,7 @@ class DetailPanel extends JPanel {
 
     Dimension progressDim = installProgressBar.getPreferredSize();
     Dimension installDim = installRemoveButton.getPreferredSize();
-    progressDim.width = DetailPanel.BUTTON_WIDTH;
+    progressDim.width = BUTTON_WIDTH;
     progressDim.height = Math.max(progressDim.height, installDim.height);
     rightPane.setMinimumSize(progressDim);
     rightPane.setPreferredSize(progressDim);

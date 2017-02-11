@@ -45,7 +45,7 @@ import processing.app.Platform;
 
 
 class StatusPanel extends JPanel {
-  static final int BUTTON_WIDTH = 150;
+  static final int BUTTON_WIDTH = Toolkit.zoom(150);
 
   static Icon foundationIcon;
   static Icon installIcon;
