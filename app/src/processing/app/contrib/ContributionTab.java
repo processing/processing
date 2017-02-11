@@ -38,7 +38,7 @@ import processing.app.ui.Toolkit;
 
 public class ContributionTab extends JPanel {
   static final String ANY_CATEGORY = Language.text("contrib.all");
-  static final int FILTER_WIDTH = 180;
+  static final int FILTER_WIDTH = Toolkit.zoom(180);
 
   ContributionType contribType;
   ManagerFrame contribDialog;
