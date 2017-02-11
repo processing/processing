@@ -53,9 +53,21 @@ public class ManagerFrame {
   ContributionTab examplesTab;
   UpdateContributionTab updatesTab;
 
+  static Font SMALL_PLAIN;
+  static Font SMALL_BOLD;
+  static Font NORMAL_PLAIN;
+  static Font NORMAL_BOLD;
+
 
   public ManagerFrame(Base base) {
     this.base = base;
+
+    final int smallSize = Toolkit.zoom(12);
+    final int normalSize = Toolkit.zoom(14);
+    SMALL_PLAIN = Toolkit.getSansFont(smallSize, Font.PLAIN);
+    SMALL_BOLD = Toolkit.getSansFont(smallSize, Font.BOLD);
+    NORMAL_PLAIN = Toolkit.getSansFont(normalSize, Font.PLAIN);
+    NORMAL_BOLD = Toolkit.getSansFont(normalSize, Font.BOLD);
 
     librariesTab = new ContributionTab(this, ContributionType.LIBRARY);
     modesTab = new ContributionTab(this, ContributionType.MODE);

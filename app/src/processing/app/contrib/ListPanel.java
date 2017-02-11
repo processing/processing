@@ -61,10 +61,6 @@ implements Scrollable, ContributionListing.ChangeListener {
   static Icon foundationIcon;
   static Icon downloadingIcon;
 
-  static Font plainFont;
-  static Font boldFont;
-  static Font headerFont;
-
   // Should this be in theme.txt? Of course! Is it? No.
   static final Color HEADER_BGCOLOR = new Color(0xffEBEBEB);
 
@@ -76,10 +72,6 @@ implements Scrollable, ContributionListing.ChangeListener {
       incompatibleIcon = Toolkit.getLibIconX("manager/incompatible");
       foundationIcon = Toolkit.getLibIconX("icons/foundation", 16);
       downloadingIcon = Toolkit.getLibIconX("manager/downloading");
-
-      plainFont = Toolkit.getSansFont(14, Font.PLAIN);
-      boldFont = Toolkit.getSansFont(14, Font.BOLD);
-      headerFont = Toolkit.getSansFont(12, Font.PLAIN);
     }
   }
 
@@ -114,7 +106,7 @@ implements Scrollable, ContributionListing.ChangeListener {
     scrollPane.setBorder(BorderFactory.createEmptyBorder());
     table.setFillsViewportHeight(true);
     table.setDefaultRenderer(Contribution.class, new ContribStatusRenderer());
-    table.setFont(plainFont);
+    table.setFont(ManagerFrame.NORMAL_PLAIN);
     table.setRowHeight(28);
     table.setRowMargin(6);
     table.getColumnModel().setColumnMargin(0);
@@ -231,7 +223,7 @@ implements Scrollable, ContributionListing.ChangeListener {
       if (tableHeader != null) {
         setForeground(tableHeader.getForeground());
       }
-      setFont(headerFont);
+      setFont(ManagerFrame.SMALL_PLAIN);
       setIcon(getSortIcon(table, column));
       setBackground(HEADER_BGCOLOR);
 //      if (column % 2 == 0) {
@@ -308,7 +300,7 @@ implements Scrollable, ContributionListing.ChangeListener {
       }
       if (column == 0) {
         Icon icon = null;
-        label.setFont(plainFont);
+        label.setFont(ManagerFrame.NORMAL_PLAIN);
         if (contribution.isInstalled()) {
           icon = upToDateIcon;
           if (contribListing.hasUpdates(contribution)) {
@@ -334,6 +326,7 @@ implements Scrollable, ContributionListing.ChangeListener {
 
       } else if (column == 1) {
         // Generating ellipses based on fontMetrics
+        final Font boldFont = ManagerFrame.NORMAL_BOLD;
         String fontFace = "<font face=\"" + boldFont.getName() + "\">";
         FontMetrics fontMetrics = table.getFontMetrics(boldFont); //table.getFont());
         int colSize = table.getColumnModel().getColumn(1).getWidth();
@@ -368,7 +361,7 @@ implements Scrollable, ContributionListing.ChangeListener {
         if (table.isRowSelected(row)) {
           label.setBackground(new Color(0xe0fffd));
         }
-        label.setFont(plainFont);
+        label.setFont(ManagerFrame.NORMAL_PLAIN);
         label.setOpaque(true);
       } else {
         if (contribution.isSpecial()) {
@@ -388,7 +381,7 @@ implements Scrollable, ContributionListing.ChangeListener {
         if (table.isRowSelected(row)) {
           label.setBackground(new Color(0xe0fffd));
         }
-        label.setFont(Toolkit.getSansFont(14, Font.BOLD));
+        label.setFont(ManagerFrame.NORMAL_BOLD);
         label.setOpaque(true);
       }
       return label;

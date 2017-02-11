@@ -2,7 +2,6 @@ package processing.app.contrib;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -20,7 +19,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import processing.app.Base;
-import processing.app.ui.Toolkit;
 
 
 public class UpdateListPanel extends ListPanel {
@@ -87,7 +85,7 @@ public class UpdateListPanel extends ListPanel {
     table.setFillsViewportHeight(true);
     table.setSelectionBackground(new Color(0xe0fffd));
     table.setSelectionForeground(table.getForeground());
-    table.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+    table.setFont(ManagerFrame.NORMAL_PLAIN);
     table.setRowHeight(30);
     table.setRowMargin(6);
     table.getColumnModel().setColumnMargin(-1);
@@ -153,16 +151,10 @@ public class UpdateListPanel extends ListPanel {
   // Thread: EDT
   @Override
   void updatePanelOrdering(Set<Contribution> contributionsSet) {
-//    int updateCount = panelByContribution.size();
-//    new Exception("update count is " + updateCount).printStackTrace(System.out);
-//    (UpdateContributionTab) contributionTab
-
     model.getDataVector().removeAllElements();
     ContributionType currentType = null;
 
-    // Avoid ugly synthesized bold
-    Font boldFont = Toolkit.getSansFont(table.getFont().getSize(), Font.BOLD);
-    String fontFace = "<font face=\"" + boldFont.getName() + "\">";
+    String fontFace = "<font face=\"" + ManagerFrame.NORMAL_BOLD.getName() + "\">";
 
     for (Contribution entry : contributionsSet) {
       if (entry.getType() != currentType) {

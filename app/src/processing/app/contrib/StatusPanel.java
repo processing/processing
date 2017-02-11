@@ -79,7 +79,7 @@ class StatusPanel extends JPanel {
       installIcon = Toolkit.getLibIconX("manager/install");
       updateIcon = Toolkit.getLibIconX("manager/update");
       removeIcon = Toolkit.getLibIconX("manager/remove");
-      buttonFont = Toolkit.getSansFont(14, Font.PLAIN);
+      buttonFont = ManagerFrame.NORMAL_PLAIN;
     }
 
     setBackground(new Color(0xebebeb));

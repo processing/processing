@@ -198,7 +198,7 @@ class DetailPanel extends JPanel {
     notificationLabel.setInheritsPopupMenu(true);
     notificationLabel.setVisible(false);
     notificationLabel.setOpaque(false);
-    notificationLabel.setFont(Toolkit.getSansFont(12, Font.PLAIN));
+    notificationLabel.setFont(ManagerFrame.SMALL_PLAIN);
 
     {
       updateButton = new JButton("Update");
@@ -406,7 +406,7 @@ class DetailPanel extends JPanel {
     }
 
     // Avoid ugly synthesized bold
-    Font boldFont = Toolkit.getSansFont(12, Font.BOLD);
+    Font boldFont = ManagerFrame.SMALL_BOLD;
     String fontFace = "<font face=\"" + boldFont.getName() + "\">";
 
     StringBuilder desc = new StringBuilder();

@@ -25,7 +25,6 @@ package processing.app.contrib;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.*;
 import java.util.*;
 
@@ -172,7 +171,7 @@ public class ContributionTab extends JPanel {
 
     categoryChooser = new JComboBox<String>();
     categoryChooser.setMaximumRowCount(20);
-    categoryChooser.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+    categoryChooser.setFont(ManagerFrame.NORMAL_PLAIN);
 
     updateCategoryChooser();
 
@@ -227,7 +226,7 @@ public class ContributionTab extends JPanel {
       }
     });
     tryAgainButton = new JButton("Try Again");
-    tryAgainButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+    tryAgainButton.setFont(ManagerFrame.NORMAL_PLAIN);
     tryAgainButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         contribDialog.makeAndShowTab(false, true);
@@ -350,10 +349,10 @@ public class ContributionTab extends JPanel {
       super("");
 
       JLabel filterLabel = new JLabel("Filter");
-      filterLabel.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+      filterLabel.setFont(ManagerFrame.NORMAL_PLAIN);
       filterLabel.setOpaque(false);
 
-      setFont(Toolkit.getSansFont(14, Font.PLAIN));
+      setFont(ManagerFrame.NORMAL_PLAIN);
       filterLabel.setIcon(Toolkit.getLibIconX("manager/search"));
       JButton removeFilter = Toolkit.createIconButton("manager/remove");
       removeFilter.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 2));

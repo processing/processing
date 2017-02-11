@@ -21,7 +21,6 @@
 package processing.app.contrib;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -39,7 +38,7 @@ public class UpdateStatusPanel extends StatusPanel {
     this.contributionTab = tab;
 
     updateButton = Toolkit.createIconButton("Update All", "manager/update");
-    updateButton.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+    updateButton.setFont(ManagerFrame.NORMAL_PLAIN);
     updateButton.setHorizontalAlignment(SwingConstants.LEFT);
     updateButton.setVisible(true);
     updateButton.setEnabled(false);
