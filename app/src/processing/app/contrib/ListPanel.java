@@ -107,8 +107,8 @@ implements Scrollable, ContributionListing.ChangeListener {
     table.setFillsViewportHeight(true);
     table.setDefaultRenderer(Contribution.class, new ContribStatusRenderer());
     table.setFont(ManagerFrame.NORMAL_PLAIN);
-    table.setRowHeight(28);
-    table.setRowMargin(6);
+    table.setRowHeight(Toolkit.zoom(28));
+    table.setRowMargin(Toolkit.zoom(6));
     table.getColumnModel().setColumnMargin(0);
     table.getColumnModel().getColumn(0).setMaxWidth(ManagerFrame.STATUS_WIDTH);
     table.getColumnModel().getColumn(2).setMinWidth(ManagerFrame.AUTHOR_WIDTH);
