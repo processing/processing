@@ -38,37 +38,25 @@ import processing.app.ui.Toolkit;
 public class ManagerFrame {
   static final String ANY_CATEGORY = Language.text("contrib.all");
 
-//  static final int TAB_WIDTH = 100;
-//  static final int TAB_HEIGHT = 34;
-  static final int AUTHOR_WIDTH = 240;
-  static final int STATUS_WIDTH = 66;
+  static final int AUTHOR_WIDTH = Toolkit.zoom(240);
+  static final int STATUS_WIDTH = Toolkit.zoom(66);
 
   static final String title = "Contribution Manager";
 
   Base base;
   JFrame frame;
-//  JTabbedPane tabbedPane;
   ManagerTabs tabs;
-
-  // the calling editor, so updates can be applied
-//  Editor editor;
 
   ContributionTab librariesTab;
   ContributionTab modesTab;
   ContributionTab toolsTab;
   ContributionTab examplesTab;
   UpdateContributionTab updatesTab;
-//  JLabel numberLabel;
-
-//  private JLabel[] tabLabels;
-//  private JPanel updateTabPanel;
-//  private JLabel updateTabLabel;
 
 
   public ManagerFrame(Base base) {
     this.base = base;
 
-//    numberLabel = new JLabel(Toolkit.getLibIconX("manager/notification"));
     librariesTab = new ContributionTab(this, ContributionType.LIBRARY);
     modesTab = new ContributionTab(this, ContributionType.MODE);
     toolsTab = new ContributionTab(this, ContributionType.TOOL);
@@ -77,11 +65,7 @@ public class ManagerFrame {
   }
 
 
-  // TODO remove this Editor... need to use Base.getActiveEditor()
-  // The editor may be closed while still running the contrib manager
   public void showFrame(ContributionType contributionType) {
-//    this.editor = editor;
-
     ContributionTab showTab = getTab(contributionType);
     if (frame == null) {
       makeFrame();
@@ -100,7 +84,7 @@ public class ManagerFrame {
 
   private void makeFrame() {
     frame = new JFrame(title);
-    frame.setMinimumSize(new Dimension(750, 500));
+    frame.setMinimumSize(Toolkit.zoom(750, 500));
     tabs = new ManagerTabs(base);
 
     makeAndShowTab(false, true);
@@ -111,129 +95,7 @@ public class ManagerFrame {
     tabs.addPanel(examplesTab, "Examples");
     tabs.addPanel(updatesTab, "Updates");
 
-    /*
-    tabbedPane.addTab("Libraries", null, librariesTab, "Libraries");
-    tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-
-    tabbedPane.addTab("Modes", null, modesTab, "Modes");
-    tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-
-    tabbedPane.addTab("Tools", null, toolsTab, "Tools");
-    tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
-
-    tabbedPane.addTab("Examples", null, examplesTab, "Examples");
-    tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
-
-    tabbedPane.addTab("Updates", null, updatesTab, "Updates");
-    tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
-
-    tabbedPane.setUI(new SpacedTabbedPaneUI());
-    tabbedPane.setBackground(new Color(0x132638));
-    tabbedPane.setOpaque(true);
-
-    for (int i = 0; i < 5; i++) {
-      tabbedPane.setToolTipTextAt(i, null);
-    }
-    */
-
-    /*
-    final String[] tabTitles = {
-      "Libraries", "Modes", "Tools", "Examples", "Updates"
-    };
-    tabLabels = new JLabel[4];
-
-    for (int i = 0 ; i < 4; i++) {
-      final int temp = i;
-      tabLabels[i] = new JLabel(tabTitles[i]) {
-        @Override
-        protected void paintComponent(Graphics g) {
-          g.setClip(Toolkit.createRoundRect(0, 0,
-                                            getWidth(), getHeight(),
-                                            temp == 0 ? 6 : 0,
-                                            temp == 3 ? 6 : 0,
-                                            0, 0));
-          super.paintComponent(g);
-        }
-      };
-      tabLabels[i].setForeground(Color.WHITE);
-      tabLabels[i].setBackground(new Color(0x2d4251));
-      tabLabels[i].setOpaque(true);
-      tabLabels[i].setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
-      tabLabels[i].setPreferredSize(new Dimension(TAB_WIDTH, TAB_HEIGHT));
-      tabLabels[i].setHorizontalAlignment(SwingConstants.CENTER);
-      tabLabels[i].setFont(Toolkit.getSansFont(14, Font.BOLD));
-      tabbedPane.setTabComponentAt(i, tabLabels[i]);
-    }
-    */
-
-    /*
-    updateTabPanel = new JPanel() {
-      @Override
-      protected void paintComponent(Graphics g) {
-        g.setClip(Toolkit.createRoundRect(0, 0, getWidth(), getHeight(),
-                                          6, 6, 0, 0));
-        super.paintComponent(g);
-      }
-    };;
-    updateTabLabel = new JLabel("Updates");
-    updateTabLabel.setFont(Toolkit.getSansFont(14, Font.BOLD));
-    numberLabel.setVerticalTextPosition(SwingConstants.CENTER);
-    numberLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-    numberLabel.setFont(Toolkit.getSansFont(14, Font.BOLD));
-    numberLabel.setForeground(Color.WHITE);
-    updateTabPanel.setOpaque(true);
-    updateTabPanel.setBackground(new Color(0x2d4251));
-    updateTabLabel.setForeground(Color.WHITE);
-    updateTabPanel.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
-    updateTabPanel.setPreferredSize(new Dimension(TAB_WIDTH, TAB_HEIGHT));
-    tabbedPane.setTabComponentAt(4, updateTabPanel);
-    */
-
-    /*
-    GroupLayout tabLayout = new GroupLayout(updateTabPanel);
-    tabLayout.setAutoCreateGaps(true);
-    updateTabPanel.setLayout(tabLayout);
-    tabLayout.setHorizontalGroup(tabLayout
-      .createSequentialGroup()
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
-                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-      .addComponent(updateTabLabel)
-      .addComponent(numberLabel)
-      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
-                       GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE));
-    tabLayout.setVerticalGroup(tabLayout
-      .createParallelGroup(GroupLayout.Alignment.CENTER)
-      .addComponent(numberLabel).addComponent(updateTabLabel));
-
-    numberLabel.setVisible(false);
-    */
-
-    /*
-    tabbedPane.addChangeListener(new ChangeListener() {
-
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        for(int i = 0 ; i < 4; i++){
-          tabLabels[i].setBackground(new Color(0x2d4251));
-          tabLabels[i].setForeground(Color.WHITE);
-        }
-        updateTabPanel.setBackground(new Color(0x2d4251));
-        updateTabLabel.setForeground(Color.WHITE);
-        int currentIndex = tabbedPane.getSelectedIndex();
-        if(currentIndex != 4){
-          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setBackground(new Color(0xe0fffd));
-          tabbedPane.getTabComponentAt(tabbedPane.getSelectedIndex()).setForeground(Color.BLACK);
-        }else{
-          updateTabPanel.setBackground(new Color(0xe0fffd));
-          updateTabLabel.setForeground(Color.BLACK);
-        }
-        getActiveTab().contributionListPanel.scrollPane.requestFocusInWindow();
-      }
-    });
-    */
-
     frame.setResizable(true);
-//    tabbedPane.setBorder(new EmptyBorder(BORDER, BORDER, BORDER, BORDER));
 
     Container c = frame.getContentPane();
     c.add(tabs);
@@ -255,73 +117,7 @@ public class ManagerFrame {
    */
   protected void disposeFrame() {
     frame.dispose();
-//    editor = null;
   }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  /*
-  private class SpacedTabbedPaneUI extends BasicTabbedPaneUI {
-
-    @Override
-    protected void installDefaults() {
-      UIManager.put("TabbedPane.selected", Color.BLACK);
-      UIManager.put("TabbedPane.tabsOverlapBorder" , true);
-      super.installDefaults();
-      tabInsets = new Insets(0, 0, 0, 0);
-      contentBorderInsets = new Insets(0, 0, 0, 0);
-      tabAreaInsets = new Insets(0, 0, 0, 0);
-      selectedTabPadInsets = new Insets(0, 0, 0, 0);
-    }
-
-
-    @Override
-    protected int getTabLabelShiftY(int tabPlacement, int tabIndex,
-                                    boolean isSelected) {
-      return 1;
-    }
-
-
-    @Override
-    protected void paintTabBackground(Graphics g, int tabPlacement,
-                                      int tabIndex, int x, int y, int w, int h,
-                                      boolean isSelected) {
-    }
-
-
-    @Override
-    protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex,
-                                  int x, int y, int w, int h, boolean isSelected) {
-    }
-
-
-    @Override
-    protected void paintFocusIndicator(Graphics g, int tabPlacement,
-                                       Rectangle[] rects, int tabIndex,
-                                       Rectangle iconRect, Rectangle textRect,
-                                       boolean isSelected) {
-    }
-
-
-    @Override
-    protected LayoutManager createLayoutManager() {
-      return new BasicTabbedPaneUI.TabbedPaneLayout() {
-
-        @Override
-        protected void calculateTabRects(int tabPlacement, int tabCount) {
-          super.calculateTabRects(tabPlacement, tabCount);
-          rects[0].x -= 2;
-          rects[1].x -= 1;
-          rects[2].x -= 1;
-          rects[3].x -= 1;
-          rects[4].x = tabbedPane.getWidth() - rects[4].width + 1;
-        }
-      };
-    }
-  }
-  */
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -420,19 +216,5 @@ public class ManagerFrame {
 
   ContributionTab getActiveTab() {
     return (ContributionTab) tabs.getPanel();
-    /*
-    switch (tabbedPane.getSelectedIndex()) {
-    case 0:
-      return librariesTab;
-    case 1:
-      return modesTab;
-    case 2:
-      return toolsTab;
-    case 3:
-      return examplesTab;
-    default:
-      return updatesTab;
-    }
-    */
   }
 }
