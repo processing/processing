@@ -158,8 +158,10 @@ public class EditorState {
    * @param editors List of editors currently opened
    */
   void defaultLocation(List<Editor> editors) {
-    int defaultWidth = Preferences.getInteger("editor.window.width.default");
-    int defaultHeight = Preferences.getInteger("editor.window.height.default");
+    int defaultWidth =
+      Toolkit.zoom(Preferences.getInteger("editor.window.width.default"));
+    int defaultHeight =
+      Toolkit.zoom(Preferences.getInteger("editor.window.height.default"));
 
     defaultWidth = Math.min(defaultWidth, deviceBounds.width);
     defaultHeight = Math.min(defaultHeight, deviceBounds.height);

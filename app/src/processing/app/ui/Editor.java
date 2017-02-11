@@ -263,8 +263,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     textarea.setRightClickPopup(new TextAreaPopup());
     textarea.setHorizontalOffset(JEditTextArea.leftHandGutter);
     //System.out.println(textarea.getPreferredSize());
-    textarea.setPreferredSize(new Dimension(textarea.getPreferredSize().width,
-                                            Toolkit.zoom(360)));
+//    textarea.setPreferredSize(new Dimension(textarea.getPreferredSize().width,
+//                                            Toolkit.zoom(360)));
 
     { // Hack: add Numpad Slash as an alternative shortcut for Comment/Uncomment
       int modifiers = Toolkit.awtToolkit.getMenuShortcutKeyMask();
