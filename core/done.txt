@@ -1,3 +1,27 @@
+0257 (3.3)
+X return null for PApplet.trim(null)
+X StringDict(TableRow) constructor
+X allow lone double quotes in the midst of csv strings
+X make trim() work on column titles as well
+o add trimRows() and trimColumns()
+o   would you ever use one w/o the other?
+X   just make this part of trim()
+X also remove rows/columns from beginning
+X   since that's what trim() on strings does
+X consume Unicode BOM (0xFEFF) in createReader() and Table parser
+o no prompt shows with selectInput() on 10.11 and 10.12
+X   https://github.com/processing/processing/issues/4758
+X   can't fix, seems embedded in the Java implementation
+X return null for getString(), getJSONObject(), and getJSONArray()
+X   when key is not present, more in line w/ other p5 api
+
+contrib
+X Fix a number of memory leaks (jdf)
+X   https://github.com/processing/processing/pull/4862
+X   https://github.com/jdf/processing.py/issues/233
+X   https://github.com/processing/processing/pull/4873
+
+
 0256 (3.2.4)
 X write exec() documentation
 X   https://github.com/processing/processing/issues/4740

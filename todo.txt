@@ -1,24 +1,7 @@
-0257 (3.3)
-X check for already-exported folders before trying to remove them
-X   was spewing 'file not found' errors into the console
-X PDE and sketches are 2x smaller on high-res Windows machines
-X   https://github.com/processing/processing/issues/2411
-o   System.setProperty("sun.java2d.dpiaware", "false");
-X   though that seems broken in Java 8: http://superuser.com/a/1007783
-X   until we fix it..
-o     call this from JNA? https://msdn.microsoft.com/en-us/library/windows/desktop/dn302122(v=vs.85).aspx
-o     or modify the manifest/app? https://msdn.microsoft.com/en-us/library/windows/desktop/dn469266%28v=vs.85%29.aspx
-o   hidpi scaling via font changes?
-o   http://stackoverflow.com/a/34152675
-X hi-dpi support on Linux
-X   https://github.com/processing/processing/issues/4183
+0258 (3.3.1)
 
-cleaning
-X Contribution Manager does not show all libraries until filter cleared
-X   https://github.com/processing/processing/issues/4840
-X   fixed in 3.2.4
 
-unconfirmed
+awaiting confirmation (fixed in 3.3)
 X visual artifacts on Windows 10 when using menus
 _   https://github.com/processing/processing/issues/4700
 X Broken characters in the Welcome Page and the Contribution Manager
