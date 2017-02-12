@@ -2,6 +2,8 @@
 
 
 high
+_ implement sketch scaling into PApplet
+_   https://github.com/processing/processing/issues/4897
 _ Sketches on Windows don't take UI sizing into account
 _   https://github.com/processing/processing/issues/4894
 _ Sketches on Linux don't take UI scaling into account
