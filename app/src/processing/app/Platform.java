@@ -399,4 +399,12 @@ public class Platform {
   static public int unsetenv(String variable) {
     return inst.unsetenv(variable);
   }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static public int getSystemDPI() {
+    return inst.getSystemDPI();
+  }
 }

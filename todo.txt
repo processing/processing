@@ -11,6 +11,8 @@ X Contribution Manager does not show all libraries until filter cleared
 X   https://github.com/processing/processing/issues/4840
 X   fixed in 3.2.4
 
+_ EventQueue problems with "could not find sketch size" message?
+_   https://github.com/processing/processing/issues/4893
 
 _ "Sketch disappeared" infinite pop up dialogs
 _   https://github.com/processing/processing/pull/4808

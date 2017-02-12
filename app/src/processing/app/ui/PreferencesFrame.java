@@ -730,6 +730,7 @@ public class PreferencesFrame {
     consoleFontSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
 
     String zoomSel = Preferences.get("editor.zoom");
+    System.out.println(Platform.getSystemDPI());
     int zoomIndex = Toolkit.zoomOptions.index(zoomSel);
     if (zoomIndex != -1) {
       zoomSelectionBox.setSelectedIndex(zoomIndex);
