@@ -3,12 +3,16 @@ PROCESSING 3.3 (REV 0257) - 12 February 2017
 This release adds the ability to the scale the UI or high-resolution
 (known as HiDPI) screens on Windows and Linux. Sketches don't scale yet,
 but this will at least make the Editor and Contribution Manager usable
-again on more recent Windows and Linux laptops. This release also attempts
-to fix several other Windows bugs, detailed below.
+again on more recent Windows and Linux laptops.
 
-The "unconfirmed" fixes section is a handful of issues that I've never
-been able to reproduce, but that should now be fixed. Please confirm at
-the links listed to let me know if it's working.
+Note: the scaling feature is only meant to patch up problems on HiDPI
+devices, it does not provide an all-purpose means for scaling UI elements
+independent of the OS.
+
+This release also attempts to fix several other Windows bugs, detailed
+below. The "unconfirmed" fixes section is a handful of issues that I've
+never been able to reproduce, but that should now be fixed. Please
+confirm at the links listed to let me know if it's working.
 
 This is release 3.3 instead of 3.2.5 due to the huge change to the PDE
 for scaling, as well as minor API modifications (see below). 

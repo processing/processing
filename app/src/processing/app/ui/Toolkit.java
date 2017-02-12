@@ -1036,7 +1036,7 @@ public class Toolkit {
         }
         */
         sansFont = createFont("ProcessingSansPro-Regular.ttf", size);
-        sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
+        sansBoldFont = createFont("ProcessingSansPro-Semibold.ttf", size);
 
         // additional language constraints
         if ("el".equals(Language.getLanguage())) {
