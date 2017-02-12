@@ -22,6 +22,13 @@ X   https://github.com/jdf/processing.py/issues/233
 X   https://github.com/processing/processing/pull/4873
 
 
+high
+_ Sketches on Windows don't take UI sizing into account
+_   https://github.com/processing/processing/issues/4894
+_ Sketches on Linux don't take UI scaling into account
+_   https://github.com/processing/processing/issues/4895
+
+
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
 _   https://github.com/processing/processing/issues/4678
 

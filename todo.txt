@@ -1,20 +1,46 @@
 0257 (3.2.5)
 X check for already-exported folders before trying to remove them
 X   was spewing 'file not found' errors into the console
-X NVIDIA driver problems (and means to check)
-_   https://github.com/processing/processing/issues/4853
-_ put the reference (and examples?) into .zip files
-_   unzipping the app takes forever
+X PDE and sketches are 2x smaller on high-res Windows machines
+X   https://github.com/processing/processing/issues/2411
+o   System.setProperty("sun.java2d.dpiaware", "false");
+X   though that seems broken in Java 8: http://superuser.com/a/1007783
+X   until we fix it..
+o     call this from JNA? https://msdn.microsoft.com/en-us/library/windows/desktop/dn302122(v=vs.85).aspx
+o     or modify the manifest/app? https://msdn.microsoft.com/en-us/library/windows/desktop/dn469266%28v=vs.85%29.aspx
+o   hidpi scaling via font changes?
+o   http://stackoverflow.com/a/34152675
+X hi-dpi support on Linux
+X   https://github.com/processing/processing/issues/4183
 
 cleaning
 X Contribution Manager does not show all libraries until filter cleared
 X   https://github.com/processing/processing/issues/4840
 X   fixed in 3.2.4
 
-possible
+unconfirmed
 X visual artifacts on Windows 10 when using menus
 _   https://github.com/processing/processing/issues/4700
+X Broken characters in the Welcome Page and the Contribution Manager
+_   https://github.com/processing/processing/issues/4747
+X   looks like a failure to load the Source Sans font
+X   what happens if font loading fails?
+X   are there conflicts between version in lib and OS?
+o   are we still installing fonts into ext?
+o   fixed by rolling back to 8u92, broken since 8u102 in 3.1.2
+X NVIDIA driver problems (and means to check)
+_   https://github.com/processing/processing/issues/4853
+_ blank window on startup where the "Welcome" screen should be
+_   this may be fixed (removed invokeLater() on startup), unconfirmed
+_   https://github.com/processing/processing/issues/3933
 
+
+_ Welcome screen doesn't size properly for HiDPI screens
+_   https://github.com/processing/processing/issues/4896
+
+_ put the reference (and examples?) into .zip files
+_   unzipping the app takes forever
+_   see the 'examples' section below
 
 _ EventQueue problems with "could not find sketch size" message?
 _   https://github.com/processing/processing/issues/4893
@@ -23,9 +49,6 @@ _ "Sketch disappeared" infinite pop up dialogs
 _   https://github.com/processing/processing/pull/4808
 _   https://github.com/processing/processing/issues/4805
 
-_ blank window on startup where the "welcome" screen should be
-_   https://github.com/processing/processing/issues/3933
-_   this may be fixed (removed invokeLater() on startup), unconfirmed
 _ "error during export" message, but no error message contents come through
 _   e.g. https://github.com/processing/processing/issues/4792
 _ 'run sketches on display' message shows up on clean install
@@ -56,14 +79,6 @@ _   https://github.com/processing/processing/issues/1476#issuecomment-23229990
 
 _ could not write to temporary directory
 _   https://github.com/processing/processing/issues/4757
-
-_ Broken characters in the Welcome Page and the Contribution Manager
-_   looks like a failure to load the Source Sans font
-_   https://github.com/processing/processing/issues/4747
-_   what happens if font loading fails?
-_   are there conflicts between version in lib and OS?
-_   are we still installing fonts into ext?
-_   fixed by rolling back to 8u92, broken since 8u102 in 3.1.2
 
 _ Export Application fails on machines w/ non-ASCII chars in user name
 _   at least give a warning about this? 
@@ -108,25 +123,11 @@ _ swap out the fonts?
 _ Help Menu disabled on OS X
 _   https://github.com/processing/processing/issues/4353#issuecomment-237715947
 
-high
-_ PDE and sketches are 2x smaller on high-res Windows machines
-_   https://github.com/processing/processing/issues/2411
-_   System.setProperty("sun.java2d.dpiaware", "false");
-_   though that seems broken in Java 8: http://superuser.com/a/1007783
-_   modi
-_   until we fix it..
-_     call this from JNA? https://msdn.microsoft.com/en-us/library/windows/desktop/dn302122(v=vs.85).aspx
-_     or modify the manifest/app? https://msdn.microsoft.com/en-us/library/windows/desktop/dn469266%28v=vs.85%29.aspx
-
 medium
 _ detect changes in case with libraries
 _   https://github.com/processing/processing/issues/4507
 _ make when opening new editor window, open on the same display as current
 _   https://github.com/processing/processing/issues/4526
-_ hidpi scaling via font changes?
-_   http://stackoverflow.com/a/34152675
-_ hi-dpi support on Linux
-_   https://github.com/processing/processing/issues/4183
 _ Library path mismatch between processing-java and export
 _   https://github.com/processing/processing/issues/4493
 
@@ -634,9 +635,9 @@ _   .java files are copied to the root folder as well as the source folder
 
 PDE / Examples
 
-_ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
-_   mark examples as untitled (rather than read-only)
-_   maybe even pull these directly from the zip file?
+o keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
+o   mark examples as untitled (rather than read-only)
+o   maybe even pull these directly from the zip file?
 _ load examples from zip files
 _   https://github.com/processing/processing/issues/182
 _ don't make examples read-only
