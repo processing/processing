@@ -39,6 +39,11 @@
 	 directory of processing.exe (the current working directory). -->
     <opt>-Djna.boot.library.path=lib</opt>
     <opt>-Djna.nounpack=true</opt>
+    <!-- Attempt to fix UI rendering issues in Windows 10
+         https://github.com/processing/processing/issues/4700 -->
+    <opt>-Dsun.java2d.d3d=false</opt>
+    <opt>-Dsun.java2d.ddoffscreen=false</opt>
+    <opt>-Dsun.java2d.noddraw=true</opt>
     <!-- starting in 3.0, require Java 8 -->
     <minVersion>1.8.0_60</minVersion>
     <!-- increase available per PDE X request -->
