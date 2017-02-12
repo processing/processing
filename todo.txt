@@ -3,6 +3,8 @@ X check for already-exported folders before trying to remove them
 X   was spewing 'file not found' errors into the console
 X NVIDIA driver problems (and means to check)
 _   https://github.com/processing/processing/issues/4853
+_ put the reference (and examples?) into .zip files
+_   unzipping the app takes forever
 
 cleaning
 X Contribution Manager does not show all libraries until filter cleared

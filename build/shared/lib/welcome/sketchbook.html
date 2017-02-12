@@ -10,26 +10,31 @@
 
       body {
         padding: 20px;
-        /* Use the Processing font */
-        font-family: "Source Sans Pro", sans-serif;
+        font-family: "Processing Sans Pro", sans-serif;
       }
 
       h1 {
-        margin: 0;
-        font-size: 16px;
-        font-family: "Source Sans Pro Semibold", sans-serif;
+        margin-bottom: 0;
+        /* can't get the Semibold to work properly */
+        font-family: "Processing Sans Pro", sans-serif;
+        font-size: 1.3em; /*16px;*/
         font-weight: normal;
+      /*
+        font-size: 1.15em;
+        font-family: "Processing Sans Pro", sans-serif;
+        font-weight: 600;
+      */
       }
 
-      p {
+      p, td {
         margin-bottom: 0;
-        font-size: 11px;
-        line-height: 12px;
+        font-size: 0.975em; /*11px*/
+        line-height: 1.05em; /*12px*/
       }
 
       table {
-        margin: 10px 0 0 0;
-        padding: 0;
+        margin-top: 10px;
+        margin-bottom: 0;
       }
 
       p.inset, table.inset {
@@ -40,7 +45,6 @@
       a {
         color: #2c7bb5;
         text-decoration: none;
-        font-family: "Source Sans Pro Semibold", sans-serif;
       }
 
       #startButton {

@@ -1005,6 +1005,7 @@ public class Toolkit {
   static public Font getSansFont(int size, int style) {
     if (sansFont == null) {
       try {
+        /*
         // check for an installed version, because they cause nasty conflicts
         // https://github.com/processing/processing/issues/4747
         if (Platform.isWindows()) {
@@ -1024,6 +1025,9 @@ public class Toolkit {
         if (sansBoldFont == null) {
           sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
         }
+        */
+        sansFont = createFont("ProcessingSansPro-Regular.ttf", size);
+        sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
 
         // additional language constraints
         if ("el".equals(Language.getLanguage())) {
