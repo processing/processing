@@ -1,3 +1,83 @@
+PROCESSING 3.3 (REV 0257) - 12 February 2017
+
+This release adds the ability to the scale the UI or high-resolution
+(known as HiDPI) screens on Windows and Linux. Sketches don't scale yet,
+but this will at least make the Editor and Contribution Manager usable
+again on more recent Windows and Linux laptops. This release also attempts
+to fix several other Windows bugs, detailed below.
+
+The "unconfirmed" fixes section is a handful of issues that I've never
+been able to reproduce, but that should now be fixed. Please confirm at
+the links listed to let me know if it's working.
+
+This is release 3.3 instead of 3.2.5 due to the huge change to the PDE
+for scaling, as well as minor API modifications (see below). 
+
+
+[ big fixes ]
+
++ PDE was too small on high-res Windows and Linux machines. If you're
+  having trouble with this, change the "Interface scaling" option in
+  the Preferences window. On Windows, it will attempt to auto-detect. 
+  https://github.com/processing/processing/issues/2411
+  https://github.com/processing/processing/issues/4183
+
+
+[ unconfirmed fixes ]
+
++ Visual artifacts on Windows 10 when using menus
+  https://github.com/processing/processing/issues/4700
+  
++ Broken characters in the Welcome Page and the Contribution Manager
+  https://github.com/processing/processing/issues/4747
+
++ Add a dialog box to warn Windows users about NVIDIA driver problems
+  https://github.com/processing/processing/issues/4853
+
++ Blank window on startup where the "Welcome" screen should be
+  https://github.com/processing/processing/issues/3933
+
+
+[ minor fixes ]
+
++ Prevent unnecessary 'file not found' errors in the console during Export
+
+
+[ fixed earlier ]
+
++ Contribution Manager does not show all libraries until filter cleared
+  https://github.com/processing/processing/issues/4840
+
+
+[ changes to core ]
+
++ StringDict(TableRow) constructor to create a dictionary from a table row
+
++ Allow lone double quotes in the midst of CSV strings. This improves
+  compatibility with spreadsheets exported from Google Sheets. 
+
++ Return null (rather than NullPointerException) for PApplet.trim(null)
+
++ Make trim() work on column titles as well
+
++ Make Table.trim() also remove unused rows and columns. This will remove
+  extra rows or columns at the beginning as well, since that's what trim()
+  does to whitespace on strings.
+
++ Consume Unicode BOM (0xFEFF) in createReader() and Table parser
+
++ Return null for getString(), getJSONObject(), and getJSONArray()
+  when key is not present, more in line w/ other API
+
++ Several fixes for memory leaks from jdf
+  https://github.com/processing/processing/pull/4862
+  https://github.com/jdf/processing.py/issues/233
+  https://github.com/processing/processing/pull/4873
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.2.4 (REV 0256) - 29 January 2017
 
 Just getting in as many bug fixes as we can before the end of days.

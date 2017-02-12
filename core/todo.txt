@@ -1,4 +1,4 @@
-0257 (3.2.5)
+0257 (3.3)
 X return null for PApplet.trim(null)
 X StringDict(TableRow) constructor
 X allow lone double quotes in the midst of csv strings
