@@ -13,7 +13,8 @@ X   fixed in 3.2.4
 
 possible
 X visual artifacts on Windows 10 when using menus
-X   https://github.com/processing/processing/issues/4700
+_   https://github.com/processing/processing/issues/4700
+
 
 _ EventQueue problems with "could not find sketch size" message?
 _   https://github.com/processing/processing/issues/4893

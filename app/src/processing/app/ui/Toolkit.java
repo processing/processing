@@ -787,6 +787,7 @@ public class Toolkit {
   static final StringList zoomOptions =
     new StringList("100%", "150%", "200%", "300%");
 
+
   static public int zoom(int pixels) {
     if (zoom == 0) {
       zoom = parseZoom();
@@ -801,15 +802,23 @@ public class Toolkit {
 
 
   static private float parseZoom() {
-    String zoomSel = Preferences.get("editor.zoom");
-    if (zoomOptions.hasValue(zoomSel)) {
-      // shave off the % symbol at the end
-      zoomSel = zoomSel.substring(0, zoomSel.length() - 1);
-      return PApplet.parseInt(zoomSel, 100) / 100f;
+    if (Preferences.getBoolean("editor.zoom.auto")) {
+      float newZoom = Platform.getSystemDPI() / 96f;
+      String percentSel = ((int) (newZoom*100)) + "%";
+      Preferences.set("editor.zoom", percentSel);
+      return newZoom;
 
     } else {
-      Preferences.set("editor.zoom", "100%");
-      return 1;
+      String zoomSel = Preferences.get("editor.zoom");
+      if (zoomOptions.hasValue(zoomSel)) {
+        // shave off the % symbol at the end
+        zoomSel = zoomSel.substring(0, zoomSel.length() - 1);
+        return PApplet.parseInt(zoomSel, 100) / 100f;
+
+      } else {
+        Preferences.set("editor.zoom", "100%");
+        return 1;
+      }
     }
   }
 

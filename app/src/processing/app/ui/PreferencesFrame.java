@@ -69,9 +69,10 @@ public class PreferencesFrame {
   JCheckBox warningsCheckerBox;
   JCheckBox codeCompletionBox;
   JCheckBox importSuggestionsBox;
-  //JCheckBox codeCompletionTriggerBox;
 
   JComboBox<String> zoomSelectionBox;
+  JCheckBox zoomAutoBox;
+
   JComboBox<String> displaySelectionBox;
   JComboBox<String> languageSelectionBox;
 
@@ -165,10 +166,18 @@ public class PreferencesFrame {
     // Interface scale: [ 100% ] (requires restart of Processing)
 
     JLabel zoomLabel = new JLabel(Language.text("preferences.zoom") + ": ");
+
+    zoomAutoBox = new JCheckBox(Language.text("preferences.zoom.auto"));
+    zoomAutoBox.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        zoomSelectionBox.setEnabled(!zoomAutoBox.isSelected());
+      }
+    });
+
     zoomSelectionBox = new JComboBox<String>();
     zoomSelectionBox.setModel(new DefaultComboBoxModel<String>(Toolkit.zoomOptions.array()));
     zoomRestartLabel = new JLabel(" (" + Language.text("preferences.requires_restart") + ")");
-
 
     //
 
@@ -418,6 +427,7 @@ public class PreferencesFrame {
                       .addComponent(consoleFontSizeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
           .addGroup(layout.createSequentialGroup()
                       .addComponent(zoomLabel)
+                      .addComponent(zoomAutoBox)
                       .addComponent(zoomSelectionBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                       .addComponent(zoomRestartLabel))
           .addGroup(layout.createSequentialGroup()
@@ -481,6 +491,7 @@ public class PreferencesFrame {
                   .addComponent(consoleFontSizeField))
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(zoomLabel)
+                  .addComponent(zoomAutoBox)
                   .addComponent(zoomSelectionBox)
                   .addComponent(zoomRestartLabel))
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -657,6 +668,7 @@ public class PreferencesFrame {
       fontSizeField.setSelectedItem(Preferences.getInteger("editor.font.size"));
     }
 
+    Preferences.setBoolean("editor.zoom.auto", zoomAutoBox.isSelected());
     Preferences.set("editor.zoom",
                     String.valueOf(zoomSelectionBox.getSelectedItem()));
 
@@ -729,8 +741,12 @@ public class PreferencesFrame {
     fontSizeField.setSelectedItem(Preferences.getInteger("editor.font.size"));
     consoleFontSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
 
+    boolean zoomAuto = Preferences.getBoolean("editor.zoom.auto");
+    if (zoomAuto) {
+      zoomAutoBox.setSelected(zoomAuto);
+      zoomSelectionBox.setEnabled(!zoomAuto);
+    }
     String zoomSel = Preferences.get("editor.zoom");
-    System.out.println(Platform.getSystemDPI());
     int zoomIndex = Toolkit.zoomOptions.index(zoomSel);
     if (zoomIndex != -1) {
       zoomSelectionBox.setSelectedIndex(zoomIndex);

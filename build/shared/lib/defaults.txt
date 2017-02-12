@@ -107,6 +107,8 @@ editor.window.height.min.linux = 480
 
 # scaling for the interface (to handle Windows and Linux HiDPI displays)
 editor.zoom = 100%
+# automatically set based on system dpi (only helps on Windows)
+editor.zoom.auto = true
 
 # font size for editor
 #editor.font = Monospaced,plain,12
