@@ -23,6 +23,7 @@ import java.awt.EventQueue;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.InputEvent;
@@ -209,6 +210,10 @@ public class PDEX {
 
       // Add listeners
 
+      JMenuItem showUsageItem = new JMenuItem(Language.text("editor.popup.jump_to_declaration"));
+      showUsageItem.addActionListener(e -> handleInspect());
+      editor.getTextArea().getRightClickPopup().add(showUsageItem);
+
       editor.getJavaTextArea().getPainter().addMouseListener(new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent e) {
@@ -277,6 +282,12 @@ public class PDEX {
 
     }
 
+    void handleInspect() {
+      int off = editor.getSelectionStart();
+      int tabIndex = editor.getSketch().getCurrentCodeIndex();
+
+      pps.whenDoneBlocking(ps -> handleInspect(ps, tabIndex, off));
+    }
 
     // Thread: EDT
     void handleInspect(MouseEvent evt) {
