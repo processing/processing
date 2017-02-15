@@ -533,10 +533,10 @@ public class MovieMaker extends JFrame implements Tool {
     // ---------------------------------
     // Create the QuickTime movie
     // ---------------------------------
-    SwingWorker w = new SwingWorker() {
+    SwingWorker<Throwable, ?> w = new SwingWorker<Throwable, Object>() {
 
       @Override
-      protected Object doInBackground() {
+      protected Throwable doInBackground() {
         try {
           // Read image files
           File[] imgFiles = null;
@@ -600,20 +600,18 @@ public class MovieMaker extends JFrame implements Tool {
 
       @Override
       protected void done() {
-        Object o;
+        Throwable t;
         try {
-          o = get();
+          t = get();
         } catch (Exception ex) {
-          o = ex;
+          t = ex;
         }
-        if (o instanceof Throwable) {
-          Throwable t = (Throwable) o;
-          t.printStackTrace();
-          JOptionPane.showMessageDialog(MovieMaker.this,
-              Language.text("movie_maker.error.movie_failed") + "\n" + (t.getMessage() == null ? t.toString() : t.getMessage()),
-              Language.text("movie_maker.error.sorry"),
-              JOptionPane.ERROR_MESSAGE);
-        }
+        t.printStackTrace();
+        JOptionPane.showMessageDialog(MovieMaker.this,
+                                      Language.text("movie_maker.error.movie_failed") + "\n" +
+                                      (t.getMessage() == null ? t.toString() : t.getMessage()),
+                                      Language.text("movie_maker.error.sorry"),
+                                      JOptionPane.ERROR_MESSAGE);
         createMovieButton.setEnabled(true);
       }
     };
