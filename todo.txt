@@ -3,6 +3,14 @@ X add Jump to Declaration
 X   https://github.com/processing/processing/pull/4707
 X   https://github.com/processing/processing/issues/4668
 
+jakub
+X Fix preprocessing of code with double backslash in string or char literal
+X   https://github.com/processing/processing/issues/4903
+X   https://github.com/processing/processing/pull/4907
+X Ugly button images at 125% and 150% scaling on Windows
+X   https://github.com/processing/processing/issues/4901
+X   https://github.com/processing/processing/pull/4906
+
 awaiting confirmation (fixed in 3.3)
 X visual artifacts on Windows 10 when using menus
 _   https://github.com/processing/processing/issues/4700
@@ -21,6 +29,11 @@ _   https://github.com/processing/processing/issues/3933
 X amazing blurry editor window
 X   https://github.com/processing/processing/issues/4892
 
+_ Ugly button images at 125% and 150% scaling on Windows
+_   https://github.com/processing/processing/issues/4901
+_ Gap between tab headers and text area at 125% and 150% scaling on Windows
+_   Math.ceil() helps
+_   https://github.com/processing/processing/issues/4902
 
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
