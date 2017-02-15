@@ -23,7 +23,6 @@ import java.awt.EventQueue;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.InputEvent;
@@ -88,6 +87,7 @@ import processing.mode.java.JavaMode;
 import processing.mode.java.pdex.PreprocessedSketch.SketchInterval;
 
 import static processing.mode.java.pdex.ASTUtils.*;
+
 
 public class PDEX {
 
@@ -188,7 +188,6 @@ public class PDEX {
 
 
   private class InspectMode {
-
     boolean inspectModeEnabled;
 
     boolean isMouse1Down;
@@ -279,8 +278,8 @@ public class PDEX {
           inspectModeEnabled = inspectModeEnabled && isHotkeyDown;
         }
       });
-
     }
+
 
     void handleInspect() {
       int off = editor.getSelectionStart();
@@ -288,6 +287,7 @@ public class PDEX {
 
       pps.whenDoneBlocking(ps -> handleInspect(ps, tabIndex, off));
     }
+
 
     // Thread: EDT
     void handleInspect(MouseEvent evt) {
@@ -352,13 +352,10 @@ public class PDEX {
     void dispose() {
       // Nothing to do
     }
-
   }
 
 
-
-  private static class ShowUsage {
-
+  static private class ShowUsage {
     final JDialog window;
     final JTree tree;
 
@@ -595,12 +592,10 @@ public class PDEX {
         window.dispose();
       }
     }
-
   }
 
 
-  private static class ShowUsageTreeNode {
-
+  static private class ShowUsageTreeNode {
     final int tabIndex;
     final int startTabOffset;
     final int stopTabOffset;
@@ -902,7 +897,6 @@ public class PDEX {
       int offsetDiff = precedingIntervals * intervalLengthDiff;
 
       editor.getTextArea().setCaretPosition(currentOffset + offsetDiff);
-
     }
 
 
@@ -911,16 +905,12 @@ public class PDEX {
         window.dispose();
       }
     }
-
   }
 
 
-
-  private static class DebugTree {
-
+  static private class DebugTree {
     final JDialog window;
     final JTree tree;
-
     final Consumer<PreprocessedSketch> updateListener;
 
 
@@ -1030,13 +1020,10 @@ public class PDEX {
         }
       });
     }
-
   }
 
 
-
-  private static class ErrorChecker {
-
+  static private class ErrorChecker {
     // Delay delivering error check result after last sketch change #2677
     private final static long DELAY_BEFORE_UPDATE = 650;
 
@@ -1181,6 +1168,7 @@ public class PDEX {
           id == IProblem.UnresolvedVariable;
     }
 
+
     static private boolean isMissingBraceProblem(IProblem iproblem) {
       switch (iproblem.getID()) {
         case IProblem.ParsingErrorInsertToComplete: {
@@ -1197,7 +1185,7 @@ public class PDEX {
     }
 
 
-    public static String[] getImportSuggestions(ClassPath cp, String className) {
+    static public String[] getImportSuggestions(ClassPath cp, String className) {
       RegExpResourceFilter regf = new RegExpResourceFilter(
           Pattern.compile(".*"),
           Pattern.compile("(.*\\$)?" + className + "\\.class",
@@ -1224,6 +1212,5 @@ public class PDEX {
           })
           .toArray(String[]::new);
     }
-
   }
 }
