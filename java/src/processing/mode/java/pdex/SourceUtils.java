@@ -266,6 +266,14 @@ public class SourceUtils {
     for (int i = 0; i <= length; i++) {
       char ch = (i < length) ? p.charAt(i) : 0;
       char pch = (i == 0) ? 0 : p.charAt(i-1);
+      // Get rid of double backslash immediately, otherwise
+      // the second backslash incorrectly triggers a new escape sequence
+      if (pch == '\\' && ch == '\\') {
+        p.setCharAt(i-1, ' ');
+        p.setCharAt(i, ' ');
+        pch = ' ';
+        ch = ' ';
+      }
       switch (state) {
         case OUT:
           switch (ch) {
