@@ -533,7 +533,7 @@ public class MovieMaker extends JFrame implements Tool {
     // ---------------------------------
     // Create the QuickTime movie
     // ---------------------------------
-    SwingWorker<Throwable, ?> w = new SwingWorker<Throwable, Object>() {
+    new SwingWorker<Throwable, Object>() {
 
       @Override
       protected Throwable doInBackground() {
@@ -614,9 +614,7 @@ public class MovieMaker extends JFrame implements Tool {
                                       JOptionPane.ERROR_MESSAGE);
         createMovieButton.setEnabled(true);
       }
-    };
-    w.execute();
-
+    }.execute();
 
   }//GEN-LAST:event_createMovie
 
