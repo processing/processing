@@ -112,6 +112,11 @@ implements MouseListener, MouseMotionListener, ActionListener {
     } else if (rollover) {
       image = rolloverImage;
     }
+
+    Graphics2D g2 = (Graphics2D) g;
+    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                        RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+
     int dim = getSize().width;  // width == height
     if (gradient != null) {
       //g.drawImage(gradient, 0, 0, DIM, DIM, this);
