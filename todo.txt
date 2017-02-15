@@ -29,11 +29,9 @@ _   https://github.com/processing/processing/issues/3933
 X amazing blurry editor window
 X   https://github.com/processing/processing/issues/4892
 
-_ Ugly button images at 125% and 150% scaling on Windows
-_   https://github.com/processing/processing/issues/4901
 _ Gap between tab headers and text area at 125% and 150% scaling on Windows
-_   Math.ceil() helps
 _   https://github.com/processing/processing/issues/4902
+_   Math.ceil() helps
 
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
