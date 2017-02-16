@@ -409,8 +409,6 @@ public class PGraphicsJava2D extends PGraphics {
     checkSettings();
     resetMatrix(); // reset model matrix
     vertexCount = 0;
-
-    g2.scale(pixelDensity, pixelDensity);
   }
 
 
@@ -2236,6 +2234,7 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public void resetMatrix() {
     g2.setTransform(new AffineTransform());
+    g2.scale(pixelDensity, pixelDensity);
   }
 
 
