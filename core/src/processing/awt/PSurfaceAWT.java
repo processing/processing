@@ -90,6 +90,8 @@ public class PSurfaceAWT extends PSurfaceNone {
   int sketchWidth;
   int sketchHeight;
 
+  int windowScaleFactor;
+
 
   public PSurfaceAWT(PGraphics graphics) {
     //this.graphics = graphics;
@@ -224,7 +226,7 @@ public class PSurfaceAWT extends PSurfaceNone {
       if (!oldSize.equals(newSize)) {
 //        System.out.println("validate() render old=" + oldSize + " -> new=" + newSize);
         oldSize = newSize;
-        sketch.setSize(newSize.width, newSize.height);
+        sketch.setSize(newSize.width / windowScaleFactor, newSize.height / windowScaleFactor);
 //        try {
         render();
 //        } catch (IllegalStateException ise) {
@@ -423,8 +425,11 @@ public class PSurfaceAWT extends PSurfaceNone {
     sketch.displayWidth = screenRect.width;
     sketch.displayHeight = screenRect.height;
 
-    sketchWidth = sketch.sketchWidth();
-    sketchHeight = sketch.sketchHeight();
+    windowScaleFactor = PApplet.platform == PConstants.MACOSX ?
+        1 : sketch.pixelDensity;
+
+    sketchWidth = sketch.sketchWidth() * windowScaleFactor;
+    sketchHeight = sketch.sketchHeight() * windowScaleFactor;
 
     boolean fullScreen = sketch.sketchFullScreen();
     // Removing the section below because sometimes people want to do the
@@ -481,7 +486,7 @@ public class PSurfaceAWT extends PSurfaceNone {
     // http://dev.processing.org/bugs/show_bug.cgi?id=908
 
     frame.add(canvas);
-    setSize(sketchWidth, sketchHeight);
+    setSize(sketchWidth / windowScaleFactor, sketchHeight / windowScaleFactor);
 
     /*
     if (fullScreen) {
@@ -954,8 +959,8 @@ public class PSurfaceAWT extends PSurfaceNone {
       return;  // unchanged, don't rebuild everything
     }
 
-    sketchWidth = wide;
-    sketchHeight = high;
+    sketchWidth = wide * windowScaleFactor;
+    sketchHeight = high * windowScaleFactor;
 
 //    canvas.setSize(wide, high);
 //    frame.setSize(wide, high);
@@ -1142,8 +1147,9 @@ public class PSurfaceAWT extends PSurfaceNone {
             // overall size of the window. Perhaps JFrame sets its coord
             // system so that (0, 0) is always the upper-left of the content
             // area. Which seems nice, but breaks any f*ing AWT-based code.
-            setSize(windowSize.width - currentInsets.left - currentInsets.right,
-                    windowSize.height - currentInsets.top - currentInsets.bottom);
+            int w = windowSize.width - currentInsets.left - currentInsets.right;
+            int h = windowSize.height - currentInsets.top - currentInsets.bottom;
+            setSize(w / windowScaleFactor, h / windowScaleFactor);
 
             // correct the location when inset size changes
             setLocation(x - currentInsets.left, y - currentInsets.top);
