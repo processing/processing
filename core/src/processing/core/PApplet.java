@@ -1143,7 +1143,7 @@ public class PApplet implements PConstants {
  /**
   * @param display the display number to check
   */
-  static public int displayDensity(int display) {
+  public int displayDensity(int display) {
     if (PApplet.platform == PConstants.MACOSX) {
       // This should probably be reset each time there's a display change.
       // A 5-minute search didn't turn up any such event in the Java 7 API.
@@ -1185,6 +1185,15 @@ public class PApplet implements PConstants {
             }
           }
         } catch (Exception ignore) { }
+      }
+    } else if (PApplet.platform == PConstants.WINDOWS ||
+        PApplet.platform == PConstants.LINUX) {
+      if (suggestedDensity == -1) {
+        // TODO: detect and return DPI scaling using JNA; Windows has
+        //   a system-wide value, not sure how it works on Linux
+        return 1;
+      } else if (suggestedDensity == 1 || suggestedDensity == 2) {
+        return suggestedDensity;
       }
     }
     return 1;
