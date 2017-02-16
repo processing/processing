@@ -787,6 +787,8 @@ public class PApplet implements PConstants {
    */
   static public final String ARGS_SKETCH_FOLDER = "--sketch-path";
 
+  static public final String ARGS_DENSITY = "--density";
+
   /**
    * When run externally to a PdeEditor,
    * this is sent by the sketch when it quits.
@@ -906,6 +908,7 @@ public class PApplet implements PConstants {
   // Unlike the others above, needs to be public to support
   // the pixelWidth and pixelHeight fields.
   public int pixelDensity = 1;
+  int suggestedDensity = -1;
 
   String outputPath;
   OutputStream outputStream;
@@ -10367,6 +10370,7 @@ public class PApplet implements PConstants {
 //    boolean fullScreen = false;
     boolean present = false;
 //    boolean spanDisplays = false;
+    int density = -1;
 
     String param = null, value = null;
     String folder = calcSketchPath();
@@ -10409,6 +10413,15 @@ public class PApplet implements PConstants {
 
         } else if (param.equals(ARGS_LOCATION)) {
           location = parseInt(split(value, ','));
+
+        } else if (param.equals(ARGS_DENSITY)) {
+          density = parseInt(value, -1);
+          if (density == -1) {
+            System.err.println("Could not parse " + value + " for " + ARGS_DENSITY);
+          } else if (density != 1 && density != 2) {
+            density = -1;
+            System.err.println(ARGS_DENSITY + " should be 1 or 2");
+          }
         }
 
       } else {
@@ -10476,6 +10489,10 @@ public class PApplet implements PConstants {
     // Set the suggested display that's coming from the command line
     // (and most likely, from the PDE's preference setting).
     sketch.display = displayNum;
+
+    // Set the suggested density that is coming from command line
+    // (most likely set from the PDE based on a system DPI scaling)
+    sketch.suggestedDensity = density;
 
     // For 3.0.1, moved this above handleSettings() so that loadImage() can be
     // used inside settings(). Sets a terrible precedent, but the alternative
