@@ -1318,7 +1318,8 @@ public class PSurfaceAWT extends PSurfaceNone {
 
     sketch.postEvent(new MouseEvent(nativeEvent, nativeEvent.getWhen(),
                                     peAction, peModifiers,
-                                    nativeEvent.getX(), nativeEvent.getY(),
+                                    nativeEvent.getX() / windowScaleFactor,
+                                    nativeEvent.getY() / windowScaleFactor,
                                     peButton,
                                     peCount));
   }
