@@ -2889,7 +2889,7 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   public void set(int x, int y, int argb) {
-    if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
+    if ((x < 0) || (y < 0) || (x >= pixelWidth) || (y >= pixelHeight)) return;
 //    ((BufferedImage) image).setRGB(x, y, argb);
     getset[0] = argb;
 //    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
