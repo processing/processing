@@ -645,9 +645,27 @@ public class PGraphicsFX2D extends PGraphics {
       int mw = mx2 - mx1;
       int mh = my2 - my1;
 
-      PixelWriter pw = context.getPixelWriter();
-      pw.setPixels(mx1, my1, mw, mh, argbFormat, pixels,
-                   mx1 + my1 * pixelWidth, pixelWidth);
+      if (pixelDensity == 1) {
+        PixelWriter pw = context.getPixelWriter();
+        pw.setPixels(mx1, my1, mw, mh, argbFormat, pixels,
+                     mx1 + my1 * pixelWidth, pixelWidth);
+      } else {
+        // The only way to push all the pixels is to draw a scaled-down image
+        if (snapshotImage == null ||
+            snapshotImage.getWidth() != pixelWidth ||
+            snapshotImage.getHeight() != pixelHeight) {
+          snapshotImage = new WritableImage(pixelWidth, pixelHeight);
+        }
+
+        PixelWriter pw = snapshotImage.getPixelWriter();
+        pw.setPixels(mx1, my1, mw, mh, argbFormat, pixels,
+                     mx1 + my1 * pixelWidth, pixelWidth);
+        context.save();
+        resetMatrix();
+        context.scale(1d / pixelDensity, 1d / pixelDensity);
+        context.drawImage(snapshotImage, mx1, my1, mw, mh, mx1, my1, mw, mh);
+        context.restore();
+      }
     }
 
     modified = false;
@@ -2133,8 +2151,9 @@ public class PGraphicsFX2D extends PGraphics {
         snapshotImage = new WritableImage(pixelWidth, pixelHeight);
       }
 
-      SnapshotParameters sp = new SnapshotParameters();
+      SnapshotParameters sp = null;
       if (pixelDensity != 1) {
+        sp = new SnapshotParameters();
         sp.setTransform(Transform.scale(pixelDensity, pixelDensity));
       }
       snapshotImage = ((PSurfaceFX) surface).canvas.snapshot(sp, snapshotImage);
