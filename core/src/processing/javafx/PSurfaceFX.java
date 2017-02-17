@@ -22,6 +22,8 @@
 
 package processing.javafx;
 
+import com.sun.glass.ui.Screen;
+
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
@@ -244,6 +246,13 @@ public class PSurfaceFX implements PSurface {
 
       PApplet sketch = surface.sketch;
 
+      float renderScale = Screen.getMainScreen().getRenderScale();
+      float uiScale = Screen.getMainScreen().getUIScale();
+      if (sketch.pixelDensity == 2 && renderScale < 2) {
+        sketch.pixelDensity = 1;
+        System.err.println("pixelDensity(2) is not available for this display");
+      }
+
       // Use AWT display code, because FX orders screens in different way
       GraphicsDevice displayDevice = null;
 
@@ -308,14 +317,14 @@ public class PSurfaceFX implements PSurface {
       int sketchHeight = sketch.sketchHeight();
 
       if (fullScreen || spanDisplays) {
-        sketchWidth = (int) screenRect.getWidth();
-        sketchHeight = (int) screenRect.getHeight();
+        sketchWidth = (int) (screenRect.getWidth() / uiScale);
+        sketchHeight = (int) (screenRect.getHeight() / uiScale);
 
         stage.initStyle(StageStyle.UNDECORATED);
-        stage.setX(screenRect.getMinX());
-        stage.setY(screenRect.getMinY());
-        stage.setWidth(screenRect.getWidth());
-        stage.setHeight(screenRect.getHeight());
+        stage.setX(screenRect.getMinX() / uiScale);
+        stage.setY(screenRect.getMinY() / uiScale);
+        stage.setWidth(screenRect.getWidth() / uiScale);
+        stage.setHeight(screenRect.getHeight() / uiScale);
       }
 
       Canvas canvas = surface.canvas;
