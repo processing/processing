@@ -1,6 +1,14 @@
 0258 (3.3.1)
 
 
+gohai
+X Fix MeshTweening vertex shader
+X   https://github.com/processing/processing-docs/issues/523
+X   https://github.com/processing/processing-docs/pull/524
+X ARM: Allow Raspberry Pi's Mesa GL driver to use up to 8 lights
+X   https://github.com/processing/processing/pull/4915
+
+
 high
 _ implement sketch scaling into PApplet
 _   https://github.com/processing/processing/issues/4897
