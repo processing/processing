@@ -1,4 +1,9 @@
 0258 (3.3.1)
+X improve sum() functions in processing.data
+X   add sum() to IntDict and FloatDict
+X   add sumLong() to IntList, IntDict (to handle cases outside integer range)
+X   add sumDouble() to FloatList, FloatDict (to handle outside float range)
+X   throw exception when using sum() with numbers that are too large or small
 
 
 gohai
