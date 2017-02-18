@@ -695,6 +695,10 @@ public class PGraphicsOpenGL extends PGraphics {
     float f = pgl.getPixelScale();
     pixelWidth = (int)(width * f);
     pixelHeight = (int)(height * f);
+    if (primaryGraphics) {
+      parent.pixelWidth = pixelWidth;
+      parent.pixelHeight = pixelHeight;
+    }
   }
 
 
