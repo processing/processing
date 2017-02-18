@@ -390,6 +390,8 @@ public class PSurfaceJOGL implements PSurface {
       sketchHeight = screenRect.height;
     }
 
+    sketch.setSize(sketchWidth, sketchHeight);
+
     float[] reqSurfacePixelScale;
     if (graphics.is2X()) {
        // Retina
