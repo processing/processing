@@ -2052,6 +2052,9 @@ public abstract class PGL {
     int status = checkFramebufferStatus(FRAMEBUFFER);
     if (status == FRAMEBUFFER_COMPLETE) {
       return true;
+    } else if (status == FRAMEBUFFER_UNDEFINED) {
+      System.err.println(String.format(FRAMEBUFFER_ERROR,
+                                       "framebuffer undefined"));
     } else if (status == FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
       System.err.println(String.format(FRAMEBUFFER_ERROR,
                                        "incomplete attachment"));
@@ -2070,12 +2073,15 @@ public abstract class PGL {
     } else if (status == FRAMEBUFFER_INCOMPLETE_READ_BUFFER) {
       System.err.println(String.format(FRAMEBUFFER_ERROR,
                                        "incomplete read buffer"));
-    } else if (status == FRAMEBUFFER_INCOMPLETE_MULTISAMPLE) {
-      System.err.println(String.format(FRAMEBUFFER_ERROR,
-                                       "incomplete multisample buffer"));
     } else if (status == FRAMEBUFFER_UNSUPPORTED) {
       System.err.println(String.format(FRAMEBUFFER_ERROR,
                                        "framebuffer unsupported"));
+    } else if (status == FRAMEBUFFER_INCOMPLETE_MULTISAMPLE) {
+      System.err.println(String.format(FRAMEBUFFER_ERROR,
+                                       "incomplete multisample buffer"));
+    } else if (status == FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS) {
+      System.err.println(String.format(FRAMEBUFFER_ERROR,
+                                       "incomplete layer targets"));
     } else {
       System.err.println(String.format(FRAMEBUFFER_ERROR,
                                        "unknown error " + status));
@@ -2994,14 +3000,16 @@ public abstract class PGL {
   public static int DEPTH_STENCIL;
 
   public static int FRAMEBUFFER_COMPLETE;
+  public static int FRAMEBUFFER_UNDEFINED;
   public static int FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
   public static int FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
   public static int FRAMEBUFFER_INCOMPLETE_DIMENSIONS;
   public static int FRAMEBUFFER_INCOMPLETE_FORMATS;
   public static int FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER;
   public static int FRAMEBUFFER_INCOMPLETE_READ_BUFFER;
-  public static int FRAMEBUFFER_INCOMPLETE_MULTISAMPLE;
   public static int FRAMEBUFFER_UNSUPPORTED;
+  public static int FRAMEBUFFER_INCOMPLETE_MULTISAMPLE;
+  public static int FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS;
 
   public static int FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE;
   public static int FRAMEBUFFER_ATTACHMENT_OBJECT_NAME;
