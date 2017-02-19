@@ -961,7 +961,16 @@ public abstract class PGL {
       createDepthAndStencilBuffer(true, depthBits, stencilBits, packed);
     }
 
-    validateFramebuffer();
+    int status = validateFramebuffer();
+
+    if (status == FRAMEBUFFER_INCOMPLETE_MULTISAMPLE && 1 < numSamples) {
+      System.err.println("Continuing with multisampling disabled");
+      reqNumSamples = 1;
+      destroyFBOLayer();
+      // try again
+      createFBOLayer();
+      return;
+    }
 
     // Clear all buffers.
     clearDepth(1);
@@ -2048,10 +2057,10 @@ public abstract class PGL {
   }
 
 
-  protected boolean validateFramebuffer() {
+  protected int validateFramebuffer() {
     int status = checkFramebufferStatus(FRAMEBUFFER);
     if (status == FRAMEBUFFER_COMPLETE) {
-      return true;
+      return 0;
     } else if (status == FRAMEBUFFER_UNDEFINED) {
       System.err.println(String.format(FRAMEBUFFER_ERROR,
                                        "framebuffer undefined"));
@@ -2086,7 +2095,7 @@ public abstract class PGL {
       System.err.println(String.format(FRAMEBUFFER_ERROR,
                                        "unknown error " + status));
     }
-    return false;
+    return status;
   }
 
   protected boolean isES() {
