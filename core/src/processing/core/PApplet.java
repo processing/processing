@@ -1212,9 +1212,11 @@ public class PApplet implements PConstants {
         if (density != 1 && density != 2) {
           throw new RuntimeException("pixelDensity() can only be 1 or 2");
         }
-        if (density == 2 && displayDensity() == 1) {
+        if (!FX2D.equals(renderer) && density == 2 && displayDensity() == 1) {
+          // FX has its own check in PSurfaceFX
           // Don't throw exception because the sketch should still work
-          throw new RuntimeException("pixelDensity(2) is not available for this display");
+          System.err.println("pixelDensity(2) is not available for this display");
+          this.pixelDensity = 1;
         } else {
           this.pixelDensity = density;
         }
