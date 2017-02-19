@@ -2147,8 +2147,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (textured && textureMode == IMAGE) {
-      u /= textureImage.width;
-      v /= textureImage.height;
+      u /= textureImage.pixelWidth;
+      v /= textureImage.pixelHeight;
     }
 
     inGeo.addVertex(x, y, z,
@@ -5555,10 +5555,10 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   protected void processImageBeforeAsyncSave(PImage image) {
     if (image.format == AsyncPixelReader.OPENGL_NATIVE) {
-      PGL.nativeToJavaARGB(image.pixels, image.width, image.height);
+      PGL.nativeToJavaARGB(image.pixels, image.pixelWidth, image.pixelHeight);
       image.format = ARGB;
     } else if (image.format == AsyncPixelReader.OPENGL_NATIVE_OPAQUE) {
-      PGL.nativeToJavaRGB(image.pixels, image.width, image.height);
+      PGL.nativeToJavaRGB(image.pixels, image.pixelWidth, image.pixelHeight);
       image.format = RGB;
     }
   }
@@ -6003,7 +6003,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void mask(PImage alpha) {
     updatePixelSize();
-    if (alpha.width != pixelWidth || alpha.height != pixelHeight) {
+    if (alpha.pixelWidth != pixelWidth || alpha.pixelHeight != pixelHeight) {
       throw new RuntimeException("The PImage used with mask() must be " +
       "the same size as the applet.");
     }
@@ -6364,8 +6364,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (tex == null) return null;
 
     if (img.isModified()) {
-      if (img.width != tex.width || img.height != tex.height) {
-        tex.init(img.width, img.height);
+      if (img.pixelWidth != tex.width || img.pixelHeight != tex.height) {
+        tex.init(img.pixelWidth, img.pixelHeight);
       }
       updateTexture(img, tex);
     }
@@ -6491,8 +6491,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // avoid initializing the pixels array.
     PImage img = new PImage();
     img.parent = parent;
-    img.width = tex.width;
-    img.height = tex.height;
+    img.width = img.pixelWidth = tex.width;
+    img.height = img.pixelHeight = tex.height;
     img.format = ARGB;
     setCache(img, tex);
     return img;

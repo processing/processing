@@ -3879,6 +3879,11 @@ public class PGraphics extends PImage implements PConstants {
 //      fillA = 1;
 //    }
 
+    u1 *= img.pixelDensity;
+    u2 *= img.pixelDensity;
+    v1 *= img.pixelDensity;
+    v2 *= img.pixelDensity;
+
     beginShape(QUADS);
     texture(img);
     vertex(x1, y1, u1, v1);
@@ -7347,7 +7352,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param image PImage to set as background (must be same size as the sketch window)
    */
   public void background(PImage image) {
-    if ((image.width != width) || (image.height != height)) {
+    if ((image.pixelWidth != width) || (image.pixelHeight != height)) {
       throw new RuntimeException(ERROR_BACKGROUND_IMAGE_SIZE);
     }
     if ((image.format != RGB) && (image.format != ARGB)) {
