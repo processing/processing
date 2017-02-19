@@ -1102,9 +1102,15 @@ public class PSurfaceJOGL implements PSurface {
       peCount = nativeEvent.getClickCount();
     }
 
-    int pixelScale = (int) getPixelScale();
-    int sx = nativeEvent.getX() / pixelScale;
-    int sy = nativeEvent.getY() / pixelScale;
+    int scale;
+    if (PApplet.platform == PConstants.MACOSX) {
+      window.getCurrentSurfaceScale(currentPixelScale);
+      scale = (int) currentPixelScale[0];
+    } else {
+      scale = (int) getPixelScale();
+    }
+    int sx = nativeEvent.getX() / scale;
+    int sy = nativeEvent.getY() / scale;
     int mx = sx;
     int my = sy;
 
