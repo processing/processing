@@ -6920,7 +6920,7 @@ public class PApplet implements PConstants {
    *
    */
   public InputStream createInput(String filename) {
-    InputStream input = createInputRaw(filename);
+    InputStream input = new BufferedInputStream(createInputRaw(filename));
     final String lower = filename.toLowerCase();
     if ((input != null) &&
         (lower.endsWith(".gz") || lower.endsWith(".svgz"))) {
@@ -7360,11 +7360,12 @@ public class PApplet implements PConstants {
   static public OutputStream createOutput(File file) {
     try {
       createPath(file);  // make sure the path exists
-      FileOutputStream fos = new FileOutputStream(file);
+      OutputStream output =
+        new BufferedOutputStream(new FileOutputStream(file));
       if (file.getName().toLowerCase().endsWith(".gz")) {
-        return new GZIPOutputStream(fos);
+        return new GZIPOutputStream(output);
       }
-      return fos;
+      return output;
 
     } catch (IOException e) {
       e.printStackTrace();

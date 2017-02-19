@@ -4,6 +4,8 @@ X   add sum() to IntDict and FloatDict
 X   add sumLong() to IntList, IntDict (to handle cases outside integer range)
 X   add sumDouble() to FloatList, FloatDict (to handle outside float range)
 X   throw exception when using sum() with numbers that are too large or small
+X createInput() and createOutput() now both use buffered streams by default
+X   createInputRaw() does not, however
 
 
 gohai
