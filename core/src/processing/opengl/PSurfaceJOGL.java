@@ -822,27 +822,33 @@ public class PSurfaceJOGL implements PSurface {
   public void setSize(final int width, final int height) {
     if (pgl.presentMode()) return;
 
+    boolean changed = sketch.width != width || sketch.height != height;
+
     sketchWidth = width;
     sketchHeight = height;
 
     sketch.setSize(width, height);
     graphics.setSize(width, height);
 
-    if (window.getWidth() != width || window.getHeight() != height) {
+    if (changed) {
       window.setSize(width * windowScaleFactor, height * windowScaleFactor);
     }
   }
 
 
   public float getPixelScale() {
-    float result = graphics.pixelDensity;
-    if (graphics.pixelDensity == 2 && PApplet.platform == PConstants.MACOSX) {
+    if (graphics.pixelDensity == 1) {
+      return 1;
+    }
+
+    if (PApplet.platform == PConstants.MACOSX) {
       // Even if the graphics are retina, the user might have moved the window
       // into a non-retina monitor, so we need to check
       window.getCurrentSurfaceScale(currentPixelScale);
-      result = currentPixelScale[0];
+      return currentPixelScale[0];
     }
-    return result;
+
+    return 2;
   }
 
 
@@ -947,8 +953,8 @@ public class PSurfaceJOGL implements PSurface {
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
       pgl.resetFBOLayer();
       pgl.getGL(drawable);
-      int pixelScale = (int) getPixelScale();
-      setSize(w / pixelScale, h / pixelScale);
+      window.getCurrentSurfaceScale(currentPixelScale);
+      setSize((int) (w / currentPixelScale[0]), (int) (h / currentPixelScale[1]));
     }
   }
 
