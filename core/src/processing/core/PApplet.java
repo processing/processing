@@ -7094,6 +7094,7 @@ public class PApplet implements PConstants {
     return null;
   }
 
+
   /**
    * @nowebref
    */
@@ -7102,7 +7103,7 @@ public class PApplet implements PConstants {
       throw new IllegalArgumentException("File passed to createInput() was null");
     }
     try {
-      InputStream input = new FileInputStream(file);
+      InputStream input = new BufferedInputStream(new FileInputStream(file));
       if (file.getName().toLowerCase().endsWith(".gz")) {
         return new GZIPInputStream(input);
       }
