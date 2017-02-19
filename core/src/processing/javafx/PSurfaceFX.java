@@ -247,9 +247,15 @@ public class PSurfaceFX implements PSurface {
       PApplet sketch = surface.sketch;
 
       float renderScale = Screen.getMainScreen().getRenderScale();
+      if (PApplet.platform == PConstants.MACOSX) {
+        for (Screen s : Screen.getScreens()) {
+          renderScale = Math.max(renderScale, s.getRenderScale());
+        }
+      }
       float uiScale = Screen.getMainScreen().getUIScale();
       if (sketch.pixelDensity == 2 && renderScale < 2) {
         sketch.pixelDensity = 1;
+        sketch.g.pixelDensity = 1;
         System.err.println("pixelDensity(2) is not available for this display");
       }
 
