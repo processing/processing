@@ -6521,7 +6521,6 @@ public class PApplet implements PConstants {
           }
         } else {
           checkLookAndFeel();
-
           JFileChooser fileChooser = new JFileChooser();
           fileChooser.setDialogTitle(prompt);
           fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
