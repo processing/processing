@@ -60,7 +60,7 @@
   <!-- using 8u111 instead of 8u112 because the latter 
        has different build numbers for macOS vs others -->
   <property name="jdk.version" value="8" />
-  <property name="jdk.update" value="111" />
+  <property name="jdk.update" value="92" />
   <property name="jdk.build" value="14" />
 
   <property name="jdk.short" value="${jdk.version}u${jdk.update}" />

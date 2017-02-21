@@ -49,6 +49,7 @@ public class PreferencesFrame {
   GroupLayout layout;
 
   static final Integer[] FONT_SIZES = { 10, 12, 14, 18, 24, 36, 48 };
+  static final Integer[] TABS_SIZES = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
   JTextField sketchbookLocationField;
   JTextField presentColor;
@@ -60,6 +61,7 @@ public class PreferencesFrame {
   JCheckBox checkUpdatesBox;
   JComboBox<Integer> fontSizeField;
   JComboBox<Integer> consoleFontSizeField;
+  JComboBox<Integer> tabsSizeField;
   JCheckBox inputMethodBox;
   JCheckBox autoAssociateBox;
 
@@ -153,7 +155,7 @@ public class PreferencesFrame {
     fontSelectionBox.setEnabled(false);  // don't enable until fonts are loaded
 
 
-    // Editor font size [ 12 ]  Console font size [ 10 ]
+    // Editor font size [ 12 ]  Console font size [ 10 ]  Tabs length [ 2 ]
 
     JLabel fontSizelabel = new JLabel(Language.text("preferences.editor_font_size")+": ");
     fontSizeField = new JComboBox<Integer>(FONT_SIZES);
@@ -161,6 +163,10 @@ public class PreferencesFrame {
     JLabel consoleFontSizeLabel = new JLabel(Language.text("preferences.console_font_size")+": ");
     consoleFontSizeField = new JComboBox<Integer>(FONT_SIZES);
     fontSizeField.setSelectedItem(Preferences.getFont("editor.font.size"));
+
+    JLabel tabsSizeLabel = new JLabel(Language.text("preferences.tabs_size")+": ");
+    tabsSizeField = new JComboBox<Integer>(TABS_SIZES);
+    tabsSizeField.setSelectedItem(Preferences.getInteger("editor.tabs.size"));
 
 
     // Interface scale: [ 100% ] (requires restart of Processing)
@@ -424,7 +430,9 @@ public class PreferencesFrame {
                       .addComponent(fontSizelabel)
                       .addComponent(fontSizeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                       .addComponent(consoleFontSizeLabel)
-                      .addComponent(consoleFontSizeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                      .addComponent(consoleFontSizeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                      .addComponent(tabsSizeLabel)
+                      .addComponent(tabsSizeField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
           .addGroup(layout.createSequentialGroup()
                       .addComponent(zoomLabel)
                       .addComponent(zoomAutoBox)
@@ -488,7 +496,9 @@ public class PreferencesFrame {
                   .addComponent(fontSizelabel)
                   .addComponent(fontSizeField)
                   .addComponent(consoleFontSizeLabel)
-                  .addComponent(consoleFontSizeField))
+                  .addComponent(consoleFontSizeField)
+                  .addComponent(tabsSizeLabel)
+                  .addComponent(tabsSizeField))
       .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                   .addComponent(zoomLabel)
                   .addComponent(zoomAutoBox)
@@ -683,6 +693,19 @@ public class PreferencesFrame {
     } catch (NumberFormatException e) {
       Messages.log("Ignoring invalid font size " + consoleFontSizeField); //$NON-NLS-1$
       consoleFontSizeField.setSelectedItem(Preferences.getInteger("console.font.size"));
+    }
+
+    try {
+      Object selection = tabsSizeField.getSelectedItem();
+      if(selection instanceof String) {
+        // Replace with Integer version
+        selection = Integer.parseInt((String) selection);
+      }
+      Preferences.set("editor.tabs.size", String.valueOf(selection));
+
+    } catch (NumberFormatException e) {
+      Messages.log("Ignoring invalid tabs size " + tabsSizeField);
+      tabsSizeField.setSelectedItem(Preferences.getInteger("editor.tabs.size"));
     }
 
     Preferences.setColor("run.present.bgcolor", presentColor.getBackground());
