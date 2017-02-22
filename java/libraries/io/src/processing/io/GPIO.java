@@ -451,9 +451,14 @@ public class GPIO {
    *  @return true if the interrupt occured, false if the timeout occured
    *  @webref
    */
-  public static boolean waitForInterrupt(int pin, int mode, int timeout) {
+  public static boolean waitFor(int pin, int mode, int timeout) {
     enableInterrupt(pin, mode);
     return waitForInterrupt(pin, timeout);
+  }
+
+
+  public static boolean waitForInterrupt(int pin, int mode, int timeout) {
+    throw new RuntimeException("The waitForInterrupt function has been renamed to waitFor. Please update your sketch accordingly.");
   }
 
 
