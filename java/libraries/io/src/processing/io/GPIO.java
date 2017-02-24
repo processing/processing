@@ -456,15 +456,18 @@ public class GPIO {
 
   /**
    *  Waits for the value of an input pin to change
+   *
+   *  This function will throw a RuntimeException in case of a timeout.
    *  @param pin GPIO pin
    *  @param mode what to wait for: GPIO.CHANGE, GPIO.FALLING or GPIO.RISING
    *  @param timeout don't wait more than timeout milliseconds
-   *  @return true if the interrupt occured, false if the timeout occured
    *  @webref
    */
-  public static boolean waitFor(int pin, int mode, int timeout) {
+  public static void waitFor(int pin, int mode, int timeout) {
     enableInterrupt(pin, mode);
-    return waitForInterrupt(pin, timeout);
+    if (waitForInterrupt(pin, timeout) == false) {
+      throw new RuntimeException("Timeout occurred");
+    }
   }
 
 
