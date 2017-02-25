@@ -210,6 +210,11 @@ public class Commander implements RunnerListener {
       } else if (arg.startsWith(outputArg)) {
         outputSet = true;
         outputPath = arg.substring(outputArg.length());
+        outputPath = outputPath.replaceAll("~", System.getProperty("user.home"));
+        // Relative paths
+        if (!outputPath.matches("^(\\$|\\/).*")) {
+          outputPath = pwd + "/" + outputPath;
+        }
 
       } else if (arg.equals(forceArg)) {
         force = true;
