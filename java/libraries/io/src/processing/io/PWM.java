@@ -117,7 +117,7 @@ public class PWM {
     // XXX: implicit clear()?
     // XXX: also check GPIO
 
-    String fn = "/sys/class/pwm/" + chip + "/export";
+    String fn = "/sys/class/pwm/" + chip + "/unexport";
     int ret = NativeInterface.writeFile(fn, Integer.toString(channel));
     if (ret < 0) {
       if (ret == -2) {    // ENOENT
