@@ -2,12 +2,6 @@
 X add Jump to Declaration
 X   https://github.com/processing/processing/pull/4707
 X   https://github.com/processing/processing/issues/4668
-_ Small tooltip text on high-dpi screens
-_   https://github.com/processing/processing/issues/4914
-_ mode list does not update after changing sketchbook folder
-_   already reported?
-_ swap font smoothing for tab size?
-_   implement simple table for prefs?
 
 jakub
 X Fix preprocessing of code with double backslash in string or char literal

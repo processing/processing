@@ -508,27 +508,6 @@ public class IntDict {
   }
 
 
-  public int sum() {
-    long amount = sumLong();
-    if (amount > Integer.MAX_VALUE) {
-      throw new RuntimeException("sum() exceeds " + Integer.MAX_VALUE + ", use sumLong()");
-    }
-    if (amount < Integer.MIN_VALUE) {
-      throw new RuntimeException("sum() less than " + Integer.MIN_VALUE + ", use sumLong()");
-    }
-    return (int) amount;
-  }
-
-
-  public long sumLong() {
-    long sum = 0;
-    for (int i = 0; i < count; i++) {
-      sum += values[i];
-    }
-    return sum;
-  }
-
-
   public int index(String what) {
     Integer found = indices.get(what);
     return (found == null) ? -1 : found.intValue();
@@ -697,7 +676,10 @@ public class IntDict {
    * @return an IntDict with the original keys, mapped to their pct of the total
    */
   public FloatDict getPercent() {
-    double sum = sum();  // a little more accuracy
+    double sum = 0;
+    for (int i = 0; i < count; i++) {
+      sum += values[i];
+    }
     FloatDict outgoing = new FloatDict();
     for (int i = 0; i < size(); i++) {
       double percent = value(i) / sum;

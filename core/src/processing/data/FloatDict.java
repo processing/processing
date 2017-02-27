@@ -522,27 +522,6 @@ public class FloatDict {
   }
 
 
-  public float sum() {
-    double amount = sumDouble();
-    if (amount > Float.MAX_VALUE) {
-      throw new RuntimeException("sum() exceeds " + Float.MAX_VALUE + ", use sumDouble()");
-    }
-    if (amount < -Float.MAX_VALUE) {
-      throw new RuntimeException("sum() lower than " + -Float.MAX_VALUE + ", use sumDouble()");
-    }
-    return (float) amount;
-  }
-
-
-  public double sumDouble() {
-    double sum = 0;
-    for (int i = 0; i < count; i++) {
-      sum += values[i];
-    }
-    return sum;
-  }
-
-
   public int index(String what) {
     Integer found = indices.get(what);
     return (found == null) ? -1 : found.intValue();
@@ -729,7 +708,10 @@ public class FloatDict {
    * @return a FloatDict with the original keys, mapped to their pct of the total
    */
   public FloatDict getPercent() {
-    double sum = sum();
+    double sum = 0;
+    for (int i = 0; i < count; i++) {
+      sum += values[i];
+    }
     FloatDict outgoing = new FloatDict();
     for (int i = 0; i < size(); i++) {
       double percent = value(i) / sum;

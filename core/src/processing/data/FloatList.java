@@ -627,23 +627,11 @@ public class FloatList implements Iterable<Float> {
 
 
   public float sum() {
-    double amount = sumDouble();
-    if (amount > Float.MAX_VALUE) {
-      throw new RuntimeException("sum() exceeds " + Float.MAX_VALUE + ", use sumDouble()");
-    }
-    if (amount < -Float.MAX_VALUE) {
-      throw new RuntimeException("sum() lower than " + -Float.MAX_VALUE + ", use sumDouble()");
-    }
-    return (float) amount;
-  }
-
-
-  public double sumDouble() {
-    double sum = 0;
+    double outgoing = 0;
     for (int i = 0; i < count; i++) {
-      sum += data[i];
+      outgoing += data[i];
     }
-    return sum;
+    return (float) outgoing;
   }
 
 

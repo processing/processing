@@ -596,23 +596,11 @@ public class IntList implements Iterable<Integer> {
 
 
   public int sum() {
-    long amount = sumLong();
-    if (amount > Integer.MAX_VALUE) {
-      throw new RuntimeException("sum() exceeds " + Integer.MAX_VALUE + ", use sumLong()");
-    }
-    if (amount < Integer.MIN_VALUE) {
-      throw new RuntimeException("sum() less than " + Integer.MIN_VALUE + ", use sumLong()");
-    }
-    return (int) amount;
-  }
-
-
-  public long sumLong() {
-    long sum = 0;
+    int outgoing = 0;
     for (int i = 0; i < count; i++) {
-      sum += data[i];
+      outgoing += data[i];
     }
-    return sum;
+    return outgoing;
   }
 
 
