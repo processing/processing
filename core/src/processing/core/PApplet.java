@@ -44,6 +44,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 // used by selectInput(), selectOutput(), selectFolder()
 import javax.swing.JFileChooser;
+import javax.swing.UIManager;
 // used to present the fullScreen() warning about Spaces on OS X
 import javax.swing.JOptionPane;
 // used by desktopFile() method
@@ -994,6 +995,7 @@ public class PApplet implements PConstants {
       if ("0".equals(result)) {
         EventQueue.invokeLater(new Runnable() {
           public void run() {
+            checkLookAndFeel();
             final String msg =
               "To use fullScreen(SPAN), first turn off “Displays have separate spaces”\n" +
               "in System Preferences \u2192 Mission Control. Then log out and log back in.";
@@ -6287,6 +6289,25 @@ public class PApplet implements PConstants {
   */
 
 
+  static private boolean lookAndFeelCheck;
+
+  /**
+   * Initialize the Look & Feel if it hasn't been already.
+   * Call this before using any Swing-related code in PApplet methods.
+   */
+  static private void checkLookAndFeel() {
+    if (!lookAndFeelCheck) {
+      if (platform == WINDOWS) {
+        // Windows is defaulting to Metal or something else awful.
+        // Which also is not scaled properly with HiDPI interfaces.
+        try {
+          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) { }
+      }
+      lookAndFeelCheck = true;
+    }
+  }
+
   /**
    * Open a platform-specific file chooser dialog to select a file for input.
    * After the selection is made, the selected File will be passed to the
@@ -6499,6 +6520,7 @@ public class PApplet implements PConstants {
             selectedFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
           }
         } else {
+          checkLookAndFeel();
           JFileChooser fileChooser = new JFileChooser();
           fileChooser.setDialogTitle(prompt);
           fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -6925,13 +6947,14 @@ public class PApplet implements PConstants {
     if ((input != null) &&
         (lower.endsWith(".gz") || lower.endsWith(".svgz"))) {
       try {
-        return new GZIPInputStream(input);
+        // buffered has to go *around* the GZ, otherwise 25x slower
+        return new BufferedInputStream(new GZIPInputStream(input));
       } catch (IOException e) {
         printStackTrace(e);
         return null;
       }
     }
-    return input;
+    return new BufferedInputStream(input);
   }
 
 
@@ -7094,6 +7117,7 @@ public class PApplet implements PConstants {
     return null;
   }
 
+
   /**
    * @nowebref
    */
@@ -7104,9 +7128,9 @@ public class PApplet implements PConstants {
     try {
       InputStream input = new FileInputStream(file);
       if (file.getName().toLowerCase().endsWith(".gz")) {
-        return new GZIPInputStream(input);
+        return new BufferedInputStream(new GZIPInputStream(input));
       }
-      return input;
+      return new BufferedInputStream(input);
 
     } catch (IOException e) {
       System.err.println("Could not createInput() for " + file);
@@ -7360,11 +7384,11 @@ public class PApplet implements PConstants {
   static public OutputStream createOutput(File file) {
     try {
       createPath(file);  // make sure the path exists
-      FileOutputStream fos = new FileOutputStream(file);
+      OutputStream output = new FileOutputStream(file);
       if (file.getName().toLowerCase().endsWith(".gz")) {
-        return new GZIPOutputStream(fos);
+        return new BufferedOutputStream(new GZIPOutputStream(output));
       }
-      return fos;
+      return new BufferedOutputStream(output);
 
     } catch (IOException e) {
       e.printStackTrace();
