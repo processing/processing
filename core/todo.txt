@@ -1,4 +1,19 @@
 0258 (3.3.1)
+X improve sum() functions in processing.data
+X   add sum() to IntDict and FloatDict
+X   add sumLong() to IntList, IntDict (to handle cases outside integer range)
+X   add sumDouble() to FloatList, FloatDict (to handle outside float range)
+X   throw exception when using sum() with numbers that are too large or small
+X createInput() and createOutput() now both use buffered streams by default
+X   createInputRaw() does not, however
+
+
+gohai
+X Fix MeshTweening vertex shader
+X   https://github.com/processing/processing-docs/issues/523
+X   https://github.com/processing/processing-docs/pull/524
+X ARM: Allow Raspberry Pi's Mesa GL driver to use up to 8 lights
+X   https://github.com/processing/processing/pull/4915
 
 
 high

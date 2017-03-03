@@ -6925,13 +6925,14 @@ public class PApplet implements PConstants {
     if ((input != null) &&
         (lower.endsWith(".gz") || lower.endsWith(".svgz"))) {
       try {
-        return new GZIPInputStream(input);
+        // buffered has to go *around* the GZ, otherwise 25x slower
+        return new BufferedInputStream(new GZIPInputStream(input));
       } catch (IOException e) {
         printStackTrace(e);
         return null;
       }
     }
-    return input;
+    return new BufferedInputStream(input);
   }
 
 
@@ -7094,6 +7095,7 @@ public class PApplet implements PConstants {
     return null;
   }
 
+
   /**
    * @nowebref
    */
@@ -7104,9 +7106,9 @@ public class PApplet implements PConstants {
     try {
       InputStream input = new FileInputStream(file);
       if (file.getName().toLowerCase().endsWith(".gz")) {
-        return new GZIPInputStream(input);
+        return new BufferedInputStream(new GZIPInputStream(input));
       }
-      return input;
+      return new BufferedInputStream(input);
 
     } catch (IOException e) {
       System.err.println("Could not createInput() for " + file);
@@ -7360,11 +7362,12 @@ public class PApplet implements PConstants {
   static public OutputStream createOutput(File file) {
     try {
       createPath(file);  // make sure the path exists
-      FileOutputStream fos = new FileOutputStream(file);
+      OutputStream output =
+        new BufferedOutputStream(new FileOutputStream(file));
       if (file.getName().toLowerCase().endsWith(".gz")) {
-        return new GZIPOutputStream(fos);
+        return new GZIPOutputStream(output);
       }
-      return fos;
+      return output;
 
     } catch (IOException e) {
       e.printStackTrace();
