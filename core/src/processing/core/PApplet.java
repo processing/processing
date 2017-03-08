@@ -1230,6 +1230,21 @@ public class PApplet implements PConstants {
   }
 
 
+  /*
+   * Allows for more streamlined window resizing without needing to
+   * call setResizeable().
+   */
+  public void resize(int width, int height) {
+    if (this.width == width && this.height == height) {
+      return;
+    } else {
+      surface.setResizable(true);
+      surface.setSize(width, height);
+      surface.setResizable(false);
+    }
+  }
+
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
