@@ -4,6 +4,8 @@ X   https://github.com/processing/processing/pull/4707
 X   https://github.com/processing/processing/issues/4668
 _ Small tooltip text on high-dpi screens
 _   https://github.com/processing/processing/issues/4914
+_ some line heights are wrong on hidpi
+_   https://github.com/processing/processing/issues/4936
 _ mode list does not update after changing sketchbook folder
 _   already reported?
 _ swap font smoothing for tab size?
@@ -16,6 +18,11 @@ X   https://github.com/processing/processing/pull/4907
 X Ugly button images at 125% and 150% scaling on Windows
 X   https://github.com/processing/processing/issues/4901
 X   https://github.com/processing/processing/pull/4906
+
+contrib
+_ redo console handling to not use Timer, fixing freeze-up problems
+_   https://github.com/processing/processing/pull/4935
+_   https://github.com/processing/processing/issues/4825
 
 awaiting confirmation (fixed in 3.3)
 X visual artifacts on Windows 10 when using menus
