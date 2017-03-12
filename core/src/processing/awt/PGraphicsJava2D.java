@@ -1908,14 +1908,9 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   protected void handleTextSize(float size) {
     // if a native version available, derive this font
-//    if (textFontNative != null) {
-//      textFontNative = textFontNative.deriveFont(size);
-//      g2.setFont(textFontNative);
-//      textFontNativeMetrics = g2.getFontMetrics(textFontNative);
-//    }
     Font font = (Font) textFont.getNative();
-    //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
-    if (font != null) {
+    // don't derive again if the font size has not changed
+    if (font != null && font.getSize2D() != size) {
       Map<TextAttribute, Object> map =
         new HashMap<TextAttribute, Object>();
       map.put(TextAttribute.SIZE, size);
@@ -1928,13 +1923,12 @@ public class PGraphicsJava2D extends PGraphics {
       textFont.setNative(font);
       fontObject = font;
 
-//      Font dfont = font.deriveFont(size);
-////      Map<TextAttribute, ?> attrs = dfont.getAttributes();
-////      for (TextAttribute ta : attrs.keySet()) {
-////        System.out.println(ta + " -> " + attrs.get(ta));
-////      }
-//      g2.setFont(dfont);
-//      textFont.setNative(dfont);
+      /*
+      Map<TextAttribute, ?> attrs = font.getAttributes();
+      for (TextAttribute ta : attrs.keySet()) {
+        System.out.println(ta + " -> " + attrs.get(ta));
+      }
+      */
     }
 
     // take care of setting the textSize and textLeading vars
