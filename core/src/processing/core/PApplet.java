@@ -7444,10 +7444,9 @@ public class PApplet implements PConstants {
   static public boolean saveStream(File target, InputStream source) {
     File tempFile = null;
     try {
-      File parentDir = target.getParentFile();
       // make sure that this path actually exists before writing
       createPath(target);
-      tempFile = File.createTempFile(target.getName(), null, parentDir);
+      tempFile = createTempFile(target);
       FileOutputStream targetStream = new FileOutputStream(tempFile);
 
       saveStream(targetStream, source);
@@ -7524,14 +7523,41 @@ public class PApplet implements PConstants {
 
 
   /**
+   * Creates a temporary file based on the name/extension of another file
+   * and in the same parent directory. Ensures that the same extension is used
+   * (i.e. so that .gz files are gzip compressed on output) and that it's done
+   * from the same directory so that renaming the file later won't cross file
+   * system boundaries.
+   */
+  static private File createTempFile(File file) throws IOException {
+    File parentDir = file.getParentFile();
+    String name = file.getName();
+    String prefix;
+    String suffix = null;
+    int dot = name.lastIndexOf('.');
+    if (dot == -1) {
+      prefix = name;
+    } else {
+      // preserve the extension so that .gz works properly
+      prefix = name.substring(0, dot);
+      suffix = name.substring(dot);
+    }
+    // Prefix must be three characters
+    if (prefix.length() < 3) {
+      prefix += "processing";
+    }
+    return File.createTempFile(prefix, suffix, parentDir);
+  }
+
+
+  /**
    * @nowebref
    * Saves bytes to a specific File location specified by the user.
    */
   static public void saveBytes(File file, byte[] data) {
     File tempFile = null;
     try {
-      File parentDir = file.getParentFile();
-      tempFile = File.createTempFile(file.getName(), null, parentDir);
+      tempFile = createTempFile(file);
 
       OutputStream output = createOutput(tempFile);
       saveBytes(output, data);

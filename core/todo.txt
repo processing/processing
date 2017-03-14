@@ -8,6 +8,9 @@ X createInput() and createOutput() now both use buffered streams by default
 X   createInputRaw() does not, however
 X don't derive the font again if the size is unchanged
 X   part of https://github.com/processing/processing/issues/4956
+X fix temporary file handling for saveBytes(), saveStream(), etc
+X   wasn't handling gzip output properly
+X   also could have problems w/ names under length 3
 
 
 gohai
