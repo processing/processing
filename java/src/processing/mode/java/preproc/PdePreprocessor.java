@@ -347,10 +347,12 @@ public class PdePreprocessor {
 
     String[] sizeContents = matchMethod("size", searchArea);
     String[] fullContents = matchMethod("fullScreen", searchArea);
-    // First check and make sure they aren't both being used, otherwise it'll
-    // throw a confusing state exception error that one "can't be used here".
-    if (sizeContents != null && fullContents != null) {
-      throw new SketchException("size() and fullScreen() cannot be used in the same sketch", false);
+    String[] maxiContents = matchMethod("maximize", searchArea);
+    // First check and make sure there isn't more than one being used, otherwise
+    // it'll throw a confusing state exception error that one "can't be used here".
+    if ((sizeContents != null) == (fullContents != null)
+       ? (sizeContents != null) : (maxiContents != null)) {
+      throw new SketchException("Use only one of size(), maximize() and fullScreen() in the same sketch.", false);
     }
 
     // Get everything inside the parens for the size() method
@@ -420,6 +422,20 @@ public class PdePreprocessor {
 //      if (extraStatements.size() != 0) {
 //        info.statement += extraStatements.join(" ");
 //      }
+      info.addStatements(extraStatements);
+      info.checkEmpty();
+      return info;
+    }
+
+    if (maxiContents != null) {
+      SurfaceInfo info = new SurfaceInfo();
+      info.addStatement(maxiContents[0]);
+      StringList args = breakCommas(maxiContents[1]);
+      if (args.size() == 1) {
+        info.renderer = args.get(0).trim();
+      } else if (args.size() > 1) {
+        throw new SketchException("That's too many parameters for maximize().");
+      }
       info.addStatements(extraStatements);
       info.checkEmpty();
       return info;

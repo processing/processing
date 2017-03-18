@@ -865,10 +865,11 @@ public class PSurfaceAWT extends PSurfaceNone {
 
     if (sketch.sketchFullScreen()) {
       setFullFrame();
-    }
-
-    // Ignore placement of previous window and editor when full screen
-    if (!sketch.sketchFullScreen()) {
+    } else if (sketch.sketchMaximize()) {
+      frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+    } else {
+      // Ignore placement of previous window and editor when full screen/
+      // maximized.
       if (location != null) {
         // a specific location was received from the Runner
         // (applet has been run more than once, user placed window)
@@ -1105,6 +1106,11 @@ public class PSurfaceAWT extends PSurfaceNone {
         // This seems to be firing when dragging the window on OS X
         // https://github.com/processing/processing/issues/3092
         if (Frame.MAXIMIZED_BOTH == e.getNewState()) {
+          if (sketch.sketchMaximize()) {
+            // If maximizing, mustn't start the animation thread until the window
+            // really has maximized.
+            sketch.doneMaximizing();
+          }
           // Supposedly, sending the frame to back and then front is a
           // workaround for this bug:
           // http://stackoverflow.com/a/23897602
@@ -1127,7 +1133,7 @@ public class PSurfaceAWT extends PSurfaceNone {
         // http://dev.processing.org/bugs/show_bug.cgi?id=341
         // This should also fix the blank screen on Linux bug
         // http://dev.processing.org/bugs/show_bug.cgi?id=282
-        if (frame.isResizable()) {
+        if (frame.isResizable() || sketch.sketchMaximize()) {
           // might be multiple resize calls before visible (i.e. first
           // when pack() is called, then when it's resized for use).
           // ignore them because it's not the user resizing things.
