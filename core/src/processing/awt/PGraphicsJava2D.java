@@ -1910,15 +1910,17 @@ public class PGraphicsJava2D extends PGraphics {
     // if a native version available, derive this font
     Font font = (Font) textFont.getNative();
     // don't derive again if the font size has not changed
-    if (font != null && font.getSize2D() != size) {
-      Map<TextAttribute, Object> map =
-        new HashMap<TextAttribute, Object>();
-      map.put(TextAttribute.SIZE, size);
-      map.put(TextAttribute.KERNING,
-              TextAttribute.KERNING_ON);
+    if (font != null) {
+      if (font.getSize2D() != size) {
+        Map<TextAttribute, Object> map =
+          new HashMap<TextAttribute, Object>();
+        map.put(TextAttribute.SIZE, size);
+        map.put(TextAttribute.KERNING,
+                TextAttribute.KERNING_ON);
 //      map.put(TextAttribute.TRACKING,
 //              TextAttribute.TRACKING_TIGHT);
-      font = font.deriveFont(map);
+        font = font.deriveFont(map);
+      }
       g2.setFont(font);
       textFont.setNative(font);
       fontObject = font;
