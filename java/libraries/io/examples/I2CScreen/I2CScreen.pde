@@ -14,7 +14,8 @@ void setup() {
 }
 
 void draw() {
-  background(255);
+  background(0);
+  stroke(255);
   line(0, 0, 127, 63);
   line(0, 63, 127, 0);
   oled.sendImage(get());
