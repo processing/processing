@@ -32,12 +32,24 @@
       <equals arg1="${sun.arch.data.model}" arg2="32" />
     </and>
   </condition>
+  <condition property="linux-arm64" value="linux-arm64">
+    <and>
+      <equals arg1="${platform}" arg2="linux" />
+      <equals arg1="${os.arch}" arg2="aarch64" />
+      <equals arg1="${sun.arch.data.model}" arg2="64" />
+    </and>
+  </condition>
 
+  <!-- there is currently no JRE available for ARM -->
   <target name="check-linux-arm32" if="linux-arm32">
-    <!-- there is currently no JRE available -->
     <property name="jre.download.jdk" value="true" />
     <property name="jre.downloader" value="linux-arm32-vfp-hflt.tar.gz" />
     <property name="linux.dist" value="linux/processing-${version}-linux-armv6hf.tgz" />
+  </target>
+  <target name="check-linux-arm64" if="linux-arm64">
+    <property name="jre.download.jdk" value="true" />
+    <property name="jre.downloader" value="linux-arm64-vfp-hflt.tar.gz" />
+    <property name="linux.dist" value="linux/processing-${version}-linux-arm64.tgz" />
   </target>
 
   <!-- Require Java 8 everywhere. -->
@@ -348,11 +360,13 @@
     <subant buildpath="../java" target="build"/>
   </target>
 
+  <!-- I/O library is only compiled on supported ARM platforms -->
   <target name="subprojects-build-linux-arm32" if="linux-arm32">
-    <!-- I/O library is only compiled on supported ARM platforms -->
     <subant buildpath="../java/libraries/io" target="build"/>
   </target>
-
+  <target name="subprojects-build-linux-arm64" if="linux-arm64">
+    <subant buildpath="../java/libraries/io" target="build"/>
+  </target>
 
   <!-- - - - - - - - - -->
   <!-- Basic Assembly  -->
@@ -750,7 +764,7 @@
     <fail message="wrong platform (${os.name})" />
   </target>
   
-  <target name="linux-build" depends="ignore-tools, check-linux-arm32, revision-check, linux-check-os, jre-download, subprojects-build, subprojects-build-linux-arm32" description="Build Linux version">
+  <target name="linux-build" depends="ignore-tools, check-linux-arm32, check-linux-arm64, revision-check, linux-check-os, jre-download, subprojects-build, subprojects-build-linux-arm32, subprojects-build-linux-arm64" description="Build Linux version">
     <mkdir dir="linux/work" />
     
     <copy todir="linux/work">
@@ -932,11 +946,17 @@
    <condition property="linux.deb" value="linux/processing-${version}-linux-armv6hf.deb">
      <equals arg1="${linux-arm32}" arg2="linux-arm32" />
    </condition>
+   <condition property="linux.deb" value="linux/processing-${version}-linux-arm64.deb">
+     <equals arg1="${linux-arm64}" arg2="linux-arm64" />
+   </condition>
    <property name="linux.deb" value="linux/processing-${version}-linux${sun.arch.data.model}.deb" />
 
    <!-- Raspbian seems to borrow armhf for armv6hf, so this works -->
    <condition property="deb.arch" value="armhf">
      <equals arg1="${linux-arm32}" arg2="linux-arm32" />
+   </condition>
+   <condition property="deb.arch" value="arm64">
+     <equals arg1="${linux-arm64}" arg2="linux-arm64" />
    </condition>
    <condition property="deb.arch" value="i386"> 
      <equals arg1="${sun.arch.data.model}" arg2="32" />
