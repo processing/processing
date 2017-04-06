@@ -189,7 +189,7 @@ public class Library extends LocalContribution {
       String platformName = platformNames[i];
       String platformName32 = platformName + "32";
       String platformName64 = platformName + "64";
-      String platformNameArmv6hh = platformName + "-armv6hf";
+      String platformNameArmv6hf = platformName + "-armv6hf";
       String platformNameArm64 = platformName + "-arm64";
 
       // First check for things like 'application.macosx=' or 'application.windows32' in the export.txt file.
@@ -216,7 +216,7 @@ public class Library extends LocalContribution {
         platformList64 = listPlatformEntries(libraryFolder, platformName64, baseList);
       }
       if (platformListArmv6hf == null) {
-        platformListArmv6hf = listPlatformEntries(libraryFolder, platformNameArmv6hh, baseList);
+        platformListArmv6hf = listPlatformEntries(libraryFolder, platformNameArmv6hf, baseList);
       }
       if (platformListArm64 == null) {
         platformListArm64 = listPlatformEntries(libraryFolder, platformNameArm64, baseList);
@@ -244,7 +244,7 @@ public class Library extends LocalContribution {
           exportList.put(platformName64, platformList64);
         }
         if (platformListArmv6hf != null) {
-          exportList.put(platformNameArmv6hh, platformListArmv6hf);
+          exportList.put(platformNameArmv6hf, platformListArmv6hf);
         }
         if (platformListArm64 != null) {
           exportList.put(platformNameArm64, platformListArm64);
