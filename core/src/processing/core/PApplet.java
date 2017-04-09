@@ -61,6 +61,8 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.text.*;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.*;
 import java.util.zip.*;
 
@@ -2564,38 +2566,8 @@ public class PApplet implements PConstants {
   //////////////////////////////////////////////////////////////
 
 
-  InternalEventQueue eventQueue = new InternalEventQueue();
-
-
-  static class InternalEventQueue {
-    protected Event queue[] = new Event[10];
-    protected int offset;
-    protected int count;
-
-    synchronized void add(Event e) {
-      if (count == queue.length) {
-        queue = (Event[]) expand(queue);
-      }
-      queue[count++] = e;
-    }
-
-    synchronized Event remove() {
-      if (offset == count) {
-        throw new RuntimeException("Nothing left on the event queue.");
-      }
-      Event outgoing = queue[offset++];
-      if (offset == count) {
-        // All done, time to reset
-        offset = 0;
-        count = 0;
-      }
-      return outgoing;
-    }
-
-    synchronized boolean available() {
-      return count != 0;
-    }
-  }
+  BlockingQueue<Event> eventQueue = new LinkedBlockingQueue<>();
+  private final Object eventQueueDequeueLock = new Object[0];
 
 
   /**
@@ -2612,16 +2584,17 @@ public class PApplet implements PConstants {
 
 
   protected void dequeueEvents() {
-    while (eventQueue.available()) {
-      Event e = eventQueue.remove();
-
-      switch (e.getFlavor()) {
-      case Event.MOUSE:
-        handleMouseEvent((MouseEvent) e);
-        break;
-      case Event.KEY:
-        handleKeyEvent((KeyEvent) e);
-        break;
+    synchronized (eventQueueDequeueLock) {
+      while (!eventQueue.isEmpty()) {
+        Event e = eventQueue.remove();
+        switch (e.getFlavor()) {
+        case Event.MOUSE:
+          handleMouseEvent((MouseEvent) e);
+          break;
+        case Event.KEY:
+          handleKeyEvent((KeyEvent) e);
+          break;
+        }
       }
     }
   }
