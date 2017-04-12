@@ -953,8 +953,8 @@ public class PSurfaceJOGL implements PSurface {
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
       pgl.resetFBOLayer();
       pgl.getGL(drawable);
-      window.getCurrentSurfaceScale(currentPixelScale);
-      setSize((int) (w / currentPixelScale[0]), (int) (h / currentPixelScale[1]));
+      float scale = getPixelScale();
+      setSize((int) (w / scale), (int) (h / scale));
     }
   }
 
