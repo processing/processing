@@ -751,8 +751,9 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void placePresent(int stopColor) {
-    pgl.initPresentMode(0.5f * (screenRect.width - sketchWidth),
-                        0.5f * (screenRect.height - sketchHeight), stopColor);
+    float scale = getPixelScale();
+    pgl.initPresentMode(0.5f * (screenRect.width/scale - sketchWidth),
+                        0.5f * (screenRect.height/scale - sketchHeight), stopColor);
     window.setSize(screenRect.width, screenRect.height);
     PApplet.hideMenuBar();
     window.setTopLevelPosition(sketchX + screenRect.x,
