@@ -690,11 +690,11 @@ public class PSurfaceJOGL implements PSurface {
     float scale = getPixelScale();
     pgl.initPresentMode(0.5f * (screenRect.width/scale - sketchWidth),
                         0.5f * (screenRect.height/scale - sketchHeight), stopColor);
-    window.setSize(screenRect.width, screenRect.height);
     PApplet.hideMenuBar();
-    window.setTopLevelPosition(sketchX + screenRect.x,
-                               sketchY + screenRect.y);
-    window.setFullscreen(true);
+
+    window.setUndecorated(true);
+    window.setTopLevelPosition((int) displayRect.getX(), (int) displayRect.getY());
+    window.setTopLevelSize((int) displayRect.getWidth(), (int) displayRect.getHeight());
   }
 
 
