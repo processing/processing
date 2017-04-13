@@ -103,8 +103,7 @@ public class PSurfaceJOGL implements PSurface {
 
   protected Display display;
   protected Screen screen;
-  protected List<MonitorDevice> monitors;
-  protected MonitorDevice displayDevice;
+  protected Rectangle displayRect;
   protected Throwable drawException;
   private final Object drawExceptionMutex = new Object();
 
@@ -163,103 +162,35 @@ public class PSurfaceJOGL implements PSurface {
 
 
   protected void initDisplay() {
-    Display tmpDisplay = NewtFactory.createDisplay(null);
-    tmpDisplay.addReference();
-    Screen tmpScreen = NewtFactory.createScreen(tmpDisplay, 0);
-    tmpScreen.addReference();
+    display = NewtFactory.createDisplay(null);
+    display.addReference();
+    screen = NewtFactory.createScreen(display, 0);
+    screen.addReference();
 
-    monitors = new ArrayList<MonitorDevice>();
     GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice[] awtDevices = environment.getScreenDevices();
-    List<MonitorDevice> newtDevices = tmpScreen.getMonitorDevices();
 
-    // AWT and NEWT name devices in different ways, depending on the platform,
-    // and also appear to order them in different ways. The following code
-    // tries to address the differences.
-    if (PApplet.platform == PConstants.LINUX) {
-      for (GraphicsDevice device: awtDevices) {
-        String did = device.getIDstring();
-        String[] parts = did.split("\\.");
-        String id1 = "";
-        if (1 < parts.length) {
-          id1 = parts[1].trim();
-        }
-        MonitorDevice monitor = null;
-        int id0 = newtDevices.size() > 0 ? newtDevices.get(0).getId() : 0;
-        for (int i = 0; i < newtDevices.size(); i++) {
-          MonitorDevice mon = newtDevices.get(i);
-          String mid = String.valueOf(mon.getId() - id0);
-          if (id1.equals(mid)) {
-            monitor = mon;
-            break;
-          }
-        }
-        if (monitor != null) {
-          monitors.add(monitor);
-        }
-      }
-    } else if (PApplet.platform == PConstants.WINDOWS) {
-      // NEWT display id is == (adapterId << 8 | monitorId),
-      // should be in the same order as AWT
-      monitors.addAll(newtDevices);
-    } else { // MAC OSX and others
-      for (GraphicsDevice device: awtDevices) {
-        String did = device.getIDstring();
-        String[] parts = did.split("Display");
-        String id1 = "";
-        if (1 < parts.length) {
-          id1 = parts[1].trim();
-        }
-        MonitorDevice monitor = null;
-        for (int i = 0; i < newtDevices.size(); i++) {
-          MonitorDevice mon = newtDevices.get(i);
-          String mid = String.valueOf(mon.getId());
-          if (id1.equals(mid)) {
-            monitor = mon;
-            break;
-          }
-        }
-        if (monitor == null) {
-          // Didn't find a matching monitor, try using less stringent id check
-          for (int i = 0; i < newtDevices.size(); i++) {
-            MonitorDevice mon = newtDevices.get(i);
-            String mid = String.valueOf(mon.getId());
-            if (-1 < did.indexOf(mid)) {
-              monitor = mon;
-              break;
-            }
-          }
-        }
-        if (monitor != null) {
-          monitors.add(monitor);
-        }
-      }
-    }
-
-    displayDevice = null;
+    GraphicsDevice awtDisplayDevice = null;
     int displayNum = sketch.sketchDisplay();
     if (displayNum > 0) {  // if -1, use the default device
-      if (displayNum <= monitors.size()) {
-        displayDevice = monitors.get(displayNum - 1);
+      if (displayNum <= awtDevices.length) {
+        awtDisplayDevice = awtDevices[displayNum-1];
       } else {
         System.err.format("Display %d does not exist, " +
           "using the default display instead.%n", displayNum);
-        for (int i = 0; i < monitors.size(); i++) {
-          System.err.format("Display %d is %s%n", i+1, monitors.get(i));
+        for (int i = 0; i < awtDevices.length; i++) {
+          System.err.format("Display %d is %s%n", i+1, awtDevices[i]);
         }
       }
-    } else if (0 < monitors.size()) {
-      displayDevice = monitors.get(0);
+    } else if (0 < awtDevices.length) {
+      awtDisplayDevice = awtDevices[0];
     }
 
-    if (displayDevice != null) {
-      screen = displayDevice.getScreen();
-      display = screen.getDisplay();
-    } else {
-      screen = tmpScreen;
-      display = tmpDisplay;
-      displayDevice = screen.getPrimaryMonitor();
+    if (awtDisplayDevice == null) {
+      awtDisplayDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
     }
+
+    displayRect = awtDisplayDevice.getDefaultConfiguration().getBounds();
   }
 
 
@@ -340,8 +271,8 @@ public class PSurfaceJOGL implements PSurface {
     screenRect = spanDisplays ?
       new Rectangle(0, 0, screen.getWidth(), screen.getHeight()) :
       new Rectangle(0, 0,
-                    displayDevice.getViewportInWindowUnits().getWidth(),
-                    displayDevice.getViewportInWindowUnits().getHeight());
+                    (int) displayRect.getWidth(),
+                    (int) displayRect.getHeight());
 
     // Set the displayWidth/Height variables inside PApplet, so that they're
     // usable and can even be returned by the sketchWidth()/Height() methods.
@@ -410,16 +341,16 @@ public class PSurfaceJOGL implements PSurface {
     window.setSize(sketchWidth * windowScaleFactor, sketchHeight * windowScaleFactor);
     window.setResizable(false);
     setSize(sketchWidth, sketchHeight);
-    sketchX = displayDevice.getViewportInWindowUnits().getX();
-    sketchY = displayDevice.getViewportInWindowUnits().getY();
+    sketchX = (int) displayRect.getX();
+    sketchY = (int) displayRect.getY();
     if (fullScreen) {
       PApplet.hideMenuBar();
-      window.setTopLevelPosition(sketchX, sketchY);
       if (spanDisplays) {
-        window.setFullscreen(monitors);
+        window.setFullscreen(screen.getMonitorDevices());
       } else {
-        List<MonitorDevice> display = Collections.singletonList(displayDevice);
-        window.setFullscreen(display);
+        window.setUndecorated(true);
+        window.setTopLevelPosition((int) displayRect.getX(), (int) displayRect.getY());
+        window.setTopLevelSize((int) displayRect.getWidth(), (int) displayRect.getHeight());
       }
     }
   }
@@ -695,6 +626,11 @@ public class PSurfaceJOGL implements PSurface {
 
   @Override
   public void placeWindow(int[] location, int[] editorLocation) {
+
+    if (sketch.sketchFullScreen()) {
+      return;
+    }
+
     int x = window.getX() - window.getInsets().getLeftWidth();
     int y = window.getY() - window.getInsets().getTopHeight();
     int w = window.getWidth() + window.getInsets().getTotalWidth();
@@ -735,8 +671,8 @@ public class PSurfaceJOGL implements PSurface {
     } else {  // just center on screen
       // Can't use frame.setLocationRelativeTo(null) because it sends the
       // frame to the main display, which undermines the --display setting.
-      int sketchX = displayDevice.getViewportInWindowUnits().getX();
-      int sketchY = displayDevice.getViewportInWindowUnits().getY();
+      int sketchX = (int) displayRect.getX();
+      int sketchY = (int) displayRect.getY();
       window.setTopLevelPosition(sketchX + screenRect.x + (screenRect.width - sketchWidth) / 2,
                                  sketchY + screenRect.y + (screenRect.height - sketchHeight) / 2);
     }
