@@ -555,6 +555,7 @@ public class PSurfaceFX implements PSurface {
   public void placeWindow(int[] location, int[] editorLocation) {
     if (sketch.sketchFullScreen()) {
       PApplet.hideMenuBar();
+      return;
     }
 
     //Dimension window = setFrameSize();
