@@ -1055,7 +1055,7 @@ public class PSurfaceJOGL implements PSurface {
       mx -= (int)pgl.presentX;
       my -= (int)pgl.presentY;
       if (peAction == KeyEvent.RELEASE &&
-          pgl.insideStopButton(sx, sy - screenRect.height)) {
+          pgl.insideStopButton(sx, sy - screenRect.height / scale)) {
         sketch.exit();
       }
       if (mx < 0 || sketchWidth < mx || my < 0 || sketchHeight < my) {
