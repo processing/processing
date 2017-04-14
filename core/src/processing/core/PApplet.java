@@ -910,6 +910,8 @@ public class PApplet implements PConstants {
   public int pixelDensity = 1;
   int suggestedDensity = -1;
 
+  boolean present;
+
   String outputPath;
   OutputStream outputStream;
 
@@ -1127,17 +1129,17 @@ public class PApplet implements PConstants {
   * @see PApplet#size(int,int)
   */
   public int displayDensity() {
-    if (display == SPAN) {
-      // walk through all displays, use lowest common denominator
-      for (int i = 0; i < displayDevices.length; i++) {
-        if (displayDensity(i) != 2) {
-          return 1;
-        }
-      }
-      // If nobody's density is 1 (or != 2, to be exact) then everyone is 2
-      return 2;
+    if (display != SPAN && (fullScreen || present)) {
+      return displayDensity(display);
     }
-    return displayDensity(display);
+    // walk through all displays, use 2 if any display is 2
+    for (int i = 0; i < displayDevices.length; i++) {
+      if (displayDensity(i+1) == 2) {
+        return 2;
+      }
+    }
+    // If nobody's density is 2 then everyone is 1
+    return 1;
   }
 
  /**
@@ -10504,6 +10506,8 @@ public class PApplet implements PConstants {
     // Set the suggested density that is coming from command line
     // (most likely set from the PDE based on a system DPI scaling)
     sketch.suggestedDensity = density;
+
+    sketch.present = present;
 
     // For 3.0.1, moved this above handleSettings() so that loadImage() can be
     // used inside settings(). Sets a terrible precedent, but the alternative
