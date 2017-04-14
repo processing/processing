@@ -779,13 +779,17 @@ public class PSurfaceJOGL implements PSurface {
     }
 
     if (PApplet.platform == PConstants.MACOSX) {
-      // Even if the graphics are retina, the user might have moved the window
-      // into a non-retina monitor, so we need to check
-      window.getCurrentSurfaceScale(currentPixelScale);
-      return currentPixelScale[0];
+      return getCurrentPixelScale();
     }
 
     return 2;
+  }
+
+  private float getCurrentPixelScale() {
+    // Even if the graphics are retina, the user might have moved the window
+    // into a non-retina monitor, so we need to check
+    window.getCurrentSurfaceScale(currentPixelScale);
+    return currentPixelScale[0];
   }
 
 
@@ -890,7 +894,8 @@ public class PSurfaceJOGL implements PSurface {
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
       pgl.resetFBOLayer();
       pgl.getGL(drawable);
-      float scale = getPixelScale();
+      float scale = PApplet.platform == PConstants.MACOSX ?
+          getCurrentPixelScale() : getPixelScale();
       setSize((int) (w / scale), (int) (h / scale));
     }
   }
