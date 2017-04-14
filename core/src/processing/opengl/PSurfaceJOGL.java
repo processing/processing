@@ -1046,8 +1046,7 @@ public class PSurfaceJOGL implements PSurface {
 
     int scale;
     if (PApplet.platform == PConstants.MACOSX) {
-      window.getCurrentSurfaceScale(currentPixelScale);
-      scale = (int) currentPixelScale[0];
+      scale = (int) getCurrentPixelScale();
     } else {
       scale = (int) getPixelScale();
     }
@@ -1060,7 +1059,7 @@ public class PSurfaceJOGL implements PSurface {
       mx -= (int)pgl.presentX;
       my -= (int)pgl.presentY;
       if (peAction == KeyEvent.RELEASE &&
-          pgl.insideStopButton(sx, sy - screenRect.height / scale)) {
+          pgl.insideStopButton(sx, sy - screenRect.height / windowScaleFactor)) {
         sketch.exit();
       }
       if (mx < 0 || sketchWidth < mx || my < 0 || sketchHeight < my) {
