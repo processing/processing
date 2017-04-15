@@ -94,8 +94,6 @@ public class PSurfaceJOGL implements PSurface {
   protected PApplet sketch;
   protected PGraphics graphics;
 
-  protected int sketchX;
-  protected int sketchY;
   protected int sketchWidth0;
   protected int sketchHeight0;
   protected int sketchWidth;
@@ -269,8 +267,8 @@ public class PSurfaceJOGL implements PSurface {
 
     boolean spanDisplays = sketch.sketchDisplay() == PConstants.SPAN;
     screenRect = spanDisplays ?
-      new Rectangle(0, 0, screen.getWidth(), screen.getHeight()) :
-      new Rectangle(0, 0,
+      new Rectangle(screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight()) :
+      new Rectangle((int) displayRect.getX(), (int) displayRect.getY(),
                     (int) displayRect.getWidth(),
                     (int) displayRect.getHeight());
 
@@ -341,8 +339,6 @@ public class PSurfaceJOGL implements PSurface {
     window.setSize(sketchWidth * windowScaleFactor, sketchHeight * windowScaleFactor);
     window.setResizable(false);
     setSize(sketchWidth, sketchHeight);
-    sketchX = (int) displayRect.getX();
-    sketchY = (int) displayRect.getY();
     if (fullScreen) {
       PApplet.hideMenuBar();
       if (spanDisplays) {
@@ -671,10 +667,8 @@ public class PSurfaceJOGL implements PSurface {
     } else {  // just center on screen
       // Can't use frame.setLocationRelativeTo(null) because it sends the
       // frame to the main display, which undermines the --display setting.
-      int sketchX = (int) displayRect.getX();
-      int sketchY = (int) displayRect.getY();
-      window.setTopLevelPosition(sketchX + screenRect.x + (screenRect.width - sketchWidth) / 2,
-                                 sketchY + screenRect.y + (screenRect.height - sketchHeight) / 2);
+      window.setTopLevelPosition(screenRect.x + (screenRect.width - sketchWidth) / 2,
+                                 screenRect.y + (screenRect.height - sketchHeight) / 2);
     }
 
     Point frameLoc = new Point(x, y);
