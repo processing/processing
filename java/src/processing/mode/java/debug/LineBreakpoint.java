@@ -137,9 +137,11 @@ public class LineBreakpoint implements ClassLoadListener {
     return false;
   }
 
+
   protected boolean isAttached() {
     return bpr != null;
   }
+
 
   /**
    * Detach this breakpoint from the VM. Deletes the
@@ -232,7 +234,8 @@ public class LineBreakpoint implements ClassLoadListener {
     }
   }
 
-  public String parseTopLevelClassName(String name) {
+
+  static public String parseTopLevelClassName(String name) {
     // Get rid of nested class name
     int dollar = name.indexOf('$');
     return (dollar == -1) ? name : name.substring(0, dollar);
