@@ -29,6 +29,7 @@ import processing.mode.java.Debugger;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.request.BreakpointRequest;
 
 
@@ -40,7 +41,7 @@ public class LineBreakpoint implements ClassLoadListener {
   protected Debugger dbg; // the debugger
   protected LineID line; // the line this breakpoint is set on
   protected BreakpointRequest bpr; // the request on the VM's event request manager
-  protected ReferenceType theClass; // the class containing this breakpoint, null when not yet loaded
+  protected String className;
 
 
   /**
@@ -56,9 +57,9 @@ public class LineBreakpoint implements ClassLoadListener {
     this.line = line;
     line.startTracking(dbg.getEditor().getTab(line.fileName()).getDocument());
     this.dbg = dbg;
-    theClass = dbg.getClass(className()); // try to get the class immediately, may return null if not yet loaded
+    this.className = className();
     set(); // activate the breakpoint (show highlight, attach if debugger is running)
-    Messages.log("LBP Created " + toString() + " class: " + className());
+    Messages.log("LBP Created " + toString() + " class: " + this.className);
   }
 
 
@@ -94,48 +95,61 @@ public class LineBreakpoint implements ClassLoadListener {
   /**
    * Attach this breakpoint to the VM. Creates and enables a
    * {@link BreakpointRequest}. VM needs to be paused.
+   *
+   * @param theClass class to attach to
+   * @return true on success
    */
-  protected void attach() {
-    if (!dbg.isPaused()) {
-      log("can't attach breakpoint, debugger not paused");
-      return;
+  protected boolean attach(ReferenceType theClass) {
+
+    if (theClass == null || className == null ||
+        !className.equals(parseTopLevelClassName(theClass.name()))) {
+      return false;
     }
 
-    if (theClass == null) {
-      log("can't attach breakpoint, class not loaded: " + className());
-      return;
+    log("trying to attach: " + line.fileName + ":" + line.lineIdx + " to " + theClass.name());
+
+    if (!dbg.isPaused()) {
+      log("can't attach breakpoint, debugger not paused");
+      return false;
     }
 
     // find line in java space
     LineID javaLine = dbg.sketchToJavaLine(line);
     if (javaLine == null) {
       log("couldn't find line " + line + " in the java code");
-      return;
+      return false;
     }
     try {
       log("BPs of class: " + theClass + ", line " + (javaLine.lineIdx() + 1));
       List<Location> locations = theClass.locationsOfLine(javaLine.lineIdx() + 1);
       if (locations.isEmpty()) {
         log("no location found for line " + line + " -> " + javaLine);
-        return;
+        return false;
       }
       // use first found location
       bpr = dbg.vm().eventRequestManager().createBreakpointRequest(locations.get(0));
       bpr.enable();
       log("attached breakpoint to " + line + " -> " + javaLine);
+      return true;
     } catch (AbsentInformationException ex) {
       Messages.loge(null, ex);
     }
+    return false;
   }
 
+  protected boolean isAttached() {
+    return bpr != null;
+  }
 
   /**
    * Detach this breakpoint from the VM. Deletes the
    * {@link BreakpointRequest}.
    */
-  protected void detach() {
+  public void detach() {
     if (bpr != null) {
-      dbg.vm().eventRequestManager().deleteEventRequest(bpr);
+      try {
+        dbg.vm().eventRequestManager().deleteEventRequest(bpr);
+      } catch (VMDisconnectedException ignore) { }
       bpr = null;
     }
   }
@@ -148,9 +162,11 @@ public class LineBreakpoint implements ClassLoadListener {
   protected void set() {
     dbg.addClassLoadListener(this); // class may not yet be loaded
     dbg.getEditor().addBreakpointedLine(line);
-    if (theClass != null && dbg.isPaused()) { // class is loaded
-      // immediately activate the breakpoint
-      attach();
+    if (className != null && dbg.isPaused()) { // debugging right now, try to attach
+      for (ReferenceType rt : dbg.getClasses()) {
+        // try to attach to all top level or nested classes
+        if (attach(rt)) break;
+      }
     }
     if (dbg.getEditor().isInCurrentTab(line)) {
       dbg.getEditor().getSketch().setModified(true);
@@ -191,12 +207,7 @@ public class LineBreakpoint implements ClassLoadListener {
   protected String className() {
     if (line.fileName().endsWith(".pde")) {
       // standard tab
-      ReferenceType mainClass = dbg.getMainClass();
-      //System.out.println(dbg.getMainClass().name());
-      if (mainClass == null) {
-        return null;
-      }
-      return dbg.getMainClass().name();
+      return dbg.getEditor().getSketch().getName();
     }
 
     if (line.fileName().endsWith(".java")) {
@@ -215,15 +226,16 @@ public class LineBreakpoint implements ClassLoadListener {
    */
   @Override
   public void classLoaded(ReferenceType theClass) {
-    // check if our class is being loaded
-    Messages.log("Class Loaded: " + theClass.name());
-    if (theClass.name().equals(className())) {
-      this.theClass = theClass;
-      attach();
+    if (!isAttached()) {
+      // try to attach
+      attach(theClass);
     }
-    for (ReferenceType ct : theClass.nestedTypes()) {
-      Messages.log("Nested " + ct.name());
-    }
+  }
+
+  public String parseTopLevelClassName(String name) {
+    // Get rid of nested class name
+    int dollar = name.indexOf('$');
+    return (dollar == -1) ? name : name.substring(0, dollar);
   }
 
 
