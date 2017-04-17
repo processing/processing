@@ -18,6 +18,14 @@ X   https://github.com/processing/processing/pull/4907
 X Ugly button images at 125% and 150% scaling on Windows
 X   https://github.com/processing/processing/issues/4901
 X   https://github.com/processing/processing/pull/4906
+X Fix breakpoints in inner classes
+X   https://github.com/processing/processing/pull/5008
+X   https://github.com/processing/processing/issues/2946
+X Fix preproc skipping one char after a block comment
+X   https://github.com/processing/processing/issues/4995
+X   https://github.com/processing/processing/pull/4999
+X Synchronize input event processing
+X   https://github.com/processing/processing/pull/4998
 
 contrib
 _ redo console handling to not use Timer, fixing freeze-up problems
@@ -38,7 +46,8 @@ X NVIDIA driver problems (and means to check)
 _   https://github.com/processing/processing/issues/4853
 X blank window on startup where the "Welcome" screen should be
 X   this may be fixed (removed invokeLater() on startup), unconfirmed
-_   https://github.com/processing/processing/issues/3933
+X   https://github.com/processing/processing/issues/3933
+X   Olivia hasn't seen it, closing
 X amazing blurry editor window
 X   https://github.com/processing/processing/issues/4892
 
