@@ -811,7 +811,7 @@ public class PdePreprocessor {
         boolean terminated = false;
         while (i < length - 1) {
           if ((program.charAt(i) == '*') && (program.charAt(i + 1) == '/')) {
-            i += 2;
+            i++; // advance to the ending '/'
             terminated = true;
             break;
           } else {
