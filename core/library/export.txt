@@ -9,3 +9,4 @@ application.windows64=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-wind
 application.linux32=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-i586.jar,gluegen-rt-natives-linux-i586.jar
 application.linux64=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-amd64.jar,gluegen-rt-natives-linux-amd64.jar
 application.linux-armv6hf=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-armv6hf.jar,gluegen-rt-natives-linux-armv6hf.jar
+application.linux-arm64=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-aarch64.jar,gluegen-rt-natives-linux-aarch64.jar

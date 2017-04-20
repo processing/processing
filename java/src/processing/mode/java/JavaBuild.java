@@ -709,9 +709,13 @@ public class JavaBuild {
             return false;
           }
           if (platform == PConstants.LINUX) {
-            // export the armv6hf version as well
+            // export the arm versions as well
             folder = new File(sketch.getFolder(), "application.linux-armv6hf");
             if (!exportApplication(folder, platform, "armv6hf", embedJava && (bits == 32) && "arm".equals(arch))) {
+              return false;
+            }
+            folder = new File(sketch.getFolder(), "application.linux-arm64");
+            if (!exportApplication(folder, platform, "arm64", embedJava && (bits == 64) && "aarch64".equals(arch))) {
               return false;
             }
           }
