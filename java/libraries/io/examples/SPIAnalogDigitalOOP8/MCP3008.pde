@@ -8,7 +8,7 @@ class MCP3008 extends SPI {
 
   MCP3008(String dev) {
     super(dev);
-    super.settings(500000, SPI.MSBFIRST, SPI.MODE0);
+    settings(500000, SPI.MSBFIRST, SPI.MODE0);
   }
 
   float getAnalog(int channel) {
@@ -19,7 +19,7 @@ class MCP3008 extends SPI {
     byte[] out = { 0, 0, 0 };
     // encode the channel number in the first byte
     out[0] = (byte)(0x18 | channel);
-    byte[] in = super.transfer(out);
+    byte[] in = transfer(out);
     int val = ((in[1] & 0x03) << 8) | (in[2] & 0xff);
     // val is between 0 and 1023
     return val/1023.0;
