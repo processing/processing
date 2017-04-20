@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javafx.scene.SnapshotParameters;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.PixelFormat;
@@ -112,7 +113,12 @@ public class PGraphicsFX2D extends PGraphics {
   //public void setPath(String path)
 
 
-  //public void setSize(int width, int height)
+  public void setSize(int width, int height) {
+    if (!primaryGraphics && context == null) {
+      context = new Canvas(width, height).getGraphicsContext2D();
+    }
+    super.setSize(width, height);
+  }
 
 
   //public void dispose()
@@ -157,6 +163,8 @@ public class PGraphicsFX2D extends PGraphics {
     if (!primaryGraphics) {
       // TODO this is probably overkill for most tasks...
       loadPixels();
+      // Make the image cache reload this.
+      modified = true;
     }
   }
 
@@ -2134,10 +2142,11 @@ public class PGraphicsFX2D extends PGraphics {
       }
 
       SnapshotParameters sp = new SnapshotParameters();
+      sp.setFill(Color.TRANSPARENT); // Alpha channel should not be made white.
       if (pixelDensity != 1) {
         sp.setTransform(Transform.scale(pixelDensity, pixelDensity));
       }
-      snapshotImage = ((PSurfaceFX) surface).canvas.snapshot(sp, snapshotImage);
+      snapshotImage = context.getCanvas().snapshot(sp, snapshotImage);
       PixelReader pr = snapshotImage.getPixelReader();
       pr.getPixels(0, 0, pixelWidth, pixelHeight, argbFormat, pixels, 0, pixelWidth);
 
