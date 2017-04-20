@@ -273,6 +273,15 @@ public class PSurfaceJOGL implements PSurface {
       } else if (PJOGL.profile == 2) {
         try {
           profile = GLProfile.getGL2ES2();
+
+          // workaround for https://jogamp.org/bugzilla/show_bug.cgi?id=1347
+          if (!profile.isHardwareRasterizer()) {
+            GLProfile hardware = GLProfile.getMaxProgrammable(true);
+            if (hardware.isGL2ES2()) {
+              profile = hardware;
+            }
+          }
+
         } catch (GLException ex) {
           profile = GLProfile.getMaxProgrammable(true);
         }
