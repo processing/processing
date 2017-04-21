@@ -11,6 +11,10 @@ _   already reported?
 _ swap font smoothing for tab size?
 _   implement simple table for prefs?
 
+_ fix the JRE downloader
+_   https://gist.github.com/P7h/9741922
+_   http://stackoverflow.com/q/10268583
+
 jakub
 X Fix preprocessing of code with double backslash in string or char literal
 X   https://github.com/processing/processing/issues/4903
@@ -26,6 +30,13 @@ X   https://github.com/processing/processing/issues/4995
 X   https://github.com/processing/processing/pull/4999
 X Synchronize input event processing
 X   https://github.com/processing/processing/pull/4998
+
+gohai
+X Add support for 64-bit ARM boards
+X   https://github.com/processing/processing/pull/5002
+X Hardware I/O updates for ARM
+X   https://github.com/processing/processing/pull/4931
+
 
 contrib
 _ redo console handling to not use Timer, fixing freeze-up problems

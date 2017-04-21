@@ -13,6 +13,10 @@ X   wasn't handling gzip output properly
 X   also could have problems w/ names under length 3
 
 
+jakub
+X major work on window placement and pixel density
+X   https://github.com/processing/processing/pull/5011
+
 gohai
 X Fix MeshTweening vertex shader
 X   https://github.com/processing/processing-docs/issues/523
@@ -26,6 +30,10 @@ X   because of INCOMPLETE_MULTISAMPLE
 X   https://github.com/processing/processing/pull/4921
 X Report more error conditions in validateFramebuffer
 X   https://github.com/processing/processing/pull/4920
+X Add more Raspberry Pi related fixes to JOGL
+X   https://github.com/processing/processing/pull/4911
+X Unblock hardware-accelerated P3D on ARM Mali devices
+X   https://github.com/processing/processing/pull/5014
 
 
 high
@@ -35,7 +43,6 @@ _ Sketches on Windows don't take UI sizing into account
 _   https://github.com/processing/processing/issues/4894
 _ Sketches on Linux don't take UI scaling into account
 _   https://github.com/processing/processing/issues/4895
-
 
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
 _   https://github.com/processing/processing/issues/4678
