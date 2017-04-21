@@ -24,6 +24,7 @@ package processing.mode.java.runner;
 
 import processing.app.*;
 import processing.app.exec.StreamRedirectThread;
+import processing.app.ui.Toolkit;
 import processing.core.*;
 import processing.data.StringList;
 import processing.mode.java.JavaBuild;
@@ -465,6 +466,10 @@ public class Runner implements MessageConsumer {
       // There was a PDE X hack that put this after the class name, but it was
       // removed for 3.0a6 because it would break the args passed to sketches.
       params.append(PApplet.ARGS_SKETCH_FOLDER + "=" + build.getSketchPath());
+
+      if (Toolkit.zoom(100) >= 200) { // Use 100 to bypass possible rounding in zoom()
+        params.append(PApplet.ARGS_DENSITY + "=2");
+      }
 
       params.append(build.getSketchClassName());
     }

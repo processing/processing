@@ -94,8 +94,6 @@ public class PSurfaceJOGL implements PSurface {
   protected PApplet sketch;
   protected PGraphics graphics;
 
-  protected int sketchX;
-  protected int sketchY;
   protected int sketchWidth0;
   protected int sketchHeight0;
   protected int sketchWidth;
@@ -103,12 +101,13 @@ public class PSurfaceJOGL implements PSurface {
 
   protected Display display;
   protected Screen screen;
-  protected List<MonitorDevice> monitors;
-  protected MonitorDevice displayDevice;
+  protected Rectangle displayRect;
   protected Throwable drawException;
   private final Object drawExceptionMutex = new Object();
 
   protected NewtCanvasAWT canvas;
+
+  protected int windowScaleFactor;
 
   protected float[] currentPixelScale = {0, 0};
 
@@ -151,103 +150,35 @@ public class PSurfaceJOGL implements PSurface {
 
 
   protected void initDisplay() {
-    Display tmpDisplay = NewtFactory.createDisplay(null);
-    tmpDisplay.addReference();
-    Screen tmpScreen = NewtFactory.createScreen(tmpDisplay, 0);
-    tmpScreen.addReference();
+    display = NewtFactory.createDisplay(null);
+    display.addReference();
+    screen = NewtFactory.createScreen(display, 0);
+    screen.addReference();
 
-    monitors = new ArrayList<MonitorDevice>();
     GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice[] awtDevices = environment.getScreenDevices();
-    List<MonitorDevice> newtDevices = tmpScreen.getMonitorDevices();
 
-    // AWT and NEWT name devices in different ways, depending on the platform,
-    // and also appear to order them in different ways. The following code
-    // tries to address the differences.
-    if (PApplet.platform == PConstants.LINUX) {
-      for (GraphicsDevice device: awtDevices) {
-        String did = device.getIDstring();
-        String[] parts = did.split("\\.");
-        String id1 = "";
-        if (1 < parts.length) {
-          id1 = parts[1].trim();
-        }
-        MonitorDevice monitor = null;
-        int id0 = newtDevices.size() > 0 ? newtDevices.get(0).getId() : 0;
-        for (int i = 0; i < newtDevices.size(); i++) {
-          MonitorDevice mon = newtDevices.get(i);
-          String mid = String.valueOf(mon.getId() - id0);
-          if (id1.equals(mid)) {
-            monitor = mon;
-            break;
-          }
-        }
-        if (monitor != null) {
-          monitors.add(monitor);
-        }
-      }
-    } else if (PApplet.platform == PConstants.WINDOWS) {
-      // NEWT display id is == (adapterId << 8 | monitorId),
-      // should be in the same order as AWT
-      monitors.addAll(newtDevices);
-    } else { // MAC OSX and others
-      for (GraphicsDevice device: awtDevices) {
-        String did = device.getIDstring();
-        String[] parts = did.split("Display");
-        String id1 = "";
-        if (1 < parts.length) {
-          id1 = parts[1].trim();
-        }
-        MonitorDevice monitor = null;
-        for (int i = 0; i < newtDevices.size(); i++) {
-          MonitorDevice mon = newtDevices.get(i);
-          String mid = String.valueOf(mon.getId());
-          if (id1.equals(mid)) {
-            monitor = mon;
-            break;
-          }
-        }
-        if (monitor == null) {
-          // Didn't find a matching monitor, try using less stringent id check
-          for (int i = 0; i < newtDevices.size(); i++) {
-            MonitorDevice mon = newtDevices.get(i);
-            String mid = String.valueOf(mon.getId());
-            if (-1 < did.indexOf(mid)) {
-              monitor = mon;
-              break;
-            }
-          }
-        }
-        if (monitor != null) {
-          monitors.add(monitor);
-        }
-      }
-    }
-
-    displayDevice = null;
+    GraphicsDevice awtDisplayDevice = null;
     int displayNum = sketch.sketchDisplay();
     if (displayNum > 0) {  // if -1, use the default device
-      if (displayNum <= monitors.size()) {
-        displayDevice = monitors.get(displayNum - 1);
+      if (displayNum <= awtDevices.length) {
+        awtDisplayDevice = awtDevices[displayNum-1];
       } else {
         System.err.format("Display %d does not exist, " +
           "using the default display instead.%n", displayNum);
-        for (int i = 0; i < monitors.size(); i++) {
-          System.err.format("Display %d is %s%n", i+1, monitors.get(i));
+        for (int i = 0; i < awtDevices.length; i++) {
+          System.err.format("Display %d is %s%n", i+1, awtDevices[i]);
         }
       }
-    } else if (0 < monitors.size()) {
-      displayDevice = monitors.get(0);
+    } else if (0 < awtDevices.length) {
+      awtDisplayDevice = awtDevices[0];
     }
 
-    if (displayDevice != null) {
-      screen = displayDevice.getScreen();
-      display = screen.getDisplay();
-    } else {
-      screen = tmpScreen;
-      display = tmpDisplay;
-      displayDevice = screen.getPrimaryMonitor();
+    if (awtDisplayDevice == null) {
+      awtDisplayDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
     }
+
+    displayRect = awtDisplayDevice.getDefaultConfiguration().getBounds();
   }
 
 
@@ -330,13 +261,15 @@ public class PSurfaceJOGL implements PSurface {
 //      window = GLWindow.create(displayDevice.getScreen(), pgl.getCaps());
 //    }
 
+    windowScaleFactor = PApplet.platform == PConstants.MACOSX ?
+        1 : sketch.pixelDensity;
 
     boolean spanDisplays = sketch.sketchDisplay() == PConstants.SPAN;
     screenRect = spanDisplays ?
-      new Rectangle(0, 0, screen.getWidth(), screen.getHeight()) :
-      new Rectangle(0, 0,
-                    displayDevice.getViewportInWindowUnits().getWidth(),
-                    displayDevice.getViewportInWindowUnits().getHeight());
+      new Rectangle(screen.getX(), screen.getY(), screen.getWidth(), screen.getHeight()) :
+      new Rectangle((int) displayRect.getX(), (int) displayRect.getY(),
+                    (int) displayRect.getWidth(),
+                    (int) displayRect.getHeight());
 
     // Set the displayWidth/Height variables inside PApplet, so that they're
     // usable and can even be returned by the sketchWidth()/Height() methods.
@@ -385,12 +318,14 @@ public class PSurfaceJOGL implements PSurface {
     */
 
     if (fullScreen || spanDisplays) {
-      sketchWidth = screenRect.width;
-      sketchHeight = screenRect.height;
+      sketchWidth = screenRect.width / windowScaleFactor;
+      sketchHeight = screenRect.height / windowScaleFactor;
     }
 
+    sketch.setSize(sketchWidth, sketchHeight);
+
     float[] reqSurfacePixelScale;
-    if (graphics.is2X()) {
+    if (graphics.is2X() && PApplet.platform == PConstants.MACOSX) {
        // Retina
        reqSurfacePixelScale = new float[] { ScalableSurface.AUTOMAX_PIXELSCALE,
                                             ScalableSurface.AUTOMAX_PIXELSCALE };
@@ -400,19 +335,17 @@ public class PSurfaceJOGL implements PSurface {
                                            ScalableSurface.IDENTITY_PIXELSCALE };
     }
     window.setSurfaceScale(reqSurfacePixelScale);
-    window.setSize(sketchWidth, sketchHeight);
+    window.setSize(sketchWidth * windowScaleFactor, sketchHeight * windowScaleFactor);
     window.setResizable(false);
     setSize(sketchWidth, sketchHeight);
-    sketchX = displayDevice.getViewportInWindowUnits().getX();
-    sketchY = displayDevice.getViewportInWindowUnits().getY();
     if (fullScreen) {
       PApplet.hideMenuBar();
-      window.setTopLevelPosition(sketchX, sketchY);
       if (spanDisplays) {
-        window.setFullscreen(monitors);
+        window.setFullscreen(screen.getMonitorDevices());
       } else {
-        List<MonitorDevice> display = Collections.singletonList(displayDevice);
-        window.setFullscreen(display);
+        window.setUndecorated(true);
+        window.setTopLevelPosition((int) displayRect.getX(), (int) displayRect.getY());
+        window.setTopLevelSize((int) displayRect.getWidth(), (int) displayRect.getHeight());
       }
     }
   }
@@ -688,6 +621,11 @@ public class PSurfaceJOGL implements PSurface {
 
   @Override
   public void placeWindow(int[] location, int[] editorLocation) {
+
+    if (sketch.sketchFullScreen()) {
+      return;
+    }
+
     int x = window.getX() - window.getInsets().getLeftWidth();
     int y = window.getY() - window.getInsets().getTopHeight();
     int w = window.getWidth() + window.getInsets().getTotalWidth();
@@ -728,10 +666,8 @@ public class PSurfaceJOGL implements PSurface {
     } else {  // just center on screen
       // Can't use frame.setLocationRelativeTo(null) because it sends the
       // frame to the main display, which undermines the --display setting.
-      int sketchX = displayDevice.getViewportInWindowUnits().getX();
-      int sketchY = displayDevice.getViewportInWindowUnits().getY();
-      window.setTopLevelPosition(sketchX + screenRect.x + (screenRect.width - sketchWidth) / 2,
-                                 sketchY + screenRect.y + (screenRect.height - sketchHeight) / 2);
+      window.setTopLevelPosition(screenRect.x + (screenRect.width - sketchWidth) / 2,
+                                 screenRect.y + (screenRect.height - sketchHeight) / 2);
     }
 
     Point frameLoc = new Point(x, y);
@@ -744,13 +680,14 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void placePresent(int stopColor) {
-    pgl.initPresentMode(0.5f * (screenRect.width - sketchWidth),
-                        0.5f * (screenRect.height - sketchHeight), stopColor);
-    window.setSize(screenRect.width, screenRect.height);
+    float scale = getPixelScale();
+    pgl.initPresentMode(0.5f * (screenRect.width/scale - sketchWidth),
+                        0.5f * (screenRect.height/scale - sketchHeight), stopColor);
     PApplet.hideMenuBar();
-    window.setTopLevelPosition(sketchX + screenRect.x,
-                               sketchY + screenRect.y);
-    window.setFullscreen(true);
+
+    window.setUndecorated(true);
+    window.setTopLevelPosition((int) displayRect.getX(), (int) displayRect.getY());
+    window.setTopLevelSize((int) displayRect.getWidth(), (int) displayRect.getHeight());
   }
 
 
@@ -813,29 +750,39 @@ public class PSurfaceJOGL implements PSurface {
 
 
   public void setSize(final int width, final int height) {
-    if (width == sketch.width && height == sketch.height) {
-      return;
-    }
+    if (pgl.presentMode()) return;
 
-    if (!pgl.presentMode()) {
-      sketch.setSize(width, height);
-      sketchWidth = width;
-      sketchHeight = height;
-      graphics.setSize(width, height);
-      window.setSize(width, height);
+    boolean changed = sketch.width != width || sketch.height != height;
+
+    sketchWidth = width;
+    sketchHeight = height;
+
+    sketch.setSize(width, height);
+    graphics.setSize(width, height);
+
+    if (changed) {
+      window.setSize(width * windowScaleFactor, height * windowScaleFactor);
     }
   }
 
 
   public float getPixelScale() {
-    if (graphics.is2X()) {
-      // Even if the graphics are retina, the user might have moved the window
-      // into a non-retina monitor, so we need to check
-      window.getCurrentSurfaceScale(currentPixelScale);
-      return currentPixelScale[0];
-    } else {
+    if (graphics.pixelDensity == 1) {
       return 1;
     }
+
+    if (PApplet.platform == PConstants.MACOSX) {
+      return getCurrentPixelScale();
+    }
+
+    return 2;
+  }
+
+  private float getCurrentPixelScale() {
+    // Even if the graphics are retina, the user might have moved the window
+    // into a non-retina monitor, so we need to check
+    window.getCurrentSurfaceScale(currentPixelScale);
+    return currentPixelScale[0];
   }
 
 
@@ -938,32 +885,11 @@ public class PSurfaceJOGL implements PSurface {
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
-//      int c = graphics.backgroundColor;
-//      pgl.clearColor(((c >> 16) & 0xff) / 255f,
-//                     ((c >>  8) & 0xff) / 255f,
-//                     ((c >>  0) & 0xff) / 255f,
-//                     ((c >> 24) & 0xff) / 255f);
-//      pgl.clear(PGL.COLOR_BUFFER_BIT);
       pgl.resetFBOLayer();
-//      final float[] valReqSurfacePixelScale = window.getRequestedSurfaceScale(new float[2]);
-      window.getCurrentSurfaceScale(currentPixelScale);
-//      final float[] nativeSurfacePixelScale = window.getMaximumSurfaceScale(new float[2]);
-//      System.err.println("[set PixelScale post]: "+
-//                         valReqSurfacePixelScale[0]+"x"+valReqSurfacePixelScale[1]+" (val) -> "+
-//                         hasSurfacePixelScale[0]+"x"+hasSurfacePixelScale[1]+" (has), "+
-//                         nativeSurfacePixelScale[0]+"x"+nativeSurfacePixelScale[1]+" (native)");
-
-
-
-
-//      System.out.println("reshape: " + w + ", " + h);
       pgl.getGL(drawable);
-//      if (!graphics.is2X() && 1 < hasSurfacePixelScale[0]) {
-//        setSize(w/2, h/2);
-//      } else {
-//        setSize(w, h);
-//      }
-      setSize((int)(w/currentPixelScale[0]), (int)(h/currentPixelScale[1]));
+      float scale = PApplet.platform == PConstants.MACOSX ?
+          getCurrentPixelScale() : getPixelScale();
+      setSize((int) (w / scale), (int) (h / scale));
     }
   }
 
@@ -1111,9 +1037,14 @@ public class PSurfaceJOGL implements PSurface {
       peCount = nativeEvent.getClickCount();
     }
 
-    window.getCurrentSurfaceScale(currentPixelScale);
-    int sx = (int)(nativeEvent.getX()/currentPixelScale[0]);
-    int sy = (int)(nativeEvent.getY()/currentPixelScale[1]);
+    int scale;
+    if (PApplet.platform == PConstants.MACOSX) {
+      scale = (int) getCurrentPixelScale();
+    } else {
+      scale = (int) getPixelScale();
+    }
+    int sx = nativeEvent.getX() / scale;
+    int sy = nativeEvent.getY() / scale;
     int mx = sx;
     int my = sy;
 
@@ -1121,7 +1052,7 @@ public class PSurfaceJOGL implements PSurface {
       mx -= (int)pgl.presentX;
       my -= (int)pgl.presentY;
       if (peAction == KeyEvent.RELEASE &&
-          pgl.insideStopButton(sx, sy - screenRect.height)) {
+          pgl.insideStopButton(sx, sy - screenRect.height / windowScaleFactor)) {
         sketch.exit();
       }
       if (mx < 0 || sketchWidth < mx || my < 0 || sketchHeight < my) {

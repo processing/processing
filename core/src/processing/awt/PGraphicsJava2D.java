@@ -409,8 +409,6 @@ public class PGraphicsJava2D extends PGraphics {
     checkSettings();
     resetMatrix(); // reset model matrix
     vertexCount = 0;
-
-    g2.scale(pixelDensity, pixelDensity);
   }
 
 
@@ -1573,8 +1571,8 @@ public class PGraphicsJava2D extends PGraphics {
 
     // Nuke the cache if the image was resized
     if (cash != null) {
-      if (who.width != cash.image.getWidth() ||
-          who.height != cash.image.getHeight()) {
+      if (who.pixelWidth != cash.image.getWidth() ||
+          who.pixelHeight != cash.image.getHeight()) {
         cash = null;
       }
     }
@@ -1601,11 +1599,16 @@ public class PGraphicsJava2D extends PGraphics {
         // This might be a PGraphics that hasn't been drawn to yet.
         // Can't just bail because the cache has been created above.
         // https://github.com/processing/processing/issues/2208
-        who.pixels = new int[who.width * who.height];
+        who.pixels = new int[who.pixelWidth * who.pixelHeight];
       }
       cash.update(who, tint, tintColor);
       who.setModified(false);
     }
+
+    u1 *= who.pixelDensity;
+    v1 *= who.pixelDensity;
+    u2 *= who.pixelDensity;
+    v2 *= who.pixelDensity;
 
     g2.drawImage(((ImageCache) getCache(who)).image,
                  (int) x1, (int) y1, (int) x2, (int) y2,
@@ -1674,14 +1677,14 @@ public class PGraphicsJava2D extends PGraphics {
       // in the alpha channel when drawn to the screen.
       // https://github.com/processing/processing/issues/2030
       if (image == null) {
-        image = new BufferedImage(source.width, source.height,
+        image = new BufferedImage(source.pixelWidth, source.pixelHeight,
                                   BufferedImage.TYPE_INT_ARGB);
       }
 
       WritableRaster wr = image.getRaster();
       if (tint) {
-        if (tintedTemp == null || tintedTemp.length != source.width) {
-          tintedTemp = new int[source.width];
+        if (tintedTemp == null || tintedTemp.length != source.pixelWidth) {
+          tintedTemp = new int[source.pixelHeight];
         }
         int a2 = (tintColor >> 24) & 0xff;
 //        System.out.println("tint color is " + a2);
@@ -1695,8 +1698,8 @@ public class PGraphicsJava2D extends PGraphics {
           // The target image is opaque, meaning that the source image has no
           // alpha (is not ARGB), and the tint has no alpha.
           int index = 0;
-          for (int y = 0; y < source.height; y++) {
-            for (int x = 0; x < source.width; x++) {
+          for (int y = 0; y < source.pixelHeight; y++) {
+            for (int x = 0; x < source.pixelWidth; x++) {
               int argb1 = source.pixels[index++];
               int r1 = (argb1 >> 16) & 0xff;
               int g1 = (argb1 >> 8) & 0xff;
@@ -1710,7 +1713,7 @@ public class PGraphicsJava2D extends PGraphics {
                   ((g2 * g1) & 0xff00) |
                   (((b2 * b1) & 0xff00) >> 8);
             }
-            wr.setDataElements(0, y, source.width, 1, tintedTemp);
+            wr.setDataElements(0, y, source.pixelWidth, 1, tintedTemp);
           }
           // could this be any slower?
 //          float[] scales = { tintR, tintG, tintB };
@@ -1724,18 +1727,18 @@ public class PGraphicsJava2D extends PGraphics {
               (tintColor & 0xffffff) == 0xffffff) {
             int hi = tintColor & 0xff000000;
             int index = 0;
-            for (int y = 0; y < source.height; y++) {
-              for (int x = 0; x < source.width; x++) {
+            for (int y = 0; y < source.pixelHeight; y++) {
+              for (int x = 0; x < source.pixelWidth; x++) {
                 tintedTemp[x] = hi | (source.pixels[index++] & 0xFFFFFF);
               }
-              wr.setDataElements(0, y, source.width, 1, tintedTemp);
+              wr.setDataElements(0, y, source.pixelWidth, 1, tintedTemp);
             }
           } else {
             int index = 0;
-            for (int y = 0; y < source.height; y++) {
+            for (int y = 0; y < source.pixelHeight; y++) {
               if (source.format == RGB) {
                 int alpha = tintColor & 0xFF000000;
-                for (int x = 0; x < source.width; x++) {
+                for (int x = 0; x < source.pixelWidth; x++) {
                   int argb1 = source.pixels[index++];
                   int r1 = (argb1 >> 16) & 0xff;
                   int g1 = (argb1 >> 8) & 0xff;
@@ -1746,7 +1749,7 @@ public class PGraphicsJava2D extends PGraphics {
                       (((b2 * b1) & 0xff00) >> 8);
                 }
               } else if (source.format == ARGB) {
-                for (int x = 0; x < source.width; x++) {
+                for (int x = 0; x < source.pixelWidth; x++) {
                   int argb1 = source.pixels[index++];
                   int a1 = (argb1 >> 24) & 0xff;
                   int r1 = (argb1 >> 16) & 0xff;
@@ -1760,13 +1763,13 @@ public class PGraphicsJava2D extends PGraphics {
                 }
               } else if (source.format == ALPHA) {
                 int lower = tintColor & 0xFFFFFF;
-                for (int x = 0; x < source.width; x++) {
+                for (int x = 0; x < source.pixelWidth; x++) {
                   int a1 = source.pixels[index++];
                   tintedTemp[x] =
                       (((a2 * a1) & 0xff00) << 16) | lower;
                 }
               }
-              wr.setDataElements(0, y, source.width, 1, tintedTemp);
+              wr.setDataElements(0, y, source.pixelWidth, 1, tintedTemp);
             }
           }
           // Not sure why ARGB images take the scales in this order...
@@ -1786,7 +1789,7 @@ public class PGraphicsJava2D extends PGraphics {
           // in a PImage and how the high bits will be set.
         }
         // If no tint, just shove the pixels on in there verbatim
-        wr.setDataElements(0, 0, source.width, source.height, source.pixels);
+        wr.setDataElements(0, 0, source.pixelWidth, source.pixelHeight, source.pixels);
       }
       this.tinted = tint;
       this.tintedColor = tintColor;
@@ -2232,6 +2235,7 @@ public class PGraphicsJava2D extends PGraphics {
   @Override
   public void resetMatrix() {
     g2.setTransform(new AffineTransform());
+    g2.scale(pixelDensity, pixelDensity);
   }
 
 
@@ -2793,7 +2797,7 @@ public class PGraphicsJava2D extends PGraphics {
     if (pixels != null) {
       getRaster().setDataElements(0, 0, pixelWidth, pixelHeight, pixels);
     }
-    modified = true;
+    modified = false;
   }
 
 
@@ -2837,12 +2841,6 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   @Override
-  public PImage get() {
-    return get(0, 0, width, height);
-  }
-
-
-  @Override
   protected void getImpl(int sourceX, int sourceY,
                          int sourceWidth, int sourceHeight,
                          PImage target, int targetX, int targetY) {
@@ -2852,7 +2850,7 @@ public class PGraphicsJava2D extends PGraphics {
 //      ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
     WritableRaster raster = getRaster();
 
-    if (sourceWidth == target.width && sourceHeight == target.height) {
+    if (sourceWidth == target.pixelWidth && sourceHeight == target.pixelHeight) {
       raster.getDataElements(sourceX, sourceY, sourceWidth, sourceHeight, target.pixels);
       // https://github.com/processing/processing/issues/2030
       if (raster.getNumBands() == 3) {
@@ -2866,7 +2864,7 @@ public class PGraphicsJava2D extends PGraphics {
 
       // Copy the temporary output pixels over to the outgoing image
       int sourceOffset = 0;
-      int targetOffset = targetY*target.width + targetX;
+      int targetOffset = targetY*target.pixelWidth + targetX;
       for (int y = 0; y < sourceHeight; y++) {
         if (raster.getNumBands() == 3) {
           for (int i = 0; i < sourceWidth; i++) {
@@ -2878,7 +2876,7 @@ public class PGraphicsJava2D extends PGraphics {
           System.arraycopy(temp, sourceOffset, target.pixels, targetOffset, sourceWidth);
         }
         sourceOffset += sourceWidth;
-        targetOffset += target.width;
+        targetOffset += target.pixelWidth;
       }
     }
   }
@@ -2886,7 +2884,7 @@ public class PGraphicsJava2D extends PGraphics {
 
   @Override
   public void set(int x, int y, int argb) {
-    if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
+    if ((x < 0) || (y < 0) || (x >= pixelWidth) || (y >= pixelHeight)) return;
 //    ((BufferedImage) image).setRGB(x, y, argb);
     getset[0] = argb;
 //    WritableRaster raster = ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
@@ -2907,18 +2905,18 @@ public class PGraphicsJava2D extends PGraphics {
 //      ((BufferedImage) (useOffscreen && primarySurface ? offscreen : image)).getRaster();
 
     if ((sourceX == 0) && (sourceY == 0) &&
-        (sourceWidth == sourceImage.width) &&
-        (sourceHeight == sourceImage.height)) {
+        (sourceWidth == sourceImage.pixelWidth) &&
+        (sourceHeight == sourceImage.pixelHeight)) {
 //      System.out.format("%d %d  %dx%d  %d%n", targetX, targetY,
 //                             sourceImage.width, sourceImage.height,
 //                             sourceImage.pixels.length);
       raster.setDataElements(targetX, targetY,
-                             sourceImage.width, sourceImage.height,
+                             sourceImage.pixelWidth, sourceImage.pixelHeight,
                              sourceImage.pixels);
     } else {
       // TODO optimize, incredibly inefficient to reallocate this much memory
       PImage temp = sourceImage.get(sourceX, sourceY, sourceWidth, sourceHeight);
-      raster.setDataElements(targetX, targetY, temp.width, temp.height, temp.pixels);
+      raster.setDataElements(targetX, targetY, temp.pixelWidth, temp.pixelHeight, temp.pixels);
     }
   }
 

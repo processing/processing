@@ -790,6 +790,8 @@ public class PApplet implements PConstants {
    */
   static public final String ARGS_SKETCH_FOLDER = "--sketch-path";
 
+  static public final String ARGS_DENSITY = "--density";
+
   /**
    * When run externally to a PdeEditor,
    * this is sent by the sketch when it quits.
@@ -909,6 +911,9 @@ public class PApplet implements PConstants {
   // Unlike the others above, needs to be public to support
   // the pixelWidth and pixelHeight fields.
   public int pixelDensity = 1;
+  int suggestedDensity = -1;
+
+  boolean present;
 
   String outputPath;
   OutputStream outputStream;
@@ -1128,23 +1133,23 @@ public class PApplet implements PConstants {
   * @see PApplet#size(int,int)
   */
   public int displayDensity() {
-    if (display == SPAN) {
-      // walk through all displays, use lowest common denominator
-      for (int i = 0; i < displayDevices.length; i++) {
-        if (displayDensity(i) != 2) {
-          return 1;
-        }
-      }
-      // If nobody's density is 1 (or != 2, to be exact) then everyone is 2
-      return 2;
+    if (display != SPAN && (fullScreen || present)) {
+      return displayDensity(display);
     }
-    return displayDensity(display);
+    // walk through all displays, use 2 if any display is 2
+    for (int i = 0; i < displayDevices.length; i++) {
+      if (displayDensity(i+1) == 2) {
+        return 2;
+      }
+    }
+    // If nobody's density is 2 then everyone is 1
+    return 1;
   }
 
  /**
   * @param display the display number to check
   */
-  static public int displayDensity(int display) {
+  public int displayDensity(int display) {
     if (PApplet.platform == PConstants.MACOSX) {
       // This should probably be reset each time there's a display change.
       // A 5-minute search didn't turn up any such event in the Java 7 API.
@@ -1187,6 +1192,15 @@ public class PApplet implements PConstants {
           }
         } catch (Exception ignore) { }
       }
+    } else if (PApplet.platform == PConstants.WINDOWS ||
+        PApplet.platform == PConstants.LINUX) {
+      if (suggestedDensity == -1) {
+        // TODO: detect and return DPI scaling using JNA; Windows has
+        //   a system-wide value, not sure how it works on Linux
+        return 1;
+      } else if (suggestedDensity == 1 || suggestedDensity == 2) {
+        return suggestedDensity;
+      }
     }
     return 1;
   }
@@ -1204,9 +1218,11 @@ public class PApplet implements PConstants {
         if (density != 1 && density != 2) {
           throw new RuntimeException("pixelDensity() can only be 1 or 2");
         }
-        if (density == 2 && displayDensity() == 1) {
+        if (!FX2D.equals(renderer) && density == 2 && displayDensity() == 1) {
+          // FX has its own check in PSurfaceFX
           // Don't throw exception because the sketch should still work
-          throw new RuntimeException("pixelDensity(2) is not available for this display");
+          System.err.println("pixelDensity(2) is not available for this display");
+          this.pixelDensity = 1;
         } else {
           this.pixelDensity = density;
         }
@@ -10390,6 +10406,7 @@ public class PApplet implements PConstants {
 //    boolean fullScreen = false;
     boolean present = false;
 //    boolean spanDisplays = false;
+    int density = -1;
 
     String param = null, value = null;
     String folder = calcSketchPath();
@@ -10432,6 +10449,15 @@ public class PApplet implements PConstants {
 
         } else if (param.equals(ARGS_LOCATION)) {
           location = parseInt(split(value, ','));
+
+        } else if (param.equals(ARGS_DENSITY)) {
+          density = parseInt(value, -1);
+          if (density == -1) {
+            System.err.println("Could not parse " + value + " for " + ARGS_DENSITY);
+          } else if (density != 1 && density != 2) {
+            density = -1;
+            System.err.println(ARGS_DENSITY + " should be 1 or 2");
+          }
         }
 
       } else {
@@ -10499,6 +10525,12 @@ public class PApplet implements PConstants {
     // Set the suggested display that's coming from the command line
     // (and most likely, from the PDE's preference setting).
     sketch.display = displayNum;
+
+    // Set the suggested density that is coming from command line
+    // (most likely set from the PDE based on a system DPI scaling)
+    sketch.suggestedDensity = density;
+
+    sketch.present = present;
 
     // For 3.0.1, moved this above handleSettings() so that loadImage() can be
     // used inside settings(). Sets a terrible precedent, but the alternative
