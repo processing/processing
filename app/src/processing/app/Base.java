@@ -255,8 +255,9 @@ public class Base {
         public void run() {
           try {
             Process p = Runtime.getRuntime().exec("powershell Get-WmiObject Win32_PnPSignedDriver| select devicename, driverversion | where {$_.devicename -like \\\"*nvidia*\\\"}");
-            String[] lines = PApplet.loadStrings(PApplet.createReader(p.getInputStream()));
-            for (String line : lines) {
+            BufferedReader reader = PApplet.createReader(p.getInputStream());
+            String line = null;
+            while ((line = reader.readLine()) != null) {
               if (line.contains("3.7849")) {
                 EventQueue.invokeLater(new Runnable() {
                   public void run() {
@@ -426,12 +427,12 @@ public class Base {
    */
   void rebuildContribModes() {
     if (modeContribs == null) {
-      modeContribs = new ArrayList<ModeContribution>();
+      modeContribs = new ArrayList<>();
     }
     File modesFolder = getSketchbookModesFolder();
     List<ModeContribution> contribModes = getModeContribs();
 
-    Map<File, ModeContribution> known = new HashMap<File, ModeContribution>();
+    Map<File, ModeContribution> known = new HashMap<>();
     for (ModeContribution contrib : contribModes) {
       known.put(contrib.getFolder(), contrib);
     }
@@ -492,7 +493,7 @@ public class Base {
    */
   void rebuildContribExamples() {
     if (exampleContribs == null) {
-      exampleContribs = new ArrayList<ExamplesContribution>();
+      exampleContribs = new ArrayList<>();
     }
     ExamplesContribution.loadMissing(this);
   }
@@ -618,7 +619,7 @@ public class Base {
   public void rebuildToolList() {
     // Only do this once because the list of internal tools will never change
     if (internalTools == null) {
-      internalTools = new ArrayList<Tool>();
+      internalTools = new ArrayList<>();
 
       initInternalTool("processing.app.tools.CreateFont");
       initInternalTool("processing.app.tools.ColorSelector");
@@ -826,7 +827,7 @@ public class Base {
 
 
   public List<Mode> getModeList() {
-    List<Mode> allModes = new ArrayList<Mode>();
+    List<Mode> allModes = new ArrayList<>();
     allModes.addAll(Arrays.asList(coreModes));
     if (modeContribs != null) {
       for (ModeContribution contrib : modeContribs) {
@@ -843,14 +844,14 @@ public class Base {
 
 
   private List<Contribution> getInstalledContribs() {
-    List<Contribution> contributions = new ArrayList<Contribution>();
+    List<Contribution> contributions = new ArrayList<>();
 
     List<ModeContribution> modeContribs = getModeContribs();
     contributions.addAll(modeContribs);
 
     for (ModeContribution modeContrib : modeContribs) {
       Mode mode = modeContrib.getMode();
-      contributions.addAll(new ArrayList<Library>(mode.contribLibraries));
+      contributions.addAll(new ArrayList<>(mode.contribLibraries));
     }
 
     // TODO this duplicates code in Editor, but it's not editor-specific
@@ -1014,7 +1015,7 @@ public class Base {
   private Mode promptForMode(final File sketch, final ModeInfo preferredMode) {
     final String extension =
       sketch.getName().substring(sketch.getName().lastIndexOf('.') + 1);
-    final List<Mode> possibleModes = new ArrayList<Mode>();
+    final List<Mode> possibleModes = new ArrayList<>();
     for (final Mode mode : getModeList()) {
       if (mode.canEdit(sketch)) {
         possibleModes.add(mode);
