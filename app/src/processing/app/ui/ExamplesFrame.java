@@ -26,7 +26,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -187,8 +186,8 @@ public class ExamplesFrame extends JFrame {
     tree.setCellRenderer(new ZoomTreeCellRenderer(mode));
 
     JScrollPane treePane = new JScrollPane(tree);
-    treePane.setPreferredSize(new Dimension(250, 300));
-    treePane.setBorder(new EmptyBorder(2, 0, 0, 0));
+    treePane.setPreferredSize(Toolkit.zoom(250, 300));
+    treePane.setBorder(new EmptyBorder(Toolkit.zoom(2), 0, 0, 0));
     treePane.setOpaque(true);
     treePane.setBackground(Color.WHITE);
     treePane.setAlignmentX(Component.LEFT_ALIGNMENT);
