@@ -8,9 +8,9 @@ X   https://github.com/processing/processing/issues/4997
 X Gap between tab headers and text area at 125% and 150% scaling on Windows
 X   https://github.com/processing/processing/issues/4902
 X   Math.ceil() helps
-
-_ Small tooltip text on high-dpi screens
+X Small tooltip text on high-dpi screens
 _   https://github.com/processing/processing/issues/4914
+
 _ some line heights are wrong on hidpi
 _   https://github.com/processing/processing/issues/4936
 _ mode list does not update after changing sketchbook folder
@@ -52,6 +52,10 @@ X   https://github.com/processing/processing/issues/4668
 _ redo console handling to not use Timer, fixing freeze-up problems
 _   https://github.com/processing/processing/pull/4935
 _   https://github.com/processing/processing/issues/4825
+_ Make the change detector not reload the sketch
+_   https://github.com/processing/processing/pull/5021
+_   https://github.com/processing/processing/issues/4713
+X   https://github.com/processing/processing/pull/4849
 
 awaiting confirmation (fixed in 3.3)
 X visual artifacts on Windows 10 when using menus

@@ -131,7 +131,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   protected CopyAsHtmlAction copyAsHtmlAction;
   protected PasteAction pasteAction;
   /** Menu Actions updated on the opening of the edit menu. */
-  protected List<UpdatableAction> editMenuUpdatable = new ArrayList<UpdatableAction>();
+  protected List<UpdatableAction> editMenuUpdatable = new ArrayList<>();
 
   /** The currently selected tab's undo manager */
   private UndoManager undo;
@@ -144,8 +144,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
   // true if inserting text, false if removing text
   private boolean isInserting;
   // maintain caret position during undo operations
-  private final Stack<Integer> caretUndoStack = new Stack<Integer>();
-  private final Stack<Integer> caretRedoStack = new Stack<Integer>();
+  private final Stack<Integer> caretUndoStack = new Stack<>();
+  private final Stack<Integer> caretRedoStack = new Stack<>();
 
   private FindReplace find;
   JMenu toolsMenu;
@@ -1069,7 +1069,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     sketchMenu.addMenuListener(new MenuListener() {
       // Menu Listener that populates the menu only when the menu is opened
-      List<JMenuItem> menuList = new ArrayList<JMenuItem>();
+      List<JMenuItem> menuList = new ArrayList<>();
 
       @Override
       public void menuSelected(MenuEvent event) {
@@ -3162,14 +3162,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
       bgColorError = mode.getColor("errors.selection.error.bgcolor");
     }
 
-    Color bgColor = error ? //text.startsWith(Language.text("editor.status.error")) ?
-      bgColorError : bgColorWarning;
-    String content = "<html>" +
-      "<div style='margin: -3 -3 -3 -3; padding: 3 3 3 3; " +
+    Color bgColor = error ? bgColorError : bgColorWarning;
+    String css =
+      "margin: -3 -3 -3 -3; padding: 3 3 3 3; " +
       "background: #" + PApplet.hex(bgColor.getRGB(), 8).substring(2) + ";" +
       "font-family: " + font.getFontName() + ", sans-serif;" +
-      "font-size: " + font.getSize() + "px;'>" + message + "</div></html>";
-    //System.out.println(content);
+      "font-size: " + Toolkit.zoom(font.getSize()) + "px;";
+    String content =
+      "<html> <div style='" + css + "'>" + message + "</div> </html>";
     comp.setToolTipText(content);
   }
 
