@@ -241,7 +241,8 @@
 
     <downloader version="${jdk.version}" 
                 update="${jdk.update}" 
-                build="${jdk.build}" 
+                build="${jdk.build}"
+                hash="${jdk.hash}" 
                 jdk="${jre.download.jdk}"
                 flavor="${jre.downloader}"
                 path="${jre.tgz.path}" />    
@@ -250,7 +251,8 @@
   <target name="download-jdk-macosx" depends="downloader-setup">
     <downloader version="${jdk.version}" 
                 update="${jdk.update}" 
-                build="${jdk.build}" 
+                build="${jdk.build}"
+                hash="${jdk.hash}" 
                 jdk="true" 
                 flavor="macosx-x64.dmg"
                 path="${env.HOME}/Desktop/jdk-${jdk.short}.dmg" />

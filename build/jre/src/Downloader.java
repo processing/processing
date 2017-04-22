@@ -45,6 +45,11 @@ public class Downloader extends Task {
   }
 
 
+  public void setHash(String hash) {
+    this.hash = hash;
+  }
+
+
   public void setJDK(boolean jdk) {
     this.jdk = jdk;
   }
