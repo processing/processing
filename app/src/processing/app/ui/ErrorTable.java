@@ -62,9 +62,9 @@ public class ErrorTable extends JTable {
   Color headerColor;
   Color headerBgColor;
 
-  Font rowFont;
-  Color rowColor;
-  Color rowBgColor;
+//  Font rowFont;
+//  Color rowColor;
+//  Color rowBgColor;
 
 
   public ErrorTable(final Editor editor) {
@@ -117,6 +117,7 @@ public class ErrorTable extends JTable {
     });
 
     header.setReorderingAllowed(false);
+    setFillsViewportHeight(true);
     ToolTipManager.sharedInstance().registerComponent(this);
   }
 
