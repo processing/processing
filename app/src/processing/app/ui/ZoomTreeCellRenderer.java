@@ -23,16 +23,18 @@
 package processing.app.ui;
 
 import java.awt.Component;
-import java.awt.Font;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
+import processing.app.Mode;
+
 
 class ZoomTreeCellRenderer extends DefaultTreeCellRenderer {
 
-  public ZoomTreeCellRenderer() {
-    setFont(Toolkit.getSansFont(12, Font.PLAIN));
+  public ZoomTreeCellRenderer(Mode mode) {
+    //setFont(Toolkit.getSansFont(Toolkit.zoom(14), Font.PLAIN));
+    setFont(mode.getFont("tree.font"));
   }
 
 
@@ -48,6 +50,8 @@ class ZoomTreeCellRenderer extends DefaultTreeCellRenderer {
     // https://github.com/processing/processing/issues/4936
     int high = getPreferredSize().height;
     if (high != 0) {
+      // add 10% for a little more spacing.. Source Sans leading is short
+      high = (high * 12) / 10;
       int current = getSize().height;
       if (current != high) {
         tree.setRowHeight(high);
