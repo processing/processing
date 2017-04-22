@@ -158,6 +158,18 @@ public class ErrorTable extends JTable {
                                                    boolean selected,
                                                    boolean focused,
                                                    int row, int column) {
+
+      // Adjust height for magnified displays. The font is scaled properly,
+      // but the rows don't automatically use the scaled preferred size.
+      // https://github.com/processing/processing/issues/4936
+      int high = getPreferredSize().height;
+      if (high != 0) {
+        JTableHeader header = table.getTableHeader();
+        int current = header.getSize().height;
+        if (current != high) {
+          table.setPreferredSize(new Dimension(table.getWidth(), high));
+        }
+      }
       setText(value == null ? "" : value.toString());
       return this;
     }
@@ -175,7 +187,6 @@ public class ErrorTable extends JTable {
     Color bgColorError;
     Color bgColorWarning;
 
-//    int indicatorSize;
     Color errorIndicatorColor;
     Color warningIndicatorColor;
 
@@ -190,7 +201,6 @@ public class ErrorTable extends JTable {
       bgColorError = mode.getColor("errors.selection.error.bgcolor");
       bgColorWarning = mode.getColor("errors.selection.warning.bgcolor");
 
-//      indicatorSize = mode.getInteger("errors.indicator.size");
       errorIndicatorColor = mode.getColor("errors.indicator.error.color");
       warningIndicatorColor = mode.getColor("errors.indicator.warning.color");
 
@@ -203,6 +213,17 @@ public class ErrorTable extends JTable {
                                                    boolean focused,
                                                    int row, int column) {
       Problem entry = (Problem) table.getValueAt(row, DATA_COLUMN);
+
+      // Adjust row height for magnified displays. The font is scaled properly,
+      // but the rows don't automatically use the scaled preferred size.
+      // https://github.com/processing/processing/issues/4936
+      int high = getPreferredSize().height;
+      if (high != 0) {
+        int current = table.getRowHeight();
+        if (current != high) {
+          table.setRowHeight(high);
+        }
+      }
 
       if (selected) {
         setForeground(textColorSelected);
