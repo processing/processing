@@ -183,6 +183,9 @@ public class ExamplesFrame extends JFrame {
       tree.setToggleClickCount(1);
     }
 
+    // Special cell renderer that takes the UI zoom into account
+    tree.setCellRenderer(new ZoomTreeCellRenderer());
+
     JScrollPane treePane = new JScrollPane(tree);
     treePane.setPreferredSize(new Dimension(250, 300));
     treePane.setBorder(new EmptyBorder(2, 0, 0, 0));
