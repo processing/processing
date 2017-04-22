@@ -227,6 +227,20 @@ public class Sketch {
   }
 
 
+  /**
+   * Load a tab that the user added to the sketch or modified with an external
+   * editor.
+   */
+  public void loadNewTab(String filename, String ext, boolean newAddition) {
+    if (newAddition) {
+      insertCode(new SketchCode(new File(folder, filename), ext));
+    } else {
+      replaceCode(new SketchCode(new File(folder, filename), ext));
+    }
+    sortCode();
+  }
+
+
   protected void replaceCode(SketchCode newCode) {
     for (int i = 0; i < codeCount; i++) {
       if (code[i].getFileName().equals(newCode.getFileName())) {
@@ -685,7 +699,11 @@ public class Sketch {
   }
 
 
-  protected void removeCode(SketchCode which) {
+  /**
+   * Remove a SketchCode from the list of files without deleting its file.
+   * @see #handleDeleteCode()
+   */
+  public void removeCode(SketchCode which) {
     // remove it from the internal list of files
     // resort internal list of files
     for (int i = 0; i < codeCount; i++) {
@@ -758,6 +776,16 @@ public class Sketch {
 
 
   /**
+   * Ensure that all SketchCodes are up-to-date, so that sc.save() works.
+   */
+  public void updateSketchCodes() {
+//    if (current.isModified()) {
+    current.setProgram(editor.getText());
+//    }
+  }
+
+
+  /**
    * Save all code in the current sketch. This just forces the files to save
    * in place, so if it's an untitled (un-saved) sketch, saveAs() should be
    * called instead. (This is handled inside Editor.handleSave()).
@@ -767,9 +795,7 @@ public class Sketch {
     ensureExistence();
 
     // first get the contents of the editor text area
-//    if (current.isModified()) {
-    current.setProgram(editor.getText());
-//    }
+    updateSketchCodes();
 
     // don't do anything if not actually modified
     //if (!modified) return false;
@@ -911,9 +937,7 @@ public class Sketch {
 
     // grab the contents of the current tab before saving
     // first get the contents of the editor text area
-    if (current.isModified()) {
-      current.setProgram(editor.getText());
-    }
+    updateSketchCodes();
 
     File[] copyItems = folder.listFiles(new FileFilter() {
       public boolean accept(File file) {
