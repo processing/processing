@@ -269,6 +269,17 @@ public class Base {
                                          "https://github.com/processing/processing/issues/4853");
                   }
                 });
+              } else if (line.contains("3.8165")) {
+                EventQueue.invokeLater(new Runnable() {
+                  public void run() {
+                    Messages.showWarning("NVIDIA screwed up again",
+                                         "Due to an NVIDIA bug, you need to update your graphics drivers,\n" +
+                                         "otherwise you won't be able to run any sketches. Update here:\n" +
+                                         "http://nvidia.custhelp.com/app/answers/detail/a_id/4453/\n" +
+                                         "or read background about the issue at this link:\n" +
+                                         "https://github.com/processing/processing/issues/4997");
+                  }
+                });
               }
             }
           } catch (Exception e) {
