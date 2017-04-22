@@ -23,12 +23,18 @@
 package processing.app.ui;
 
 import java.awt.Component;
+import java.awt.Font;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 
 class ZoomTreeCellRenderer extends DefaultTreeCellRenderer {
+
+  public ZoomTreeCellRenderer() {
+    setFont(Toolkit.getSansFont(12, Font.PLAIN));
+  }
+
 
   @Override
   public Component getTreeCellRendererComponent(JTree tree, Object value,
