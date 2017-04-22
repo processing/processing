@@ -3,6 +3,9 @@ X fix the JRE downloader
 X   https://gist.github.com/P7h/9741922
 X   http://stackoverflow.com/q/10268583
 X move to 8u131
+X add another warning for a bad NVIDIA driver
+X   https://github.com/processing/processing/issues/4997
+
 _ Small tooltip text on high-dpi screens
 _   https://github.com/processing/processing/issues/4914
 _ some line heights are wrong on hidpi
