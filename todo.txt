@@ -5,6 +5,9 @@ X   http://stackoverflow.com/q/10268583
 X move to 8u131
 X add another warning for a bad NVIDIA driver
 X   https://github.com/processing/processing/issues/4997
+X Gap between tab headers and text area at 125% and 150% scaling on Windows
+X   https://github.com/processing/processing/issues/4902
+X   Math.ceil() helps
 
 _ Small tooltip text on high-dpi screens
 _   https://github.com/processing/processing/issues/4914
@@ -68,10 +71,6 @@ X   https://github.com/processing/processing/issues/3933
 X   Olivia hasn't seen it, closing
 X amazing blurry editor window
 X   https://github.com/processing/processing/issues/4892
-
-_ Gap between tab headers and text area at 125% and 150% scaling on Windows
-_   https://github.com/processing/processing/issues/4902
-_   Math.ceil() helps
 
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
