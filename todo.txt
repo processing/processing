@@ -9,11 +9,16 @@ X Gap between tab headers and text area at 125% and 150% scaling on Windows
 X   https://github.com/processing/processing/issues/4902
 X   Math.ceil() helps
 X Small tooltip text on high-dpi screens
-_   https://github.com/processing/processing/issues/4914
+X   https://github.com/processing/processing/issues/4914
+X make the Error Table extend white to the bottom
+X   was making a gray box on Windows, probably Linux too
 
 _ some line heights are wrong on hidpi
+_   usage window
+_   examples window
+_   sketchbook window
 _   https://github.com/processing/processing/issues/4936
-_   https://github.com/processing/processing/issues/5007
+X   https://github.com/processing/processing/issues/5007
 _ mode list does not update after changing sketchbook folder
 _   already reported?
 _ swap font smoothing for tab size?
