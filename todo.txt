@@ -1,7 +1,8 @@
 0258 (3.3.1)
-X add Jump to Declaration
-X   https://github.com/processing/processing/pull/4707
-X   https://github.com/processing/processing/issues/4668
+X fix the JRE downloader
+X   https://gist.github.com/P7h/9741922
+X   http://stackoverflow.com/q/10268583
+X move to 8u131
 _ Small tooltip text on high-dpi screens
 _   https://github.com/processing/processing/issues/4914
 _ some line heights are wrong on hidpi
@@ -10,10 +11,6 @@ _ mode list does not update after changing sketchbook folder
 _   already reported?
 _ swap font smoothing for tab size?
 _   implement simple table for prefs?
-
-_ fix the JRE downloader
-_   https://gist.github.com/P7h/9741922
-_   http://stackoverflow.com/q/10268583
 
 jakub
 X Fix preprocessing of code with double backslash in string or char literal
@@ -43,13 +40,16 @@ X   https://github.com/processing/processing/pull/4931
 contrib
 X Added Arabic translation
 X   https://github.com/processing/processing/pull/4970
+X add Jump to Declaration
+X   https://github.com/processing/processing/pull/4707
+X   https://github.com/processing/processing/issues/4668
 _ redo console handling to not use Timer, fixing freeze-up problems
 _   https://github.com/processing/processing/pull/4935
 _   https://github.com/processing/processing/issues/4825
 
 awaiting confirmation (fixed in 3.3)
 X visual artifacts on Windows 10 when using menus
-_   https://github.com/processing/processing/issues/4700
+X   https://github.com/processing/processing/issues/4700
 X Broken characters in the Welcome Page and the Contribution Manager
 X   https://github.com/processing/processing/issues/4747
 X   looks like a failure to load the Source Sans font
