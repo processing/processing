@@ -550,7 +550,7 @@ public class PSurfaceFX implements PSurface {
     }
 
     int wide = sketch.width;  // stage.getWidth() is NaN here
-    int high = sketch.height;  // stage.getHeight()
+    //int high = sketch.height;  // stage.getHeight()
 
     if (location != null) {
       // a specific location was received from the Runner

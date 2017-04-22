@@ -36,10 +36,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
@@ -61,7 +58,6 @@ import com.jogamp.nativewindow.MutableGraphicsConfiguration;
 import com.jogamp.nativewindow.WindowClosingProtocol;
 import com.jogamp.newt.Display;
 import com.jogamp.newt.Display.PointerIcon;
-import com.jogamp.newt.MonitorDevice;
 import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Screen;
 import com.jogamp.newt.awt.NewtCanvasAWT;
