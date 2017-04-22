@@ -288,7 +288,7 @@ public class Toolkit {
 
     // Holds only [0-9a-z], not uppercase.
     // Prevents X != x, so "Save" and "Save As" aren't both given 'a'.
-    final List<Character> taken = new ArrayList<Character>(menu.length);
+    final List<Character> taken = new ArrayList<>(menu.length);
     char firstChar;
     char[] cleanChars;
     Character[] cleanCharas;
@@ -327,7 +327,7 @@ public class Toolkit {
       if (cleanString.length() == 0) continue;
 
       // First, ban letters by underscores.
-      final List<Character> banned = new ArrayList<Character>();
+      final List<Character> banned = new ArrayList<>();
       for (int i = 0; i < cleanString.length(); i++) {
         if (cleanString.charAt(i) == '_') {
           if (i > 0)
@@ -433,7 +433,7 @@ public class Toolkit {
    * As setMenuMnemonics(JMenuItem...).
    */
   static public void setMenuMnemonics(JPopupMenu menu) {
-    ArrayList<JMenuItem> items = new ArrayList<JMenuItem>();
+    ArrayList<JMenuItem> items = new ArrayList<>();
 
     for (Component c : menu.getComponents()) {
       if (c instanceof JMenuItem) items.add((JMenuItem)c);
@@ -590,7 +590,7 @@ public class Toolkit {
   static public void setIcon(Window window) {
     if (!Platform.isMacOS()) {
       if (iconImages == null) {
-        iconImages = new ArrayList<Image>();
+        iconImages = new ArrayList<>();
         final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
         for (int sz : sizes) {
           iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png"));
@@ -794,7 +794,9 @@ public class Toolkit {
     if (zoom == 0) {
       zoom = parseZoom();
     }
-    return (int) (zoom * pixels);
+    // Deal with 125% scaling badness
+    // https://github.com/processing/processing/issues/4902
+    return (int) Math.ceil(zoom * pixels);
   }
 
 
@@ -894,7 +896,7 @@ public class Toolkit {
     GraphicsEnvironment ge =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
     Font[] fonts = ge.getAllFonts();
-    List<Font> outgoing = new ArrayList<Font>();
+    List<Font> outgoing = new ArrayList<>();
     // Using AffineTransform.getScaleInstance(100, 100) doesn't change sizes
     FontRenderContext frc =
       new FontRenderContext(new AffineTransform(),
