@@ -13,6 +13,7 @@ _   https://github.com/processing/processing/issues/4914
 
 _ some line heights are wrong on hidpi
 _   https://github.com/processing/processing/issues/4936
+_   https://github.com/processing/processing/issues/5007
 _ mode list does not update after changing sketchbook folder
 _   already reported?
 _ swap font smoothing for tab size?

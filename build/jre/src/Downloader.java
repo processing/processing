@@ -78,7 +78,7 @@ public class Downloader extends Task {
       throw new BuildException("You've gotta choose a flavor (macosx-x64.dmg, windows-x64.exe...)");
     }
 
-    if (build >= 121 && hash == null) {
+    if (update >= 121 && hash == null) {
       throw new BuildException("Starting with 8u121, a hash is required, see https://gist.github.com/P7h/9741922");
     }
 
@@ -92,29 +92,27 @@ public class Downloader extends Task {
 
 
   void download() throws IOException {
-    //HttpURLConnection.setFollowRedirects(true);
     String filename = (jdk ? "jdk" : "jre") +
       (update == 0 ?
        String.format("-%d-%s", version, flavor) :
        String.format("-%du%d-%s", version, update, flavor));
 
     if (path == null) {
-      path = filename;  //System.getProperty("user.dir");
+      path = filename;
     }
 
-    //String url = "http://download.oracle.com/otn-pub/java/jdk/" +
-    // https://edelivery.oracle.com/otn-pub/java/jdk/7u45-b18/jre-7u45-linux-i586.tar.gz
-    //String url = "https://edelivery.oracle.com/otn-pub/java/jdk/" +
     String url = "http://download.oracle.com/otn-pub/java/jdk/" +
       (update == 0 ?
        String.format("%d-b%02d/", version, build) :
-       String.format("%du%d-b%02d/", version, update, build)) + filename;
-//    System.out.println(url);
+       String.format("%du%d-b%02d/", version, update, build));
 
     // URL format changed starting with 8u121
     if (update >= 121) {
       url += hash + "/";
     }
+
+    // Finally, add the filename to the end
+    url += filename;
 
     HttpURLConnection conn =
       (HttpURLConnection) new URL(url).openConnection();
