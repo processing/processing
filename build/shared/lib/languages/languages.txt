@@ -5,6 +5,7 @@
 # Add new languages in alphabetical order to (slightly)
 # reduce the risk of merge conflicts
 
+ar  # Arabic
 de  # German, Deutsch
 en  # English, English
 el  # Greek
