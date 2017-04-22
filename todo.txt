@@ -30,6 +30,9 @@ X   https://github.com/processing/processing/issues/4995
 X   https://github.com/processing/processing/pull/4999
 X Synchronize input event processing
 X   https://github.com/processing/processing/pull/4998
+X Scrub comments: skip the second chracter in the escape sequence
+X   https://github.com/processing/processing/pull/5019
+X   https://github.com/processing/processing/issues/5016
 
 gohai
 X Add support for 64-bit ARM boards
@@ -37,8 +40,9 @@ X   https://github.com/processing/processing/pull/5002
 X Hardware I/O updates for ARM
 X   https://github.com/processing/processing/pull/4931
 
-
 contrib
+X Added Arabic translation
+X   https://github.com/processing/processing/pull/4970
 _ redo console handling to not use Timer, fixing freeze-up problems
 _   https://github.com/processing/processing/pull/4935
 _   https://github.com/processing/processing/issues/4825

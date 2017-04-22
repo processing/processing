@@ -20,7 +20,7 @@ X   fixed in 3.2.4
 
 unconfirmed
 X visual artifacts on Windows 10 when using menus
-_   https://github.com/processing/processing/issues/4700
+X   https://github.com/processing/processing/issues/4700
 X Broken characters in the Welcome Page and the Contribution Manager
 _   https://github.com/processing/processing/issues/4747
 X   looks like a failure to load the Source Sans font
@@ -32,7 +32,7 @@ X NVIDIA driver problems (and means to check)
 _   https://github.com/processing/processing/issues/4853
 X blank window on startup where the "Welcome" screen should be
 X   this may be fixed (removed invokeLater() on startup), unconfirmed
-_   https://github.com/processing/processing/issues/3933
+X   https://github.com/processing/processing/issues/3933
 
 
 0256 (3.2.4)
