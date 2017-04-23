@@ -12,13 +12,13 @@ X Small tooltip text on high-dpi screens
 X   https://github.com/processing/processing/issues/4914
 X make the Error Table extend white to the bottom
 X   was making a gray box on Windows, probably Linux too
-
-_ some line heights are wrong on hidpi
-_   usage window
-_   examples window
-_   sketchbook window
-_   https://github.com/processing/processing/issues/4936
+X some line heights are wrong on hidpi
+X   usage window
+X   examples window
+X   sketchbook window
+X   https://github.com/processing/processing/issues/4936
 X   https://github.com/processing/processing/issues/5007
+
 _ mode list does not update after changing sketchbook folder
 _   already reported?
 _ swap font smoothing for tab size?
