@@ -66,7 +66,7 @@ X   are there conflicts between version in lib and OS?
 o   are we still installing fonts into ext?
 o   fixed by rolling back to 8u92, broken since 8u102 in 3.1.2
 X NVIDIA driver problems (and means to check)
-_   https://github.com/processing/processing/issues/4853
+X   https://github.com/processing/processing/issues/4853
 X blank window on startup where the "Welcome" screen should be
 X   this may be fixed (removed invokeLater() on startup), unconfirmed
 X   https://github.com/processing/processing/issues/3933

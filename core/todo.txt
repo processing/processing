@@ -12,7 +12,6 @@ X fix temporary file handling for saveBytes(), saveStream(), etc
 X   wasn't handling gzip output properly
 X   also could have problems w/ names under length 3
 
-
 jakub
 X major work on window placement and pixel density
 X   https://github.com/processing/processing/pull/5011

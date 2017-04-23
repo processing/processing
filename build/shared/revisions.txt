@@ -1,3 +1,136 @@
+PROCESSING 3.3.1 (REV 0258) - 23 April 2017
+
+With Casey and Ben together in Boston for a conference, we managed to
+wrap up a few things and prepare a new release. Highlights include:
+
++ The UI now supports Arabic with a new translation provided by Omar Hommos
+
++ Several bug fixes have been implemented for high-res display support
+  on Windows and Linux
+
++ Several updates from Gottfried for ARM devices like Raspberry Pi and CHIP
+
++ Lots of pixelDensity() and sketch scaling work has been developed by
+  Jakub Valtar and is in the current release, though we've not yet
+  activated these features entirely. Expect those in the 3.4 release.
+
+And now on with the countdown:
+
+
+[ bug fixes ]
+
++ Fix gap between tab headers and text area at 125% and 150% scaling on Windows
+  https://github.com/processing/processing/issues/4902
+
++ Some line heights were wrong on hi-dpi displays
+  https://github.com/processing/processing/issues/4936
+  https://github.com/processing/processing/issues/5007
+
++ Fix small tooltip text on high-dpi screens
+  https://github.com/processing/processing/issues/4914
+  
++ Ugly button images at 125% and 150% scaling on Windows
+  https://github.com/processing/processing/issues/4901
+  https://github.com/processing/processing/pull/4906
+
++ Get rid of error message when exporting sketches with the video library
+  https://github.com/processing/processing/issues/4971
+
++ Fix preprocessing of code with double backslash in string or char literal
+  https://github.com/processing/processing/issues/4903
+  https://github.com/processing/processing/pull/4907
+  
++ Fix breakpoints in inner classes
+  https://github.com/processing/processing/pull/5008
+  https://github.com/processing/processing/issues/2946
+  
++ Fix preprocessor skipping one char after a block comment
+  https://github.com/processing/processing/issues/4995
+  https://github.com/processing/processing/pull/4999
+  
++ Synchronize input event processing
+  https://github.com/processing/processing/pull/4998
+  
++ Scrub comments: skip the second chracter in the escape sequence
+  https://github.com/processing/processing/pull/5019
+  https://github.com/processing/processing/issues/5016
+
+
+[ additions & changes ]
+
++ Added Arabic translation
+  https://github.com/processing/processing/pull/4970
+
++ Added Jump to Declaration
+  https://github.com/processing/processing/pull/4707
+  https://github.com/processing/processing/issues/4668
+
++ Fix the JRE downloader and upgrade to Java 8 update 131
+
++ Add another warning for yet another a bad NVIDIA driver
+  https://github.com/processing/processing/issues/4997
+  
++ Make the Error Table extend white to the bottom
+  
++ Use built-in font for any non-Roman or CJK language
+
+
+[ graphics & the core ]
+
++ Major work on window placement and pixel density by Jakub
+  https://github.com/processing/processing/pull/5011
+
++ Improve sum() functions in processing.data
+  Add sum() to IntDict and FloatDict
+  Add sumLong() to IntList, IntDict (to handle cases outside integer range)
+  Add sumDouble() to FloatList, FloatDict (to handle outside float range)
+  Throw exception when using sum() with numbers that are too large or small
+
++ createInput() and createOutput() now both use buffered streams by default
+  createInputRaw() does not, however
+  
++ Don't derive the font again if the size is unchanged
+  https://github.com/processing/processing/issues/4956
+  
++ fix temporary file handling for saveBytes(), saveStream(), etc
+  wasn't handling gzip output properly
+  also could have problems w/ names under length 3
+
+
+[ gottfried's arms ] 
+
++ Add support for 64-bit ARM boards
+  https://github.com/processing/processing/pull/5002
+  
++ Hardware I/O updates for ARM
+  https://github.com/processing/processing/pull/4931
+
++ Fix MeshTweening vertex shader
+  https://github.com/processing/processing-docs/issues/523
+  https://github.com/processing/processing-docs/pull/524
+  
++ ARM: Allow Raspberry Pi's Mesa GL driver to use up to 8 lights
+  https://github.com/processing/processing/pull/4915
+  ...and revert it back again
+  https://github.com/processing/processing/pull/4922
+  
++ Retry with multisampling disabled if creating a framebuffer 
+  fails because of INCOMPLETE_MULTISAMPLE
+  https://github.com/processing/processing/pull/4921
+
++ Report more error conditions in validateFramebuffer
+  https://github.com/processing/processing/pull/4920
+
++ Add more Raspberry Pi related fixes to JOGL
+  https://github.com/processing/processing/pull/4911
+
++ Unblock hardware-accelerated P3D on ARM Mali devices
+  https://github.com/processing/processing/pull/5014
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.3 (REV 0257) - 12 February 2017
 
 This release adds the ability to the scale the UI or high-resolution
