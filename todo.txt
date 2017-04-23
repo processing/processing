@@ -20,6 +20,8 @@ X   https://github.com/processing/processing/issues/4936
 X   https://github.com/processing/processing/issues/5007
 X get rid of error message when exporting sketches with the video library
 X   https://github.com/processing/processing/issues/4971
+X use dialog font for processing.sans if using a non- or quirky Roman language
+X   make this a parameter of the language translation
 
 jakub
 X Fix preprocessing of code with double backslash in string or char literal
@@ -52,13 +54,6 @@ X   https://github.com/processing/processing/pull/4970
 X add Jump to Declaration
 X   https://github.com/processing/processing/pull/4707
 X   https://github.com/processing/processing/issues/4668
-_ redo console handling to not use Timer, fixing freeze-up problems
-_   https://github.com/processing/processing/pull/4935
-_   https://github.com/processing/processing/issues/4825
-_ Make the change detector not reload the sketch
-_   https://github.com/processing/processing/pull/5021
-_   https://github.com/processing/processing/issues/4713
-X   https://github.com/processing/processing/pull/4849
 
 awaiting confirmation (fixed in 3.3)
 X visual artifacts on Windows 10 when using menus
@@ -79,6 +74,22 @@ X   Olivia hasn't seen it, closing
 X amazing blurry editor window
 X   https://github.com/processing/processing/issues/4892
 
+
+contrib
+_ redo console handling to not use Timer, fixing freeze-up problems
+_   https://github.com/processing/processing/pull/4935
+_   https://github.com/processing/processing/issues/4825
+_ Make the change detector not reload the sketch
+_   https://github.com/processing/processing/pull/5021
+_   https://github.com/processing/processing/issues/4713
+X   https://github.com/processing/processing/pull/4849
+
+
+_ implement fallback fonts instead of giving up and using Dialog and Mono
+_   https://github.com/processing/processing/issues/5023
+
+_ "Required files could not be found" when trying to run from the .zip file
+_   https://github.com/processing/processing/issues/5022
 
 _ mode list does not update after changing sketchbook folder
 _   already reported?
