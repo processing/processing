@@ -1,38 +1,4 @@
-0258 (3.3.1)
-X improve sum() functions in processing.data
-X   add sum() to IntDict and FloatDict
-X   add sumLong() to IntList, IntDict (to handle cases outside integer range)
-X   add sumDouble() to FloatList, FloatDict (to handle outside float range)
-X   throw exception when using sum() with numbers that are too large or small
-X createInput() and createOutput() now both use buffered streams by default
-X   createInputRaw() does not, however
-X don't derive the font again if the size is unchanged
-X   part of https://github.com/processing/processing/issues/4956
-X fix temporary file handling for saveBytes(), saveStream(), etc
-X   wasn't handling gzip output properly
-X   also could have problems w/ names under length 3
-
-jakub
-X major work on window placement and pixel density
-X   https://github.com/processing/processing/pull/5011
-
-gohai
-X Fix MeshTweening vertex shader
-X   https://github.com/processing/processing-docs/issues/523
-X   https://github.com/processing/processing-docs/pull/524
-X ARM: Allow Raspberry Pi's Mesa GL driver to use up to 8 lights
-X   https://github.com/processing/processing/pull/4915
-X   ...and revert it back again
-X   https://github.com/processing/processing/pull/4922
-X Retry with multisampling disabled if creating a framebuffer fails
-X   because of INCOMPLETE_MULTISAMPLE
-X   https://github.com/processing/processing/pull/4921
-X Report more error conditions in validateFramebuffer
-X   https://github.com/processing/processing/pull/4920
-X Add more Raspberry Pi related fixes to JOGL
-X   https://github.com/processing/processing/pull/4911
-X Unblock hardware-accelerated P3D on ARM Mali devices
-X   https://github.com/processing/processing/pull/5014
+0259 (3.3.2)
 
 
 high

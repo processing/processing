@@ -1,3 +1,80 @@
+0258 (3.3.1)
+X fix the JRE downloader
+X   https://gist.github.com/P7h/9741922
+X   http://stackoverflow.com/q/10268583
+X move to 8u131
+X add another warning for a bad NVIDIA driver
+X   https://github.com/processing/processing/issues/4997
+X Gap between tab headers and text area at 125% and 150% scaling on Windows
+X   https://github.com/processing/processing/issues/4902
+X   Math.ceil() helps
+X Small tooltip text on high-dpi screens
+X   https://github.com/processing/processing/issues/4914
+X make the Error Table extend white to the bottom
+X   was making a gray box on Windows, probably Linux too
+X some line heights are wrong on hidpi
+X   usage window
+X   examples window
+X   sketchbook window
+X   https://github.com/processing/processing/issues/4936
+X   https://github.com/processing/processing/issues/5007
+X get rid of error message when exporting sketches with the video library
+X   https://github.com/processing/processing/issues/4971
+X use dialog font for processing.sans if using a non- or quirky Roman language
+X   make this a parameter of the language translation
+
+jakub
+X Fix preprocessing of code with double backslash in string or char literal
+X   https://github.com/processing/processing/issues/4903
+X   https://github.com/processing/processing/pull/4907
+X Ugly button images at 125% and 150% scaling on Windows
+X   https://github.com/processing/processing/issues/4901
+X   https://github.com/processing/processing/pull/4906
+X Fix breakpoints in inner classes
+X   https://github.com/processing/processing/pull/5008
+X   https://github.com/processing/processing/issues/2946
+X Fix preproc skipping one char after a block comment
+X   https://github.com/processing/processing/issues/4995
+X   https://github.com/processing/processing/pull/4999
+X Synchronize input event processing
+X   https://github.com/processing/processing/pull/4998
+X Scrub comments: skip the second chracter in the escape sequence
+X   https://github.com/processing/processing/pull/5019
+X   https://github.com/processing/processing/issues/5016
+
+gohai
+X Add support for 64-bit ARM boards
+X   https://github.com/processing/processing/pull/5002
+X Hardware I/O updates for ARM
+X   https://github.com/processing/processing/pull/4931
+
+contrib
+X Added Arabic translation
+X   https://github.com/processing/processing/pull/4970
+X add Jump to Declaration
+X   https://github.com/processing/processing/pull/4707
+X   https://github.com/processing/processing/issues/4668
+
+awaiting confirmation (fixed in 3.3)
+X visual artifacts on Windows 10 when using menus
+X   https://github.com/processing/processing/issues/4700
+X Broken characters in the Welcome Page and the Contribution Manager
+X   https://github.com/processing/processing/issues/4747
+X   looks like a failure to load the Source Sans font
+X   what happens if font loading fails?
+X   are there conflicts between version in lib and OS?
+o   are we still installing fonts into ext?
+o   fixed by rolling back to 8u92, broken since 8u102 in 3.1.2
+X NVIDIA driver problems (and means to check)
+X   https://github.com/processing/processing/issues/4853
+X blank window on startup where the "Welcome" screen should be
+X   this may be fixed (removed invokeLater() on startup), unconfirmed
+X   https://github.com/processing/processing/issues/3933
+X   Olivia hasn't seen it, closing
+X amazing blurry editor window
+X   https://github.com/processing/processing/issues/4892
+
+
 0257 (3.3)
 X check for already-exported folders before trying to remove them
 X   was spewing 'file not found' errors into the console
