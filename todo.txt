@@ -18,6 +18,8 @@ X   examples window
 X   sketchbook window
 X   https://github.com/processing/processing/issues/4936
 X   https://github.com/processing/processing/issues/5007
+X get rid of error message when exporting sketches with the video library
+X   https://github.com/processing/processing/issues/4971
 
 _ mode list does not update after changing sketchbook folder
 _   already reported?
