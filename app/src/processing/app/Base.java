@@ -249,8 +249,10 @@ public class Base {
 
   // Remove this code in a couple months [fry 170211]
   // https://github.com/processing/processing/issues/4853
+  // Or maybe not, if NVIDIA keeps doing this [fry 170423]
+  // https://github.com/processing/processing/issues/4997
   static private void checkDriverBug() {
-    if (Platform.isWindows()) {
+    if (System.getProperty("os.name").contains("Windows 10")) {
       new Thread(new Runnable() {
         public void run() {
           try {

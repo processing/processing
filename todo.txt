@@ -21,11 +21,6 @@ X   https://github.com/processing/processing/issues/5007
 X get rid of error message when exporting sketches with the video library
 X   https://github.com/processing/processing/issues/4971
 
-_ mode list does not update after changing sketchbook folder
-_   already reported?
-_ swap font smoothing for tab size?
-_   implement simple table for prefs?
-
 jakub
 X Fix preprocessing of code with double backslash in string or char literal
 X   https://github.com/processing/processing/issues/4903
@@ -83,6 +78,12 @@ X   https://github.com/processing/processing/issues/3933
 X   Olivia hasn't seen it, closing
 X amazing blurry editor window
 X   https://github.com/processing/processing/issues/4892
+
+
+_ mode list does not update after changing sketchbook folder
+_   already reported?
+_ swap font smoothing for tab size?
+_   implement simple table for prefs?
 
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
