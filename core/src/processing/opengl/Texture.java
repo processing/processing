@@ -340,6 +340,8 @@ public class Texture implements PConstants {
 
     loadPixels(w * h);
     convertToRGBA(pixels, format, w, h);
+    if (invertedX) flipArrayOnX(rgbaPixels, 1);
+    if (invertedY) flipArrayOnY(rgbaPixels, 1);
     updatePixelBuffer(rgbaPixels);
     pgl.texSubImage2D(glTarget, 0, x, y, w, h, PGL.RGBA, PGL.UNSIGNED_BYTE,
                       pixelBuffer);

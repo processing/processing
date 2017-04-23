@@ -5479,7 +5479,7 @@ public class PGraphicsOpenGL extends PGraphics {
       endPixelsOp();
     } else {
       // We only need to copy the pixels to the back texture where we are
-      // currently drawing to. Because the texture is invertex along Y, we
+      // currently drawing to. Because the texture is inverted along Y, we
       // need to reflect that in the vertical arguments.
       pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
                         x, pixelHeight - (y + h), w, h, nativePixelBuffer);
