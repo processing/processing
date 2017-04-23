@@ -30,7 +30,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import processing.app.Mode;
 
 
-class ZoomTreeCellRenderer extends DefaultTreeCellRenderer {
+public class ZoomTreeCellRenderer extends DefaultTreeCellRenderer {
 
   public ZoomTreeCellRenderer(Mode mode) {
     //setFont(Toolkit.getSansFont(Toolkit.zoom(14), Font.PLAIN));
