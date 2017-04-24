@@ -61,7 +61,7 @@ class SSD1306 extends I2C {
     img.loadPixels();
     for (int y=startY; y < height && y-startY < 64; y++) {
       for (int x=startX; x < width && x-startX < 128; x++) {
-        if (brightness(img.pixels[y*img.width+x]) < 128) {
+        if (128 <= brightness(img.pixels[y*img.width+x])) {
           // this isn't the normal (scanline) mapping, but 8 pixels below each other at a time
           // white pixels have their bit turned on
           frame[x + (y/8)*128] |= (1 << (y % 8));

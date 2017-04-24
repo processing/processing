@@ -55,9 +55,9 @@ import processing.data.StringList;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, due to javac inlining the static final values.
-  static private final int REVISION = 258;
+  static private final int REVISION = 259;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0258"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0259"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 
   /**
@@ -249,14 +249,17 @@ public class Base {
 
   // Remove this code in a couple months [fry 170211]
   // https://github.com/processing/processing/issues/4853
+  // Or maybe not, if NVIDIA keeps doing this [fry 170423]
+  // https://github.com/processing/processing/issues/4997
   static private void checkDriverBug() {
-    if (Platform.isWindows()) {
+    if (System.getProperty("os.name").contains("Windows 10")) {
       new Thread(new Runnable() {
         public void run() {
           try {
             Process p = Runtime.getRuntime().exec("powershell Get-WmiObject Win32_PnPSignedDriver| select devicename, driverversion | where {$_.devicename -like \\\"*nvidia*\\\"}");
-            String[] lines = PApplet.loadStrings(PApplet.createReader(p.getInputStream()));
-            for (String line : lines) {
+            BufferedReader reader = PApplet.createReader(p.getInputStream());
+            String line = null;
+            while ((line = reader.readLine()) != null) {
               if (line.contains("3.7849")) {
                 EventQueue.invokeLater(new Runnable() {
                   public void run() {
@@ -266,6 +269,17 @@ public class Base {
                                          "http://nvidia.custhelp.com/app/answers/detail/a_id/4378\n" +
                                          "or read background about the issue at this link:\n" +
                                          "https://github.com/processing/processing/issues/4853");
+                  }
+                });
+              } else if (line.contains("3.8165")) {
+                EventQueue.invokeLater(new Runnable() {
+                  public void run() {
+                    Messages.showWarning("NVIDIA screwed up again",
+                                         "Due to an NVIDIA bug, you need to update your graphics drivers,\n" +
+                                         "otherwise you won't be able to run any sketches. Update here:\n" +
+                                         "http://nvidia.custhelp.com/app/answers/detail/a_id/4453/\n" +
+                                         "or read background about the issue at this link:\n" +
+                                         "https://github.com/processing/processing/issues/4997");
                   }
                 });
               }
@@ -426,12 +440,12 @@ public class Base {
    */
   void rebuildContribModes() {
     if (modeContribs == null) {
-      modeContribs = new ArrayList<ModeContribution>();
+      modeContribs = new ArrayList<>();
     }
     File modesFolder = getSketchbookModesFolder();
     List<ModeContribution> contribModes = getModeContribs();
 
-    Map<File, ModeContribution> known = new HashMap<File, ModeContribution>();
+    Map<File, ModeContribution> known = new HashMap<>();
     for (ModeContribution contrib : contribModes) {
       known.put(contrib.getFolder(), contrib);
     }
@@ -492,7 +506,7 @@ public class Base {
    */
   void rebuildContribExamples() {
     if (exampleContribs == null) {
-      exampleContribs = new ArrayList<ExamplesContribution>();
+      exampleContribs = new ArrayList<>();
     }
     ExamplesContribution.loadMissing(this);
   }
@@ -618,7 +632,7 @@ public class Base {
   public void rebuildToolList() {
     // Only do this once because the list of internal tools will never change
     if (internalTools == null) {
-      internalTools = new ArrayList<Tool>();
+      internalTools = new ArrayList<>();
 
       initInternalTool("processing.app.tools.CreateFont");
       initInternalTool("processing.app.tools.ColorSelector");
@@ -826,7 +840,7 @@ public class Base {
 
 
   public List<Mode> getModeList() {
-    List<Mode> allModes = new ArrayList<Mode>();
+    List<Mode> allModes = new ArrayList<>();
     allModes.addAll(Arrays.asList(coreModes));
     if (modeContribs != null) {
       for (ModeContribution contrib : modeContribs) {
@@ -843,14 +857,14 @@ public class Base {
 
 
   private List<Contribution> getInstalledContribs() {
-    List<Contribution> contributions = new ArrayList<Contribution>();
+    List<Contribution> contributions = new ArrayList<>();
 
     List<ModeContribution> modeContribs = getModeContribs();
     contributions.addAll(modeContribs);
 
     for (ModeContribution modeContrib : modeContribs) {
       Mode mode = modeContrib.getMode();
-      contributions.addAll(new ArrayList<Library>(mode.contribLibraries));
+      contributions.addAll(new ArrayList<>(mode.contribLibraries));
     }
 
     // TODO this duplicates code in Editor, but it's not editor-specific
@@ -1014,7 +1028,7 @@ public class Base {
   private Mode promptForMode(final File sketch, final ModeInfo preferredMode) {
     final String extension =
       sketch.getName().substring(sketch.getName().lastIndexOf('.') + 1);
-    final List<Mode> possibleModes = new ArrayList<Mode>();
+    final List<Mode> possibleModes = new ArrayList<>();
     for (final Mode mode : getModeList()) {
       if (mode.canEdit(sketch)) {
         possibleModes.add(mode);

@@ -637,6 +637,9 @@ public class PGraphicsOpenGL extends PGraphics {
     height = iheight;
     updatePixelSize();
 
+    texture = null;
+    ptexture = null;
+
     // init perspective projection based on new dimensions
     defCameraFOV = 60 * DEG_TO_RAD; // at least for now
     defCameraX = width / 2.0f;
@@ -692,6 +695,10 @@ public class PGraphicsOpenGL extends PGraphics {
     float f = pgl.getPixelScale();
     pixelWidth = (int)(width * f);
     pixelHeight = (int)(height * f);
+    if (primaryGraphics) {
+      parent.pixelWidth = pixelWidth;
+      parent.pixelHeight = pixelHeight;
+    }
   }
 
 
@@ -2140,8 +2147,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (textured && textureMode == IMAGE) {
-      u /= textureImage.width;
-      v /= textureImage.height;
+      u /= textureImage.pixelWidth;
+      v /= textureImage.pixelHeight;
     }
 
     inGeo.addVertex(x, y, z,
@@ -5417,30 +5424,29 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void drawPixels(int x, int y, int w, int h) {
-    int f = (int)pgl.getPixelScale();
-    int len = f * w * f * h;
+    int len = w * h;
     if (nativePixels == null || nativePixels.length < len) {
       nativePixels = new int[len];
       nativePixelBuffer = PGL.allocateIntBuffer(nativePixels);
     }
 
     try {
-      if (0 < x || 0 < y || w < width || h < height) {
+      if (0 < x || 0 < y || w < pixelWidth || h < pixelHeight) {
         // The pixels to be copied to the texture need to be consecutive, and
         // they are not in the pixels array, so putting each row one after
         // another in nativePixels.
-        int offset0 = f * (y * width + x);
+        int offset0 = y * pixelWidth + x;
         int offset1 = 0;
 
-        for (int yc = f * y; yc < f * (y + h); yc++) {
-          System.arraycopy(pixels, offset0, nativePixels, offset1, f * w);
-          offset0 += f * width;
-          offset1 += f * w;
+        for (int yc = y; yc < y + h; yc++) {
+          System.arraycopy(pixels, offset0, nativePixels, offset1, w);
+          offset0 += pixelWidth;
+          offset1 += w;
         }
       } else {
         PApplet.arrayCopy(pixels, 0, nativePixels, 0, len);
       }
-      PGL.javaToNativeARGB(nativePixels, f * w, f * h);
+      PGL.javaToNativeARGB(nativePixels, w, h);
     } catch (ArrayIndexOutOfBoundsException e) {
     }
     PGL.putIntArray(nativePixelBuffer, nativePixels);
@@ -5464,19 +5470,19 @@ public class PGraphicsOpenGL extends PGraphics {
       // (off)screen buffer.
       // First, copy the pixels to the texture. We don't need to invert the
       // pixel copy because the texture will be drawn inverted.
-      int tw = PApplet.min(texture.glWidth - f * x, f * w);
-      int th = PApplet.min(texture.glHeight - f * y, f * h);
+      int tw = PApplet.min(texture.glWidth - x, w);
+      int th = PApplet.min(texture.glHeight - y, h);
       pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
-                        f * x, f * y, tw, th, nativePixelBuffer);
+                        x, y, tw, th, nativePixelBuffer);
       beginPixelsOp(OP_WRITE);
       drawTexture(x, y, w, h);
       endPixelsOp();
     } else {
       // We only need to copy the pixels to the back texture where we are
-      // currently drawing to. Because the texture is invertex along Y, we
+      // currently drawing to. Because the texture is inverted along Y, we
       // need to reflect that in the vertical arguments.
       pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glName,
-                        f * x, f * (height - (y + h)), f * w, f * h, nativePixelBuffer);
+                        x, pixelHeight - (y + h), w, h, nativePixelBuffer);
     }
   }
 
@@ -5549,10 +5555,10 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   protected void processImageBeforeAsyncSave(PImage image) {
     if (image.format == AsyncPixelReader.OPENGL_NATIVE) {
-      PGL.nativeToJavaARGB(image.pixels, image.width, image.height);
+      PGL.nativeToJavaARGB(image.pixels, image.pixelWidth, image.pixelHeight);
       image.format = ARGB;
     } else if (image.format == AsyncPixelReader.OPENGL_NATIVE_OPAQUE) {
-      PGL.nativeToJavaRGB(image.pixels, image.width, image.height);
+      PGL.nativeToJavaRGB(image.pixels, image.pixelWidth, image.pixelHeight);
       image.format = RGB;
     }
   }
@@ -5960,9 +5966,9 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.disable(PGL.BLEND);
       pgl.drawTexture(texture.glTarget, texture.glName,
                       texture.glWidth, texture.glHeight,
-                      0, 0, width, height,
+                      0, 0, pixelWidth, pixelHeight, 1,
                       x, y, x + w, y + h,
-                      x, height - (y + h), x + w, height - y);
+                      x, pixelHeight - (y + h), x + w, pixelHeight - y);
       pgl.enable(PGL.BLEND);
     }
   }
@@ -5997,7 +6003,7 @@ public class PGraphicsOpenGL extends PGraphics {
   @Override
   public void mask(PImage alpha) {
     updatePixelSize();
-    if (alpha.width != pixelWidth || alpha.height != pixelHeight) {
+    if (alpha.pixelWidth != pixelWidth || alpha.pixelHeight != pixelHeight) {
       throw new RuntimeException("The PImage used with mask() must be " +
       "the same size as the applet.");
     }
@@ -6358,8 +6364,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (tex == null) return null;
 
     if (img.isModified()) {
-      if (img.width != tex.width || img.height != tex.height) {
-        tex.init(img.width, img.height);
+      if (img.pixelWidth != tex.width || img.pixelHeight != tex.height) {
+        tex.init(img.pixelWidth, img.pixelHeight);
       }
       updateTexture(img, tex);
     }
@@ -6485,8 +6491,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // avoid initializing the pixels array.
     PImage img = new PImage();
     img.parent = parent;
-    img.width = tex.width;
-    img.height = tex.height;
+    img.width = img.pixelWidth = tex.width;
+    img.height = img.pixelHeight = tex.height;
     img.format = ARGB;
     setCache(img, tex);
     return img;

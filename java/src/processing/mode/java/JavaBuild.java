@@ -381,7 +381,7 @@ public class JavaBuild {
 
     // grab the imports from the code just preprocessed
 
-    importedLibraries = new ArrayList<Library>();
+    importedLibraries = new ArrayList<>();
     Library core = mode.getCoreLibrary();
     if (core != null) {
       importedLibraries.add(core);
@@ -697,11 +697,13 @@ public class JavaBuild {
         final String arch = Platform.getNativeArch();
 
         if (Library.hasMultipleArch(platform, importedLibraries)) {
-          // export the 32-bit version
-          folder = new File(sketch.getFolder(), "application." + platformName + "32");
-
-          if (!exportApplication(folder, platform, "32", embedJava && (bits == 32) && ("x86".equals(arch) || "i386".equals(arch)))) {
-            return false;
+          // Don't try to export 32-bit on macOS, because it doesn't exist.
+          if (platform != PConstants.MACOSX) {
+            // export the 32-bit version
+            folder = new File(sketch.getFolder(), "application." + platformName + "32");
+            if (!exportApplication(folder, platform, "32", embedJava && (bits == 32) && ("x86".equals(arch) || "i386".equals(arch)))) {
+              return false;
+            }
           }
           // export the 64-bit version
           folder = new File(sketch.getFolder(), "application." + platformName + "64");
@@ -709,9 +711,13 @@ public class JavaBuild {
             return false;
           }
           if (platform == PConstants.LINUX) {
-            // export the armv6hf version as well
+            // export the arm versions as well
             folder = new File(sketch.getFolder(), "application.linux-armv6hf");
             if (!exportApplication(folder, platform, "armv6hf", embedJava && (bits == 32) && "arm".equals(arch))) {
+              return false;
+            }
+            folder = new File(sketch.getFolder(), "application.linux-arm64");
+            if (!exportApplication(folder, platform, "arm64", embedJava && (bits == 64) && "aarch64".equals(arch))) {
               return false;
             }
           }

@@ -37,7 +37,10 @@
 
     <!-- JavaFX got removed from the Oracle's JDK for arm -->
     <condition property="fx.unavailable" value="true">
-      <equals arg1="${os.arch}" arg2="arm" />
+      <or>
+        <equals arg1="${os.arch}" arg2="arm" />
+        <equals arg1="${os.arch}" arg2="aarch64" />
+      </or>
     </condition>
 
     <!-- link against apple.jar for the ThinkDifferent class -->

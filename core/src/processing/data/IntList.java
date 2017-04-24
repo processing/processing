@@ -852,6 +852,19 @@ public class IntList implements Iterable<Integer> {
   }
 
 
+//  /**
+//   * Count the number of times each entry is found in this list.
+//   * Converts each entry to a String so it can be used as a key.
+//   */
+//  public IntDict getTally() {
+//    IntDict outgoing = new IntDict();
+//    for (int i = 0; i < count; i++) {
+//      outgoing.increment(String.valueOf(data[i]));
+//    }
+//    return outgoing;
+//  }
+
+
   public IntList getSubset(int start) {
     return getSubset(start, count - start);
   }

@@ -23,7 +23,6 @@
 package processing.app.ui;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -111,25 +110,29 @@ public class SketchbookFrame extends JFrame {
       }
     });
 
-    tree.setBorder(new EmptyBorder(5, 5, 5, 5));
+    final int border = Toolkit.zoom(5);
+    tree.setBorder(new EmptyBorder(border, border, border, border));
     if (Platform.isMacOS()) {
       tree.setToggleClickCount(2);
     } else {
       tree.setToggleClickCount(1);
     }
 
+    // Special cell renderer that takes the UI zoom into account
+    tree.setCellRenderer(new ZoomTreeCellRenderer(mode));
+
     // Check whether sketch book is empty or not
     TreeModel treeModel = tree.getModel();
     if (treeModel.getChildCount(treeModel.getRoot()) != 0) {
       JScrollPane treePane = new JScrollPane(tree);
-      treePane.setPreferredSize(new Dimension(250, 450));
+      treePane.setPreferredSize(Toolkit.zoom(250, 450));
       treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
       getContentPane().add(treePane);
 
     } else {
       JPanel emptyPanel = new JPanel();
       emptyPanel.setBackground(Color.WHITE);
-      emptyPanel.setPreferredSize(new Dimension(250,450));
+      emptyPanel.setPreferredSize(Toolkit.zoom(250,450));
 
       JLabel emptyLabel = new JLabel("Empty Sketchbook");
       emptyLabel.setForeground(Color.GRAY);

@@ -288,7 +288,7 @@ public class Toolkit {
 
     // Holds only [0-9a-z], not uppercase.
     // Prevents X != x, so "Save" and "Save As" aren't both given 'a'.
-    final List<Character> taken = new ArrayList<Character>(menu.length);
+    final List<Character> taken = new ArrayList<>(menu.length);
     char firstChar;
     char[] cleanChars;
     Character[] cleanCharas;
@@ -327,7 +327,7 @@ public class Toolkit {
       if (cleanString.length() == 0) continue;
 
       // First, ban letters by underscores.
-      final List<Character> banned = new ArrayList<Character>();
+      final List<Character> banned = new ArrayList<>();
       for (int i = 0; i < cleanString.length(); i++) {
         if (cleanString.charAt(i) == '_') {
           if (i > 0)
@@ -433,7 +433,7 @@ public class Toolkit {
    * As setMenuMnemonics(JMenuItem...).
    */
   static public void setMenuMnemonics(JPopupMenu menu) {
-    ArrayList<JMenuItem> items = new ArrayList<JMenuItem>();
+    ArrayList<JMenuItem> items = new ArrayList<>();
 
     for (Component c : menu.getComponents()) {
       if (c instanceof JMenuItem) items.add((JMenuItem)c);
@@ -590,7 +590,7 @@ public class Toolkit {
   static public void setIcon(Window window) {
     if (!Platform.isMacOS()) {
       if (iconImages == null) {
-        iconImages = new ArrayList<Image>();
+        iconImages = new ArrayList<>();
         final int[] sizes = { 16, 32, 48, 64, 128, 256, 512 };
         for (int sz : sizes) {
           iconImages.add(Toolkit.getLibImage("icons/pde-" + sz + ".png"));
@@ -634,25 +634,6 @@ public class Toolkit {
     return path;
   }
 
-
-  // someone needs to be slapped
-  //static KeyStroke closeWindowKeyStroke;
-
-  /**
-   * Return true if the key event was a Ctrl-W or an ESC,
-   * both indicators to close the window.
-   * Use as part of a keyPressed() event handler for frames.
-   */
-  /*
-  static public boolean isCloseWindowEvent(KeyEvent e) {
-    if (closeWindowKeyStroke == null) {
-      int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-      closeWindowKeyStroke = KeyStroke.getKeyStroke('W', modifiers);
-    }
-    return ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
-            KeyStroke.getKeyStrokeForEvent(e).equals(closeWindowKeyStroke));
-  }
-  */
 
   /**
    * Registers key events for a Ctrl-W and ESC with an ActionListener
@@ -794,7 +775,9 @@ public class Toolkit {
     if (zoom == 0) {
       zoom = parseZoom();
     }
-    return (int) (zoom * pixels);
+    // Deal with 125% scaling badness
+    // https://github.com/processing/processing/issues/4902
+    return (int) Math.ceil(zoom * pixels);
   }
 
 
@@ -885,16 +868,12 @@ public class Toolkit {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  static final char GREEK_SMALL_LETTER_ALPHA = '\u03B1';  // α
-  static final char GREEK_CAPITAL_LETTER_OMEGA = '\u03A9';  // ω
-
-
   // Gets the plain (not bold, not italic) version of each
   static private List<Font> getMonoFontList() {
     GraphicsEnvironment ge =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
     Font[] fonts = ge.getAllFonts();
-    List<Font> outgoing = new ArrayList<Font>();
+    List<Font> outgoing = new ArrayList<>();
     // Using AffineTransform.getScaleInstance(100, 100) doesn't change sizes
     FontRenderContext frc =
       new FontRenderContext(new AffineTransform(),
@@ -966,17 +945,12 @@ public class Toolkit {
         monoFont = createFont("SourceCodePro-Regular.ttf", size);
         monoBoldFont = createFont("SourceCodePro-Bold.ttf", size);
 
-        // additional language constraints
-        if ("el".equals(Language.getLanguage())) {
-          if (!monoFont.canDisplay(GREEK_SMALL_LETTER_ALPHA) ||
-              !monoFont.canDisplay(GREEK_CAPITAL_LETTER_OMEGA)) {
-            monoFont = createFont("AnonymousPro-Regular.ttf", size);
-            monoBoldFont = createFont("AnonymousPro-Bold.ttf", size);
-          }
-        }
         // https://github.com/processing/processing/issues/2886
+        // https://github.com/processing/processing/issues/4944
         String lang = Language.getLanguage();
-        if (Locale.CHINESE.getLanguage().equals(lang) ||
+        if ("el".equals(lang) ||
+            "ar".equals(lang) ||
+            Locale.CHINESE.getLanguage().equals(lang) ||
             Locale.JAPANESE.getLanguage().equals(lang) ||
             Locale.KOREAN.getLanguage().equals(lang)) {
           sansFont = new Font("Monospaced", Font.PLAIN, size);
@@ -1016,42 +990,15 @@ public class Toolkit {
   static public Font getSansFont(int size, int style) {
     if (sansFont == null) {
       try {
-        /*
-        // check for an installed version, because they cause nasty conflicts
-        // https://github.com/processing/processing/issues/4747
-        if (Platform.isWindows()) {
-          sansFont = new Font("Source Sans Pro", Font.PLAIN, size);
-          // the ps name will be Dialog.plain (or similar) if not installed
-          if (!sansFont.getPSName().startsWith("Source")) {
-            sansFont = null;
-          }
-          sansBoldFont = new Font("Source Sans Pro Semibold", Font.PLAIN, size);
-          if (!sansBoldFont.getPSName().startsWith("Source")) {
-            sansBoldFont = null;
-          }
-        }
-        if (sansFont == null) {
-          sansFont = createFont("SourceSansPro-Regular.ttf", size);
-        }
-        if (sansBoldFont == null) {
-          sansBoldFont = createFont("SourceSansPro-Semibold.ttf", size);
-        }
-        */
         sansFont = createFont("ProcessingSansPro-Regular.ttf", size);
         sansBoldFont = createFont("ProcessingSansPro-Semibold.ttf", size);
 
-        // additional language constraints
-        if ("el".equals(Language.getLanguage())) {
-          if (!sansFont.canDisplay(GREEK_SMALL_LETTER_ALPHA) ||
-              !sansFont.canDisplay(GREEK_CAPITAL_LETTER_OMEGA)) {
-            sansFont = createFont("Carlito-Regular.ttf", size);
-            sansBoldFont = createFont("Carlito-Bold.ttf", size);
-          }
-        }
-
         // https://github.com/processing/processing/issues/2886
+        // https://github.com/processing/processing/issues/4944
         String lang = Language.getLanguage();
-        if (Locale.CHINESE.getLanguage().equals(lang) ||
+        if ("el".equals(lang) ||
+            "ar".equals(lang) ||
+            Locale.CHINESE.getLanguage().equals(lang) ||
             Locale.JAPANESE.getLanguage().equals(lang) ||
             Locale.KOREAN.getLanguage().equals(lang)) {
           sansFont = new Font("SansSerif", Font.PLAIN, size);
@@ -1135,20 +1082,6 @@ public class Toolkit {
     //return new TextLayout("H", font, frc).getBounds().getHeight();
     return new TextLayout("H", g.getFont(), frc).getBounds().getHeight();
   }
-
-
-//  /** Do not use or rely upon presence of this method: not approved as final API. */
-//  static public void debugOpacity(Component comp) {
-//    //Component parent = comp.getParent();
-//    while (comp != null) {
-//      //EditorConsole.systemOut.println("parent is " + parent + " " + parent.isOpaque());
-//      //EditorConsole.systemOut.println(parent.getClass().getName() + " " + (parent.isOpaque() ? "OPAQUE" : ""));
-//      System.out.println(comp.getClass().getName() + " " + (comp.isOpaque() ? "OPAQUE" : ""));
-//      comp = comp.getParent();
-//    }
-//    //EditorConsole.systemOut.println();
-//    System.out.println();
-//  }
 
 
   static public int getMenuItemIndex(JMenu menu, JMenuItem item) {

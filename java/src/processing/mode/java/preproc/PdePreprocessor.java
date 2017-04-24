@@ -730,9 +730,15 @@ public class PdePreprocessor {
           throw new RuntimeException("Missing the */ from the end of a " +
                                      "/* comment */");
         }
-      } else if (p[index] == '"' && index > 0 && p[index-1] != '\\') {
+
+        // switch in/out of quoted region
+      } else if (p[index] == '"') {
         insideQuote = !insideQuote;
         index++;
+
+        // skip the escaped char
+      } else if (insideQuote && p[index] == '\\') {
+        index += 2;
 
       } else {  // any old character, move along
         index++;
@@ -811,7 +817,7 @@ public class PdePreprocessor {
         boolean terminated = false;
         while (i < length - 1) {
           if ((program.charAt(i) == '*') && (program.charAt(i + 1) == '/')) {
-            i += 2;
+            i++; // advance to the ending '/'
             terminated = true;
             break;
           } else {

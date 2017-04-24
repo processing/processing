@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -68,7 +69,7 @@ public class Debugger {
   protected ReferenceType mainClass;
 
   /// holds all loaded classes in the debuggee VM
-  protected Set<ReferenceType> classes = new HashSet<>();
+  protected Set<ReferenceType> classes = new LinkedHashSet<>();
 
   /// listeners for class load events
   protected List<ClassLoadListener> classLoadListeners = new ArrayList<>();
@@ -124,24 +125,12 @@ public class Debugger {
 
 
   /**
-   * Get the {@link ReferenceType} for a class name.
-   * @param name the class name
-   * @return the {@link ReferenceType} or null if not found
-   * (e.g. not yet loaded)
+   * Get the main and nested {@link ReferenceType}s for the sketch.
+   * @return a list of main and nested {@link ReferenceType}s,
+   * empty list if nothing found (e.g. not yet loaded)
    */
-  public ReferenceType getClass(String name) {
-    if (name == null) {
-      return null;
-    }
-    if (name.equals(mainClassName)) {
-      return mainClass;
-    }
-    for (ReferenceType rt : classes) {
-      if (rt.name().equals(name)) {
-        return rt;
-      }
-    }
-    return null;
+  public Set<ReferenceType> getClasses() {
+    return classes;
   }
 
 
@@ -239,6 +228,11 @@ public class Debugger {
     editor.variableInspector().lock();
     if (runtime != null) {
       Messages.log("closing runtime");
+
+      for (LineBreakpoint bp : breakpoints) {
+        bp.detach();
+      }
+
       runtime.close();
       runtime = null;
       //build = null;
@@ -563,21 +557,25 @@ public class Debugger {
     }
   }
 
+  private void createClassPrepareRequest(String name) {
+    ClassPrepareRequest classPrepareRequest = runtime.vm().eventRequestManager().createClassPrepareRequest();
+    classPrepareRequest.addClassFilter(name);
+    classPrepareRequest.enable();
+  }
+
 
   private void vmStartEvent() {
     // break on main class load
     log("requesting event on main class load: " + mainClassName);
-    ClassPrepareRequest mainClassPrepare = runtime.vm().eventRequestManager().createClassPrepareRequest();
-    mainClassPrepare.addClassFilter(mainClassName);
-    mainClassPrepare.enable();
-
+    createClassPrepareRequest(mainClassName);
+    createClassPrepareRequest(mainClassName + "$*");
     // break on loading custom classes
     for (SketchCode tab : editor.getSketch().getCode()) {
       if (tab.isExtension("java")) {
         log("requesting event on class load: " + tab.getPrettyName());
-        ClassPrepareRequest customClassPrepare = runtime.vm().eventRequestManager().createClassPrepareRequest();
-        customClassPrepare.addClassFilter(tab.getPrettyName());
-        customClassPrepare.enable();
+        String name = tab.getPrettyName();
+        createClassPrepareRequest(name);
+        createClassPrepareRequest(name + "$*");
       }
     }
     runtime.vm().resume();
@@ -592,6 +590,7 @@ public class Debugger {
     if (rt.name().equals(mainClassName)) {
       //printType(rt);
       mainClass = rt;
+      classes.add(rt);
       log("main class load: " + rt.name());
       started = true; // now that main class is loaded, we're started
     } else {

@@ -11,22 +11,20 @@ import org.apache.tools.ant.Task;
  */
 public class Downloader extends Task {
   static final String COOKIE =
-    //"gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; " +
     "oraclelicense=accept-securebackup-cookie";
 
   private int version;  // Java 8
-  private int update;   // Update 31
-  private int build;    // Build 13
+  private int update;   // Update 131
+  private int build;    // Build 11
+  // https://gist.github.com/P7h/9741922
+  // http://stackoverflow.com/q/10268583
+  private String hash;  // d54c1d3a095b4ff2b6607d096fa80163
 
   private boolean jdk;  // false if JRE
 
-//  private String platform;  // macosx, windows, linux
-//  private String bits;  // i586 or x64
   private String flavor;
 
   private String path;  // target path
-//  private File baseDir;
-//  private boolean includeRecorder;
 
 
   public Downloader() { }
@@ -47,19 +45,15 @@ public class Downloader extends Task {
   }
 
 
+  public void setHash(String hash) {
+    this.hash = hash;
+  }
+
+
   public void setJDK(boolean jdk) {
     this.jdk = jdk;
   }
 
-
-//  public void setPlatform(String platform) {
-//    this.platform = platform;
-//  }
-
-
-//  public void setBits(String bits) {
-//    this.bits = bits;
-//  }
 
   public void setFlavor(String flavor) {
     this.flavor = flavor;
@@ -72,24 +66,21 @@ public class Downloader extends Task {
 
 
   public void execute() throws BuildException {
-    //if (baseDir == null) {
-    //  throw new BuildException("dir parameter must be set!");
-    //}
-
     if (version == 0) {
-      throw new BuildException("version (i.e. 7 or 8) must be set");
+      throw new BuildException("Version (i.e. 7 or 8) must be set");
     }
 
     if (build == 0) {
-      throw new BuildException("build number must be set");
+      throw new BuildException("Build number must be set");
     }
 
     if (flavor == null) {
-      throw new BuildException("you've gotta choose a flavor (macosx-x64.dmg, windows-x64.exe...");
+      throw new BuildException("You've gotta choose a flavor (macosx-x64.dmg, windows-x64.exe...)");
     }
-//    if (bits == null) {
-//      throw new BuildException("bits must be set (x64 or i586)");
-//    }
+
+    if (update >= 121 && hash == null) {
+      throw new BuildException("Starting with 8u121, a hash is required, see https://gist.github.com/P7h/9741922");
+    }
 
     //download(path, jdk, platform, bits, version, update, build);
     try {
@@ -97,54 +88,35 @@ public class Downloader extends Task {
     } catch (IOException e) {
       throw new BuildException(e);
     }
-
-    /*
-    downloadJRE("linux-i586.tar.gz");
-    downloadJRE("linux-x64.tar.gz");
-    downloadJRE("windows-i586.tar.gz");
-    downloadJRE("windows-x64.tar.gz");
-    downloadJRE("windows-i586.exe");
-    downloadJRE("windows-x64.exe");
-    downloadJRE("macosx-x64.dmg");
-    downloadJRE("macosx-x64.tar.gz");
-
-    downloadJDK("linux-i586.tar.gz");
-    downloadJDK("linux-x64.tar.gz");
-    downloadJDK("windows-i586.exe");
-    downloadJDK("windows-x64.exe");
-    downloadJDK("macosx-x64.dmg");
-    */
   }
 
 
-//  static void download(String path, //File folder, String filename,
-//                       boolean jdk, String platform, String bits,
-//                       int version, int update, int build) {
   void download() throws IOException {
-    //HttpURLConnection.setFollowRedirects(true);
     String filename = (jdk ? "jdk" : "jre") +
       (update == 0 ?
        String.format("-%d-%s", version, flavor) :
        String.format("-%du%d-%s", version, update, flavor));
 
     if (path == null) {
-      path = filename;  //System.getProperty("user.dir");
+      path = filename;
     }
 
-    //String url = "http://download.oracle.com/otn-pub/java/jdk/" +
-    // https://edelivery.oracle.com/otn-pub/java/jdk/7u45-b18/jre-7u45-linux-i586.tar.gz
-    //String url = "https://edelivery.oracle.com/otn-pub/java/jdk/" +
     String url = "http://download.oracle.com/otn-pub/java/jdk/" +
       (update == 0 ?
        String.format("%d-b%02d/", version, build) :
-       String.format("%du%d-b%02d/", version, update, build)) + filename;
-//    System.out.println(url);
+       String.format("%du%d-b%02d/", version, update, build));
+
+    // URL format changed starting with 8u121
+    if (update >= 121) {
+      url += hash + "/";
+    }
+
+    // Finally, add the filename to the end
+    url += filename;
 
     HttpURLConnection conn =
-        (HttpURLConnection) new URL(url).openConnection();
-    //conn.setRequestProperty("Cookie", "name1=value1; name2=value2");
+      (HttpURLConnection) new URL(url).openConnection();
     conn.setRequestProperty("Cookie", COOKIE);
-    //conn.setRequestProperty("Cookie", "gpw_e24=http://www.oracle.com/");
 
     //printHeaders(conn);
     //conn.connect();

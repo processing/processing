@@ -69,7 +69,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
@@ -82,6 +81,7 @@ import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
 import processing.app.ui.EditorStatus;
 import processing.app.ui.Toolkit;
+import processing.app.ui.ZoomTreeCellRenderer;
 import processing.mode.java.JavaEditor;
 import processing.mode.java.JavaMode;
 import processing.mode.java.pdex.PreprocessedSketch.SketchInterval;
@@ -372,7 +372,8 @@ public class PDEX {
       this.pps = pps;
 
       // Add show usage option
-      JMenuItem showUsageItem = new JMenuItem(Language.text("editor.popup.show_usage"));
+      JMenuItem showUsageItem =
+        new JMenuItem(Language.text("editor.popup.show_usage"));
       showUsageItem.addActionListener(e -> handleShowUsage());
       editor.getTextArea().getRightClickPopup().add(showUsageItem);
 
@@ -395,12 +396,14 @@ public class PDEX {
             pps.registerListener(reloadListener);
           }
         });
-        window.setSize(300, 400);
+        window.setSize(Toolkit.zoom(300, 400));
         window.setFocusableWindowState(false);
         Toolkit.setIcon(window);
         JScrollPane sp2 = new JScrollPane();
         tree = new JTree();
-        DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tree.getCellRenderer();
+        ZoomTreeCellRenderer renderer =
+          new ZoomTreeCellRenderer(editor.getMode());
+        tree.setCellRenderer(renderer);
         renderer.setLeafIcon(null);
         renderer.setClosedIcon(null);
         renderer.setOpenIcon(null);
@@ -412,18 +415,16 @@ public class PDEX {
       }
 
       tree.addTreeSelectionListener(e -> {
-        if (tree.getLastSelectedPathComponent() == null) {
-          return;
-        }
-        DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) tree
-            .getLastSelectedPathComponent();
+        if (tree.getLastSelectedPathComponent() != null) {
+          DefaultMutableTreeNode tnode =
+            (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 
-        if (tnode.getUserObject() instanceof ShowUsageTreeNode) {
-          ShowUsageTreeNode node = (ShowUsageTreeNode) tnode.getUserObject();
-          editor.highlight(node.tabIndex, node.startTabOffset, node.stopTabOffset);
+          if (tnode.getUserObject() instanceof ShowUsageTreeNode) {
+            ShowUsageTreeNode node = (ShowUsageTreeNode) tnode.getUserObject();
+            editor.highlight(node.tabIndex, node.startTabOffset, node.stopTabOffset);
+          }
         }
       });
-
     }
 
 
@@ -935,6 +936,7 @@ public class PDEX {
           return super.convertValueToText(value, selected, expanded, leaf, row, hasFocus);
         }
       };
+      tree.setCellRenderer(new ZoomTreeCellRenderer(editor.getMode()));
       window.addComponentListener(new ComponentAdapter() {
         @Override
         public void componentHidden(ComponentEvent e) {
@@ -951,22 +953,20 @@ public class PDEX {
       pps.whenDone(updateListener);
       pps.registerListener(updateListener);
 
-
       tree.addTreeSelectionListener(e -> {
-        if (tree.getLastSelectedPathComponent() == null) {
-          return;
-        }
-        DefaultMutableTreeNode tnode =
+        if (tree.getLastSelectedPathComponent() != null) {
+          DefaultMutableTreeNode tnode =
             (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-        if (tnode.getUserObject() instanceof ASTNode) {
-          ASTNode node = (ASTNode) tnode.getUserObject();
-          pps.whenDone(ps -> {
-            SketchInterval si = ps.mapJavaToSketch(node);
-            if (!ps.inRange(si)) return;
-            EventQueue.invokeLater(() -> {
-              editor.highlight(si.tabIndex, si.startTabOffset, si.stopTabOffset);
+          if (tnode.getUserObject() instanceof ASTNode) {
+            ASTNode node = (ASTNode) tnode.getUserObject();
+            pps.whenDone(ps -> {
+              SketchInterval si = ps.mapJavaToSketch(node);
+              if (!ps.inRange(si)) return;
+              EventQueue.invokeLater(() -> {
+                editor.highlight(si.tabIndex, si.startTabOffset, si.stopTabOffset);
+              });
             });
-          });
+          }
         }
       });
     }

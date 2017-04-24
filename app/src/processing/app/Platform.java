@@ -195,6 +195,7 @@ public class Platform {
    * Return the value of the os.arch property
    */
   static public String getNativeArch() {
+    // This will return "arm" for 32-bit ARM, "aarch64" for 64-bit ARM (both on Linux)
     return System.getProperty("os.arch");
   }
 
@@ -211,8 +212,12 @@ public class Platform {
   static public String getVariant(int platform, String arch, int bits) {
     if (platform == PConstants.LINUX &&
         bits == 32 && "arm".equals(Platform.getNativeArch())) {
-      return "armv6hf";  // assume armv6hf for now
+      return "armv6hf";  // assume armv6hf
+    } else if (platform == PConstants.LINUX &&
+        bits == 64 && "aarch64".equals(Platform.getNativeArch())) {
+      return "arm64";
     }
+
     return Integer.toString(bits);  // 32 or 64
   }
 

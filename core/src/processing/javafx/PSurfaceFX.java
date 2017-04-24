@@ -22,6 +22,8 @@
 
 package processing.javafx;
 
+import com.sun.glass.ui.Screen;
+
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
@@ -244,6 +246,19 @@ public class PSurfaceFX implements PSurface {
 
       PApplet sketch = surface.sketch;
 
+      float renderScale = Screen.getMainScreen().getRenderScale();
+      if (PApplet.platform == PConstants.MACOSX) {
+        for (Screen s : Screen.getScreens()) {
+          renderScale = Math.max(renderScale, s.getRenderScale());
+        }
+      }
+      float uiScale = Screen.getMainScreen().getUIScale();
+      if (sketch.pixelDensity == 2 && renderScale < 2) {
+        sketch.pixelDensity = 1;
+        sketch.g.pixelDensity = 1;
+        System.err.println("pixelDensity(2) is not available for this display");
+      }
+
       // Use AWT display code, because FX orders screens in different way
       GraphicsDevice displayDevice = null;
 
@@ -286,17 +301,8 @@ public class PSurfaceFX implements PSurface {
             maxY = Math.max(maxY, bounds.getMaxY());
           }
         }
-        if (minY < 0) {
-          // FX can't handle this
-          System.err.format("FX can't place window at negative Y coordinate " +
-                                "[x=%d, y=%d]. Please make sure that your secondary " +
-                                "display does not extend above the main display.",
-                            (int) minX, (int) minY);
-          screenRect = primaryScreenRect;
-        } else {
-          screenRect = new Rectangle((int) minX, (int) minY,
-                                     (int) (maxX - minX), (int) (maxY - minY));
-        }
+        screenRect = new Rectangle((int) minX, (int) minY,
+                                   (int) (maxX - minX), (int) (maxY - minY));
       }
 
       // Set the displayWidth/Height variables inside PApplet, so that they're
@@ -308,14 +314,14 @@ public class PSurfaceFX implements PSurface {
       int sketchHeight = sketch.sketchHeight();
 
       if (fullScreen || spanDisplays) {
-        sketchWidth = (int) screenRect.getWidth();
-        sketchHeight = (int) screenRect.getHeight();
+        sketchWidth = (int) (screenRect.getWidth() / uiScale);
+        sketchHeight = (int) (screenRect.getHeight() / uiScale);
 
         stage.initStyle(StageStyle.UNDECORATED);
-        stage.setX(screenRect.getMinX());
-        stage.setY(screenRect.getMinY());
-        stage.setWidth(screenRect.getWidth());
-        stage.setHeight(screenRect.getHeight());
+        stage.setX(screenRect.getMinX() / uiScale);
+        stage.setY(screenRect.getMinY() / uiScale);
+        stage.setWidth(screenRect.getWidth() / uiScale);
+        stage.setHeight(screenRect.getHeight() / uiScale);
       }
 
       Canvas canvas = surface.canvas;
@@ -540,14 +546,11 @@ public class PSurfaceFX implements PSurface {
   public void placeWindow(int[] location, int[] editorLocation) {
     if (sketch.sketchFullScreen()) {
       PApplet.hideMenuBar();
+      return;
     }
 
-    //Dimension window = setFrameSize();
-//    int contentW = Math.max(sketchWidth, MIN_WINDOW_WIDTH);
-//    int contentH = Math.max(sketchHeight, MIN_WINDOW_HEIGHT);
-//    System.out.println("stage size is " + stage.getWidth() + " " + stage.getHeight());
     int wide = sketch.width;  // stage.getWidth() is NaN here
-    int high = sketch.height;  // stage.getHeight()
+    //int high = sketch.height;  // stage.getHeight()
 
     if (location != null) {
       // a specific location was received from the Runner
@@ -565,42 +568,10 @@ public class PSurfaceFX implements PSurface {
         stage.setY(locationY);
 
       } else {  // doesn't fit
-//        // if it fits inside the editor window,
-//        // offset slightly from upper lefthand corner
-//        // so that it's plunked inside the text area
-//        locationX = editorLocation[0] + 66;
-//        locationY = editorLocation[1] + 66;
-//
-//        if ((locationX + stage.getWidth() > sketch.displayWidth - 33) ||
-//            (locationY + stage.getHeight() > sketch.displayHeight - 33)) {
-//          // otherwise center on screen
-//        locationX = (int) ((sketch.displayWidth - wide) / 2);
-//        locationY = (int) ((sketch.displayHeight - high) / 2);
-//        }
-        locationX = (sketch.displayWidth - wide) / 2;
-        locationY = (sketch.displayHeight - high) / 2;
-        stage.setX(locationX);
-        stage.setY(locationY);
+        stage.centerOnScreen();
       }
     } else {  // just center on screen
-      //setFrameCentered();
-    }
-    if (stage.getY() < 0) {
-      // Windows actually allows you to place frames where they can't be
-      // closed. Awesome. http://dev.processing.org/bugs/show_bug.cgi?id=1508
-      //frame.setLocation(frameLoc.x, 30);
-      stage.setY(30);
-    }
-
-    //canvas.setBounds((contentW - sketchWidth)/2,
-    //                 (contentH - sketchHeight)/2,
-    //                 sketchWidth, sketchHeight);
-
-    // handle frame resizing events
-    //setupFrameResizeListener();
-
-    if (sketch.getGraphics().displayable()) {
-      setVisible(true);
+      stage.centerOnScreen();
     }
   }
 

@@ -32,12 +32,24 @@
       <equals arg1="${sun.arch.data.model}" arg2="32" />
     </and>
   </condition>
+  <condition property="linux-arm64" value="linux-arm64">
+    <and>
+      <equals arg1="${platform}" arg2="linux" />
+      <equals arg1="${os.arch}" arg2="aarch64" />
+      <equals arg1="${sun.arch.data.model}" arg2="64" />
+    </and>
+  </condition>
 
+  <!-- there is currently no JRE available for ARM -->
   <target name="check-linux-arm32" if="linux-arm32">
-    <!-- there is currently no JRE available -->
     <property name="jre.download.jdk" value="true" />
     <property name="jre.downloader" value="linux-arm32-vfp-hflt.tar.gz" />
     <property name="linux.dist" value="linux/processing-${version}-linux-armv6hf.tgz" />
+  </target>
+  <target name="check-linux-arm64" if="linux-arm64">
+    <property name="jre.download.jdk" value="true" />
+    <property name="jre.downloader" value="linux-arm64-vfp-hflt.tar.gz" />
+    <property name="linux.dist" value="linux/processing-${version}-linux-arm64.tgz" />
   </target>
 
   <!-- Require Java 8 everywhere. -->
@@ -57,11 +69,12 @@
   <property name="examples.dir" 
 	    value="../../processing-docs/content/examples" />
 
-  <!-- using 8u111 instead of 8u112 because the latter 
-       has different build numbers for macOS vs others -->
   <property name="jdk.version" value="8" />
-  <property name="jdk.update" value="111" />
-  <property name="jdk.build" value="14" />
+  <property name="jdk.update" value="131" />
+  <property name="jdk.build" value="11" />
+  <!-- See https://gist.github.com/P7h/9741922
+       or http://stackoverflow.com/q/10268583 -->
+  <property name="jdk.hash" value="d54c1d3a095b4ff2b6607d096fa80163" />
 
   <property name="jdk.short" value="${jdk.version}u${jdk.update}" />
   <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />
@@ -228,7 +241,8 @@
 
     <downloader version="${jdk.version}" 
                 update="${jdk.update}" 
-                build="${jdk.build}" 
+                build="${jdk.build}"
+                hash="${jdk.hash}" 
                 jdk="${jre.download.jdk}"
                 flavor="${jre.downloader}"
                 path="${jre.tgz.path}" />    
@@ -237,7 +251,8 @@
   <target name="download-jdk-macosx" depends="downloader-setup">
     <downloader version="${jdk.version}" 
                 update="${jdk.update}" 
-                build="${jdk.build}" 
+                build="${jdk.build}"
+                hash="${jdk.hash}" 
                 jdk="true" 
                 flavor="macosx-x64.dmg"
                 path="${env.HOME}/Desktop/jdk-${jdk.short}.dmg" />
@@ -348,11 +363,13 @@
     <subant buildpath="../java" target="build"/>
   </target>
 
+  <!-- I/O library is only compiled on supported ARM platforms -->
   <target name="subprojects-build-linux-arm32" if="linux-arm32">
-    <!-- I/O library is only compiled on supported ARM platforms -->
     <subant buildpath="../java/libraries/io" target="build"/>
   </target>
-
+  <target name="subprojects-build-linux-arm64" if="linux-arm64">
+    <subant buildpath="../java/libraries/io" target="build"/>
+  </target>
 
   <!-- - - - - - - - - -->
   <!-- Basic Assembly  -->
@@ -750,7 +767,7 @@
     <fail message="wrong platform (${os.name})" />
   </target>
   
-  <target name="linux-build" depends="ignore-tools, check-linux-arm32, revision-check, linux-check-os, jre-download, subprojects-build, subprojects-build-linux-arm32" description="Build Linux version">
+  <target name="linux-build" depends="ignore-tools, check-linux-arm32, check-linux-arm64, revision-check, linux-check-os, jre-download, subprojects-build, subprojects-build-linux-arm32, subprojects-build-linux-arm64" description="Build Linux version">
     <mkdir dir="linux/work" />
     
     <copy todir="linux/work">
@@ -932,11 +949,17 @@
    <condition property="linux.deb" value="linux/processing-${version}-linux-armv6hf.deb">
      <equals arg1="${linux-arm32}" arg2="linux-arm32" />
    </condition>
+   <condition property="linux.deb" value="linux/processing-${version}-linux-arm64.deb">
+     <equals arg1="${linux-arm64}" arg2="linux-arm64" />
+   </condition>
    <property name="linux.deb" value="linux/processing-${version}-linux${sun.arch.data.model}.deb" />
 
    <!-- Raspbian seems to borrow armhf for armv6hf, so this works -->
    <condition property="deb.arch" value="armhf">
      <equals arg1="${linux-arm32}" arg2="linux-arm32" />
+   </condition>
+   <condition property="deb.arch" value="arm64">
+     <equals arg1="${linux-arm64}" arg2="linux-arm64" />
    </condition>
    <condition property="deb.arch" value="i386"> 
      <equals arg1="${sun.arch.data.model}" arg2="32" />

@@ -89,6 +89,7 @@ public class Language {
     // List of languages in alphabetical order. (Add yours here.)
     // Also remember to add it to build/shared/lib/languages/languages.txt.
     final String[] SUPPORTED = {
+      "ar", // Arabic
       "de", // German, Deutsch
       "en", // English
       "el", // Greek
