@@ -6846,18 +6846,10 @@ public class PApplet implements PConstants {
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
   // FILE INPUT
-
-
-  // Removed for 3.0a8
-//  /**
-//   * @deprecated As of release 0136, use createInput() instead.
-//   */
-//  public InputStream openStream(String filename) {
-//    return createInput(filename);
-//  }
 
 
   /**
@@ -6975,8 +6967,8 @@ public class PApplet implements PConstants {
           // Will not handle a protocol change (see below)
           httpConn.setInstanceFollowRedirects(true);
           int response = httpConn.getResponseCode();
-          // Normally will not follow HTTPS redirects from HTTP due to security concerns
-          // http://stackoverflow.com/questions/1884230/java-doesnt-follow-redirect-in-urlconnection/1884427
+          // Default won't follow HTTP -> HTTPS redirects for security reasons
+          // http://stackoverflow.com/a/1884427
           if (response >= 300 && response < 400) {
             String newLocation = httpConn.getHeaderField("Location");
             return createInputRaw(newLocation);
@@ -7219,7 +7211,7 @@ public class PApplet implements PConstants {
         // http://stackoverflow.com/a/3039805
         int maxArraySize = Integer.MAX_VALUE - 5;
         if (len > maxArraySize) {
-          System.err.println("Cannot load files larger than " + maxArraySize);
+          System.err.println("Cannot use loadBytes() on a file larger than " + maxArraySize);
           return null;
         }
         length = (int) len;
