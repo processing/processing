@@ -7174,14 +7174,15 @@ public class PApplet implements PConstants {
    */
   static public byte[] loadBytes(InputStream input) {
     try {
-      BufferedInputStream bis = new BufferedInputStream(input);
       ByteArrayOutputStream out = new ByteArrayOutputStream();
+      byte[] buf = new byte[4096];
 
-      int c = bis.read();
-      while (c != -1) {
-        out.write(c);
-        c = bis.read();
+      int bytesRead = input.read(buf);
+      while (bytesRead != -1) {
+        out.write(buf, 0, bytesRead);
+        bytesRead = input.read(buf);
       }
+      out.flush();
       return out.toByteArray();
 
     } catch (IOException e) {
