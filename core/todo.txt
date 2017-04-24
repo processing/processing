@@ -1,8 +1,13 @@
 0259 (3.3.2)
+X add (far) more efficient file loading for loadBytes(File)
 
 andres
 X Assigning Pixels Vertically Flipped in P2D
 X   https://github.com/processing/processing/issues/5013
+
+gohai
+X improve loadBytes() performance 
+X   https://github.com/processing/processing/pull/5027
 
 
 high

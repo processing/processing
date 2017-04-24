@@ -7192,19 +7192,54 @@ public class PApplet implements PConstants {
     return null;
   }
 
+
   /**
    * @nowebref
    */
   static public byte[] loadBytes(File file) {
-    InputStream is = createInput(file);
-    byte[] byteArr = loadBytes(is);
     try {
-      is.close();
+      InputStream input;
+      int length;
+
+      if (file.getName().toLowerCase().endsWith(".gz")) {
+        RandomAccessFile raf = new RandomAccessFile(file, "r");
+        raf.seek(raf.length() - 4);
+        int b4 = raf.read();
+        int b3 = raf.read();
+        int b2 = raf.read();
+        int b1 = raf.read();
+        length = (b1 << 24) | (b2 << 16) + (b3 << 8) + b4;
+        raf.close();
+
+        // buffered has to go *around* the GZ, otherwise 25x slower
+        input = new BufferedInputStream(new GZIPInputStream(new FileInputStream(file)));
+
+      } else {
+        long len = file.length();
+        // http://stackoverflow.com/a/3039805
+        int maxArraySize = Integer.MAX_VALUE - 5;
+        if (len > maxArraySize) {
+          System.err.println("Cannot load files larger than " + maxArraySize);
+          return null;
+        }
+        length = (int) len;
+        input = new BufferedInputStream(new FileInputStream(file));
+      }
+      byte[] buffer = new byte[length];
+      int count;
+      int offset = 0;
+      while ((count = input.read(buffer, offset, length - offset)) != -1) {
+        offset += count;
+      }
+      input.close();
+      return buffer;
+
     } catch (IOException e) {
       e.printStackTrace();
+      return null;
     }
-    return byteArr;
   }
+
 
   /**
    * @nowebref
@@ -7222,6 +7257,7 @@ public class PApplet implements PConstants {
     }
     return null;
   }
+
 
   /**
    * ( begin auto-generated from loadStrings.xml )
