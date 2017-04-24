@@ -11,6 +11,9 @@ _   https://github.com/processing/processing/issues/4713
 X   https://github.com/processing/processing/pull/4849
 
 
+_ Could not initialize class com.sun.jna.Native on startup (Windows)
+_   https://github.com/processing/processing/issues/4929
+
 _ implement fallback fonts instead of giving up and using Dialog and Mono
 _   https://github.com/processing/processing/issues/5023
 

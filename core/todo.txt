@@ -1,5 +1,9 @@
 0259 (3.3.2)
 
+andres
+X Assigning Pixels Vertically Flipped in P2D
+X   https://github.com/processing/processing/issues/5013
+
 
 high
 _ implement sketch scaling into PApplet
