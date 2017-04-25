@@ -6927,18 +6927,22 @@ public class PApplet implements PConstants {
    */
   public InputStream createInput(String filename) {
     InputStream input = createInputRaw(filename);
-    final String lower = filename.toLowerCase();
-    if ((input != null) &&
-        (lower.endsWith(".gz") || lower.endsWith(".svgz"))) {
-      try {
-        // buffered has to go *around* the GZ, otherwise 25x slower
-        return new BufferedInputStream(new GZIPInputStream(input));
-      } catch (IOException e) {
-        printStackTrace(e);
-        return null;
+    if (input != null) {
+      // if it's gzip-encoded, automatically decode
+      final String lower = filename.toLowerCase();
+      if (lower.endsWith(".gz") || lower.endsWith(".svgz")) {
+        try {
+          // buffered has to go *around* the GZ, otherwise 25x slower
+          return new BufferedInputStream(new GZIPInputStream(input));
+
+        } catch (IOException e) {
+          printStackTrace(e);
+        }
+      } else {
+        return new BufferedInputStream(input);
       }
     }
-    return new BufferedInputStream(input);
+    return null;
   }
 
 
@@ -7109,9 +7113,14 @@ public class PApplet implements PConstants {
     if (file == null) {
       throw new IllegalArgumentException("File passed to createInput() was null");
     }
+    if (!file.exists()) {
+      System.err.println(file + " does not exist, createInput() will return null");
+      return null;
+    }
     try {
       InputStream input = new FileInputStream(file);
-      if (file.getName().toLowerCase().endsWith(".gz")) {
+      final String lower = file.getName().toLowerCase();
+      if (lower.endsWith(".gz") || lower.endsWith(".svgz")) {
         return new BufferedInputStream(new GZIPInputStream(input));
       }
       return new BufferedInputStream(input);
@@ -7247,6 +7256,11 @@ public class PApplet implements PConstants {
    * @nowebref
    */
   static public byte[] loadBytes(File file) {
+    if (!file.exists()) {
+      System.err.println(file + " does not exist, loadBytes() will return null");
+      return null;
+    }
+
     try {
       InputStream input;
       int length;
@@ -7295,6 +7309,11 @@ public class PApplet implements PConstants {
    * @nowebref
    */
   static public String[] loadStrings(File file) {
+    if (!file.exists()) {
+      System.err.println(file + " does not exist, loadStrings() will return null");
+      return null;
+    }
+
     InputStream is = createInput(file);
     if (is != null) {
       String[] outgoing = loadStrings(is);
