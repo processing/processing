@@ -658,6 +658,7 @@ public class PApplet implements PConstants {
    * @see PApplet#keyReleased()
    */
   public boolean keyPressed;
+  int keyPressedCount;
 
   /**
    * The last KeyEvent object passed into a mouse function.
@@ -2934,11 +2935,13 @@ public class PApplet implements PConstants {
 
     switch (event.getAction()) {
     case KeyEvent.PRESS:
+      keyPressedCount++;
       keyPressed = true;
       keyPressed(keyEvent);
       break;
     case KeyEvent.RELEASE:
-      keyPressed = false;
+      keyPressedCount--;
+      keyPressed = (keyPressedCount == 0);
       keyReleased(keyEvent);
       break;
     case KeyEvent.TYPE:

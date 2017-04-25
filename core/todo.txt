@@ -1,6 +1,8 @@
 0259 (3.3.2)
 X add (far) more efficient file loading for loadBytes(File)
 X add loadBytes(URL) variant that uses content length header for array size
+X keyPressed is false if one key is released while multiple keys are pressed
+X   https://github.com/processing/processing/issues/4993
 
 andres
 X Assigning Pixels Vertically Flipped in P2D
