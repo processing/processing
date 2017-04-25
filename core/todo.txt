@@ -1,5 +1,6 @@
 0259 (3.3.2)
 X add (far) more efficient file loading for loadBytes(File)
+X add loadBytes(URL) variant that uses content length header for array size
 
 andres
 X Assigning Pixels Vertically Flipped in P2D
