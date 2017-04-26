@@ -1166,7 +1166,7 @@ public class PGraphicsFX2D extends PGraphics {
                 tintedTemp[x] = hi | (source.pixels[index++] & 0xFFFFFF);
               }
               //wr.setDataElements(0, y, source.width, 1, tintedTemp);
-              pw.setPixels(0, y, source.pixelWidth, 1, argbFormat, tintedTemp, 0, source.pixelHeight);
+              pw.setPixels(0, y, source.pixelWidth, 1, argbFormat, tintedTemp, 0, source.pixelWidth);
             }
           } else {
             int index = 0;

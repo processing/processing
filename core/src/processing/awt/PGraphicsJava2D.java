@@ -1684,7 +1684,7 @@ public class PGraphicsJava2D extends PGraphics {
       WritableRaster wr = image.getRaster();
       if (tint) {
         if (tintedTemp == null || tintedTemp.length != source.pixelWidth) {
-          tintedTemp = new int[source.pixelHeight];
+          tintedTemp = new int[source.pixelWidth];
         }
         int a2 = (tintColor >> 24) & 0xff;
 //        System.out.println("tint color is " + a2);
