@@ -14,6 +14,11 @@ gohai
 X improve loadBytes() performance 
 X   https://github.com/processing/processing/pull/5027
 
+jakub
+X ArrayIndexOutOfBoundsException when using tint() or loadFont()
+X   https://github.com/processing/processing/issues/5028
+X   https://github.com/processing/processing/pull/5029
+
 
 high
 _ implement sketch scaling into PApplet
