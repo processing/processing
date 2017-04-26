@@ -1,3 +1,7 @@
+0259 (3.3.2)
+X no changes to the PDE in this release
+
+
 0258 (3.3.1)
 X fix the JRE downloader
 X   https://gist.github.com/P7h/9741922
