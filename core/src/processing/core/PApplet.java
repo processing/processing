@@ -658,7 +658,7 @@ public class PApplet implements PConstants {
    * @see PApplet#keyReleased()
    */
   public boolean keyPressed;
-  public int keyPressedCount;
+  int keyPressedCount;
 
   /**
    * The last KeyEvent object passed into a mouse function.
