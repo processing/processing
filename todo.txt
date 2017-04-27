@@ -32,8 +32,9 @@ _ put the reference (and examples?) into .zip files
 _   unzipping the app takes forever
 _   see the 'examples' section below
 
-_ EventQueue problems with "could not find sketch size" message?
+_ EventQueue problems with "could not find sketch size" message
 _   https://github.com/processing/processing/issues/4893
+_   https://github.com/processing/processing/issues/5030
 
 _ "Sketch disappeared" infinite pop up dialogs
 _   https://github.com/processing/processing/pull/4808
