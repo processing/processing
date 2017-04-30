@@ -458,8 +458,6 @@ public class GPIO {
    *  Waits for the value of an input pin to change
    *
    *  This function will throw a RuntimeException in case of a timeout.
-   *  @param pin GPIO pin
-   *  @param mode what to wait for: GPIO.CHANGE, GPIO.FALLING or GPIO.RISING
    *  @param timeout don't wait more than timeout milliseconds
    *  @webref
    */
