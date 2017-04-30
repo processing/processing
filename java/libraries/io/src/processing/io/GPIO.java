@@ -450,7 +450,7 @@ public class GPIO {
    *  @webref
    */
   public static void waitFor(int pin, int mode) {
-    waitForInterrupt(pin, mode, -1);
+    waitFor(pin, mode, -1);
   }
 
 
