@@ -511,19 +511,4 @@ public class GPIO {
       return true;
     }
   }
-
-
-  /**
-   *  Waits for the value of an input pin to change
-   *
-   *  Make sure to setup the interrupt with enableInterrupt() before calling
-   *  this function. This function will wait indefinitely for an interrupt
-   *  to occur.
-   *  @parm pin GPIO pin
-   *  @see enableInterrupt
-   *  @see disableInterrupt
-   */
-  protected static void waitForInterrupt(int pin) {
-    waitForInterrupt(pin, -1);
-  }
 }
