@@ -5,9 +5,9 @@ X deal with loadBytes() regressions introduced by their rewrite
 X   (was breaking p5jsMode because of its use of loadBytes(File)
 
 jakub
-X Revert updatePixels() to set modified flag to true
-X   https://github.com/processing/processing/pull/5042
+X image tint() broken in 3.3.x
 X   https://github.com/processing/processing/issues/5040
+X   https://github.com/processing/processing/pull/5042
 
 
 high
