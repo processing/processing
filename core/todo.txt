@@ -1,13 +1,4 @@
-0260 (3.3.3)
-X keyPressed not returning false once a key is released
-X   https://github.com/processing/processing/issues/5033
-X deal with loadBytes() regressions introduced by their rewrite
-X   (was breaking p5jsMode because of its use of loadBytes(File)
-
-jakub
-X image tint() broken in 3.3.x
-X   https://github.com/processing/processing/issues/5040
-X   https://github.com/processing/processing/pull/5042
+0261 (3.3.4 or 3.4)
 
 
 high
