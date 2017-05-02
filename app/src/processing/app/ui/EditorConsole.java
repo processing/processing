@@ -34,6 +34,13 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -60,7 +67,13 @@ import processing.app.Preferences;
 public class EditorConsole extends JScrollPane {
   Editor editor;
 
-  Timer flushTimer;
+  // Timer flushTimer;
+
+  // Using Scheduled Exe. service will provide a more scalable concurrent structure rather
+  // Than using a complete synchronization as with the Timer class.
+  // Using a timer can sometimes cause "out of memory exception" if there is
+  // Too many outputs . See #4825 
+  ScheduledExecutorService scheduler;
 
   JTextPane consoleTextPane;
   BufferedStyledDocument consoleDoc;
@@ -165,17 +178,45 @@ public class EditorConsole extends JScrollPane {
     sketchOut = new PrintStream(new EditorConsoleStream(false));
     sketchErr = new PrintStream(new EditorConsoleStream(true));
 
-    startTimer();
+    startScheduler();
   }
 
 
   protected void flush() {
     // only if new text has been added
-    if (consoleDoc.hasAppendage) {
+    if (consoleDoc.hasAppendage.get()) {
       // insert the text that's been added in the meantime
       consoleDoc.insertAll();
       // always move to the end of the text as it's added
       consoleTextPane.setCaretPosition(consoleDoc.getLength());
+    }
+  }
+
+  protected void startScheduler() {
+    scheduler = Executors.newScheduledThreadPool(1);
+    final Runnable beeper = new Runnable() {
+      @Override
+      public void run() {
+        flush();
+      }  
+    };
+    // The interval can be changed. Now it's 250ms 
+    scheduler.scheduleAtFixedRate(beeper, 0, 250, MILLISECONDS);
+  }
+
+  protected void stopScheduler() {
+    if(scheduler!=null) {
+      try {
+        // Flush the remaining data before stopping the scheduler
+        flush();
+        // No more new tasks given to the scheduler
+        scheduler.shutdown();
+        // If it did not terminate within 60 sec, cancel currently executing tasks 
+        if(!scheduler.awaitTermination(60, SECONDS))
+          scheduler.shutdownNow();  
+      } catch(InterruptedException ex) {
+          scheduler.shutdownNow();      
+      }
     }
   }
 
@@ -185,27 +226,27 @@ public class EditorConsole extends JScrollPane {
    * and stopped/cleared because the Timer thread will keep a reference to its
    * Editor around even after the Editor has been closed, leaking memory.
    */
-  protected void startTimer() {
-    if (flushTimer == null) {
-      // periodically post buffered messages to the console
-      // should the interval come from the preferences file?
-      flushTimer = new Timer(250, new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-          flush();
-        }
-      });
-      flushTimer.start();
-    }
-  }
+  // protected void startTimer() {
+  //   if (flushTimer == null) {
+  //     // periodically post buffered messages to the console
+  //     // should the interval come from the preferences file?
+  //     flushTimer = new Timer(250, new ActionListener() {
+  //       public void actionPerformed(ActionEvent evt) {
+  //         flush();
+  //       }
+  //     });
+  //     flushTimer.start();
+  //   }
+  // }
 
 
-  protected void stopTimer() {
-    if (flushTimer != null) {
-      flush();  // clear anything that's there
-      flushTimer.stop();
-      flushTimer = null;
-    }
-  }
+  // protected void stopTimer() {
+  //   if (flushTimer != null) {
+  //     flush();  // clear anything that's there
+  //     flushTimer.stop();
+  //     flushTimer = null;
+  //   }
+  // }
 
 
   public PrintStream getOut() {
@@ -292,7 +333,7 @@ public class EditorConsole extends JScrollPane {
 
   static public void setEditor(Editor editor) {
     if (current != null) {
-      current.stopTimer();  // allow to be garbage collected
+      current.stopScheduler();  // allow to be garbage collected
     }
     editor.console.setCurrent();
   }
@@ -300,7 +341,7 @@ public class EditorConsole extends JScrollPane {
 
   void setCurrent() {
     current = this;  //editor.console;
-    startTimer();
+    startScheduler();
     Console.setEditor(sketchOut, sketchErr);
   }
 
@@ -334,7 +375,7 @@ public class EditorConsole extends JScrollPane {
 //  }
 
 
-  synchronized public void message(String what, boolean err) {
+  public void message(String what, boolean err) {
     // now handled in Console
     /*
     if (err) {
@@ -443,12 +484,19 @@ public class EditorConsole extends JScrollPane {
  * appendString() is called from multiple threads, and insertAll from the
  * swing event thread, so they need to be synchronized
  */
+
+/**
+ * Updated: Changed the synchronization structure to concurrent structure
+ * Reasons described above at ScheduledExecutorService declaration 
+*/
 class BufferedStyledDocument extends DefaultStyledDocument {
-  List<ElementSpec> elements = new ArrayList<ElementSpec>();
-  int maxLineLength, maxLineCount;
-  int currentLineLength = 0;
-  boolean needLineBreak = false;
-  boolean hasAppendage = false;
+  ConcurrentLinkedQueue<ElementSpec> elements = new ConcurrentLinkedQueue<ElementSpec>();
+  final int     maxLineLength;
+  final int     maxLineCount;
+  // Used atomicity because they are not interrupted by other threads.
+  AtomicInteger currentLineLength = new AtomicInteger(0);
+  AtomicBoolean needLineBreak     = new AtomicBoolean(false);
+  AtomicBoolean hasAppendage      = new AtomicBoolean(false);
 
   public BufferedStyledDocument(int maxLineLength, int maxLineCount) {
     this.maxLineLength = maxLineLength;
@@ -456,38 +504,38 @@ class BufferedStyledDocument extends DefaultStyledDocument {
   }
 
   /** buffer a string for insertion at the end of the DefaultStyledDocument */
-  public synchronized void appendString(String str, AttributeSet a) {
+  public void appendString(String str, AttributeSet a) {
     // do this so that it's only updated when needed (otherwise console
     // updates every 250 ms when an app isn't even running.. see bug 180)
-    hasAppendage = true;
+    hasAppendage.set(true);
 
     // process each line of the string
     while (str.length() > 0) {
       // newlines within an element have (almost) no effect, so we need to
       // replace them with proper paragraph breaks (start and end tags)
-      if (needLineBreak || currentLineLength > maxLineLength) {
+      if (needLineBreak.get() || currentLineLength.get() > maxLineLength) {
         elements.add(new ElementSpec(a, ElementSpec.EndTagType));
         elements.add(new ElementSpec(a, ElementSpec.StartTagType));
-        currentLineLength = 0;
+        currentLineLength.set(0);
       }
 
       if (str.indexOf('\n') == -1) {
         elements.add(new ElementSpec(a, ElementSpec.ContentType,
           str.toCharArray(), 0, str.length()));
-        currentLineLength += str.length();
-        needLineBreak = false;
+        currentLineLength.set(currentLineLength.get()+str.length());
+        needLineBreak.set(false);
         str = str.substring(str.length()); // eat the string
       } else {
         elements.add(new ElementSpec(a, ElementSpec.ContentType,
           str.toCharArray(), 0, str.indexOf('\n') + 1));
-        needLineBreak = true;
+        needLineBreak.set(true);
         str = str.substring(str.indexOf('\n') + 1); // eat the line
       }
     }
   }
 
   /** insert the buffered strings */
-  public synchronized void insertAll() {
+  public void insertAll() {
     ElementSpec[] elementArray = new ElementSpec[elements.size()];
     elements.toArray(elementArray);
 
@@ -515,6 +563,6 @@ class BufferedStyledDocument extends DefaultStyledDocument {
       // maybe not a good idea in the long run?
     }
     elements.clear();
-    hasAppendage = false;
+    hasAppendage.set(false);
   }
 }
