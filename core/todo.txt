@@ -1,4 +1,4 @@
-0260 (3.3.3 or 3.4)
+0260 (3.3.3)
 X keyPressed not returning false once a key is released
 X   https://github.com/processing/processing/issues/5033
 X deal with loadBytes() regressions introduced by their rewrite
