@@ -7155,58 +7155,64 @@ public class PApplet implements PConstants {
    *
    */
   public byte[] loadBytes(String filename) {
-    // If this looks like a URL, try to load it that way. Use the fact that
-    // URL connections may have a content length header to size the array.
-    if (filename.contains(":")) {  // at least smells like URL
-      try {
-        URL url = new URL(filename);
-        URLConnection conn = url.openConnection();
-        InputStream input = null;
-        int length = -1;
+    String lower = filename.toLowerCase();
+    // If it's not a .gz file, then we might be able to uncompress it into
+    // a fixed-size buffer, which should help speed because we won't have to
+    // reallocate and resize the target array each time it gets full.
+    if (!lower.endsWith(".gz")) {
+      // If this looks like a URL, try to load it that way. Use the fact that
+      // URL connections may have a content length header to size the array.
+      if (filename.contains(":")) {  // at least smells like URL
+        try {
+          URL url = new URL(filename);
+          URLConnection conn = url.openConnection();
+          InputStream input = null;
+          int length = -1;
 
-        if (conn instanceof HttpURLConnection) {
-          HttpURLConnection httpConn = (HttpURLConnection) conn;
-          // Will not handle a protocol change (see below)
-          httpConn.setInstanceFollowRedirects(true);
-          int response = httpConn.getResponseCode();
-          // Default won't follow HTTP -> HTTPS redirects for security reasons
-          // http://stackoverflow.com/a/1884427
-          if (response >= 300 && response < 400) {
-            String newLocation = httpConn.getHeaderField("Location");
-            return loadBytes(newLocation);
-          }
-          length = conn.getContentLength();
-          input = conn.getInputStream();
-        } else if (conn instanceof JarURLConnection) {
-          length = conn.getContentLength();
-          input = url.openStream();
-        }
-
-        if (input != null) {
-          byte[] buffer = null;
-          if (length != -1) {
-            buffer = new byte[length];
-            int count;
-            int offset = 0;
-            while ((count = input.read(buffer, offset, length - offset)) != -1) {
-              offset += count;
+          if (conn instanceof HttpURLConnection) {
+            HttpURLConnection httpConn = (HttpURLConnection) conn;
+            // Will not handle a protocol change (see below)
+            httpConn.setInstanceFollowRedirects(true);
+            int response = httpConn.getResponseCode();
+            // Default won't follow HTTP -> HTTPS redirects for security reasons
+            // http://stackoverflow.com/a/1884427
+            if (response >= 300 && response < 400) {
+              String newLocation = httpConn.getHeaderField("Location");
+              return loadBytes(newLocation);
             }
-          } else {
-            buffer = loadBytes(input);
+            length = conn.getContentLength();
+            input = conn.getInputStream();
+          } else if (conn instanceof JarURLConnection) {
+            length = conn.getContentLength();
+            input = url.openStream();
           }
-          input.close();
-          return buffer;
+
+          if (input != null) {
+            byte[] buffer = null;
+            if (length != -1) {
+              buffer = new byte[length];
+              int count;
+              int offset = 0;
+              while ((count = input.read(buffer, offset, length - offset)) > 0) {
+                offset += count;
+              }
+            } else {
+              buffer = loadBytes(input);
+            }
+            input.close();
+            return buffer;
+          }
+        } catch (MalformedURLException mfue) {
+          // not a url, that's fine
+
+        } catch (FileNotFoundException fnfe) {
+          // Java 1.5+ throws FNFE when URL not available
+          // http://dev.processing.org/bugs/show_bug.cgi?id=403
+
+        } catch (IOException e) {
+          printStackTrace(e);
+          return null;
         }
-      } catch (MalformedURLException mfue) {
-        // not a url, that's fine
-
-      } catch (FileNotFoundException fnfe) {
-        // Java 1.5+ throws FNFE when URL not available
-        // http://dev.processing.org/bugs/show_bug.cgi?id=403
-
-      } catch (IOException e) {
-        printStackTrace(e);
-        return null;
       }
     }
 
@@ -7292,7 +7298,8 @@ public class PApplet implements PConstants {
       byte[] buffer = new byte[length];
       int count;
       int offset = 0;
-      while ((count = input.read(buffer, offset, length - offset)) != -1) {
+      // count will come back 0 when complete (or -1 if somehow going long?)
+      while ((count = input.read(buffer, offset, length - offset)) > 0) {
         offset += count;
       }
       input.close();

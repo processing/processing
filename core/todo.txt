@@ -1,6 +1,13 @@
 0260 (3.3.3 or 3.4)
 X keyPressed not returning false once a key is released
 X   https://github.com/processing/processing/issues/5033
+X deal with loadBytes() regressions introduced by their rewrite
+X   (was breaking p5jsMode because of its use of loadBytes(File)
+
+jakub
+X Revert updatePixels() to set modified flag to true
+X   https://github.com/processing/processing/pull/5042
+X   https://github.com/processing/processing/issues/5040
 
 
 high
