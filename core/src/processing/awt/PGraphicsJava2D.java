@@ -2797,7 +2797,7 @@ public class PGraphicsJava2D extends PGraphics {
     if (pixels != null) {
       getRaster().setDataElements(0, 0, pixelWidth, pixelHeight, pixels);
     }
-    modified = false;
+    modified = true;
   }
 
 
