@@ -1,5 +1,42 @@
 0261 (3.3.4 or 3.4)
 
+_ sketch.properties not being written if initial mode is p5.js?
+_ what to double-click when opening p5 projects
+_   lack of a project file makes this a pain
+_   dropping a sketch folder onto the PDE should also be implemented
+_ some type of sketch archive format for posting examples (.psk?)
+_   would be nice to open a sketch directly from a zip file
+_   https://github.com/processing/processing/issues/73
+_   maybe just open from a zip file, since psk doesn't help anything
+_   also have a means of importing sketches
+_     https://github.com/processing/processing/issues/3987
+_   also see several notes below re: examples
+_ how are file associations handled in Linux? (for .pde, .psk)
+
+_ EventQueue problems with "could not find sketch size" message
+_   https://github.com/processing/processing/issues/4893
+_   https://github.com/processing/processing/issues/5030
+
+_ put the reference (and examples?) into .zip files
+_   unzipping the app takes forever
+_   see the 'examples' section below
+
+_ untitled folders are stored in temp folder
+
+_ clean up /tmp folders used during build
+_   https://github.com/processing/processing/issues/1896
+_ don't let people into the /tmp folder for sketches
+o   don't use tmp folder for sketches? 
+_   restrict more things like "show sketch folder"
+_   don't allow adding files w/o saving
+_   others?
+_ when creating a sketch within non-Java mode, should write the settings file
+_   so that it re-loads in the proper environment
+_ remove sketch.properties when moving back to the default?
+_   or can we not do this, because it's used to set the 'next' mode
+_ add means to import .zip files from file/url into sketchbook, library, etc.
+_   super easy given current code implementation, might help usability
+
 
 contrib
 _ redo console handling to not use Timer, fixing freeze-up problems
@@ -27,14 +64,6 @@ _   implement simple table for prefs?
 
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
-
-_ put the reference (and examples?) into .zip files
-_   unzipping the app takes forever
-_   see the 'examples' section below
-
-_ EventQueue problems with "could not find sketch size" message
-_   https://github.com/processing/processing/issues/4893
-_   https://github.com/processing/processing/issues/5030
 
 _ "Sketch disappeared" infinite pop up dialogs
 _   https://github.com/processing/processing/pull/4808
@@ -371,7 +400,6 @@ _   problem with big floats: http://processing.org/discourse/yabb/YaBB.cgi?board
 _   problem with small floats: http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115500448
 _ console stored in prefs location
 _   console may be useful for debugging
-_ untitled folders are stored in temp folder
 
 
 DOC / Text
@@ -550,23 +578,10 @@ _   https://github.com/processing/processing/issues/533
 
 PDE / Editor
 
-_ clean up /tmp folders used during build
-_   https://github.com/processing/processing/issues/1896
 _ 'recent' menu doesn't respect examples folder of other p5 versions
 _   could write that into the file, that it's an example
 _   or write the path as shown in the PDE to the file as simpler
 _ 'recent' menu paths can get enormous
-_ don't let people into the /tmp folder for sketches
-o   don't use tmp folder for sketches? 
-_   restrict more things like "show sketch folder"
-_   don't allow adding files w/o saving
-_   others?
-_ when creating a sketch within non-Java mode, should write the settings file
-_   so that it re-loads in the proper environment
-_ remove sketch.properties when moving back to the default?
-_   or can we not do this, because it's used to set the 'next' mode
-_ add means to import .zip files from file/url into sketchbook, library, etc.
-_   super easy given current code implementation, might help usability
 _ active editor not being set null
 _   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
 _   instead of (activeEditor == null), but that's papering over a problem
@@ -795,11 +810,6 @@ _   because there's a dash in the name
 _   and instead only loads StemCell.pde
 _ show progress dialog during export and save
 _ hitting ESC on "create this, move file, continue" opened anyway
-_ some type of sketch archive format for posting examples (.psk?)
-_   would be nice to open a sketch directly from a zip file
-_   https://github.com/processing/processing/issues/73
-_   maybe just open from a zip file, since psk doesn't help anything
-_   also have a means of importing sketches
 
 
 
