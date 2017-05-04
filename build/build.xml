@@ -336,6 +336,7 @@
   <!-- - - - - - - - - - - - - - - - - - -->
   
   <target name="subprojects-clean">
+    <subant buildpath="../core/methods" target="clean"/>
     <subant buildpath="../core" target="clean"/>
     <subant buildpath="../app" target="clean"/>
     <subant buildpath="../java/libraries/dxf" target="clean"/>
@@ -352,6 +353,7 @@
   </target>
   
   <target name="subprojects-build">
+    <subant buildpath="../core/methods" target="task-lib"/>
     <subant buildpath="../core" target="build"/>
     <subant buildpath="../app" target="build"/>
     <subant buildpath="../java/libraries/dxf" target="build"/>
