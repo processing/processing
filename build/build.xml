@@ -307,6 +307,13 @@
     <antcall target="${platform}-run" />
   </target>
 
+  <!-- Run the app in a more "native" manner, i.e. no additional 
+       console for debugging. Ensures that double-clicking shortcuts 
+       and other desktop integration features work properly. -->
+  <target name="app" description="Run Processing w/o console.">
+    <antcall target="${platform}-run-app" />
+  </target>
+
   <target name="dist" depends="revision-check"
           description="Build Processing for distribution.">
     <input message="Enter version number:" 
@@ -682,8 +689,14 @@
     <exec executable="open" dir="macosx/work" spawn="true">
       <arg value="-a" />
       <arg value="/Applications/Utilities/Terminal.app" />
-<!--      <arg value="Processing.app/Contents/MacOS/JavaApplicationStub" />-->
       <arg value="Processing.app/Contents/MacOS/Processing" />
+    </exec>
+  </target>
+  
+  <target name="macosx-run-app" depends="macosx-build" 
+          description="Run Mac OS X version without console">
+    <exec executable="open" dir="macosx/work" spawn="true">
+      <arg value="Processing.app" />
     </exec>
   </target>
 

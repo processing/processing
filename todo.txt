@@ -11,12 +11,13 @@ X   xattr -d -r com.apple.quarantine
 X   https://github.com/steakknife/unsign
 X   https://developer.apple.com/library/content/technotes/tn2318
 X 'run sketches on display' message shows up on clean install
+X should ant run launch the .app so that launchsvcs stuff works properly?
+X   double-clicking a .pde file won't open the app correctly
+X   add 'ant app' target, at least for macOS
 
 gohai
 X IO library updates
 X   https://github.com/processing/processing/pull/5044
-
-_ should ant run launch the .app so that launchsvcs stuff works properly?
 
 _ sketch.properties not being written if initial mode is p5.js?
 _ when creating a sketch within non-Java mode, should write the settings file
