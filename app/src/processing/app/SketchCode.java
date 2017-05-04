@@ -283,6 +283,12 @@ public class SketchCode {
   public void load() throws IOException {
     program = Util.loadFile(file);
 
+    if (program == null) {
+      System.err.println("There was a problem loading " + file);
+      System.err.println("This may happen because you don't have permissions to read the file, or the file has gone missing.");
+      throw new IOException("Cannot read or access " + file);
+    }
+
     // Remove NUL characters because they'll cause problems,
     // and their presence is very difficult to debug.
     // https://github.com/processing/processing/issues/1973
@@ -292,7 +298,7 @@ public class SketchCode {
     savedProgram = program;
 
     // This used to be the "Fix Encoding and Reload" warning, but since that
-    // tool has been removed, it just rambles about text editors and encodings.
+    // tool has been removed, let's ramble about text editors and encodings.
     if (program.indexOf('\uFFFD') != -1) {
       System.err.println(file.getName() + " contains unrecognized characters.");
       System.err.println("You should re-open " + file.getName() +

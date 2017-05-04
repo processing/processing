@@ -14,6 +14,8 @@ X 'run sketches on display' message shows up on clean install
 X should ant run launch the .app so that launchsvcs stuff works properly?
 X   double-clicking a .pde file won't open the app correctly
 X   add 'ant app' target, at least for macOS
+X add null check to sketch loading
+X   discovered during https://github.com/processing/processing/issues/4980
 
 gohai
 X IO library updates
