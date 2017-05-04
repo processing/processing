@@ -19,6 +19,11 @@ X   https://github.com/processing/processing/pull/5044
 _ should ant run launch the .app so that launchsvcs stuff works properly?
 
 _ sketch.properties not being written if initial mode is p5.js?
+_ when creating a sketch within non-Java mode, should write the settings file
+_   so that it re-loads in the proper environment
+_ remove sketch.properties when moving back to the default?
+_   or can we not do this, because it's used to set the 'next' mode
+
 _ what to double-click when opening p5 projects
 _   lack of a project file makes this a pain
 _   dropping a sketch folder onto the PDE should also be implemented
@@ -31,6 +36,9 @@ _     https://github.com/processing/processing/issues/3987
 _   also see several notes below re: examples
 _ how are file associations handled in Linux? (for .pde, .psk)
 
+_ add means to import .zip files from file/url into sketchbook, library, etc.
+_   super easy given current code implementation, might help usability
+
 _ EventQueue problems with "could not find sketch size" message
 _   https://github.com/processing/processing/issues/4893
 _   https://github.com/processing/processing/issues/5030
@@ -40,7 +48,6 @@ _   unzipping the app takes forever
 _   see the 'examples' section below
 
 _ untitled folders are stored in temp folder
-
 _ clean up /tmp folders used during build
 _   https://github.com/processing/processing/issues/1896
 _ don't let people into the /tmp folder for sketches
@@ -48,12 +55,6 @@ o   don't use tmp folder for sketches?
 _   restrict more things like "show sketch folder"
 _   don't allow adding files w/o saving
 _   others?
-_ when creating a sketch within non-Java mode, should write the settings file
-_   so that it re-loads in the proper environment
-_ remove sketch.properties when moving back to the default?
-_   or can we not do this, because it's used to set the 'next' mode
-_ add means to import .zip files from file/url into sketchbook, library, etc.
-_   super easy given current code implementation, might help usability
 
 
 contrib
@@ -944,6 +945,8 @@ _   this may already work with SingleInstance stuff
 
 DIST / Mac OS X
 
+_ Java bug prevents us from setting the dock name of a sketch run from the PDE
+_   https://github.com/processing/processing/issues/5045
 _ client properties 
 _   https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html
 _ built-in images: http://nadeausoftware.com/articles/2008/12/mac_java_tip_how_access_mac_specific_nsimage_icons

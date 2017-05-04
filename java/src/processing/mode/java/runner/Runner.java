@@ -341,9 +341,12 @@ public class Runner implements MessageConsumer {
     }
 
     if (Platform.isMacOS()) {
+      // This successfully sets the application menu name,
+      // but somehow, not the dock name itself.
       params.append("-Xdock:name=" + build.getSketchClassName());
-//      params.add("-Dcom.apple.mrj.application.apple.menu.about.name=" +
-//                 sketch.getMainClassName());
+      // No longer needed / doesn't seem to do anything differently
+      //params.append("-Dcom.apple.mrj.application.apple.menu.about.name=" +
+      //              build.getSketchClassName());
     }
     // sketch.libraryPath might be ""
     // librariesClassPath will always have sep char prepended

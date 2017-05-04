@@ -1,10 +1,5 @@
 0261 (3.3.4 or 3.4)
 
-_ set the application name to sketch name (not processing.core.PApplet)
-_   System.setProperty("com.apple.mrj.application.apple.menu.about.name", ...)
-_   -Xdock:name=<application name>
-_   -Xdock:icon=<path to icon file>
-
 _ WARNING: GL pipe is running in software mode (Renderer ID=0x1020400)
 _   is this coming from us? if so, need to provide actions
 

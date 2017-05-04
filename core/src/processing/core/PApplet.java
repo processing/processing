@@ -10459,6 +10459,9 @@ public class PApplet implements PConstants {
     // Remove 60fps limit on the JavaFX "pulse" timer
     System.setProperty("javafx.animation.fullspeed", "true");
 
+    // Doesn't seem to do anything helpful here (that can't be done via Runner)
+    //System.setProperty("com.apple.mrj.application.apple.menu.about.name", "potato");
+
     Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
       public void uncaughtException(Thread t, Throwable e) {
         e.printStackTrace();
