@@ -4000,6 +4000,22 @@ public class PApplet implements PConstants {
   }
   */
 
+  /**
+   * Writes to the text area of the Processing environment's console. This handles many common conversions used when printing data. It is powerful, but somewhat complex. Beginners may prefer to use <code>println( String )</code>, or <code>println( Object... )</code>. For a complete guide to use, have a look at <a href="http://docs.oracle.com/javase/7/docs/api/java/util/Formatter.html#syntax">the official java documentation for format string syntax</a>.
+   *
+   * Examples:
+   * <code>printf( "Hello %s, the year is %d\n", "Sally", year());</code>
+   *
+   * @param format The format string
+   * @param format The arguments to the format string
+   **/
+  static public void printf( String format, Object... variables) {
+    if( format == null)
+      System.out.println( "null");
+    else
+      System.out.printf( format, variables);
+  }
+
 
   /**
    * ( begin auto-generated from println.xml )
