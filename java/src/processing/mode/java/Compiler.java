@@ -39,7 +39,7 @@ public class Compiler {
 
   static HashMap<String, String> importSuggestions;
   static {
-    importSuggestions = new HashMap<String, String>();
+    importSuggestions = new HashMap<>();
     importSuggestions.put("Arrays", "java.util.Arrays");
     importSuggestions.put("Collections", "java.util.Collections");
     importSuggestions.put("Date", "java.util.Date");
@@ -188,7 +188,8 @@ public class Compiler {
                                    "You might be missing a library.");
               System.err.println("Libraries must be " +
                                  "installed in a folder named 'libraries' " +
-                                 "inside the 'sketchbook' folder.");
+                                 "inside the sketchbook folder " +
+                                 "(see the Preferences window).");
             }
           }
 
