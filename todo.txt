@@ -2,7 +2,14 @@
 X redo console handling to not use Timer, fixing freeze-up problems
 o   https://github.com/processing/processing/pull/4935
 X   https://github.com/processing/processing/issues/4825
+X clean up error message for sketchbook location
+X   https://github.com/processing/processing/issues/4942
 
+
+_ Application Exports report as "Damaged" on macOS Sierra
+_   https://github.com/processing/processing/issues/4705
+_   could provide script to un-quarrantine
+_   xattr -d -r com.apple.quarantine
 
 _ should ant run launch the .app so that launchsvcs stuff works properly?
 
@@ -122,11 +129,6 @@ _   https://github.com/processing/processing/issues/4703
 
 _ right bracket missing error
 _   https://github.com/processing/processing/issues/4702
-
-_ Application Exports report as "Damaged" on macOS Sierra
-_   https://github.com/processing/processing/issues/4705
-_   could provide script to un-quarrantine
-_   xattr -d -r com.apple.quarantine
 
 _ sharing usage metrics about libraries
 _   https://github.com/processing/processing/issues/4708
