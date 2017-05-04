@@ -584,8 +584,7 @@ public class PImage implements PConstants, Cloneable {
   // http://code.google.com/p/processing/issues/detail?id=1463
   static private BufferedImage shrinkImage(BufferedImage img,
                                            int targetWidth, int targetHeight) {
-    int type = (img.getTransparency() == Transparency.OPAQUE) ?
-      BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+    int type = BufferedImage.TYPE_INT_ARGB;
     BufferedImage outgoing = img;
     BufferedImage scratchImage = null;
     Graphics2D g2 = null;
