@@ -4251,6 +4251,10 @@ public class PApplet implements PConstants {
     return (n < 0) ? -n : n;
   }
 
+  static public final float abs(long n) {
+    return (n < 0) ? -n : n;
+  }
+
   static public final int abs(int n) {
     return (n < 0) ? -n : n;
   }
@@ -4268,6 +4272,10 @@ public class PApplet implements PConstants {
    * @see PApplet#sqrt(float)
    */
   static public final float sq(float n) {
+    return n*n;
+  }
+
+  static public final float sq(long n) {
     return n*n;
   }
 
@@ -4350,6 +4358,10 @@ public class PApplet implements PConstants {
     return (a > b) ? a : b;
   }
 
+  static public final long max(long a, long b) {
+    return (a > b) ? a : b;
+  }
+
   static public final float max(float a, float b) {
     return (a > b) ? a : b;
   }
@@ -4364,6 +4376,10 @@ public class PApplet implements PConstants {
  * @param c third number to compare
  */
   static public final int max(int a, int b, int c) {
+    return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
+  }
+
+  static public final long max(long a, long b, long c) {
     return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
   }
 
@@ -4392,6 +4408,17 @@ public class PApplet implements PConstants {
       throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
     }
     float max = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] > max) max = list[i];
+    }
+    return max;
+  }
+
+  static public final long max(long[] list) {
+    if (list.length == 0) {
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
+    }
+    long max = list[0];
     for (int i = 1; i < list.length; i++) {
       if (list[i] > max) max = list[i];
     }
@@ -4427,6 +4454,10 @@ public class PApplet implements PConstants {
     return (a < b) ? a : b;
   }
 
+  static public final long min(long a, long b) {
+    return (a < b) ? a : b;
+  }
+
   /*
   static public final double min(double a, double b) {
     return (a < b) ? a : b;
@@ -4435,6 +4466,10 @@ public class PApplet implements PConstants {
 
 
   static public final int min(int a, int b, int c) {
+    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
+  }
+
+  static public final long min(long a, long b, long c) {
     return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
   }
 
@@ -4486,6 +4521,17 @@ public class PApplet implements PConstants {
     return min;
   }
 
+  static public final long min(long[] list) {
+    if (list.length == 0) {
+      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
+    }
+    long min = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] < min) min = list[i];
+    }
+    return min;
+  }
+
 
   /*
    * Find the minimum value in an array.
@@ -4508,6 +4554,10 @@ public class PApplet implements PConstants {
 
 
   static public final int constrain(int amt, int low, int high) {
+    return (amt < low) ? low : ((amt > high) ? high : amt);
+  }
+
+  static public final long constrain(long amt, long low, long high) {
     return (amt < low) ? low : ((amt > high) ? high : amt);
   }
 
@@ -8100,6 +8150,17 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
+  static public long[] sort(long list[]) {
+    return sort(list, list.length);
+  }
+
+  static public long[] sort(long[] list, int count) {
+    long[] outgoing = new long[list.length];
+    System.arraycopy(list, 0, outgoing, 0, list.length);
+    Arrays.sort(outgoing, 0, count);
+    return outgoing;
+  }
+
   static public String[] sort(String list[]) {
     return sort(list, list.length);
   }
@@ -8344,6 +8405,12 @@ public class PApplet implements PConstants {
     return array;
   }
 
+  static public long[] append(long array[], long value) {
+    array = expand(array, array.length + 1);
+    array[array.length-1] = value;
+    return array;
+  }
+
   static public float[] append(float array[], float value) {
     array = expand(array, array.length + 1);
     array[array.length-1] = value;
@@ -8397,6 +8464,10 @@ public class PApplet implements PConstants {
   }
 
   static public float[] shorten(float list[]) {
+    return subset(list, 0, list.length-1);
+  }
+
+  static public long[] shorten(long list[]) {
     return subset(list, 0, list.length-1);
   }
 
@@ -8531,6 +8602,26 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
+  static final public long[] splice(long list[],
+                                     long value, int index) {
+    long outgoing[] = new long[list.length + 1];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    outgoing[index] = value;
+    System.arraycopy(list, index, outgoing, index + 1,
+                     list.length - index);
+    return outgoing;
+  }
+
+  static final public long[] splice(long list[],
+                                     long value[], int index) {
+    long outgoing[] = new long[list.length + value.length];
+    System.arraycopy(list, 0, outgoing, 0, index);
+    System.arraycopy(value, 0, outgoing, index, value.length);
+    System.arraycopy(list, index, outgoing, index + value.length,
+                     list.length - index);
+    return outgoing;
+  }
+
   static final public String[] splice(String list[],
                                       String value, int index) {
     String outgoing[] = new String[list.length + 1];
@@ -8646,6 +8737,16 @@ public class PApplet implements PConstants {
     return output;
   }
 
+  static public long[] subset(long list[], int start) {
+    return subset(list, start, list.length - start);
+  }
+
+  static public long[] subset(long list[], int start, int count) {
+    long output[] = new long[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
 
   static public String[] subset(String list[], int start) {
     return subset(list, start, list.length - start);
@@ -8724,6 +8825,13 @@ public class PApplet implements PConstants {
     return c;
   }
 
+  static public float[] concat(long a[], long b[]) {
+    float c[] = new float[a.length + b.length];
+    System.arraycopy(a, 0, c, 0, a.length);
+    System.arraycopy(b, 0, c, a.length, b.length);
+    return c;
+  }
+
   static public String[] concat(String a[], String b[]) {
     String c[] = new String[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
@@ -8792,6 +8900,15 @@ public class PApplet implements PConstants {
 
   static public float[] reverse(float list[]) {
     float outgoing[] = new float[list.length];
+    int length1 = list.length - 1;
+    for (int i = 0; i < list.length; i++) {
+      outgoing[i] = list[length1 - i];
+    }
+    return outgoing;
+  }
+
+  static public long[] reverse(long list[]) {
+    long outgoing[] = new long[list.length];
     int length1 = list.length - 1;
     for (int i = 0; i < list.length; i++) {
       outgoing[i] = list[length1 - i];
@@ -9272,6 +9389,10 @@ public class PApplet implements PConstants {
     return (byte) what;
   }
 
+  static final public byte parseByte(long what) {
+    return (byte) what;
+  }
+
   static final public byte parseByte(float what) {
     return (byte) what;
   }
@@ -9310,6 +9431,14 @@ public class PApplet implements PConstants {
   }
 
   static final public byte[] parseByte(float what[]) {
+    byte outgoing[] = new byte[what.length];
+    for (int i = 0; i < what.length; i++) {
+      outgoing[i] = (byte) what[i];
+    }
+    return outgoing;
+  }
+
+  static final public byte[] parseByte(long what[]) {
     byte outgoing[] = new byte[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (byte) what[i];
@@ -9429,6 +9558,13 @@ public class PApplet implements PConstants {
   }
 
   /**
+   * Same as floor(), or an (int) cast.
+   */
+  static final public int parseInt(long what) {
+    return (int) what;
+  }
+
+  /**
    * Parse a String into an int value. Returns 0 if the value is bad.
    */
   static final public int parseInt(String what) {
@@ -9485,6 +9621,14 @@ public class PApplet implements PConstants {
     return inties;
   }
 
+  static public int[] parseInt(long what[]) {
+    int inties[] = new int[what.length];
+    for (int i = 0; i < what.length; i++) {
+      inties[i] = (int)what[i];
+    }
+    return inties;
+  }
+
   /**
    * Make an array of int elements from an array of String objects.
    * If the String can't be parsed as a number, it will be set to zero.
@@ -9532,7 +9676,7 @@ public class PApplet implements PConstants {
    * Convert an int to a float value. Also handles bytes because of
    * Java's rules for upgrading values.
    */
-  static final public float parseFloat(int what) {  // also handles byte
+  static final public float parseFloat(long what) {  // also handles byte
     return what;
   }
 
@@ -9584,6 +9728,14 @@ public class PApplet implements PConstants {
     return floaties;
   }
 
+  static final public long[] parseFloat(long what[]) {
+    long floaties[] = new long[what.length];
+    for (int i = 0; i < what.length; i++) {
+      floaties[i] = what[i];
+    }
+    return floaties;
+  }
+
   static final public float[] parseFloat(String what[]) {
     return parseFloat(what, Float.NaN);
   }
@@ -9622,6 +9774,10 @@ public class PApplet implements PConstants {
     return String.valueOf(x);
   }
 
+  static final public String str(long x) {
+    return String.valueOf(x);
+  }
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   static final public String[] str(boolean x[]) {
@@ -9654,6 +9810,11 @@ public class PApplet implements PConstants {
     return s;
   }
 
+  static final public String[] str(long x[]) {
+    String s[] = new String[x.length];
+    for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x[i]);
+    return s;
+  }
 
   //////////////////////////////////////////////////////////////
 
