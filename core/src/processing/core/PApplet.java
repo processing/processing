@@ -9083,15 +9083,13 @@ public class PApplet implements PConstants {
   static public String[] match(String str, String regexp) {
     Pattern p = matchPattern(regexp);
     Matcher m = p.matcher(str);
-    if (m.find()) {
-      int count = m.groupCount() + 1;
-      String[] groups = new String[count];
-      for (int i = 0; i < count; i++) {
-        groups[i] = m.group(i);
-      }
-      return groups;
+    if (!m.find()) return null;
+    int count = m.groupCount() + 1;
+    String[] groups = new String[count];
+    for (int i = 0; i < count; i++) {
+      groups[i] = m.group(i);
     }
-    return null;
+    return groups;
   }
 
 
