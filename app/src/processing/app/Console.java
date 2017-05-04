@@ -30,7 +30,7 @@ import java.util.Date;
 
 
 /**
- * Message console that sits below the editing area.
+ * Non-GUI handling of System.out and System.err redirection.
  * <p />
  * Be careful when debugging this class, because if it's throwing exceptions,
  * don't take over System.err, and debug while watching just System.out
@@ -43,9 +43,6 @@ import java.util.Date;
  * get along with one another. Use 'ant run' to work on encoding-related issues.
  */
 public class Console {
-//  PrintStream sketchOut;
-//  PrintStream sketchErr;
-
   // Single static instance shared because there's only one real System.out.
   // Within the input handlers, the currentConsole variable will be used to
   // echo things to the correct location.
@@ -72,6 +69,13 @@ public class Console {
 
 
   static public void startup() {
+    if (systemOut != null) {
+      // TODO fix this dreadful style choice in how the Console is initialized
+      // (This is not good code.. startup() should gracefully deal with this.
+      // It's just a low priority relative to the likelihood of trouble.)
+      new Exception("startup() called more than once").printStackTrace(systemErr);
+      return;
+    }
     systemOut = System.out;
     systemErr = System.err;
 
@@ -115,8 +119,6 @@ public class Console {
       File errFile = new File(consoleDir, stamp + ".err");
       stderrFile = new FileOutputStream(errFile);
 
-//      consoleOut = new PrintStream(new EditorConsoleStream(false, null));
-//      consoleErr = new PrintStream(new EditorConsoleStream(true, null));
       consoleOut = new PrintStream(new ConsoleStream(false));
       consoleErr = new PrintStream(new ConsoleStream(true));
 
@@ -144,20 +146,14 @@ public class Console {
   }
 
 
-//  public Console() {
-//    sketchOut = new PrintStream(new EditorConsoleStream(false, this));
-//    sketchErr = new PrintStream(new EditorConsoleStream(true, this));
-//  }
+  static public void systemOut(String what) {
+    systemOut.println(what);
+  }
 
 
-//  public PrintStream getOut() {
-//    return sketchOut;
-//  }
-
-
-//  public PrintStream getErr() {
-//    return sketchErr;
-//  }
+  static public void systemErr(String what) {
+    systemErr.println(what);
+  }
 
 
   /**

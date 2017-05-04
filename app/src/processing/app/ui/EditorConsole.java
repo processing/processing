@@ -32,8 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -46,16 +45,6 @@ import processing.app.Preferences;
 
 /**
  * Message console that sits below the editing area.
- * <p />
- * Be careful when debugging this class, because if it's throwing exceptions,
- * don't take over System.err, and debug while watching just System.out
- * or just call println() or whatever directly to systemOut or systemErr.
- * <p />
- * Also note that encodings will not work properly when run from Eclipse. This
- * means that if you use non-ASCII characters in a println() or some such,
- * the characters won't print properly in the Processing and/or Eclipse console.
- * It seems that Eclipse's console-grabbing and that of Processing don't
- * get along with one another. Use 'ant run' to work on encoding-related issues.
  */
 public class EditorConsole extends JScrollPane {
   Editor editor;
@@ -69,6 +58,7 @@ public class EditorConsole extends JScrollPane {
   MutableAttributeSet errStyle;
 
   int maxLineCount;
+  int maxCharCount;
 
   PrintStream sketchOut;
   PrintStream sketchErr;
@@ -79,9 +69,10 @@ public class EditorConsole extends JScrollPane {
   public EditorConsole(Editor editor) {
     this.editor = editor;
 
-    maxLineCount = Preferences.getInteger("console.length");
+    maxLineCount = Preferences.getInteger("console.lines");
+    maxCharCount = Preferences.getInteger("console.chars");
 
-    consoleDoc = new BufferedStyledDocument(10000, maxLineCount);
+    consoleDoc = new BufferedStyledDocument(10000, maxLineCount, maxCharCount);
     consoleTextPane = new JTextPane(consoleDoc);
     consoleTextPane.setEditable(false);
 
@@ -98,7 +89,7 @@ public class EditorConsole extends JScrollPane {
 
   protected void flush() {
     // only if new text has been added
-    if (consoleDoc.hasAppendage) {
+    if (consoleDoc.hasAppendage()) {
       // insert the text that's been added in the meantime
       consoleDoc.insertAll();
       // always move to the end of the text as it's added
@@ -150,8 +141,7 @@ public class EditorConsole extends JScrollPane {
    */
   protected void updateAppearance() {
     String fontFamily = Preferences.get("editor.font.family");
-    int fontSize =
-      Toolkit.zoom(Preferences.getInteger("console.font.size"));
+    int fontSize = Toolkit.zoom(Preferences.getInteger("console.font.size"));
     StyleConstants.setFontFamily(stdStyle, fontFamily);
     StyleConstants.setFontSize(stdStyle, fontSize);
     StyleConstants.setFontFamily(errStyle, fontFamily);
@@ -232,7 +222,7 @@ public class EditorConsole extends JScrollPane {
   }
 
 
-  synchronized public void message(String what, boolean err) {
+  public void message(String what, boolean err) {
     if (err && (what.contains("invalid context 0x0") || (what.contains("invalid drawable")))) {
       // Respectfully declining... This is a quirk of more recent releases of
       // Java on Mac OS X, but is widely reported as the source of any other
@@ -302,22 +292,32 @@ public class EditorConsole extends JScrollPane {
  * swing event thread, so they need to be synchronized
  */
 class BufferedStyledDocument extends DefaultStyledDocument {
-  List<ElementSpec> elements = new ArrayList<>();
-  int maxLineLength, maxLineCount;
+  //List<ElementSpec> elements = new ArrayList<>();
+  LinkedBlockingQueue<ElementSpec> elements;
+//  AtomicInteger queuedLineCount = new AtomicInteger();
+  int maxLineLength, maxLineCount, maxCharCount;
   int currentLineLength = 0;
   boolean needLineBreak = false;
-  boolean hasAppendage = false;
+//  boolean hasAppendage = false;
+  final Object insertLock = new Object();
 
-  public BufferedStyledDocument(int maxLineLength, int maxLineCount) {
+  public BufferedStyledDocument(int maxLineLength, int maxLineCount,
+                                int maxCharCount) {
     this.maxLineLength = maxLineLength;
     this.maxLineCount = maxLineCount;
+    this.maxCharCount = maxCharCount;
+    elements = new LinkedBlockingQueue<>();
+  }
+
+  // monitor this so that it's only updated when needed (otherwise console
+  // updates every 250 ms when an app isn't even running.. see bug 180)
+  public boolean hasAppendage() {
+    return elements.size() > 0;
   }
 
   /** buffer a string for insertion at the end of the DefaultStyledDocument */
-  public synchronized void appendString(String str, AttributeSet a) {
-    // do this so that it's only updated when needed (otherwise console
-    // updates every 250 ms when an app isn't even running.. see bug 180)
-    hasAppendage = true;
+  public void appendString(String str, AttributeSet a) {
+//    hasAppendage = true;
 
     // process each line of the string
     while (str.length() > 0) {
@@ -326,6 +326,7 @@ class BufferedStyledDocument extends DefaultStyledDocument {
       if (needLineBreak || currentLineLength > maxLineLength) {
         elements.add(new ElementSpec(a, ElementSpec.EndTagType));
         elements.add(new ElementSpec(a, ElementSpec.StartTagType));
+//        queuedLineCount.incrementAndGet();
         currentLineLength = 0;
       }
 
@@ -341,15 +342,42 @@ class BufferedStyledDocument extends DefaultStyledDocument {
         needLineBreak = true;
         str = str.substring(str.indexOf('\n') + 1); // eat the line
       }
+      /*
+      while (queuedLineCount.get() > maxLineCount) {
+        Console.systemOut("too many: " + queuedLineCount);
+        ElementSpec elem = elements.remove();
+        if (elem.getType() == ElementSpec.EndTagType) {
+          queuedLineCount.decrementAndGet();
+        }
+      }
+      */
+    }
+    if (elements.size() > 1000) {
+      insertAll();
     }
   }
 
   /** insert the buffered strings */
-  public synchronized void insertAll() {
-    ElementSpec[] elementArray = new ElementSpec[elements.size()];
-    elements.toArray(elementArray);
+  public void insertAll() {
+    /*
+    // each line is ~3 elements
+    int tooMany = elements.size() - maxLineCount*3;
+    if (tooMany > 0) {
+      try {
+        remove(0, getLength()); // clear the document first
+      } catch (BadLocationException ble) {
+        ble.printStackTrace();
+      }
+      Console.systemOut("skipping " + elements.size());
+      for (int i = 0; i < tooMany; i++) {
+        elements.remove();
+      }
+    }
+    */
+    ElementSpec[] elementArray = elements.toArray(new ElementSpec[0]);
 
     try {
+      /*
       // check how many lines have been used so far
       // if too many, shave off a few lines from the beginning
       Element element = super.getDefaultRootElement();
@@ -366,13 +394,42 @@ class BufferedStyledDocument extends DefaultStyledDocument {
         // remove to the end of the 200th line
         super.remove(0, endOffset);
       }
-      super.insert(super.getLength(), elementArray);
+      */
+      synchronized (insertLock) {
+        checkLength();
+        insert(getLength(), elementArray);
+        checkLength();
+      }
 
     } catch (BadLocationException e) {
       // ignore the error otherwise this will cause an infinite loop
       // maybe not a good idea in the long run?
     }
     elements.clear();
-    hasAppendage = false;
+//    hasAppendage = false;
+  }
+
+  private void checkLength() throws BadLocationException {
+    // set a limit on the number of characters in the console
+    int docLength = getLength();
+    if (docLength > maxCharCount) {
+      remove(0, docLength - maxCharCount);
+    }
+    // check how many lines have been used so far
+    // if too many, shave off a few lines from the beginning
+    Element element = super.getDefaultRootElement();
+    int lineCount = element.getElementCount();
+    int overage = lineCount - maxLineCount;
+    if (overage > 0) {
+      // if 1200 lines, and 1000 lines is max,
+      // find the position of the end of the 200th line
+      //systemOut.println("overage is " + overage);
+      Element lineElement = element.getElement(overage);
+      if (lineElement != null) {
+        int endOffset = lineElement.getEndOffset();
+        // remove to the end of the 200th line
+        super.remove(0, endOffset);
+      }
+    }
   }
 }

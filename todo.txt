@@ -1,4 +1,10 @@
 0261 (3.3.4 or 3.4)
+X redo console handling to not use Timer, fixing freeze-up problems
+o   https://github.com/processing/processing/pull/4935
+X   https://github.com/processing/processing/issues/4825
+
+
+_ should ant run launch the .app so that launchsvcs stuff works properly?
 
 _ sketch.properties not being written if initial mode is p5.js?
 _ what to double-click when opening p5 projects
@@ -39,9 +45,6 @@ _   super easy given current code implementation, might help usability
 
 
 contrib
-_ redo console handling to not use Timer, fixing freeze-up problems
-_   https://github.com/processing/processing/pull/4935
-_   https://github.com/processing/processing/issues/4825
 _ Make the change detector not reload the sketch
 _   https://github.com/processing/processing/pull/5021
 _   https://github.com/processing/processing/issues/4713
