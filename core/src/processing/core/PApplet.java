@@ -4270,6 +4270,10 @@ public class PApplet implements PConstants {
   static public final float sq(float n) {
     return n*n;
   }
+  
+  static public final int sq(int n) {
+    return n*n;
+  }
 
 /**
    * ( begin auto-generated from sqrt.xml )
