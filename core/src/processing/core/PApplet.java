@@ -4164,6 +4164,13 @@ public class PApplet implements PConstants {
           }
           break;
 
+        case 'S':  // short
+          short ss[] = (short[]) what;
+          for (int i = 0; i < ss.length; i++) {
+            System.out.println("[" + i + "] " + ss[i]);
+          }
+          break;
+
         case 'C':  // char
           char cc[] = (char[]) what;
           for (int i = 0; i < cc.length; i++) {
@@ -4178,7 +4185,7 @@ public class PApplet implements PConstants {
           }
           break;
 
-        case 'J':  // int
+        case 'J':  // long
           long jj[] = (long[]) what;
           for (int i = 0; i < jj.length; i++) {
             System.out.println("[" + i + "] " + jj[i]);
