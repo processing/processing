@@ -7442,6 +7442,15 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#stroke(float)
    */
   public void colorMode(int mode) {
+    if(colorMode == RGB && mode == HSB) { // Switching from RGB to HSB
+      colorModeX = 360;
+      colorModeY = 100;
+      colorModeZ = 100;
+    } else if(colorMode == HSB && mode == RGB) { // Switching from HSB to RGB
+      colorModeX = 255;
+      colorModeY = 255;
+      colorModeZ = 255;
+    }
     colorMode(mode, colorModeX, colorModeY, colorModeZ, colorModeA);
   }
 
