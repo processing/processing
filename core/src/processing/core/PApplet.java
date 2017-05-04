@@ -4272,6 +4272,25 @@ public class PApplet implements PConstants {
   }
 
 /**
+   * ( begin auto-generated from cb.xml )
+   *
+   * Cubes a number (multiplies a number by its square).
+   *
+   * ( end auto-generated )
+   * @webref math:calculation
+   * @param n number to cube
+   * @see PApplet#cbrt(float)
+   * @see PApplet#sq(float)
+   */
+  static public final float cb(float n) {
+    return n*n*n;
+  }
+
+  static public final int cb(int n) {
+    return n*n*n;
+  }
+
+/**
    * ( begin auto-generated from sqrt.xml )
    *
    * Calculates the square root of a number. The square root of a number is
