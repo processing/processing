@@ -151,7 +151,7 @@ public class PdePreprocessor {
   protected Mode mode;
   Set<String> foundMethods;
 
-  SurfaceInfo sizeInfo;
+  protected SurfaceInfo sizeInfo;
 
 
   /**
