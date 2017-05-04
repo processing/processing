@@ -4,16 +4,17 @@ o   https://github.com/processing/processing/pull/4935
 X   https://github.com/processing/processing/issues/4825
 X clean up error message for sketchbook location
 X   https://github.com/processing/processing/issues/4942
+X Application Exports report as "Damaged" on macOS Sierra
+X   https://github.com/processing/processing/issues/4705
+X   could provide script to un-quarrantine
+X   xattr -d -r com.apple.quarantine
+X   https://github.com/steakknife/unsign
+X   https://developer.apple.com/library/content/technotes/tn2318
+X 'run sketches on display' message shows up on clean install
 
 gohai
 X IO library updates
 X   https://github.com/processing/processing/pull/5044
-
-_ Application Exports report as "Damaged" on macOS Sierra
-_   https://github.com/processing/processing/issues/4705
-_   could provide script to un-quarrantine
-_   xattr -d -r com.apple.quarantine
-_   https://github.com/steakknife/unsign
 
 _ should ant run launch the .app so that launchsvcs stuff works properly?
 
@@ -85,7 +86,6 @@ _   https://github.com/processing/processing/issues/4805
 
 _ "error during export" message, but no error message contents come through
 _   e.g. https://github.com/processing/processing/issues/4792
-_ 'run sketches on display' message shows up on clean install
 
 _ report of a library or tool (probably includes 2.x? 1.x?) breaking things
 _   NoSuchFieldError: useNativeSelect
