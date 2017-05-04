@@ -5,11 +5,15 @@ X   https://github.com/processing/processing/issues/4825
 X clean up error message for sketchbook location
 X   https://github.com/processing/processing/issues/4942
 
+gohai
+X IO library updates
+X   https://github.com/processing/processing/pull/5044
 
 _ Application Exports report as "Damaged" on macOS Sierra
 _   https://github.com/processing/processing/issues/4705
 _   could provide script to un-quarrantine
 _   xattr -d -r com.apple.quarantine
+_   https://github.com/steakknife/unsign
 
 _ should ant run launch the .app so that launchsvcs stuff works properly?
 

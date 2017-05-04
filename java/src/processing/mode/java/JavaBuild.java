@@ -796,7 +796,8 @@ public class JavaBuild {
 
       File macosFolder = new File(contentsFolder, "MacOS");
       macosFolder.mkdirs();
-      Util.copyFile(new File(contentsOrig, "MacOS/Processing"),
+      // This is an unsigned copy of the app binary (see build/build.xml)
+      Util.copyFile(mode.getContentFile("application/mac-app-stub"),
                     new File(contentsFolder, "MacOS/" + sketch.getName()));
 
       File pkgInfo = new File(contentsFolder, "PkgInfo");

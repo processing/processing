@@ -624,29 +624,41 @@
       <arg line="${jdk.path.macosx}/Contents/Home/bin/keytool macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/bin"/>
     </exec>
 
+    <property name="contents.dir"
+              location="macosx/work/Processing.app/Contents" />
+
     <!-- Replace libjli.dylib symlink with actual file. 
          Deals with code signing issues on OS X 10.9.5+ -->
-    <property name="jli.path" value="macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/MacOS/libjli.dylib" />
+    <property name="jli.path" value="${contents.dir}/PlugIns/jdk${jdk.esoteric}.jdk/Contents/MacOS/libjli.dylib" />
     <delete file="${jli.path}" />
     <exec executable="cp">
       <arg line="${jdk.path.macosx}/Contents/Home/jre/lib/jli/libjli.dylib ${jli.path}"/>
     </exec>
 
-    <copy todir="macosx/work/Processing.app/Contents/Java">
+    <copy todir="${contents.dir}/Java">
       <fileset dir=".." includes="core/library/**" /> <!-- why this? -->
       <!--<fileset dir="shared" includes="launch4j/**" />-->
       <fileset dir="shared" includes="lib/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
 
+    <!-- Use the Processing executable as the stub for exported apps.
+         This works b/c everything app-specific is in Info.plist. -->
+    <property name="app.stub" value="${contents.dir}/Java/modes/java/application/mac-app-stub" />
+    <!-- Grab a copy of the stub binary before it is signed.
+         (See processing.mode.java.JavaBuild for usage.)
+         Prevents signing errors with exported apps. -->
+    <copy file="${contents.dir}/MacOS/Processing" tofile="${app.stub}" />
+    <!-- The ant copy command does not preserve permissions. -->
+    <chmod file="${app.stub}" perm="ugo+x" />
+
     <antcall target="assemble">
-      <param name="target.path" 
-             value="macosx/work/Processing.app/Contents/Java" />
+      <param name="target.path" value="${contents.dir}/Java" />
     </antcall>
 
     <exec executable="macosx/language_gen.py" />
 
-    <property name="launch4j.dir" value="macosx/work/Processing.app/Contents/Java/modes/java/application/launch4j" />
+    <property name="launch4j.dir" value="${contents.dir}/Java/modes/java/application/launch4j" />
 
     <!-- rename the version we need -->
     <move file="${launch4j.dir}/bin/windres-macosx"
@@ -716,17 +728,6 @@
   <target name="macosx-dist" if="macosx" 
           depends="macosx-build" 
           description="Create a downloadable .zip for the Mac OS X version">
-
-    <!-- The ant copy command does not preserve permissions. -->
-    <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
-
-    <!-- Now handled by the app bundler -->
-    <!--
-    <replace file="macosx/work/Processing.app/Contents/Info.plist"
-             token="VERSION" value="${version}" />
-    <replace file="macosx/work/Processing.app/Contents/Info.plist"
-             token="REVISION" value="${revision}" />
-    -->
 
     <antcall target="macosx-dist-sign" />
 
