@@ -4387,6 +4387,14 @@ public class PApplet implements PConstants {
     return max;
   }
 
+  static public final int max(int a, int b, int... c) {
+    int max = max(a, b);
+    if ( c != null) {
+      max = max(max,max(c));
+    }
+    return max;
+  }
+
   static public final float max(float[] list) {
     if (list.length == 0) {
       throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
@@ -4394,6 +4402,14 @@ public class PApplet implements PConstants {
     float max = list[0];
     for (int i = 1; i < list.length; i++) {
       if (list[i] > max) max = list[i];
+    }
+    return max;
+  }
+
+  static public final float max(float a, float b, float... c) {
+    float max = max(a, b);
+    if ( c != null) {
+      max = max(max,max(c));
     }
     return max;
   }
@@ -4418,7 +4434,6 @@ public class PApplet implements PConstants {
   }
   */
 
-
   static public final int min(int a, int b) {
     return (a < b) ? a : b;
   }
@@ -4432,7 +4447,6 @@ public class PApplet implements PConstants {
     return (a < b) ? a : b;
   }
   */
-
 
   static public final int min(int a, int b, int c) {
     return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
@@ -4475,6 +4489,14 @@ public class PApplet implements PConstants {
     return min;
   }
 
+  static public final int min(int a, int b, int... c) {
+    int min = min(a, b);
+    if ( c != null) {
+      min = min(min,min(c));
+    }
+    return min;
+  }
+
   static public final float min(float[] list) {
     if (list.length == 0) {
       throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
@@ -4486,6 +4508,13 @@ public class PApplet implements PConstants {
     return min;
   }
 
+  static public final float min(float a, float b, float... c) {
+    float min = min(a, b);
+    if ( c != null) {
+      min = min(min,min(c));
+    }
+    return min;
+  }
 
   /*
    * Find the minimum value in an array.
