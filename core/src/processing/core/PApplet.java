@@ -4290,6 +4290,23 @@ public class PApplet implements PConstants {
   }
 
 /**
+   * ( begin auto-generated from cbrt.xml )
+   *
+   * Calculates the cube root of a number. The cube root <b>s</b> 
+   * of number <b>a</b> is such that <b>s*s*s = a</b>.
+   * It is the opposite of cubing. Same as <b>pow(a, 1.0/3.0)</b>.
+   *
+   * ( end auto-generated )
+   * @webref math:calculation
+   * @param n number
+   * @see PApplet#pow(float, float)
+   * @see PApplet#cb(float)
+   */
+  static public final float cbrt(float n) {
+    return (float)Math.cbrt(n);
+  }
+
+/**
    * ( begin auto-generated from log.xml )
    *
    * Calculates the natural logarithm (the base-<i>e</i> logarithm) of a
