@@ -4149,21 +4149,28 @@ public class PApplet implements PConstants {
             }
           }
           break;
-
+        /* Why would n1 would need a boolean[] after all?
         case 'Z':  // boolean
           boolean zz[] = (boolean[]) what;
           for (int i = 0; i < zz.length; i++) {
             System.out.println("[" + i + "] " + zz[i]);
           }
           break;
-
+        */
         case 'B':  // byte
           byte bb[] = (byte[]) what;
           for (int i = 0; i < bb.length; i++) {
             System.out.println("[" + i + "] " + bb[i]);
           }
           break;
-
+        /* I was refused even though I'm the only 1 missing!
+        case 'S':  // short
+          byte ss[] = (short[]) what;
+          for (int i = 0; i < ss.length; i++) {
+            System.out.println("[" + i + "] " + ss[i]);
+          }
+          break;
+        */
         case 'C':  // char
           char cc[] = (char[]) what;
           for (int i = 0; i < cc.length; i++) {
@@ -4177,28 +4184,28 @@ public class PApplet implements PConstants {
             System.out.println("[" + i + "] " + ii[i]);
           }
           break;
-
+        /* I'm as non-official as any other primitive!
         case 'J':  // int
           long jj[] = (long[]) what;
           for (int i = 0; i < jj.length; i++) {
             System.out.println("[" + i + "] " + jj[i]);
           }
           break;
-
+        */
         case 'F':  // float
           float ff[] = (float[]) what;
           for (int i = 0; i < ff.length; i++) {
             System.out.println("[" + i + "] " + ff[i]);
           }
           break;
-
+        /* Use float[] instead, dumb!!!
         case 'D':  // double
           double dd[] = (double[]) what;
           for (int i = 0; i < dd.length; i++) {
             System.out.println("[" + i + "] " + dd[i]);
           }
           break;
-
+        */
         default:
           System.out.println(what);
         }
