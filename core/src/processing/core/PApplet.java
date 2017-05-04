@@ -3316,7 +3316,7 @@ public class PApplet implements PConstants {
    * @see PApplet#frameRate
    * @see PApplet#draw()
    */
-  public void delay(int napTime) {
+  static public final void delay(int napTime) {
     //if (frameCount != 0) {
     //if (napTime > 0) {
     try {
