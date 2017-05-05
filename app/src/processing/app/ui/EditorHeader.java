@@ -480,6 +480,7 @@ public class EditorHeader extends JComponent {
                                  Language.text("editor.header.delete.warning.text"));
         } else {
           editor.getSketch().handleDeleteCode();
+          rebuildMenu();
         }
       }
     };
