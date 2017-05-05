@@ -658,7 +658,7 @@ public class PApplet implements PConstants {
    * @see PApplet#keyReleased()
    */
   public boolean keyPressed;
-  int keyPressedCount;
+  List<Long> pressedKeys = new ArrayList<>(6);
 
   /**
    * The last KeyEvent object passed into a mouse function.
@@ -2935,13 +2935,14 @@ public class PApplet implements PConstants {
 
     switch (event.getAction()) {
     case KeyEvent.PRESS:
-      keyPressedCount++;
+      Long hash = ((long) keyCode << Character.SIZE) | key;
+      if (!pressedKeys.contains(hash)) pressedKeys.add(hash);
       keyPressed = true;
       keyPressed(keyEvent);
       break;
     case KeyEvent.RELEASE:
-      keyPressedCount--;
-      keyPressed = (keyPressedCount > 0);
+      pressedKeys.remove(((long) keyCode << Character.SIZE) | key);
+      keyPressed = !pressedKeys.isEmpty();
       keyReleased(keyEvent);
       break;
     case KeyEvent.TYPE:
@@ -3123,7 +3124,10 @@ public class PApplet implements PConstants {
   public void focusGained() { }
 
 
-  public void focusLost() { }
+  public void focusLost() {
+    // TODO: if user overrides this without calling super it's not gonna work
+    pressedKeys.clear();
+  }
 
 
 
