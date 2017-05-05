@@ -67,6 +67,26 @@ public class LinuxPlatform extends DefaultPlatform {
   }
 
 
+  // Unlike many other UNIX programs, the JVM does not evaluate
+  // the HOME environment variable to construct user.home and
+  // friends, but solely relies on the UID of the current user
+  // for this purpose.
+  // For this reason user.home will always be "/root", even when
+  // a different user attempts to launch Processing with "sudo".
+  // (see also https://askubuntu.com/a/659882)
+  // Attempt to work around this in the least invasive manner,
+  // so that "sudo -E processing" or "sudo -E processing-java"
+  // will pick up the invoking user's sketchbook folder instead.
+  public File getDefaultSketchbookFolder() throws Exception {
+    String sysEnvHome = System.getenv("HOME");
+    if (sysEnvHome != null && 0 < sysEnvHome.length()) {
+      return new File(sysEnvHome, "sketchbook");
+    } else {
+      return super.getDefaultSketchbookFolder();
+    }
+  }
+
+
   public void openURL(String url) throws Exception {
     if (openFolderAvailable()) {
       String launcher = Preferences.get("launcher");
