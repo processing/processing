@@ -69,7 +69,7 @@ public class ContributionListing {
 
     //listingFile = Base.getSettingsFile("contributions.txt");
     listingFile = Base.getSettingsFile(LOCAL_FILENAME);
-    listingFile.setWritable(true);
+    listingFile.setWritable(true, false);
     if (listingFile.exists()) {
       setAdvertisedList(listingFile);
     }
@@ -422,7 +422,7 @@ public class ContributionListing {
 //          System.out.println(contribInfo.length() + " " + contribInfo);
 
           File tempContribFile = Base.getSettingsFile("contribs.tmp");
-          tempContribFile.setWritable(true);
+          tempContribFile.setWritable(true, false);
           ContributionManager.download(url, base.getInstalledContribsInfo(),
                                        tempContribFile, progress);
           if (!progress.isCanceled() && !progress.isError()) {

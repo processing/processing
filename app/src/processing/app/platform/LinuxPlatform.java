@@ -77,6 +77,16 @@ public class LinuxPlatform extends DefaultPlatform {
   // Attempt to work around this in the least invasive manner,
   // so that "sudo -E processing" or "sudo -E processing-java"
   // will pick up the invoking user's sketchbook folder instead.
+  public File getSettingsFolder() throws Exception {
+    String sysEnvHome = System.getenv("HOME");
+    if (sysEnvHome != null && 0 < sysEnvHome.length()) {
+      return new File(sysEnvHome, ".processing");
+    } else {
+      return super.getSettingsFolder();
+    }
+  }
+
+
   public File getDefaultSketchbookFolder() throws Exception {
     String sysEnvHome = System.getenv("HOME");
     if (sysEnvHome != null && 0 < sysEnvHome.length()) {

@@ -103,6 +103,7 @@ public class Recent {
 
 
   static protected void save() {
+    file.setWritable(true, false);
     PrintWriter writer = PApplet.createWriter(file);
     writer.println(VERSION);
     for (Record record : records) {

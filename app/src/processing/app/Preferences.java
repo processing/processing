@@ -216,6 +216,7 @@ public class Preferences {
       try {
         File dir = preferencesFile.getParentFile();
         File preferencesTemp = File.createTempFile("preferences", ".txt", dir);
+        preferencesTemp.setWritable(true, false);
 
         // Fix for 0163 to properly use Unicode when writing preferences.txt
         PrintWriter writer = PApplet.createWriter(preferencesTemp);

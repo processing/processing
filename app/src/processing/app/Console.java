@@ -112,11 +112,14 @@ public class Console {
         }
       } else {
         consoleDir.mkdirs();
+        consoleDir.setWritable(true, false);
       }
 
       File outFile = new File(consoleDir, stamp + ".out");
+      outFile.setWritable(true, false);
       stdoutFile = new FileOutputStream(outFile);
       File errFile = new File(consoleDir, stamp + ".err");
+      errFile.setWritable(true, false);
       stderrFile = new FileOutputStream(errFile);
 
       consoleOut = new PrintStream(new ConsoleStream(false));
