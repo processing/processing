@@ -1,5 +1,11 @@
 0261 (3.3.4 or 3.4)
 
+jakub
+X Fix keyPressed for multiple keys
+X   https://github.com/processing/processing/pull/5050
+X   https://github.com/processing/processing/issues/5049
+
+
 _ WARNING: GL pipe is running in software mode (Renderer ID=0x1020400)
 _   is this coming from us? if so, need to provide actions
 

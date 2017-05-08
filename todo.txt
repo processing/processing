@@ -20,6 +20,9 @@ X   discovered during https://github.com/processing/processing/issues/4980
 gohai
 X IO library updates
 X   https://github.com/processing/processing/pull/5044
+X Consider $SUDO_USER on Linux for locating the sketchbook folder
+X   https://github.com/processing/processing/pull/5055
+o   https://github.com/processing/processing/pull/5054
 
 _ sketch.properties not being written if initial mode is p5.js?
 _ when creating a sketch within non-Java mode, should write the settings file

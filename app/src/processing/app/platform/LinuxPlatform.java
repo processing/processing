@@ -22,20 +22,17 @@
 
 package processing.app.platform;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
-import java.io.IOException;
 import java.awt.Toolkit;
 
 import processing.app.Base;
 import processing.app.Messages;
 import processing.app.Preferences;
 import processing.app.platform.DefaultPlatform;
+import processing.core.PApplet;
 
 
 public class LinuxPlatform extends DefaultPlatform {
-
   String homeDir;
 
 
@@ -73,48 +70,34 @@ public class LinuxPlatform extends DefaultPlatform {
   }
 
 
+  // Java sets user.home to be /root for execution with sudo.
+  // This method attempts to use the user's real home directory instead.
   public String getHomeDir() {
-    // return cached value if set
-    if (homeDir != null) {
-      return homeDir;
+    if (homeDir == null) {
+      // get home directory of SUDO_USER if set, else use user.home
+      homeDir = System.getProperty("user.home");
+      String sudoUser = System.getenv("SUDO_USER");
+      if (sudoUser != null && sudoUser.length() != 0) {
+        try {
+          homeDir = getHomeDir(sudoUser);
+        } catch (Exception e) { }
+      }
     }
-
-    // get home directory of SUDO_USER if set,
-    // else use user.home
-    homeDir = System.getProperty("user.home");
-    String sudoUser = System.getenv("SUDO_USER");
-    if (sudoUser != null && sudoUser.length() != 0) {
-      try {
-        homeDir = getHomeDir(sudoUser);
-      } catch (Exception e) {}
-    }
-
     return homeDir;
   }
 
 
-  public static String getHomeDir(String user) throws IOException {
-    return new BufferedReader(
-      new InputStreamReader(
-        Runtime.getRuntime().exec(
-          new String[]{"/bin/sh", "-c", "echo ~" + user}
-        ).getInputStream()
-      )
-    ).readLine();
+  static public String getHomeDir(String user) throws Exception {
+    Process p = PApplet.exec("/bin/sh", "-c", "echo ~" + user);
+    return PApplet.createReader(p.getInputStream()).readLine();
   }
 
 
-  // Java sets user.home to be /root for execution with sudo
-  // This method attempts to use the user's real home direcory
-  // instead.
   public File getSettingsFolder() throws Exception {
     return new File(getHomeDir(), ".processing");
   }
 
 
-  // Java sets user.home to be /root for execution with sudo
-  // This method attempts to use the user's real home direcory
-  // instead.
   public File getDefaultSketchbookFolder() throws Exception {
     return new File(getHomeDir(), "sketchbook");
   }
