@@ -147,6 +147,7 @@ public class Language {
   static public void saveLanguage(String language) {
     try {
       Util.saveFile(language, prefFile);
+      prefFile.setWritable(true, false);
     } catch (Exception e) {
       e.printStackTrace();
     }
