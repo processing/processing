@@ -22,7 +22,10 @@
 
 package processing.app.platform;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.IOException;
 import java.awt.Toolkit;
 
 import processing.app.Base;
@@ -32,6 +35,9 @@ import processing.app.platform.DefaultPlatform;
 
 
 public class LinuxPlatform extends DefaultPlatform {
+
+  String homeDir;
+
 
   public void initBase(Base base) {
     super.initBase(base);
@@ -67,33 +73,50 @@ public class LinuxPlatform extends DefaultPlatform {
   }
 
 
-  // Unlike many other UNIX programs, the JVM does not evaluate
-  // the HOME environment variable to construct user.home and
-  // friends, but solely relies on the UID of the current user
-  // for this purpose.
-  // For this reason user.home will always be "/root", even when
-  // a different user attempts to launch Processing with "sudo".
-  // (see also https://askubuntu.com/a/659882)
-  // Attempt to work around this in the least invasive manner,
-  // so that "sudo -E processing" or "sudo -E processing-java"
-  // will pick up the invoking user's sketchbook folder instead.
-  public File getSettingsFolder() throws Exception {
-    String sysEnvHome = System.getenv("HOME");
-    if (sysEnvHome != null && 0 < sysEnvHome.length()) {
-      return new File(sysEnvHome, ".processing");
-    } else {
-      return super.getSettingsFolder();
+  public String getHomeDir() {
+    // return cached value if set
+    if (homeDir != null) {
+      return homeDir;
     }
+
+    // get home directory of SUDO_USER if set,
+    // else use user.home
+    homeDir = System.getProperty("user.home");
+    String sudoUser = System.getenv("SUDO_USER");
+    if (sudoUser != null && sudoUser.length() != 0) {
+      try {
+        homeDir = getHomeDir(sudoUser);
+      } catch (Exception e) {}
+    }
+
+    return homeDir;
   }
 
 
+  public static String getHomeDir(String user) throws IOException {
+    return new BufferedReader(
+      new InputStreamReader(
+        Runtime.getRuntime().exec(
+          new String[]{"/bin/sh", "-c", "echo ~" + user}
+        ).getInputStream()
+      )
+    ).readLine();
+  }
+
+
+  // Java sets user.home to be /root for execution with sudo
+  // This method attempts to use the user's real home direcory
+  // instead.
+  public File getSettingsFolder() throws Exception {
+    return new File(getHomeDir(), ".processing");
+  }
+
+
+  // Java sets user.home to be /root for execution with sudo
+  // This method attempts to use the user's real home direcory
+  // instead.
   public File getDefaultSketchbookFolder() throws Exception {
-    String sysEnvHome = System.getenv("HOME");
-    if (sysEnvHome != null && 0 < sysEnvHome.length()) {
-      return new File(sysEnvHome, "sketchbook");
-    } else {
-      return super.getDefaultSketchbookFolder();
-    }
+    return new File(getHomeDir(), "sketchbook");
   }
 
 
