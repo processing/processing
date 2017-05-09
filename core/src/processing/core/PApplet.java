@@ -3510,11 +3510,79 @@ public class PApplet implements PConstants {
   }
 
 
-  // yuck.. maybe this is just a class
-//  static public int exec(StringList stdout, StringList stderr, String... args) {
-//    Process p = exec(args);
-//    int result = p.waitFor();
-//  }
+  /**
+   * Alternative version of exec() that retrieves stdout and stderr into the
+   * StringList objects provided. This is a convenience function that handles
+   * simple exec() calls. If the results will be more than a couple lines,
+   * you shouldn't use this function, you should use a more elaborate method
+   * that makes use of proper threading (to drain the shell output) and error
+   * handling to address the many things that can go wrong within this method.
+   *
+   * @param stdout a non-null StringList object to be filled with any output
+   * @param stderr a non-null StringList object to be filled with error lines
+   * @param args each argument to be passed as a series of String objects
+   * @return the result returned from the application, or -1 if an Exception
+   *         occurs before the application is able to return a result.
+   */
+  static public int exec(StringList stdout, StringList stderr, String... args) {
+    Process p = exec(args);
+    int result = -1;
+    try {
+      BufferedReader out = createReader(p.getInputStream());
+      BufferedReader err = createReader(p.getErrorStream());
+      result = p.waitFor();
+      String line;
+      while ((line = out.readLine()) != null) {
+        stdout.append(line);
+      }
+      while ((line = err.readLine()) != null) {
+        stderr.append(line);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+
+    } catch (InterruptedException e) {
+      // can be safely ignored
+    }
+    return result;
+  }
+
+
+  /**
+   * Same as exec() above, but prefixes the call with a shell.
+   */
+  static public int shell(StringList stdout, StringList stderr, String... args) {
+    if (platform == WINDOWS) {
+      throw new RuntimeException("Not yet implemented.");
+    }
+    String shell = System.getenv("SHELL");  // or just /bin/sh?
+    StringList argList = new StringList();
+    for (String arg : args) {
+      argList.append(shellQuoted(arg));
+    }
+    return exec(stdout, stderr, shell, "-c", argList.join(" "));
+  }
+
+
+  static private final String shellQuoted(String arg) {
+    if (arg.indexOf(' ') != -1) {
+      // check to see if already quoted
+      if ((arg.charAt(0) != '\"' || arg.charAt(arg.length()-1) != '\"') &&
+          (arg.charAt(0) != '\'' || arg.charAt(arg.length()-1) != '\'')) {
+
+        // see which quotes we can use
+        if (arg.indexOf('\"') == -1) {
+          // if no double quotes, try those first
+          return "\"" + arg + "\"";
+
+        } else if (arg.indexOf('\'') == -1) {
+          // if no single quotes, let's use those
+          return "'" + arg + "'";
+        }
+      }
+    }
+    return arg;
+  }
 
 
   //////////////////////////////////////////////////////////////
