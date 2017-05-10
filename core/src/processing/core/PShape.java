@@ -681,11 +681,13 @@ public class PShape implements PConstants {
 
   public void vertex(float x, float y) {
     if (vertices == null) {
-      vertices = new float[10][2];
+      vertices = new float[10][PGraphics.VERTEX_FIELD_COUNT];
     } else if (vertices.length == vertexCount) {
       vertices = (float[][]) PApplet.expand(vertices);
     }
-    vertices[vertexCount++] = new float[] { x, y };
+    vertices[vertexCount][X] = x;
+    vertices[vertexCount][Y] = y;
+    vertexCount++;
 
     if (vertexCodes == null) {
       vertexCodes = new int[10];
@@ -1784,10 +1786,18 @@ public class PShape implements PConstants {
     if (vertices == null) return;
 
     boolean insideContour = false;
+    boolean is3D = false;
     g.beginShape();
 
+    for (int i = 0; i < vertices.length; i++) {
+      if(vertices[i][Z] != 0.0){
+        is3D = true;
+        break;
+      }
+    }
+
     if (vertexCodeCount == 0) {  // each point is a simple vertex
-      if (vertices[0].length == 2) {  // drawing 2D vertices
+      if (!is3D) {  // drawing 2D vertices
         for (int i = 0; i < vertexCount; i++) {
           g.vertex(vertices[i][X], vertices[i][Y]);
         }
@@ -1800,7 +1810,7 @@ public class PShape implements PConstants {
     } else {  // coded set of vertices
       int index = 0;
 
-      if (vertices[0].length == 2) {  // drawing a 2D path
+      if (!is3D) {  // drawing a 2D path
         for (int j = 0; j < vertexCodeCount; j++) {
           switch (vertexCodes[j]) {
 
