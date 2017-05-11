@@ -3,7 +3,6 @@ package processing.app.ui;
 import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.nio.file.Files;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -30,7 +29,7 @@ public class ChangeDetector implements WindowFocusListener {
   private final Sketch sketch;
   private final Editor editor;
 
-  private List<String> ignoredAdditions = new ArrayList<>();
+  //private List<String> ignoredAdditions = new ArrayList<>();
   private List<SketchCode> ignoredRemovals = new ArrayList<>();
   private List<SketchCode> ignoredModifications = new ArrayList<>();
 
@@ -103,12 +102,12 @@ public class ChangeDetector implements WindowFocusListener {
         .collect(Collectors.toList());
 
     // Added files that are actually candidates for a new tab
-    List<String> addedTabsFinal = addedFilenames.stream()
-        .filter(f -> !ignoredAdditions.contains(f))
-        .collect(Collectors.toList());
+    //List<String> addedTabsFinal = addedFilenames.stream()
+    //    .filter(f -> !ignoredAdditions.contains(f))
+    //    .collect(Collectors.toList());
 
     // Take action if there are any added files which were not previously ignored
-    boolean added = !addedTabsFinal.isEmpty();
+    boolean added = !addedFilenames.isEmpty();
 
 
     // REMOVED FILES
@@ -127,24 +126,30 @@ public class ChangeDetector implements WindowFocusListener {
     /// MODIFIED FILES
 
     // Get codes which have file with different modification time
-    List<SketchCode> modifiedCodes = Optional.ofNullable(existsMap.get(Boolean.TRUE))
-        .orElse(Collections.emptyList())
-        .stream()
-        .filter(code -> {
-          if (ignoredModifications.contains(code)) return false;
-          long fileLastModified = code.getFile().lastModified();
-          long codeLastModified = code.getLastModified();
-          long diff = fileLastModified - codeLastModified;
-          return fileLastModified == 0L || diff > MODIFICATION_WINDOW_MILLIS;
-        })
-        .collect(Collectors.toList());
+    List<SketchCode> modifiedCodes = existsMap.containsKey(Boolean.TRUE) ?
+      existsMap.get(Boolean.TRUE) : Collections.emptyList();
+    List<SketchCode> modifiedCodesFinal = new ArrayList<>();
+    for (SketchCode code : modifiedCodes) {
+      if (ignoredModifications.contains(code)) continue;
+      long fileLastModified = code.getFile().lastModified();
+      long codeLastModified = code.getLastModified();
+      long diff = fileLastModified - codeLastModified;
+      if (fileLastModified == 0L || diff > MODIFICATION_WINDOW_MILLIS) {
+        modifiedCodesFinal.add(code);
+      }
+    }
 
     // Show prompt if any open codes were modified
-    boolean modified = !modifiedCodes.isEmpty();
+    boolean modified = !modifiedCodesFinal.isEmpty();
+
+    // Clean ignore lists
+    ignoredModifications.retainAll(modifiedCodes);
+    ignoredRemovals.retainAll(removedCodes);
+
 
     boolean changes = added || removed || modified;
     // Do both PDE and disk change for any one file?
-    List<SketchCode> mergeConflicts = modifiedCodes.stream()
+    List<SketchCode> mergeConflicts = modifiedCodesFinal.stream()
       .filter(SketchCode::isModified)
       .collect(Collectors.toList());
     boolean ask = !mergeConflicts.isEmpty() || removed;
@@ -153,11 +158,11 @@ public class ChangeDetector implements WindowFocusListener {
       System.out.println("ask: "             + ask + "\n" +
                          "merge conflicts: " + mergeConflicts + ",\n" +
                          "added filenames: " + addedFilenames + ",\n" +
-                         "added final:     " + addedTabsFinal + ",\n" +
-                         "ignored added: " + ignoredAdditions + ",\n" +
+ //                        "added final:     " + addedTabsFinal + ",\n" +
+ //                        "ignored added: " + ignoredAdditions + ",\n" +
                          "removed codes: " + removedCodes + ",\n" +
                          "ignored removed: " + ignoredRemovals + ",\n" +
-                         "modified codes: " + modifiedCodes + "\n");
+                         "modified codes: " + modifiedCodesFinal + "\n");
     }
 
 
@@ -171,18 +176,16 @@ public class ChangeDetector implements WindowFocusListener {
         // No prompt yet.
         if (changes) {
           for (int i = 0; i < filenames.size(); i++) {
-            for (String addedTab : addedTabsFinal) {
+            for (String addedTab : addedFilenames) {
               if (filenames.get(i).equals(addedTab)) {
                 sketch.loadNewTab(filenames.get(i), extensions.get(i), true);
-                break;
               }
             }
           }
-          for (SketchCode modifiedCode : modifiedCodes) {
+          for (SketchCode modifiedCode : modifiedCodesFinal) {
             if (!mergeConflicts.contains(modifiedCode)) {
               sketch.loadNewTab(modifiedCode.getFileName(),
                   modifiedCode.getExtension(), false);
-              break;
             }
           }
 
@@ -209,32 +212,8 @@ public class ChangeDetector implements WindowFocusListener {
                 sketch.loadNewTab(scReload.getFileName(), scReload.getExtension(), false);
               },
               scKeep -> {
-                try {
-                  File file = scKeep.getFile();
-                  File autosave = File.createTempFile(scKeep.getPrettyName(),
-                    ".autosave", file.getParentFile());
-                  // It is platform-dependent whether File.renameTo would let
-                  // you overwrite the dummy file autosave, which is used to
-                  // make sure all autosave files are unique.
-                  Files.move(file.toPath(), autosave.toPath(),
-                      java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                  Messages.showWarning("Move failed",
-                      "Could not move the external editor's"
-                    + " version of " + scKeep.getPrettyName() + " to a safe"
-                    + " location; make a copy of it before saving the sketch"
-                    + " if you need it.", e);
-                  ignoredModifications.add(scKeep); // No infinite loops.
-                  return;
-                }
-                try {
-                  scKeep.save();
-                } catch (IOException e) {
-                  Messages.showWarning("Save failed",
-                      "Did not save " + scKeep.getPrettyName() + " after"
-                    + " the file was changed.", e);
-                  ignoredModifications.add(scKeep); // No infinite loops.
-                }
+                scKeep.setLastModified();
+                scKeep.setModified(true);
               },
               scDelete -> sketch.removeCode(scDelete),
               scResave -> {
@@ -274,12 +253,12 @@ public class ChangeDetector implements WindowFocusListener {
         }
 
         // If something changed, set modified flags and modification times
-        if (!removedCodes.isEmpty() || !modifiedCodes.isEmpty()) {
-          Stream.concat(removedCodes.stream(), modifiedCodes.stream())
-              .forEach(code -> {
-                code.setModified(true);
-                code.setLastModified();
-              });
+        if (!removedCodes.isEmpty() || !modifiedCodesFinal.isEmpty()) {
+//          Stream.concat(removedCodes.stream(), modifiedCodesFinal.stream())
+//              .forEach(code -> {
+//                code.setModified(true);
+//                code.setLastModified();
+//              });
 
           // Not sure if this is needed
           editor.rebuildHeader();
