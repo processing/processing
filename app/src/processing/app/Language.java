@@ -95,6 +95,7 @@ public class Language {
       "el", // Greek
       "es", // Spanish
       "fr", // French, Français
+      "it", // Italiano, Italian
       "ja", // Japanese
       "ko", // Korean
       "nl", // Dutch, Nederlands
