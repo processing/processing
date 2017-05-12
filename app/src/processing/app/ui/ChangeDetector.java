@@ -3,6 +3,7 @@ package processing.app.ui;
 import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import java.util.stream.Stream;
 
 import javax.swing.JOptionPane;
 
+import processing.app.Language;
 import processing.app.Messages;
 import processing.app.Preferences;
 import processing.app.Sketch;
@@ -132,9 +134,15 @@ public class ChangeDetector implements WindowFocusListener {
 
 
     boolean ask = added || removed || modified;
+    // Do both PDE and disk change for any one file?
+    List<SketchCode> mergeConflicts = Stream
+      .concat(modifiedCodes.stream(), removedCodes.stream())
+      .filter(SketchCode::isModified)
+      .collect(Collectors.toList());
 
     if (DEBUG) {
-      System.out.println("ask: " + ask + "\n" +
+      System.out.println("\nask: " + ask + "\n" +
+                             "merge conflicts: " + mergeConflicts + ",\n" +
                              "added filenames: " + addedFilenames + ",\n" +
                              "ignored added: " + ignoredAdditions + ",\n" +
                              "removed codes: " + removedCodes + ",\n" +
@@ -151,8 +159,21 @@ public class ChangeDetector implements WindowFocusListener {
       // We need to stay in synchronized scope because of ignore lists
       EventQueue.invokeAndWait(() -> {
         // Show prompt if something interesting happened
-        if (ask && showReloadPrompt()) {
+        if (ask && showReloadPrompt(mergeConflicts)) {
           // She said yes!!!
+          sketch.updateSketchCodes();
+          for (SketchCode code : codes) {
+            if (code.isModified() && !mergeConflicts.contains(code)) {
+              try {
+                code.save();
+              } catch (IOException e) {
+                // We promised to save, so abort reload if we can't.
+                editor.statusError(e);
+                return;
+              }
+            }
+            // And now reload.
+          }
           if (sketch.getMainFile().exists()) {
             sketch.reload();
             editor.rebuildHeader();
@@ -208,12 +229,21 @@ public class ChangeDetector implements WindowFocusListener {
    * perform the actual reload.
    * @return true if user said yes, false if they hit No or closed the window
    */
-  private boolean showReloadPrompt() {
-    int response = Messages
-        .showYesNoQuestion(editor, "File Modified",
-                           "Your sketch has been modified externally.<br>" +
-                               "Would you like to reload the sketch?",
-                           "If you reload the sketch, any unsaved changes will be lost.");
-    return response == JOptionPane.YES_OPTION;
+  private boolean showReloadPrompt(List<SketchCode> mergeConflict) {
+    if (mergeConflict.size() == 0) {
+      return JOptionPane.YES_OPTION == Messages.showYesNoQuestion(editor,
+          Language.text("change_detect.message.title"),
+          Language.text("change_detect.message.merge.question"),
+          Language.text("change_detect.message.merge.comment"));
+    } else {
+      StringBuilder sb = new StringBuilder();
+      for (SketchCode sc : mergeConflict) {
+        sb.append("<li>").append(sc.getPrettyName()).append("</li>");
+      }
+      return JOptionPane.YES_OPTION == Messages.showYesNoQuestion(editor,
+          Language.text("change_detect.message.title"),
+          Language.text("change_detect.message.reload.question"),
+          Language.interpolate("change_detect.message.reload.comment", sb.toString()));
+    }
   }
 }

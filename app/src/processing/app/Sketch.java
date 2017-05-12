@@ -759,6 +759,16 @@ public class Sketch {
 
 
   /**
+   * Ensure that all SketchCodes are up-to-date, so that sc.save() works.
+   */
+  public void updateSketchCodes() {
+//    if (current.isModified()) {
+    current.setProgram(editor.getText());
+//    }
+  }
+
+
+  /**
    * Save all code in the current sketch. This just forces the files to save
    * in place, so if it's an untitled (un-saved) sketch, saveAs() should be
    * called instead. (This is handled inside Editor.handleSave()).
@@ -768,9 +778,7 @@ public class Sketch {
     ensureExistence();
 
     // first get the contents of the editor text area
-//    if (current.isModified()) {
-    current.setProgram(editor.getText());
-//    }
+    updateSketchCodes();
 
     // don't do anything if not actually modified
     //if (!modified) return false;
@@ -912,9 +920,7 @@ public class Sketch {
 
     // grab the contents of the current tab before saving
     // first get the contents of the editor text area
-    if (current.isModified()) {
-      current.setProgram(editor.getText());
-    }
+    updateSketchCodes();
 
     File[] copyItems = folder.listFiles(new FileFilter() {
       public boolean accept(File file) {
