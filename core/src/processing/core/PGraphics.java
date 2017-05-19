@@ -8073,6 +8073,18 @@ public class PGraphics extends PImage implements PConstants {
     return 0;
   }
 
+  //////////////////////////////////////////////////////////////
+
+  // resize
+
+  /**
+   * Resize the PSurface.
+   */
+  public void resize(int width, int height) {
+    surface.setResizable(true);
+    surface.setSize(width, height);
+    surface.setResizable(false);
+  }
 
   //////////////////////////////////////////////////////////////
 
