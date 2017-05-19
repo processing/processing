@@ -91,16 +91,16 @@ public class Toolkit {
   /** Command on Mac OS X, Ctrl on Windows and Linux */
   static final int SHORTCUT_KEY_MASK =
     awtToolkit.getMenuShortcutKeyMask();
-
-  /** Command-W on Mac OS X, Ctrl-W on Windows and Linux */
-  public static final KeyStroke WINDOW_CLOSE_KEYSTROKE =
-    KeyStroke.getKeyStroke('W', SHORTCUT_KEY_MASK);
   /** Command-Option on Mac OS X, Ctrl-Alt on Windows and Linux */
   static final int SHORTCUT_ALT_KEY_MASK =
     ActionEvent.ALT_MASK | SHORTCUT_KEY_MASK;
   /** Command-Shift on Mac OS X, Ctrl-Shift on Windows and Linux */
   static final int SHORTCUT_SHIFT_KEY_MASK =
     ActionEvent.SHIFT_MASK | SHORTCUT_KEY_MASK;
+
+  /** Command-W on Mac OS X, Ctrl-W on Windows and Linux */
+  static public final KeyStroke WINDOW_CLOSE_KEYSTROKE =
+    KeyStroke.getKeyStroke('W', SHORTCUT_KEY_MASK);
 
 
   /**
