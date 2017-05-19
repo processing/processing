@@ -1274,6 +1274,12 @@ public class JavaEditor extends Editor {
   }
 
 
+  @Override
+  public void sketchChanged() {
+    preprocessingService.notifySketchChanged();
+  }
+
+
   public void statusError(String what) {
     super.statusError(what);
 //    new Exception("deactivating RUN").printStackTrace();

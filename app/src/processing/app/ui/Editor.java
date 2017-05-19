@@ -1125,6 +1125,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   public void codeFolderChanged() { }
 
+  public void sketchChanged() { }
+
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 

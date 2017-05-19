@@ -1,11 +1,9 @@
 package processing.app.ui;
 
-import java.awt.EventQueue;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,13 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import processing.app.Language;
 import processing.app.Messages;
-import processing.app.Platform;
 import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.SketchCode;
@@ -29,7 +24,6 @@ public class ChangeDetector implements WindowFocusListener {
   private final Sketch sketch;
   private final Editor editor;
 
-  //private List<String> ignoredAdditions = new ArrayList<>();
   private List<SketchCode> ignoredRemovals = new ArrayList<>();
   private List<SketchCode> ignoredModifications = new ArrayList<>();
 
@@ -57,14 +51,9 @@ public class ChangeDetector implements WindowFocusListener {
       if (sketch != null) {
         // make sure the sketch folder exists at all.
         // if it does not, it will be re-saved, and no changes will be detected
-        sketch.ensureExistence(); // <- touches UI, stay on EDT
+        sketch.ensureExistence();
 
-        // TODO: Not sure if we even need to run this async. Usually takes
-        //   just a few ms and we probably want to prevent any changes from
-        //   users until the external changes are sorted out. [jv 2016-12-05]
-
-        // Run task in common pool, starting threads directly is so Java 6
-        ForkJoinPool.commonPool().execute(this::checkFiles);
+        checkFiles();
       }
     }
   }
@@ -77,8 +66,7 @@ public class ChangeDetector implements WindowFocusListener {
   }
 
 
-  // Synchronize, we are running async and touching fields
-  private synchronized void checkFiles() {
+  private void checkFiles() {
     List<String> filenames = new ArrayList<>();
     List<String> extensions = new ArrayList<>();
     sketch.getSketchCodeFiles(filenames, extensions);
@@ -100,11 +88,6 @@ public class ChangeDetector implements WindowFocusListener {
     List<String> addedFilenames = filenames.stream()
         .filter(f -> !codeFilenames.contains(f))
         .collect(Collectors.toList());
-
-    // Added files that are actually candidates for a new tab
-    //List<String> addedTabsFinal = addedFilenames.stream()
-    //    .filter(f -> !ignoredAdditions.contains(f))
-    //    .collect(Collectors.toList());
 
     // Take action if there are any added files which were not previously ignored
     boolean added = !addedFilenames.isEmpty();
@@ -158,121 +141,92 @@ public class ChangeDetector implements WindowFocusListener {
       System.out.println("ask: "             + ask + "\n" +
                          "merge conflicts: " + mergeConflicts + ",\n" +
                          "added filenames: " + addedFilenames + ",\n" +
- //                        "added final:     " + addedTabsFinal + ",\n" +
- //                        "ignored added: " + ignoredAdditions + ",\n" +
                          "removed codes: " + removedCodes + ",\n" +
                          "ignored removed: " + ignoredRemovals + ",\n" +
                          "modified codes: " + modifiedCodesFinal + "\n");
     }
 
 
-    // This has to happen in one go and also touches UI everywhere. It has to
-    // run on EDT, otherwise windowGainedFocus callback runs again right after
-    // dismissing the prompt and we get another prompt before we even finished.
-    try {
-      // Wait for EDT to finish its business
-      // We need to stay in synchronized scope because of ignore lists
-      EventQueue.invokeAndWait(() -> {
-        // No prompt yet.
-        if (changes) {
-          for (int i = 0; i < filenames.size(); i++) {
-            for (String addedTab : addedFilenames) {
-              if (filenames.get(i).equals(addedTab)) {
-                sketch.loadNewTab(filenames.get(i), extensions.get(i), true);
+    // No prompt yet.
+    if (changes) {
+      for (int i = 0; i < filenames.size(); i++) {
+        for (String addedTab : addedFilenames) {
+          if (filenames.get(i).equals(addedTab)) {
+            sketch.loadNewTab(filenames.get(i), extensions.get(i), true);
+          }
+        }
+      }
+      for (SketchCode modifiedCode : modifiedCodesFinal) {
+        if (!mergeConflicts.contains(modifiedCode)) {
+          sketch.loadNewTab(modifiedCode.getFileName(),
+              modifiedCode.getExtension(), false);
+        }
+      }
+
+      // Destructive actions, so prompt.
+      if (ask) {
+        sketch.updateSketchCodes();
+
+        showReloadPrompt(mergeConflicts, removedCodesFinal,
+          scReload -> {
+            try {
+              File file = scReload.getFile();
+              File autosave = File.createTempFile(scReload.getPrettyName(),
+                ".autosave", file.getParentFile());
+              scReload.copyTo(autosave);
+            } catch (IOException e) {
+              Messages.showWarning("Could not autosave modified tab",
+                  "Your changes to " + scReload.getPrettyName() +
+                  " have not been saved, so we won't load the new version.", e);
+              scReload.setModified(true); // So we'll have another go at saving
+                                          // it later,
+              ignoredModifications.add(scReload); // but not create a loop.
+              return;
+            }
+            sketch.loadNewTab(scReload.getFileName(), scReload.getExtension(), false);
+          },
+          scKeep -> {
+            scKeep.setLastModified();
+            scKeep.setModified(true);
+          },
+          scDelete -> sketch.removeCode(scDelete),
+          scResave -> {
+            try {
+              scResave.save();
+            } catch (IOException e) {
+              if (sketch.getCode(0).equals(scResave)) {
+                // Not a fatal error; the sketch has to stay open if
+                // they're going to save the code that's in it.
+                Messages.showWarning(
+                    scResave.getFileName() + " deleted and not re-saved",
+                    "Your main tab was deleted, and Processing couldn't " +
+                    "resave it.\nYour sketch won't work without the " +
+                    "main tab.", e);
+              } else {
+                Messages.showWarning("Could not re-save deleted tab",
+                                     "Your copy of " + scResave.getPrettyName() +
+                                     " will stay in the editor.", e);
               }
+              ignoredRemovals.add(scResave);
+              scResave.setModified(true); // So we'll have another go at
+                                          // saving it later.
             }
           }
-          for (SketchCode modifiedCode : modifiedCodesFinal) {
-            if (!mergeConflicts.contains(modifiedCode)) {
-              sketch.loadNewTab(modifiedCode.getFileName(),
-                  modifiedCode.getExtension(), false);
-            }
-          }
+        );
+      }
+      editor.rebuildHeader();
+      sketch.handleNextCode();
+      sketch.handlePrevCode();
+      editor.repaintHeader();
 
-          // Destructive actions, so prompt.
-          if (ask) {
-            sketch.updateSketchCodes();
-
-            showReloadPrompt(mergeConflicts, removedCodesFinal,
-              scReload -> {
-                try {
-                  File file = scReload.getFile();
-                  File autosave = File.createTempFile(scReload.getPrettyName(),
-                    ".autosave", file.getParentFile());
-                  scReload.copyTo(autosave);
-                } catch (IOException e) {
-                  Messages.showWarning("Could not autosave modified tab",
-                      "Your changes to " + scReload.getPrettyName() +
-                      " have not been saved, so we won't load the new version.", e);
-                  scReload.setModified(true); // So we'll have another go at saving
-                                              // it later,
-                  ignoredModifications.add(scReload); // but not create a loop.
-                  return;
-                }
-                sketch.loadNewTab(scReload.getFileName(), scReload.getExtension(), false);
-              },
-              scKeep -> {
-                scKeep.setLastModified();
-                scKeep.setModified(true);
-              },
-              scDelete -> sketch.removeCode(scDelete),
-              scResave -> {
-                try {
-                  scResave.save();
-                } catch (IOException e) {
-                  if (sketch.getCode(0).equals(scResave)) {
-                    // Not a fatal error; the sketch has to stay open if
-                    // they're going to save the code that's in it.
-                    Messages.showWarning(
-                        scResave.getFileName() + " deleted and not re-saved",
-                        "Your main tab was deleted, and Processing couldn't " +
-                        "resave it.\nYour sketch won't work without the " +
-                        "main tab.", e);
-                  } else {
-                    Messages.showWarning("Could not re-save deleted tab",
-                                         "Your copy of " + scResave.getPrettyName() +
-                                         " will stay in the editor.", e);
-                  }
-                  ignoredRemovals.add(scResave);
-                  scResave.setModified(true); // So we'll have another go at
-                                              // saving it later.
-                }
-              }
-            );
-          }
-          editor.rebuildHeader();
-          sketch.handleNextCode();
-          sketch.handlePrevCode();
-          editor.repaintHeader();
-
-          // Sketch was reloaded, clear ignore lists
-          //ignoredAdditions.clear();
-          //ignoredRemovals.clear();
-
-          return;
-        }
-
-        // If something changed, set modified flags and modification times
-        if (!removedCodes.isEmpty() || !modifiedCodesFinal.isEmpty()) {
-//          Stream.concat(removedCodes.stream(), modifiedCodesFinal.stream())
-//              .forEach(code -> {
-//                code.setModified(true);
-//                code.setLastModified();
-//              });
-
-          // Not sure if this is needed
-          editor.rebuildHeader();
-        }
-      });
-    } catch (InterruptedException ignore) {
-    } catch (InvocationTargetException e) {
-      Messages.loge("exception in ChangeDetector", e);
+      editor.sketchChanged();
     }
+
   }
 
 
   /**
-   * Prompt the user what do do about each tab. Passes the tab to the user's
+   * Prompt the user what to do about each tab. Passes the tab to the user's
    * choice of Consumer. Won't let you delete the main tab.
    */
   private void showReloadPrompt(
