@@ -539,9 +539,9 @@ public class ColorChooser {  //extends JFrame implements DocumentListener {
     public void paintComponent(Graphics g) {
       super.paintComponent(g);
 
-      for (int j = 0; j < WIDE; j++) {
-        for (int i = 0; i < HIGH; i++) {
-          g.setColor(Color.getHSBColor(hue / 360f, i / 256f, (255 - j) / 256f));
+      for (int j = 0; j < HIGH; j++) {
+        for (int i = 0; i < WIDE; i++) {
+          g.setColor(Color.getHSBColor(hue / 360f, i / (float) WIDE, (HIGH - 1 - j) / (float) HIGH));
           g.fillRect(i, j, 1, 1);
         }
       }
