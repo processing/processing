@@ -2749,7 +2749,13 @@ public class PGraphicsJava2D extends PGraphics {
     }
 
     WritableRaster raster = getRaster();
-    raster.getDataElements(0, 0, pixelWidth, pixelHeight, pixels);
+
+    try {
+      raster.getDataElements(0, 0, pixelWidth, pixelHeight, pixels);
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
+    }
+
     if (raster.getNumBands() == 3) {
       // Java won't set the high bits when RGB, returns 0 for alpha
       // https://github.com/processing/processing/issues/2030
