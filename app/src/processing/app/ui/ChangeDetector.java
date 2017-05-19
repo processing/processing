@@ -24,7 +24,6 @@ public class ChangeDetector implements WindowFocusListener {
   private final Sketch sketch;
   private final Editor editor;
 
-  //private List<String> ignoredAdditions = new ArrayList<>();
   private List<SketchCode> ignoredRemovals = new ArrayList<>();
   private List<SketchCode> ignoredModifications = new ArrayList<>();
 
@@ -52,7 +51,7 @@ public class ChangeDetector implements WindowFocusListener {
       if (sketch != null) {
         // make sure the sketch folder exists at all.
         // if it does not, it will be re-saved, and no changes will be detected
-        sketch.ensureExistence(); // <- touches UI, stay on EDT
+        sketch.ensureExistence();
 
         checkFiles();
       }
@@ -89,11 +88,6 @@ public class ChangeDetector implements WindowFocusListener {
     List<String> addedFilenames = filenames.stream()
         .filter(f -> !codeFilenames.contains(f))
         .collect(Collectors.toList());
-
-    // Added files that are actually candidates for a new tab
-    //List<String> addedTabsFinal = addedFilenames.stream()
-    //    .filter(f -> !ignoredAdditions.contains(f))
-    //    .collect(Collectors.toList());
 
     // Take action if there are any added files which were not previously ignored
     boolean added = !addedFilenames.isEmpty();
@@ -147,8 +141,6 @@ public class ChangeDetector implements WindowFocusListener {
       System.out.println("ask: "             + ask + "\n" +
                          "merge conflicts: " + mergeConflicts + ",\n" +
                          "added filenames: " + addedFilenames + ",\n" +
- //                        "added final:     " + addedTabsFinal + ",\n" +
- //                        "ignored added: " + ignoredAdditions + ",\n" +
                          "removed codes: " + removedCodes + ",\n" +
                          "ignored removed: " + ignoredRemovals + ",\n" +
                          "modified codes: " + modifiedCodesFinal + "\n");
@@ -226,25 +218,8 @@ public class ChangeDetector implements WindowFocusListener {
       sketch.handleNextCode();
       sketch.handlePrevCode();
       editor.repaintHeader();
-
-      // Sketch was reloaded, clear ignore lists
-      //ignoredAdditions.clear();
-      //ignoredRemovals.clear();
-
-      return;
     }
 
-    // If something changed, set modified flags and modification times
-    if (!removedCodes.isEmpty() || !modifiedCodesFinal.isEmpty()) {
-//          Stream.concat(removedCodes.stream(), modifiedCodesFinal.stream())
-//              .forEach(code -> {
-//                code.setModified(true);
-//                code.setLastModified();
-//              });
-
-      // Not sure if this is needed
-      editor.rebuildHeader();
-    }
   }
 
 
