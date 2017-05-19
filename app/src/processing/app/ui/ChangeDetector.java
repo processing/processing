@@ -218,6 +218,8 @@ public class ChangeDetector implements WindowFocusListener {
       sketch.handleNextCode();
       sketch.handlePrevCode();
       editor.repaintHeader();
+
+      editor.sketchChanged();
     }
 
   }
