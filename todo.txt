@@ -24,6 +24,10 @@ X Consider $SUDO_USER on Linux for locating the sketchbook folder
 X   https://github.com/processing/processing/pull/5055
 o   https://github.com/processing/processing/pull/5054
 
+jakub
+X more updates to the change detector
+X   https://github.com/processing/processing/pull/5075
+
 contrib
 X Make the change detector not reload the sketch
 X   https://github.com/processing/processing/issues/4713
