@@ -1,6 +1,8 @@
 0261 (3.3.4 or 3.4)
 X add exec() with StringList options
 X start to add stub for shell() function
+_ loadTable() should support a separator specification option
+_   https://github.com/processing/processing/issues/5068
 
 jakub
 X Fix keyPressed for multiple keys
