@@ -77,6 +77,7 @@ public class Preferences {
 
     // other things that have to be set explicitly for the defaults
     setColor("run.window.bgcolor", SystemColor.control); //$NON-NLS-1$
+    setBoolean("editor.input_method_support", true);
 
     // For CJK users, enable IM support by default
     if (Language.useInputMethod()) {
