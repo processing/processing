@@ -166,6 +166,8 @@ public class Compiler {
           exception = new SketchException(errorMessage);
         }
 
+        String[] parts = null;
+
         if (errorMessage.startsWith("The import ") &&
             errorMessage.endsWith("cannot be resolved")) {
           // The import poo cannot be resolved
@@ -253,9 +255,18 @@ public class Compiler {
           // "Duplicate nested type xxx"
           // "Duplicate local variable xxx"
 
+        } else if (null != (parts = PApplet.match(errorMessage,
+                "literal (\\S*) of type (\\S*) is out of range"))) {
+          if ("int".equals(parts[2])) {
+            exception.setMessage("The type int can't handle numbers that big. Try "
+                + parts[1] + "L to upgrade to long.");
+          } else {
+            // I'd like to give an essay on BigInteger and BigDecimal, but
+            // this margin is too narrow to contain it.
+            exception.setMessage("Even the type " + parts[2] + " can't handle "
+                + parts[1] + ". Research big numbers in Java.");
+          }
         } else {
-          String[] parts = null;
-
           // The method xxx(String) is undefined for the type Temporary_XXXX_XXXX
           //xxx("blah");
           // The method xxx(String, int) is undefined for the type Temporary_XXXX_XXXX
