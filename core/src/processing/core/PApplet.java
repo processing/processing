@@ -3552,15 +3552,20 @@ public class PApplet implements PConstants {
    * Same as exec() above, but prefixes the call with a shell.
    */
   static public int shell(StringList stdout, StringList stderr, String... args) {
+    String shell;
+    String runCmd;
     if (platform == WINDOWS) {
-      throw new RuntimeException("Not yet implemented.");
+      shell = System.getenv("COMSPEC");
+      runCmd = "/C";
+    } else {
+      shell = "/bin/sh";
+      runCmd = "-c";
     }
-    String shell = System.getenv("SHELL");  // or just /bin/sh?
     StringList argList = new StringList();
     for (String arg : args) {
-      argList.append(shellQuoted(arg));
+      argList.append(arg);
     }
-    return exec(stdout, stderr, shell, "-c", argList.join(" "));
+    return exec(stdout, stderr, shell, runCmd, argList.join(" "));
   }
 
 
