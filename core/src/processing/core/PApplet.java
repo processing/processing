@@ -714,10 +714,10 @@ public class PApplet implements PConstants {
    */
   public float frameRate = 10;
 
-  protected boolean looping = true;
+  private boolean looping = true;
 
   /** flag set to true when a redraw is asked for by the user */
-  protected boolean redraw = true;
+  private boolean redraw = true;
 
   /**
    * ( begin auto-generated from frameCount.xml )
@@ -1834,7 +1834,7 @@ public class PApplet implements PConstants {
   public void draw() {
     // if no draw method, then shut things down
     //System.out.println("no draw method, goodbye");
-    finished = true;
+    //finished = true;
   }
 
 
