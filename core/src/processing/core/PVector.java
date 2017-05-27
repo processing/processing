@@ -1010,6 +1010,11 @@ public class PVector implements Serializable {
   }
 
 
+/**
+ * Transform PVector into string
+ *
+ * @return Returns the values vector in the form of a string
+ */
   @Override
   public String toString() {
     return "[ " + x + ", " + y + ", " + z + " ]";
