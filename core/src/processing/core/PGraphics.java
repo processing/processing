@@ -8011,8 +8011,8 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#lerp(float, float, float)
    */
   int lerpColor(int c[], float amt) {
-    int index = int(c.length * amt);
-    return lerpColor(c[index], c[index + 1 < c.length ? index + 1 : c.length-1], amt * c.length - index);
+    int index = (int) c.length * amt;
+    return lerpColor(c[index], c[index + 1 < c.length ? index + 1 : c.length-1], amt * (c.length-1) - index);
   }
  
   static float[] lerpColorHSB1;
