@@ -251,8 +251,8 @@ public class PComplex {
   public static PComplex exp(PComplex c) {
     double e = Math.exp(c.a);
     return new PComplex(
-        e * Math.cos(c.b),
-        e * Math.sin(c.b)
+      e * Math.cos(c.b),
+      e * Math.sin(c.b)
     );
   }
 
@@ -266,8 +266,8 @@ public class PComplex {
    * */
   public static PComplex ln(PComplex c) {
     return new PComplex(
-        c.abs(),
-        c.arg()
+      c.abs(),
+      c.arg()
     );
   }
 }
