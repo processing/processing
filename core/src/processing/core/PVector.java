@@ -119,6 +119,7 @@ public class PVector implements Serializable {
    * Constructor for an empty vector: x, y, and z are set to 0.
    */
   public PVector() {
+    this(0, 0, 0);
   }
 
 
@@ -140,9 +141,7 @@ public class PVector implements Serializable {
    * Constructor for a 2D vector: z coordinate is set to 0.
    */
   public PVector(float x, float y) {
-    this.x = x;
-    this.y = y;
-    this.z = 0;
+    this(x, y, 0);
   }
 
 
@@ -173,9 +172,7 @@ public class PVector implements Serializable {
    * @param y the y component of the vector
    */
   public PVector set(float x, float y) {
-    this.x = x;
-    this.y = y;
-    return this;
+    return set(x, y, 0);
   }
 
 
@@ -183,10 +180,7 @@ public class PVector implements Serializable {
    * @param v any variable of type PVector
    */
   public PVector set(PVector v) {
-    x = v.x;
-    y = v.y;
-    z = v.z;
-    return this;
+    return set(v.x, v.y, v.z);
   }
 
 
@@ -251,9 +245,11 @@ public class PVector implements Serializable {
    * @return the random PVector
    */
   static public PVector random2D(PVector target, PApplet parent) {
-    return (parent == null) ?
-      fromAngle((float) (Math.random() * Math.PI*2), target) :
-      fromAngle(parent.random(PConstants.TAU), target);
+    if (parent == null) {
+      return fromAngle((float) (Math.random() * Math.PI * 2), target);
+    } else {
+      return fromAngle(parent.random(PConstants.TAU), target);
+    }
   }
 
 
@@ -383,7 +379,7 @@ public class PVector implements Serializable {
    */
   public float[] get(float[] target) {
     if (target == null) {
-      return new float[] { x, y, z };
+      return new float[] {x, y, z};
     }
     if (target.length >= 2) {
       target[0] = x;
@@ -411,7 +407,7 @@ public class PVector implements Serializable {
    * @see PVector#magSq()
    */
   public float mag() {
-    return (float) Math.sqrt(x*x + y*y + z*z);
+    return (float) Math.sqrt(this.magSq());
   }
 
 
@@ -432,7 +428,7 @@ public class PVector implements Serializable {
    * @see PVector#mag()
    */
   public float magSq() {
-    return (x*x + y*y + z*z);
+    return x*x + y*y + z*z;
   }
 
 
@@ -453,10 +449,7 @@ public class PVector implements Serializable {
    * @brief Adds x, y, and z components to a vector, one vector to another, or two independent vectors
    */
   public PVector add(PVector v) {
-    x += v.x;
-    y += v.y;
-    z += v.z;
-    return this;
+    return add(v.x, v.y, v.z);
   }
 
 
@@ -465,9 +458,7 @@ public class PVector implements Serializable {
    * @param y y component of the vector
    */
   public PVector add(float x, float y) {
-    this.x += x;
-    this.y += y;
-    return this;
+    return add(x, y, 0);
   }
 
 
@@ -523,10 +514,7 @@ public class PVector implements Serializable {
    * @brief Subtract x, y, and z components from a vector, one vector from another, or two independent vectors
    */
   public PVector sub(PVector v) {
-    x -= v.x;
-    y -= v.y;
-    z -= v.z;
-    return this;
+    return sub(v.x, v.y, v.z);
   }
 
 
@@ -535,9 +523,7 @@ public class PVector implements Serializable {
    * @param y the y component of the vector
    */
   public PVector sub(float x, float y) {
-    this.x -= x;
-    this.y -= y;
-    return this;
+    return sub(x, y, 0);
   }
 
 
@@ -676,10 +662,7 @@ public class PVector implements Serializable {
    * @brief Calculate the distance between two points
    */
   public float dist(PVector v) {
-    float dx = x - v.x;
-    float dy = y - v.y;
-    float dz = z - v.z;
-    return (float) Math.sqrt(dx*dx + dy*dy + dz*dz);
+    return dist(this, v);
   }
 
 
@@ -838,9 +821,8 @@ public class PVector implements Serializable {
    * @brief Limit the magnitude of the vector
    */
   public PVector limit(float max) {
-    if (magSq() > max*max) {
-      normalize();
-      mult(max);
+    if (magSq() > max * max) {
+      setMag(max);
     }
     return this;
   }
