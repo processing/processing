@@ -4328,6 +4328,27 @@ public class PApplet implements PConstants {
   }
 
 /**
+   * ( begin auto-generated from signum.xml )
+   *
+   * Returns the signum function of the argument.
+   * The return value is -1 if the specified value is negative;
+   * 0 if the specified value is zero; and 1 if the specified value is positive.
+   * If the argument is NaN, then the result is NaN.
+   *
+   * ( end auto-generated )
+   * @webref math:calculation
+   * @param n number
+   * @see PApplet#abs(float)
+   */
+  static public final float signum(float n) {
+    return Math.signum(n);
+  }
+
+  static public final int signum(int n) {
+    return Integer.signum(n);
+  }
+
+/**
    * ( begin auto-generated from sq.xml )
    *
    * Squares a number (multiplies a number by itself). The result is always a
