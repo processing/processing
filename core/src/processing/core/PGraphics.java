@@ -7996,7 +7996,25 @@ public class PGraphics extends PImage implements PConstants {
   public int lerpColor(int c1, int c2, float amt) {  // ignore
     return lerpColor(c1, c2, amt, colorMode);
   }
-
+  
+  
+   /**
+   * Generalization of the function lerpColor for many colors that are passed 
+   * by parameter as a vector of colors
+   *
+   * @webref color:creating_reading
+   * @usage web_application
+   * @param c[] interpolate to this set of color
+   * @param amt between 0.0 and 1.0
+   * @see PImage#blendColor(int, int, int)
+   * @see PGraphics#color(float, float, float, float)
+   * @see PApplet#lerp(float, float, float)
+   */
+  int lerpColor(int c[], float amt) {
+    int index = int(c.length * amt);
+    return lerpColor(c[index], c[index + 1 < c.length ? index + 1 : c.length-1], amt * c.length - index);
+  }
+ 
   static float[] lerpColorHSB1;
   static float[] lerpColorHSB2;
 
