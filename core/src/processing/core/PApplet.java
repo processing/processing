@@ -7848,7 +7848,7 @@ public class PApplet implements PConstants {
       // Workaround for bug in Java for OS X from Oracle (7u51)
       // https://github.com/processing/processing/issues/2181
       if (platform == MACOSX) {
-        if (jarPath.contains("Contents/Java/")) {
+        if (jarPath != null && jarPath.contains("Contents/Java/")) {
           String appPath = jarPath.substring(0, jarPath.indexOf(".app") + 4);
           File containingFolder = new File(appPath).getParentFile();
           folder = containingFolder.getAbsolutePath();
@@ -7856,9 +7856,15 @@ public class PApplet implements PConstants {
       } else {
         // Working directory may not be set properly, try some options
         // https://github.com/processing/processing/issues/2195
-        if (jarPath.contains("/lib/")) {
-          // Windows or Linux, back up a directory to get the executable
-          folder = new File(jarPath, "../..").getCanonicalPath();
+        if (jarPath != null && jarPath.contains("/lib/")) {
+          File path = new File(jarPath);
+
+          // go up until the path is lib dir
+          while (!path.getName().equals("lib")) {
+            path = path.getParentFile();
+          }
+          // go up from the lib dir to get the folder with executable
+          folder = path.getParentFile().getCanonicalPath();
         }
       }
     } catch (Exception e) {
