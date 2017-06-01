@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012-15 The Processing Foundation
+  Copyright (c) 2012-17 The Processing Foundation
   Copyright (c) 2008-12 Ben Fry and Casey Reas
   Copyright (c) 2008 Dan Shiffman
 
@@ -142,7 +142,6 @@ public class PVector implements Serializable {
   public PVector(float x, float y) {
     this.x = x;
     this.y = y;
-    this.z = 0;
   }
 
 
@@ -175,6 +174,7 @@ public class PVector implements Serializable {
   public PVector set(float x, float y) {
     this.x = x;
     this.y = y;
+    this.z = 0;
     return this;
   }
 
@@ -201,6 +201,8 @@ public class PVector implements Serializable {
     }
     if (source.length >= 3) {
       z = source[2];
+    } else {
+      z = 0;
     }
     return this;
   }
