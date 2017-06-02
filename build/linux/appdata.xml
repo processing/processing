@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- See https://www.freedesktop.org/software/appstream/docs/chap-Quickstart.html -->
+<component type="desktop-application">
+  <id>org.processing.processingide.desktop</id>
+  <metadata_license>GPLv3</metadata_license>
+  <developer_name>Processing Foundation</developer_name>
+
+  <name>Processing IDE</name>
+  <summary>Open-source software prototyping platform</summary>
+
+  <description>
+    <p>
+      Processing is the first easy-to-use software sketching platform
+      created by C. Reas and B. Fry and supported by the Processing
+      Foundation.
+    </p>
+    <p>
+      Included is an integrated development environment that can be used
+      to develop interactive applications using different programming
+      languages but mainly Java, Android, Python, and Javascript.
+    </p>
+  </description>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://upload.wikimedia.org/wikipedia/commons/6/6b/Processing_screen_shot.png</image>
+      <caption>The Processing IDE showing a simple example program</caption>
+    </screenshot>
+  </screenshots>
+
+  <url type="homepage">http://www.processing.org/</url>
+  <url type="help">https://processing.org/reference/</url>
+  <url type="bugtracker">https://github.com/processing/processing/issues?q=is%3Aopen</url>
+  <url type="translate">https://github.com/processing/processing/tree/master/build/shared/lib/languages</url>
+  <url type="donation">https://processing.org/download/support.html</url>
+
+  <update_contact>foundation@processing.org</update_contact>
+</component>
