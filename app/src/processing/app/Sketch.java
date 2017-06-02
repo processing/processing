@@ -208,6 +208,23 @@ public class Sketch {
             if (outFilenames != null) outFilenames.add(filename);
             if (outExtensions != null) outExtensions.add(extension);
           }
+          else {
+			System.out.println("File '" + filename + "' was not opened as filename contains characters which are not valid in this context");
+			String sanitizedFilename = sanitizeName(base);
+			if (base.length() == sanitizedFilename.length()) {
+				// Point out which characters are problematic
+				StringBuffer buffer = new StringBuffer("      ");
+				for (int i = 0; i < filename.length(); ++i) {
+					if (i >= sanitizedFilename.length() || base.charAt(i) == sanitizedFilename.charAt(i)) {
+						buffer.append(" ");
+					}
+					else {
+						buffer.append("^");
+					}
+				}
+				System.out.println(buffer);
+			}
+          }
         }
       }
     }
