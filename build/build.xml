@@ -67,7 +67,7 @@
        (Windows/Linux) or JDK (on Mac OS X) -->
 
   <property name="examples.dir"
-	    value="../../processing-docs/content/examples" />
+            value="../../processing-docs/content/examples" />
 
   <property name="jdk.version" value="8" />
   <property name="jdk.update" value="131" />
@@ -221,8 +221,8 @@
 
     <!-- define our special JRE downloader task -->
     <taskdef name="downloader"
-	     classname="Downloader"
-	     classpath="jre/downloader.jar" />
+             classname="Downloader"
+             classpath="jre/downloader.jar" />
   </target>
 
   <target name="jre-download" depends="jre-check, downloader-setup"
@@ -623,10 +623,10 @@
          https://github.com/processing/processing/issues/3359
          https://github.com/processing/processing/issues/3360
          The 'keytool' file is deleted by our appbundler. Add it back so that
-	 Android signing works properly. (Not modifying our appbundler since
-	 most of the time that appbundler is used, keytool isn't needed).
-	 Also, because Ant's copy task does not retain file permissions on
-	 Unix systems, we need to use <exec executable="cp" ... > instead -->
+         Android signing works properly. (Not modifying our appbundler since
+         most of the time that appbundler is used, keytool isn't needed).
+         Also, because Ant's copy task does not retain file permissions on
+         Unix systems, we need to use <exec executable="cp" ... > instead -->
     <exec executable="cp">
       <arg line="${jdk.path.macosx}/Contents/Home/bin/keytool macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/bin"/>
     </exec>
@@ -905,7 +905,7 @@
   </target>
 
   <target name="linux-dist" depends="linux-build"
-	  description="Build .tar.gz of linux version">
+          description="Build .tar.gz of linux version">
 
 <!--
     <tar compression="gzip" destfile="linux/processing-${version}.tgz">
@@ -939,7 +939,7 @@
   </target>
 
   <target name="deb" depends="dist"
-	  description="Build .deb of linux version">
+          description="Build .deb of linux version">
 
    <!-- start with a clean debian folder -->
    <delete dir="linux/debian" quiet="true" />
@@ -1380,9 +1380,9 @@ remove the spaces for depth since it should be double dash, but screws up commen
 
       <packageset dir="../core/src">
         <include name="processing/**" />
-	<!--
+        <!--
         <include name="japplemenubar/**" />
-	-->
+        -->
       </packageset>
     </javadoc>
 
