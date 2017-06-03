@@ -1,16 +1,4 @@
-0261 (3.3.4 or 3.4)
-X add exec() with StringList options
-X start to add stub for shell() function
-X handle edge case for set() being called with a 2D vector, on a 3D vector
-X   https://github.com/processing/processing/issues/5092
-o keyPressed() problems with special press-and-hold behavior macOS Sierra
-X   https://github.com/processing/processing/issues/4952
-X   added documentation in 3 places about it
-
-jakub
-X Fix keyPressed for multiple keys
-X   https://github.com/processing/processing/pull/5050
-X   https://github.com/processing/processing/issues/5049
+0262 (3.3.5 or 3.4)
 
 
 _ add separator option to loadTable() 
