@@ -1,3 +1,64 @@
+PROCESSING 3.3.4 (REV 0261) - 3 June 2017
+
+We're 
+
+X redo console handling to not use Timer, fixing freeze-up problems
+o   https://github.com/processing/processing/pull/4935
+X   https://github.com/processing/processing/issues/4825
+X clean up error message for sketchbook location
+X   https://github.com/processing/processing/issues/4942
+X Application Exports report as "Damaged" on macOS Sierra
+X   https://github.com/processing/processing/issues/4705
+X   could provide script to un-quarrantine
+X   xattr -d -r com.apple.quarantine
+X   https://github.com/steakknife/unsign
+X   https://developer.apple.com/library/content/technotes/tn2318
+X 'run sketches on display' message shows up on clean install
+X should ant run launch the .app so that launchsvcs stuff works properly?
+X   double-clicking a .pde file won't open the app correctly
+X   add 'ant app' target, at least for macOS
+X add null check to sketch loading
+X   discovered during https://github.com/processing/processing/issues/4980
+
+gohai
+X IO library updates
+X   https://github.com/processing/processing/pull/5044
+X Consider $SUDO_USER on Linux for locating the sketchbook folder
+X   https://github.com/processing/processing/pull/5055
+o   https://github.com/processing/processing/pull/5054
+
+jakub
+X more updates to the change detector
+X   https://github.com/processing/processing/pull/5075
+
+contrib
+X Make the change detector not reload the sketch
+X   https://github.com/processing/processing/issues/4713
+X   https://github.com/processing/processing/pull/5021
+X   https://github.com/processing/processing/pull/4849
+X Warn user to use L when creating a number constant that won't fit into an int
+X   https://github.com/processing/processing/issues/4878
+X   https://github.com/processing/processing/pull/5077
+X add install/uninstall scripts for Linux and correct mime types for IDE 
+X   https://github.com/processing/processing/pull/5106
+
+X add exec() with StringList options
+X start to add stub for shell() function
+X handle edge case for set() being called with a 2D vector, on a 3D vector
+X   https://github.com/processing/processing/issues/5092
+o keyPressed() problems with special press-and-hold behavior macOS Sierra
+X   https://github.com/processing/processing/issues/4952
+X   added documentation in 3 places about it
+
+jakub
+X Fix keyPressed for multiple keys
+X   https://github.com/processing/processing/pull/5050
+X   https://github.com/processing/processing/issues/5049
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.3.3 (REV 0260) - 2 May 2017
 
 Happy birthday to my Dad and baby brother!

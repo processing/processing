@@ -36,6 +36,8 @@ X   https://github.com/processing/processing/pull/4849
 X Warn user to use L when creating a number constant that won't fit into an int
 X   https://github.com/processing/processing/issues/4878
 X   https://github.com/processing/processing/pull/5077
+X add install/uninstall scripts for Linux and correct mime types for IDE 
+X   https://github.com/processing/processing/pull/5106
 
 
 _ sketch.properties not being written if initial mode is p5.js?

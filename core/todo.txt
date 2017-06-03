@@ -3,13 +3,18 @@ X add exec() with StringList options
 X start to add stub for shell() function
 X handle edge case for set() being called with a 2D vector, on a 3D vector
 X   https://github.com/processing/processing/issues/5092
-_ loadTable() should support a separator specification option
-_   https://github.com/processing/processing/issues/5068
+o keyPressed() problems with special press-and-hold behavior macOS Sierra
+X   https://github.com/processing/processing/issues/4952
+X   added documentation in 3 places about it
 
 jakub
 X Fix keyPressed for multiple keys
 X   https://github.com/processing/processing/pull/5050
 X   https://github.com/processing/processing/issues/5049
+
+
+_ add separator option to loadTable() 
+_   https://github.com/processing/processing/issues/5068
 
 _ add blendMode() to nope() calls in PGraphicsPDF
 _   https://github.com/processing/processing/issues/5105
@@ -19,8 +24,6 @@ _   is this coming from us? if so, need to provide actions
 
 
 high
-_ keyPressed() problems with special press-and-hold behavior macOS Sierra
-_   https://github.com/processing/processing/issues/4952
 _ implement sketch scaling into PApplet
 _   https://github.com/processing/processing/issues/4897
 _ Sketches on Windows don't take UI sizing into account
