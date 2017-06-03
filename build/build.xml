@@ -826,33 +826,25 @@
     <copy file="linux/processing" tofile="linux/work/processing-java" />
     <chmod perm="ugo+x" file="linux/work/processing-java" />
 
-    <!-- Additions by the Arduino folks having beer on a Friday evening -->
-    <!-- this allows Linux users to add mime types to IDE by simply running the
-         install script added to the Processing folder. This adds the following features:
-         - the icons for the IDE in different resolutions
+    <!-- This allows Linux users to add mime types to the PDE by simply
+         running the install script added to the Processing folder.
+         This adds the following features:
+         - the icons for the PDE in different resolutions
          - icons for the files
          - a desktop icon
-         - when double clicking the *.pde files, the IDE will be opened
+         - when double clicking the *.pde files, the PDE will be opened
 
          from Sweden with <3
-       -->
-       <copy file="linux/install.sh" todir="linux/work" />
-       <chmod perm="ugo+x" file="linux/work/install.sh" />
+    -->
+    <copy file="linux/install.sh" todir="linux/work" />
+    <chmod perm="ugo+x" file="linux/work/install.sh" />
 
-        <copy file="linux/uninstall.sh" todir="linux/work" />
-        <chmod perm="ugo+x" file="linux/work/uninstall.sh" />
+    <copy file="linux/uninstall.sh" todir="linux/work" />
+    <chmod perm="ugo+x" file="linux/work/uninstall.sh" />
 
-        <copy file="linux/processing-processingide.xml" todir="linux/work/lib" />
-        <copy file="linux/appdata.xml" todir="linux/work/lib" />
-        <copy file="linux/desktop.template" todir="linux/work/lib" />
-
-
-
-<!--
-    <get src="http://download.processing.org/java/${jre.file}"
-         dest="linux/jre.tgz"
-         usetimestamp="true" />
--->
+    <copy file="linux/processing-pde.xml" todir="linux/work/lib" />
+    <copy file="linux/appdata.xml" todir="linux/work/lib" />
+    <copy file="linux/desktop.template" todir="linux/work/lib" />
 
 <!--
     Cannot use ant version of tar because it doesn't preserve properties.
@@ -875,11 +867,6 @@
       <arg value="xfz" />
       <arg value="../${jre.tgz.path}"/>
     </exec>
-
-    <!--
-    We only want to move when the folder didn't exist before
-    <move file="linux/jre1.7.0_40" tofile="linux/work/java" />
-    -->
 
     <!-- use the jre subfolder when having downloaded a JDK file -->
     <condition property="jre.dir" value="jdk${jdk.esoteric}/jre">

@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# This script adds a menu item, icons and mime type for Arduino for the current
-# user. If possible, it will use the xdg-utils - or fall back to just creating
-# and copying a desktop file to the user's dir.
-# If called with the "-u" option, it will undo the changes.
+# This script adds a menu item, icons and mime type for Processing for 
+# the current user. If possible, it will use the xdg-utils - or fall back 
+# to just creating and copying a desktop file to the user's directory.
+# If called with the "-u" option, it will uninstall.
 
 # Resource name to use (including vendor prefix)
-RESOURCE_NAME=processing-processingide
+RESOURCE_NAME=processing-pde
 
 # Get absolute path from which this script file was executed
 # (Could be changed to "pwd -P" to resolve symlinks to their target)
@@ -61,7 +61,7 @@ xdg_install_f() {
   xdg-icon-resource install --context mimetypes --size 512 "${SCRIPT_PATH}/lib/icons/pde-512.png" text-x-processing
   xdg-icon-resource install --context mimetypes --size 1024 "${SCRIPT_PATH}/lib/icons/pde-1024.png" text-x-processing
 
-  # Make Processing IDE the default application for *.pde
+  # Make the Processing Development Environment the default app for *.pde files
   xdg-mime default ${RESOURCE_NAME}.desktop text/x-processing
 
   # Clean up
@@ -128,7 +128,7 @@ xdg_uninstall_f() {
   xdg-icon-resource uninstall --size 512 text-x-processing
   xdg-icon-resource uninstall --size 1024 text-x-processing
 
-  # Remove Arduino MIME type
+  # Remove MIME type
   xdg-mime uninstall "${SCRIPT_PATH}/lib/${RESOURCE_NAME}.xml"
 
 }
@@ -194,7 +194,7 @@ xdg_exists_f() {
 
 # Shows a description of the available options
 display_help_f() {
-  printf "\nThis script will add a Processing IDE desktop shortcut, menu item,\n"
+  printf "\nThis script will add a Processing desktop shortcut, menu item,\n"
   printf "icons and file associations for the current user.\n"
   if ! xdg_exists_f; then
     printf "\nxdg-utils are recommended to be installed, so this script can use them.\n"
@@ -227,21 +227,21 @@ done
 # If possible, use xdg-utils, if not, use a more basic approach
 if xdg_exists_f; then
   if [ ${UNINSTALL} = true ]; then
-    printf "Removing desktop shortcut and menu item for Processing IDE..."
+    printf "Removing desktop shortcut and menu item for Processing..."
     xdg_uninstall_f
     simple_uninstall_f
   else
-    printf "Adding desktop shortcut, menu item and file associations for Processing IDE..."
+    printf "Adding desktop shortcut, menu item and file associations for Processing..."
     xdg_uninstall_f
     simple_uninstall_f
     xdg_install_f
   fi
 else
   if [ ${UNINSTALL} = true ]; then
-    printf "Removing desktop shortcut and menu item for Processing IDE..."
+    printf "Removing desktop shortcut and menu item for Processing..."
     simple_uninstall_f
   else
-    printf "Adding desktop shortcut and menu item for Processing IDE..."
+    printf "Adding desktop shortcut and menu item for Processing..."
     simple_uninstall_f
     simple_install_f
   fi
