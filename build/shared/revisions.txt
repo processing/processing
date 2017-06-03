@@ -1,59 +1,73 @@
 PROCESSING 3.3.4 (REV 0261) - 3 June 2017
 
-We're 
+Several useful bug fixes and improvements. Some big, many small.
 
-X redo console handling to not use Timer, fixing freeze-up problems
-o   https://github.com/processing/processing/pull/4935
-X   https://github.com/processing/processing/issues/4825
-X clean up error message for sketchbook location
-X   https://github.com/processing/processing/issues/4942
-X Application Exports report as "Damaged" on macOS Sierra
-X   https://github.com/processing/processing/issues/4705
-X   could provide script to un-quarrantine
-X   xattr -d -r com.apple.quarantine
-X   https://github.com/steakknife/unsign
-X   https://developer.apple.com/library/content/technotes/tn2318
-X 'run sketches on display' message shows up on clean install
-X should ant run launch the .app so that launchsvcs stuff works properly?
-X   double-clicking a .pde file won't open the app correctly
-X   add 'ant app' target, at least for macOS
-X add null check to sketch loading
-X   discovered during https://github.com/processing/processing/issues/4980
 
-gohai
-X IO library updates
-X   https://github.com/processing/processing/pull/5044
-X Consider $SUDO_USER on Linux for locating the sketchbook folder
-X   https://github.com/processing/processing/pull/5055
-o   https://github.com/processing/processing/pull/5054
+[ fixes you'll notice ]
 
-jakub
-X more updates to the change detector
-X   https://github.com/processing/processing/pull/5075
++ Exported applications no longer report as "Damaged" on macOS Sierra
+  https://github.com/processing/processing/issues/4705
 
-contrib
-X Make the change detector not reload the sketch
-X   https://github.com/processing/processing/issues/4713
-X   https://github.com/processing/processing/pull/5021
-X   https://github.com/processing/processing/pull/4849
-X Warn user to use L when creating a number constant that won't fit into an int
-X   https://github.com/processing/processing/issues/4878
-X   https://github.com/processing/processing/pull/5077
-X add install/uninstall scripts for Linux and correct mime types for IDE 
-X   https://github.com/processing/processing/pull/5106
++ Prevent the console from freezing up when print() and println()
+  are used to print thousands of lines of output.
+  https://github.com/processing/processing/pull/4935
+  https://github.com/processing/processing/issues/4825
 
-X add exec() with StringList options
-X start to add stub for shell() function
-X handle edge case for set() being called with a 2D vector, on a 3D vector
-X   https://github.com/processing/processing/issues/5092
-o keyPressed() problems with special press-and-hold behavior macOS Sierra
-X   https://github.com/processing/processing/issues/4952
-X   added documentation in 3 places about it
++ Apple broke key repeat in macOS Sierra, here's how to fix it:
+  https://github.com/processing/processing/wiki/Troubleshooting#key-repeat-on-macos-sierra
 
-jakub
-X Fix keyPressed for multiple keys
-X   https://github.com/processing/processing/pull/5050
-X   https://github.com/processing/processing/issues/5049
++ Fix the keyPressed variable when multiple keys are pressed
+  https://github.com/processing/processing/pull/5050
+  https://github.com/processing/processing/issues/5049
+
+
+[ some you probably won't ]
+
++ Clarify wording of error message regarding sketchbook location
+  https://github.com/processing/processing/issues/4942
+
++ Remove 'run sketches on display' error text that showed up even 
+  when using Processing for the first time
+
++ Implement alternate 'ant app' target for macOS application debugging
+
++ Added a null check to sketch loading to prevent some issues such as
+  https://github.com/processing/processing/issues/4980
+
++ Handle edge case for set() being called with a 2D vector, on a 3D vector
+  https://github.com/processing/processing/issues/5092
+  
+
+[ incomplete additions ]
+
++ Add exec() with StringList options (documentation coming soon)
+
++ Begin work on a shell() function to do exec() via a shell
+
+
+[ other contributions - thank you! ] 
+  
++ Add install/uninstall scripts for Linux and correct mime types for the PDE 
+  https://github.com/processing/processing/pull/5106
+
++ IO library updates for ARM
+  https://github.com/processing/processing/pull/5044
+  
++ Check $SUDO_USER on Linux for locating the sketchbook folder
+  https://github.com/processing/processing/pull/5055
+  https://github.com/processing/processing/pull/5054
+
++ Debugging the "files changed" detector in the Editor
+  https://github.com/processing/processing/issues/4713
+  https://github.com/processing/processing/pull/5021
+  https://github.com/processing/processing/pull/4849
+
++ Still more updates to the change detector
+  https://github.com/processing/processing/pull/5075
+  
++ Warn user to use L when creating a number constant that won't fit into an int
+  https://github.com/processing/processing/issues/4878
+  https://github.com/processing/processing/pull/5077
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
