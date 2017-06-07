@@ -79,20 +79,22 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   String url;
   int rightEdge;
   int mouseX;
-  boolean urlRollover;
+  int rolloverState;
+  static final int ROLLOVER_NONE     = 0;
+  static final int ROLLOVER_URL      = 1;
+  static final int ROLLOVER_COLLAPSE = 2;
+  static final int ROLLOVER_EMOJI    = 3;
 
   Font font;
   FontMetrics metrics;
   int ascent;
 
   // used to draw the clipboard icon
-  static final int EMOJI_OFFSET = 27;
   Font emojiFont;
-  int emojiLeft;
-  boolean emojiRollover;
 
   Image offscreen;
   int sizeW, sizeH;
+  boolean collapseState = false;
 
   int response;
 
@@ -115,10 +117,10 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        if (urlRollover) {
+        if (rolloverState == ROLLOVER_URL) {
           Platform.openURL(url);
 
-        } else if (emojiRollover) {
+        } else if (rolloverState == ROLLOVER_EMOJI) {
           if (e.isShiftDown()) {
             // open the text in a browser window as a search
             final String fmt = Preferences.get("search.format");
@@ -131,17 +133,28 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
             System.out.println("Copied to the clipboard. " +
                                "Use shift-click to search the web instead.");
           }
+
+        } else if (rolloverState == ROLLOVER_COLLAPSE) {
+          collapse(!collapseState);
         }
       }
 
       @Override
       public void mouseExited(MouseEvent e) {
+        mouseX = -100;
         updateMouse();
       }
 
     });
 
     addMouseMotionListener(new MouseMotionAdapter() {
+      @Override
+      public void mouseDragged(MouseEvent e) {
+        // BasicSplitPaneUI.startDragging gets called even when you click but
+        // don't drag, so we can't expand the console whenever that gets called
+        // or the button wouldn't work.
+        collapse(false);
+      }
 
       @Override
       public void mouseMoved(MouseEvent e) {
@@ -152,13 +165,26 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   }
 
 
+  void collapse(boolean doCollapse) {
+    if (collapseState == doCollapse) return;
+    collapseState = doCollapse;
+    editor.footer.setVisible(!doCollapse);
+    splitPane.resetToPreferredSizes();
+  }
+
+
   void updateMouse() {
-    if (urlRollover) {
+    switch (rolloverState) {
+    case ROLLOVER_EMOJI:
+    case ROLLOVER_URL:
       setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    } else if (emojiRollover) {
-      setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    } else {
+      break;
+    case ROLLOVER_COLLAPSE:
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      break;
+    case ROLLOVER_NONE:
       setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+      break;
     }
     repaint();
   }
@@ -282,8 +308,8 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   }
 
 
+  //public void paintComponent(Graphics screen) {
   public void paint(Graphics screen) {
-//  public void paint(Graphics screen) {
     Dimension size = getSize();
     if ((size.width != sizeW) || (size.height != sizeH)) {
       // component has been resized
@@ -308,21 +334,31 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
     g.drawImage(bgImage[mode], 0, 0, sizeW, sizeH, this);
 
-    g.setColor(fgColor[mode]);
+    // What's the mouse over?
+    if (sizeW - sizeH < mouseX && mouseX < sizeW) {
+      rolloverState = ROLLOVER_COLLAPSE;
+    } else if (message != null && !message.isEmpty()) {
+      if (sizeW - 2*sizeH < mouseX) {
+        rolloverState = ROLLOVER_EMOJI;
+      } else if (url != null && mouseX > LEFT_MARGIN &&
+        // calculate right edge of the text for rollovers (otherwise the pane
+        // cannot be resized up or down whenever a URL is being displayed)
+        mouseX < (LEFT_MARGIN + g.getFontMetrics().stringWidth(message))) {
+        rolloverState = ROLLOVER_URL;
+      } else {
+        rolloverState = ROLLOVER_NONE;
+      }
+    } else {
+      rolloverState = ROLLOVER_NONE;
+    }
+
     // https://github.com/processing/processing/issues/3265
     if (message != null) {
       // needs to be set each time on osx
       g.setFont(font);
-      // calculate right edge of the text for rollovers (otherwise the pane
-      // cannot be resized up or down whenever a URL is being displayed)
-      rightEdge = LEFT_MARGIN + g.getFontMetrics().stringWidth(message);
       // set the highlight color on rollover so that the user's not surprised
       // to see the web browser open when they click
-      urlRollover = (url != null) &&
-        (mouseX > LEFT_MARGIN && mouseX < rightEdge);
-      if (urlRollover) {
-        g.setColor(urlColor);
-      }
+      g.setColor((rolloverState == ROLLOVER_URL) ? urlColor : fgColor[mode]);
       g.drawString(message, LEFT_MARGIN, (sizeH + ascent) / 2);
     }
 
@@ -330,9 +366,9 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
       //int x = cancelButton.getX();
       //int w = cancelButton.getWidth();
       int w = Toolkit.getButtonWidth();
-      int x = getWidth() - RIGHT_MARGIN - w;
-      int y = getHeight() / 3;
-      int h = getHeight() / 3;
+      int x = getWidth() - Math.max(RIGHT_MARGIN, (int)(sizeH*1.2)) - w;
+      int y = sizeH / 3;
+      int h = sizeH / 3;
       g.setColor(new Color(0x80000000, true));
       g.drawRect(x, y, w, h);
       for (int i = 0; i < 10; i++) {
@@ -341,19 +377,40 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
       }
 
     } else if (!message.isEmpty()) {
-      g.setColor(Color.WHITE);
       g.setFont(emojiFont);
       // actual Clipboard character not available [fry 180326]
       //g.drawString("\uD83D\uDCCB", sizeW - LEFT_MARGIN, (sizeH + ascent) / 2);
-      // other apps seem to use this one as a hack
-      emojiLeft = sizeW - Toolkit.zoom(EMOJI_OFFSET);
-      g.drawString("\u2398", emojiLeft, (sizeH + ascent) / 2);
-      emojiRollover = mouseX > emojiLeft - 4;
+      // other apps seem to use this one as a hack: ⎘
+      drawButton(g, "\u2398", 1, rolloverState == ROLLOVER_EMOJI);
+      g.setFont(font);
     }
+
+    // draw collapse/expand button
+    drawButton(g, collapseState ? "▲" : "▼", 0, rolloverState == ROLLOVER_COLLAPSE);
 
     screen.drawImage(offscreen, 0, 0, sizeW, sizeH, null);
   }
 
+
+  private final Color whitishTint = new Color(0x40eeeeee, true);
+  /**
+   * @param pos A zero-based index with 0 on the right.
+   */
+  private void drawButton(Graphics g, String symbol, int pos, boolean highlight) {
+    int left = sizeW - (pos + 1) * sizeH;
+    g.setColor(bgColor[mode]);  // Overlap very long errors.
+    g.fillRect(left, 0, sizeH, sizeH);
+    if (highlight) {
+      g.setColor(whitishTint);
+      g.fillRect(left, 0, sizeH, sizeH);
+      g.setColor(urlColor);
+    } else {
+      g.setColor(fgColor[mode]);
+    }
+    g.drawString(symbol,
+        left + (sizeH - g.getFontMetrics().stringWidth(symbol))/2,
+        (sizeH + ascent) / 2);
+  }
 
   public Dimension getPreferredSize() {
     return getMinimumSize();
