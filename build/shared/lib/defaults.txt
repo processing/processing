@@ -74,8 +74,6 @@ recent.count = 10
 
 # Default to the native (AWT) file selector where possible
 chooser.files.native = true
-# native Linux file chooser is atrocious, use Swing instead
-chooser.files.native.linux = false
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

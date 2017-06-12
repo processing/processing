@@ -1,4 +1,6 @@
 0262 (3.3.5 or 3.4)
+X use native Linux file choosers by default
+X   https://github.com/processing/processing/issues/5122
 
 _ Console window losing text
 _   https://github.com/processing/processing/issues/5110

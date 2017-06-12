@@ -176,12 +176,10 @@ public class PApplet implements PConstants {
 
   /**
    * Whether to use native (AWT) dialogs for selectInput and selectOutput.
-   * The native dialogs on Linux tend to be pretty awful. With selectFolder()
-   * this is ignored, because there is no native folder selector, except on
-   * Mac OS X. On OS X, the native folder selector will be used unless
-   * useNativeSelect is set to false.
+   * The native dialogs on some platforms can be ugly, buggy, or missing
+   * features. For 3.3.5, this defaults to true on all platforms.
    */
-  static public boolean useNativeSelect = (platform != LINUX);
+  static public boolean useNativeSelect = true;
 
   /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
