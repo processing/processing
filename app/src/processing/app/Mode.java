@@ -30,6 +30,7 @@ import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.*;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -395,6 +396,20 @@ public abstract class Mode {
   }
 
 
+ 
+
+  /**
+   * 
+   * tries to return a library based on a given package name.
+   * In case of duplicates an exception is thrown.
+   * 
+   * @param pkgName
+   * @return
+   * @throws SketchException in case of multiple library mappings (Duplicates)
+   * 
+   * @deprecated use {@link #getLibraries(HashMap<String, Library> pkg_libs)} instead.  
+   */
+  @Deprecated
   public Library getLibrary(String pkgName) throws SketchException {
     List<Library> libraries = importToLibraryTable.get(pkgName);
     if (libraries == null) {
@@ -418,6 +433,189 @@ public abstract class Mode {
       return libraries.get(0);
     }
   }
+  
+  
+  
+  /**
+   * 
+   * For each package declaration (= map keys) a matching library is searched for.
+   * and put into the map.
+   * 
+   * In case of multiple matching libraries (possible duplicates) only the 
+   * required one is chosen, by making a guess based on the other, guaranteed,
+   * libraries in use.<br>
+   * 
+   * This avoids the old "Duplicate Library" Conflict.
+   * 
+   * <br><br>
+   * the map can still contain null-values, in case no library was found at all.
+   * 
+   * @param pkg_libs
+   */
+  public void getLibraries(HashMap<String, Library> pkg_libs) {
+    
+    if(pkg_libs == null || pkg_libs.isEmpty()){
+      return;
+    }
+    
+  
+    // stack, for imports that will we resolved in the second pass
+    List<String> pkg_unresolved = new ArrayList<String>();
+    
+    // cache, for libraries that are picked with certainty
+    List<Library> lib_cache = new ArrayList<Library>();
+    
+    // PASS 1
+    // for each package declaration (= map keys) a matching library is searched for.
+    // in case of only one available library (standard case) its picked instantly
+    // and put into the lib_cache.
+    // In case of multiple candidates, the lib_cache is queried, if nothing is
+    // found so far, the package is put into pkg_unresolved (for the second pass)
+    
+//    System.out.println("Pass 1: find package-imports library mappings");
+    
+    Iterator<Entry<String, Library>> iter = pkg_libs.entrySet().iterator();
+    while (iter.hasNext()) {
+      
+      Map.Entry<String, Library> pkg_lib = iter.next();
+      
+      String pgk_name = pkg_lib.getKey();
+   
+      List<Library> lib_candidates = importToLibraryTable.get(pgk_name);
+    
+      // 0) no library found for this package, ... worst case
+      if(lib_candidates == null || lib_candidates.size() == 0)
+      {
+        System.err.printf("Error, no library found for package: \"%s\"\n", pgk_name);
+        pkg_lib.setValue(null);
+      } 
+      
+      // 1) exactly one library found for this package, ... most of the time
+      else if(lib_candidates.size() == 1)
+      {
+        Library lib_picked = lib_candidates.get(0);
+        lib_cache.add(lib_picked);
+        pkg_lib.setValue(lib_picked);
+      }
+      
+      // 2) two or more libraries found for this package, ... can happen
+      else 
+      {
+        
+        // warning msg
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Warning, duplicate libraries found for package: \"%s\"\n", pgk_name));
+        
+        // try to find a matching library that has been picked previously
+        Library lib_picked = null;
+        for (Library library : lib_candidates) {
+
+          // if the cache contains one of these candidates, pick it
+          if(lib_picked == null && lib_cache.contains(library)){
+            lib_picked = library;
+          }
+          
+          // candidate info
+          String lib_name = library.getName();
+          String lib_path = library.getPath();
+          String picked   = (lib_picked == library) ? "[x]": "[ ]";
+          sb.append(String.format("  %s %-20s   %s\n", picked, lib_name, lib_path));
+        }
+        
+       
+        if(lib_picked != null){
+          // found a library
+          lib_cache.add(lib_picked);
+          pkg_lib.setValue(lib_picked);
+          // TODO: note sure what processings' best practice is with this
+          // informative warning. I'll just print it for the moment.
+          System.out.print(sb);
+        } else {
+          // still no match, but at least we have multiple candidates.
+          // --> resolve the conflict in the second pass
+          pkg_unresolved.add(pgk_name);
+        }
+        
+      }
+      
+    }
+    
+    
+    // PASS 2
+    //
+//    System.out.println("Pass 2: fix unresolved mappings");
+    
+    // resolve the other packages
+    for(String pgk_name : pkg_unresolved){
+
+      List<Library> lib_candidates = importToLibraryTable.get(pgk_name);
+      
+      // warning msg
+      StringBuilder sb = new StringBuilder();
+      sb.append(String.format("Warning, duplicate libraries found for package: \"%s\"\n", pgk_name));
+      
+      // try to find a matching library that has been picked previously
+      Library lib_picked = null;
+      for (Library library : lib_candidates) {
+
+        // if the cache contains one of these candidates, pick it
+        if(lib_picked == null && lib_cache.contains(library)){
+          lib_picked = library;
+        }
+        
+        // candidate info
+        String lib_name = library.getName();
+        String lib_path = library.getPath();
+        String picked   = (lib_picked == library) ? "[x]": "[ ]";
+        sb.append(String.format("  %s %-20s   %s\n", picked, lib_name, lib_path));
+      }
+      
+      
+      // still not found in cache, so this time we just take the first one
+      if(lib_picked == null){
+        lib_picked = lib_candidates.get(0);
+        
+        // candidate info
+        String lib_name = lib_picked.getName();
+        String lib_path = lib_picked.getPath();
+        String picked   = "[x]";
+        sb.append(String.format("  %s %-20s   %s\n", picked, lib_name, lib_path));
+      }
+     
+      // found a library, finally
+      lib_cache.add(lib_picked);
+      pkg_libs.put(pgk_name, lib_picked);
+      // TODO: note sure what processings' best practice is with this
+      // informative warning. I'll just print it for the moment.
+      System.out.print(sb);
+    }
+    
+    
+
+    // look what you have done
+//    iter = pkg_libs.entrySet().iterator();
+//    int idx = 0;
+//    System.out.println("\nPackage/Library mapping");
+//    while (iter.hasNext()) {
+//      Map.Entry<String, Library> pkg_lib = iter.next();
+//      
+//      String pkg_name = pkg_lib.getKey();
+//      Library pgk_lib = pkg_lib.getValue();
+//      
+//      System.out.printf("[%2d] %-70s - %-25s - %s\n", idx++, pkg_name, pgk_lib.getName(), pgk_lib.getClassPath());
+//    }
+    
+
+  }
+  
+  
+  
+  
+  
+  
+  
+
+  
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
