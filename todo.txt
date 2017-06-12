@@ -1,5 +1,16 @@
 0262 (3.3.5 or 3.4)
 
+_ Console window losing text
+_   https://github.com/processing/processing/issues/5110
+_   console.lines was set to 2?
+_ Linux 64-bit issues
+_   https://github.com/processing/processing/issues/5111
+_ display=-1 regression? ("could not parse" message)
+_   https://github.com/processing/processing/issues/5118
+
+contrib
+_ console hiding button?
+_   https://github.com/processing/processing/pull/5115
 
 _ sketch.properties not being written if initial mode is p5.js?
 _ when creating a sketch within non-Java mode, should write the settings file

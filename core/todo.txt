@@ -1,6 +1,9 @@
 0262 (3.3.5 or 3.4)
 
 
+_ shell discussion with gohai
+_   https://github.com/processing/processing/pull/5082
+
 _ add separator option to loadTable() 
 _   https://github.com/processing/processing/issues/5068
 
