@@ -23,7 +23,7 @@ public class FloatDict {
   protected float[] values;
 
   /** Internal implementation for faster lookups */
-  private HashMap<String, Integer> indices = new HashMap<String, Integer>();
+  private HashMap<String, Integer> indices = new HashMap<>();
 
 
   public FloatDict() {

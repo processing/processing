@@ -109,9 +109,7 @@ public class FileTextFieldTransferHandler extends TransferHandler {
                     c.setText(file.getPath());
                 }
                 imported = true;
-            } catch (UnsupportedFlavorException ex) {
-                //   ex.printStackTrace();
-            } catch (IOException ex) {
+            } catch (UnsupportedFlavorException | IOException ex) {
                 //   ex.printStackTrace();
             }
         }
@@ -129,11 +127,7 @@ public class FileTextFieldTransferHandler extends TransferHandler {
                     boolean useRead = false;
                     handleReaderImport(r, c, useRead);
                     imported = true;
-                } catch (UnsupportedFlavorException ex) {
-                    //   ex.printStackTrace();
-                } catch (BadLocationException ex) {
-                    //   ex.printStackTrace();
-                } catch (IOException ex) {
+                } catch (UnsupportedFlavorException | BadLocationException | IOException ex) {
                     //   ex.printStackTrace();
                 }
             }
