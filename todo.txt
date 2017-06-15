@@ -10,6 +10,9 @@ _   https://github.com/processing/processing/issues/5111
 _ display=-1 regression? ("could not parse" message)
 _   https://github.com/processing/processing/issues/5118
 
+_ detect errors from curved quotation marks
+_   https://github.com/processing/processing/issues/5133
+
 contrib
 _ console hiding button?
 _   https://github.com/processing/processing/pull/5115

@@ -69,8 +69,8 @@ public class EditorConsole extends JScrollPane {
   public EditorConsole(Editor editor) {
     this.editor = editor;
 
-    maxLineCount = Preferences.getInteger("console.lines");
-    maxCharCount = Preferences.getInteger("console.chars");
+    maxLineCount = Preferences.getInteger("console.scrollback.lines");
+    maxCharCount = Preferences.getInteger("console.scrollback.chars");
 
     consoleDoc = new BufferedStyledDocument(10000, maxLineCount, maxCharCount);
     consoleTextPane = new JTextPane(consoleDoc);
