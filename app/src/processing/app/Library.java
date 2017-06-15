@@ -28,7 +28,7 @@ public class Library extends LocalContribution {
   StringList packageList;
 
   /** Per-platform exports for this library. */
-   HashMap<String, String[]> exportList;
+  HashMap<String, String[]> exportList;
 
   /** Applet exports (cross-platform by definition). */
   String[] appletExportList;
