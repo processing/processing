@@ -74,8 +74,6 @@ recent.count = 10
 
 # Default to the native (AWT) file selector where possible
 chooser.files.native = true
-# native Linux file chooser is atrocious, use Swing instead
-chooser.files.native.linux = false
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -184,8 +182,8 @@ console.auto_clear = true
 
 # set the maximum number of lines remembered by the console
 # the default is 500, lengthen at your own peril
-console.lines = 500
-console.chars = 40000
+console.scrollback.lines = 500
+console.scrollback.chars = 40000
 
 # Any additional Java options when running. 
 # If you change this and can't run things, it's your own durn fault.
