@@ -3482,6 +3482,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   protected float textWidthImpl(char buffer[], int start, int stop) {
+    if (textFont == null) defaultFontOrDeath("textWidth");
     Object font = textFont.getNative();
     float twidth = 0;
     if (font != null) twidth = pgl.getTextWidth(font, buffer, start, stop);
