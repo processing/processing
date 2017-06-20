@@ -5922,8 +5922,11 @@ public class PApplet implements PConstants {
   public XML loadXML(String filename, String options) {
     try {
       BufferedReader br = createReader(filename);
-      if (br != null) return new XML(br, options);
-      else br = null;
+      if (br != null) {
+        return new XML(br, options);
+      } else {
+        br = null;
+      }
 
       // can't use catch-all exception, since it might catch the
       // RuntimeException about the incorrect case sensitivity
