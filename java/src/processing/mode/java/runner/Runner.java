@@ -400,26 +400,26 @@ public class Runner implements MessageConsumer {
 
         // Make sure the display set in Preferences actually exists
         GraphicsDevice runDevice = editorDevice;
-        if (runDisplay > 0) {
-          if (runDisplay <= devices.length) {
+        if (runDisplay > 0 && runDisplay <= devices.length) {
             runDevice = devices[runDisplay-1];
-
-          } else {
-            // If a bad display is selected, use the same display as the editor
-            if (runDisplay > 0) {  // don't complain about -1 or 0
-              System.err.println("Display " + runDisplay + " not available.");
-            }
-            runDevice = editorDevice;
-            for (int i = 0; i < devices.length; i++) {
-              if (devices[i] == runDevice) {
-                // Wasn't setting the pref to avoid screwing things up with
-                // something temporary. But not setting it makes debugging one's
-                // setup just too damn weird, so changing that behavior.
-                runDisplay = i + 1;
-                System.err.println("Setting 'Run Sketches on Display' preference to display " + runDisplay);
-                Preferences.setInteger("run.display", runDisplay);
-                break;
+        } else {
+          // If a bad display (or -1 display) is selected, use the same display as the editor
+          if (runDisplay > 0) {  // don't complain about -1 or 0
+            System.err.println("Display " + runDisplay + " not available.");
+          }
+          runDevice = editorDevice;
+          for (int i = 0; i < devices.length; i++) {
+            if (devices[i] == runDevice) {
+              // Prevent message on the first run
+              if (runDisplay != -1) {
+                System.err.println("Setting 'Run Sketches on Display' preference to display " + (i+1));
               }
+              runDisplay = i + 1;
+              // Wasn't setting the pref to avoid screwing things up with
+              // something temporary. But not setting it makes debugging one's
+              // setup just too damn weird, so changing that behavior.
+              Preferences.setInteger("run.display", runDisplay);
+              break;
             }
           }
         }
