@@ -639,25 +639,48 @@ public class AutoFormat implements Formatter {
         break;
 
       case '"':
+      case '“':
+      case '”':
       case '\'':
+      case '‘':
+      case '’':
         inStatementFlag = true;
-        buf.append(c);
+        char realQuote = c;
+        if (c == '“' || c == '”') realQuote = '"';
+        if (c == '‘' || c == '’') realQuote = '\'';
+        buf.append(realQuote);
+
+        char otherQuote = c;
+        if (c == '“') otherQuote = '”';
+        if (c == '”') otherQuote = '“';
+        if (c == '‘') otherQuote = '’';
+        if (c == '’') otherQuote = '‘';
+
         char cc = nextChar();
-        while (!EOF && cc != c) {
+        // In a proper string, all the quotes tested are c. In a curly-quoted
+        // string, there are three possible end quotes: c, its reverse, and
+        // the correct straight quote.
+        while (!EOF && cc != otherQuote && cc != realQuote && cc != c) {
           buf.append(cc);
           if (cc == '\\') {
             buf.append(cc = nextChar());
           }
-          if (cc == '\n') {
-            writeIndentedLine();
-            startFlag = true;
-          }
+
+          // Syntax error: unterminated string. Leave \n in nextChar, so it
+          // feeds back into the loop.
+          if (peek() == '\n') break;
           cc = nextChar();
         }
-        buf.append(cc);
-        if (readForNewLine()) {
-          // push a newline into the stream
-          chars[pos--] = '\n';
+        if (cc == otherQuote || cc == realQuote || cc == c) {
+          buf.append(realQuote);
+          if (readForNewLine()) {
+            // push a newline into the stream
+            chars[pos--] = '\n';
+          }
+        } else {
+          // We've had a syntax error if the string wasn't terminated by EOL/
+          // EOF, just abandon this statement.
+          inStatementFlag = false;
         }
         break;
 
