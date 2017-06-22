@@ -924,9 +924,11 @@ public class PdePreprocessor {
 
     checkForUnterminatedMultilineComment(program);
 
-    if (Preferences.getBoolean("preproc.substitute_unicode")) {
-      program = substituteUnicode(program);
-    }
+    // Removing all the Unicode characters makes detecting and reporting their
+    // preprocessor errors quite hard.
+//    if (Preferences.getBoolean("preproc.substitute_unicode")) {
+//      program = substituteUnicode(program);
+//    }
 
     // For 0215, adding } as a legitimate prefix to the import (along with
     // newline and semicolon) for cases where a tab ends with } and an import
