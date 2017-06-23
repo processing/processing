@@ -1,21 +1,30 @@
 0262 (3.3.5 or 3.4)
 X use native Linux file choosers by default
 X   https://github.com/processing/processing/issues/5122
-
-_ Console window losing text
-_   https://github.com/processing/processing/issues/5110
-_   console.lines was set to 2?
+X Console window losing text
+X   https://github.com/processing/processing/issues/5110
 _ Linux 64-bit issues
 _   https://github.com/processing/processing/issues/5111
-_ display=-1 regression? ("could not parse" message)
-_   https://github.com/processing/processing/issues/5118
 
-_ detect errors from curved quotation marks
-_   https://github.com/processing/processing/issues/5133
+contrib
+X display=-1 regression ("could not parse" message)
+X   https://github.com/processing/processing/issues/5118
+X   https://github.com/processing/processing/pull/5141
+
 
 contrib
 _ console hiding button?
 _   https://github.com/processing/processing/pull/5115
+_ make "loadXML(String)" handle "file not found"
+_   https://github.com/processing/processing/pull/5144
+
+_ make setting the window icon automatic, based on files in local dirs
+_   https://github.com/processing/processing/issues/5123
+_   need to make this work behind the scenes instead
+_   create icon.png or have an 'icons' folder with multiple sizes
+
+_ detect errors from curved quotation marks
+_   https://github.com/processing/processing/issues/5133
 
 _ sketch.properties not being written if initial mode is p5.js?
 _ when creating a sketch within non-Java mode, should write the settings file
