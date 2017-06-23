@@ -1,15 +1,4 @@
-0262 (3.3.5 or 3.4)
-X use native Linux file choosers by default
-X   https://github.com/processing/processing/issues/5122
-X Console window losing text
-X   https://github.com/processing/processing/issues/5110
-_ Linux 64-bit issues
-_   https://github.com/processing/processing/issues/5111
-
-contrib
-X display=-1 regression ("could not parse" message)
-X   https://github.com/processing/processing/issues/5118
-X   https://github.com/processing/processing/pull/5141
+0263 (3.3.6 or 3.4)
 
 
 contrib

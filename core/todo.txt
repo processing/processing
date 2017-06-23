@@ -1,10 +1,4 @@
-0262 (3.3.5 or 3.4)
-X default to using native select on all platforms
-
-contrib
-X Add defaultFontOrDeath to OpenGL textWidth
-X   https://github.com/processing/processing/issues/5137
-X   https://github.com/processing/processing/pull/5138
+0263 (3.3.6 or 3.4)
 
 
 _ shell discussion with gohai
