@@ -85,7 +85,7 @@ public class ErrorMessageSimplifier {
   /**
    * Tones down the jargon in the ecj reported errors.
    */
-  public static String getSimplifiedErrorMessage(IProblem iprob) {
+  public static String getSimplifiedErrorMessage(IProblem iprob, String badCode) {
     if (iprob == null) return null;
 
     String args[] = iprob.getArguments();
@@ -97,6 +97,7 @@ public class ErrorMessageSimplifier {
       for (String arg : args) {
         Messages.log("Arg " + arg);
       }
+      Messages.log("Bad code: " + badCode);
     }
 
     String result = null;
@@ -111,6 +112,15 @@ public class ErrorMessageSimplifier {
 
       case IProblem.ParsingErrorDeleteToken:
         if (args.length > 0) {
+          if (args[0].equalsIgnoreCase("Invalid Character")) {
+            result = getErrorMessageForCurlyQuote(badCode);
+          }
+        }
+        break;
+
+      case IProblem.ParsingErrorDeleteTokens:
+        result = getErrorMessageForCurlyQuote(badCode);
+        if (result == null) {
           result = Language.interpolate("editor.status.error_on", args[0]);
         }
         break;
@@ -136,13 +146,16 @@ public class ErrorMessageSimplifier {
 
       case IProblem.ParsingErrorInvalidToken:
         if (args.length > 0) {
-          if (args[1].equals("VariableDeclaratorId")) {
-            if (args[0].equals("int")) {
+          if (args[0].equals("int")) {
+            if (args[1].equals("VariableDeclaratorId")) {
               result = Language.text("editor.status.reserved_words");
             } else {
               result = Language.interpolate("editor.status.error_on", args[0]);
             }
-          } else {
+          } else if (args[0].equalsIgnoreCase("Invalid Character")) {
+            result = getErrorMessageForCurlyQuote(badCode);
+          }
+          if (result == null) {
             result = Language.interpolate("editor.status.error_on", args[0]);
           }
         }
@@ -164,6 +177,9 @@ public class ErrorMessageSimplifier {
           }
         }
         break;
+
+      case IProblem.ParsingErrorReplaceTokens:
+        result = getErrorMessageForCurlyQuote(badCode);
 
       case IProblem.UndefinedConstructor:
         if (args.length == 2) {
@@ -230,6 +246,13 @@ public class ErrorMessageSimplifier {
         }
         break;
 
+      case IProblem.UnterminatedString:
+        if (badCode.contains("“") || badCode.contains("”")) {
+          result = Language.interpolate("editor.status.unterm_string_curly",
+              badCode.replaceAll("[^“”]", ""));
+        }
+        break;
+
       case IProblem.TypeMismatch:
         if (args.length > 1) {
           result = Language.interpolate("editor.status.type_mismatch", args[0], args[1]);
@@ -261,16 +284,17 @@ public class ErrorMessageSimplifier {
           result = Language.interpolate("editor.status.hiding_enclosing_type", args[0]);
         }
         break;
+    }
 
-      default:
-        String message = iprob.getMessage();
-        if (message != null) {
-          // Remove all instances of token
-          // "Syntax error on token 'blah', delete this token"
-          Matcher matcher = tokenRegExp.matcher(message);
-          message = matcher.replaceAll("");
-          result = message;
-        }
+    if (result == null) {
+      String message = iprob.getMessage();
+      if (message != null) {
+        // Remove all instances of token
+        // "Syntax error on token 'blah', delete this token"
+        Matcher matcher = tokenRegExp.matcher(message);
+        message = matcher.replaceAll("");
+        result = message;
+      }
     }
 
     if (DEBUG) {
@@ -320,6 +344,20 @@ public class ErrorMessageSimplifier {
     // This seems to be unreachable and wasn't in PDE.properties.
     // I've added it for 3.0a8, but that seems gross. [fry]
     return Language.interpolate("editor.status.missing.default", c);
+  }
+
+
+  /**
+   * @param badCode The code which may contain curly quotes
+   * @return Friendly error message if there is a curly quote in badCode,
+   *         null otherwise.
+   */
+  static private String getErrorMessageForCurlyQuote(String badCode) {
+    if (badCode.contains("‘") || badCode.contains("’") ||
+        badCode.contains("“") || badCode.contains("”")) {
+      return Language.interpolate("editor.status.bad_curly_quote",
+          badCode.replaceAll("[^‘’“”]", ""));
+    } else return null;
   }
 
 

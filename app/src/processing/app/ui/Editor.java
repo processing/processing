@@ -3106,9 +3106,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   /**
-   * @return the Problem for the first error or warning on 'line'
+   * @return the Problem for the most relevant error or warning on 'line',
+   *         defaulting to the first.
    */
-  Problem findProblem(int line) {
+  protected Problem findProblem(int line) {
     int currentTab = getSketch().getCurrentCodeIndex();
     return problems.stream()
         .filter(p -> p.getTabIndex() == currentTab)

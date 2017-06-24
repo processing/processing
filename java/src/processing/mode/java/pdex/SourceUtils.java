@@ -355,7 +355,7 @@ public class SourceUtils {
         if (depth < 0) {
           JavaProblem problem =
               new JavaProblem("Found one too many } characters without { to match it.",
-                              JavaProblem.ERROR, tabIndex, lineNumber);
+                              JavaProblem.ERROR, tabIndex, lineNumber, 8);
           problem.setPDEOffsets(i - tabStartOffset, i - tabStartOffset + 1);
           problems.add(problem);
           continue tabLoop;
@@ -364,7 +364,7 @@ public class SourceUtils {
       if (depth > 0) {
         JavaProblem problem =
             new JavaProblem("Found one too many { characters without } to match it.",
-                            JavaProblem.ERROR, tabIndex, lineNumber - 1);
+                            JavaProblem.ERROR, tabIndex, lineNumber - 1, 8);
         problem.setPDEOffsets(tabEndOffset - tabStartOffset - 2, tabEndOffset - tabStartOffset - 1);
         problems.add(problem);
       }
