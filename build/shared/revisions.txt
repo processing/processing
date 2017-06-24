@@ -1,3 +1,42 @@
+PROCESSING 3.3.5 (REV 0262) - 23 June 2017
+
+Fixes for a couple problems introduced in the last release.
+
+
+[ everything that went bad ] 
+
++ Console window was only remembering two lines of text 
+  because of a name collision in the preferences handling.
+  https://github.com/processing/processing/issues/5110
+  
++ Something went wrong with the 64-bit Linux release:
+  "libjli.so: cannot open shared object file: No such file or directory" 
+  https://github.com/processing/processing/issues/5111
+
++ "Could not parse -1 for --display" message on some Windows machines
+  https://github.com/processing/processing/issues/5118
+  https://github.com/processing/processing/pull/5141
+
+
+[ some new things hopefully going good ]
+
++ Fix a NullPointerException that showed up with textWidth() and OpenGL
+  https://github.com/processing/processing/issues/5137
+  https://github.com/processing/processing/pull/5138
+
++ Per request, use native file choosers by default on Linux. I'm told
+  that the default Linux file choosers have grown up in the last decade. 
+  I'm trusting the person who is making that claim and making them default.
+  https://github.com/processing/processing/issues/5122
+  To get the old behavior in the Editor, change preferences.txt to say:
+  chooser.files.native = false
+  Or in your code, add this line:
+  useNativeSelect = false;
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.3.4 (REV 0261) - 3 June 2017
 
 Several useful bug fixes and improvements. Some big, many small.

@@ -1,3 +1,17 @@
+0262 (3.3.5 or 3.4)
+X use native Linux file choosers by default
+X   https://github.com/processing/processing/issues/5122
+X Console window losing text
+X   https://github.com/processing/processing/issues/5110
+X Linux 64-bit issues
+X   https://github.com/processing/processing/issues/5111
+
+contrib
+X display=-1 regression ("could not parse" message)
+X   https://github.com/processing/processing/issues/5118
+X   https://github.com/processing/processing/pull/5141
+
+
 0261 (3.3.4)
 X redo console handling to not use Timer, fixing freeze-up problems
 o   https://github.com/processing/processing/pull/4935

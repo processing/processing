@@ -1,5 +1,4 @@
-0262 (3.3.5 or 3.4)
-X default to using native select on all platforms
+0263 (3.3.6 or 3.4)
 
 
 _ shell discussion with gohai
