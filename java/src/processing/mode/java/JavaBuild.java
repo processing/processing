@@ -520,6 +520,7 @@ public class JavaBuild {
   protected boolean ignorableImport(String pkg) {
     if (pkg.startsWith("java.")) return true;
     if (pkg.startsWith("javax.")) return true;
+    if (pkg.startsWith("javafx.")) return true;
 
     if (pkg.startsWith("processing.core.")) return true;
     if (pkg.startsWith("processing.data.")) return true;
