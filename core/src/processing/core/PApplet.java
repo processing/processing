@@ -3550,15 +3550,25 @@ public class PApplet implements PConstants {
    * Same as exec() above, but prefixes the call with a shell.
    */
   static public int shell(StringList stdout, StringList stderr, String... args) {
-    if (platform == WINDOWS) {
-      throw new RuntimeException("Not yet implemented.");
-    }
-    String shell = System.getenv("SHELL");  // or just /bin/sh?
+    String shell;
+    String runCmd;
     StringList argList = new StringList();
-    for (String arg : args) {
-      argList.append(shellQuoted(arg));
+    if (platform == WINDOWS) {
+      shell = System.getenv("COMSPEC");
+      runCmd = "/C";
+    } else {
+      shell = "/bin/sh";
+      runCmd = "-c";
+      // attempt emulate the behavior of an interactive shell
+      // can't use -i or -l since the version of bash shipped with macOS does not support this together with -c
+      // also we want to make sure no motd or similar gets returned as stdout
+      argList.append("if [ -f /etc/profile ]; then . /etc/profile >/dev/null 2>&1; fi;");
+      argList.append("if [ -f ~/.bash_profile ]; then . ~/.bash_profile >/dev/null 2>&1; elif [ -f ~/.bash_profile ]; then . ~/.bash_profile >/dev/null 2>&1; elif [ -f ~/.profile ]; then ~/.profile >/dev/null 2>&1; fi;");
     }
-    return exec(stdout, stderr, shell, "-c", argList.join(" "));
+    for (String arg : args) {
+      argList.append(arg);
+    }
+    return exec(stdout, stderr, shell, runCmd, argList.join(" "));
   }
 
 

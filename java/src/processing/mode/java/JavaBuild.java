@@ -53,6 +53,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.data.StringList;
 import processing.data.XML;
+import processing.mode.java.pdex.SourceUtils;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PreprocessorResult;
 import processing.mode.java.preproc.SurfaceInfo;
@@ -281,27 +282,30 @@ public class JavaBuild {
       //System.out.println(java.getAbsolutePath());
 //      System.out.println(bigCode);
 
-      if (msg.contains("expecting RCURLY")) {
-      //if (msg.equals("expecting RCURLY, found 'null'")) {
-        // This can be a problem since the error is sometimes listed as a line
-        // that's actually past the number of lines. For instance, it might
-        // report "line 15" of a 14 line program. Added code to highlightLine()
-        // inside Editor to deal with this situation (since that code is also
-        // useful for other similar situations).
-        throw new SketchException("Found one too many { characters " +
-                                  "without a } to match it.",
-                                  errorFile, errorLine, re.getColumn(), false);
-      }
+      if (msg.contains("expecting RCURLY") || msg.contains("expecting LCURLY")) {
+        for (int i = 0; i < sketch.getCodeCount(); i++) {
+          SketchCode sc = sketch.getCode(i);
+          if (sc.isExtension("pde")) {
+            String s = sc.getProgram();
+            int[] braceTest = SourceUtils.checkForMissingBraces(
+                SourceUtils.scrubCommentsAndStrings(s) + "\n", 0, s.length()+1);
+            if (braceTest[0] == 0) continue;
 
-      if (msg.contains("expecting LCURLY")) {
-        System.err.println(msg);
-        String suffix = ".";
-        String[] m = PApplet.match(msg, "found ('.*')");
-        if (m != null) {
-          suffix = ", not " + m[1] + ".";
+            // Completely ignoring the errorFile/errorLine given since it's
+            // likely to be the wrong tab. For the same reason, I'm not showing
+            // the result of PApplet.match(msg, "found ('.*')") on missing
+            // LCURLY.
+            throw new SketchException(braceTest[0] > 0
+              ? "Found one too many { characters without a } to match it."
+              : "Found one too many } characters without a { to match it.",
+              i, braceTest[1], braceTest[2], false);
+          }
         }
-        throw new SketchException("Was expecting a { character" + suffix,
-                                   errorFile, errorLine, re.getColumn(), false);
+        // If we're still here, there's the right brackets, just not in the
+        // right place. Passing on the original error.
+        throw new SketchException(
+            msg.replace("LCURLY", "{").replace("RCURLY", "}"),
+            errorFile, errorLine, re.getColumn(), false);
       }
 
       if (msg.indexOf("expecting RBRACK") != -1) {

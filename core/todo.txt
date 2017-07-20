@@ -1,9 +1,10 @@
-0262 (3.3.5 or 3.4)
-X default to using native select on all platforms
+0263 (3.3.6 or 3.4)
 
 
-_ shell discussion with gohai
-_   https://github.com/processing/processing/pull/5082
+contrib
+X shell discussion with gohai
+X   https://github.com/processing/processing/pull/5082
+
 
 _ add separator option to loadTable() 
 _   https://github.com/processing/processing/issues/5068

@@ -11,6 +11,7 @@ en  # English, English
 el  # Greek
 es  # Spanish
 fr  # French, Français, Langue française
+it  # Italiano, Italian
 ja  # Japanese
 ko  # Korean
 nl  # Dutch, Nederlands
