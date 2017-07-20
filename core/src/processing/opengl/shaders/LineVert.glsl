@@ -52,7 +52,8 @@ void main() {
   // formula to convert from clip space (range -1..1) to screen space (range 0..[width or height])
   // screen_p = (p.xy/p.w + <1,1>) * 0.5 * viewport.zw
 
-  // prevent dividing by W by transforming the tangent formula
+  // prevent division by W by transforming the tangent formula (div by 0 causes
+  // the line to disappear, see https://github.com/processing/processing/issues/5183)
   // t = screen_q - screen_p
   //
   // tangent is normalized and we don't care which direction it points to (+-)
@@ -66,7 +67,8 @@ void main() {
   // t = +- normalize( ((q.xy*p.w - p.xy*q.w) / (p.w*q.w)) * 0.5 * viewport.zw )
   //
   // remove the common scalar divisor/factor, not needed due to normalize and +-
-  // (keep viewport - can't remove because it has different components for x and y)
+  // (keep viewport - can't remove because it has different components for x and y
+  //  and corrects for aspect ratio, see https://github.com/processing/processing/issues/5181)
   // t = +- normalize( (q.xy*p.w - p.xy*q.w) * viewport.zw )
 
   vec2 tangent = normalize((q.xy*p.w - p.xy*q.w) * viewport.zw);
@@ -79,6 +81,7 @@ void main() {
 
   // Perspective ---
   // convert from world to clip by multiplying with projection scaling factor
+  // to get the right thickness (see https://github.com/processing/processing/issues/5182)
   // invert Y, projections in Processing invert Y
   vec2 perspScale = (projectionMatrix * vec4(1, -1, 0, 0)).xy;
 
