@@ -34,54 +34,61 @@ attribute vec4 color;
 attribute vec4 direction;
 
 varying vec4 vertColor;
-
-vec3 clipToWindow(vec4 clip, vec4 viewport) {
-  vec3 post_div = clip.xyz / clip.w;
-  vec2 xypos = (post_div.xy + vec2(1.0, 1.0)) * 0.5 * viewport.zw;
-  return vec3(xypos, post_div.z * 0.5 + 0.5);
-}
-  
-vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
-  vec2 xypos = (window / viewport.zw) * 2.0;
-  return vec4(xypos, 0.0, 0.0) * clip_w;
-}  
   
 void main() {
   vec4 posp = modelviewMatrix * position;
-    
+  vec4 posq = modelviewMatrix * (position + vec4(direction.xyz, 0));
+
   // Moving vertices slightly toward the camera
   // to avoid depth-fighting with the fill triangles.
   // Discussed here:
   // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
   posp.xyz = posp.xyz * scale;
-  vec4 clipp = projectionMatrix * posp;
-  float thickness = direction.w;
-  
-  if (thickness != 0.0) {  
-    vec4 posq = posp + modelviewMatrix * vec4(direction.xyz, 0);
-    posq.xyz = posq.xyz * scale;  
-    vec4 clipq = projectionMatrix * posq; 
-  
-    vec3 window_p = clipToWindow(clipp, viewport); 
-    vec3 window_q = clipToWindow(clipq, viewport); 
-    vec3 tangent = window_q - window_p;
-    
-    vec2 perp = normalize(vec2(-tangent.y, tangent.x));
-    vec2 offset = perp * thickness;
+  posq.xyz = posq.xyz * scale;
 
-    if (0 < perspective) {
-      // Perspective correction (lines will look thiner as they move away 
-      // from the view position).  
-      gl_Position.xy = clipp.xy + offset.xy;
-      gl_Position.zw = clipp.zw;
-    } else {
-      // No perspective correction.	
-      vec4 offsetp = windowToClipVector(offset, viewport, clipp.w);
-      gl_Position = clipp + offsetp;
-    }    
-  } else {
-    gl_Position = clipp;
-  }
-  
+  vec4 p = projectionMatrix * posp;
+  vec4 q = projectionMatrix * posq;
+
+  // formula to convert from clip space (range -1..1) to screen space (range 0..[width or height])
+  // screen_p = (p.xy/p.w + <1,1>) * 0.5 * viewport.zw
+
+  // prevent dividing by W by transforming the tangent formula
+  // t = screen_q - screen_p
+  //
+  // tangent is normalized and we don't care which direction it points to (+-)
+  // t = +- normalize( screen_q - screen_p )
+  // t = +- normalize( (q.xy/q.w+<1,1>)*0.5*viewport.zw - (p.xy/p.w+<1,1>)*0.5*viewport.zw )
+  //
+  // extract common factor, <1,1> - <1,1> cancels out
+  // t = +- normalize( (q.xy/q.w - p.xy/p.w) * 0.5 * viewport.zw )
+  //
+  // convert to common divisor
+  // t = +- normalize( ((q.xy*p.w - p.xy*q.w) / (p.w*q.w)) * 0.5 * viewport.zw )
+  //
+  // remove the common scalar divisor/factor, not needed due to normalize and +-
+  // (keep viewport - can't remove because it has different components for x and y)
+  // t = +- normalize( (q.xy*p.w - p.xy*q.w) * viewport.zw )
+
+  vec2 tangent = normalize((q.xy*p.w - p.xy*q.w) * viewport.zw);
+
+  // flip tangent to normal (it's already normalized)
+  vec2 normal = vec2(-tangent.y, tangent.x);
+
+  float thickness = direction.w;
+  vec2 offset = normal * thickness;
+
+  // Perspective ---
+  // convert from world to clip by multiplying with projection scaling factor
+  // invert Y, projections in Processing invert Y
+  vec2 perspScale = (projectionMatrix * vec4(1, -1, 0, 0)).xy;
+
+  // No Perspective ---
+  // multiply by W (to cancel out division by W later in the pipeline) and
+  // convert from screen to clip (derived from clip to screen above)
+  vec2 noPerspScale = p.w / (0.5 * viewport.zw);
+
+  gl_Position.xy = p.xy + offset.xy * mix(noPerspScale, perspScale, perspective > 0);
+  gl_Position.zw = p.zw;
+
   vertColor = color;
 }
