@@ -333,43 +333,57 @@ public class SourceUtils {
 
   static public List<JavaProblem> checkForMissingBraces(StringBuilder p, int[] tabStartOffsets) {
     List<JavaProblem> problems = new ArrayList<>(0);
-    tabLoop: for (int tabIndex = 0; tabIndex < tabStartOffsets.length; tabIndex++) {
+    for (int tabIndex = 0; tabIndex < tabStartOffsets.length; tabIndex++) {
       int tabStartOffset = tabStartOffsets[tabIndex];
       int tabEndOffset = (tabIndex < tabStartOffsets.length - 1) ?
           tabStartOffsets[tabIndex + 1] : p.length();
-      int depth = 0;
-      int lineNumber = 0;
-      for (int i = tabStartOffset; i < tabEndOffset; i++) {
-        char ch = p.charAt(i);
-        switch (ch) {
-          case '{':
-            depth++;
-            break;
-          case '}':
-            depth--;
-            break;
-          case '\n':
-            lineNumber++;
-            break;
-        }
-        if (depth < 0) {
-          JavaProblem problem =
-              new JavaProblem("Found one too many } characters without { to match it.",
-                              JavaProblem.ERROR, tabIndex, lineNumber);
-          problem.setPDEOffsets(i - tabStartOffset, i - tabStartOffset + 1);
-          problems.add(problem);
-          continue tabLoop;
-        }
-      }
-      if (depth > 0) {
+      int[] braceResult = checkForMissingBraces(p, tabStartOffset, tabEndOffset);
+      if (braceResult[0] != 0) {
         JavaProblem problem =
-            new JavaProblem("Found one too many { characters without } to match it.",
-                            JavaProblem.ERROR, tabIndex, lineNumber - 1);
-        problem.setPDEOffsets(tabEndOffset - tabStartOffset - 2, tabEndOffset - tabStartOffset - 1);
-        problems.add(problem);
+            new JavaProblem(braceResult[0] < 0
+                ? "Found one too many } characters without { to match it."
+                : "Found one too many { characters without } to match it.",
+                JavaProblem.ERROR, tabIndex, braceResult[1]);
+          problem.setPDEOffsets(braceResult[3], braceResult[3] + 1);
+          problems.add(problem);
       }
     }
     return problems;
   }
 
+
+  /**
+   * Checks a single code fragment (such as a tab) for non-matching braces.
+   * Broken out to allow easy use in JavaBuild.
+   * @param c Program code scrubbed of comments and string literals.
+   * @param start Start index, inclusive.
+   * @param end End index, exclusive.
+   * @return {@code int[4]} Depth at which the loop stopped, followed by the
+   *         line number, column, and string index (within the range) at which
+   *         an error was found, if any.
+   */
+  static public int[] checkForMissingBraces(CharSequence c, int start, int end) {
+    int depth = 0;
+    int lineNumber = 0;
+    int lineStart = start;
+    for (int i = start; i < end; i++) {
+      char ch = c.charAt(i);
+      switch (ch) {
+        case '{':
+          depth++;
+          break;
+        case '}':
+          depth--;
+          break;
+        case '\n':
+          lineNumber++;
+          lineStart = i;
+          break;
+      }
+      if (depth < 0) {
+        return new int[] {depth, lineNumber, i - lineStart, i - start};
+      }
+    }
+    return new int[] {depth, lineNumber - 1, end - lineStart - 2, end - start - 2};
+  }
 }

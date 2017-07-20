@@ -2136,12 +2136,25 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // log("Commented: " + commented);
 
-    // This is the line start offset of the first line, which is added to
-    // all other lines while adding a comment. Required when commenting
+    // This is the min line start offset of the selection, which is added to
+    // all lines while adding a comment. Required when commenting
     // lines which have uneven whitespaces in the beginning. Makes the
     // commented lines look more uniform.
     int lso = Math.abs(textarea.getLineStartNonWhiteSpaceOffset(startLine)
         - textarea.getLineStartOffset(startLine));
+
+    if (!commented) {
+      // get min line start offset of all selected lines
+      for (int line = startLine+1; line <= stopLine; line++) {
+        String lineText = textarea.getLineText(line);
+        if (lineText.trim().length() == 0) {
+          continue; //ignore blank lines
+        }
+        int so = Math.abs(textarea.getLineStartNonWhiteSpaceOffset(line)
+                              - textarea.getLineStartOffset(line));
+        lso = Math.min(lso, so);
+      }
+    }
 
     for (int line = startLine; line <= stopLine; line++) {
       int location = textarea.getLineStartNonWhiteSpaceOffset(line);
