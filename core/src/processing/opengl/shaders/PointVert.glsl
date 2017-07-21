@@ -49,7 +49,7 @@ void main() {
   // convert from screen to clip (derived from clip to screen above)
   vec2 noPerspScale = clip.w / (0.5 * viewport.zw);
 
-  gl_Position.xy = clip.xy + offset.xy * mix(noPerspScale, perspScale, perspective > 0);
+  gl_Position.xy = clip.xy + offset.xy * mix(noPerspScale, perspScale, float(perspective > 0));
   gl_Position.zw = clip.zw;
   
   vertColor = color;
