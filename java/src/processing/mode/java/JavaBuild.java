@@ -301,10 +301,18 @@ public class JavaBuild {
           }
         }
         // If we're still here, there's the right brackets, just not in the
-        // right place. Passing on the original error.
-        throw new SketchException(
-            msg.replace("LCURLY", "{").replace("RCURLY", "}"),
-            errorFile, errorLine, re.getColumn(), false);
+        // right place.
+        String[] m = PApplet.match(msg, "expecting [LR]CURLY, found (.*)");
+        if (m != null) {
+          // In this case, the fact that you could say }/{ to make valid code
+          // probably isn't the point. Eg. a return statement outside a method.
+          throw new SketchException(m[1] + " seems wrong here.",
+              errorFile, errorLine, re.getColumn(), false);
+        } else { // Is this possible?
+          throw new SketchException(
+              msg.replace("LCURLY", "{").replace("RCURLY", "}"),
+              errorFile, errorLine, re.getColumn(), false);
+        }
       }
 
       if (msg.indexOf("expecting RBRACK") != -1) {
