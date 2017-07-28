@@ -6,6 +6,8 @@ X shell discussion with gohai
 X   https://github.com/processing/processing/pull/5082
 
 
+_ when doing createFont, can we add it to the os fonts available?
+
 _ add separator option to loadTable() 
 _   https://github.com/processing/processing/issues/5068
 

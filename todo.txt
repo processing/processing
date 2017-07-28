@@ -1,8 +1,19 @@
 0263 (3.3.6 or 3.4)
+X update to Java 8u144
 
 contrib
 X add Italian translation
 X   https://github.com/processing/processing/pull/5169
+X Wrong tab for missing brace
+X   https://github.com/processing/processing/pull/5180
+X   https://github.com/processing/processing/issues/5165
+X Fix comment/uncomment adding slashes at wrong indent
+X   https://github.com/processing/processing/issues/5171
+X   https://github.com/processing/processing/pull/5185
+
+
+_ movie maker a little broken
+_   https://github.com/processing/processing/issues/5168
 
 contrib
 _ console hiding button?
@@ -12,7 +23,6 @@ _   https://github.com/processing/processing/pull/5144
 _ detect errors from curved quotation marks
 _   https://github.com/processing/processing/issues/5133
 _   https://github.com/processing/processing/pull/5152
-
 
 _ make setting the window icon automatic, based on files in local dirs
 _   https://github.com/processing/processing/issues/5123
