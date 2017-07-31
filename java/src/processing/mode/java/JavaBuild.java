@@ -819,7 +819,13 @@ public class JavaBuild {
       File resourcesFolder = new File(contentsFolder, "Resources");
       Util.copyDir(new File(contentsOrig, "Resources/en.lproj"),
                    new File(resourcesFolder, "en.lproj"));
-      Util.copyFile(mode.getContentFile("application/sketch.icns"),
+
+      String = SKETCH_ICNS = "sketch.icns";
+      File bundleIconFile = new File(sketch.getFolder(), SKETCH_ICNS);
+      if (!bundleIconFile.exists()) {
+        bundleIconFile = mode.getContentFile("application/sketch.icns");
+      }
+      Util.copyFile(bundleIconFile,
                     new File(resourcesFolder, "sketch.icns"));
 
     } else if (exportPlatform == PConstants.LINUX) {
