@@ -1557,7 +1557,7 @@ public class PApplet implements PConstants {
       Method method = c.getMethod(name, new Class[] {});
       meth.add(o, method);
 
-    } catch (NoSuchMethodException nsme) {
+    } catch (NoSuchMethodException name) {
       die("There is no public " + name + "() method in the class " +
           o.getClass().getName());
 
@@ -1578,7 +1578,7 @@ public class PApplet implements PConstants {
       Method method = c.getMethod(name, cargs);
       meth.add(o, method);
 
-    } catch (NoSuchMethodException nsme) {
+    } catch (NoSuchMethodException name) {
       die("There is no public " + name + "() method in the class " +
           o.getClass().getName());
 
