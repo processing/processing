@@ -2254,11 +2254,15 @@ public class PApplet implements PConstants {
 //      if (!primary) {
 //        surface.initImage(pg, w, h);
 //      }
-      if(w <= 0 and h <= 0) { //setting size to 0 if size is invalid
-        pg.setSize(0, 0);
-      } else {
-        pg.setSize(w, h);
+
+      //setting w/h to 0 if it is is invalid
+      if(w <= 0){
+        w = 0;
       }
+      if(h <= 0) {
+        h = 0;
+      }
+      pg.setSize(w, h);
 
 
       // everything worked, return it
