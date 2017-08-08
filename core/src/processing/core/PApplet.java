@@ -3572,6 +3572,7 @@ public class PApplet implements PConstants {
   }
 
 
+  /*
   static private final String shellQuoted(String arg) {
     if (arg.indexOf(' ') != -1) {
       // check to see if already quoted
@@ -3591,6 +3592,7 @@ public class PApplet implements PConstants {
     }
     return arg;
   }
+  */
 
 
   //////////////////////////////////////////////////////////////

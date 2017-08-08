@@ -1,6 +1,9 @@
 0263 (3.3.6 or 3.4)
 X update to Java 8u144
 
+_ data folder not exporting on macOS?
+_   https://github.com/processing/processing/issues/5207
+
 contrib
 X add Italian translation
 X   https://github.com/processing/processing/pull/5169
@@ -10,7 +13,9 @@ X   https://github.com/processing/processing/issues/5165
 X Fix comment/uncomment adding slashes at wrong indent
 X   https://github.com/processing/processing/issues/5171
 X   https://github.com/processing/processing/pull/5185
-
+X typo in German translation
+X   https://github.com/processing/processing/pull/5195
+X   https://github.com/processing/processing/issues/5187
 
 _ movie maker a little broken
 _   https://github.com/processing/processing/issues/5168
