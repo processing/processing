@@ -60,11 +60,28 @@ import processing.app.Preferences;
 import processing.core.PApplet;
 import processing.data.StringDict;
 
+/**
+ * The Welcome class creates a welcome window upon startup
+ * 
+ * It provides links to changes Processing 3
+ *
+ * If the user is migrating from Processing 2, it provides a
+ * prompt asking whether to use the same sketchbook folder
+ * as before, or use a new one.
+ *
+ */
 
 public class Welcome extends JFrame {
   Base base;
-  StringDict dict; // used for submitting form values
+  StringDict dict;  // used for submitting form values
 
+  /**
+   * Constructor for the Welcome window
+   *
+   * @param Base the current Processing Base
+   * @param sketchbook true if the user is migrating from Processing 2
+   * @throws IOException if resources cannot be found
+   */
   public Welcome(Base base, boolean sketchbook) throws IOException {
     this.base = base;
     dict = new StringDict();
@@ -90,7 +107,6 @@ public class Welcome extends JFrame {
     
     // color used for boxes with special information
     final Color insetColor = new Color(224, 253, 251);
-
     // color used in hyperlinks
     final Color linkColor = new Color(44, 123, 181);
 
@@ -102,12 +118,12 @@ public class Welcome extends JFrame {
     Font processingSansPro;
 
     // load fonts
-    try{
+    try {
         processingSemibold = Font.createFont(Font.TRUETYPE_FONT,
           Base.getLibFile("/fonts/ProcessingSansPro-Semibold.ttf"));
         processingSansPro = Font.createFont(Font.TRUETYPE_FONT,
           Base.getLibFile("/fonts/ProcessingSansPro-Regular.ttf"));
-    } catch (FontFormatException e){
+    } catch (FontFormatException e) {
         processingSemibold = UIManager.getDefaults().getFont("Label.font");
         processingSansPro = UIManager.getDefaults().getFont("Label.font");
     }
@@ -129,7 +145,10 @@ public class Welcome extends JFrame {
     
     int width = sketchbook ? 500 : 400;
     int height = sketchbook ? 400 : 250;
-    if(Toolkit.highResImages()){
+    
+    // resizes for hidpi displays
+    // should fix https://github.com/processing/processing/issues/4896
+    if (Toolkit.highResImages()) {
       width *= 2;
       height *= 2;
     }
@@ -157,7 +176,7 @@ public class Welcome extends JFrame {
     readNew.setCursor(new Cursor(Cursor.HAND_CURSOR));
     readNew.addMouseListener(new MouseAdapter() {
       @Override
-      public void mouseClicked(MouseEvent e){
+      public void mouseClicked(MouseEvent e) {
         Platform.openURL(whatsNewUrl);
       }
     });
@@ -201,7 +220,8 @@ public class Welcome extends JFrame {
     c.gridy = 2;
     panel.add(compatible, c);
 
-    if(sketchbook){
+    //if the user needs to choose a new sketchbook
+    if(sketchbook) {
       // create new sketchbook prompt
       JTextArea newSketchbookPrompt = new JTextArea(newSketchbookText);
       newSketchbookPrompt.setFont(bodyFont);
@@ -235,10 +255,10 @@ public class Welcome extends JFrame {
       sketchbookGroup.add(createNew);
       createNew.setSelected(true);
       createNew.setFont(bodyFont);
-      createNew.addItemListener(new ItemListener(){
+      createNew.addItemListener(new ItemListener() {
         @Override
-        public void itemStateChanged(ItemEvent e){
-          if(e.getStateChange() == ItemEvent.SELECTED){
+        public void itemStateChanged(ItemEvent e) {
+          if (e.getStateChange() == ItemEvent.SELECTED) {
             dict.set("sketchbook", "create_new");
           }
         }
@@ -253,10 +273,10 @@ public class Welcome extends JFrame {
       JRadioButton useOld = new JRadioButton("<html>" + useOldSketchbookText);
       sketchbookGroup.add(useOld);
       useOld.setFont(bodyFont);
-      useOld.addItemListener(new ItemListener(){
+      useOld.addItemListener(new ItemListener() {
         @Override
-        public void itemStateChanged(ItemEvent e){
-          if(e.getStateChange() == ItemEvent.SELECTED){
+        public void itemStateChanged(ItemEvent e) {
+          if (e.getStateChange() == ItemEvent.SELECTED) {
             dict.set("sketchbook", "use_existing");
           }
         }
@@ -272,16 +292,17 @@ public class Welcome extends JFrame {
     }
    
     // show welcome each time checkbox
+    // fixes https://github.com/processing/processing/issues/3912
     JCheckBox showEachTime = new JCheckBox("<html>" + showEachTimeText);
     showEachTime.setSelected(true);
     showEachTime.setFont(bodyFont);
-    showEachTime.addItemListener(new ItemListener(){
+    showEachTime.addItemListener(new ItemListener() {
       @Override
-      public void itemStateChanged(ItemEvent e){
-        if(e.getStateChange() == ItemEvent.SELECTED){
+      public void itemStateChanged(ItemEvent e) {
+        if (e.getStateChange() == ItemEvent.SELECTED) {
           dict.set("show_each_time", "on");
         }
-        else if(e.getStateChange() == ItemEvent.DESELECTED){
+        else if (e.getStateChange() == ItemEvent.DESELECTED) {
           dict.set("show_each_time", "off");
         }
       }
@@ -295,11 +316,11 @@ public class Welcome extends JFrame {
     // get started (submit) button
     JButton getStarted = new JButton("Get Started");
     getStarted.setFont(bodyFont);
-    getStarted.addActionListener(new ActionListener(){
-        @Override
-        public void actionPerformed(ActionEvent e){
-            handleSubmit(dict);
-        }
+    getStarted.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        handleSubmit(dict);
+      }
     });
     c.fill = GridBagConstraints.NONE;
     c.gridx = 0;
@@ -311,13 +332,14 @@ public class Welcome extends JFrame {
     pack();
     
     // adds submit function to closing the window
-    addWindowListener(new WindowAdapter(){
-        @Override
-        public void windowClosing(WindowEvent e){
-            if(!sketchbook){
-                handleSubmit(dict);
-            }
+    // fixes https://github.com/processing/processing/issues/3911
+    addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+        if (!sketchbook) {
+          handleSubmit(dict);
         }
+      }
     });
 
     // center window on the screen
@@ -326,6 +348,13 @@ public class Welcome extends JFrame {
     setVisible(true);
   }
 
+
+  /**
+   * Handles the form submission, called when 'Get Started' button is clicked
+   * or when the window is closed
+   *
+   * @param dict a StringDict containing form options
+   */
   public void handleSubmit(StringDict dict) {
     // sketchbook = "create_new" or "use_existing"
     // show_each_time = "on" or <not param>
@@ -353,7 +382,12 @@ public class Welcome extends JFrame {
   }
 
 
-  /* Callback for the folder selector. */
+  /**
+   * Callback for the folder selector, used when user chooses a new sketchbook
+   * for Processing 3
+   *
+   * @param folder the path to the new sketcbook
+   */
   public void sketchbookCallback(File folder) {
     if (folder != null) {
       if (base != null) {
@@ -365,6 +399,9 @@ public class Welcome extends JFrame {
   }
 
 
+  /**
+   * Closes the window
+   */
   public void handleClose() {
     dispose();
   }
