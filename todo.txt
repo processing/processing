@@ -248,12 +248,8 @@ _   https://github.com/processing/processing/issues/136
 
 
 welcome
-_ click "show this welcome" text to check/uncheck the box
-_   https://github.com/processing/processing/issues/3912
-_ submit the form (as if 'get started' clicked) when closing the window
-_   whether hitting ESC or the close box on the window
-_   https://github.com/processing/processing/issues/3911
-
+_ resize welcome screen on hidpi displays
+_   https://github.com/processing/processing/issues/4896
 
 fonts
 _ fonts are still really ugly (on non-retina)
