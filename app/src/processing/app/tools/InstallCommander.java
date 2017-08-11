@@ -60,13 +60,13 @@ public class InstallCommander implements Tool {
       final String secondary =
         "This will install the processing-java program, which is capable " +
         "of building and running Java Mode sketches from the command line. " +
-        "Click “Yes” to install it for all users (an administrator password " +
-        "is required), or “No” to place the program in your home directory. " +
+        "Would you like to install it for all users ?" +
         "If you rename or move Processing.app, " +
         "you'll need to reinstall the tool.";
 
-      int result =
-        JOptionPane.showConfirmDialog(editor,
+	Object[] options = {"All users", "This user only", "Cancel"};
+	int result =
+        	JOptionPane.showOptionDialog(editor,
                                       "<html> " +
                                       "<head> <style type=\"text/css\">"+
                                       "b { font: 13pt \"Lucida Grande\" }"+
@@ -75,10 +75,13 @@ public class InstallCommander implements Tool {
                                       "<b>" + primary + "</b>" +
                                       "<p>" + secondary + "</p>",
                                       "Commander",
-                                      JOptionPane.YES_NO_CANCEL_OPTION,
-                                      JOptionPane.QUESTION_MESSAGE);
+                                      JOptionPane.DEFAULT_OPTION,
+                                      JOptionPane.QUESTION_MESSAGE,
+                                      null,
+                                      options,
+                                      options[0]);
 
-      if (result == JOptionPane.CANCEL_OPTION) {
+      if (result == 2) {
         return;
       }
 
@@ -115,7 +118,7 @@ public class InstallCommander implements Tool {
       file.setExecutable(true);
       String sourcePath = file.getAbsolutePath();
 
-      if (result == JOptionPane.YES_OPTION) {
+      if (result == 0) {
         // Moving to /usr/local/bin instead of /usr/bin for compatibility
         // with OS X 10.11 and its "System Integrity Protection"
         // https://github.com/processing/processing/issues/3497
@@ -130,7 +133,7 @@ public class InstallCommander implements Tool {
           "do shell script \"" + shellScript + "\" with administrator privileges";
         PApplet.exec(new String[] { "osascript", "-e", appleScript });
 
-      } else if (result == JOptionPane.NO_OPTION) {
+      } else if (result == 1) {
         File targetFile = new File(System.getProperty("user.home"), "processing-java");
         String targetPath = targetFile.getAbsolutePath();
         if (targetFile.exists()) {
