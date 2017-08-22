@@ -31,6 +31,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map.Entry;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -489,13 +490,27 @@ public class Base {
       System.out.println("Attempting to load " + modeClass + " with resources at " + modeResourcePath);
       ModeContribution mc = ModeContribution.load(this, new File(modeResourcePath), modeClass);
       contribModes.add(mc);
-      known.remove(mc);
+      File key = getFileForContrib(mc, known);
+      if (key != null) {
+        known.remove(key);
+      }
     }
     if (known.size() != 0) {
       for (ModeContribution mc : known.values()) {
         System.out.println("Extraneous Mode entry: " + mc.getName());
       }
     }
+  }
+
+
+  static private File getFileForContrib(ModeContribution contrib,
+                                 Map<File, ModeContribution> known) {
+    for (Entry<File, ModeContribution> entry : known.entrySet()) {
+      if (entry.getValue() == contrib) {
+        return entry.getKey();
+      }
+    }
+    return null;
   }
 
 
