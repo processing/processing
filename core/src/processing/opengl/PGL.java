@@ -1989,8 +1989,9 @@ public abstract class PGL {
     String[] src = new String[src0.length+offset];
     for (int i = 0; i < src0.length; i++) {
       String line = src0[i];
-      if (line.contains("#version")) {
-        line = "";
+      int versionIndex = line.indexOf("#version");
+      if (versionIndex >= 0) {
+        line = line.substring(0, versionIndex);
       }
       for (int j = 0; j < search.length; j++) {
         line = search[j].matcher(line).replaceAll(replace[j]);
@@ -2003,8 +2004,12 @@ public abstract class PGL {
   protected static boolean containsVersionDirective(String[] shSrc) {
     for (int i = 0; i < shSrc.length; i++) {
       String line = shSrc[i];
-      if (line.contains("#version")) {
-        return true;
+      int versionIndex = line.indexOf("#version");
+      if (versionIndex >= 0) {
+        int commentIndex = line.indexOf("//");
+        if (commentIndex < 0 || versionIndex < commentIndex) {
+          return true;
+        }
       }
     }
     return false;

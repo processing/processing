@@ -32,24 +32,25 @@ attribute vec2 offset;
 
 varying vec4 vertColor;
 
-vec4 windowToClipVector(vec2 window, vec4 viewport, float clipw) {
-  vec2 xypos = (window / viewport.zw) * 2.0;
-  return vec4(xypos, 0.0, 0.0) * clipw;
-}  
-
 void main() {
   vec4 pos = modelviewMatrix * position;
   vec4 clip = projectionMatrix * pos;
-  
-  if (0 < perspective) {
-    // Perspective correction (points will look thiner as they move away 
-    // from the view position).
-    gl_Position = clip + projectionMatrix * vec4(offset.xy, 0, 0);
-  } else {
-    // No perspective correction.	
-    vec4 cloff = windowToClipVector(offset.xy, viewport, clip.w);
-    gl_Position = clip + cloff;
-  }
+
+  // Perspective ---
+  // convert from world to clip by multiplying with projection scaling factor
+  // invert Y, projections in Processing invert Y
+  vec2 perspScale = (projectionMatrix * vec4(1, -1, 0, 0)).xy;
+
+  // formula to convert from clip space (range -1..1) to screen space (range 0..[width or height])
+  // screen_p = (p.xy/p.w + <1,1>) * 0.5 * viewport.zw
+
+  // No Perspective ---
+  // multiply by W (to cancel out division by W later in the pipeline) and
+  // convert from screen to clip (derived from clip to screen above)
+  vec2 noPerspScale = clip.w / (0.5 * viewport.zw);
+
+  gl_Position.xy = clip.xy + offset.xy * mix(noPerspScale, perspScale, float(perspective > 0));
+  gl_Position.zw = clip.zw;
   
   vertColor = color;
 }
