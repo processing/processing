@@ -1,0 +1,60 @@
+.TH PROCESSING-JAVA 1 . processing
+.SH NAME
+processing-java \- command-line tool for Processing (Java Mode)
+.SH SYNOPSIS
+.B processing-java
+[\fI\,OPTIONS\/\fR]...
+.SH DESCRIPTION
+Processing is a flexible software sketchbook and a language for learning how to code within the context of the visual arts.
+Since 2001, Processing has promoted software literacy within the visual arts and visual literacy within technology.
+There are tens of thousands of students, artists, designers, researchers, and hobbyists who use Processing for learning and prototyping.
+.PP
+This command is the command-line tool.
+.SH OPTIONS
+.TP
+.BR \-\-help
+Show this help text. Congratulations.
+.TP
+.BR \-\-sketch =\fIname\fR
+Specify the sketch folder (required)
+.TP
+.BR \-\-output =\fIname\fR
+Specify the output folder (optional and cannot be the same as the sketch folder.)
+.TP
+.B \-\-force
+The sketch will not build if the output folder already exists, because the contents will be replaced.
+This option erases the folder first. Use with extreme caution!
+.TP
+.B \-\-build
+Preprocess and compile a sketch into .class files.
+.TP
+.B \-\-run
+Preprocess, compile, and run a sketch.
+.TP
+.B \-\-present
+Preprocess, compile, and run a sketch in presentation mode.
+.TP
+.B \-\-export
+Export an application.
+.TP
+.B \-\-no-java
+Do not embed Java.
+Use at your own risk!
+.TP
+.B \-\-platform
+Specify the platform (export to application only).
+Should be one of
+.BR windows ", " macosx ", or " linux .
+.PP
+.RB "The " --build ", " --run ", " --present ", or " --export
+must be the final parameter passed to Processing.
+Arguments passed following one of those four will be passed through to the
+sketch itself, and therefore available to the sketch via the 'args' field.
+To pass options understood by PApplet.main(), write a custom main() method
+so that the preprocessor does not add one.
+.SH "SEE ALSO"
+\fBprocessing\fP(1): the main GUI for Processing.
+.PP
+Online documentation: <https://github.com/processing/processing/wiki/Command-Line>
+.PP
+The Processing website: <https://processing.org/>

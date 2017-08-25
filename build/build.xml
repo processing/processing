@@ -845,6 +845,9 @@
     <copy file="linux/processing-pde.xml" todir="linux/work/lib" />
     <copy file="linux/appdata.xml" todir="linux/work/lib" />
     <copy file="linux/desktop.template" todir="linux/work/lib" />
+    <copy todir="linux/work/lib/man">
+      <fileset dir="linux/man" />
+    </copy>
 
 <!--
     Cannot use ant version of tar because it doesn't preserve properties.
@@ -948,6 +951,7 @@
    <mkdir dir="linux/debian/opt" />
    <mkdir dir="linux/debian/usr/bin" />
    <mkdir dir="linux/debian/usr/share/applications/" />
+   <mkdir dir="linux/debian/usr/share/man/man1/" />
    <mkdir dir="linux/debian/usr/share/mime/packages/" />
    <!-- rename the work folder temporarily -->
    <move file="linux/work" tofile="linux/debian/opt/processing" />
@@ -967,6 +971,12 @@
    </copy>
    <copy file="linux/processing.sharedmimeinfo"
          tofile="linux/debian/usr/share/mime/packages/processing.xml" />
+
+   <!-- Place man pages -->
+   <gzip src="linux/man/processing.1"
+         destfile="linux/debian/usr/share/man/man1/processing.1.gz" />
+   <gzip src="linux/man/processing-java.1"
+         destfile="linux/debian/usr/share/man/man1/processing-java.1.gz" />
 
    <!-- Set properties for DEBIAN/control file -->
    <condition property="linux.deb" value="linux/processing-${version}-linux-armv6hf.deb">
