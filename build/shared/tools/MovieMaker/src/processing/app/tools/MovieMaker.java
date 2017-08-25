@@ -606,12 +606,14 @@ public class MovieMaker extends JFrame implements Tool {
         } catch (Exception ex) {
           t = ex;
         }
-        t.printStackTrace();
-        JOptionPane.showMessageDialog(MovieMaker.this,
+        if (t != null) {
+          t.printStackTrace();
+          JOptionPane.showMessageDialog(MovieMaker.this,
                                       Language.text("movie_maker.error.movie_failed") + "\n" +
                                       (t.getMessage() == null ? t.toString() : t.getMessage()),
                                       Language.text("movie_maker.error.sorry"),
                                       JOptionPane.ERROR_MESSAGE);
+        }
         createMovieButton.setEnabled(true);
       }
     }.execute();
