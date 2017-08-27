@@ -2254,16 +2254,7 @@ public class PApplet implements PConstants {
 //      if (!primary) {
 //        surface.initImage(pg, w, h);
 //      }
-
-      //setting w/h to 0 if it is is invalid
-      if(w <= 0){
-        w = 0;
-      }
-      if(h <= 0) {
-        h = 0;
-      }
       pg.setSize(w, h);
-
 
       // everything worked, return it
       return pg;
@@ -2308,8 +2299,6 @@ public class PApplet implements PConstants {
         if (e.getMessage().contains("cannot be <= 0")) {
           // IllegalArgumentException will be thrown if w/h is <= 0
           // http://code.google.com/p/processing/issues/detail?id=983
-
-          // a fix should be done here to resize the window back to 0 if new size is not valid
           throw new RuntimeException(e);
 
         } else {
