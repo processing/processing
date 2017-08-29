@@ -160,23 +160,23 @@ public class TextTransform {
   }
 
 
-  protected static class Edit {
+  public static class Edit {
 
-    static Edit insert(int offset, String text) {
+    public static Edit insert(int offset, String text) {
       return new Edit(offset, 0, offset, text.length(), text);
     }
 
-    static Edit replace(int offset, int length, String text) {
+    public static Edit replace(int offset, int length, String text) {
       return new Edit(offset, length, offset, text.length(), text);
     }
 
-    static Edit move(int fromOffset, int length, int toOffset) {
+    public static Edit move(int fromOffset, int length, int toOffset) {
       Edit result = new Edit(fromOffset, length, toOffset, length, null);
       result.toOffset = toOffset;
       return result;
     }
 
-    static Edit delete(int position, int length) {
+    public static Edit delete(int position, int length) {
       return new Edit(position, length, position, 0, null);
     }
 
