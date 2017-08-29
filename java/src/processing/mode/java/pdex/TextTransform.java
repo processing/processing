@@ -31,7 +31,7 @@ public class TextTransform {
   private int builtForLength;
 
 
-  TextTransform(CharSequence input) {
+  public TextTransform(CharSequence input) {
     this.input = input;
   }
 
