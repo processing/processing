@@ -945,6 +945,15 @@ public class PSurfaceAWT extends PSurfaceNone {
   // needs to resize the frame, which will resize the canvas, and so on...
   @Override
   public void setSize(int wide, int high) {
+
+    //In Microsoft Windows, when the surface is set to resizable (surface.setResizable(true)),
+    //the height set by the user can become less than or equal to zero and program crashes
+    //when that occurs. This is a simple fix for that
+    //(issue: https://github.com/processing/processing/issues/5052)
+    if(high <= 0) {
+      high = 1;
+    }
+
 //    if (PApplet.DEBUG) {
 //      //System.out.format("frame visible %b, setSize(%d, %d) %n", frame.isVisible(), wide, high);
 //      new Exception(String.format("setSize(%d, %d)", wide, high)).printStackTrace(System.out);
