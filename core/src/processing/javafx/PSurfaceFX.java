@@ -616,14 +616,24 @@ public class PSurfaceFX implements PSurface {
   }
 
 
-  public void setSize(int width, int height) {
+  public void setSize(int wide, int high) {
+    // When the surface is set to resizable via surface.setResizable(true),
+    // a crash may occur if the user sets the window to size zero.
+    // https://github.com/processing/processing/issues/5052
+    if (high <= 0) {
+      high = 1;
+    }
+    if (wide <= 0) {
+      wide = 1;
+    }
+
     //System.out.format("%s.setSize(%d, %d)%n", getClass().getSimpleName(), width, height);
     Scene scene = stage.getScene();
     double decorH = stage.getWidth() - scene.getWidth();
     double decorV = stage.getHeight() - scene.getHeight();
-    stage.setWidth(width + decorH);
-    stage.setHeight(height + decorV);
-    fx.setSize(width, height);
+    stage.setWidth(wide + decorH);
+    stage.setHeight(high + decorV);
+    fx.setSize(wide, high);
   }
 
 

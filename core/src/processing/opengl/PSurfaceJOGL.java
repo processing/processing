@@ -745,19 +745,29 @@ public class PSurfaceJOGL implements PSurface {
   }
 
 
-  public void setSize(final int width, final int height) {
+  public void setSize(int wide, int high) {
     if (pgl.presentMode()) return;
 
-    boolean changed = sketch.width != width || sketch.height != height;
+    // When the surface is set to resizable via surface.setResizable(true),
+    // a crash may occur if the user sets the window to size zero.
+    // https://github.com/processing/processing/issues/5052
+    if (high <= 0) {
+      high = 1;
+    }
+    if (wide <= 0) {
+      wide = 1;
+    }
 
-    sketchWidth = width;
-    sketchHeight = height;
+    boolean changed = sketch.width != wide || sketch.height != high;
 
-    sketch.setSize(width, height);
-    graphics.setSize(width, height);
+    sketchWidth = wide;
+    sketchHeight = high;
+
+    sketch.setSize(wide, high);
+    graphics.setSize(wide, high);
 
     if (changed) {
-      window.setSize(width * windowScaleFactor, height * windowScaleFactor);
+      window.setSize(wide * windowScaleFactor, high * windowScaleFactor);
     }
   }
 
