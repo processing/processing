@@ -1,6 +1,7 @@
 <!--- ** Issues are for new bugs & feature requests. ** -->
-<!--- ** Be sure to read the [troubleshooting page](https://github.com/processing/processing/wiki/Troubleshooting) first ** -->
-<!--- ** For coding problems visit https://forum.processing.org ** -->
+<!--- ** For coding questions visit https://forum.processing.org ** -->
+<!--- ** Be sure to read the troubleshooting page first: ** -->
+<!--- ** https://github.com/processing/processing/wiki/Troubleshooting ** -->
 <!--- ** Before posting, please search Issues for duplicates  ** --> 
 
 ## Description
@@ -22,7 +23,9 @@
 3.
 
 ## Your Environment
-<!--- Include details about your environment -->
+<!--- Include details about your environment. -->
+<!--- Thousands of people use Processing every day and may not have --> 
+<!--- this issue, this might give us clues about why you’re seeing it. -->
 * Processing version:
 * Operating System and OS version:
 * Other information:
