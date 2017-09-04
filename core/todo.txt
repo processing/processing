@@ -1,26 +1,5 @@
-0263 (3.3.6)
-
-gohai
-X shell discussion with gohai
-X   https://github.com/processing/processing/pull/5082
-X Workaround issues with Raspbian release August 2017
-X   https://github.com/processing/processing/pull/5222
-
-jakub
-X Fix bugs in line vert shader
-X   https://github.com/processing/processing/pull/5184
-X   https://github.com/processing/processing/issues/5181
-X   https://github.com/processing/processing/issues/5182
-X   https://github.com/processing/processing/issues/5183
-X   https://github.com/processing/processing/issues/5194
-
-contrib
-X Add workaround for window size = 0 crash
-X   https://github.com/processing/processing/pull/5234
-X   https://github.com/processing/processing/issues/5052
-
-
 0264 (3.3.7 or 3.4)
+
 
 _ when doing createFont, can we add it to the os fonts available?
 
@@ -33,8 +12,6 @@ _   https://github.com/processing/processing/issues/5105
 _ WARNING: GL pipe is running in software mode (Renderer ID=0x1020400)
 _   is this coming from us? if so, need to provide actions
 
-
-high
 _ implement sketch scaling into PApplet
 _   https://github.com/processing/processing/issues/4897
 _ Sketches on Windows don't take UI sizing into account

@@ -1,38 +1,5 @@
-0263 (3.3.6)
-X update to Java 8u144
-X fix issue with call to remove value instead of key in mode contrib hash
-X   this was only in the code used by the command line mode loader
-o data folder not exporting on macOS?
-o   https://github.com/processing/processing/issues/5207
-X   confirmed working with LoadDisplayImage example
-
-contrib
-X add Italian translation
-X   https://github.com/processing/processing/pull/5169
-X Wrong tab for missing brace
-X   https://github.com/processing/processing/pull/5180
-X   https://github.com/processing/processing/issues/5165
-X typo in German translation
-X   https://github.com/processing/processing/pull/5195
-X   https://github.com/processing/processing/issues/5187
-X movie maker a little broken
-X   https://github.com/processing/processing/issues/5168
-X   https://github.com/processing/processing/pull/5230
-X Add more build products to linux/.gitignore
-X   https://github.com/processing/processing/pull/5229
-X add issue template to the repo
-X   https://github.com/processing/processing/issues/5239
-X   https://github.com/processing/processing/pull/5245
-
-jakub
-X Fix comment/uncomment adding slashes at wrong indent
-X   https://github.com/processing/processing/issues/5171
-X   https://github.com/processing/processing/pull/5185
-X Add JavaFX runtime to error checker class path
-X   https://github.com/processing/processing/pull/5186
-
-
 0264 (3.3.7 or 3.4)
+
 
 high
 _ make setting the window icon automatic, based on files in local dirs

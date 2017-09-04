@@ -1,3 +1,25 @@
+0263 (3.3.6)
+
+gohai
+X shell discussion with gohai
+X   https://github.com/processing/processing/pull/5082
+X Workaround issues with Raspbian release August 2017
+X   https://github.com/processing/processing/pull/5222
+
+jakub
+X Fix bugs in line vert shader
+X   https://github.com/processing/processing/pull/5184
+X   https://github.com/processing/processing/issues/5181
+X   https://github.com/processing/processing/issues/5182
+X   https://github.com/processing/processing/issues/5183
+X   https://github.com/processing/processing/issues/5194
+
+contrib
+X Add workaround for window size = 0 crash
+X   https://github.com/processing/processing/pull/5234
+X   https://github.com/processing/processing/issues/5052
+
+
 0262 (3.3.5)
 X default to using native select on all platforms
 
