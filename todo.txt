@@ -1,4 +1,4 @@
-0263 (3.3.6 or 3.4)
+0263 (3.3.6)
 X update to Java 8u144
 X fix issue with call to remove value instead of key in mode contrib hash
 X   this was only in the code used by the command line mode loader
@@ -30,6 +30,9 @@ X   https://github.com/processing/processing/issues/5171
 X   https://github.com/processing/processing/pull/5185
 X Add JavaFX runtime to error checker class path
 X   https://github.com/processing/processing/pull/5186
+
+
+0264 (3.3.7 or 3.4)
 
 high
 _ make setting the window icon automatic, based on files in local dirs

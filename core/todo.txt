@@ -1,4 +1,4 @@
-0263 (3.3.6 or 3.4)
+0263 (3.3.6)
 
 gohai
 X shell discussion with gohai
@@ -19,6 +19,8 @@ X Add workaround for window size = 0 crash
 X   https://github.com/processing/processing/pull/5234
 X   https://github.com/processing/processing/issues/5052
 
+
+0264 (3.3.7 or 3.4)
 
 _ when doing createFont, can we add it to the os fonts available?
 

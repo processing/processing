@@ -1,3 +1,75 @@
+PROCESSING 3.3.6 (REV 0263) - 4 September 2017
+
+A collection of mostly minor bug fixes that have accreted 
+since the last release back in June.
+
+
+[ contributions, we love 'em ]
+
++ Add Italian translation
+  https://github.com/processing/processing/pull/5169
+  
++ Wrong tab for missing brace
+  https://github.com/processing/processing/pull/5180
+  https://github.com/processing/processing/issues/5165
+
++ Fix typo in German translation
+  https://github.com/processing/processing/pull/5195
+  https://github.com/processing/processing/issues/5187
+  
++ Movie Maker only works once
+  https://github.com/processing/processing/issues/5168
+  https://github.com/processing/processing/pull/5230
+  
++ Add more build products to linux/.gitignore
+  https://github.com/processing/processing/pull/5229
+
++ Add issue template to the repo
+  https://github.com/processing/processing/issues/5239
+  https://github.com/processing/processing/pull/5245
+
++ Add workaround for window size = 0 crash
+  https://github.com/processing/processing/pull/5234
+  https://github.com/processing/processing/issues/5052
+
+
+[ jakub, we love him ]
+
++ Fix comment/uncomment adding slashes at wrong indent
+  https://github.com/processing/processing/issues/5171
+  https://github.com/processing/processing/pull/5185
+  
++ Add JavaFX runtime to error checker class path
+  https://github.com/processing/processing/pull/5186
+
+
+[ gottfried, with gusto ]
+
++ Ironing out the new shell() command
+  https://github.com/processing/processing/pull/5082
+
++ Workaround issues with August 2017 release of Raspbian
+  https://github.com/processing/processing/pull/5222
+
++ Fix bugs in line vert shader
+  https://github.com/processing/processing/pull/5184
+  https://github.com/processing/processing/issues/5181
+  https://github.com/processing/processing/issues/5182
+  https://github.com/processing/processing/issues/5183
+  https://github.com/processing/processing/issues/5194
+
+
+[ behind the scenes ]
+
++ Updated to Java 8u144
+
++ Fixed issue with call to remove value instead of key in mode contrib hash
+  (this was only in the code used by the command line mode loader)
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.3.5 (REV 0262) - 23 June 2017
 
 Fixes for a couple problems introduced in the last release.
