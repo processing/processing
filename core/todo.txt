@@ -51,7 +51,7 @@ _   https://github.com/processing/processing/issues/4584
 
 _ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
 _   https://github.com/processing/processing/issues/4020
-_   calling textSize() fixes it
+_   calling textSize() fixes it, only hpapens with the default font
 
 _ should fullScreen() set width and height to displayWidth/Height
 _   or is that being set/unset used for any state info?
