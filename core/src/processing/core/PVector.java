@@ -123,6 +123,16 @@ public class PVector implements Serializable {
 
 
   /**
+  * Copy constructor.
+  */
+  public PVector(PVector otherPVector) {
+    this.x = otherPVector.x;
+    this.y = otherPVector.y;
+    this.z = otherPVector.z;
+  }
+  
+  
+  /**
    * Constructor for a 3D vector.
    *
    * @param  x the x coordinate.
