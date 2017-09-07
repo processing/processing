@@ -456,6 +456,7 @@ displayHeight	KEYWORD4	displayHeight
 displayWidth	KEYWORD4	displayWidth
 dist	FUNCTION1	dist_
 draw	FUNCTION4	draw
+driveDirect	FUNCTION1	driveDirect_
 ellipse	FUNCTION1	ellipse_
 ellipseMode	FUNCTION1	ellipseMode_
 emissive	FUNCTION1	emissive_
