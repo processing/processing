@@ -3211,7 +3211,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#bezierVertex(float, float, float, float, float, float)
    * @see PGraphics#curvePoint(float, float, float, float, float)
    */
-  float bezierPoint (float a, float b, float c, float d, float t) {
+  public float bezierPoint (float a, float b, float c, float d, float t) {
     float t1 = t-1.0f;
     return t * ( 3*t1*(b*t1-c*t) + d*t*t ) - a*t1*t1*t1;
   }
