@@ -2,15 +2,15 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
-# DO NOT MAKE CHANGES TO THIS FILE!!! 
+# DO NOT MAKE CHANGES TO THIS FILE!!!
 
-# These are the default preferences. If you want to modify 
+# These are the default preferences. If you want to modify
 # them directly, use the per-user local version of the file:
 
-# Documents and Settings -> [username] -> Application Data -> 
+# Documents and Settings -> [username] -> Application Data ->
 #    Processing -> preferences.txt (on Windows XP)
 
-# Users -> [username] -> AppData -> Roaming -> 
+# Users -> [username] -> AppData -> Roaming ->
 #    Processing -> preferences.txt (on Windows Vista and 7)
 
 # ~/Library -> Processing -> preferences.txt (on Mac OS X)
@@ -20,11 +20,11 @@
 # The exact location of your preferences file can be found at
 # the bottom of the Preferences window inside Processing.
 
-# Because AppData and Application Data may be considered 
+# Because AppData and Application Data may be considered
 # hidden or system folders on Windows, you'll have to ensure
 # that they're visible in order to get at preferences.txt
 
-# You'll have problems running Processing if you incorrectly 
+# You'll have problems running Processing if you incorrectly
 # modify lines in this file. It will probably not start at all.
 
 # AGAIN, DO NOT ALTER THIS FILE! I'M ONLY YELLING BECAUSE I LOVE YOU!
@@ -41,9 +41,9 @@
 # note that this path should use forward slashes (like unix)
 # instead of \ on windows or : on macos or whatever else
 
-# If you don't want users to have their sketchbook default to 
-# "My Documents/Processing" on Windows and "Documents/Processing" on OS X, 
-# set this to another path that will be used by default. 
+# If you don't want users to have their sketchbook default to
+# "My Documents/Processing" on Windows and "Documents/Processing" on OS X,
+# set this to another path that will be used by default.
 # Note that this path must exist already otherwise it won't see
 # the sketchbook folder, and will instead assume the sketchbook
 # has gone missing, and that it should instead use the default.
@@ -80,7 +80,7 @@ chooser.files.native = true
 
 
 # by default, check the processing server for any updates
-# (please avoid disabling, this also helps us know basic numbers 
+# (please avoid disabling, this also helps us know basic numbers
 # on how many people are using Processing)
 update.check = true
 
@@ -117,8 +117,8 @@ editor.zoom.auto = true
 editor.font.family = Source Code Pro
 editor.font.size = 12
 
-# To reset everyone's default, replaced editor.antialias with editor.smooth 
-# for 2.1. Fonts are unusably gross on OS X (and Linux) w/o smoothing and 
+# To reset everyone's default, replaced editor.antialias with editor.smooth
+# for 2.1. Fonts are unusably gross on OS X (and Linux) w/o smoothing and
 # the Oracle JVM, and many longtime users have anti-aliasing turned off.
 editor.smooth = true
 
@@ -132,21 +132,21 @@ editor.caret.block = false
 editor.keys.alternative_cut_copy_paste = true
 editor.keys.alternative_cut_copy_paste.macosx = false
 
-# true if shift-backspace sends the delete character, 
+# true if shift-backspace sends the delete character,
 # false if shift-backspace just means backspace
 editor.keys.shift_backspace_is_delete = false
 
 # home and end keys should only travel to the start/end of the current line
 editor.keys.home_and_end_travel_far = false
 # home and end keys move to the first/last non-whitespace character,
-# and move to the actual start/end when pressed a second time. 
+# and move to the actual start/end when pressed a second time.
 # Only works if editor.keys.home_and_end_travel_far is false.
 editor.keys.home_and_end_travel_smart = true
-# The OS X HI Guidelines say that home/end are relative to the document, 
+# The OS X HI Guidelines say that home/end are relative to the document,
 # but that drives some people nuts. This pref enables/disables it.
 editor.keys.home_and_end_travel_far.macosx = true
 
-# Enable/disable support for complex scripts. Used for Japanese and others, 
+# Enable/disable support for complex scripts. Used for Japanese and others,
 # but disable when not needed, otherwise basic Western European chars break.
 editor.input_method_support = false
 
@@ -185,21 +185,21 @@ console.auto_clear = true
 console.scrollback.lines = 500
 console.scrollback.chars = 40000
 
-# Any additional Java options when running. 
+# Any additional Java options when running.
 # If you change this and can't run things, it's your own durn fault.
-run.options = 
+run.options =
 
 # settings for the -XmsNNNm and -XmxNNNm command line option
 run.options.memory = false
 run.options.memory.initial = 64
 run.options.memory.maximum = 256
 
-# By default, Mac OS X 10.6 launches applications in 32-bit mode, 
+# By default, Mac OS X 10.6 launches applications in 32-bit mode,
 # which is more compatible with libraries (many have not updated to 64-bit).
-# Changing this doesn't do anything on other platforms. 
+# Changing this doesn't do anything on other platforms.
 run.options.bits.macosx = 32
 
-# Index of the display to use for running sketches (starts at 1). 
+# Index of the display to use for running sketches (starts at 1).
 # Kept this 1-indexed because older vesions of Processing were setting
 # the preference even before it was being used.
 # -1 means the default display, 0 means all displays
@@ -210,20 +210,20 @@ run.display = -1
 
 # set to false to open a new untitled window when closing the last window
 # (otherwise, the environment will quit)
-# default to the relative norm for the different platforms, 
+# default to the relative norm for the different platforms,
 # but the setting can be changed in the prefs dialog anyway
 #sketchbook.closing_last_window_quits = true
 #sketchbook.closing_last_window_quits.macosx = false
 
 editor.untitled.prefix=sketch_
 # The old (pre-1.0, back for 2.0) style for default sketch name.
-# If you change this, be careful that this will work with your language 
-# settings. For instance, MMMdd won't work on Korean-language systems 
+# If you change this, be careful that this will work with your language
+# settings. For instance, MMMdd won't work on Korean-language systems
 # because it'll insert non-ASCII characters and break the environment.
 # http://code.google.com/p/processing/issues/detail?id=283
 editor.untitled.suffix=yyMMdd
 
-# Set the default look & feel on Linux to something other than 
+# Set the default look & feel on Linux to something other than
 # the 'native' platform default, which is usually Metal (yuck!)
 # GTK isn't for everyone (and KDE users will get Metal or some
 # such anyway, so this is now broken out as an option
@@ -231,7 +231,7 @@ editor.untitled.suffix=yyMMdd
 #editor.laf.linux = com.sun.java.swing.plaf.gtk.GTKLookAndFeel
 # Trying Nimbus in 3.0a6 because the GTK menus are really dreadful.
 # Unfortunately, the Nimbus scrollbars are really gross, but...
-# As always, people can override on their own, or the next step 
+# As always, people can override on their own, or the next step
 # is to do a Synth LAF that gives us something not awful.
 editor.laf.linux = javax.swing.plaf.nimbus.NimbusLookAndFeel
 
@@ -243,29 +243,29 @@ editor.laf.linux = javax.swing.plaf.nimbus.NimbusLookAndFeel
 # For an explanation of these tags, see Token.java:
 # processing/app/src/processing/app/syntax/Token.java
 
-editor.token.function1.style = #006699,plain
-editor.token.function2.style = #006699,plain
-editor.token.function3.style = #669900,plain
-editor.token.function4.style = #006699,bold
+editor.token.function1.style = #bbc4ef,plain
+editor.token.function2.style = #bbc4ef,plain
+editor.token.function3.style = #7986cb,plain
+editor.token.function4.style = #84ffff,bold
 
-editor.token.keyword1.style = #33997e,plain
-editor.token.keyword2.style = #33997e,plain
-editor.token.keyword3.style = #669900,plain
-editor.token.keyword4.style = #d94a7a,plain
-editor.token.keyword5.style = #e2661a,plain
-editor.token.keyword6.style = #33997e,plain
+editor.token.keyword1.style=#d798c6,bold
+editor.token.keyword2.style=#90a4ae,plain
+editor.token.keyword3.style=#7986cb,plain
+editor.token.keyword4.style=#18ffff,plain
+editor.token.keyword5.style=#c6ff00,plain
+editor.token.keyword6.style=#90a4ae,plain
 
-editor.token.literal1.style = #7D4793,plain
-editor.token.literal2.style = #718a62,plain
+editor.token.literal1.style=#78909c,plain
+editor.token.literal2.style=#c0ca33,plain
 
-editor.token.operator.style = #006699,plain
+editor.token.operator.style=#607d8b,plain
 
-editor.token.label.style = #666666,bold
+editor.token.label.style=#9e9e9e,bold
 
-editor.token.comment1.style = #666666,plain
-editor.token.comment2.style = #666666,plain
+editor.token.comment1.style=#9e9e9e,plain
+editor.token.comment2.style=#9e9e9e,plain
 
-editor.token.invalid.style = #666666,bold
+editor.token.invalid.style=#9e9e9e,bold
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -291,7 +291,7 @@ export.delete_target_folder = true
 # may be useful when attempting to debug the preprocessor
 preproc.save_build_files=false
 
-# allows various preprocessor features to be toggled 
+# allows various preprocessor features to be toggled
 # in case they are causing problems
 
 # preprocessor: pde.g
@@ -312,13 +312,13 @@ preproc.substitute_unicode = true
 # viewed in (at least) Mozilla or IE.  useful when debugging the preprocessor.
 preproc.output_parse_tree = false
 
-# Changed after 2.0b6 to remove those that aren't compatible with Android, 
+# Changed after 2.0b6 to remove those that aren't compatible with Android,
 # as we move to the new built-in event types. Also remove .list from the end
 # of the name, so that the pref will reset. These are now the same imports
 # as are used over on the Android side.
-# Changed again for revision 0215 (around 2.0b7) to remove all default 
+# Changed again for revision 0215 (around 2.0b7) to remove all default
 # imports that aren't covered by the reference. This has been done to improve
-# overall cross-platform parity and to avoid users unknowingly adding 
+# overall cross-platform parity and to avoid users unknowingly adding
 # Java classes, and then the sadness that comes when switching to Android
 # or JavaScript modes.
 #preproc.imports.list = java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.event.MouseEvent,java.awt.event.KeyEvent,java.awt.event.FocusEvent,java.awt.Image,java.io.*,java.net.*,java.text.*,java.util.*,java.util.zip.*,java.util.regex.*
