@@ -102,9 +102,6 @@ log PATH
 current_name=`basename $0`
 cmd_name='processing-java'
 
-# PDE UI Fonts workaround
-export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true'
-
 if [ $current_name = $cmd_name ]
 then
     java -Djna.nosys=true -Djava.ext.dirs="$APPDIR"/java/lib/ext -Xmx256m processing.mode.java.Commander "$@"
