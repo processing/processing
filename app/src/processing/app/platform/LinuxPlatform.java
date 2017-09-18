@@ -69,6 +69,9 @@ public class LinuxPlatform extends DefaultPlatform {
     }
   }
 
+  public void setLookAndFeel() throws Exception {
+    GTKLookAndFeelFixer.installGtkPopupBugWorkaround();
+  }
 
   // Java sets user.home to be /root for execution with sudo.
   // This method attempts to use the user's real home directory instead.
