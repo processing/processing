@@ -2286,26 +2286,6 @@ public class JavaEditor extends Editor {
 
 
   /**
-   * @return the Problem for the most relevant error or warning on 'line',
-   *         defaulting to the first.
-   */
-  @Override
-  protected Problem findProblem(int line) {
-    List<Problem> l = findProblems(line);
-    if (l.size() == 0) return null;
-    Problem worst = l.get(0);
-
-    for (Problem p : l) {
-      if (p instanceof JavaProblem && ((!(worst instanceof JavaProblem)) ||
-          ((JavaProblem)p).getPriority() > ((JavaProblem)worst).getPriority())) {
-        worst = p;
-      }
-    }
-    return worst;
-  }
-
-
-  /**
    * Updates the error table in the Error Window.
    * Overridden to handle the fugly import suggestions text.
    */

@@ -1193,7 +1193,7 @@ public class PDEX {
         int tabLine = ps.tabOffsetToTabLine(tabIndex, tabOffset);
 
         String message = Language.interpolate("editor.status.bad_curly_quote", q);
-        JavaProblem problem = new JavaProblem(message, JavaProblem.ERROR, tabIndex, tabLine, 10);
+        JavaProblem problem = new JavaProblem(message, JavaProblem.ERROR, tabIndex, tabLine);
         problem.setPDEOffsets(tabOffset, tabOffset+1);
 
         problems.add(problem);
@@ -1229,7 +1229,7 @@ public class PDEX {
                 } else {
                   message = Language.interpolate("editor.status.bad_curly_quote", q);
                 }
-                JavaProblem p = new JavaProblem(message, JavaProblem.ERROR, in.tabIndex, line, 10);
+                JavaProblem p = new JavaProblem(message, JavaProblem.ERROR, in.tabIndex, line);
                 p.setPDEOffsets(tabStart, tabStop);
                 problems2.add(p);
               }
@@ -1255,7 +1255,7 @@ public class PDEX {
               new JavaProblem(braceResult[0] < 0
                                   ? Language.interpolate("editor.status.missing.left_curly_bracket")
                                   : Language.interpolate("editor.status.missing.right_curly_bracket"),
-                              JavaProblem.ERROR, tabIndex, braceResult[1], 8);
+                              JavaProblem.ERROR, tabIndex, braceResult[1]);
           problem.setPDEOffsets(braceResult[3], braceResult[3] + 1);
           problems.add(problem);
         }

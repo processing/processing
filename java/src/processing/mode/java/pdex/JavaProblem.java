@@ -20,10 +20,7 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import java.util.Arrays;
-
 import org.eclipse.jdt.core.compiler.IProblem;
-import static org.eclipse.jdt.core.compiler.IProblem.*;
 
 import processing.app.Problem;
 
@@ -57,64 +54,17 @@ public class JavaProblem implements Problem {
   private int type;
 
   /**
-   * Priority: bigger = higher. Currently 7 to 10 for errors,
-   * 4 for warning.
-   * <p>
-   * The logic of the numbers in the priorityN arrays is that if ECJ wants a
-   * token got rid of entirely it's most likely the root of the problem. If it
-   * wants more tokens, that might have been caused by an unterminated string
-   * or something but it's also likely to be the “real” error. Only if the
-   * syntax is good are mismatched argument lists and so on of any real
-   * significance. These rankings are entirely made up so can be changed to
-   * support any other plausible scenario.
-   */
-  private int priority;
-
-  static private final int[] priority10 = {
-    ParsingError,
-    ParsingErrorDeleteToken,
-    ParsingErrorDeleteTokens,
-    ParsingErrorInvalidToken,
-    ParsingErrorMergeTokens,
-    ParsingErrorMisplacedConstruct,
-    ParsingErrorNoSuggestion,
-    ParsingErrorNoSuggestionForTokens,
-    ParsingErrorOnKeyword,
-    ParsingErrorOnKeywordNoSuggestion,
-    ParsingErrorReplaceTokens,
-    ParsingErrorUnexpectedEOF
-  };
-  static private final int[] priority9 = {
-    InvalidCharacterConstant,
-    UnterminatedString
-  };
-  static private final int[] priority8 = {
-    ParsingErrorInsertToComplete,
-    ParsingErrorInsertToCompletePhrase,
-    ParsingErrorInsertToCompleteScope,
-    ParsingErrorInsertTokenAfter,
-    ParsingErrorInsertTokenBefore,
-  };
-  // Sorted so I can do a one-line binary search later.
-  static {
-    Arrays.sort(priority10);
-    Arrays.sort(priority9);
-    Arrays.sort(priority8);
-  }
-
-  /**
    * If the error is a 'cannot find type' contains the list of suggested imports
    */
   private String[] importSuggestions;
 
   public static final int ERROR = 1, WARNING = 2;
 
-  public JavaProblem(String message, int type, int tabIndex, int lineNumber, int priority) {
+  public JavaProblem(String message, int type, int tabIndex, int lineNumber) {
     this.message = message;
     this.type = type;
     this.tabIndex = tabIndex;
     this.lineNumber = lineNumber;
-    this.priority = priority;
   }
 
   /**
@@ -127,24 +77,13 @@ public class JavaProblem implements Problem {
   public static JavaProblem fromIProblem(IProblem iProblem,
       int tabIndex, int lineNumber, String badCode) {
     int type = 0;
-    int priority = 0;
-    if (iProblem.isError()) {
+    if(iProblem.isError()) {
       type = ERROR;
-      if (Arrays.binarySearch(priority10, iProblem.getID()) >= 0) {
-        priority = 10;
-      } else if (Arrays.binarySearch(priority9, iProblem.getID()) >= 0) {
-        priority = 9;
-      } else if (Arrays.binarySearch(priority8, iProblem.getID()) >= 0) {
-        priority = 8;
-      } else {
-        priority = 7;
-      }
     } else if (iProblem.isWarning()) {
       type = WARNING;
-      priority = 4;
     }
     String message = ErrorMessageSimplifier.getSimplifiedErrorMessage(iProblem, badCode);
-    return new JavaProblem(message, type, tabIndex, lineNumber, priority);
+    return new JavaProblem(message, type, tabIndex, lineNumber);
   }
 
   public void setPDEOffsets(int startOffset, int stopOffset){
@@ -193,10 +132,6 @@ public class JavaProblem implements Problem {
 
   public void setImportSuggestions(String[] a) {
     importSuggestions = a;
-  }
-
-  public int getPriority() {
-    return priority;
   }
 
   @Override
