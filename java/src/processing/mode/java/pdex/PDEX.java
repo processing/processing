@@ -1125,10 +1125,8 @@ public class PDEX {
               int stop = iproblem.getSourceEnd() + 1; // make it exclusive
               SketchInterval in = ps.mapJavaToSketch(start, stop);
               if (in == SketchInterval.BEFORE_START) return null;
+              String badCode = ps.pdeCode.substring(in.startPdeOffset, in.stopPdeOffset);
               int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
-              ps.sketch.updateSketchCodes(); // seems to be needed
-              String badCode = ps.sketch.getCode(in.tabIndex).getProgram()
-                .substring(in.startTabOffset, in.stopTabOffset);
               JavaProblem p = JavaProblem.fromIProblem(iproblem, in.tabIndex, line, badCode);
               p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
 
