@@ -48,6 +48,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -1083,32 +1084,18 @@ public class PDEX {
 
       IProblem[] iproblems = ps.compilationUnit.getProblems();
 
-      { // Handle missing brace problems
-        IProblem missingBraceProblem = Arrays.stream(iproblems)
-            .filter(ErrorChecker::isMissingBraceProblem)
-            .findFirst()
-            // Ignore if it is at the end of file
-            .filter(p -> p.getSourceEnd() + 1 < ps.javaCode.length())
-            // Ignore if the tab number does not match our detected tab number
-            .filter(p -> ps.missingBraceProblems.isEmpty() ||
-                ps.missingBraceProblems.get(0).getTabIndex() ==
-                    ps.mapJavaToSketch(p.getSourceStart(), p.getSourceEnd()+1).tabIndex
-            )
-            .orElse(null);
-
-        // If there is missing brace ignore all other problems
-        if (missingBraceProblem != null) {
-          // Prefer ECJ problem, shows location more accurately
-          iproblems = new IProblem[]{missingBraceProblem};
-        } else if (!ps.missingBraceProblems.isEmpty()) {
-          // Fallback to manual detection
-          problems.addAll(ps.missingBraceProblems);
-        }
+      { // Check for curly quotes
+        List<JavaProblem> curlyQuoteProblems = checkForCurlyQuotes(ps);
+        problems.addAll(curlyQuoteProblems);
       }
 
-      AtomicReference<ClassPath> searchClassPath = new AtomicReference<>(null);
+      if (problems.isEmpty()) { // Check for missing braces
+        List<JavaProblem> missingBraceProblems = checkForMissingBraces(ps);
+        problems.addAll(missingBraceProblems);
+      }
 
       if (problems.isEmpty()) {
+        AtomicReference<ClassPath> searchClassPath = new AtomicReference<>(null);
         List<Problem> cuProblems = Arrays.stream(iproblems)
             // Filter Warnings if they are not enabled
             .filter(iproblem -> !(iproblem.isWarning() && !JavaMode.warningsEnabled))
@@ -1121,17 +1108,10 @@ public class PDEX {
                 .contains("Syntax error, insert \":: IdentifierOrNew\""))
             // Transform into our Problems
             .map(iproblem -> {
-              int start = iproblem.getSourceStart();
-              int stop = iproblem.getSourceEnd() + 1; // make it exclusive
-              SketchInterval in = ps.mapJavaToSketch(start, stop);
-              if (in == SketchInterval.BEFORE_START) return null;
-              String badCode = ps.pdeCode.substring(in.startPdeOffset, in.stopPdeOffset);
-              int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
-              JavaProblem p = JavaProblem.fromIProblem(iproblem, in.tabIndex, line, badCode);
-              p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
+              JavaProblem p = convertIProblem(iproblem, ps);
 
               // Handle import suggestions
-              if (JavaMode.importSuggestEnabled && isUndefinedTypeProblem(iproblem)) {
+              if (p != null && JavaMode.importSuggestEnabled && isUndefinedTypeProblem(iproblem)) {
                 ClassPath cp = searchClassPath.updateAndGet(prev -> prev != null ?
                     prev : new ClassPathFactory().createFromPaths(ps.searchClassPathArray));
                 String[] s = suggCache.computeIfAbsent(iproblem.getArguments()[0],
@@ -1161,6 +1141,16 @@ public class PDEX {
                                              TimeUnit.MILLISECONDS);
     }
 
+    static private JavaProblem convertIProblem(IProblem iproblem, PreprocessedSketch ps) {
+      SketchInterval in = ps.mapJavaToSketch(iproblem);
+      if (in == SketchInterval.BEFORE_START) return null;
+      String badCode = ps.pdeCode.substring(in.startPdeOffset, in.stopPdeOffset);
+      int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
+      JavaProblem p = JavaProblem.fromIProblem(iproblem, in.tabIndex, line, badCode);
+      p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
+      return p;
+    }
+
 
     static private boolean isUndefinedTypeProblem(IProblem iproblem) {
       int id = iproblem.getID();
@@ -1183,6 +1173,119 @@ public class PDEX {
         default:
           return false;
       }
+    }
+
+
+    private static final Pattern CURLY_QUOTE_REGEX =
+        Pattern.compile("([“”‘’])", Pattern.UNICODE_CHARACTER_CLASS);
+
+    static private List<JavaProblem> checkForCurlyQuotes(PreprocessedSketch ps) {
+      List<JavaProblem> problems = new ArrayList<>(0);
+
+      // Go through the scrubbed code and look for curly quotes (they should not be any)
+      Matcher matcher = CURLY_QUOTE_REGEX.matcher(ps.scrubbedPdeCode);
+      while (matcher.find()) {
+        int pdeOffset = matcher.start();
+        String q = matcher.group();
+
+        int tabIndex = ps.pdeOffsetToTabIndex(pdeOffset);
+        int tabOffset = ps.pdeOffsetToTabOffset(tabIndex, pdeOffset);
+        int tabLine = ps.tabOffsetToTabLine(tabIndex, tabOffset);
+
+        String message = Language.interpolate("editor.status.bad_curly_quote", q);
+        JavaProblem problem = new JavaProblem(message, JavaProblem.ERROR, tabIndex, tabLine, 10);
+        problem.setPDEOffsets(tabOffset, tabOffset+1);
+
+        problems.add(problem);
+      }
+
+
+      // Go through iproblems and look for problems involving curly quotes
+      List<JavaProblem> problems2 = new ArrayList<>(0);
+      IProblem[] iproblems = ps.compilationUnit.getProblems();
+
+      for (IProblem iproblem : iproblems) {
+        switch (iproblem.getID()) {
+          case IProblem.ParsingErrorDeleteToken:
+          case IProblem.ParsingErrorDeleteTokens:
+          case IProblem.ParsingErrorInvalidToken:
+          case IProblem.ParsingErrorReplaceTokens:
+          case IProblem.UnterminatedString:
+            SketchInterval in = ps.mapJavaToSketch(iproblem);
+            if (in == SketchInterval.BEFORE_START) continue;
+            String badCode = ps.pdeCode.substring(in.startPdeOffset, in.stopPdeOffset);
+            matcher.reset(badCode);
+            while (matcher.find()) {
+              int offset = matcher.start();
+              String q = matcher.group();
+              int tabStart = in.startTabOffset + offset;
+              int tabStop = tabStart + 1;
+              // Prevent duplicate problems
+              if (problems.stream().noneMatch(p -> p.getStartOffset() == tabStart)) {
+                int line = ps.tabOffsetToTabLine(in.tabIndex, tabStart);
+                String message;
+                if (iproblem.getID() == IProblem.UnterminatedString) {
+                  message = Language.interpolate("editor.status.unterm_string_curly", q);
+                } else {
+                  message = Language.interpolate("editor.status.bad_curly_quote", q);
+                }
+                JavaProblem p = new JavaProblem(message, JavaProblem.ERROR, in.tabIndex, line, 10);
+                p.setPDEOffsets(tabStart, tabStop);
+                problems2.add(p);
+              }
+            }
+        }
+      }
+
+      problems.addAll(problems2);
+
+      return problems;
+    }
+
+
+    static private List<JavaProblem> checkForMissingBraces(PreprocessedSketch ps) {
+      List<JavaProblem> problems = new ArrayList<>(0);
+      for (int tabIndex = 0; tabIndex < ps.tabStartOffsets.length; tabIndex++) {
+        int tabStartOffset = ps.tabStartOffsets[tabIndex];
+        int tabEndOffset = (tabIndex < ps.tabStartOffsets.length - 1) ?
+            ps.tabStartOffsets[tabIndex + 1] : ps.scrubbedPdeCode.length();
+        int[] braceResult = SourceUtils.checkForMissingBraces(ps.scrubbedPdeCode, tabStartOffset, tabEndOffset);
+        if (braceResult[0] != 0) {
+          JavaProblem problem =
+              new JavaProblem(braceResult[0] < 0
+                                  ? Language.interpolate("editor.status.missing.left_curly_bracket")
+                                  : Language.interpolate("editor.status.missing.right_curly_bracket"),
+                              JavaProblem.ERROR, tabIndex, braceResult[1], 8);
+          problem.setPDEOffsets(braceResult[3], braceResult[3] + 1);
+          problems.add(problem);
+        }
+      }
+
+      if (problems.isEmpty()) {
+        return problems;
+      }
+
+      int problemTabIndex = problems.get(0).getTabIndex();
+
+      IProblem missingBraceProblem = Arrays.stream(ps.compilationUnit.getProblems())
+          .filter(ErrorChecker::isMissingBraceProblem)
+          // Ignore if it is at the end of file
+          .filter(p -> p.getSourceEnd() + 1 < ps.javaCode.length())
+          // Ignore if the tab number does not match our detected tab number
+          .filter(p -> problemTabIndex == ps.mapJavaToSketch(p).tabIndex)
+          .findFirst()
+          .orElse(null);
+
+      // Prefer ECJ problem, shows location more accurately
+      if (missingBraceProblem != null) {
+        JavaProblem p = convertIProblem(missingBraceProblem, ps);
+        if (p != null) {
+          problems.clear();
+          problems.add(p);
+        }
+      }
+
+      return problems;
     }
 
 
