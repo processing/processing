@@ -312,6 +312,8 @@ public class PreprocessingService {
 
     SourceUtils.scrubCommentsAndStrings(workBuffer);
 
+    result.scrubbedPdeCode = workBuffer.toString();
+
     Mode sketchMode = PdePreprocessor.parseMode(workBuffer);
 
     // Prepare transforms to convert pde code into parsable code
@@ -391,15 +393,6 @@ public class PreprocessingService {
         result.classPath = prevResult.classPath;
         result.searchClassPathArray = prevResult.searchClassPathArray;
         result.classPathArray = prevResult.classPathArray;
-      }
-    }
-
-    { // Check for missing braces
-      List<JavaProblem> missingBraceProblems =
-          SourceUtils.checkForMissingBraces(workBuffer, result.tabStartOffsets);
-      if (!missingBraceProblems.isEmpty()) {
-        result.missingBraceProblems.addAll(missingBraceProblems);
-        result.hasSyntaxErrors = true;
       }
     }
 
