@@ -284,7 +284,7 @@ public class SourceUtils {
           }
           break;
         case IN_BLOCK_COMMENT:
-          if (pch == '*' && ch == '/' && (i - blockStart) > 1) {
+          if (pch == '*' && ch == '/' && (i - blockStart) > 0) {
             state = OUT;
           }
           break;
