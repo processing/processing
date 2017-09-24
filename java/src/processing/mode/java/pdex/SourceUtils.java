@@ -331,27 +331,9 @@ public class SourceUtils {
 
   }
 
-  static public List<JavaProblem> checkForMissingBraces(StringBuilder p, int[] tabStartOffsets) {
-    List<JavaProblem> problems = new ArrayList<>(0);
-    for (int tabIndex = 0; tabIndex < tabStartOffsets.length; tabIndex++) {
-      int tabStartOffset = tabStartOffsets[tabIndex];
-      int tabEndOffset = (tabIndex < tabStartOffsets.length - 1) ?
-          tabStartOffsets[tabIndex + 1] : p.length();
-      int[] braceResult = checkForMissingBraces(p, tabStartOffset, tabEndOffset);
-      if (braceResult[0] != 0) {
-        JavaProblem problem =
-            new JavaProblem(braceResult[0] < 0
-                ? "Found one too many } characters without { to match it."
-                : "Found one too many { characters without } to match it.",
-                JavaProblem.ERROR, tabIndex, braceResult[1]);
-          problem.setPDEOffsets(braceResult[3], braceResult[3] + 1);
-          problems.add(problem);
-      }
-    }
-    return problems;
-  }
 
-
+  // TODO: move this to a better place when JavaBuild starts using JDT and we
+  //       don't need to check errors at two different places [jv 2017-09-19]
   /**
    * Checks a single code fragment (such as a tab) for non-matching braces.
    * Broken out to allow easy use in JavaBuild.

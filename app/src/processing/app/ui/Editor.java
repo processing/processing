@@ -3119,20 +3119,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   /**
-   * @return the Problem for the first error or warning on 'line'
+   * @return the Problem for the most relevant error or warning on 'line',
+   *         defaults to the first error, if there are no errors first warning.
    */
-  Problem findProblem(int line) {
-    int currentTab = getSketch().getCurrentCodeIndex();
-    return problems.stream()
-        .filter(p -> p.getTabIndex() == currentTab)
-        .filter(p -> {
-          int pStartLine = p.getLineNumber();
-          int pEndOffset = p.getStopOffset();
-          int pEndLine = textarea.getLineOfOffset(pEndOffset);
-          return line >= pStartLine && line <= pEndLine;
-        })
-        .findFirst()
-        .orElse(null);
+  protected Problem findProblem(int line) {
+    List<Problem> problems = findProblems(line);
+    for (Problem p : problems) {
+      if (p.isError()) return p;
+    }
+    return problems.isEmpty() ? null : problems.get(0);
   }
 
 

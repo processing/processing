@@ -38,6 +38,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 
 import processing.app.Base;
+import processing.app.Language;
 import processing.app.Library;
 import processing.app.Messages;
 import processing.app.Mode;
@@ -345,9 +346,30 @@ public class JavaBuild {
 
 //      System.err.println("and then she tells me " + tsre.toString());
       // TODO not tested since removing ORO matcher.. ^ could be a problem
-      String mess = "^line (\\d+):(\\d+):\\s";
+      String locationRegex = "^line (\\d+):(\\d+):\\s";
+      String message = tsre.getMessage();
+      String[] m;
 
-      String[] matches = PApplet.match(tsre.toString(), mess);
+      if (null != (m = PApplet.match(tsre.toString(),
+              "unexpected char: (.*)"))) {
+        char c = 0;
+        if (m[1].startsWith("0x")) {     // Hex
+          c = (char) PApplet.unhex(m[1].substring(2));
+        } else if (m[1].length() == 3) { // Quoted
+          c = m[1].charAt(1);
+        } else if (m[1].length() == 1) { // Alone
+          c = m[1].charAt(0);
+        }
+        if (c == '\u201C' || c == '\u201D' || // “”
+            c == '\u2018' || c == '\u2019') { // ‘’
+          message = Language.interpolate("editor.status.bad_curly_quote", c);
+        } else if (c != 0) {
+          message = "Not expecting symbol " + m[1] +
+              ", which is " + Character.getName(c) + ".";
+        }
+      }
+
+      String[] matches = PApplet.match(tsre.toString(), locationRegex);
       if (matches != null) {
         int errorLine = Integer.parseInt(matches[1]) - 1;
         int errorColumn = Integer.parseInt(matches[2]);
@@ -362,7 +384,7 @@ public class JavaBuild {
         }
         errorLine -= sketch.getCode(errorFile).getPreprocOffset();
 
-        throw new SketchException(tsre.getMessage(),
+        throw new SketchException(message,
                                   errorFile, errorLine, errorColumn);
 
       } else {
