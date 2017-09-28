@@ -793,7 +793,7 @@ public class PVector implements Serializable {
    *
    * @webref pvector:method
    * @usage web_application
-   * @brief Multiply a vector by a scalar
+   * @brief Multiply a vector by a matrix
    * @param m the matrix to multiply with the vector
    */
   public PVector multMatrix(float m[][]) {
