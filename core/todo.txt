@@ -1,6 +1,6 @@
 0264 (3.3.7 or 3.4)
-_ fix exception due to version parsing in Java 9
-_   https://github.com/processing/processing/issues/5275
+X fix exception due to version parsing in Java 9
+X   https://github.com/processing/processing/issues/5275
 
 _ make setting the window icon automatic, based on files in local dirs
 X   https://github.com/processing/processing/issues/5123
