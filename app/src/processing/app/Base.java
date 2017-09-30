@@ -112,7 +112,7 @@ public class Base {
 
 
   static public void main(final String[] args) {
-    if (Platform.isLinux()) {
+    if (Preferences.getBoolean("editor.smooth")) {
       // Those properties helps enabling anti-aliasing on Linux
       // (but not on Windows where they made things worse actually
       // and the font rendering becomes ugly).
