@@ -1,21 +1,43 @@
 0264 (3.3.7 or 3.4)
 
+jakub
+X Fix scrub comments for empty block comment /**/
+X   https://github.com/processing/processing/pull/5265
+X   https://github.com/processing/processing/issues/5219
+
+contrib
+X detect errors from curved quotation marks
+X   https://github.com/processing/processing/issues/5133
+X   https://github.com/processing/processing/pull/5152
 
 high
+_ menu bars broken in High Sierra
+_   https://github.com/processing/processing/issues/5272
+_ fix exception due to version parsing in Java 9
+_   https://github.com/processing/processing/issues/5275
 _ make setting the window icon automatic, based on files in local dirs
 X   https://github.com/processing/processing/issues/5123
 X   https://github.com/processing/processing/pull/5202
 _   need to make this work behind the scenes instead
 _   create icon.png or have an 'icons' folder with multiple sizes
 
+_ add select/copy to the status bar
+_   https://github.com/processing/processing/issues/5271
+
+_ untitled folders are stored in temp folder
+_ clean up /tmp folders used during build
+_   https://github.com/processing/processing/issues/1896
+_ don't let people into the /tmp folder for sketches
+o   don't use tmp folder for sketches? 
+_   restrict more things like "show sketch folder"
+_   don't allow adding files w/o saving
+_   others?
+
 contrib
 _ console hiding button?
 _   https://github.com/processing/processing/pull/5115
 _ make "loadXML(String)" handle "file not found"
 _   https://github.com/processing/processing/pull/5144
-_ detect errors from curved quotation marks
-_   https://github.com/processing/processing/issues/5133
-_   https://github.com/processing/processing/pull/5152
 _ alternate handling of duplicate library conflicts
 _   https://github.com/processing/processing/pull/5126
 
@@ -49,15 +71,6 @@ _   https://github.com/processing/processing/issues/5233
 _ put the reference (and examples?) into .zip files
 _   unzipping the app takes forever
 _   see the 'examples' section below
-
-_ untitled folders are stored in temp folder
-_ clean up /tmp folders used during build
-_   https://github.com/processing/processing/issues/1896
-_ don't let people into the /tmp folder for sketches
-o   don't use tmp folder for sketches? 
-_   restrict more things like "show sketch folder"
-_   don't allow adding files w/o saving
-_   others?
 
 _ Could not initialize class com.sun.jna.Native on startup (Windows)
 _   https://github.com/processing/processing/issues/4929
