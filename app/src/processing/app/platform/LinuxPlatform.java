@@ -70,6 +70,7 @@ public class LinuxPlatform extends DefaultPlatform {
   }
 
   public void setLookAndFeel() throws Exception {
+    super.setLookAndFeel();
     GTKLookAndFeelFixer.installGtkPopupBugWorkaround();
   }
 
