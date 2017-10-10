@@ -53,6 +53,9 @@ import javax.swing.filechooser.FileSystemView;
 // loadXML() error handling
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.jointheleague.ecolban.rpirobot.IRobotAdapter;
+import org.jointheleague.ecolban.rpirobot.IRobotInterface;
+import org.jointheleague.ecolban.rpirobot.SimpleIRobot;
 import org.xml.sax.SAXException;
 
 import java.io.*;
@@ -106,7 +109,24 @@ import processing.opengl.*;
  * (tiny) size, we should be focusing on the future, rather than working around
  * legacy Java code.
  */
-public class PApplet implements PConstants {
+public class PApplet implements PConstants, IRobotInterface {
+  /**
+   * Robot initialization
+   */
+  static IRobotInterface base;
+  static IRobotAdapter delegate;
+
+  static {
+    try {
+      base = new SimpleIRobot();
+    } catch (InterruptedException | IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    delegate = new IRobotAdapter(base);
+  }
+
+
   /** Full name of the Java version (i.e. 1.5.0_11). */
   static public final String javaVersionName = System
     .getProperty("java.version");
@@ -1047,6 +1067,7 @@ public class PApplet implements PConstants {
    * @see PApplet#smooth()
    */
   public void settings() {
+
     // is this necessary? (doesn't appear to be, so removing)
     //size(DEFAULT_WIDTH, DEFAULT_HEIGHT, JAVA2D);
   }
@@ -3936,7 +3957,315 @@ public class PApplet implements PConstants {
     System.out.print(what);
     System.out.flush();
   }
+  public void driveDirect(int l, int r) {
+    System.out.print("test");
+  }
+  public void drive(int velocity, int radius) throws IOException {
+    // TODO Auto-generated method stub
 
+  }
+  public void full() throws IOException {
+    // TODO Auto-generated method stub
+
+  }
+
+  public int getAngle() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getBatteryCapacity() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getBatteryCharge() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getBatteryTemperature() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getChargingState() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getCliffSignalLeftFront() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getCliffSignalRightFront() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getCliffSignalLeft() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getCliffSignalRight() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getCurrent() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getDistance() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getEncoderCountLeft() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getEncoderCountRight() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getInfraredByte() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getInfraredByteLeft() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getInfraredByteRight() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getMotorCurrentLeft() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int[] getLightBumps() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public int getMotorCurrentRight() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getOiMode() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getRequestedRadius() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getRequestedVelocity() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getRequestedVelocityLeft() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getRequestedVelocityRight() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getSongNumber() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public int getVoltage() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public boolean isStasis() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public int getWallSignal() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  public boolean isBumpLeft() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isBumpRight() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isCleanButtonDown() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isCliffFrontLeft() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isCliffFrontRight() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isCliffLeft() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isCliffRight() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isHomeBaseChargerAvailable() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isInternalChargerAvailable() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isLeftWheelOvercurrent() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isLightBump() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isWheelOvercurrentMainBrush() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isSpotButtonDown() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isRightWheelOvercurrent() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isSongPlaying() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isVirtualWall() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isWall() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isWheelDropLeft() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isWheelDropRight() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public boolean isWheelOvercurrentSideBrush() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public void leds(int powerColor, int powerIntensity, boolean spotLedOn)
+    throws IOException {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void ledsToggle(boolean togglePower) throws IOException {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void playSong(int songNumber) throws IOException {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void readSensors(int sensorId) throws IOException {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void reset() throws IOException {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void safe() throws IOException {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void song(int songNumber, int[] notesAndDurations) throws IOException {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void song(int songNumber, int[] notesAndDurations, int startIndex,
+                   int length)
+    throws IOException {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void setTailLight(boolean on) throws IOException {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void waitButtonPressed(boolean beep) throws IOException {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void closeConnection() {
+    // TODO Auto-generated method stub
+
+  }
   /**
    * @param variables
    *          list of data, separated by commas
@@ -15665,11 +15994,5 @@ public class PApplet implements PConstants {
                     int dw, int dh, int mode) {
     if (recorder != null) recorder.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
     g.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
-  }
-
-
-  public void driveDirect(int l, int r) {
-    if (recorder != null) recorder.driveDirect(l, r);
-    g.driveDirect(l, r);
   }
 }

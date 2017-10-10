@@ -3385,8 +3385,5 @@ public class PImage implements PConstants, Cloneable {
     return success;
   }
 
-  public void driveDirect(int l, int r) {
-    System.err.println("not implemented yet");
-  }
 
 }
