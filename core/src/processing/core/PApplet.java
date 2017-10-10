@@ -109,24 +109,10 @@ import processing.opengl.*;
  * (tiny) size, we should be focusing on the future, rather than working around
  * legacy Java code.
  */
-public class PApplet implements PConstants, IRobotInterface {
-  /**
-   * Robot initialization
-   */
-  static IRobotInterface base;
-  static IRobotAdapter delegate;
+public class PApplet implements PConstants {
 
-  static {
-    try {
-      base = new SimpleIRobot();
-    } catch (InterruptedException | IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    delegate = new IRobotAdapter(base);
-  }
-
-
+IRobotInterface base;
+IRobotAdapter delegate;
   /** Full name of the Java version (i.e. 1.5.0_11). */
   static public final String javaVersionName = System
     .getProperty("java.version");
@@ -3961,7 +3947,21 @@ public class PApplet implements PConstants, IRobotInterface {
     System.out.print("test");
   }
   public void drive(int velocity, int radius) throws IOException {
-    // TODO Auto-generated method stub
+   System.out.println("drive");
+
+  }
+  public void connect(){
+    /**
+     * Robot initialization
+     */
+      try {
+        base = new SimpleIRobot();
+      } catch (InterruptedException | IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      delegate = new IRobotAdapter(base);
+
 
   }
   public void full() throws IOException {

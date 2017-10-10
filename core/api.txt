@@ -177,6 +177,7 @@ This document was last updated for Processing 1.0.
   boolean isWheelDropLeft()
   boolean isWheelDropRight()
   boolean isWheelOvercurrentSideBrush()
+  public void connect()
   void leds(int powerColor, int powerIntensity, boolean spotLedOn)
   void ledsToggle(boolean togglePower)
   void playSong(int songNumber)

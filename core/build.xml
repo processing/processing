@@ -54,7 +54,14 @@
 	   classpath="apple.jar;
                       library/jogl-all.jar;
                       library/gluegen-rt.jar;
-                      library/RPiGreenbot.jar;"
+                      library/RPiGreenbot.jar;
+                      library/pi4j-gpio-extension.jar;
+                      library/pi4j-service.jar;
+                      library/pi4j-device.jar;
+                      library/pi4j-core.jar;
+                      library/pi4j-core-sources.jar;
+                      library/RXTXcomm.jar;
+                      library/librxtxSerial.so;"  
 
 	   nowarn="true">
       <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
