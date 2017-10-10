@@ -1,11 +1,12 @@
 This document was last updated for Processing 1.0.
-  
+
   public void setParent(PApplet parent)
   public void setPrimary(boolean primary)
   public void setPath(String path)
   public void setSize(int iwidth, int iheight)
   protected void allocate()
   public void dispose()
+
 
   public boolean canDraw()
   public void beginDraw()
@@ -43,24 +44,24 @@ This document was last updated for Processing 1.0.
   protected void curveVertexCheck();
   public void curveVertex(float x, float y)
   public void curveVertex(float x, float y, float z)
-  protected void curveVertexSegment(float x1, float y1,  
-                                    float x2, float y2, 
-                                    float x3, float y3, 
+  protected void curveVertexSegment(float x1, float y1,
+                                    float x2, float y2,
+                                    float x3, float y3,
                                     float x4, float y4)
-  protected void curveVertexSegment(float x1, float y1, float z1, 
+  protected void curveVertexSegment(float x1, float y1, float z1,
                                     float x2, float y2, float z2,
                                     float x3, float y3, float z3,
                                     float x4, float y4, float z4)
 
   protected void renderPoints(int start, int stop)  // P3D
   protected void rawPoints(int start, int stop)  // P3D
-  
+
   protected void renderLines(int start, int stop)  // P3D
   protected void rawLines(int start, int stop)  // P3D
-  
+
   protected void renderTriangles(int start, int stop)  // P3D
   protected void rawTriangles(int start, int stop)  // P3D
-  
+
   public void flush()
   protected void render()
   proected void sort()
@@ -70,7 +71,7 @@ This document was last updated for Processing 1.0.
   public void line(float x1, float y1, float x2, float y2)
   public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2)
-  public void triangle(float x1, float y1, 
+  public void triangle(float x1, float y1,
                        float x2, float y2,
                        float x3, float y3)
   public void quad(float x1, float y1, float x2, float y2,
@@ -83,7 +84,7 @@ This document was last updated for Processing 1.0.
   public void ellipseMode(int mode)
   public void ellipse(float a, float b, float c, float d)
   protected void ellipseImpl(float x, float y, float w, float h)
-    
+
   public void arc(float a, float b, float c, float d,
                   float start, float stop)
   protected void arcImpl(float x, float y, float w, float h,
@@ -124,11 +125,73 @@ This document was last updated for Processing 1.0.
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
                     float x4, float y4, float z4)
-
   protected void splineForward(int segments, PMatrix3D matrix)
-
+  public void driveDirect(int l,int r)	void drive(int velocity, int radius)
+  void driveDirect(int leftVelocity, int rightVelocity)
+  void full()
+  int getAngle()
+  int getBatteryCapacity()
+  int getBatteryCharge()
+  int getBatteryTemperature()
+  int getChargingState()
+  int getCliffSignalLeftFront()
+  int getCliffSignalRightFront()
+  int getCliffSignalLeft()
+  int getCliffSignalRight()
+  int getCurrent()
+  int getDistance()
+  int getEncoderCountLeft()
+  int getEncoderCountRight()
+  int getInfraredByte()
+  int getInfraredByteLeft()
+  int getInfraredByteRight()
+  int getMotorCurrentLeft()
+  int[] getLightBumps()
+  int getMotorCurrentRight()
+  int getOiMode()
+  int getRequestedRadius()
+  int getRequestedVelocity()
+  int getRequestedVelocityLeft()
+  int getRequestedVelocityRight()
+  int getSongNumber()
+  int getVoltage()
+  boolean isStasis()
+  int getWallSignal()
+  boolean isBumpLeft()
+  boolean isBumpRight()
+  boolean isCleanButtonDown()
+  boolean isCliffFrontLeft()
+  boolean isCliffFrontRight()
+  boolean isCliffLeft()
+  boolean isCliffRight()
+  boolean isHomeBaseChargerAvailable()
+  boolean isInternalChargerAvailable()
+  boolean isLeftWheelOvercurrent()
+  boolean isLightBump()
+  boolean isWheelOvercurrentMainBrush()
+  boolean isSpotButtonDown()
+  boolean isRightWheelOvercurrent()
+  boolean isSongPlaying()
+  boolean isVirtualWall()
+  boolean isWall()
+  boolean isWheelDropLeft()
+  boolean isWheelDropRight()
+  boolean isWheelOvercurrentSideBrush()
+  public void connect()
+  void leds(int powerColor, int powerIntensity, boolean spotLedOn)
+  void ledsToggle(boolean togglePower)
+  void playSong(int songNumber)
+  void readSensors(int sensorId)
+  void reset()
+  void safe()
+  void song(int songNumber, int[] notesAndDurations)
+  void song(int songNumber, int[] notesAndDurations, int startIndex, int length)
+  void setTailLight(boolean on) throws IOException
+  void stop()
+  void waitButtonPressed(boolean beep)
+  void closeConnection()
   public void smooth()
-  public void noSmooth() 
+  public void noSmooth()
 
   public void imageMode(int mode)
   public void image(PImage image, float x, float y)
@@ -229,8 +292,8 @@ This document was last updated for Processing 1.0.
                     float near, float far)
   public void perspective()
   public void perspective(float fov, float aspect, float near, float far)
-  public void frustum(float left, float right, 
-                      float bottom, float top, 
+  public void frustum(float left, float right,
+                      float bottom, float top,
                       float near, float far)
   public void printProjection()
 
@@ -245,7 +308,7 @@ This document was last updated for Processing 1.0.
 
   public void pushStyle()
   public void popStyle()
-  public void style(PStyle) 
+  public void style(PStyle)
   public PStyle getStyle()
   public void getStyle(PStyle)
 
@@ -368,6 +431,7 @@ These are the methods found in PImage, which are inherited by PGraphics.
 
   public PImage(Image)
   public Image getImage()
+
 
   public void setCache(Object parent, Object storage)
   public void getCache(Object parent)
