@@ -120,6 +120,8 @@ public class FloatDict {
    * Helpful for situations like sorting and then grabbing the top 50 entries.
    */
   public void resize(int length) {
+    if (length == count) return;
+
     if (length > count) {
       throw new IllegalArgumentException("resize() can only be used to shrink the dictionary");
     }
@@ -192,8 +194,8 @@ public class FloatDict {
       }
 
       public Entry next() {
+        ++index;
         Entry e = new Entry(keys[index], values[index]);
-        index++;
         return e;
       }
 

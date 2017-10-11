@@ -214,8 +214,8 @@ public class StringDict {
       }
 
       public Entry next() {
+        ++index;
         Entry e = new Entry(keys[index], values[index]);
-        index++;
         return e;
       }
 
