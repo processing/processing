@@ -116,6 +116,29 @@ public class FloatDict {
 
 
   /**
+   * Resize the internal data, this can only be used to shrink the list.
+   * Helpful for situations like sorting and then grabbing the top 50 entries.
+   */
+  public void resize(int length) {
+    if (length > count) {
+      throw new IllegalArgumentException("resize() can only be used to shrink the dictionary");
+    }
+    if (length < 1) {
+      throw new IllegalArgumentException("resize(" + length + ") is too small, use 1 or higher");
+    }
+
+    String[] newKeys = new String[length];
+    float[] newValues = new float[length];
+    PApplet.arrayCopy(keys, newKeys, length);
+    PApplet.arrayCopy(values, newValues, length);
+    keys = newKeys;
+    values = newValues;
+    count = length;
+    resetIndices();
+  }
+
+
+  /**
    * Remove all entries.
    *
    * @webref floatdict:method
@@ -124,6 +147,14 @@ public class FloatDict {
   public void clear() {
     count = 0;
     indices = new HashMap<String, Integer>();
+  }
+
+
+  private void resetIndices() {
+    indices = new HashMap<String, Integer>(count);
+    for (int i = 0; i < count; i++) {
+      indices.put(keys[i], i);
+    }
   }
 
 
@@ -725,10 +756,7 @@ public class FloatDict {
     s.run();
 
     // Set the indices after sort/swaps (performance fix 160411)
-    indices = new HashMap<String, Integer>();
-    for (int i = 0; i < count; i++) {
-      indices.put(keys[i], i);
-    }
+    resetIndices();
   }
 
 
