@@ -23,7 +23,7 @@ public class StringDict {
   protected String[] values;
 
   /** Internal implementation for faster lookups */
-  private HashMap<String, Integer> indices = new HashMap<String, Integer>();
+  private HashMap<String, Integer> indices = new HashMap<>();
 
 
   public StringDict() {
@@ -168,12 +168,12 @@ public class StringDict {
    */
   public void clear() {
     count = 0;
-    indices = new HashMap<String, Integer>();
+    indices = new HashMap<>();
   }
 
 
   private void resetIndices() {
-    indices = new HashMap<String, Integer>(count);
+    indices = new HashMap<>(count);
     for (int i = 0; i < count; i++) {
       indices.put(keys[i], i);
     }
