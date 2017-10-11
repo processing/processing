@@ -363,10 +363,20 @@ public class StringDict {
   }
 
 
+  public void setIndex(int index, String key, String value) {
+    if (index < 0 || index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
+    keys[index] = key;
+    values[index] = value;
+  }
+
+
   public int index(String what) {
     Integer found = indices.get(what);
     return (found == null) ? -1 : found.intValue();
   }
+
 
   /**
    * @webref stringdict:method

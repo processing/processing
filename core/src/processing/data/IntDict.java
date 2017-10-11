@@ -348,6 +348,16 @@ public class IntDict {
     }
   }
 
+
+  public void setIndex(int index, String key, int value) {
+    if (index < 0 || index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
+    keys[index] = key;
+    values[index] = value;
+  }
+
+
   /**
    * @webref intdict:method
    * @brief Check if a key is a part of the data structure

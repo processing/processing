@@ -346,6 +346,15 @@ public class FloatDict {
   }
 
 
+  public void setIndex(int index, String key, float value) {
+    if (index < 0 || index >= count) {
+      throw new ArrayIndexOutOfBoundsException(index);
+    }
+    keys[index] = key;
+    values[index] = value;
+  }
+
+
   /**
    * @webref floatdict:method
    * @brief Check if a key is a part of the data structure
