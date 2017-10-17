@@ -229,6 +229,7 @@ public interface PConstants {
   static final int HSB   = 3;  // color
   static final int ALPHA = 4;  // image
 //  static final int CMYK  = 5;  // image & color (someday)
+  static final int HSLUV = 6;  // color
 
 
   // image file types

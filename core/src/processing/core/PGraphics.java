@@ -551,6 +551,8 @@ public class PGraphics extends PImage implements PConstants {
   protected int calcRi, calcGi, calcBi, calcAi;
   protected int calcColor;
   protected boolean calcAlpha;
+  protected double[] calcColorHSLuv = new double[3];
+  protected double[] calcColorRGB = new double[3];
 
   /** The last RGB value converted to HSB */
   int cacheHsbKey;
@@ -7622,6 +7624,22 @@ public class PGraphics extends PImage implements PConstants {
         case 5: calcR = z; calcG = p; calcB = q; break;
         }
       }
+      break;
+    case HSLUV:
+      x /= colorModeX; // h
+      y /= colorModeY; // s
+      z /= colorModeZ; // l
+
+      calcColorHSLuv[0] = (double)x*360.0;
+      calcColorHSLuv[1] = (double)y*100.0;
+      calcColorHSLuv[2] = (double)z*100.0;
+
+      calcColorRGB = HUSLColorConverter.hsluvToRgb(calcColorHSLuv);
+      
+      calcR = (float)calcColorRGB[0];
+      calcG = (float)calcColorRGB[1];
+      calcB = (float)calcColorRGB[2];
+      calcA = colorModeScale ? (a/colorModeA) : a;
       break;
     }
     calcRi = (int)(255*calcR); calcGi = (int)(255*calcG);
