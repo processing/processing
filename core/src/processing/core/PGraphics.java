@@ -49,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 import processing.opengl.PGL;
 import processing.opengl.PShader;
 
+
   /**
    * ( begin auto-generated from PGraphics.xml )
    *
@@ -551,6 +552,8 @@ public class PGraphics extends PImage implements PConstants {
   protected int calcRi, calcGi, calcBi, calcAi;
   protected int calcColor;
   protected boolean calcAlpha;
+  protected double[] colorHSLuv = new double[3];
+  protected double[] colorRGB = new double[3];
 
   /** The last RGB value converted to HSB */
   int cacheHsbKey;
@@ -716,6 +719,7 @@ public class PGraphics extends PImage implements PConstants {
   // default implementations for each are simple, obvious, and common.
   // They're also separate to avoid a monolithic and fragile constructor.
 
+  HUSLColorConverter hsluvConverter;
 
   public PGraphics() {
     // In 3.1.2, giving up on the async image saving as the default
@@ -7622,6 +7626,22 @@ public class PGraphics extends PImage implements PConstants {
         case 5: calcR = z; calcG = p; calcB = q; break;
         }
       }
+      break;
+    case HSLuv:
+      x /= colorModeX; // h
+      y /= colorModeY; // s
+      z /= colorModeZ; // b
+
+      colorHSLuv[0] = (double)x*360.0;
+      colorHSLuv[1] = (double)y*100.0;
+      colorHSLuv[2] = (double)z*100.0;
+
+      colorRGB = HUSLColorConverter.hsluvToRgb(colorHSLuv);
+      
+      calcR = (float)colorRGB[0];
+      calcG = (float)colorRGB[1];
+      calcB = (float)colorRGB[2];
+      calcA = colorModeScale ? (a/colorModeA) : a;
       break;
     }
     calcRi = (int)(255*calcR); calcGi = (int)(255*calcG);
