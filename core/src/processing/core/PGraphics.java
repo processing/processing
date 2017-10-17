@@ -719,7 +719,6 @@ public class PGraphics extends PImage implements PConstants {
   // default implementations for each are simple, obvious, and common.
   // They're also separate to avoid a monolithic and fragile constructor.
 
-  HUSLColorConverter hsluvConverter;
 
   public PGraphics() {
     // In 3.1.2, giving up on the async image saving as the default
