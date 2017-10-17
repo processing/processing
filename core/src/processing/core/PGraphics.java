@@ -551,8 +551,8 @@ public class PGraphics extends PImage implements PConstants {
   protected int calcRi, calcGi, calcBi, calcAi;
   protected int calcColor;
   protected boolean calcAlpha;
-  protected double[] colorHSLuv = new double[3];
-  protected double[] colorRGB = new double[3];
+  protected double[] calcColorHSLuv = new double[3];
+  protected double[] calcColorRGB = new double[3];
 
   /** The last RGB value converted to HSB */
   int cacheHsbKey;
@@ -7630,15 +7630,15 @@ public class PGraphics extends PImage implements PConstants {
       y /= colorModeY; // s
       z /= colorModeZ; // l
 
-      colorHSLuv[0] = (double)x*360.0;
-      colorHSLuv[1] = (double)y*100.0;
-      colorHSLuv[2] = (double)z*100.0;
+      calcColorHSLuv[0] = (double)x*360.0;
+      calcColorHSLuv[1] = (double)y*100.0;
+      calcColorHSLuv[2] = (double)z*100.0;
 
-      colorRGB = HUSLColorConverter.hsluvToRgb(colorHSLuv);
+      calcColorRGB = HUSLColorConverter.hsluvToRgb(calcColorHSLuv);
       
-      calcR = (float)colorRGB[0];
-      calcG = (float)colorRGB[1];
-      calcB = (float)colorRGB[2];
+      calcR = (float)calcColorRGB[0];
+      calcG = (float)calcColorRGB[1];
+      calcB = (float)calcColorRGB[2];
       calcA = colorModeScale ? (a/colorModeA) : a;
       break;
     }
