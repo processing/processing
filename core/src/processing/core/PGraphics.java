@@ -49,7 +49,6 @@ import java.util.concurrent.TimeUnit;
 import processing.opengl.PGL;
 import processing.opengl.PShader;
 
-
   /**
    * ( begin auto-generated from PGraphics.xml )
    *
@@ -7629,7 +7628,7 @@ public class PGraphics extends PImage implements PConstants {
     case HSLuv:
       x /= colorModeX; // h
       y /= colorModeY; // s
-      z /= colorModeZ; // b
+      z /= colorModeZ; // l
 
       colorHSLuv[0] = (double)x*360.0;
       colorHSLuv[1] = (double)y*100.0;
