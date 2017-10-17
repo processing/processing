@@ -7625,7 +7625,7 @@ public class PGraphics extends PImage implements PConstants {
         }
       }
       break;
-    case HSLuv:
+    case HSLUV:
       x /= colorModeX; // h
       y /= colorModeY; // s
       z /= colorModeZ; // l
