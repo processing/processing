@@ -2,6 +2,11 @@
 X fix exception due to version parsing in Java 9
 X   https://github.com/processing/processing/issues/5275
 
+data
+X added setIndex() method to IntDict, FloatDict, StringDict
+X added resize() to IntDict, FloatDict, StringDict
+X fix entries() Iterator in IntDict, FloatDict, StringDict
+
 _ make setting the window icon automatic, based on files in local dirs
 X   https://github.com/processing/processing/issues/5123
 X   https://github.com/processing/processing/pull/5202

@@ -1,4 +1,7 @@
 0264 (3.3.7 or 3.4)
+X downloading the jre broken again
+X   https://github.com/processing/processing/issues/5284
+X   the old 144 link must have been removed
 
 jakub
 X Fix scrub comments for empty block comment /**/
@@ -9,6 +12,8 @@ contrib
 X detect errors from curved quotation marks
 X   https://github.com/processing/processing/issues/5133
 X   https://github.com/processing/processing/pull/5152
+_ Remove "Pipe Organ" from exec javadoc
+_   https://github.com/processing/processing/pull/5282
 
 high
 _ menu bars broken in High Sierra
