@@ -3457,7 +3457,7 @@ public class PApplet implements PConstants {
    * method, which uses the operating system's launcher to open the files.
    * It's always a good idea to use a full path to the executable here.
    * <pre>
-   * exec("/usr/bin/say", "-v", "Pipe Organ", "welcome to the command line");
+   * exec("/usr/bin/say", "welcome to the command line");
    * </pre>
    * Or if you want to wait until it's completed, something like this:
    * <pre>
