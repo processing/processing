@@ -23,6 +23,7 @@ package processing.mode.java.tweak;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public class SketchParser {
@@ -581,11 +582,9 @@ public class SketchParser {
     for (int i = 0; i < codeTabs.length; i++) {
       List<ColorControlBox> toDelete = new ArrayList<ColorControlBox>();
       for (String context : multipleContexts) {
-        for (ColorControlBox ccb : colorBoxes.get(i)) {
-          if (ccb.drawContext.equals(context) && !ccb.isHex) {
-            toDelete.add(ccb);
-          }
-        }
+        toDelete  = colorBoxes.get(i).stream()
+                                     .filter(ccb -> ccb.drawContext.equals(context) && !ccb.isHex)
+                                     .collect(Collectors.toList());
       }
       colorBoxes.get(i).removeAll(toDelete);
     }

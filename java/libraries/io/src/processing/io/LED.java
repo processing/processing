@@ -161,7 +161,7 @@ public class LED {
       return new String[]{ "led0", "led1" };
     }
 
-    ArrayList<String> devs = new ArrayList<String>();
+    ArrayList<String> devs = new ArrayList<>();
     File dir = new File("/sys/class/leds");
     File[] files = dir.listFiles();
     if (files != null) {

@@ -282,7 +282,7 @@ public class Library extends LocalContribution {
   }
 
 
-  static protected HashMap<String, Object> packageWarningMap = new HashMap<String, Object>();
+  static protected HashMap<String, Object> packageWarningMap = new HashMap<>();
 
   /**
    * Add the packages provided by this library to the master list that maps
@@ -461,12 +461,7 @@ public class Library extends LocalContribution {
 
 
   static public boolean hasMultipleArch(int platform, List<Library> libraries) {
-    for (Library library : libraries) {
-      if (library.hasMultipleArch(platform)) {
-        return true;
-      }
-    }
-    return false;
+    return libraries.stream().anyMatch(library -> library.hasMultipleArch(platform));
   }
 
 
@@ -484,7 +479,7 @@ public class Library extends LocalContribution {
 
 
   static public List<File> discover(File folder) {
-    List<File> libraries = new ArrayList<File>();
+    List<File> libraries = new ArrayList<>();
     String[] folderNames = folder.list(junkFolderFilter);
 
     // if a bad folder or something like that, this might come back null
@@ -529,8 +524,8 @@ public class Library extends LocalContribution {
 
 
   static public List<Library> list(File folder) {
-    List<Library> libraries = new ArrayList<Library>();
-    List<File> librariesFolders = new ArrayList<File>();
+    List<Library> libraries = new ArrayList<>();
+    List<File> librariesFolders = new ArrayList<>();
     librariesFolders.addAll(discover(folder));
 
     for (File baseFolder : librariesFolders) {

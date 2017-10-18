@@ -60,7 +60,7 @@ public class MarkerColumn extends JPanel {
   private Color warningColor;
 
   // Stores error markers displayed PER TAB along the error bar.
-  private List<LineMarker> errorPoints = new ArrayList<LineMarker>();
+  private List<LineMarker> errorPoints = new ArrayList<>();
 
 
   public MarkerColumn(Editor editor, int height) {

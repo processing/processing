@@ -52,9 +52,7 @@ public class ArrayFieldNode extends VariableNode {
   public void setValue(Value value) {
     try {
       array.setValue(index, value);
-    } catch (InvalidTypeException ex) {
-      Messages.loge(null, ex);
-    } catch (ClassNotLoadedException ex) {
+    } catch (InvalidTypeException | ClassNotLoadedException ex) {
       Messages.loge(null, ex);
     }
     this.value = value;

@@ -81,7 +81,7 @@ public class VariableInspector extends JDialog {
 //  protected Debugger dbg;
 
   /// list of expanded tree paths. (using list to maintain the order of expansion)
-  protected List<TreePath> expandedNodes = new ArrayList<TreePath>();
+  protected List<TreePath> expandedNodes = new ArrayList<>();
 
 
   public VariableInspector(final JavaEditor editor) {
@@ -696,7 +696,7 @@ public class VariableInspector extends JDialog {
       // first remove all children of collapsed path
       // this makes sure children do not appear before parents in the list.
       // (children can't be expanded before their parents)
-      List<TreePath> removalList = new ArrayList<TreePath>();
+      List<TreePath> removalList = new ArrayList<>();
       for (TreePath path : expandedNodes) {
         if (path.getParentPath().equals(tee.getPath())) {
           removalList.add(path);
@@ -911,7 +911,7 @@ public class VariableInspector extends JDialog {
    * @return the filtered list.
    */
   protected List<VariableNode> filterNodes(List<VariableNode> nodes, VariableNodeFilter filter) {
-    List<VariableNode> filtered = new ArrayList<VariableNode>();
+    List<VariableNode> filtered = new ArrayList<>();
     for (VariableNode node : nodes) {
       if (filter.accept(node)) {
         filtered.add(node);
