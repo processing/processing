@@ -3213,10 +3213,8 @@ public class PGraphics extends PImage implements PConstants {
    */
   public float bezierPoint(float a, float b, float c, float d, float t) {
     float t1 = 1.0f - t;
-    return a*t1*t1*t1 + 3*b*t*t1*t1 + 3*c*t*t*t1 + d*t*t*t;
+    return (a*t1 + 3*b*t)*t1*t1 + (3*c*t1 + d*t)*t*t;
   }
-
-
   /**
    * ( begin auto-generated from bezierTangent.xml )
    *
