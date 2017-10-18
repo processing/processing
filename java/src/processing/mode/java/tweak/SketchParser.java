@@ -23,7 +23,6 @@ package processing.mode.java.tweak;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 
 public class SketchParser {
@@ -118,7 +117,7 @@ public class SketchParser {
 
     Pattern p = Pattern.compile("[\\[\\{<>(),\\t\\s\\+\\-\\/\\*^%!|&=?:~]\\d+\\.?\\d*");
     for (int i = 0; i < codeTabs.length; i++) {
-      List<Handle> handles = new ArrayList<Handle>();
+      List<Handle> handles = new ArrayList<>();
       allHandles.add(handles);
 
       String c = codeTabs[i];
@@ -328,7 +327,7 @@ public class SketchParser {
 
 
   private ArrayList<ColorMode> findAllColorModes() {
-    ArrayList<ColorMode> modes = new ArrayList<ColorMode>();
+    ArrayList<ColorMode> modes = new ArrayList<>();
 
     for (int i=0; i<codeTabs.length; i++) {
       String tab = codeTabs[i];
@@ -369,14 +368,14 @@ public class SketchParser {
     Pattern p = Pattern.compile("color\\(|color\\s\\(|fill[\\(\\s]|stroke[\\(\\s]|background[\\(\\s]|tint[\\(\\s]");
 
     for (int i = 0; i < codeTabs.length; i++) {
-      List<ColorControlBox> colorBox = new ArrayList<ColorControlBox>();
+      List<ColorControlBox> colorBox = new ArrayList<>();
       colorBoxes.add(colorBox);
 
       String tab = codeTabs[i];
       Matcher m = p.matcher(tab);
 
       while (m.find()) {
-        ArrayList<Handle> colorHandles = new ArrayList<Handle>();
+        ArrayList<Handle> colorHandles = new ArrayList<>();
 
         // look for the '(' and ')' positions
         int openPar = tab.indexOf("(", m.start());
@@ -460,7 +459,7 @@ public class SketchParser {
       Matcher m = p.matcher(tab);
 
       while (m.find()) {
-        ArrayList<Handle> colorHandles = new ArrayList<Handle>();
+        ArrayList<Handle> colorHandles = new ArrayList<>();
 
         // look for the '(' and ')' positions
         int openPar = tab.indexOf("(", m.start());
@@ -559,7 +558,7 @@ public class SketchParser {
 
   private void handleMultipleColorModes() {
     // count how many color modes per context
-    Map<String, Integer> modeCount = new HashMap<String, Integer>();
+    Map<String, Integer> modeCount = new HashMap<>();
     for (ColorMode cm : colorModes) {
       Integer prev = modeCount.get(cm.drawContext);
       if (prev == null) {
@@ -569,7 +568,7 @@ public class SketchParser {
     }
 
     // find the contexts that have more than one color mode
-    ArrayList<String> multipleContexts = new ArrayList<String>();
+    ArrayList<String> multipleContexts = new ArrayList<>();
     Set<String> allContexts = modeCount.keySet();
     for (String context : allContexts) {
       if (modeCount.get(context) > 1) {
@@ -580,11 +579,13 @@ public class SketchParser {
     // keep only hex and web color boxes in color calls
     // that belong to 'multipleContexts' contexts
     for (int i = 0; i < codeTabs.length; i++) {
-      List<ColorControlBox> toDelete = new ArrayList<ColorControlBox>();
+      List<ColorControlBox> toDelete = new ArrayList<>();
       for (String context : multipleContexts) {
-        toDelete  = colorBoxes.get(i).stream()
-                                     .filter(ccb -> ccb.drawContext.equals(context) && !ccb.isHex)
-                                     .collect(Collectors.toList());
+        for (ColorControlBox ccb : colorBoxes.get(i)) {
+          if (ccb.drawContext.equals(context) && !ccb.isHex) {
+            toDelete.add(ccb);
+          }
+        }
       }
       colorBoxes.get(i).removeAll(toDelete);
     }
@@ -596,7 +597,7 @@ public class SketchParser {
 
     Pattern p = Pattern.compile("[+\\-]?(?:0|[1-9]\\d*)(?:\\.\\d*)?[eE][+\\-]?\\d+");
     for (String code : codeTabs) {
-      List<Range> notation = new ArrayList<Range>();
+      List<Range> notation = new ArrayList<>();
       Matcher m = p.matcher(code);
       while (m.find()) {
         notation.add(new Range(m.start(), m.end()));
@@ -766,7 +767,7 @@ public class SketchParser {
 
 
   static private List<Range> getCommentBlocks(String code) {
-    List<Range> commentBlocks = new ArrayList<Range>();
+    List<Range> commentBlocks = new ArrayList<>();
 
     int lastBlockStart=0;
     boolean lookForEnd = false;
