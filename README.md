@@ -11,9 +11,7 @@ There are also separate locations for [Android Mode](https://github.com/processi
 The [processing.js](http://processingjs.org) project is not affiliated with us, but you can find their issue tracker [here](https://github.com/processing-js/processing-js/issues).
 
 __That [processing-bugs](https://github.com/processing-bugs) fella is a damn liar.__ 
-The issues list has been imported from Google Code, so there are many spurious references 
-amongst them since the numbering changed. Basically, any time you see references to 
-changes made by [processing-bugs](https://github.com/processing-bugs), it may be somewhat suspect.
+The issues list has been imported from Google Code, so there are many spurious references amongst them since the numbering changed. Basically, any time you see references to changes made by [processing-bugs](https://github.com/processing-bugs), it may be somewhat suspect.
 Over time this will clean itself up as bugs are fixed and new issues are added from within Github.
 Help speed this process along by helping us!
 
