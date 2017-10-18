@@ -12,8 +12,12 @@ contrib
 X detect errors from curved quotation marks
 X   https://github.com/processing/processing/issues/5133
 X   https://github.com/processing/processing/pull/5152
-_ Remove "Pipe Organ" from exec javadoc
-_   https://github.com/processing/processing/pull/5282
+X Refactor to use a few Java 8 features
+X   https://github.com/processing/processing/pull/5134
+X Remove "Pipe Organ" from exec javadoc
+X   https://github.com/processing/processing/pull/5282
+_ Welcome dialog rewritten in Swing
+_   https://github.com/processing/processing/pull/5210
 
 high
 _ menu bars broken in High Sierra

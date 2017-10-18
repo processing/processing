@@ -7,6 +7,10 @@ X added setIndex() method to IntDict, FloatDict, StringDict
 X added resize() to IntDict, FloatDict, StringDict
 X fix entries() Iterator in IntDict, FloatDict, StringDict
 
+contrib
+X minor bezierPoint() rewrite for performance
+X   https://github.com/processing/processing/pull/5251
+
 _ make setting the window icon automatic, based on files in local dirs
 X   https://github.com/processing/processing/issues/5123
 X   https://github.com/processing/processing/pull/5202
