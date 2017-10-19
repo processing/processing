@@ -123,7 +123,7 @@ public class JSONObject {
    * string objects. This is used by JSONObject.put(string, object).
    */
   private static HashMap<String, Object> keyPool =
-    new HashMap<String, Object>(keyPoolSize);
+    new HashMap<>(keyPoolSize);
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -197,7 +197,7 @@ public class JSONObject {
    * @nowebref
    */
   public JSONObject() {
-    this.map = new HashMap<String, Object>();
+    this.map = new HashMap<>();
   }
 
 
@@ -291,7 +291,7 @@ public class JSONObject {
    *  the JSONObject.
    */
   protected JSONObject(HashMap<String, Object> map) {
-    this.map = new HashMap<String, Object>();
+    this.map = new HashMap<>();
     if (map != null) {
       Iterator i = map.entrySet().iterator();
       while (i.hasNext()) {
@@ -309,7 +309,7 @@ public class JSONObject {
    * @nowebref
    */
   public JSONObject(IntDict dict) {
-    map = new HashMap<String, Object>();
+    map = new HashMap<>();
     for (int i = 0; i < dict.size(); i++) {
       setInt(dict.key(i), dict.value(i));
     }
@@ -320,7 +320,7 @@ public class JSONObject {
    * @nowebref
    */
   public JSONObject(FloatDict dict) {
-    map = new HashMap<String, Object>();
+    map = new HashMap<>();
     for (int i = 0; i < dict.size(); i++) {
       setFloat(dict.key(i), dict.value(i));
     }
@@ -331,7 +331,7 @@ public class JSONObject {
    * @nowebref
    */
   public JSONObject(StringDict dict) {
-    map = new HashMap<String, Object>();
+    map = new HashMap<>();
     for (int i = 0; i < dict.size(); i++) {
       setString(dict.key(i), dict.value(i));
     }
@@ -1212,7 +1212,7 @@ public class JSONObject {
    * @see JSONObject#setBoolean(String, boolean)
    */
   public JSONObject setFloat(String key, float value) {
-    this.put(key, new Double(value));
+    this.put(key, Double.valueOf(value));
     return this;
   }
 
@@ -1226,7 +1226,7 @@ public class JSONObject {
    * @throws RuntimeException If the key is null or if the number is NaN or infinite.
    */
   public JSONObject setDouble(String key, double value) {
-    this.put(key, new Double(value));
+    this.put(key, Double.valueOf(value));
     return this;
   }
 
@@ -1326,7 +1326,7 @@ public class JSONObject {
       pooled = (String)keyPool.get(key);
       if (pooled == null) {
         if (keyPool.size() >= keyPoolSize) {
-          keyPool = new HashMap<String, Object>(keyPoolSize);
+          keyPool = new HashMap<>(keyPoolSize);
         }
         keyPool.put(key, key);
       } else {

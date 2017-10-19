@@ -41,14 +41,14 @@ import processing.core.PConstants;
 public class Platform {
   static DefaultPlatform inst;
 
-  static Map<Integer, String> platformNames = new HashMap<Integer, String>();
+  static Map<Integer, String> platformNames = new HashMap<>();
   static {
     platformNames.put(PConstants.WINDOWS, "windows"); //$NON-NLS-1$
     platformNames.put(PConstants.MACOSX, "macosx"); //$NON-NLS-1$
     platformNames.put(PConstants.LINUX, "linux"); //$NON-NLS-1$
   }
 
-  static Map<String, Integer> platformIndices = new HashMap<String, Integer>();
+  static Map<String, Integer> platformIndices = new HashMap<>();
   static {
     platformIndices.put("windows", PConstants.WINDOWS); //$NON-NLS-1$
     platformIndices.put("macosx", PConstants.MACOSX); //$NON-NLS-1$
@@ -86,7 +86,7 @@ public class Platform {
       } else if (Platform.isLinux()) {
         platformClass = Class.forName("processing.app.platform.LinuxPlatform"); //$NON-NLS-1$
       }
-      inst = (DefaultPlatform) platformClass.newInstance();
+      inst = (DefaultPlatform) platformClass.getDeclaredConstructor().newInstance();
     } catch (Exception e) {
       Messages.showError("Problem Setting the Platform",
                          "An unknown error occurred while trying to load\n" +

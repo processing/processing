@@ -9596,7 +9596,7 @@ public class PApplet implements PConstants {
 
   static final public float parseFloat(String what, float otherwise) {
     try {
-      return new Float(what).floatValue();
+      return Float.parseFloat(what);
     } catch (NumberFormatException e) { }
 
     return otherwise;
@@ -9646,7 +9646,7 @@ public class PApplet implements PConstants {
     float output[] = new float[what.length];
     for (int i = 0; i < what.length; i++) {
       try {
-        output[i] = new Float(what[i]).floatValue();
+        output[i] = Float.parseFloat(what[i]);
       } catch (NumberFormatException e) {
         output[i] = missing;
       }
@@ -10669,7 +10669,7 @@ public class PApplet implements PConstants {
       try {
         Class<?> c =
           Thread.currentThread().getContextClassLoader().loadClass(name);
-        sketch = (PApplet) c.newInstance();
+        sketch = (PApplet) c.getDeclaredConstructor().newInstance();
       } catch (RuntimeException re) {
         // Don't re-package runtime exceptions
         throw re;

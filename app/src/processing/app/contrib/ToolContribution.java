@@ -63,7 +63,7 @@ public class ToolContribution extends LocalContribution implements Tool, Compara
     String className = initLoader(null);
     if (className != null) {
       Class<?> toolClass = loader.loadClass(className);
-      tool = (Tool) toolClass.newInstance();
+      tool = (Tool) toolClass.getDeclaredConstructor().newInstance();
     }
 
     referenceFile = new File(folder, "reference/index.html");
@@ -95,7 +95,7 @@ public class ToolContribution extends LocalContribution implements Tool, Compara
 
   static public List<ToolContribution> loadAll(File toolsFolder) {
     File[] list = ContributionType.TOOL.listCandidates(toolsFolder);
-    ArrayList<ToolContribution> outgoing = new ArrayList<ToolContribution>();
+    ArrayList<ToolContribution> outgoing = new ArrayList<>();
     // If toolsFolder does not exist or is inaccessible (stranger things have
     // happened, and are reported as bugs) list will come back null.
     if (list != null) {

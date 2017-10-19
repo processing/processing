@@ -385,7 +385,7 @@ public class Toolkit {
       cleanChars  = cleanString.toCharArray();
       cleanCharas = new Character[cleanChars.length];
       for (int i = 0; i < cleanChars.length; i++) {
-        cleanCharas[i] = new Character(cleanChars[i]);
+        cleanCharas[i] = cleanChars[i];
       }
       Arrays.sort(cleanCharas, charComparator); // sorts in increasing order
       for (char mnem : cleanCharas) {

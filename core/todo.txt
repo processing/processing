@@ -17,6 +17,13 @@ X   https://github.com/processing/processing/pull/5202
 _   need to make this work behind the scenes instead
 _   create icon.png or have an 'icons' folder with multiple sizes
 
+_ Switch to getModifiersEx() and fix the AWT modifiers used in PSurfaceAWT
+_   this is an easy fix, but need to check impact elsewhere
+_   does anything else rely on these modifiers?
+
+_ Fix Java 9 incompatibilities inside PSurfaceFX
+_   https://github.com/processing/processing/issues/5286
+
 _ Hitting ESC in FX2D app on macOS throws IllegalStateException
 _   https://github.com/processing/processing/issues/5249
 

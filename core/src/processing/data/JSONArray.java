@@ -109,7 +109,7 @@ public class JSONArray {
    * Construct an empty JSONArray.
    */
   public JSONArray() {
-    this.myArrayList = new ArrayList<Object>();
+    this.myArrayList = new ArrayList<>();
   }
 
 
@@ -165,7 +165,7 @@ public class JSONArray {
    * @nowebref
    */
   public JSONArray(IntList list) {
-    myArrayList = new ArrayList<Object>();
+    myArrayList = new ArrayList<>();
     for (int item : list.values()) {
       myArrayList.add(Integer.valueOf(item));
     }
@@ -176,9 +176,9 @@ public class JSONArray {
    * @nowebref
    */
   public JSONArray(FloatList list) {
-    myArrayList = new ArrayList<Object>();
+    myArrayList = new ArrayList<>();
     for (float item : list.values()) {
-      myArrayList.add(new Float(item));
+      myArrayList.add(Float.valueOf(item));
     }
   }
 
@@ -187,7 +187,7 @@ public class JSONArray {
    * @nowebref
    */
   public JSONArray(StringList list) {
-    myArrayList = new ArrayList<Object>();
+    myArrayList = new ArrayList<>();
     for (String item : list.values()) {
       myArrayList.add(item);
     }
