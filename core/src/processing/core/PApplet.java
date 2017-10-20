@@ -111,8 +111,14 @@ public class PApplet implements PConstants {
   static public final String javaVersionName =
     System.getProperty("java.version");
 
-  static public final int javaPlatform =
-    parseInt(match(javaVersionName, "[1-9][0-9]*((\\.0)*\\.[1-9][0-9]*)*")[0]);
+  static public final int javaPlatform;
+  static {
+    String version = javaVersionName;
+    if (javaVersionName.startsWith("1.")) {
+      version = version.substring(2);
+    }
+    javaPlatform = parseInt(version.substring(0, version.indexOf('.')));
+  }
 
   /**
    * Do not use; javaPlatform or javaVersionName are better options.
