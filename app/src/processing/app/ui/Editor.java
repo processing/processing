@@ -2222,7 +2222,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         int last = Math.min(location + tabSize, textarea.getDocumentLength());
         textarea.select(location, last);
         // Don't eat code if it's not indented
-        if (textarea.getSelectedText().equals(tabString)) {
+        if (tabString.equals(textarea.getSelectedText())) {
           textarea.setSelectedText("");
         }
       }
@@ -2321,11 +2321,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
     if (ref != null) {
       showReference(ref + ".html");
     } else {
-      String text = textarea.getSelectedText().trim();
-      if (text.length() == 0) {
+      String text = textarea.getSelectedText();
+      if (text == null) {
         statusNotice(Language.text("editor.status.find_reference.select_word_first"));
       } else {
-        statusNotice(Language.interpolate("editor.status.find_reference.not_available", text));
+        statusNotice(Language.interpolate("editor.status.find_reference.not_available", text.trim()));
       }
     }
   }
