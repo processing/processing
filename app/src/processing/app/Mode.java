@@ -53,8 +53,7 @@ public abstract class Mode {
   protected File folder;
 
   protected TokenMarker tokenMarker;
-  protected Map<String, String> keywordToReference =
-    new HashMap<String, String>();
+  protected Map<String, String> keywordToReference = new HashMap<>();
 
   protected Settings theme;
 //  protected Formatter formatter;
@@ -598,7 +597,7 @@ public abstract class Mode {
       contrib.setEnabled(false);
       importMenu.add(contrib);
 
-      HashMap<String, JMenu> subfolders = new HashMap<String, JMenu>();
+      HashMap<String, JMenu> subfolders = new HashMap<>();
 
       for (Library library : contribLibraries) {
         JMenuItem item = new JMenuItem(library.getName());
