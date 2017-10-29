@@ -2,6 +2,8 @@
 X downloading the jre broken again
 X   https://github.com/processing/processing/issues/5284
 X   the old 144 link must have been removed
+_ update to launch4j 3.11? 
+_   http://launch4j.sourceforge.net/changelog.html
 
 jakub
 X Fix scrub comments for empty block comment /**/

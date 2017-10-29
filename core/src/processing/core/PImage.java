@@ -936,7 +936,6 @@ public class PImage implements PConstants, Cloneable {
   // ALPHA CHANNEL
 
 
-  @Deprecated
   /**
    * @param maskArray array of integers used as the alpha channel, needs to be
    * the same length as the image's pixel array.

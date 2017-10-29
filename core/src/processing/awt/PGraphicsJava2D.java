@@ -1916,7 +1916,7 @@ public class PGraphicsJava2D extends PGraphics {
     if (font != null) {
       if (font.getSize2D() != size) {
         Map<TextAttribute, Object> map =
-          new HashMap<TextAttribute, Object>();
+          new HashMap<>();
         map.put(TextAttribute.SIZE, size);
         map.put(TextAttribute.KERNING,
                 TextAttribute.KERNING_ON);
@@ -2932,7 +2932,6 @@ public class PGraphicsJava2D extends PGraphics {
 
 
   @Override
-  @SuppressWarnings("deprecation")
   public void mask(int[] alpha) {
     if (primaryGraphics) {
       showWarning(MASK_WARNING);

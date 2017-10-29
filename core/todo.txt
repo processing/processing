@@ -1,6 +1,9 @@
 0264 (3.3.7 or 3.4)
 X fix exception due to version parsing in Java 9
 X   https://github.com/processing/processing/issues/5275
+X remove useless deprecation on PImage.mask(int[])
+_ add circle() and square()
+_ add push() and pop()
 
 data
 X added setIndex() method to IntDict, FloatDict, StringDict
