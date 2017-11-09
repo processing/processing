@@ -1290,6 +1290,7 @@ public class PDEX {
 
 
     static public String[] getImportSuggestions(ClassPath cp, String className) {
+      className = className.replace("[", "\\[").replace("]", "\\]");
       RegExpResourceFilter regf = new RegExpResourceFilter(
           Pattern.compile(".*"),
           Pattern.compile("(.*\\$)?" + className + "\\.class",
