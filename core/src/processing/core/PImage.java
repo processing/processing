@@ -3328,15 +3328,13 @@ int testFunction(int dst, int src) {
   /**
    * ( begin auto-generated from PImage_save.xml )
    *
-   * Saves the image into a file. Images are saved in TIFF, TARGA, JPEG, and
-   * PNG format depending on the extension within the <b>filename</b>
-   * parameter. For example, "image.tif" will have a TIFF image and
-   * "image.png" will save a PNG image. If no extension is included in the
-   * filename, the image will save in TIFF format and <b>.tif</b> will be
-   * added to the name. These files are saved to the sketch's folder, which
+   * Saves the image into a file. Append a file extension to the name of 
+   * the file, to indicate the file format to be used: either TIFF (.tif), 
+   * TARGA (.tga), JPEG (.jpg), or PNG (.png). If no extension is included 
+   * in the filename, the image will save in TIFF format and .tif will be 
+   * added to the name.  These files are saved to the sketch's folder, which
    * may be opened by selecting "Show sketch folder" from the "Sketch" menu.
-   * It is not possible to use <b>save()</b> while running the program in a
-   * web browser.<br /><br />To save an image created within the code, rather
+   * <br /><br />To save an image created within the code, rather
    * than through loading, it's necessary to make the image with the
    * <b>createImage()</b> function so it is aware of the location of the
    * program and can therefore save the file to the right place. See the

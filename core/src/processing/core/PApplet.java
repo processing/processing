@@ -5258,7 +5258,6 @@ public class PApplet implements PConstants {
 
   /**
    * @see #noiseDetail(int)
-   * @param lod number of octaves to be used by the noise
    * @param falloff falloff factor for each octave
    */
   public void noiseDetail(int lod, float falloff) {
@@ -5994,7 +5993,9 @@ public class PApplet implements PConstants {
     return new JSONObject(createReader(filename));
   }
 
-
+  /**
+   * @nowebref
+   */
   static public JSONObject loadJSONObject(File file) {
     return new JSONObject(createReader(file));
   }
