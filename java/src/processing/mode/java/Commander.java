@@ -58,14 +58,14 @@ public class Commander implements RunnerListener {
   static final String noJavaArg = "--no-java";
   static final String platformArg = "--platform=";
   static final String bitsArg = "--bits=";
-//  static final String preferencesArg = "--preferences=";
+
 
   static final int HELP = -1;
   static final int PREPROCESS = 0;
   static final int BUILD = 1;
   static final int RUN = 2;
   static final int PRESENT = 3;
-//  static final int EXPORT_APPLET = 4;
+
   static final int EXPORT = 4;
 
   Sketch sketch;
@@ -95,9 +95,7 @@ public class Commander implements RunnerListener {
     File outputFolder = null;
     boolean outputSet = false;  // set an output folder
     boolean force = false;  // replace that no good output folder
-//    String preferencesPath = null;
     int platform = PApplet.platform; // default to this platform
-//    int platformBits = Base.getNativeBits();
     int task = HELP;
     boolean embedJava = true;
 
@@ -127,10 +125,7 @@ public class Commander implements RunnerListener {
         // ignore it, just the crappy shell script
 
       } else if (arg.equals(helpArg)) {
-        // mode already set to HELP
-
-//      } else if (arg.equals(preprocArg)) {
-//        task = PREPROCESS;
+       
 
       } else if (arg.equals(buildArg)) {
         task = BUILD;
@@ -152,7 +147,7 @@ public class Commander implements RunnerListener {
         embedJava = false;
 
       } else if (arg.startsWith(platformArg)) {
-//        complainAndQuit("The --platform option has been removed from Processing 2.1.", false);
+
         String platformStr = arg.substring(platformArg.length());
         platform = Platform.getIndex(platformStr);
         if (platform == -1) {
@@ -162,14 +157,7 @@ public class Commander implements RunnerListener {
 
       } else if (arg.startsWith(bitsArg)) {
         complainAndQuit("The --bits option has been removed.", false);
-//        String bitsStr = arg.substring(bitsArg.length());
-//        if (bitsStr.equals("32")) {
-//          platformBits = 32;
-//        } else if (bitsStr.equals("64")) {
-//          platformBits = 64;
-//        } else {
-//          complainAndQuit("Bits should be either 32 or 64, not " + bitsStr, true);
-//        }
+
 
       } else if (arg.startsWith(sketchArg)) {
         sketchPath = arg.substring(sketchArg.length());
@@ -183,8 +171,6 @@ public class Commander implements RunnerListener {
         }
         pdePath = pdeFile.getAbsolutePath();
 
-//      } else if (arg.startsWith(preferencesArg)) {
-//        preferencesPath = arg.substring(preferencesArg.length());
 
       } else if (arg.startsWith(outputArg)) {
         outputSet = true;
@@ -199,13 +185,6 @@ public class Commander implements RunnerListener {
     }
     String[] sketchArgs = PApplet.subset(args, argOffset);
 
-//    if ((outputPath == null) &&
-//        (task == PREPROCESS || task == BUILD ||
-//         task == RUN || task == PRESENT)) {
-//      complainAndQuit("An output path must be specified when using " +
-//                      preprocArg + ", " + buildArg + ", " +
-//                      runArg + ", or " + presentArg + ".");
-//    }
     if (task == HELP) {
       printCommandLine(systemOut);
       System.exit(0);
@@ -231,20 +210,13 @@ public class Commander implements RunnerListener {
       }
     }
 
-//    // run static initialization that grabs all the prefs
-//    // (also pass in a prefs path if that was specified)
-//    if (preferencesPath != null) {
-//      Preferences.init(preferencesPath);
-//    }
-
+    
     Preferences.init();
     Base.locateSketchbookFolder();
 
     if (sketchPath == null) {
       complainAndQuit("No sketch path specified.", true);
 
-//    } else if (!pdePath.toLowerCase().endsWith(".pde")) {
-//      complainAndQuit("Sketch path must point to the main .pde file.", false);
 
     } else {
 
@@ -256,8 +228,6 @@ public class Commander implements RunnerListener {
 
       boolean success = false;
 
-//      JavaMode javaMode =
-//        new JavaMode(null, Base.getContentFile("modes/java"));
       JavaMode javaMode = (JavaMode)
         ModeContribution.load(null, Platform.getContentFile("modes/java"),
                               "processing.mode.java.JavaMode").getMode();
@@ -272,7 +242,7 @@ public class Commander implements RunnerListener {
           JavaBuild build = new JavaBuild(sketch);
           File srcFolder = new File(outputFolder, "source");
           String className = build.build(srcFolder, outputFolder, true);
-//          String className = build.build(sketchFolder, outputFolder, true);
+
           if (className != null) {
             success = true;
             if (task == RUN || task == PRESENT) {
