@@ -334,8 +334,11 @@ public class PGraphics extends PImage implements PConstants {
   /** True if colors are not in the range 0..1 */
   boolean colorModeScale; // = true;
 
-  /** True if colorMode(RGB, 255) */
-  boolean colorModeDefault; // = true;
+  /** 
+   * True if colorMode(RGB, 255). Defaults to true so that color()
+   * used as part of a field declaration will properly assign values.
+   */
+  boolean colorModeDefault = true;
 
   // ........................................................
 
