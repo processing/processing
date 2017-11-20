@@ -47,7 +47,6 @@ import processing.mode.java.runner.Runner;
  */
 public class Commander implements RunnerListener {
   static final String helpArg = "--help";
-//  static final String preprocArg = "--preprocess";
   static final String buildArg = "--build";
   static final String runArg = "--run";
   static final String presentArg = "--present";
@@ -80,7 +79,7 @@ public class Commander implements RunnerListener {
     // init the platform so that prefs and other native code is ready to go
     Platform.init();
     // make sure a full JDK is installed
-    //Base.initRequirements();
+    
 
     // launch command line handler
     new Commander(args);
