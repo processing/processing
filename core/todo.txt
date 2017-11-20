@@ -2,6 +2,7 @@
 X fix exception due to version parsing in Java 9
 X   https://github.com/processing/processing/issues/5275
 X remove useless deprecation on PImage.mask(int[])
+X set colorModeDefault to true by default
 _ add circle() and square()
 _ add push() and pop()
 
