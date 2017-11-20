@@ -59,13 +59,16 @@ public class Commander implements RunnerListener {
   static final String bitsArg = "--bits=";
 
 
-  static final int HELP = -1;
-  static final int PREPROCESS = 0;
-  static final int BUILD = 1;
-  static final int RUN = 2;
-  static final int PRESENT = 3;
+//   static final int HELP = -1;
+//   static final int PREPROCESS = 0;
+//   static final int BUILD = 1;
+//   static final int RUN = 2;
+//   static final int PRESENT = 3;
 
-  static final int EXPORT = 4;
+//   static final int EXPORT = 4;
+
+ // for describing the tasks.
+  enum Task {HELP, PREPROCESS, BUILD, RUN, PRESENT, EXPORT};
 
   Sketch sketch;
 
@@ -95,7 +98,7 @@ public class Commander implements RunnerListener {
     boolean outputSet = false;  // set an output folder
     boolean force = false;  // replace that no good output folder
     int platform = PApplet.platform; // default to this platform
-    int task = HELP;
+    Task task = Task.HELP;
     boolean embedJava = true;
 
     try {
@@ -127,19 +130,19 @@ public class Commander implements RunnerListener {
        
 
       } else if (arg.equals(buildArg)) {
-        task = BUILD;
+        task = Task.BUILD;
         break;
 
       } else if (arg.equals(runArg)) {
-        task = RUN;
+        task = Task.RUN;
         break;
 
       } else if (arg.equals(presentArg)) {
-        task = PRESENT;
+        task = Task.PRESENT;
         break;
 
       } else if (arg.equals(exportApplicationArg)) {
-        task = EXPORT;
+        task = Task.EXPORT;
         break;
 
       } else if (arg.equals(noJavaArg)) {
@@ -184,7 +187,7 @@ public class Commander implements RunnerListener {
     }
     String[] sketchArgs = PApplet.subset(args, argOffset);
 
-    if (task == HELP) {
+    if (task == Task.HELP) {
       printCommandLine(systemOut);
       System.exit(0);
     }
@@ -237,16 +240,16 @@ public class Commander implements RunnerListener {
           outputFolder = sketch.makeTempFolder();
         }
 
-        if (task == BUILD || task == RUN || task == PRESENT) {
+        if (task == Task.BUILD || task == Task.RUN || task == Task.PRESENT) {
           JavaBuild build = new JavaBuild(sketch);
           File srcFolder = new File(outputFolder, "source");
           String className = build.build(srcFolder, outputFolder, true);
 
           if (className != null) {
             success = true;
-            if (task == RUN || task == PRESENT) {
+            if (task == Task.RUN || task == Task.PRESENT) {
               Runner runner = new Runner(build, this);
-              if (task == PRESENT) {
+              if (task == Task.PRESENT) {
                 runner.present(sketchArgs);
               } else {
                 runner.launch(sketchArgs);
@@ -257,7 +260,7 @@ public class Commander implements RunnerListener {
             success = false;
           }
 
-        } else if (task == EXPORT) {
+        } else if (task == Task.EXPORT) {
           if (outputPath == null) {
             javaMode.handleExportApplication(sketch);
           } else {
@@ -394,3 +397,4 @@ public class Commander implements RunnerListener {
     return false;
   }
 }
+
