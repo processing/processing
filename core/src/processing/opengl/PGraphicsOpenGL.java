@@ -617,7 +617,7 @@ public class PGraphicsOpenGL extends PGraphics {
     format = ARGB;
     if (primary) {
       fbStack = new FrameBuffer[FB_STACK_DEPTH];
-      fontMap = new WeakHashMap<PFont, FontTexture>();
+      fontMap = new WeakHashMap<>();
       tessellator = new Tessellator();
     } else {
       tessellator = getPrimaryPG().tessellator;
@@ -1993,6 +1993,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   @Override
   public void textureWrap(int wrap) {
+    if (this.textureWrap != wrap) {
+      flush();
+    }
     this.textureWrap = wrap;
   }
 
@@ -7142,7 +7145,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   static protected class AttributeMap extends HashMap<String, VertexAttribute> {
-    public ArrayList<String> names = new ArrayList<String>();
+    public ArrayList<String> names = new ArrayList<>();
     public int numComp = 0; // number of components for a single vertex
 
     @Override
@@ -7668,9 +7671,9 @@ public class PGraphicsOpenGL extends PGraphics {
       shininess = new float[PGL.DEFAULT_IN_VERTICES];
       edges = new int[PGL.DEFAULT_IN_EDGES][3];
 
-      fattribs = new HashMap<String, float[]>();
-      iattribs = new HashMap<String, int[]>();
-      battribs = new HashMap<String, byte[]>();
+      fattribs = new HashMap<>();
+      iattribs = new HashMap<>();
+      battribs = new HashMap<>();
 
       clear();
     }
@@ -9105,7 +9108,7 @@ public class PGraphicsOpenGL extends PGraphics {
     FloatBuffer polyShininessBuffer;
 
     // Generic attributes
-    HashMap<String, Buffer> polyAttribBuffers = new HashMap<String, Buffer>();
+    HashMap<String, Buffer> polyAttribBuffers = new HashMap<>();
 
     int polyIndexCount;
     int firstPolyIndex;
@@ -9160,9 +9163,9 @@ public class PGraphicsOpenGL extends PGraphics {
     float[] pointOffsets;
     short[] pointIndices;
 
-    HashMap<String, float[]> fpolyAttribs = new HashMap<String, float[]>();
-    HashMap<String, int[]> ipolyAttribs = new HashMap<String, int[]>();
-    HashMap<String, byte[]> bpolyAttribs = new HashMap<String, byte[]>();
+    HashMap<String, float[]> fpolyAttribs = new HashMap<>();
+    HashMap<String, int[]> ipolyAttribs = new HashMap<>();
+    HashMap<String, byte[]> bpolyAttribs = new HashMap<>();
 
     TessGeometry(PGraphicsOpenGL pg, AttributeMap attr, int mode) {
       this.pg = pg;
