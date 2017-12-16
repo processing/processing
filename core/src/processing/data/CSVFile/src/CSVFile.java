@@ -10,6 +10,9 @@
  * CSVFile(path : string, seperator : char)
  * 	compiles the CSV-file in the inner data structure.
  * 
+ * CSVFile (file : File, seperator : char)
+ * CSVFile (seperator : char)
+ * 
  * compile (row : string, seperator : char) : string
  * 	compiles row in its columns.
  * 
@@ -25,6 +28,9 @@
  * addRow(row : string) : void
  * 	adds a row to the inner data structure.
  * 	without writing into the CSV-file.
+ * 
+ * set (row : int, column : int, item : string) : void
+ * 	replaces the specified item with a newer.
  * 
  * commit() : void 
  * 	writes the added data into CSV-file.
@@ -706,6 +712,26 @@ public class CSVFile {
 	 */
 	public int getNumberOfRows() {
 		return table.size();
+	}
+	
+	
+	/**
+	 * 
+	 * @param row
+	 * @param column
+	 * @param item
+	 * @purpose replaces the specified item with a newer.
+	 */
+	public void set(int row, int column, String item) {
+		if (row < table.size()) {
+			if (column < table.get(row).size()) {
+				table.get(row).set(column, item);
+			} else {
+				throw new RuntimeException("set: column is too large!");
+			}
+		} else {
+			throw new RuntimeException("set: row is too large!");
+		}
 	}
 	
 }
