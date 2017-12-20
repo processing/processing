@@ -1280,6 +1280,7 @@ public class PSurfaceJOGL implements PSurface {
     display.getEDTUtil().invoke(false, new Runnable() {
       @Override
       public void run() {
+        window.setPointerVisible(true);
         window.setPointerIcon(pi);
       }
     });
