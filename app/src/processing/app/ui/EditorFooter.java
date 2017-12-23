@@ -172,7 +172,7 @@ public class EditorFooter extends Box {
 
     updateColor = mode.getColor("footer.updates.color");
 
-    gradient = mode.makeGradient("footer", 400, HIGH);
+    gradient = mode.makeGradient("footer", 200, HIGH);
     // Set the default background color in case the window size reported
     // incorrectly by the OS, or we miss an update event of some kind
     // https://github.com/processing/processing/issues/3919
