@@ -103,19 +103,6 @@ public class EditorStatus extends BasicSplitPaneDivider{  //JPanel {
 		this.editor = editor;
 		empty();
 		updateMode();
-		final String mess = message;
-		JFrame frame2 = new JFrame();
-		JPanel p = new JPanel();
-		JButton copy = new JButton("COPY");
-		p.add(copy);
-		frame2.getContentPane().add(p);
-		frame2.setVisible(true);
-
-		copy.addActionListener(new ActionListener() { 
-			public void actionPerformed(ActionEvent e) { 
-				copyMessage();
-			} 
-		} );
 
 		addMouseListener(new MouseAdapter() {
 
@@ -129,6 +116,8 @@ public class EditorStatus extends BasicSplitPaneDivider{  //JPanel {
 				if (urlRollover) {
 					Platform.openURL(url);
 				}
+				//  Function call to copy message when clicked on the error
+				copyMessage();
 			}
 
 			@Override
@@ -285,7 +274,6 @@ public class EditorStatus extends BasicSplitPaneDivider{  //JPanel {
 	//public void paintComponent(Graphics screen) {
 	public void paint(Graphics screen) {
 //    if (okButton == null) setup();
-		addButton();
 		Dimension size = getSize();
 		if ((size.width != sizeW) || (size.height != sizeH)) {
 			// component has been resized
@@ -344,18 +332,10 @@ public class EditorStatus extends BasicSplitPaneDivider{  //JPanel {
 			}
 		}
 
-
 		screen.drawImage(offscreen, 0, 0, sizeW, sizeH, null);
+
 	}
 
-	// Adding a button for copy
-	public void addButton(){
-		JPanel p = new JPanel();
-		JButton copy=new JButton("COPY");
-		p.add(copy);
-		// copy.setVerticalTextPosition(AbstractButton.BOTTOM);
-		// copy.setHorizontalTextPosition(AbstractButton.CENTER);
-	}
 
 	public Dimension getPreferredSize() {
 		return getMinimumSize();
