@@ -361,7 +361,7 @@ public class ContributionManager {
     editor.getTextArea().setEditable(false);
 //    base.getActiveEditor().getConsole().clear();
 
-    List<String> installedLibList = new ArrayList<String>();
+    List<String> installedLibList = new ArrayList<>();
 
     // boolean variable to check if previous lib was installed successfully,
     // to give the user an idea about progress being made.
@@ -590,8 +590,10 @@ public class ContributionManager {
                 LocalContribution.isDeletionFlagged(folder));
       }
     });
-    for (File folder : markedForDeletion) {
-      Util.removeDir(folder);
+    if (markedForDeletion != null) {
+      for (File folder : markedForDeletion) {
+        Util.removeDir(folder);
+      }
     }
   }
 
@@ -632,8 +634,8 @@ public class ContributionManager {
       }
     });
 
-    ArrayList<String> updateContribsNames = new ArrayList<String>();
-    LinkedList<AvailableContribution> updateContribsList = new LinkedList<AvailableContribution>();
+    List<String> updateContribsNames = new ArrayList<>();
+    List<AvailableContribution> updateContribsList = new LinkedList<>();
 
     String type = root.getName().substring(root.getName().lastIndexOf('/') + 1);
     String propFileName = null;
