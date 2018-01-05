@@ -2,6 +2,10 @@
 X downloading the jre broken again
 X   https://github.com/processing/processing/issues/5284
 X   the old 144 link must have been removed
+X NullPointerException in ContributionManager.deleteFlagged()
+X   https://github.com/processing/processing/issues/5342
+_ change up the newline handling
+_   https://github.com/processing/processing/issues/5327
 _ Contributions manager fails to complete install of PythonMode when no windows open
 _   https://github.com/processing/processing/issues/5309
 _ update to launch4j 3.11? 
@@ -9,6 +13,11 @@ _   http://launch4j.sourceforge.net/changelog.html
 _ add a note about temp dir to the bug on windows temp dirs
 _   move away from using a temp dir at all for sketches
 _   -Djava.io.tmpdir=Z:\temp
+_ add pyde as a supported extension? 
+_   https://github.com/jdf/processing.py/issues/284
+
+_ an incompatible Mode prevents the PDE from quitting after the last window is closed
+_   https://github.com/processing/processing/issues/5112
 
 jakub
 X Fix scrub comments for empty block comment /**/
@@ -34,6 +43,8 @@ _   https://github.com/processing/processing/issues/5272
 
 _ add select/copy to the status bar
 _   https://github.com/processing/processing/issues/5271
+_   possible fix (just copies on click)
+_   https://github.com/processing/processing/pull/5345
 
 _ untitled folders are stored in temp folder
 _ clean up /tmp folders used during build

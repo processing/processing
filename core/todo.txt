@@ -15,11 +15,18 @@ contrib
 X minor bezierPoint() rewrite for performance
 X   https://github.com/processing/processing/pull/5251
 
+andres
+X textureWrap() not updating when changed during draw()
+X   https://github.com/processing/processing/issues/5322
+
 _ make setting the window icon automatic, based on files in local dirs
 X   https://github.com/processing/processing/issues/5123
 X   https://github.com/processing/processing/pull/5202
 _   need to make this work behind the scenes instead
 _   create icon.png or have an 'icons' folder with multiple sizes
+
+_ many shift- keys not working properly in FX2D (added a test sketch)
+_   https://github.com/processing/processing/issues/5317
 
 _ Switch to getModifiersEx() and fix the AWT modifiers used in PSurfaceAWT
 _   this is an easy fix, but need to check impact elsewhere
@@ -48,6 +55,7 @@ _ Sketches on Windows don't take UI sizing into account
 _   https://github.com/processing/processing/issues/4894
 _ Sketches on Linux don't take UI scaling into account
 _   https://github.com/processing/processing/issues/4895
+_   gohai says "xrdb -query" or "xdpyinfo" might work
 
 _ TRIANGLE_STRIP not working correctly with createShape() and default renderer
 _   https://github.com/processing/processing/issues/4678
