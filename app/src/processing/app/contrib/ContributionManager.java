@@ -637,6 +637,12 @@ public class ContributionManager {
     List<String> updateContribsNames = new ArrayList<>();
     List<AvailableContribution> updateContribsList = new LinkedList<>();
 
+    // TODO This is bad code... This root.getName() stuff to get the folder
+    // type, plus "libraries.properties" (not the correct file name),
+    // and I have no idea what "putting this here, in just in case" means.
+    // Not sure the function here so I'm not fixing it at the moment,
+    // but this whole function could use some cleaning. [fry 180105]
+
     String type = root.getName().substring(root.getName().lastIndexOf('/') + 1);
     String propFileName = null;
 
