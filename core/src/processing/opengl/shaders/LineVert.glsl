@@ -71,7 +71,10 @@ void main() {
   //  and corrects for aspect ratio, see https://github.com/processing/processing/issues/5181)
   // t = +- normalize( (q.xy*p.w - p.xy*q.w) * viewport.zw )
 
-  vec2 tangent = normalize((q.xy*p.w - p.xy*q.w) * viewport.zw);
+  vec2 tangent = (q.xy*p.w - p.xy*q.w) * viewport.zw;
+
+  // don't normalize zero vector (line join triangles and lines perpendicular to the eye plane)
+  tangent = length(tangent) == 0.0 ? vec2(0.0, 0.0) : normalize(tangent);
 
   // flip tangent to normal (it's already normalized)
   vec2 normal = vec2(-tangent.y, tangent.x);
