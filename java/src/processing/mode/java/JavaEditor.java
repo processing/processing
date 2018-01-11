@@ -311,17 +311,17 @@ public class JavaEditor extends Editor {
 
       @Override
       public void menuSelected(MenuEvent e) {
-        boolean isCoreLibMenuItemAdded = false;
-        boolean isContribLibMenuItemAdded = false;
-
         // Adding this in case references are included in a core library,
-        // or other core libraries are incuded in future
-        isCoreLibMenuItemAdded = addLibReferencesToSubMenu(mode.coreLibraries, libRefSubmenu);
+        // or other core libraries are included in the future
+        boolean isCoreLibMenuItemAdded =
+          addLibReferencesToSubMenu(mode.coreLibraries, libRefSubmenu);
 
-        if (isCoreLibMenuItemAdded && !mode.contribLibraries.isEmpty())
+        if (isCoreLibMenuItemAdded && !mode.contribLibraries.isEmpty()) {
           libRefSubmenu.addSeparator();
+        }
 
-        isContribLibMenuItemAdded = addLibReferencesToSubMenu(mode.contribLibraries, libRefSubmenu);
+        boolean isContribLibMenuItemAdded =
+          addLibReferencesToSubMenu(mode.contribLibraries, libRefSubmenu);
 
         if (!isContribLibMenuItemAdded && !isCoreLibMenuItemAdded) {
           JMenuItem emptyMenuItem = new JMenuItem(Language.text("menu.help.empty"));
@@ -329,8 +329,8 @@ public class JavaEditor extends Editor {
           emptyMenuItem.setFocusable(false);
           emptyMenuItem.setFocusPainted(false);
           libRefSubmenu.add(emptyMenuItem);
-        }
-        else if (!isContribLibMenuItemAdded && !mode.coreLibraries.isEmpty()) {
+
+        } else if (!isContribLibMenuItemAdded && !mode.coreLibraries.isEmpty()) {
           //re-populate the menu to get rid of terminal separator
           libRefSubmenu.removeAll();
           addLibReferencesToSubMenu(mode.coreLibraries, libRefSubmenu);
