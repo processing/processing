@@ -2674,12 +2674,17 @@ public abstract class PGL {
 
 
   protected interface Tessellator {
-    public void beginPolygon();
-    public void endPolygon();
+    public void setCallback(int flag);
     public void setWindingRule(int rule);
+    public void setProperty(int property, int value);
+
+    public void beginPolygon();
+    public void beginPolygon(Object data);
+    public void endPolygon();
     public void beginContour();
     public void endContour();
     public void addVertex(double[] v);
+    public void addVertex(double[] v, int n, Object data);
   }
 
 
@@ -2791,6 +2796,7 @@ public abstract class PGL {
 
   public static int TESS_WINDING_NONZERO;
   public static int TESS_WINDING_ODD;
+  public static int TESS_EDGE_FLAG;
 
   public static int GENERATE_MIPMAP_HINT;
   public static int FASTEST;
