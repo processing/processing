@@ -14,10 +14,22 @@ X fix entries() Iterator in IntDict, FloatDict, StringDict
 contrib
 X minor bezierPoint() rewrite for performance
 X   https://github.com/processing/processing/pull/5251
+X void cursor() don't work after void noCursor() in P2D and P3D
+X   https://github.com/processing/processing/issues/5330
+X   https://github.com/processing/processing/pull/5340
 
 andres
 X textureWrap() not updating when changed during draw()
 X   https://github.com/processing/processing/issues/5322
+
+gohai
+X ARM tweaks for shaders on the RPi
+X   https://github.com/processing/processing/pull/5297
+
+jakub
+X fix line joins on triangles
+X   https://github.com/processing/processing/issues/5353
+X   https://github.com/processing/processing/pull/5354
 
 _ make setting the window icon automatic, based on files in local dirs
 X   https://github.com/processing/processing/issues/5123
