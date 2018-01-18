@@ -704,7 +704,7 @@ public abstract class PGL {
     clearColor = false;
 
     pclearDepth = clearDepth;
-    clearColor = false;
+    clearDepth = false;
 
     pclearStencil = clearStencil;
     clearStencil = false;
