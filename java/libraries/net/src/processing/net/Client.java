@@ -57,6 +57,8 @@ public class Client implements Runnable {
   public InputStream input;
   public OutputStream output;
 
+  final Object bufferLock = new Object[0];
+
   byte buffer[] = new byte[32768];
   int bufferIndex;
   int bufferLast;
@@ -230,7 +232,7 @@ public class Client implements Runnable {
             return;
           }
 
-          synchronized (buffer) {
+          synchronized (bufferLock) {
             // todo: at some point buffer should stop increasing in size, 
             // otherwise it could use up all the memory.
             if (bufferLast == buffer.length) {
@@ -341,7 +343,7 @@ public class Client implements Runnable {
   public int read() {
     if (bufferIndex == bufferLast) return -1;
 
-    synchronized (buffer) {
+    synchronized (bufferLock) {
       int outgoing = buffer[bufferIndex++] & 0xff;
       if (bufferIndex == bufferLast) {  // rewind
         bufferIndex = 0;
@@ -394,7 +396,7 @@ public class Client implements Runnable {
   public byte[] readBytes() {
     if (bufferIndex == bufferLast) return null;
 
-    synchronized (buffer) {
+    synchronized (bufferLock) {
       int length = bufferLast - bufferIndex;
       byte outgoing[] = new byte[length];
       System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
@@ -419,7 +421,7 @@ public class Client implements Runnable {
   public byte[] readBytes(int max) {
     if (bufferIndex == bufferLast) return null;
 
-    synchronized (buffer) {
+    synchronized (bufferLock) {
       int length = bufferLast - bufferIndex;
       if (length > max) length = max;
       byte outgoing[] = new byte[length];
@@ -451,7 +453,7 @@ public class Client implements Runnable {
   public int readBytes(byte bytebuffer[]) {
     if (bufferIndex == bufferLast) return 0;
 
-    synchronized (buffer) {
+    synchronized (bufferLock) {
       int length = bufferLast - bufferIndex;
       if (length > bytebuffer.length) length = bytebuffer.length;
       System.arraycopy(buffer, bufferIndex, bytebuffer, 0, length);
@@ -490,7 +492,7 @@ public class Client implements Runnable {
     if (bufferIndex == bufferLast) return null;
     byte what = (byte)interesting;
 
-    synchronized (buffer) {
+    synchronized (bufferLock) {
       int found = -1;
       for (int k = bufferIndex; k < bufferLast; k++) {
         if (buffer[k] == what) {
@@ -531,7 +533,7 @@ public class Client implements Runnable {
     if (bufferIndex == bufferLast) return 0;
     byte what = (byte)interesting;
 
-    synchronized (buffer) {
+    synchronized (bufferLock) {
       int found = -1;
       for (int k = bufferIndex; k < bufferLast; k++) {
         if (buffer[k] == what) {
