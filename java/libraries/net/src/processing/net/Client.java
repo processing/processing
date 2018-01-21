@@ -209,15 +209,16 @@ public class Client implements Runnable {
 
 
   public void run() {
+    byte[] readBuffer = new byte[2048]; // Ethernet MTU = 1500 B
     while (Thread.currentThread() == thread) {
       try {
         while (input != null) {
-          int value;
+          int readCount;
 
           // try to read a byte using a blocking read. 
           // An exception will occur when the sketch is exits.
           try {
-            value = input.read();
+            readCount = input.read(readBuffer, 0, readBuffer.length);
           } catch (SocketException e) {
              System.err.println("Client SocketException: " + e.getMessage());
              // the socket had a problem reading so don't try to read from it again.
@@ -226,7 +227,7 @@ public class Client implements Runnable {
           }
         
           // read returns -1 if end-of-stream occurs (for example if the host disappears)
-          if (value == -1) {
+          if (readCount == -1) {
             System.err.println("Client got end-of-stream.");
             stop();
             return;
@@ -235,31 +236,36 @@ public class Client implements Runnable {
           synchronized (bufferLock) {
             // todo: at some point buffer should stop increasing in size, 
             // otherwise it could use up all the memory.
-            if (bufferLast == buffer.length) {
-              if (bufferIndex > 0) {
-                // compact the buffer
-                int bufferLength = bufferLast - bufferIndex;
-                System.arraycopy(buffer, bufferIndex, buffer, 0, bufferLength);
-                bufferLast -= bufferIndex;
-                bufferIndex = 0;
-              } else {
-                // resize the buffer
-                byte temp[] = new byte[bufferLast << 1];
-                System.arraycopy(buffer, 0, temp, 0, bufferLast);
-                buffer = temp;
+            int freeBack = buffer.length - bufferLast;
+            if (readCount > freeBack) {
+              // not enough space at the back
+              int bufferLength = bufferLast - bufferIndex;
+              byte[] targetBuffer = buffer;
+              if (bufferLength + readCount > buffer.length) {
+                // can't fit even after compacting, resize the buffer
+                // find the next power of two which can fit everything in
+                int newSize = Integer.highestOneBit(bufferLength + readCount - 1) << 1;
+                targetBuffer = new byte[newSize];
               }
+              // compact the buffer (either in-place or into the new bigger buffer)
+              System.arraycopy(buffer, bufferIndex, targetBuffer, 0, bufferLength);
+              bufferLast -= bufferIndex;
+              bufferIndex = 0;
+              buffer = targetBuffer;
             }
-            buffer[bufferLast++] = (byte)value;
+            // copy all newly read bytes into the buffer
+            System.arraycopy(readBuffer, 0, buffer, bufferLast, readCount);
+            bufferLast += readCount;
           }
 
           // now post an event
           if (clientEventMethod != null) {
             try {
               clientEventMethod.invoke(parent, new Object[] { this });
-             } catch (Exception e) {
-               System.err.println("error, disabling clientEvent() for " + host);
-               e.printStackTrace();
-               clientEventMethod = null;
+            } catch (Exception e) {
+              System.err.println("error, disabling clientEvent() for " + host);
+              e.printStackTrace();
+              clientEventMethod = null;
             }
           }
         }
