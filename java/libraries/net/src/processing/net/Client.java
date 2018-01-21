@@ -45,6 +45,9 @@ import java.net.*;
  * @see_external LIB_net/clientEvent
  */
 public class Client implements Runnable {
+
+  protected static final int MAX_BUFFER_SIZE = 2 << 27; // 128 MB
+
   PApplet parent;
   Method clientEventMethod;
   Method disconnectEventMethod;
@@ -234,8 +237,6 @@ public class Client implements Runnable {
           }
 
           synchronized (bufferLock) {
-            // todo: at some point buffer should stop increasing in size, 
-            // otherwise it could use up all the memory.
             int freeBack = buffer.length - bufferLast;
             if (readCount > freeBack) {
               // not enough space at the back
@@ -245,6 +246,13 @@ public class Client implements Runnable {
                 // can't fit even after compacting, resize the buffer
                 // find the next power of two which can fit everything in
                 int newSize = Integer.highestOneBit(bufferLength + readCount - 1) << 1;
+                if (newSize > MAX_BUFFER_SIZE) {
+                  // buffer is full because client is not reading (fast enough)
+                  System.err.println("Client: can't receive more data, buffer is full. " +
+                                         "Make sure you read the data from the client.");
+                  stop();
+                  return;
+                }
                 targetBuffer = new byte[newSize];
               }
               // compact the buffer (either in-place or into the new bigger buffer)
