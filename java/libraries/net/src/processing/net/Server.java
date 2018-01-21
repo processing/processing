@@ -52,10 +52,11 @@ public class Server implements Runnable {
   PApplet parent;
   Method serverEventMethod;
 
-  Thread thread;
+  volatile Thread thread;
   ServerSocket server;
   int port;
-  
+
+  protected final Object clientsLock = new Object[0];
   /** Number of clients currently connected. */
   public int clientCount;
   /** Array of client objects, useful length is determined by clientCount. */
@@ -127,26 +128,30 @@ public class Server implements Runnable {
    */
   public void disconnect(Client client) {
     client.stop();
-    int index = clientIndex(client);
-    if (index != -1) {
-      removeIndex(index);
+    synchronized (clientsLock) {
+      int index = clientIndex(client);
+      if (index != -1) {
+        removeIndex(index);
+      }
     }
   }
   
   
   protected void removeIndex(int index) {
-    clientCount--;
-    // shift down the remaining clients
-    for (int i = index; i < clientCount; i++) {
-      clients[i] = clients[i+1];
+    synchronized (clientsLock) {
+      clientCount--;
+      // shift down the remaining clients
+      for (int i = index; i < clientCount; i++) {
+        clients[i] = clients[i + 1];
+      }
+      // mark last empty var for garbage collection
+      clients[clientCount] = null;
     }
-    // mark last empty var for garbage collection
-    clients[clientCount] = null;
   }
   
   
   protected void disconnectAll() {
-    synchronized (clients) {
+    synchronized (clientsLock) {
       for (int i = 0; i < clientCount; i++) {
         try {
           clients[i].stop();
@@ -161,20 +166,24 @@ public class Server implements Runnable {
   
   
   protected void addClient(Client client) {
-    if (clientCount == clients.length) {
-      clients = (Client[]) PApplet.expand(clients);
+    synchronized (clientsLock) {
+      if (clientCount == clients.length) {
+        clients = (Client[]) PApplet.expand(clients);
+      }
+      clients[clientCount++] = client;
     }
-    clients[clientCount++] = client;
   }
   
   
   protected int clientIndex(Client client) {
-    for (int i = 0; i < clientCount; i++) {
-      if (clients[i] == client) {
-        return i;
+    synchronized (clientsLock) {
+      for (int i = 0; i < clientCount; i++) {
+        if (clients[i] == client) {
+          return i;
+        }
       }
+      return -1;
     }
-    return -1;
   }
 
   
@@ -219,7 +228,7 @@ public class Server implements Runnable {
    * @usage application
    */
   public Client available() {
-    synchronized (clients) {
+    synchronized (clientsLock) {
       int index = lastAvailable + 1;
       if (index >= clientCount) index = 0;
 
@@ -293,7 +302,7 @@ public class Server implements Runnable {
       try {
         Socket socket = server.accept();
         Client client = new Client(parent, socket);
-        synchronized (clients) {
+        synchronized (clientsLock) {
           addClient(client);
           if (serverEventMethod != null) {
             try {
@@ -333,39 +342,45 @@ public class Server implements Runnable {
    * @param data data to write
    */
   public void write(int data) {  // will also cover char
-    int index = 0;
-    while (index < clientCount) {
-      if (clients[index].active()) {
-        clients[index].write(data);
-        index++;
-      } else {
-        removeIndex(index);
+    synchronized (clientsLock) {
+      int index = 0;
+      while (index < clientCount) {
+        if (clients[index].active()) {
+          clients[index].write(data);
+          index++;
+        } else {
+          removeIndex(index);
+        }
       }
     }
   }
   
 
   public void write(byte data[]) {
-    int index = 0;
-    while (index < clientCount) {
-      if (clients[index].active()) {
-        clients[index].write(data);
-        index++;
-      } else {
-        removeIndex(index);
+    synchronized (clientsLock) {
+      int index = 0;
+      while (index < clientCount) {
+        if (clients[index].active()) {
+          clients[index].write(data);
+          index++;
+        } else {
+          removeIndex(index);
+        }
       }
     }
   }
   
 
   public void write(String data) {
-    int index = 0;
-    while (index < clientCount) {
-      if (clients[index].active()) {
-        clients[index].write(data);
-        index++;
-      } else {
-        removeIndex(index);
+    synchronized (clientsLock) {
+      int index = 0;
+      while (index < clientCount) {
+        if (clients[index].active()) {
+          clients[index].write(data);
+          index++;
+        } else {
+          removeIndex(index);
+        }
       }
     }
   }
