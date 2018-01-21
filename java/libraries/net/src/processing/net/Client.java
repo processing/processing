@@ -49,7 +49,7 @@ public class Client implements Runnable {
   Method clientEventMethod;
   Method disconnectEventMethod;
 
-  Thread thread;
+  volatile Thread thread;
   Socket socket;
   int port;
   String host;
@@ -308,7 +308,9 @@ public class Client implements Runnable {
    * @brief Returns the number of bytes in the buffer waiting to be read
    */
   public int available() {
-    return (bufferLast - bufferIndex);
+    synchronized (bufferLock) {
+      return (bufferLast - bufferIndex);
+    }
   }
 
 
@@ -323,8 +325,10 @@ public class Client implements Runnable {
    * @brief Clears the buffer
    */
   public void clear() {
-    bufferLast = 0;
-    bufferIndex = 0;
+    synchronized (bufferLock) {
+      bufferLast = 0;
+      bufferIndex = 0;
+    }
   }
 
 
@@ -341,9 +345,9 @@ public class Client implements Runnable {
    * @brief Returns a value from the buffer
    */
   public int read() {
-    if (bufferIndex == bufferLast) return -1;
-
     synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return -1;
+
       int outgoing = buffer[bufferIndex++] & 0xff;
       if (bufferIndex == bufferLast) {  // rewind
         bufferIndex = 0;
@@ -366,8 +370,10 @@ public class Client implements Runnable {
    * @brief Returns the next byte in the buffer as a char
    */
   public char readChar() {
-    if (bufferIndex == bufferLast) return (char)(-1);
-    return (char) read();
+    synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return (char) (-1);
+      return (char) read();
+    }
   }
 
 
@@ -394,9 +400,9 @@ public class Client implements Runnable {
    * @brief Reads everything in the buffer
    */
   public byte[] readBytes() {
-    if (bufferIndex == bufferLast) return null;
-
     synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return null;
+
       int length = bufferLast - bufferIndex;
       byte outgoing[] = new byte[length];
       System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
@@ -419,9 +425,9 @@ public class Client implements Runnable {
    * @param max the maximum number of bytes to read
    */
   public byte[] readBytes(int max) {
-    if (bufferIndex == bufferLast) return null;
-
     synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return null;
+
       int length = bufferLast - bufferIndex;
       if (length > max) length = max;
       byte outgoing[] = new byte[length];
@@ -451,9 +457,9 @@ public class Client implements Runnable {
    * @param bytebuffer passed in byte array to be altered
    */
   public int readBytes(byte bytebuffer[]) {
-    if (bufferIndex == bufferLast) return 0;
-
     synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return 0;
+
       int length = bufferLast - bufferIndex;
       if (length > bytebuffer.length) length = bytebuffer.length;
       System.arraycopy(buffer, bufferIndex, bytebuffer, 0, length);
@@ -489,10 +495,11 @@ public class Client implements Runnable {
    * @param interesting character designated to mark the end of the data
    */
   public byte[] readBytesUntil(int interesting) {
-    if (bufferIndex == bufferLast) return null;
     byte what = (byte)interesting;
 
     synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return null;
+
       int found = -1;
       for (int k = bufferIndex; k < bufferLast; k++) {
         if (buffer[k] == what) {
@@ -530,10 +537,11 @@ public class Client implements Runnable {
    * @param byteBuffer passed in byte array to be altered
    */
   public int readBytesUntil(int interesting, byte byteBuffer[]) {
-    if (bufferIndex == bufferLast) return 0;
     byte what = (byte)interesting;
 
     synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return 0;
+
       int found = -1;
       for (int k = bufferIndex; k < bufferLast; k++) {
         if (buffer[k] == what) {
@@ -578,8 +586,10 @@ public class Client implements Runnable {
    * @brief Returns the buffer as a String
    */
   public String readString() {
-    if (bufferIndex == bufferLast) return null;
-    return new String(readBytes());
+    synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return null;
+      return new String(readBytes());
+    }
   }
 
 
