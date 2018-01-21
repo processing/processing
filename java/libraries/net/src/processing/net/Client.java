@@ -107,10 +107,6 @@ public class Client implements Runnable {
         // no such method, or an error.. which is fine, just ignore
       }
 
-    } catch (ConnectException ce) {
-      ce.printStackTrace();
-      dispose();
-
     } catch (IOException e) {
       e.printStackTrace();
       dispose();
