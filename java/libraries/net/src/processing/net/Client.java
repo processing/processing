@@ -236,9 +236,18 @@ public class Client implements Runnable {
             // todo: at some point buffer should stop increasing in size, 
             // otherwise it could use up all the memory.
             if (bufferLast == buffer.length) {
-              byte temp[] = new byte[bufferLast << 1];
-              System.arraycopy(buffer, 0, temp, 0, bufferLast);
-              buffer = temp;
+              if (bufferIndex > 0) {
+                // compact the buffer
+                int bufferLength = bufferLast - bufferIndex;
+                System.arraycopy(buffer, bufferIndex, buffer, 0, bufferLength);
+                bufferLast -= bufferIndex;
+                bufferIndex = 0;
+              } else {
+                // resize the buffer
+                byte temp[] = new byte[bufferLast << 1];
+                System.arraycopy(buffer, 0, temp, 0, bufferLast);
+                buffer = temp;
+              }
             }
             buffer[bufferLast++] = (byte)value;
           }
