@@ -95,16 +95,14 @@ public class Client implements Runnable {
       // which would be called each time an event comes in
       try {
         clientEventMethod =
-          parent.getClass().getMethod("clientEvent",
-                                      new Class[] { Client.class });
+          parent.getClass().getMethod("clientEvent", Client.class);
       } catch (Exception e) {
         // no such method, or an error.. which is fine, just ignore
       }
       // do the same for disconnectEvent(Client c);
       try {
         disconnectEventMethod =
-          parent.getClass().getMethod("disconnectEvent",
-                                      new Class[] { Client.class });
+          parent.getClass().getMethod("disconnectEvent", Client.class);
       } catch (Exception e) {
         // no such method, or an error.. which is fine, just ignore
       }
@@ -138,8 +136,7 @@ public class Client implements Runnable {
     // public void disconnectEvent(processing.net.Client)
     try {
       disconnectEventMethod =
-        parent.getClass().getMethod("disconnectEvent",
-                                    new Class[] { Client.class });
+        parent.getClass().getMethod("disconnectEvent", Client.class);
     } catch (Exception e) {
       // no such method, or an error.. which is fine, just ignore
     }
@@ -160,7 +157,7 @@ public class Client implements Runnable {
   public void stop() {    
     if (disconnectEventMethod != null && thread != null){
       try {
-        disconnectEventMethod.invoke(parent, new Object[] { this });
+        disconnectEventMethod.invoke(parent, this);
       } catch (Exception e) {
         e.printStackTrace();
         disconnectEventMethod = null;
@@ -211,6 +208,7 @@ public class Client implements Runnable {
   }
 
 
+  @Override
   public void run() {
     byte[] readBuffer = new byte[2048]; // Ethernet MTU = 1500 B
     while (Thread.currentThread() == thread) {
@@ -269,7 +267,7 @@ public class Client implements Runnable {
           // now post an event
           if (clientEventMethod != null) {
             try {
-              clientEventMethod.invoke(parent, new Object[] { this });
+              clientEventMethod.invoke(parent, this);
             } catch (Exception e) {
               System.err.println("error, disabling clientEvent() for " + host);
               e.printStackTrace();
