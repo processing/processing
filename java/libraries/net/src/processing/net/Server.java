@@ -100,9 +100,7 @@ public class Server implements Runnable {
       // which is called when a new guy connects
       try {
         serverEventMethod =
-          parent.getClass().getMethod("serverEvent",
-                                      new Class[] { Server.class,
-                                                    Client.class });
+          parent.getClass().getMethod("serverEvent", Server.class, Client.class);
       } catch (Exception e) {
         // no such method, or an error.. which is fine, just ignore
       }
@@ -297,6 +295,7 @@ public class Server implements Runnable {
   }
 
 
+  @Override
   public void run() {
     while (Thread.currentThread() == thread) {
       try {
@@ -306,7 +305,7 @@ public class Server implements Runnable {
           addClient(client);
           if (serverEventMethod != null) {
             try {
-              serverEventMethod.invoke(parent, new Object[] { this, client });
+              serverEventMethod.invoke(parent, this, client);
             } catch (Exception e) {
               System.err.println("Disabling serverEvent() for port " + port);
               e.printStackTrace();
