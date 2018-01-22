@@ -621,10 +621,9 @@ public class Client implements Runnable {
    * @brief Returns the buffer as a String
    */
   public String readString() {
-    synchronized (bufferLock) {
-      if (bufferIndex == bufferLast) return null;
-      return new String(readBytes());
-    }
+    byte b[] = readBytes();
+    if (b == null) return null;
+    return new String(b);
   }
 
 
