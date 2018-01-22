@@ -129,7 +129,15 @@ public class Client implements Runnable {
     thread.start();
 
     // reflection to check whether host sketch has a call for
-    // public void disconnectEvent(processing.net.Client)
+    // public void clientEvent(processing.net.Client)
+    // which would be called each time an event comes in
+    try {
+      clientEventMethod =
+          parent.getClass().getMethod("clientEvent", Client.class);
+    } catch (Exception e) {
+      // no such method, or an error.. which is fine, just ignore
+    }
+    // do the same for disconnectEvent(Client c);
     try {
       disconnectEventMethod =
         parent.getClass().getMethod("disconnectEvent", Client.class);
