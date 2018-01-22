@@ -155,7 +155,12 @@ public class Client implements Runnable {
       try {
         disconnectEventMethod.invoke(parent, this);
       } catch (Exception e) {
-        e.printStackTrace();
+        Throwable cause = e;
+        // unwrap the exception if it came from the user code
+        if (e instanceof InvocationTargetException && e.getCause() != null) {
+          cause = e.getCause();
+        }
+        cause.printStackTrace();
         disconnectEventMethod = null;
       }
     }
@@ -266,7 +271,12 @@ public class Client implements Runnable {
               clientEventMethod.invoke(parent, this);
             } catch (Exception e) {
               System.err.println("error, disabling clientEvent() for " + host);
-              e.printStackTrace();
+              Throwable cause = e;
+              // unwrap the exception if it came from the user code
+              if (e instanceof InvocationTargetException && e.getCause() != null) {
+                cause = e.getCause();
+              }
+              cause.printStackTrace();
               clientEventMethod = null;
             }
           }

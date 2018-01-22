@@ -308,7 +308,12 @@ public class Server implements Runnable {
               serverEventMethod.invoke(parent, this, client);
             } catch (Exception e) {
               System.err.println("Disabling serverEvent() for port " + port);
-              e.printStackTrace();
+              Throwable cause = e;
+              // unwrap the exception if it came from the user code
+              if (e instanceof InvocationTargetException && e.getCause() != null) {
+                cause = e.getCause();
+              }
+              cause.printStackTrace();
               serverEventMethod = null;
             }
           }
