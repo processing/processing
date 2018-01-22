@@ -1384,6 +1384,9 @@ public class PApplet implements PConstants {
   HashMap<String, RegisteredMethods> registerMap =
     new HashMap<>();
 
+  /** Lock when un/registering from multiple threads */
+  private final Object registerLock = new Object[0];
+
 
   class RegisteredMethods {
     int count;
@@ -1525,16 +1528,17 @@ public class PApplet implements PConstants {
 
 
   private void registerNoArgs(String name, Object o) {
-    RegisteredMethods meth = registerMap.get(name);
-    if (meth == null) {
-      meth = new RegisteredMethods();
-      registerMap.put(name, meth);
-    }
     Class<?> c = o.getClass();
     try {
-      Method method = c.getMethod(name, new Class[] {});
-      meth.add(o, method);
-
+      Method method = c.getMethod(name);
+      synchronized (registerLock) {
+        RegisteredMethods meth = registerMap.get(name);
+        if (meth == null) {
+          meth = new RegisteredMethods();
+          registerMap.put(name, meth);
+        }
+        meth.add(o, method);
+      }
     } catch (NoSuchMethodException nsme) {
       die("There is no public " + name + "() method in the class " +
           o.getClass().getName());
@@ -1546,16 +1550,17 @@ public class PApplet implements PConstants {
 
 
   private void registerWithArgs(String name, Object o, Class<?> cargs[]) {
-    RegisteredMethods meth = registerMap.get(name);
-    if (meth == null) {
-      meth = new RegisteredMethods();
-      registerMap.put(name, meth);
-    }
     Class<?> c = o.getClass();
     try {
       Method method = c.getMethod(name, cargs);
-      meth.add(o, method);
-
+      synchronized (registerLock) {
+        RegisteredMethods meth = registerMap.get(name);
+        if (meth == null) {
+          meth = new RegisteredMethods();
+          registerMap.put(name, meth);
+        }
+        meth.add(o, method);
+      }
     } catch (NoSuchMethodException nsme) {
       die("There is no public " + name + "() method in the class " +
           o.getClass().getName());
@@ -1572,32 +1577,38 @@ public class PApplet implements PConstants {
 
 
   public void unregisterMethod(String name, Object target) {
-    RegisteredMethods meth = registerMap.get(name);
-    if (meth == null) {
-      die("No registered methods with the name " + name + "() were found.");
-    }
-    try {
+    synchronized (registerLock) {
+      RegisteredMethods meth = registerMap.get(name);
+      if (meth == null) {
+        die("No registered methods with the name " + name + "() were found.");
+      }
+      try {
 //      Method method = o.getClass().getMethod(name, new Class[] {});
 //      meth.remove(o, method);
-      meth.remove(target);
-    } catch (Exception e) {
-      die("Could not unregister " + name + "() for " + target, e);
+        meth.remove(target);
+      } catch (Exception e) {
+        die("Could not unregister " + name + "() for " + target, e);
+      }
     }
   }
 
 
   protected void handleMethods(String methodName) {
-    RegisteredMethods meth = registerMap.get(methodName);
-    if (meth != null) {
-      meth.handle();
+    synchronized (registerLock) {
+      RegisteredMethods meth = registerMap.get(methodName);
+      if (meth != null) {
+        meth.handle();
+      }
     }
   }
 
 
   protected void handleMethods(String methodName, Object[] args) {
-    RegisteredMethods meth = registerMap.get(methodName);
-    if (meth != null) {
-      meth.handle(args);
+    synchronized (registerLock) {
+      RegisteredMethods meth = registerMap.get(methodName);
+      if (meth != null) {
+        meth.handle(args);
+      }
     }
   }
 
