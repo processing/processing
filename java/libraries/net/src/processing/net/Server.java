@@ -327,9 +327,6 @@ public class Server implements Runnable {
         e.printStackTrace();
         thread = null;
       }
-      try {
-        Thread.sleep(8);
-      } catch (InterruptedException ex) { }
     }
   }
 
