@@ -219,7 +219,15 @@ public class Client implements Runnable {
 
   @Override
   public void run() {
-    byte[] readBuffer = new byte[2048]; // Ethernet MTU = 1500 B
+    byte[] readBuffer;
+    { // make the read buffer same size as socket receive buffer so that
+      // we don't waste cycles calling listeners when there is more data waiting
+      int readBufferSize = 2 << 16; // 64 KB (default socket receive buffer size)
+      try {
+        readBufferSize = socket.getReceiveBufferSize();
+      } catch (SocketException ignore) { }
+      readBuffer = new byte[readBufferSize];
+    }
     while (Thread.currentThread() == thread) {
       try {
         while (input != null) {
