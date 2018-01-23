@@ -45,17 +45,22 @@ import java.net.*;
  * @see_external LIB_net/clientEvent
  */
 public class Client implements Runnable {
+
+  protected static final int MAX_BUFFER_SIZE = 2 << 27; // 128 MB
+
   PApplet parent;
   Method clientEventMethod;
   Method disconnectEventMethod;
 
-  Thread thread;
+  volatile Thread thread;
   Socket socket;
   int port;
   String host;
 
   public InputStream input;
   public OutputStream output;
+
+  final Object bufferLock = new Object[0];
 
   byte buffer[] = new byte[32768];
   int bufferIndex;
@@ -90,23 +95,17 @@ public class Client implements Runnable {
       // which would be called each time an event comes in
       try {
         clientEventMethod =
-          parent.getClass().getMethod("clientEvent",
-                                      new Class[] { Client.class });
+          parent.getClass().getMethod("clientEvent", Client.class);
       } catch (Exception e) {
         // no such method, or an error.. which is fine, just ignore
       }
       // do the same for disconnectEvent(Client c);
       try {
         disconnectEventMethod =
-          parent.getClass().getMethod("disconnectEvent",
-                                      new Class[] { Client.class });
+          parent.getClass().getMethod("disconnectEvent", Client.class);
       } catch (Exception e) {
         // no such method, or an error.. which is fine, just ignore
       }
-
-    } catch (ConnectException ce) {
-      ce.printStackTrace();
-      dispose();
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -130,11 +129,18 @@ public class Client implements Runnable {
     thread.start();
 
     // reflection to check whether host sketch has a call for
-    // public void disconnectEvent(processing.net.Client)
+    // public void clientEvent(processing.net.Client)
+    // which would be called each time an event comes in
+    try {
+      clientEventMethod =
+          parent.getClass().getMethod("clientEvent", Client.class);
+    } catch (Exception e) {
+      // no such method, or an error.. which is fine, just ignore
+    }
+    // do the same for disconnectEvent(Client c);
     try {
       disconnectEventMethod =
-        parent.getClass().getMethod("disconnectEvent",
-                                    new Class[] { Client.class });
+        parent.getClass().getMethod("disconnectEvent", Client.class);
     } catch (Exception e) {
       // no such method, or an error.. which is fine, just ignore
     }
@@ -155,9 +161,14 @@ public class Client implements Runnable {
   public void stop() {    
     if (disconnectEventMethod != null && thread != null){
       try {
-        disconnectEventMethod.invoke(parent, new Object[] { this });
+        disconnectEventMethod.invoke(parent, this);
       } catch (Exception e) {
-        e.printStackTrace();
+        Throwable cause = e;
+        // unwrap the exception if it came from the user code
+        if (e instanceof InvocationTargetException && e.getCause() != null) {
+          cause = e.getCause();
+        }
+        cause.printStackTrace();
         disconnectEventMethod = null;
       }
     }
@@ -206,16 +217,26 @@ public class Client implements Runnable {
   }
 
 
+  @Override
   public void run() {
+    byte[] readBuffer;
+    { // make the read buffer same size as socket receive buffer so that
+      // we don't waste cycles calling listeners when there is more data waiting
+      int readBufferSize = 2 << 16; // 64 KB (default socket receive buffer size)
+      try {
+        readBufferSize = socket.getReceiveBufferSize();
+      } catch (SocketException ignore) { }
+      readBuffer = new byte[readBufferSize];
+    }
     while (Thread.currentThread() == thread) {
       try {
         while (input != null) {
-          int value;
+          int readCount;
 
           // try to read a byte using a blocking read. 
           // An exception will occur when the sketch is exits.
           try {
-            value = input.read();
+            readCount = input.read(readBuffer, 0, readBuffer.length);
           } catch (SocketException e) {
              System.err.println("Client SocketException: " + e.getMessage());
              // the socket had a problem reading so don't try to read from it again.
@@ -224,31 +245,55 @@ public class Client implements Runnable {
           }
         
           // read returns -1 if end-of-stream occurs (for example if the host disappears)
-          if (value == -1) {
+          if (readCount == -1) {
             System.err.println("Client got end-of-stream.");
             stop();
             return;
           }
 
-          synchronized (buffer) {
-            // todo: at some point buffer should stop increasing in size, 
-            // otherwise it could use up all the memory.
-            if (bufferLast == buffer.length) {
-              byte temp[] = new byte[bufferLast << 1];
-              System.arraycopy(buffer, 0, temp, 0, bufferLast);
-              buffer = temp;
+          synchronized (bufferLock) {
+            int freeBack = buffer.length - bufferLast;
+            if (readCount > freeBack) {
+              // not enough space at the back
+              int bufferLength = bufferLast - bufferIndex;
+              byte[] targetBuffer = buffer;
+              if (bufferLength + readCount > buffer.length) {
+                // can't fit even after compacting, resize the buffer
+                // find the next power of two which can fit everything in
+                int newSize = Integer.highestOneBit(bufferLength + readCount - 1) << 1;
+                if (newSize > MAX_BUFFER_SIZE) {
+                  // buffer is full because client is not reading (fast enough)
+                  System.err.println("Client: can't receive more data, buffer is full. " +
+                                         "Make sure you read the data from the client.");
+                  stop();
+                  return;
+                }
+                targetBuffer = new byte[newSize];
+              }
+              // compact the buffer (either in-place or into the new bigger buffer)
+              System.arraycopy(buffer, bufferIndex, targetBuffer, 0, bufferLength);
+              bufferLast -= bufferIndex;
+              bufferIndex = 0;
+              buffer = targetBuffer;
             }
-            buffer[bufferLast++] = (byte)value;
+            // copy all newly read bytes into the buffer
+            System.arraycopy(readBuffer, 0, buffer, bufferLast, readCount);
+            bufferLast += readCount;
           }
 
           // now post an event
           if (clientEventMethod != null) {
             try {
-              clientEventMethod.invoke(parent, new Object[] { this });
-             } catch (Exception e) {
-               System.err.println("error, disabling clientEvent() for " + host);
-               e.printStackTrace();
-               clientEventMethod = null;
+              clientEventMethod.invoke(parent, this);
+            } catch (Exception e) {
+              System.err.println("error, disabling clientEvent() for " + host);
+              Throwable cause = e;
+              // unwrap the exception if it came from the user code
+              if (e instanceof InvocationTargetException && e.getCause() != null) {
+                cause = e.getCause();
+              }
+              cause.printStackTrace();
+              clientEventMethod = null;
             }
           }
         }
@@ -306,7 +351,9 @@ public class Client implements Runnable {
    * @brief Returns the number of bytes in the buffer waiting to be read
    */
   public int available() {
-    return (bufferLast - bufferIndex);
+    synchronized (bufferLock) {
+      return (bufferLast - bufferIndex);
+    }
   }
 
 
@@ -321,8 +368,10 @@ public class Client implements Runnable {
    * @brief Clears the buffer
    */
   public void clear() {
-    bufferLast = 0;
-    bufferIndex = 0;
+    synchronized (bufferLock) {
+      bufferLast = 0;
+      bufferIndex = 0;
+    }
   }
 
 
@@ -339,9 +388,9 @@ public class Client implements Runnable {
    * @brief Returns a value from the buffer
    */
   public int read() {
-    if (bufferIndex == bufferLast) return -1;
+    synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return -1;
 
-    synchronized (buffer) {
       int outgoing = buffer[bufferIndex++] & 0xff;
       if (bufferIndex == bufferLast) {  // rewind
         bufferIndex = 0;
@@ -364,8 +413,10 @@ public class Client implements Runnable {
    * @brief Returns the next byte in the buffer as a char
    */
   public char readChar() {
-    if (bufferIndex == bufferLast) return (char)(-1);
-    return (char) read();
+    synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return (char) (-1);
+      return (char) read();
+    }
   }
 
 
@@ -392,9 +443,9 @@ public class Client implements Runnable {
    * @brief Reads everything in the buffer
    */
   public byte[] readBytes() {
-    if (bufferIndex == bufferLast) return null;
+    synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return null;
 
-    synchronized (buffer) {
       int length = bufferLast - bufferIndex;
       byte outgoing[] = new byte[length];
       System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
@@ -417,9 +468,9 @@ public class Client implements Runnable {
    * @param max the maximum number of bytes to read
    */
   public byte[] readBytes(int max) {
-    if (bufferIndex == bufferLast) return null;
+    synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return null;
 
-    synchronized (buffer) {
       int length = bufferLast - bufferIndex;
       if (length > max) length = max;
       byte outgoing[] = new byte[length];
@@ -449,9 +500,9 @@ public class Client implements Runnable {
    * @param bytebuffer passed in byte array to be altered
    */
   public int readBytes(byte bytebuffer[]) {
-    if (bufferIndex == bufferLast) return 0;
+    synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return 0;
 
-    synchronized (buffer) {
       int length = bufferLast - bufferIndex;
       if (length > bytebuffer.length) length = bytebuffer.length;
       System.arraycopy(buffer, bufferIndex, bytebuffer, 0, length);
@@ -487,10 +538,11 @@ public class Client implements Runnable {
    * @param interesting character designated to mark the end of the data
    */
   public byte[] readBytesUntil(int interesting) {
-    if (bufferIndex == bufferLast) return null;
     byte what = (byte)interesting;
 
-    synchronized (buffer) {
+    synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return null;
+
       int found = -1;
       for (int k = bufferIndex; k < bufferLast; k++) {
         if (buffer[k] == what) {
@@ -528,10 +580,11 @@ public class Client implements Runnable {
    * @param byteBuffer passed in byte array to be altered
    */
   public int readBytesUntil(int interesting, byte byteBuffer[]) {
-    if (bufferIndex == bufferLast) return 0;
     byte what = (byte)interesting;
 
-    synchronized (buffer) {
+    synchronized (bufferLock) {
+      if (bufferIndex == bufferLast) return 0;
+
       int found = -1;
       for (int k = bufferIndex; k < bufferLast; k++) {
         if (buffer[k] == what) {
@@ -576,8 +629,9 @@ public class Client implements Runnable {
    * @brief Returns the buffer as a String
    */
   public String readString() {
-    if (bufferIndex == bufferLast) return null;
-    return new String(readBytes());
+    byte b[] = readBytes();
+    if (b == null) return null;
+    return new String(b);
   }
 
 
