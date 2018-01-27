@@ -3703,8 +3703,7 @@ public class PApplet implements PConstants {
     if (platform == MACOSX) {
       try {
         final String td = "processing.core.ThinkDifferent";
-        final Class<?> thinkDifferent =
-          Thread.currentThread().getContextClassLoader().loadClass(td);
+        final Class<?> thinkDifferent = getClass().getClassLoader().loadClass(td);
         thinkDifferent.getMethod("cleanup").invoke(null);
       } catch (Exception e) {
         e.printStackTrace();
