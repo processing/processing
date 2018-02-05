@@ -30,6 +30,12 @@ X   https://github.com/processing/processing/pull/5265
 X   https://github.com/processing/processing/issues/5219
 X Fix error checker crash when className contains [ or ]
 X   https://github.com/processing/processing/pull/5304
+X major fixes for the net library
+X   https://github.com/processing/processing/pull/5378
+X   https://github.com/processing/processing/issues/4419
+X   https://github.com/processing/processing/issues/5360
+X   https://github.com/processing/processing/issues/3970
+X   https://github.com/processing/processing/pull/5389
 
 contrib
 X detect errors from curved quotation marks
