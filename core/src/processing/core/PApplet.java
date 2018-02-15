@@ -5382,6 +5382,7 @@ public class PApplet implements PConstants {
       if (dot == -1) {
         extension = "unknown";  // no extension found
       }
+      else
       extension = lower.substring(dot + 1);
 
       // check for, and strip any parameters on the url, i.e.
