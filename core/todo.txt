@@ -24,6 +24,8 @@ _   https://github.com/processing/processing/pull/5384
 andres
 X textureWrap() not updating when changed during draw()
 X   https://github.com/processing/processing/issues/5322
+X cap frameRate() to 1000 in OpenGL
+X   https://github.com/processing/processing/issues/5404
 
 gohai
 X ARM tweaks for shaders on the RPi
