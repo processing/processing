@@ -6,6 +6,9 @@ X set colorModeDefault to true by default
 _ add circle() and square()
 _ add push() and pop()
 
+_ Table.insertRow insert duplicates and cause ArrayIndexOutOfBoundsException (with fix)
+_   https://github.com/processing/processing/issues/5406
+
 data
 X added setIndex() method to IntDict, FloatDict, StringDict
 X added resize() to IntDict, FloatDict, StringDict
