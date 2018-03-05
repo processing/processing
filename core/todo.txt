@@ -33,6 +33,9 @@ X   https://github.com/processing/processing/issues/5404
 gohai
 X ARM tweaks for shaders on the RPi
 X   https://github.com/processing/processing/pull/5297
+X Fix 3D on contemporary versions of Linux
+X   https://github.com/processing/processing/pull/5428
+X   https://github.com/processing/processing/issues/5308
 
 jakub
 X fix line joins on triangles

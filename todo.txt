@@ -6,40 +6,6 @@ X NullPointerException in ContributionManager.deleteFlagged()
 X   https://github.com/processing/processing/issues/5342
 X move to Java 8u162
 
-
-welcome
-_ just remove the welcome dialog; but what should the default behavior be?
-_ Welcome dialog rewritten in Swing
-_   https://github.com/processing/processing/pull/5210
-_ Welcome screen doesn't size properly for HiDPI screens
-_   https://github.com/processing/processing/issues/4896
-_ click "show this welcome" text to check/uncheck the box
-_   https://github.com/processing/processing/issues/3912
-_ submit the form (as if 'get started' clicked) when closing the window
-_   whether hitting ESC or the close box on the window
-_   https://github.com/processing/processing/issues/3911
-
-_ windows defender blocks processing 3.3.6
-_   https://github.com/processing/processing/issues/5329
-_ Rename dialog is unusable on high density screen
-_   https://github.com/processing/processing/issues/5368
-_ change up the newline handling
-_   https://github.com/processing/processing/issues/5327
-_ Contributions manager fails to complete install of PythonMode when no windows open
-_   https://github.com/processing/processing/issues/5309
-_ update to launch4j 3.11? 
-_   http://launch4j.sourceforge.net/changelog.html
-_ add a note about temp dir to the bug on windows temp dirs
-_   move away from using a temp dir at all for sketches
-_   -Djava.io.tmpdir=Z:\temp
-_ add pyde as a supported extension? 
-_   https://github.com/jdf/processing.py/issues/284
-_ “could not move the contribution to the backup folder” message while updating libraries
-_   problem is that any sketch that uses a library, the lib is stuck as "in use"
-_   https://github.com/processing/processing/issues/4973
-_ an incompatible Mode prevents the PDE from quitting after last window is closed
-_   https://github.com/processing/processing/issues/5112
-
 jakub
 X Fix scrub comments for empty block comment /**/
 X   https://github.com/processing/processing/pull/5265
@@ -63,6 +29,46 @@ X Remove "Pipe Organ" from exec javadoc
 X   https://github.com/processing/processing/pull/5282
 X typo in Italian translation
 X   https://github.com/processing/processing/issues/5365
+
+
+welcome
+_ just remove the welcome dialog; but what should the default behavior be?
+_   or should it only show up for people who have used <=2 but not 3?
+_ Welcome dialog rewritten in Swing
+_   https://github.com/processing/processing/pull/5210
+_ Welcome screen doesn't size properly for HiDPI screens
+_   https://github.com/processing/processing/issues/4896
+_ click "show this welcome" text to check/uncheck the box
+_   https://github.com/processing/processing/issues/3912
+_ submit the form (as if 'get started' clicked) when closing the window
+_   whether hitting ESC or the close box on the window
+_   https://github.com/processing/processing/issues/3911
+
+_ windows defender blocks processing 3.3.6
+_   https://github.com/processing/processing/issues/5329
+_ Rename dialog is unusable on high density screen
+_   https://github.com/processing/processing/issues/5368
+_ change up the newline handling
+_   https://github.com/processing/processing/issues/5327
+_ Manager fails to complete install of PythonMode when no windows open
+_   https://github.com/processing/processing/issues/5309
+_ update to launch4j 3.11? 
+_   http://launch4j.sourceforge.net/changelog.html
+_ add a note about temp dir to the bug on windows temp dirs
+_   move away from using a temp dir at all for sketches
+_   -Djava.io.tmpdir=Z:\temp
+_ add pyde as a supported extension? 
+_   https://github.com/jdf/processing.py/issues/284
+_ “could not move the contribution to the backup folder” message while updating libraries
+_   problem is that any sketch that uses a library, the lib is stuck as "in use"
+_   https://github.com/processing/processing/issues/4973
+_ an incompatible Mode prevents the PDE from quitting after last window is closed
+_   https://github.com/processing/processing/issues/5112
+_ examples window not updating on install
+_   open examples window
+_   mode > add mode > libraries > install video 
+_   did not update the examples window, had to restart pde
+_ was able to save over the video capture examples b/c they were a library
 
 high
 _ menu bars broken in High Sierra
@@ -833,6 +839,7 @@ _   when are prefs saved? could instead save whenever changes are made
 _   and then if the file gets modified, it'll put up an error message
 _   also, this may be part of why other sketches aren't reloading properly
 _ simple prefs implementation to set key/value pairs using a JTable
+_   https://github.com/processing/processing/issues/5425
 _ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
 _   don't bother having a "cancel" for the prefs window
 _ make prefs dialog modal?
