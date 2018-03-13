@@ -436,8 +436,10 @@ public class AutoFormat implements Formatter {
   /** Entry point */
   public String format(final String source) {
     final String normalizedText = source.replaceAll("\r", "");
-    final String cleanText =
-      normalizedText + (normalizedText.endsWith("\n") ? "" : "\n");
+    String cleanText = normalizedText;
+    if (!normalizedText.endsWith("\n")) {
+      cleanText += "\n";
+    }
 
     // Globals' description at top of file.
     result.setLength(0);
@@ -459,8 +461,8 @@ public class AutoFormat implements Formatter {
     ind = new boolean[10];
     p_flg = new int[10];
     s_tabs = new int[20][10];
-    doWhileFlags = new Stack<Boolean>();
-    ifWhileForFlags = new Stack<Boolean>();
+    doWhileFlags = new Stack<>();
+    ifWhileForFlags = new Stack<>();
 
     chars = cleanText.toCharArray();
 
