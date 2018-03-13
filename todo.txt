@@ -8,11 +8,10 @@ X move to Java 8u162
 X menu bars broken in High Sierra
 X   https://github.com/processing/processing/issues/5272
 X   no more responses, had to close
-
-_ change up the newline handling
-_   https://github.com/processing/processing/issues/5327
-_   explanation: https://stackoverflow.com/a/729795
-_   http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_206
+X include newlines at end of files (i.e. when saving .pde files)
+X   https://github.com/processing/processing/issues/5327
+X   explanation: https://stackoverflow.com/a/729795
+X   http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_206
 
 jakub
 X Fix scrub comments for empty block comment /**/
@@ -65,9 +64,6 @@ _ Manager fails to complete install of PythonMode when no windows open
 _   https://github.com/processing/processing/issues/5309
 _ update to launch4j 3.11? 
 _   http://launch4j.sourceforge.net/changelog.html
-_ add a note about temp dir to the bug on windows temp dirs
-_   move away from using a temp dir at all for sketches
-_   -Djava.io.tmpdir=Z:\temp
 _ add pyde as a supported extension? 
 _   https://github.com/jdf/processing.py/issues/284
 _ an incompatible Mode prevents the PDE from quitting after last window is closed
@@ -90,7 +86,16 @@ _   https://github.com/processing/processing/issues/5271
 _   possible fix (just copies on click)
 _   https://github.com/processing/processing/pull/5345
 
+temp
+_ inside Sketch, makeTempFolder() would be the place to modify the location
+_   perhaps make a 'temp' inside the sketchbook folder? 
+_   on startup, check to see if there are a lot of files, remove them? 
+_   or maybe auto-delete once older than 24 hours?
+_   also don't search it when walking the sketchbook
 _ untitled folders are stored in temp folder
+_ add a note about temp dir to the bug on windows temp dirs
+_   move away from using a temp dir at all for sketches
+_   -Djava.io.tmpdir=Z:\temp
 _ clean up /tmp folders used during build
 _   https://github.com/processing/processing/issues/1896
 _ don't let people into the /tmp folder for sketches
@@ -98,6 +103,8 @@ o   don't use tmp folder for sketches?
 _   restrict more things like "show sketch folder"
 _   don't allow adding files w/o saving
 _   others?
+_ clean Windows temp folders
+_   https://github.com/processing/processing/issues/1896
 
 contrib
 _ console hiding button?
@@ -183,7 +190,7 @@ _   malformed proxy issues http://stackoverflow.com/q/376101
 _   docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html
 _   https://github.com/processing/processing/issues/1476#issuecomment-23229990
 
-_ could not write to temporary directory
+_ could not write to temporary directory (virus checker problems)
 _   https://github.com/processing/processing/issues/4757
 
 _ Export Application fails on machines w/ non-ASCII chars in user name
