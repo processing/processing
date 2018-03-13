@@ -21,6 +21,10 @@ X   https://github.com/processing/processing/issues/4419
 X   https://github.com/processing/processing/issues/5360
 X   https://github.com/processing/processing/issues/3970
 X   https://github.com/processing/processing/pull/5389
+X Output java files in UTF-8 and force compiler to use UTF-8
+X   https://github.com/processing/processing/pull/5436
+X PdePreprocessor change is breaking current source
+X   https://github.com/processing/processing/issues/5413
 
 contrib
 X detect errors from curved quotation marks
@@ -47,8 +51,7 @@ _ submit the form (as if 'get started' clicked) when closing the window
 _   whether hitting ESC or the close box on the window
 _   https://github.com/processing/processing/issues/3911
 
-_ Java 8u162 may be breaking fonts on Windows
-_   https://github.com/processing/processing/issues/5413
+
 _ windows defender blocks processing 3.3.6
 _   https://github.com/processing/processing/issues/5329
 _ Rename dialog is unusable on high density screen
