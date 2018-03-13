@@ -9,6 +9,11 @@ X menu bars broken in High Sierra
 X   https://github.com/processing/processing/issues/5272
 X   no more responses, had to close
 
+_ change up the newline handling
+_   https://github.com/processing/processing/issues/5327
+_   explanation: https://stackoverflow.com/a/729795
+_   http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_206
+
 jakub
 X Fix scrub comments for empty block comment /**/
 X   https://github.com/processing/processing/pull/5265
@@ -56,8 +61,6 @@ _ windows defender blocks processing 3.3.6
 _   https://github.com/processing/processing/issues/5329
 _ Rename dialog is unusable on high density screen
 _   https://github.com/processing/processing/issues/5368
-_ change up the newline handling
-_   https://github.com/processing/processing/issues/5327
 _ Manager fails to complete install of PythonMode when no windows open
 _   https://github.com/processing/processing/issues/5309
 _ update to launch4j 3.11? 
