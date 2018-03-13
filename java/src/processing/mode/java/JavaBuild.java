@@ -24,6 +24,8 @@ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package processing.mode.java;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -249,14 +251,15 @@ public class JavaBuild {
       outputFolder.mkdirs();
 //      Base.openFolder(outputFolder);
       final File java = new File(outputFolder, sketch.getName() + ".java");
-      final PrintWriter stream = new PrintWriter(new FileWriter(java));
+      BufferedWriter bw = Files.newBufferedWriter(java.toPath(), StandardCharsets.UTF_8);
+      final PrintWriter stream = new PrintWriter(bw);
       try {
         result = preprocessor.write(stream, bigCode.toString(), codeFolderPackages);
       } finally {
         stream.close();
       }
-    } catch (FileNotFoundException fnfe) {
-      fnfe.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
       String msg = "Build folder disappeared or could not be written";
       throw new SketchException(msg);
 

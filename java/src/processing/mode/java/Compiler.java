@@ -68,6 +68,7 @@ public class Compiler {
       //"-noExit",  // not necessary for ecj
       "-source", "1.7",
       "-target", "1.7",
+      "-encoding", "utf8",
       "-classpath", build.getClassPath(),
       "-nowarn", // we're not currently interested in warnings (works in ecj)
       "-d", build.getBinFolder().getAbsolutePath() // output the classes in the buildPath
