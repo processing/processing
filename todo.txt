@@ -5,6 +5,9 @@ X   the old 144 link must have been removed
 X NullPointerException in ContributionManager.deleteFlagged()
 X   https://github.com/processing/processing/issues/5342
 X move to Java 8u162
+X menu bars broken in High Sierra
+X   https://github.com/processing/processing/issues/5272
+X   no more responses, had to close
 
 jakub
 X Fix scrub comments for empty block comment /**/
@@ -44,6 +47,8 @@ _ submit the form (as if 'get started' clicked) when closing the window
 _   whether hitting ESC or the close box on the window
 _   https://github.com/processing/processing/issues/3911
 
+_ Java 8u162 may be breaking fonts on Windows
+_   https://github.com/processing/processing/issues/5413
 _ windows defender blocks processing 3.3.6
 _   https://github.com/processing/processing/issues/5329
 _ Rename dialog is unusable on high density screen
@@ -59,9 +64,6 @@ _   move away from using a temp dir at all for sketches
 _   -Djava.io.tmpdir=Z:\temp
 _ add pyde as a supported extension? 
 _   https://github.com/jdf/processing.py/issues/284
-_ “could not move the contribution to the backup folder” message while updating libraries
-_   problem is that any sketch that uses a library, the lib is stuck as "in use"
-_   https://github.com/processing/processing/issues/4973
 _ an incompatible Mode prevents the PDE from quitting after last window is closed
 _   https://github.com/processing/processing/issues/5112
 _ examples window not updating on install
@@ -69,10 +71,13 @@ _   open examples window
 _   mode > add mode > libraries > install video 
 _   did not update the examples window, had to restart pde
 _ was able to save over the video capture examples b/c they were a library
+_   lib examples not properly marked as read-only
 
-high
-_ menu bars broken in High Sierra
-_   https://github.com/processing/processing/issues/5272
+_ “could not move the contribution to the backup folder” message while updating
+_   problem is that any sketch that uses a library, the lib is stuck as "in use"
+_   https://github.com/processing/processing/issues/4973
+_ issues with updating modes
+_   https://github.com/processing/processing/issues/5424
 
 _ add select/copy to the status bar
 _   https://github.com/processing/processing/issues/5271

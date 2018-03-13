@@ -6,8 +6,10 @@ X set colorModeDefault to true by default
 _ add circle() and square()
 _ add push() and pop()
 
-_ Table.insertRow insert duplicates and cause ArrayIndexOutOfBoundsException (with fix)
+_ Table.insertRow()) causes ArrayIndexOutOfBoundsException (with fix)
 _   https://github.com/processing/processing/issues/5406
+_ blendMode() with PDF isn't showing the warning about it not being available
+_   https://github.com/processing/processing/issues/5105
 
 data
 X added setIndex() method to IntDict, FloatDict, StringDict
