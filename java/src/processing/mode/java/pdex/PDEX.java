@@ -18,7 +18,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -648,9 +647,7 @@ public class PDEX {
   }
 
 
-
   private class Rename {
-
     final JDialog window;
     final JTextField textField;
     final JLabel oldNameLabel;
@@ -684,26 +681,28 @@ public class PDEX {
           ps = null;
         }
       });
-      window.setSize(250, 130);
+      window.setSize(Toolkit.zoom(250, 130));
       window.setLayout(new BoxLayout(window.getContentPane(), BoxLayout.Y_AXIS));
       Toolkit.setIcon(window);
+
+      final int b = Toolkit.zoom(5);
 
       { // Top panel
 
         // Text field
         textField = new JTextField();
-        textField.setPreferredSize(new Dimension(150, 60));
+        textField.setPreferredSize(Toolkit.zoom(150, 60));
 
         // Old name label
         oldNameLabel = new JLabel();
-        oldNameLabel.setText("Old Name: ");
+        oldNameLabel.setText("Current Name: ");
 
         // Top panel
         JPanel panelTop = new JPanel();
         panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
-        panelTop.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        panelTop.setBorder(BorderFactory.createEmptyBorder(b, b, b, b));
         panelTop.add(textField);
-        panelTop.add(Box.createRigidArea(new Dimension(0, 10)));
+        panelTop.add(Box.createRigidArea(Toolkit.zoom(0, 10)));
         panelTop.add(oldNameLabel);
         window.add(panelTop);
       }
@@ -717,28 +716,27 @@ public class PDEX {
 
         JButton renameButton = new JButton("Rename");
         renameButton.addActionListener(e -> {
-          if (textField.getText().length() == 0) {
-            return;
-          }
-          String newName = textField.getText().trim();
-          boolean isNewNameValid = newName.length() >= 1 &&
-              newName.chars().limit(1).allMatch(Character::isUnicodeIdentifierStart) &&
-              newName.chars().skip(1).allMatch(Character::isUnicodeIdentifierPart);
-          if (!isNewNameValid) {
-            JOptionPane.showMessageDialog(new JFrame(), "'" + newName
-                + "' isn't a valid name.", "Uh oh..", JOptionPane.PLAIN_MESSAGE);
-          } else {
-            rename(ps, binding, newName);
-            window.setVisible(false);
+          final String newName = textField.getText().trim();
+          if (!newName.isEmpty()) {
+            if (newName.length() >= 1 &&
+                newName.chars().limit(1).allMatch(Character::isUnicodeIdentifierStart) &&
+                newName.chars().skip(1).allMatch(Character::isUnicodeIdentifierPart)) {
+              rename(ps, binding, newName);
+              window.setVisible(false);
+            } else {
+              String msg = String.format("'%s' is not a valid name", newName);
+              JOptionPane.showMessageDialog(editor, msg, "Naming is Hard",
+                                            JOptionPane.PLAIN_MESSAGE);
+            }
           }
         });
 
         JPanel panelBottom = new JPanel();
         panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
-        panelBottom.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        panelBottom.setBorder(BorderFactory.createEmptyBorder(b, b, b, b));
         panelBottom.add(Box.createHorizontalGlue());
         panelBottom.add(showUsageButton);
-        panelBottom.add(Box.createRigidArea(new Dimension(15, 0)));
+        panelBottom.add(Box.createRigidArea(Toolkit.zoom(15, 0)));
         panelBottom.add(renameButton);
         window.add(panelBottom);
       }

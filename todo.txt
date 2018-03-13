@@ -12,6 +12,8 @@ X include newlines at end of files (i.e. when saving .pde files)
 X   https://github.com/processing/processing/issues/5327
 X   explanation: https://stackoverflow.com/a/729795
 X   http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_206
+X Rename dialog is unusable on high density screen
+X   https://github.com/processing/processing/issues/5368
 
 jakub
 X Fix scrub comments for empty block comment /**/
@@ -58,8 +60,6 @@ _   https://github.com/processing/processing/issues/3911
 
 _ windows defender blocks processing 3.3.6
 _   https://github.com/processing/processing/issues/5329
-_ Rename dialog is unusable on high density screen
-_   https://github.com/processing/processing/issues/5368
 _ Manager fails to complete install of PythonMode when no windows open
 _   https://github.com/processing/processing/issues/5309
 _ update to launch4j 3.11? 
