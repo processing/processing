@@ -2434,6 +2434,7 @@ public class Table {
     setRow(insert, columnData);
   }
 
+
   /**
    * @webref table:method
    * @brief Removes a row from a table
