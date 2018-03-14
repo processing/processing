@@ -22,9 +22,9 @@ X   https://github.com/processing/processing/pull/5251
 X void cursor() don't work after void noCursor() in P2D and P3D
 X   https://github.com/processing/processing/issues/5330
 X   https://github.com/processing/processing/pull/5340
-_ nullPointer on close button with P3D and noLoop
-_   https://github.com/processing/processing/issues/5214
-_   https://github.com/processing/processing/pull/5384
+X NullPointerException on close button with P3D and noLoop
+X   https://github.com/processing/processing/issues/5214
+X   https://github.com/processing/processing/pull/5384
 
 andres
 X textureWrap() not updating when changed during draw()
