@@ -248,11 +248,15 @@ public class JavaBuild {
         srcFolder : new File(srcFolder, packageName.replace('.', '/'));
       outputFolder.mkdirs();
       final File java = new File(outputFolder, sketch.getName() + ".java");
-      final PrintWriter writer = PApplet.createWriter(java);
       try {
-        result = preprocessor.write(writer, bigCode.toString(), codeFolderPackages);
-      } finally {
-        writer.close();
+        final PrintWriter writer = PApplet.createWriter(java);
+        try {
+          result = preprocessor.write(writer, bigCode.toString(), codeFolderPackages);
+        } finally {
+          writer.close();
+        }
+      } catch (RuntimeException re) {
+        throw new SketchException("Could not write " + java.getAbsolutePath());
       }
     } catch (antlr.RecognitionException re) {
       // re also returns a column that we're not bothering with for now
