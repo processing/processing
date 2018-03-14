@@ -2428,8 +2428,10 @@ public class Table {
         }
       }
     }
+    // Need to increment before setRow(), because it calls ensureBounds()
+    // https://github.com/processing/processing/issues/5406
+    ++rowCount;
     setRow(insert, columnData);
-    rowCount++;
   }
 
   /**
