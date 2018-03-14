@@ -1,4 +1,52 @@
+0264 (3.3.7)
+X fix exception due to version parsing in Java 9
+X   https://github.com/processing/processing/issues/5275
+X remove useless deprecation on PImage.mask(int[])
+X set colorModeDefault to true by default
+X blendMode() with PDF isn't showing the warning about it not being available
+X   add blendMode() to nope() calls in PGraphicsPDF
+X   https://github.com/processing/processing/issues/5105
+X Table.insertRow() causes ArrayIndexOutOfBoundsException (with fix)
+X   https://github.com/processing/processing/issues/5406
+
+data
+X added setIndex() method to IntDict, FloatDict, StringDict
+X added resize() to IntDict, FloatDict, StringDict
+X fix entries() Iterator in IntDict, FloatDict, StringDict
+
+contrib
+X minor bezierPoint() rewrite for performance
+X   https://github.com/processing/processing/pull/5251
+X void cursor() don't work after void noCursor() in P2D and P3D
+X   https://github.com/processing/processing/issues/5330
+X   https://github.com/processing/processing/pull/5340
+X NullPointerException on close button with P3D and noLoop
+X   https://github.com/processing/processing/issues/5214
+X   https://github.com/processing/processing/pull/5384
+
+andres
+X textureWrap() not updating when changed during draw()
+X   https://github.com/processing/processing/issues/5322
+X cap frameRate() to 1000 in OpenGL
+X   https://github.com/processing/processing/issues/5404
+
+gohai
+X ARM tweaks for shaders on the RPi
+X   https://github.com/processing/processing/pull/5297
+X Fix 3D on contemporary versions of Linux
+X   https://github.com/processing/processing/pull/5428
+X   https://github.com/processing/processing/issues/5308
+
+jakub
+X fix line joins on triangles
+X   https://github.com/processing/processing/issues/5353
+X   https://github.com/processing/processing/pull/5354
+X Make un/registering methods in PApplet thread-saf
+X   https://github.com/processing/processing/pull/5379
+
+
 0263 (3.3.6)
+X lots of contribs!
 
 gohai
 X shell discussion with gohai
