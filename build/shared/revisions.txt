@@ -1,3 +1,125 @@
+PROCESSING 3.3.7 (REV 0264) - 13 March 2018
+
+A rollup of several fixes from the last few months. 
+
+
+[ changes most likely to be noticed ]
+
++ Windows Defender blocks Processing 3.3.6. Not sure why this was happening,
+  but hopefully a new release should be all that's necessary to fix it.
+  https://github.com/processing/processing/issues/5329
+
++ Lots of fixes for the Net Library by Jakub
+  https://github.com/processing/processing/pull/5378
+  https://github.com/processing/processing/issues/4419
+  https://github.com/processing/processing/issues/5360
+  https://github.com/processing/processing/issues/3970
+  https://github.com/processing/processing/pull/5389
+
++ Include newlines at end of files (i.e. when saving .pde files)
+  https://github.com/processing/processing/issues/5327
+  Why do this? https://stackoverflow.com/a/729795
+
++ Rename (refactor) dialog is unusable on high density screen
+  https://github.com/processing/processing/issues/5368
+
++ Detect errors from curved quotation marks (a headache when copying/pasting)
+  https://github.com/processing/processing/issues/5133
+  https://github.com/processing/processing/pull/5152
+
++ NullPointerException on close button with P3D and noLoop
+  https://github.com/processing/processing/issues/5214
+  https://github.com/processing/processing/pull/5384
+
++ Fix exception due to version parsing in Java 9
+  https://github.com/processing/processing/issues/5275
+
++ Fix line joins on triangles
+  https://github.com/processing/processing/issues/5353
+  https://github.com/processing/processing/pull/5354
+
+
+[ somewhere in the middle ]
+
++ Fix NullPointerException in ContributionManager.deleteFlagged()
+  https://github.com/processing/processing/issues/5342
+
++ Fix scrub comments for empty block comment /**/
+  https://github.com/processing/processing/pull/5265
+  https://github.com/processing/processing/issues/5219
+  
++ Fix error checker crash when className contains [ or ]
+  https://github.com/processing/processing/pull/5304
+
++ Table.insertRow() causes ArrayIndexOutOfBoundsException (with fix)
+  https://github.com/processing/processing/issues/5406
+
++ blendMode() with PDF isn't showing the warning about it not being available
+  https://github.com/processing/processing/issues/5105
+
++ textureWrap() not updating when changed during draw()
+  https://github.com/processing/processing/issues/5322
+
++ Cap frameRate() to 1000 in OpenGL
+  https://github.com/processing/processing/issues/5404
+
++ ARM tweaks for shaders on the Raspberry Pi
+  https://github.com/processing/processing/pull/5297
+
++ Fix 3D on contemporary versions of Linux
+  https://github.com/processing/processing/pull/5428
+  https://github.com/processing/processing/issues/5308
+
++ cursor() don't work after void noCursor() in P2D and P3D
+  https://github.com/processing/processing/issues/5330
+  https://github.com/processing/processing/pull/5340
+
+
+[ changes least likely to be noticed ]
+
++ Fix JRE download issues
+  https://github.com/processing/processing/issues/5284
+
++ Update to Java 8u162
+
++ PdePreprocessor change is breaking current source
+  https://github.com/processing/processing/issues/5413
+
++ Output .java files in UTF-8 and force compiler to use UTF-8
+  https://github.com/processing/processing/pull/5436
+
++ Refactor to use a few Java 8 features
+  https://github.com/processing/processing/pull/5134
+
++ Remove "Pipe Organ" from exec() docs
+  https://github.com/processing/processing/pull/5282
+
++ Fix typo in Italian translation
+  https://github.com/processing/processing/issues/5365
+
++ Remove useless deprecation on PImage.mask(int[])
+
++ Make un/registering methods in PApplet thread-safe
+  https://github.com/processing/processing/pull/5379
+
++ set colorModeDefault to true by default
+
++ Minor bezierPoint() rewrite for performance
+  https://github.com/processing/processing/pull/5251
+
+
+[ additions! new features! ]
+
++ Added setIndex() method to IntDict, FloatDict, StringDict
+
++ Added resize() to IntDict, FloatDict, StringDict
+
++ Fix entries() Iterator in IntDict, FloatDict, StringDict
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.3.6 (REV 0263) - 4 September 2017
 
 A collection of mostly minor bug fixes that have accreted 
