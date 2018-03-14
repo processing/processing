@@ -3,13 +3,11 @@ X fix exception due to version parsing in Java 9
 X   https://github.com/processing/processing/issues/5275
 X remove useless deprecation on PImage.mask(int[])
 X set colorModeDefault to true by default
-_ add circle() and square()
-_ add push() and pop()
-
+X blendMode() with PDF isn't showing the warning about it not being available
+X   add blendMode() to nope() calls in PGraphicsPDF
+X   https://github.com/processing/processing/issues/5105
 _ Table.insertRow()) causes ArrayIndexOutOfBoundsException (with fix)
 _   https://github.com/processing/processing/issues/5406
-_ blendMode() with PDF isn't showing the warning about it not being available
-_   https://github.com/processing/processing/issues/5105
 
 data
 X added setIndex() method to IntDict, FloatDict, StringDict
@@ -46,6 +44,12 @@ X   https://github.com/processing/processing/pull/5354
 X Make un/registering methods in PApplet thread-saf
 X   https://github.com/processing/processing/pull/5379
 
+
+3.4
+_ add circle() and square()
+_ add push() and pop()
+
+
 _ make setting the window icon automatic, based on files in local dirs
 X   https://github.com/processing/processing/issues/5123
 X   https://github.com/processing/processing/pull/5202
@@ -69,9 +73,6 @@ _ when doing createFont, can we add it to the os fonts available?
 
 _ add separator option to loadTable() 
 _   https://github.com/processing/processing/issues/5068
-
-_ add blendMode() to nope() calls in PGraphicsPDF
-_   https://github.com/processing/processing/issues/5105
 
 _ WARNING: GL pipe is running in software mode (Renderer ID=0x1020400)
 _   is this coming from us? if so, need to provide actions
