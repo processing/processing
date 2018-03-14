@@ -6,8 +6,8 @@ X set colorModeDefault to true by default
 X blendMode() with PDF isn't showing the warning about it not being available
 X   add blendMode() to nope() calls in PGraphicsPDF
 X   https://github.com/processing/processing/issues/5105
-_ Table.insertRow()) causes ArrayIndexOutOfBoundsException (with fix)
-_   https://github.com/processing/processing/issues/5406
+X Table.insertRow() causes ArrayIndexOutOfBoundsException (with fix)
+X   https://github.com/processing/processing/issues/5406
 
 data
 X added setIndex() method to IntDict, FloatDict, StringDict
