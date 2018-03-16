@@ -23,6 +23,7 @@
 uniform mat4 modelviewMatrix;
 uniform mat4 transformMatrix;
 uniform mat3 normalMatrix;
+uniform mat4 texMatrix;
 
 uniform int lightCount;
 uniform vec4 lightPosition[8];
@@ -36,6 +37,7 @@ uniform vec2 lightSpot[8];
 attribute vec4 position;
 attribute vec4 color;
 attribute vec3 normal;
+attribute vec2 texCoord;
 
 attribute vec4 ambient;
 attribute vec4 specular;
@@ -44,6 +46,7 @@ attribute float shininess;
 
 varying vec4 vertColor;
 varying vec4 backVertColor;
+varying vec4 vertTexCoord;
 
 const float zero_float = 0.0;
 const float one_float = 1.0;
@@ -96,8 +99,8 @@ void main() {
   vec3 totalBackSpecular = vec3(0, 0, 0);
   
   // prevent register allocation failure by limiting ourselves to
-  // four lights for now
-  for (int i = 0; i < 4; i++) {
+  // two lights for now
+  for (int i = 0; i < 2; i++) {
     if (lightCount == i) break;
     
     vec3 lightPos = lightPosition[i].xyz;
@@ -139,7 +142,7 @@ void main() {
                             blinnPhongFactor(lightDir, ecVertex, ecNormalInv, shininess);
     }     
   }    
-
+  
   // Calculating final color as result of all lights (plus emissive term).
   // Transparency is determined exclusively by the diffuse component.
   vertColor =     vec4(totalAmbient, 0) * ambient + 
@@ -151,4 +154,7 @@ void main() {
                   vec4(totalBackDiffuse, 1) * color + 
                   vec4(totalBackSpecular, 0) * specular + 
                   vec4(emissive.rgb, 0);
+                  
+  // Calculating texture coordinates, with r and q set both to one
+  vertTexCoord = texMatrix * vec4(texCoord, 1.0, 1.0);        
 }

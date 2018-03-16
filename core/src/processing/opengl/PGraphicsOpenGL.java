@@ -6895,8 +6895,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
     // overwrite the default shaders with vendor specific versions
     // if needed
-    if (OPENGL_RENDERER.equals("VideoCore IV HW") ||    // Broadcom's binary driver for Raspberry Pi
-      OPENGL_RENDERER.contains("VC4")) {   // Mesa driver for same hardware
+    if (OPENGL_RENDERER.equals("VideoCore IV HW")) {  // Broadcom's binary driver for Raspberry Pi
+        defLightShaderVertURL =
+          PGraphicsOpenGL.class.getResource("/processing/opengl/shaders/LightVert-brcm.glsl");
+        defTexlightShaderVertURL =
+          PGraphicsOpenGL.class.getResource("/processing/opengl/shaders/TexLightVert-brcm.glsl");
+    } else if (OPENGL_RENDERER.contains("VC4")) {     // Mesa driver for same hardware
         defLightShaderVertURL =
           PGraphicsOpenGL.class.getResource("/processing/opengl/shaders/LightVert-vc4.glsl");
         defTexlightShaderVertURL =
