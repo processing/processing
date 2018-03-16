@@ -112,6 +112,17 @@ public class Base {
 
 
   static public void main(final String[] args) {
+    if (Preferences.getBoolean("editor.smooth")) {
+      // Those properties helps enabling anti-aliasing on Linux
+      // (but not on Windows where they made things worse actually
+      // and the font rendering becomes ugly).
+
+      // Those properties must be set before initializing any
+      // graphic object, otherwise they don't have any effect.
+      System.setProperty("awt.useSystemAAFontSettings", "on");
+      System.setProperty("swing.aatext", "true");
+    }
+
     EventQueue.invokeLater(new Runnable() {
         public void run() {
           try {
