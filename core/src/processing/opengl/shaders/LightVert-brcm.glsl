@@ -96,8 +96,8 @@ void main() {
   vec3 totalBackSpecular = vec3(0, 0, 0);
   
   // prevent register allocation failure by limiting ourselves to
-  // four lights for now
-  for (int i = 0; i < 4; i++) {
+  // two lights for now
+  for (int i = 0; i < 2; i++) {
     if (lightCount == i) break;
     
     vec3 lightPos = lightPosition[i].xyz;
