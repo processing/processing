@@ -211,7 +211,7 @@ public abstract class Mode {
         theme.load(modeTheme);
       }
 
-      // Against my better judgement, adding the ability to override themes
+      // Against my better judgment, adding the ability to override themes
       // https://github.com/processing/processing/issues/5445
       File sketchbookTheme =
         new File(Base.getSketchbookFolder(), "theme.txt");
