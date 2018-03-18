@@ -69,7 +69,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import processing.app.Language;
