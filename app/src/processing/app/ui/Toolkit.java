@@ -788,9 +788,10 @@ public class Toolkit {
   }
 
 
-  static public Border zoomBorder(int t, int l, int b, int r) {
-    return new EmptyBorder(Toolkit.zoom(t), Toolkit.zoom(l),
-                           Toolkit.zoom(b), Toolkit.zoom(r));
+  static public void setBorder(JComponent comp,
+                               int top, int left, int bottom, int right) {
+    comp.setBorder(new EmptyBorder(Toolkit.zoom(top), Toolkit.zoom(left),
+                                   Toolkit.zoom(bottom), Toolkit.zoom(right)));
   }
 
 

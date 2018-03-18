@@ -125,13 +125,16 @@ public class Welcome2 extends JFrame {
 
     //Main content panel
     JPanel panel = new JPanel(new GridBagLayout());
+    Toolkit.setBorder(panel, 20, 20, 20, 20);
     GridBagConstraints c = new GridBagConstraints();
     c.anchor = GridBagConstraints.LINE_START;
     c.fill = GridBagConstraints.HORIZONTAL;
 
     //int width = sketchbook ? 500 : 400;
-    int width = Toolkit.zoom(400);
-    int height = Toolkit.zoom(oldSketchbook ? 400 : 250);
+//    int width = Toolkit.zoom(400);
+//    int height = Toolkit.zoom(oldSketchbook ? 400 : 250);
+    int width = 400;
+    int height = oldSketchbook ? 400 : 250;
 
     panel.setPreferredSize(Toolkit.zoom(width, height));
     panel.setBackground(Color.white);
@@ -169,7 +172,7 @@ public class Welcome2 extends JFrame {
     JPanel compatible = new JPanel(new GridBagLayout());
     GridBagConstraints compc = new GridBagConstraints();
     compatible.setBackground(insetColor);
-    compatible.setBorder(Toolkit.zoomBorder(10, 0, 10, 0));
+    Toolkit.setBorder(compatible, 10, 0, 10, 0);
     compc.anchor = GridBagConstraints.FIRST_LINE_START;
     compc.fill = GridBagConstraints.HORIZONTAL;
 
@@ -221,7 +224,7 @@ public class Welcome2 extends JFrame {
 
       // inset for choose sketchbook
       JPanel chooseSketchbook = new JPanel(new GridBagLayout());
-      compatible.setBorder(Toolkit.zoomBorder(10, 0, 10, 0));
+      Toolkit.setBorder(chooseSketchbook, 10, 0, 10, 0);
       GridBagConstraints choosec = new GridBagConstraints();
       choosec.fill = GridBagConstraints.HORIZONTAL;
       choosec.anchor = GridBagConstraints.LINE_START;
