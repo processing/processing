@@ -62,7 +62,7 @@ import processing.data.StringDict;
 
 /**
  * The Welcome class creates a welcome window upon startup
- * 
+ *
  * It provides links to changes Processing 3
  *
  * If the user is migrating from Processing 2, it provides a
@@ -71,7 +71,7 @@ import processing.data.StringDict;
  *
  */
 
-public class Welcome extends JFrame {
+public class Welcome2 extends JFrame {
   Base base;
   StringDict dict;  // used for submitting form values
 
@@ -82,29 +82,29 @@ public class Welcome extends JFrame {
    * @param sketchbook true if the user is migrating from Processing 2
    * @throws IOException if resources cannot be found
    */
-  public Welcome(Base base, boolean sketchbook) throws IOException {
+  public Welcome2(Base base, boolean sketchbook) throws IOException {
     this.base = base;
     dict = new StringDict();
-    
+
     // strings used in the GUI
     // should be moved to external files to make tranlsation easier
     final String welcomeText = "Welcome to Processing 3";
-    final String whatsNewText = "Read about what's new in 3.0 →";
-    final String compatibleText = "Note that some sketches from Processing 2 " + 
+    final String whatsNewText = "Read about what's new in 3.0 \u2192";
+    final String compatibleText = "Note that some sketches from Processing 2 " +
       "may not be compatible.";
     final String whatHasChangedText = "What has changed?";
-    final String newSketchbookText = "Since older sketches may " + 
-      "not be compatible, we recommend creating a new sketchbook folder, " + 
-      "so Processing 2 and 3 can happily coexist. This is a one-time " + 
+    final String newSketchbookText = "Since older sketches may " +
+      "not be compatible, we recommend creating a new sketchbook folder, " +
+      "so Processing 2 and 3 can happily coexist. This is a one-time " +
       "process.";
     final String readMoreText = "Read more about it";
-    final String createNewSketchbookText = "Create a new sketchbook " + 
+    final String createNewSketchbookText = "Create a new sketchbook " +
       "folder for use with Processing 3 sketches (recommended!)";
-    final String useOldSketchbookText = "Use the existing sketchbook " + 
+    final String useOldSketchbookText = "Use the existing sketchbook " +
       "for both old and new sketches (may cause conflicts with installed " +
       "libraries)";
     final String showEachTimeText = "Show this welcome message each time";
-    
+
     // color used for boxes with special information
     final Color insetColor = new Color(224, 253, 251);
     // color used in hyperlinks
@@ -114,23 +114,26 @@ public class Welcome extends JFrame {
 
     Font headerFont;
     Font bodyFont;
-    Font processingSemibold;
-    Font processingSansPro;
+//    Font processingSemibold;
+//    Font processingSansPro;
 
     // load fonts
-    try {
-        processingSemibold = Font.createFont(Font.TRUETYPE_FONT,
-          Base.getLibFile("/fonts/ProcessingSansPro-Semibold.ttf"));
-        processingSansPro = Font.createFont(Font.TRUETYPE_FONT,
-          Base.getLibFile("/fonts/ProcessingSansPro-Regular.ttf"));
-    } catch (FontFormatException e) {
-        processingSemibold = UIManager.getDefaults().getFont("Label.font");
-        processingSansPro = UIManager.getDefaults().getFont("Label.font");
-    }
+//    try {
+//        processingSemibold = Font.createFont(Font.TRUETYPE_FONT,
+//          Base.getLibFile("/fonts/ProcessingSansPro-Semibold.ttf"));
+//        processingSansPro = Font.createFont(Font.TRUETYPE_FONT,
+//          Base.getLibFile("/fonts/ProcessingSansPro-Regular.ttf"));
+//    } catch (FontFormatException e) {
+//        processingSemibold = UIManager.getDefaults().getFont("Label.font");
+//        processingSansPro = UIManager.getDefaults().getFont("Label.font");
+//    }
+//
+//    headerFont = processingSemibold.deriveFont(20f);
+//    bodyFont = processingSansPro.deriveFont(12f);
 
-    headerFont = processingSemibold.deriveFont(20f);
-    bodyFont = processingSansPro.deriveFont(12f);
- 
+    headerFont = Toolkit.getSansFont(20, Font.BOLD);
+    bodyFont = Toolkit.getSansFont(12, Font.PLAIN);
+
     //Set welcome window title
     setTitle(welcomeText);
 
@@ -142,28 +145,22 @@ public class Welcome extends JFrame {
     GridBagConstraints c = new GridBagConstraints();
     c.anchor = GridBagConstraints.LINE_START;
     c.fill = GridBagConstraints.HORIZONTAL;
-    
-    int width = sketchbook ? 500 : 400;
-    int height = sketchbook ? 400 : 250;
-    
-    // resizes for hidpi displays
-    // should fix https://github.com/processing/processing/issues/4896
-    if (Toolkit.highResImages()) {
-      width *= 2;
-      height *= 2;
-    }
-    panel.setPreferredSize(new Dimension(width, height));
-    panel.setBackground(new Color(255, 255, 255));
+
+    //int width = sketchbook ? 500 : 400;
+    int width = Toolkit.zoom(400);
+    int height = Toolkit.zoom(sketchbook ? 400 : 250);
+
+    panel.setPreferredSize(Toolkit.zoom(width, height));
+    panel.setBackground(Color.white);
 
     // Processing logo
-    BufferedImage img = ImageIO.read(Base.getLibFile("/icons/pde-64.png"));
-    JLabel logo = new JLabel(new ImageIcon(img));
+    JLabel logo = new JLabel(Toolkit.getLibIcon("/icons/pde-64.png"));
     c.gridx = 0;
     c.gridy = 0;
     panel.add(logo, c);
 
     // welcome header
-    JLabel header = new JLabel(welcomeText); 
+    JLabel header = new JLabel(welcomeText);
     header.setFont(headerFont);
     c.gridx = 1;
     c.gridy = 0;
@@ -184,7 +181,7 @@ public class Welcome extends JFrame {
     c.gridx = 0;
     c.gridy = 1;
     panel.add(readNew, c);
-    
+
     // compatible notice inset
     JPanel compatible = new JPanel(new GridBagLayout());
     GridBagConstraints compc = new GridBagConstraints();
@@ -290,7 +287,7 @@ public class Welcome extends JFrame {
       c.gridy = 5;
       panel.add(chooseSketchbook, c);
     }
-   
+
     // show welcome each time checkbox
     // fixes https://github.com/processing/processing/issues/3912
     JCheckBox showEachTime = new JCheckBox("<html>" + showEachTimeText);
@@ -330,7 +327,7 @@ public class Welcome extends JFrame {
 
     add(panel);
     pack();
-    
+
     // adds submit function to closing the window
     // fixes https://github.com/processing/processing/issues/3911
     addWindowListener(new WindowAdapter() {
@@ -344,7 +341,7 @@ public class Welcome extends JFrame {
 
     // center window on the screen
     setLocationRelativeTo(null);
-    
+
     setVisible(true);
   }
 
