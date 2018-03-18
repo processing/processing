@@ -277,7 +277,8 @@ public class Welcome2 extends JFrame {
     // show welcome each time checkbox
     // fixes https://github.com/processing/processing/issues/3912
     JCheckBox showEachTime = new JCheckBox("<html>" + showEachTimeText);
-    showEachTime.setSelected(true);
+    // handles the Help menu invocation, and also the pref not existing
+    showEachTime.setSelected("true".equals(Preferences.get("welcome.show")));
     showEachTime.setFont(bodyFont);
     showEachTime.addItemListener(new ItemListener() {
       @Override
