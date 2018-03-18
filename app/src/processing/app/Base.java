@@ -179,6 +179,7 @@ public class Base {
 
       boolean sketchbookPrompt = false;
       if (Preferences.getBoolean("welcome.show")) {
+        // only ask once about split sketchbooks
         if (!Preferences.getBoolean("welcome.seen")) {
           // Check if there's a 2.0 sketchbook present
           String oldPath = Preferences.getOldSketchbookPath();
@@ -189,9 +190,9 @@ public class Base {
               sketchbookPrompt = true;
 
             } else if (oldPath.equals(newPath)) {
-              // If both exist and are identical, then the user has been using
-              // alpha releases of 3.x and needs to be warned about the larger
-              // changes in this release.
+              // If both exist and are identical, then the user has used
+              // pre-releases of 3.x and needs to be warned about the
+              // larger changes in this release.
               sketchbookPrompt = true;
             }
           }
