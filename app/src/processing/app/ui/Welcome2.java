@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2017 The Processing Foundation
+  Copyright (c) 2017-18 The Processing Foundation
 
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License
@@ -18,47 +18,37 @@
   along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 package processing.app.ui;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.border.EmptyBorder;
-import javax.imageio.ImageIO;
-import javax.swing.UIManager;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.image.BufferedImage;
-import java.awt.Dimension;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Cursor;
-import java.awt.FontFormatException;
-import java.awt.event.ActionListener;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
+
 import processing.app.Base;
-import processing.app.Platform;
 import processing.app.Language;
+import processing.app.Platform;
 import processing.app.Preferences;
 import processing.core.PApplet;
-import processing.data.StringDict;
+
 
 /**
  * The Welcome class creates a welcome window upon startup
@@ -68,23 +58,18 @@ import processing.data.StringDict;
  * If the user is migrating from Processing 2, it provides a
  * prompt asking whether to use the same sketchbook folder
  * as before, or use a new one.
- *
  */
-
 public class Welcome2 extends JFrame {
   Base base;
-  StringDict dict;  // used for submitting form values
+  boolean newSketchbook;
 
   /**
-   * Constructor for the Welcome window
-   *
    * @param Base the current Processing Base
-   * @param sketchbook true if the user is migrating from Processing 2
+   * @param oldSketchbook true if the user has a Processing 2 sketchbook
    * @throws IOException if resources cannot be found
    */
-  public Welcome2(Base base, boolean sketchbook) throws IOException {
+  public Welcome2(Base base, boolean oldSketchbook) throws IOException {
     this.base = base;
-    dict = new StringDict();
 
     // strings used in the GUI
     // should be moved to external files to make tranlsation easier
@@ -112,8 +97,6 @@ public class Welcome2 extends JFrame {
 
     final String whatsNewUrl = "https://github.com/processing/processing/wiki/Changes-in-3.0";
 
-    Font headerFont;
-    Font bodyFont;
 //    Font processingSemibold;
 //    Font processingSansPro;
 
@@ -131,8 +114,8 @@ public class Welcome2 extends JFrame {
 //    headerFont = processingSemibold.deriveFont(20f);
 //    bodyFont = processingSansPro.deriveFont(12f);
 
-    headerFont = Toolkit.getSansFont(20, Font.BOLD);
-    bodyFont = Toolkit.getSansFont(12, Font.PLAIN);
+    Font headerFont = Toolkit.getSansFont(20, Font.BOLD);
+    Font bodyFont = Toolkit.getSansFont(12, Font.PLAIN);
 
     //Set welcome window title
     setTitle(welcomeText);
@@ -148,7 +131,7 @@ public class Welcome2 extends JFrame {
 
     //int width = sketchbook ? 500 : 400;
     int width = Toolkit.zoom(400);
-    int height = Toolkit.zoom(sketchbook ? 400 : 250);
+    int height = Toolkit.zoom(oldSketchbook ? 400 : 250);
 
     panel.setPreferredSize(Toolkit.zoom(width, height));
     panel.setBackground(Color.white);
@@ -186,7 +169,7 @@ public class Welcome2 extends JFrame {
     JPanel compatible = new JPanel(new GridBagLayout());
     GridBagConstraints compc = new GridBagConstraints();
     compatible.setBackground(insetColor);
-    compatible.setBorder(new EmptyBorder(10, 0, 10, 0));
+    compatible.setBorder(Toolkit.zoomBorder(10, 0, 10, 0));
     compc.anchor = GridBagConstraints.FIRST_LINE_START;
     compc.fill = GridBagConstraints.HORIZONTAL;
 
@@ -217,8 +200,8 @@ public class Welcome2 extends JFrame {
     c.gridy = 2;
     panel.add(compatible, c);
 
-    //if the user needs to choose a new sketchbook
-    if(sketchbook) {
+    // if the user needs to choose a new sketchbook
+    if (oldSketchbook) {
       // create new sketchbook prompt
       JTextArea newSketchbookPrompt = new JTextArea(newSketchbookText);
       newSketchbookPrompt.setFont(bodyFont);
@@ -238,7 +221,7 @@ public class Welcome2 extends JFrame {
 
       // inset for choose sketchbook
       JPanel chooseSketchbook = new JPanel(new GridBagLayout());
-      compatible.setBorder(new EmptyBorder(10, 0, 10, 0));
+      compatible.setBorder(Toolkit.zoomBorder(10, 0, 10, 0));
       GridBagConstraints choosec = new GridBagConstraints();
       choosec.fill = GridBagConstraints.HORIZONTAL;
       choosec.anchor = GridBagConstraints.LINE_START;
@@ -256,12 +239,14 @@ public class Welcome2 extends JFrame {
         @Override
         public void itemStateChanged(ItemEvent e) {
           if (e.getStateChange() == ItemEvent.SELECTED) {
-            dict.set("sketchbook", "create_new");
+            //dict.set("sketchbook", "create_new");
+            newSketchbook = true;
           }
         }
       });
       // set default
-      dict.set("sketchbook", "create_new");
+      //dict.set("sketchbook", "create_new");
+      newSketchbook = true;
       choosec.gridx = 0;
       choosec.gridy = 0;
       chooseSketchbook.add(createNew, choosec);
@@ -274,7 +259,8 @@ public class Welcome2 extends JFrame {
         @Override
         public void itemStateChanged(ItemEvent e) {
           if (e.getStateChange() == ItemEvent.SELECTED) {
-            dict.set("sketchbook", "use_existing");
+            //dict.set("sketchbook", "use_existing");
+            newSketchbook = false;
           }
         }
       });
@@ -297,15 +283,14 @@ public class Welcome2 extends JFrame {
       @Override
       public void itemStateChanged(ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED) {
-          dict.set("show_each_time", "on");
-        }
-        else if (e.getStateChange() == ItemEvent.DESELECTED) {
-          dict.set("show_each_time", "off");
+          Preferences.setBoolean("welcome.show", true);
+        } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+          Preferences.setBoolean("welcome.show", false);
         }
       }
     });
     // set default
-    dict.set("show_each_time", "on");
+//    dict.set("show_each_time", "on");
     c.gridx = 0;
     c.gridy = 6;
     panel.add(showEachTime, c);
@@ -316,7 +301,7 @@ public class Welcome2 extends JFrame {
     getStarted.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        handleSubmit(dict);
+        handleClose();
       }
     });
     c.fill = GridBagConstraints.NONE;
@@ -328,14 +313,9 @@ public class Welcome2 extends JFrame {
     add(panel);
     pack();
 
-    // adds submit function to closing the window
-    // fixes https://github.com/processing/processing/issues/3911
-    addWindowListener(new WindowAdapter() {
-      @Override
-      public void windowClosing(WindowEvent e) {
-        if (!sketchbook) {
-          handleSubmit(dict);
-        }
+    Toolkit.registerWindowCloseKeys(getRootPane(), new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleClose();
       }
     });
 
@@ -347,42 +327,8 @@ public class Welcome2 extends JFrame {
 
 
   /**
-   * Handles the form submission, called when 'Get Started' button is clicked
-   * or when the window is closed
-   *
-   * @param dict a StringDict containing form options
-   */
-  public void handleSubmit(StringDict dict) {
-    // sketchbook = "create_new" or "use_existing"
-    // show_each_time = "on" or <not param>
-    // dict.print();
-
-    String sketchbookAction = dict.get("sketchbook", null);
-    if ("create_new".equals(sketchbookAction)) {
-      // open file dialog
-      // on affirmative selection, update sketchbook folder
-      // String path = Preferences.getSketchbookPath() + "3";
-      //      File folder = new File(path);
-      //      folder.mkdirs();
-      File folder = new File(Preferences.getSketchbookPath()).getParentFile();
-      PApplet.selectFolder(Language.text("preferences.sketchbook_location.popup"),
-                           "sketchbookCallback", folder,
-                           this, this);
-    }
-
-    // If un-checked, the key won't be in the dict, so null will be passed
-    boolean keepShowing = "on".equals(dict.get("show_each_time", null));
-    Preferences.setBoolean("welcome.show", keepShowing);
-    Preferences.save();
-
-    handleClose();
-  }
-
-
-  /**
-   * Callback for the folder selector, used when user chooses a new sketchbook
-   * for Processing 3
-   *
+   * Callback for the folder selector, used when user chooses
+   * a new sketchbook for Processing 3
    * @param folder the path to the new sketcbook
    */
   public void sketchbookCallback(File folder) {
@@ -400,6 +346,13 @@ public class Welcome2 extends JFrame {
    * Closes the window
    */
   public void handleClose() {
+    Preferences.save();  // save the "show this" setting
+
+    if (newSketchbook) {
+      File folder = new File(Preferences.getSketchbookPath()).getParentFile();
+      PApplet.selectFolder(Language.text("preferences.sketchbook_location.popup"),
+                           "sketchbookCallback", folder, this, this);
+    }
     dispose();
   }
 }

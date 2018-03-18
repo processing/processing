@@ -69,6 +69,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import processing.app.Language;
 import processing.app.Messages;
@@ -783,6 +785,12 @@ public class Toolkit {
 
   static public Dimension zoom(int w, int h) {
     return new Dimension(zoom(w), zoom(h));
+  }
+
+
+  static public Border zoomBorder(int t, int l, int b, int r) {
+    return new EmptyBorder(Toolkit.zoom(t), Toolkit.zoom(l),
+                           Toolkit.zoom(b), Toolkit.zoom(r));
   }
 
 
