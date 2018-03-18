@@ -1,6 +1,11 @@
 0265 (3.3.8 or 3.4)
 
 
+gohai
+X Various ARM-related updates
+X   https://github.com/processing/processing/pull/5440
+
+
 3.4
 _ add circle() and square()
 _ add push() and pop()

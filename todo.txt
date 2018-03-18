@@ -1,6 +1,11 @@
 0265 (3.3.7 or 3.4)
 
 
+contrib
+X updates to Japanese translation
+X   https://github.com/processing/processing/pull/5263
+
+
 welcome
 _ just remove the welcome dialog; but what should the default behavior be?
 _   or should it only show up for people who have used <=2 but not 3?
