@@ -211,6 +211,14 @@ public abstract class Mode {
         theme.load(modeTheme);
       }
 
+      // Against my better judgement, adding the ability to override themes
+      // https://github.com/processing/processing/issues/5445
+      File sketchbookTheme =
+        new File(Base.getSketchbookFolder(), "theme.txt");
+      if (sketchbookTheme.exists()) {
+        theme.load(sketchbookTheme);
+      }
+
       // other things that have to be set explicitly for the defaults
       theme.setColor("run.window.bgcolor", SystemColor.control);
 

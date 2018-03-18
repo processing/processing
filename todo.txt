@@ -1,4 +1,7 @@
-0265 (3.3.7 or 3.4)
+0265 (3.4)
+X make it possible to override theme.txt with a file in the sketchbook folder
+X   https://github.com/processing/processing/issues/5445
+_   https://github.com/processing/processing/wiki/Dark-Theme-for-PDE
 
 
 contrib
@@ -14,8 +17,8 @@ X   https://github.com/processing/processing/issues/3912
 X submit the form (as if 'get started' clicked) when closing the window
 X   whether hitting ESC or the close box on the window
 X   https://github.com/processing/processing/issues/3911
-_ Welcome dialog rewritten in Swing
-_   https://github.com/processing/processing/pull/5210
+o Welcome dialog rewritten in Swing
+X   https://github.com/processing/processing/pull/5210
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
 
