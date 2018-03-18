@@ -21,6 +21,7 @@
 
 package processing.app.ui;
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,10 +47,10 @@ public class WebFrame extends JFrame {
   boolean ready;
 
 
-  public WebFrame(File file, int width) throws IOException {
+  public WebFrame(File file, int width, Container panel) throws IOException {
     // Need to use the URL version so that relative paths work for images
     // https://github.com/processing/processing/issues/3494
-    URL fileUrl = file.toURI().toURL();  //.toExternalForm();
+    URL fileUrl = file.toURI().toURL();
     requestContentHeight(width, fileUrl);
 
     editorPane = new JEditorPane();
@@ -68,7 +69,14 @@ public class WebFrame extends JFrame {
     editorPane.setEditable(false);
     // set height to something generic
     editorPane.setPreferredSize(new Dimension(width, width));
-    getContentPane().add(editorPane);
+
+    //getContentPane().add(editorPane);
+    Container pain = getContentPane();
+    pain.setLayout(new BoxLayout(pain, BoxLayout.Y_AXIS));
+    pain.add(editorPane);
+    if (panel != null) {
+      pain.add(panel);
+    }
 
     Toolkit.registerWindowCloseKeys(getRootPane(), new ActionListener() {
       @Override

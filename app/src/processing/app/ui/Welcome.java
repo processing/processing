@@ -21,54 +21,114 @@
 
 package processing.app.ui;
 
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
+
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 
 import processing.app.Base;
 import processing.app.Language;
 import processing.app.Platform;
 import processing.app.Preferences;
 import processing.core.PApplet;
-import processing.data.StringDict;
 
 
-public class Welcome extends WebFrame {
+public class Welcome {
   Base base;
+  WebFrame view;
 
 
   public Welcome(Base base, boolean sketchbook) throws IOException {
-    super(getIndexFile(sketchbook), 400);
     this.base = base;
-    //addStyle("#new_sketchbook { background-color: rgb(0, 255, 0); }");
-    setVisible(true);
-  }
 
+    // TODO this should live inside theme or somewhere modifiable
+    Font dialogFont = Toolkit.getSansFont(14, Font.PLAIN);
 
-  public void handleSubmit(StringDict dict) {
-    // sketchbook = "create_new" or "use_existing"
-    // show_each_time = "on" or <not param>
-    //dict.print();
+    JComponent panel = Box.createHorizontalBox();
+    panel.setBackground(new Color(245, 245, 245));
+    Toolkit.setBorder(panel, 15, 20, 15, 20);
 
-    String sketchbookAction = dict.get("sketchbook", null);
-    if ("create_new".equals(sketchbookAction)) {
-      // open file dialog
-      // on affirmative selection, update sketchbook folder
-//      String path = Preferences.getSketchbookPath() + "3";
-//      File folder = new File(path);
-//      folder.mkdirs();
-      File folder = new File(Preferences.getSketchbookPath()).getParentFile();
-      PApplet.selectFolder(Language.text("preferences.sketchbook_location.popup"),
-                           "sketchbookCallback", folder,
-                           this, this);
-    }
+    //panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+    //panel.add(Box.createHorizontalStrut(20));
+    JCheckBox checkbox = new JCheckBox("Show this message on startup");
+    checkbox.setFont(dialogFont);
+    // handles the Help menu invocation, and also the pref not existing
+    checkbox.setSelected("true".equals(Preferences.get("welcome.show")));
+    checkbox.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        if (e.getStateChange() == ItemEvent.SELECTED) {
+          Preferences.setBoolean("welcome.show", true);
+        } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+          Preferences.setBoolean("welcome.show", false);
+        }
+      }
+    });
+    panel.add(checkbox);
 
-    // If un-checked, the key won't be in the dict, so null will be passed
-    boolean keepShowing = "on".equals(dict.get("show_each_time", null));
-    Preferences.setBoolean("welcome.show", keepShowing);
-    Preferences.save();
+    panel.add(Box.createHorizontalGlue());
 
-    handleClose();
+    JButton button = new JButton("Get Started");
+    button.setFont(Toolkit.getSansFont(14, Font.PLAIN));
+    button.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        view.handleClose();
+      }
+    });
+    panel.add(button);
+    //panel.add(Box.createHorizontalGlue());
+
+    view = new WebFrame(getIndexFile(sketchbook), 425, panel) {
+      /*
+      @Override
+      public void handleSubmit(StringDict dict) {
+        String sketchbookAction = dict.get("sketchbook", null);
+        if ("create_new".equals(sketchbookAction)) {
+          File folder = new File(Preferences.getSketchbookPath()).getParentFile();
+          PApplet.selectFolder(Language.text("preferences.sketchbook_location.popup"),
+                               "sketchbookCallback", folder,
+                               this, this);
+        }
+
+//        // If un-checked, the key won't be in the dict, so null will be passed
+//        boolean keepShowing = "on".equals(dict.get("show_each_time", null));
+//        Preferences.setBoolean("welcome.show", keepShowing);
+//        Preferences.save();
+        handleClose();
+      }
+      */
+
+      @Override
+      public void handleLink(String link) {
+        // The link will already have the full URL prefix
+        if (link.endsWith("#sketchbook")) {
+          File folder = new File(Preferences.getSketchbookPath()).getParentFile();
+          PApplet.selectFolder(Language.text("preferences.sketchbook_location.popup"),
+                               "sketchbookCallback", folder,
+                               this, this);
+        } else {
+          super.handleLink(link);
+        }
+      }
+
+      @Override
+      public void handleClose() {
+        Preferences.setBoolean("welcome.seen", true);
+        Preferences.save();
+        super.handleClose();
+      }
+    };
+    view.setVisible(true);
   }
 
 
@@ -77,16 +137,17 @@ public class Welcome extends WebFrame {
     if (folder != null) {
       if (base != null) {
         base.setSketchbookFolder(folder);
-      } else {
-        System.out.println("user selected " + folder);
+//      } else {
+//        System.out.println("user selected " + folder);
       }
     }
   }
 
 
-  public void handleClose() {
-    dispose();
-  }
+//  @Override
+//  public void handleClose() {
+//    dispose();
+//  }
 
 
   static private File getIndexFile(boolean sketchbook) {
@@ -120,11 +181,7 @@ public class Welcome extends WebFrame {
     EventQueue.invokeLater(new Runnable() {
       public void run() {
         try {
-          new Welcome(null, true) {
-            public void handleClose() {
-              System.exit(0);
-            }
-          };
+          new Welcome(null, true);
         } catch (IOException e) {
           e.printStackTrace();
         }

@@ -7,17 +7,17 @@ X   https://github.com/processing/processing/pull/5263
 
 
 welcome
-_ just remove the welcome dialog; but what should the default behavior be?
-_   or should it only show up for people who have used <=2 but not 3?
+o just remove the welcome dialog; but what should the default behavior be?
+o   or should it only show up for people who have used <=2 but not 3?
+X click "show this welcome" text to check/uncheck the box
+X   https://github.com/processing/processing/issues/3912
+X submit the form (as if 'get started' clicked) when closing the window
+X   whether hitting ESC or the close box on the window
+X   https://github.com/processing/processing/issues/3911
 _ Welcome dialog rewritten in Swing
 _   https://github.com/processing/processing/pull/5210
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
-_ click "show this welcome" text to check/uncheck the box
-_   https://github.com/processing/processing/issues/3912
-_ submit the form (as if 'get started' clicked) when closing the window
-_   whether hitting ESC or the close box on the window
-_   https://github.com/processing/processing/issues/3911
 
 
 manager
