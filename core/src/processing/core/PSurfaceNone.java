@@ -58,10 +58,7 @@ public class PSurfaceNone implements PSurface {
 
 
   @Override
-  public void initFrame(PApplet sketch) {/*, int backgroundColor,
-                        int deviceIndex, boolean fullScreen,
-                        boolean spanDisplays) {*/
-    //this.sketch = sketch;
+  public void initFrame(PApplet sketch) {
     throw new IllegalStateException("initFrame() not available with " +
                                     getClass().getSimpleName());
   }
