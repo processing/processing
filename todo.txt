@@ -21,12 +21,16 @@ X   https://github.com/processing/processing/commit/8dda8a4d02bc9a1d15e81fee3e6c
 X   https://github.com/processing/processing/commit/ff7dc4d5094ccf1cc35189c9412adda93153b436
 X add pyde as a supported extension
 X   https://github.com/jdf/processing.py/issues/284
+o update to launch4j 3.11? 
+o   http://launch4j.sourceforge.net/changelog.html
 
 contrib
 X updates to Japanese translation
 X   https://github.com/processing/processing/pull/5263
 X added Russian translation
 X   https://github.com/processing/processing/pull/5451
+X make "loadXML(String)" handle "file not found"
+X   https://github.com/processing/processing/pull/5144
 
 welcome
 o just remove the welcome dialog; but what should the default behavior be?
@@ -81,16 +85,23 @@ _ clean Windows temp folders
 _   https://github.com/processing/processing/issues/1896
 
 
-_ update to launch4j 3.11? 
-_   http://launch4j.sourceforge.net/changelog.html
-
 contrib
 _ console hiding button?
 _   https://github.com/processing/processing/pull/5115
-_ make "loadXML(String)" handle "file not found"
-_   https://github.com/processing/processing/pull/5144
 _ alternate handling of duplicate library conflicts
 _   https://github.com/processing/processing/pull/5126
+
+
+nasty ones
+_ "Sketch disappeared" infinite pop up dialogs
+_   https://github.com/processing/processing/pull/4808
+_   https://github.com/processing/processing/issues/4805
+_ EventQueue problems with "could not find sketch size" message
+_   https://github.com/processing/processing/issues/4893
+_   https://github.com/processing/processing/issues/5030
+_   size(0, 0) just freezes instead of showing an error (as a result)
+_   https://github.com/processing/processing/issues/5233
+
 
 _ sketch.properties not being written if initial mode is p5.js?
 _ when creating a sketch within non-Java mode, should write the settings file
@@ -101,6 +112,7 @@ _   or can we not do this, because it's used to set the 'next' mode
 _ what to double-click when opening p5 projects
 _   lack of a project file makes this a pain
 _   dropping a sketch folder onto the PDE should also be implemented
+
 _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
 _   https://github.com/processing/processing/issues/73
@@ -108,20 +120,13 @@ _   maybe just open from a zip file, since psk doesn't help anything
 _   also have a means of importing sketches
 _     https://github.com/processing/processing/issues/3987
 _   also see several notes below re: examples
-_ how are file associations handled in Linux? (for .pde, .psk)
-
 _ add means to import .zip files from file/url into sketchbook, library, etc.
 _   super easy given current code implementation, might help usability
-
-_ EventQueue problems with "could not find sketch size" message
-_   https://github.com/processing/processing/issues/4893
-_   https://github.com/processing/processing/issues/5030
-_ size(0, 0) just freezes instead of showing an error (as a result)
-_   https://github.com/processing/processing/issues/5233
-
 _ put the reference (and examples?) into .zip files
 _   unzipping the app takes forever
 _   see the 'examples' section below
+_ how are file associations handled in Linux? (for .pde, .psk)
+
 
 _ Could not initialize class com.sun.jna.Native on startup (Windows)
 _   https://github.com/processing/processing/issues/4929
@@ -131,15 +136,12 @@ _   https://github.com/processing/processing/issues/5023
 
 _ "Required files could not be found" when trying to run from the .zip file
 _   https://github.com/processing/processing/issues/5022
+_   use an installer instead?
 
 _ mode list does not update after changing sketchbook folder
 _   already reported?
 _ swap font smoothing for tab size?
 _   implement simple table for prefs?
-
-_ "Sketch disappeared" infinite pop up dialogs
-_   https://github.com/processing/processing/pull/4808
-_   https://github.com/processing/processing/issues/4805
 
 _ "error during export" message, but no error message contents come through
 _   e.g. https://github.com/processing/processing/issues/4792
