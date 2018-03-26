@@ -561,7 +561,7 @@
       <!-- no support for this with Java 7 from Oracle -->
       <!--<arch name="i386"/>-->
 
-      <bundledocument extensions="pde"
+      <bundledocument extensions="pde,pyde"
                       icon="macosx/document.icns"
                       name="Processing Source Code"
                       role="Editor">

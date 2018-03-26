@@ -19,6 +19,8 @@ X   https://github.com/processing/processing/commit/7e3661e9f7a6df1569c8bebc683e
 X   https://github.com/processing/processing/commit/20c6f86c0d600806c991962eb208548ac45e9e2a
 X   https://github.com/processing/processing/commit/8dda8a4d02bc9a1d15e81fee3e6c183e4076a40e
 X   https://github.com/processing/processing/commit/ff7dc4d5094ccf1cc35189c9412adda93153b436
+X add pyde as a supported extension
+X   https://github.com/jdf/processing.py/issues/284
 
 contrib
 X updates to Japanese translation
@@ -43,8 +45,6 @@ _   https://github.com/processing/processing/issues/4896
 manager
 _ Manager fails to complete install of PythonMode when no windows open
 _   https://github.com/processing/processing/issues/5309
-_ add pyde as a supported extension? 
-_   https://github.com/jdf/processing.py/issues/284
 _ an incompatible Mode prevents the PDE from quitting after last window is closed
 _   https://github.com/processing/processing/issues/5112
 _ “could not move the contribution to the backup folder” message while updating
