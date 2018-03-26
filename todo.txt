@@ -4,7 +4,8 @@ X   https://github.com/processing/processing/issues/5445
 _   https://github.com/processing/processing/wiki/Dark-Theme-for-PDE
 X add 2018 to p5 launch screen
 X   also update the bmp version
-
+X Close the Rename window when ESC pressed
+X   https://github.com/processing/processing/issues/5391
 
 contrib
 X updates to Japanese translation
