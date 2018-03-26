@@ -53,8 +53,15 @@ public class CompletionCandidate implements Comparable<CompletionCandidate> {
     method.getDeclaringClass().getName();
     elementName = method.getName();
 
-    StringBuilder labelBuilder = new StringBuilder("<html>"+method.getName() + "(");
-    StringBuilder compBuilder = new StringBuilder(method.getName() + "(");
+    StringBuilder labelBuilder = new StringBuilder();
+    labelBuilder.append("<html>");
+    labelBuilder.append(elementName);
+    labelBuilder.append('(');
+
+    StringBuilder compBuilder = new StringBuilder();
+    compBuilder.append(elementName);
+    compBuilder.append('(');
+
     Class<?>[] types = method.getParameterTypes();
     for (int i = 0; i < types.length; i++) {
       labelBuilder.append(types[i].getSimpleName());
@@ -66,14 +73,16 @@ public class CompletionCandidate implements Comparable<CompletionCandidate> {
     if (types.length == 1) {
       compBuilder.append(' ');
     }
-    labelBuilder.append(")");
+    compBuilder.append(")");
 
+    labelBuilder.append(")");
     if (method.getReturnType() != null) {
       labelBuilder.append(" : " + method.getReturnType().getSimpleName());
     }
-    labelBuilder.append(" - <font color=#777777>" + method.getDeclaringClass().getSimpleName() + "</font></html>");
+    labelBuilder.append(" - <font color=#777777>");
+    labelBuilder.append(method.getDeclaringClass().getSimpleName());
+    labelBuilder.append("</font></html>");
 
-    compBuilder.append(")");
     label = labelBuilder.toString();
     completion = compBuilder.toString();
 
@@ -145,21 +154,20 @@ public class CompletionCandidate implements Comparable<CompletionCandidate> {
     f.getDeclaringClass().getName();
     elementName = f.getName();
     type = PREDEF_FIELD;
-    label = "<html>" + f.getName() + " : " + f.getType().getSimpleName() +
-        " - <font color=#777777>" + f.getDeclaringClass().getSimpleName() +
-        "</font></html>";
+    label = "<html>" +
+      f.getName() + " : " +
+      f.getType().getSimpleName() + " - " +
+      "<font color=#777777>" +
+      f.getDeclaringClass().getSimpleName() +
+      "</font></html>";
     completion = elementName;
     wrappedObject = f;
   }
 
 
-  public CompletionCandidate(String name, String label, String completion, int type) {
-    this(name, label, completion, type, null);
-  }
-
-
-  public CompletionCandidate(String name, int type) {
-    this(name, name, name, type, null);
+  CompletionCandidate(String elementName, String label,
+                      String completion, int type) {
+    this(elementName, label, completion, type, null);
   }
 
 
@@ -189,11 +197,6 @@ public class CompletionCandidate implements Comparable<CompletionCandidate> {
   }
 
 
-  public String toString() {
-    return label;
-  }
-
-
   public int getType() {
     return type;
   }
@@ -204,12 +207,13 @@ public class CompletionCandidate implements Comparable<CompletionCandidate> {
   }
 
 
-  public String getNoHtmlLabel(){
+  // TODO this is gross [fry 180326]
+  /*
+  private String getNoHtmlLabel(){
     if (!label.contains("<html>")) {
       return label;
 
     } else {
-      // TODO this is gross [fry 180326]
       StringBuilder ans = new StringBuilder(label);
       while (ans.indexOf("<") > -1) {
         int a = ans.indexOf("<"), b = ans.indexOf(">");
@@ -219,25 +223,26 @@ public class CompletionCandidate implements Comparable<CompletionCandidate> {
       return ans.toString();
     }
   }
+  */
 
 
-  public CompletionCandidate withLabelAndCompString(String label,
-                                                    String completion) {
-    return new CompletionCandidate(this.elementName, label, completion,
-                                   this.type, this.wrappedObject);
+  boolean startsWith(String newWord) {
+//    System.out.println("checking " + newWord);
+//    return getNoHtmlLabel().toLowerCase().startsWith(newWord);
+    // this seems to be elementName in all cases [fry 180326]
+    return elementName.startsWith(newWord);
   }
 
 
-  @Override
-  public int compareTo(CompletionCandidate cc) {
-    if (type != cc.getType()) {
-      return cc.getType() - type;
-    }
-    return elementName.compareTo(cc.getElementName());
+  CompletionCandidate withLabelAndCompString(String withLabel,
+                                             String withCompletion) {
+    return new CompletionCandidate(elementName,
+                                   withLabel, withCompletion,
+                                   type, wrappedObject);
   }
 
 
-  public CompletionCandidate withRegeneratedCompString() {
+  CompletionCandidate withRegeneratedCompString() {
     if (wrappedObject instanceof MethodDeclaration) {
       MethodDeclaration method = (MethodDeclaration)wrappedObject;
 
@@ -294,5 +299,19 @@ public class CompletionCandidate implements Comparable<CompletionCandidate> {
 
     // fall-through silently does nothing? [fry 180326]
     return this;
+  }
+
+
+  @Override
+  public int compareTo(CompletionCandidate cc) {
+    if (type != cc.getType()) {
+      return cc.getType() - type;
+    }
+    return elementName.compareTo(cc.getElementName());
+  }
+
+
+  public String toString() {
+    return label;
   }
 }

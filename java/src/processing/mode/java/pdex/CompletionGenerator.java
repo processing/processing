@@ -1713,7 +1713,8 @@ public class CompletionGenerator {
     ArrayList<CompletionCandidate> newCandidate = new ArrayList<>();
     newWord = newWord.toLowerCase();
     for (CompletionCandidate comp : candidates) {
-      if(comp.getNoHtmlLabel().toLowerCase().startsWith(newWord)){
+      //if (comp.getNoHtmlLabel().toLowerCase().startsWith(newWord)) {
+      if (comp.startsWith(newWord)) {
         newCandidate.add(comp);
       }
     }
