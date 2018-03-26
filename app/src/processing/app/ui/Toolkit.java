@@ -787,6 +787,15 @@ public class Toolkit {
   }
 
 
+  static public final int BORDER =
+    Toolkit.zoom(Platform.isMacOS() ? 20 : 13);
+
+
+  static public void setBorder(JComponent comp) {
+    setBorder(comp, BORDER, BORDER, BORDER, BORDER);
+  }
+
+
   static public void setBorder(JComponent comp,
                                int top, int left, int bottom, int right) {
     comp.setBorder(new EmptyBorder(Toolkit.zoom(top), Toolkit.zoom(left),

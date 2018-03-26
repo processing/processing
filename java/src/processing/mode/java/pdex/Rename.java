@@ -1,5 +1,6 @@
 package processing.mode.java.pdex;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,14 +15,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JTextField;
 import javax.swing.text.BadLocationException;
 
@@ -33,6 +33,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.SimpleName;
 
 import processing.app.Language;
+import processing.app.Platform;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.syntax.SyntaxDocument;
@@ -70,15 +71,16 @@ class Rename {
     editor.getTextArea().getRightClickPopup().add(renameItem);
 
     window = new JDialog(editor);
-    window.setTitle("Enter new name:");
+    JRootPane rootPane = window.getRootPane();
+    window.setTitle("Rename");
     window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    Toolkit.registerWindowCloseKeys(window.getRootPane(), new ActionListener() {
-
+    Toolkit.registerWindowCloseKeys(rootPane, new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         window.setVisible(false);
       }
     });
+    Toolkit.setIcon(window);
 
     window.setModal(true);
     window.setResizable(false);
@@ -89,31 +91,33 @@ class Rename {
         ps = null;
       }
     });
-    window.setSize(Toolkit.zoom(250, 130));
-    window.setLayout(new BoxLayout(window.getContentPane(), BoxLayout.Y_AXIS));
-    Toolkit.setIcon(window);
+    //window.setSize(Toolkit.zoom(250, 130));
+    //window.setLayout(new BoxLayout(window.getContentPane(), BoxLayout.Y_AXIS));
+    Box windowBox = Box.createVerticalBox();
+    Toolkit.setBorder(windowBox);
+    final int GAP = Toolkit.zoom(5);
 
-    { // Top panel
-
-      // Text field
-      textField = new JTextField(40);
-      //textField.setPreferredSize(Toolkit.zoom(150, 60));
-
-      // Old name label
-      oldNameLabel = new JLabel();
-      oldNameLabel.setText("Current Name: ");
-
-      // Top panel
-      JPanel panelTop = new JPanel();
-      panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
-      Toolkit.setBorder(panelTop, 5, 5, 5, 5);
-      panelTop.add(textField);
-      panelTop.add(Box.createRigidArea(Toolkit.zoom(0, 10)));
-      panelTop.add(oldNameLabel);
-      window.add(panelTop);
+    { // old name
+      Box oldBox = Box.createHorizontalBox();
+      oldNameLabel = new JLabel("Current Name: ");
+      oldBox.add(oldNameLabel);
+      //oldBox.add(Box.createHorizontalStrut(10));
+      oldBox.add(Box.createHorizontalGlue());
+      windowBox.add(oldBox);
+      windowBox.add(Box.createVerticalStrut(GAP));
     }
 
-    { // Bottom panel
+    { // new name
+      Box newBox = Box.createHorizontalBox();
+      JLabel newNameLabel = new JLabel("New Name: ");
+      newBox.add(newNameLabel);
+      newBox.add(textField = new JTextField(20));
+      newBox.add(Box.createHorizontalGlue());
+      windowBox.add(newBox);
+      windowBox.add(Box.createVerticalStrut(GAP*2));
+    }
+
+    { // button panel
       JButton showUsageButton = new JButton("Show Usage");
       showUsageButton.addActionListener(e -> {
         showUsage.findUsageAndUpdateTree(ps, binding);
@@ -137,17 +141,33 @@ class Rename {
         }
       });
 
-      JPanel panelBottom = new JPanel();
-      panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
-      Toolkit.setBorder(panelBottom, 5, 5, 5, 5);
+      //JPanel panelBottom = new JPanel();
+      //panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
+      Box panelBottom = Box.createHorizontalBox();
+      //Toolkit.setBorder(panelBottom, 5, 5, 5, 5);
+
       panelBottom.add(Box.createHorizontalGlue());
       panelBottom.add(showUsageButton);
-      panelBottom.add(Box.createRigidArea(Toolkit.zoom(15, 0)));
+      if (!Platform.isMacOS()) {
+        panelBottom.add(Box.createHorizontalStrut(GAP));
+      }
       panelBottom.add(renameButton);
-      window.add(panelBottom);
-    }
+      panelBottom.add(Box.createHorizontalGlue());
 
-    window.setMinimumSize(window.getSize());
+      Dimension showDim = showUsageButton.getPreferredSize();
+      Dimension renameDim = renameButton.getPreferredSize();
+      final int niceSize = Math.max(showDim.width, renameDim.width) + GAP;
+      final Dimension buttonDim = new Dimension(niceSize, showDim.height);
+      showUsageButton.setPreferredSize(buttonDim);
+      renameButton.setPreferredSize(buttonDim);
+
+      windowBox.add(panelBottom);
+
+      //window.add(panelBottom);
+    }
+    window.add(windowBox);
+    window.pack();
+    //window.setMinimumSize(window.getSize());
   }
 
 
