@@ -13,6 +13,7 @@ X add select/copy to the status bar
 X   https://github.com/processing/processing/issues/5271
 o   possible fix (just copies on click)
 o   https://github.com/processing/processing/pull/5345
+_   in the docs: modify 'search.format=' in preferences.txt
 
 contrib
 X updates to Japanese translation
