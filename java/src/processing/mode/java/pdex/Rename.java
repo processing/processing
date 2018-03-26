@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -85,8 +84,6 @@ class Rename {
     window.setLayout(new BoxLayout(window.getContentPane(), BoxLayout.Y_AXIS));
     Toolkit.setIcon(window);
 
-    final int b = Toolkit.zoom(5);
-
     { // Top panel
 
       // Text field
@@ -100,7 +97,7 @@ class Rename {
       // Top panel
       JPanel panelTop = new JPanel();
       panelTop.setLayout(new BoxLayout(panelTop, BoxLayout.Y_AXIS));
-      panelTop.setBorder(BorderFactory.createEmptyBorder(b, b, b, b));
+      Toolkit.setBorder(panelTop, 5, 5, 5, 5);
       panelTop.add(textField);
       panelTop.add(Box.createRigidArea(Toolkit.zoom(0, 10)));
       panelTop.add(oldNameLabel);
@@ -133,7 +130,7 @@ class Rename {
 
       JPanel panelBottom = new JPanel();
       panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
-      panelBottom.setBorder(BorderFactory.createEmptyBorder(b, b, b, b));
+      Toolkit.setBorder(panelBottom, 5, 5, 5, 5);
       panelBottom.add(Box.createHorizontalGlue());
       panelBottom.add(showUsageButton);
       panelBottom.add(Box.createRigidArea(Toolkit.zoom(15, 0)));
