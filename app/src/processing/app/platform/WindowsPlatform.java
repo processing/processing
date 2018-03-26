@@ -49,6 +49,7 @@ import processing.core.PApplet;
 public class WindowsPlatform extends DefaultPlatform {
 
   static final String APP_NAME = "Processing";
+  static final String[] APP_EXTENSIONS = { ".pde", ".pyde" };
   static final String REG_OPEN_COMMAND =
     System.getProperty("user.dir").replace('/', '\\') +
     "\\" + APP_NAME.toLowerCase() + ".exe \"%1\"";
@@ -192,33 +193,36 @@ public class WindowsPlatform extends DefaultPlatform {
                                 openCommand)) {
 */
 
+    // First create the .pde association
+    for (String extension : APP_EXTENSIONS) {
+      if (!registerExtension(extension)) {
+        Messages.log("Could not associate " + extension + "files, " +
+                     "turning off auto-associate pref.");
+        Preferences.setBoolean("platform.auto_file_type_associations", false);
+      }
+    }
+  }
+
+
+  private boolean registerExtension(String extension) throws UnsupportedEncodingException {
     // "To change the settings for the interactive user, store the changes
     // under HKEY_CURRENT_USER\Software\Classes rather than HKEY_CLASSES_ROOT."
     // msdn.microsoft.com/en-us/library/windows/desktop/ms724475(v=vs.85).aspx
     final REGISTRY_ROOT_KEY rootKey = REGISTRY_ROOT_KEY.CURRENT_USER;
     final String docPrefix = "Software\\Classes\\" + REG_DOC;
 
-    // First create the .pde association
-    if (WindowsRegistry.createKey(rootKey, "Software\\Classes", ".pde") &&
-        WindowsRegistry.setStringValue(rootKey, "Software\\Classes\\.pde", "", REG_DOC) &&
+    return (WindowsRegistry.createKey(rootKey, "Software\\Classes", extension) &&
+            WindowsRegistry.setStringValue(rootKey, "Software\\Classes\\" + extension, "", REG_DOC) &&
 
-        // Now give files with a .pde extension a name for the explorer
-        WindowsRegistry.createKey(rootKey, "Software\\Classes", REG_DOC) &&
-        WindowsRegistry.setStringValue(rootKey, docPrefix, "", APP_NAME + " Source Code") &&
+            // Now give files with a .pde extension a name for the explorer
+            WindowsRegistry.createKey(rootKey, "Software\\Classes", REG_DOC) &&
+            WindowsRegistry.setStringValue(rootKey, docPrefix, "", APP_NAME + " Source Code") &&
 
-        // Now associate the 'open' command with the current processing.exe
-        WindowsRegistry.createKey(rootKey, docPrefix, "shell") &&
-        WindowsRegistry.createKey(rootKey, docPrefix + "\\shell", "open") &&
-        WindowsRegistry.createKey(rootKey, docPrefix + "\\shell\\open", "command") &&
-        WindowsRegistry.setStringValue(rootKey, docPrefix + "\\shell\\open\\command", "", REG_OPEN_COMMAND)) {
-
-      // everything ok
-      // hooray!
-
-    } else {
-      Messages.log("Could not associate files, turning off auto-associate pref.");
-      Preferences.setBoolean("platform.auto_file_type_associations", false);
-    }
+            // Now associate the 'open' command with the current processing.exe
+            WindowsRegistry.createKey(rootKey, docPrefix, "shell") &&
+            WindowsRegistry.createKey(rootKey, docPrefix + "\\shell", "open") &&
+            WindowsRegistry.createKey(rootKey, docPrefix + "\\shell\\open", "command") &&
+            WindowsRegistry.setStringValue(rootKey, docPrefix + "\\shell\\open\\command", "", REG_OPEN_COMMAND));
   }
 
 
