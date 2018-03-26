@@ -140,10 +140,18 @@ public class WindowsPlatform extends DefaultPlatform {
         // Check the key that should be set by a previous run of Processing
         String knownCommand =
           WindowsRegistry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER,
-                                  "Software\\Classes\\" + REG_DOC + "\\shell\\open\\command", "");
+                                         "Software\\Classes\\" + REG_DOC + "\\shell\\open\\command", "");
         // If the association hasn't been set, or it's not correct, set it.
         if (knownCommand == null || !knownCommand.equals(REG_OPEN_COMMAND)) {
           setAssociations();
+
+        } else {  // check each extension
+          for (String extension : APP_EXTENSIONS) {
+            if (!WindowsRegistry.valueExists(REGISTRY_ROOT_KEY.CURRENT_USER,
+                                             "Software\\Classes", extension)) {
+              setAssociations();
+            }
+          }
         }
       }
     } catch (Exception e) {
