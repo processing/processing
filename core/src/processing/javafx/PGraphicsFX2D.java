@@ -53,7 +53,7 @@ import processing.core.*;
 
 
 public class PGraphicsFX2D extends PGraphics {
-  GraphicsContext context;
+  public GraphicsContext context;
 
   static final WritablePixelFormat<IntBuffer> argbFormat =
     PixelFormat.getIntArgbInstance();
