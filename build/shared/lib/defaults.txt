@@ -167,6 +167,9 @@ editor.watcher.debug = false
 # The window of time (in milliseconds) in which a change won't be counted
 editor.watcher.window = 1500
 
+# Format and search engine to use for online queries
+search.format = https://google.com/search?q=%s
+
 # font choice and size for the console
 #console.font = Monospaced,plain,11
 #console.font.macosx = Monaco,plain,10

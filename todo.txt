@@ -4,12 +4,15 @@ X   https://github.com/processing/processing/issues/5445
 _   https://github.com/processing/processing/wiki/Dark-Theme-for-PDE
 X add 2018 to p5 launch screen
 X   also update the bmp version
-
 X redesign the Rename window to be less ugly
 X Close the Rename window when ESC pressed
 X   https://github.com/processing/processing/issues/5391
 X Set default operation for Rename window
 X   https://github.com/processing/processing/issues/5400
+X add select/copy to the status bar
+X   https://github.com/processing/processing/issues/5271
+o   possible fix (just copies on click)
+o   https://github.com/processing/processing/pull/5345
 
 contrib
 X updates to Japanese translation
@@ -75,12 +78,6 @@ _   https://github.com/processing/processing/issues/1896
 
 _ update to launch4j 3.11? 
 _   http://launch4j.sourceforge.net/changelog.html
-
-_ add select/copy to the status bar
-_   https://github.com/processing/processing/issues/5271
-_   possible fix (just copies on click)
-_   https://github.com/processing/processing/pull/5345
-
 
 contrib
 _ console hiding button?

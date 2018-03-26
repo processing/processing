@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012-16 The Processing Foundation
+  Copyright (c) 2012-18 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -31,6 +31,8 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -40,6 +42,7 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import processing.app.Mode;
 import processing.app.Platform;
+import processing.app.Preferences;
 import processing.core.PApplet;
 
 
@@ -68,12 +71,10 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   static final int CANCEL = 3;
   static final int OK     = 4;
 
-  static final String NO_MESSAGE = "";
-
   Editor editor;
 
   int mode;
-  String message;
+  String message = "";
 
   String url;
   int rightEdge;
@@ -83,6 +84,12 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   Font font;
   FontMetrics metrics;
   int ascent;
+
+  // used to draw the clipboard icon
+  static final int EMOJI_OFFSET = 27;
+  Font emojiFont;
+  int emojiLeft;
+  boolean emojiRollover;
 
   Image offscreen;
   int sizeW, sizeH;
@@ -110,6 +117,20 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
       public void mousePressed(MouseEvent e) {
         if (urlRollover) {
           Platform.openURL(url);
+
+        } else if (emojiRollover) {
+          if (e.isShiftDown()) {
+            // open the text in a browser window as a search
+            final String fmt = Preferences.get("search.format");
+            Platform.openURL(String.format(fmt, PApplet.urlEncode(message)));
+
+          } else {
+            // copy the text to the clipboard
+            Clipboard clipboard = getToolkit().getSystemClipboard();
+            clipboard.setContents(new StringSelection(message), null);
+            System.out.println("Copied to the clipboard. " +
+                               "Use shift-click to search the web instead.");
+          }
         }
       }
 
@@ -133,6 +154,8 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
 
   void updateMouse() {
     if (urlRollover) {
+      setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    } else if (emojiRollover) {
       setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     } else {
       setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
@@ -180,13 +203,14 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     };
 
     font = mode.getFont("status.font");
+    emojiFont = new Font("Dialog", Font.PLAIN, 22);
     metrics = null;
   }
 
 
   public void empty() {
     mode = NOTICE;
-    message = NO_MESSAGE;
+    message = "";
     url = null;
     repaint();
   }
@@ -257,10 +281,8 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   }
 
 
-  //public void paintComponent(Graphics screen) {
   public void paint(Graphics screen) {
-//    if (okButton == null) setup();
-
+//  public void paint(Graphics screen) {
     Dimension size = getSize();
     if ((size.width != sizeW) || (size.height != sizeH)) {
       // component has been resized
@@ -316,6 +338,16 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
         int r = (int) (x + Math.random() * w);
         g.drawLine(r, y, r, y+h);
       }
+
+    } else if (!message.isEmpty()) {
+      g.setColor(Color.WHITE);
+      g.setFont(emojiFont);
+      // actual Clipboard character not available [fry 180326]
+      //g.drawString("\uD83D\uDCCB", sizeW - LEFT_MARGIN, (sizeH + ascent) / 2);
+      // other apps seem to use this one as a hack
+      emojiLeft = sizeW - Toolkit.zoom(EMOJI_OFFSET);
+      g.drawString("\u2398", emojiLeft, (sizeH + ascent) / 2);
+      emojiRollover = mouseX > emojiLeft - 4;
     }
 
     screen.drawImage(offscreen, 0, 0, sizeW, sizeH, null);
