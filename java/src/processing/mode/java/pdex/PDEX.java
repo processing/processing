@@ -114,7 +114,7 @@ public class PDEX {
 
     inspectMode = new InspectMode(editor, pps);
     showUsage = new ShowUsage(editor, pps);
-    rename = new Rename(editor, pps);
+    rename = new Rename(editor, pps, showUsage);
     if (SHOW_DEBUG_TREE) {
       debugTree = new DebugTree(editor, pps);
     }
@@ -647,21 +647,23 @@ public class PDEX {
   }
 
 
-  private class Rename {
+  static private class Rename {
+    final JavaEditor editor;
+    final PreprocessingService pps;
+    final ShowUsage showUsage;
+
     final JDialog window;
     final JTextField textField;
     final JLabel oldNameLabel;
-
-    final JavaEditor editor;
-    final PreprocessingService pps;
 
     IBinding binding;
     PreprocessedSketch ps;
 
 
-    Rename(JavaEditor editor, PreprocessingService pps) {
+    Rename(JavaEditor editor, PreprocessingService pps, ShowUsage showUsage) {
       this.editor = editor;
       this.pps = pps;
+      this.showUsage = showUsage;
 
       // Add rename option
       JMenuItem renameItem = new JMenuItem(Language.text("editor.popup.rename"));
