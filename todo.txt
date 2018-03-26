@@ -4,8 +4,12 @@ X   https://github.com/processing/processing/issues/5445
 _   https://github.com/processing/processing/wiki/Dark-Theme-for-PDE
 X add 2018 to p5 launch screen
 X   also update the bmp version
+
+X redesign the Rename window to be less ugly
 X Close the Rename window when ESC pressed
 X   https://github.com/processing/processing/issues/5391
+X Set default operation for Rename window
+X   https://github.com/processing/processing/issues/5400
 
 contrib
 X updates to Japanese translation
