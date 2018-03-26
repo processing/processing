@@ -1,6 +1,8 @@
 package processing.mode.java.pdex;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
@@ -67,10 +69,17 @@ class Rename {
     renameItem.addActionListener(e -> handleRename());
     editor.getTextArea().getRightClickPopup().add(renameItem);
 
-
     window = new JDialog(editor);
     window.setTitle("Enter new name:");
     window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    Toolkit.registerWindowCloseKeys(window.getRootPane(), new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        window.setVisible(false);
+      }
+    });
+
     window.setModal(true);
     window.setResizable(false);
     window.addComponentListener(new ComponentAdapter() {
@@ -87,8 +96,8 @@ class Rename {
     { // Top panel
 
       // Text field
-      textField = new JTextField();
-      textField.setPreferredSize(Toolkit.zoom(150, 60));
+      textField = new JTextField(40);
+      //textField.setPreferredSize(Toolkit.zoom(150, 60));
 
       // Old name label
       oldNameLabel = new JLabel();
