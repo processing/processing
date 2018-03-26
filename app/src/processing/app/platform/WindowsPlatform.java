@@ -43,6 +43,15 @@ import processing.app.platform.WindowsRegistry.REGISTRY_ROOT_KEY;
 import processing.core.PApplet;
 
 
+// With the changes to include .pyde files for 3.4, this class is
+// a bit of a mess. Registering a single extension has moved to
+// registerExtension(), however that method, and the checkAssociations()
+// method now have too much duplicated effort, which isn't great,
+// but more importantly, makes it hard to follow what's going on.
+// At some point, checkAssociations() and setAssociations() can probably
+// be merged, or at least turned into cleaner methods that don't re-do
+// one another's work, but I haven't time today. [fry 180326]
+
 /**
  * Platform-specific glue for Windows.
  */
