@@ -140,19 +140,20 @@ class Rename {
           }
         }
       });
+      rootPane.setDefaultButton(renameButton);
 
       //JPanel panelBottom = new JPanel();
       //panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS));
-      Box panelBottom = Box.createHorizontalBox();
+      Box buttonBox = Box.createHorizontalBox();
       //Toolkit.setBorder(panelBottom, 5, 5, 5, 5);
 
-      panelBottom.add(Box.createHorizontalGlue());
-      panelBottom.add(showUsageButton);
+      buttonBox.add(Box.createHorizontalGlue());
+      buttonBox.add(showUsageButton);
       if (!Platform.isMacOS()) {
-        panelBottom.add(Box.createHorizontalStrut(GAP));
+        buttonBox.add(Box.createHorizontalStrut(GAP));
       }
-      panelBottom.add(renameButton);
-      panelBottom.add(Box.createHorizontalGlue());
+      buttonBox.add(renameButton);
+      buttonBox.add(Box.createHorizontalGlue());
 
       Dimension showDim = showUsageButton.getPreferredSize();
       Dimension renameDim = renameButton.getPreferredSize();
@@ -161,7 +162,7 @@ class Rename {
       showUsageButton.setPreferredSize(buttonDim);
       renameButton.setPreferredSize(buttonDim);
 
-      windowBox.add(panelBottom);
+      windowBox.add(buttonBox);
 
       //window.add(panelBottom);
     }
@@ -184,7 +185,7 @@ class Rename {
   // Thread: worker
   void handleRename(PreprocessedSketch ps, int tabIndex, int startTabOffset, int stopTabOffset) {
     if (ps.hasSyntaxErrors) {
-      editor.statusMessage("Can't perform action until syntax errors are fixed",
+      editor.statusMessage("Cannot rename until syntax errors are fixed",
                            EditorStatus.WARNING);
       return;
     }
