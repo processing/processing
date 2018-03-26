@@ -203,7 +203,8 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     };
 
     font = mode.getFont("status.font");
-    emojiFont = new Font("Dialog", Font.PLAIN, 22);
+    //emojiFont = new Font("Dialog", Font.PLAIN, 21);
+    emojiFont = mode.getFont("status.emoji.font");
     metrics = null;
   }
 

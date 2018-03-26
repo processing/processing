@@ -8,6 +8,9 @@ status.warning.bgcolor = #EF8115
 status.warning.fgcolor = #FFFFFF
 status.url.fgcolor = #cccccc
 status.font = processing.sans,plain,13
+# For the clipboard icon, needs to be a little larger on macOS
+status.emoji.font = Dialog,plain,19
+status.emoji.font.macosx = Dialog,plain,22
 
 # HEADER TABS
 # Settings for the tab area at the top.
