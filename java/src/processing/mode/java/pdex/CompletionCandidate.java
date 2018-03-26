@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 // getReturnType2() is used instead of getReturnType().
 // need to check whether that's identical in how it performs,
 // and if so, use makeLabel() and makeCompletion() more [fry 180326]
+// https://help.eclipse.org/neon/index.jsp?topic=%2Forg.eclipse.jdt.doc.isv%2Freference%2Fapi%2Forg%2Feclipse%2Fjdt%2Fcore%2Fdom%2FMethodDeclaration.html
 
 public class CompletionCandidate implements Comparable<CompletionCandidate> {
   private final String elementName;

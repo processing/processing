@@ -15,13 +15,16 @@ o   possible fix (just copies on click)
 o   https://github.com/processing/processing/pull/5345
 _   in the docs: modify 'search.format=' in preferences.txt
 X refactoring inside the completion code
+X   https://github.com/processing/processing/commit/7e3661e9f7a6df1569c8bebc683e7742f50caa25
+X   https://github.com/processing/processing/commit/20c6f86c0d600806c991962eb208548ac45e9e2a
+X   https://github.com/processing/processing/commit/8dda8a4d02bc9a1d15e81fee3e6c183e4076a40e
+X   https://github.com/processing/processing/commit/ff7dc4d5094ccf1cc35189c9412adda93153b436
 
 contrib
 X updates to Japanese translation
 X   https://github.com/processing/processing/pull/5263
 X added Russian translation
 X   https://github.com/processing/processing/pull/5451
-
 
 welcome
 o just remove the welcome dialog; but what should the default behavior be?
