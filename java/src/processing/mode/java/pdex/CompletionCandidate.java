@@ -52,39 +52,48 @@ public class CompletionCandidate implements Comparable<CompletionCandidate> {
     // return value ignored? [fry 180326]
     method.getDeclaringClass().getName();
     elementName = method.getName();
-
-    StringBuilder labelBuilder = new StringBuilder();
-    labelBuilder.append("<html>");
-    labelBuilder.append(elementName);
-    labelBuilder.append('(');
-
-    StringBuilder compBuilder = new StringBuilder();
-    compBuilder.append(elementName);
-    compBuilder.append('(');
-
     Class<?>[] types = method.getParameterTypes();
-    for (int i = 0; i < types.length; i++) {
-      labelBuilder.append(types[i].getSimpleName());
-      if (i < types.length - 1) {
-        labelBuilder.append(',');
-        compBuilder.append(',');
+
+    {  // html label
+      StringBuilder labelBuilder = new StringBuilder();
+      labelBuilder.append("<html>");
+      labelBuilder.append(elementName);
+      labelBuilder.append('(');
+
+      for (int i = 0; i < types.length; i++) {
+        labelBuilder.append(types[i].getSimpleName());
+        if (i < types.length - 1) {
+          labelBuilder.append(',');
+        }
       }
-    }
-    if (types.length == 1) {
-      compBuilder.append(' ');
-    }
-    compBuilder.append(")");
+      labelBuilder.append(")");
+      if (method.getReturnType() != null) {
+        labelBuilder.append(" : ");
+        labelBuilder.append(method.getReturnType().getSimpleName());
+      }
+      labelBuilder.append(" - <font color=#777777>");
+      labelBuilder.append(method.getDeclaringClass().getSimpleName());
+      labelBuilder.append("</font></html>");
 
-    labelBuilder.append(")");
-    if (method.getReturnType() != null) {
-      labelBuilder.append(" : " + method.getReturnType().getSimpleName());
+      label = labelBuilder.toString();
     }
-    labelBuilder.append(" - <font color=#777777>");
-    labelBuilder.append(method.getDeclaringClass().getSimpleName());
-    labelBuilder.append("</font></html>");
 
-    label = labelBuilder.toString();
-    completion = compBuilder.toString();
+    {  // completion string
+      StringBuilder compBuilder = new StringBuilder();
+      compBuilder.append(elementName);
+      compBuilder.append('(');
+
+      for (int i = 0; i < types.length; i++) {
+        if (i < types.length - 1) {
+          compBuilder.append(',');  // wtf? [fry 180326]
+        }
+      }
+      if (types.length == 1) {
+        compBuilder.append(' ');
+      }
+      compBuilder.append(")");
+      completion = compBuilder.toString();
+    }
 
     type = PREDEF_METHOD;
     wrappedObject = method;
@@ -119,24 +128,39 @@ public class CompletionCandidate implements Comparable<CompletionCandidate> {
     List<ASTNode> params = (List<ASTNode>)
       method.getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
 
-    StringBuilder label = new StringBuilder(elementName + "(");
-    StringBuilder cstr = new StringBuilder(method.getName() + "(");
-    for (int i = 0; i < params.size(); i++) {
-      label.append(params.get(i).toString());
-      if (i < params.size() - 1) {
-        label.append(",");
-        cstr.append(",");
+    { // label
+      StringBuilder labelBuilder = new StringBuilder(elementName);
+      labelBuilder.append('(');
+      for (int i = 0; i < params.size(); i++) {
+        labelBuilder.append(params.get(i).toString());
+        if (i < params.size() - 1) {
+          labelBuilder.append(',');
+        }
       }
+      labelBuilder.append(')');
+      if (method.getReturnType2() != null) {
+        labelBuilder.append(" : ");
+        labelBuilder.append(method.getReturnType2());
+      }
+      label = labelBuilder.toString();
     }
-    if (params.size() == 1) {
-      cstr.append(' ');
+
+    { // completion
+      StringBuilder compBuilder = new StringBuilder(elementName);
+      compBuilder.append('(');
+
+      for (int i = 0; i < params.size(); i++) {
+        if (i < params.size() - 1) {
+          compBuilder.append(',');
+        }
+      }
+      if (params.size() == 1) {
+        compBuilder.append(' ');
+      }
+      compBuilder.append(')');
+      completion = compBuilder.toString();
     }
-    label.append(")");
-    if (method.getReturnType2() != null)
-      label.append(" : " + method.getReturnType2());
-    cstr.append(")");
-    this.label = label.toString();
-    this.completion = cstr.toString();
+
     wrappedObject = method;
   }
 
@@ -251,37 +275,53 @@ public class CompletionCandidate implements Comparable<CompletionCandidate> {
         method.getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
 
       StringBuilder labelBuilder = new StringBuilder(elementName + "(");
-      StringBuilder compBuilder = new StringBuilder(method.getName() + "(");
+      labelBuilder.append('(');
       for (int i = 0; i < params.size(); i++) {
         labelBuilder.append(params.get(i));
         if (i < params.size() - 1) {
           labelBuilder.append(',');
-          compBuilder.append(',');
         }
-      }
-      if (params.size() == 1) {
-        compBuilder.append(' ');
       }
       labelBuilder.append(')');
       if (method.getReturnType2() != null) {
         labelBuilder.append(" : ");
         labelBuilder.append(method.getReturnType2());
       }
+
+      StringBuilder compBuilder = new StringBuilder();
+      compBuilder.append(method.getName());
+      compBuilder.append('(');
+      for (int i = 0; i < params.size(); i++) {
+        if (i < params.size() - 1) {
+          compBuilder.append(',');
+        }
+      }
+      if (params.size() == 1) {
+        compBuilder.append(' ');
+      }
       compBuilder.append(')');
+
       return withLabelAndCompString(labelBuilder.toString(), compBuilder.toString());
 
     } else if (wrappedObject instanceof Method) {
       Method method = (Method) wrappedObject;
-      StringBuilder labelBuilder = new StringBuilder("<html>" + method.getName() + "(");
+      Class<?>[] types = method.getParameterTypes();
+
+      StringBuilder labelBuilder = new StringBuilder();
+      labelBuilder.append("<html>");
+      labelBuilder.append(method.getName());
+      labelBuilder.append('(');
+
       StringBuilder compBuilder = new StringBuilder(method.getName() + "(");
-      for (int i = 0; i < method.getParameterTypes().length; i++) {
-        labelBuilder.append(method.getParameterTypes()[i].getSimpleName());
-        if (i < method.getParameterTypes().length - 1) {
+
+      for (int i = 0; i < types.length; i++) {
+        labelBuilder.append(types[i].getSimpleName());
+        if (i < types.length - 1) {
           labelBuilder.append(',');
           compBuilder.append(',');
         }
       }
-      if (method.getParameterTypes().length == 1) {
+      if (types.length == 1) {
         compBuilder.append(' ');
       }
       compBuilder.append(')');
@@ -290,6 +330,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate> {
       if (method.getReturnType() != null) {
         labelBuilder.append(" : " + method.getReturnType().getSimpleName());
       }
+
       labelBuilder.append(" - <font color=#777777>");
       labelBuilder.append(method.getDeclaringClass().getSimpleName());
       labelBuilder.append("</font></html>");
@@ -299,6 +340,33 @@ public class CompletionCandidate implements Comparable<CompletionCandidate> {
 
     // fall-through silently does nothing? [fry 180326]
     return this;
+  }
+
+
+  static private String makeLabel(Method method) {
+    Class<?>[] types = method.getParameterTypes();
+
+    StringBuilder labelBuilder = new StringBuilder();
+    labelBuilder.append("<html>");
+    labelBuilder.append(method.getName());
+    labelBuilder.append('(');
+
+    for (int i = 0; i < types.length; i++) {
+      labelBuilder.append(types[i].getSimpleName());
+      if (i < types.length - 1) {
+        labelBuilder.append(',');
+      }
+    }
+    labelBuilder.append(")");
+    if (method.getReturnType() != null) {
+      labelBuilder.append(" : ");
+      labelBuilder.append(method.getReturnType().getSimpleName());
+    }
+    labelBuilder.append(" - <font color=#777777>");
+    labelBuilder.append(method.getDeclaringClass().getSimpleName());
+    labelBuilder.append("</font></html>");
+
+    return labelBuilder.toString();
   }
 
 
