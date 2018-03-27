@@ -70,6 +70,10 @@ public class LinuxPlatform extends DefaultPlatform {
   }
 
 
+  // The default Look & Feel is set in preferences.txt
+  // As of 3.0a6, defaults.txt is set to Nimbus for Linux.
+
+
   // Java sets user.home to be /root for execution with sudo.
   // This method attempts to use the user's real home directory instead.
   public String getHomeDir() {
