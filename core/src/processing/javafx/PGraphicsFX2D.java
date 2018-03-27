@@ -471,15 +471,17 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   protected void clipImpl(float x1, float y1, float x2, float y2) {
-    //g2.setClip(new Rectangle2D.Float(x1, y1, x2 - x1, y2 - y1));
-    showTodoWarning("clip()", 3274);
+    context.save();
+    context.beginPath();
+    context.rect(x1, y1, x2, y2);
+    context.closePath();
+    context.clip();
   }
 
 
   @Override
   public void noClip() {
-    //g2.setClip(null);
-    showTodoWarning("noClip()", 3274);
+    context.restore();
   }
 
 
