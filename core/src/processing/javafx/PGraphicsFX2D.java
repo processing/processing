@@ -78,6 +78,8 @@ public class PGraphicsFX2D extends PGraphics {
   int transformCount;
   Affine transformStack[] = new Affine[MATRIX_STACK_DEPTH];
 
+  boolean clip = false; // this indicates if clipping is on
+
 //  Line2D.Float line = new Line2D.Float();
 //  Ellipse2D.Float ellipse = new Ellipse2D.Float();
 //  Rectangle2D.Float rect = new Rectangle2D.Float();
@@ -471,6 +473,8 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   protected void clipImpl(float x1, float y1, float x2, float y2) {
+    if (clip) context.restore(); // automatically call noClip() if it wasn't called before to prevent crashes
+    clip = true;
     context.save();
     context.beginPath();
     context.rect(x1, y1, x2, y2);
@@ -482,6 +486,7 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void noClip() {
     context.restore();
+    clip = false;
   }
 
 
