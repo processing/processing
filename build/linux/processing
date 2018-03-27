@@ -13,6 +13,11 @@
 # Thanks to Ferdinand Kasper for this build script. [fry]
 
 
+# Make pwd as the first arg
+args=($(pwd) $@)
+set -- ${args[*]}
+
+
 # JARs required from JDK (anywhere in/below the JDK home directory)
 JDKLIBS="rt.jar"
 

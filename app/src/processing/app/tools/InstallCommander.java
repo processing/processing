@@ -94,7 +94,9 @@ public class InstallCommander implements Tool {
                    "    if [ \"$ARG\" = \"--build\" ]; then\n" +
                    "        OPTION_FOR_HEADLESS_RUN=\"-Djava.awt.headless=true\"\n" +
                    "    fi\n" +
-                   "done\n\n");
+                   "done\n" +
+                   "args=($(pwd) $@)\n" +
+                   "set -- ${args[*]}\n\n");
 
       String javaRoot = Platform.getContentFile(".").getCanonicalPath();
 

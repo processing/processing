@@ -101,6 +101,14 @@ public class Commander implements RunnerListener {
     int task = HELP;
     boolean embedJava = true;
 
+    // Contains the current path
+    String pwd = "";
+    // Only for MacOS and Linux
+    if (!Platform.isWindows() && args.length > 0) {
+      pwd = args[0];
+      args[0] = "";
+    }
+
     try {
       if (Platform.isWindows()) {
         // On Windows, it needs to use the default system encoding.
@@ -173,9 +181,22 @@ public class Commander implements RunnerListener {
 
       } else if (arg.startsWith(sketchArg)) {
         sketchPath = arg.substring(sketchArg.length());
+        sketchPath = sketchPath.replaceAll("~", System.getProperty("user.home"));
         sketchFolder = new File(sketchPath);
+        // If the full path does not exist
         if (!sketchFolder.exists()) {
-          complainAndQuit(sketchFolder + " does not exist.", false);
+          if (Platform.isWindows()) {
+            complainAndQuit(sketchFolder + " does not exist.", false);
+          } else {
+            // Try the relative path
+            if (!new File(pwd + "/" + sketchPath).exists()) {
+              complainAndQuit(sketchFolder + " does not exist.", false);
+            } else {
+              // And then update sketchFolder and sketchPath
+              sketchPath = pwd + "/" + sketchPath;
+              sketchFolder = new File(sketchPath);
+            }
+          }
         }
         File pdeFile = new File(sketchFolder, sketchFolder.getName() + ".pde");
         if (!pdeFile.exists()) {
@@ -189,6 +210,11 @@ public class Commander implements RunnerListener {
       } else if (arg.startsWith(outputArg)) {
         outputSet = true;
         outputPath = arg.substring(outputArg.length());
+        outputPath = outputPath.replaceAll("~", System.getProperty("user.home"));
+        // Relative paths
+        if (!outputPath.matches("^(\\$|\\/).*")) {
+          outputPath = pwd + "/" + outputPath;
+        }
 
       } else if (arg.equals(forceArg)) {
         force = true;
