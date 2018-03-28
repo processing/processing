@@ -1,4 +1,5 @@
 0265 (3.3.8 or 3.4)
+X change lack of blendMode() to a warning rather than an error in PDF
 
 
 gohai
@@ -14,6 +15,9 @@ X   https://github.com/processing/processing/issues/5123
 X   https://github.com/processing/processing/pull/5202
 _   need to make this work behind the scenes instead
 _   create icon.png or have an 'icons' folder with multiple sizes
+
+_ Implement blendMode() for PDF
+_   https://github.com/processing/processing/issues/5438
 
 _ many shift- keys not working properly in FX2D (added a test sketch)
 _   https://github.com/processing/processing/issues/5317
