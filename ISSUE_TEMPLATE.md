@@ -1,7 +1,9 @@
-<!--- ** Issues are for new bugs & feature requests. ** -->
-<!--- ** For coding questions visit https://forum.processing.org ** -->
-<!--- ** Be sure to read the troubleshooting page first: ** -->
+<!--- ** For coding questions, please use https://forum.processing.org ** -->
+<!--- ** This form is only for bugs in the software & feature requests ** -->
+
+<!--- ** Also be sure to read the troubleshooting page first: ** -->
 <!--- ** https://github.com/processing/processing/wiki/Troubleshooting ** -->
+
 <!--- ** Before posting, please search Issues for duplicates  ** --> 
 
 ## Description
