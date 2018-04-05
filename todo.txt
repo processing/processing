@@ -31,6 +31,8 @@ X added Russian translation
 X   https://github.com/processing/processing/pull/5451
 X make "loadXML(String)" handle "file not found"
 X   https://github.com/processing/processing/pull/5144
+X Update java.lang.UnsupportedClassVersionError message
+X   https://github.com/processing/processing/pull/5459
 
 welcome
 o just remove the welcome dialog; but what should the default behavior be?
