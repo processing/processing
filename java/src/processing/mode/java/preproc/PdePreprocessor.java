@@ -907,15 +907,15 @@ public class PdePreprocessor {
     // these ones have the .* at the end, since a class name might be at the end
     // instead of .* which would make trouble other classes using this can lop
     // off the . and anything after it to produce a package name consistently.
-    final ArrayList<String> programImports = new ArrayList<String>();
+    final ArrayList<String> programImports = new ArrayList<>();
 
     // imports just from the code folder, treated differently
     // than the others, since the imports are auto-generated.
-    final ArrayList<String> codeFolderImports = new ArrayList<String>();
+    final ArrayList<String> codeFolderImports = new ArrayList<>();
 
     // need to reset whether or not this has a main()
 //    foundMain = false;
-    foundMethods = new HashSet<String>();
+    foundMethods = new HashSet<>();
 
     // http://processing.org/bugs/bugzilla/5.html
     if (!program.endsWith("\n")) {
@@ -923,12 +923,6 @@ public class PdePreprocessor {
     }
 
     checkForUnterminatedMultilineComment(program);
-
-    // Removing all the Unicode characters makes detecting and reporting their
-    // preprocessor errors quite hard.
-//    if (Preferences.getBoolean("preproc.substitute_unicode")) {
-//      program = substituteUnicode(program);
-//    }
 
     // For 0215, adding } as a legitimate prefix to the import (along with
     // newline and semicolon) for cases where a tab ends with } and an import
@@ -982,44 +976,6 @@ public class PdePreprocessor {
       writeImports(stream, programImports, codeFolderImports);
     return new PreprocessorResult(mode, headerOffset + 2,
                                   write(program, stream), programImports);
-  }
-
-
-  static String substituteUnicode(String program) {
-    // check for non-ascii chars (these will be/must be in unicode format)
-    char p[] = program.toCharArray();
-    int unicodeCount = 0;
-    for (int i = 0; i < p.length; i++) {
-      if (p[i] > 127)
-        unicodeCount++;
-    }
-    if (unicodeCount == 0)
-      return program;
-    // if non-ascii chars are in there, convert to unicode escapes
-    // add unicodeCount * 5.. replacing each unicode char
-    // with six digit uXXXX sequence (xxxx is in hex)
-    // (except for nbsp chars which will be a replaced with a space)
-    int index = 0;
-    char p2[] = new char[p.length + unicodeCount * 5];
-    for (int i = 0; i < p.length; i++) {
-      if (p[i] < 128) {
-        p2[index++] = p[i];
-      } else if (p[i] == 160) { // unicode for non-breaking space
-        p2[index++] = ' ';
-      } else {
-        int c = p[i];
-        p2[index++] = '\\';
-        p2[index++] = 'u';
-        char str[] = Integer.toHexString(c).toCharArray();
-        // add leading zeros, so that the length is 4
-        //for (int i = 0; i < 4 - str.length; i++) p2[index++] = '0';
-        for (int m = 0; m < 4 - str.length; m++)
-          p2[index++] = '0';
-        System.arraycopy(str, 0, p2, index, str.length);
-        index += str.length;
-      }
-    }
-    return new String(p2, 0, index);
   }
 
 
