@@ -3492,7 +3492,7 @@ public class PApplet implements PConstants {
     try {
       return Runtime.getRuntime().exec(args);
     } catch (Exception e) {
-      throw new RuntimeException("Could not open " + join(args, ' '), e);
+      throw new RuntimeException("Exception while attempting " + join(args, ' '), e);
     }
   }
 
