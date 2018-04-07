@@ -33,7 +33,6 @@ import processing.app.Mode;
 public class ZoomTreeCellRenderer extends DefaultTreeCellRenderer {
 
   public ZoomTreeCellRenderer(Mode mode) {
-    //setFont(Toolkit.getSansFont(Toolkit.zoom(14), Font.PLAIN));
     setFont(mode.getFont("tree.font"));
   }
 
@@ -50,10 +49,12 @@ public class ZoomTreeCellRenderer extends DefaultTreeCellRenderer {
     // https://github.com/processing/processing/issues/4936
     int high = getPreferredSize().height;
     if (high != 0) {
-      // add 15% for a little more spacing.. Source Sans leading is short
+      // Source Sans leading too short, so also add 15% for nicer spacing
       high = (int) (high * 1.15f);
       int current = getSize().height;
       if (current != high) {
+        // This seems to be causing an infinite loop on Windows
+        // https://github.com/processing/processing/issues/5246
         tree.setRowHeight(high);
       }
     }
