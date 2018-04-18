@@ -1937,6 +1937,8 @@ public class PJOGL extends PGL {
       gl2x.glRenderbufferStorageMultisample(target, samples, format, width, height);
     } else if (gl3 != null) {
       gl3.glRenderbufferStorageMultisample(target, samples, format, width, height);
+    } else if (gl3es3 != null) {
+      gl3es3.glRenderbufferStorageMultisample(target, samples, format, width, height);
     } else {
       throw new RuntimeException(String.format(MISSING_GLFUNC_ERROR, "glRenderbufferStorageMultisample()"));
     }
