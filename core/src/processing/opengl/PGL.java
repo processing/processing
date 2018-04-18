@@ -1935,7 +1935,11 @@ public abstract class PGL {
 
       fragSrc = preprocessShaderSource(fragSrc0, search, replace, offset);
       fragSrc[0] = "#version " + version + versionSuffix;
-      fragSrc[1] = "out vec4 _fragColor;";
+      if (" es".equals(versionSuffix)) {
+        fragSrc[1] = "out mediump vec4 _fragColor;";
+      } else {
+        fragSrc[1] = "out vec4 _fragColor;";
+      }
     }
 
     return fragSrc;
