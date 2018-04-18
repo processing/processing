@@ -509,50 +509,58 @@ public class PJOGL extends PGL {
     return vn.getMajor() * 100 + vn.getMinor();
   }
 
+  protected String getGLSLVersionSuffix() {
+    if (context.isGLESProfile()) {
+      return " es";
+    } else {
+      return "";
+    }
+  }
+
 
   @Override
   protected String[] loadVertexShader(String filename) {
-    return loadVertexShader(filename, getGLSLVersion());
+    return loadVertexShader(filename, getGLSLVersion(), getGLSLVersionSuffix());
   }
 
 
   @Override
   protected String[] loadFragmentShader(String filename) {
-    return loadFragmentShader(filename, getGLSLVersion());
+    return loadFragmentShader(filename, getGLSLVersion(), getGLSLVersionSuffix());
   }
 
 
   @Override
   protected String[] loadVertexShader(URL url) {
-    return loadVertexShader(url, getGLSLVersion());
+    return loadVertexShader(url, getGLSLVersion(), getGLSLVersionSuffix());
   }
 
 
   @Override
   protected String[] loadFragmentShader(URL url) {
-    return loadFragmentShader(url, getGLSLVersion());
+    return loadFragmentShader(url, getGLSLVersion(), getGLSLVersionSuffix());
   }
 
 
   @Override
-  protected String[] loadFragmentShader(String filename, int version) {
+  protected String[] loadFragmentShader(String filename, int version, String versionSuffix) {
     String[] fragSrc0 = sketch.loadStrings(filename);
-    return preprocessFragmentSource(fragSrc0, version);
+    return preprocessFragmentSource(fragSrc0, version, versionSuffix);
   }
 
 
   @Override
-  protected String[] loadVertexShader(String filename, int version) {
+  protected String[] loadVertexShader(String filename, int version, String versionSuffix) {
     String[] vertSrc0 = sketch.loadStrings(filename);
-    return preprocessVertexSource(vertSrc0, version);
+    return preprocessVertexSource(vertSrc0, version, versionSuffix);
   }
 
 
   @Override
-  protected String[] loadFragmentShader(URL url, int version) {
+  protected String[] loadFragmentShader(URL url, int version, String versionSuffix) {
     try {
       String[] fragSrc0 = PApplet.loadStrings(url.openStream());
-      return preprocessFragmentSource(fragSrc0, version);
+      return preprocessFragmentSource(fragSrc0, version, versionSuffix);
     } catch (IOException e) {
       PGraphics.showException("Cannot load fragment shader " + url.getFile());
     }
@@ -561,10 +569,10 @@ public class PJOGL extends PGL {
 
 
   @Override
-  protected String[] loadVertexShader(URL url, int version) {
+  protected String[] loadVertexShader(URL url, int version, String versionSuffix) {
     try {
       String[] vertSrc0 = PApplet.loadStrings(url.openStream());
-      return preprocessVertexSource(vertSrc0, version);
+      return preprocessVertexSource(vertSrc0, version, versionSuffix);
     } catch (IOException e) {
       PGraphics.showException("Cannot load vertex shader " + url.getFile());
     }
