@@ -1287,9 +1287,9 @@ public abstract class PGL {
     PGL ppgl = primaryPGL ? this : graphics.getPrimaryPGL();
 
     if (!ppgl.loadedTex2DShader || ppgl.tex2DShaderContext != ppgl.glContext) {
-      String[] preprocVertSrc = preprocessVertexSource(texVertShaderSource, getGLSLVersion());
+      String[] preprocVertSrc = preprocessVertexSource(texVertShaderSource, getGLSLVersion(), getGLSLVersionSuffix());
       String vertSource = PApplet.join(preprocVertSrc, "\n");
-      String[] preprocFragSrc = preprocessFragmentSource(tex2DFragShaderSource, getGLSLVersion());
+      String[] preprocFragSrc = preprocessFragmentSource(tex2DFragShaderSource, getGLSLVersion(), getGLSLVersionSuffix());
       String fragSource = PApplet.join(preprocFragSrc, "\n");
       ppgl.tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
       ppgl.tex2DFragShader = createShader(FRAGMENT_SHADER, fragSource);
@@ -1419,9 +1419,9 @@ public abstract class PGL {
     PGL ppgl = primaryPGL ? this : graphics.getPrimaryPGL();
 
     if (!ppgl.loadedTexRectShader || ppgl.texRectShaderContext != ppgl.glContext) {
-      String[] preprocVertSrc = preprocessVertexSource(texVertShaderSource, getGLSLVersion());
+      String[] preprocVertSrc = preprocessVertexSource(texVertShaderSource, getGLSLVersion(), getGLSLVersionSuffix());
       String vertSource = PApplet.join(preprocVertSrc, "\n");
-      String[] preprocFragSrc = preprocessFragmentSource(texRectFragShaderSource, getGLSLVersion());
+      String[] preprocFragSrc = preprocessFragmentSource(texRectFragShaderSource, getGLSLVersion(), getGLSLVersionSuffix());
       String fragSource = PApplet.join(preprocFragSrc, "\n");
       ppgl.texRectVertShader = createShader(VERTEX_SHADER, vertSource);
       ppgl.texRectFragShader = createShader(FRAGMENT_SHADER, fragSource);
@@ -1848,6 +1848,7 @@ public abstract class PGL {
 
 
   abstract protected int getGLSLVersion();
+  abstract protected String getGLSLVersionSuffix();
 
 
   protected String[] loadVertexShader(String filename) {
@@ -1880,28 +1881,29 @@ public abstract class PGL {
   }
 
 
-  protected String[] loadVertexShader(String filename, int version) {
+  protected String[] loadVertexShader(String filename, int version, String versionSuffix) {
     return loadVertexShader(filename);
   }
 
 
-  protected String[] loadFragmentShader(String filename, int version) {
+  protected String[] loadFragmentShader(String filename, int version, String versionSuffix) {
     return loadFragmentShader(filename);
   }
 
 
-  protected String[] loadFragmentShader(URL url, int version) {
+  protected String[] loadFragmentShader(URL url, int version, String versionSuffix) {
     return loadFragmentShader(url);
   }
 
 
-  protected String[] loadVertexShader(URL url, int version) {
+  protected String[] loadVertexShader(URL url, int version, String versionSuffix) {
     return loadVertexShader(url);
   }
 
 
   protected static String[] preprocessFragmentSource(String[] fragSrc0,
-                                                     int version) {
+                                                     int version,
+                                                     String versionSuffix) {
     if (containsVersionDirective(fragSrc0)) {
       // The user knows what she or he is doing
       return fragSrc0;
@@ -1915,7 +1917,7 @@ public abstract class PGL {
       int offset = 1;
 
       fragSrc = preprocessShaderSource(fragSrc0, search, replace, offset);
-      fragSrc[0] = "#version " + version;
+      fragSrc[0] = "#version " + version + versionSuffix;
     } else {
       // We need to replace 'texture' uniform by 'texMap' uniform and
       // 'textureXXX()' functions by 'texture()' functions. Order of these
@@ -1932,15 +1934,20 @@ public abstract class PGL {
       int offset = 2;
 
       fragSrc = preprocessShaderSource(fragSrc0, search, replace, offset);
-      fragSrc[0] = "#version " + version;
-      fragSrc[1] = "out vec4 _fragColor;";
+      fragSrc[0] = "#version " + version + versionSuffix;
+      if (" es".equals(versionSuffix)) {
+        fragSrc[1] = "out mediump vec4 _fragColor;";
+      } else {
+        fragSrc[1] = "out vec4 _fragColor;";
+      }
     }
 
     return fragSrc;
   }
 
   protected static String[] preprocessVertexSource(String[] vertSrc0,
-                                                   int version) {
+                                                   int version,
+                                                   String versionSuffix) {
     if (containsVersionDirective(vertSrc0)) {
       // The user knows what she or he is doing
       return vertSrc0;
@@ -1954,7 +1961,7 @@ public abstract class PGL {
       int offset = 1;
 
       vertSrc = preprocessShaderSource(vertSrc0, search, replace, offset);
-      vertSrc[0] = "#version " + version;
+      vertSrc[0] = "#version " + version + versionSuffix;
     } else {
       // We need to replace 'texture' uniform by 'texMap' uniform and
       // 'textureXXX()' functions by 'texture()' functions. Order of these
@@ -1971,7 +1978,7 @@ public abstract class PGL {
       int offset = 1;
 
       vertSrc = preprocessShaderSource(vertSrc0, search, replace, offset);
-      vertSrc[0] = "#version " + version;
+      vertSrc[0] = "#version " + version + versionSuffix;
     }
 
     return vertSrc;
@@ -2225,7 +2232,7 @@ public abstract class PGL {
 
   protected boolean hasAnisoSamplingSupport() {
     int major = getGLVersion()[0];
-    if (major < 3) {
+    if (isES() || major < 3) {
       String ext = getString(EXTENSIONS);
       return -1 < ext.indexOf("_texture_filter_anisotropic");
     } else {
