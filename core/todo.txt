@@ -5,6 +5,8 @@ X change lack of blendMode() to a warning rather than an error in PDF
 gohai
 X Various ARM-related updates
 X   https://github.com/processing/processing/pull/5440
+X make P3D work on Linux SBCs using ARM Mali graphics and their ES 3.1 driver
+X   https://github.com/processing/processing/pull/5475
 
 
 3.4
