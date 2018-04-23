@@ -23,6 +23,7 @@ X add pyde as a supported extension
 X   https://github.com/jdf/processing.py/issues/284
 o update to launch4j 3.11? 
 o   http://launch4j.sourceforge.net/changelog.html
+X update to Java 8u172
 _ Examples dialog causes high CPU load
 _   https://github.com/processing/processing/issues/5246
 
