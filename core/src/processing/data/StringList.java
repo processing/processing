@@ -514,8 +514,8 @@ public class StringList implements Iterable<String> {
       }
 
       @Override
-      public float compare(int a, int b) {
-        float diff = data[a].compareToIgnoreCase(data[b]);
+      public int compare(int a, int b) {
+        int diff = data[a].compareToIgnoreCase(data[b]);
         return reverse ? -diff : diff;
       }
 

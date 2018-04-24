@@ -692,8 +692,9 @@ public class FloatList implements Iterable<Float> {
       }
 
       @Override
-      public float compare(int a, int b) {
-        return data[b] - data[a];
+      public int compare(int a, int b) {
+        float diff = data[b] - data[a];
+        return diff == 0 ? 0 : (diff < 0 ? -1 : 1);
       }
 
       @Override

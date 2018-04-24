@@ -690,7 +690,7 @@ public class LongDict {
       }
 
       @Override
-      public float compare(int a, int b) {
+      public int compare(int a, int b) {
         long diff = 0;
         if (useKeys) {
           diff = keys[a].compareToIgnoreCase(keys[b]);
@@ -703,7 +703,13 @@ public class LongDict {
             diff = keys[a].compareToIgnoreCase(keys[b]);
           }
         }
-        return reverse ? -diff : diff;
+        if (diff == 0) {
+          return 0;
+        } else if (reverse) {
+          return diff < 0 ? 1 : -1;
+        } else {
+          return diff < 0 ? -1 : 1;
+        }
       }
 
       @Override

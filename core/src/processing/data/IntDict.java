@@ -701,7 +701,7 @@ public class IntDict {
       }
 
       @Override
-      public float compare(int a, int b) {
+      public int compare(int a, int b) {
         int diff = 0;
         if (useKeys) {
           diff = keys[a].compareToIgnoreCase(keys[b]);

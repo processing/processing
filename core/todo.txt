@@ -1,6 +1,12 @@
 0265 (3.3.8 or 3.4)
 X change lack of blendMode() to a warning rather than an error in PDF
 
+data classes
+X add Double and Long versions of the data classes
+X also add subset(long) and subset(double) to PApplet
+X change Sort class to use int for comparisons
+X   sort only uses the sign of the value
+X   more accurate than float, especially when using double and long values
 
 gohai
 X Various ARM-related updates
@@ -330,7 +336,6 @@ _ decide how disconnectEvent should actually be handled (and name?)
 _   was disconnect always there? 
 _   will need documentation
 _ negative indices so that we can work relative to the end in data classes?
-_ add Double and Long versions of the data classes?
 _ add requestFocus() method to PApplet (or surface?)
 
 

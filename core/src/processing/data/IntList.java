@@ -641,7 +641,7 @@ public class IntList implements Iterable<Integer> {
       }
 
       @Override
-      public float compare(int a, int b) {
+      public int compare(int a, int b) {
         return data[b] - data[a];
       }
 
