@@ -39,6 +39,7 @@ import javax.swing.JTree; // needed for javadocs
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import processing.app.Messages;
+import processing.app.RunnerListenerEdtAdapter;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.mode.java.debug.*;
@@ -201,7 +202,7 @@ public class Debugger {
         //lineMap = LineMapping.generateMapping(srcPath + File.separator + mainClassName + ".java");
 
         log("launching debuggee runtime");
-        runtime = new Runner(build, editor);
+        runtime = new Runner(build, new RunnerListenerEdtAdapter(editor));
         VirtualMachine vm = runtime.debug(null); // non-blocking
         if (vm == null) {
           loge("error 37: launch failed", null);
