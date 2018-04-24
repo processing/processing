@@ -1404,8 +1404,8 @@ public class Sketch {
 //      System.out.println(current.visited);
 //    }
     // if current is null, then this is the first setCurrent(0)
-    if (((currentIndex == which) && (current != null))
-      || which >= codeCount || which < 0) {
+    if (which < 0 || which >= codeCount ||
+        ((currentIndex == which) && (current == code[currentIndex]))) {
       return;
     }
 
