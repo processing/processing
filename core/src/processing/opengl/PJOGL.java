@@ -503,12 +503,15 @@ public class PJOGL extends PGL {
     return ((Font) font).deriveFont(size);
   }
 
+
   @Override
   protected int getGLSLVersion() {
     VersionNumber vn = context.getGLSLVersionNumber();
     return vn.getMajor() * 100 + vn.getMinor();
   }
 
+
+  @Override
   protected String getGLSLVersionSuffix() {
     if (context.isGLESProfile()) {
       return " es";
