@@ -805,6 +805,16 @@ public class FloatDict {
 
 
   /**
+   * Save tab-delimited entries to a file (TSV format, UTF-8 encoding)
+   */
+  public void save(File file) {
+    PrintWriter writer = PApplet.createWriter(file);
+    write(writer);
+    writer.close();
+  }
+
+
+  /**
    * Write tab-delimited entries out to
    * @param writer
    */

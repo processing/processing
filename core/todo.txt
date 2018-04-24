@@ -7,6 +7,8 @@ X also add subset(long) and subset(double) to PApplet
 X change Sort class to use int for comparisons
 X   sort only uses the sign of the value
 X   more accurate than float, especially when using double and long values
+X consistently implement write(PrintWriter) in the List and Dict classes
+X add save(File) to the List and Dict classes
 
 gohai
 X Various ARM-related updates

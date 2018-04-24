@@ -1,5 +1,7 @@
 package processing.data;
 
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
@@ -896,6 +898,27 @@ public class LongList implements Iterable<Long> {
     for (int i = 0; i < count; i++) {
       System.out.format("[%d] %d%n", i, data[i]);
     }
+  }
+
+
+  /**
+   * Save tab-delimited entries to a file (TSV format, UTF-8 encoding)
+   */
+  public void save(File file) {
+    PrintWriter writer = PApplet.createWriter(file);
+    write(writer);
+    writer.close();
+  }
+
+
+  /**
+   * Write entries to a PrintWriter, one per line
+   */
+  public void write(PrintWriter writer) {
+    for (int i = 0; i < count; i++) {
+      writer.println(data[i]);
+    }
+    writer.flush();
   }
 
 

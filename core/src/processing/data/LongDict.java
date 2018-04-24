@@ -761,8 +761,17 @@ public class LongDict {
 
 
   /**
-   * Write tab-delimited entries out to
-   * @param writer
+   * Save tab-delimited entries to a file (TSV format, UTF-8 encoding)
+   */
+  public void save(File file) {
+    PrintWriter writer = PApplet.createWriter(file);
+    write(writer);
+    writer.close();
+  }
+
+
+  /**
+   * Write tab-delimited entries to a PrintWriter
    */
   public void write(PrintWriter writer) {
     for (int i = 0; i < count; i++) {
