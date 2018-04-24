@@ -8650,9 +8650,11 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static public boolean[] subset(boolean list[], int start) {
+
+  static public boolean[] subset(boolean[] list, int start) {
     return subset(list, start, list.length - start);
   }
+
 
  /**
    * ( begin auto-generated from subset.xml )
@@ -8676,60 +8678,92 @@ public class PApplet implements PConstants {
   * @param count number of values to extract
   * @see PApplet#splice(boolean[], boolean, int)
   */
-  static public boolean[] subset(boolean list[], int start, int count) {
-    boolean output[] = new boolean[count];
-    System.arraycopy(list, start, output, 0, count);
-    return output;
-  }
-
-  static public byte[] subset(byte list[], int start) {
-    return subset(list, start, list.length - start);
-  }
-
-  static public byte[] subset(byte list[], int start, int count) {
-    byte output[] = new byte[count];
+  static public boolean[] subset(boolean[] list, int start, int count) {
+    boolean[] output = new boolean[count];
     System.arraycopy(list, start, output, 0, count);
     return output;
   }
 
 
-  static public char[] subset(char list[], int start) {
+  static public byte[] subset(byte[] list, int start) {
     return subset(list, start, list.length - start);
   }
 
-  static public char[] subset(char list[], int start, int count) {
-    char output[] = new char[count];
-    System.arraycopy(list, start, output, 0, count);
-    return output;
-  }
 
-  static public int[] subset(int list[], int start) {
-    return subset(list, start, list.length - start);
-  }
-
-  static public int[] subset(int list[], int start, int count) {
-    int output[] = new int[count];
-    System.arraycopy(list, start, output, 0, count);
-    return output;
-  }
-
-  static public float[] subset(float list[], int start) {
-    return subset(list, start, list.length - start);
-  }
-
-  static public float[] subset(float list[], int start, int count) {
-    float output[] = new float[count];
+  static public byte[] subset(byte[] list, int start, int count) {
+    byte[] output = new byte[count];
     System.arraycopy(list, start, output, 0, count);
     return output;
   }
 
 
-  static public String[] subset(String list[], int start) {
+  static public char[] subset(char[] list, int start) {
     return subset(list, start, list.length - start);
   }
 
-  static public String[] subset(String list[], int start, int count) {
-    String output[] = new String[count];
+
+  static public char[] subset(char[] list, int start, int count) {
+    char[] output = new char[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+
+  static public int[] subset(int[] list, int start) {
+    return subset(list, start, list.length - start);
+  }
+
+
+  static public int[] subset(int[] list, int start, int count) {
+    int[] output = new int[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+
+  static public long[] subset(long[] list, int start) {
+    return subset(list, start, list.length - start);
+  }
+
+
+  static public long[] subset(long[] list, int start, int count) {
+    long[] output = new long[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+
+  static public float[] subset(float[] list, int start) {
+    return subset(list, start, list.length - start);
+  }
+
+
+  static public float[] subset(float[] list, int start, int count) {
+    float[] output = new float[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+
+  static public double[] subset(double[] list, int start) {
+    return subset(list, start, list.length - start);
+  }
+
+
+  static public double[] subset(double[] list, int start, int count) {
+    double[] output = new double[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+
+  static public String[] subset(String[] list, int start) {
+    return subset(list, start, list.length - start);
+  }
+
+
+  static public String[] subset(String[] list, int start, int count) {
+    String[] output = new String[count];
     System.arraycopy(list, start, output, 0, count);
     return output;
   }
@@ -8739,6 +8773,7 @@ public class PApplet implements PConstants {
     int length = Array.getLength(list);
     return subset(list, start, length - start);
   }
+
 
   static public Object subset(Object list, int start, int count) {
     Class<?> type = list.getClass().getComponentType();
