@@ -1,4 +1,4 @@
-0265 (3.3.8 or 3.4)
+0265 (3.4)
 X change lack of blendMode() to a warning rather than an error in PDF
 
 data classes
@@ -9,6 +9,7 @@ X   sort only uses the sign of the value
 X   more accurate than float, especially when using double and long values
 X consistently implement write(PrintWriter) in the List and Dict classes
 X add save(File) to the List and Dict classes
+_ Dict.remove() should return value, not index (for consistency w/ others)
 
 gohai
 X Various ARM-related updates
