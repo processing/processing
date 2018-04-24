@@ -1567,6 +1567,8 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.disable(PGL.MULTISAMPLE);
     } else if (1 <= smooth) {
       pgl.enable(PGL.MULTISAMPLE);
+    }
+    if (!pgl.isES()) {
       pgl.disable(PGL.POLYGON_SMOOTH);
     }
 
