@@ -3497,6 +3497,38 @@ public class PApplet implements PConstants {
   }
 
 
+  static class LineThread extends Thread {
+    InputStream input;
+    StringList output;
+
+
+    LineThread(InputStream input, StringList output) {
+      this.input = input;
+      this.output = output;
+      start();
+    }
+
+    @Override
+    public void run() {
+      // It's not sufficient to use BufferedReader, because if the app being
+      // called fills up stdout or stderr to quickly, the app will hang.
+      // Instead, write to a byte[] array and then parse it once finished.
+      try {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        saveStream(baos, input);
+        BufferedReader reader =
+          createReader(new ByteArrayInputStream(baos.toByteArray()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+          output.append(line);
+        }
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+
   /**
    * Alternative version of exec() that retrieves stdout and stderr into the
    * StringList objects provided. This is a convenience function that handles
@@ -3514,69 +3546,52 @@ public class PApplet implements PConstants {
   static public int exec(StringList stdout, StringList stderr, String... args) {
     Process p = exec(args);
 
-    printArray(args);
-    //final BufferedReader err = createReader(p.getErrorStream());
+    Thread outThread = new LineThread(p.getInputStream(), stdout);
+    Thread errThread = new LineThread(p.getErrorStream(), stderr);
+    /*
     final InputStream err = p.getErrorStream();
-    println("err created");
-//    final BufferedReader out = createReader(p.getInputStream());
     final InputStream out = p.getInputStream();
-    println("out created");
     Thread outThread = new Thread(() ->  {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       String line;
       try {
-        System.out.println("waiting out");
         saveStream(baos, out);
-        println("done saving stream");
         BufferedReader err2 = createReader(new ByteArrayInputStream(baos.toByteArray()));
         while ((line = err2.readLine()) != null) {
-          System.out.println("err got line");
           stdout.append(line);
         }
-        System.out.println("done with out");
       } catch (IOException e) {
         e.printStackTrace();
         throw new RuntimeException(e);
       }
     });
-    println("before out start");
     outThread.start();
-    println("out started");
 
     Thread errThread = new Thread(() ->  {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       String line;
       try {
-        System.out.println("waiting err");
         saveStream(baos, err);
-        println("done saving stream");
         BufferedReader err2 = createReader(new ByteArrayInputStream(baos.toByteArray()));
         while ((line = err2.readLine()) != null) {
-          System.out.println("err got line");
           stderr.append(line);
         }
-        System.out.println("done with err");
       } catch (IOException e) {
         e.printStackTrace();
         throw new RuntimeException(e);
       }
     });
-    println("before err start");
     errThread.start();
-    println("err started");
+    */
 
     try {
-      println("waitFor()...");
       int result = p.waitFor();
-      println("waitFor() result " + result + "...");
       outThread.join();
-      println("out done with join()");
       errThread.join();
-      println("err done with join()");
       return result;
 
     } catch (InterruptedException e) {
-      System.err.println("interrupted");
+      // Throwing the exception here because we can't give a valid 'result'
       throw new RuntimeException(e);
     }
   }
