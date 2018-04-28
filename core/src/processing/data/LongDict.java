@@ -8,42 +8,41 @@ import processing.core.PApplet;
 
 
 /**
- * A simple table class to use a String as a lookup for another String value.
+ * A simple class to use a String as a lookup for an int value.
  *
  * @webref data:composite
- * @see IntDict
  * @see FloatDict
+ * @see StringDict
  */
-public class StringDict {
+public class LongDict {
 
   /** Number of elements in the table */
   protected int count;
 
   protected String[] keys;
-  protected String[] values;
+  protected long[] values;
 
   /** Internal implementation for faster lookups */
   private HashMap<String, Integer> indices = new HashMap<>();
 
 
-  public StringDict() {
+  public LongDict() {
     count = 0;
     keys = new String[10];
-    values = new String[10];
+    values = new long[10];
   }
 
 
   /**
-   * Create a new lookup pre-allocated to a specific length. This will not
-   * change the size(), but is more efficient than not specifying a length.
-   * Use it when you know the rough size of the thing you're creating.
+   * Create a new lookup with a specific size. This is more efficient than not
+   * specifying a size. Use it when you know the rough size of the thing you're creating.
    *
    * @nowebref
    */
-  public StringDict(int length) {
+  public LongDict(int length) {
     count = 0;
     keys = new String[length];
-    values = new String[length];
+    values = new long[length];
   }
 
 
@@ -53,27 +52,26 @@ public class StringDict {
    *
    * @nowebref
    */
-  public StringDict(BufferedReader reader) {
+  public LongDict(BufferedReader reader) {
     String[] lines = PApplet.loadStrings(reader);
     keys = new String[lines.length];
-    values = new String[lines.length];
+    values = new long[lines.length];
 
     for (int i = 0; i < lines.length; i++) {
       String[] pieces = PApplet.split(lines[i], '\t');
       if (pieces.length == 2) {
         keys[count] = pieces[0];
-        values[count] = pieces[1];
-        indices.put(keys[count], count);
+        values[count] = PApplet.parseInt(pieces[1]);
+        indices.put(pieces[0], count);
         count++;
       }
     }
   }
 
-
   /**
    * @nowebref
    */
-  public StringDict(String[] keys, String[] values) {
+  public LongDict(String[] keys, long[] values) {
     if (keys.length != values.length) {
       throw new IllegalArgumentException("key and value arrays must be the same length");
     }
@@ -89,47 +87,28 @@ public class StringDict {
   /**
    * Constructor to allow (more intuitive) inline initialization, e.g.:
    * <pre>
-   * new StringDict(new String[][] {
-   *   { "key1", "value1" },
-   *   { "key2", "value2" }
+   * new FloatDict(new Object[][] {
+   *   { "key1", 1 },
+   *   { "key2", 2 }
    * });
    * </pre>
-   * It's no Python, but beats a static { } block with HashMap.put() statements.
    */
-  public StringDict(String[][] pairs) {
+  public LongDict(Object[][] pairs) {
     count = pairs.length;
     this.keys = new String[count];
-    this.values = new String[count];
+    this.values = new long[count];
     for (int i = 0; i < count; i++) {
-      keys[i] = pairs[i][0];
-      values[i] = pairs[i][1];
+      keys[i] = (String) pairs[i][0];
+      values[i] = (Integer) pairs[i][1];
       indices.put(keys[i], i);
     }
   }
 
 
   /**
-   * Create a dictionary that maps between column titles and cell entries
-   * in a TableRow. If two columns have the same name, the later column's
-   * values will override the earlier values.
-   */
-  public StringDict(TableRow row) {
-    this(row.getColumnCount());
-
-    String[] titles = row.getColumnTitles();
-    if (titles == null) {
-      titles = new StringList(IntList.fromRange(row.getColumnCount())).array();
-    }
-    for (int col = 0; col < row.getColumnCount(); col++) {
-      set(titles[col], row.getString(col));
-    }
-    // remove unused and overwritten entries
-    crop();
-  }
-
-
-  /**
-   * @webref stringdict:method
+   * Returns the number of key/value pairs
+   *
+   * @webref intdict:method
    * @brief Returns the number of key/value pairs
    */
   public int size() {
@@ -150,7 +129,7 @@ public class StringDict {
     }
 
     String[] newKeys = new String[length];
-    String[] newValues = new String[length];
+    long[] newValues = new long[length];
     PApplet.arrayCopy(keys, newKeys, length);
     PApplet.arrayCopy(values, newValues, length);
     keys = newKeys;
@@ -163,7 +142,7 @@ public class StringDict {
   /**
    * Remove all entries.
    *
-   * @webref stringdict:method
+   * @webref intdict:method
    * @brief Remove all entries
    */
   public void clear() {
@@ -185,9 +164,9 @@ public class StringDict {
 
   public class Entry {
     public String key;
-    public String value;
+    public long value;
 
-    Entry(String key, String value) {
+    Entry(String key, long value) {
       this.key = key;
       this.value = value;
     }
@@ -277,7 +256,7 @@ public class StringDict {
   /**
    * Return a copy of the internal keys array. This array can be modified.
    *
-   * @webref stringdict:method
+   * @webref intdict:method
    * @brief Return a copy of the internal keys array
    */
   public String[] keyArray() {
@@ -295,27 +274,28 @@ public class StringDict {
   }
 
 
-  public String value(int index) {
+  public long value(int index) {
     return values[index];
   }
 
+
   /**
-   * @webref stringdict:method
+   * @webref intdict:method
    * @brief Return the internal array being used to store the values
    */
-  public Iterable<String> values() {
-    return new Iterable<String>() {
+  public Iterable<Long> values() {
+    return new Iterable<Long>() {
 
       @Override
-      public Iterator<String> iterator() {
+      public Iterator<Long> iterator() {
         return valueIterator();
       }
     };
   }
 
 
-  public Iterator<String> valueIterator() {
-    return new Iterator<String>() {
+  public Iterator<Long> valueIterator() {
+    return new Iterator<Long>() {
       int index = -1;
 
       public void remove() {
@@ -323,7 +303,7 @@ public class StringDict {
         index--;
       }
 
-      public String next() {
+      public Long next() {
         return value(++index);
       }
 
@@ -337,10 +317,10 @@ public class StringDict {
   /**
    * Create a new array and copy each of the values into it.
    *
-   * @webref stringdict:method
+   * @webref intdict:method
    * @brief Create a new array and copy each of the values into it
    */
-  public String[] valueArray() {
+  public int[] valueArray() {
     crop();
     return valueArray(null);
   }
@@ -350,10 +330,12 @@ public class StringDict {
    * Fill an already-allocated array with the values (more efficient than
    * creating a new array each time). If 'array' is null, or not the same
    * size as the number of values, a new array will be allocated and returned.
+   *
+   * @param array values to copy into the array
    */
-  public String[] valueArray(String[] array) {
+  public int[] valueArray(int[] array) {
     if (array == null || array.length != size()) {
-      array = new String[count];
+      array = new int[count];
     }
     System.arraycopy(values, 0, array, 0, count);
     return array;
@@ -363,17 +345,19 @@ public class StringDict {
   /**
    * Return a value for the specified key.
    *
-   * @webref stringdict:method
+   * @webref intdict:method
    * @brief Return a value for the specified key
    */
-  public String get(String key) {
+  public long get(String key) {
     int index = index(key);
-    if (index == -1) return null;
+    if (index == -1) {
+      throw new IllegalArgumentException("No key named '" + key + "'");
+    }
     return values[index];
   }
 
 
-  public String get(String key, String alternate) {
+  public long get(String key, long alternate) {
     int index = index(key);
     if (index == -1) return alternate;
     return values[index];
@@ -381,25 +365,196 @@ public class StringDict {
 
 
   /**
-   * @webref stringdict:method
+   * Create a new key/value pair or change the value of one.
+   *
+   * @webref intdict:method
    * @brief Create a new key/value pair or change the value of one
    */
-  public void set(String key, String value) {
+  public void set(String key, long amount) {
     int index = index(key);
     if (index == -1) {
-      create(key, value);
+      create(key, amount);
     } else {
-      values[index] = value;
+      values[index] = amount;
     }
   }
 
 
-  public void setIndex(int index, String key, String value) {
+  public void setIndex(int index, String key, long value) {
     if (index < 0 || index >= count) {
       throw new ArrayIndexOutOfBoundsException(index);
     }
     keys[index] = key;
     values[index] = value;
+  }
+
+
+  /**
+   * @webref intdict:method
+   * @brief Check if a key is a part of the data structure
+   */
+  public boolean hasKey(String key) {
+    return index(key) != -1;
+  }
+
+
+  /**
+   * Increase the value associated with a specific key by 1.
+   *
+   * @webref intdict:method
+   * @brief Increase the value of a specific key value by 1
+   */
+  public void increment(String key) {
+    add(key, 1);
+  }
+
+
+  /**
+   * Merge another dictionary into this one. Calling this increment()
+   * since it doesn't make sense in practice for the other dictionary types,
+   * even though it's technically an add().
+   */
+  public void increment(LongDict dict) {
+    for (int i = 0; i < dict.count; i++) {
+      add(dict.key(i), dict.value(i));
+    }
+  }
+
+
+  /**
+   * @webref intdict:method
+   * @brief Add to a value
+   */
+  public void add(String key, long amount) {
+    int index = index(key);
+    if (index == -1) {
+      create(key, amount);
+    } else {
+      values[index] += amount;
+    }
+  }
+
+
+  /**
+   * @webref intdict:method
+   * @brief Subtract from a value
+   */
+  public void sub(String key, long amount) {
+    add(key, -amount);
+  }
+
+
+  /**
+   * @webref intdict:method
+   * @brief Multiply a value
+   */
+  public void mult(String key, long amount) {
+    int index = index(key);
+    if (index != -1) {
+      values[index] *= amount;
+    }
+  }
+
+
+  /**
+   * @webref intdict:method
+   * @brief Divide a value
+   */
+  public void div(String key, long amount) {
+    int index = index(key);
+    if (index != -1) {
+      values[index] /= amount;
+    }
+  }
+
+
+  private void checkMinMax(String functionName) {
+    if (count == 0) {
+      String msg =
+        String.format("Cannot use %s() on an empty %s.",
+                      functionName, getClass().getSimpleName());
+      throw new RuntimeException(msg);
+    }
+  }
+
+
+  // return the index of the minimum value
+  public int minIndex() {
+    //checkMinMax("minIndex");
+    if (count == 0) return -1;
+
+    int index = 0;
+    long value = values[0];
+    for (int i = 1; i < count; i++) {
+      if (values[i] < value) {
+        index = i;
+        value = values[i];
+      }
+    }
+    return index;
+  }
+
+
+  // return the key for the minimum value
+  public String minKey() {
+    checkMinMax("minKey");
+    int index = minIndex();
+    if (index == -1) {
+      return null;
+    }
+    return keys[index];
+  }
+
+
+  // return the minimum value, or throw an error if there are no values
+  public long minValue() {
+    checkMinMax("minValue");
+    return values[minIndex()];
+  }
+
+
+  // return the index of the max value
+  public int maxIndex() {
+    //checkMinMax("maxIndex");
+    if (count == 0) {
+      return -1;
+    }
+    int index = 0;
+    long value = values[0];
+    for (int i = 1; i < count; i++) {
+      if (values[i] > value) {
+        index = i;
+        value = values[i];
+      }
+    }
+    return index;
+  }
+
+
+  /** return the key corresponding to the maximum value or null if no entries */
+  public String maxKey() {
+    //checkMinMax("maxKey");
+    int index = maxIndex();
+    if (index == -1) {
+      return null;
+    }
+    return keys[index];
+  }
+
+
+  // return the maximum value or throw an error if zero length
+  public long maxValue() {
+    checkMinMax("maxIndex");
+    return values[maxIndex()];
+  }
+
+
+  public long sum() {
+    long sum = 0;
+    for (int i = 0; i < count; i++) {
+      sum += values[i];
+    }
+    return sum;
   }
 
 
@@ -409,28 +564,20 @@ public class StringDict {
   }
 
 
-  /**
-   * @webref stringdict:method
-   * @brief Check if a key is a part of the data structure
-   */
-  public boolean hasKey(String key) {
-    return index(key) != -1;
-  }
-
-
-  protected void create(String key, String value) {
+  protected void create(String what, long much) {
     if (count == keys.length) {
       keys = PApplet.expand(keys);
       values = PApplet.expand(values);
     }
-    indices.put(key, Integer.valueOf(count));
-    keys[count] = key;
-    values[count] = value;
+    indices.put(what, Integer.valueOf(count));
+    keys[count] = what;
+    values[count] = much;
     count++;
   }
 
+
   /**
-   * @webref stringdict:method
+   * @webref intdict:method
    * @brief Remove a key/value pair
    */
   public int remove(String key) {
@@ -448,7 +595,7 @@ public class StringDict {
     }
     //System.out.println("index is " + which + " and " + keys[which]);
     String key = keys[index];
-    indices.remove(key);
+    indices.remove(keys[index]);
     for (int i = index; i < count-1; i++) {
       keys[i] = keys[i+1];
       values[i] = values[i+1];
@@ -456,14 +603,14 @@ public class StringDict {
     }
     count--;
     keys[count] = null;
-    values[count] = null;
+    values[count] = 0;
     return key;
   }
 
 
   public void swap(int a, int b) {
     String tkey = keys[a];
-    String tvalue = values[a];
+    long tvalue = values[a];
     keys[a] = keys[b];
     values[a] = values[b];
     keys[b] = tkey;
@@ -478,43 +625,64 @@ public class StringDict {
    * Sort the keys alphabetically (ignoring case). Uses the value as a
    * tie-breaker (only really possible with a key that has a case change).
    *
-   * @webref stringdict:method
+   * @webref intdict:method
    * @brief Sort the keys alphabetically
    */
   public void sortKeys() {
-    sortImpl(true, false);
+    sortImpl(true, false, true);
   }
 
   /**
-   * @webref stringdict:method
+   * Sort the keys alphabetically in reverse (ignoring case). Uses the value as a
+   * tie-breaker (only really possible with a key that has a case change).
+   *
+   * @webref intdict:method
    * @brief Sort the keys alphabetically in reverse
    */
   public void sortKeysReverse() {
-    sortImpl(true, true);
+    sortImpl(true, true, true);
   }
 
 
   /**
-   * Sort by values in descending order (largest value will be at [0]).
+   * Sort by values in ascending order. The smallest value will be at [0].
    *
-   * @webref stringdict:method
+   * @webref intdict:method
    * @brief Sort by values in ascending order
    */
   public void sortValues() {
-    sortImpl(false, false);
+    sortValues(true);
   }
 
 
   /**
-   * @webref stringdict:method
-   * @brief Sort by values in descending order
+   * Set true to ensure that the order returned is identical. Slightly
+   * slower because the tie-breaker for identical values compares the keys.
+   * @param stable
    */
-  public void sortValuesReverse() {
-    sortImpl(false, true);
+  public void sortValues(boolean stable) {
+    sortImpl(false, false, stable);
   }
 
 
-  protected void sortImpl(final boolean useKeys, final boolean reverse) {
+  /**
+   * Sort by values in descending order. The largest value will be at [0].
+   *
+   * @webref intdict:method
+   * @brief Sort by values in descending order
+   */
+  public void sortValuesReverse() {
+    sortValuesReverse(true);
+  }
+
+
+  public void sortValuesReverse(boolean stable) {
+    sortImpl(false, true, stable);
+  }
+
+
+  protected void sortImpl(final boolean useKeys, final boolean reverse,
+                          final boolean stable) {
     Sort s = new Sort() {
       @Override
       public int size() {
@@ -523,24 +691,30 @@ public class StringDict {
 
       @Override
       public int compare(int a, int b) {
-        int diff = 0;
+        long diff = 0;
         if (useKeys) {
           diff = keys[a].compareToIgnoreCase(keys[b]);
           if (diff == 0) {
-            diff = values[a].compareToIgnoreCase(values[b]);
+            diff = values[a] - values[b];
           }
         } else {  // sort values
-          diff = values[a].compareToIgnoreCase(values[b]);
-          if (diff == 0) {
+          diff = values[a] - values[b];
+          if (diff == 0 && stable) {
             diff = keys[a].compareToIgnoreCase(keys[b]);
           }
         }
-        return reverse ? -diff : diff;
+        if (diff == 0) {
+          return 0;
+        } else if (reverse) {
+          return diff < 0 ? 1 : -1;
+        } else {
+          return diff < 0 ? -1 : 1;
+        }
       }
 
       @Override
       public void swap(int a, int b) {
-        StringDict.this.swap(a, b);
+        LongDict.this.swap(a, b);
       }
     };
     s.run();
@@ -550,9 +724,25 @@ public class StringDict {
   }
 
 
+  /**
+   * Sum all of the values in this dictionary, then return a new FloatDict of
+   * each key, divided by the total sum. The total for all values will be ~1.0.
+   * @return an IntDict with the original keys, mapped to their pct of the total
+   */
+  public FloatDict getPercent() {
+    double sum = sum();  // a little more accuracy
+    FloatDict outgoing = new FloatDict();
+    for (int i = 0; i < size(); i++) {
+      double percent = value(i) / sum;
+      outgoing.set(key(i), (float) percent);
+    }
+    return outgoing;
+  }
+
+
   /** Returns a duplicate copy of this object. */
-  public StringDict copy() {
-    StringDict outgoing = new StringDict(count);
+  public LongDict copy() {
+    LongDict outgoing = new LongDict(count);
     System.arraycopy(keys, 0, outgoing.keys, 0, count);
     System.arraycopy(values, 0, outgoing.values, 0, count);
     for (int i = 0; i < count; i++) {
@@ -597,7 +787,7 @@ public class StringDict {
   public String toJSON() {
     StringList items = new StringList();
     for (int i = 0; i < count; i++) {
-      items.append(JSONObject.quote(keys[i])+ ": " + JSONObject.quote(values[i]));
+      items.append(JSONObject.quote(keys[i])+ ": " + values[i]);
     }
     return "{ " + items.join(", ") + " }";
   }

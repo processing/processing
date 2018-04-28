@@ -23,6 +23,7 @@
 package processing.app.ui;
 
 import java.awt.Component;
+import java.awt.EventQueue;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -33,7 +34,6 @@ import processing.app.Mode;
 public class ZoomTreeCellRenderer extends DefaultTreeCellRenderer {
 
   public ZoomTreeCellRenderer(Mode mode) {
-    //setFont(Toolkit.getSansFont(Toolkit.zoom(14), Font.PLAIN));
     setFont(mode.getFont("tree.font"));
   }
 
@@ -50,11 +50,17 @@ public class ZoomTreeCellRenderer extends DefaultTreeCellRenderer {
     // https://github.com/processing/processing/issues/4936
     int high = getPreferredSize().height;
     if (high != 0) {
-      // add 15% for a little more spacing.. Source Sans leading is short
-      high = (int) (high * 1.15f);
-      int current = getSize().height;
-      if (current != high) {
-        tree.setRowHeight(high);
+      // Source Sans leading too short, so also add 15% for nicer spacing
+      final int targetHeight = (int) (high * 1.15f);
+      int currentHeight = getSize().height;
+      if (currentHeight != targetHeight) {
+        // Using invokeLater() to avoid infinite loop on Windows
+        // https://github.com/processing/processing/issues/5246
+        EventQueue.invokeLater(new Runnable() {
+          public void run() {
+            tree.setRowHeight(targetHeight);
+          }
+        });
       }
     }
     return super.getTreeCellRendererComponent(tree, value, selected,

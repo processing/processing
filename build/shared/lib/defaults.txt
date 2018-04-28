@@ -307,9 +307,6 @@ preproc.substitute_floats = true
 #preproc.substitute_image = false
 #preproc.substitute_font = false
 
-# auto-convert non-ascii chars to unicode escape sequences
-preproc.substitute_unicode = true
-
 # PdePreproc.java
 # writes out the parse tree as parseTree.xml, which can be usefully
 # viewed in (at least) Mozilla or IE.  useful when debugging the preprocessor.

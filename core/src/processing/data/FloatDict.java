@@ -734,7 +734,7 @@ public class FloatDict {
       }
 
       @Override
-      public float compare(int a, int b) {
+      public int compare(int a, int b) {
         float diff = 0;
         if (useKeys) {
           diff = keys[a].compareToIgnoreCase(keys[b]);
@@ -747,7 +747,13 @@ public class FloatDict {
             diff = keys[a].compareToIgnoreCase(keys[b]);
           }
         }
-        return reverse ? -diff : diff;
+        if (diff == 0) {
+          return 0;
+        } else if (reverse) {
+          return diff < 0 ? 1 : -1;
+        } else {
+          return diff < 0 ? -1 : 1;
+        }
       }
 
       @Override
@@ -795,6 +801,16 @@ public class FloatDict {
     for (int i = 0; i < size(); i++) {
       System.out.println(keys[i] + " = " + values[i]);
     }
+  }
+
+
+  /**
+   * Save tab-delimited entries to a file (TSV format, UTF-8 encoding)
+   */
+  public void save(File file) {
+    PrintWriter writer = PApplet.createWriter(file);
+    write(writer);
+    writer.close();
   }
 
 

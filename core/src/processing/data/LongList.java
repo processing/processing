@@ -9,8 +9,13 @@ import java.util.Random;
 import processing.core.PApplet;
 
 
+// splice, slice, subset, concat, reverse
+
+// trim, join for String versions
+
+
 /**
- * Helper class for a list of floats. Lists are designed to have some of the
+ * Helper class for a list of ints. Lists are designed to have some of the
  * features of ArrayLists, but to maintain the simplicity and efficiency of
  * working with arrays.
  *
@@ -18,52 +23,52 @@ import processing.core.PApplet;
  * a sorted copy, use list.copy().sort().
  *
  * @webref data:composite
- * @see IntList
+ * @see FloatList
  * @see StringList
  */
-public class FloatList implements Iterable<Float> {
-  int count;
-  float[] data;
+public class LongList implements Iterable<Long> {
+  protected int count;
+  protected long[] data;
 
 
-  public FloatList() {
-    data = new float[10];
+  public LongList() {
+    data = new long[10];
   }
 
 
   /**
    * @nowebref
    */
-  public FloatList(int length) {
-    data = new float[length];
+  public LongList(int length) {
+    data = new long[length];
   }
 
 
   /**
    * @nowebref
    */
-  public FloatList(float[] list) {
-    count = list.length;
-    data = new float[count];
-    System.arraycopy(list, 0, data, 0, count);
+  public LongList(int[] source) {
+    count = source.length;
+    data = new long[count];
+    System.arraycopy(source, 0, data, 0, count);
   }
 
 
   /**
-   * Construct an FloatList from an iterable pile of objects.
+   * Construct an IntList from an iterable pile of objects.
    * For instance, a float array, an array of strings, who knows).
-   * Un-parseable or null values will be set to NaN.
+   * Un-parseable or null values will be set to 0.
    * @nowebref
    */
-  public FloatList(Iterable<Object> iter) {
+  public LongList(Iterable<Object> iter) {
     this(10);
     for (Object o : iter) {
       if (o == null) {
-        append(Float.NaN);
+        append(0);  // missing value default
       } else if (o instanceof Number) {
-        append(((Number) o).floatValue());
+        append(((Number) o).intValue());
       } else {
-        append(PApplet.parseFloat(o.toString().trim()));
+        append(PApplet.parseInt(o.toString().trim()));
       }
     }
     crop();
@@ -71,27 +76,41 @@ public class FloatList implements Iterable<Float> {
 
 
   /**
-   * Construct an FloatList from a random pile of objects.
-   * Un-parseable or null values will be set to NaN.
+   * Construct an IntList from a random pile of objects.
+   * Un-parseable or null values will be set to zero.
    */
-  public FloatList(Object... items) {
-    // nuts, no good way to pass missingValue to this fn (varargs must be last)
-    final float missingValue = Float.NaN;
+  public LongList(Object... items) {
+    final int missingValue = 0;  // nuts, can't be last/final/second arg
 
     count = items.length;
-    data = new float[count];
+    data = new long[count];
     int index = 0;
     for (Object o : items) {
-      float value = missingValue;
+      int value = missingValue;
       if (o != null) {
         if (o instanceof Number) {
-          value = ((Number) o).floatValue();
+          value = ((Number) o).intValue();
         } else {
-          value = PApplet.parseFloat(o.toString().trim(), missingValue);
+          value = PApplet.parseInt(o.toString().trim(), missingValue);
         }
       }
       data[index++] = value;
     }
+  }
+
+
+  static public LongList fromRange(int stop) {
+    return fromRange(0, stop);
+  }
+
+
+  static public LongList fromRange(int start, int stop) {
+    int count = stop - start;
+    LongList newbie = new LongList(count);
+    for (int i = 0; i < count; i++) {
+      newbie.set(i, start+i);
+    }
+    return newbie;
   }
 
 
@@ -111,7 +130,7 @@ public class FloatList implements Iterable<Float> {
   /**
    * Get the length of the list.
    *
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Get the length of the list
    */
   public int size() {
@@ -121,7 +140,7 @@ public class FloatList implements Iterable<Float> {
 
   public void resize(int length) {
     if (length > data.length) {
-      float[] temp = new float[length];
+      long[] temp = new long[length];
       System.arraycopy(data, 0, temp, 0, count);
       data = temp;
 
@@ -135,7 +154,7 @@ public class FloatList implements Iterable<Float> {
   /**
    * Remove all entries from the list.
    *
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Remove all entries from the list
    */
   public void clear() {
@@ -146,11 +165,11 @@ public class FloatList implements Iterable<Float> {
   /**
    * Get an entry at a particular index.
    *
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Get an entry at a particular index
    */
-  public float get(int index) {
-    if (index >= count) {
+  public long get(int index) {
+    if (index >= this.count) {
       throw new ArrayIndexOutOfBoundsException(index);
     }
     return data[index];
@@ -162,10 +181,10 @@ public class FloatList implements Iterable<Float> {
    * the list, it'll expand the list to accommodate, and fill the intermediate
    * entries with 0s.
    *
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Set the entry at a particular index
    */
-  public void set(int index, float what) {
+  public void set(int index, int what) {
     if (index >= count) {
       data = PApplet.expand(data, index+1);
       for (int i = count; i < index; i++) {
@@ -178,32 +197,32 @@ public class FloatList implements Iterable<Float> {
 
 
   /** Just an alias for append(), but matches pop() */
-  public void push(float value) {
+  public void push(int value) {
     append(value);
   }
 
 
-  public float pop() {
+  public long pop() {
     if (count == 0) {
       throw new RuntimeException("Can't call pop() on an empty list");
     }
-    float value = get(count-1);
+    long value = get(count-1);
     count--;
     return value;
   }
 
 
   /**
-   * Remove an element from the specified index.
+   * Remove an element from the specified index
    *
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Remove an element from the specified index
    */
-  public float remove(int index) {
+  public long remove(int index) {
     if (index < 0 || index >= count) {
       throw new ArrayIndexOutOfBoundsException(index);
     }
-    float entry = data[index];
+    long entry = data[index];
 //    int[] outgoing = new int[count - 1];
 //    System.arraycopy(data, 0, outgoing, 0, index);
 //    count--;
@@ -235,17 +254,9 @@ public class FloatList implements Iterable<Float> {
   // and return the number of values found and removed
   public int removeValues(int value) {
     int ii = 0;
-    if (Float.isNaN(value)) {
-      for (int i = 0; i < count; i++) {
-        if (!Float.isNaN(data[i])) {
-          data[ii++] = data[i];
-        }
-      }
-    } else {
-      for (int i = 0; i < count; i++) {
-        if (data[i] != value) {
-          data[ii++] = data[i];
-        }
+    for (int i = 0; i < count; i++) {
+      if (data[i] != value) {
+        data[ii++] = data[i];
       }
     }
     int removed = count - ii;
@@ -254,56 +265,13 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  /** Replace the first instance of a particular value */
-  public boolean replaceValue(float value, float newValue) {
-    if (Float.isNaN(value)) {
-      for (int i = 0; i < count; i++) {
-        if (Float.isNaN(data[i])) {
-          data[i] = newValue;
-          return true;
-        }
-      }
-    } else {
-      int index = index(value);
-      if (index != -1) {
-        data[index] = newValue;
-        return true;
-      }
-    }
-    return false;
-  }
-
-
-  /** Replace all instances of a particular value */
-  public boolean replaceValues(float value, float newValue) {
-    boolean changed = false;
-    if (Float.isNaN(value)) {
-      for (int i = 0; i < count; i++) {
-        if (Float.isNaN(data[i])) {
-          data[i] = newValue;
-          changed = true;
-        }
-      }
-    } else {
-      for (int i = 0; i < count; i++) {
-        if (data[i] == value) {
-          data[i] = newValue;
-          changed = true;
-        }
-      }
-    }
-    return changed;
-  }
-
-
-
   /**
    * Add a new entry to the list.
    *
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Add a new entry to the list
    */
-  public void append(float value) {
+  public void append(long value) {
     if (count == data.length) {
       data = PApplet.expand(data);
     }
@@ -311,22 +279,22 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  public void append(float[] values) {
-    for (float v : values) {
+  public void append(int[] values) {
+    for (int v : values) {
       append(v);
     }
   }
 
 
-  public void append(FloatList list) {
-    for (float v : list.values()) {  // will concat the list...
+  public void append(LongList list) {
+    for (long v : list.values()) {  // will concat the list...
       append(v);
     }
   }
 
 
   /** Add this value, but only if it's not already in the list. */
-  public void appendUnique(float value) {
+  public void appendUnique(int value) {
     if (!hasValue(value)) {
       append(value);
     }
@@ -363,13 +331,13 @@ public class FloatList implements Iterable<Float> {
 //  }
 
 
-  public void insert(int index, float value) {
-    insert(index, new float[] { value });
+  public void insert(int index, long value) {
+    insert(index, new long[] { value });
   }
 
 
   // same as splice
-  public void insert(int index, float[] values) {
+  public void insert(int index, long[] values) {
     if (index < 0) {
       throw new IllegalArgumentException("insert() index cannot be negative: it was " + index);
     }
@@ -377,7 +345,7 @@ public class FloatList implements Iterable<Float> {
       throw new IllegalArgumentException("insert() index " + index + " is past the end of this list");
     }
 
-    float[] temp = new float[count + values.length];
+    long[] temp = new long[count + values.length];
 
     // Copy the old values, but not more than already exist
     System.arraycopy(data, 0, temp, 0, Math.min(count, index));
@@ -397,7 +365,7 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  public void insert(int index, FloatList list) {
+  public void insert(int index, LongList list) {
     insert(index, list.values());
   }
 
@@ -446,7 +414,7 @@ public class FloatList implements Iterable<Float> {
 
 
   /** Return the first index of a particular value. */
-  public int index(float what) {
+  public int index(int what) {
     /*
     if (indexCache != null) {
       try {
@@ -465,25 +433,41 @@ public class FloatList implements Iterable<Float> {
   }
 
 
+  // !!! TODO this is not yet correct, because it's not being reset when
+  // the rest of the entries are changed
+//  protected void cacheIndices() {
+//    indexCache = new HashMap<Integer, Integer>();
+//    for (int i = 0; i < count; i++) {
+//      indexCache.put(data[i], i);
+//    }
+//  }
+
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Check if a number is a part of the list
    */
-  public boolean hasValue(float value) {
-    if (Float.isNaN(value)) {
-      for (int i = 0; i < count; i++) {
-        if (Float.isNaN(data[i])) {
-          return true;
-        }
-      }
-    } else {
-      for (int i = 0; i < count; i++) {
-        if (data[i] == value) {
-          return true;
-        }
+  public boolean hasValue(int value) {
+//    if (indexCache == null) {
+//      cacheIndices();
+//    }
+//    return index(what) != -1;
+    for (int i = 0; i < count; i++) {
+      if (data[i] == value) {
+        return true;
       }
     }
     return false;
+  }
+
+  /**
+   * @webref intlist:method
+   * @brief Add one to a value
+   */
+  public void increment(int index) {
+    if (count <= index) {
+      resize(index + 1);
+    }
+    data[index]++;
   }
 
 
@@ -495,10 +479,10 @@ public class FloatList implements Iterable<Float> {
 
 
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Add to a value
    */
-  public void add(int index, float amount) {
+  public void add(int index, int amount) {
     if (index < count) {
       data[index] += amount;
     } else {
@@ -506,12 +490,11 @@ public class FloatList implements Iterable<Float> {
     }
   }
 
-
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Subtract from a value
    */
-  public void sub(int index, float amount) {
+  public void sub(int index, int amount) {
     if (index < count) {
       data[index] -= amount;
     } else {
@@ -519,12 +502,11 @@ public class FloatList implements Iterable<Float> {
     }
   }
 
-
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Multiply a value
    */
-  public void mult(int index, float amount) {
+  public void mult(int index, int amount) {
     if (index < count) {
       data[index] *= amount;
     } else {
@@ -532,12 +514,11 @@ public class FloatList implements Iterable<Float> {
     }
   }
 
-
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Divide a value
    */
-  public void div(int index, float amount) {
+  public void div(int index, int amount) {
     if (index < count) {
       data[index] /= amount;
     } else {
@@ -557,91 +538,79 @@ public class FloatList implements Iterable<Float> {
 
 
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Return the smallest value
    */
-  public float min() {
+  public long min() {
     checkMinMax("min");
-    int index = minIndex();
-    return index == -1 ? Float.NaN : data[index];
+    long outgoing = data[0];
+    for (int i = 1; i < count; i++) {
+      if (data[i] < outgoing) outgoing = data[i];
+    }
+    return outgoing;
   }
 
 
+  // returns the index of the minimum value.
+  // if there are ties, it returns the first one found.
   public int minIndex() {
     checkMinMax("minIndex");
-    float m = Float.NaN;
-    int mi = -1;
-    for (int i = 0; i < count; i++) {
-      // find one good value to start
-      if (data[i] == data[i]) {
-        m = data[i];
-        mi = i;
-
-        // calculate the rest
-        for (int j = i+1; j < count; j++) {
-          float d = data[j];
-          if (!Float.isNaN(d) && (d < m)) {
-            m = data[j];
-            mi = j;
-          }
-        }
-        break;
+    long value = data[0];
+    int index = 0;
+    for (int i = 1; i < count; i++) {
+      if (data[i] < value) {
+        value = data[i];
+        index = i;
       }
     }
-    return mi;
+    return index;
   }
 
 
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Return the largest value
    */
-  public float max() {
+  public long max() {
     checkMinMax("max");
-    int index = maxIndex();
-    return index == -1 ? Float.NaN : data[index];
+    long outgoing = data[0];
+    for (int i = 1; i < count; i++) {
+      if (data[i] > outgoing) outgoing = data[i];
+    }
+    return outgoing;
   }
 
 
+  // returns the index of the maximum value.
+  // if there are ties, it returns the first one found.
   public int maxIndex() {
     checkMinMax("maxIndex");
-    float m = Float.NaN;
-    int mi = -1;
-    for (int i = 0; i < count; i++) {
-      // find one good value to start
-      if (data[i] == data[i]) {
-        m = data[i];
-        mi = i;
-
-        // calculate the rest
-        for (int j = i+1; j < count; j++) {
-          float d = data[j];
-          if (!Float.isNaN(d) && (d > m)) {
-            m = data[j];
-            mi = j;
-          }
-        }
-        break;
+    long value = data[0];
+    int index = 0;
+    for (int i = 1; i < count; i++) {
+      if (data[i] > value) {
+        value = data[i];
+        index = i;
       }
     }
-    return mi;
+    return index;
   }
 
 
-  public float sum() {
-    double amount = sumDouble();
-    if (amount > Float.MAX_VALUE) {
-      throw new RuntimeException("sum() exceeds " + Float.MAX_VALUE + ", use sumDouble()");
+  public int sum() {
+    long amount = sumLong();
+    if (amount > Integer.MAX_VALUE) {
+      throw new RuntimeException("sum() exceeds " + Integer.MAX_VALUE + ", use sumLong()");
     }
-    if (amount < -Float.MAX_VALUE) {
-      throw new RuntimeException("sum() lower than " + -Float.MAX_VALUE + ", use sumDouble()");
+    if (amount < Integer.MIN_VALUE) {
+      throw new RuntimeException("sum() less than " + Integer.MIN_VALUE + ", use sumLong()");
     }
-    return (float) amount;
+    return (int) amount;
   }
 
 
-  public double sumDouble() {
-    double sum = 0;
+  public long sumLong() {
+    long sum = 0;
     for (int i = 0; i < count; i++) {
       sum += data[i];
     }
@@ -652,8 +621,8 @@ public class FloatList implements Iterable<Float> {
   /**
    * Sorts the array in place.
    *
-   * @webref floatlist:method
-   * @brief Sorts an array, lowest to highest
+   * @webref intlist:method
+   * @brief Sorts the array, lowest to highest
    */
   public void sort() {
     Arrays.sort(data, 0, count);
@@ -661,47 +630,27 @@ public class FloatList implements Iterable<Float> {
 
 
   /**
-   * Reverse sort, orders values from highest to lowest
+   * Reverse sort, orders values from highest to lowest.
    *
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Reverse sort, orders values from highest to lowest
    */
   public void sortReverse() {
     new Sort() {
       @Override
       public int size() {
-        // if empty, don't even mess with the NaN check, it'll AIOOBE
-        if (count == 0) {
-          return 0;
-        }
-        // move NaN values to the end of the list and don't sort them
-        int right = count - 1;
-        while (data[right] != data[right]) {
-          right--;
-          if (right == -1) {  // all values are NaN
-            return 0;
-          }
-        }
-        for (int i = right; i >= 0; --i) {
-          float v = data[i];
-          if (v != v) {
-            data[i] = data[right];
-            data[right] = v;
-            --right;
-          }
-        }
-        return right + 1;
+        return count;
       }
 
       @Override
       public int compare(int a, int b) {
-        float diff = data[b] - data[a];
+        long diff = data[b] - data[a];
         return diff == 0 ? 0 : (diff < 0 ? -1 : 1);
       }
 
       @Override
       public void swap(int a, int b) {
-        float temp = data[a];
+        long temp = data[a];
         data[a] = data[b];
         data[b] = temp;
       }
@@ -717,8 +666,8 @@ public class FloatList implements Iterable<Float> {
 //  public void subset(int start) {
 //    subset(start, count - start);
 //  }
-
-
+//
+//
 //  public void subset(int start, int num) {
 //    for (int i = 0; i < num; i++) {
 //      data[i] = data[i+start];
@@ -726,15 +675,14 @@ public class FloatList implements Iterable<Float> {
 //    count = num;
 //  }
 
-
   /**
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Reverse the order of the list elements
    */
   public void reverse() {
     int ii = count - 1;
     for (int i = 0; i < count/2; i++) {
-      float t = data[i];
+      long t = data[i];
       data[i] = data[ii];
       data[ii] = t;
       --ii;
@@ -746,7 +694,7 @@ public class FloatList implements Iterable<Float> {
    * Randomize the order of the list elements. Note that this does not
    * obey the randomSeed() function in PApplet.
    *
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Randomize the order of the list elements
    */
   public void shuffle() {
@@ -755,7 +703,7 @@ public class FloatList implements Iterable<Float> {
     while (num > 1) {
       int value = r.nextInt(num);
       num--;
-      float temp = data[num];
+      long temp = data[num];
       data[num] = data[value];
       data[value] = temp;
     }
@@ -771,15 +719,15 @@ public class FloatList implements Iterable<Float> {
     while (num > 1) {
       int value = (int) sketch.random(num);
       num--;
-      float temp = data[num];
+      long temp = data[num];
       data[num] = data[value];
       data[value] = temp;
     }
   }
 
 
-  public FloatList copy() {
-    FloatList outgoing = new FloatList(data);
+  public LongList copy() {
+    LongList outgoing = new LongList(data);
     outgoing.count = count;
     return outgoing;
   }
@@ -790,28 +738,24 @@ public class FloatList implements Iterable<Float> {
    * this is the fastest way to access a large list. Suitable for iterating
    * with a for() loop, but modifying the list will have terrible consequences.
    */
-  public float[] values() {
+  public long[] values() {
     crop();
     return data;
   }
 
 
-  /** Implemented this way so that we can use a FloatList in a for loop. */
   @Override
-  public Iterator<Float> iterator() {
-//  }
-//
-//
-//  public Iterator<Float> valueIterator() {
-    return new Iterator<Float>() {
+  public Iterator<Long> iterator() {
+//  public Iterator<Integer> valueIterator() {
+    return new Iterator<Long>() {
       int index = -1;
 
       public void remove() {
-        FloatList.this.remove(index);
+        LongList.this.remove(index);
         index--;
       }
 
-      public Float next() {
+      public Long next() {
         return data[++index];
       }
 
@@ -824,11 +768,12 @@ public class FloatList implements Iterable<Float> {
 
   /**
    * Create a new array with a copy of all the values.
+   *
    * @return an array sized by the length of the list with each of the values.
-   * @webref floatlist:method
+   * @webref intlist:method
    * @brief Create a new array with a copy of all the values
    */
-  public float[] array() {
+  public int[] array() {
     return array(null);
   }
 
@@ -838,13 +783,56 @@ public class FloatList implements Iterable<Float> {
    * not the same size, a new array will be allocated.
    * @param array
    */
-  public float[] array(float[] array) {
+  public int[] array(int[] array) {
     if (array == null || array.length != count) {
-      array = new float[count];
+      array = new int[count];
     }
     System.arraycopy(data, 0, array, 0, count);
     return array;
   }
+
+
+//  public int[] toIntArray() {
+//    int[] outgoing = new int[count];
+//    for (int i = 0; i < count; i++) {
+//      outgoing[i] = (int) data[i];
+//    }
+//    return outgoing;
+//  }
+
+
+//  public long[] toLongArray() {
+//    long[] outgoing = new long[count];
+//    for (int i = 0; i < count; i++) {
+//      outgoing[i] = (long) data[i];
+//    }
+//    return outgoing;
+//  }
+
+
+//  public float[] toFloatArray() {
+//    float[] outgoing = new float[count];
+//    System.arraycopy(data, 0, outgoing, 0, count);
+//    return outgoing;
+//  }
+
+
+//  public double[] toDoubleArray() {
+//    double[] outgoing = new double[count];
+//    for (int i = 0; i < count; i++) {
+//      outgoing[i] = data[i];
+//    }
+//    return outgoing;
+//  }
+
+
+//  public String[] toStringArray() {
+//    String[] outgoing = new String[count];
+//    for (int i = 0; i < count; i++) {
+//      outgoing[i] = String.valueOf(data[i]);
+//    }
+//    return outgoing;
+//  }
 
 
   /**
@@ -867,15 +855,28 @@ public class FloatList implements Iterable<Float> {
   }
 
 
-  public FloatList getSubset(int start) {
+//  /**
+//   * Count the number of times each entry is found in this list.
+//   * Converts each entry to a String so it can be used as a key.
+//   */
+//  public IntDict getTally() {
+//    IntDict outgoing = new IntDict();
+//    for (int i = 0; i < count; i++) {
+//      outgoing.increment(String.valueOf(data[i]));
+//    }
+//    return outgoing;
+//  }
+
+
+  public LongList getSubset(int start) {
     return getSubset(start, count - start);
   }
 
 
-  public FloatList getSubset(int start, int num) {
-    float[] subset = new float[num];
+  public LongList getSubset(int start, int num) {
+    int[] subset = new int[num];
     System.arraycopy(data, start, subset, 0, num);
-    return new FloatList(subset);
+    return new LongList(subset);
   }
 
 
@@ -895,7 +896,7 @@ public class FloatList implements Iterable<Float> {
 
   public void print() {
     for (int i = 0; i < count; i++) {
-      System.out.format("[%d] %f%n", i, data[i]);
+      System.out.format("[%d] %d%n", i, data[i]);
     }
   }
 

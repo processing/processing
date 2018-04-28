@@ -7388,6 +7388,7 @@ public class PGraphics extends PImage implements PConstants {
     pushStyle();
     pushMatrix();
     resetMatrix();
+    noStroke();
     fill(backgroundColor);
     rect(0, 0, width, height);
     popMatrix();

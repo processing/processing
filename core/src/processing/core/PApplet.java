@@ -3492,7 +3492,39 @@ public class PApplet implements PConstants {
     try {
       return Runtime.getRuntime().exec(args);
     } catch (Exception e) {
-      throw new RuntimeException("Could not open " + join(args, ' '), e);
+      throw new RuntimeException("Exception while attempting " + join(args, ' '), e);
+    }
+  }
+
+
+  static class LineThread extends Thread {
+    InputStream input;
+    StringList output;
+
+
+    LineThread(InputStream input, StringList output) {
+      this.input = input;
+      this.output = output;
+      start();
+    }
+
+    @Override
+    public void run() {
+      // It's not sufficient to use BufferedReader, because if the app being
+      // called fills up stdout or stderr to quickly, the app will hang.
+      // Instead, write to a byte[] array and then parse it once finished.
+      try {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        saveStream(baos, input);
+        BufferedReader reader =
+          createReader(new ByteArrayInputStream(baos.toByteArray()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+          output.append(line);
+        }
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 
@@ -3513,25 +3545,55 @@ public class PApplet implements PConstants {
    */
   static public int exec(StringList stdout, StringList stderr, String... args) {
     Process p = exec(args);
-    int result = -1;
-    try {
-      BufferedReader out = createReader(p.getInputStream());
-      BufferedReader err = createReader(p.getErrorStream());
-      result = p.waitFor();
+
+    Thread outThread = new LineThread(p.getInputStream(), stdout);
+    Thread errThread = new LineThread(p.getErrorStream(), stderr);
+    /*
+    final InputStream err = p.getErrorStream();
+    final InputStream out = p.getInputStream();
+    Thread outThread = new Thread(() ->  {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
       String line;
-      while ((line = out.readLine()) != null) {
-        stdout.append(line);
+      try {
+        saveStream(baos, out);
+        BufferedReader err2 = createReader(new ByteArrayInputStream(baos.toByteArray()));
+        while ((line = err2.readLine()) != null) {
+          stdout.append(line);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+        throw new RuntimeException(e);
       }
-      while ((line = err.readLine()) != null) {
-        stderr.append(line);
+    });
+    outThread.start();
+
+    Thread errThread = new Thread(() ->  {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      String line;
+      try {
+        saveStream(baos, err);
+        BufferedReader err2 = createReader(new ByteArrayInputStream(baos.toByteArray()));
+        while ((line = err2.readLine()) != null) {
+          stderr.append(line);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+        throw new RuntimeException(e);
       }
-    } catch (IOException e) {
-      e.printStackTrace();
+    });
+    errThread.start();
+    */
+
+    try {
+      int result = p.waitFor();
+      outThread.join();
+      errThread.join();
+      return result;
 
     } catch (InterruptedException e) {
-      // can be safely ignored
+      // Throwing the exception here because we can't give a valid 'result'
+      throw new RuntimeException(e);
     }
-    return result;
   }
 
 
@@ -8650,9 +8712,11 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static public boolean[] subset(boolean list[], int start) {
+
+  static public boolean[] subset(boolean[] list, int start) {
     return subset(list, start, list.length - start);
   }
+
 
  /**
    * ( begin auto-generated from subset.xml )
@@ -8676,60 +8740,92 @@ public class PApplet implements PConstants {
   * @param count number of values to extract
   * @see PApplet#splice(boolean[], boolean, int)
   */
-  static public boolean[] subset(boolean list[], int start, int count) {
-    boolean output[] = new boolean[count];
-    System.arraycopy(list, start, output, 0, count);
-    return output;
-  }
-
-  static public byte[] subset(byte list[], int start) {
-    return subset(list, start, list.length - start);
-  }
-
-  static public byte[] subset(byte list[], int start, int count) {
-    byte output[] = new byte[count];
+  static public boolean[] subset(boolean[] list, int start, int count) {
+    boolean[] output = new boolean[count];
     System.arraycopy(list, start, output, 0, count);
     return output;
   }
 
 
-  static public char[] subset(char list[], int start) {
+  static public byte[] subset(byte[] list, int start) {
     return subset(list, start, list.length - start);
   }
 
-  static public char[] subset(char list[], int start, int count) {
-    char output[] = new char[count];
-    System.arraycopy(list, start, output, 0, count);
-    return output;
-  }
 
-  static public int[] subset(int list[], int start) {
-    return subset(list, start, list.length - start);
-  }
-
-  static public int[] subset(int list[], int start, int count) {
-    int output[] = new int[count];
-    System.arraycopy(list, start, output, 0, count);
-    return output;
-  }
-
-  static public float[] subset(float list[], int start) {
-    return subset(list, start, list.length - start);
-  }
-
-  static public float[] subset(float list[], int start, int count) {
-    float output[] = new float[count];
+  static public byte[] subset(byte[] list, int start, int count) {
+    byte[] output = new byte[count];
     System.arraycopy(list, start, output, 0, count);
     return output;
   }
 
 
-  static public String[] subset(String list[], int start) {
+  static public char[] subset(char[] list, int start) {
     return subset(list, start, list.length - start);
   }
 
-  static public String[] subset(String list[], int start, int count) {
-    String output[] = new String[count];
+
+  static public char[] subset(char[] list, int start, int count) {
+    char[] output = new char[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+
+  static public int[] subset(int[] list, int start) {
+    return subset(list, start, list.length - start);
+  }
+
+
+  static public int[] subset(int[] list, int start, int count) {
+    int[] output = new int[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+
+  static public long[] subset(long[] list, int start) {
+    return subset(list, start, list.length - start);
+  }
+
+
+  static public long[] subset(long[] list, int start, int count) {
+    long[] output = new long[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+
+  static public float[] subset(float[] list, int start) {
+    return subset(list, start, list.length - start);
+  }
+
+
+  static public float[] subset(float[] list, int start, int count) {
+    float[] output = new float[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+
+  static public double[] subset(double[] list, int start) {
+    return subset(list, start, list.length - start);
+  }
+
+
+  static public double[] subset(double[] list, int start, int count) {
+    double[] output = new double[count];
+    System.arraycopy(list, start, output, 0, count);
+    return output;
+  }
+
+
+  static public String[] subset(String[] list, int start) {
+    return subset(list, start, list.length - start);
+  }
+
+
+  static public String[] subset(String[] list, int start, int count) {
+    String[] output = new String[count];
     System.arraycopy(list, start, output, 0, count);
     return output;
   }
@@ -8739,6 +8835,7 @@ public class PApplet implements PConstants {
     int length = Array.getLength(list);
     return subset(list, start, length - start);
   }
+
 
   static public Object subset(Object list, int start, int count) {
     Class<?> type = list.getClass().getComponentType();
