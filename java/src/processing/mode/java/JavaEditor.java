@@ -21,6 +21,7 @@ import processing.data.StringList;
 import processing.app.*;
 import processing.app.contrib.*;
 import processing.app.syntax.JEditTextArea;
+import processing.app.syntax.PdeTextArea;
 import processing.app.syntax.PdeTextAreaDefaults;
 import processing.app.ui.*;
 import processing.app.ui.Toolkit;
@@ -2078,7 +2079,7 @@ public class JavaEditor extends Editor {
     cursorToLineStart(line.lineIdx());
     // highlight line
     currentLine = new LineHighlight(line.lineIdx(), this);
-    currentLine.setMarker(JavaTextArea.STEP_MARKER);
+    currentLine.setMarker(PdeTextArea.STEP_MARKER);
     currentLine.setPriority(10); // fixes current line being hidden by the breakpoint when moved down
   }
 
@@ -2107,7 +2108,7 @@ public class JavaEditor extends Editor {
    */
   public void addBreakpointedLine(LineID lineID) {
     LineHighlight hl = new LineHighlight(lineID, this);
-    hl.setMarker(JavaTextArea.BREAK_MARKER);
+    hl.setMarker(PdeTextArea.BREAK_MARKER);
     breakpointedLines.add(hl);
     // repaint current line if it's on this line
     if (currentLine != null && currentLine.getLineID().equals(lineID)) {
@@ -2350,7 +2351,7 @@ public class JavaEditor extends Editor {
     frmImportSuggest = new JFrame();
 
     frmImportSuggest.setUndecorated(true);
-    frmImportSuggest.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    frmImportSuggest.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     JPanel panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
     panel.setBackground(Color.WHITE);

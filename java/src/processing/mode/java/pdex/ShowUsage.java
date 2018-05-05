@@ -16,10 +16,10 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.WindowConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -63,7 +63,7 @@ class ShowUsage {
 
     { // Show Usage window
       window = new JDialog(editor);
-      window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+      window.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
       window.setAutoRequestFocus(false);
       window.addComponentListener(new ComponentAdapter() {
         @Override
