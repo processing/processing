@@ -287,6 +287,9 @@ public class PGraphicsOpenGL extends PGraphics {
   // To pass to shaders
   protected float[] glProjection;
   protected float[] glModelview;
+  protected float[] glView;
+  protected float[] glViewInv;
+  protected float[] glCamPos;
   protected float[] glProjmodelview;
   protected float[] glNormal;
 
@@ -1755,6 +1758,67 @@ public class PGraphicsOpenGL extends PGraphics {
     glModelview[15] = modelview.m33;
   }
 
+  protected void updateGLView() {
+    if (glView == null) {
+      glView = new float[16];
+    }
+
+    glView[0] = camera.m00;
+    glView[1] = camera.m10;
+    glView[2] = camera.m20;
+    glView[3] = camera.m30;
+
+    glView[4] = camera.m01;
+    glView[5] = camera.m11;
+    glView[6] = camera.m21;
+    glView[7] = camera.m31;
+
+    glView[8] = camera.m02;
+    glView[9] = camera.m12;
+    glView[10] = camera.m22;
+    glView[11] = camera.m32;
+
+    glView[12] = camera.m03;
+    glView[13] = camera.m13;
+    glView[14] = camera.m23;
+    glView[15] = camera.m33;
+  }
+
+  protected void updateGLViewInv() {
+    if (glViewInv == null) {
+      glViewInv = new float[16];
+    }
+
+    glViewInv[0] = cameraInv.m00;
+    glViewInv[1] = cameraInv.m10;
+    glViewInv[2] = cameraInv.m20;
+    glViewInv[3] = cameraInv.m30;
+
+    glViewInv[4] = cameraInv.m01;
+    glViewInv[5] = cameraInv.m11;
+    glViewInv[6] = cameraInv.m21;
+    glViewInv[7] = cameraInv.m31;
+
+    glViewInv[8] = cameraInv.m02;
+    glViewInv[9] = cameraInv.m12;
+    glViewInv[10] = cameraInv.m22;
+    glViewInv[11] = cameraInv.m32;
+
+    glViewInv[12] = cameraInv.m03;
+    glViewInv[13] = cameraInv.m13;
+    glViewInv[14] = cameraInv.m23;
+    glViewInv[15] = cameraInv.m33;
+  }
+
+  protected void updateGLCameraPos() {
+    if (glCamPos == null) {
+        glCamPos = new float[3];
+    }
+
+    glCamPos[0] = modelviewInv.m03;
+    glCamPos[1] = modelviewInv.m13;
+    glCamPos[2] = modelviewInv.m23;
+  }
 
   protected void updateGLProjmodelview() {
     if (glProjmodelview == null) {
