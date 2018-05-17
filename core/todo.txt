@@ -1,6 +1,7 @@
 0265 (3.4)
 X change lack of blendMode() to a warning rather than an error in PDF
 X rewrite exec() to do threads, also handle fast/excessive output cases
+X rewrite requestImage() to fix errors/slowness/concurrency problems
 
 data classes
 X add Double and Long versions of the data classes

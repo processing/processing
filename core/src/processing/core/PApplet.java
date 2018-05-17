@@ -62,7 +62,11 @@ import java.nio.charset.StandardCharsets;
 import java.text.*;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.*;
 import java.util.zip.*;
 
@@ -5431,9 +5435,10 @@ public class PApplet implements PConstants {
    */
   public PImage loadImage(String filename, String extension) { //, Object params) {
 
-    // await... has to run on the main thread, because P2D and P3D call GL functions
-    // If this runs on background, requestImage() already called await... on the main thread
-    if (g != null && !Thread.currentThread().getName().startsWith(ASYNC_IMAGE_LOADER_THREAD_PREFIX)) {
+    // awaitAsyncSaveCompletion() has to run on the main thread, because P2D
+    // and P3D call GL functions. If this runs on background, requestImage()
+    // already called awaitAsyncSaveCompletion() on the main thread.
+    if (g != null && !Thread.currentThread().getName().startsWith(REQUEST_IMAGE_THREAD_PREFIX)) {
       g.awaitAsyncSaveCompletion(filename);
     }
 
@@ -5561,8 +5566,12 @@ public class PApplet implements PConstants {
   }
 
 
+  static private final String REQUEST_IMAGE_THREAD_PREFIX = "requestImage";
+  // fixed-size thread pool used by requestImage()
+  ExecutorService requestImagePool;
+
+
   public PImage requestImage(String filename) {
-//    return requestImage(filename, null, null);
     return requestImage(filename, null);
   }
 
@@ -5596,62 +5605,17 @@ public class PApplet implements PConstants {
       g.awaitAsyncSaveCompletion(filename);
     }
     PImage vessel = createImage(0, 0, ARGB);
-    AsyncImageLoader ail =
-      new AsyncImageLoader(filename, extension, vessel);
-    ail.start();
-    return vessel;
-  }
 
-
-//  /**
-//   * @nowebref
-//   */
-//  public PImage requestImage(String filename, String extension, Object params) {
-//    PImage vessel = createImage(0, 0, ARGB, params);
-//    AsyncImageLoader ail =
-//      new AsyncImageLoader(filename, extension, vessel);
-//    ail.start();
-//    return vessel;
-//  }
-
-
-  /**
-   * By trial and error, four image loading threads seem to work best when
-   * loading images from online. This is consistent with the number of open
-   * connections that web browsers will maintain. The variable is made public
-   * (however no accessor has been added since it's esoteric) if you really
-   * want to have control over the value used. For instance, when loading local
-   * files, it might be better to only have a single thread (or two) loading
-   * images so that you're disk isn't simply jumping around.
-   */
-  public int requestImageMax = 4;
-  volatile int requestImageCount;
-
-  private static final String ASYNC_IMAGE_LOADER_THREAD_PREFIX = "ASYNC_IMAGE_LOADER";
-
-  class AsyncImageLoader extends Thread {
-    String filename;
-    String extension;
-    PImage vessel;
-
-    public AsyncImageLoader(String filename, String extension, PImage vessel) {
-      // Give these threads distinct name so we can check whether we are loading
-      // on the main/background thread; for now they are all named the same
-      super(ASYNC_IMAGE_LOADER_THREAD_PREFIX);
-      this.filename = filename;
-      this.extension = extension;
-      this.vessel = vessel;
+    // if the image loading thread pool hasn't been created, create it
+    if (requestImagePool == null) {
+      ThreadFactory factory = new ThreadFactory() {
+        public Thread newThread(Runnable r) {
+          return new Thread(r, REQUEST_IMAGE_THREAD_PREFIX);
+        }
+      };
+      requestImagePool = Executors.newFixedThreadPool(4, factory);
     }
-
-    @Override
-    public void run() {
-      while (requestImageCount == requestImageMax) {
-        try {
-          Thread.sleep(10);
-        } catch (InterruptedException e) { }
-      }
-      requestImageCount++;
-
+    requestImagePool.execute(() -> {
       PImage actual = loadImage(filename, extension);
 
       // An error message should have already printed
@@ -5669,29 +5633,9 @@ public class PApplet implements PConstants {
         vessel.pixelHeight = actual.height;
         vessel.pixelDensity = 1;
       }
-      requestImageCount--;
-    }
+    });
+    return vessel;
   }
-
-
-  // done internally by ImageIcon
-//  /**
-//   * Load an AWT image synchronously by setting up a MediaTracker for
-//   * a single image, and blocking until it has loaded.
-//   */
-//  protected PImage loadImageMT(Image awtImage) {
-//    MediaTracker tracker = new MediaTracker(this);
-//    tracker.addImage(awtImage, 0);
-//    try {
-//      tracker.waitForAll();
-//    } catch (InterruptedException e) {
-//      //e.printStackTrace();  // non-fatal, right?
-//    }
-//
-//    PImage image = new PImage(awtImage);
-//    image.parent = this;
-//    return image;
-//  }
 
 
   /**
