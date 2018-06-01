@@ -302,32 +302,41 @@ public class PGraphicsJava2D extends PGraphics {
 //        image = new BufferedImage(width * pixelFactor, height * pixelFactor
 //                                  format == RGB ?  BufferedImage.TYPE_INT_ARGB);
 
-      GraphicsConfiguration gc = null;
-      if (surface != null) {
-        Component comp = null;  //surface.getComponent();
-        if (comp == null) {
-//          System.out.println("component null, but parent.frame is " + parent.frame);
-          comp = parent.frame;
-        }
-        if (comp != null) {
-          gc = comp.getGraphicsConfiguration();
-        }
-      }
-      // If not realized (off-screen, i.e the Color Selector Tool), gc will be null.
-      if (gc == null) {
-        //System.err.println("GraphicsConfiguration null in initImage()");
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
-      }
+// Commenting this out, because we are not drawing directly to the screen [jv 2018-06-01]
+//
+//      GraphicsConfiguration gc = null;
+//      if (surface != null) {
+//        Component comp = null;  //surface.getComponent();
+//        if (comp == null) {
+////          System.out.println("component null, but parent.frame is " + parent.frame);
+//          comp = parent.frame;
+//        }
+//        if (comp != null) {
+//          gc = comp.getGraphicsConfiguration();
+//        }
+//      }
+//      // If not realized (off-screen, i.e the Color Selector Tool), gc will be null.
+//      if (gc == null) {
+//        //System.err.println("GraphicsConfiguration null in initImage()");
+//        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//        gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
+//      }
 
       // Formerly this was broken into separate versions based on offscreen or
       // not, but we may as well create a compatible image; it won't hurt, right?
+      // P.S.: Three years later, I'm happy to report it did in fact hurt [jv 2018-06-01]
       int wide = width * pixelDensity;
       int high = height * pixelDensity;
 //      System.out.println("re-creating image");
-      image = gc.createCompatibleImage(wide, high, Transparency.TRANSLUCENT);
-//      image = gc.createCompatibleVolatileImage(wide, high);
-      //image = surface.getComponent().createImage(width, height);
+
+      // For now we expect non-premultiplied INT ARGB and the compatible image
+      // might not be it... create the image directly. It's important that the
+      // image has all four bands, otherwise we get garbage alpha during blending
+      // (see https://github.com/processing/processing/pull/2645,
+      //      https://github.com/processing/processing/pull/3523)
+      //
+      // image = gc.createCompatibleImage(wide, high, Transparency.TRANSLUCENT);
+      image = new BufferedImage(wide, high, BufferedImage.TYPE_INT_ARGB);
     }
     return (Graphics2D) image.getGraphics();
   }
