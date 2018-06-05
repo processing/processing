@@ -3,6 +3,7 @@ package processing.data;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import processing.core.PApplet;
 
@@ -102,6 +103,20 @@ public class DoubleDict {
       keys[i] = (String) pairs[i][0];
       values[i] = (Float) pairs[i][1];
       indices.put(keys[i], i);
+    }
+  }
+
+
+  public DoubleDict(Map<String, Double> incoming) {
+    count = incoming.size();
+    keys = new String[count];
+    values = new double[count];
+    int index = 0;
+    for (Map.Entry<String, Double> e : incoming.entrySet()) {
+      keys[index] = e.getKey();
+      values[index] = e.getValue();
+      indices.put(keys[index], index);
+      index++;
     }
   }
 

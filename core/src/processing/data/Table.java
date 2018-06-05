@@ -4350,7 +4350,15 @@ public class Table {
           double diffd = getDouble(a, column) - getDouble(b, column);
           return diffd == 0 ? 0 : (diffd < 0 ? -1 : 1);
         case STRING:
-          return getString(a, column).compareToIgnoreCase(getString(b, column));
+          String string1 = getString(a, column);
+          if (string1 == null) {
+            string1 = "";  // avoid NPE when cells are left empty
+          }
+          String string2 = getString(b, column);
+          if (string2 == null) {
+            string2 = "";
+          }
+          return string1.compareToIgnoreCase(string2);
         case CATEGORY:
           return getInt(a, column) - getInt(b, column);
         default:

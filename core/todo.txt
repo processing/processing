@@ -1,6 +1,7 @@
 0265 (3.4)
 X change lack of blendMode() to a warning rather than an error in PDF
 X rewrite exec() to do threads, also handle fast/excessive output cases
+X rewrite requestImage() to fix errors/slowness/concurrency problems
 
 data classes
 X add Double and Long versions of the data classes
@@ -10,6 +11,7 @@ X   sort only uses the sign of the value
 X   more accurate than float, especially when using double and long values
 X consistently implement write(PrintWriter) in the List and Dict classes
 X add save(File) to the List and Dict classes
+X prevent Table.sort() from throwing NPE with empty cells
 _ Dict.remove() should return value, not index (for consistency w/ others)
 _ check again whether element 0,0 in a Table is working
 _   https://github.com/processing/processing/issues/3011

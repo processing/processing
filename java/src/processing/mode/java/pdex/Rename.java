@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.text.BadLocationException;
 
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -73,7 +73,7 @@ class Rename {
     window = new JDialog(editor);
     JRootPane rootPane = window.getRootPane();
     window.setTitle("Rename");
-    window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    window.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     Toolkit.registerWindowCloseKeys(rootPane, new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

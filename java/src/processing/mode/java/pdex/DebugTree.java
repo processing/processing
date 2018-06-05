@@ -9,9 +9,9 @@ import java.util.Deque;
 import java.util.function.Consumer;
 
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.WindowConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -23,6 +23,7 @@ import processing.app.Messages;
 import processing.app.ui.ZoomTreeCellRenderer;
 import processing.mode.java.JavaEditor;
 import processing.mode.java.pdex.PreprocessedSketch.SketchInterval;
+
 
 class DebugTree {
   final JDialog window;
@@ -59,7 +60,7 @@ class DebugTree {
         tree.setModel(null);
       }
     });
-    window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    window.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     window.setBounds(new Rectangle(680, 100, 460, 620));
     window.setTitle("AST View - " + editor.getSketch().getName());
     JScrollPane sp = new JScrollPane();

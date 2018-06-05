@@ -594,7 +594,14 @@ public class XML implements Serializable {
     children = null;  // TODO not efficient
   }
 
-
+  /**
+   * Removes whitespace nodes.
+   * Those whitespace nodes are required to reconstruct the original XML's spacing and indentation.
+   * If you call this and use saveXML() your original spacing will be gone.
+   * 
+   * @nowebref
+   * @brief Removes whitespace nodes
+   */
   public void trim() {
     try {
       XPathFactory xpathFactory = XPathFactory.newInstance();
