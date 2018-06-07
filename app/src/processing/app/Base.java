@@ -1889,7 +1889,7 @@ public class Base {
       }
     } catch (Exception e) {
       Messages.showError("Problem getting the settings folder",
-                         "Error getting the Processing the settings folder.", e);
+                         e.getMessage(), e);
     }
     return settingsFolder;
   }
