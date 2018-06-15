@@ -2906,6 +2906,18 @@ public class PShape implements PConstants {
         }
       }
       return c;
+    } else if (family == GROUP) {
+      // If this is a group, loop through children until we find one that 
+      // contains the supplied coordinates. If a child does not support contains()
+      // just throw a warning and continue.
+      for (int i = 0; i < childCount; i++) {
+        try {
+          if (children[i].contains(x, y)) return true;
+        } catch (IllegalArgumentException e) {
+          PGraphics.showWarning(e);
+        }
+      }
+      return false;
     } else {
       throw new IllegalArgumentException("The contains() method is only implemented for paths.");
     }
