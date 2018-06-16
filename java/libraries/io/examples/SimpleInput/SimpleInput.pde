@@ -5,7 +5,10 @@ import processing.io.*;
 // see setup.png in the sketch folder for wiring details
 
 void setup() {
-  GPIO.pinMode(4, GPIO.INPUT);
+  // INPUT_PULLUP enables the built-in pull-up resistor for this pin
+  // left alone, the pin will read as HIGH
+  // connected to ground (via e.g. a button or switch) it will read LOW
+  GPIO.pinMode(4, GPIO.INPUT_PULLUP);
 }
 
 void draw() {
