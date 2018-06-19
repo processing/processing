@@ -62,6 +62,9 @@ public class NativeInterface {
   }
 
   /* GPIO */
+  public static native int raspbianGpioMemRead(int offset);
+  public static native int raspbianGpioMemWrite(int offset, int mask, int value);
+  public static native int raspbianGpioMemSetPinBias(int gpio, int mode);
   public static native int pollDevice(String fn, int timeout);
   /* I2C */
   public static native int transferI2c(int handle, int slave, byte[] out, byte[] in);
