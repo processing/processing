@@ -356,14 +356,6 @@ public class GPIO {
       }
     }
 
-    // delay to give udev a chance to change the file permissions behind our back
-    // there should really be a cleaner way for this
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-    }
-
     // set direction and default level for outputs
     fn = String.format("/sys/class/gpio/gpio%d/direction", pin);
     String out;
@@ -395,7 +387,17 @@ public class GPIO {
     } else {
       throw new IllegalArgumentException("Unknown mode");
     }
-    ret = NativeInterface.writeFile(fn, out);
+
+    // we need to give udev some time to change the file permissions behind our back
+    // retry for 500ms when writing to the file fails with -EPERM
+    long start = System.currentTimeMillis();
+    do {
+      ret = NativeInterface.writeFile(fn, out);
+      if (ret == -1) {
+        Thread.yield();
+      }
+    } while (ret == -1 && System.currentTimeMillis()-start < 500);
+
     if (ret < 0) {
       throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
     }
