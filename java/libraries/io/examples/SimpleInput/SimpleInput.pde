@@ -12,10 +12,11 @@ void setup() {
 }
 
 void draw() {
-  // sense the input pin
-  if (GPIO.digitalRead(4) == GPIO.HIGH) {
+  if (GPIO.digitalRead(4) == GPIO.LOW) {
+    // button is pressed
     fill(255);
   } else {
+    // button is not pressed
     fill(204);
   }
   stroke(255);
