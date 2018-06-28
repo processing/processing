@@ -323,6 +323,9 @@ JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_transferI2c
 		packets.nmsgs++;
 	}
 
+	// set the timeout to 100ms - this helps slow devices such as the
+	// Arduino Uno to keep up
+	ioctl(handle, I2C_TIMEOUT, 10);
 	int ret = ioctl(handle, I2C_RDWR, &packets);
 	if (ret < 0) {
 		ret = -errno;
