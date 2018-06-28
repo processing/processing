@@ -1018,6 +1018,7 @@ public class PSurfaceFX implements PSurface {
       case SUBTRACT:
         return '-';
       case ADD:
+      case PLUS:
         return '+';
       case NUMPAD0:
         return '0';
