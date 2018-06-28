@@ -304,21 +304,23 @@ JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_transferI2c
 	jbyte *out, *in;
 
 	packets.msgs = msgs;
+	packets.nmsgs = 0;
 
-	msgs[0].addr = slave;
-	msgs[0].flags = 0;
-	msgs[0].len = (*env)->GetArrayLength(env, _out);
-	out = (*env)->GetByteArrayElements(env, _out, NULL);
-	msgs[0].buf = out;
+	if (_out != NULL) {
+		msgs[packets.nmsgs].addr = slave;
+		msgs[packets.nmsgs].flags = 0;
+		msgs[packets.nmsgs].len = (*env)->GetArrayLength(env, _out);
+		out = (*env)->GetByteArrayElements(env, _out, NULL);
+		msgs[packets.nmsgs].buf = out;
+		packets.nmsgs++;
+	}
 	if (_in != NULL) {
+		msgs[packets.nmsgs].addr = slave;
+		msgs[packets.nmsgs].flags = I2C_M_RD;	// I2C_M_RECV_LEN is not supported
+		msgs[packets.nmsgs].len = (*env)->GetArrayLength(env, _in);
 		in = (*env)->GetByteArrayElements(env, _in, NULL);
-		msgs[1].addr = slave;
-		msgs[1].flags = I2C_M_RD;	// I2C_M_RECV_LEN is not supported
-		msgs[1].len = (*env)->GetArrayLength(env, _in);
-		msgs[1].buf = in;
-		packets.nmsgs = 2;
-	} else {
-		packets.nmsgs = 1;
+		msgs[packets.nmsgs].buf = in;
+		packets.nmsgs++;
 	}
 
 	int ret = ioctl(handle, I2C_RDWR, &packets);
@@ -326,7 +328,9 @@ JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_transferI2c
 		ret = -errno;
 	}
 
-	(*env)->ReleaseByteArrayElements(env, _out, out, JNI_ABORT);
+	if (_out != NULL) {
+		(*env)->ReleaseByteArrayElements(env, _out, out, JNI_ABORT);
+	}
 	if (_in != NULL) {
 		(*env)->ReleaseByteArrayElements(env, _in, in, 0);
 	}
