@@ -1016,9 +1016,16 @@ public class PSurfaceFX implements PSurface {
       case MULTIPLY:
         return '*';
       case SUBTRACT:
+      case MINUS:
+        if (fxEvent.isShiftDown()) {
+          return '_';
+        }
         return '-';
       case ADD:
       case PLUS:
+        if (fxEvent.isShiftDown()) {
+          return '*';
+        }
         return '+';
       case NUMPAD0:
         return '0';
@@ -1040,12 +1047,79 @@ public class PSurfaceFX implements PSurface {
         return '8';
       case NUMPAD9:
         return '9';
+      case DIGIT1:
+        if (fxEvent.isShiftDown()) {
+          return '!';
+        }
+        return '1';
+      case DIGIT2:
+        if (fxEvent.isShiftDown()) {
+          return '"';
+        }
+        return '2';
+      case DIGIT3:
+        if (fxEvent.isShiftDown()) {
+          return '§';
+        }
+        return '3';
+      case DIGIT4:
+        if (fxEvent.isShiftDown()) {
+          return '$';
+        }
+        return '4';
+      case DIGIT5:
+        if (fxEvent.isShiftDown()) {
+          return '%';
+        }
+        return '5';
+      case DIGIT6:
+        if (fxEvent.isShiftDown()) {
+          return '&';
+        }
+        return '6';
+      case DIGIT7:
+        if (fxEvent.isShiftDown()) {
+          return '/';
+        }
+        return '7';
+      case DIGIT8:
+        if (fxEvent.isShiftDown()) {
+          return '(';
+        }
+        return '8';
+      case DIGIT9:
+        if (fxEvent.isShiftDown()) {
+          return ')';
+        }
+        return '9';
+      case DIGIT0:
+        if (fxEvent.isShiftDown()) {
+          return '=';
+        }
+        return '0';
       case DECIMAL:
         // KEY_TYPED does not go through here and will produce
         // dot or comma based on the keyboard layout.
         // For KEY_PRESSED and KEY_RELEASED, let's just go with
         // the dot. Users can detect the key by its keyCode.
         return '.';
+      case NUMBER_SIGN:
+        return '#';
+      case LESS:
+        if (fxEvent.isShiftDown()) {
+          return '>';
+        }
+        return '<';
+      case PERIOD:
+        if (fxEvent.isShiftDown()) {
+          return ':';
+        }
+        return '.';
+      case COMMA:
+        if (fxEvent.isShiftDown()) {
+          return ';';
+        }
+        return ',';
       case UNDEFINED:
         // KEY_TYPED has KeyCode: UNDEFINED
         // and falls through here
