@@ -5,6 +5,9 @@ SPI spi;
 // datasheet: http://ww1.microchip.com/downloads/en/DeviceDoc/21293C.pdf
 // see setup.png in the sketch folder for wiring details
 
+// also see AnalogDigital_SPI_MCP3001 for how to write the
+// same sketch in an object-oriented way
+
 void setup() {
   //printArray(SPI.list());
   spi = new SPI(SPI.list()[0]);
