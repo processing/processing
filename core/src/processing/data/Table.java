@@ -129,11 +129,25 @@ public class Table {
           extensionOptions(true, file.getName(), options));
   }
 
+  public Table(File file, String options, char delimiter) throws IOException {
+    // uses createInput() to handle .gz (and eventually .bz2) files
+    this.delimiter = delimiter;
+    init();
+    parse(PApplet.createInput(file),
+          extensionOptions(true, file.getName(), options));
+  }
+
   /**
    * @nowebref
    */
   public Table(InputStream input) throws IOException {
     this(input, null);
+  }
+
+
+  public Table(InputStream input, char delimiter) throws IOException {
+    this(input, null);
+    this.delimiter = delimiter;
   }
 
 
@@ -1274,7 +1288,7 @@ public class Table {
     if (columnTitles != null) {
       for (int col = 0; col < getColumnCount(); col++) {
         if (col != 0) {
-          writer.print(',');
+          writer.print(delimiter);
         }
         try {
           if (columnTitles[col] != null) {  // col < columnTitles.length &&
@@ -1291,7 +1305,7 @@ public class Table {
     for (int row = 0; row < rowCount; row++) {
       for (int col = 0; col < getColumnCount(); col++) {
         if (col != 0) {
-          writer.print(',');
+          writer.print(delimiter);
         }
         String entry = getString(row, col);
         // just write null entries as blanks, rather than spewing 'null'

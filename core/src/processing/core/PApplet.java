@@ -6122,6 +6122,14 @@ public class PApplet implements PConstants {
 
 
   /**
+   * Other version with a delimiter
+   */
+  public Table loadTable(String filename, char delimiter) {
+    return loadTable(filename, null, delimiter);
+  }
+
+
+  /**
    * Options may contain "header", "tsv", "csv", or "bin" separated by commas.
    *
    * Another option is "dictionary=filename.tsv", which allows users to
@@ -6163,7 +6171,7 @@ public class PApplet implements PConstants {
 
 
   /**
-   * Same method as above inclusive a optiona delimiter. 
+   * Other version with a delimiter
    */
   public Table loadTable(String filename, String options, char delimiter) {
 
