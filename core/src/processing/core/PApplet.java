@@ -6161,6 +6161,10 @@ public class PApplet implements PConstants {
     }
   }
 
+
+  /**
+   * Same method as above inclusive a optiona delimiter. 
+   */
   public Table loadTable(String filename, String options, char delimiter) {
 
     //System.out.printf("DEBUG: class: PApplet loadTable(String, String) filename=%s, options=%s\n",filename, options); //DEBUG
@@ -6181,6 +6185,8 @@ public class PApplet implements PConstants {
         System.err.println(filename + " does not exist or could not be read");
         return null;
       }
+
+      // call a other constructor of Table
       return new Table(input, optionStr, delimiter);
 
     } catch (IOException e) {

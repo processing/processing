@@ -98,6 +98,7 @@ public class Table {
   // each expansion.
   protected int expandIncrement;
 
+  // free delimiter - standard is the comma-seperator
   protected char delimiter = ',';
 
   /**
@@ -573,6 +574,7 @@ public class Table {
 //    int offset;
     int start; //, stop;
 
+    // free delimiter. standard is comma-seperator
     char delimiter = ',';
 
     String[] handle(String line, BufferedReader reader, char delimiter) throws IOException {
