@@ -6134,6 +6134,9 @@ public class PApplet implements PConstants {
    * @param options may contain "header", "tsv", "csv", or "bin" separated by commas
    */
   public Table loadTable(String filename, String options) {
+
+   // System.out.printf("DEBUG: class: PApplet loadTable(String, String) filename=%s, options=%s\n",filename, options); //DEBUG
+
     try {
       String optionStr = Table.extensionOptions(true, filename, options);
       String[] optionList = trim(split(optionStr, ','));
@@ -6151,6 +6154,34 @@ public class PApplet implements PConstants {
         return null;
       }
       return new Table(input, optionStr);
+
+    } catch (IOException e) {
+      printStackTrace(e);
+      return null;
+    }
+  }
+
+  public Table loadTable(String filename, String options, char delimiter) {
+
+    //System.out.printf("DEBUG: class: PApplet loadTable(String, String) filename=%s, options=%s\n",filename, options); //DEBUG
+
+    try {
+      String optionStr = Table.extensionOptions(true, filename, options);
+      String[] optionList = trim(split(optionStr, ','));
+
+      Table dictionary = null;
+      for (String opt : optionList) {
+        if (opt.startsWith("dictionary=")) {
+          dictionary = loadTable(opt.substring(opt.indexOf('=') + 1), "tsv");
+          return dictionary.typedParse(createInput(filename), optionStr);
+        }
+      }
+      InputStream input = createInput(filename);
+      if (input == null) {
+        System.err.println(filename + " does not exist or could not be read");
+        return null;
+      }
+      return new Table(input, optionStr, delimiter);
 
     } catch (IOException e) {
       printStackTrace(e);
