@@ -62,6 +62,8 @@ public class Compiler {
     SketchException exception = null;
     boolean success = false;
 
+    // System.out.printf("DEBUG: class Compiler -- BEGIN compile(...)\n"); //DEBUG
+
     String baseCommand[] = new String[] {
       "-g",
       "-Xemacs",
@@ -78,6 +80,8 @@ public class Compiler {
     String[] sourceFiles = Util.listFiles(build.getSrcFolder(), false, ".java");
     String[] command = PApplet.concat(baseCommand, sourceFiles);
     //PApplet.println(command);
+
+    // System.out.printf("DEBUG: class Compiler -- BEGIN  -- compile(...) exception=%s\n",exception); // DEBUG 
 
     try {
       // Load errors into a local StringBuilder
@@ -107,6 +111,10 @@ public class Compiler {
       // Version that *is* dynamically loaded. First gets the mode class loader
       // so that it can grab the compiler JAR files from it.
       ClassLoader loader = build.mode.getClassLoader();
+
+      // System.out.printf("DEBUG: class Compiler -- line 114 -- compile(...) exception=%s\n",exception); // DEBUG 
+      // System.err.println(errorBuffer.toString()); //DEBUG
+
       try {
         Class<?> batchClass =
           Class.forName("org.eclipse.jdt.core.compiler.batch.BatchCompiler", false, loader);
@@ -117,10 +125,14 @@ public class Compiler {
         Method compileMethod = batchClass.getMethod("compile", compileArgs);
         success = (Boolean)
           compileMethod.invoke(null, new Object[] { command, outWriter, writer, null });
+        // System.err.println(errorBuffer.toString()); //DEBUG
+
       } catch (Exception e) {
         e.printStackTrace();
         throw new SketchException("Unknown error inside the compiler.");
       }
+
+      // System.err.println(errorBuffer.toString()); //DEBUG
 
       // Close out the stream for good measure
       writer.flush();
@@ -128,17 +140,18 @@ public class Compiler {
 
       BufferedReader reader =
         new BufferedReader(new StringReader(errorBuffer.toString()));
-      //System.err.println(errorBuffer.toString());
+      // System.err.println(errorBuffer.toString()); //DEBUG
 
       String line = null;
       while ((line = reader.readLine()) != null) {
-        //System.out.println("got line " + line);  // debug
+        // System.out.println("got line " + line);  // debug
 
         // get first line, which contains file name, line number,
         // and at least the first line of the error message
         String errorFormat = "([\\w\\d_]+.java):(\\d+):\\s*(.*):\\s*(.*)\\s*";
         String[] pieces = PApplet.match(line, errorFormat);
-        //PApplet.println(pieces);
+        // PApplet.println(pieces);
+        // System.out.println(pieces[4]); //DEBUG 
 
         // if it's something unexpected, die and print the mess to the console
         if (pieces == null) {
@@ -159,11 +172,19 @@ public class Compiler {
         int dotJavaLineIndex = PApplet.parseInt(pieces[2]) - 1;
         String errorMessage = pieces[4];
 
+        // extended error message
+        if (errorMessage.length() <= 3) {
+          errorMessage = pieces[3] + " " + errorMessage;
+        }
+
+
         exception = build.placeException(errorMessage,
                                          dotJavaFilename,
                                          dotJavaLineIndex);
+        
 
         if (exception == null) {
+          // System.err.println(errorMessage); //DEBUG
           exception = new SketchException(errorMessage);
         }
 
@@ -304,6 +325,8 @@ public class Compiler {
           break;
         }
       }
+
+      // System.out.printf("DEBUG: class Compiler -- end of first try -- compile(...) exception=%s\n",exception); // DEBUG 
     } catch (IOException e) {
       String bigSigh = "Error while compiling. (" + e.getMessage() + ")";
       exception = new SketchException(bigSigh);
@@ -312,6 +335,8 @@ public class Compiler {
     }
     // In case there was something else.
     if (exception != null) throw exception;
+
+    // System.out.printf("DEBUG: class Compiler -- END of compile(...)\n"); // DEBUG 
 
     return success;
   }
