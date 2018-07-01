@@ -29,14 +29,14 @@ _   https://github.com/processing/processing/issues/5246
 
 
 pi & arm [from 3.3.7.1 special release]
-X IO: pinMode() can now set pull-up and pull-down resistors on Rasbian (thanks to @xranby for 64-bit help)
+X IO: pinMode() can now set pull-up and pull-down resistors on Raspbian (thanks to @xranby for 64-bit help)
 X IO: New example sketch showing how to use a MPR121 capacitive touch sensor (fun tutorial by @msurguy forthcoming)
 X IO: New example sketch showing how to use a BME280 environmental sensor (contributed by @OlivierLD)
 X IO: New example sketch showing how to use a TSL2561 light sensor (contributed by @OlivierLD)
 X IO: New example sketch showing how to use a PCA9685 Servo & PWM controller (contributed by @OlivierLD)
 X IO: pinMode() got faster
 X IO: I2C now supports talking to slower devices, such as Arduino boards
-X Support for ARM Mali graphics was added to P2D/P3D (thanks to seongwook from the forums for help during bringup)
+X Support for ARM Mali graphics was added to P2D/P3D (thanks to seongwook from the forums for his help during bringup)
 X P3D now supports up to 4 lights on Pi using their OpenGL driver
 X Serial library now supports Raspbian's port naming (such as "/dev/serial0")
 X Processing on ARM can now export applications for Microsoft Windows
