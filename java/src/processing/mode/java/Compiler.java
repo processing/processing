@@ -172,9 +172,16 @@ public class Compiler {
         int dotJavaLineIndex = PApplet.parseInt(pieces[2]) - 1;
         String errorMessage = pieces[4];
 
-        // extended error message
+        // extended error message or certain error message
         if (errorMessage.length() <= 3) {
-          errorMessage = pieces[3] + " " + errorMessage;
+          switch (errorMessage) {
+            case "23)": // cast error: int -> boolean
+              errorMessage = "int constant cannot be casted into boolean";
+              break;
+            default:
+              errorMessage = pieces[3] + " " + errorMessage;
+              break;
+          }
         }
 
 
