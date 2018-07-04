@@ -158,7 +158,7 @@ public class Compiler {
 
         // extended error message or certain error message
         
-        if (!errorMessage.matches("(a-zA-Z|\\s)+")) {
+        if (!errorMessage.matches("([\\w\\d_]+.java):(\\d+):\\s*(.*):\\s*(.*)\\s*")) {
           switch (errorMessage) {
             case "23)": // cast error: int -> boolean
               errorMessage = "int constant cannot be casted into boolean";
