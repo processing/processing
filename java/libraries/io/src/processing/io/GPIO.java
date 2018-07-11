@@ -389,14 +389,14 @@ public class GPIO {
     }
 
     // we need to give udev some time to change the file permissions behind our back
-    // retry for 500ms when writing to the file fails with -EPERM
+    // retry for 500ms when writing to the file fails with -EACCES
     long start = System.currentTimeMillis();
     do {
       ret = NativeInterface.writeFile(fn, out);
-      if (ret == -1) {
+      if (ret == -13) {
         Thread.yield();
       }
-    } while (ret == -1 && System.currentTimeMillis()-start < 500);
+    } while (ret == -13 && System.currentTimeMillis()-start < 500);
 
     if (ret < 0) {
       throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
