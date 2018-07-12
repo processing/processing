@@ -99,12 +99,14 @@ public class PSurfaceFX implements PSurface {
 
         if (sketch.exitCalled()) {
           // using Platform.runLater() didn't work
-//          Platform.runLater(new Runnable() {
-//            public void run() {
-          // instead of System.exit(), safely shut down JavaFX this way
+          Platform.runLater(new Runnable() {
+            public void run() {
+          // first safely shut down JavaFX this way
           Platform.exit();
-//            }
-//          });
+          // then System.exit()
+          System.exit(0);
+            }
+          });
         }
         if (sketch.frameCount > 5) {
           animation.setRate(-PApplet.min(1e9f / drawNanos, frameRate));
