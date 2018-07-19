@@ -1888,8 +1888,10 @@ public class Base {
         }
       }
     } catch (Exception e) {
-      Messages.showError("Problem getting the settings folder",
-                         "Error getting the Processing the settings folder.", e);
+      Messages.showTrace("An rare and unknowable thing happened",
+                         "Could not get the settings folder. Please report:\n" +
+                         "http://github.com/processing/processing/issues/new",
+                         e, true);
     }
     return settingsFolder;
   }
