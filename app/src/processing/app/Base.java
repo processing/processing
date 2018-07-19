@@ -116,7 +116,24 @@ public class Base {
         public void run() {
           try {
             createAndShowGUI(args);
+
           } catch (Throwable t) {
+            // Windows Defender has been insisting on destroying each new
+            // release by removing core.jar and other files. Yay!
+            // https://github.com/processing/processing/issues/5537
+            if (Platform.isWindows()) {
+              String mess = t.getMessage();
+              if (mess.contains("Could not initialize class com.sun.jna.Native") ||
+                  mess.contains("NoClassDefFoundError: processing/core/PApplet")) {
+                Messages.showError("Necessary files are missing",
+                                   "Files required by Processing appear to be missing.\n\n" +
+                                   "Make sure that you're not trying to run Processing from inside\n" +
+                                   "the .zip file you downloaded, and check that Windows Defender\n" +
+                                   "hasn't removed files from the Processing folder.\n\n" +
+                                   "(It sometimes flags parts of Processing as a trojan or virus.\n" +
+                                   "It is neither, but Microsoft has ignored our pleas for help.)", t);
+              }
+            }
             Messages.showTrace("It was not meant to be",
                                "A serious problem happened during startup. Please report:\n" +
                                "http://github.com/processing/processing/issues/new", t, true);
