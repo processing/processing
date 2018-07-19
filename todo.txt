@@ -24,22 +24,44 @@ X   https://github.com/jdf/processing.py/issues/284
 o update to launch4j 3.11? 
 o   http://launch4j.sourceforge.net/changelog.html
 X update to Java 8u172
+X show alternate error message on windows when JNA breaks or core.jar is missing
+_   https://github.com/processing/processing/issues/5537
+_   https://github.com/processing/processing/issues/4929
+X   https://github.com/processing/processing/issues/5442
+_   https://www.microsoft.com/en-us/wdsi/filesubmission
 _ Examples dialog causes high CPU load
 _   https://github.com/processing/processing/issues/5246
 
 
-pi & arm [from 3.3.7.1 special release]
-X IO: pinMode() can now set pull-up and pull-down resistors on Raspbian (thanks to @xranby for 64-bit help)
-X IO: New example sketch showing how to use a MPR121 capacitive touch sensor (fun tutorial by @msurguy forthcoming)
-X IO: New example sketch showing how to use a BME280 environmental sensor (contributed by @OlivierLD)
-X IO: New example sketch showing how to use a TSL2561 light sensor (contributed by @OlivierLD)
-X IO: New example sketch showing how to use a PCA9685 Servo & PWM controller (contributed by @OlivierLD)
+gohai 
+X additional I/O improvements
+X   https://github.com/processing/processing/pull/5581
+
+gohai (from 3.3.7.1 special release)
+X IO: pinMode() can now set pull-up and pull-down resistors on Raspbian
+X   thanks to @xranby for 64-bit help
+X several new examples
+X   https://github.com/processing/processing/pull/5566
+X IO: New example sketch showing how to use a MPR121 capacitive touch sensor
+X   fun tutorial by @msurguy forthcoming
+X IO: New example sketch showing how to use a BME280 environmental sensor
+X   contributed by @OlivierLD
+X IO: New example sketch showing how to use a TSL2561 light sensor
+X   contributed by @OlivierLD
+X IO: New example sketch showing how to use a PCA9685 Servo & PWM controller
+X   contributed by @OlivierLD
 X IO: pinMode() got faster
+X   https://github.com/processing/processing/pull/5557
 X IO: I2C now supports talking to slower devices, such as Arduino boards
-X Support for ARM Mali graphics was added to P2D/P3D (thanks to seongwook from the forums for his help during bringup)
+X   https://github.com/processing/processing/pull/5567
+X Support for ARM Mali graphics was added to P2D/P3D
+X   thanks to seongwook from the forums for his help during bringup
+X   https://github.com/processing/processing/pull/5485
 X P3D now supports up to 4 lights on Pi using their OpenGL driver
 X Serial library now supports Raspbian's port naming (such as "/dev/serial0")
-X Processing on ARM can now export applications for Microsoft Windows
+X Enable exporting of Windows applications on ARM
+X   https://github.com/processing/processing/pull/5488
+X   https://github.com/processing/processing/issues/5287
 
 
 contrib
