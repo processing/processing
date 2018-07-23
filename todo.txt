@@ -31,11 +31,18 @@ X   https://github.com/processing/processing/issues/5442
 _   https://www.microsoft.com/en-us/wdsi/filesubmission
 _ Examples dialog causes high CPU load
 _   https://github.com/processing/processing/issues/5246
+X update to Java 8u181
+X   https://github.com/processing/processing/pull/5586
 
 
 gohai 
 X additional I/O improvements
 X   https://github.com/processing/processing/pull/5581
+X rpi regressions in 3.3.7.1
+X   https://github.com/processing/processing/issues/5582
+X OpenGL ES: Fix GLSL version number for 1.00
+X   https://github.com/processing/processing/pull/5583
+
 
 gohai (from 3.3.7.1 special release)
 X IO: pinMode() can now set pull-up and pull-down resistors on Raspbian
@@ -62,6 +69,8 @@ X Serial library now supports Raspbian's port naming (such as "/dev/serial0")
 X Enable exporting of Windows applications on ARM
 X   https://github.com/processing/processing/pull/5488
 X   https://github.com/processing/processing/issues/5287
+X clarify SimpleInput example
+X   https://github.com/processing/processing/pull/5558
 
 
 contrib
