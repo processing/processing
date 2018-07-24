@@ -33,6 +33,9 @@ _ Examples dialog causes high CPU load
 _   https://github.com/processing/processing/issues/5246
 X update to Java 8u181
 X   https://github.com/processing/processing/pull/5586
+_ Find in Reference disabled for various keywords (draw, for, if, catch, while)
+_   https://github.com/processing/processing/issues/5562
+_ "Could not find a examples in the downloaded file" is a poorly worded message
 
 
 gohai 
@@ -71,6 +74,15 @@ X   https://github.com/processing/processing/pull/5488
 X   https://github.com/processing/processing/issues/5287
 X clarify SimpleInput example
 X   https://github.com/processing/processing/pull/5558
+
+
+jakub
+X Make sure editor is updated after reloading changes
+X   https://github.com/processing/processing/pull/5487
+X   https://github.com/processing/processing/issues/5466
+_ Fix sketch exception getting hidden by warning
+_   https://github.com/processing/processing/pull/5486
+_   https://github.com/processing/processing/issues/5412
 
 
 contrib
