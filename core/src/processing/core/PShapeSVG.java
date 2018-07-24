@@ -32,6 +32,8 @@ import java.awt.geom.Point2D;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -452,14 +454,27 @@ public class PShapeSVG extends PShape {
 
     String pointsAttr = element.getString("points");
     if (pointsAttr != null) {
-      String[] pointsBuffer = PApplet.splitTokens(pointsAttr);
-      vertexCount = pointsBuffer.length;
+      Pattern pattern = Pattern.compile("([+-]?[\\d]+(\\.[\\d]+)?([eE][+-][\\d]+)?)(,?\\s*)([+-]?[\\d]+(\\.[\\d]+)?([eE][+-][\\d]+)?)");
+      Matcher matcher = pattern.matcher(pointsAttr);
+      vertexCount = 0;
+      while (matcher.find()) {
+        vertexCount++;
+      }
+      matcher.reset();
       vertices = new float[vertexCount][2];
       for (int i = 0; i < vertexCount; i++) {
-        String pb[] = PApplet.splitTokens(pointsBuffer[i], ", \t\r\n");
-        vertices[i][X] = Float.parseFloat(pb[0]);
-        vertices[i][Y] = Float.parseFloat(pb[1]);
+        matcher.find();
+        vertices[i][X] = Float.parseFloat(matcher.group(1));
+        vertices[i][Y] = Float.parseFloat(matcher.group(5));
       }
+//      String[] pointsBuffer = PApplet.splitTokens(pointsAttr);
+//      vertexCount = pointsBuffer.length;
+//      vertices = new float[vertexCount][2];
+//      for (int i = 0; i < vertexCount; i++) {
+//        String pb[] = PApplet.splitTokens(pointsBuffer[i], ", \t\r\n");
+//        vertices[i][X] = Float.parseFloat(pb[0]);
+//        vertices[i][Y] = Float.parseFloat(pb[1]);
+//      }
     }
   }
 
