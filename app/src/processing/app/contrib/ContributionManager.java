@@ -61,6 +61,7 @@ public class ContributionManager {
     boolean success = false;
     try {
       HttpURLConnection conn = (HttpURLConnection) source.openConnection();
+      // Will not handle a protocol change (see below)
       HttpURLConnection.setFollowRedirects(true);
       conn.setConnectTimeout(15 * 1000);
       conn.setReadTimeout(60 * 1000);
@@ -89,27 +90,37 @@ public class ContributionManager {
         progress.startTask(Language.text("contrib.progress.downloading"), fileSize);
       }
 
-      InputStream in = conn.getInputStream();
-      FileOutputStream out = new FileOutputStream(dest);
+      int response = conn.getResponseCode();
+      // Default won't follow HTTP -> HTTPS redirects for security reasons
+      // http://stackoverflow.com/a/1884427
+      if (response >= 300 && response < 400) {
+        // Handle SSL redirects from HTTP sources
+        // https://github.com/processing/processing/issues/5554
+        String newLocation = conn.getHeaderField("Location");
+        return download(new URL(newLocation), post, dest, progress);
 
-      byte[] b = new byte[8192];
-      int amount;
-      if (progress != null) {
-        int total = 0;
-        while (!progress.isCanceled() && (amount = in.read(b)) != -1) {
-          out.write(b, 0, amount);
-          total += amount;
-          progress.setProgress(total);
-        }
       } else {
-        while ((amount = in.read(b)) != -1) {
-          out.write(b, 0, amount);
-        }
-      }
-      out.flush();
-      out.close();
-      success = true;
+        InputStream in = conn.getInputStream();
+        FileOutputStream out = new FileOutputStream(dest);
 
+        byte[] b = new byte[8192];
+        int amount;
+        if (progress != null) {
+          int total = 0;
+          while (!progress.isCanceled() && (amount = in.read(b)) != -1) {
+            out.write(b, 0, amount);
+            total += amount;
+            progress.setProgress(total);
+          }
+        } else {
+          while ((amount = in.read(b)) != -1) {
+            out.write(b, 0, amount);
+          }
+        }
+        out.flush();
+        out.close();
+        success = true;
+      }
     } catch (SocketTimeoutException ste) {
       if (progress != null) {
         progress.error(ste);
@@ -120,8 +131,6 @@ public class ContributionManager {
         progress.error(ioe);
         progress.cancel();
       }
-      // Hiding stack trace. An error has been shown where needed.
-//      ioe.printStackTrace();
     }
     if (progress != null) {
       progress.finished();

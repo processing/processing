@@ -33,6 +33,8 @@ _ Examples dialog causes high CPU load
 _   https://github.com/processing/processing/issues/5246
 X update to Java 8u181
 X   https://github.com/processing/processing/pull/5586
+X Contributed libraries/examples/etc that redirect to https are failing download
+X   https://github.com/processing/processing/issues/5554
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
 _   https://github.com/processing/processing/issues/5562
 _ "Could not find a examples in the downloaded file" is a poorly worded message
