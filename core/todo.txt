@@ -31,6 +31,11 @@ X   https://github.com/processing/processing/pull/5475
 contrib
 X Fixed a crash occuring while loading certain SVGs exported from Illustrator
 X   https://github.com/processing/processing/pull/5526
+X Support PShape.contains() on GROUP objects
+X   https://github.com/processing/processing/pull/5550
+X Improve implementation of PShape.contains() to take the CTM into account
+X   https://github.com/processing/processing/pull/5549
+
 
 3.4
 _ add circle() and square()
