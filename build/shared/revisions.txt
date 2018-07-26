@@ -2,7 +2,8 @@ PROCESSING 3.4 (REV 0265) - 26 July 2018
 
 Kind of a huge batch of bug fixes and updates. 
 
-We've had trouble on Windows when MS Security Essentials or Windows Defender decides to defend your machine from our software, removing files from the 
+We've had trouble on Windows when MS Security Essentials or Windows Defender
+decides to defend your machine from our software, removing files from the 
 download and making Processing unusable. A few extra checks have been added
 so that more helpful warnings can be conveyed when this happens.
 
