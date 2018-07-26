@@ -47,6 +47,8 @@ X rpi regressions in 3.3.7.1
 X   https://github.com/processing/processing/issues/5582
 X OpenGL ES: Fix GLSL version number for 1.00
 X   https://github.com/processing/processing/pull/5583
+X Add ADS1X15 Analog-to-Digital converter example
+X   https://github.com/processing/processing/pull/5590
 
 
 gohai (from 3.3.7.1 special release)
