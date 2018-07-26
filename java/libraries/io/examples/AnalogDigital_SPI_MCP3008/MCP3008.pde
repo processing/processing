@@ -11,7 +11,8 @@ class MCP3008 extends SPI {
     settings(500000, SPI.MSBFIRST, SPI.MODE0);
   }
 
-  float getAnalog(int channel) {
+  // returns a number between 0.0 and 1.0
+  float analogRead(int channel) {
     if (channel < 0 ||  7 < channel) {
       System.err.println("The channel needs to be from 0 to 7");
       throw new IllegalArgumentException("Unexpected channel");

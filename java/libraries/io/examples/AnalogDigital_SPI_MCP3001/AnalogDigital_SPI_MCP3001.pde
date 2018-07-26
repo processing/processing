@@ -9,5 +9,12 @@ void setup() {
 }
 
 void draw() {
-  background(adc.getAnalog() * 255);
+  // this will return a number between 0 and 1
+  float measured = adc.analogRead();
+
+  // multiply with the supply voltage to get an absolute value
+  float volts = 3.3 * measured;
+  println("Analog Input is " + volts + "V");
+
+  background(measured * 255);
 }
