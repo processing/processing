@@ -12,9 +12,6 @@ X   more accurate than float, especially when using double and long values
 X consistently implement write(PrintWriter) in the List and Dict classes
 X add save(File) to the List and Dict classes
 X prevent Table.sort() from throwing NPE with empty cells
-_ Dict.remove() should return value, not index (for consistency w/ others)
-_ check again whether element 0,0 in a Table is working
-_   https://github.com/processing/processing/issues/3011
 
 jakub
 X Semi-transparent colors do not display properly in PGraphics
@@ -38,7 +35,13 @@ X Improve implementation of PShape.contains() to take the CTM into account
 X   https://github.com/processing/processing/pull/5549
 
 
-3.4
+data
+_ Dict.remove() should return value, not index (for consistency w/ others)
+_ check again whether element 0,0 in a Table is working
+_   https://github.com/processing/processing/issues/3011
+
+
+3.5+
 _ add circle() and square()
 _ add push() and pop()
 _ requestSize() and xxxxTitle() (to diminish use of 'surface')

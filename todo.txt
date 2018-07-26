@@ -1,7 +1,7 @@
 0265 (3.4)
 X make it possible to override theme.txt with a file in the sketchbook folder
 X   https://github.com/processing/processing/issues/5445
-_   https://github.com/processing/processing/wiki/Dark-Theme-for-PDE
+X   https://github.com/processing/processing/wiki/Dark-Theme-for-PDE
 X add 2018 to p5 launch screen
 X   also update the bmp version
 X redesign the Rename window to be less ugly
@@ -13,7 +13,7 @@ X add select/copy to the status bar
 X   https://github.com/processing/processing/issues/5271
 o   possible fix (just copies on click)
 o   https://github.com/processing/processing/pull/5345
-_   in the docs: modify 'search.format=' in preferences.txt
+X   in the docs: modify 'search.format=' in preferences.txt
 X refactoring inside the completion code
 X   https://github.com/processing/processing/commit/7e3661e9f7a6df1569c8bebc683e7742f50caa25
 X   https://github.com/processing/processing/commit/20c6f86c0d600806c991962eb208548ac45e9e2a
@@ -26,16 +26,24 @@ o   http://launch4j.sourceforge.net/changelog.html
 X update to Java 8u172
 X show alternate error message on windows when JNA breaks or core.jar is missing
 X   https://github.com/processing/processing/issues/5537
-_   https://github.com/processing/processing/issues/4929
+X   https://github.com/processing/processing/issues/4929
 X   https://github.com/processing/processing/issues/5442
-_   https://www.microsoft.com/en-us/wdsi/filesubmission
-_ Examples dialog causes high CPU load
-_   https://github.com/processing/processing/issues/5246
+X   https://www.microsoft.com/en-us/wdsi/filesubmission
 X update to Java 8u181
 X   https://github.com/processing/processing/pull/5586
 X Contributed libraries/examples/etc that redirect to https are failing download
 X   https://github.com/processing/processing/issues/5554
 
+welcome
+o just remove the welcome dialog; but what should the default behavior be?
+o   or should it only show up for people who have used <=2 but not 3?
+X click "show this welcome" text to check/uncheck the box
+X   https://github.com/processing/processing/issues/3912
+X submit the form (as if 'get started' clicked) when closing the window
+X   whether hitting ESC or the close box on the window
+X   https://github.com/processing/processing/issues/3911
+o Welcome dialog rewritten in Swing
+X   https://github.com/processing/processing/pull/5210
 
 gohai 
 X additional I/O improvements
@@ -46,7 +54,6 @@ X OpenGL ES: Fix GLSL version number for 1.00
 X   https://github.com/processing/processing/pull/5583
 X Add ADS1X15 Analog-to-Digital converter example
 X   https://github.com/processing/processing/pull/5590
-
 
 gohai (from 3.3.7.1 special release)
 X IO: pinMode() can now set pull-up and pull-down resistors on Raspbian
@@ -76,15 +83,10 @@ X   https://github.com/processing/processing/issues/5287
 X clarify SimpleInput example
 X   https://github.com/processing/processing/pull/5558
 
-
 jakub
 X Make sure editor is updated after reloading changes
 X   https://github.com/processing/processing/pull/5487
 X   https://github.com/processing/processing/issues/5466
-_ Fix sketch exception getting hidden by warning
-_   https://github.com/processing/processing/pull/5486
-_   https://github.com/processing/processing/issues/5412
-
 
 contrib
 X updates to Japanese translation
@@ -97,23 +99,19 @@ X Update java.lang.UnsupportedClassVersionError message
 X   https://github.com/processing/processing/pull/5459
 
 
-welcome
-o just remove the welcome dialog; but what should the default behavior be?
-o   or should it only show up for people who have used <=2 but not 3?
-X click "show this welcome" text to check/uncheck the box
-X   https://github.com/processing/processing/issues/3912
-X submit the form (as if 'get started' clicked) when closing the window
-X   whether hitting ESC or the close box on the window
-X   https://github.com/processing/processing/issues/3911
-o Welcome dialog rewritten in Swing
-X   https://github.com/processing/processing/pull/5210
+_ Examples dialog causes high CPU load
+_   https://github.com/processing/processing/issues/5246
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
-
-
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
 _   https://github.com/processing/processing/issues/5562
 _ "Could not find a examples in the downloaded file" is a poorly worded message
+
+
+jakub
+_ Fix sketch exception getting hidden by warning
+_   https://github.com/processing/processing/pull/5486
+_   https://github.com/processing/processing/issues/5412
 
 
 manager
