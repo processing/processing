@@ -25,7 +25,7 @@ o update to launch4j 3.11?
 o   http://launch4j.sourceforge.net/changelog.html
 X update to Java 8u172
 X show alternate error message on windows when JNA breaks or core.jar is missing
-_   https://github.com/processing/processing/issues/5537
+X   https://github.com/processing/processing/issues/5537
 _   https://github.com/processing/processing/issues/4929
 X   https://github.com/processing/processing/issues/5442
 _   https://www.microsoft.com/en-us/wdsi/filesubmission
@@ -35,9 +35,6 @@ X update to Java 8u181
 X   https://github.com/processing/processing/pull/5586
 X Contributed libraries/examples/etc that redirect to https are failing download
 X   https://github.com/processing/processing/issues/5554
-_ Find in Reference disabled for various keywords (draw, for, if, catch, while)
-_   https://github.com/processing/processing/issues/5562
-_ "Could not find a examples in the downloaded file" is a poorly worded message
 
 
 gohai 
@@ -112,6 +109,11 @@ o Welcome dialog rewritten in Swing
 X   https://github.com/processing/processing/pull/5210
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
+
+
+_ Find in Reference disabled for various keywords (draw, for, if, catch, while)
+_   https://github.com/processing/processing/issues/5562
+_ "Could not find a examples in the downloaded file" is a poorly worded message
 
 
 manager

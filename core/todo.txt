@@ -19,8 +19,9 @@ _   https://github.com/processing/processing/issues/3011
 jakub
 X Semi-transparent colors do not display properly in PGraphics
 X   https://github.com/processing/processing/issues/5519
-_ PR from Jakub
-_   https://github.com/processing/processing/pull/5522
+X Semi-transparent colors do not display properly in PGraphics
+X   https://github.com/processing/processing/issues/5519
+X   https://github.com/processing/processing/pull/5522
 
 gohai
 X Various ARM-related updates

@@ -123,10 +123,15 @@ public class Base {
             // https://github.com/processing/processing/issues/5537
             if (Platform.isWindows()) {
               String mess = t.getMessage();
-              if (mess.contains("Could not initialize class com.sun.jna.Native") ||
-                  mess.contains("NoClassDefFoundError: processing/core/PApplet")) {
+              String missing = null;
+              if (mess.contains("Could not initialize class com.sun.jna.Native")) {
+                missing = "jnidispatch.dll";
+              } else if (mess.contains("NoClassDefFoundError: processing/core/PApplet")) {
+                missing = "core.jar";
+              }
+              if (missing != null) {
                 Messages.showError("Necessary files are missing",
-                                   "Files required by Processing appear to be missing.\n\n" +
+                                   "A file required by Processing (" + missing + ") is missing.\n\n" +
                                    "Make sure that you're not trying to run Processing from inside\n" +
                                    "the .zip file you downloaded, and check that Windows Defender\n" +
                                    "hasn't removed files from the Processing folder.\n\n" +
@@ -134,8 +139,8 @@ public class Base {
                                    "It is neither, but Microsoft has ignored our pleas for help.)", t);
               }
             }
-            Messages.showTrace("It was not meant to be",
-                               "A serious problem happened during startup. Please report:\n" +
+            Messages.showTrace("Unknown Problem",
+                               "A serious error happened during startup. Please report:\n" +
                                "http://github.com/processing/processing/issues/new", t, true);
           }
         }
