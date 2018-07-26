@@ -10,7 +10,8 @@ class MCP3001 extends SPI {
     settings(500000, SPI.MSBFIRST, SPI.MODE0);
   }
 
-  float getAnalog() {
+  // returns a number between 0.0 and 1.0
+  float analogRead() {
     // dummy write, actual values don't matter
     byte[] out = { 0, 0 };
     byte[] in = transfer(out);

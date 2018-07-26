@@ -9,7 +9,14 @@ void setup() {
 }
 
 void draw() {
-  background(adc.getAnalog(0) * 255);
-  fill(adc.getAnalog(1) * 255);
+  // this will return a number between 0 and 1
+  float measured = adc.analogRead(0);
+
+  // multiply with the supply voltage to get an absolute value
+  float volts = 3.3 * measured;
+  println("Analog Input 0 is " + volts + "V");
+
+  background(255);
+  fill(measured * 255);
   ellipse(width/2, height/2, width * 0.75, width * 0.75);
 }
