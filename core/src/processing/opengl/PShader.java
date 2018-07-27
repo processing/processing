@@ -961,15 +961,23 @@ public class PShader implements PConstants {
 
     if (glProgram == 0 || contextIsOutdated() || shaderWasUpdated) {
       create();
-      if (compile()) {
-        pgl.attachShader(glProgram, glVertex);
-        pgl.attachShader(glProgram, glFragment);
+      try {
+        if (compile()) {
+          pgl.attachShader(glProgram, glVertex);
+          pgl.attachShader(glProgram, glFragment);
 
-        setup();
+          setup();
 
-        pgl.linkProgram(glProgram);
+          pgl.linkProgram(glProgram);
 
-        validate();
+          validate();
+        }
+      } catch (Exception e) {
+        if (shaderWasUpdated) {
+          System.err.println(e.getMessage());
+        } else {
+          throw e;
+        }
       }
     }
   }
