@@ -1682,7 +1682,7 @@ public class PJOGL extends PGL {
 
     byte[] log = new byte[length];
     gl2.glGetShaderInfoLog(shader, length, val, 0, log, 0);
-    return new String(log);
+    return new String(log).trim();
   }
 
   @Override
