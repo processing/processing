@@ -28,6 +28,8 @@
     </screenshot>
   </screenshots>
 
+  <content_rating type="oars-1.1" />
+
   <url type="homepage">http://www.processing.org/</url>
   <url type="help">https://processing.org/reference/</url>
   <url type="bugtracker">https://github.com/processing/processing/issues?q=is%3Aopen</url>
