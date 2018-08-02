@@ -30,6 +30,13 @@
 
   <content_rating type="oars-1.1" />
 
+  <releases>
+    <release date="2018-07-26" version="3.4" />
+    <release date="2018-07-22" version="3.3.7.2" />
+    <release date="2018-07-01" version="3.3.7.1" />
+    <release date="2018-03-13" version="3.3.7" />
+  </releases>
+
   <url type="homepage">http://www.processing.org/</url>
   <url type="help">https://processing.org/reference/</url>
   <url type="bugtracker">https://github.com/processing/processing/issues?q=is%3Aopen</url>
