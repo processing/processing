@@ -1,5 +1,8 @@
 0266 (3.4.1 or 3.5)
 
+_ NullPointerException at java.awt.Window.init(Window.java:497) when using Airplay
+_   https://github.com/processing/processing/issues/5620
+_   try to catch the NPE and warn the user about what's happening
 
 data
 _ Dict.remove() should return value, not index (for consistency w/ others)
