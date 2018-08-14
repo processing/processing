@@ -23,6 +23,7 @@ _ extended SVG support
 _   https://github.com/processing/processing/pull/4168
 _ show a warning when a font isn't what the user expected
 _   https://github.com/processing/processing/issues/5481
+_   https://github.com/processing/processing/pull/5605
 
 
 _ Implement blendMode() for PDF
