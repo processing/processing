@@ -1387,7 +1387,7 @@ public class JSONObject {
    * @param string A String
    * @return  A String correctly formatted for insertion in a JSON text.
    */
-  static protected String quote(String string) {
+  static public String quote(String string) {
     StringWriter sw = new StringWriter();
     synchronized (sw.getBuffer()) {
       try {
@@ -1399,7 +1399,7 @@ public class JSONObject {
     }
   }
 
-  static protected Writer quote(String string, Writer w) throws IOException {
+  static public Writer quote(String string, Writer w) throws IOException {
     if (string == null || string.length() == 0) {
       w.write("\"\"");
       return w;
