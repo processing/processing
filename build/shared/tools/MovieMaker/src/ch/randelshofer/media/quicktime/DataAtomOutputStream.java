@@ -11,6 +11,7 @@
 package ch.randelshofer.media.quicktime;
 
 import java.io.*;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import javax.imageio.stream.ImageOutputStreamImpl;
@@ -31,7 +32,8 @@ import javax.imageio.stream.ImageOutputStreamImpl;
 public class DataAtomOutputStream extends FilterOutputStream {
 
     ImageOutputStreamImpl impl;
-    protected static final long MAC_TIMESTAMP_EPOCH = new GregorianCalendar(1904, GregorianCalendar.JANUARY, 1).getTimeInMillis();
+    protected static final long MAC_TIMESTAMP_EPOCH = new GregorianCalendar(1904, Calendar.JANUARY, 1).getTimeInMillis();
+
     /**
      * The number of bytes written to the data output stream so far.
      * If this counter overflows, it will be wrapped to Integer.MAX_VALUE.
