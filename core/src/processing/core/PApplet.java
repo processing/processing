@@ -119,8 +119,11 @@ public class PApplet implements PConstants {
     String version = javaVersionName;
     if (javaVersionName.startsWith("1.")) {
       version = version.substring(2);
+      javaPlatform = parseInt(version.substring(0, version.indexOf('.')));
+    } else {
+      // Remove -xxx and .yyy from java.version (@see JEP-223)
+      javaPlatform = parseInt(version.replaceAll("-.*","").replaceAll("\\..*",""));
     }
-    javaPlatform = parseInt(version.substring(0, version.indexOf('.')));
   }
 
   /**
