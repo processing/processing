@@ -156,7 +156,7 @@ public class Messages {
    * Testing a new warning window that includes the stack trace.
    */
   static public void showTrace(String title, String message,
-                                       Throwable t, boolean fatal) {
+                               Throwable t, boolean fatal) {
     if (title == null) title = fatal ? "Error" : "Warning";
 
     if (Base.isCommandLine()) {

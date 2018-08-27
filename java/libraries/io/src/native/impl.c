@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <sys/mman.h>
 #include <sys/param.h>
 #include <time.h>
 #include <unistd.h>
@@ -120,6 +121,143 @@ JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_writeFile
 }
 
 
+JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_raspbianGpioMemRead
+  (JNIEnv *env, jclass cls, jint offset)
+{
+	// validate offset
+	if (4096 <= offset) {
+		return -EINVAL;
+	}
+
+	int file = open("/dev/gpiomem", O_RDWR|O_SYNC);
+	if (file < 0) {
+		return -errno;
+	}
+
+	uint32_t *mem = mmap(NULL, 4096, PROT_READ, MAP_SHARED, file, 0);
+	if (mem == MAP_FAILED) {
+		close(file);
+		return -errno;
+	}
+
+	uint32_t value = mem[offset];
+
+	munmap(mem, 4096);
+	close(file);
+	return value;
+}
+
+
+JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_raspbianGpioMemWrite
+  (JNIEnv *env, jclass cls, jint offset, jint mask, jint value)
+{
+	// validate offset
+	if (4096 <= offset) {
+		return -EINVAL;
+	}
+
+	int file = open("/dev/gpiomem", O_RDWR|O_SYNC);
+	if (file < 0) {
+		return -errno;
+	}
+
+	uint32_t *mem = mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, file, 0);
+	if (mem == MAP_FAILED) {
+		close(file);
+		return -errno;
+	}
+
+	mem[offset] = (mem[offset] & ~mask) | (value & mask);
+
+	munmap(mem, 4096);
+	close(file);
+	return 1;	// number of bytes written
+}
+
+
+#define BCM2835_GPPUD_OFFSET (0x94 >> 2)
+#define BCM2835_GPPUDCLK0_OFFSET (0x98 >> 2)
+#define BCM2835_GPPUDCLK1_OFFSET (0x9c >> 2)
+
+JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_raspbianGpioMemSetPinBias
+  (JNIEnv *env, jclass cls, jint gpio, jint mode)
+{
+	int ret = 0;	// success
+
+	int file = open("/dev/gpiomem", O_RDWR|O_SYNC);
+	if (file < 0) {
+		return -errno;
+	}
+
+	uint32_t *mem = mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, file, 0);
+	if (mem == MAP_FAILED) {
+		close(file);
+		return -errno;
+	}
+
+	// validate arguments
+	if (gpio < 0 || 53 < gpio) {
+		ret = -EINVAL;
+		goto out;
+	}
+
+	// see BCM2835 datasheet, p. 101
+	uint32_t pud;
+	if (mode == 0) {
+		pud = 0;	// floating
+	} else if (mode == 2) {
+		pud = 2;	// pull-up
+	} else if (mode == 3) {
+		pud = 1;	// pull-down
+	} else {
+		ret = -EINVAL;
+		goto out;
+	}
+
+	/*
+	 * From the BCM2835 datasheet, p. 101:
+	 *
+	 * The following sequence of events is required:
+	 * 1. Write to GPPUD to set the required control signal (i.e. Pull-up or
+	 *    Pull-Down or neither to remove the current Pull-up/down)
+	 * 2. Wait 150 cycles – this provides the required set-up time for the
+	 *    control signal
+	 * 3. Write to GPPUDCLK0/1 to clock the control signal into the GPIO pads
+	 *    you wish to modify – NOTE only the pads which receive a clock will
+	 *    be modified, all others will retain their previous state.
+	 * 4. Wait 150 cycles – this provides the required hold time for the
+	 *    control signal
+	 * 5. Write to GPPUD to remove the control signal
+	 * 6. Write to GPPUDCLK0/1 to remove the clock
+	 */
+
+	// python-gpiozero uses a delay of 214 ns, so we do the same
+	struct timespec wait;
+	wait.tv_sec = 0;
+	wait.tv_nsec = 214;
+
+	mem[BCM2835_GPPUD_OFFSET] = pud;
+	nanosleep(&wait, NULL);
+	if (gpio < 32) {
+		mem[BCM2835_GPPUDCLK0_OFFSET] = 1 << gpio;
+	} else {
+		mem[BCM2835_GPPUDCLK1_OFFSET] = 1 << (gpio-32);
+	}
+	nanosleep(&wait, NULL);
+	mem[BCM2835_GPPUD_OFFSET] = 0;
+	if (gpio < 32) {
+		mem[BCM2835_GPPUDCLK0_OFFSET] = 0;
+	} else {
+		mem[BCM2835_GPPUDCLK1_OFFSET] = 0;
+	}
+
+out:
+	munmap(mem, 4096);
+	close(file);
+	return ret;
+}
+
+
 JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_pollDevice
   (JNIEnv *env, jclass cls, jstring _fn, jint timeout)
 {
@@ -166,29 +304,36 @@ JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_transferI2c
 	jbyte *out, *in;
 
 	packets.msgs = msgs;
+	packets.nmsgs = 0;
 
-	msgs[0].addr = slave;
-	msgs[0].flags = 0;
-	msgs[0].len = (*env)->GetArrayLength(env, _out);
-	out = (*env)->GetByteArrayElements(env, _out, NULL);
-	msgs[0].buf = out;
+	if (_out != NULL) {
+		msgs[packets.nmsgs].addr = slave;
+		msgs[packets.nmsgs].flags = 0;
+		msgs[packets.nmsgs].len = (*env)->GetArrayLength(env, _out);
+		out = (*env)->GetByteArrayElements(env, _out, NULL);
+		msgs[packets.nmsgs].buf = out;
+		packets.nmsgs++;
+	}
 	if (_in != NULL) {
+		msgs[packets.nmsgs].addr = slave;
+		msgs[packets.nmsgs].flags = I2C_M_RD;	// I2C_M_RECV_LEN is not supported
+		msgs[packets.nmsgs].len = (*env)->GetArrayLength(env, _in);
 		in = (*env)->GetByteArrayElements(env, _in, NULL);
-		msgs[1].addr = slave;
-		msgs[1].flags = I2C_M_RD;	// I2C_M_RECV_LEN is not supported
-		msgs[1].len = (*env)->GetArrayLength(env, _in);
-		msgs[1].buf = in;
-		packets.nmsgs = 2;
-	} else {
-		packets.nmsgs = 1;
+		msgs[packets.nmsgs].buf = in;
+		packets.nmsgs++;
 	}
 
+	// set the timeout to 100ms - this helps slow devices such as the
+	// Arduino Uno to keep up
+	ioctl(handle, I2C_TIMEOUT, 10);
 	int ret = ioctl(handle, I2C_RDWR, &packets);
 	if (ret < 0) {
 		ret = -errno;
 	}
 
-	(*env)->ReleaseByteArrayElements(env, _out, out, JNI_ABORT);
+	if (_out != NULL) {
+		(*env)->ReleaseByteArrayElements(env, _out, out, JNI_ABORT);
+	}
 	if (_in != NULL) {
 		(*env)->ReleaseByteArrayElements(env, _in, in, 0);
 	}

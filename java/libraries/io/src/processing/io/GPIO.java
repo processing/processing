@@ -328,7 +328,7 @@ public class GPIO {
   /**
    *  Configures a pin to act either as input or output
    *  @param pin GPIO pin
-   *  @param mode GPIO.INPUT or GPIO.OUTPUT
+   *  @param mode GPIO.INPUT, GPIO.INPUT_PULLUP, GPIO.INPUT_PULLDOWN, or GPIO.OUTPUT
    *  @see digitalRead
    *  @see digitalWrite
    *  @see releasePin
@@ -356,19 +356,15 @@ public class GPIO {
       }
     }
 
-    // delay to give udev a chance to change the file permissions behind our back
-    // there should really be a cleaner way for this
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-    }
-
     // set direction and default level for outputs
     fn = String.format("/sys/class/gpio/gpio%d/direction", pin);
     String out;
     if (mode == INPUT) {
       out = "in";
+
+      // attempt to disable any pre-set pullups on the Raspberry Pi
+      NativeInterface.raspbianGpioMemSetPinBias(pin, mode);
+
     } else if (mode == OUTPUT) {
       if (values.get(pin)) {
         out = "high";
@@ -376,13 +372,32 @@ public class GPIO {
         out = "low";
       }
     } else if (mode == INPUT_PULLUP || mode == INPUT_PULLDOWN) {
+      out = "in";
+
+      // attempt to set pullups on the Raspberry Pi
+      ret = NativeInterface.raspbianGpioMemSetPinBias(pin, mode);
+      if (ret == -2) {    // NOENT
+        System.err.println("Setting pullup or pulldown resistors is currently only supported on the Raspberry Pi running Raspbian. Continuing without.");
+      } else if (ret < 0) {
+        System.err.println("Error setting pullup or pulldown resistors: " + NativeInterface.getError(ret) + ". Continuing without.");
+      }
       // currently this can't be done in a non-platform-specific way, see
       // http://lists.infradead.org/pipermail/linux-rpi-kernel/2015-August/002146.html
-      throw new RuntimeException("Not yet implemented");
+
     } else {
       throw new IllegalArgumentException("Unknown mode");
     }
-    ret = NativeInterface.writeFile(fn, out);
+
+    // we need to give udev some time to change the file permissions behind our back
+    // retry for 500ms when writing to the file fails with -EACCES
+    long start = System.currentTimeMillis();
+    do {
+      ret = NativeInterface.writeFile(fn, out);
+      if (ret == -13) {
+        Thread.yield();
+      }
+    } while (ret == -13 && System.currentTimeMillis()-start < 500);
+
     if (ret < 0) {
       throw new RuntimeException(fn + ": " + NativeInterface.getError(ret));
     }

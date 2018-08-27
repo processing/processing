@@ -1561,13 +1561,14 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     pgl.depthFunc(PGL.LEQUAL);
 
-    if (OPENGL_RENDERER.equals("VideoCore IV HW")) {
-      // Broadcom's VC IV driver is unhappy with either of these
-      // ignore for now
+    if (pgl.isES()) {
+      // neither GL_MULTISAMPLE nor GL_POLYGON_SMOOTH are part of GLES2 or GLES3
     } else if (smooth < 1) {
       pgl.disable(PGL.MULTISAMPLE);
     } else if (1 <= smooth) {
       pgl.enable(PGL.MULTISAMPLE);
+    }
+    if (!pgl.isES()) {
       pgl.disable(PGL.POLYGON_SMOOTH);
     }
 
@@ -6775,16 +6776,14 @@ public class PGraphicsOpenGL extends PGraphics {
 //        quality = temp;
 //      }
     }
-    if (OPENGL_RENDERER.equals("VideoCore IV HW")) {
-      // Broadcom's VC IV driver is unhappy with either of these
-      // ignore for now
+    if (pgl.isES()) {
+      // neither GL_MULTISAMPLE nor GL_POLYGON_SMOOTH are part of GLES2 or GLES3
     } else if (smooth < 1) {
       pgl.disable(PGL.MULTISAMPLE);
     } else if (1 <= smooth) {
       pgl.enable(PGL.MULTISAMPLE);
     }
-    // work around runtime exceptions in Broadcom's VC IV driver
-    if (false == OPENGL_RENDERER.equals("VideoCore IV HW")) {
+    if (!pgl.isES()) {
       pgl.disable(PGL.POLYGON_SMOOTH);
     }
 

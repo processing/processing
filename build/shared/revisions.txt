@@ -1,3 +1,205 @@
+PROCESSING 3.4 (REV 0265) - 26 July 2018
+
+Kind of a huge batch of bug fixes and updates. 
+
+We've had trouble on Windows when MS Security Essentials or Windows Defender
+decides to defend your machine from our software, removing files from the 
+download and making Processing unusable. A few extra checks have been added
+so that more helpful warnings can be conveyed when this happens.
+
+The other important fix is better handling in the Contributions Manager 
+for sites that use https. This fixes Python Mode installation, and many
+others that have recently started reporting "Could not find a ... in the
+downloaded file" when installing a Library, Mode, Tool, or Example set.
+
+We're also bumping the release to 3.4 because of a lot of additions,
+plus some internal changes that have an impact on API.
+
+
+[ the big ones ]
+
++ Show alternate error message on Windows when jnidispatch.dll or core.jar 
+  have been removed by Windows Defender or Microsoft Security Essentials.
+  https://github.com/processing/processing/issues/5537
+  https://github.com/processing/processing/issues/4929
+  https://github.com/processing/processing/issues/5442
+  This has been a huge headache for us. We've repeatedly submitted the 
+  software and asked Microsoft for help, but haven't had any luck.
+  If you run into this issue and would like to help, please submit the files
+  to Microsoft here: https://www.microsoft.com/en-us/wdsi/filesubmission
+  Perhaps if there are enough reports, they'll understand this is affecting
+  a lot of people. 
+
++ Contributed libraries/examples/etc that redirect to https URLs now working.
+  https://github.com/processing/processing/issues/5554
+ 
+
+[ new features ] 
+
++ It's now possible to make your own theme file for Processing. Copy the
+  theme.txt file from inside the Processing folder to your sketchbook
+  folder, and then edit away. For instance, to make a dark theme:
+  https://github.com/processing/processing/wiki/Dark-Theme-for-PDE
+
++ It's now possible to copy the text of the status bar. Click the clipboard
+  icon at the right-hand side to copy the text to the clipboard. To search
+  immediately, use shift-click. 
+  https://github.com/processing/processing/issues/5271
+  https://github.com/processing/processing/pull/5345
+  The default search engine is Google, but you can modify that by altering
+  the 'search.format' line in preferences.txt
+
++ Added pyde as a supported extension, so double-clicking 
+  on Python sketches will launch the PDE.
+  https://github.com/jdf/processing.py/issues/284
+
+
+[ do you like data? ]
+
++ Added Double and Long versions of the data classes. Not sure if we'll 
+  keep these, but we're trying them out.
+
++ Also add subset(long) and subset(double) to PApplet
+
++ Changed the internal Sort class to use int for comparisons for better 
+  accuracy, especially when working with double and long values.
+
++ Consistently implemented write(PrintWriter) in the List and Dict classes
+
++ Added save(File) to the List and Dict classes
+
++ Prevent Table.sort() from throwing NullPointerException with empty cells
+
+
+[ updates ]
+
++ Fixed up the Welcome dialog. When closing the window or hitting ESC, 
+  the "show this" selection is recorded. Also clicking that text will 
+  toggle the checkbox on/off, as users would expect.
+  https://github.com/processing/processing/issues/3911
+  https://github.com/processing/processing/issues/3912
+
++ Redesigned the Rename window to be less ugly. Now closes when ESC is
+  pressed, and the default action is set so hitting Enter will work properly.
+  https://github.com/processing/processing/issues/5391
+  https://github.com/processing/processing/issues/5400
+
++ Rewrite exec() to do threads, also handle fast/excessive output cases
+
++ Rewrite requestImage() to fix errors/slowness/concurrency problems
+
++ Refactoring inside the completion code
+  https://github.com/processing/processing/commit/7e3661e9f7a6df1569c8bebc683e7742f50caa25
+  https://github.com/processing/processing/commit/20c6f86c0d600806c991962eb208548ac45e9e2a
+  https://github.com/processing/processing/commit/8dda8a4d02bc9a1d15e81fee3e6c183e4076a40e
+  https://github.com/processing/processing/commit/ff7dc4d5094ccf1cc35189c9412adda93153b436
+
++ Now using Java 8u181.
+  https://github.com/processing/processing/pull/5586
+
++ Change lack of blendMode() to a warning rather than an error in PDF
+
++ Updated the copyright and year in the launch and About screen.
+
+
+[ give gohai a hand, because he's all arm ]
+
++ A large number of changes and fixes for ARM submitted by Gottfried,
+  who also posted 3.3.7.1 and 3.3.7.2 interim releases with some of these
+  changes already present. Now we're back on track with 3.4.
+
++ Additional I/O improvements
+  https://github.com/processing/processing/pull/5581
+
++ Fix regressions in 3.3.7.1
+  https://github.com/processing/processing/issues/5582
+
++ OpenGL ES: Fix GLSL version number for 1.00
+  https://github.com/processing/processing/pull/5583
+
++ Add ADS1X15 Analog-to-Digital converter example
+  https://github.com/processing/processing/pull/5590
+
++ IO: pinMode() can now set pull-up and pull-down resistors on Raspbian
+  thanks to @xranby for 64-bit help
+
++ Several new examples
+  https://github.com/processing/processing/pull/5566
+
++ IO: New example sketch showing how to use a MPR121 capacitive touch sensor
+  fun tutorial by @msurguy forthcoming
+
++ IO: New example sketch showing how to use a BME280 environmental sensor
+  IO: New example sketch showing how to use a TSL2561 light sensor
+  IO: New example sketch showing how to use a PCA9685 Servo & PWM controller
+  ...all contributed by @OlivierLD
+
++ IO: pinMode() got faster
+  https://github.com/processing/processing/pull/5557
+
++ IO: I2C now supports talking to slower devices, such as Arduino boards
+  https://github.com/processing/processing/pull/5567
+
++ Support for ARM Mali graphics was added to P2D/P3D
+  Thanks to seongwook from the forums for his help during bringup
+  https://github.com/processing/processing/pull/5485
+
++ P3D now supports up to 4 lights on Pi using their OpenGL driver
+
++ Serial library now supports Raspbian's port naming (such as "/dev/serial0")
+
++ Enable exporting of Windows applications on ARM
+  https://github.com/processing/processing/pull/5488
+  https://github.com/processing/processing/issues/5287
+
++ Clarify SimpleInput example
+  https://github.com/processing/processing/pull/5558
+
++ Various ARM-related updates
+  https://github.com/processing/processing/pull/5440
+
++ Make P3D work on Linux SBCs using ARM Mali graphics and their ES 3.1 driver
+  https://github.com/processing/processing/pull/5475
+
+
+[ contributed by the community ]
+
++ Updates to Japanese translation
+  https://github.com/processing/processing/pull/5263
+
++ Added Russian translation
+  https://github.com/processing/processing/pull/5451
+
++ Make "loadXML(String)" handle "file not found"
+  https://github.com/processing/processing/pull/5144
+
++ Update java.lang.UnsupportedClassVersionError message
+  https://github.com/processing/processing/pull/5459
+  
++ Semi-transparent colors do not display properly in PGraphics
+  https://github.com/processing/processing/issues/5519
+  https://github.com/processing/processing/pull/5522
+
++ Fixed a crash occuring while loading certain SVGs exported from Illustrator
+  https://github.com/processing/processing/pull/5526
+
++ Support PShape.contains() on GROUP objects
+  https://github.com/processing/processing/pull/5550
+
++ Improve implementation of PShape.contains() to take the CTM into account
+  https://github.com/processing/processing/pull/5549
+
+
+[ bug fixes ]
+
++ Make sure the editor is updated after reloading changes (from Jakub)
+  https://github.com/processing/processing/pull/5487
+  https://github.com/processing/processing/issues/5466
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.3.7 (REV 0264) - 13 March 2018
 
 A rollup of several fixes from the last few months. 

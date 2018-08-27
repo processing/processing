@@ -45,6 +45,7 @@
     <property name="jre.download.jdk" value="true" />
     <property name="jre.downloader" value="linux-arm32-vfp-hflt.tar.gz" />
     <property name="linux.dist" value="linux/processing-${version}-linux-armv6hf.tgz" />
+    <property name="launch4j.variant" value="linux-armv6hf" />
   </target>
   <target name="check-linux-arm64" if="linux-arm64">
     <property name="jre.download.jdk" value="true" />
@@ -70,11 +71,11 @@
             value="../../processing-docs/content/examples" />
 
   <property name="jdk.version" value="8" />
-  <property name="jdk.update" value="172" />
-  <property name="jdk.build" value="11" />
+  <property name="jdk.update" value="181" />
+  <property name="jdk.build" value="13" />
   <!-- See https://gist.github.com/P7h/9741922
        or http://stackoverflow.com/q/10268583 -->
-  <property name="jdk.hash" value="a58eab1ec242421181065cdc37240b08" />
+  <property name="jdk.hash" value="96a7b8442fe848ef90c96a2fad6ed6d1" />
 
   <property name="jdk.short" value="${jdk.version}u${jdk.update}" />
   <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />
@@ -798,11 +799,13 @@
 
     <property name="launch4j.dir"
               value="linux/work/modes/java/application/launch4j" />
+    <!-- this might be already overwritten by check-linux-arm32 -->
+    <property name="launch4j.variant" value="linux" />
 
     <!-- rename the version we need -->
-    <move file="${launch4j.dir}/bin/windres-linux"
+    <move file="${launch4j.dir}/bin/windres-${launch4j.variant}"
           tofile="${launch4j.dir}/bin/windres" />
-    <move file="${launch4j.dir}/bin/ld-linux"
+    <move file="${launch4j.dir}/bin/ld-${launch4j.variant}"
           tofile="${launch4j.dir}/bin/ld" />
 
     <!-- make executable (ant doesn't preserve) -->

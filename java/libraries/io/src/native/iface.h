@@ -49,6 +49,30 @@ JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_writeFile
 
 /*
  * Class:     processing_io_NativeInterface
+ * Method:    raspbianGpioMemRead
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_raspbianGpioMemRead
+  (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     processing_io_NativeInterface
+ * Method:    raspbianGpioMemWrite
+ * Signature: (III)I
+ */
+JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_raspbianGpioMemWrite
+  (JNIEnv *, jclass, jint, jint, jint);
+
+/*
+ * Class:     processing_io_NativeInterface
+ * Method:    raspbianGpioMemWrite
+ * Signature: (II)I
+ */
+JNIEXPORT jint JNICALL Java_processing_io_NativeInterface_raspbianGpioMemSetPinBias
+  (JNIEnv *, jclass, jint, jint);
+
+/*
+ * Class:     processing_io_NativeInterface
  * Method:    pollDevice
  * Signature: (Ljava/lang/String;I)I
  */

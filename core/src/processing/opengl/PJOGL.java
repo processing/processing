@@ -513,7 +513,8 @@ public class PJOGL extends PGL {
 
   @Override
   protected String getGLSLVersionSuffix() {
-    if (context.isGLESProfile()) {
+    VersionNumber vn = context.getGLSLVersionNumber();
+    if (context.isGLESProfile() && 1 < vn.getMajor()) {
       return " es";
     } else {
       return "";

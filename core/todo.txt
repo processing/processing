@@ -1,40 +1,34 @@
-0265 (3.4)
-X change lack of blendMode() to a warning rather than an error in PDF
-X rewrite exec() to do threads, also handle fast/excessive output cases
-X rewrite requestImage() to fix errors/slowness/concurrency problems
+0266 (3.4.1 or 3.5)
+X make JSONObject.quote() (both versions) public
 
-data classes
-X add Double and Long versions of the data classes
-X also add subset(long) and subset(double) to PApplet
-X change Sort class to use int for comparisons
-X   sort only uses the sign of the value
-X   more accurate than float, especially when using double and long values
-X consistently implement write(PrintWriter) in the List and Dict classes
-X add save(File) to the List and Dict classes
-X prevent Table.sort() from throwing NPE with empty cells
+_ NullPointerException at java.awt.Window.init(Window.java:497) when using Airplay
+_   https://github.com/processing/processing/issues/5620
+_   try to catch the NPE and warn the user about what's happening
+
+data
 _ Dict.remove() should return value, not index (for consistency w/ others)
 _ check again whether element 0,0 in a Table is working
 _   https://github.com/processing/processing/issues/3011
 
 
-gohai
-X Various ARM-related updates
-X   https://github.com/processing/processing/pull/5440
-X make P3D work on Linux SBCs using ARM Mali graphics and their ES 3.1 driver
-X   https://github.com/processing/processing/pull/5475
-
-
-3.4
+3.5+
 _ add circle() and square()
 _ add push() and pop()
+_ requestSize() and xxxxTitle() (to diminish use of 'surface')
 _ make setting the window icon automatic, based on files in local dirs
 X   https://github.com/processing/processing/issues/5123
 X   https://github.com/processing/processing/pull/5202
 _   need to make this work behind the scenes instead
 _   create icon.png or have an 'icons' folder with multiple sizes
 
+
+contribs
+_ extended SVG support
+_   https://github.com/processing/processing/pull/4168
 _ show a warning when a font isn't what the user expected
 _   https://github.com/processing/processing/issues/5481
+_   https://github.com/processing/processing/pull/5605
+
 
 _ Implement blendMode() for PDF
 _   https://github.com/processing/processing/issues/5438

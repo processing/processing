@@ -13,14 +13,14 @@ h1 {
   margin-bottom: 0;
   /* can't get the Semibold to work properly */
   font-family: "Processing Sans Pro", sans-serif;
-  font-size: 1.3em; /*16px;*/
+  font-size: 18px;
   font-weight: normal;
 }
 
 p, td {
   margin-bottom: 0;
-  font-size: 0.975em; /*11px*/
-  line-height: 1.05em; /*12px*/
+  font-size: 11px;
+  line-height: 12px;
 }
 
 table {

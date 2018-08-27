@@ -56,9 +56,9 @@ import processing.data.StringList;
 public class Base {
   // Added accessors for 0218 because the UpdateCheck class was not properly
   // updating the values, due to javac inlining the static final values.
-  static private final int REVISION = 265;
+  static private final int REVISION = 266;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static private String VERSION_NAME = "0265"; //$NON-NLS-1$
+  static private String VERSION_NAME = "0266"; //$NON-NLS-1$
   /** Set true if this a proper release rather than a numbered revision. */
 
   /**
@@ -116,9 +116,31 @@ public class Base {
         public void run() {
           try {
             createAndShowGUI(args);
+
           } catch (Throwable t) {
-            Messages.showTrace("It was not meant to be",
-                               "A serious problem happened during startup. Please report:\n" +
+            // Windows Defender has been insisting on destroying each new
+            // release by removing core.jar and other files. Yay!
+            // https://github.com/processing/processing/issues/5537
+            if (Platform.isWindows()) {
+              String mess = t.getMessage();
+              String missing = null;
+              if (mess.contains("Could not initialize class com.sun.jna.Native")) {
+                missing = "jnidispatch.dll";
+              } else if (mess.contains("NoClassDefFoundError: processing/core/PApplet")) {
+                missing = "core.jar";
+              }
+              if (missing != null) {
+                Messages.showError("Necessary files are missing",
+                                   "A file required by Processing (" + missing + ") is missing.\n\n" +
+                                   "Make sure that you're not trying to run Processing from inside\n" +
+                                   "the .zip file you downloaded, and check that Windows Defender\n" +
+                                   "hasn't removed files from the Processing folder.\n\n" +
+                                   "(It sometimes flags parts of Processing as a trojan or virus.\n" +
+                                   "It is neither, but Microsoft has ignored our pleas for help.)", t);
+              }
+            }
+            Messages.showTrace("Unknown Problem",
+                               "A serious error happened during startup. Please report:\n" +
                                "http://github.com/processing/processing/issues/new", t, true);
           }
         }
@@ -1888,8 +1910,10 @@ public class Base {
         }
       }
     } catch (Exception e) {
-      Messages.showError("Problem getting the settings folder",
-                         "Error getting the Processing the settings folder.", e);
+      Messages.showTrace("An rare and unknowable thing happened",
+                         "Could not get the settings folder. Please report:\n" +
+                         "http://github.com/processing/processing/issues/new",
+                         e, true);
     }
     return settingsFolder;
   }

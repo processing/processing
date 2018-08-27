@@ -1,3 +1,40 @@
+0265 (3.4)
+X change lack of blendMode() to a warning rather than an error in PDF
+X rewrite exec() to do threads, also handle fast/excessive output cases
+X rewrite requestImage() to fix errors/slowness/concurrency problems
+
+data classes
+X add Double and Long versions of the data classes
+X also add subset(long) and subset(double) to PApplet
+X change Sort class to use int for comparisons
+X   sort only uses the sign of the value
+X   more accurate than float, especially when using double and long values
+X consistently implement write(PrintWriter) in the List and Dict classes
+X add save(File) to the List and Dict classes
+X prevent Table.sort() from throwing NPE with empty cells
+
+jakub
+X Semi-transparent colors do not display properly in PGraphics
+X   https://github.com/processing/processing/issues/5519
+X Semi-transparent colors do not display properly in PGraphics
+X   https://github.com/processing/processing/issues/5519
+X   https://github.com/processing/processing/pull/5522
+
+gohai
+X Various ARM-related updates
+X   https://github.com/processing/processing/pull/5440
+X make P3D work on Linux SBCs using ARM Mali graphics and their ES 3.1 driver
+X   https://github.com/processing/processing/pull/5475
+
+contrib
+X Fixed a crash occuring while loading certain SVGs exported from Illustrator
+X   https://github.com/processing/processing/pull/5526
+X Support PShape.contains() on GROUP objects
+X   https://github.com/processing/processing/pull/5550
+X Improve implementation of PShape.contains() to take the CTM into account
+X   https://github.com/processing/processing/pull/5549
+
+
 0264 (3.3.7)
 X fix exception due to version parsing in Java 9
 X   https://github.com/processing/processing/issues/5275

@@ -1,3 +1,104 @@
+0265 (3.4)
+X make it possible to override theme.txt with a file in the sketchbook folder
+X   https://github.com/processing/processing/issues/5445
+X   https://github.com/processing/processing/wiki/Dark-Theme-for-PDE
+X add 2018 to p5 launch screen
+X   also update the bmp version
+X redesign the Rename window to be less ugly
+X Close the Rename window when ESC pressed
+X   https://github.com/processing/processing/issues/5391
+X Set default operation for Rename window
+X   https://github.com/processing/processing/issues/5400
+X add select/copy to the status bar
+X   https://github.com/processing/processing/issues/5271
+o   possible fix (just copies on click)
+o   https://github.com/processing/processing/pull/5345
+X   in the docs: modify 'search.format=' in preferences.txt
+X refactoring inside the completion code
+X   https://github.com/processing/processing/commit/7e3661e9f7a6df1569c8bebc683e7742f50caa25
+X   https://github.com/processing/processing/commit/20c6f86c0d600806c991962eb208548ac45e9e2a
+X   https://github.com/processing/processing/commit/8dda8a4d02bc9a1d15e81fee3e6c183e4076a40e
+X   https://github.com/processing/processing/commit/ff7dc4d5094ccf1cc35189c9412adda93153b436
+X add pyde as a supported extension
+X   https://github.com/jdf/processing.py/issues/284
+o update to launch4j 3.11? 
+o   http://launch4j.sourceforge.net/changelog.html
+X update to Java 8u172
+X show alternate error message on windows when JNA breaks or core.jar is missing
+X   https://github.com/processing/processing/issues/5537
+X   https://github.com/processing/processing/issues/4929
+X   https://github.com/processing/processing/issues/5442
+X   https://www.microsoft.com/en-us/wdsi/filesubmission
+X update to Java 8u181
+X   https://github.com/processing/processing/pull/5586
+X Contributed libraries/examples/etc that redirect to https are failing download
+X   https://github.com/processing/processing/issues/5554
+
+welcome
+o just remove the welcome dialog; but what should the default behavior be?
+o   or should it only show up for people who have used <=2 but not 3?
+X click "show this welcome" text to check/uncheck the box
+X   https://github.com/processing/processing/issues/3912
+X submit the form (as if 'get started' clicked) when closing the window
+X   whether hitting ESC or the close box on the window
+X   https://github.com/processing/processing/issues/3911
+o Welcome dialog rewritten in Swing
+X   https://github.com/processing/processing/pull/5210
+
+gohai 
+X additional I/O improvements
+X   https://github.com/processing/processing/pull/5581
+X rpi regressions in 3.3.7.1
+X   https://github.com/processing/processing/issues/5582
+X OpenGL ES: Fix GLSL version number for 1.00
+X   https://github.com/processing/processing/pull/5583
+X Add ADS1X15 Analog-to-Digital converter example
+X   https://github.com/processing/processing/pull/5590
+
+gohai (from 3.3.7.1 special release)
+X IO: pinMode() can now set pull-up and pull-down resistors on Raspbian
+X   thanks to @xranby for 64-bit help
+X several new examples
+X   https://github.com/processing/processing/pull/5566
+X IO: New example sketch showing how to use a MPR121 capacitive touch sensor
+X   fun tutorial by @msurguy forthcoming
+X IO: New example sketch showing how to use a BME280 environmental sensor
+X   contributed by @OlivierLD
+X IO: New example sketch showing how to use a TSL2561 light sensor
+X   contributed by @OlivierLD
+X IO: New example sketch showing how to use a PCA9685 Servo & PWM controller
+X   contributed by @OlivierLD
+X IO: pinMode() got faster
+X   https://github.com/processing/processing/pull/5557
+X IO: I2C now supports talking to slower devices, such as Arduino boards
+X   https://github.com/processing/processing/pull/5567
+X Support for ARM Mali graphics was added to P2D/P3D
+X   thanks to seongwook from the forums for his help during bringup
+X   https://github.com/processing/processing/pull/5485
+X P3D now supports up to 4 lights on Pi using their OpenGL driver
+X Serial library now supports Raspbian's port naming (such as "/dev/serial0")
+X Enable exporting of Windows applications on ARM
+X   https://github.com/processing/processing/pull/5488
+X   https://github.com/processing/processing/issues/5287
+X clarify SimpleInput example
+X   https://github.com/processing/processing/pull/5558
+
+jakub
+X Make sure editor is updated after reloading changes
+X   https://github.com/processing/processing/pull/5487
+X   https://github.com/processing/processing/issues/5466
+
+contrib
+X updates to Japanese translation
+X   https://github.com/processing/processing/pull/5263
+X added Russian translation
+X   https://github.com/processing/processing/pull/5451
+X make "loadXML(String)" handle "file not found"
+X   https://github.com/processing/processing/pull/5144
+X Update java.lang.UnsupportedClassVersionError message
+X   https://github.com/processing/processing/pull/5459
+
+
 0264 (3.3.7)
 X downloading the jre broken again
 X   https://github.com/processing/processing/issues/5284

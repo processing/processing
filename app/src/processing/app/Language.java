@@ -100,6 +100,7 @@ public class Language {
       "ko", // Korean
       "nl", // Dutch, Nederlands
       "pt", // Portuguese
+      "ru", // Russian
       "tr", // Turkish
       "uk", // Ukrainian
       "zh"  // Chinese
