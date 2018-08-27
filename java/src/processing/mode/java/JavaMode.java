@@ -81,7 +81,7 @@ public class JavaMode extends Mode {
 
 
   public String[] getExtensions() {
-    return new String[] { "pde", "java" };
+    return new String[] { "pde", "java", "glsl" };
   }
 
 

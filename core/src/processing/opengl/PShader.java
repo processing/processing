@@ -27,6 +27,7 @@ package processing.opengl;
 import processing.core.*;
 import processing.opengl.PGraphicsOpenGL.GLResourceShader;
 
+import java.io.File;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -103,7 +104,9 @@ public class PShader implements PConstants {
   protected String fragmentFilename;
 
   protected String[] vertexShaderSource;
+  protected long vertexShaderModificationTime;
   protected String[] fragmentShaderSource;
+  protected long fragmentShaderModificationTime;
 
   protected boolean bound;
 
@@ -212,8 +215,8 @@ public class PShader implements PConstants {
     this.fragmentURL = null;
     this.vertexFilename = vertFilename;
     this.fragmentFilename = fragFilename;
-    fragmentShaderSource = pgl.loadFragmentShader(fragFilename);
-    vertexShaderSource = pgl.loadVertexShader(vertFilename);
+    refreshFragmentShaderSource();
+    refreshVertexShaderSource();
 
     glProgram = 0;
     glVertex = 0;
@@ -313,7 +316,7 @@ public class PShader implements PConstants {
 
   public void setVertexShader(String vertFilename) {
     this.vertexFilename = vertFilename;
-    vertexShaderSource = pgl.loadVertexShader(vertFilename);
+    refreshVertexShaderSource();
   }
 
 
@@ -330,7 +333,7 @@ public class PShader implements PConstants {
 
   public void setFragmentShader(String fragFilename) {
     this.fragmentFilename = fragFilename;
-    fragmentShaderSource = pgl.loadFragmentShader(fragFilename);
+    refreshFragmentShaderSource();
   }
 
 
@@ -341,6 +344,70 @@ public class PShader implements PConstants {
 
   public void setFragmentShader(String[] fragSource) {
     fragmentShaderSource = fragSource;
+  }
+
+  /**
+   * @return true if fragmentShaderSource was updated, false if not
+   */
+  public boolean refreshFragmentShaderSource() {
+    // support hot reload only for files, not URLs
+    if (fragmentFilename == null) {
+      return false;
+    }
+
+    // look for the file in the data folder first, and in the sketch folder second
+    // this mirrors loadStrings(), which is what loadFragmentShader() will use
+    File[] tmp = { parent.dataFile(fragmentFilename), parent.sketchFile(fragmentFilename) };
+
+    for (int i=0; i < tmp.length; i++) {
+      if (tmp[i].exists()) {
+        long lastModified = tmp[i].lastModified();
+        if (lastModified != fragmentShaderModificationTime) {
+          if (fragmentShaderModificationTime != 0) {
+            System.out.println("Fragment shader was updated");
+          }
+          fragmentShaderModificationTime = lastModified;
+          fragmentShaderSource = pgl.loadFragmentShader(fragmentFilename);
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * @return true if vertexShaderSource was updated, false if not
+   */
+  public boolean refreshVertexShaderSource() {
+    // support hot reload only for files, not URLs
+    if (vertexFilename == null) {
+      return false;
+    }
+
+    // look for the file in the data folder first, and in the sketch folder second
+    // this mirrors loadStrings(), which is what loadVertexShader() will use
+    File[] tmp = { parent.dataFile(vertexFilename), parent.sketchFile(vertexFilename) };
+
+    for (int i=0; i < tmp.length; i++) {
+      if (tmp[i].exists()) {
+        long lastModified = tmp[i].lastModified();
+        if (lastModified != vertexShaderModificationTime) {
+          if (vertexShaderModificationTime != 0) {
+            System.out.println("Vertex shader was updated");
+          }
+          vertexShaderModificationTime = lastModified;
+          vertexShaderSource = pgl.loadVertexShader(vertexFilename);
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+
+    return false;
   }
 
 
@@ -889,17 +956,28 @@ public class PShader implements PConstants {
 
 
   public void init() {
-    if (glProgram == 0 || contextIsOutdated()) {
+    boolean shaderWasUpdated = refreshFragmentShaderSource() |
+                               refreshVertexShaderSource();
+
+    if (glProgram == 0 || contextIsOutdated() || shaderWasUpdated) {
       create();
-      if (compile()) {
-        pgl.attachShader(glProgram, glVertex);
-        pgl.attachShader(glProgram, glFragment);
+      try {
+        if (compile()) {
+          pgl.attachShader(glProgram, glVertex);
+          pgl.attachShader(glProgram, glFragment);
 
-        setup();
+          setup();
 
-        pgl.linkProgram(glProgram);
+          pgl.linkProgram(glProgram);
 
-        validate();
+          validate();
+        }
+      } catch (Exception e) {
+        if (shaderWasUpdated) {
+          System.err.println(e.getMessage());
+        } else {
+          throw e;
+        }
       }
     }
   }
