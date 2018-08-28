@@ -24,29 +24,40 @@
 
 package processing.core;
 
-// used by link()
-import java.awt.Desktop;
-import java.awt.DisplayMode;
-import java.awt.EventQueue;
-import java.awt.FileDialog;
+// dummy object for backwards compatibility, plus the select methods
 import java.awt.Frame;
+
+// before calling settings() to get displayWidth/Height
+import java.awt.DisplayMode;
+// handleSettings() and displayDensity()
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+// used to present the fullScreen() warning about Spaces on OS X
+import javax.swing.JOptionPane;
+
+// inside runSketch() to warn users about headless
 import java.awt.HeadlessException;
-import java.awt.Image;
 import java.awt.Toolkit;
+
+// used by loadImage()
+import java.awt.Image;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-
-// used by loadImage() functions
 import javax.imageio.ImageIO;
 // allows us to remove our own MediaTracker code
 import javax.swing.ImageIcon;
+
 // used by selectInput(), selectOutput(), selectFolder()
+import java.awt.EventQueue;
+import java.awt.FileDialog;
 import javax.swing.JFileChooser;
+
+// set the look and feel, if specified
 import javax.swing.UIManager;
-// used to present the fullScreen() warning about Spaces on OS X
-import javax.swing.JOptionPane;
+
+// used by link()
+import java.awt.Desktop;
+
 // used by desktopFile() method
 import javax.swing.filechooser.FileSystemView;
 
