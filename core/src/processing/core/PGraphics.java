@@ -4595,9 +4595,11 @@ public class PGraphics extends PImage implements PConstants {
    * ignored.
    */
   public void text(String str, float x, float y) {
-    // fix for #5625 pixelDensity(2) breaks the width of a tab ("\t") in JAVA2D
-    // makes the tab width consistent across renderers
-    str = str.replaceAll("\t", "    ");
+    if (str.indexOf('\t') != -1) {
+      // https://github.com/processing/processing/issues/5625
+      // https://github.com/processing/processing/pull/5633
+      str = str.replaceAll("\t", "    ");
+    }
 
     if (textFont == null) {
       defaultFontOrDeath("text");
