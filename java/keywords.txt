@@ -1,17 +1,17 @@
 # THE TEXT BELOW IS HAND WRITTEN AND FOUND IN THE FILE "keywords_base.txt"
 # IN THE PROCESSING-DOCS REPO. DON'T EDITS THE keywords.txt FILE DIRECTLY.
 
-# For an explanation of these tags, see Token.java 
+# For an explanation of these tags, see Token.java
 # trunk/processing/app/src/processing/app/syntax/Token.java
 
 ADD	LITERAL2	blend_
-ALIGN_CENTER	LITERAL2	
-ALIGN_LEFT	LITERAL2	
-ALIGN_RIGHT	LITERAL2	
+ALIGN_CENTER	LITERAL2
+ALIGN_LEFT	LITERAL2
+ALIGN_RIGHT	LITERAL2
 ALPHA	LITERAL2
 ALPHA_MASK	LITERAL2
 ALT	LITERAL2
-AMBIENT	LITERAL2	
+AMBIENT	LITERAL2
 ARC	LITERAL2	createShape_
 ARROW	LITERAL2	cursor_
 ARGB	LITERAL2
@@ -24,7 +24,7 @@ BLUR	LITERAL2	filter_
 BOTTOM	LITERAL2	textAlign_
 BOX	LITERAL2	createShape_
 BURN	LITERAL2	blend_
-CENTER	LITERAL2	
+CENTER	LITERAL2
 CHATTER	LITERAL2
 CHORD	LITERAL2	arc_
 CLAMP LITERAL2
@@ -88,7 +88,7 @@ GIF	LITERAL2
 GRAY	LITERAL2	filter_
 GREEN_MASK	LITERAL2
 GROUP	LITERAL2
-HALF	LITERAL2	
+HALF	LITERAL2
 HALF_PI	LITERAL2	HALF_PI
 HAND	LITERAL2	cursor_
 HARD_LIGHT	LITERAL2	blend_
@@ -97,7 +97,7 @@ HSB	LITERAL2	colorMode_
 IMAGE	LITERAL2	textureMode_
 INVERT	LITERAL2	filter_
 JAVA2D	LITERAL2	size_
-JPEG	LITERAL2	
+JPEG	LITERAL2
 LEFT	LITERAL2	keyCode
 LIGHTEST	LITERAL2	blend_
 LINE	LITERAL2	createShape_
@@ -105,18 +105,18 @@ LINES	LITERAL2	beginShape_
 LINUX	LITERAL2
 MACOSX	LITERAL2
 MAX_FLOAT	LITERAL2
-MAX_INT	LITERAL2	
+MAX_INT	LITERAL2
 MIN_FLOAT	LITERAL2
 MIN_INT	LITERAL2
 MITER	LITERAL2	stokeJoin_
 MODEL	LITERAL2	textMode_
 MOVE	LITERAL2	cursor_
 MULTIPLY	LITERAL2	blend_
-NORMAL	LITERAL2	
+NORMAL	LITERAL2
 NORMALIZED	LITERAL2	textureMode_
 NO_DEPTH_TEST	LITERAL2
 NTSC	LITERAL2
-ONE	LITERAL2	
+ONE	LITERAL2
 OPAQUE	LITERAL2	filter_
 OPEN	LITERAL2
 ORTHOGRAPHIC	LITERAL2
@@ -127,13 +127,13 @@ P2D	LITERAL2	size_
 P3D	LITERAL2	size_
 PERSPECTIVE	LITERAL2
 PI	LITERAL2	PI
-PIE	LITERAL2	
+PIE	LITERAL2
 PIXEL_CENTER	LITERAL2
 POINT	LITERAL2
-POINTS	LITERAL2	
+POINTS	LITERAL2
 POSTERIZE	LITERAL2	filter_
 PRESS	LITERAL2
-PROBLEM	LITERAL2	
+PROBLEM	LITERAL2
 PROJECT	LITERAL2	strokeCap_
 QUAD	LITERAL2	createShape_
 QUAD_STRIP	LITERAL2	beginShape_
@@ -146,23 +146,23 @@ RECT	LITERAL2
 RED_MASK	LITERAL2
 RELEASE LITERAL2
 REPEAT	LITERAL2
-REPLACE	LITERAL2	
+REPLACE	LITERAL2
 RETURN	LITERAL2
 RGB	LITERAL2	colorMode_
 RIGHT	LITERAL2	keyCode
 ROUND	LITERAL2	strokeCap_
 SCREEN	LITERAL2	blend_
-SECAM	LITERAL2	
+SECAM	LITERAL2
 SHAPE	LITERAL2	textMode_
 SHIFT	LITERAL2
-SPAN	LITERAL2	fullScreen_	
+SPAN	LITERAL2	fullScreen_
 SPECULAR	LITERAL2
 SPHERE	LITERAL2	createShape_
 SOFT_LIGHT	LITERAL2	blend_
 SQUARE	LITERAL2	strokeCap_
 SUBTRACT	LITERAL2	blend_
 SVG	LITERAL2
-SVIDEO	LITERAL2	
+SVIDEO	LITERAL2
 TAB	LITERAL2	keyCode
 TARGA	LITERAL2
 TAU	LITERAL2	TAU
@@ -181,17 +181,17 @@ TWO	LITERAL2
 TWO_PI	LITERAL2	TWO_PI
 UP	LITERAL2	keyCode
 WAIT	LITERAL2	cursor_
-WHITESPACE	LITERAL2		
+WHITESPACE	LITERAL2
 
 
 # Java keywords (void, import, , etc.)
-		
+
 abstract	KEYWORD1
 break	KEYWORD1	break
 class	KEYWORD1	class
 continue	KEYWORD1	continue
-default	KEYWORD1	default	
-enum	KEYWORD1	
+default	KEYWORD1	default
+enum	KEYWORD1
 extends	KEYWORD1	extends
 false	KEYWORD1	false
 final	KEYWORD1	final
@@ -199,17 +199,17 @@ finally	KEYWORD1
 implements	KEYWORD1	implements
 import	KEYWORD1	import
 instanceof	KEYWORD1
-interface	KEYWORD1	
+interface	KEYWORD1
 native	KEYWORD1
 new	KEYWORD1	new
 null	KEYWORD1	null
-package	KEYWORD1	
+package	KEYWORD1
 private	KEYWORD1	private
-protected	KEYWORD1	
+protected	KEYWORD1
 public	KEYWORD1	public
 static	KEYWORD1	static
-strictfp	KEYWORD1	
-throws	KEYWORD1	
+strictfp	KEYWORD1
+throws	KEYWORD1
 transient	KEYWORD1
 true	KEYWORD1	true
 void	KEYWORD1	void
@@ -220,7 +220,7 @@ volatile	KEYWORD1
 
 assert	KEYWORD6
 case	KEYWORD6	case
-return	KEYWORD6	return	
+return	KEYWORD6	return
 super	KEYWORD6	super
 this	KEYWORD6	this
 throw	KEYWORD6
@@ -230,18 +230,18 @@ throw	KEYWORD6
 
 Array	KEYWORD5	Array
 ArrayList	KEYWORD5	ArrayList
-Boolean	KEYWORD5	
-Byte	KEYWORD5	
+Boolean	KEYWORD5
+Byte	KEYWORD5
 BufferedReader	KEYWORD5	BufferedReader
-Character	KEYWORD5	
+Character	KEYWORD5
 Class	KEYWORD5	class
-Double	KEYWORD5	
-Float	KEYWORD5	
-Integer	KEYWORD5	
+Double	KEYWORD5
+Float	KEYWORD5
+Integer	KEYWORD5
 HashMap	KEYWORD5	HashMap
 PrintWriter	KEYWORD5	PrintWriter
 String	KEYWORD5	String
-StringBuffer	KEYWORD5	
+StringBuffer	KEYWORD5
 StringBuilder	KEYWORD5
 Thread	KEYWORD5
 boolean	KEYWORD5	boolean
@@ -267,14 +267,14 @@ synchronized	KEYWORD3
 while	KEYWORD3	while
 try	KEYWORD3	try
 
-catch	FUNCTION3	catch
+catch	FUNCTION3	catch_
 do	FUNCTION3
-for	FUNCTION3	for
-if	FUNCTION3	if
+for	FUNCTION3	for_
+if	FUNCTION3	if_
 #else	FUNCTION3	else
-switch	FUNCTION3	switch
+switch	FUNCTION3	switch_
 synchronized	FUNCTION3
-while	FUNCTION3	while
+while	FUNCTION3	while_
 #try	FUNCTION3	try
 
 
@@ -386,9 +386,9 @@ pixelHeight	KEYWORD4	pixelHeight
 #
 # THE TEXT BELOW IS AUTO-GENERATED
 #
-# SO 
-# DON'T 
-# TOUCH 
+# SO
+# DON'T
+# TOUCH
 # IT
 
 
@@ -455,7 +455,7 @@ displayDensity	FUNCTION1	displayDensity_
 displayHeight	KEYWORD4	displayHeight
 displayWidth	KEYWORD4	displayWidth
 dist	FUNCTION1	dist_
-draw	FUNCTION4	draw
+draw	FUNCTION4	draw_
 ellipse	FUNCTION1	ellipse_
 ellipseMode	FUNCTION1	ellipseMode_
 emissive	FUNCTION1	emissive_
@@ -599,10 +599,10 @@ setJSONObject	FUNCTION2	JSONObject_setJSONObject_
 setString	FUNCTION2	JSONObject_setString_
 key	KEYWORD4	key
 keyCode	KEYWORD4	keyCode
-keyPressed	FUNCTION4	keyPressed
+keyPressed	FUNCTION4	keyPressed_
 keyPressed	KEYWORD4	keyPressed
-keyReleased	FUNCTION4	keyReleased
-keyTyped	FUNCTION4	keyTyped
+keyReleased	FUNCTION4	keyReleased_
+keyTyped	FUNCTION4	keyTyped_
 launch	FUNCTION1	launch_
 lerp	FUNCTION1	lerp_
 lerpColor	FUNCTION1	lerpColor_
@@ -636,13 +636,13 @@ modelY	FUNCTION1	modelY_
 modelZ	FUNCTION1	modelZ_
 month	FUNCTION1	month_
 mouseButton	KEYWORD4	mouseButton
-mouseClicked	FUNCTION4	mouseClicked
-mouseDragged	FUNCTION4	mouseDragged
-mouseMoved	FUNCTION4	mouseMoved
-mousePressed	FUNCTION4	mousePressed
+mouseClicked	FUNCTION4	mouseClicked_
+mouseDragged	FUNCTION4	mouseDragged_
+mouseMoved	FUNCTION4	mouseMoved_
+mousePressed	FUNCTION4	mousePressed_
 mousePressed	KEYWORD4	mousePressed
-mouseReleased	FUNCTION4	mouseReleased
-mouseWheel	FUNCTION4	mouseWheel
+mouseReleased	FUNCTION4	mouseReleased_
+mouseWheel	FUNCTION4	mouseWheel_
 mouseX	KEYWORD4	mouseX
 mouseY	KEYWORD4	mouseY
 nf	FUNCTION1	nf_
@@ -793,8 +793,8 @@ selectFolder	FUNCTION1	selectFolder_
 selectInput	FUNCTION1	selectInput_
 selectOutput	FUNCTION1	selectOutput_
 set	FUNCTION1	set_
-settings	FUNCTION4	settings
-setup	FUNCTION4	setup
+settings	FUNCTION4	settings_
+setup	FUNCTION4	setup_
 shader	FUNCTION1	shader_
 shape	FUNCTION1	shape_
 shapeMode	FUNCTION1	shapeMode_
