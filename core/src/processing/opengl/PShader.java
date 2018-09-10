@@ -103,6 +103,9 @@ public class PShader implements PConstants {
   protected String vertexFilename;
   protected String fragmentFilename;
 
+  protected File vertexFile;
+  protected File fragmentFile;
+
   protected String[] vertexShaderSource;
   protected long vertexShaderModificationTime;
   protected String[] fragmentShaderSource;
@@ -175,6 +178,8 @@ public class PShader implements PConstants {
     this.fragmentURL = null;
     this.vertexFilename = null;
     this.fragmentFilename = null;
+    this.vertexFile = null;
+    this.fragmentFile = null;
 
     glProgram = 0;
     glVertex = 0;
@@ -215,8 +220,17 @@ public class PShader implements PConstants {
     this.fragmentURL = null;
     this.vertexFilename = vertFilename;
     this.fragmentFilename = fragFilename;
-    refreshFragmentShaderSource();
-    refreshVertexShaderSource();
+    this.vertexFile = shaderFile(vertFilename);
+    this.fragmentFile = shaderFile(fragFilename);
+    if (!refreshFragmentShaderSource()) {
+      // The refresh function failed, maybe the shader file is inside a .jar. In such case
+      // hot loading is not going to work anyways, but the shader could still be loaded.
+      fragmentShaderSource = pgl.loadFragmentShader(fragFilename);
+    }
+    if (!refreshVertexShaderSource()) {
+      // Same comment as above
+      vertexShaderSource = pgl.loadVertexShader(vertFilename);
+    }
 
     glProgram = 0;
     glVertex = 0;
@@ -288,6 +302,8 @@ public class PShader implements PConstants {
     this.fragmentURL = null;
     this.vertexFilename = null;
     this.fragmentFilename = null;
+    this.vertexFile = null;
+    this.fragmentFile = null;
     vertexShaderSource = vertSource;
     fragmentShaderSource = fragSource;
 
@@ -316,7 +332,10 @@ public class PShader implements PConstants {
 
   public void setVertexShader(String vertFilename) {
     this.vertexFilename = vertFilename;
-    refreshVertexShaderSource();
+    this.vertexFile = shaderFile(vertFilename);
+    if (!refreshVertexShaderSource()) {
+      vertexShaderSource = pgl.loadVertexShader(vertFilename);
+    }
   }
 
 
@@ -333,7 +352,10 @@ public class PShader implements PConstants {
 
   public void setFragmentShader(String fragFilename) {
     this.fragmentFilename = fragFilename;
-    refreshFragmentShaderSource();
+    this.fragmentFile = shaderFile(fragFilename);
+    if (!refreshFragmentShaderSource()) {
+      fragmentShaderSource = pgl.loadFragmentShader(fragFilename);
+    }
   }
 
 
@@ -350,64 +372,54 @@ public class PShader implements PConstants {
    * @return true if fragmentShaderSource was updated, false if not
    */
   public boolean refreshFragmentShaderSource() {
-    // support hot reload only for files, not URLs
-    if (fragmentFilename == null) {
+    if (fragmentFile == null || !fragmentFile.exists()) return false;
+
+    long lastModified = fragmentFile.lastModified();
+    if (lastModified != fragmentShaderModificationTime) {
+      if (fragmentShaderModificationTime != 0) {
+        System.out.println("Fragment shader was updated");
+      }
+      fragmentShaderModificationTime = lastModified;
+      fragmentShaderSource = pgl.loadFragmentShader(fragmentFilename);
+      return true;
+    } else {
       return false;
     }
-
-    // look for the file in the data folder first, and in the sketch folder second
-    // this mirrors loadStrings(), which is what loadFragmentShader() will use
-    File[] tmp = { parent.dataFile(fragmentFilename), parent.sketchFile(fragmentFilename) };
-
-    for (int i=0; i < tmp.length; i++) {
-      if (tmp[i].exists()) {
-        long lastModified = tmp[i].lastModified();
-        if (lastModified != fragmentShaderModificationTime) {
-          if (fragmentShaderModificationTime != 0) {
-            System.out.println("Fragment shader was updated");
-          }
-          fragmentShaderModificationTime = lastModified;
-          fragmentShaderSource = pgl.loadFragmentShader(fragmentFilename);
-          return true;
-        } else {
-          return false;
-        }
-      }
-    }
-
-    return false;
   }
 
   /**
    * @return true if vertexShaderSource was updated, false if not
    */
   public boolean refreshVertexShaderSource() {
-    // support hot reload only for files, not URLs
-    if (vertexFilename == null) {
+    if (vertexFile == null || !vertexFile.exists()) return false;
+
+    long lastModified = vertexFile.lastModified();
+    if (lastModified != vertexShaderModificationTime) {
+      if (vertexShaderModificationTime != 0) {
+        System.out.println("Vertex shader was updated");
+      }
+      vertexShaderModificationTime = lastModified;
+      vertexShaderSource = pgl.loadVertexShader(vertexFilename);
+      return true;
+    } else {
       return false;
     }
+  }
 
-    // look for the file in the data folder first, and in the sketch folder second
-    // this mirrors loadStrings(), which is what loadVertexShader() will use
-    File[] tmp = { parent.dataFile(vertexFilename), parent.sketchFile(vertexFilename) };
+  // Looks for the file in the data folder first, and in the sketch folder second
+  // this mirrors loadStrings(), which is what loadVertexShader() will use. No other
+  // locations are needed since this is to probe for a shader file that's being edited
+  // by the user, so something packaged inside a .jar is not going to matter.
+  protected File shaderFile(String filename) {
+    if (filename == null) return null;
 
-    for (int i=0; i < tmp.length; i++) {
-      if (tmp[i].exists()) {
-        long lastModified = tmp[i].lastModified();
-        if (lastModified != vertexShaderModificationTime) {
-          if (vertexShaderModificationTime != 0) {
-            System.out.println("Vertex shader was updated");
-          }
-          vertexShaderModificationTime = lastModified;
-          vertexShaderSource = pgl.loadVertexShader(vertexFilename);
-          return true;
-        } else {
-          return false;
-        }
-      }
-    }
+    File file = parent.dataFile(filename);
+    if (file.exists()) return file;
 
-    return false;
+    file = parent.sketchFile(filename);
+    if (file.exists()) return file;
+
+    return null;
   }
 
 
@@ -803,7 +815,7 @@ public class PShader implements PConstants {
 
   protected void setUniformImpl(String name, int type, Object value) {
     if (uniformValues == null) {
-      uniformValues = new HashMap<String, UniformValue>();
+      uniformValues = new HashMap<>();
     }
     uniformValues.put(name, new UniformValue(type, value));
   }
@@ -893,10 +905,10 @@ public class PShader implements PConstants {
           PImage img = (PImage)val.value;
           Texture tex = currentPG.getTexture(img);
 
-          if (textures == null) textures = new HashMap<Integer, Texture>();
+          if (textures == null) textures = new HashMap<>();
           textures.put(loc, tex);
 
-          if (texUnits == null) texUnits = new HashMap<Integer, Integer>();
+          if (texUnits == null) texUnits = new HashMap<>();
           if (texUnits.containsKey(loc)) {
             unit = texUnits.get(loc);
             pgl.uniform1i(loc, unit);
