@@ -228,6 +228,11 @@ public class EditorConsole extends JScrollPane {
       // Java on Mac OS X, but is widely reported as the source of any other
       // bug or problem that a user runs into. It may well be a Processing
       // bug, but until we know, we're suppressing the messages.
+    } else if (err && what.contains("is calling TIS/TSM in non-main thread environment")) {
+      // Error message caused by JOGL since macOS 10.13.4, cannot fix at the moment so silencing it:
+      // https://github.com/processing/processing/issues/5462
+      // Some discussion on the Apple's developer forums seems to suggest that is not serious:
+      // https://forums.developer.apple.com/thread/105244
     } else if (err && what.contains("Make pbuffer:")) {
       // Remove initalization warning from LWJGL.
     } else if (err && what.contains("XInitThreads() called for concurrent")) {
