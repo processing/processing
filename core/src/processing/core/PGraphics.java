@@ -6161,7 +6161,7 @@ public class PGraphics extends PImage implements PConstants {
     ellipseMode(s.ellipseMode);
     shapeMode(s.shapeMode);
 
-    if (blendMode != 0) {
+    if (blendMode != s.blendMode) {
       blendMode(s.blendMode);
     }
 
