@@ -4,9 +4,17 @@ X fix javaPlatform variable for newer JDK versions
 X   https://github.com/processing/processing/pull/5626
 
 contrib
-X make tabs into spaces, fixes pixelDensity(2) issue with tabs
-X   https://github.com/processing/processing/issues/5625
-X   https://github.com/processing/processing/pull/5633
+o make tabs into spaces, fixes pixelDensity(2) issue with tabs
+o   https://github.com/processing/processing/issues/5625
+o   https://github.com/processing/processing/pull/5633
+X   had to back this fix out again
+X Fixes blend mode not being set correctly, fixing #5645
+X   https://github.com/processing/processing/issues/5645
+X   https://github.com/processing/processing/pull/5647
+
+andres
+X silence TIS/TSM warning message with P2D/P3D/OPENGL since macOS 10.13.4
+X   https://github.com/processing/processing/issues/5462
 
 
 _ NullPointerException at java.awt.Window.init(Window.java:497) when using Airplay

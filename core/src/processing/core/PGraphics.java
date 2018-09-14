@@ -4595,12 +4595,6 @@ public class PGraphics extends PImage implements PConstants {
    * ignored.
    */
   public void text(String str, float x, float y) {
-    if (str.indexOf('\t') != -1) {
-      // https://github.com/processing/processing/issues/5625
-      // https://github.com/processing/processing/pull/5633
-      str = str.replaceAll("\t", "    ");
-    }
-
     if (textFont == null) {
       defaultFontOrDeath("text");
     }
@@ -4924,16 +4918,6 @@ public class PGraphics extends PImage implements PConstants {
     textBreakStop[textBreakCount] = stop;
     textBreakCount++;
   }
-
-
-//  public void text(String s, float a, float b, float c, float d, float z) {
-//    if (z != 0) translate(0, 0, z);  // slowness, badness
-//
-//    text(s, a, b, c, d);
-//    textZ = z;
-//
-//    if (z != 0) translate(0, 0, -z);  // TEMPORARY HACK! SLOW!
-//  }
 
 
   public void text(int num, float x, float y) {

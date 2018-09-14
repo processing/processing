@@ -3,7 +3,11 @@
 contrib
 X Updated russian translation, now can choose russian in preferences
 X   https://github.com/processing/processing/pull/5619
-
+X Turkish translation updates
+X   https://github.com/processing/processing/pull/5636
+_ Find in Reference disabled for various keywords (draw, for, if, catch, while)
+_   https://github.com/processing/processing/issues/5562
+_   https://github.com/processing/processing/pull/5642
 
 _ Examples dialog causes high CPU load
 _   https://github.com/processing/processing/issues/5246
