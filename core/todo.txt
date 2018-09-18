@@ -12,6 +12,11 @@ X Fixes blend mode not being set correctly, fixing #5645
 X   https://github.com/processing/processing/issues/5645
 X   https://github.com/processing/processing/pull/5647
 
+gohai
+X Profile GL3bc is not available on X11GraphicsDevice
+X   https://github.com/processing/processing/issues/5476
+X   https://github.com/processing/processing/pull/5652
+
 andres
 X silence TIS/TSM warning message with P2D/P3D/OPENGL since macOS 10.13.4
 X   https://github.com/processing/processing/issues/5462
