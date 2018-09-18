@@ -3,3 +3,6 @@
 ._*
 *~
 /build/shared/reference.zip
+/bugfix_info/processing_bugfix_duplicateLibraryConflict_new.png
+/bugfix_info/processing_bugfix_duplicateLibraryConflict_old.png
+/build/ant_run.bat

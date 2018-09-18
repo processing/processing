@@ -31,9 +31,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -568,19 +570,37 @@ public class PreprocessingService {
                                                           List<ImportStatement> programImports) {
     StringBuilder classPath = new StringBuilder();
 
-    programImports.stream()
-        .map(ImportStatement::getPackageName)
-        .filter(pckg -> !ignorableImport(pckg))
-        .map(pckg -> {
-          try {
-            return mode.getLibrary(pckg);
-          } catch (SketchException e) {
-            return null;
-          }
-        })
-        .filter(lib -> lib != null)
-        .map(Library::getClassPath)
-        .forEach(cp -> classPath.append(File.pathSeparator).append(cp));
+
+    // init map by setting package imports as keys and libraries to null
+    HashMap<String, Library> pkg_libs = new HashMap<String, Library>();
+    for(ImportStatement pgk : programImports){
+      pkg_libs.put(pgk.getPackageName(), null);
+    }
+    
+    // for each package import, find a library that makes sense
+    // no more "duplicate library" conflicts"
+    mode.getLibraries(pkg_libs);
+    
+    // checkout the generated mapping
+    // some imports are still mapped to null, which is the case if not
+    // a single library was found
+    Iterator<Entry<String, Library>> iter = pkg_libs.entrySet().iterator();
+    while (iter.hasNext()) {
+      Map.Entry<String, Library> pkg_lib = iter.next();
+      
+      Library lib = pkg_lib.getValue();
+      if(lib != null){
+        classPath.append(File.pathSeparator).append(lib.getClassPath());
+      }
+    }
+
+//    programImports.stream()
+//        .map(ImportStatement::getPackageName)
+//        .filter(pckg -> !ignorableImport(pckg))
+//        .map(pckg -> mode.getLibrary(pckg))
+//        .filter(lib -> lib != null)
+//        .map(Library::getClassPath)
+//        .forEach(cp -> classPath.append(File.pathSeparator).append(cp));
 
     return sanitizeClassPath(classPath.toString());
   }

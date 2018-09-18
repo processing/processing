@@ -6,9 +6,11 @@ import java.beans.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -1818,39 +1820,74 @@ public class JavaEditor extends Editor {
    * @param importHeaders
    */
   private List<AvailableContribution> getNotInstalledAvailableLibs(ArrayList<String> importHeadersList) {
-    Map<String, Contribution> importMap =
-      ContributionListing.getInstance().getLibrariesByImportHeader();
+    
+    Map<String, Contribution> importMap = ContributionListing.getInstance().getLibrariesByImportHeader();
+    
     List<AvailableContribution> libList = new ArrayList<>();
+
+    
+    // init map by setting package imports as keys and libraries to null
+    
+    HashMap<String, Library> pkg_libs = new HashMap<String, Library>();
+    HashMap<String, Contribution> pkg_contr = new HashMap<String, Contribution>();
+    
     for (String importHeaders : importHeadersList) {
       int dot = importHeaders.lastIndexOf('.');
-      String entry = (dot == -1) ? importHeaders : importHeaders.substring(0,
-          dot);
+      String entry = (dot == -1) ? importHeaders : importHeaders.substring(0, dot);
 
       if (entry.startsWith("java.") ||
           entry.startsWith("javax.") ||
           entry.startsWith("processing.")) {
         continue;
       }
-
-      Library library = null;
-      try {
-        library = this.getMode().getLibrary(entry);
-        if (library == null) {
-          Contribution c = importMap.get(importHeaders);
-          if (c != null && c instanceof AvailableContribution) {
-            libList.add((AvailableContribution) c);// System.out.println(importHeaders
-                                                   // + "not found");
-          }
-        }
-      } catch (Exception e) {
-        // Not gonna happen (hopefully)
-        Contribution c = importMap.get(importHeaders);
-        if (c != null && c instanceof AvailableContribution) {
-          libList.add((AvailableContribution) c);// System.out.println(importHeaders
-                                                 // + "not found");
+      pkg_libs.put(entry, null);
+      pkg_contr.put(entry, importMap.get(entry));
+    }
+    
+    // for each package import, find a library that makes sense
+    // no more "duplicate library" conflicts"
+    mode.getLibraries(pkg_libs);
+    
+    
+    // checkout the generated mapping
+    // some imports are still mapped to null, which is the case if not
+    // a single library was found. Exactly what we want here.
+    Iterator<Entry<String, Library>> iter = pkg_libs.entrySet().iterator();
+    while (iter.hasNext()) {
+      
+      Map.Entry<String, Library> pkg_lib = iter.next();
+      
+      String  pkg = pkg_lib.getKey();
+      Library lib = pkg_lib.getValue();
+      
+      if(lib == null){
+        Contribution contr = pkg_contr.get(pkg);
+        if (contr != null && contr instanceof AvailableContribution) {
+          libList.add((AvailableContribution) contr);
         }
       }
     }
+    
+    
+
+//    for (String importHeaders : importHeadersList) {
+//      int dot = importHeaders.lastIndexOf('.');
+//      String entry = (dot == -1) ? importHeaders : importHeaders.substring(0, dot);
+//
+//      if (entry.startsWith("java.") ||
+//          entry.startsWith("javax.") ||
+//          entry.startsWith("processing.")) {
+//        continue;
+//      }
+//
+//      if (pkg_libs.get(entry) == null) {
+//        Contribution c = importMap.get(importHeaders);
+//        if (c != null && c instanceof AvailableContribution) {
+//          libList.add((AvailableContribution) c);
+//        }
+//      }
+//    }
+      
     return libList;
   }
 

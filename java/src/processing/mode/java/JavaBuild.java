@@ -27,7 +27,10 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -413,7 +416,11 @@ public class JavaBuild {
       javaLibraryPath += File.pathSeparator + core.getNativePath();
     }
 
-//    System.out.println("extra imports: " + result.extraImports);
+    
+    
+    // init map by setting package imports as keys and libraries to null
+    HashMap<String, Library> pkg_libs = new HashMap<String, Library>();
+    
     for (String item : result.extraImports) {
 //      System.out.println("item = '" + item + "'");
       // remove things up to the last dot
@@ -421,7 +428,7 @@ public class JavaBuild {
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
       String entry = (dot == -1) ? item : item.substring(0, dot);
 //      System.out.print(entry + " => ");
-
+  
       if (item.startsWith("static ")) {
         // import static - https://github.com/processing/processing/issues/8
         // Remove more stuff.
@@ -429,11 +436,28 @@ public class JavaBuild {
         entry = entry.substring(7, (dot2 == -1) ? entry.length() : dot2);
 //        System.out.println(entry);
       }
-
-//      System.out.println("library searching for " + entry);
-      Library library = mode.getLibrary(entry);
-//      System.out.println("  found " + library);
-
+      
+      // add package import as key, library is null atm
+      pkg_libs.put(entry, null);
+    }
+    
+    
+    // for each package import, find a library that makes sense
+    // no more "duplicate library" conflicts"
+    mode.getLibraries(pkg_libs);
+    
+    
+    // checkout the generated mapping
+    // some imports are still mapped to null, which is the case if not
+    // a single library was found
+    Iterator<Entry<String, Library>> iter = pkg_libs.entrySet().iterator();
+    while (iter.hasNext()) {
+      
+      Map.Entry<String, Library> pkg_lib = iter.next();
+      
+      String  entry   = pkg_lib.getKey();
+      Library library = pkg_lib.getValue();
+  
       if (library != null) {
         if (!importedLibraries.contains(library)) {
           importedLibraries.add(library);
@@ -460,7 +484,10 @@ public class JavaBuild {
           System.err.println("No library found for " + entry);
         }
       }
+      
     }
+    
+  
 //    PApplet.println(PApplet.split(libraryPath, File.pathSeparatorChar));
 
     // Finally, add the regular Java CLASSPATH. This contains everything
