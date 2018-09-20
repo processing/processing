@@ -5,6 +5,9 @@ X Updated russian translation, now can choose russian in preferences
 X   https://github.com/processing/processing/pull/5619
 X Turkish translation updates
 X   https://github.com/processing/processing/pull/5636
+X Examples dialog causes high CPU load
+X   https://github.com/processing/processing/issues/5246
+X   https://github.com/processing/processing/pull/5654
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
 _   https://github.com/processing/processing/issues/5562
 _   https://github.com/processing/processing/pull/5642
@@ -36,7 +39,7 @@ _ issues with updating modes
 _   https://github.com/processing/processing/issues/5424
 _ examples window not updating on install
 _   open examples window
-_   mode > add mode > libraries > install video 
+_   mode > add mode > libraries > install video
 _   did not update the examples window, had to restart pde
 _ was able to save over the video capture examples b/c they were a library
 _   lib examples not properly marked as read-only
@@ -44,8 +47,8 @@ _   lib examples not properly marked as read-only
 
 temp
 _ inside Sketch, makeTempFolder() would be the place to modify the location
-_   perhaps make a 'temp' inside the sketchbook folder? 
-_   on startup, check to see if there are a lot of files, remove them? 
+_   perhaps make a 'temp' inside the sketchbook folder?
+_   on startup, check to see if there are a lot of files, remove them?
 _   or maybe auto-delete once older than 24 hours?
 _   also don't search it when walking the sketchbook
 _ untitled folders are stored in temp folder
@@ -55,7 +58,7 @@ _   -Djava.io.tmpdir=Z:\temp
 _ clean up /tmp folders used during build
 _   https://github.com/processing/processing/issues/1896
 _ don't let people into the /tmp folder for sketches
-o   don't use tmp folder for sketches? 
+o   don't use tmp folder for sketches?
 _   restrict more things like "show sketch folder"
 _   don't allow adding files w/o saving
 _   others?
@@ -71,7 +74,7 @@ _   https://github.com/processing/processing/pull/5126
 
 
 nasty ones
-_ errors inside setup() aren't coming through at all? 
+_ errors inside setup() aren't coming through at all?
 _   seen in Eclipse; have to turn on the debugger
 _ "Sketch disappeared" infinite pop up dialogs
 _   https://github.com/processing/processing/pull/4808
@@ -154,7 +157,7 @@ _ could not write to temporary directory (virus checker problems)
 _   https://github.com/processing/processing/issues/4757
 
 _ Export Application fails on machines w/ non-ASCII chars in user name
-_   at least give a warning about this? 
+_   at least give a warning about this?
 _   https://github.com/processing/processing/issues/4736
 _   related: https://github.com/processing/processing/issues/3543
 
@@ -184,7 +187,7 @@ _   https://github.com/processing/processing/issues/1566
 
 _ modify line number color when no lines extend that far?
 _   https://github.com/processing/processing/pull/4560
-_ text gutter doesn't seem to be hidpi 
+_ text gutter doesn't seem to be hidpi
 X   or is it b/c screen not quite 2x? (nope)
 _ swap out the fonts?
 
@@ -258,7 +261,7 @@ _   make all tooltips run through our style
 _   https://github.com/processing/processing/issues/3940
 _ import suggestions box needs design review
 _   https://github.com/processing/processing/issues/3407
-_ fix background color for selected lines in VariableInspector 
+_ fix background color for selected lines in VariableInspector
 _   https://github.com/processing/processing/issues/3925
 _ implement 2x versions of the icons for the debugger window/variable inspector
 _   https://github.com/processing/processing/issues/3921
@@ -287,7 +290,7 @@ _   may need to drop use of Source Sans
 _   what do these do, and are we doing it already?
 _   System.setProperty("awt.useSystemAAFontSettings","on");
 _   System.setProperty("swing.aatext", "true");
-_ how are we going to handle fonts for other languages? 
+_ how are we going to handle fonts for other languages?
 _   two new fonts have been added, other languages will need more
 _   need a decent sans with with Unicode coverage
 _   i.e. https://github.com/processing/processing/pull/3025
@@ -334,7 +337,7 @@ _ don't allow users to create 'blah.java' when 'blah.pde' already in sketch
 
 
 sketchbook
-_ Mode.rebuildLibraryList() called too many times on startup? 
+_ Mode.rebuildLibraryList() called too many times on startup?
 _   and when sketches saved as well?
 _   makes saving *really* slow with a lot of libraries
 _ New/Rename/Save As is reloading the whole sketchbook, argh
@@ -381,7 +384,7 @@ _   the Find window (also the save windows) also have the same problem
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
 _   and/or start bundling separate source downloads
-_ look through all isPopupTrigger() code 
+_ look through all isPopupTrigger() code
 _   make sure both press/release are implemented
 _ emacs style errors in commander aren't quite right
 _   https://github.com/processing/processing/issues/2158
@@ -391,7 +394,7 @@ _ modes are being loaded multiple times, which can cause trouble
 _ add minimum version required (or max version?) to libraries/modes/etc
 
 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
 DOC / Misc
@@ -419,7 +422,7 @@ _   and that java2d should complain if people try it
 _ method to go from function name to the included examples where used?
 _ encourage use of set() instead of point() in the drawing api
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116
-_ other projects on which p5 is built 
+_ other projects on which p5 is built
 _   no longer oro matcher and jikes
 _   add: quaqua, jna, registry stuff, .. ?
 _ noLoop() isn't the same as "finished", though it's sometimes used that way
@@ -454,12 +457,12 @@ _ textMode(SCREEN) for P2D and P3D for nice fast text in screen space
 _   currently slow in JAVA2D and OPENGL, but this will improve
 _ what is the vlw font file format?
 _ shapes from 3D type
-_   the way to do it (will improve later) is to use some undocumented features  
-_   1) you have to use the OPENGL renderer 
-_   2) use textMode(SHAPE); 
-_   3) use createFont() (which you already are) 
-_   this will convert all the shape data from the fonts for writing. 
-_   it will be *extremely* slow, which is part of why it's not documented yet. 
+_   the way to do it (will improve later) is to use some undocumented features
+_   1) you have to use the OPENGL renderer
+_   2) use textMode(SHAPE);
+_   3) use createFont() (which you already are)
+_   this will convert all the shape data from the fonts for writing.
+_   it will be *extremely* slow, which is part of why it's not documented yet.
 _   but it will work with beginRaw().
 _ improve documentation of the pdf stuff
 _   be clearer about the font setup stuff
@@ -474,7 +477,7 @@ _ under the hood - basic
 _   it's all java
 _   don't use awt
 _   most things are imported by default
-_ under the hood - complex 
+_ under the hood - complex
 _   how to get started with coding
 _   everything subclasses PApplet
 _   if you need a particular name, add it with "extends PApplet"
@@ -485,7 +488,7 @@ _   add main() to your app to make it run on its own
 _   preproc stuff.. have to make setup() into public void setup()
 _     (same for key events and all that)
 _ is there a way to do xxx?
-_   advanced users who are outgrowing the basic reference: 
+_   advanced users who are outgrowing the basic reference:
 _   be sure to check the "complete" reference
 _ change bugs.html to issues.html
 _   and add a redirect in httpd.conf
@@ -518,10 +521,10 @@ _ write an example that uses HashMap (or Hashtable)
 _ write an example that uses ArrayList properly
 _ get xml library example in there
 _ simple method for having a clickable region or sprite with rollover
-_ post to web example 
+_ post to web example
 _   particularly for uploading image data
 _   along with php script to handle receive
-_   this is in hacks, but 
+_   this is in hacks, but
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1117194066#7
 
 
@@ -604,7 +607,7 @@ _ link out to further documentation (e.g. AIOOBE, NPE)
 low (common errors around reserved names/class naming)
 _ Saving sketch with the same name as a class or primitive breaks sketch
 _   https://github.com/processing/processing/issues/196
-_ don't allow people to override methods like paint() 
+_ don't allow people to override methods like paint()
 _   make them final? just improve the error messages?
 _   https://github.com/processing/processing/issues/1058
 _ Processing chokes if a sketch defines a class with same name as the sketch
@@ -623,7 +626,7 @@ _   could write that into the file, that it's an example
 _   or write the path as shown in the PDE to the file as simpler
 _ 'recent' menu paths can get enormous
 _ active editor not being set null
-_   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
+_   in Base.nextEditorLocation(), changed to "editors.size() == 0"
 _   instead of (activeEditor == null), but that's papering over a problem
 _   where the active editor is not being set null
 _ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
@@ -674,8 +677,8 @@ _   or don't allow it to be exported
 _   add bug reference to the faq once added to the db
 X   or at least add a note about this to the faq
 _ show error when no main() is included but class extends PApplet
-_   error can happen or be checked 
-_ exporting application copies .java files 
+_   error can happen or be checked
+_ exporting application copies .java files
 _   .java files are copied to the root folder as well as the source folder
 
 
@@ -707,7 +710,7 @@ _ Add a means to specify packages to import in library.properties
 _   https://github.com/processing/processing/issues/2134
 _ need to deal with classpath conflicts
 _   avoid garbage that people have installed on their machines
-_   antlr.jar in the classpath will cause trouble.. 
+_   antlr.jar in the classpath will cause trouble..
 _     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1138652326
 _   jogl jar files, or jogl install will cause trouble
 _     /System/Library/Java/Extensions or /Library/Java/Extensions
@@ -728,12 +731,12 @@ _     i.e. even if not specified, the stuff will be in the classpath
 _   need to make classpath code be less promiscuous
 _   the order of adding libraries to classpath should be opposite
 _     the important local libraries should be first in cp, user contrib later
-_ make sure there aren't library jar files named the same thing 
+_ make sure there aren't library jar files named the same thing
 _   i.e. if one library has db.jar, then that's gonna kill another db.jar
 _   when the files are copied over
 _ java.ext.dirs for /System/Library/Java/Extensions
 _   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/spec.html
-_   can set java.ext.dirs to something else 
+_   can set java.ext.dirs to something else
 _   on osx, just ignore anything in /Library/Java/Extensions (but not others)?
 _ native lib stuff, use native.txt in lib folder, then:
 _   String osName = System.getProperty("os.name");
@@ -772,10 +775,10 @@ _ why wasn't Library moved to LibraryContribution?
 _   or that LibraryContribution needs to be a wrapper around it?
 _ send info on 'check for updates' so we know about libs/modes/etc?
 _   how to disclose to users?
-_   only send for items that are part of the public list 
+_   only send for items that are part of the public list
 _     otherwise we're sending private libraries/installs
 _     although this won't pick up old libraries not on the new system
-_ classpath conflicts.. 
+_ classpath conflicts..
 _   getPackageList.. from Library... maybe others?
 _   really need to make sure that a weird core.jar isn't being imported
 _   coffeescript was doing this and breaking the pde
@@ -799,7 +802,7 @@ _ font size for "Downloading" on progress bar is too large
 _   but changing the size breaks the vertical centering
 _ highlight color seems to be incorrect?
 _ after installing, the item in the manager list doesn't change color
-_ wheel mouse is super jumpy 
+_ wheel mouse is super jumpy
 _   something about unit increment in ContributionListPanel
 _ arrow keys up/down move scroll bar, not selection
 _ fonts/etc need to be set in one place where they can be edited
@@ -823,7 +826,7 @@ _   don't bother having a "cancel" for the prefs window
 _ make prefs dialog modal?
 
 
-PDE / Runner 
+PDE / Runner
 
 _ if RuntimeException thrown, needs to check if it's a wrapped exception
 _   for instance, if there's a crash inside makeGraphics()
@@ -840,7 +843,7 @@ _ need to set dock icon title on osx
 
 PDE / Sketch & Sketchbook
 
-_ Large number of files in sketchbook folder can cause slow startup 
+_ Large number of files in sketchbook folder can cause slow startup
 _   and/or errors with launch4j
 _   https://github.com/processing/processing/issues/1190
 _ error that sketch is read-only can't be canceled
@@ -867,7 +870,7 @@ _ for tools, maybe don't run on event thread? (makes the gui hang)
 _   but instead, things that affect gui need to be called w/ invokeLater?
 
 
-TOOLS / Ideas 
+TOOLS / Ideas
 
 _ eclipse import/export
 _   simple mechanism to export to eclipse
@@ -888,7 +891,7 @@ TOOLS / Auto Format
 
 _ Switch block cases not indented
 _   https://github.com/processing/processing/issues/1042
-_ do a better job of maintaining cursor 
+_ do a better job of maintaining cursor
 _ only auto-format a particular section of code
 _   set the 'tabs' var based on how many spaces on previous line
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
@@ -924,9 +927,9 @@ DIST
 How the environment gets packed up, downloaded, and installed.
 
 
-DIST / General 
+DIST / General
 
-_ move processing-java inside the Java Mode? 
+_ move processing-java inside the Java Mode?
 _   make a Tool that installs it for all platforms, not just OS X
 _   not really part of the 'build' anymore
 _ line ending issues
@@ -949,12 +952,12 @@ _ need .psk file icon
 _ need exported application icons
 _ need more comprehensive list of 'known bugs'
 _ need more comprehensive list of 'known suggestions'
-_ write notes about running p5 on another platforms 
+_ write notes about running p5 on another platforms
 _   this was some feedback from running on bsd:
-_     /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase 
+_     /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase
 _   need to use the 1.3 vm, and get a fake platform name
 _   otherwise, goes looking for lib/pde_.properties or something
-_ about box 
+_ about box
 _   bring up information about gpl, lgpl, and ibmpl
 _   jedit syntax is under mit license
 _     http://www.opensource.org/licenses/mit-license.php
@@ -978,7 +981,7 @@ DIST / Mac OS X
 
 _ Java bug prevents us from setting the dock name of a sketch run from the PDE
 _   https://github.com/processing/processing/issues/5045
-_ client properties 
+_ client properties
 _   https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html
 _ built-in images: http://nadeausoftware.com/articles/2008/12/mac_java_tip_how_access_mac_specific_nsimage_icons
 _ Update QuickLook plugin for Processing 3
@@ -992,11 +995,11 @@ _ more OS X-specific hackery for improved appearance
 _   https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html
 _ possible better option for doing retina?
 _   g.getFontRenderContext().getTransform().equals(AffineTransform.getScaleInstance(2.0, 2.0))
-_ LWJGL forum discussion 
+_ LWJGL forum discussion
 _   http://lwjgl.org/forum/index.php/topic,4711.225.html
-_ change cmd line for OS X to use symlink? 
+_ change cmd line for OS X to use symlink?
 _   otherwise updates are going to require reinstall..
-_   or that it's gonna need to parse and say "update command line?" 
+_   or that it's gonna need to parse and say "update command line?"
 _ look into LCD rendering problems w/ Java (see if Lion still a problem)
 _   fonts were showing up with very different fatness
 _ we're breaking some mac human interface guidelines
@@ -1061,7 +1064,7 @@ _   argh.. more path and shell issues..
 
 
 
-FUTURE 
+FUTURE
 
 Notes for some indefinite later release...
 
@@ -1088,18 +1091,18 @@ _   https://github.com/processing/processing/issues/218
 _ changing number of screens between run causes things to show up off-screen
 _   so when running, check to make sure that things are out of the area
 _ improve the speed of file copying
-_   use FileChannels, see FileInputStream.getChannel(), 
+_   use FileChannels, see FileInputStream.getChannel(),
 _   and use transferFrom() or transferTo().)
 _   could also use FileUtils in Apache's common io
 _   http://commons.apache.org/io/api-release/index.html
-_ go through libraries and clean things up 
+_ go through libraries and clean things up
 protected void finalize() throws Throwable {
   try {
-    close();        
+    close();
   } catch (Exception e) {
-    // do something               
-  } finally {        
+    // do something
+  } finally {
     super.finalize();
-    // more code can be written here as per need of application        
+    // more code can be written here as per need of application
   }
 }
