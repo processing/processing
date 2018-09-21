@@ -28,21 +28,10 @@ import processing.core.*;
 import processing.opengl.PGraphicsOpenGL.GLResourceShader;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
-
-import com.sun.nio.file.SensitivityWatchEventModifier;
 
 /**
  * This class encapsulates a GLSL shader program, including a vertex
@@ -60,6 +49,9 @@ public class PShader implements PConstants {
   static protected final int LIGHT    = 4;
   static protected final int TEXTURE  = 5;
   static protected final int TEXLIGHT = 6;
+
+  // Minimum interval (in milliseconds) to check for changes in shader code
+  static protected final int SHADER_REFRESH_INTERVAL = 250;
 
   static protected String pointShaderAttrRegexp =
     "attribute *vec2 *offset";
@@ -121,9 +113,7 @@ public class PShader implements PConstants {
   protected long vertexShaderModificationTime;
   protected String[] fragmentShaderSource;
   protected long fragmentShaderModificationTime;
-
-  protected WatchService watcher;
-  protected boolean watching;
+  protected int lastShaderRefreshTime = (int)System.currentTimeMillis();
 
   protected boolean bound;
 
@@ -233,10 +223,6 @@ public class PShader implements PConstants {
     this.vertexURL = null;
     this.fragmentURL = null;
     this.vertexFilename = vertFilename;
-
-
-
-
     this.fragmentFilename = fragFilename;
     this.vertexFile = shaderFile(vertFilename);
     this.fragmentFile = shaderFile(fragFilename);
@@ -386,6 +372,16 @@ public class PShader implements PConstants {
     fragmentShaderSource = fragSource;
   }
 
+  public boolean refreshShaderSource() {
+    int time = parent.millis();
+    if (SHADER_REFRESH_INTERVAL <= time - lastShaderRefreshTime) {
+      lastShaderRefreshTime = time;
+      return refreshFragmentShaderSource() | refreshVertexShaderSource();
+    } else {
+      return false;
+    }
+  }
+
   /**
    * @return true if fragmentShaderSource was updated, false if not
    */
@@ -433,113 +429,16 @@ public class PShader implements PConstants {
 
     File file = parent.dataFile(filename);
     if (file.exists()) {
-      registerWithWatcher(file);
       return file;
     }
 
     file = parent.sketchFile(filename);
     if (file.exists()) {
-      registerWithWatcher(file);
       return file;
     }
 
     return null;
   }
-
-  protected void registerWithWatcher(File file) {
-    initWatcher();
-    if (watcher == null) return;
-    try {
-      Path path = file.getParentFile().toPath();
-//      path.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
-      path.register(watcher, new WatchEvent.Kind[]{StandardWatchEventKinds.ENTRY_MODIFY}, SensitivityWatchEventModifier.HIGH);
-
-      System.out.println("REGISTERED " + path);
-    } catch (IOException x) {
-      System.err.println(x);
-    }
-  }
-
-  protected void initWatcher() {
-    System.out.println("INITING WATCHER...");
-    if (watching) return;
-    if (watcher == null) {
-      try {
-        watcher = FileSystems.getDefault().newWatchService();
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-    }
-    if (watcher == null) return;
-    watching = true;
-    new Thread(new Runnable() {
-      public void run() {
-        try {
-          for (;;) {
-            System.out.println("WATCHING...");
-
-            // wait for key to be signaled
-            WatchKey key;
-            try {
-                key = watcher.take();
-//                key = watcher.poll(250, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException x) {
-                return;
-            }
-            if (key == null) continue;
-
-            for (WatchEvent<?> event: key.pollEvents()) {
-                WatchEvent.Kind kind = event.kind();
-
-                if (kind == StandardWatchEventKinds.OVERFLOW) {
-                    continue;
-                }
-
-                //The filename is the context of the event.
-                WatchEvent<Path> ev = (WatchEvent<Path>)event;
-                Path filename = ev.context();
-
-                //Verify that the new file is a text file.
-                /*
-                try {
-                    Path child = dir.resolve(filename);
-                    if (!Files.probeContentType(child).equals("text/plain")) {
-                        System.err.format("New file '%s' is not a plain text file.%n", filename);
-                        continue;
-                    }
-                 } catch (IOException x) {
-                    System.err.println(x);
-                    continue;
-                 }
-                 */
-
-                //Email the file to the specified email alias.
-//                System.out.format("Emailing file %s%n", filename);
-                //Details left to reader....
-                System.out.format("-----> Shader file %s%n has been modified", filename);
-            }
-
-            //Reset the key -- this step is critical if you want to receive
-            //further watch events. If the key is no longer valid, the directory
-            //is inaccessible so exit the loop.
-            boolean valid = key.reset();
-            if (!valid) {
-                    break;
-            }
-        }
-
-        } catch (Exception e) {
-          // This can safely be ignored, too many situations where no net
-          // connection is available that behave in strange ways.
-          // Covers likely IOException, InterruptedException, and any others.
-        }
-
-        watching = false;
-      }
-    }, "Shader Update Checker").start();
-  }
-
 
   /**
    * Initializes (if needed) and binds the shader program.
@@ -1086,9 +985,7 @@ public class PShader implements PConstants {
 
 
   public void init() {
-    boolean shaderWasUpdated = refreshFragmentShaderSource() |
-                               refreshVertexShaderSource();
-
+    boolean shaderWasUpdated = refreshShaderSource();
     if (glProgram == 0 || contextIsOutdated() || shaderWasUpdated) {
       create();
       try {
@@ -1682,5 +1579,12 @@ public class PShader implements PConstants {
       this.type = type;
       this.value = value;
     }
+  }
+
+  // ***************************************************************************
+  //
+  // Class to watch modifications in the shader files
+  protected static class FileWatcher {
+
   }
 }
