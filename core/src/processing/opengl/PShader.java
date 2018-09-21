@@ -51,7 +51,7 @@ public class PShader implements PConstants {
   static protected final int TEXLIGHT = 6;
 
   // Minimum interval (in milliseconds) to check for changes in shader code
-  static protected final int SHADER_REFRESH_INTERVAL = 250;
+  static protected final int SHADER_REFRESH_INTERVAL = 500;
 
   static protected String pointShaderAttrRegexp =
     "attribute *vec2 *offset";
