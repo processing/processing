@@ -29,7 +29,7 @@ public class UpdateListPanel extends ListPanel {
     ContributionType.TOOL.getPluralTitle(),
     ContributionType.EXAMPLES.getPluralTitle(),
   };
-  Set<String> sectionNames = new HashSet<String>(Arrays.asList(PLURAL_TYPES));
+  Set<String> sectionNames = new HashSet<>(Arrays.asList(PLURAL_TYPES));
 
   public UpdateListPanel(ContributionTab contributionTab,
                          Contribution.Filter filter) {
@@ -134,18 +134,8 @@ public class UpdateListPanel extends ListPanel {
     setLayout(layout);
     table.setVisible(true);
 
-    panelByContribution = new TreeMap<Contribution, DetailPanel>(new Comparator<Contribution>() {
-      @Override
-      public int compare(Contribution o1, Contribution o2) {
-        int diff =
-          ContributionManager.getTypeIndex(o1.getType()) -
-          ContributionManager.getTypeIndex(o2.getType());
-        if (diff == 0) {
-          diff = o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-        }
-        return diff;
-      }
-    });
+    panelByContribution = new TreeMap<>(Comparator.comparingInt(c -> ContributionManager.getTypeIndex(((Contribution) c).getType()))
+            .thenComparing(c -> ((Contribution) c).getName().toLowerCase()));
   }
 
   // Thread: EDT
@@ -163,24 +153,7 @@ public class UpdateListPanel extends ListPanel {
           null, currentType.getPluralTitle(), null, null, null
         });
       }
-      //TODO Make this into a function
-      StringBuilder name = new StringBuilder("");
-      String authorList = entry.getAuthorList();
-      if (authorList != null) {
-        for (int i = 0; i < authorList.length(); i++) {
-          if (authorList.charAt(i) == '[' || authorList.charAt(i) == ']') {
-            continue;
-          }
-          if (authorList.charAt(i) == '(') {
-            i++;
-            while (authorList.charAt(i) != ')') {
-              i++;
-            }
-          } else {
-            name.append(authorList.charAt(i));
-          }
-        }
-      }
+      String name = getAuthorNameWithoutMarkup(entry.getAuthorList());
       Icon icon = null;
       if (entry.isInstalled()) {
         icon = upToDateIcon;
