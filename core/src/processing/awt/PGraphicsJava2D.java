@@ -884,7 +884,12 @@ public class PGraphicsJava2D extends PGraphics {
         gpath.lineTo(x, y);
       }
       break;
+
+    default:
+      showWarning("Invalid shape type. Try calling beginShape() without a parameter.");
+      break;
     }
+
   }
 
 
