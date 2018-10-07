@@ -1011,6 +1011,15 @@ public class PSurfaceJOGL implements PSurface {
   }
 
 
+  // MACOSX: CTRL + Left Mouse is converted to Right Mouse. This boolean keeps
+  // track of whether the conversion happened on PRESS, because we should report
+  // the same button during DRAG and on RELEASE, even though CTRL might have
+  // been released already. Otherwise the events are inconsistent, e.g.
+  // Left Pressed - Left Drag - CTRL Pressed - Right Drag - Right Released.
+  // See: https://github.com/processing/processing/issues/5672
+  private boolean macosxLeftButtonWithCtrlPressed;
+
+
   protected void nativeMouseEvent(com.jogamp.newt.event.MouseEvent nativeEvent,
                                   int peAction) {
     int modifiers = nativeEvent.getModifiers();
@@ -1033,10 +1042,16 @@ public class PSurfaceJOGL implements PSurface {
         break;
     }
 
-    if (PApplet.platform == PConstants.MACOSX) {
-      //if (nativeEvent.isPopupTrigger()) {
-      if ((modifiers & InputEvent.CTRL_MASK) != 0) {
+    // If running on Mac OS, allow ctrl-click as right mouse.
+    if (PApplet.platform == PConstants.MACOSX && peButton == PConstants.LEFT) {
+      if (peAction == MouseEvent.PRESS && (modifiers & InputEvent.CTRL_MASK) != 0) {
+        macosxLeftButtonWithCtrlPressed = true;
+      }
+      if (macosxLeftButtonWithCtrlPressed) {
         peButton = PConstants.RIGHT;
+      }
+      if (peAction == MouseEvent.RELEASE) {
+        macosxLeftButtonWithCtrlPressed = false;
       }
     }
 
