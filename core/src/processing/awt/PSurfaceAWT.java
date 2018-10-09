@@ -1231,14 +1231,6 @@ public class PSurfaceAWT extends PSurfaceNone {
   */
 
 
-  // MACOSX: CTRL + Left Mouse is converted to Right Mouse. This boolean keeps
-  // track of whether the conversion happened on PRESS, because we should report
-  // the same button during DRAG and on RELEASE, even though CTRL might have
-  // been released already. Otherwise the events are inconsistent, e.g.
-  // Left Pressed - Left Drag - CTRL Pressed - Right Drag - Right Released.
-  // See: https://github.com/processing/processing/issues/5672
-  private boolean macosxLeftButtonWithCtrlPressed;
-
   /**
    * Figure out how to process a mouse event. When loop() has been
    * called, the events will be queued up until drawing is complete.
@@ -1322,21 +1314,6 @@ public class PSurfaceAWT extends PSurfaceNone {
       peButton = PConstants.CENTER;
     } else if ((modifiers & InputEvent.BUTTON3_MASK) != 0) {
       peButton = PConstants.RIGHT;
-    }
-
-    // If running on Mac OS, allow ctrl-click as right mouse. Prior to 0215,
-    // this used isPopupTrigger() on the native event, but that doesn't work
-    // for mouseClicked and mouseReleased (or others).
-    if (/*PApplet.platform == PConstants.MACOSX &&*/ peButton == PConstants.LEFT) {
-      if (peAction == MouseEvent.PRESS && (modifiers & InputEvent.CTRL_MASK) != 0) {
-        macosxLeftButtonWithCtrlPressed = true;
-      }
-      if (macosxLeftButtonWithCtrlPressed) {
-        peButton = PConstants.RIGHT;
-      }
-      if (peAction == MouseEvent.RELEASE) {
-        macosxLeftButtonWithCtrlPressed = false;
-      }
     }
 
     sketch.postEvent(new MouseEvent(nativeEvent, nativeEvent.getWhen(),

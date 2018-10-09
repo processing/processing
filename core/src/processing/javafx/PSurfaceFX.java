@@ -27,7 +27,6 @@ import com.sun.glass.ui.Screen;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
-import java.awt.event.InputEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -824,16 +823,6 @@ public class PSurfaceFX implements PSurface {
     mouseMap.put(MouseEvent.MOUSE_EXITED, processing.event.MouseEvent.EXIT);
   }
 
-
-  // MACOSX: CTRL + Left Mouse is converted to Right Mouse. This boolean keeps
-  // track of whether the conversion happened on PRESS, because we should report
-  // the same button during DRAG and on RELEASE, even though CTRL might have
-  // been released already. Otherwise the events are inconsistent, e.g.
-  // Left Pressed - Left Drag - CTRL Pressed - Right Drag - Right Released.
-  // See: https://github.com/processing/processing/issues/5672
-  private boolean macosxLeftButtonWithCtrlPressed;
-
-
   protected void fxMouseEvent(MouseEvent fxEvent) {
     // the 'amount' is the number of button clicks for a click event,
     // or the number of steps/clicks on the wheel for a mouse wheel event.
@@ -869,20 +858,6 @@ public class PSurfaceFX implements PSurface {
       case NONE:
         // not currently handled
         break;
-    }
-
-    // If running on Mac OS, allow ctrl-click as right mouse.
-    // Verified to be necessary with Java 8u45.
-    if (PApplet.platform == PConstants.MACOSX && button == PConstants.LEFT) {
-      if (action == processing.event.MouseEvent.PRESS && fxEvent.isControlDown()) {
-        macosxLeftButtonWithCtrlPressed = true;
-      }
-      if (macosxLeftButtonWithCtrlPressed) {
-        button = PConstants.RIGHT;
-      }
-      if (action == processing.event.MouseEvent.RELEASE) {
-        macosxLeftButtonWithCtrlPressed = false;
-      }
     }
 
     //long when = nativeEvent.getWhen();  // from AWT
