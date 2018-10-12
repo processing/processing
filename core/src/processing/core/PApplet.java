@@ -8792,12 +8792,12 @@ public class PApplet implements PConstants {
   }
 
 
-	static public <T> T[] subset(T[] list, int start, int count){
-		return Arrays.copyOfRange(list, start, start + count);
-	}
+  static public <T> T[] subset(T[] list, int start, int count){
+    return Arrays.copyOfRange(list, start, start + count);
+  }
 
 
-	static public <T> T[] subset(T[] list, int start){
+  static public <T> T[] subset(T[] list, int start){
     return subset(list, start, list.length - start);
 	}
 
