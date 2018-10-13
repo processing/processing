@@ -10241,6 +10241,28 @@ public class PApplet implements PConstants {
     return stuff;
   }
 
+  /**
+   * Accepts an integer that uses decimal format
+   * to represent a sequence of bits, and returns
+   * an integer in native format.
+   * 
+   * For example, the integer 1101 represents binary,
+   * and returns 13 (binary 0b1101, or 8+4+0+1 = 13).
+   * 
+   * This signature extends unbinary(String value).
+   * It is a workaround for lack of parser support for
+   * binary literals such as 0b1101.
+   */
+  static final public int unbinary(int value) {    
+    int result = 0;
+    int i = 0;
+    while (value != 0) {
+      result |= (value % 10) << i;
+      i++;
+      value /= 10;
+    }
+    return result;
+  }
 
  /**
    * ( begin auto-generated from unbinary.xml )
@@ -10248,9 +10270,12 @@ public class PApplet implements PConstants {
    * Converts a String representation of a binary number to its equivalent
    * integer value. For example, unbinary("00001000") will return 8.
    *
+   * Alternately, converts an int< representation of a binary number to its
+   * equivalent integer value. For example, unbinary(1000) will return 8.
+   *
    * ( end auto-generated )
    * @webref data:conversion
-   * @param value String to convert to an integer
+   * @param value value to convert to an integer
    * @see PApplet#binary(byte)
    * @see PApplet#hex(int,int)
    * @see PApplet#unhex(String)
