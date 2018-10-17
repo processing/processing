@@ -8387,17 +8387,18 @@ public class PApplet implements PConstants {
  /**
   * @nowebref
   */
-  static public Object expand(Object array) {
+  static public <T> T[] expand(T[] array) {
     int len = Array.getLength(array);
     return expand(array, len > 0 ? len << 1 : 1);
   }
 
-  static public Object expand(Object list, int newSize) {
+	@SuppressWarnings("unchecked")
+	static public <T> T[] expand(T[] list, int newSize) {
     Class<?> type = list.getClass().getComponentType();
     Object temp = Array.newInstance(type, newSize);
     System.arraycopy(list, 0, temp, 0,
                      Math.min(Array.getLength(list), newSize));
-    return temp;
+    return (T[])temp;
   }
 
   // contract() has been removed in revision 0124, use subset() instead.
@@ -8452,11 +8453,12 @@ public class PApplet implements PConstants {
     return array;
   }
 
-  static public Object append(Object array, Object value) {
+	@SuppressWarnings("unchecked")
+  static public <T> T[] append(T[] array, T value) {
     int length = Array.getLength(array);
     array = expand(array, length + 1);
     Array.set(array, length, value);
-    return array;
+    return (T[])array;
   }
 
 
@@ -8500,7 +8502,7 @@ public class PApplet implements PConstants {
     return subset(list, 0, list.length-1);
   }
 
-  static public Object shorten(Object list) {
+  static public <T> T[] shorten(T[] list) {
     int length = Array.getLength(list);
     return subset(list, 0, length - 1);
   }
@@ -8647,7 +8649,8 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static final public Object splice(Object list, Object value, int index) {
+	@SuppressWarnings("unchecked")
+  static final public <T> T[] splice(T[] list, T value, int index) {
     Class<?> type = list.getClass().getComponentType();
     Object outgoing = null;
     int length = Array.getLength(list);
@@ -8666,7 +8669,7 @@ public class PApplet implements PConstants {
       Array.set(outgoing, index, value);
       System.arraycopy(list, index, outgoing, index + 1, length - index);
     }
-    return outgoing;
+    return (T[])outgoing;
   }
 
 
@@ -8697,6 +8700,7 @@ public class PApplet implements PConstants {
   * @param count number of values to extract
   * @see PApplet#splice(boolean[], boolean, int)
   */
+
   static public boolean[] subset(boolean[] list, int start, int count) {
     boolean[] output = new boolean[count];
     System.arraycopy(list, start, output, 0, count);
@@ -8788,18 +8792,14 @@ public class PApplet implements PConstants {
   }
 
 
-  static public Object subset(Object list, int start) {
-    int length = Array.getLength(list);
-    return subset(list, start, length - start);
+  static public <T> T[] subset(T[] list, int start, int count){
+    return Arrays.copyOfRange(list, start, start + count);
   }
 
 
-  static public Object subset(Object list, int start, int count) {
-    Class<?> type = list.getClass().getComponentType();
-    Object outgoing = Array.newInstance(type, count);
-    System.arraycopy(list, start, outgoing, 0, count);
-    return outgoing;
-  }
+  static public <T> T[] subset(T[] list, int start){
+    return subset(list, start, list.length - start);
+	}
 
 
  /**
@@ -8862,17 +8862,18 @@ public class PApplet implements PConstants {
     return c;
   }
 
-  static public Object concat(Object a, Object b) {
+	@SuppressWarnings("unchecked") // Safe, because of Array.newInstance
+	static public <T> T[] concat(T a, T b){
     Class<?> type = a.getClass().getComponentType();
     int alength = Array.getLength(a);
     int blength = Array.getLength(b);
     Object outgoing = Array.newInstance(type, alength + blength);
     System.arraycopy(a, 0, outgoing, 0, alength);
     System.arraycopy(b, 0, outgoing, alength, blength);
-    return outgoing;
-  }
 
-  //
+    return (T[])outgoing;
+	}
+
 
 
  /**
@@ -8939,14 +8940,15 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static public Object reverse(Object list) {
+	@SuppressWarnings("unchecked")
+  static public <T> T[] reverse(T[] list) {
     Class<?> type = list.getClass().getComponentType();
     int length = Array.getLength(list);
     Object outgoing = Array.newInstance(type, length);
     for (int i = 0; i < length; i++) {
       Array.set(outgoing, i, Array.get(list, (length - 1) - i));
     }
-    return outgoing;
+    return (T[])outgoing;
   }
 
 
