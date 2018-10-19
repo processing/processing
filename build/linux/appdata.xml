@@ -2,7 +2,8 @@
 <!-- See https://www.freedesktop.org/software/appstream/docs/chap-Quickstart.html -->
 <component type="desktop-application">
   <id>org.processing.processingide.desktop</id>
-  <metadata_license>GPLv3</metadata_license>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0</project_license>
   <developer_name>Processing Foundation</developer_name>
 
   <name>Processing IDE</name>
