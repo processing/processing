@@ -8263,6 +8263,7 @@ public class PApplet implements PConstants {
   /**
    * @deprecated Use arrayCopy() instead.
    */
+  @Deprecated
   static public void arraycopy(Object src, int srcPosition,
                                Object dst, int dstPosition,
                                int length) {
@@ -8272,6 +8273,7 @@ public class PApplet implements PConstants {
   /**
    * @deprecated Use arrayCopy() instead.
    */
+  @Deprecated
   static public void arraycopy(Object src, Object dst, int length) {
     System.arraycopy(src, 0, dst, 0, length);
   }
@@ -8279,6 +8281,7 @@ public class PApplet implements PConstants {
   /**
    * @deprecated Use arrayCopy() instead.
    */
+  @Deprecated
   static public void arraycopy(Object src, Object dst) {
     System.arraycopy(src, 0, dst, 0, Array.getLength(src));
   }
