@@ -53,18 +53,18 @@ public class ContributionListing {
   Map<String, Contribution> librariesByImportHeader;
   // TODO: Every contribution is getting added twice
   // and nothing is replaced ever.
-  List<Contribution> allContributions;
+  Set<Contribution> allContributions;
   boolean listDownloaded;
   boolean listDownloadFailed;
   ReentrantLock downloadingListingLock;
 
 
   private ContributionListing() {
-    listeners = new ArrayList<ChangeListener>();
-    advertisedContributions = new ArrayList<AvailableContribution>();
-    librariesByCategory = new HashMap<String, List<Contribution>>();
-    librariesByImportHeader = new HashMap<String, Contribution>();
-    allContributions = new ArrayList<Contribution>();
+    listeners = new ArrayList<>();
+    advertisedContributions = new ArrayList<>();
+    librariesByCategory = new HashMap<>();
+    librariesByImportHeader = new HashMap<>();
+    allContributions = new LinkedHashSet<>();
     downloadingListingLock = new ReentrantLock();
 
     //listingFile = Base.getSettingsFile("contributions.txt");
@@ -96,7 +96,6 @@ public class ContributionListing {
     for (Contribution contribution : advertisedContributions) {
       addContribution(contribution);
     }
-    Collections.sort(allContributions, COMPARATOR);
   }
 
 
@@ -139,11 +138,8 @@ public class ContributionListing {
         }
       }
 
-      for (int i = 0; i < allContributions.size(); i++) {
-        if (allContributions.get(i) == oldLib) {
-          allContributions.set(i, newLib);
-        }
-      }
+      allContributions.remove(oldLib);
+      allContributions.add(newLib);
 
       notifyChange(oldLib, newLib);
     }
@@ -169,7 +165,6 @@ public class ContributionListing {
       }
       allContributions.add(contribution);
       notifyAdd(contribution);
-      Collections.sort(allContributions, COMPARATOR);
     }
   }
 
@@ -234,43 +229,7 @@ public class ContributionListing {
   }
 
 
-//  public List<Contribution> getAllContributions() {
-//    return new ArrayList<Contribution>(allContributions);
-//  }
-
-
-//  public List<Contribution> getLibararies(String category) {
-//    ArrayList<Contribution> libinfos =
-//        new ArrayList<Contribution>(librariesByCategory.get(category));
-//    Collections.sort(libinfos, nameComparator);
-//    return libinfos;
-//  }
-
-
-  protected List<Contribution> getFilteredLibraryList(String category, List<String> filters) {
-    ArrayList<Contribution> filteredList =
-      new ArrayList<Contribution>(allContributions);
-
-    Iterator<Contribution> it = filteredList.iterator();
-    while (it.hasNext()) {
-      Contribution libInfo = it.next();
-      //if (category != null && !category.equals(libInfo.getCategory())) {
-      if (category != null && !libInfo.hasCategory(category)) {
-        it.remove();
-      } else {
-        for (String filter : filters) {
-          if (!matches(libInfo, filter)) {
-            it.remove();
-            break;
-          }
-        }
-      }
-    }
-    return filteredList;
-  }
-
-
-  private boolean matches(Contribution contrib, String typed) {
+  public boolean matches(Contribution contrib, String typed) {
     int colon = typed.indexOf(":");
     if (colon != -1) {
       String isText = typed.substring(0, colon);

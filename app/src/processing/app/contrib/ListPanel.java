@@ -46,13 +46,12 @@ public class ListPanel extends JPanel
 implements Scrollable, ContributionListing.ChangeListener {
   ContributionTab contributionTab;
   TreeMap<Contribution, DetailPanel> panelByContribution = new TreeMap<>(ContributionListing.COMPARATOR);
-  Set<Contribution> visibleContributions = new TreeSet<>(ContributionListing.COMPARATOR);
 
   private DetailPanel selectedPanel;
-  protected Contribution.Filter filter;
+  protected ContributionRowFilter filter;
   protected ContributionListing contribListing = ContributionListing.getInstance();
   protected JTable table;
-  DefaultTableModel model;
+  ContributionTableModel model;
   JScrollPane scrollPane;
 
   static Icon upToDateIcon;
@@ -77,14 +76,15 @@ implements Scrollable, ContributionListing.ChangeListener {
 
 
   public ListPanel(final ContributionTab contributionTab,
-                   Contribution.Filter filter) {
+                   final Contribution.Filter filter) {
+    this();
     this.contributionTab = contributionTab;
-    this.filter = filter;
+    this.filter = new ContributionRowFilter(filter);
 
     setLayout(new GridBagLayout());
     setOpaque(true);
     setBackground(Color.WHITE);
-    model = new ContribTableModel();
+    model = new ContributionTableModel();
     table = new JTable(model) {
       @Override
       public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -99,8 +99,6 @@ implements Scrollable, ContributionListing.ChangeListener {
     };
 
     // There is a space before Status
-    String[] colName = { " Status", "Name", "Author" };
-    model.setColumnIdentifiers(colName);
     scrollPane = new JScrollPane(table);
     scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -135,8 +133,9 @@ implements Scrollable, ContributionListing.ChangeListener {
         }
       });
 
-    TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
+    TableRowSorter<ContributionTableModel> sorter = new TableRowSorter<>(model);
     table.setRowSorter(sorter);
+    sorter.setRowFilter(this.filter);
     sorter.setComparator(1, ContributionListing.COMPARATOR);
     sorter.setComparator(2, Comparator.comparing(o -> getAuthorNameWithoutMarkup(((Contribution) o).getAuthorList())));
     sorter.setComparator(0, Comparator.comparingInt(o -> getContributionStatusRank((Contribution) o)));
@@ -354,15 +353,61 @@ implements Scrollable, ContributionListing.ChangeListener {
     }
   }
 
-  static private class ContribTableModel extends DefaultTableModel {
+  protected class ContributionTableModel extends AbstractTableModel {
     @Override
-    public boolean isCellEditable(int row, int column) {
-      return false;
+    public int getRowCount() {
+      return contribListing.allContributions.size();
+    }
+
+    @Override
+    public int getColumnCount() {
+      return 3;
+    }
+
+    @Override
+    public String getColumnName(int column) {
+      switch (column) {
+        case 0: return " Status"; // Note the space
+        case 1: return "Name";
+        case 2: return "Author";
+        default: return "";
+      }
     }
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
       return Contribution.class;
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+      return contribListing.allContributions.stream().skip(rowIndex).findFirst().get();
+    }
+  }
+
+  protected class ContributionRowFilter extends RowFilter<ContributionTableModel, Integer> {
+    Contribution.Filter contributionFilter;
+    Optional<String> categoryFilter = Optional.empty();
+    List<String> stringFilters = Collections.emptyList();
+
+    ContributionRowFilter(Contribution.Filter contributionFilter) {
+      this.contributionFilter = contributionFilter;
+    }
+
+    public void setCategoryFilter(String categoryFilter) {
+      this.categoryFilter = Optional.ofNullable(categoryFilter);
+    }
+
+    public void setStringFilters(List<String> filters) {
+      this.stringFilters = filters;
+    }
+
+    @Override
+    public boolean include(Entry<? extends ContributionTableModel, ? extends Integer> entry) {
+      Contribution contribution = (Contribution) entry.getValue(0);
+      return contributionFilter.matches(contribution)
+              && categoryFilter.map(contribution::hasCategory).orElse(true)
+              && stringFilters.stream().allMatch(pattern -> contribListing.matches(contribution, pattern));
     }
   }
 
@@ -388,31 +433,14 @@ implements Scrollable, ContributionListing.ChangeListener {
   }
 
   // Thread: EDT
-  void updatePanelOrdering(Set<Contribution> contributionsSet) {
-    model.getDataVector().removeAllElements();
-    int rowCount = 0;
-    for (Contribution entry : contributionsSet) {
-      model.addRow(new Object[]{entry, entry, entry});
-      if (selectedPanel != null &&
-          entry.getName().equals(selectedPanel.getContrib().getName())) {
-        table.setRowSelectionInterval(rowCount, rowCount);
-      }
-      rowCount++;
-    }
-    model.fireTableDataChanged();
-  }
-
-
-  // Thread: EDT
   public void contributionAdded(final Contribution contribution) {
-    if (filter.matches(contribution) && !panelByContribution.containsKey(contribution)) {
+    if (!panelByContribution.containsKey(contribution)) {
       DetailPanel newPanel =
               new DetailPanel(ListPanel.this);
       panelByContribution.put(contribution, newPanel);
-      visibleContributions.add(contribution);
       newPanel.setContribution(contribution);
       add(newPanel);
-      updatePanelOrdering(visibleContributions);
+      model.fireTableDataChanged();
       updateColors();  // XXX this is the place
     }
   }
@@ -420,24 +448,20 @@ implements Scrollable, ContributionListing.ChangeListener {
 
   // Thread: EDT
   public void contributionRemoved(final Contribution contribution) {
-    if (filter.matches(contribution)) {
       DetailPanel panel = panelByContribution.get(contribution);
       if (panel != null) {
         remove(panel);
         panelByContribution.remove(contribution);
       }
-      visibleContributions.remove(contribution);
-      updatePanelOrdering(visibleContributions);
+      model.fireTableDataChanged();
       updateColors();
       updateUI();
-    }
   }
 
 
   // Thread: EDT
   public void contributionChanged(final Contribution oldContrib,
                                   final Contribution newContrib) {
-    if (filter.matches(oldContrib) || filter.matches(newContrib)) {
       DetailPanel panel = panelByContribution.get(oldContrib);
       if (panel == null) {
         contributionAdded(newContrib);
@@ -445,37 +469,16 @@ implements Scrollable, ContributionListing.ChangeListener {
         panelByContribution.remove(oldContrib);
         panel.setContribution(newContrib);
         panelByContribution.put(newContrib, panel);
+        model.fireTableDataChanged();
       }
-      if (visibleContributions.contains(oldContrib)) {
-        visibleContributions.remove(oldContrib);
-        visibleContributions.add(newContrib);
-      }
-      updatePanelOrdering(visibleContributions);
-    }
   }
 
 
   // Thread: EDT
-  public void filterLibraries(List<Contribution> filteredContributions) {
-    visibleContributions.clear();
-    for (Contribution contribution : panelByContribution.keySet()) {
-      if (contribution.getType() == contributionTab.contribType
-              && filteredContributions.contains(contribution)
-              && panelByContribution.keySet().contains(contribution)) {
-        // contains() uses equals() and there can be multiple instances,
-        // so Contribution.equals() has to be overridden
-        visibleContributions.add(contribution);
-      }
-    }
-    // TODO: Make the following loop work for optimization
-//  for (Contribution contribution : filteredContributions) {
-//    if (contribution.getType() == contributionTab.contribType) {
-//      if(panelByContribution.keySet().contains(contribution)){
-//       visibleContributions.add(contribution);
-//      }
-//    }
-//  }
-    updatePanelOrdering(visibleContributions);
+  public void filterLibraries(String category, List<String> filters) {
+    filter.setCategoryFilter(category);
+    filter.setStringFilters(filters);
+    model.fireTableDataChanged();
   }
 
 
