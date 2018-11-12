@@ -120,7 +120,7 @@ public class Downloader extends Task {
 
     //printHeaders(conn);
     //conn.connect();
-    while (conn.getResponseCode() == 302) {
+    while (conn.getResponseCode() == 302 || conn.getResponseCode() == 301) {
       Map<String, List<String>> headers = conn.getHeaderFields();
       List<String> location = headers.get("Location");
       if (location.size() == 1) {
