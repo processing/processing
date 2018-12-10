@@ -560,7 +560,30 @@ public class PApplet implements PConstants {
    * @see PApplet#mouseWheel(MouseEvent)
    */
   public boolean mousePressed;
-
+  
+  /**
+   * ( begin auto-generated from mousePressed_var.xml )
+   *
+   * Variable storing if the mouse is currently over the window. The value of the system
+   * variable <b>mouseOver</b> is true if the mouse is over the window and
+   * false if the mouse is not over the window.
+   *
+   * ( end auto-generated )
+   * @webref input:mouse
+   * @see PApplet#mouseX
+   * @see PApplet#mouseY
+   * @see PApplet#pmouseX
+   * @see PApplet#pmouseY
+   * @see PApplet#mousePressed
+   * @see PApplet#mousePressed()
+   * @see PApplet#mouseReleased()
+   * @see PApplet#mouseClicked()
+   * @see PApplet#mouseMoved()
+   * @see PApplet#mouseDragged()
+   * @see PApplet#mouseButton
+   * @see PApplet#mouseWheel(MouseEvent)
+   */
+  public boolean mouseOver;
 
   /** @deprecated Use a mouse event handler that passes an event instead. */
   @Deprecated
@@ -2685,6 +2708,12 @@ public class PApplet implements PConstants {
       break;
     case MouseEvent.RELEASE:
       mousePressed = false;
+      break;
+    case MouseEvent.ENTER:
+      mouseOver = true;
+      break;
+    case MouseEvent.EXIT:
+      mouseOver = false;
       break;
     }
 
