@@ -389,7 +389,7 @@ public class PApplet implements PConstants {
    * @see PApplet#mouseDragged()
    * @see PApplet#mouseButton
    * @see PApplet#mouseWheel(MouseEvent)
-   *
+   * @see PApplet#mouseOver
    *
    */
   public int mouseX;
@@ -413,6 +413,7 @@ public class PApplet implements PConstants {
    * @see PApplet#mouseDragged()
    * @see PApplet#mouseButton
    * @see PApplet#mouseWheel(MouseEvent)
+   * @see PApplet#mouseOver
    *
    */
   public int mouseY;
@@ -452,6 +453,7 @@ public class PApplet implements PConstants {
    * @see PApplet#mouseDragged()
    * @see PApplet#mouseButton
    * @see PApplet#mouseWheel(MouseEvent)
+   * @see PApplet#mouseOver
    */
   public int pmouseX;
 
@@ -476,6 +478,7 @@ public class PApplet implements PConstants {
    * @see PApplet#mouseDragged()
    * @see PApplet#mouseButton
    * @see PApplet#mouseWheel(MouseEvent)
+   * @see PApplet#mouseOver
    */
   public int pmouseY;
 
@@ -535,6 +538,7 @@ public class PApplet implements PConstants {
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
    * @see PApplet#mouseWheel(MouseEvent)
+   * @see PApplet#mouseOver
    */
   public int mouseButton;
 
@@ -558,11 +562,12 @@ public class PApplet implements PConstants {
    * @see PApplet#mouseDragged()
    * @see PApplet#mouseButton
    * @see PApplet#mouseWheel(MouseEvent)
+   * @see PApplet#mouseOver
    */
   public boolean mousePressed;
   
   /**
-   * ( begin auto-generated from mousePressed_var.xml )
+   * ( begin auto-generated from mouseOver_var.xml )
    *
    * Variable storing if the mouse is currently over the window. The value of the system
    * variable <b>mouseOver</b> is true if the mouse is over the window and
