@@ -583,6 +583,15 @@ public class PSurfaceAWT extends PSurfaceNone {
     }
   }
 
+    /** Set the minimum size of frame */
+  @Override
+  public void setMinimumSize(int x, int y) {
+    if (frame != null) {
+      sketchWidth = x;
+      sketchHeight = y;
+      frame.setMinimumSize(new Dimension(x, y));
+    }
+  } 
 
   @Override
   public void setIcon(PImage image) {
