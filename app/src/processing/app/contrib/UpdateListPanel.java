@@ -1,38 +1,50 @@
 package processing.app.contrib;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.Icon;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-
-import processing.app.Base;
-
-
 public class UpdateListPanel extends ListPanel {
-  static final Color SECTION_COLOR = new Color(0xFFf8f8f8);
-  static final String[] PLURAL_TYPES = {
-    ContributionType.LIBRARY.getPluralTitle(),
-    ContributionType.MODE.getPluralTitle(),
-    ContributionType.TOOL.getPluralTitle(),
-    ContributionType.EXAMPLES.getPluralTitle(),
-  };
-  Set<String> sectionNames = new HashSet<>(Arrays.asList(PLURAL_TYPES));
+
+  Contribution.Filter filter;
 
   public UpdateListPanel(ContributionTab contributionTab,
                          Contribution.Filter filter) {
-    super(contributionTab, filter);
+    super(contributionTab, filter, true,
+            ContributionColumn.STATUS_NO_HEADER,
+            ContributionColumn.NAME,
+            ContributionColumn.AUTHOR,
+            ContributionColumn.INSTALLED_VERSION,
+            ContributionColumn.AVAILABLE_VERSION);
+
+    this.filter = filter;
+    table.getTableHeader().setEnabled(false);
   }
+
+  // Thread: EDT
+  @Override
+  public void contributionAdded(final Contribution contribution) {
+    // Ensures contributionAdded in ListPanel is only run on LocalContributions
+    if (filter.matches(contribution)) {
+      super.contributionAdded(contribution);
+      ((UpdateStatusPanel) contributionTab.statusPanel).update(); // Enables update button
+    }
+  }
+
+  // Thread: EDT
+  @Override
+  public void contributionRemoved(final Contribution contribution) {
+    super.contributionRemoved(contribution);
+    ((UpdateStatusPanel) contributionTab.statusPanel).update(); // Disables update button on last contribution
+  }
+
+  // Thread: EDT
+  @Override
+  public void contributionChanged(final Contribution oldContrib,
+                                  final Contribution newContrib) {
+    DetailPanel panel = panelByContribution.get(oldContrib);
+    if (panel == null) {
+      contributionAdded(newContrib);
+    } else if (newContrib.isInstalled()) {
+      panelByContribution.remove(oldContrib);
+    }
+    model.fireTableDataChanged();
+  }
+
 }

@@ -35,6 +35,7 @@ import javax.swing.table.*;
 import processing.app.Base;
 import processing.app.Platform;
 import processing.app.ui.Toolkit;
+import sun.swing.SwingUtilities2;
 
 
 // The "Scrollable" implementation and its methods here take care of preventing
@@ -49,8 +50,8 @@ implements Scrollable, ContributionListing.ChangeListener {
 
   private DetailPanel selectedPanel;
   protected ContributionRowFilter filter;
-  protected ContributionListing contribListing = ContributionListing.getInstance();
   protected JTable table;
+  protected TableRowSorter<ContributionTableModel> sorter;
   ContributionTableModel model;
   JScrollPane scrollPane;
 
@@ -62,7 +63,15 @@ implements Scrollable, ContributionListing.ChangeListener {
 
   // Should this be in theme.txt? Of course! Is it? No.
   static final Color HEADER_BGCOLOR = new Color(0xffEBEBEB);
+  static final Color SECTION_COLOR = new Color(0xFFf8f8f8);
+  static final Color SELECTION_COLOR = new Color(0xffe0fffd);
 
+  static final SectionHeaderContribution[] sections = {
+          new SectionHeaderContribution(ContributionType.LIBRARY),
+          new SectionHeaderContribution(ContributionType.MODE),
+          new SectionHeaderContribution(ContributionType.TOOL),
+          new SectionHeaderContribution(ContributionType.EXAMPLES)
+  };
 
   public ListPanel() {
     if (upToDateIcon == null) {
@@ -76,7 +85,9 @@ implements Scrollable, ContributionListing.ChangeListener {
 
 
   public ListPanel(final ContributionTab contributionTab,
-                   final Contribution.Filter filter) {
+                   final Contribution.Filter filter,
+                   final boolean enableSections,
+                   final ContributionColumn... columns) {
     this();
     this.contributionTab = contributionTab;
     this.filter = new ContributionRowFilter(filter);
@@ -84,17 +95,28 @@ implements Scrollable, ContributionListing.ChangeListener {
     setLayout(new GridBagLayout());
     setOpaque(true);
     setBackground(Color.WHITE);
-    model = new ContributionTableModel();
+    model = new ContributionTableModel(columns);
+    model.enableSections(enableSections);
     table = new JTable(model) {
       @Override
       public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         Component c = super.prepareRenderer(renderer, row, column);
-        if (isRowSelected(row)) {
-          c.setBackground(new Color(0xe0fffd));
+        Object rowValue = getValueAt(row, column);
+        if (rowValue instanceof SectionHeaderContribution) {
+          c.setBackground(SECTION_COLOR);
+        } else if (isRowSelected(row)) {
+          c.setBackground(SELECTION_COLOR);
         } else {
           c.setBackground(Color.white);
         }
         return c;
+      }
+
+      @Override
+      public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
+        if (!(getValueAt(rowIndex, columnIndex) instanceof SectionHeaderContribution)) {
+          super.changeSelection(rowIndex, columnIndex, toggle, extend);
+        }
       }
     };
 
@@ -126,19 +148,22 @@ implements Scrollable, ContributionListing.ChangeListener {
             setSelectedPanel(panelByContribution.get(table.getValueAt(table
               .getSelectedRow(), 0)));
             // Preventing the focus to move out of filterField after typing every character
-            if (!contributionTab.filterField.hasFocus()) {
+            if (!contributionTab.filterHasFocus()) {
               table.requestFocusInWindow();
             }
           }
         }
       });
 
-    TableRowSorter<ContributionTableModel> sorter = new TableRowSorter<>(model);
+    sorter = new TableRowSorter<>(model);
     table.setRowSorter(sorter);
     sorter.setRowFilter(this.filter);
-    sorter.setComparator(1, ContributionListing.COMPARATOR);
-    sorter.setComparator(2, Comparator.comparing(o -> getAuthorNameWithoutMarkup(((Contribution) o).getAuthorList())));
-    sorter.setComparator(0, Comparator.comparingInt(o -> getContributionStatusRank((Contribution) o)));
+    for (int i=0; i < model.getColumnCount(); i++) {
+      if (model.columns[i] == ContributionColumn.NAME) {
+        sorter.setSortKeys(Collections.singletonList(new SortKey(i, SortOrder.ASCENDING)));
+      }
+      sorter.setComparator(i, model.columns[i].getComparator());
+    }
     table.getTableHeader().setDefaultRenderer(new ContribHeaderRenderer());
 
     GroupLayout layout = new GroupLayout(this);
@@ -149,11 +174,11 @@ implements Scrollable, ContributionListing.ChangeListener {
     table.setVisible(true);
   }
 
-  private int getContributionStatusRank(Contribution c) {
+  private static int getContributionStatusRank(Contribution c) {
     int pos = 4;
     if (c.isInstalled()) {
       pos = 1;
-      if (contribListing.hasUpdates(c)) {
+      if (ContributionListing.getInstance().hasUpdates(c)) {
         pos = 2;
       }
       if (!c.isCompatible(Base.getRevision())) {
@@ -262,27 +287,41 @@ implements Scrollable, ContributionListing.ChangeListener {
                                                    int column) {
       Contribution contribution = (Contribution) value;
       JLabel label = new JLabel();
+      ContributionColumn col = model.columns[column];
       if (value == null) {
         // Working on https://github.com/processing/processing/issues/3667
         //System.err.println("null value seen in getTableCellRendererComponent()");
         // TODO this is now working, but the underlying issue is not fixed
         return label;
       }
-      if (isSelected) {
-        label.setBackground(new Color(0xe0fffd));
+
+      label.setOpaque(true);
+
+      if (value instanceof SectionHeaderContribution && col != ContributionColumn.NAME) {
+        return label;
       }
-      if (column == 0) {
-        configureStatusColumnLabel(label, contribution);
-      } else if (column == 1) {
-        configureNameColumnLabel(table, label, contribution);
-      } else {
-        configureAuthorsColumnLabel(label, contribution);
+      switch (col) {
+        case STATUS:
+        case STATUS_NO_HEADER:
+          configureStatusColumnLabel(label, contribution);
+          break;
+        case NAME:
+          configureNameColumnLabel(table, label, contribution);
+          break;
+        case AUTHOR:
+          configureAuthorsColumnLabel(label, contribution);
+          break;
+        case INSTALLED_VERSION:
+          label.setText(contribution.getBenignVersion());
+          break;
+        case AVAILABLE_VERSION:
+          label.setText(ContributionListing.getInstance().getLatestPrettyVersion(contribution));
+          break;
       }
 
       if(!contribution.isCompatible(Base.getRevision())){
         label.setForeground(Color.LIGHT_GRAY);
       }
-      label.setOpaque(true);
       return label;
     }
 
@@ -296,8 +335,11 @@ implements Scrollable, ContributionListing.ChangeListener {
       } else if (contribution.isInstalled()) {
         if (!contribution.isCompatible(Base.getRevision())) {
           icon = incompatibleIcon;
-        } else if (contribListing.hasUpdates(contribution)) {
+        } else if (ContributionListing.getInstance().hasUpdates(contribution)) {
           icon = updateAvailableIcon;
+        } else if (panelByContribution.get(contribution).installInProgress
+                || panelByContribution.get(contribution).updateInProgress) {
+          icon = downloadingIcon;
         } else {
           icon = upToDateIcon;
         }
@@ -353,25 +395,64 @@ implements Scrollable, ContributionListing.ChangeListener {
     }
   }
 
+  protected enum ContributionColumn {
+    STATUS(" Status"),
+    NAME("Name"),
+    AUTHOR("Author"),
+    INSTALLED_VERSION("Installed"),
+    AVAILABLE_VERSION("Available"),
+    STATUS_NO_HEADER("");
+
+    final String name;
+
+    ContributionColumn(String name) {
+      this.name = name;
+    }
+
+    Comparator<Contribution> getComparator() {
+      Comparator<Contribution> comparator = Comparator.comparing(Contribution::getType)
+              .thenComparingInt(contribution -> contribution instanceof SectionHeaderContribution ? 0 : 1);
+      switch (this) {
+        case STATUS:
+        case STATUS_NO_HEADER:
+          return comparator.thenComparingInt(ListPanel::getContributionStatusRank);
+        case AUTHOR:
+          return comparator.thenComparing(contribution -> getAuthorNameWithoutMarkup(contribution.getAuthorList()));
+        case NAME:
+        default:
+          return comparator.thenComparing(Contribution::getName);
+      }
+    }
+  }
+
   protected class ContributionTableModel extends AbstractTableModel {
+
+    ContributionColumn[] columns = { ContributionColumn.STATUS, ContributionColumn.NAME, ContributionColumn.AUTHOR };
+    boolean sectionsEnabled;
+
+    ContributionTableModel(ContributionColumn... columns) {
+      if (columns.length > 0) {
+        this.columns = columns;
+      }
+    }
+
     @Override
     public int getRowCount() {
-      return contribListing.allContributions.size();
+      return ContributionListing.getInstance().allContributions.size() + (sectionsEnabled ? 4 : 0);
     }
 
     @Override
     public int getColumnCount() {
-      return 3;
+      return columns.length;
     }
 
     @Override
     public String getColumnName(int column) {
-      switch (column) {
-        case 0: return " Status"; // Note the space
-        case 1: return "Name";
-        case 2: return "Author";
-        default: return "";
+      if (column < 0 || column > columns.length) {
+        return "";
       }
+
+      return columns[column].name;
     }
 
     @Override
@@ -381,7 +462,19 @@ implements Scrollable, ContributionListing.ChangeListener {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-      return contribListing.allContributions.stream().skip(rowIndex).findFirst().get();
+      if (rowIndex >= ContributionListing.getInstance().allContributions.size()) {
+        return sections[rowIndex - ContributionListing.getInstance().allContributions.size()];
+      }
+
+      return ContributionListing.getInstance().allContributions.stream().skip(rowIndex).findFirst().orElse(null);
+    }
+
+    public void setColumns(ContributionColumn[] columns) {
+      this.columns = columns;
+    }
+
+    public void enableSections(boolean enable) {
+      this.sectionsEnabled = enable;
     }
   }
 
@@ -405,14 +498,46 @@ implements Scrollable, ContributionListing.ChangeListener {
     @Override
     public boolean include(Entry<? extends ContributionTableModel, ? extends Integer> entry) {
       Contribution contribution = (Contribution) entry.getValue(0);
+      if (contribution instanceof SectionHeaderContribution) {
+        return includeSection((SectionHeaderContribution) contribution);
+      }
+      return includeContribution(contribution);
+    }
+
+    private boolean includeContribution(Contribution contribution) {
       return contributionFilter.matches(contribution)
               && categoryFilter.map(contribution::hasCategory).orElse(true)
-              && stringFilters.stream().allMatch(pattern -> contribListing.matches(contribution, pattern));
+              && stringFilters.stream().allMatch(pattern -> ContributionListing.getInstance().matches(contribution, pattern));
+    }
+
+    private boolean includeSection(SectionHeaderContribution section) {
+      return ContributionListing.getInstance().allContributions.stream()
+              .filter(contribution -> contribution.getType() == section.getType())
+              .anyMatch(this::includeContribution);
     }
   }
 
-  String getAuthorNameWithoutMarkup(String authorList) {
-    StringBuilder name = new StringBuilder("");
+  protected static class SectionHeaderContribution extends Contribution {
+    ContributionType type;
+
+    SectionHeaderContribution(ContributionType type) {
+      this.type = type;
+      this.name = getTypeName();
+    }
+
+    @Override
+    public ContributionType getType() {
+      return type;
+    }
+
+    @Override
+    public boolean isInstalled() {
+      return false;
+    }
+  }
+
+  static String getAuthorNameWithoutMarkup(String authorList) {
+    StringBuilder name = new StringBuilder();
     if (authorList != null) {
       int parentheses = 0;
       for (int i = 0; i < authorList.length(); i++) {
@@ -436,7 +561,7 @@ implements Scrollable, ContributionListing.ChangeListener {
   public void contributionAdded(final Contribution contribution) {
     if (!panelByContribution.containsKey(contribution)) {
       DetailPanel newPanel =
-              new DetailPanel(ListPanel.this);
+              new DetailPanel(this);
       panelByContribution.put(contribution, newPanel);
       newPanel.setContribution(contribution);
       add(newPanel);
@@ -632,6 +757,7 @@ implements Scrollable, ContributionListing.ChangeListener {
 
 
   public int getRowCount() {
-    return panelByContribution.size();
+    // This will count section headers, but it is only used to check if any rows are shown
+    return sorter.getViewRowCount();
   }
 }

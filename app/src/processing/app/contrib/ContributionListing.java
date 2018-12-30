@@ -560,11 +560,7 @@ public class ContributionListing {
   }
 
 
-  static public Comparator<Contribution> COMPARATOR = new Comparator<Contribution>() {
-    public int compare(Contribution o1, Contribution o2) {
-      return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-    }
-  };
+  static public Comparator<Contribution> COMPARATOR = Comparator.comparing(o -> o.getName().toLowerCase());
 
 
   public interface ChangeListener {

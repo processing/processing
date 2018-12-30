@@ -77,7 +77,7 @@ public class ContributionTab extends JPanel {
 
     contribListing = ContributionListing.getInstance();
     statusPanel = new StatusPanel(this, 650);
-    contributionListPanel = new ListPanel(this, filter);
+    contributionListPanel = new ListPanel(this, filter, false);
     contribListing.addListener(contributionListPanel);
   }
 
@@ -444,5 +444,9 @@ public class ContributionTab extends JPanel {
 
   protected boolean hasUpdates() {
     return contributionListPanel.getRowCount() > 0;
+  }
+
+  public boolean filterHasFocus() {
+      return filterField != null && filterField.hasFocus();
   }
 }
