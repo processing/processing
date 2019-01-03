@@ -1699,6 +1699,15 @@ public class Base {
       return false;  // let's not go there
     }
 
+    if (folder.getName().equals("sdk")) {
+      // This could be Android's SDK folder. Let's double check:
+      File suspectSDKPath = new File(folder.getParent(), folder.getName());
+      File expectedSDKPath = new File(sketchbookFolder, "android" + File.separator + "sdk");
+      if (expectedSDKPath.getAbsolutePath().equals(suspectSDKPath.getAbsolutePath())) {
+        return false;  // Most likely the SDK folder, skip it
+      }
+    }    
+    
     String[] list = folder.list();
     // If a bad folder or unreadable or whatever, this will come back null
     if (list == null) {
