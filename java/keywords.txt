@@ -238,6 +238,7 @@ Class	KEYWORD5	class
 Double	KEYWORD5
 Float	KEYWORD5
 Integer	KEYWORD5
+Long	KEYWORD5
 HashMap	KEYWORD5	HashMap
 PrintWriter	KEYWORD5	PrintWriter
 String	KEYWORD5	String
