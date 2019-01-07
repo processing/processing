@@ -23,11 +23,12 @@
 package processing.core;
 
 import java.awt.Image;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
-import com.apple.eawt.AppEvent.QuitEvent;
 import com.apple.eawt.Application;
-import com.apple.eawt.QuitHandler;
-import com.apple.eawt.QuitResponse;
 
 
 /**
@@ -57,25 +58,64 @@ public class ThinkDifferent {
       application = Application.getApplication();
     }
 
-    application.setQuitHandler(new QuitHandler() {
-      public void handleQuitRequestWith(QuitEvent event, QuitResponse response) {
-        sketch.exit();
-        if (PApplet.uncaughtThrowable == null &&  // no known crash
-            !attemptedQuit) {  // haven't tried yet
-          response.cancelQuit();  // tell OS X we'll handle this
-          attemptedQuit = true;
-        } else {
-          response.performQuit();  // just force it this time
-        }
+    setHandler(application, "setQuitHandler", (proxy, method, args) -> {
+      sketch.exit();
+      if (PApplet.uncaughtThrowable == null &&  // no known crash
+          !attemptedQuit) {  // haven't tried yet
+        args[1].getClass().getMethod("cancelQuit").invoke(args[1]);  // tell OS X we'll handle this
+        attemptedQuit = true;
+      } else {
+        args[1].getClass().getMethod("performQuit").invoke(args[1]);  // just force it this time
       }
+      return null;
     });
+  }
+
+  /**
+   * Sets a handler on an instance of {@link Application}, taking into account JVM version
+   * differences.
+   *
+   * @param app an instance of {@link Application}
+   * @param name the "set handler" method name
+   * @param handler the handler
+   */
+  private static void setHandler(Application app, String name, InvocationHandler handler) {
+    // Determine which version of com.apple.eawt.Application to use and pass it a handler of the
+    // appropriate type
+    Method[] methods = app.getClass().getMethods();
+    for (Method m : methods) {
+      if (!name.equals(m.getName())) {
+        continue;
+      }
+      if (m.getParameterCount() != 1) {
+        continue;
+      }
+      Class paramType = m.getParameterTypes()[0];
+      try {
+        // Allow a null handler
+        Object proxy = null;
+        if (handler != null) {
+          proxy = Proxy.newProxyInstance(
+              paramType.getClassLoader(), new Class<?>[] { paramType }, handler);
+        }
+        m.invoke(app, proxy);
+      } catch (IllegalArgumentException ex) {
+        // TODO: Print error?: method doesn't take an interface, etc.
+      } catch (IllegalAccessException ex) {
+        // TODO: Print error?: Other method invocation problem
+      } catch (InvocationTargetException ex) {
+        ex.getCause().printStackTrace();
+        // TODO: Print ex.getCause() a different way?
+      }
+      break;
+    }
   }
 
   static public void cleanup() {
     if (application == null) {
       application = Application.getApplication();
     }
-    application.setQuitHandler(null);
+    setHandler(application, "setQuitHandler", null);
   }
 
   // Called via reflection from PSurfaceAWT and others
