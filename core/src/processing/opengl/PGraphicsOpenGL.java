@@ -3772,6 +3772,13 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  static protected void invTranslate(PMatrix2D matrix,
+                                     float tx, float ty) {
+    matrix.preApply(1, 0, -tx,
+                    0, 1, -ty);
+  }
+
+
   static protected float matrixScale(PMatrix matrix) {
     // Volumetric scaling factor that is associated to the given
     // transformation matrix, which is given by the absolute value of its
@@ -3857,8 +3864,8 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  static private void invRotate(PMatrix3D matrix, float angle,
-                                float v0, float v1, float v2) {
+  static protected void invRotate(PMatrix3D matrix, float angle,
+                                  float v0, float v1, float v2) {
     float c = PApplet.cos(-angle);
     float s = PApplet.sin(-angle);
     float t = 1.0f - c;
@@ -3867,6 +3874,11 @@ public class PGraphicsOpenGL extends PGraphics {
                     (t*v0*v1) + (s*v2), (t*v1*v1) + c, (t*v1*v2) - (s*v0), 0,
                     (t*v0*v2) - (s*v1), (t*v1*v2) + (s*v0), (t*v2*v2) + c, 0,
                     0, 0, 0, 1);
+  }
+
+
+  static protected void invRotate(PMatrix2D matrix, float angle) {
+    matrix.rotate(-angle);
   }
 
 
@@ -3908,6 +3920,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
   static protected void invScale(PMatrix3D matrix, float x, float y, float z) {
     matrix.preApply(1/x, 0, 0, 0,  0, 1/y, 0, 0,  0, 0, 1/z, 0,  0, 0, 0, 1);
+  }
+
+
+  static protected void invScale(PMatrix2D matrix, float x, float y) {
+    matrix.preApply(1/x, 0, 0, 1/y, 0, 0);
   }
 
 
