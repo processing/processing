@@ -1,5 +1,7 @@
 0266 (3.4.1 or 3.5)
 X update to Java 8u192
+_ fix the link to the FAQ in the menu
+_   https://github.com/processing/processing/issues/5729
 
 contrib
 X Updated russian translation, now can choose russian in preferences
