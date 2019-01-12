@@ -32,6 +32,19 @@ X   https://github.com/processing/processing/issues/5707
 X   skip Android's SDK folder when adding sketches
 X   https://github.com/processing/processing/commit/5b653263cc6151f838c11a61689d756901c11e37
 
+jakub
+X Fix freeze when restarting sketch with variables in size
+X   https://github.com/processing/processing/pull/5708
+X Make sure Ctrl+Left Mouse on MacOS is consistent
+X   https://github.com/processing/processing/issues/5672
+X   https://github.com/processing/processing/pull/5674
+X Stop frame rate counter from exaggerating
+X   https://github.com/processing/processing/pull/5697
+X Fix vertex buffer initialized with wrong number of components
+X   https://github.com/processing/processing/pull/5698
+X Recreate FBOs when offscreen PGraphicsOpenGL is resized
+X   https://github.com/processing/processing/pull/5699
+
 
 _ NullPointerException at java.awt.Window.init(Window.java:497) when using Airplay
 _   https://github.com/processing/processing/issues/5620
