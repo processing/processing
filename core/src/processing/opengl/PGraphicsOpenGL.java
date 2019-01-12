@@ -6821,6 +6821,9 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         // offscreen surfaces are transparent by default.
         background(0x00 << 24 | (backgroundColor & 0xFFFFFF));
+
+        // Recreate offscreen FBOs
+        restartPGL();
       }
 
       // Sets the default projection and camera (initializes modelview).
