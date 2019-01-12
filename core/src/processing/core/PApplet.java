@@ -561,6 +561,14 @@ public class PApplet implements PConstants {
    */
   public boolean mousePressed;
 
+  // MACOSX: CTRL + Left Mouse is converted to Right Mouse. This boolean keeps
+  // track of whether the conversion happened on PRESS, because we should report
+  // the same button during DRAG and on RELEASE, even though CTRL might have
+  // been released already. Otherwise the events are inconsistent, e.g.
+  // Left Pressed - Left Drag - CTRL Pressed - Right Drag - Right Released.
+  // See: https://github.com/processing/processing/issues/5672
+  private boolean macosxLeftButtonWithCtrlPressed;
+
 
   /** @deprecated Use a mouse event handler that passes an event instead. */
   @Deprecated
@@ -2650,8 +2658,27 @@ public class PApplet implements PConstants {
       mouseY = event.getY();
     }
 
+    int button = event.getButton();
+
+    // If running on Mac OS, allow ctrl-click as right mouse.
+    if (PApplet.platform == PConstants.MACOSX && event.getButton() == PConstants.LEFT) {
+      if (action == MouseEvent.PRESS && event.isControlDown()) {
+        macosxLeftButtonWithCtrlPressed = true;
+      }
+      if (macosxLeftButtonWithCtrlPressed) {
+        button = PConstants.RIGHT;
+        event = new MouseEvent(event.getNative(), event.getMillis(),
+                               event.getAction(), event.getModifiers(),
+                               event.getX(), event.getY(),
+                               button, event.getCount());
+      }
+      if (button == MouseEvent.RELEASE) {
+        macosxLeftButtonWithCtrlPressed = false;
+      }
+    }
+
     // Get the (already processed) button code
-    mouseButton = event.getButton();
+    mouseButton = button;
 
     /*
     // Compatibility for older code (these have AWT object params, not P5)
