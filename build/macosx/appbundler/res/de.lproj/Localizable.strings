@@ -1,0 +1,7 @@
+"JRELoadError" = "Die Java Laufzeitumgebung konnte nicht geladen werden.";
+"JRExLoadError" = "Die Java %d Laufzeitumgebung konnte nicht geladen werden.";
+"JRExLoadFullError" = "Diese Anwendung benötigt die Java %d Laufzeitumgebung oder höher auf Ihrem Computer installiert sein. Bitte installieren Sie die neueste Version von Java von www.java.com und erneut versuchen.";
+"JDKxLoadFullError" = "Diese Anwendung benötigt die Java %d Laufzeitumgebung oder höher auf Ihrem Computer installiert sein. Bitte installieren Sie die neueste JDK von Oracle.com und erneut versuchen.";
+"MainClassNameRequired" = "Hauptklassenname ist erforderlich.";
+"JavaDirectoryNotFound" = "Das Java Verzeichnis ist nicht vorhanden.";
+"BundlePathContainsColon" = "Kann nicht vom einem Ordner aus starten, der \"/\" in seinem Namen enthält.";

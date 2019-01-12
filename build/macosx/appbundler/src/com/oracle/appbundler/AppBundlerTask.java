@@ -42,8 +42,13 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -56,699 +61,890 @@ import org.apache.tools.ant.types.resources.FileResource;
  * App bundler Ant task.
  */
 public class AppBundlerTask extends Task {
-  // Output folder for generated bundle
-  private File outputDirectory = null;
+    // Output folder for generated bundle
+    private File outputDirectory = null;
 
-  // General bundle properties
-  private String name = null;
-  private String displayName = null;
-  private String identifier = null;
-  private File iconFile = null;
-  private String executableName = EXECUTABLE_NAME;
+    // General bundle properties
+    private String name = null;
+    private String displayName = null;
+    private String identifier = null;
+    private File icon = null;
+    private String executableName = EXECUTABLE_NAME;
 
-  private String shortVersion = null; //"1.0";
-  private String version = null; //"1.0";
-  private String signature = "????";
-  private String copyright = null; //"";
-  private String getInfo = null;
-  private String privileged = null;
-  private String workingDirectory = null;
+    private String shortVersion = "1.0";
+    private String version = "1.0";
+    private String signature = "????";
+    private String copyright = "";
+    private String privileged = null;
+    private String workingDirectory = null;
+    private String minimumSystemVersion = null;
 
-  private String applicationCategory = null;
-  private boolean highResolutionCapable = true;
-  // Oracle Java 8 requires 10.8.3 or later, so require it here.
-  private String minimumSystem = "10.8.3";
-  // By default, don't embed Java FX.
-  private boolean javafx = false;
+    private String jvmRequired = null;
+    private boolean jrePreferred = false;
+    private boolean jdkPreferred = false;
 
-  // JVM info properties
-  private String mainClassName = null;
-  private FileSet runtime = null;
-  private ArrayList<FileSet> classPath = new ArrayList<>();
-  private ArrayList<FileSet> libraryPath = new ArrayList<>();
-  private ArrayList<String> options = new ArrayList<>();
-  private ArrayList<String> arguments = new ArrayList<>();
-  private ArrayList<String> architectures = new ArrayList<>();
-  private ArrayList<BundleDocument> bundleDocuments = new ArrayList<>();
+    private String applicationCategory = null;
 
-  private Reference classPathRef;
+    private boolean highResolutionCapable = true;
+    private boolean supportsAutomaticGraphicsSwitching = true;
+    private boolean hideDockIcon = false;
+    private boolean isDebug = false;
+    private boolean ignorePSN = false;
 
-  private static final String EXECUTABLE_NAME = "JavaAppLauncher";
-  private static final String DEFAULT_ICON_NAME = "GenericApp.icns";
-  private static final String OS_TYPE_CODE = "APPL";
+    // JVM info properties
+    private String mainClassName = null;
+    private String jnlpLauncherName = null;
+    private String jarLauncherName = null;
+    private Runtime runtime = null;
+    private ArrayList<FileSet> classPath = new ArrayList<>();
+    private ArrayList<FileSet> libraryPath = new ArrayList<>();
+    private ArrayList<Option> options = new ArrayList<>();
+    private ArrayList<String> arguments = new ArrayList<>();
+    private ArrayList<String> architectures = new ArrayList<>();
+    private ArrayList<String> registeredProtocols = new ArrayList<>();
+    private ArrayList<BundleDocument> bundleDocuments = new ArrayList<>();
+    private ArrayList<TypeDeclaration> exportedTypeDeclarations = new ArrayList<>();
+    private ArrayList<TypeDeclaration> importedTypeDeclarations = new ArrayList<>();
+    private ArrayList<PlistEntry> plistEntries = new ArrayList<>();
+    private ArrayList<Environment> environments = new ArrayList<>();
 
-  private static final int BUFFER_SIZE = 2048;
+    private Reference classPathRef;
+    private ArrayList<String> plistClassPaths = new ArrayList<>();
 
+    private static final String EXECUTABLE_NAME = "JavaAppLauncher";
+    private static final String DEFAULT_ICON_NAME = "GenericApp.icns";
+    private static final String OS_TYPE_CODE = "APPL";
 
-  public void setOutputDirectory(File outputDirectory) {
-    this.outputDirectory = outputDirectory;
-  }
+    private static final String PLIST_DTD = "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">";
+    private static final String PLIST_TAG = "plist";
+    private static final String PLIST_VERSION_ATTRIBUTE = "version";
+    private static final String DICT_TAG = "dict";
+    private static final String KEY_TAG = "key";
+    private static final String ARRAY_TAG = "array";
+    private static final String STRING_TAG = "string";
 
+    private static final int BUFFER_SIZE = 2048;
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
-
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
-  }
-
-
-  public void setIdentifier(String identifier) {
-    this.identifier = identifier;
-  }
-
-
-  public void setIcon(File icon) {
-    this.iconFile = icon;
-  }
-
-
-  public void setExecutableName(String executable) {
-    this.executableName = executable;
-  }
-
-
-  public void setShortVersion(String shortVersion) {
-    this.shortVersion = shortVersion;
-  }
-
-
-  public void setVersion(String version) {
-    this.version = version;
-  }
-
-
-  public void setSignature(String signature) {
-    this.signature = signature;
-  }
-
-
-  public void setCopyright(String copyright) {
-    this.copyright = copyright;
-  }
-
-
-  public void setGetInfo(String getInfo) {
-    this.getInfo = getInfo;
-  }
-
-
-  public void setPrivileged(String privileged) {
-    this.privileged = privileged;
-  }
-
-
-  public void setWorkingDirectory(String workingDirectory) {
-    this.workingDirectory = workingDirectory;
-  }
-
-
-  public void setApplicationCategory(String applicationCategory) {
-    this.applicationCategory = applicationCategory;
-  }
-
-
-  public void setMinimumSystem(String minimumSystem) {
-    this.minimumSystem = minimumSystem;
-  }
-
-
-  public void setHighResolutionCapable(boolean highResolutionCapable) {
-    this.highResolutionCapable = highResolutionCapable;
-  }
-
-
-  public void setJavaFX(boolean javafx) {
-    this.javafx = javafx;
-  }
-
-
-  public void setMainClassName(String mainClassName) {
-    this.mainClassName = mainClassName;
-  }
-
-
-  public void addConfiguredRuntime(FileSet runtime) throws BuildException {
-    if (this.runtime != null) {
-      throw new BuildException("Runtime already specified.");
+    public void setOutputDirectory(File outputDirectory) {
+        this.outputDirectory = outputDirectory;
     }
 
-    this.runtime = runtime;
-
-    runtime.appendIncludes(new String[] {
-      "jre/",
-    });
-
-    runtime.appendExcludes(new String[] {
-      "bin/",
-
-      // original version, removed entire bin folder
-      //"jre/bin/",
-
-      // remove everything except 'java'
-      // also keep 'keytool' (needed by Android)
-      "jre/bin/orbd",
-      "jre/bin/pack200",
-      "jre/bin/policytool",
-      "jre/bin/rmid",
-      "jre/bin/rmiregistry",
-      "jre/bin/servertool",
-      "jre/bin/tnameserv",
-      "jre/bin/unpack200",
-
-      "jre/lib/deploy/",
-      "jre/lib/deploy.jar",
-      "jre/lib/javaws.jar",
-      "jre/lib/libdeploy.dylib",
-      "jre/lib/libnpjp2.dylib",
-      "jre/lib/plugin.jar",
-      "jre/lib/security/javaws.policy"
-    });
-
-    if (!javafx) {
-      // http://www.oracle.com/technetwork/java/javase/jdk-7-readme-429198.html
-      runtime.appendExcludes(new String[] {
-        "jre/THIRDPARTYLICENSEREADME-JAVAFX.txt",
-
-        "jre/lib/javafx.properties",
-        "jre/lib/jfxrt.jar",
-        "jre/lib/security/javafx.policy",
-
-        "jre/lib/fxplugins.dylib",
-        "jre/lib/libdecora-sse.dylib",
-        "jre/lib/libglass.dylib",
-        "jre/lib/libglib-2.0.0.dylib",
-        "jre/lib/libgstplugins-lite.dylib",
-        "jre/lib/libgstreamer-lite.dylib",
-        "jre/lib/libjavafx-font.dylib",
-        "jre/lib/libjavafx-iio.dylib",
-        "jre/lib/libjfxmedia.dylib",
-        "jre/lib/libjfxwebkit.dylib",
-        "jre/lib/libprism-es2.dylib"
-      });
-    }
-  }
-
-
-  public void setClasspathRef(Reference ref) {
-    this.classPathRef = ref;
-  }
-
-
-  public void addConfiguredClassPath(FileSet classPath) {
-    this.classPath.add(classPath);
-  }
-
-
-  public void addConfiguredLibraryPath(FileSet libraryPath) {
-    this.libraryPath.add(libraryPath);
-  }
-
-
-  public void addConfiguredBundleDocument(BundleDocument document) {
-    this.bundleDocuments.add(document);
-  }
-
-
-  public void addConfiguredOption(Option option) throws BuildException {
-    String value = option.getValue();
-
-    if (value == null) {
-      throw new BuildException("Value is required.");
+    public void setName(String name) {
+        this.name = name;
     }
 
-    options.add(value);
-  }
-
-
-  public void addConfiguredArgument(Argument argument) throws BuildException {
-    String value = argument.getValue();
-
-    if (value == null) {
-      throw new BuildException("Value is required.");
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
-    arguments.add(value);
-  }
-
-
-  public void addConfiguredArch(Architecture architecture) throws BuildException {
-    String name = architecture.getName();
-
-    if (name == null) {
-      throw new BuildException("Name is required.");
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
-    architectures.add(name);
-  }
-
-
-  @Override
-  public void execute() throws BuildException {
-    // Validate required properties
-    if (outputDirectory == null) {
-      throw new IllegalStateException("Output directory is required.");
+    public void setIcon(File icon) {
+        this.icon = icon;
     }
 
-    if (!outputDirectory.exists()) {
-      throw new IllegalStateException("Output directory does not exist.");
+    public void setExecutableName(String executable) {
+        this.executableName = executable;
     }
 
-    if (!outputDirectory.isDirectory()) {
-      throw new IllegalStateException("Invalid output directory.");
+    public void setShortVersion(String shortVersion) {
+        this.shortVersion = shortVersion;
     }
 
-    if (name == null) {
-      throw new IllegalStateException("Name is required.");
+    public void setVersion(String version) {
+        this.version = version;
     }
 
-    if (displayName == null) {
-      throw new IllegalStateException("Display name is required.");
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
-    if (identifier == null) {
-      throw new IllegalStateException("Identifier is required.");
+    public void setCopyright(String copyright) {
+        this.copyright = copyright;
     }
 
-    if (iconFile != null) {
-      if (!iconFile.exists()) {
-        throw new IllegalStateException("Icon does not exist.");
-      }
-
-      if (iconFile.isDirectory()) {
-        throw new IllegalStateException("Invalid icon.");
-      }
+    public void setPrivileged(String privileged) {
+        this.privileged = privileged;
     }
 
-    if (shortVersion == null) {
-      throw new IllegalStateException("Short version is required.");
+    public void setWorkingDirectory(String workingDirectory) {
+        this.workingDirectory = workingDirectory;
     }
 
-    if (signature == null) {
-      throw new IllegalStateException("Signature is required.");
+    public void setJVMRequired(String v){
+        this.jvmRequired = v;
     }
 
-    if (signature.length() != 4) {
-      throw new IllegalStateException("Invalid signature.");
+    public void setJREPreferred(boolean preferred){
+        this.jrePreferred = preferred;
     }
 
-    if (copyright == null) {
-      throw new IllegalStateException("Copyright is required.");
+    public void setJDKPreferred(boolean preferred){
+        this.jdkPreferred = preferred;
     }
 
-    if (mainClassName == null) {
-      throw new IllegalStateException("Main class name is required.");
+    public void setMinimumSystemVersion(String v){
+        this.minimumSystemVersion = v;
     }
 
-    // Create the app bundle
-    try {
-      System.out.println("Creating app bundle: " + name);
-
-      // Create directory structure
-      File rootDirectory = new File(outputDirectory, name + ".app");
-      delete(rootDirectory);
-      rootDirectory.mkdir();
-
-      File contentsDirectory = new File(rootDirectory, "Contents");
-      contentsDirectory.mkdir();
-
-      File macOSDirectory = new File(contentsDirectory, "MacOS");
-      macOSDirectory.mkdir();
-
-      File javaDirectory = new File(contentsDirectory, "Java");
-      javaDirectory.mkdir();
-
-      File plugInsDirectory = new File(contentsDirectory, "PlugIns");
-      plugInsDirectory.mkdir();
-
-      File resourcesDirectory = new File(contentsDirectory, "Resources");
-      resourcesDirectory.mkdir();
-
-//      // Move back to Contents/Resources/Java instead of Contents/Java [fry]
-//      File javaDirectory = new File(resourcesDirectory, "Java");
-//      javaDirectory.mkdir();
-
-      // Generate Info.plist
-      File infoPlistFile = new File(contentsDirectory, "Info.plist");
-      infoPlistFile.createNewFile();
-      writeInfoPlist(infoPlistFile);
-
-      // Generate PkgInfo
-      File pkgInfoFile = new File(contentsDirectory, "PkgInfo");
-      pkgInfoFile.createNewFile();
-      writePkgInfo(pkgInfoFile);
-
-      // Copy executable to MacOS folder
-      File executableFile = new File(macOSDirectory, executableName);
-      copy(getClass().getResource(EXECUTABLE_NAME), executableFile);
-
-      executableFile.setExecutable(true, false);
-
-      // Copy localized resources to Resources folder
-      copyResources(resourcesDirectory);
-
-      // Copy runtime to PlugIns folder
-      copyRuntime(plugInsDirectory);
-
-      // Copy class path entries to Java folder
-      copyClassPathEntries(javaDirectory);
-
-      // Copy class path ref entries to Java folder
-      copyClassPathRefEntries(javaDirectory);
-
-      // Copy library path entries to MacOS folder
-      copyLibraryPathEntries(macOSDirectory);
-
-      // Copy icon to Resources folder
-      copyIcon(resourcesDirectory);
-
-      // Copy the bundle/document icons as well
-      copyBundleIcons(resourcesDirectory);
-
-    } catch (IOException exception) {
-      throw new BuildException(exception);
+    public void setApplicationCategory(String applicationCategory) {
+        this.applicationCategory = applicationCategory;
     }
-  }
 
+    public void setHighResolutionCapable(boolean highResolutionCapable) {
+        this.highResolutionCapable = highResolutionCapable;
+    }
 
-  private void copyResources(File resourcesDirectory) throws IOException {
-    // Unzip res.zip into resources directory
-    InputStream inputStream = getClass().getResourceAsStream("res.zip");
-    ZipInputStream zipInputStream = new ZipInputStream(inputStream);
+    public void setHideDockIcon(boolean hideDock) {
+        this.hideDockIcon = hideDock;
+    }
 
-    try {
-      ZipEntry zipEntry = zipInputStream.getNextEntry();
-      while (zipEntry != null) {
-        File file = new File(resourcesDirectory, zipEntry.getName());
+    public void setDebug(boolean enabled) {
+        this.isDebug = enabled;
+    }
 
-        if (zipEntry.isDirectory()) {
-          file.mkdir();
+    public void setSupportsAutomaticGraphicsSwitching(boolean supportsAutomaticGraphicsSwitching) {
+        this.supportsAutomaticGraphicsSwitching = supportsAutomaticGraphicsSwitching;
+    }
+
+    public void setIgnorePSN(boolean ignorePSN) {
+        this.ignorePSN = ignorePSN;
+    }
+
+    public void setMainClassName(String mainClassName) {
+        this.mainClassName = mainClassName;
+    }
+
+    public void setJnlpLauncherName(String jnlpLauncherName) {
+        this.jnlpLauncherName = jnlpLauncherName;
+    }
+
+    public void setJarLauncherName(String jarLauncherName) {
+        this.jarLauncherName = jarLauncherName;
+    }
+
+    public void addConfiguredRuntime(Runtime runtime) throws BuildException {
+        if (this.runtime != null) {
+            throw new BuildException("Runtime already specified.");
+        }
+
+        this.runtime = runtime;
+    }
+
+    public void setClasspathRef(Reference ref) {
+
+        this.classPathRef = ref;
+    }
+
+    public void setPlistClassPaths(String plistClassPaths) {
+        for (String tok : plistClassPaths.split("\\s*,\\s*")) {
+            this.plistClassPaths.add(tok);
+        }
+    }
+
+    public void addConfiguredClassPath(FileSet classPath) {
+        this.classPath.add(classPath);
+    }
+
+    public void addConfiguredLibraryPath(FileSet libraryPath) {
+        this.libraryPath.add(libraryPath);
+    }
+
+    public void addConfiguredBundleDocument(BundleDocument document) {
+        if ((document.getContentTypes() == null) && (document.getExtensions() == null)) {
+            throw new BuildException("Document content type or extension is required.");
+        }
+        this.bundleDocuments.add(document);
+    }
+
+    public void addConfiguredTypeDeclaration(TypeDeclaration typeDeclaration) {
+        if (typeDeclaration.getIdentifier() == null) {
+            throw new BuildException("Type declarations must have an identifier.");
+        }
+        if (typeDeclaration.isImported()) {
+            this.importedTypeDeclarations.add(typeDeclaration);
         } else {
-          OutputStream outputStream =
-            new BufferedOutputStream(new FileOutputStream(file), BUFFER_SIZE);
-          try {
-            int b = zipInputStream.read();
-            while (b != -1) {
-              outputStream.write(b);
-              b = zipInputStream.read();
+            this.exportedTypeDeclarations.add(typeDeclaration);
+        }
+    }
+
+    public void addConfiguredPlistEntry(PlistEntry plistEntry) {
+        if (plistEntry.getKey() == null) {
+            throw new BuildException("Name is required.");
+        }
+        if (plistEntry.getValue() == null) {
+            throw new BuildException("Value is required.");
+        }
+        if (plistEntry.getType() == null) {
+            plistEntry.setType(STRING_TAG);
+        }
+
+        this.plistEntries.add(plistEntry);
+    }
+
+    public void addConfiguredEnvironment(Environment environment) {
+        if (environment.getName() == null) {
+            throw new BuildException("Name is required.");
+        }
+        if (environment.getValue() == null) {
+            throw new BuildException("Value is required.");
+        }
+
+        this.environments.add(environment);
+    }
+
+    public void addConfiguredOption(Option option) throws BuildException {
+        String value = option.getValue();
+
+        if (value == null) {
+            throw new BuildException("Value is required.");
+        }
+
+        options.add(option);
+    }
+
+    public void addConfiguredArgument(Argument argument) throws BuildException {
+        String value = argument.getValue();
+
+        if (value == null) {
+            throw new BuildException("Value is required.");
+        }
+
+        arguments.add(value);
+    }
+    public void addConfiguredScheme(Argument argument) throws BuildException {
+        String value = argument.getValue();
+
+        if (value == null) {
+            throw new BuildException("Value is required.");
+        }
+
+        this.registeredProtocols.add(value);
+    }
+
+    public void addConfiguredArch(Architecture architecture) throws BuildException {
+        String name = architecture.getName();
+
+        if (name == null) {
+            throw new BuildException("Name is required.");
+        }
+
+        architectures.add(name);
+
+    }
+
+    @Override
+    public void execute() throws BuildException {
+        // Validate required properties
+        if (outputDirectory == null) {
+            throw new IllegalStateException("Output directory is required.");
+        }
+
+        if (!outputDirectory.exists()) {
+            throw new IllegalStateException("Output directory does not exist.");
+        }
+
+        if (!outputDirectory.isDirectory()) {
+            throw new IllegalStateException("Invalid output directory.");
+        }
+
+        if (name == null) {
+            throw new IllegalStateException("Name is required.");
+        }
+
+        if (displayName == null) {
+            throw new IllegalStateException("Display name is required.");
+        }
+
+        if (identifier == null) {
+            throw new IllegalStateException("Identifier is required.");
+        }
+
+        if (icon != null) {
+            if (!icon.exists()) {
+                throw new IllegalStateException("Icon does not exist.");
             }
-            outputStream.flush();
-          } finally {
-            outputStream.close();
-          }
+
+            if (icon.isDirectory()) {
+                throw new IllegalStateException("Invalid icon.");
+            }
         }
-        zipEntry = zipInputStream.getNextEntry();
-      }
-    } finally {
-      zipInputStream.close();
-    }
-  }
 
-
-  private void copyRuntime(File plugInsDirectory) throws IOException {
-    if (runtime != null) {
-      File runtimeHomeDirectory = runtime.getDir();
-      File runtimeContentsDirectory = runtimeHomeDirectory.getParentFile();
-      File runtimeDirectory = runtimeContentsDirectory.getParentFile();
-
-      // Create root plug-in directory
-      File pluginDirectory = new File(plugInsDirectory, runtimeDirectory.getName());
-      pluginDirectory.mkdir();
-
-      // Create Contents directory
-      File pluginContentsDirectory = new File(pluginDirectory, runtimeContentsDirectory.getName());
-      pluginContentsDirectory.mkdir();
-
-      // Copy MacOS directory
-      File runtimeMacOSDirectory = new File(runtimeContentsDirectory, "MacOS");
-      copy(runtimeMacOSDirectory, new File(pluginContentsDirectory, runtimeMacOSDirectory.getName()));
-
-      // Copy Info.plist file
-      File runtimeInfoPlistFile = new File(runtimeContentsDirectory, "Info.plist");
-      copy(runtimeInfoPlistFile, new File(pluginContentsDirectory, runtimeInfoPlistFile.getName()));
-
-      // Copy included contents of Home directory
-      File pluginHomeDirectory = new File(pluginContentsDirectory, runtimeHomeDirectory.getName());
-
-      DirectoryScanner directoryScanner = runtime.getDirectoryScanner(getProject());
-      String[] includedFiles = directoryScanner.getIncludedFiles();
-
-      for (String includedFile : includedFiles) {
-      //for (int i = 0; i < includedFiles.length; i++) {
-        //String includedFile = includedFiles[i];
-        File source = new File(runtimeHomeDirectory, includedFile);
-        File destination = new File(pluginHomeDirectory, includedFile);
-        copy(source, destination);
-      }
-    }
-  }
-
-
-  private void copyClassPathRefEntries(File javaDirectory) throws IOException {
-    if (classPathRef != null) {
-      org.apache.tools.ant.types.Path classpath =
-        (org.apache.tools.ant.types.Path) classPathRef.getReferencedObject(getProject());
-
-      Iterator<?> iter = classpath.iterator();
-      while (iter.hasNext()) {
-        FileResource resource = (FileResource) iter.next();
-        File source = resource.getFile();
-        File destination = new File(javaDirectory, source.getName());
-        copy(source, destination);
-      }
-    }
-  }
-
-
-  private void copyClassPathEntries(File javaDirectory) throws IOException {
-    for (FileSet fileSet : classPath) {
-      File classPathDirectory = fileSet.getDir();
-      DirectoryScanner directoryScanner = fileSet.getDirectoryScanner(getProject());
-      String[] includedFiles = directoryScanner.getIncludedFiles();
-
-      for (String includedFile : includedFiles) {
-        File source = new File(classPathDirectory, includedFile);
-        File destination = new File(javaDirectory, new File(includedFile).getName());
-        copy(source, destination);
-      }
-    }
-  }
-
-
-  private void copyLibraryPathEntries(File macOSDirectory) throws IOException {
-    for (FileSet fileSet : libraryPath) {
-      File libraryPathDirectory = fileSet.getDir();
-      DirectoryScanner directoryScanner = fileSet.getDirectoryScanner(getProject());
-      String[] includedFiles = directoryScanner.getIncludedFiles();
-
-      for (String includedFile : includedFiles) {
-        File source = new File(libraryPathDirectory, includedFile);
-        File destination = new File(macOSDirectory, new File(includedFile).getName());
-        copy(source, destination);
-      }
-    }
-  }
-
-
-  private void copyIcon(File resourcesDirectory) throws IOException {
-    if (iconFile == null) {
-      copy(getClass().getResource(DEFAULT_ICON_NAME),
-           new File(resourcesDirectory, DEFAULT_ICON_NAME));
-    } else {
-      copy(iconFile, new File(resourcesDirectory, iconFile.getName()));
-    }
-  }
-
-
-  private void copyBundleIcons(File resourcesDirectory) throws IOException {
-    for (BundleDocument bundleDocument : bundleDocuments) {
-      if (bundleDocument.hasIcon()) {
-        File iconFile = bundleDocument.getIconFile();
-        copy(iconFile, new File(resourcesDirectory, iconFile.getName()));
-      }
-    }
-  }
-
-
-  private void writeInfoPlist(File file) throws IOException {
-    FileOutputStream output = new FileOutputStream(file);
-    PropertyLister plist = new PropertyLister(output);
-
-    // Get started, write all necessary header info and open plist element
-    plist.writeStartDocument();
-
-    // Begin root dictionary
-    plist.writeStartDictElement();
-
-    // Write bundle properties
-    plist.writeProperty("CFBundleDevelopmentRegion", "English");
-    plist.writeProperty("CFBundleExecutable", executableName);
-    plist.writeProperty("CFBundleIconFile", (iconFile == null) ? DEFAULT_ICON_NAME : iconFile.getName());
-    plist.writeProperty("CFBundleIdentifier", identifier);
-    plist.writeProperty("CFBundleDisplayName", displayName);
-    plist.writeProperty("CFBundleInfoDictionaryVersion", "6.0");
-    plist.writeProperty("CFBundleName", name);
-    plist.writeProperty("CFBundlePackageType", OS_TYPE_CODE);
-    plist.writeProperty("CFBundleShortVersionString", shortVersion);
-    plist.writeProperty("CFBundleVersion", version);
-    plist.writeProperty("CFBundleSignature", signature);
-    plist.writeProperty("NSHumanReadableCopyright", copyright);
-
-    if (getInfo != null) {
-      plist.writeProperty("CFBundleGetInfoString", getInfo);
-    }
-
-    if (applicationCategory != null) {
-      plist.writeProperty("LSApplicationCategoryType", applicationCategory);
-    }
-
-    if (minimumSystem != null) {
-      plist.writeProperty("LSMinimumSystemVersion", minimumSystem);
-    }
-
-    if (highResolutionCapable) {
-      plist.writeKey("NSHighResolutionCapable");
-      plist.writeBoolean(true);
-    }
-
-    if (runtime != null) {
-      plist.writeProperty("JVMRuntime", runtime.getDir().getParentFile().getParentFile().getName());
-    }
-
-    if (privileged != null) {
-      plist.writeProperty("JVMRunPrivileged", privileged);
-    }
-
-    if (workingDirectory != null) {
-      plist.writeProperty("WorkingDirectory", workingDirectory);
-    }
-
-    // Write main class name
-    plist.writeProperty("JVMMainClassName", mainClassName);
-
-    // Write CFBundleDocument entries
-    plist.writeKey("CFBundleDocumentTypes");
-    plist.writeStartArrayElement();
-    for (BundleDocument bundleDocument: bundleDocuments) {
-      plist.writeStartDictElement();
-
-      plist.writeKey("CFBundleTypeExtensions");
-      plist.writeStartArrayElement();
-      for (String extension : bundleDocument.getExtensions()) {
-        plist.writeString(extension);
-      }
-      plist.writeEndElement();
-
-      if (bundleDocument.hasIcon()) {
-        plist.writeKey("CFBundleTypeIconFile");
-        plist.writeString(bundleDocument.getIconName());
-      }
-
-      plist.writeKey("CFBundleTypeName");
-      plist.writeString(bundleDocument.getName());
-
-      plist.writeKey("CFBundleTypeRole");
-      plist.writeString(bundleDocument.getRole());
-
-      plist.writeKey("LSTypeIsPackage");
-      plist.writeBoolean(bundleDocument.isPackage());
-
-      plist.writeEndElement();
-    }
-    plist.writeEndElement();
-
-    // Write architectures
-    plist.writeKey("LSArchitecturePriority");
-    plist.writeStartArrayElement();
-    for (String architecture : architectures) {
-      plist.writeString(architecture);
-    }
-    plist.writeEndElement();
-
-    // Write Environment
-    plist.writeKey("LSEnvironment");
-    plist.writeStartDictElement();
-    plist.writeKey("LC_CTYPE");
-    plist.writeString("UTF-8");
-    plist.writeEndElement();
-
-    // Write options
-    plist.writeKey("JVMOptions");
-    plist.writeStartArrayElement();
-    for (String option : options) {
-      plist.writeString(option);
-    }
-    plist.writeEndElement();
-
-    // Write arguments
-    plist.writeKey("JVMArguments");
-    plist.writeStartArrayElement();
-    for (String argument : arguments) {
-      plist.writeString(argument);
-    }
-    plist.writeEndElement();
-
-    // End root dictionary
-    plist.writeEndElement();
-
-    // Close out the plist
-    plist.writeEndDocument();
-  }
-
-
-  private void writePkgInfo(File file) throws IOException {
-    Writer out = new BufferedWriter(new FileWriter(file));
-
-    try {
-      out.write(OS_TYPE_CODE + signature);
-      out.flush();
-    } finally {
-      out.close();
-    }
-  }
-
-
-  private static void delete(File file) throws IOException {
-    Path filePath = file.toPath();
-
-    if (Files.exists(filePath, LinkOption.NOFOLLOW_LINKS)) {
-      if (Files.isDirectory(filePath, LinkOption.NOFOLLOW_LINKS)) {
-        File[] files = file.listFiles();
-
-        for (int i = 0; i < files.length; i++) {
-          delete(files[i]);
+        if (shortVersion == null) {
+            throw new IllegalStateException("Short version is required.");
         }
-      }
 
-      Files.delete(filePath);
+        if (signature == null) {
+            throw new IllegalStateException("Signature is required.");
+        }
+
+        if (signature.length() != 4) {
+            throw new IllegalStateException("Invalid signature.");
+        }
+
+        if (copyright == null) {
+            throw new IllegalStateException("Copyright is required.");
+        }
+
+        if (jnlpLauncherName == null && mainClassName == null) {
+            throw new IllegalStateException("Main class name or JNLP launcher name is required.");
+        }
+
+        // Create the app bundle
+        try {
+            System.out.println("Creating app bundle: " + name);
+
+            // Create directory structure
+            File rootDirectory = new File(outputDirectory, name + ".app");
+            delete(rootDirectory);
+            rootDirectory.mkdir();
+
+            File contentsDirectory = new File(rootDirectory, "Contents");
+            contentsDirectory.mkdir();
+
+            File macOSDirectory = new File(contentsDirectory, "MacOS");
+            macOSDirectory.mkdir();
+
+            File javaDirectory = new File(contentsDirectory, "Java");
+            javaDirectory.mkdir();
+
+            File plugInsDirectory = new File(contentsDirectory, "PlugIns");
+            plugInsDirectory.mkdir();
+
+            File resourcesDirectory = new File(contentsDirectory, "Resources");
+            resourcesDirectory.mkdir();
+
+            // Generate Info.plist
+            File infoPlistFile = new File(contentsDirectory, "Info.plist");
+            infoPlistFile.createNewFile();
+            writeInfoPlist(infoPlistFile);
+
+            // Generate PkgInfo
+            File pkgInfoFile = new File(contentsDirectory, "PkgInfo");
+            pkgInfoFile.createNewFile();
+            writePkgInfo(pkgInfoFile);
+
+            // Copy executable to MacOS folder
+            File executableFile = new File(macOSDirectory, executableName);
+            copy(getClass().getResource(EXECUTABLE_NAME), executableFile);
+
+            executableFile.setExecutable(true, false);
+
+            // Copy localized resources to Resources folder
+            copyResources(resourcesDirectory);
+
+            // Copy runtime to PlugIns folder
+            copyRuntime(plugInsDirectory);
+
+            // Copy class path entries to Java folder
+            copyClassPathEntries(javaDirectory);
+
+            // Copy class path ref entries to Java folder
+            copyClassPathRefEntries(javaDirectory);
+
+            // Copy library path entries to MacOS folder
+            copyLibraryPathEntries(macOSDirectory);
+
+            // Copy app icon to Resources folder
+            copyIcon(resourcesDirectory);
+
+            // Copy app document icons to Resources folder
+            copyDocumentIcons(bundleDocuments, resourcesDirectory);
+            copyDocumentIcons(exportedTypeDeclarations, resourcesDirectory);
+            copyDocumentIcons(importedTypeDeclarations, resourcesDirectory);
+
+        } catch (IOException exception) {
+            throw new BuildException(exception);
+        }
     }
-  }
 
+    private void copyResources(File resourcesDirectory) throws IOException {
+        // Unzip res.zip into resources directory
+        InputStream inputStream = getClass().getResourceAsStream("res.zip");
+        ZipInputStream zipInputStream = new ZipInputStream(inputStream);
 
-  private static void copy(URL location, File file) throws IOException {
-    try (InputStream in = location.openStream()) {
-      Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        try {
+            ZipEntry zipEntry = zipInputStream.getNextEntry();
+            while (zipEntry != null) {
+                File file = new File(resourcesDirectory, zipEntry.getName());
+
+                if (zipEntry.isDirectory()) {
+                    file.mkdir();
+                } else {
+                    OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file), BUFFER_SIZE);
+
+                    try {
+                        int b = zipInputStream.read();
+                        while (b != -1) {
+                            outputStream.write(b);
+                            b = zipInputStream.read();
+                        }
+
+                        outputStream.flush();
+                    } finally {
+                        outputStream.close();
+                    }
+
+                }
+
+                zipEntry = zipInputStream.getNextEntry();
+            }
+        } finally {
+            zipInputStream.close();
+        }
     }
-  }
 
-
-  private static void copy(File source, File destination) throws IOException {
-    Path sourcePath = source.toPath();
-    Path destinationPath = destination.toPath();
-
-    destination.getParentFile().mkdirs();
-
-    Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS);
-
-    if (Files.isDirectory(sourcePath, LinkOption.NOFOLLOW_LINKS)) {
-      String[] files = source.list();
-
-      for (int i = 0; i < files.length; i++) {
-        String file = files[i];
-        copy(new File(source, file), new File(destination, file));
-      }
+    private void copyRuntime(File plugInsDirectory) throws IOException {
+        if (runtime != null) {
+            runtime.copyTo(plugInsDirectory);
+        }
     }
-  }
+
+    private void copyClassPathRefEntries(File javaDirectory) throws IOException {
+        if(classPathRef != null) {
+            org.apache.tools.ant.types.Path classpath =
+
+                    (org.apache.tools.ant.types.Path) classPathRef.getReferencedObject(getProject());
+
+            Iterator<FileResource> iter = (Iterator<FileResource>)(Object)classpath.iterator();
+            while(iter.hasNext()) {
+                FileResource resource = iter.next();
+                File source = resource.getFile();
+                File destination = new File(javaDirectory, source.getName());
+                copy(source, destination);
+            }
+        }
+    }
+
+    private void copyClassPathEntries(File javaDirectory) throws IOException {
+        for (FileSet fileSet : classPath) {
+            File classPathDirectory = fileSet.getDir();
+            DirectoryScanner directoryScanner = fileSet.getDirectoryScanner(getProject());
+            String[] includedFiles = directoryScanner.getIncludedFiles();
+
+            for (int i = 0; i < includedFiles.length; i++) {
+                String includedFile = includedFiles[i];
+                File source = new File(classPathDirectory, includedFile);
+                File destination = new File(javaDirectory, new File(includedFile).getName());
+                copy(source, destination);
+            }
+        }
+    }
+
+    private void copyLibraryPathEntries(File macOSDirectory) throws IOException {
+        for (FileSet fileSet : libraryPath) {
+            File libraryPathDirectory = fileSet.getDir();
+            DirectoryScanner directoryScanner = fileSet.getDirectoryScanner(getProject());
+            String[] includedFiles = directoryScanner.getIncludedFiles();
+
+            for (int i = 0; i < includedFiles.length; i++) {
+                String includedFile = includedFiles[i];
+                File source = new File(libraryPathDirectory, includedFile);
+                File destination = new File(macOSDirectory, new File(includedFile).getName());
+                copy(source, destination);
+            }
+        }
+    }
+
+    private void copyIcon(File resourcesDirectory) throws IOException {
+        if (icon == null) {
+            copy(getClass().getResource(DEFAULT_ICON_NAME), new File(resourcesDirectory, DEFAULT_ICON_NAME));
+        } else {
+            copy(icon, new File(resourcesDirectory, icon.getName()));
+        }
+    }
+
+    public void copyDocumentIcons(final ArrayList<? extends IconContainer> iconContainers,
+            File resourcesDirectory) throws IOException {
+        for(IconContainer iconContainer: iconContainers) {
+            if(iconContainer.hasIcon()) {
+                File ifile = iconContainer.getIconFile();
+                if (ifile != null) {
+                    copyDocumentIcon(ifile,resourcesDirectory);
+                }
+            }
+        }
+    }
+
+    private void copyDocumentIcon(File ifile, File resourcesDirectory) throws IOException {
+        if (ifile == null) {
+            return;
+        } else {
+            copy(ifile, new File(resourcesDirectory, ifile.getName()));
+        }
+    }
+
+    private void writeInfoPlist(File file) throws IOException {
+        Writer out = new BufferedWriter(new FileWriter(file));
+        XMLOutputFactory output = XMLOutputFactory.newInstance();
+
+        try {
+            XMLStreamWriter xout = output.createXMLStreamWriter(out);
+
+            // Write XML declaration
+            xout.writeStartDocument();
+            xout.writeCharacters("\n");
+
+            // Write plist DTD declaration
+            xout.writeDTD(PLIST_DTD);
+            xout.writeCharacters("\n");
+
+            // Begin root element
+            xout.writeStartElement(PLIST_TAG);
+            xout.writeAttribute(PLIST_VERSION_ATTRIBUTE, "1.0");
+            xout.writeCharacters("\n");
+
+            // Begin root dictionary
+            xout.writeStartElement(DICT_TAG);
+            xout.writeCharacters("\n");
+
+            // Write bundle properties
+            writeProperty(xout, "CFBundleDevelopmentRegion", "English");
+            writeProperty(xout, "CFBundleExecutable", executableName);
+            writeProperty(xout, "CFBundleIconFile", (icon == null) ? DEFAULT_ICON_NAME : icon.getName());
+            writeProperty(xout, "CFBundleIdentifier", identifier);
+            writeProperty(xout, "CFBundleDisplayName", displayName);
+            writeProperty(xout, "CFBundleInfoDictionaryVersion", "6.0");
+            writeProperty(xout, "CFBundleName", name);
+            writeProperty(xout, "CFBundlePackageType", OS_TYPE_CODE);
+            writeProperty(xout, "CFBundleShortVersionString", shortVersion);
+            writeProperty(xout, "CFBundleVersion", version);
+            writeProperty(xout, "CFBundleSignature", signature);
+            writeProperty(xout, "NSHumanReadableCopyright", copyright);
+            writeProperty(xout, "LSMinimumSystemVersion", minimumSystemVersion);
+            writeProperty(xout, "LSApplicationCategoryType", applicationCategory);
+            writeProperty(xout, "LSUIElement",hideDockIcon);
+            writeProperty(xout, "NSHighResolutionCapable",highResolutionCapable);
+            writeProperty(xout, "NSSupportsAutomaticGraphicsSwitching",
+                        supportsAutomaticGraphicsSwitching);
+            writeProperty(xout, "IgnorePSN",ignorePSN);
+
+            if(registeredProtocols.size() > 0){
+                writeKey(xout, "CFBundleURLTypes");
+                xout.writeStartElement(ARRAY_TAG);
+                xout.writeCharacters("\n");
+                xout.writeStartElement(DICT_TAG);
+                xout.writeCharacters("\n");
+
+                writeProperty(xout, "CFBundleURLName", identifier);
+                writeStringArray(xout, "CFBundleURLSchemes",registeredProtocols);
+
+                xout.writeEndElement();
+                xout.writeCharacters("\n");
+                xout.writeEndElement();
+                xout.writeCharacters("\n");
+            }
+
+            // Write runtime
+            if (runtime != null) {
+                writeProperty(xout, "JVMRuntime", runtime.getDir().getParentFile().getParentFile().getName());
+            }
+
+            if(jvmRequired != null) {
+                writeProperty(xout, "JVMVersion", jvmRequired);
+            }
+
+            writeProperty(xout, "JVMRunPrivileged", privileged);
+
+            writeProperty(xout, "JREPreferred", jrePreferred);
+            writeProperty(xout, "JDKPreferred", jdkPreferred);
+
+            writeProperty(xout, "WorkingDirectory", workingDirectory);
+
+            // Write jnlp launcher name - only if set
+            writeProperty(xout, "JVMJNLPLauncher", jnlpLauncherName);
+
+            // Write main class name - only if set. There should only one be set
+            writeProperty(xout, "JVMMainClassName", mainClassName);
+
+           // Write classpaths in plist, if specified
+            if (!plistClassPaths.isEmpty()) {
+                writeStringArray(xout,"JVMClassPath", plistClassPaths);
+            }
+
+            // Write whether launcher be verbose with debug msgs
+            writeProperty(xout, "JVMDebug", isDebug);
+
+            // Write jar launcher name
+            writeProperty(xout, "JVMJARLauncher", jarLauncherName);
+
+            // Write CFBundleDocument entries
+            writeKey(xout, "CFBundleDocumentTypes");
+            writeBundleDocuments(xout, bundleDocuments);
+
+            // Write Type Declarations
+            if (! exportedTypeDeclarations.isEmpty()) {
+                writeKey(xout, "UTExportedTypeDeclarations");
+                writeTypeDeclarations(xout, exportedTypeDeclarations);
+            }
+            if (! importedTypeDeclarations.isEmpty()) {
+                writeKey(xout, "UTImportedTypeDeclarations");
+                writeTypeDeclarations(xout, importedTypeDeclarations);
+            }
+
+            // Write architectures
+            writeStringArray(xout, "LSArchitecturePriority",architectures);
+
+            // Write Environment
+            writeKey(xout, "LSEnvironment");
+            xout.writeStartElement(DICT_TAG);
+            xout.writeCharacters("\n");
+            writeKey(xout, "LC_CTYPE");
+            writeString(xout, "UTF-8");
+
+            for (Environment environment : environments) {
+                writeProperty(xout, environment.getName(), environment.getValue());
+            }
+
+            xout.writeEndElement();
+            xout.writeCharacters("\n");
+
+            // Write options
+            writeKey(xout, "JVMOptions");
+
+            xout.writeStartElement(ARRAY_TAG);
+            xout.writeCharacters("\n");
+
+            for (Option option : options) {
+                if (option.getName() == null) writeString(xout, option.getValue());
+            }
+
+            xout.writeEndElement();
+            xout.writeCharacters("\n");
+
+            // Write default options
+            writeKey(xout, "JVMDefaultOptions");
+
+            xout.writeStartElement(DICT_TAG);
+            xout.writeCharacters("\n");
+
+            for (Option option : options) {
+                if (option.getName() != null) {
+                    writeProperty(xout, option.getName(), option.getValue());
+                }
+            }
+
+            xout.writeEndElement();
+            xout.writeCharacters("\n");
+
+            // Write arguments
+            writeStringArray(xout, "JVMArguments",arguments);
+
+            // Write arbitrary key-value pairs
+            for (PlistEntry item : plistEntries) {
+                writeKey(xout, item.getKey());
+                writeValue(xout, item.getType(), item.getValue());
+            }
+
+            // End root dictionary
+            xout.writeEndElement();
+            xout.writeCharacters("\n");
+
+            // End root element
+            xout.writeEndElement();
+            xout.writeCharacters("\n");
+
+            // Close document
+            xout.writeEndDocument();
+            xout.writeCharacters("\n");
+
+            out.flush();
+        } catch (XMLStreamException exception) {
+            throw new IOException(exception);
+        } finally {
+            out.close();
+        }
+    }
+
+    private void writeKey(XMLStreamWriter xout, String key) throws XMLStreamException {
+        xout.writeStartElement(KEY_TAG);
+        xout.writeCharacters(key);
+        xout.writeEndElement();
+        xout.writeCharacters("\n");
+    }
+
+    private void writeValue(XMLStreamWriter xout, String type, String value) throws XMLStreamException {
+        if (type == null) {
+            type = STRING_TAG;
+        }
+        if ("boolean".equals(type)) {
+            writeBoolean(xout, "true".equals(value));
+        } else {
+            xout.writeStartElement(type);
+            xout.writeCharacters(value);
+            xout.writeEndElement();
+            xout.writeCharacters("\n");
+        }
+    }
+
+    private void writeString(XMLStreamWriter xout, String value) throws XMLStreamException {
+        xout.writeStartElement(STRING_TAG);
+        xout.writeCharacters(value);
+        xout.writeEndElement();
+        xout.writeCharacters("\n");
+    }
+
+    private void writeBoolean(XMLStreamWriter xout, boolean value) throws XMLStreamException {
+        xout.writeEmptyElement(value ? "true" : "false");
+        xout.writeCharacters("\n");
+    }
+
+    private void writeProperty(XMLStreamWriter xout, String key, Boolean value) throws XMLStreamException {
+        if (value != null && value) {
+            writeKey(xout, key);
+            writeBoolean(xout, true);
+        }
+    }
+
+    private void writeProperty(XMLStreamWriter xout, String key, Object value) throws XMLStreamException {
+        if (value != null) {
+            writeKey(xout, key);
+            writeString(xout, value.toString());
+        }
+    }
+
+    public void writeStringArray(XMLStreamWriter xout, final String key,
+            final Iterable<String> values) throws XMLStreamException {
+        if (values != null) {
+            writeKey(xout, key);
+            xout.writeStartElement(ARRAY_TAG);
+            xout.writeCharacters("\n");
+            for(String singleValue : values) {
+                writeString(xout, singleValue);
+            }
+            xout.writeEndElement();
+            xout.writeCharacters("\n");
+        }
+    }
+
+    public void writeBundleDocuments(XMLStreamWriter xout,
+            final ArrayList<BundleDocument> bundleDocuments) throws XMLStreamException {
+
+        xout.writeStartElement(ARRAY_TAG);
+        xout.writeCharacters("\n");
+
+        for(BundleDocument bundleDocument: bundleDocuments) {
+            xout.writeStartElement(DICT_TAG);
+            xout.writeCharacters("\n");
+
+            final List<String> contentTypes = bundleDocument.getContentTypes();
+            if (contentTypes != null) {
+                writeStringArray(xout, "LSItemContentTypes", contentTypes);
+            } else {
+                writeStringArray(xout, "CFBundleTypeExtensions", bundleDocument.getExtensions());
+                writeProperty(xout, "LSTypeIsPackage", bundleDocument.isPackage());
+            }
+            writeStringArray(xout, "NSExportableTypes", bundleDocument.getExportableTypes());
+
+            final File ifile = bundleDocument.getIconFile();
+            writeProperty(xout, "CFBundleTypeIconFile", ifile != null ?
+                        ifile.getName() : bundleDocument.getIcon());
+
+            writeProperty(xout, "CFBundleTypeName", bundleDocument.getName());
+            writeProperty(xout, "CFBundleTypeRole", bundleDocument.getRole());
+            writeProperty(xout, "LSHandlerRank", bundleDocument.getHandlerRank());
+
+            xout.writeEndElement();
+            xout.writeCharacters("\n");
+        }
+
+        xout.writeEndElement();
+        xout.writeCharacters("\n");
+    }
+
+    public void writeTypeDeclarations(XMLStreamWriter xout,
+            final ArrayList<TypeDeclaration> typeDeclarations) throws XMLStreamException {
+        xout.writeStartElement(ARRAY_TAG);
+        xout.writeCharacters("\n");
+        for (TypeDeclaration typeDeclaration: typeDeclarations) {
+
+            xout.writeStartElement(DICT_TAG);
+            xout.writeCharacters("\n");
+
+            writeProperty(xout, "UTTypeIdentifier", typeDeclaration.getIdentifier());
+            writeProperty(xout, "UTTypeReferenceURL", typeDeclaration.getReferenceUrl());
+            writeProperty(xout, "UTTypeDescription", typeDeclaration.getDescription());
+
+            final File ifile = typeDeclaration.getIconFile();
+            writeProperty(xout, "UTTypeIconFile", ifile != null ?
+                        ifile.getName() : typeDeclaration.getIcon());
+
+            writeStringArray(xout, "UTTypeConformsTo", typeDeclaration.getConformsTo());
+
+            writeKey(xout, "UTTypeTagSpecification");
+
+            xout.writeStartElement(DICT_TAG);
+            xout.writeCharacters("\n");
+
+            writeStringArray(xout, "com.apple.ostype", typeDeclaration.getOsTypes());
+            writeStringArray(xout, "public.filename-extension", typeDeclaration.getExtensions());
+            writeStringArray(xout, "public.mime-type", typeDeclaration.getMimeTypes());
+
+            xout.writeEndElement();
+            xout.writeCharacters("\n");
+
+            xout.writeEndElement();
+            xout.writeCharacters("\n");
+        }
+
+        xout.writeEndElement();
+        xout.writeCharacters("\n");
+    }
+    private void writePkgInfo(File file) throws IOException {
+        Writer out = new BufferedWriter(new FileWriter(file));
+
+        try {
+            out.write(OS_TYPE_CODE + signature);
+            out.flush();
+        } finally {
+            out.close();
+        }
+    }
+
+    private static void delete(File file) throws IOException {
+        Path filePath = file.toPath();
+
+        if (Files.exists(filePath, LinkOption.NOFOLLOW_LINKS)) {
+            if (Files.isDirectory(filePath, LinkOption.NOFOLLOW_LINKS)) {
+                File[] files = file.listFiles();
+
+                for (int i = 0; i < files.length; i++) {
+                    delete(files[i]);
+                }
+            }
+
+            Files.delete(filePath);
+        }
+    }
+
+    private static void copy(URL location, File file) throws IOException {
+        try (InputStream in = location.openStream()) {
+            Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+        catch (Exception exc)
+        {
+        System.err.println ("Trying to copy " + location + " to " + file);
+            throw exc;
+        }
+    }
+
+    static void copy(File source, File destination) throws IOException {
+        Path sourcePath = source.toPath();
+        Path destinationPath = destination.toPath();
+
+        destination.getParentFile().mkdirs();
+
+        Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+        if (Files.isDirectory(sourcePath)) {
+            String[] files = source.list();
+
+            for (int i = 0; i < files.length; i++) {
+                String file = files[i];
+                copy(new File(source, file), new File(destination, file));
+            }
+        }
+    }
 }

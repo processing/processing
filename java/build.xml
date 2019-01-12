@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <project name="Java Mode" default="build">
 
-  <property name="generated" 
+  <property name="generated"
 	    value="${basedir}/generated/processing/mode/java/preproc" />
   <mkdir dir="${generated}" />
 
-  <property name="grammars" 
+  <property name="grammars"
 	    value="${basedir}/src/processing/mode/java/preproc" />
 
-  <property name="antlr_jar" 
+  <property name="antlr_jar"
 	    value="${basedir}/mode/antlr.jar" />
 
   <property name="mode_jar"
@@ -37,8 +37,8 @@
     <antlr target="${grammars}/java15.g" outputdirectory="${generated}">
       <classpath path="${antlr_jar}" />
     </antlr>
-    <antlr target="${grammars}/pde.g" 
-	   outputdirectory="${generated}" 
+    <antlr target="${grammars}/pde.g"
+	   outputdirectory="${generated}"
 	   glib="${grammars}/java15.g">
       <classpath path="${antlr_jar}" />
     </antlr>
@@ -49,27 +49,27 @@
     <property name="uc" value="@SuppressWarnings({ &quot;unused&quot;, &quot;cast&quot; })${line.separator}" />
 
     <!-- need to match against the previous line so that we don't re-add -->
-    <replaceregexp 
+    <replaceregexp
         file="generated/processing/mode/java/preproc/JavaLexer.java"
-        match="(\n\n)(public class JavaLexer .*)" 
+        match="(\n\n)(public class JavaLexer .*)"
         replace="\1${uucr}\2">
     </replaceregexp>
 
-    <replaceregexp 
+    <replaceregexp
         file="generated/processing/mode/java/preproc/JavaRecognizer.java"
-        match="(\*/\n)(public class JavaRecognizer .*)" 
+        match="(\*/\n)(public class JavaRecognizer .*)"
         replace="\1${uc}\2">
     </replaceregexp>
 
-    <replaceregexp 
+    <replaceregexp
         file="generated/processing/mode/java/preproc/PdeLexer.java"
-        match="(\n\n)(public class PdeLexer .*)" 
+        match="(\n\n)(public class PdeLexer .*)"
         replace="\1${uucr}\2">
     </replaceregexp>
 
-    <replaceregexp 
+    <replaceregexp
         file="generated/processing/mode/java/preproc/PdeRecognizer.java"
-        match="(\n\n)(public class PdeRecognizer .*)" 
+        match="(\n\n)(public class PdeRecognizer .*)"
         replace="\1${uc}\2">
     </replaceregexp>
     <!-- end of workaround for old antlr -->
@@ -88,7 +88,7 @@
 
 
     <mkdir dir="bin" />
-       
+
     <!-- in some cases, pde.jar was not getting built
 	 https://github.com/processing/processing/issues/1792 -->
     <delete file="${mode_jar}" />
@@ -98,26 +98,26 @@
 
     <javac source="1.8"
 	   target="1.8"
-	   destdir="bin" 
-	   excludes="**/tools/format/**" 
-	   encoding="UTF-8" 
-	   includeAntRuntime="false" 
-	   classpath="../core/library/core.jar; 
+	   destdir="bin"
+	   excludes="**/tools/format/**"
+	   encoding="UTF-8"
+	   includeAntRuntime="false"
+	   classpath="../core/library/core.jar;
 
                       ../app/pde.jar;
-                      ../app/lib/ant.jar; 
-                      ../app/lib/ant-launcher.jar; 
-                      ../app/lib/apple.jar; 
-                      ../app/lib/jna.jar; 
-                      ../app/lib/jna-platform.jar; 
+                      ../app/lib/ant.jar;
+                      ../app/lib/ant-launcher.jar;
+                      ../app/lib/apple.jar;
+                      ../app/lib/jna.jar;
+                      ../app/lib/jna-platform.jar;
 
-                      mode/antlr.jar; 
-                      mode/classpath-explorer-1.0.jar; 
+                      mode/antlr.jar;
+                      mode/classpath-explorer-1.0.jar;
                       mode/jsoup-1.7.1.jar;
-                      mode/org.netbeans.swing.outline.jar; 
+                      mode/org.netbeans.swing.outline.jar;
 
-                      mode/jdi.jar; 
-                      mode/jdimodel.jar; 
+                      mode/jdi.jar;
+                      mode/jdimodel.jar;
 
                       mode/com.ibm.icu.jar;
 
@@ -127,16 +127,15 @@
                       mode/org.eclipse.core.runtime.jar;
                       mode/org.eclipse.equinox.common.jar;
                       mode/org.eclipse.equinox.preferences.jar;
+                      mode/org.eclipse.jdt.compiler.apt.jar;
                       mode/org.eclipse.jdt.core.jar;
                       mode/org.eclipse.osgi.jar;
                       mode/org.eclipse.text.jar"
 	   debug="on"
 	   nowarn="true"
-	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
+	   compiler="modern">
       <src path="src" />
       <src path="generated" />
-      <compilerclasspath path="mode/org.eclipse.jdt.core.jar; 
-                               mode/jdtCompilerAdapter.jar" />
     </javac>
   </target>
 

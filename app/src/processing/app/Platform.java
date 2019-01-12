@@ -342,7 +342,7 @@ public class Platform {
             name.endsWith(".jdk") && !name.startsWith(".");
         }
       });
-      return new File(plugins[0], "Contents/Home/jre");
+      return new File(plugins[0], "Contents/Home");
     }
     // On all other platforms, it's the 'java' folder adjacent to Processing
     return getContentFile("java");

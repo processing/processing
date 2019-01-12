@@ -18,12 +18,14 @@
  * You should have received a copy of the GNU General Public License version
  * 2 along with this work; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- *
+ * 
  */
 
 package com.oracle.appbundler;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 
@@ -31,95 +33,157 @@ import org.apache.tools.ant.BuildException;
 /**
  * Represent a CFBundleDocument.
  */
-public class BundleDocument {
-  private String name = "editor";
-  private String role = "";
-  private File icon = null;
-  private String[] extensions;
-  private boolean isPackage = false;
+public class BundleDocument implements IconContainer {
+    private String name = null;
+    private String role = "Editor";
+    private String icon = null;
+    private String handlerRank = null;
+    private List<String> extensions;
+    private List<String> contentTypes;
+    private List<String> exportableTypes;
+    private boolean isPackage = false;
 
-
-  static private String capitalizeFirst(String string) {
-    char[] stringArray = string.toCharArray();
-    stringArray[0] = Character.toUpperCase(stringArray[0]);
-    return new String(stringArray);
-  }
-
-
-  public void setExtensions(String extensionsList) {
-    if (extensionsList == null) {
-      throw new BuildException("Extensions can't be null");
+    private String capitalizeFirst(String string) {
+        char[] stringArray = string.toCharArray();
+        stringArray[0] = Character.toUpperCase(stringArray[0]);
+        return new String(stringArray);
+    }
+    
+    public void setExtensions(String extensionsString) {
+        extensions = getListFromCommaSeparatedString(extensionsString, "Extensions", true);
     }
 
-    extensions = extensionsList.split(",");
-    for (int i = 0; i < extensions.length; i++) {
-      extensions[i] = extensions[i].trim().toLowerCase();
+    public void setContentTypes(String contentTypesString) {
+        contentTypes = getListFromCommaSeparatedString(contentTypesString, "Content Types");
     }
-  }
 
-
-  public void setIcon(File icon) {
-    this.icon = icon;
-  }
-
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-
-  public void setRole(String role) {
-    this.role = capitalizeFirst(role);
-  }
-
-
-  public void setIsPackage(String isPackageString) {
-    this.isPackage = isPackageString.trim().equalsIgnoreCase("true");
-  }
-
-
-  public String getIconName() {
-    return icon.getName();
-  }
-
-
-  public File getIconFile() {
-    return icon;
-  }
-
-
-  public String getName() {
-    return name;
-  }
-
-
-  public String getRole() {
-    return role;
-  }
-
-
-  public String[] getExtensions() {
-    return extensions;
-  }
-
-
-  public boolean hasIcon() {
-    return icon != null;
-  }
-
-
-  public boolean isPackage() {
-    return isPackage;
-  }
-
-
-  @Override
-  public String toString() {
-    StringBuilder s = new StringBuilder(getName());
-    s.append(" ").append(getRole()).append(" ").append(getIconName()).append(" ");
-    for (String extension : extensions) {
-      s.append(extension).append(" ");
+    public void setExportableTypes(String exportableTypesString) {
+        exportableTypes = getListFromCommaSeparatedString(exportableTypesString, "Exportable Types");
     }
-    return s.toString();
-  }
+
+    public static List<String> getListFromCommaSeparatedString(String listAsString,
+            final String attributeName) {
+        return getListFromCommaSeparatedString(listAsString, attributeName, false);
+    }
+            
+    public static List<String> getListFromCommaSeparatedString(String listAsString,
+            final String attributeName, final boolean lowercase) {
+        if(listAsString == null) {
+            throw new BuildException(attributeName + " can't be null");
+        }
+        
+        String[] splittedListAsString = listAsString.split(",");
+        List<String> stringList = new ArrayList<String>();
+        
+        for (String extension : splittedListAsString) {
+            String cleanExtension = extension.trim();
+            if (lowercase) {
+                cleanExtension = cleanExtension.toLowerCase();
+            }
+            if (cleanExtension.length() > 0) {
+                stringList.add(cleanExtension);
+            }
+        }
+        
+        if (stringList.size() == 0) {
+            throw new BuildException(attributeName + " list must not be empty");
+        }
+        return stringList;
+    }
+    
+    public void setIcon(String icon) {
+      this.icon = icon;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+
+    public void setRole(String role) {
+      this.role = capitalizeFirst(role);
+    }
+    
+    public void setHandlerRank(String handlerRank) {
+      this.handlerRank = capitalizeFirst(handlerRank);
+    } 
+      
+    public void setIsPackage(String isPackageString) {
+        if(isPackageString.trim().equalsIgnoreCase("true")) {
+            this.isPackage = true;
+        } else {
+            this.isPackage = false;
+        }
+    }
+    
+    public String getIcon() {
+        return icon;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public String getHandlerRank() {
+        return handlerRank;
+    }
+    
+    public List<String> getExtensions() {
+        return extensions;
+    }
+    
+    public List<String> getContentTypes() {
+        return contentTypes;
+    }
+    
+    public List<String> getExportableTypes() {
+        return exportableTypes;
+    }
+    
+    public File getIconFile() {
+        if (icon == null) { return null; }
+
+        File ifile = new File (icon);
+        
+        if (! ifile.exists ( ) || ifile.isDirectory ( )) { return null; }
+
+        return ifile;
+    }
+    
+    public boolean hasIcon() {
+        return icon != null;
+    }
+    
+    public boolean isPackage() {
+        return isPackage;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(getName());
+        s.append(" ").append(getRole())
+        .append(" ").append(getIcon())
+        .append(" ").append(getHandlerRank())
+        .append(" ");
+        if (contentTypes != null) {
+            for(String contentType : contentTypes) {
+                s.append(contentType).append(" ");
+            }
+        }
+        if (extensions != null) {
+            for(String extension : extensions) {
+                s.append(extension).append(" ");
+            }
+        }
+        if (exportableTypes != null) {
+            for(String exportableType : exportableTypes) {
+                s.append(exportableType).append(" ");
+            }
+        }
+        
+        return s.toString();
+    }
 }

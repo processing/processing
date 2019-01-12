@@ -1,0 +1,7 @@
+"JRELoadError" = "Impossible d'utiliser un environnement Java.";
+"JRExLoadError" = "Impossible d'utiliser un environnement Java %d.";
+"JRExLoadFullError" = "Ce logiciel nécessite que Java %d ou plus récent être installés sur votre ordinateur. S'il vous plaît télécharger et installer la dernière version de Java à partir de www.java.com et essayez à nouveau.";
+"JDKxLoadFullError" = "Ce logiciel nécessite que Java %d JDK ou plus récent être installés sur votre ordinateur. S'il vous plaît télécharger et installer le JDK plus récente de Oracle.com et essayez à nouveau.";
+"MainClassNameRequired" = "Principal nom de classe est nécessaire.";
+"JavaDirectoryNotFound" = "Impossible d'énumérer répertoire Java contenu.";
+"BundlePathContainsColon" = "Pas de commencer à partir d'un dossier qui contient un \"/\" dans son nom.";

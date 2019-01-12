@@ -28,9 +28,33 @@ package com.oracle.appbundler;
 
 /**
  * Class representing an option that will be passed to the JVM at startup.
+ * The class can optionally be named, which allows the bundled Java program
+ * itself to override the option. Changes will take effect upon restart of the
+ * application.<p>
+ * Assuming your {@code CFBundleIdentifier} (settable via {@link AppBundlerTask#setIdentifier(String)})
+ * is {@code com.oracle.appbundler}. Then you can override a named option by calling
+ * <xmp>
+ *     import java.util.prefs.Preferences;
+ *     [...]
+ *     Preferences jvmOptions = Preferences.userRoot().node("/com/oracle/appbundler/JVMOptions");
+ *     jvmOptions.put("name", "value");
+ *     jvmOptions.flush();
+ * </xmp>
+ * The corresponding entries will be stored in a file called
+ * {@code ~/Library/Preferences/com.oracle.appbundler.plist}.
+ * To manipulate the file without Java's {@link java.util.prefs.Preferences} from the command line,
+ * you should use the tool
+ * <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/defaults.1.html">defaults</a>.
+ * For example, to add an entry via the command line, use:
+ * <xmp>
+ *     defaults write com.oracle.appbundler /com/oracle/appbundler/ -dict-add JVMOptions/ '{"name"="value";}'
+ * </xmp>
+ *
+ * @author <a href="mailto:hs@tagtraum.com">Hendrik Schreiber</a> (preference related code only)
  */
 public class Option {
     private String value = null;
+    private String name = null;
 
     public String getValue() {
         return value;
@@ -40,8 +64,16 @@ public class Option {
         this.value = value;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
-        return value;
+        return name == null ? value : name + "=" + value;
     }
 }

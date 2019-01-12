@@ -1,23 +1,22 @@
 <?xml version="1.0"?>
 <project name="Movie Maker Tool" default="build">
-  
+
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
     <delete file="tool/MovieMaker.jar" />
   </target>
 
-  <target name="compile" description="Compile sources">   
+  <target name="compile" description="Compile sources">
     <mkdir dir="bin" />
     <javac target="1.8"
 	   source="1.8"
-	   srcdir="src" 
-	   destdir="bin" 
+	   srcdir="src"
+	   destdir="bin"
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
-	   classpath="../../../../app/bin" 
-	   nowarn="true"
-	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
-      <compilerclasspath path="../../../../java/mode/org.eclipse.jdt.core.jar; 
+	   classpath="../../../../app/bin"
+	   nowarn="true">
+      <compilerclasspath path="../../../../java/mode/org.eclipse.jdt.core.jar;
                                ../../../../java/mode/jdtCompilerAdapter.jar" />
     </javac>
   </target>

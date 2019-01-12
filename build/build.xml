@@ -54,11 +54,11 @@
   </target>
 
   <!-- Require Java 8 everywhere. -->
-  <fail message="Unsupported Java version: ${java.version}. To build, make sure that Java 8 (aka Java 1.8) is installed.">
+  <fail message="Unsupported Java version: ${java.version}. To build, make sure that Java 11 is installed.">
     <condition>
       <not>
         <or>
-          <contains string="${java.version}" substring="1.8" />
+          <contains string="${java.version}" substring="11." />
         </or>
       </not>
     </condition>
@@ -70,15 +70,20 @@
   <property name="examples.dir"
             value="../../processing-docs/content/examples" />
 
-  <property name="jdk.version" value="8" />
-  <property name="jdk.update" value="192" />
+  <property name="jdk.train" value="11" />
+  <property name="jdk.version" value="0" />
+  <property name="jdk.update" value="1" />
   <property name="jdk.build" value="12" />
   <!-- See https://gist.github.com/P7h/9741922
        or http://stackoverflow.com/q/10268583 -->
   <property name="jdk.hash" value="750e1c8617c5452694857ad95c3ee230" />
 
   <property name="jdk.short" value="${jdk.version}u${jdk.update}" />
-  <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />
+
+  <property name="jdk.prefix" value="adoptopenjdk" />
+  <property name="jdk.separator" value="-" />
+  <property name="jdk.esoteric" value="${jdk.train}.${jdk.version}.${jdk.update}" />
+
 
   <!-- Figure out the JRE download location for Linux and Windows. -->
   <!--
@@ -266,7 +271,7 @@
 
   <!-- Set the version of Java that must be present to build. -->
   <property name="jdk.path.macosx"
-            value="/Library/Java/JavaVirtualMachines/jdk${jdk.esoteric}.jdk" />
+            value="/Library/Java/JavaVirtualMachines/${jdk.prefix}${jdk.separator}${jdk.esoteric}.jdk" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
@@ -532,11 +537,8 @@
                signature="Pde3"
                icon="macosx/processing.icns"
                copyright="© The Processing Foundation"
-               getInfo="${version}, Copyright © The Processing Foundation"
                shortVersion="${version}"
                version="${revision}"
-               javafx="true"
-               minimumSystem="10.8.5"
                mainClassName="processing.app.BaseSplash">
 
       <!-- The appbundler task needs a couple files (the Info.plist and
@@ -592,7 +594,7 @@
       <option value="-Djna.nosys=true" />
 
       <!-- deal with jokers who install JOGL, ANTLR, etc system-wide -->
-      <option value="-Djava.ext.dirs=$APP_ROOT/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/lib/ext" />
+      <!--<option value="-Djava.ext.dirs=$APP_ROOT/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/lib/ext" />-->
 
       <option value="-Dapple.laf.useScreenMenuBar=true" />
       <option value="-Dcom.apple.macos.use-file-dialog-packages=true" />
@@ -620,6 +622,8 @@
 -->
     </bundleapp>
 
+    <mkdir dir="macosx/work/Processing.app/Contents/Java/Classes" />
+
     <!-- Temporary fix until new appbundler is included again after solving
          https://github.com/processing/processing/issues/3359
          https://github.com/processing/processing/issues/3360
@@ -629,7 +633,8 @@
          Also, because Ant's copy task does not retain file permissions on
          Unix systems, we need to use <exec executable="cp" ... > instead -->
     <exec executable="cp">
-      <arg line="${jdk.path.macosx}/Contents/Home/bin/keytool macosx/work/Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk/Contents/Home/jre/bin"/>
+      <arg value="-r"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/bin macosx/work/Processing.app/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/bin"/>
     </exec>
 
     <property name="contents.dir"
@@ -637,10 +642,10 @@
 
     <!-- Replace libjli.dylib symlink with actual file.
          Deals with code signing issues on OS X 10.9.5+ -->
-    <property name="jli.path" value="${contents.dir}/PlugIns/jdk${jdk.esoteric}.jdk/Contents/MacOS/libjli.dylib" />
+    <property name="jli.path" value="${contents.dir}/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/MacOS/libjli.dylib" />
     <delete file="${jli.path}" />
     <exec executable="cp">
-      <arg line="${jdk.path.macosx}/Contents/Home/jre/lib/jli/libjli.dylib ${jli.path}"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/lib/jli/libjli.dylib ${jli.path}"/>
     </exec>
 
     <copy todir="${contents.dir}/Java">

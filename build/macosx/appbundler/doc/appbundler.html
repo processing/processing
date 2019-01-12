@@ -74,6 +74,13 @@ questions.
     <td align="center" valign="top">No</td>
   </tr>
   <tr>
+    <td valign="top">hideDockIcon</td>
+    <td valign="top">Set to true to prevent display of the application icon on the Mac OS X dock.
+    Corresponds to the <code>LSUIElement</code> key in the <tt>Info.plist</tt> file. 
+    (<a href="https://developer.apple.com/library/mac/documentation/General/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html#//apple_ref/doc/uid/20001431-108256">Details</a>)</td>
+    <td align="center" valign="top">No</td>
+  </tr>      
+  <tr>
     <td valign="top">shortversion</td>
     <td valign="top">The release version number string for the application.
     Corresponds to the <code>CFBundleShortVersionString</code> key in the <tt>Info.plist</tt>
@@ -101,9 +108,85 @@ questions.
     <td align="center" valign="top">No</td>
   </tr>
   <tr>
+    <td valign="top">privileged</td>
+    <td valign="top">Bool value if the bundled application is to be launched as privileged.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
     <td valign="top">mainclassname</td>
     <td valign="top">The name of the bundled application's main class.</td>
+    <td align="center" valign="top">Yes, alternative to <code>jnlplaunchername</code></td>
     <td align="center" valign="top">Yes</td>
+  </tr>  
+  <tr>
+    <td valign="top">plistClassPaths</td>
+    <td valign="top">A comma-separated list of classpath-elements which are used for the java application.
+    <tt>$APP_ROOT</tt> is replaced by the path of the <tt>.app</tt>-bundle. Required only if not
+    the libraries specified by the <tt>classpath</tt> and <tt>librarypath</tt> should be used.</td>
+    <td align="center" valign="top">No</td>
+  </tr>  
+  <tr>
+    <td valign="top">jvmRequired</td>
+    <td valign="top">Specifies the required Java virtual machine version.</td>
+    <td align="center" valign="top">No (defaults to <tt>1.7</tt>)</td>
+  </tr>     
+  <tr>
+    <td valign="top">jrePreferred</td>
+    <td valign="top">If set to <tt>true</tt>, a Java Runtime Edition is required for execution. If both <tt>jrePreferred</tt> and <tt>jdkPreferred</tt> are set <tt>true</tt>, then a JRE is preferred but a JDK ia also accepted.</td>
+    <td align="center" valign="top">No</td>
+  </tr>      
+  <tr>
+    <td valign="top">jdkPreferred</td>
+    <td valign="top">If set to <tt>true</tt>, a Java Development Kit is required for execution. If both <tt>jrePreferred</tt> and <tt>jdkPreferred</tt> are set <tt>true</tt>, then a JRE is preferred but a JDK ia also accepted.</td>
+    <td align="center" valign="top">No</td>
+  </tr>    
+  <tr>
+    <td valign="top">minimumSystemVersion</td>
+    <td valign="top">Indicates the minimum version of OS X required for this app to run.
+    Corresponds to the <code>LSMinimumSystemVersion</code> key in the <tt>Info.plist</tt>
+    file.</td> 
+    (<a href="https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html#//apple_ref/doc/uid/20001431-113253">Details</a>)</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">jnlplaunchername</td>
+    <td valign="top">The name of the bundled applications's jnlp file. The file has to be be copied to the <code>Contents/Java</code> folder. It has to be present during execution of the application. This serves as option to deliver signed applications based upon JNLP files. The application can then be signed and the signature won't break when modifying the JNLP file.</td>
+    <td align="center" valign="top">No, alternative to <code>mainclassname</code></td>
+  </tr>
+  <tr>
+    <td valign="top">workingdirectory</td>
+    <td valign="top">Specifies the working directory of the application. 
+    <tt>$APP_ROOT</tt> is replaced by the path of the <tt>.app</tt>-bundle.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">privileged</td>
+    <td valign="top">If set, the application is started with administrator privileges.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">highResolutionCapable</td>
+    <td valign="top">Sets the <i>High Resolution Capable</i> flag.   
+    Corresponds to the <code>NSHighResolutionCapable</code> key in the <tt>Info.plist</tt>
+    file.</td> 
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">supportsAutomaticGraphicsSwitching</td>
+    <td valign="top">Allow OpenGL applications to utilize the integrated GPU.
+    Corresponds to the <code>NSSupportsAutomaticGraphicsSwitching</code> key in the <tt>Info.plist</tt>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">ignorePSN</td>
+    <td valign="top">If set to <tt>true</tt>, the <tt>-psn...</tt> arguments passed by the OS
+    to the application is filtered out.</td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">isDebug</td>
+    <td valign="top">If set to <tt>true</tt>, additiona console output will be produced during startup.</td>
+    <td align="center" valign="top">No</td>
   </tr>
 </table>
 
@@ -137,6 +220,23 @@ Entries will be copied to the <tt>Contents/MacOS/</tt> folder of the generated b
 
 <h4>option</h4>
 <p>Specifies a command-line option to be passed to the JVM at startup.</p>
+<p>Options may be named, which allows the bundled Java program
+itself to override the option (e.g. to adjust heap settings). Changes will take effect upon restart of the
+application. Assuming your <tt>CFBundleIdentifier</tt> (settable via the attribute <tt>identifier</tt>)
+is <tt>com.oracle.appbundler</tt>. Then you can override a named option by calling
+<xmp>   import java.util.prefs.Preferences;
+   [...]
+   Preferences jvmOptions = Preferences.userRoot().node("/com/oracle/appbundler/JVMOptions");
+   jvmOptions.put("name", "value"); // use option name and desired value here
+   jvmOptions.flush();</xmp>
+The corresponding entries will be stored in a file called
+<tt>~/Library/Preferences/com.oracle.appbundler.plist</tt>. To manipulate the file
+without Java's <tt>Preferences</tt> from the command line, you should use the tool
+<a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/defaults.1.html">defaults</a>.
+For example, to add an entry via the command line, use:
+<xmp>   defaults write com.oracle.appbundler /com/oracle/appbundler/ -dict-add JVMOptions/ '{"name"="value";}'</xmp>
+Of named options, only the value is passed to the JVM, not the name. The name merely serves as identifier.
+</p>
 <table border="1" cellpadding="2" cellspacing="0">
   <tr>
     <td valign="top"><b>Attribute</b></td>
@@ -147,6 +247,11 @@ Entries will be copied to the <tt>Contents/MacOS/</tt> folder of the generated b
     <td valign="top">value</td>
     <td valign="top">The option value.</td>
     <td align="center" valign="top">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">name</td>
+    <td valign="top">The option name.</td>
+    <td align="center" valign="top">No</td>
   </tr>
 </table>
 
@@ -162,6 +267,218 @@ Entries will be copied to the <tt>Contents/MacOS/</tt> folder of the generated b
     <td valign="top">value</td>
     <td valign="top">The argument value.</td>
     <td align="center" valign="top">Yes</td>
+  </tr>
+</table>
+
+<h4>environment</h4>
+<p>Specifies an environment variable set via LSEnvironment entry in the <tt>Info.plist</tt> file. See the
+    <a href="https://developer.apple.com/library/prerelease/mac/documentation/General/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html#//apple_ref/doc/uid/20001431-106825">Apple Documentation</a> for details.</p>
+<p>The string <tt>$APP_ROOT</tt> will be replaced by the application bundle path in all environment variables on runtime.</p>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">name</td>
+    <td valign="top">The variable name.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">value</td>
+    <td valign="top">The variable value.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+</table>
+
+<h4>architecture</h4>
+<p>Specifies the elements of the <tt>LSArchitecturePriority</tt> array in <tt>Info.plist</tt>.
+(<a href="https://developer.apple.com/library/ios/documentation/General/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html#//apple_ref/doc/uid/TP40009250-106825-TPXREF124">Details</a>)</p>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">name</td>
+    <td valign="top">The architecture name.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+</table>
+
+<h4>plistentry</h4>
+<p>Adds an arbitrary entry to the generated <tt>Info.plist</tt>.</p>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">key</td>
+    <td valign="top">The entry's key.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">value</td>
+    <td valign="top">The entry's value.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">type</td>
+    <td valign="top">The entry's type.</td>
+    <td align="center" valign="top">No (defaults to <tt>String</tt>)</td>
+  </tr>
+</table>
+
+
+<h4>scheme</h4>
+<p>Specifies a protocol for which the bundled application should be registered as a handler.</p>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">value</td>
+    <td valign="top">The protocol scheme.</td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+</table>
+
+<h4 id="bundledocument">bundledocument</h4>
+<p>Describes a document associated with your application.</p>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td valign="top"><b>Corresponding <tt>CFBundleDocumentTypes</tt> key</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">contentTypes</td>
+    <td valign="top">A comma-separated list of <a href="https://developer.apple.com/library/mac/documentation/FileManagement/Conceptual/understanding_utis/understand_utis_intro/understand_utis_intro.html#//apple_ref/doc/uid/TP40001319">Uniform Type Identifiers</a> defining each a supported file type.
+    If you reference custom filetypes, declare them using a <a href="#typedeclaration">typedeclaration</a>. 
+    If set, <i>extensions</i> and <i>isPackage</i> are ignored. See the <a href="https://developer.apple.com/library/mac/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html">UTI reference</a> for a list of default UTIs.</td>
+    <td valign="top"><tt>LSItemContentTypes</tt></td>
+    <td align="center" valign="top">Yes (or <i>extensions</i>)</td>
+  </tr>
+  <tr>
+    <td valign="top">extensions</td>
+    <td valign="top">A comma-separated list of filename extensions (minus the leading period) to map to this document type.</td>
+    <td valign="top"><tt>CFBundleTypeExtensions</tt></td>
+    <td align="center" valign="top">Yes (or <i>contentTypes</i>)</td>
+  </tr>
+  <tr>
+    <td valign="top">icon</td>
+    <td valign="top">The name of the icon file (.icns) to associate with this OS X document type.</td>
+    <td valign="top"><tt>CFBundleTypeIconFile</tt></td>
+    <td align="center" valign="top">No (But recommended)</td>
+  </tr>
+  <tr>
+    <td valign="top">name</td>
+    <td valign="top">The abstract name for the document type.</td>
+    <td valign="top"><tt>CFBundleTypeName</tt></td>
+    <td align="center" valign="top">No (But recommended)</td>
+  </tr>
+  <tr>
+    <td valign="top">role</td>
+    <td valign="top">This key specifies the app's role with respect to the type. The value can be <tt>Editor</tt>, <tt>Viewer</tt>, <tt>Shell</tt>, or <tt>None</tt>.</td>
+    <td valign="top"><tt>CFBundleTypeRole</tt></td>
+    <td align="center" valign="top">No (default: <tt>Editor</tt>)</td>
+  </tr>
+  <tr>
+    <td valign="top">handlerRank</td>
+    <td valign="top">Determines how Launch Services ranks this app among the apps that declare themselves editors or viewers of files of this type. The possible values are: <tt>Owner</tt> (this app is the creator of files of this type), <tt>Alternate</tt> (this app is a secondary viewer of files of this type), <tt>None</tt> (this app must never be used to open files of this type, but it accepts drops of files of this type), <tt>Default</tt> (default; this app doesn't accept drops of files of this type). </td>
+    <td valign="top"><tt>LSHandlerRank</tt></td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">isPackage</td>
+    <td valign="top">Specifies whether the document is distributed as a bundle. If set to true, the bundle directory is treated as a file.</td>
+    <td valign="top"><tt>LSTypeIsPackage</tt></td>
+    <td align="center" valign="top">No (default: <tt>false</tt>)</td>
+  </tr> 
+  <tr>
+    <td valign="top">exportableTypes</td>
+    <td valign="top">A comma-separated list of <a href="https://developer.apple.com/library/mac/documentation/FileManagement/Conceptual/understanding_utis/understand_utis_intro/understand_utis_intro.html#//apple_ref/doc/uid/TP40001319">Uniform Type Identifiers</a> defining a supported file type to which this document can export its content.
+    If you reference custom filetypes, declare them using a <a href="#typedeclaration">typedeclaration</a>.
+    See also the <a href="https://developer.apple.com/library/mac/documentation/DataManagement/Conceptual/DocBasedAppProgrammingGuideForOSX/AdvancedTopics/AdvancedTopics.html#//apple_ref/doc/uid/TP40011179-CH7-SW8">Additional Document Type Considerations</a> of the <a href="https://developer.apple.com/library/mac/documentation/DataManagement/Conceptual/DocBasedAppProgrammingGuideForOSX/">Document-Based App Programming Guide for Mac</a>.
+    <td valign="top"><tt>NSExportableTypes</tt></td>
+    <td align="center" valign="top">No</td>
+  </tr>
+</table>
+
+<h4 id="typedeclaration">typedeclaration</h4>
+<p>Declares a new  <a href="https://developer.apple.com/library/mac/documentation/FileManagement/Conceptual/understanding_utis/understand_utis_intro/understand_utis_intro.html#//apple_ref/doc/uid/TP40001319">Uniform Type Identifier</a>.
+Required if you reference non-system UTIs in <a href="#bundledocument">bundledocument's</a> <i>contentTypes</i> or <i>exportableTypes</i></p>.
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td valign="top"><b>Corresponding <tt>UT...TypeDeclarations</tt> key</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">identifier</td>
+    <td valign="top">The unique UTI for the declared type. Following the reverse-DNS format beginning with com.companyName is a simple way to ensure uniqueness.</td>
+    <td valign="top"><tt>UTTypeIdentifier</tt></td>
+    <td align="center" valign="top">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">description</td>
+    <td valign="top">A user-visible description of this type.</td>
+    <td valign="top"><tt>UTTypeDescription</tt></td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">icon</td>
+    <td valign="top">The name of the icon file (.icns) to associate with this UTI.</td>
+    <td valign="top"><tt>UTTypeIconFile</tt></td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">referenceUrl</td>
+    <td valign="top">The URL of a reference document describing this type.</td>
+    <td valign="top"><tt>UTTypeReferenceURL</tt></td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">conformsTo</td>
+    <td valign="top">A comma-separated list of UTIs to which this identifier conforms.
+    Although a custom UTI can conform to any UTI, <tt>public.data</tt> or <tt>com.apple.package</tt> must be at the root of the conformance hierarchy.</td>
+    <td valign="top"><tt>UTTypeConformsTo</tt></td>
+    <td align="center" valign="top">No (defaults to <tt>public.data</tt>)</td>
+  </tr>
+  <tr>
+    <td valign="top">extensions</td>
+    <td valign="top">A comma-separated list of filename extensions (minus the leading period) to map to this UTI.</td>
+    <td valign="top"><tt>UTTypeTagSpecification -> public.filename-extension</tt></td>
+    <td align="center" valign="top">No (but recommended)</td>
+  </tr>
+  <tr>
+    <td valign="top">mimeTypes</td>
+    <td valign="top">A comma-separated list of mime types which identify this UTI.</td>
+    <td valign="top"><tt>UTTypeTagSpecification -> public.mime-type</tt></td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">osTypes</td>
+    <td valign="top">Comma-separated list of four-character codes formerly used to identify types.
+    Only specify OSTypes if you really know what you're doing.</td>
+    <td valign="top"><tt>UTTypeTagSpecification -> com.apple.ostype</tt></td>
+    <td align="center" valign="top">No</td>
+  </tr>
+  <tr>
+    <td valign="top">imported</td>
+    <td valign="top">If set to <tt>true</tt>, the declaration is listed under the <tt>UTImportedTypeDeclarations</tt> key. 
+    Otherwise, it is listed under <tt>UTExportedTypeDeclarations</tt>. 
+    If your code relies on third-party UTI types that may not be present on the system, you should declare those UTIs as imported types.</td>
+    <td valign="top">-</td>
+    <td align="center" valign="top">No</td>
   </tr>
 </table>
 
@@ -187,9 +504,57 @@ environment variable with the resulting executable.</p>
         &lt;runtime dir="${env.JAVA_HOME}"/&gt;
         &lt;classpath file="/Library/Java/Demos/JFC/SwingSet2/SwingSet2.jar"/&gt;
         &lt;option value="-Dapple.laf.useScreenMenuBar=true"/&gt;
+        &lt;scheme value="mailto"/&gt;
     &lt;/bundleapp&gt;
 &lt;/target&gt;
 </pre>
 
+<h3>Example 2: JNLP Launcher</h3>
+<p>Generate a launcher for a JNLP File, copy it into the package and sign the package. You need to have a Developer ID Profile to sign the application.</p>
+<p>You can now dynamically modify the zip content (only the JNLP file), deliver it with your web service and the application should directly unpack and can be run</p>
+<pre>
+&lt;-- Define the appbundler task --&gt;
+&lt;taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask"/&gt;
+
+&lt;-- Create the app bundle --&gt;
+&lt;target name="bundle-swingset" depends="package"&gt;
+
+    &lt;mkdir dir="./app"&gt;
+
+    &lt;bundleapp outputdirectory="./app"
+        name="SwingSet2"
+        displayname="SwingSet 2"
+        identifier="com.oracle.javax.swing.SwingSet2"
+        shortversion="1.0"
+        icon="icon.icns"
+        applicationCategory="public.app-category.developer-tools"
+        jnlplaunchername="Contents/_CodeSignature/SwingSet2.jnlp"&gt;
+        
+        &lt;value="-Xdock:icon=Contents/Resources/icon.icns" /&gt;
+        &lt;option value="-Dapple.laf.useScreenMenuBar=true"/&gt;
+    &lt;/bundleapp&gt;
+
+    &lt;!-- Optionally copy an original file --&gt;
+    &lt;copy todir="./SwingSet2.app/Contents/_CodeSignature" includeemptydirs="true" overwrite="false"&gt;
+        &lt;fileset dir="."&gt;
+            &lt;include name="**/*.jnlp" /&gt;
+        &lt;/fileset&gt;
+    &lt;/copy&gt;
+	
+    &lt;!-- Sign File --&gt;
+    &lt;exec executable="codesign" os="Mac OS X" failonerror="true"&gt;
+        &lt;arg value="-f" /&gt;
+        &lt;arg value="--deep" /&gt;
+        &lt;arg value="-s" /&gt;
+        &lt;arg value="Developer ID Application" /&gt;
+        &lt;arg value="./app/SwingSet2.app" /&gt;
+    &lt;/exec&gt;
+
+    &lt;zip destfile="./SwingSet2.app.zip" basedir="${copyroot}/app"&gt;&lt;/zip&gt;
+&lt;/target&gt;
+</pre>
+<pre>
+
+</pre>
 </body>
 </html>

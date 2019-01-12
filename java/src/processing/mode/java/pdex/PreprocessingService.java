@@ -595,7 +595,7 @@ public class PreprocessingService {
       if (new File(rtPath).exists()) {
         classPath.append(File.pathSeparator).append(rtPath);
       } else {
-        rtPath = System.getProperty("java.home") + File.separator + "jre" +
+        rtPath = System.getProperty("java.home") + File.separator +
             File.separator + "lib" + File.separator + "rt.jar";
         if (new File(rtPath).exists()) {
           classPath.append(File.pathSeparator).append(rtPath);
@@ -609,7 +609,7 @@ public class PreprocessingService {
       if (new File(jfxrtPath).exists()) {
         classPath.append(File.pathSeparator).append(jfxrtPath);
       } else {
-        jfxrtPath = System.getProperty("java.home") + File.separator + "jre" +
+        jfxrtPath = System.getProperty("java.home") + File.separator +
             File.separator + "lib" + File.separator + "ext" + File.separator + "jfxrt.jar";
         if (new File(jfxrtPath).exists()) {
           classPath.append(File.pathSeparator).append(jfxrtPath);

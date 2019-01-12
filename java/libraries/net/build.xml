@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="Processing Net Library" default="build">
-  
+
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
     <delete file="library/net.jar" />
@@ -11,18 +11,15 @@
       <available file="../../../core/library/core.jar" />
     </condition>
     <fail unless="core-built" message="Please build the core library first and make sure it sits in ../../../core/library/core.jar" />
-    
+
     <mkdir dir="bin" />
     <javac source="1.8"
 	   target="1.8"
-	   srcdir="src" destdir="bin" 
+	   srcdir="src" destdir="bin"
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   classpath="../../../core/library/core.jar"
-	   nowarn="true"
-	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
-      <compilerclasspath path="../../mode/org.eclipse.jdt.core.jar; 
-                               ../../mode/jdtCompilerAdapter.jar" />
+	   nowarn="true">
     </javac>
   </target>
 
