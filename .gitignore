@@ -1,5 +1,6 @@
 .DS_Store
 .AppleDouble
+*.iml
 ._*
 *~
 /build/shared/reference.zip

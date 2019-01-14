@@ -13,7 +13,10 @@ public class Downloader extends Task {
   static final String COOKIE =
     "oraclelicense=accept-securebackup-cookie";
 
-  private int version;  // Java 8
+  private boolean openJdk; // If using openJDK.
+  private String platform; // macos
+  private int train;  // Java 11 (was 1 through Java 8)
+  private int version;  // 0 (was 8 prior to Java 9)
   private int update;   // Update 131
   private int build;    // Build 11
   // https://gist.github.com/P7h/9741922
@@ -29,6 +32,17 @@ public class Downloader extends Task {
 
   public Downloader() { }
 
+  private void setPlatform(String platform) {
+    this.platform = platform;
+  }
+
+  private void setOpenJdk(boolean openJdk) {
+    this.openJdk = openJdk;
+  }
+
+  public void setTrain(int train) {
+    this.train = train;
+  }
 
   public void setVersion(int version) {
     this.version = version;
@@ -90,29 +104,38 @@ public class Downloader extends Task {
     }
   }
 
-
   void download() throws IOException {
-    String filename = (jdk ? "jdk" : "jre") +
-      (update == 0 ?
-       String.format("-%d-%s", version, flavor) :
-       String.format("-%du%d-%s", version, update, flavor));
+    DownloadUrlGenerator downloadUrlGenerator;
+
+    if (openJdk) {
+      downloadUrlGenerator = new AdoptOpenJdkDownloadUrlGenerator();
+    } else {
+      downloadUrlGenerator = new OracleDownloadUrlGenerator();
+    }
 
     if (path == null) {
-      path = filename;
+      path = downloadUrlGenerator.getLocalFilename(
+              platform,
+              jdk,
+              train,
+              version,
+              update,
+              build,
+              flavor,
+              hash
+      );
     }
 
-    String url = "http://download.oracle.com/otn-pub/java/jdk/" +
-      (update == 0 ?
-       String.format("%d-b%02d/", version, build) :
-       String.format("%du%d-b%02d/", version, update, build));
-
-    // URL format changed starting with 8u121
-    if (update >= 121) {
-      url += hash + "/";
-    }
-
-    // Finally, add the filename to the end
-    url += filename;
+    String url = downloadUrlGenerator.buildUrl(
+            platform,
+            jdk,
+            train,
+            version,
+            update,
+            build,
+            flavor,
+            hash
+    );
 
     HttpURLConnection conn =
       (HttpURLConnection) new URL(url).openConnection();
