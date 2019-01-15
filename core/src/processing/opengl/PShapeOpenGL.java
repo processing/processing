@@ -1761,10 +1761,11 @@ public class PShapeOpenGL extends PShape {
       return;
     }
 
-    VertexAttribute attrib = polyAttribs.get(name);
+    VertexAttribute attrib = attribImpl(name, VertexAttribute.OTHER, PGL.FLOAT,
+                                        values.length);
     float[] array = inGeo.fattribs.get(name);
     for (int i = 0; i < values.length; i++) {
-      array[attrib.size * index + 0] = values[i];
+      array[attrib.size * index + i] = values[i];
     }
     markForTessellation();
   }
@@ -1777,10 +1778,11 @@ public class PShapeOpenGL extends PShape {
       return;
     }
 
-    VertexAttribute attrib = polyAttribs.get(name);
+    VertexAttribute attrib = attribImpl(name, VertexAttribute.OTHER, PGL.INT,
+                                        values.length);
     int[] array = inGeo.iattribs.get(name);
     for (int i = 0; i < values.length; i++) {
-      array[attrib.size * index + 0] = values[i];
+      array[attrib.size * index + i] = values[i];
     }
     markForTessellation();
   }
@@ -1793,10 +1795,11 @@ public class PShapeOpenGL extends PShape {
       return;
     }
 
-    VertexAttribute attrib = polyAttribs.get(name);
+    VertexAttribute attrib = attribImpl(name, VertexAttribute.OTHER, PGL.BOOL,
+                                        values.length);
     byte[] array = inGeo.battribs.get(name);
     for (int i = 0; i < values.length; i++) {
-      array[attrib.size * index + 0] = (byte)(values[i]?1:0);
+      array[attrib.size * index + i] = (byte)(values[i]?1:0);
     }
     markForTessellation();
   }
