@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# This script runs Processing, using the JRE in the Processing 
+# This script runs Processing, using the JRE in the Processing
 # installation directory.
 
 # If your system needs a different version of Java than what's included
 # in the download, replace the 'java' folder with the contents of a new
-# Oracle JRE (Java 8 only), or create a symlink named "java" in the 
+# Oracle JRE (Java 8 only), or create a symlink named "java" in the
 # Processing installation directory that points to the JRE home directory.
 # This must be a Sun/Oracle JDK. For more details, see here:
 # https://github.com/processing/processing/wiki/Supported-Platforms
@@ -104,7 +104,7 @@ cmd_name='processing-java'
 
 if [ $current_name = $cmd_name ]
 then
-    java -Djna.nosys=true -Djava.ext.dirs="$APPDIR"/java/lib/ext -Xmx256m processing.mode.java.Commander "$@"
+    java -Djna.nosys=true -Xmx256m processing.mode.java.Commander "$@"
     exit $?
 else
   # Start Processing in the same directory as this script
@@ -115,5 +115,5 @@ else
   fi
   cd "$APPDIR"
 
-  java -splash:lib/about-1x.png -Djna.nosys=true -Djava.ext.dirs="$APPDIR"/java/lib/ext -Xmx256m processing.app.Base "$SKETCH" &
+  java -splash:lib/about-1x.png -Djna.nosys=true -Xmx256m processing.app.Base "$SKETCH" &
 fi

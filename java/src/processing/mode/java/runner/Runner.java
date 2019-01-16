@@ -351,10 +351,10 @@ public class Runner implements MessageConsumer {
     }
     // sketch.libraryPath might be ""
     // librariesClassPath will always have sep char prepended
-    params.append("-Djava.library.path=" +
+    /*params.append("-Djava.library.path=" +
                   build.getJavaLibraryPath() +
                   File.pathSeparator +
-                  System.getProperty("java.library.path"));
+                  System.getProperty("java.library.path"));*/
 
     params.append("-cp");
     params.append(build.getClassPath());

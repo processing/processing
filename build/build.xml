@@ -73,7 +73,7 @@
   <property name="jdk.train" value="11" />
   <property name="jdk.version" value="0" />
   <property name="jdk.update" value="1" />
-  <property name="jdk.build" value="12" />
+  <property name="jdk.build" value="13" />
   <!-- See https://gist.github.com/P7h/9741922
        or http://stackoverflow.com/q/10268583 -->
   <property name="jdk.hash" value="750e1c8617c5452694857ad95c3ee230" />
@@ -234,7 +234,7 @@
   <target name="jre-download" depends="jre-check, downloader-setup"
           unless="jre.tgz.downloaded">
     <!-- we normally download a JRE, except on arm -->
-    <property name="jre.download.jdk" value="false" />
+    <property name="jre.download.jdk" value="true" />
 
     <condition property="jre.downloader"
                value="${platform}-i586.tar.gz">
@@ -245,7 +245,10 @@
       <equals arg1="${sun.arch.data.model}" arg2="64" />
     </condition>
 
-    <downloader version="${jdk.version}"
+    <downloader train="${jdk.train}"
+                version="${jdk.version}"
+                openJdk="true"
+                platform="linux64"
                 update="${jdk.update}"
                 build="${jdk.build}"
                 hash="${jdk.hash}"
@@ -877,20 +880,35 @@
     </exec>
 
     <!-- use the jre subfolder when having downloaded a JDK file -->
-    <condition property="jre.dir" value="jdk${jdk.esoteric}/jre">
+    <condition property="jre.dir" value="jdk${jdk.esoteric}">
       <!-- property might not be set, but it is for arm -->
-      <equals arg1="${jre.download.jdk}" arg2="true" />
-    </condition>
-    <condition property="jre.dir" value="jre${jdk.esoteric}">
-      <not>
+      <and>
         <equals arg1="${jre.download.jdk}" arg2="true" />
+        <equals arg1="${jdk.train}" arg2="1" />
+      </and>
+    </condition>
+
+    <!-- use top level JRE otherwise -->
+    <condition property="jre.dir" value="jre${jdk.esoteric}">
+      <and>
+        <not>
+          <equals arg1="${jre.download.jdk}" arg2="true" />
+        </not>
+        <equals arg1="${jdk.train}" arg2="1" />
+      </and>
+    </condition>
+
+    <!-- Force full JDK when not on train 1 (force when on java 11) -->
+    <condition property="jre.dir" value="jdk-${jdk.esoteric}+${jdk.build}">
+      <not>
+        <equals arg1="${jdk.train}" arg2="1" />
       </not>
     </condition>
 
     <exec executable="rsync" dir="linux">
       <arg value="-a" />
       <arg value="--delete" />
-      <arg value="${jre.dir}/" />
+      <arg value="${jre.dir}" />
       <arg value="work/java/" />
     </exec>
 

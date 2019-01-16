@@ -32,11 +32,11 @@ public class Downloader extends Task {
 
   public Downloader() { }
 
-  private void setPlatform(String platform) {
+  public void setPlatform(String platform) {
     this.platform = platform;
   }
 
-  private void setOpenJdk(boolean openJdk) {
+  public void setOpenJdk(boolean openJdk) {
     this.openJdk = openJdk;
   }
 
@@ -80,7 +80,12 @@ public class Downloader extends Task {
 
 
   public void execute() throws BuildException {
-    if (version == 0) {
+    if (train == 0) {
+      throw new BuildException("Train (i.e. 1 or 11) must be set");
+    }
+
+    boolean isJava11 = train == 11;
+    if (!isJava11 && version == 0) {
       throw new BuildException("Version (i.e. 7 or 8) must be set");
     }
 
@@ -136,6 +141,8 @@ public class Downloader extends Task {
             flavor,
             hash
     );
+
+    System.out.println("Attempting download at " + url);
 
     HttpURLConnection conn =
       (HttpURLConnection) new URL(url).openConnection();
