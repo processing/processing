@@ -31,6 +31,8 @@ X Processing 3.4 takes 60 seconds before can edit file
 X   https://github.com/processing/processing/issues/5707
 X   skip Android's SDK folder when adding sketches
 X   https://github.com/processing/processing/commit/5b653263cc6151f838c11a61689d756901c11e37
+X PShape.attrib() and PShape.setAttrib() are not working
+X   https://github.com/processing/processing/issues/5560
 
 jakub
 X Fix freeze when restarting sketch with variables in size
