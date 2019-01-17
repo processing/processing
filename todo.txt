@@ -3,8 +3,8 @@ X update to Java 8u192
 o processing-java doesn't handle sketch exceptions by quitting the sketch
 X   https://github.com/processing/processing/issues/5375
 X   this is by design/follows PDE behavior
-_ fix the link to the FAQ in the menu
-_   https://github.com/processing/processing/issues/5729
+X fix the link to the FAQ in the menu
+X   https://github.com/processing/processing/issues/5729
 
 contrib
 X Updated russian translation, now can choose russian in preferences
@@ -17,9 +17,8 @@ X   https://github.com/processing/processing/pull/5654
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
 _   https://github.com/processing/processing/issues/5562
 _   https://github.com/processing/processing/pull/5642
+_   discuss with Casey
 
-_ Examples dialog causes high CPU load
-_   https://github.com/processing/processing/issues/5246
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
