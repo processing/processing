@@ -217,6 +217,16 @@
 
   <property name="jre.tgz.path" value="${platform}/jre-${jdk.short}.tgz" />
 
+  <condition property="jre.tgz.path" value="${platform}/jre-${jdk.short}.tgz">
+    <not>
+      <equals arg1="${platform}" arg2="windows" />
+    </not>
+  </condition>
+
+  <condition property="jre.tgz.path" value="${platform}/jre-${jdk.short}.zip">
+    <equals arg1="${platform}" arg2="windows" />
+  </condition>
+
   <target name="jre-check">
     <available file="${jre.tgz.path}" property="jre.tgz.downloaded" />
   </target>
@@ -248,7 +258,7 @@
     <downloader train="${jdk.train}"
                 version="${jdk.version}"
                 openJdk="true"
-                platform="linux64"
+                platform="${platform}${sun.arch.data.model}"
                 update="${jdk.update}"
                 build="${jdk.build}"
                 hash="${jdk.hash}"
@@ -898,7 +908,7 @@
       </and>
     </condition>
 
-    <!-- Force full JDK when not on train 1 (force when on java 11) -->
+    <!-- Force full JDK when not on train 1 (starts with java 11) -->
     <condition property="jre.dir" value="jdk-${jdk.esoteric}+${jdk.build}/">
       <not>
         <equals arg1="${jdk.train}" arg2="1" />
@@ -1171,12 +1181,22 @@
     -->
     <!-- Hopefully this is OK with the permissions (unlike Linux),
          since those shouldn't matter on Windows. -->
-    <untar compression="gzip"
-           dest="windows/work"
+    <unzip dest="windows/work"
            src="${jre.tgz.path}"
            overwrite="false" />
-    <move file="windows/work/jre${jdk.esoteric}"
-          tofile="windows/work/java" />
+
+    <condition property="jre.dir" value="windows/work/jre${jdk.esoteric}">
+      <equals arg1="${jdk.train}" arg2="1" />
+    </condition>
+
+    <!-- Force full JDK when not on train 1 (starts with java 11) -->
+    <condition property="jre.dir" value="windows/work/jdk-${jdk.esoteric}+${jdk.build}/">
+      <not>
+        <equals arg1="${jdk.train}" arg2="1" />
+      </not>
+    </condition>
+
+    <move file="${jre.dir}" tofile="windows/work/java" />
 
     <!-- Remove unused JRE bloat. -->
     <delete failonerror="true">
