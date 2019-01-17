@@ -899,7 +899,7 @@
     </condition>
 
     <!-- Force full JDK when not on train 1 (force when on java 11) -->
-    <condition property="jre.dir" value="jdk-${jdk.esoteric}+${jdk.build}">
+    <condition property="jre.dir" value="jdk-${jdk.esoteric}+${jdk.build}/">
       <not>
         <equals arg1="${jdk.train}" arg2="1" />
       </not>
