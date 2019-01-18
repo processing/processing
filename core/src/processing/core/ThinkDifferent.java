@@ -22,115 +22,99 @@
 
 package processing.core;
 
-import java.awt.Image;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-
-import com.apple.eawt.Application;
+import java.awt.*;
 
 
 /**
- * Deal with issues related to thinking differently.
+ * Deal with issues related to Mac OS window behavior.
  *
  * We have to register a quit handler to safely shut down the sketch,
  * otherwise OS X will just kill the sketch when a user hits Cmd-Q.
  * In addition, we have a method to set the dock icon image so we look more
- * like a native application.
+ * like a native desktop.
  *
  * This is a stripped-down version of what's in processing.app.platform to fix
  * <a href="https://github.com/processing/processing/issues/3301">3301</a>.
  */
 public class ThinkDifferent {
 
-  // http://developer.apple.com/documentation/Java/Reference/1.4.2/appledoc/api/com/apple/eawt/Application.html
-  private static Application application;
+  private static Desktop desktop;
+  private static Taskbar taskbar;
 
   // True if user has tried to quit once. Prevents us from canceling the quit
   // call if the sketch is held up for some reason, like an exception that's
   // managed to put the sketch in a bad state.
   static boolean attemptedQuit;
 
-
+  /**
+   * Initialize the sketch with the quit handler.
+   *
+   * Initialize the sketch with the quit handler such that, if there is no known
+   * crash, the application will not exit on its own if this is the first quit
+   * attempt.
+   *
+   * @param sketch The sketch whose quit handler callback should be set.
+   */
   static public void init(final PApplet sketch) {
-    if (application == null) {
-      application = Application.getApplication();
-    }
-
-    setHandler(application, "setQuitHandler", (proxy, method, args) -> {
+    getDesktop().setQuitHandler((event, quitResponse) -> {
       sketch.exit();
-      if (PApplet.uncaughtThrowable == null &&  // no known crash
-          !attemptedQuit) {  // haven't tried yet
-        args[1].getClass().getMethod("cancelQuit").invoke(args[1]);  // tell OS X we'll handle this
+
+      boolean noKnownCrash = PApplet.uncaughtThrowable == null;
+
+      if (noKnownCrash && !attemptedQuit) {  // haven't tried yet
+        quitResponse.cancelQuit();  // tell OS X we'll handle this
         attemptedQuit = true;
       } else {
-        args[1].getClass().getMethod("performQuit").invoke(args[1]);  // just force it this time
+        quitResponse.performQuit();  // just force it this time
       }
-      return null;
     });
   }
 
   /**
-   * Sets a handler on an instance of {@link Application}, taking into account JVM version
-   * differences.
-   *
-   * @param app an instance of {@link Application}
-   * @param name the "set handler" method name
-   * @param handler the handler
+   * Remove the quit handler.
    */
-  private static void setHandler(Application app, String name, InvocationHandler handler) {
-    // Determine which version of com.apple.eawt.Application to use and pass it a handler of the
-    // appropriate type
-    Method[] methods = app.getClass().getMethods();
-    for (Method m : methods) {
-      if (!name.equals(m.getName())) {
-        continue;
-      }
-      if (m.getParameterCount() != 1) {
-        continue;
-      }
-      Class paramType = m.getParameterTypes()[0];
-      try {
-        // Allow a null handler
-        Object proxy = null;
-        if (handler != null) {
-          proxy = Proxy.newProxyInstance(
-              paramType.getClassLoader(), new Class<?>[] { paramType }, handler);
-        }
-        m.invoke(app, proxy);
-      } catch (IllegalArgumentException ex) {
-        // TODO: Print error?: method doesn't take an interface, etc.
-      } catch (IllegalAccessException ex) {
-        // TODO: Print error?: Other method invocation problem
-      } catch (InvocationTargetException ex) {
-        ex.getCause().printStackTrace();
-        // TODO: Print ex.getCause() a different way?
-      }
-      break;
-    }
-  }
-
   static public void cleanup() {
-    if (application == null) {
-      application = Application.getApplication();
-    }
-    setHandler(application, "setQuitHandler", null);
+    getDesktop().setQuitHandler(null);
   }
 
-  // Called via reflection from PSurfaceAWT and others
+  /**
+   * Called via reflection from PSurfaceAWT and others, set the dock icon image.
+   *
+   * @param image The image to provide for Processing icon.
+   */
   static public void setIconImage(Image image) {
-    // When already set, is a sun.awt.image.MultiResolutionCachedImage on OS X
-//    Image current = application.getDockIconImage();
-//    System.out.println("current dock icon image is " + current);
-//    System.out.println("changing to " + image);
+    getTaskbar().setIconImage(image);
+  }
 
-    application.setDockIconImage(image);
+  /**
+   * Get the taskbar where OS visual settings can be provided.
+   *
+   * @return Cached taskbar singleton instance.
+   */
+  static private Taskbar getTaskbar() {
+    if (taskbar == null) {
+      taskbar = Taskbar.getTaskbar();
+    }
+
+    return taskbar;
+  }
+
+  /**
+   * Get the desktop where OS behavior can be provided.
+   *
+   * @return Cached desktop singleton instance.
+   */
+  static private Desktop getDesktop() {
+    if (desktop == null) {
+      desktop = Desktop.getDesktop();
+    }
+
+    return desktop;
   }
 
 
   // Instead, just use Application.getApplication() inside your app
 //  static public Application getApplication() {
-//    return application;
+//    return desktop;
 //  }
 }
