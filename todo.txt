@@ -14,22 +14,19 @@ X   https://github.com/processing/processing/pull/5636
 X Examples dialog causes high CPU load
 X   https://github.com/processing/processing/issues/5246
 X   https://github.com/processing/processing/pull/5654
+
+jakub
+X Fix sketch exception getting hidden by warning
+X   https://github.com/processing/processing/pull/5486
+X   https://github.com/processing/processing/issues/5412
+
+
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
 _   https://github.com/processing/processing/issues/5562
 _   https://github.com/processing/processing/pull/5642
 _   discuss with Casey
-
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
-_ Find in Reference disabled for various keywords (draw, for, if, catch, while)
-_   https://github.com/processing/processing/issues/5562
-_ "Could not find a examples in the downloaded file" is a poorly worded message
-
-
-jakub
-_ Fix sketch exception getting hidden by warning
-_   https://github.com/processing/processing/pull/5486
-_   https://github.com/processing/processing/issues/5412
 
 
 manager
@@ -48,6 +45,7 @@ _   mode > add mode > libraries > install video
 _   did not update the examples window, had to restart pde
 _ was able to save over the video capture examples b/c they were a library
 _   lib examples not properly marked as read-only
+_ "Could not find a examples in the downloaded file" is a poorly worded message
 
 
 temp

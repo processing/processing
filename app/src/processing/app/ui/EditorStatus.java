@@ -49,7 +49,7 @@ import processing.core.PApplet;
 /**
  * Panel just below the editing area that contains status messages.
  */
-public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
+public class EditorStatus extends BasicSplitPaneDivider {
   static final int HIGH = Toolkit.zoom(28);
   static final int LEFT_MARGIN = Editor.LEFT_GUTTER;
   static final int RIGHT_MARGIN = Toolkit.zoom(20);
@@ -60,11 +60,11 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   Image[] bgImage;
 
   @SuppressWarnings("hiding")
-  static public final int ERROR   = 1;
+  static public final int ERROR = 1;
   static public final int CURSOR_LINE_ERROR = 2;
   static public final int WARNING = 3;
   static public final int CURSOR_LINE_WARNING = 4;
-  static public final int NOTICE  = 0;
+  static public final int NOTICE = 0;
 
   static final int YES    = 1;
   static final int NO     = 2;
@@ -80,21 +80,36 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   int rightEdge;
   int mouseX;
   int rolloverState;
-  static final int ROLLOVER_NONE     = 0;
-  static final int ROLLOVER_URL      = 1;
-  static final int ROLLOVER_COLLAPSE = 2;
-  static final int ROLLOVER_EMOJI    = 3;
+  static final int ROLLOVER_NONE      = 0;
+  static final int ROLLOVER_URL       = 1;
+  static final int ROLLOVER_COLLAPSE  = 2;
+  static final int ROLLOVER_CLIPBOARD = 3;
 
   Font font;
   FontMetrics metrics;
   int ascent;
 
-  // used to draw the clipboard icon
-  Font emojiFont;
+  // actual Clipboard character not available [fry 180326]
+  //static final String CLIPBOARD_GLYPH = "\uD83D\uDCCB";
+  // other apps seem to use this one as a hack
+  static final String CLIPBOARD_GLYPH = "\u2398";
+
+//  static final String COLLAPSE_GLYPH = "\u25B3";  // large up
+//  static final String EXPAND_GLYPH = "\u25BD";  // large down
+//  static final String COLLAPSE_GLYPH = "\u25B5";  // small up (unavailable)
+//  static final String EXPAND_GLYPH = "\u25BF";  // small down (unavailable)
+  static final String COLLAPSE_GLYPH = "\u25C1";  // left
+  static final String EXPAND_GLYPH = "\u25B7";  // right
+//  static final String COLLAPSE_GLYPH = "\u25F8";  // upper-left (unavailable)
+//  static final String EXPAND_GLYPH = "\u25FF";  // lower-right (unavailable)
+
+  // a font that supports the Unicode glyphs we need
+  Font glyphFont;
 
   Image offscreen;
   int sizeW, sizeH;
-  boolean collapseState = false;
+  int buttonSize;
+  boolean collapsed = false;
 
   int response;
 
@@ -120,7 +135,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
         if (rolloverState == ROLLOVER_URL) {
           Platform.openURL(url);
 
-        } else if (rolloverState == ROLLOVER_EMOJI) {
+        } else if (rolloverState == ROLLOVER_CLIPBOARD) {
           if (e.isShiftDown()) {
             // open the text in a browser window as a search
             final String fmt = Preferences.get("search.format");
@@ -135,7 +150,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
           }
 
         } else if (rolloverState == ROLLOVER_COLLAPSE) {
-          collapse(!collapseState);
+          setCollapsed(!collapsed);
         }
       }
 
@@ -153,7 +168,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
         // BasicSplitPaneUI.startDragging gets called even when you click but
         // don't drag, so we can't expand the console whenever that gets called
         // or the button wouldn't work.
-        collapse(false);
+        setCollapsed(false);
       }
 
       @Override
@@ -165,17 +180,18 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
   }
 
 
-  void collapse(boolean doCollapse) {
-    if (collapseState == doCollapse) return;
-    collapseState = doCollapse;
-    editor.footer.setVisible(!doCollapse);
-    splitPane.resetToPreferredSizes();
+  void setCollapsed(boolean newState) {
+    if (collapsed != newState) {
+      collapsed = newState;
+      editor.footer.setVisible(!newState);
+      splitPane.resetToPreferredSizes();
+    }
   }
 
 
   void updateMouse() {
     switch (rolloverState) {
-    case ROLLOVER_EMOJI:
+    case ROLLOVER_CLIPBOARD:
     case ROLLOVER_URL:
       setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       break;
@@ -229,8 +245,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     };
 
     font = mode.getFont("status.font");
-    //emojiFont = new Font("Dialog", Font.PLAIN, 21);
-    emojiFont = mode.getFont("status.emoji.font");
+    glyphFont = mode.getFont("status.emoji.font");
     metrics = null;
   }
 
@@ -319,7 +334,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
     if (offscreen == null) {
       sizeW = size.width;
       sizeH = size.height;
-
+//      buttonSize = sizeH;
       offscreen = Toolkit.offscreenGraphics(this, sizeW, sizeH);
     }
 
@@ -339,7 +354,7 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
       rolloverState = ROLLOVER_COLLAPSE;
     } else if (message != null && !message.isEmpty()) {
       if (sizeW - 2*sizeH < mouseX) {
-        rolloverState = ROLLOVER_EMOJI;
+        rolloverState = ROLLOVER_CLIPBOARD;
       } else if (url != null && mouseX > LEFT_MARGIN &&
         // calculate right edge of the text for rollovers (otherwise the pane
         // cannot be resized up or down whenever a URL is being displayed)
@@ -377,29 +392,29 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
       }
 
     } else if (!message.isEmpty()) {
-      g.setFont(emojiFont);
-      // actual Clipboard character not available [fry 180326]
-      //g.drawString("\uD83D\uDCCB", sizeW - LEFT_MARGIN, (sizeH + ascent) / 2);
-      // other apps seem to use this one as a hack: ⎘
-      drawButton(g, "\u2398", 1, rolloverState == ROLLOVER_EMOJI);
+      g.setFont(glyphFont);
+      drawButton(g, CLIPBOARD_GLYPH, 1, rolloverState == ROLLOVER_CLIPBOARD);
       g.setFont(font);
     }
 
     // draw collapse/expand button
-    drawButton(g, collapseState ? "▲" : "▼", 0, rolloverState == ROLLOVER_COLLAPSE);
+    String collapseGlyph = collapsed ? EXPAND_GLYPH : COLLAPSE_GLYPH;
+    drawButton(g, collapseGlyph, 0, rolloverState == ROLLOVER_COLLAPSE);
 
     screen.drawImage(offscreen, 0, 0, sizeW, sizeH, null);
   }
 
 
-  private final Color whitishTint = new Color(0x40eeeeee, true);
+  private final Color whitishTint = new Color(0x20eeeeee, true);
+
   /**
    * @param pos A zero-based index with 0 on the right.
    */
   private void drawButton(Graphics g, String symbol, int pos, boolean highlight) {
     int left = sizeW - (pos + 1) * sizeH;
-    g.setColor(bgColor[mode]);  // Overlap very long errors.
-    g.fillRect(left, 0, sizeH, sizeH);
+    // Overlap very long errors
+    g.drawImage(bgImage[mode], left, 0, sizeH, sizeH, this);
+
     if (highlight) {
       g.setColor(whitishTint);
       g.fillRect(left, 0, sizeH, sizeH);
@@ -408,9 +423,10 @@ public class EditorStatus extends BasicSplitPaneDivider {  //JPanel {
       g.setColor(fgColor[mode]);
     }
     g.drawString(symbol,
-        left + (sizeH - g.getFontMetrics().stringWidth(symbol))/2,
-        (sizeH + ascent) / 2);
+                 left + (sizeH - g.getFontMetrics().stringWidth(symbol))/2,
+                 (sizeH + ascent) / 2);
   }
+
 
   public Dimension getPreferredSize() {
     return getMinimumSize();
