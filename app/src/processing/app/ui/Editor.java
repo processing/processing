@@ -2900,6 +2900,17 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     if (e instanceof SketchException) {
       SketchException re = (SketchException) e;
+
+      // Make sure something is printed into the console
+      // Status bar is volatile
+      if (!re.isStackTraceEnabled()) {
+        System.err.println(re.getMessage());
+      }
+
+      // Move the cursor to the line before updating the status bar, otherwise
+      // status message might get hidden by a potential message caused by moving
+      // the cursor to a line with warning in it
+
       if (re.hasCodeIndex()) {
         sketch.setCurrentCode(re.getCodeIndex());
       }
