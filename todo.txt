@@ -10,6 +10,13 @@ X "Sketch disappeared" infinite pop up dialogs
 X   https://github.com/processing/processing/pull/4808
 X   https://github.com/processing/processing/issues/4805
 
+fixed earlier
+X Could not initialize class com.sun.jna.Native on startup (Windows)
+X   https://github.com/processing/processing/issues/4929
+X   closed earlier; fixed as best we could
+X sharing usage metrics about libraries
+X   https://github.com/processing/processing/issues/4708
+
 contrib
 X Updated russian translation, now can choose russian in preferences
 X   https://github.com/processing/processing/pull/5619
@@ -20,6 +27,9 @@ X   https://github.com/processing/processing/issues/5246
 X   https://github.com/processing/processing/pull/5654
 X console hiding button
 X   https://github.com/processing/processing/pull/5115
+_ NullPointerException in Contribution Manager
+_   https://github.com/processing/processing/issues/5524
+_   https://github.com/processing/processing/pull/5742
 
 jakub
 X Fix sketch exception getting hidden by warning
@@ -111,9 +121,6 @@ _   see the 'examples' section below
 _ how are file associations handled in Linux? (for .pde, .psk)
 
 
-_ Could not initialize class com.sun.jna.Native on startup (Windows)
-_   https://github.com/processing/processing/issues/4929
-
 _ implement fallback fonts instead of giving up and using Dialog and Mono
 _   https://github.com/processing/processing/issues/5023
 
@@ -156,11 +163,6 @@ _   https://github.com/processing/processing/issues/1476#issuecomment-23229990
 _ could not write to temporary directory (virus checker problems)
 _   https://github.com/processing/processing/issues/4757
 
-_ Export Application fails on machines w/ non-ASCII chars in user name
-_   at least give a warning about this?
-_   https://github.com/processing/processing/issues/4736
-_   related: https://github.com/processing/processing/issues/3543
-
 _ fix appbundler problems due to rollback
 _   https://github.com/processing/processing/issues/3790
 _   the rollback re-introduces two bugs (serial export and scrolling)
@@ -175,9 +177,6 @@ _   https://github.com/processing/processing/issues/4703
 
 _ right bracket missing error
 _   https://github.com/processing/processing/issues/4702
-
-_ sharing usage metrics about libraries
-_   https://github.com/processing/processing/issues/4708
 
 _ library compilations handled oddly
 _   https://github.com/processing/processing/issues/4630
@@ -222,17 +221,19 @@ _   https://github.com/processing/processing/pull/4097
 _   solution is to create a sprite sheet as a psd that'll have better type
 _     no way we're gonna fix the sizing and spacing for all platforms
 
-_ need docs for translations
-_   https://github.com/processing/processing/issues/4018
 
 _ setting a bad font/size causes a crash on startup
 _   https://github.com/processing/processing/issues/4085
 o   https://github.com/processing/processing/pull/4087
 
 
-more contribs
+translations
+_ need docs for translations
+_   https://github.com/processing/processing/issues/4018
 _ question about PDE_pt-br instead of PDE_pt
 _   https://github.com/processing/processing/issues/4018
+
+more contribs
 _ Saving sketch with the same name as a class
 _   https://github.com/processing/processing/pull/4033
 _ Pasting text into PDE results in "Clipboard does not contain a string"
@@ -245,6 +246,10 @@ _   but anything else reports "font sadness" b/c it's using the system JRE
 _   https://github.com/processing/processing/issues/3543
 _   move to javapackager or another option?
 _   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-application
+_ Export Application fails on machines w/ non-ASCII chars in user name
+_   at least give a warning about this?
+_   https://github.com/processing/processing/issues/4736
+_   related: https://github.com/processing/processing/issues/3543
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 

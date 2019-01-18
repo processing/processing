@@ -334,7 +334,7 @@ public class PShapeSVG extends PShape {
     } else if (name.equals("rect")) {
       shape = createShape(this, elem, true);
       shape.parseRect();
-   
+
     } else if (name.equals("image")) {
       shape = createShape(this, elem, true);
       shape.parseImage();
@@ -368,8 +368,8 @@ public class PShapeSVG extends PShape {
 
     } else if (name.equals("text")) {  // || name.equals("font")) {
         return new Text(this, elem);
-    
-    } else if (name.equals("tspan")) { 
+
+    } else if (name.equals("tspan")) {
         return new LineOfText(this, elem);
 
     } else if (name.equals("filter")) {
@@ -450,8 +450,8 @@ public class PShapeSVG extends PShape {
       getFloatWithUnit(element, "height", svgHeight)
     };
   }
-  
-  
+
+
   protected void parseImage() {
     kind = RECT;
     textureMode = NORMAL;
@@ -466,7 +466,7 @@ public class PShapeSVG extends PShape {
 
     this.imagePath = element.getString("xlink:href");
   }
-  
+
   /**
    * Parse a polyline or polygon from an SVG file.
    * Syntax defined at http://www.w3.org/TR/SVG/shapes.html#PointsBNF
@@ -1537,7 +1537,10 @@ public class PShapeSVG extends PShape {
   }
 
 
-  public class LinearGradient extends Gradient {
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static public class LinearGradient extends Gradient {
     public float x1, y1, x2, y2;
 
     public LinearGradient(PShapeSVG parent, XML properties) {
@@ -1567,7 +1570,10 @@ public class PShapeSVG extends PShape {
   }
 
 
-  public class RadialGradient extends Gradient {
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static public class RadialGradient extends Gradient {
     public float cx, cy, r;
 
     public RadialGradient(PShapeSVG parent, XML properties) {
@@ -1596,23 +1602,22 @@ public class PShapeSVG extends PShape {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
-  public static float TEXT_QUALITY = 1;
-  protected PFont parseFont(XML properties) {
 
-//        FontFace fontFace = new FontFace(this, properties);
+
+//  static private float TEXT_QUALITY = 1;
+
+  static private PFont parseFont(XML properties) {
     String fontFamily = null;
     float size = 10;
     int weight = PLAIN; // 0
     int italic = 0;
-    
+
     if (properties.hasAttribute("style")) {
       String styleText = properties.getString("style");
       String[] styleTokens = PApplet.splitTokens(styleText, ";");
 
       //PApplet.println(styleTokens);
       for (int i = 0; i < styleTokens.length; i++) {
-
         String[] tokens = PApplet.splitTokens(styleTokens[i], ":");
         //PApplet.println(tokens);
 
@@ -1628,13 +1633,13 @@ public class PShapeSVG extends PShape {
           // setFillOpacity(tokens[1]);
 
         } else if (tokens[0].equals("font-weight")) {
-            // PApplet.println("font-weight: " + tokens[1]);
-                
-            if (tokens[1].contains("bold")) {
-              weight = BOLD;
-              // PApplet.println("Bold weight ! ");
-            }
-    
+          // PApplet.println("font-weight: " + tokens[1]);
+
+          if (tokens[1].contains("bold")) {
+            weight = BOLD;
+            // PApplet.println("Bold weight ! ");
+          }
+
 
         } else if (tokens[0].equals("font-stretch")) {
           // not supported.
@@ -1673,25 +1678,26 @@ public class PShapeSVG extends PShape {
     if (fontFamily == null) {
       return null;
     }
-    size = size * TEXT_QUALITY;
+//    size = size * TEXT_QUALITY;
 
     return createFont(fontFamily, weight | italic, size, true);
   }
 
-  protected PFont createFont(String name, int weight, float size, boolean smooth) {
 
-//    System.out.println("Try to create a font of " + name + " family, " + weight);
-    java.awt.Font baseFont = new java.awt.Font(name, weight, (int) size); // PFont.findFont(name);ç
+  static protected PFont createFont(String name, int weight,
+                                    float size, boolean smooth) {
+    //System.out.println("Try to create a font of " + name + " family, " + weight);
+    java.awt.Font baseFont = new java.awt.Font(name, weight, (int) size);
 
-//    System.out.println("Resulting family : " + baseFont.getFamily() + " " + baseFont.getStyle());
-    PFont outputPFont = new PFont(baseFont.deriveFont(size), smooth, null);
-
-//    System.out.println("Resulting PFont family : " + outputPFont.getName());
-    return outputPFont;
+    //System.out.println("Resulting family : " + baseFont.getFamily() + " " + baseFont.getStyle());
+    return new PFont(baseFont.deriveFont(size), smooth, null);
   }
 
-  public static class Text extends PShapeSVG {
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static public class Text extends PShapeSVG {
     protected PFont font;
 
     public Text(PShapeSVG parent, XML properties) {
@@ -1709,43 +1715,40 @@ public class PShapeSVG extends PShape {
       family = GROUP;
 
       font = parseFont(properties);
-
     }
-
-//        @Override
-//        public void drawImpl(PGraphics g){
-//        }
   }
 
-  public static class LineOfText extends PShapeSVG {
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static public class LineOfText extends PShapeSVG {
     String textToDisplay;
     PFont font;
 
     public LineOfText(PShapeSVG parent, XML properties) {
-
-    // TODO: child should ideally be parsed too... 
-    // for inline content. 
+      // TODO: child should ideally be parsed too for inline content.
       super(parent, properties, false);
 
-//    // get location
+      //get location
       float x = Float.parseFloat(properties.getString("x"));
       float y = Float.parseFloat(properties.getString("y"));
 
       float parentX = Float.parseFloat(parent.element.getString("x"));
       float parentY = Float.parseFloat(parent.element.getString("y"));
-       
+
       if (matrix == null) matrix = new PMatrix2D();
       matrix.translate(x - parentX, (y - parentY) / 2f);
-     
-    // get the first properties
-     parseColors(properties);
+
+      // get the first properties
+      parseColors(properties);
       font = parseFont(properties);
 
-      // It is a line.. 
-      boolean isALine = properties.getString("role") == "line";
-      // NO inline content yet.
+      // cleaned up syntax but removing b/c unused [fry 190118]
+      //boolean isLine = properties.getString("role").equals("line");
+
       if (this.childCount > 0) {
+        // no inline content yet.
       }
 
       String text = properties.getContent();
@@ -1762,14 +1765,18 @@ public class PShapeSVG extends PShape {
       }
 
       pre(g);
-      g.textFont(font, font.size / TEXT_QUALITY);
+//      g.textFont(font, font.size / TEXT_QUALITY);
+      g.textFont(font, font.size);
       g.text(textToDisplay, 0, 0);
       post(g);
     }
-
   }
-  
-  public static class Font extends PShapeSVG {
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static public class Font extends PShapeSVG {
     public FontFace face;
 
     public Map<String, FontGlyph> namedGlyphs;
@@ -1790,8 +1797,8 @@ public class PShapeSVG extends PShape {
 
       horizAdvX = properties.getInt("horiz-adv-x", 0);
 
-      namedGlyphs = new HashMap<String, FontGlyph>();
-      unicodeGlyphs = new HashMap<Character, FontGlyph>();
+      namedGlyphs = new HashMap<>();
+      unicodeGlyphs = new HashMap<>();
       glyphCount = 0;
       glyphs = new FontGlyph[elements.length];
 
@@ -1920,7 +1927,7 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public static class FontGlyph extends PShapeSVG {  // extends Path
+  static public class FontGlyph extends PShapeSVG {  // extends Path
     public String name;
     char unicode;
     int horizAdvX;
