@@ -320,6 +320,17 @@ public abstract class Editor extends JFrame implements RunnerListener {
         status = new EditorStatus(this, Editor.this);
         return status;
       }
+
+
+      @Override
+      public void finishDraggingTo(int location) {
+        super.finishDraggingTo(location);
+        // JSplitPane issue: if you only make the lower component visible at
+        // the last minute, its minmum size is ignored.
+        if (location > splitPane.getMaximumDividerLocation()) {
+          splitPane.setDividerLocation(splitPane.getMaximumDividerLocation());
+        }
+      }
     });
 
     box.add(splitPane);
