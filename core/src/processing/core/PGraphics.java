@@ -4062,6 +4062,15 @@ public class PGraphics extends PImage implements PConstants {
   // TEXT/FONTS
 
 
+  /**
+   * Used by PGraphics to remove the requirement for loading a font.
+   */
+  protected PFont createDefaultFont(float size) {
+    Font baseFont = new Font("Lucida Sans", Font.PLAIN, 1);
+    return createFont(baseFont, size, true, null, false);
+  }
+
+
   protected PFont createFont(String name, float size,
                              boolean smooth, char[] charset) {
     String lowerName = name.toLowerCase();
@@ -4083,15 +4092,21 @@ public class PGraphics extends PImage implements PConstants {
       } else {
         baseFont = PFont.findFont(name);
       }
-      return new PFont(baseFont.deriveFont(size * parent.pixelDensity),
-                       smooth, charset, stream != null,
-                       parent.pixelDensity);
+      return createFont(baseFont, size, smooth, charset, stream != null);
 
     } catch (Exception e) {
       System.err.println("Problem with createFont(\"" + name + "\")");
       e.printStackTrace();
       return null;
     }
+  }
+
+
+  private PFont createFont(Font baseFont, float size,
+                           boolean smooth, char[] charset, boolean stream) {
+    return new PFont(baseFont.deriveFont(size * parent.pixelDensity),
+                     smooth, charset, stream,
+                     parent.pixelDensity);
   }
 
 
@@ -8217,7 +8232,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   protected void defaultFontOrDeath(String method, float size) {
     if (parent != null) {
-      textFont = parent.createDefaultFont(size);
+      textFont = createDefaultFont(size);
     } else {
       throw new RuntimeException("Use textFont() before " + method + "()");
     }

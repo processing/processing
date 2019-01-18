@@ -6319,18 +6319,6 @@ public class PApplet implements PConstants {
   }
 
 
-  /**
-   * Used by PGraphics to remove the requirement for loading a font!
-   */
-  protected PFont createDefaultFont(float size) {
-//    Font f = new Font("SansSerif", Font.PLAIN, 12);
-//    println("n: " + f.getName());
-//    println("fn: " + f.getFontName());
-//    println("ps: " + f.getPSName());
-    return createFont("Lucida Sans", size, true, null);
-  }
-
-
   public PFont createFont(String name, float size) {
     return createFont(name, size, true, null);
   }

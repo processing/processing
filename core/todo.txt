@@ -2,6 +2,13 @@
 X make JSONObject.quote() (both versions) public
 X fix javaPlatform variable for newer JDK versions
 X   https://github.com/processing/processing/pull/5626
+o many fonts installed causes slow startup on macos
+o   run that on a thread, and make sure default font doesn't need the list loaded
+X   can't be done, notes in the code for PFont.loadFonts()
+X greatly improve startup time when user-specified fonts are not used
+X   default font will be faster, using ttf/otf is fine
+X   only createFont("The Font Name") is still slow on macOS
+X   and PFont.list()
 
 contrib
 o make tabs into spaces, fixes pixelDensity(2) issue with tabs
@@ -55,6 +62,7 @@ o   is this coming from us? if so, need to provide actions
 X   haven't seen for a while, maybe fixed
 
 
+
 _ NullPointerException at java.awt.Window.init(Window.java:497) when using Airplay
 _   https://github.com/processing/processing/issues/5620
 _   try to catch the NPE and warn the user about what's happening
@@ -78,7 +86,6 @@ _   need to make this work behind the scenes instead
 _   create icon.png or have an 'icons' folder with multiple sizes
 
 
-
 _ Implement blendMode() for PDF
 _   https://github.com/processing/processing/issues/5438
 
@@ -88,7 +95,6 @@ _   https://github.com/processing/processing/issues/5317
 _ Switch to getModifiersEx() and fix the AWT modifiers used in PSurfaceAWT
 _   this is an easy fix, but need to check impact elsewhere
 _   does anything else rely on these modifiers?
-
 
 _ when doing createFont, can we add it to the os fonts available?
 
