@@ -43,7 +43,6 @@ import processing.opengl.PGraphicsOpenGL.VertexAttribute;
 import java.nio.Buffer;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Stack;
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors
@@ -171,7 +170,8 @@ public class PShapeOpenGL extends PShape {
   // Geometric transformations.
 
   protected PMatrix transform;
-  protected Stack<PMatrix> transformStack;
+  protected PMatrix transformInv;
+  protected PMatrix matrixInv;
 
   // ........................................................
 
@@ -847,7 +847,7 @@ public class PShapeOpenGL extends PShape {
 
   protected void addTexture(PImage tex) {
     if (textures == null) {
-      textures = new HashSet<PImage>();
+      textures = new HashSet<>();
     }
     textures.add(tex);
     if (parent != null) {
@@ -1334,39 +1334,34 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void resetMatrix() {
-    if (shapeCreated && matrix != null && transformStack != null) {
+    if (shapeCreated && matrix != null && matrixInv != null) {
       if (family == GROUP) {
         updateTessellation();
       }
       if (tessellated) {
-        PMatrix mat = popTransform();
-        while (mat != null) {
-          boolean res = mat.invert();
-          if (res) {
-            applyMatrixImpl(mat);
-          } else {
-            PGraphics.showWarning("Transformation applied on the shape cannot be inverted");
-          }
-          mat = popTransform();
-        }
+        applyMatrixImpl(matrixInv);
       }
       matrix.reset();
-      transformStack.clear();
+      matrixInv.reset();
     }
   }
 
 
   protected void transform(int type, float... args) {
     int dimensions = is3D ? 3 : 2;
+    boolean invertible = true;
     checkMatrix(dimensions);
     if (transform == null) {
       if (dimensions == 2) {
         transform = new PMatrix2D();
+        transformInv = new PMatrix2D();
       } else {
         transform = new PMatrix3D();
+        transformInv = new PMatrix3D();
       }
     } else {
       transform.reset();
+      transformInv.reset();
     }
 
     int ncoords = args.length;
@@ -1380,22 +1375,28 @@ public class PShapeOpenGL extends PShape {
     case TRANSLATE:
       if (ncoords == 3) {
         transform.translate(args[0], args[1], args[2]);
+        PGraphicsOpenGL.invTranslate((PMatrix3D)transformInv, args[0], args[1], args[2]);
       } else {
         transform.translate(args[0], args[1]);
+        PGraphicsOpenGL.invTranslate((PMatrix2D)transformInv, args[0], args[1]);
       }
       break;
     case ROTATE:
       if (ncoords == 3) {
         transform.rotate(args[0], args[1], args[2], args[3]);
+        PGraphicsOpenGL.invRotate((PMatrix3D)transformInv, args[0], args[1], args[2], args[3]);
       } else {
         transform.rotate(args[0]);
+        PGraphicsOpenGL.invRotate((PMatrix2D)transformInv, -args[0]);
       }
       break;
     case SCALE:
       if (ncoords == 3) {
         transform.scale(args[0], args[1], args[2]);
+        PGraphicsOpenGL.invScale((PMatrix3D)transformInv, args[0], args[1], args[2]);
       } else {
         transform.scale(args[0], args[1]);
+        PGraphicsOpenGL.invScale((PMatrix2D)transformInv, args[0], args[1]);
       }
       break;
     case MATRIX:
@@ -1408,31 +1409,19 @@ public class PShapeOpenGL extends PShape {
         transform.set(args[0], args[1], args[2],
                       args[3], args[4], args[5]);
       }
+      transformInv.set(transform);
+      invertible = transformInv.invert();
       break;
     }
     matrix.preApply(transform);
-    pushTransform();
+    if (invertible) {
+      matrixInv.apply(transformInv);
+    } else {
+      PGraphics.showWarning("Transformation applied on the shape cannot be inverted");
+    }
     if (tessellated) applyMatrixImpl(transform);
   }
 
-
-  protected void pushTransform() {
-    if (transformStack == null) transformStack = new Stack<PMatrix>();
-    PMatrix mat;
-    if (transform instanceof PMatrix2D) {
-      mat = new PMatrix2D();
-    } else {
-      mat = new PMatrix3D();
-    }
-    mat.set(transform);
-    transformStack.push(mat);
-  }
-
-
-  protected PMatrix popTransform() {
-    if (transformStack == null || transformStack.size() == 0) return null;
-    return transformStack.pop();
-  }
 
   protected void applyMatrixImpl(PMatrix matrix) {
     if (hasPolys) {
@@ -1461,6 +1450,23 @@ public class PShapeOpenGL extends PShape {
         root.setModifiedPointVertices(firstPointVertex, lastPointVertex);
         root.setModifiedPointAttributes(firstPointVertex, lastPointVertex);
       }
+    }
+  }
+
+
+  @Override
+  protected void checkMatrix(int dimensions) {
+    if (matrix == null) {
+      if (dimensions == 2) {
+        matrix = new PMatrix2D();
+        matrixInv = new PMatrix2D();
+      } else {
+        matrix = new PMatrix3D();
+        matrixInv = new PMatrix3D();
+      }
+    } else if (dimensions == 3 && (matrix instanceof PMatrix2D)) {
+      matrix = new PMatrix3D(matrix);
+      matrixInv = new PMatrix3D(matrixInv);
     }
   }
 
@@ -1755,10 +1761,11 @@ public class PShapeOpenGL extends PShape {
       return;
     }
 
-    VertexAttribute attrib = polyAttribs.get(name);
+    VertexAttribute attrib = attribImpl(name, VertexAttribute.OTHER, PGL.FLOAT,
+                                        values.length);
     float[] array = inGeo.fattribs.get(name);
     for (int i = 0; i < values.length; i++) {
-      array[attrib.size * index + 0] = values[i];
+      array[attrib.size * index + i] = values[i];
     }
     markForTessellation();
   }
@@ -1771,10 +1778,11 @@ public class PShapeOpenGL extends PShape {
       return;
     }
 
-    VertexAttribute attrib = polyAttribs.get(name);
+    VertexAttribute attrib = attribImpl(name, VertexAttribute.OTHER, PGL.INT,
+                                        values.length);
     int[] array = inGeo.iattribs.get(name);
     for (int i = 0; i < values.length; i++) {
-      array[attrib.size * index + 0] = values[i];
+      array[attrib.size * index + i] = values[i];
     }
     markForTessellation();
   }
@@ -1787,10 +1795,11 @@ public class PShapeOpenGL extends PShape {
       return;
     }
 
-    VertexAttribute attrib = polyAttribs.get(name);
+    VertexAttribute attrib = attribImpl(name, VertexAttribute.OTHER, PGL.BOOL,
+                                        values.length);
     byte[] array = inGeo.battribs.get(name);
     for (int i = 0; i < values.length; i++) {
-      array[attrib.size * index + 0] = (byte)(values[i]?1:0);
+      array[attrib.size * index + i] = (byte)(values[i]?1:0);
     }
     markForTessellation();
   }
@@ -2822,15 +2831,21 @@ public class PShapeOpenGL extends PShape {
 
   protected void tessellate() {
     if (root == this && parent == null) { // Root shape
+      boolean initAttr = false;
       if (polyAttribs == null) {
         polyAttribs = PGraphicsOpenGL.newAttributeMap();
-        collectPolyAttribs();
+        initAttr = true;
       }
 
       if (tessGeo == null) {
         tessGeo = PGraphicsOpenGL.newTessGeometry(pg, polyAttribs, PGraphicsOpenGL.RETAINED);
       }
       tessGeo.clear();
+
+      if (initAttr) {
+        collectPolyAttribs();
+      }
+
       for (int i = 0; i < polyAttribs.size(); i++) {
         VertexAttribute attrib = polyAttribs.get(i);
         tessGeo.initAttrib(attrib);
@@ -2848,6 +2863,7 @@ public class PShapeOpenGL extends PShape {
 
   protected void collectPolyAttribs() {
     AttributeMap rootAttribs = root.polyAttribs;
+    tessGeo = root.tessGeo;
 
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {

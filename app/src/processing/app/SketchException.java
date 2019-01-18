@@ -130,6 +130,11 @@ public class SketchException extends Exception {
   }
 
 
+  public boolean isStackTraceEnabled() {
+    return showStackTrace;
+  }
+
+
   /**
    * Nix the java.lang crap out of an exception message
    * because it scares the children.
