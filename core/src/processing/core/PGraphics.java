@@ -5126,27 +5126,22 @@ public class PGraphics extends PImage implements PConstants {
   */
 
 
-//  /**
-//   * Convenience method to get a legit FontMetrics object. Where possible,
-//   * override this any renderer subclass so that you're not using what's
-//   * returned by getDefaultToolkit() to get your metrics.
-//   */
-//  @SuppressWarnings("deprecation")
-//  public FontMetrics getFontMetrics(Font font) {  // ignore
-//    Frame frame = parent.frame;
-//    if (frame != null) {
-//      return frame.getToolkit().getFontMetrics(font);
-//    }
-//    return Toolkit.getDefaultToolkit().getFontMetrics(font);
-//  }
-//
-//
-//  /**
-//   * Convenience method to jump through some Java2D hoops and get an FRC.
-//   */
-//  public FontRenderContext getFontRenderContext(Font font) {  // ignore
-//    return getFontMetrics(font).getFontRenderContext();
-//  }
+
+  //////////////////////////////////////////////////////////////
+
+  // PARITY WITH P5.JS
+
+
+  public void push() {
+    pushStyle();
+    pushMatrix();
+  }
+
+
+  public void pop() {
+    popStyle();
+    popMatrix();
+  }
 
 
 

@@ -10,6 +10,7 @@ X   default font will be faster, using ttf/otf is fine
 X   only createFont("The Font Name") is still slow on macOS
 X   and PFont.list()
 X add circle() and square()
+X add push() and pop()
 
 contrib
 o make tabs into spaces, fixes pixelDensity(2) issue with tabs
@@ -77,7 +78,6 @@ _   (Map is more efficient b/c of size, Iterable more useful)
 
 
 3.5+
-_ add push() and pop()
 _ requestSize() and xxxxTitle() (to diminish use of 'surface')
 _ make setting the window icon automatic, based on files in local dirs
 X   https://github.com/processing/processing/issues/5123
