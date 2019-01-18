@@ -14,6 +14,8 @@ X   https://github.com/processing/processing/pull/5636
 X Examples dialog causes high CPU load
 X   https://github.com/processing/processing/issues/5246
 X   https://github.com/processing/processing/pull/5654
+X console hiding button
+X   https://github.com/processing/processing/pull/5115
 
 jakub
 X Fix sketch exception getting hidden by warning
@@ -27,6 +29,19 @@ _   https://github.com/processing/processing/pull/5642
 _   discuss with Casey
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
+
+
+nasty ones
+_ errors inside setup() aren't coming through at all?
+_   seen in Eclipse; have to turn on the debugger
+_ "Sketch disappeared" infinite pop up dialogs
+_   https://github.com/processing/processing/pull/4808
+_   https://github.com/processing/processing/issues/4805
+_ EventQueue problems with "could not find sketch size" message
+_   https://github.com/processing/processing/issues/4893
+_   https://github.com/processing/processing/issues/5030
+_   size(0, 0) just freezes instead of showing an error (as a result)
+_   https://github.com/processing/processing/issues/5233
 
 
 manager
@@ -67,26 +82,6 @@ _   don't allow adding files w/o saving
 _   others?
 _ clean Windows temp folders
 _   https://github.com/processing/processing/issues/1896
-
-
-contrib
-_ console hiding button?
-_   https://github.com/processing/processing/pull/5115
-_ alternate handling of duplicate library conflicts
-_   https://github.com/processing/processing/pull/5126
-
-
-nasty ones
-_ errors inside setup() aren't coming through at all?
-_   seen in Eclipse; have to turn on the debugger
-_ "Sketch disappeared" infinite pop up dialogs
-_   https://github.com/processing/processing/pull/4808
-_   https://github.com/processing/processing/issues/4805
-_ EventQueue problems with "could not find sketch size" message
-_   https://github.com/processing/processing/issues/4893
-_   https://github.com/processing/processing/issues/5030
-_   size(0, 0) just freezes instead of showing an error (as a result)
-_   https://github.com/processing/processing/issues/5233
 
 
 _ sketch.properties not being written if initial mode is p5.js?
@@ -709,6 +704,8 @@ _ see how library installation goes, then possibly do same w/ examples
 
 PDE / Libraries
 
+_ alternate handling of duplicate library conflicts
+_   https://github.com/processing/processing/pull/5126
 _ Add a means to specify packages to import in library.properties
 _   https://github.com/processing/processing/issues/2134
 _ need to deal with classpath conflicts

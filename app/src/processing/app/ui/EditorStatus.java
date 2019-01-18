@@ -66,10 +66,10 @@ public class EditorStatus extends BasicSplitPaneDivider {
   static public final int CURSOR_LINE_WARNING = 4;
   static public final int NOTICE = 0;
 
-  static final int YES    = 1;
-  static final int NO     = 2;
+  static final int YES = 1;
+  static final int NO = 2;
   static final int CANCEL = 3;
-  static final int OK     = 4;
+  static final int OK = 4;
 
   Editor editor;
 
@@ -77,13 +77,15 @@ public class EditorStatus extends BasicSplitPaneDivider {
   String message = "";
 
   String url;
+
   int rightEdge;
   int mouseX;
-  int rolloverState;
-  static final int ROLLOVER_NONE      = 0;
-  static final int ROLLOVER_URL       = 1;
-  static final int ROLLOVER_COLLAPSE  = 2;
+
+  static final int ROLLOVER_NONE = 0;
+  static final int ROLLOVER_URL = 1;
+  static final int ROLLOVER_COLLAPSE = 2;
   static final int ROLLOVER_CLIPBOARD = 3;
+  int rolloverState;
 
   Font font;
   FontMetrics metrics;
@@ -94,6 +96,7 @@ public class EditorStatus extends BasicSplitPaneDivider {
   // other apps seem to use this one as a hack
   static final String CLIPBOARD_GLYPH = "\u2398";
 
+  // https://en.wikipedia.org/wiki/Geometric_Shapes
 //  static final String COLLAPSE_GLYPH = "\u25B3";  // large up
 //  static final String EXPAND_GLYPH = "\u25BD";  // large down
 //  static final String COLLAPSE_GLYPH = "\u25B5";  // small up (unavailable)
@@ -108,6 +111,7 @@ public class EditorStatus extends BasicSplitPaneDivider {
 
   Image offscreen;
   int sizeW, sizeH;
+  // size of the glyph buttons (width and height are identical)
   int buttonSize;
   boolean collapsed = false;
 
@@ -334,7 +338,7 @@ public class EditorStatus extends BasicSplitPaneDivider {
     if (offscreen == null) {
       sizeW = size.width;
       sizeH = size.height;
-//      buttonSize = sizeH;
+      buttonSize = sizeH;
       offscreen = Toolkit.offscreenGraphics(this, sizeW, sizeH);
     }
 
@@ -349,27 +353,25 @@ public class EditorStatus extends BasicSplitPaneDivider {
 
     g.drawImage(bgImage[mode], 0, 0, sizeW, sizeH, this);
 
-    // What's the mouse over?
-    if (sizeW - sizeH < mouseX && mouseX < sizeW) {
+    rolloverState = ROLLOVER_NONE;
+    if (mouseX > sizeW - buttonSize && mouseX < sizeW) {
       rolloverState = ROLLOVER_COLLAPSE;
+
     } else if (message != null && !message.isEmpty()) {
-      if (sizeW - 2*sizeH < mouseX) {
+      if (sizeW - 2*buttonSize < mouseX) {
         rolloverState = ROLLOVER_CLIPBOARD;
+
       } else if (url != null && mouseX > LEFT_MARGIN &&
         // calculate right edge of the text for rollovers (otherwise the pane
         // cannot be resized up or down whenever a URL is being displayed)
         mouseX < (LEFT_MARGIN + g.getFontMetrics().stringWidth(message))) {
         rolloverState = ROLLOVER_URL;
-      } else {
-        rolloverState = ROLLOVER_NONE;
       }
-    } else {
-      rolloverState = ROLLOVER_NONE;
     }
 
     // https://github.com/processing/processing/issues/3265
     if (message != null) {
-      // needs to be set each time on osx
+      // font needs to be set each time on osx
       g.setFont(font);
       // set the highlight color on rollover so that the user's not surprised
       // to see the web browser open when they click
@@ -381,7 +383,7 @@ public class EditorStatus extends BasicSplitPaneDivider {
       //int x = cancelButton.getX();
       //int w = cancelButton.getWidth();
       int w = Toolkit.getButtonWidth();
-      int x = getWidth() - Math.max(RIGHT_MARGIN, (int)(sizeH*1.2)) - w;
+      int x = getWidth() - Math.max(RIGHT_MARGIN, (int)(buttonSize*1.2)) - w;
       int y = sizeH / 3;
       int h = sizeH / 3;
       g.setColor(new Color(0x80000000, true));
@@ -405,25 +407,26 @@ public class EditorStatus extends BasicSplitPaneDivider {
   }
 
 
-  private final Color whitishTint = new Color(0x20eeeeee, true);
+  //private final Color whitishTint = new Color(0x20eeeeee, true);
 
   /**
-   * @param pos A zero-based index with 0 on the right.
+   * @param pos A zero-based button index with 0 as the rightmost button
    */
   private void drawButton(Graphics g, String symbol, int pos, boolean highlight) {
-    int left = sizeW - (pos + 1) * sizeH;
+    int left = sizeW - (pos + 1) * buttonSize;
     // Overlap very long errors
-    g.drawImage(bgImage[mode], left, 0, sizeH, sizeH, this);
+    g.drawImage(bgImage[mode], left, 0, buttonSize, sizeH, this);
 
     if (highlight) {
-      g.setColor(whitishTint);
-      g.fillRect(left, 0, sizeH, sizeH);
+      // disabling since this doesn't match any of our other UI
+//      g.setColor(whitishTint);
+//      g.fillRect(left, 0, sizeH, sizeH);
       g.setColor(urlColor);
     } else {
       g.setColor(fgColor[mode]);
     }
     g.drawString(symbol,
-                 left + (sizeH - g.getFontMetrics().stringWidth(symbol))/2,
+                 left + (buttonSize - g.getFontMetrics().stringWidth(symbol))/2,
                  (sizeH + ascent) / 2);
   }
 
