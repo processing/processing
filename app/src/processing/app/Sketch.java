@@ -40,9 +40,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.*;
@@ -93,6 +91,8 @@ public class Sketch {
   /** Moved out of Editor and into here for cleaner access. */
   private boolean untitled;
 
+  /** true if we've posted a "sketch disappeared" warning */
+  private boolean disappearedWarning;
 
   /**
    * Used by the command-line version to create a sketch object.
@@ -125,6 +125,7 @@ public class Sketch {
     int suffixLength = mode.getDefaultExtension().length() + 1;
     name = mainFilename.substring(0, mainFilename.length() - suffixLength);
     folder = new File(new File(path).getParent());
+    disappearedWarning = false;
     load();
   }
 
@@ -1199,6 +1200,7 @@ public class Sketch {
 
     name = sketchName;
     folder = sketchFolder;
+    disappearedWarning = false;
     codeFolder = new File(folder, "code");
     dataFolder = new File(folder, "data");
 
@@ -1499,8 +1501,6 @@ public class Sketch {
   */
 
 
-  private Set<File> existenceWarnings = new HashSet<>();
-
   /**
    * Make sure the sketch hasn't been moved or deleted by a nefarious user.
    * If they did, try to re-create it and save. Only checks whether the
@@ -1510,8 +1510,8 @@ public class Sketch {
     if (!folder.exists()) {
       // Avoid an infinite loop if we've already warned about this
       // https://github.com/processing/processing/issues/4805
-      if (!existenceWarnings.contains(folder)) {
-        existenceWarnings.add(folder);
+      if (!disappearedWarning) {
+        disappearedWarning = true;
 
         // Disaster recovery, try to salvage what's there already.
         Messages.showWarning(Language.text("ensure_exist.messages.missing_sketch"),
@@ -1526,6 +1526,7 @@ public class Sketch {
           calcModified();
 
         } catch (Exception e) {
+          // disappearedWarning prevents infinite loop in this scenario
           Messages.showWarning(Language.text("ensure_exist.messages.unrecoverable"),
                                Language.text("ensure_exist.messages.unrecoverable.description"), e);
         }
