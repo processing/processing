@@ -71,11 +71,11 @@
             value="../../processing-docs/content/examples" />
 
   <property name="jdk.version" value="8" />
-  <property name="jdk.update" value="192" />
-  <property name="jdk.build" value="12" />
+  <property name="jdk.update" value="202" />
+  <property name="jdk.build" value="08" />
   <!-- See https://gist.github.com/P7h/9741922
        or http://stackoverflow.com/q/10268583 -->
-  <property name="jdk.hash" value="750e1c8617c5452694857ad95c3ee230" />
+  <property name="jdk.hash" value="1961070e4c9b4e26a04e7f5a083f551e" />
 
   <property name="jdk.short" value="${jdk.version}u${jdk.update}" />
   <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />

@@ -5,6 +5,7 @@ X   https://github.com/processing/processing/issues/5375
 X   this is by design/follows PDE behavior
 X fix the link to the FAQ in the menu
 X   https://github.com/processing/processing/issues/5729
+X update to Java 8u202
 
 contrib
 X Updated russian translation, now can choose russian in preferences
@@ -39,9 +40,10 @@ _   https://github.com/processing/processing/pull/4808
 _   https://github.com/processing/processing/issues/4805
 _ EventQueue problems with "could not find sketch size" message
 _   https://github.com/processing/processing/issues/4893
-_   https://github.com/processing/processing/issues/5030
-_   size(0, 0) just freezes instead of showing an error (as a result)
-_   https://github.com/processing/processing/issues/5233
+X   https://github.com/processing/processing/pull/5708
+X   https://github.com/processing/processing/issues/5030 (duplicate)
+_ size(0, 0) just freezes instead of showing an error
+X   https://github.com/processing/processing/issues/5233 (duplicate)
 
 
 manager
