@@ -40,7 +40,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.*;
@@ -1497,29 +1499,36 @@ public class Sketch {
   */
 
 
+  private Set<File> existenceWarnings = new HashSet<>();
+
   /**
-   * Make sure the sketch hasn't been moved or deleted by some
-   * nefarious user. If they did, try to re-create it and save.
-   * Only checks to see if the main folder is still around,
-   * but not its contents.
+   * Make sure the sketch hasn't been moved or deleted by a nefarious user.
+   * If they did, try to re-create it and save. Only checks whether the
+   * main folder is still around, but not its contents.
    */
   public void ensureExistence() {
     if (!folder.exists()) {
-      // Disaster recovery, try to salvage what's there already.
-      Messages.showWarning(Language.text("ensure_exist.messages.missing_sketch"),
-                           Language.text("ensure_exist.messages.missing_sketch.description"));
-      try {
-        folder.mkdirs();
-        modified = true;
+      // Avoid an infinite loop if we've already warned about this
+      // https://github.com/processing/processing/issues/4805
+      if (!existenceWarnings.contains(folder)) {
+        existenceWarnings.add(folder);
 
-        for (int i = 0; i < codeCount; i++) {
-          code[i].save();  // this will force a save
+        // Disaster recovery, try to salvage what's there already.
+        Messages.showWarning(Language.text("ensure_exist.messages.missing_sketch"),
+                             Language.text("ensure_exist.messages.missing_sketch.description"));
+        try {
+          folder.mkdirs();
+          modified = true;
+
+          for (int i = 0; i < codeCount; i++) {
+            code[i].save();  // this will force a save
+          }
+          calcModified();
+
+        } catch (Exception e) {
+          Messages.showWarning(Language.text("ensure_exist.messages.unrecoverable"),
+                               Language.text("ensure_exist.messages.unrecoverable.description"), e);
         }
-        calcModified();
-
-      } catch (Exception e) {
-        Messages.showWarning(Language.text("ensure_exist.messages.unrecoverable"),
-                             Language.text("ensure_exist.messages.unrecoverable.description"), e);
       }
     }
   }

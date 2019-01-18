@@ -22,6 +22,12 @@ jakub
 X Fix sketch exception getting hidden by warning
 X   https://github.com/processing/processing/pull/5486
 X   https://github.com/processing/processing/issues/5412
+X EventQueue problems with "could not find sketch size" message
+X   https://github.com/processing/processing/issues/4893
+X   https://github.com/processing/processing/pull/5708
+X   https://github.com/processing/processing/issues/5030 (duplicate)
+X size(0, 0) just freezes instead of showing an error
+X   https://github.com/processing/processing/issues/5233 (duplicate)
 
 
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
@@ -38,12 +44,6 @@ _   seen in Eclipse; have to turn on the debugger
 _ "Sketch disappeared" infinite pop up dialogs
 _   https://github.com/processing/processing/pull/4808
 _   https://github.com/processing/processing/issues/4805
-_ EventQueue problems with "could not find sketch size" message
-_   https://github.com/processing/processing/issues/4893
-X   https://github.com/processing/processing/pull/5708
-X   https://github.com/processing/processing/issues/5030 (duplicate)
-_ size(0, 0) just freezes instead of showing an error
-X   https://github.com/processing/processing/issues/5233 (duplicate)
 
 
 manager
