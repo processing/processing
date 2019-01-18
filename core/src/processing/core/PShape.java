@@ -22,8 +22,23 @@
 
 package processing.core;
 
+import java.awt.Image;
+import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Base64.Decoder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.nio.charset.StandardCharsets;
+import javax.swing.ImageIcon;
+import javax.xml.bind.DatatypeConverter;
+
+
 
 import processing.core.PApplet;
 
@@ -106,6 +121,7 @@ public class PShape implements PConstants {
 
   /** Texture or image data associated with this shape. */
   protected PImage image;
+  protected String imagePath = null;
 
   public static final String OUTSIDE_BEGIN_END_ERROR =
     "%1$s can only be called between beginShape() and endShape()";
@@ -1645,6 +1661,10 @@ public class PShape implements PConstants {
              params[6], params[7]);
 
     } else if (kind == RECT) {
+
+      if (imagePath != null){
+          loadImage(g);
+      }
       if (image != null) {
         int oldMode = g.imageMode;
         g.imageMode(CORNER);
@@ -1879,6 +1899,63 @@ public class PShape implements PConstants {
     g.endShape(close ? CLOSE : OPEN);
   }
 
+  private void loadImage(PGraphics g){
+
+      if(this.imagePath.startsWith("data:image")){
+          loadBase64Image();
+      }
+
+      if(this.imagePath.startsWith("file://")){
+          loadFileSystemImage(g);
+      }
+      this.imagePath = null;
+  }
+  
+  private void loadFileSystemImage(PGraphics g){
+    imagePath = imagePath.substring(7);
+    PImage loadedImage = g.parent.loadImage(imagePath);
+    if(loadedImage == null){
+      System.err.println("Error loading image file: " + imagePath);
+    }else{
+      setTexture(loadedImage);
+    }
+  }
+
+ private void loadBase64Image(){
+    String[] parts = this.imagePath.split(";base64,");
+    String extension = parts[0].substring(11);
+    String encodedData = parts[1];
+
+    byte[] decodedBytes = DatatypeConverter.parseBase64Binary(encodedData);
+
+    if(decodedBytes == null){
+      System.err.println("Decode Error on image: " + imagePath.substring(0, 20));
+      return;
+    }
+    
+    Image awtImage = new ImageIcon(decodedBytes).getImage();
+
+    if (awtImage instanceof BufferedImage) {
+      BufferedImage buffImage = (BufferedImage) awtImage;
+      int space = buffImage.getColorModel().getColorSpace().getType();
+      if (space == ColorSpace.TYPE_CMYK) {
+       return;
+      }
+    }
+
+    PImage loadedImage = new PImage(awtImage);
+    if (loadedImage.width == -1) {
+      // error...
+    }
+
+    // if it's a .gif image, test to see if it has transparency
+    if (extension.equals("gif") || extension.equals("png") ||
+      extension.equals("unknown")) {
+    loadedImage.checkAlpha();
+    }
+    
+    setTexture(loadedImage);
+  }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
