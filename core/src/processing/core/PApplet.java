@@ -2455,7 +2455,7 @@ public class PApplet implements PConstants {
         // Get the frame time of the last frame
         double frameTimeSecs = (now - frameRateLastNanos) / 1e9;
         // Convert average frames per second to average frame time
-        double avgFrameTimeSecs = 1.0 / (double) frameRate;
+        double avgFrameTimeSecs = 1.0 / frameRate;
         // Calculate exponential moving average of frame time
         final double alpha = 0.05;
         avgFrameTimeSecs = (1.0 - alpha) * avgFrameTimeSecs + alpha * frameTimeSecs;
