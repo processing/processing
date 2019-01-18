@@ -12109,6 +12109,12 @@ public class PApplet implements PConstants {
   }
 
 
+  public void square(float x, float y, float extent) {
+    if (recorder != null) recorder.square(x, y, extent);
+    g.square(x, y, extent);
+  }
+
+
   /**
    * ( begin auto-generated from ellipseMode.xml )
    *
@@ -12194,6 +12200,12 @@ public class PApplet implements PConstants {
                   float start, float stop, int mode) {
     if (recorder != null) recorder.arc(a, b, c, d, start, stop, mode);
     g.arc(a, b, c, d, start, stop, mode);
+  }
+
+
+  public void circle(float x, float y, float extent) {
+    if (recorder != null) recorder.circle(x, y, extent);
+    g.circle(x, y, extent);
   }
 
 
@@ -13216,6 +13228,18 @@ public class PApplet implements PConstants {
   public void text(float num, float x, float y, float z) {
     if (recorder != null) recorder.text(num, x, y, z);
     g.text(num, x, y, z);
+  }
+
+
+  public void push() {
+    if (recorder != null) recorder.push();
+    g.push();
+  }
+
+
+  public void pop() {
+    if (recorder != null) recorder.pop();
+    g.pop();
   }
 
 
