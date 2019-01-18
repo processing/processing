@@ -4063,7 +4063,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected PFont createFont(String name, float size,
-                          boolean smooth, char[] charset) {
+                             boolean smooth, char[] charset) {
     String lowerName = name.toLowerCase();
     Font baseFont = null;
 
@@ -4073,9 +4073,9 @@ public class PGraphics extends PImage implements PConstants {
         stream = parent.createInput(name);
         if (stream == null) {
           System.err.println("The font \"" + name + "\" " +
-                                 "is missing or inaccessible, make sure " +
-                                 "the URL is valid or that the file has been " +
-                                 "added to your sketch and is readable.");
+                             "is missing or inaccessible, make sure " +
+                             "the URL is valid or that the file has been " +
+                             "added to your sketch and is readable.");
           return null;
         }
         baseFont = Font.createFont(Font.TRUETYPE_FONT, parent.createInput(name));

@@ -13,6 +13,9 @@ X   https://github.com/processing/processing/issues/5645
 X   https://github.com/processing/processing/pull/5647
 X extended SVG support
 X   https://github.com/processing/processing/pull/4168
+X show a warning when a font isn't what the user expected
+X   https://github.com/processing/processing/issues/5481
+X   https://github.com/processing/processing/pull/5605
 
 gohai
 X Profile GL3bc is not available on X11GraphicsDevice
@@ -74,11 +77,6 @@ X   https://github.com/processing/processing/pull/5202
 _   need to make this work behind the scenes instead
 _   create icon.png or have an 'icons' folder with multiple sizes
 
-
-contribs
-_ show a warning when a font isn't what the user expected
-_   https://github.com/processing/processing/issues/5481
-_   https://github.com/processing/processing/pull/5605
 
 
 _ Implement blendMode() for PDF

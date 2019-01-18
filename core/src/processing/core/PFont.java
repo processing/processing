@@ -146,10 +146,10 @@ public class PFont implements PConstants {
   protected boolean fontSearched;
 
   /**
-   * The name of the font that is used as default when a font isn't found.
+   * The name of the font that Java uses when a font isn't found.
    * See {@link #findFont(String)} and {@link #loadFonts()} for more info.
    */
-  static protected String defaultFontName;
+  static protected String systemFontName;
 
   /**
    * Array of the native system fonts. Used to lookup native fonts by their
@@ -157,7 +157,7 @@ public class PFont implements PConstants {
    * bug that they can't be bothered to fix.
    */
   static protected Font[] fonts;
-  static protected HashMap<String,Font> fontDifferent;
+  static protected HashMap<String, Font> fontDifferent;
 
 //  /**
 //   * If not null, this font is set to load dynamically. This is the default
@@ -907,9 +907,12 @@ public class PFont implements PConstants {
       GraphicsEnvironment ge =
         GraphicsEnvironment.getLocalGraphicsEnvironment();
       fonts = ge.getAllFonts();
-      defaultFontName = new Font("",Font.PLAIN,1).getFontName();
+
+      // Figure out what the font is named when things fail
+      systemFontName = new Font("", Font.PLAIN, 1).getFontName();
+
       if (PApplet.platform == PConstants.MACOSX) {
-        fontDifferent = new HashMap<String,Font>();
+        fontDifferent = new HashMap<>();
         for (Font font : fonts) {
           // getName() returns the PostScript name on OS X 10.6 w/ Java 6.
           fontDifferent.put(font.getName(), font);
@@ -924,9 +927,9 @@ public class PFont implements PConstants {
    * Starting with Java 1.5, Apple broke the ability to specify most fonts.
    * This bug was filed years ago as #4769141 at bugreporter.apple.com. More:
    * <a href="http://dev.processing.org/bugs/show_bug.cgi?id=407">Bug 407</a>.
-   *<br>
-   * This function displays a warning when the font isn't found and the default font is
-   * used.
+   * <br>
+   * This function displays a warning when the font isn't found and
+   * Java's system font is used.
    * See: <a href="https://github.com/processing/processing/issues/5481">issue #5481</a>
    */
   static public Font findFont(String name) {
@@ -936,18 +939,11 @@ public class PFont implements PConstants {
       if (maybe != null) {
         return maybe;
       }
-//      for (int i = 0; i < fonts.length; i++) {
-//        if (name.equals(fonts[i].getName())) {
-//          return fonts[i];
-//        }
-//      }
     }
     Font font = new Font(name, Font.PLAIN, 1);
-    if(!defaultFontName.equals(name) && font.getFontName().equals(defaultFontName)) {
-      System.err.println("Warning: font \"" + name
-                         + "\" is missing or inaccessible on this system. Default font \""
-                         + defaultFontName + "\" is used.");
-
+    if (!name.equals(systemFontName) &&
+      font.getFontName().equals(systemFontName)) {
+      PGraphics.showWarning("Default font being used because \"" + name + "\" is not available.");
     }
     return font;
   }
