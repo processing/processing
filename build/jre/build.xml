@@ -1,49 +1,76 @@
 <project name="downloader" default="dist">
 
-  <target name="compile">
+  <path id="classpath.base">
+    <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
+    <pathelement location="${jdt.jar};" />
+    <pathelement location="${java.mode}/jdtCompilerAdapter.jar" />
+  </path>
+
+  <path id="classpath.test">
+    <pathelement location="library-test/junit-4.8.1.jar" />
+    <pathelement location = "build" />
+    <path refid="classpath.base" />
+  </path>
+
+  <target name="test-compile">
+    <mkdir dir="build" />
+
+    <!-- Where can I expect to find Java Mode JARs? -->
+    <property name="java.mode" value="../../java/mode/" />
+
+    <javac source="1.8"
+        target="1.8"
+        srcdir="src; test"
+        destdir="build"
+        debug="true"
+        includeantruntime="true"
+        nowarn="true">
+      <classpath refid="classpath.test"/>
+    </javac>
+
+  </target>
+
+  <target name="test" depends="test-compile">
+    <junit haltonfailure="true">
+      <classpath refid="classpath.test" />
+      <formatter type="brief" usefile="false" />
+      <test name="AdoptOpenJdkDownloadUrlGeneratorTest" />
+      <test name="OracleDownloadUrlGeneratorTest" />
+    </junit>
+  </target>
+
+  <target name="compile" depends="test">
     <mkdir dir="bin" />
 
     <!-- Where can I expect to find Java Mode JARs? -->
     <property name="java.mode" value="../../java/mode/" />
-    
-    <!-- Check for JDT compiler, since this is likely a PDE build. Using
-	 it allows us to build the PDE with only a JRE on Windows and Linux.
-	 So that the core can be built independently of the PDE, 
-	 use javac (the "modern" compiler) if ecj is not present. -->
-    <property name="jdt.jar" value="${java.mode}/org.eclipse.jdt.core.jar" />
-    <condition property="build.compiler" 
-	       value="org.eclipse.jdt.core.JDTCompilerAdapter"
-	       else="modern">
-      <available file="${jdt.jar}" />
-    </condition>
-    <!--<echo message="compiler is ${build.compiler}" />-->
 
     <javac source="1.8"
-           target="1.8" 
-	   srcdir="src" 
-           destdir="bin" 
-	   debug="true" 
-	   includeantruntime="true"
-	   nowarn="true">
-      <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
-      <compilerclasspath path="${jdt.jar}; ${java.mode}/jdtCompilerAdapter.jar" />
+        target="1.8"
+        srcdir="src"
+        destdir="bin"
+        debug="true"
+        includeantruntime="true"
+        nowarn="true">
+      <classpath refid="classpath.test"/>
     </javac>
   </target>
-  
+
   <target name="dist" depends="compile">
     <jar basedir="bin" destfile="downloader.jar" />
   </target>
-  
+
   <target name="demo" depends="dist">
-    <taskdef name="downloader" 
+    <taskdef name="downloader"
 	     classname="Downloader"
 	     classpath="downloader.jar" />
-    <downloader version="8" update="31" build="13" 
+    <downloader version="8" update="31" build="13"
                 jdk="true" flavor="macosx-x64.dmg" />
   </target>
-  
+
   <target name="clean">
     <delete dir="bin" />
+    <delete dir="build" />
     <delete file="downloader.jar" />
   </target>
 

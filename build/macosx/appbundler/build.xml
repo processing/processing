@@ -73,7 +73,7 @@ questions.
         </copy>
 
         <exec executable="${cc}">
-            <arg line="${arch64} ${arch32}"/>
+            <arg line="${arch64}"/> <!-- ${arch32} not supported -->
             <arg value="-I"/>
             <arg value="${env.JAVA_HOME}/include"/>
             <arg value="-I"/>
@@ -87,10 +87,10 @@ questions.
             <arg value="-isysroot"/>
             <!--
             <arg value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk"/>
-            <arg value="-mmacosx-version-min=10.7"/> 
+            <arg value="-mmacosx-version-min=10.7"/>
             -->
-            <arg value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk"/>
-            <arg value="-mmacosx-version-min=10.8"/> 
+            <arg value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk"/>
+            <arg value="-mmacosx-version-min=10.8"/>
             <arg value="native/main.m"/>
         </exec>
     </target>

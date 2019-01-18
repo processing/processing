@@ -1,0 +1,133 @@
+# Turn on debug tracing for org.eclipse.jdt.core plugin
+org.eclipse.jdt.core/debug=false
+
+# Reports buffer manager activity
+org.eclipse.jdt.core/debug/buffermanager=false
+
+# Reports java  builder activity : nature of build, built state reading, indictment process
+org.eclipse.jdt.core/debug/builder=false
+
+# Reports java builder stats
+org.eclipse.jdt.core/debug/builder/stats=false
+
+# Reports compiler activity
+org.eclipse.jdt.core/debug/compiler=false
+
+# Reports codeassist completion activity : recovered unit, inferred completions
+org.eclipse.jdt.core/debug/completion=false
+
+# Reports classpath variable initialization, and classpath container resolution
+org.eclipse.jdt.core/debug/cpresolution=false
+
+# Reports internals of classpath variable initialization, and classpath container resolution (to be used on the JDT/Core team request only)
+org.eclipse.jdt.core/debug/cpresolution/advanced=false
+
+# Reports failures during classpath variable initialization, and classpath container resolution
+org.eclipse.jdt.core/debug/cpresolution/failure=false
+
+# Reports bad node nesting in DOM AST (for interactive usage)
+org.eclipse.jdt.core/debug/dom/ast=false
+
+# Throws an exception in case of bad node nesting in DOM AST (enabled in tests)
+org.eclipse.jdt.core/debug/dom/ast/throw=false
+
+# Reports type errors when using ASTRewrite (throws exceptions; not enabled by default, since some non-typesafe operations are fine in practice)
+org.eclipse.jdt.core/debug/dom/rewrite=false
+
+# Report type hierarchy connections, refreshes and deltas
+org.eclipse.jdt.core/debug/hierarchy=false
+
+# Reports background indexer activity: indexing, saving index file, index queries
+org.eclipse.jdt.core/debug/indexmanager=false
+
+# Reports internals of indexer activity (to be used on the JDT/Core team request only)
+org.eclipse.jdt.core/debug/indexmanager/advanced=false
+
+# Print notified Java element deltas
+org.eclipse.jdt.core/debug/javadelta=false
+org.eclipse.jdt.core/debug/javadelta/verbose=false
+
+# Reports various Java model activities
+org.eclipse.jdt.core/debug/javamodel=false
+
+# Reports Java model elements opening/closing
+org.eclipse.jdt.core/debug/javamodel/cache=false
+
+# Reports changes in the Java classpath and classpath resolution
+org.eclipse.jdt.core/debug/javamodel/classpath=false
+
+# Reports all insertions and removals from the java model cache
+org.eclipse.jdt.core/debug/javamodel/insertions=false
+
+# Records information about the invalid archive cache
+org.eclipse.jdt.core/debug/javamodel/invalid_archives=false
+
+# Runs self-diagnostics on the free space lists. This is expensive and will slow down indexing.
+org.eclipse.jdt.core/debug/index/freespacetest=false
+
+# Controls the amount of memory used by the traceback log, in megabytes (suggested size = 1024).
+# If nonzero, the index will print out detailed traceback information when corruption is detected. 
+org.eclipse.jdt.core/debug/index/logsizemegs=0
+
+# Logs every time a page is allocated, flushed, or inserted/removed from the page cache (very verbose)
+org.eclipse.jdt.core/debug/index/pagecache=false
+
+# Prints information about when the indexer runs and what files are being indexed
+org.eclipse.jdt.core/debug/index/indexer=false
+
+# Prints a line whenever a class is added to or removed from the index
+org.eclipse.jdt.core/debug/index/insertions=false
+
+# Prints diagnostic information about index database locks
+org.eclipse.jdt.core/debug/index/locks=false
+
+# Prints a message whenever the indexer is scheduled. Useful for tracking race conditions in the unit tests.
+org.eclipse.jdt.core/debug/index/scheduling=false
+
+# Prints statistics about database memory usage
+org.eclipse.jdt.core/debug/index/space=false
+
+# Performs self-testing during indexing by reading back every class and comparing it with the original .class file
+org.eclipse.jdt.core/debug/index/selftest=false
+
+# Prints statistics about indexing time
+org.eclipse.jdt.core/debug/index/timing=false
+
+# Reports post actions addition/run
+org.eclipse.jdt.core/debug/postaction=false
+
+# Reports name resolution activity
+org.eclipse.jdt.core/debug/resolution=false
+
+# Reports java search activity
+org.eclipse.jdt.core/debug/search=false
+
+# Reports source mapper activity
+org.eclipse.jdt.core/debug/sourcemapper=false
+
+# Reports code formatter activity
+org.eclipse.jdt.core/debug/formatter=false
+
+# Reports open on selection activity : recovered unit, inferred selection
+org.eclipse.jdt.core/debug/selection=false
+
+# Reports access to zip and jar files through the Java model
+org.eclipse.jdt.core/debug/zipaccess=false
+
+# Reports the time to perform code completion.
+org.eclipse.jdt.core/perf/completion=300
+
+# Reports the time to perform code selection.
+org.eclipse.jdt.core/perf/selection=300
+
+# Reports the time to process a java element delta.
+org.eclipse.jdt.core/perf/javadeltalistener=500
+
+# Reports the time to perform an initialization of a classpath variable.
+org.eclipse.jdt.core/perf/variableinitializer=5000
+
+# Reports the time to perform an initialization of a classpath container.
+org.eclipse.jdt.core/perf/containerinitializer=5000
+
+# Reports the time to perform a reconcile operation.
+org.eclipse.jdt.core/perf/reconcile=1000

@@ -330,7 +330,8 @@ public class Runner implements MessageConsumer {
     params.append("-Djna.nosys=true");
 
     // Added for 3.2.1, was still using the default ext.dirs in the PDE
-    try {
+    // java.ext.dirs no longer supported in Java 11
+    /*try {
       String extPath =
         new File(Platform.getJavaHome(), "lib/ext").getCanonicalPath();
       // quoting this on OS X causes it to fail
@@ -338,7 +339,7 @@ public class Runner implements MessageConsumer {
       params.append("-Djava.ext.dirs=" + extPath);
     } catch (IOException e) {
       e.printStackTrace();
-    }
+    }*/
 
     if (Platform.isMacOS()) {
       // This successfully sets the application menu name,
@@ -350,10 +351,10 @@ public class Runner implements MessageConsumer {
     }
     // sketch.libraryPath might be ""
     // librariesClassPath will always have sep char prepended
-    params.append("-Djava.library.path=" +
+    /*params.append("-Djava.library.path=" +
                   build.getJavaLibraryPath() +
                   File.pathSeparator +
-                  System.getProperty("java.library.path"));
+                  System.getProperty("java.library.path"));*/
 
     params.append("-cp");
     params.append(build.getClassPath());

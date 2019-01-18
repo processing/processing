@@ -27,11 +27,11 @@
   <jre>
     <path>java</path>
     <!-- Deal with jokers who install JOGL, ANTLR, etc system-wide -->
-    <opt>-Djava.ext.dirs="%EXEDIR%\\java\\lib\\ext"</opt>
+    <!-- <opt>-Djava.ext.dirs="%EXEDIR%\\java\\lib\\ext"</opt> -->
     <!-- https://github.com/processing/processing/issues/2239 -->
     <opt>-Djna.nosys=true</opt>
-    <!-- Because nosys is set to true, the DLL in the current working 
-	 directory won't be considered. And we can't specify the user's 
+    <!-- Because nosys is set to true, the DLL in the current working
+	 directory won't be considered. And we can't specify the user's
 	 directory here because that'll get us into encoding trouble.
 	 (See https://github.com/processing/processing/issues/3624)
 	 Instead, set this so that Native.loadNativeLibrary() will use

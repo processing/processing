@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <project name="Processing Serial Library" default="build">
-  
+
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
     <delete file="library/serial.jar" />
@@ -15,17 +15,14 @@
     <mkdir dir="bin" />
     <javac source="1.8"
 	   target="1.8"
-	   srcdir="src" destdir="bin" 
+	   srcdir="src" destdir="bin"
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
 	   classpath="../../../core/library/core.jar; library/jssc.jar"
-	   nowarn="true"
-	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
-      <compilerclasspath path="../../mode/org.eclipse.jdt.core.jar; 
-                               ../../mode/jdtCompilerAdapter.jar" />
+	   nowarn="true">
     </javac>
   </target>
-  
+
   <target name="build" depends="compile" description="Build serial library">
     <jar basedir="bin" destfile="library/serial.jar" />
   </target>

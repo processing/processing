@@ -246,13 +246,13 @@ public class PSurfaceFX implements PSurface {
 
       PApplet sketch = surface.sketch;
 
-      float renderScale = Screen.getMainScreen().getRenderScale();
+      float renderScale = Screen.getMainScreen().getRecommendedOutputScaleX();
       if (PApplet.platform == PConstants.MACOSX) {
         for (Screen s : Screen.getScreens()) {
-          renderScale = Math.max(renderScale, s.getRenderScale());
+          renderScale = Math.max(renderScale, s.getRecommendedOutputScaleX());
         }
       }
-      float uiScale = Screen.getMainScreen().getUIScale();
+      float uiScale = Screen.getMainScreen().getRecommendedOutputScaleX();
       if (sketch.pixelDensity == 2 && renderScale < 2) {
         sketch.pixelDensity = 1;
         sketch.g.pixelDensity = 1;
@@ -812,7 +812,7 @@ public class PSurfaceFX implements PSurface {
 
 
   static Map<EventType<? extends MouseEvent>, Integer> mouseMap =
-    new HashMap<EventType<? extends MouseEvent>, Integer>();
+    new HashMap<>();
   static {
     mouseMap.put(MouseEvent.MOUSE_PRESSED, processing.event.MouseEvent.PRESS);
     mouseMap.put(MouseEvent.MOUSE_RELEASED, processing.event.MouseEvent.RELEASE);
@@ -952,7 +952,7 @@ public class PSurfaceFX implements PSurface {
       default:
         break;
     }
-    return kc.impl_getCode();
+    return kc.getCode();
   }
 
 
@@ -1051,7 +1051,7 @@ public class PSurfaceFX implements PSurface {
     if (fxEvent.getEventType() == KeyEvent.KEY_TYPED) {
       ch = fxEvent.getCharacter();
     } else {
-      ch = kc.impl_getChar();
+      ch = kc.getChar();
     }
 
     if (ch.length() < 1) return PConstants.CODED;

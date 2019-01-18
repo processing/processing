@@ -13,14 +13,14 @@
     <fail unless="core-built" message="Please build the core library first and make sure it is located at ../core/library/core.jar" />
 
     <mkdir dir="bin" />
-    
+
     <!-- copy languages files -->
     <copy todir="bin">
       <fileset dir="src">
         <include name="processing/app/languages/*.properties" />
       </fileset>
     </copy>
-    
+
     <!-- in some cases, pde.jar was not getting built
 	 https://github.com/processing/processing/issues/1792 -->
     <delete file="pde.jar" />
@@ -30,22 +30,19 @@
 
     <javac source="1.8"
 	   target="1.8"
-	   destdir="bin" 
-	   excludes="**/tools/format/**" 
-	   encoding="UTF-8" 
-	   includeAntRuntime="false" 
-	   classpath="../core/library/core.jar; 
-                      ../core/apple.jar; 
-                      lib/ant.jar; 
-                      lib/ant-launcher.jar; 
+	   destdir="bin"
+	   excludes="**/tools/format/**"
+	   encoding="UTF-8"
+	   includeAntRuntime="false"
+	   classpath="../core/library/core.jar;
+                      ../core/apple.jar;
+                      lib/ant.jar;
+                      lib/ant-launcher.jar;
                       lib/jna.jar;
                       lib/jna-platform.jar"
 	   debug="on"
-	   nowarn="true"
-	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
+	   nowarn="true">
       <src path="src" />
-      <compilerclasspath path="../java/mode/org.eclipse.jdt.core.jar; 
-                               ../java/mode/jdtCompilerAdapter.jar" />
     </javac>
   </target>
 
