@@ -27,7 +27,7 @@
 
 package processing.mode.java.preproc;
 
-import java.awt.*;
+import java.awt.EventQueue;
 import java.io.*;
 import java.util.*;
 import java.util.regex.MatchResult;

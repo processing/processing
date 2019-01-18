@@ -146,6 +146,12 @@ public class PFont implements PConstants {
   protected boolean fontSearched;
 
   /**
+   * The name of the font that is used as default when a font isn't found.
+   * See {@link #findFont(String)} and {@link #loadFonts()} for more info.
+   */
+  static protected String defaultFontName;
+
+  /**
    * Array of the native system fonts. Used to lookup native fonts by their
    * PostScript name. This is a workaround for a several year old Apple Java
    * bug that they can't be bothered to fix.
@@ -901,6 +907,7 @@ public class PFont implements PConstants {
       GraphicsEnvironment ge =
         GraphicsEnvironment.getLocalGraphicsEnvironment();
       fonts = ge.getAllFonts();
+      defaultFontName = new Font("",Font.PLAIN,1).getFontName();
       if (PApplet.platform == PConstants.MACOSX) {
         fontDifferent = new HashMap<String,Font>();
         for (Font font : fonts) {
@@ -917,6 +924,10 @@ public class PFont implements PConstants {
    * Starting with Java 1.5, Apple broke the ability to specify most fonts.
    * This bug was filed years ago as #4769141 at bugreporter.apple.com. More:
    * <a href="http://dev.processing.org/bugs/show_bug.cgi?id=407">Bug 407</a>.
+   *<br>
+   * This function displays a warning when the font isn't found and the default font is
+   * used.
+   * See: <a href="https://github.com/processing/processing/issues/5481">issue #5481</a>
    */
   static public Font findFont(String name) {
     loadFonts();
@@ -931,7 +942,14 @@ public class PFont implements PConstants {
 //        }
 //      }
     }
-    return new Font(name, Font.PLAIN, 1);
+    Font font = new Font(name, Font.PLAIN, 1);
+    if(!defaultFontName.equals(name) && font.getFontName().equals(defaultFontName)) {
+      System.err.println("Warning: font \"" + name
+                         + "\" is missing or inaccessible on this system. Default font \""
+                         + defaultFontName + "\" is used.");
+
+    }
+    return font;
   }
 
 
