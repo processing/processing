@@ -2730,6 +2730,11 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  public void square(float x, float y, float extent) {
+    rect(x, y, extent, extent);
+  }
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -2903,6 +2908,11 @@ public class PGraphics extends PImage implements PConstants {
   protected void arcImpl(float x, float y, float w, float h,
                          float start, float stop, int mode) {
     showMissingWarning("arc");
+  }
+
+
+  public void circle(float x, float y, float extent) {
+    ellipse(x, y, extent, extent);
   }
 
 

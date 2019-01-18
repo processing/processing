@@ -1,4 +1,4 @@
-0266 (3.4.1 or 3.5)
+0266 (3.5)
 X make JSONObject.quote() (both versions) public
 X fix javaPlatform variable for newer JDK versions
 X   https://github.com/processing/processing/pull/5626
@@ -9,6 +9,7 @@ X greatly improve startup time when user-specified fonts are not used
 X   default font will be faster, using ttf/otf is fine
 X   only createFont("The Font Name") is still slow on macOS
 X   and PFont.list()
+X add circle() and square()
 
 contrib
 o make tabs into spaces, fixes pixelDensity(2) issue with tabs
@@ -76,7 +77,6 @@ _   (Map is more efficient b/c of size, Iterable more useful)
 
 
 3.5+
-_ add circle() and square()
 _ add push() and pop()
 _ requestSize() and xxxxTitle() (to diminish use of 'surface')
 _ make setting the window icon automatic, based on files in local dirs
