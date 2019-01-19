@@ -1384,7 +1384,8 @@ public class JavaEditor extends Editor {
 //      });
 //    debugMenu.add(item);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.debug.step"), KeyEvent.VK_J);
+    item = Toolkit.newJMenuItem(Language.text("menu.debug.step"),
+                                Language.text("menu.debug.step.keystroke"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleStep(0);
@@ -1393,7 +1394,8 @@ public class JavaEditor extends Editor {
     debugMenu.add(item);
     item.setEnabled(false);
 
-    item = Toolkit.newJMenuItemShift(Language.text("menu.debug.step_into"), KeyEvent.VK_J);
+    item = Toolkit.newJMenuItem(Language.text("menu.debug.step_into"),
+                                Language.text("menu.debug.step_into.keystroke"));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleStep(ActionEvent.SHIFT_MASK);
@@ -1402,7 +1404,8 @@ public class JavaEditor extends Editor {
     debugMenu.add(item);
     item.setEnabled(false);
 
-    item = Toolkit.newJMenuItemAlt(Language.text("menu.debug.step_out"), KeyEvent.VK_J);
+    item = Toolkit.newJMenuItem(Language.text("menu.debug.step_out"),
+                                Language.text("menu.debug.step_out.keystroke"));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleStep(ActionEvent.ALT_MASK);

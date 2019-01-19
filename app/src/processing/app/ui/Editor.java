@@ -956,7 +956,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.comment_uncomment"), '/');
+    item = Toolkit.newJMenuItem(Language.text("menu.edit.comment_uncomment"),
+                                Language.text("menu.edit.comment_uncomment.keystroke"));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleCommentUncomment();
@@ -964,7 +965,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem("\u2192 "+Language.text("menu.edit.increase_indent"), ']');
+    item = Toolkit.newJMenuItem("\u2192 " + Language.text("menu.edit.increase_indent"),
+                                Language.text("menu.edit.increase_indent.keystroke"));
+
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(true);
@@ -972,7 +975,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem("\u2190 "+Language.text("menu.edit.decrease_indent"), '[');
+    item = Toolkit.newJMenuItem("\u2190 " + Language.text("menu.edit.decrease_indent"),
+                                Language.text("menu.edit.decrease_indent.keystroke"));
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(false);
