@@ -12,7 +12,7 @@ X   https://github.com/processing/processing/issues/4805
 X text("test", 10, 10); is still slow with lots of fonts
 X   https://bugs.openjdk.java.net/browse/JDK-8179209
 X   added a note to the Known Issues section in the Changes wiki
-_ update the about screen to 2019
+X update the about screen to 2019
 
 fixed earlier
 X Could not initialize class com.sun.jna.Native on startup (Windows)
