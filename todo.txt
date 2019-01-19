@@ -17,31 +17,12 @@ o report of a library or tool (probably includes 2.x? 1.x?) breaking things
 o   NoSuchFieldError: useNativeSelect
 X   https://github.com/processing/processing/issues/4821
 X   closed, no response
-
-
-shortcuts
 X problems with non-US keyboards and some shortcuts
 X   https://github.com/processing/processing/issues/2199
-_ Determine new keyboard shortcut for Step Out
-_   https://github.com/processing/processing/issues/3538
-
-# Comment/Uncomment, Increase Indent, Decrease Indent
-menu.edit.comment_uncomment.keystroke = meta pressed SLASH
-menu.edit.increase_indent.keystroke = meta pressed CLOSE_BRACKET
-menu.edit.decrease_indent.keystroke = meta pressed OPEN_BRACKET
-# inside Editor.java
-
-# Previous Tab, Next Tab (ignored on Linux, which is Page Up and Page Down)
-editor.header.previous_tab.keystroke = meta alt pressed LEFT
-editor.header.next_tab.keystroke = meta alt pressed RIGHT
-# inside EditorHeader.java
-
-# Step, Step Into, and Step Out
-menu.debug.step.keystroke = meta pressed J
-menu.debug.step_into.keystroke = shift meta pressed J
-menu.debug.step_out.keystroke = meta alt pressed J
-# inside JavaEditor.java
-
+_   https://github.com/processing/processing/wiki/Localization#shortcuts-and-key-bindings
+o Determine new keyboard shortcut for Step Out
+X   https://github.com/processing/processing/issues/3538
+X   all set based on #2199
 
 fixed earlier
 X Could not initialize class com.sun.jna.Native on startup (Windows)
