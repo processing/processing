@@ -1033,13 +1033,6 @@ public class PSurfaceJOGL implements PSurface {
         break;
     }
 
-    if (PApplet.platform == PConstants.MACOSX) {
-      //if (nativeEvent.isPopupTrigger()) {
-      if ((modifiers & InputEvent.CTRL_MASK) != 0) {
-        peButton = PConstants.RIGHT;
-      }
-    }
-
     int peCount = 0;
     if (peAction == MouseEvent.WHEEL) {
       // Invert wheel rotation count so it matches JAVA2D's

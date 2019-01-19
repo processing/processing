@@ -561,6 +561,14 @@ public class PApplet implements PConstants {
    */
   public boolean mousePressed;
 
+  // MACOSX: CTRL + Left Mouse is converted to Right Mouse. This boolean keeps
+  // track of whether the conversion happened on PRESS, because we should report
+  // the same button during DRAG and on RELEASE, even though CTRL might have
+  // been released already. Otherwise the events are inconsistent, e.g.
+  // Left Pressed - Left Drag - CTRL Pressed - Right Drag - Right Released.
+  // See: https://github.com/processing/processing/issues/5672
+  private boolean macosxLeftButtonWithCtrlPressed;
+
 
   /** @deprecated Use a mouse event handler that passes an event instead. */
   @Deprecated
@@ -705,7 +713,7 @@ public class PApplet implements PConstants {
    * @see PApplet#frameRate(float)
    * @see PApplet#frameCount
    */
-  public float frameRate = 10;
+  public float frameRate = 60;
 
   protected boolean looping = true;
 
@@ -2426,9 +2434,34 @@ public class PApplet implements PConstants {
 
     } else {  // frameCount > 0, meaning an actual draw()
       // update the current frameRate
-      double rate = 1000000.0 / ((now - frameRateLastNanos) / 1000000.0);
-      float instantaneousRate = (float) (rate / 1000.0);
-      frameRate = (frameRate * 0.9f) + (instantaneousRate * 0.1f);
+
+      // Calculate frameRate through average frame times, not average fps, e.g.:
+      //
+      // Alternating 2 ms and 20 ms frames (JavaFX or JOGL sometimes does this)
+      // is around 90.91 fps (two frames in 22 ms, one frame 11 ms).
+      //
+      // However, averaging fps gives us: (500 fps + 50 fps) / 2 = 275 fps.
+      // This is because we had 500 fps for 2 ms and 50 fps for 20 ms, but we
+      // counted them with equal weight.
+      //
+      // If we average frame times instead, we get the right result:
+      // (2 ms + 20 ms) / 2 = 11 ms per frame, which is 1000/11 = 90.91 fps.
+      //
+      // The counter below uses exponential moving average. To do the
+      // calculation, we first convert the accumulated frame rate to average
+      // frame time, then calculate the exponential moving average, and then
+      // convert the average frame time back to frame rate.
+      {
+        // Get the frame time of the last frame
+        double frameTimeSecs = (now - frameRateLastNanos) / 1e9;
+        // Convert average frames per second to average frame time
+        double avgFrameTimeSecs = 1.0 / frameRate;
+        // Calculate exponential moving average of frame time
+        final double alpha = 0.05;
+        avgFrameTimeSecs = (1.0 - alpha) * avgFrameTimeSecs + alpha * frameTimeSecs;
+        // Convert frame time back to frames per second
+        frameRate = (float) (1.0 / avgFrameTimeSecs);
+      }
 
       if (frameCount != 0) {
         handleMethods("pre");
@@ -2650,8 +2683,27 @@ public class PApplet implements PConstants {
       mouseY = event.getY();
     }
 
+    int button = event.getButton();
+
+    // If running on Mac OS, allow ctrl-click as right mouse.
+    if (PApplet.platform == PConstants.MACOSX && event.getButton() == PConstants.LEFT) {
+      if (action == MouseEvent.PRESS && event.isControlDown()) {
+        macosxLeftButtonWithCtrlPressed = true;
+      }
+      if (macosxLeftButtonWithCtrlPressed) {
+        button = PConstants.RIGHT;
+        event = new MouseEvent(event.getNative(), event.getMillis(),
+                               event.getAction(), event.getModifiers(),
+                               event.getX(), event.getY(),
+                               button, event.getCount());
+      }
+      if (button == MouseEvent.RELEASE) {
+        macosxLeftButtonWithCtrlPressed = false;
+      }
+    }
+
     // Get the (already processed) button code
-    mouseButton = event.getButton();
+    mouseButton = button;
 
     /*
     // Compatibility for older code (these have AWT object params, not P5)
@@ -6264,18 +6316,6 @@ public class PApplet implements PConstants {
           "to the data folder of your sketch.", e);
     }
     return null;
-  }
-
-
-  /**
-   * Used by PGraphics to remove the requirement for loading a font!
-   */
-  protected PFont createDefaultFont(float size) {
-//    Font f = new Font("SansSerif", Font.PLAIN, 12);
-//    println("n: " + f.getName());
-//    println("fn: " + f.getFontName());
-//    println("ps: " + f.getPSName());
-    return createFont("Lucida Sans", size, true, null);
   }
 
 
@@ -12069,6 +12109,12 @@ public class PApplet implements PConstants {
   }
 
 
+  public void square(float x, float y, float extent) {
+    if (recorder != null) recorder.square(x, y, extent);
+    g.square(x, y, extent);
+  }
+
+
   /**
    * ( begin auto-generated from ellipseMode.xml )
    *
@@ -12154,6 +12200,12 @@ public class PApplet implements PConstants {
                   float start, float stop, int mode) {
     if (recorder != null) recorder.arc(a, b, c, d, start, stop, mode);
     g.arc(a, b, c, d, start, stop, mode);
+  }
+
+
+  public void circle(float x, float y, float extent) {
+    if (recorder != null) recorder.circle(x, y, extent);
+    g.circle(x, y, extent);
   }
 
 
@@ -13176,6 +13228,18 @@ public class PApplet implements PConstants {
   public void text(float num, float x, float y, float z) {
     if (recorder != null) recorder.text(num, x, y, z);
     g.text(num, x, y, z);
+  }
+
+
+  public void push() {
+    if (recorder != null) recorder.push();
+    g.push();
+  }
+
+
+  public void pop() {
+    if (recorder != null) recorder.pop();
+    g.pop();
   }
 
 

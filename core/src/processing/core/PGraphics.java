@@ -2730,6 +2730,11 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  public void square(float x, float y, float extent) {
+    rect(x, y, extent, extent);
+  }
+
+
 
   //////////////////////////////////////////////////////////////
 
@@ -2903,6 +2908,11 @@ public class PGraphics extends PImage implements PConstants {
   protected void arcImpl(float x, float y, float w, float h,
                          float start, float stop, int mode) {
     showMissingWarning("arc");
+  }
+
+
+  public void circle(float x, float y, float extent) {
+    ellipse(x, y, extent, extent);
   }
 
 
@@ -4062,8 +4072,17 @@ public class PGraphics extends PImage implements PConstants {
   // TEXT/FONTS
 
 
+  /**
+   * Used by PGraphics to remove the requirement for loading a font.
+   */
+  protected PFont createDefaultFont(float size) {
+    Font baseFont = new Font("Lucida Sans", Font.PLAIN, 1);
+    return createFont(baseFont, size, true, null, false);
+  }
+
+
   protected PFont createFont(String name, float size,
-                          boolean smooth, char[] charset) {
+                             boolean smooth, char[] charset) {
     String lowerName = name.toLowerCase();
     Font baseFont = null;
 
@@ -4073,9 +4092,9 @@ public class PGraphics extends PImage implements PConstants {
         stream = parent.createInput(name);
         if (stream == null) {
           System.err.println("The font \"" + name + "\" " +
-                                 "is missing or inaccessible, make sure " +
-                                 "the URL is valid or that the file has been " +
-                                 "added to your sketch and is readable.");
+                             "is missing or inaccessible, make sure " +
+                             "the URL is valid or that the file has been " +
+                             "added to your sketch and is readable.");
           return null;
         }
         baseFont = Font.createFont(Font.TRUETYPE_FONT, parent.createInput(name));
@@ -4083,15 +4102,21 @@ public class PGraphics extends PImage implements PConstants {
       } else {
         baseFont = PFont.findFont(name);
       }
-      return new PFont(baseFont.deriveFont(size * parent.pixelDensity),
-                       smooth, charset, stream != null,
-                       parent.pixelDensity);
+      return createFont(baseFont, size, smooth, charset, stream != null);
 
     } catch (Exception e) {
       System.err.println("Problem with createFont(\"" + name + "\")");
       e.printStackTrace();
       return null;
     }
+  }
+
+
+  private PFont createFont(Font baseFont, float size,
+                           boolean smooth, char[] charset, boolean stream) {
+    return new PFont(baseFont.deriveFont(size * parent.pixelDensity),
+                     smooth, charset, stream,
+                     parent.pixelDensity);
   }
 
 
@@ -5101,27 +5126,22 @@ public class PGraphics extends PImage implements PConstants {
   */
 
 
-//  /**
-//   * Convenience method to get a legit FontMetrics object. Where possible,
-//   * override this any renderer subclass so that you're not using what's
-//   * returned by getDefaultToolkit() to get your metrics.
-//   */
-//  @SuppressWarnings("deprecation")
-//  public FontMetrics getFontMetrics(Font font) {  // ignore
-//    Frame frame = parent.frame;
-//    if (frame != null) {
-//      return frame.getToolkit().getFontMetrics(font);
-//    }
-//    return Toolkit.getDefaultToolkit().getFontMetrics(font);
-//  }
-//
-//
-//  /**
-//   * Convenience method to jump through some Java2D hoops and get an FRC.
-//   */
-//  public FontRenderContext getFontRenderContext(Font font) {  // ignore
-//    return getFontMetrics(font).getFontRenderContext();
-//  }
+
+  //////////////////////////////////////////////////////////////
+
+  // PARITY WITH P5.JS
+
+
+  public void push() {
+    pushStyle();
+    pushMatrix();
+  }
+
+
+  public void pop() {
+    popStyle();
+    popMatrix();
+  }
 
 
 
@@ -8217,7 +8237,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   protected void defaultFontOrDeath(String method, float size) {
     if (parent != null) {
-      textFont = parent.createDefaultFont(size);
+      textFont = createDefaultFont(size);
     } else {
       throw new RuntimeException("Use textFont() before " + method + "()");
     }

@@ -27,6 +27,7 @@
 
 package processing.mode.java.preproc;
 
+import java.awt.EventQueue;
 import java.io.*;
 import java.util.*;
 import java.util.regex.MatchResult;
@@ -380,7 +381,9 @@ public class PdePreprocessor {
           "The size of this sketch could not be determined from your code.\n" +
           "Use only numbers (not variables) for the size() command.\n" +
           "Read the size() reference for more details.";
-        Messages.showWarning("Could not find sketch size", message, null);
+        EventQueue.invokeLater(() -> {
+          Messages.showWarning("Could not find sketch size", message, null);
+        });
 //        new Exception().printStackTrace(System.out);
 //        return null;
         throw new SketchException("Please fix the size() line to continue.", false);

@@ -1,7 +1,16 @@
-0266 (3.4.1 or 3.5)
+0266 (3.5)
 X make JSONObject.quote() (both versions) public
 X fix javaPlatform variable for newer JDK versions
 X   https://github.com/processing/processing/pull/5626
+o many fonts installed causes slow startup on macos
+o   run that on a thread, and make sure default font doesn't need the list loaded
+X   can't be done, notes in the code for PFont.loadFonts()
+X greatly improve startup time when user-specified fonts are not used
+X   default font will be faster, using ttf/otf is fine
+X   only createFont("The Font Name") is still slow on macOS
+X   and PFont.list()
+X add circle() and square()
+X add push() and pop()
 
 contrib
 o make tabs into spaces, fixes pixelDensity(2) issue with tabs
@@ -11,6 +20,11 @@ X   had to back this fix out again
 X Fixes blend mode not being set correctly, fixing #5645
 X   https://github.com/processing/processing/issues/5645
 X   https://github.com/processing/processing/pull/5647
+X extended SVG support
+X   https://github.com/processing/processing/pull/4168
+X show a warning when a font isn't what the user expected
+X   https://github.com/processing/processing/issues/5481
+X   https://github.com/processing/processing/pull/5605
 
 gohai
 X Profile GL3bc is not available on X11GraphicsDevice
@@ -20,6 +34,35 @@ X   https://github.com/processing/processing/pull/5652
 andres
 X silence TIS/TSM warning message with P2D/P3D/OPENGL since macOS 10.13.4
 X   https://github.com/processing/processing/issues/5462
+X improve matrix performance in P2D/P3D
+X   https://github.com/processing/processing/issues/5685
+X Initializing textures loads the pixels array, even if not needed aferwards
+X   https://github.com/processing/processing/issues/5748
+X Processing 3.4 takes 60 seconds before can edit file
+X   https://github.com/processing/processing/issues/5707
+X   skip Android's SDK folder when adding sketches
+X   https://github.com/processing/processing/commit/5b653263cc6151f838c11a61689d756901c11e37
+X PShape.attrib() and PShape.setAttrib() are not working
+X   https://github.com/processing/processing/issues/5560
+
+jakub
+X Fix freeze when restarting sketch with variables in size
+X   https://github.com/processing/processing/pull/5708
+X Make sure Ctrl+Left Mouse on MacOS is consistent
+X   https://github.com/processing/processing/issues/5672
+X   https://github.com/processing/processing/pull/5674
+X Stop frame rate counter from exaggerating
+X   https://github.com/processing/processing/pull/5697
+X Fix vertex buffer initialized with wrong number of components
+X   https://github.com/processing/processing/pull/5698
+X Recreate FBOs when offscreen PGraphicsOpenGL is resized
+X   https://github.com/processing/processing/pull/5699
+
+cleaning
+o WARNING: GL pipe is running in software mode (Renderer ID=0x1020400)
+o   is this coming from us? if so, need to provide actions
+X   haven't seen for a while, maybe fixed
+
 
 
 _ NullPointerException at java.awt.Window.init(Window.java:497) when using Airplay
@@ -35,22 +78,12 @@ _   (Map is more efficient b/c of size, Iterable more useful)
 
 
 3.5+
-_ add circle() and square()
-_ add push() and pop()
 _ requestSize() and xxxxTitle() (to diminish use of 'surface')
 _ make setting the window icon automatic, based on files in local dirs
 X   https://github.com/processing/processing/issues/5123
 X   https://github.com/processing/processing/pull/5202
 _   need to make this work behind the scenes instead
 _   create icon.png or have an 'icons' folder with multiple sizes
-
-
-contribs
-_ extended SVG support
-_   https://github.com/processing/processing/pull/4168
-_ show a warning when a font isn't what the user expected
-_   https://github.com/processing/processing/issues/5481
-_   https://github.com/processing/processing/pull/5605
 
 
 _ Implement blendMode() for PDF
@@ -63,19 +96,10 @@ _ Switch to getModifiersEx() and fix the AWT modifiers used in PSurfaceAWT
 _   this is an easy fix, but need to check impact elsewhere
 _   does anything else rely on these modifiers?
 
-_ Fix Java 9 incompatibilities inside PSurfaceFX
-_   https://github.com/processing/processing/issues/5286
-
-_ Hitting ESC in FX2D app on macOS throws IllegalStateException
-_   https://github.com/processing/processing/issues/5249
-
 _ when doing createFont, can we add it to the os fonts available?
 
-_ add separator option to loadTable() 
+_ add separator option to loadTable()
 _   https://github.com/processing/processing/issues/5068
-
-_ WARNING: GL pipe is running in software mode (Renderer ID=0x1020400)
-_   is this coming from us? if so, need to provide actions
 
 _ implement sketch scaling into PApplet
 _   https://github.com/processing/processing/issues/4897
@@ -91,7 +115,7 @@ _   https://github.com/processing/processing/issues/4678
 _ should we drop the 'default' prefix from the ex handler so it's not static?
 _   http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Thread.html
 
-_ option to disable OpenGL ES on Linux? 
+_ option to disable OpenGL ES on Linux?
 _   https://github.com/processing/processing/issues/4584
 
 _ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
@@ -139,17 +163,21 @@ _   https://github.com/processing/processing/issues/3753
 
 
 javafx
+_ Fix Java 11 incompatibilities inside PSurfaceFX
+_   https://github.com/processing/processing/issues/5286
+_ Hitting ESC in FX2D app on macOS throws IllegalStateException
+_   https://github.com/processing/processing/issues/5249
 _ wrong window size with fullScreen()
 _   https://github.com/processing/processing/issues/4737
 _ menu bar not hiding properly in exported applications with FX2D
 _   https://github.com/processing/processing/issues/4527
 _   hideMenuBar() called from setup() works fine
-_   just call it around setup time? 
+_   just call it around setup time?
 _ the --hide-stop option not working (FX only? traces?)
 _ make wiki about quirks
 _   starving the thread makes things really slow down
 _   keyPressed() is always uppercase, keyTyped() will be correct
-_ do we really need setTextFont/Size when we already have Impl? 
+_ do we really need setTextFont/Size when we already have Impl?
 _ need keyPressed() to do lower and upper case
 _ static mode sketches (draw once and halt w/o closing window)
 _ fix display handling, line up the device order with AWT
@@ -183,7 +211,7 @@ _   also not API we want to expose, so sort this out
 _   or maybe we're fine b/c now FX2D needs it as well
 _ when did setPath() sneak into PShape? API is nothing like anything else
 _   probably from the material stuff, but we need to fix that
-_ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)? 
+_ why is createShape() implemented 4x (for P2D, P3D, and 2x versions)?
 _   shouldn't be static, run it from the renderer, that's point of createXxx()
 _ public createShape() method that takes another shape as param?
 _   should just be the constructor doing this, or copy()
@@ -235,7 +263,7 @@ _   row count and array size are combined.. need to break apart
 _ match and iterators
 _   add match version that returns table that's only a pointer to original
 _   save the constructor for the version that actually copies data
-_   the table pointer version will be speedy and allow chaining 
+_   the table pointer version will be speedy and allow chaining
 
 
 high
@@ -248,7 +276,7 @@ _   https://github.com/processing/processing/issues/2428
 _ finish PFont.getShape() implementation
 _   needs to have a way to set width/height properly
 _   draw(s) doesn't work on the returned PShape
-_ y-location of frame might be negative, but that might be ok 
+_ y-location of frame might be negative, but that might be ok
 _   right now, on Windows it moves it on-screen (b/c of previous bug reports)
 _   may be cause of some of the display placement issues w/ multiple displays
 _   seem to recall one of the bugs mentioning stacked displays
@@ -260,7 +288,7 @@ _ don't override the window icon w/ p5 logo if already set
 
 
 decisions/misc
-_ Separately, if we wanted, we could add a method that can safely do drawing calls, but that won't be any faster or make use of more processors the way that `thread()` does. 
+_ Separately, if we wanted, we could add a method that can safely do drawing calls, but that won't be any faster or make use of more processors the way that `thread()` does.
 _ need reference update for createShape()
 _   though we need to verify the behavior here
 _   createShape(RECT) uses x/y/w/h, and optionally adds a mode param
@@ -301,16 +329,16 @@ _   public float textWidth(char[] chars, int start, int length)
 _ add version of math functions that use doubles?
 _   what other methods should work with doubles? all math functions?
 _   seems like internal (mostly static) things, but not graphics api
-_ new PGraphics(... OutputStream) 
+_ new PGraphics(... OutputStream)
 _   https://github.com/processing/processing/issues/285
 _   already added for PDF, just need to work out the API
 _ if save() returns boolean, does saveFrame()?
 _   also need to copy this over to android
 _ "translate, or this variation of it" when using text(s, x, y, z) accidentally
 _   change to be the text command
-_ size() and resize() and whatever? 
+_ size() and resize() and whatever?
 _   should be setSize(), but that's odd for image files
-_   -> resize() is fine with PImage and PGraphics... 
+_   -> resize() is fine with PImage and PGraphics...
 _   we may be inheriting the resize() from Java -> make it final?
 _   add resize().. make it call setSize().
 _     also needs to do a redraw if noLoop() has been called
@@ -344,7 +372,7 @@ _   have to pass PApplet just to make the rendering work to both renderers
 _   should instead be a renderer that splits things out
 _ wrap exceptions with die() and warn() methods
 _   this way, people can make use of exceptions if they would rather
-_   or shut them off if they don't want to 
+_   or shut them off if they don't want to
 _   also need to explain exception handling in general
 _   https://github.com/processing/processing/issues/222
 _ bring PConstants back in line w/ previous 1.5 (can't renumber)
@@ -357,12 +385,12 @@ _ add reference/docs for urlEncode() and urlDecode()
 _ add explanation to the reference about using beginRecord() with fonts
 _   pdf.textMode(SHAPE)
 _   also set the font *after* the record has started
-_   maybe should instead make textMode(SHAPE) the norm? 
+_   maybe should instead make textMode(SHAPE) the norm?
 _   and people can change it to textMode(MODEL) if they want?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1535 (no gcode)
 _ explain the new PGL interface
 _ decide how disconnectEvent should actually be handled (and name?)
-_   was disconnect always there? 
+_   was disconnect always there?
 _   will need documentation
 _ negative indices so that we can work relative to the end in data classes?
 _ add requestFocus() method to PApplet (or surface?)
@@ -385,7 +413,7 @@ _   http://www.javalobby.org/forums/thread.jspa?threadID=16867&tstart=0
 _   http://www.gamedev.net/page/resources/_/technical/general-programming/java-games-active-rendering-r2418
 
 
-CORE / stop() 
+CORE / stop()
 
 _ in PApplet.main(), windowClosing() should probably be calling 'exit()'
 _   or rather, we should never call System.exit(0), ja?
@@ -415,7 +443,7 @@ _   if not looping, need to do it immediately
 _   does stop() unwind the thread, or does the thread unwind call stop?
 _   browser will call start() and stop() methods
 _ need to figure out start/stop signals coming from the browser
-_   is it dispose/destroy? 
+_   is it dispose/destroy?
 _ when closing a sketch via the close box, make sure stop() getting called
 _   test to see if it's working
 _ what's up with stop() vs exit()?
@@ -429,10 +457,10 @@ _ noloop ref even says that redraw will be called on resize, make sure it is
 _ focus not coming through, ESC no longer working(?)
 _ hitting cmd-q when an applet is running quits p5 (on macosx)
 _   but cmd-q when running externally is ok because it just quits
-_   is there a way to catch cmd-q when running a sketch? 
+_   is there a way to catch cmd-q when running a sketch?
 _     so that it could avoid quitting if the sketch hasn't been stopped
 _     or if the sketch window is foremost
-_     maybe a hack where a new menubar is added? 
+_     maybe a hack where a new menubar is added?
 o destroy() removed, but bring back? is that better than dispose()?
 _   destroy() only called dispose(), so no difference
 _   Python Mode has a hook for when it's called
@@ -446,7 +474,7 @@ _ Text rotation, placement and font metrics incorrect when scaled
 _   https://github.com/processing/processing/issues/2167
 
 _ remove subsetting stuff from PFont?
-_   or use hint(ENABLE_FONT_SUBSETTING)? 
+_   or use hint(ENABLE_FONT_SUBSETTING)?
 _ what's the difference with ascent on loadFont vs. createFont?
 _ svg fonts
 _   would be nifty if we could convert on the fly to ttf for speed...
@@ -460,7 +488,7 @@ _   book example 25-03
 _ accessors inside PFont need a lot of work
 _ improve font metrics
 _   http://java.sun.com/products/java-media/2D/reference/faqs/index.html#Q_How_do_I_obtain_font_metrics
-_ font encoding issues 
+_ font encoding issues
 _   java seems to force straight windows encoding.. (problem for pi fonts)
 _   opentype/cff fonts don't work with live loading from the app
 _   many (all?) opentype fonts won't show up or aren't supported
@@ -473,11 +501,11 @@ _ make screen space fonts use get/set as well?
 _   too much to debug on their own
 _   unfortunately tint not set with setImpl, but...
 _ not having kerning really blows
-_   could this be pulled from the OpenType font stuff? 
+_   could this be pulled from the OpenType font stuff?
 _   it could be placed at the end of the file
 _ not having fractional widths on small fonts really blows
 _   screen space text looks crappy
-_ working with vector fonts? 
+_ working with vector fonts?
 _   need to be able to handle shapes within shapes (reverse winding)
 _   ftgl: main code is in FTVectoriser
 _   uses gluTessBeginContour and gluTessEndContour
@@ -528,7 +556,7 @@ _ trying to remember why primitive was changed to kind? (better name?)
 _ these aren't per-vertex:
 _   get/setStrokeWeight
 _   get/setAmbient
-_   get/setEmissive 
+_   get/setEmissive
 _   get/setShininess
 _ boolean isGL() -> now removed
 _ unapproved (made protected)
@@ -620,7 +648,7 @@ _   touchEvent(), gestureEvent()?
 LIBRARIES / PDF
 
 _ beginRecord() doesn't use current settings of the sketch
-_   sometimes reported as a bug, but probably not a good way to 
+_   sometimes reported as a bug, but probably not a good way to
 _   consistently carry these over
 _ pdf sketches exiting before writing has finished
 _   people have to call exit() (so that dispose() is called in particular)
@@ -628,7 +656,7 @@ _ when using noLoop() and the PDF renderer, sketch should exit gracefully
 _   because isDisplayable() returns false, there's no coming back from noLoop
 
 
-LIBRARIES / Video 
+LIBRARIES / Video
 
 _ remove dispose() being used in the Movie and Capture
 _   added warning notes, but shouldn't be necessary
@@ -653,7 +681,7 @@ _ can we use String... for options? or does it screw up the method signature?
 _   and would we have to always concatenate arrays to prepend extensions, etc
 _ include Instant and Interval? (or just Time and TimeSpan)
 _ it's going to be File or Reader (mostly BufferedReader) everywhere
-_   though TableODS needs an InputStream... 
+_   though TableODS needs an InputStream...
 _   and XML could use InputStream if we hope to be able to reflect doc encoding
 _   ok, so File, Reader, and InputStream (where needed)
 _ setMissingXxxx() -> should this live in PApplet? be static?
@@ -670,7 +698,7 @@ _     that way we can do what's most efficient
 _   then we add keyIterator() and others to handle the other case (deletion)
 _   blogs.oracle.com/CoreJavaTechTips/entry/using_enhanced_for_loops_with
 _ means that JSON.keys() -> JSON.keyIterator(), JSON.keySet() -> JSON.keys()
-_ what should they all return? 
+_ what should they all return?
 _   remove -> true/false based on whether it found something?
 _   remove all -> the number removed?
 _ List: remove(), append(), index(), etc all use values
@@ -709,7 +737,7 @@ _   i.e. get unique tables based on a particular column
 _   or, get uniques, then grab rows that match a name in a particular col
 _ create table from TableRow iterator...allows for subset and find
 _   downside is types are not included
-_ getMaxFloat() (whole table) or getMaxFloat(col) 
+_ getMaxFloat() (whole table) or getMaxFloat(col)
 _   that's max(getFloatColumn(n))
 _   also important b/c can leave out missing values
 _ dictionary support
@@ -734,12 +762,12 @@ _   that way, methods could use the information when reading
 _ loadBytes() needs optimization
 _   don't bother using a buffering stream, just handle internally. gah!
 _ can loadBytes() be improved by querying file size first?
-_   background 
+_   background
 _     this would require a new version of createInput(), which would query
 _     the URL (or file) for an actual file size. the size is not always
 _     available, so it can't be relied upon, but would help in some cases.
 _   loadBytes() is used for images.. ouch
-_   might be worth doing a test to see if it actually would help at all 
+_   might be worth doing a test to see if it actually would help at all
 _     before rewriting all of createInput()
 
 
@@ -763,10 +791,10 @@ _ createColor() instead of color()?
 _ route all exceptions through PException and catch method
 _   advanced users can override the method if they want
 _   or you can set an option to have PExceptions be raised
-_   decision: just copy & paste the serial/net code.. 
+_   decision: just copy & paste the serial/net code..
 _     until we can find a more compelling example
 _ actual shape api for things like rectangles and whatnot?
-_ should we kill import xxxx syntax for libraries? 
+_ should we kill import xxxx syntax for libraries?
 _   just give up and use a gui for it
 _   cons: copy & paste breaks
 _   pro: there's no guaranteed 1:1 between packages and single libraries

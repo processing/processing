@@ -1316,16 +1316,6 @@ public class PSurfaceAWT extends PSurfaceNone {
       peButton = PConstants.RIGHT;
     }
 
-    // If running on Mac OS, allow ctrl-click as right mouse. Prior to 0215,
-    // this used isPopupTrigger() on the native event, but that doesn't work
-    // for mouseClicked and mouseReleased (or others).
-    if (PApplet.platform == PConstants.MACOSX) {
-      //if (nativeEvent.isPopupTrigger()) {
-      if ((modifiers & InputEvent.CTRL_MASK) != 0) {
-        peButton = PConstants.RIGHT;
-      }
-    }
-
     sketch.postEvent(new MouseEvent(nativeEvent, nativeEvent.getWhen(),
                                     peAction, peModifiers,
                                     nativeEvent.getX() / windowScaleFactor,

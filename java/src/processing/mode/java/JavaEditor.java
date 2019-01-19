@@ -1094,10 +1094,11 @@ public class JavaEditor extends Editor {
         synchronized (runtimeLock) {
           if (runtimeLaunchRequested) {
             runtimeLaunchRequested = false;
+            RunnerListener listener = new RunnerListenerEdtAdapter(JavaEditor.this);
             if (!tweak) {
-              runtime = jmode.handleLaunch(sketch, JavaEditor.this, present);
+              runtime = jmode.handleLaunch(sketch, listener, present);
             } else {
-              runtime = jmode.handleTweak(sketch, JavaEditor.this);
+              runtime = jmode.handleTweak(sketch, listener);
             }
           }
         }
