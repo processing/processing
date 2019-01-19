@@ -19,7 +19,7 @@ X   https://github.com/processing/processing/issues/4821
 X   closed, no response
 X problems with non-US keyboards and some shortcuts
 X   https://github.com/processing/processing/issues/2199
-_   https://github.com/processing/processing/wiki/Localization#shortcuts-and-key-bindings
+X   https://github.com/processing/processing/wiki/Localization#shortcuts-and-key-bindings
 o Determine new keyboard shortcut for Step Out
 X   https://github.com/processing/processing/issues/3538
 X   all set based on #2199
@@ -46,6 +46,8 @@ X   https://github.com/processing/processing/pull/5115
 X NullPointerException in Contribution Manager when installing
 X   https://github.com/processing/processing/issues/5524
 X   https://github.com/processing/processing/pull/5742
+X Improvements to appdata.xml for Linux
+X   https://github.com/processing/processing/pull/5604
 
 jakub
 X Fix sketch exception getting hidden by warning
@@ -65,10 +67,11 @@ _   https://github.com/processing/processing/pull/5642
 _   discuss with Casey
 
 
-
 high-ish
+_ settings() present and pixelDensity() is in setup(), nothing set/no error
+_   https://github.com/processing/processing/issues/4703
 _ errors inside setup() aren't coming through at all?
-_   seen in Eclipse; have to turn on the debugger
+_   seen in Eclipse; have to turn on the debugger... same as #4703?
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
 
@@ -165,6 +168,7 @@ _   https://github.com/processing/processing/issues/3948
 _ update list of optional JRE files for Java 8
 _   Andres provided some updates
 _   https://github.com/processing/processing/issues/3288
+_   these will change again for Java 11, so wait until then
 
 _ proxy trouble with p5? since adding the system proxy?
 _   https://github.com/processing/processing/pull/3251/files
@@ -185,9 +189,6 @@ _   https://github.com/processing/processing/commits/master/build/macosx/appbund
 _   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
 _   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
 _   https://bitbucket.org/infinitekind/appbundler
-
-_ settings() present and pixelDensity() is in setup(), nothing set/no error
-_   https://github.com/processing/processing/issues/4703
 
 _ right bracket missing error
 _   https://github.com/processing/processing/issues/4702
