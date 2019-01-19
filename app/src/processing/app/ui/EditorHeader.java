@@ -498,7 +498,8 @@ public class EditorHeader extends JComponent {
     if (Platform.isLinux()) {
       item = Toolkit.newJMenuItem(prevTab, KeyEvent.VK_PAGE_UP);
     } else {
-      item = Toolkit.newJMenuItemAlt(prevTab, KeyEvent.VK_LEFT);
+      //item = Toolkit.newJMenuItemAlt(prevTab, KeyEvent.VK_LEFT);
+      item = Toolkit.newJMenuItem(prevTab, Language.text("editor.header.previous_tab.keystroke"));
     }
     action = new AbstractAction() {
       @Override
@@ -510,7 +511,8 @@ public class EditorHeader extends JComponent {
     if (Platform.isLinux()) {
       keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, Toolkit.SHORTCUT_KEY_MASK);
     } else {
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
+      //keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
+      keyStroke = KeyStroke.getKeyStroke(Language.text("editor.header.previous_tab.keystroke"));
     }
     inputMap.put(keyStroke, mapKey);
     actionMap.put(mapKey, action);
@@ -521,7 +523,8 @@ public class EditorHeader extends JComponent {
     if (Platform.isLinux()) {
       item = Toolkit.newJMenuItem(nextTab, KeyEvent.VK_PAGE_DOWN);
     } else {
-      item = Toolkit.newJMenuItemAlt(nextTab, KeyEvent.VK_RIGHT);
+      //item = Toolkit.newJMenuItemAlt(nextTab, KeyEvent.VK_RIGHT);
+      item = Toolkit.newJMenuItem(nextTab, Language.text("editor.header.next_tab.keystroke"));
     }
     action = new AbstractAction() {
       @Override
@@ -533,7 +536,8 @@ public class EditorHeader extends JComponent {
     if (Platform.isLinux()) {
       keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, Toolkit.SHORTCUT_KEY_MASK);
     } else {
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
+      //keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
+      keyStroke = KeyStroke.getKeyStroke(Language.text("editor.header.next_tab.keystroke"));
     }
     inputMap.put(keyStroke, mapKey);
     actionMap.put(mapKey, action);

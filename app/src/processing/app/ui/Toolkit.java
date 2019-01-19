@@ -132,6 +132,29 @@ public class Toolkit {
 
 
   /**
+   * Create a menu item and set its KeyStroke by name (so it can be stored
+   * in the language settings or the preferences. Syntax is here:
+   * https://docs.oracle.com/javase/8/docs/api/javax/swing/KeyStroke.html#getKeyStroke-java.lang.String-
+   * @param sequence the name, as outlined by the KeyStroke API
+   * @param fallback what to use if getKeyStroke() comes back null
+   */
+  static public JMenuItem newJMenuItem(String title,
+                                       String sequence) {
+    JMenuItem menuItem = new JMenuItem(title);
+    KeyStroke ks = KeyStroke.getKeyStroke(sequence);
+    if (ks != null) {
+      menuItem.setAccelerator(ks);
+
+    } else {
+      System.err.println("'" + sequence + "' is not understood, " +
+                         "pleae re-read the Java reference for KeyStroke");
+      //ks = KeyStroke.getKeyStroke(fallback);
+    }
+    return menuItem;
+  }
+
+
+  /**
    * @param action: use an Action, which sets the title, reaction
    *                and enabled-ness all by itself.
    */

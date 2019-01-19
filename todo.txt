@@ -13,6 +13,35 @@ X text("test", 10, 10); is still slow with lots of fonts
 X   https://bugs.openjdk.java.net/browse/JDK-8179209
 X   added a note to the Known Issues section in the Changes wiki
 X update the about screen to 2019
+o report of a library or tool (probably includes 2.x? 1.x?) breaking things
+o   NoSuchFieldError: useNativeSelect
+X   https://github.com/processing/processing/issues/4821
+X   closed, no response
+
+
+shortcuts
+X problems with non-US keyboards and some shortcuts
+X   https://github.com/processing/processing/issues/2199
+_ Determine new keyboard shortcut for Step Out
+_   https://github.com/processing/processing/issues/3538
+
+# Comment/Uncomment, Increase Indent, Decrease Indent
+menu.edit.comment_uncomment.keystroke = meta pressed SLASH
+menu.edit.increase_indent.keystroke = meta pressed CLOSE_BRACKET
+menu.edit.decrease_indent.keystroke = meta pressed OPEN_BRACKET
+# inside Editor.java
+
+# Previous Tab, Next Tab (ignored on Linux, which is Page Up and Page Down)
+editor.header.previous_tab.keystroke = meta alt pressed LEFT
+editor.header.next_tab.keystroke = meta alt pressed RIGHT
+# inside EditorHeader.java
+
+# Step, Step Into, and Step Out
+menu.debug.step.keystroke = meta pressed J
+menu.debug.step_into.keystroke = shift meta pressed J
+menu.debug.step_out.keystroke = meta alt pressed J
+# inside JavaEditor.java
+
 
 fixed earlier
 X Could not initialize class com.sun.jna.Native on startup (Windows)
@@ -20,6 +49,8 @@ X   https://github.com/processing/processing/issues/4929
 X   closed earlier; fixed as best we could
 X sharing usage metrics about libraries
 X   https://github.com/processing/processing/issues/4708
+X Determine shortcut for Export vs Use Selection for Find
+X   https://github.com/processing/processing/issues/2985
 
 contrib
 X Updated russian translation, now can choose russian in preferences
@@ -31,9 +62,9 @@ X   https://github.com/processing/processing/issues/5246
 X   https://github.com/processing/processing/pull/5654
 X console hiding button
 X   https://github.com/processing/processing/pull/5115
-_ NullPointerException in Contribution Manager
-_   https://github.com/processing/processing/issues/5524
-_   https://github.com/processing/processing/pull/5742
+X NullPointerException in Contribution Manager when installing
+X   https://github.com/processing/processing/issues/5524
+X   https://github.com/processing/processing/pull/5742
 
 jakub
 X Fix sketch exception getting hidden by warning
@@ -51,13 +82,14 @@ _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
 _   https://github.com/processing/processing/issues/5562
 _   https://github.com/processing/processing/pull/5642
 _   discuss with Casey
-_ Welcome screen doesn't size properly for HiDPI screens
-_   https://github.com/processing/processing/issues/4896
 
 
-nasty ones
+
+high-ish
 _ errors inside setup() aren't coming through at all?
 _   seen in Eclipse; have to turn on the debugger
+_ Welcome screen doesn't size properly for HiDPI screens
+_   https://github.com/processing/processing/issues/4896
 
 
 manager
@@ -100,16 +132,22 @@ _ clean Windows temp folders
 _   https://github.com/processing/processing/issues/1896
 
 
+modes
 _ sketch.properties not being written if initial mode is p5.js?
 _ when creating a sketch within non-Java mode, should write the settings file
 _   so that it re-loads in the proper environment
 _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because it's used to set the 'next' mode
+_ allow modes to specify their own base file name
+_   need to move "is this a sketch?" handling into Mode
+_ fix extension check for other modes
+_   https://github.com/processing/processing/issues/3980
 
+
+sketch/launching
 _ what to double-click when opening p5 projects
 _   lack of a project file makes this a pain
 _   dropping a sketch folder onto the PDE should also be implemented
-
 _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
 _   https://github.com/processing/processing/issues/73
@@ -139,15 +177,6 @@ _   implement simple table for prefs?
 
 _ "error during export" message, but no error message contents come through
 _   e.g. https://github.com/processing/processing/issues/4792
-
-_ report of a library or tool (probably includes 2.x? 1.x?) breaking things
-_   NoSuchFieldError: useNativeSelect
-_   https://github.com/processing/processing/issues/4821
-
-_ allow modes to specify their own base file name
-_   need to move "is this a sketch?" handling into Mode
-_ fix extension check for other modes
-_   https://github.com/processing/processing/issues/3980
 
 _ did we lose settings.path because it was too buggy?
 _   https://github.com/processing/processing/issues/3948
@@ -200,18 +229,10 @@ _   https://github.com/processing/processing/issues/4353#issuecomment-237715947
 medium
 _ detect changes in case with libraries
 _   https://github.com/processing/processing/issues/4507
-_ make when opening new editor window, open on the same display as current
+_ when opening new editor window, open on the same display as current
 _   https://github.com/processing/processing/issues/4526
 _ Library path mismatch between processing-java and export
 _   https://github.com/processing/processing/issues/4493
-
-shortcuts
-_ problems with non-US keyboards and some shortcuts
-_   https://github.com/processing/processing/issues/2199
-_ Determine shortcut for Export vs Use Selection for Find
-_   https://github.com/processing/processing/issues/2985
-_ Determine new keyboard shortcut for Step Out
-_   https://github.com/processing/processing/issues/3538
 
 
 needs more review
