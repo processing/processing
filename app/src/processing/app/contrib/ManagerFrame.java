@@ -73,7 +73,7 @@ public class ManagerFrame {
     modesTab = new ContributionTab(this, ContributionType.MODE);
     toolsTab = new ContributionTab(this, ContributionType.TOOL);
     examplesTab = new ContributionTab(this, ContributionType.EXAMPLES);
-    updatesTab = new UpdateContributionTab(this, null);
+    updatesTab = new UpdateContributionTab(this);
   }
 
 
