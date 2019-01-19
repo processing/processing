@@ -138,7 +138,7 @@ public class ThinkDifferent {
 //  }
 
   /**
-   * Sets a handler on an instance of {@link Application}, taking into account JVM version
+   * Sets a handler on an instance of {@link Application}, taking into account JDK version
    * differences.
    *
    * @param app an instance of {@link Application}
