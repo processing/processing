@@ -2,7 +2,8 @@
 <!-- See https://www.freedesktop.org/software/appstream/docs/chap-Quickstart.html -->
 <component type="desktop-application">
   <id>org.processing.processingide.desktop</id>
-  <metadata_license>GPLv3</metadata_license>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0</project_license>
   <developer_name>Processing Foundation</developer_name>
 
   <name>Processing IDE</name>
@@ -27,6 +28,15 @@
       <caption>The Processing IDE showing a simple example program</caption>
     </screenshot>
   </screenshots>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release date="2018-07-26" version="3.4" />
+    <release date="2018-07-22" version="3.3.7.2" />
+    <release date="2018-07-01" version="3.3.7.1" />
+    <release date="2018-03-13" version="3.3.7" />
+  </releases>
 
   <url type="homepage">http://www.processing.org/</url>
   <url type="help">https://processing.org/reference/</url>
