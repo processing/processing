@@ -1,5 +1,8 @@
 PROCESSING 3.5 (REV 0266) - 20 January 2019
 
+Hello from the flight back from Processing Community Day 2019 in LA!
+How about a new release? Lots of bug fixes and updates for you.
+
 
 [ api changes and additions ]
 
@@ -67,7 +70,6 @@ PROCESSING 3.5 (REV 0266) - 20 January 2019
   https://github.com/processing/processing/pull/5652
 
 
-
 [ jakub fixes ]
 
 + Prevent "could not find sketch size" message from freezing the app
@@ -82,8 +84,42 @@ PROCESSING 3.5 (REV 0266) - 20 January 2019
 + size(0, 0) just freezes instead of showing an error
   https://github.com/processing/processing/issues/5233 (duplicate)
 
++ Fix freeze when restarting sketch with variables in size
+  https://github.com/processing/processing/pull/5708
 
-[ bug fixes and improvements ]
++ Make sure Ctrl+Left Mouse on MacOS is consistent
+  https://github.com/processing/processing/issues/5672
+  https://github.com/processing/processing/pull/5674
+
++ Stop frame rate counter from exaggerating
+  https://github.com/processing/processing/pull/5697
+
++ Fix vertex buffer initialized with wrong number of components
+  https://github.com/processing/processing/pull/5698
+
++ Recreate FBOs when offscreen PGraphicsOpenGL is resized
+  https://github.com/processing/processing/pull/5699
+
+
+[ andres with the updates ]
+
++ Silence TIS/TSM warning message with P2D/P3D/OPENGL since macOS 10.13.4
+  https://github.com/processing/processing/issues/5462
+
++ Improve matrix performance in P2D/P3D
+  https://github.com/processing/processing/issues/5685
+
++ Initializing textures loads the pixels array, even if not needed aferwards
+  https://github.com/processing/processing/issues/5748
+
++ Improve startup time by skipping the Android SDK folder when listing sketches
+  https://github.com/processing/processing/issues/5707
+
++ PShape.attrib() and PShape.setAttrib() are not working
+  https://github.com/processing/processing/issues/5560
+
+
+[ still more bug fixes and improvements ]
 
 + Improve startup time when user-specified fonts are not used.
   The default font will be faster, using ttf/otf is fine.
@@ -97,47 +133,12 @@ PROCESSING 3.5 (REV 0266) - 20 January 2019
 + If settings() present but pixelDensity() is in setup(), no error message
   https://github.com/processing/processing/issues/4703
 
-
-[ minor updates ]
-
-
 + Fix several out of date links in the Help menu
   https://github.com/processing/processing/issues/5729
 
 + Update the About screen to 2019
 
-
-[ internal changes ]
-
 + Update to Java 8u192, then to 8u202
-
-andres
-X silence TIS/TSM warning message with P2D/P3D/OPENGL since macOS 10.13.4
-X   https://github.com/processing/processing/issues/5462
-X improve matrix performance in P2D/P3D
-X   https://github.com/processing/processing/issues/5685
-X Initializing textures loads the pixels array, even if not needed aferwards
-X   https://github.com/processing/processing/issues/5748
-X Processing 3.4 takes 60 seconds before can edit file
-X   https://github.com/processing/processing/issues/5707
-X   skip Android's SDK folder when adding sketches
-X   https://github.com/processing/processing/commit/5b653263cc6151f838c11a61689d756901c11e37
-X PShape.attrib() and PShape.setAttrib() are not working
-X   https://github.com/processing/processing/issues/5560
-
-jakub
-X Fix freeze when restarting sketch with variables in size
-X   https://github.com/processing/processing/pull/5708
-X Make sure Ctrl+Left Mouse on MacOS is consistent
-X   https://github.com/processing/processing/issues/5672
-X   https://github.com/processing/processing/pull/5674
-X Stop frame rate counter from exaggerating
-X   https://github.com/processing/processing/pull/5697
-X Fix vertex buffer initialized with wrong number of components
-X   https://github.com/processing/processing/pull/5698
-X Recreate FBOs when offscreen PGraphicsOpenGL is resized
-X   https://github.com/processing/processing/pull/5699
-
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
