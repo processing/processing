@@ -3,6 +3,7 @@ package processing.data;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import processing.core.PApplet;
 
@@ -593,19 +594,20 @@ public class IntDict {
    */
   public int remove(String key) {
     int index = index(key);
-    if (index != -1) {
-      removeIndex(index);
+    if (index == -1) {
+      throw new NoSuchElementException("'" + key + "' not found");
     }
-    return index;
+    int value = values[index];
+    removeIndex(index);
+    return value;
   }
 
 
-  public String removeIndex(int index) {
+  public int removeIndex(int index) {
     if (index < 0 || index >= count) {
       throw new ArrayIndexOutOfBoundsException(index);
     }
-    //System.out.println("index is " + which + " and " + keys[which]);
-    String key = keys[index];
+    int value = values[index];
     indices.remove(keys[index]);
     for (int i = index; i < count-1; i++) {
       keys[i] = keys[i+1];
@@ -615,7 +617,7 @@ public class IntDict {
     count--;
     keys[count] = null;
     values[count] = 0;
-    return key;
+    return value;
   }
 
 
