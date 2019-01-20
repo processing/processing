@@ -35,7 +35,6 @@ import javax.swing.table.*;
 import processing.app.Base;
 import processing.app.Platform;
 import processing.app.ui.Toolkit;
-import sun.swing.SwingUtilities2;
 
 
 // The "Scrollable" implementation and its methods here take care of preventing

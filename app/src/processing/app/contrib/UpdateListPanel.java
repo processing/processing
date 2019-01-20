@@ -2,18 +2,18 @@ package processing.app.contrib;
 
 public class UpdateListPanel extends ListPanel {
 
-  Contribution.Filter filter;
+  Contribution.Filter contribFilter;
 
   public UpdateListPanel(ContributionTab contributionTab,
-                         Contribution.Filter filter) {
-    super(contributionTab, filter, true,
-            ContributionColumn.STATUS_NO_HEADER,
-            ContributionColumn.NAME,
-            ContributionColumn.AUTHOR,
-            ContributionColumn.INSTALLED_VERSION,
-            ContributionColumn.AVAILABLE_VERSION);
+                         Contribution.Filter contribFilter) {
+    super(contributionTab, contribFilter, true,
+          ContributionColumn.STATUS_NO_HEADER,
+          ContributionColumn.NAME,
+          ContributionColumn.AUTHOR,
+          ContributionColumn.INSTALLED_VERSION,
+          ContributionColumn.AVAILABLE_VERSION);
 
-    this.filter = filter;
+    this.contribFilter = contribFilter;
     table.getTableHeader().setEnabled(false);
   }
 
@@ -21,7 +21,7 @@ public class UpdateListPanel extends ListPanel {
   @Override
   public void contributionAdded(final Contribution contribution) {
     // Ensures contributionAdded in ListPanel is only run on LocalContributions
-    if (filter.matches(contribution)) {
+    if (contribFilter.matches(contribution)) {
       super.contributionAdded(contribution);
       ((UpdateStatusPanel) contributionTab.statusPanel).update(); // Enables update button
     }
