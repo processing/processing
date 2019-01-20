@@ -24,7 +24,7 @@ o Determine new keyboard shortcut for Step Out
 X   https://github.com/processing/processing/issues/3538
 X   all set based on #2199
 
-fixed earlier
+cleaning
 X Could not initialize class com.sun.jna.Native on startup (Windows)
 X   https://github.com/processing/processing/issues/4929
 X   closed earlier; fixed as best we could
@@ -32,6 +32,15 @@ X sharing usage metrics about libraries
 X   https://github.com/processing/processing/issues/4708
 X Determine shortcut for Export vs Use Selection for Find
 X   https://github.com/processing/processing/issues/2985
+o swap font smoothing for tab size?
+o implement simple table for prefs?
+X   still requires restart of the software, so problematic
+X need docs for translations
+X   https://github.com/processing/processing/issues/4018
+X setting a bad font/size in preferences.txt causes a crash on startup
+X   https://github.com/processing/processing/issues/4085
+o   https://github.com/processing/processing/pull/4087
+X   can't reproduce with current code
 
 contrib
 X Updated russian translation, now can choose russian in preferences
@@ -61,10 +70,10 @@ X size(0, 0) just freezes instead of showing an error
 X   https://github.com/processing/processing/issues/5233 (duplicate)
 
 
+3.5.1
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
 _   https://github.com/processing/processing/issues/5562
 _   https://github.com/processing/processing/pull/5642
-_   discuss with Casey
 
 
 high-ish
@@ -74,25 +83,6 @@ _ errors inside setup() aren't coming through at all?
 _   seen in Eclipse; have to turn on the debugger... same as #4703?
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
-
-
-manager
-_ Manager fails to complete install of PythonMode when no windows open
-_   https://github.com/processing/processing/issues/5309
-_ an incompatible Mode prevents the PDE from quitting after last window is closed
-_   https://github.com/processing/processing/issues/5112
-_ “could not move the contribution to the backup folder” message while updating
-_   problem is that any sketch that uses a library, the lib is stuck as "in use"
-_   https://github.com/processing/processing/issues/4973
-_ issues with updating modes
-_   https://github.com/processing/processing/issues/5424
-_ examples window not updating on install
-_   open examples window
-_   mode > add mode > libraries > install video
-_   did not update the examples window, had to restart pde
-_ was able to save over the video capture examples b/c they were a library
-_   lib examples not properly marked as read-only
-_ "Could not find a examples in the downloaded file" is a poorly worded message
 
 
 temp
@@ -114,6 +104,8 @@ _   don't allow adding files w/o saving
 _   others?
 _ clean Windows temp folders
 _   https://github.com/processing/processing/issues/1896
+_ could not write to temporary directory (virus checker problems)
+_   https://github.com/processing/processing/issues/4757
 
 
 modes
@@ -147,7 +139,7 @@ _   see the 'examples' section below
 _ how are file associations handled in Linux? (for .pde, .psk)
 
 
-_ implement fallback fonts instead of giving up and using Dialog and Mono
+_ Implement fallback fonts so we can use Source et al with CJK/Greek/Arabic
 _   https://github.com/processing/processing/issues/5023
 
 _ "Required files could not be found" when trying to run from the .zip file
@@ -156,8 +148,6 @@ _   use an installer instead?
 
 _ mode list does not update after changing sketchbook folder
 _   already reported?
-_ swap font smoothing for tab size?
-_   implement simple table for prefs?
 
 _ "error during export" message, but no error message contents come through
 _   e.g. https://github.com/processing/processing/issues/4792
@@ -178,8 +168,6 @@ _   malformed proxy issues http://stackoverflow.com/q/376101
 _   docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html
 _   https://github.com/processing/processing/issues/1476#issuecomment-23229990
 
-_ could not write to temporary directory (virus checker problems)
-_   https://github.com/processing/processing/issues/4757
 
 _ fix appbundler problems due to rollback
 _   https://github.com/processing/processing/issues/3790
@@ -205,8 +193,6 @@ _ text gutter doesn't seem to be hidpi
 X   or is it b/c screen not quite 2x? (nope)
 _ swap out the fonts?
 
-_ Help Menu disabled on OS X
-_   https://github.com/processing/processing/issues/4353#issuecomment-237715947
 
 medium
 _ detect changes in case with libraries
@@ -229,16 +215,7 @@ _   solution is to create a sprite sheet as a psd that'll have better type
 _     no way we're gonna fix the sizing and spacing for all platforms
 
 
-_ setting a bad font/size causes a crash on startup
-_   https://github.com/processing/processing/issues/4085
-o   https://github.com/processing/processing/pull/4087
 
-
-translations
-_ need docs for translations
-_   https://github.com/processing/processing/issues/4018
-_ question about PDE_pt-br instead of PDE_pt
-_   https://github.com/processing/processing/issues/4018
 
 more contribs
 _ Saving sketch with the same name as a class
@@ -762,6 +739,22 @@ _   e.g. ocd is broken in 0125 because of method signature changes
 
 PDE / Manager
 
+_ Manager fails to complete install of PythonMode when no windows open
+_   https://github.com/processing/processing/issues/5309
+_ an incompatible Mode prevents the PDE from quitting after last window is closed
+_   https://github.com/processing/processing/issues/5112
+_ “could not move the contribution to the backup folder” message while updating
+_   problem is that any sketch that uses a library, the lib is stuck as "in use"
+_   https://github.com/processing/processing/issues/4973
+_ issues with updating modes
+_   https://github.com/processing/processing/issues/5424
+_ examples window not updating on install
+_   open examples window
+_   mode > add mode > libraries > install video
+_   did not update the examples window, had to restart pde
+_ was able to save over the video capture examples b/c they were a library
+_   lib examples not properly marked as read-only
+_ "Could not find a examples in the downloaded file" is a poorly worded message
 _ 'version' should be x.y or x.y.z, not some extra long string
 _   enforce this by disallowing spaces? on the import script?
 _ Progress bar height on macOS is too thin
@@ -993,6 +986,8 @@ _   this may already work with SingleInstance stuff
 
 DIST / Mac OS X
 
+_ Help Menu disabled on OS X (looks like a JVM bug)
+_   https://github.com/processing/processing/issues/4353#issuecomment-237715947
 _ Java bug prevents us from setting the dock name of a sketch run from the PDE
 _   https://github.com/processing/processing/issues/5045
 _ client properties
