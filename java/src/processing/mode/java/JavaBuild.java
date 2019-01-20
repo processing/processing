@@ -3,7 +3,7 @@
 /*
 Part of the Processing project - http://processing.org
 
-Copyright (c) 2012-16 The Processing Foundation
+Copyright (c) 2012-19 The Processing Foundation
 Copyright (c) 2004-12 Ben Fry and Casey Reas
 Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -57,8 +57,6 @@ import processing.mode.java.pdex.SourceUtils;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PreprocessorResult;
 import processing.mode.java.preproc.SurfaceInfo;
-
-// Would you believe there's a java.lang.Compiler class? I wouldn't.
 
 
 public class JavaBuild {
@@ -224,10 +222,11 @@ public class JavaBuild {
 
     // Remove the entries being moved to settings(). They will be re-inserted
     // by writeFooter() when it emits the settings() method.
-    if (sizeInfo != null && sizeInfo.hasSettings()) {
-//      String sizeStatement = sizeInfo.getStatement();
+    // If the user already has a settings() method, don't mess with anything.
+    // https://github.com/processing/processing/issues/4703
+    if (!PdePreprocessor.hasSettingsMethod(bigCode.toString()) &&
+        sizeInfo != null && sizeInfo.hasSettings()) {
       for (String stmt : sizeInfo.getStatements()) {
-        //System.out.format("size stmt is '%s'%n", sizeStatement);
         // Don't remove newlines (and while you're at it, just keep spaces)
         // https://github.com/processing/processing/issues/3654
         stmt = stmt.trim();
@@ -267,18 +266,9 @@ public class JavaBuild {
       // then search through for anyone else whose preprocName is null,
       // since they've also been combined into the main pde.
       int errorFile = findErrorFile(errorLine);
-//      System.out.println("error line is " + errorLine + ", file is " + errorFile);
       errorLine -= sketch.getCode(errorFile).getPreprocOffset();
-//      System.out.println("  preproc offset for that file: " + sketch.getCode(errorFile).getPreprocOffset());
-
-//      System.out.println("i found this guy snooping around..");
-//      System.out.println("whatcha want me to do with 'im boss?");
-//      System.out.println(errorLine + " " + errorFile + " " + code[errorFile].getPreprocOffset());
 
       String msg = re.getMessage();
-
-      //System.out.println(java.getAbsolutePath());
-//      System.out.println(bigCode);
 
       if (msg.contains("expecting RCURLY") || msg.contains("expecting LCURLY")) {
         for (int i = 0; i < sketch.getCodeCount(); i++) {
@@ -294,8 +284,8 @@ public class JavaBuild {
             // the result of PApplet.match(msg, "found ('.*')") on missing
             // LCURLY.
             throw new SketchException(braceTest[0] > 0
-              ? "Found one too many { characters without a } to match it."
-              : "Found one too many } characters without a { to match it.",
+              ? "Found an extra { character without a } to match it."
+              : "Found an extra } character without a { to match it.",
               i, braceTest[1], braceTest[2], false);
           }
         }
@@ -413,26 +403,19 @@ public class JavaBuild {
       javaLibraryPath += File.pathSeparator + core.getNativePath();
     }
 
-//    System.out.println("extra imports: " + result.extraImports);
     for (String item : result.extraImports) {
-//      System.out.println("item = '" + item + "'");
       // remove things up to the last dot
       int dot = item.lastIndexOf('.');
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
       String entry = (dot == -1) ? item : item.substring(0, dot);
-//      System.out.print(entry + " => ");
 
       if (item.startsWith("static ")) {
         // import static - https://github.com/processing/processing/issues/8
-        // Remove more stuff.
         int dot2 = item.lastIndexOf('.');
         entry = entry.substring(7, (dot2 == -1) ? entry.length() : dot2);
-//        System.out.println(entry);
       }
 
-//      System.out.println("library searching for " + entry);
       Library library = mode.getLibrary(entry);
-//      System.out.println("  found " + library);
 
       if (library != null) {
         if (!importedLibraries.contains(library)) {
@@ -461,7 +444,6 @@ public class JavaBuild {
         }
       }
     }
-//    PApplet.println(PApplet.split(libraryPath, File.pathSeparatorChar));
 
     // Finally, add the regular Java CLASSPATH. This contains everything
     // imported by the PDE itself (core.jar, pde.jar, quaqua.jar) which may
@@ -532,6 +514,7 @@ public class JavaBuild {
     foundMain = preprocessor.hasMethod("main");
     return result.className;
   }
+
 
   /**
    * Returns true if this package isn't part of a library (it's a system import

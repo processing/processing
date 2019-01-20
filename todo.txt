@@ -23,6 +23,8 @@ X   https://github.com/processing/processing/wiki/Localization#shortcuts-and-key
 o Determine new keyboard shortcut for Step Out
 X   https://github.com/processing/processing/issues/3538
 X   all set based on #2199
+X settings() present and pixelDensity() is in setup(), nothing set/no error
+X   https://github.com/processing/processing/issues/4703
 
 cleaning
 X Could not initialize class com.sun.jna.Native on startup (Windows)
@@ -77,8 +79,6 @@ _   https://github.com/processing/processing/pull/5642
 
 
 high-ish
-_ settings() present and pixelDensity() is in setup(), nothing set/no error
-_   https://github.com/processing/processing/issues/4703
 _ errors inside setup() aren't coming through at all?
 _   seen in Eclipse; have to turn on the debugger... same as #4703?
 _ Welcome screen doesn't size properly for HiDPI screens
