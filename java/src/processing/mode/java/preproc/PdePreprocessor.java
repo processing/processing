@@ -1230,7 +1230,8 @@ public class PdePreprocessor {
     if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
       // doesn't remove the original size() method,
       // but calling size() again in setup() is harmless.
-      if (!hasMethod("settings") && sizeInfo.hasSettings()) {
+      if (!hasMethod("settings") &&
+          sizeInfo != null && sizeInfo.hasSettings()) {
         out.println(indent + "public void settings() { " + sizeInfo.getSettings() + " }");
       }
 

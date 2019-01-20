@@ -255,6 +255,7 @@ public class JavaBuild {
           writer.close();
         }
       } catch (RuntimeException re) {
+        re.printStackTrace();
         throw new SketchException("Could not write " + java.getAbsolutePath());
       }
     } catch (antlr.RecognitionException re) {
