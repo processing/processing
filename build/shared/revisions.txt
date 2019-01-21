@@ -4,6 +4,9 @@ Should have known better than to try to fix a bug connnected to
 something as fundamental as the size() command. This release just
 fixes one major regression in 3.5.
 
+Please see the release notes for 3.5 for the major changes since 3.4:
+https://github.com/processing/processing/releases/tag/processing-0266-3.5
+
 
 [ oops, sorry ]
 
