@@ -208,9 +208,11 @@ public class PdePreprocessor {
   }
 
 
+  /** Parse the sketch size and set the internal sizeInfo variable */
   public SurfaceInfo initSketchSize(String code,
-                                 boolean sizeWarning) throws SketchException {
-    return parseSketchSize(code, sizeWarning);
+                                    boolean sizeWarning) throws SketchException {
+    sizeInfo = parseSketchSize(code, sizeWarning);
+    return sizeInfo;
   }
 
 
@@ -422,9 +424,6 @@ public class PdePreprocessor {
       }
       info.width = "displayWidth";
       info.height = "displayHeight";
-//      if (extraStatements.size() != 0) {
-//        info.statement += extraStatements.join(" ");
-//      }
       info.addStatements(extraStatements);
       info.checkEmpty();
       return info;
@@ -434,71 +433,21 @@ public class PdePreprocessor {
     // need to pull out the noSmooth() and smooth(N) methods.
     if (extraStatements.size() != 0) {
       SurfaceInfo info = new SurfaceInfo();
-//      info.statement = extraStatements.join(" ");
       info.addStatements(extraStatements);
       return info;
     }
 
     // not an error, just no size() specified
-    //return new String[] { null, null, null, null, null };
     return new SurfaceInfo();
   }
-
-/*
-  static String readSingleQuote(char[] c, int i) {
-    StringBuilder sb = new StringBuilder();
-    try {
-      sb.append(c[i++]);  // add the quote
-      if (c[i] == '\\') {
-        sb.append(c[i++]);  // add the escape
-        if (c[i] == 'u') {
-          // grabs uNNN and the fourth N will be added below
-          for (int j = 0; j < 4; j++) {
-            sb.append(c[i++]);
-          }
-        }
-      }
-      sb.append(c[i++]);  // get the char, escapee, or last unicode digit
-      sb.append(c[i++]);  // get the closing quote
-
-    } catch (ArrayIndexOutOfBoundsException ignored) {
-      // this means they have bigger problems with their code
-    }
-    return sb.toString();
-  }
-
-
-  static String readDoubleQuote(char[] c, int i) {
-    StringBuilder sb = new StringBuilder();
-    try {
-      sb.append(c[i++]);  // add the quote
-      while (i < c.length) {
-        if (c[i] == '\\') {
-          sb.append(c[i++]);  // add the escape
-          sb.append(c[i++]);  // add whatever was escaped
-        } else if (c[i] == '\"') {
-          sb.append(c[i++]);
-          break;
-        } else {
-          sb.append(c[i++]);
-        }
-      }
-    } catch (ArrayIndexOutOfBoundsException ignored) {
-      // this means they have bigger problems with their code
-    }
-    return sb.toString();
-  }
-*/
 
 
   /**
    * Parses the code and determines the mode of the sketch.
-   *
    * @param code code without comments
    * @return determined mode
    */
   static public Mode parseMode(CharSequence code) {
-
     // See if we can find any function in the global scope
     if (findInCurrentScope(FUNCTION_DECL, code) != null) {
       return Mode.ACTIVE;
@@ -1230,8 +1179,7 @@ public class PdePreprocessor {
     if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
       // doesn't remove the original size() method,
       // but calling size() again in setup() is harmless.
-      if (!hasMethod("settings") &&
-          sizeInfo != null && sizeInfo.hasSettings()) {
+      if (!hasMethod("settings") && sizeInfo.hasSettings()) {
         out.println(indent + "public void settings() { " + sizeInfo.getSettings() + " }");
       }
 
