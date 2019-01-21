@@ -1,6 +1,6 @@
 0267 (3.5.1)
-_ size() command not working properly
-_   https://github.com/processing/processing/issues/5759
+X size() command not working properly
+X   https://github.com/processing/processing/issues/5759
 
 
 3.5.1

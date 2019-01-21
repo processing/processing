@@ -1,3 +1,19 @@
+PROCESSING 3.5.1 (REV 0267) - 21 January 2019
+
+Should have known better than to try to fix a bug connnected to
+something as fundamental as the size() command. This release just
+fixes one major regression in 3.5.
+
+
+[ oops, sorry ]
+
++ size() command not working properly
+  https://github.com/processing/processing/issues/5759
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.5 (REV 0266) - 20 January 2019
 
 Hello from the flight back from Processing Community Day 2019 in LA!
