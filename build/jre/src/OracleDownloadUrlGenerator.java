@@ -29,7 +29,7 @@ public class OracleDownloadUrlGenerator extends DownloadUrlGenerator{
 
   @Override
   public String buildUrl(String platform, boolean jdk, int train, int version, int update,
-    int build, String flavor, String hash) {
+      int build, String flavor, String hash) {
 
     String filename = getLocalFilename(platform, jdk, train, version, update, build, flavor, hash);
 

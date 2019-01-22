@@ -18,7 +18,7 @@ public abstract class DownloadUrlGenerator {
    * @param hash The hash like "d54c1d3a095b4ff2b6607d096fa80163".
    */
   public abstract String buildUrl(String platform, boolean jdk, int train, int version,
-    int update, int build, String flavor, String hash);
+      int update, int build, String flavor, String hash);
 
   /**
    * Determine the name of the file to which the remote file should be saved.
@@ -35,7 +35,7 @@ public abstract class DownloadUrlGenerator {
    * @param hash The hash like "d54c1d3a095b4ff2b6607d096fa80163".
    */
   public String getLocalFilename(String downloadPlatform, boolean jdk, int train, int version,
-    int update, int build, String flavor, String hash) {
+      int update, int build, String flavor, String hash) {
 
     String baseFilename = (jdk ? "jdk" : "jre");
 
