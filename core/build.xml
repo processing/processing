@@ -3,6 +3,7 @@
 
   <target name="clean" description="Clean out the build directories">
     <delete dir="bin" />
+    <delete dir="bin-test" />
     <delete file="library/core.jar" />
   </target>
 
@@ -75,7 +76,18 @@
     </sequential>
   </macrodef>
 
-  <target name="compile" description="Compile" depends="methods-build">
+  <target name="test-compile" description="Compile" depends="methods-build">
+    <compilecommon srcdir="src; test" destdir="bin-test" />
+  </target>
+
+  <target name="test" depends="test-compile">
+    <junit haltonfailure="true">
+      <classpath refid="classpath.test" />
+      <formatter type="brief" usefile="false" />
+    </junit>
+  </target>
+
+  <target name="compile" description="Compile" depends="test">
     <compilecommon srcdir="src" destdir="bin" />
   </target>
 

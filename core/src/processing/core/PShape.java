@@ -1932,15 +1932,14 @@ public class PShape implements PConstants {
       }
     }
 
-    PImage loadedImage = new PImage(awtImage);
+    // if it's a .gif image, test to see if it has transparency
+    boolean requiresCheckAlpha = extension.equals("gif") || extension.equals("png") ||
+        extension.equals("unknown");
+
+    PImage loadedImage = new PImage(awtImage, requiresCheckAlpha);
+
     if (loadedImage.width == -1) {
       // error...
-    }
-
-    // if it's a .gif image, test to see if it has transparency
-    if (extension.equals("gif") || extension.equals("png") ||
-      extension.equals("unknown")) {
-    loadedImage.checkAlpha();
     }
 
     setTexture(loadedImage);

@@ -24,6 +24,8 @@
 
 package processing.core;
 
+import processing.core.util.image.TifConstants;
+
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
@@ -239,7 +241,6 @@ public class PImage implements PConstants, Cloneable {
     init(width, height, format, factor);
   }
 
-
   /**
    * Do not remove, see notes in the other variant.
    */
@@ -270,7 +271,7 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Check the alpha on an image, using a really primitive loop.
    */
-  protected void checkAlpha() {
+  private void checkAlpha() {
     if (pixels == null) return;
 
     for (int i = 0; i < pixels.length; i++) {
@@ -286,6 +287,40 @@ public class PImage implements PConstants, Cloneable {
 
   //////////////////////////////////////////////////////////////
 
+  public PImage(int width, int height, int[] pixels, boolean requiresCheckAlpha, PApplet parent) {
+    initFromPixels(
+        width,
+        height,
+        pixels,
+        RGB,
+        1
+    );
+
+    this.parent = parent;
+
+    if (requiresCheckAlpha) {
+      checkAlpha();
+    }
+  }
+
+  public PImage(int width, int height, int[] pixels, boolean requiresCheckAlpha, PApplet parent,
+                int format, int factor) {
+
+    initFromPixels(width, height, pixels, format, factor);
+    this.parent = parent;
+
+    if (requiresCheckAlpha) {
+      checkAlpha();
+    }
+  }
+
+  private void initFromPixels(int width, int height, int[] pixels, int format, int factor) {
+    this.width = width;
+    this.height = height;
+    this.format = format;
+    this.pixelDensity = factor;
+    this.pixels = pixels;
+  }
 
   /**
    * Construct a new PImage from a java.awt.Image. This constructor assumes
@@ -297,6 +332,38 @@ public class PImage implements PConstants, Cloneable {
    * the data and the img is valid
    */
   public PImage(Image img) {
+    initFromImage(img);
+  }
+
+  /**
+   * @nowebref
+   *
+   * @param requiresCheckAlpha
+   */
+  public PImage(Image img, boolean requiresCheckAlpha) {
+    initFromImage(img);
+
+    if (requiresCheckAlpha) {
+      checkAlpha();
+    }
+  }
+
+  /**
+   * @nowebref
+   *
+   * @param requiresCheckAlpha
+   */
+  public PImage(Image img, boolean requiresCheckAlpha, PApplet parent) {
+    initFromImage(img);
+
+    this.parent = parent;
+
+    if (requiresCheckAlpha) {
+      checkAlpha();
+    }
+  }
+
+  private void initFromImage(Image img) {
     format = RGB;
     if (img instanceof BufferedImage) {
       BufferedImage bi = (BufferedImage) img;
@@ -331,7 +398,7 @@ public class PImage implements PConstants, Cloneable {
       height = img.getHeight(null);
       pixels = new int[width * height];
       PixelGrabber pg =
-        new PixelGrabber(img, 0, 0, width, height, pixels, 0, width);
+          new PixelGrabber(img, 0, 0, width, height, pixels, 0, width);
       try {
         pg.grabPixels();
       } catch (InterruptedException e) { }
@@ -340,7 +407,6 @@ public class PImage implements PConstants, Cloneable {
     pixelWidth = width;
     pixelHeight = height;
   }
-
 
   /**
    * Use the getNative() method instead, which allows library interfaces to be
@@ -2947,68 +3013,6 @@ int testFunction(int dst, int src) {
 
   // FILE I/O
 
-
-  static byte TIFF_HEADER[] = {
-    77, 77, 0, 42, 0, 0, 0, 8, 0, 9, 0, -2, 0, 4, 0, 0, 0, 1, 0, 0,
-    0, 0, 1, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 3, 0, 0, 0, 1,
-    0, 0, 0, 0, 1, 2, 0, 3, 0, 0, 0, 3, 0, 0, 0, 122, 1, 6, 0, 3, 0,
-    0, 0, 1, 0, 2, 0, 0, 1, 17, 0, 4, 0, 0, 0, 1, 0, 0, 3, 0, 1, 21,
-    0, 3, 0, 0, 0, 1, 0, 3, 0, 0, 1, 22, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0,
-    1, 23, 0, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8, 0, 8
-  };
-
-
-  static final String TIFF_ERROR =
-    "Error: Processing can only read its own TIFF files.";
-
-  static protected PImage loadTIFF(byte tiff[]) {
-    if ((tiff[42] != tiff[102]) ||  // width/height in both places
-        (tiff[43] != tiff[103])) {
-      System.err.println(TIFF_ERROR);
-      return null;
-    }
-
-    int width =
-      ((tiff[30] & 0xff) << 8) | (tiff[31] & 0xff);
-    int height =
-      ((tiff[42] & 0xff) << 8) | (tiff[43] & 0xff);
-
-    int count =
-      ((tiff[114] & 0xff) << 24) |
-      ((tiff[115] & 0xff) << 16) |
-      ((tiff[116] & 0xff) << 8) |
-      (tiff[117] & 0xff);
-    if (count != width * height * 3) {
-      System.err.println(TIFF_ERROR + " (" + width + ", " + height +")");
-      return null;
-    }
-
-    // check the rest of the header
-    for (int i = 0; i < TIFF_HEADER.length; i++) {
-      if ((i == 30) || (i == 31) || (i == 42) || (i == 43) ||
-          (i == 102) || (i == 103) ||
-          (i == 114) || (i == 115) || (i == 116) || (i == 117)) continue;
-
-      if (tiff[i] != TIFF_HEADER[i]) {
-        System.err.println(TIFF_ERROR + " (" + i + ")");
-        return null;
-      }
-    }
-
-    PImage outgoing = new PImage(width, height, RGB);
-    int index = 768;
-    count /= 3;
-    for (int i = 0; i < count; i++) {
-      outgoing.pixels[i] =
-        0xFF000000 |
-        (tiff[index++] & 0xff) << 16 |
-        (tiff[index++] & 0xff) << 8 |
-        (tiff[index++] & 0xff);
-    }
-    return outgoing;
-  }
-
-
   protected boolean saveTIFF(OutputStream output) {
     // shutting off the warning, people can figure this out themselves
     /*
@@ -3019,7 +3023,13 @@ int testFunction(int dst, int src) {
     */
     try {
       byte tiff[] = new byte[768];
-      System.arraycopy(TIFF_HEADER, 0, tiff, 0, TIFF_HEADER.length);
+      System.arraycopy(
+          TifConstants.TIFF_HEADER,
+          0,
+          tiff,
+          0,
+          TifConstants.TIFF_HEADER.length
+      );
 
       tiff[30] = (byte) ((pixelWidth >> 8) & 0xff);
       tiff[31] = (byte) ((pixelWidth) & 0xff);
