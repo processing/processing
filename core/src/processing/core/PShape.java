@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
 
 
 /**
@@ -1915,7 +1915,7 @@ public class PShape implements PConstants {
     String extension = parts[0].substring(11);
     String encodedData = parts[1];
 
-    byte[] decodedBytes = DatatypeConverter.parseBase64Binary(encodedData);
+    byte[] decodedBytes = Base64.getDecoder().decode(encodedData);
 
     if(decodedBytes == null){
       System.err.println("Decode Error on image: " + imagePath.substring(0, 20));
