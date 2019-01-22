@@ -2697,7 +2697,7 @@ public class PApplet implements PConstants {
                                event.getX(), event.getY(),
                                button, event.getCount());
       }
-      if (button == MouseEvent.RELEASE) {
+      if (action == MouseEvent.RELEASE) {
         macosxLeftButtonWithCtrlPressed = false;
       }
     }
