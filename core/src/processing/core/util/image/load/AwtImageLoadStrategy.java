@@ -1,4 +1,4 @@
-package processing.core.util.image.loadstrategy;
+package processing.core.util.image.load;
 
 import processing.core.PApplet;
 import processing.core.PImage;

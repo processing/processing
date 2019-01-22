@@ -1,8 +1,9 @@
-package processing.core.util.image.loadstrategy;
+package processing.core.util.io;
 
-public class ImageLoadUtil {
+import java.io.File;
 
-  private static String UNKNOWN_FILE_EXTENSION = "unknown";
+public class PathUtil {
+  private static final String UNKNOWN_FILE_EXTENSION = "unknown";
 
   public static String parseExtension(String path) {
     String lower = path.toLowerCase();
@@ -30,10 +31,20 @@ public class ImageLoadUtil {
     return extension == null ? UNKNOWN_FILE_EXTENSION : extension.toLowerCase();
   }
 
-  public static boolean checkExtensionRequiresAlpha(String extension) {
-    return extension.equals("gif") ||
-        extension.equals("png") ||
-        extension.equals("unknown");
+  static public void createPath(String path) {
+    createPath(new File(path));
   }
 
+  public static void createPath(File file) {
+    try {
+      String parent = file.getParent();
+      if (parent != null) {
+        File unit = new File(parent);
+        if (!unit.exists()) unit.mkdirs();
+      }
+    } catch (SecurityException se) {
+      System.err.println("You don't have permissions to create " +
+          file.getAbsolutePath());
+    }
+  }
 }

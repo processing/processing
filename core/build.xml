@@ -76,7 +76,7 @@
     </sequential>
   </macrodef>
 
-  <target name="test-compile" description="Compile" depends="methods-build">
+  <target name="test-compile" description="Compile">
     <compilecommon srcdir="src; test" destdir="bin-test" />
   </target>
 

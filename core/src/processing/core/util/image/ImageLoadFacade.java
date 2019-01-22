@@ -3,8 +3,9 @@ package processing.core.util.image;
 
 import processing.core.PApplet;
 import processing.core.PImage;
-import processing.core.util.image.loadstrategy.*;
+import processing.core.util.image.load.*;
 import processing.core.util.io.InputFactory;
+import processing.core.util.io.PathUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -21,13 +22,13 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class ImageLoadFacade {
 
-  private static AtomicReference<ImageLoadFacade> instance = new AtomicReference<>(null);
+  private static final AtomicReference<ImageLoadFacade> instance = new AtomicReference<>(null);
 
   private static final String PREFIX_BASE64_STRING_IMAGE = "data:image";
   private static final String PREFIX_FILE_PATH = "file://";
 
-  private Map<String, ImageLoadStrategy> loadStrategies;
-  private ImageLoadStrategy defaultImageLoadStrategy;
+  private final Map<String, ImageLoadStrategy> loadStrategies;
+  private final ImageLoadStrategy defaultImageLoadStrategy;
 
   public static ImageLoadFacade get() {
     instance.compareAndSet(null, new ImageLoadFacade());
@@ -41,7 +42,7 @@ public class ImageLoadFacade {
 
     loadStrategies.put("tga", new TgaImageLoadStrategy());
 
-    ImageLoadStrategy tifImageLoadStrategy = new TifImageLoadStrategy();
+    ImageLoadStrategy tifImageLoadStrategy = new TiffImageLoadStrategy();
     loadStrategies.put("tif", tifImageLoadStrategy);
     loadStrategies.put("tiff", tifImageLoadStrategy);
 
@@ -117,11 +118,11 @@ public class ImageLoadFacade {
 
   public PImage loadFromFile(PApplet pApplet, String path, String extension) {
     if (extension == null) {
-      extension = ImageLoadUtil.parseExtension(path);
+      extension = PathUtil.parseExtension(path);
     }
 
     // just in case. them users will try anything!
-    extension = ImageLoadUtil.cleanExtension(extension);
+    extension = PathUtil.cleanExtension(extension);
 
     // Find strategy for loading
     ImageLoadStrategy imageLoadStrategy = loadStrategies.getOrDefault(

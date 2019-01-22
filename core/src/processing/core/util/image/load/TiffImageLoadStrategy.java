@@ -1,4 +1,4 @@
-package processing.core.util.image.loadstrategy;
+package processing.core.util.image.load;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -6,7 +6,7 @@ import processing.core.PImage;
 import processing.core.util.image.constants.TifConstants;
 
 
-public class TifImageLoadStrategy implements ImageLoadStrategy {
+public class TiffImageLoadStrategy implements ImageLoadStrategy {
 
   @Override
   public PImage load(PApplet pApplet, String path, String extension) {
