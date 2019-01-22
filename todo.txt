@@ -1,6 +1,6 @@
 0268 (3.5.2)
-_ shortcuts not working on Windows/Linux (using meta)
-_   https://github.com/processing/processing/issues/5763
+X shortcuts not working on Windows/Linux (using meta)
+X   https://github.com/processing/processing/issues/5763
 _   update https://github.com/processing/processing/wiki/Localization#shortcuts-and-key-bindings
 
 

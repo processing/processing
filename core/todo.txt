@@ -1,4 +1,7 @@
 0268 (3.5.2)
+X Ctrl-click on Mac OS X result in all subsequent clicks reported as right-click
+X   https://github.com/processing/processing/issues/5765
+X   https://github.com/processing/processing/pull/5766
 
 
 high-ish
