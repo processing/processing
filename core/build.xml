@@ -15,6 +15,28 @@
     <subant buildpath="methods" target="dist" />
   </target>
 
+  <path id="classpath.base">
+    <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
+    <pathelement location="apple.jar" />
+    <pathelement location="library/jogl-all.jar" />
+    <pathelement location="library/gluegen-rt.jar" />
+    <pathelement location="library/javafx-swt.jar" />
+    <pathelement location="library/javafx.base.jar" />
+    <pathelement location="library/javafx.controls.jar" />
+    <pathelement location="library/javafx.fxml.jar" />
+    <pathelement location="library/javafx.graphics.jar" />
+    <pathelement location="library/javafx.media.jar" />
+    <pathelement location="library/javafx.properties" />
+    <pathelement location="library/javafx.swing.jar" />
+    <pathelement location="library/javafx.web.jar" />
+  </path>
+
+  <path id="classpath.test">
+    <pathelement location="library-test/junit-4.8.1.jar" />
+    <pathelement location = "bin-test" />
+    <path refid="classpath.base" />
+  </path>
+
   <macrodef name="compilecommon">
     <attribute name="destdir"/>
     <attribute name="srcdir"/>
@@ -43,18 +65,7 @@
   	   includeAntRuntime="false"
   	   debug="true"
   	   destdir="@{destdir}"
-  	   classpath="apple.jar;
-                        library/jogl-all.jar;
-                        library/gluegen-rt.jar;
-                        library/javafx-swt.jar;
-                        library/javafx.base.jar;
-                        library/javafx.controls.jar;
-                        library/javafx.fxml.jar;
-                        library/javafx.graphics.jar;
-                        library/javafx.media.jar;
-                        library/javafx.properties;
-                        library/javafx.swing.jar;
-                        library/javafx.web.jar"
+  	   classpath=""
   	   nowarn="true">
         <src path="@{srcdir}" />
         <include name="processing/**" />
