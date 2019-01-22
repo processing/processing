@@ -15,6 +15,7 @@
   <macrodef name="compilecommon">
     <attribute name="destdir"/>
     <attribute name="srcdir"/>
+    <attribute name="classpath"/>
     <sequential>
       <mkdir dir="@{destdir}" />
 
@@ -28,13 +29,13 @@
           debug="true"
           includeantruntime="true"
           nowarn="true">
-        <classpath refid="classpath.test"/>
+        <classpath refid="@{classpath}"/>
       </javac>
     </sequential>
   </macrodef>
 
   <target name="test-compile">
-    <compilecommon srcdir="src; test" destdir="bin-test" />
+    <compilecommon srcdir="src; test" destdir="bin-test" classpath="classpath.test" />
   </target>
 
   <target name="test" depends="test-compile">
@@ -47,7 +48,7 @@
   </target>
 
   <target name="compile" depends="test">
-    <compilecommon srcdir="src" destdir="bin" />
+    <compilecommon srcdir="src" destdir="bin" classpath="classpath.base" />
   </target>
 
   <target name="dist" depends="compile">
