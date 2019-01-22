@@ -3056,7 +3056,7 @@ int testFunction(int dst, int src) {
    * @usage application
    * @param filename a sequence of letters and numbers
    */
-  public boolean save(String filename) {
+  public boolean save(String filename) { // ignore
     // Make sure the pixel data is ready to go
     loadPixels();
 
