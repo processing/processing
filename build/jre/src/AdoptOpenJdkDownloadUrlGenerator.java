@@ -26,56 +26,58 @@
  */
 public class AdoptOpenJdkDownloadUrlGenerator extends DownloadUrlGenerator {
 
-    private static final String BASE_URL = "https://github.com/AdoptOpenJDK/openjdk%d-binaries/releases/download/jdk-%d.%d.%d%%2B%d/OpenJDK%dU-%s_%d.%d.%d_%d.%s";
+  private static final String BASE_URL = "https://github.com/AdoptOpenJDK/openjdk%d-binaries/releases/download/jdk-%d.%d.%d%%2B%d/OpenJDK%dU-%s_%d.%d.%d_%d.%s";
 
-    @Override
-    public String buildUrl(String platform, boolean jdk, int train, int version, int update, int build, String flavor, String hash) {
-        String filename = buildDownloadRemoteFilename(platform);
-        String fileExtension = buildFileExtension(platform);
-        return String.format(
-                BASE_URL,
-                train,
-                train,
-                version,
-                update,
-                build,
-                train,
-                filename,
-                train,
-                version,
-                update,
-                build,
-                fileExtension
-        );
-    }
+  @Override
+  public String buildUrl(String platform, boolean jdk, int train, int version, int update,
+      int build, String flavor, String hash) {
 
-    /**
-     * Build a the filename (the "flavor") that is expected on AdoptOpenJDK.
-     *
-     * @param downloadPlatform The platform for which the download URL is being generated like
-     *      "macos" or "linux64".
-     * @return The artifact name without extension like "jdk_x64_mac_hotspot".
-     */
-    private String buildDownloadRemoteFilename(String downloadPlatform) {
-        switch (downloadPlatform.toLowerCase()) {
-            case "windows32": return "jdk_x86-32_windows_hotspot";
-            case "windows64": return "jdk_x64_windows_hotspot";
-            case "macos": return "jdk_x64_mac_hotspot";
-            case "linux32": throw new RuntimeException("Linux32 not supported by AdoptOpenJDK.");
-            case "linux64": return "jdk_x64_linux_hotspot";
-            case "linuxArm": return "jdk_aarch64_linux_hotspot";
-            default: throw new RuntimeException("Unknown platform: " + downloadPlatform);
-        }
-    }
+    String filename = buildDownloadRemoteFilename(platform);
+    String fileExtension = buildFileExtension(platform);
+    return String.format(
+        BASE_URL,
+        train,
+        train,
+        version,
+        update,
+        build,
+        train,
+        filename,
+        train,
+        version,
+        update,
+        build,
+        fileExtension
+    );
+  }
 
-    /**
-     * Determine the download file extension.
-     *
-     * @param downloadPlatform The platform for which the download URL is being generated like
-     *      "macos" or "linux64".
-     * @return The file extension without leading period like "zip" or "tar.gz".
-     */
-    private String buildFileExtension(String downloadPlatform) {
-        return downloadPlatform.startsWith("windows") ? "zip" : "tar.gz";
+  /**
+   * Build a the filename (the "flavor") that is expected on AdoptOpenJDK.
+   *
+   * @param downloadPlatform The platform for which the download URL is being generated like
+   *    "macos" or "linux64".
+   * @return The artifact name without extension like "jdk_x64_mac_hotspot".
+   */
+  private String buildDownloadRemoteFilename(String downloadPlatform) {
+    switch (downloadPlatform.toLowerCase()) {
+      case "windows32": return "jdk_x86-32_windows_hotspot";
+      case "windows64": return "jdk_x64_windows_hotspot";
+      case "macos": return "jdk_x64_mac_hotspot";
+      case "linux32": throw new RuntimeException("Linux32 not supported by AdoptOpenJDK.");
+      case "linux64": return "jdk_x64_linux_hotspot";
+      case "linuxArm": return "jdk_aarch64_linux_hotspot";
+      default: throw new RuntimeException("Unknown platform: " + downloadPlatform);
     }
+  }
+
+  /**
+   * Determine the download file extension.
+   *
+   * @param downloadPlatform The platform for which the download URL is being generated like
+   *    "macos" or "linux64".
+   * @return The file extension without leading period like "zip" or "tar.gz".
+   */
+  private String buildFileExtension(String downloadPlatform) {
+    return downloadPlatform.startsWith("windows") ? "zip" : "tar.gz";
+  }
 }
