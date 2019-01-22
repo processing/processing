@@ -1,3 +1,7 @@
+0267 (3.5.1)
+X no changes to core in this release
+
+
 0266 (3.5)
 X fix javaPlatform variable for newer JDK versions
 X   https://github.com/processing/processing/pull/5626

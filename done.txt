@@ -1,3 +1,8 @@
+0267 (3.5.1)
+X size() command not working properly
+X   https://github.com/processing/processing/issues/5759
+
+
 0266 (3.5)
 X update to Java 8u192
 o processing-java doesn't handle sketch exceptions by quitting the sketch

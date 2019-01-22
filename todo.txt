@@ -1,9 +1,8 @@
-0267 (3.5.1)
-X size() command not working properly
-X   https://github.com/processing/processing/issues/5759
+0268 (3.5.2)
+_ shortcuts not working on Windows/Linux (using meta)
+_   https://github.com/processing/processing/issues/5763
 
 
-3.5.1
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
 _   https://github.com/processing/processing/issues/5562
 _   https://github.com/processing/processing/pull/5642
