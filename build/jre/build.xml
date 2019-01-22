@@ -12,22 +12,29 @@
     <path refid="classpath.base" />
   </path>
 
+  <macrodef name="buildcommon">
+    <attribute name="destdir"/>
+    <attribute name="srcdir"/>
+    <sequential>
+      <mkdir dir="build" />
+
+      <!-- Where can I expect to find Java Mode JARs? -->
+      <property name="java.mode" value="../../java/mode/" />
+
+      <javac source="1.8"
+          target="1.8"
+          srcdir="@{srcdir}"
+          destdir="@{destdir}"
+          debug="true"
+          includeantruntime="true"
+          nowarn="true">
+        <classpath refid="classpath.test"/>
+      </javac>
+    </sequential>
+  </macrodef>
+
   <target name="test-compile">
-    <mkdir dir="build" />
-
-    <!-- Where can I expect to find Java Mode JARs? -->
-    <property name="java.mode" value="../../java/mode/" />
-
-    <javac source="1.8"
-        target="1.8"
-        srcdir="src; test"
-        destdir="build"
-        debug="true"
-        includeantruntime="true"
-        nowarn="true">
-      <classpath refid="classpath.test"/>
-    </javac>
-
+    <buildcommon srcdir="src; test" destdir="build" />
   </target>
 
   <target name="test" depends="test-compile">
@@ -40,20 +47,7 @@
   </target>
 
   <target name="compile" depends="test">
-    <mkdir dir="bin" />
-
-    <!-- Where can I expect to find Java Mode JARs? -->
-    <property name="java.mode" value="../../java/mode/" />
-
-    <javac source="1.8"
-        target="1.8"
-        srcdir="src"
-        destdir="bin"
-        debug="true"
-        includeantruntime="true"
-        nowarn="true">
-      <classpath refid="classpath.test"/>
-    </javac>
+    <buildcommon srcdir="src" destdir="bin" />
   </target>
 
   <target name="dist" depends="compile">
