@@ -881,13 +881,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     undoItem = Toolkit.newJMenuItem(undoAction = new UndoAction(), 'Z');
     menu.add(undoItem);
 
-    // Gotta follow them interface guidelines
-    // http://code.google.com/p/processing/issues/detail?id=363
-    if (Platform.isWindows()) {
-      redoItem = Toolkit.newJMenuItem(redoAction = new RedoAction(), 'Y');
-    } else {  // Linux and OS X
-      redoItem = Toolkit.newJMenuItemShift(redoAction = new RedoAction(), 'Z');
-    }
+    redoItem = new JMenuItem(redoAction = new RedoAction());
+    redoItem.setAccelerator(Toolkit.getKeyStrokeExt("menu.edit.redo"));
     menu.add(redoItem);
 
     menu.addSeparator();
@@ -956,8 +951,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.comment_uncomment"),
-                                Language.text("menu.edit.comment_uncomment.keystroke"));
+    item = Toolkit.newJMenuItemExt("menu.edit.comment_uncomment");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleCommentUncomment();
@@ -965,9 +959,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem("\u2192 " + Language.text("menu.edit.increase_indent"),
-                                Language.text("menu.edit.increase_indent.keystroke"));
-
+    item = Toolkit.newJMenuItemExt("menu.edit.increase_indent");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(true);
@@ -975,8 +967,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem("\u2190 " + Language.text("menu.edit.decrease_indent"),
-                                Language.text("menu.edit.decrease_indent.keystroke"));
+    item = Toolkit.newJMenuItemExt("menu.edit.decrease_indent");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(false);

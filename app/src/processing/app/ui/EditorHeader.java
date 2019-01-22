@@ -494,51 +494,29 @@ public class EditorHeader extends JComponent {
 
     //  KeyEvent.VK_LEFT and VK_RIGHT will make Windows beep
 
-    final String prevTab = Language.text("editor.header.previous_tab");
-    if (Platform.isLinux()) {
-      item = Toolkit.newJMenuItem(prevTab, KeyEvent.VK_PAGE_UP);
-    } else {
-      //item = Toolkit.newJMenuItemAlt(prevTab, KeyEvent.VK_LEFT);
-      item = Toolkit.newJMenuItem(prevTab, Language.text("editor.header.previous_tab.keystroke"));
-    }
+    mapKey = "editor.header.previous_tab";
+    item = Toolkit.newJMenuItemExt(mapKey);
     action = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         editor.getSketch().handlePrevCode();
       }
     };
-    mapKey = "editor.header.previous_tab";
-    if (Platform.isLinux()) {
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, Toolkit.SHORTCUT_KEY_MASK);
-    } else {
-      //keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
-      keyStroke = KeyStroke.getKeyStroke(Language.text("editor.header.previous_tab.keystroke"));
-    }
+    keyStroke = item.getAccelerator();
     inputMap.put(keyStroke, mapKey);
     actionMap.put(mapKey, action);
     item.addActionListener(action);
     menu.add(item);
 
-    final String nextTab = Language.text("editor.header.next_tab");
-    if (Platform.isLinux()) {
-      item = Toolkit.newJMenuItem(nextTab, KeyEvent.VK_PAGE_DOWN);
-    } else {
-      //item = Toolkit.newJMenuItemAlt(nextTab, KeyEvent.VK_RIGHT);
-      item = Toolkit.newJMenuItem(nextTab, Language.text("editor.header.next_tab.keystroke"));
-    }
+    mapKey = "editor.header.next_tab";
+    item = Toolkit.newJMenuItemExt(mapKey);
     action = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         editor.getSketch().handleNextCode();
       }
     };
-    mapKey = "editor.header.next_tab";
-    if (Platform.isLinux()) {
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, Toolkit.SHORTCUT_KEY_MASK);
-    } else {
-      //keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
-      keyStroke = KeyStroke.getKeyStroke(Language.text("editor.header.next_tab.keystroke"));
-    }
+    keyStroke = item.getAccelerator();
     inputMap.put(keyStroke, mapKey);
     actionMap.put(mapKey, action);
     item.addActionListener(action);

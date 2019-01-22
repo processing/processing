@@ -103,6 +103,8 @@ public class Toolkit {
   static public final KeyStroke WINDOW_CLOSE_KEYSTROKE =
     KeyStroke.getKeyStroke('W', SHORTCUT_KEY_MASK);
 
+  static final String BAD_KEYSTROKE =
+    "'%s' is not understood, please re-read the Java reference for KeyStroke";
 
   /**
    * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
@@ -118,16 +120,36 @@ public class Toolkit {
 
 
   /**
-   * A software engineer, somewhere, needs to have their abstraction
-   * taken away. Who crafts the sort of API that would require a
-   * five-line helper function just to set the shortcut key for a
-   * menu item?
+   * Return the correct KeyStroke per locale and platform.
+   * Also checks for any additional overrides in preferences.txt.
+   * @param base the localization key for the menu item
+   *             (.keystroke and .platform will be added to the end)
+   * @return KeyStroke for base + .keystroke + .platform
+   *         (or the value from preferences) or null if none found
    */
-  static public JMenuItem newJMenuItem(String title, int what) {
-    JMenuItem menuItem = new JMenuItem(title);
-    int modifiers = awtToolkit.getMenuShortcutKeyMask();
-    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
-    return menuItem;
+  static public KeyStroke getKeyStrokeExt(String base) {
+    String key = base + ".keystroke";
+
+    // see if there's an override in preferences.txt
+    String sequence = Preferences.get(key);
+    if (sequence != null) {
+      KeyStroke ks = KeyStroke.getKeyStroke(sequence);
+      if (ks != null) {
+        return ks;  // user did good, we're all set
+
+      } else {
+        System.err.format(BAD_KEYSTROKE, sequence);
+      }
+    }
+
+    sequence = Language.text(key + "." + Platform.getName());
+    KeyStroke ks = KeyStroke.getKeyStroke(sequence);
+    if (ks == null) {
+      // this can only happen if user has screwed up their language files
+      System.err.format(BAD_KEYSTROKE, sequence);
+      //return KeyStroke.getKeyStroke(0, 0);  // badness
+    }
+    return ks;
   }
 
 
@@ -138,18 +160,26 @@ public class Toolkit {
    * @param sequence the name, as outlined by the KeyStroke API
    * @param fallback what to use if getKeyStroke() comes back null
    */
-  static public JMenuItem newJMenuItem(String title,
-                                       String sequence) {
-    JMenuItem menuItem = new JMenuItem(title);
-    KeyStroke ks = KeyStroke.getKeyStroke(sequence);
+  static public JMenuItem newJMenuItemExt(String base) {
+    JMenuItem menuItem = new JMenuItem(Language.text(base));
+    KeyStroke ks = getKeyStrokeExt(base);  // will print error if necessary
     if (ks != null) {
       menuItem.setAccelerator(ks);
-
-    } else {
-      System.err.println("'" + sequence + "' is not understood, " +
-                         "pleae re-read the Java reference for KeyStroke");
-      //ks = KeyStroke.getKeyStroke(fallback);
     }
+    return menuItem;
+  }
+
+
+  /**
+   * A software engineer, somewhere, needs to have their abstraction
+   * taken away. Who crafts the sort of API that would require a
+   * five-line helper function just to set the shortcut key for a
+   * menu item?
+   */
+  static public JMenuItem newJMenuItem(String title, int what) {
+    JMenuItem menuItem = new JMenuItem(title);
+    int modifiers = awtToolkit.getMenuShortcutKeyMask();
+    menuItem.setAccelerator(KeyStroke.getKeyStroke(what, modifiers));
     return menuItem;
   }
 
