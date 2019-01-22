@@ -8,15 +8,15 @@
 
   <path id="classpath.test">
     <pathelement location="library-test/junit-4.8.1.jar" />
-    <pathelement location = "build" />
+    <pathelement location = "bin-test" />
     <path refid="classpath.base" />
   </path>
 
-  <macrodef name="buildcommon">
+  <macrodef name="compilecommon">
     <attribute name="destdir"/>
     <attribute name="srcdir"/>
     <sequential>
-      <mkdir dir="build" />
+      <mkdir dir="@{destdir}" />
 
       <!-- Where can I expect to find Java Mode JARs? -->
       <property name="java.mode" value="../../java/mode/" />
@@ -34,7 +34,7 @@
   </macrodef>
 
   <target name="test-compile">
-    <buildcommon srcdir="src; test" destdir="build" />
+    <compilecommon srcdir="src; test" destdir="bin-test" />
   </target>
 
   <target name="test" depends="test-compile">
@@ -47,7 +47,7 @@
   </target>
 
   <target name="compile" depends="test">
-    <buildcommon srcdir="src" destdir="bin" />
+    <compilecommon srcdir="src" destdir="bin" />
   </target>
 
   <target name="dist" depends="compile">
@@ -64,7 +64,7 @@
 
   <target name="clean">
     <delete dir="bin" />
-    <delete dir="build" />
+    <delete dir="bin-test" />
     <delete file="downloader.jar" />
   </target>
 
