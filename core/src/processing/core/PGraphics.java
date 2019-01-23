@@ -5175,7 +5175,7 @@ public class PGraphics extends PImage implements PConstants {
    * with push(), it builds on the current style and transform 
    * information.<br />
    * <br />
-   * <b>push() stores information related to the current 
+   * <b>push()</b> stores information related to the current 
    * transformation state and style settings controlled by the 
    * following functions: <b>rotate()</b>, <b>translate()</b>, 
    * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>, 
@@ -5212,7 +5212,7 @@ public class PGraphics extends PImage implements PConstants {
    * it builds on the current style and transform information.<br />
    * <br />
    * <br />
-   * <b>push() stores information related to the current 
+   * <b>push()</b> stores information related to the current 
    * transformation state and style settings controlled by the 
    * following functions: <b>rotate()</b>, <b>translate()</b>, 
    * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>, 
