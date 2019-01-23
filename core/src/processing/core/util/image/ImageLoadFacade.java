@@ -1,5 +1,27 @@
-package processing.core.util.image;
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 
+/*
+  Part of the Processing project - http://processing.org
+
+  Copyright (c) 2012-19 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  version 2, as published by the Free Software Foundation.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
+  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+package processing.core.util.image;
 
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -15,10 +37,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Utility functions for loading images either from file system or via string encoding.
- *
- * Utility functions for use within processing.core that provide high level image loading
- * functionality.
+ * Utility for loading images either from file system or string encoding using a set of strategies.
  */
 public class ImageLoadFacade {
 
@@ -30,11 +49,19 @@ public class ImageLoadFacade {
   private final Map<String, ImageLoadStrategy> loadStrategies;
   private final ImageLoadStrategy defaultImageLoadStrategy;
 
+  /**
+   * Get a shared instance of this singleton.
+   *
+   * @return Shared instance of this singleton.
+   */
   public static ImageLoadFacade get() {
     instance.compareAndSet(null, new ImageLoadFacade());
     return instance.get();
   }
 
+  /**
+   * Hidden constructor. Clients should use get().
+   */
   private ImageLoadFacade() {
     loadStrategies = new HashMap<>();
 
@@ -59,41 +86,14 @@ public class ImageLoadFacade {
     loadStrategies.put("unknown", imageIoWithFallbackStrategy);
   }
 
-  public PImage loadImageIO(PApplet pApplet, String filename) {
-    InputStream stream = InputFactory.createInput(pApplet, filename);
-    if (stream == null) {
-      System.err.println("The image " + filename + " could not be found.");
-      return null;
-    }
-
-    try {
-      BufferedImage bi = ImageIO.read(stream);
-
-      int width = bi.getWidth();
-      int height = bi.getHeight();
-      int[] pixels = new int[width * height];
-
-      bi.getRGB(0, 0, width, height, pixels, 0, width);
-
-      // check the alpha for this image
-      // was gonna call getType() on the image to see if RGB or ARGB,
-      // but it's not actually useful, since gif images will come through
-      // as TYPE_BYTE_INDEXED, which means it'll still have to check for
-      // the transparency. also, would have to iterate through all the other
-      // types and guess whether alpha was in there, so.. just gonna stick
-      // with the old method.
-      PImage outgoing = new PImage(width, height, pixels, true, pApplet);
-
-      stream.close();
-      // return the image
-      return outgoing;
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      return null;
-    }
-  }
-
+  /**
+   * Load an image embedded within an SVG string.
+   *
+   * @param pApplet The PApplet through which the image should be retrieved in the case of sketch
+   *    relative file.
+   * @param svgImageStr The SVG string to load which can be data:image or file://.
+   * @return The image loaded as a PImage.
+   */
   public PImage loadFromSvg(PApplet pApplet, String svgImageStr) {
     if (svgImageStr == null) {
       return null;
@@ -112,10 +112,27 @@ public class ImageLoadFacade {
     }
   }
 
+  /**
+   * Load an image from a file.
+   *
+   * @param pApplet The PApplet through which the image should be retrieved in the case of sketch
+   *     relative file (data folder for example).
+   * @param path The path to the file to be opened.
+   * @return The image loaded.
+   */
   public PImage loadFromFile(PApplet pApplet, String path) {
     return loadFromFile(pApplet, path, null);
   }
 
+  /**
+   * Load an image from a file using the given file extension.
+   *
+   * @param pApplet The PApplet through which the image should be retrieved in the case of sketch
+   *     relative file (data folder for example).
+   * @param path The path to the file to be opened.
+   * @param extension The extension with which the image should be loaded like "png".
+   * @return The image loaded.
+   */
   public PImage loadFromFile(PApplet pApplet, String path, String extension) {
     if (extension == null) {
       extension = PathUtil.parseExtension(path);
