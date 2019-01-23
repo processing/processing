@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2014 The Processing Foundation
+  Copyright (c) 2014-19 The Processing Foundation
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -53,7 +53,7 @@ public class Preferences {
   static final String PREFS_FILE = "preferences.txt"; //$NON-NLS-1$
 
   static Map<String, String> defaults;
-  static Map<String, String> table = new HashMap<String, String>();
+  static Map<String, String> table = new HashMap<>();
   static File preferencesFile;
 
 
@@ -73,7 +73,7 @@ public class Preferences {
 
     // Clone the defaults, then override any them with the user's preferences.
     // This ensures that any new/added preference will be present.
-    defaults = new HashMap<String, String>(table);
+    defaults = new HashMap<>(table);
 
     // other things that have to be set explicitly for the defaults
     setColor("run.window.bgcolor", SystemColor.control); //$NON-NLS-1$

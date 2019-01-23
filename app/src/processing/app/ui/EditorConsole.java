@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012-17 The Processing Foundation
+  Copyright (c) 2012-19 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -233,8 +233,8 @@ public class EditorConsole extends JScrollPane {
       // https://github.com/processing/processing/issues/5462
       // Some discussion on the Apple's developer forums seems to suggest that is not serious:
       // https://forums.developer.apple.com/thread/105244
-    } else if (err && what.contains("NSWindow drag regions should only be invalidated on the Main Thread")) {  
-      // Keep hiding warnings triggered by JOGL on recent macOS versions (this is from 10.14 onwards I think).      
+    } else if (err && what.contains("NSWindow drag regions should only be invalidated on the Main Thread")) {
+      // Keep hiding warnings triggered by JOGL on recent macOS versions (this is from 10.14 onwards I think).
     } else if (err && what.contains("Make pbuffer:")) {
       // Remove initalization warning from LWJGL.
     } else if (err && what.contains("XInitThreads() called for concurrent")) {
