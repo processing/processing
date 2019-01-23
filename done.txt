@@ -1,3 +1,9 @@
+0268 (3.5.2)
+X shortcuts not working on Windows/Linux (using meta)
+X   https://github.com/processing/processing/issues/5763
+X   update https://github.com/processing/processing/wiki/Localization#shortcuts-and-key-bindings
+
+
 0267 (3.5.1)
 X size() command not working properly
 X   https://github.com/processing/processing/issues/5759

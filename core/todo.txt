@@ -1,7 +1,4 @@
-0268 (3.5.2)
-X Ctrl-click on Mac OS X result in all subsequent clicks reported as right-click
-X   https://github.com/processing/processing/issues/5765
-X   https://github.com/processing/processing/pull/5766
+0269 (3.5.3)
 
 
 high-ish
@@ -21,6 +18,8 @@ _   mostly held up by cross-renderer inconsistency with these
 _ textAlign(CENTER) and pixelDensity(2) aligning incorrectly with Java2D
 _   https://github.com/processing/processing/issues/4020
 _   calling textSize() fixes it, only hpapens with the default font
+_ incorrect textWidth() with pixelDensity(2) when textFont() not used
+_   https://github.com/processing/processing/issues/5768
 
 
 retina/hi-dpi/sizing
