@@ -1,3 +1,27 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+  Part of the Processing project - http://processing.org
+
+  Copyright (c) 2012-18 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation, version 2.1.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General
+  Public License along with this library; if not, write to the
+  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+  Boston, MA  02111-1307  USA
+*/
+
 package processing.core.util.image.load;
 
 import processing.core.PApplet;
@@ -9,18 +33,7 @@ import java.io.InputStream;
 
 
 /**
- * Targa image loader for RLE-compressed TGA files.
- * <p>
- * Rewritten for 0115 to read/write RLE-encoded targa images.
- * For 0125, non-RLE encoded images are now supported, along with
- * images whose y-order is reversed (which is standard for TGA files).
- * <p>
- * A version of this function is in MovieMaker.java. Any fixes here
- * should be applied over in MovieMaker as well.
- * <p>
- * Known issue with RLE encoding and odd behavior in some apps:
- * https://github.com/processing/processing/issues/2096
- * Please help!
+ * Strategy for loading a RLE-compressed TGA image.
  */
 public class TgaImageLoadStrategy implements ImageLoadStrategy {
 
@@ -35,6 +48,20 @@ public class TgaImageLoadStrategy implements ImageLoadStrategy {
     }
   }
 
+  /**
+   * Targa image loader for RLE-compressed TGA files which throws exceptions.
+   * <p>
+   * Rewritten for 0115 to read/write RLE-encoded targa images.
+   * For 0125, non-RLE encoded images are now supported, along with
+   * images whose y-order is reversed (which is standard for TGA files).
+   * <p>
+   * A version of this function is in MovieMaker.java. Any fixes here
+   * should be applied over in MovieMaker as well.
+   * <p>
+   * Known issue with RLE encoding and odd behavior in some apps:
+   * https://github.com/processing/processing/issues/2096
+   * Please help!
+   */
   private PImage loadNoCatch(PApplet pApplet, String filename) throws IOException {
     InputStream is = pApplet.createInput(filename);
     if (is == null) return null;

@@ -3,22 +3,23 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012-19 The Processing Foundation
+  Copyright (c) 2012-18 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  version 2, as published by the Free Software Foundation.
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation, version 2.1.
 
-  This program is distributed in the hope that it will be useful,
+  This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software Foundation,
-  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  You should have received a copy of the GNU Lesser General
+  Public License along with this library; if not, write to the
+  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+  Boston, MA  02111-1307  USA
 */
 
 package processing.core.util.image;
@@ -26,15 +27,12 @@ package processing.core.util.image;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.util.image.load.*;
-import processing.core.util.io.InputFactory;
 import processing.core.util.io.PathUtil;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+
 
 /**
  * Utility for loading images either from file system or string encoding using a set of strategies.
@@ -89,8 +87,8 @@ public class ImageLoadFacade {
   /**
    * Load an image embedded within an SVG string.
    *
-   * @param pApplet The PApplet through which the image should be retrieved in the case of sketch
-   *    relative file.
+   * @param pApplet The PApplet on whose behalf an SVG is being parsed. This must be given so that
+   *                image can be retrieved in the case of sketch relative file.
    * @param svgImageStr The SVG string to load which can be data:image or file://.
    * @return The image loaded as a PImage.
    */
