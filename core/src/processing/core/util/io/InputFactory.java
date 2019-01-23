@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2012-19 The Processing Foundation
   Copyright (c) 2004-11 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -31,8 +32,17 @@ import java.net.*;
 import java.util.zip.GZIPInputStream;
 
 
+/**
+ * Factory producing InputStreams under various parameter sets.
+ */
 public class InputFactory {
 
+  /**
+   * Create a new input stream from a file.
+   *
+   * @param file The file for which an input stream should be created.
+   * @return InputStream for the input file.
+   */
   public static InputStream createInput(File file) {
     if (file == null) {
       throw new IllegalArgumentException("File passed to createInput() was null");
@@ -56,6 +66,19 @@ public class InputFactory {
     }
   }
 
+  /**
+   * Create an InputStream using path information from a PApplet.
+   *
+   * <p>
+   * Create an InputStream using path information from a PApplet with some pre-processing of file
+   * contents like unzipping a gzip compressed file. This is in contrast to createInputRaw which
+   * will not perform any pre-processing.
+   * </p>
+   *
+   * @param pApplet The PApplet whose sketch path informatino should be used.
+   * @param filename THe filename (url, absolute path, or relative path) to open.
+   * @return InputStream for the given filename or null if no input path could be created.
+   */
   public static InputStream createInput(PApplet pApplet, String filename) {
     InputStream input = createInputRaw(pApplet, filename);
     if (input != null) {
@@ -75,6 +98,19 @@ public class InputFactory {
     return null;
   }
 
+  /**
+   * Create an InputStream without any pre-processing of file content before it is returned.
+   *
+   * <p>
+   * Create an InputStream using path information from a PApplet without any pre-processing of file
+   * contents like unzipping a gzip compressed file. This is in contrast to createInput which will
+   * perform some pre-processing.
+   * </p>
+   *
+   * @param pApplet The PApplet whose sketch path informatino should be used.
+   * @param filename THe filename (url, absolute path, or relative path) to open.
+   * @return InputStream for the given filename or null if no input path could be created.
+   */
   public static InputStream createInputRaw(PApplet pApplet, String filename) {
     if (filename == null) return null;
 
@@ -233,9 +269,15 @@ public class InputFactory {
     return null;
   }
 
+  /**
+   * Determine if a file is gzip compressed.
+   *
+   * @param filename The name of the fiel to check.
+   * @return True if the file is a gzip compressed file and false otherwise.
+   */
   private static boolean isGzipCompressed(String filename) {
-    String lower = filename.toLowerCase();
-    return lower.endsWith(".gz") || lower.endsWith(".svgz");
+    String extension = PathUtil.parseExtension(filename);
+    return extension.equalsIgnoreCase("gz") || extension.equalsIgnoreCase("svgz");
   }
 
 }

@@ -4,6 +4,7 @@
   <target name="clean" description="Clean out the build directories">
     <delete dir="bin" />
     <delete dir="bin-test" />
+    <delete dir="resource-test/scratch" />
     <delete file="library/core.jar" />
   </target>
 
@@ -33,13 +34,14 @@
 
   <path id="classpath.test">
     <pathelement location="library-test/junit-4.8.1.jar" />
-    <pathelement location = "bin-test" />
+    <pathelement location="bin-test" />
     <path refid="classpath.base" />
   </path>
 
   <macrodef name="compilecommon">
     <attribute name="destdir"/>
     <attribute name="srcdir"/>
+    <attribute name="classpath"/>
     <sequential>
       <taskdef name="methods"
   	     classname="PAppletMethods"
@@ -65,8 +67,8 @@
   	   includeAntRuntime="false"
   	   debug="true"
   	   destdir="@{destdir}"
-  	   classpath=""
   	   nowarn="true">
+        <classpath refid="@{classpath}"/>
         <src path="@{srcdir}" />
         <include name="processing/**" />
         <exclude name="processing/javafx/**" if="fx.unavailable" />
@@ -88,18 +90,24 @@
   </macrodef>
 
   <target name="test-compile" description="Compile">
-    <compilecommon srcdir="src; test" destdir="bin-test" />
+    <compilecommon srcdir="src; test" destdir="bin-test" classpath="classpath.test" />
   </target>
 
-  <target name="test" depends="test-compile">
+  <target name="clean-pre-test" description="Required step prior to test">
+    <delete dir="resource-test/scratch" />
+  </target>
+
+  <target name="test" depends="test-compile, clean-pre-test">
     <junit haltonfailure="true">
       <classpath refid="classpath.test" />
       <formatter type="brief" usefile="false" />
+      <test name="processing.core.util.io.PathUtilTest" />
+      <test name="processing.core.util.io.InputFactoryTest" />
     </junit>
   </target>
 
   <target name="compile" description="Compile" depends="test">
-    <compilecommon srcdir="src" destdir="bin" />
+    <compilecommon srcdir="src" destdir="bin" classpath="classpath.base" />
   </target>
 
   <target name="build" depends="compile" description="Build core library">
