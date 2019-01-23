@@ -2742,10 +2742,10 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
    *
    * @webref shape:2d_primitives
-   * @param a x-coordinate of the rectangle by default
-   * @param b y-coordinate of the rectangle by default
-   * @param c width and height of the rectangle by default
-   * @see PGraphics#rect(int, int, int, int)
+   * @param x x-coordinate of the rectangle by default
+   * @param y y-coordinate of the rectangle by default
+   * @param extent width and height of the rectangle by default
+   * @see PGraphics#rect(float, float, float, float)
    * @see PGraphics#rectMode(int)
    */
   public void square(float x, float y, float extent) {
@@ -2938,9 +2938,9 @@ public class PGraphics extends PImage implements PConstants {
    *
    * ( end auto-generated )
    * @webref shape:2d_primitives
-   * @param a x-coordinate of the ellipse
-   * @param b y-coordinate of the ellipse
-   * @param c width and height of the ellipse by default
+   * @param x x-coordinate of the ellipse
+   * @param y y-coordinate of the ellipse
+   * @param extent width and height of the ellipse by default
    * @see PApplet#ellipse(float, float, float, float)
    * @see PApplet#ellipseMode(int)
    */

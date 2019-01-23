@@ -12114,20 +12114,20 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from square.xml )
    *
-   * Draws a square to the screen. A square is a four-sided shape with
-   * every angle at ninety degrees and each side is the same length.
-   * By default, the first two parameters set the location of the
-   * upper-left corner, the third sets the width and height. The way
-   * these parameters are interpreted, however, may be changed with the
+   * Draws a square to the screen. A square is a four-sided shape with 
+   * every angle at ninety degrees and each side is the same length. 
+   * By default, the first two parameters set the location of the 
+   * upper-left corner, the third sets the width and height. The way 
+   * these parameters are interpreted, however, may be changed with the 
    * <b>rectMode()</b> function.
    *
    * ( end auto-generated )
    *
    * @webref shape:2d_primitives
-   * @param a x-coordinate of the rectangle by default
-   * @param b y-coordinate of the rectangle by default
-   * @param c width and height of the rectangle by default
-   * @see PGraphics#rect(int, int, int, int)
+   * @param x x-coordinate of the rectangle by default
+   * @param y y-coordinate of the rectangle by default
+   * @param extent width and height of the rectangle by default
+   * @see PGraphics#rect(float, float, float, float)
    * @see PGraphics#rectMode(int)
    */
   public void square(float x, float y, float extent) {
@@ -12227,16 +12227,16 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from circle.xml )
    *
-   * Draws a circle to the screen. By default, the first two parameters
-   * set the location of the center, and the third sets the shape's width
-   * and height. The origin may be changed with the <b>ellipseMode()</b>
+   * Draws a circle to the screen. By default, the first two parameters 
+   * set the location of the center, and the third sets the shape's width 
+   * and height. The origin may be changed with the <b>ellipseMode()</b> 
    * function.
    *
    * ( end auto-generated )
    * @webref shape:2d_primitives
-   * @param a x-coordinate of the ellipse
-   * @param b y-coordinate of the ellipse
-   * @param c width and height of the ellipse by default
+   * @param x x-coordinate of the ellipse
+   * @param y y-coordinate of the ellipse
+   * @param extent width and height of the ellipse by default
    * @see PApplet#ellipse(float, float, float, float)
    * @see PApplet#ellipseMode(int)
    */
