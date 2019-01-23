@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013-15 The Processing Foundation
+  Copyright (c) 2013-19 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -5164,13 +5164,75 @@ public class PGraphics extends PImage implements PConstants {
 
   // PARITY WITH P5.JS
 
-
+  /**
+   * ( begin auto-generated from push.xml )
+   *
+   * The <b>push()</b> function saves the current drawing style 
+   * settings and transformations, while <b>pop()</b> restores these 
+   * settings. Note that these functions are always used together. 
+   * They allow you to change the style and transformation settings 
+   * and later return to what you had. When a new state is started 
+   * with push(), it builds on the current style and transform 
+   * information.<br />
+   * <br />
+   * <b>push() stores information related to the current 
+   * transformation state and style settings controlled by the 
+   * following functions: <b>rotate()</b>, <b>translate()</b>, 
+   * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>, 
+   * <b>strokeWeight()</b>, <b>strokeCap()</b>, <b>strokeJoin()</b>, 
+   * <b>imageMode()</b>, <b>rectMode()</b>, <b>ellipseMode()</b>, 
+   * <b>colorMode()</b>, <b>textAlign()</b>, <b>textFont()</b>, 
+   * <b>textMode()</b>, <b>textSize()</b>, <b>textLeading()</b>.<br />
+   * <br />
+   * The <b>push()</b> and <b>pop()</b> functions were added with 
+   * Processing 3.5. They can be used in place of <b>pushMatrix()</b>, 
+   * <b>popMatrix()</b>, <b>pushStyles()</b>, and <b>popStyles()</b>. 
+   * The difference is that push() and pop() control both the 
+   * transformations (rotate, scale, translate) and the drawing styles 
+   * at the same time.
+   *
+   * ( end auto-generated )
+   *
+   * @webref structure
+   * @see PGraphics#pop()
+   */
   public void push() {
     pushStyle();
     pushMatrix();
   }
 
-
+  /**
+   * ( begin auto-generated from pop.xml )
+   *
+   * The <b>pop()</b> function restores the previous drawing style 
+   * settings and transformations after <b>push()</b> has changed them. 
+   * Note that these functions are always used together. They allow 
+   * you to change the style and transformation settings and later 
+   * return to what you had. When a new state is started with push(), 
+   * it builds on the current style and transform information.<br />
+   * <br />
+   * <br />
+   * <b>push() stores information related to the current 
+   * transformation state and style settings controlled by the 
+   * following functions: <b>rotate()</b>, <b>translate()</b>, 
+   * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>, 
+   * <b>strokeWeight()</b>, <b>strokeCap()</b>, <b>strokeJoin()</b>, 
+   * <b>imageMode()</b>, <b>rectMode()</b>, <b>ellipseMode()</b>, 
+   * <b>colorMode()</b>, <b>textAlign()</b>, <b>textFont()</b>, 
+   * <b>textMode()</b>, <b>textSize()</b>, <b>textLeading()</b>.<br />
+   * <br />
+   * The <b>push()</b> and <b>pop()</b> functions were added with 
+   * Processing 3.5. They can be used in place of <b>pushMatrix()</b>, 
+   * <b>popMatrix()</b>, <b>pushStyles()</b>, and <b>popStyles()</b>. 
+   * The difference is that push() and pop() control both the 
+   * transformations (rotate, scale, translate) and the drawing styles 
+   * at the same time.
+   *
+   * ( end auto-generated )
+   *
+   * @webref structure
+   * @see PGraphics#push()
+   */
   public void pop() {
     popStyle();
     popMatrix();
