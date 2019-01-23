@@ -159,7 +159,7 @@ public class ContributionListing {
         Collections.sort(list, COMPARATOR);
 
       } else {
-        ArrayList<Contribution> list = new ArrayList<Contribution>();
+        ArrayList<Contribution> list = new ArrayList<>();
         list.add(contribution);
         librariesByCategory.put(category, list);
       }
@@ -210,7 +210,7 @@ public class ContributionListing {
 
 
   protected Set<String> getCategories(Contribution.Filter filter) {
-    Set<String> outgoing = new HashSet<String>();
+    Set<String> outgoing = new HashSet<>();
 
     Set<String> categorySet = librariesByCategory.keySet();
     for (String categoryName : categorySet) {
@@ -426,28 +426,6 @@ public class ContributionListing {
   }
 
 
-  /*
-  boolean hasUpdates(Base base) {
-    for (ModeContribution mc : base.getModeContribs()) {
-      if (hasUpdates(mc)) {
-        return true;
-      }
-    }
-    for (Library lib : base.getActiveEditor().getMode().contribLibraries) {
-      if (hasUpdates(lib)) {
-        return true;
-      }
-    }
-    for (ToolContribution tc : base.getToolContribs()) {
-      if (hasUpdates(tc)) {
-        return true;
-      }
-    }
-    return false;
-  }
-  */
-
-
   protected boolean hasUpdates(Contribution contribution) {
     if (contribution.isInstalled()) {
       Contribution advertised = getAvailableContribution(contribution);
@@ -482,7 +460,7 @@ public class ContributionListing {
 
   private List<AvailableContribution> parseContribList(File file) {
     List<AvailableContribution> outgoing =
-      new ArrayList<AvailableContribution>();
+      new ArrayList<>();
 
     if (file != null && file.exists()) {
       String[] lines = PApplet.loadStrings(file);

@@ -1,6 +1,11 @@
 0269 (3.5.3)
 
 
+contrib
+X Update missing @Deprecated tags in PApplet.java
+X   https://github.com/processing/processing/pull/5686
+
+
 high-ish
 _ add separator option to loadTable()
 _   https://github.com/processing/processing/issues/5068

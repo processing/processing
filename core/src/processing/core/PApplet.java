@@ -141,7 +141,6 @@ public class PApplet implements PConstants {
    * Do not use; javaPlatform or javaVersionName are better options.
    * For instance, javaPlatform is useful when you need a number for
    * comparison, i.e. "if (javaPlatform >= 9)".
-   * @deprecated
    */
   @Deprecated
   public static final float javaVersion = 1 + javaPlatform / 10f;
@@ -8299,9 +8298,8 @@ public class PApplet implements PConstants {
     System.arraycopy(src, 0, dst, 0, Array.getLength(src));
   }
 
-  //
   /**
-   * @deprecated Use arrayCopy() instead.
+   * Use arrayCopy() instead.
    */
   @Deprecated
   static public void arraycopy(Object src, int srcPosition,
@@ -8311,7 +8309,7 @@ public class PApplet implements PConstants {
   }
 
   /**
-   * @deprecated Use arrayCopy() instead.
+   * Use arrayCopy() instead.
    */
   @Deprecated
   static public void arraycopy(Object src, Object dst, int length) {
@@ -8319,12 +8317,13 @@ public class PApplet implements PConstants {
   }
 
   /**
-   * @deprecated Use arrayCopy() instead.
+   * Use arrayCopy() instead.
    */
   @Deprecated
   static public void arraycopy(Object src, Object dst) {
     System.arraycopy(src, 0, dst, 0, Array.getLength(src));
   }
+
 
   /**
    * ( begin auto-generated from expand.xml )
@@ -12115,11 +12114,11 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from square.xml )
    *
-   * Draws a square to the screen. A square is a four-sided shape with 
-   * every angle at ninety degrees and each side is the same length. 
-   * By default, the first two parameters set the location of the 
-   * upper-left corner, the third sets the width and height. The way 
-   * these parameters are interpreted, however, may be changed with the 
+   * Draws a square to the screen. A square is a four-sided shape with
+   * every angle at ninety degrees and each side is the same length.
+   * By default, the first two parameters set the location of the
+   * upper-left corner, the third sets the width and height. The way
+   * these parameters are interpreted, however, may be changed with the
    * <b>rectMode()</b> function.
    *
    * ( end auto-generated )
@@ -12228,9 +12227,9 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from circle.xml )
    *
-   * Draws a circle to the screen. By default, the first two parameters 
-   * set the location of the center, and the third sets the shape's width 
-   * and height. The origin may be changed with the <b>ellipseMode()</b> 
+   * Draws a circle to the screen. By default, the first two parameters
+   * set the location of the center, and the third sets the shape's width
+   * and height. The origin may be changed with the <b>ellipseMode()</b>
    * function.
    *
    * ( end auto-generated )
