@@ -8,12 +8,6 @@ trouble on non-US keyboards. See the Localization wiki for more details:
 https://github.com/processing/processing/wiki/Localization#shortcuts-and-key-bindings
 
 
-[ new feature! ]
-
-+ The nine menu shortcuts that can be localized can now also be overridden
-  by users in preferences.txt. Information is on the Localization page.
-
-
 [ more regressions! ]
 
 + Some Linux/Windows menu shortcuts were mapped to META instead of CTRL
@@ -22,6 +16,12 @@ https://github.com/processing/processing/wiki/Localization#shortcuts-and-key-bin
 + Ctrl-click on Mac OS X result in all subsequent clicks reported as right-click
   https://github.com/processing/processing/issues/5765
   https://github.com/processing/processing/pull/5766
+
+
+[ and a new feature! ]
+
++ The nine menu shortcuts that can be localized can now also be overridden
+  by users in preferences.txt. Information is on the Localization page.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
