@@ -1,9 +1,12 @@
 0269 (3.5.3)
+X redo key command for Windows screwed up
+X   https://github.com/processing/processing/issues/5773
 
 
 contrib
 X update translation of "sketch" for Russian speakers
 X   https://github.com/processing/processing/pull/5673
+
 
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
 _   https://github.com/processing/processing/issues/5562
