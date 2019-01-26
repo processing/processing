@@ -27,13 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -589,18 +583,13 @@ public class PreprocessingService {
   static private List<String> buildJavaRuntimeClassPath() {
     StringBuilder classPath = new StringBuilder();
 
-    { // Java runtime
-      String rtPath = System.getProperty("java.home") +
-          File.separator + "lib" + File.separator + "rt.jar";
-      if (new File(rtPath).exists()) {
-        classPath.append(File.pathSeparator).append(rtPath);
-      } else {
-        rtPath = System.getProperty("java.home") + File.separator +
-            File.separator + "lib" + File.separator + "rt.jar";
-        if (new File(rtPath).exists()) {
-          classPath.append(File.pathSeparator).append(rtPath);
-        }
-      }
+    { // Java runtime (jmods in Java 9+)
+      StringJoiner jmodPathJoiner = new StringJoiner(File.separator);
+      jmodPathJoiner.add(System.getProperty("java.home"));
+      jmodPathJoiner.add("jmods");
+      jmodPathJoiner.add("java.base.jmod");
+      String jmodsPath = jmodPathJoiner.toString();
+      classPath.append(File.pathSeparator).append(jmodsPath);
     }
 
     { // JavaFX runtime
@@ -675,7 +664,9 @@ public class PreprocessingService {
   static {
     Map<String, String> compilerOptions = new HashMap<>();
 
-    JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, compilerOptions);
+    compilerOptions.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_11);
+    compilerOptions.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_11);
+    compilerOptions.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_11);
 
     // See http://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.jdt.doc.isv%2Fguide%2Fjdt_api_options.htm&anchor=compiler
 

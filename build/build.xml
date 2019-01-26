@@ -74,7 +74,7 @@
   <property name="jdk.version" value="0" />
   <property name="jdk.update" value="1" />
   <property name="jdk.build" value="13" />
-  
+
   <!-- See https://gist.github.com/P7h/9741922
        or http://stackoverflow.com/q/10268583 -->
   <property name="jdk.hash" value="1961070e4c9b4e26a04e7f5a083f551e" />
@@ -649,6 +649,16 @@
     <exec executable="cp">
       <arg value="-r"/>
       <arg line="${jdk.path.macosx}/Contents/Home/bin macosx/work/Processing.app/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/bin"/>
+    </exec>
+
+    <exec executable="cp">
+      <arg value="-r"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/jmods macosx/work/Processing.app/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/jmods"/>
+    </exec>
+
+    <exec executable="cp">
+      <arg value="-r"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/legal macosx/work/Processing.app/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/legal"/>
     </exec>
 
     <property name="contents.dir"
