@@ -687,11 +687,12 @@ public class PdeEmitter implements PdeTokenTypes {
       break;
 
     // the color datatype is just an alias for int
+    /*
     case LITERAL_color:
       out.print("int");
       dumpHiddenAfter(ast);
       break;
-
+    */
     case WEBCOLOR_LITERAL:
       if (ast.getText().length() != 6) {
         System.err.println("Internal error: incorrect length of webcolor "

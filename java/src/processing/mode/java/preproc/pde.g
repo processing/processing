@@ -179,11 +179,12 @@ builtInConsCastType
 // rules so that constructor casts can just use the original typelist, since
 // we don't want to support the color type as a constructor cast.
 //
-builtInType
-    :   builtInConsCastType
-    |   "color"              // aliased to an int in PDE
-        { processing.app.Preferences.getBoolean("preproc.color_datatype") }? 
-    ;
+
+// builtInType
+//    :   builtInConsCastType
+//    |   "color"              // aliased to an int in PDE
+//        { processing.app.Preferences.getBoolean("preproc.color_datatype") }? 
+//    ;
 
 // constructor style casts.
 constructorCast!
@@ -245,12 +246,13 @@ builtInConsCastTypeSpec[boolean addImagNode]
 // that can generate a method call from an expression that starts with this
 // token
 //
-colorMethodCall
-    : c:"color" {#c.setType(IDENT);} // this would default to LITERAL_color
-      lp:LPAREN^ {#lp.setType(METHOD_CALL);}
-      argList
-      RPAREN!
-    ;  
+
+// colorMethodCall
+//    : c:"color" {#c.setType(IDENT);} // this would default to LITERAL_color
+//      lp:LPAREN^ {#lp.setType(METHOD_CALL);}
+//      argList
+//      RPAREN!
+//    ;  
 
 // copy of the java.g rule with added constructorCast and colorMethodCall 
 // alternatives
@@ -266,7 +268,7 @@ primaryExpression
     |   "this"
     |   "super"
     |   LPAREN! assignmentExpression RPAREN!
-    |   colorMethodCall
+//    |   colorMethodCall
         // look for int.class and int[].class
     |   builtInType
         ( lbt:LBRACK^ {#lbt.setType(ARRAY_DECLARATOR);} RBRACK! )*
