@@ -5,6 +5,8 @@ X redo key command for Windows screwed up
 X   https://github.com/processing/processing/issues/5773
 X fix an editor problem with plain text (css, etc) files
 X   https://github.com/processing/processing/issues/5628
+X default to using Desktop methods for URLs and files when available on Linux
+X   also cover a few weird cases that were failing silently
 
 
 contrib
