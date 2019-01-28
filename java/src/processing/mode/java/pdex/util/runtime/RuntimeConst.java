@@ -73,4 +73,15 @@ public class RuntimeConst {
       "jdk.xml.dom.jmod",
       "jdk.zipfs.jmod"
   };
+
+  public static final String[] JAVA_FX_JARS = {
+      "javafx-swt.jar",
+      "javafx.base.jar",
+      "javafx.controls.jar",
+      "javafx.fxml.jar",
+      "javafx.graphics.jar",
+      "javafx.media.jar",
+      "javafx.swing.jar",
+      "javafx.web.jar"
+  };
 }

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RuntimeUtil {
+public class RuntimePathUtil {
 
   public static List<String> sanitizeClassPath(String classPathString) {
     // Make sure class path does not contain empty string (home dir)

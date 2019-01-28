@@ -157,7 +157,6 @@
     <junit haltonfailure="true">
       <classpath refid="classpath.test" />
       <formatter type="brief" usefile="false" />
-      <test name="processing.mode.java.pdex.util.runtime.strategy.JavaRuntimeFactoryStrategyTest" />
     </junit>
   </target>
 
