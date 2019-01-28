@@ -20,6 +20,7 @@
 
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
+    <delete dir="bin-test" />
     <delete file="${mode_jar}" />
     <delete>
       <fileset dir="${generated}">
@@ -102,6 +103,12 @@
     <pathelement location="mode/org.eclipse.text.jar" />
   </path>
 
+  <path id="classpath.test">
+    <pathelement location="../core/library-test/junit-4.8.1.jar" />
+    <pathelement location = "bin-test" />
+    <path refid="classpath.base" />
+  </path>
+
   <macrodef name="compilecommon">
     <attribute name="destdir"/>
     <attribute name="srcdir"/>
@@ -142,7 +149,19 @@
     </sequential>
   </macrodef>
 
-  <target name="compile" depends="preproc" description="Compile sources">
+  <target name="test-compile" depends="preproc">
+    <compilecommon srcdir="src; test" destdir="bin-test" classpath="classpath.test" />
+  </target>
+
+  <target name="test" depends="test-compile">
+    <junit haltonfailure="true">
+      <classpath refid="classpath.test" />
+      <formatter type="brief" usefile="false" />
+      <test name="processing.mode.java.pdex.util.runtime.strategy.JavaRuntimeFactoryStrategyTest" />
+    </junit>
+  </target>
+
+  <target name="compile" depends="test" description="Compile sources">
     <compilecommon srcdir="src" destdir="bin" classpath="classpath.base" />
   </target>
 

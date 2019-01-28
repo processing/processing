@@ -661,6 +661,11 @@
       <arg line="${jdk.path.macosx}/Contents/Home/legal macosx/work/Processing.app/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/legal"/>
     </exec>
 
+    <exec executable="cp">
+      <arg value="-r"/>
+      <arg line="${env.PATH_TO_FX} macosx/work/Processing.app/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/lib"/>
+    </exec>
+
     <property name="contents.dir"
               location="macosx/work/Processing.app/Contents" />
 
