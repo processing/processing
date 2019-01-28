@@ -7,7 +7,8 @@ X fix an editor problem with plain text (css, etc) files
 X   https://github.com/processing/processing/issues/5628
 X default to using Desktop methods for URLs and files when available on Linux
 X   also cover a few weird cases that were failing silently
-
+X The package "META" does not exist when .class files found in META-INF folder
+X   https://github.com/processing/processing/issues/5778
 
 contrib
 X update translation of "sketch" for Russian speakers

@@ -559,15 +559,14 @@ public class Util {
         if (!entry.isDirectory()) {
           String name = entry.getName();
 
-          if (name.endsWith(".class")) {
+          // Avoid META-INF because some jokers but .class files in there
+          // https://github.com/processing/processing/issues/5778
+          if (name.endsWith(".class") && !name.startsWith("META-INF/")) {
             int slash = name.lastIndexOf('/');
-            if (slash == -1) continue;
-
-            String pname = name.substring(0, slash);
-//            if (map.get(pname) == null) {
-//              map.put(pname, new Object());
-//            }
-            list.appendUnique(pname);
+            if (slash != -1) {
+              String packageName = name.substring(0, slash);
+              list.appendUnique(packageName);
+            }
           }
         }
       }
