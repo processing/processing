@@ -1,6 +1,10 @@
 0269 (3.5.3)
+X added reference for circle(), square(), push(), pop()
+_   has the reference.zip file been fixed?
 X redo key command for Windows screwed up
 X   https://github.com/processing/processing/issues/5773
+X fix an editor problem with plain text (css, etc) files
+X   https://github.com/processing/processing/issues/5628
 
 
 contrib
