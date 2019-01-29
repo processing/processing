@@ -25,76 +25,52 @@ import org.junit.Test;
 import processing.app.Sketch;
 import processing.mode.java.JavaMode;
 import processing.mode.java.pdex.ImportStatement;
-import processing.mode.java.pdex.util.runtime.RuntimePathUtilTest;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
 
-public class CachedRuntimePathFactoryTest {
+public class RuntimePathFactoryStrategyCollectionTest {
 
-  private CachedRuntimePathFactory cachedRuntimePathFactory;
+  private RuntimePathFactoryStrategyCollection factory;
   private JavaMode testMode;
   private List<ImportStatement> testImports;
   private Sketch testSketch;
+  private List<String> classpath;
 
   @Before
   public void setUp() throws Exception {
-    cachedRuntimePathFactory = new CachedRuntimePathFactory(new RuntimePathFactoryStrategy() {
-
-      private int calls = 0;
-
-      @Override
-      public List<String> buildClasspath(JavaMode mode, List<ImportStatement> imports,
-            Sketch sketch) {
-
-        String retVal = String.format("Test%d", calls);
-        calls++;
-
-        List<String> retList = new ArrayList<>();
-        retList.add(retVal);
-        return retList;
-      }
-    });
+    List<RuntimePathFactoryStrategy> innerFactories = new ArrayList<>();
+    innerFactories.add(createInnerFactory("test1"));
+    innerFactories.add(createInnerFactory("test2"));
+    factory = new RuntimePathFactoryStrategyCollection(innerFactories);
 
     testMode = RuntimePathFactoryTestUtil.createTestJavaMode();
     testImports = RuntimePathFactoryTestUtil.createTestImports();
     testSketch = RuntimePathFactoryTestUtil.createTestSketch();
+
+    classpath = factory.buildClasspath(testMode, testImports, testSketch);
+  }
+
+  private RuntimePathFactoryStrategy createInnerFactory(String retStr) {
+    return (mode, imports, sketch) -> {
+      List<String> retList = new ArrayList<>();
+      retList.add(retStr);
+      return retList;
+    };
   }
 
   @Test
-  public void buildClasspath() {
-    List<String> classpath = cachedRuntimePathFactory.buildClasspath(
-        testMode,
-        testImports,
-        testSketch
-    );
-
-    assertEquals(1, classpath.size());
-    assertEquals("Test0", classpath.get(0));
+  public void testBuildClasspathLength() {
+    assertEquals(2, classpath.size());
   }
 
   @Test
-  public void invalidateCache() {
-    cachedRuntimePathFactory.buildClasspath(
-        testMode,
-        testImports,
-        testSketch
-    );
-
-    cachedRuntimePathFactory.invalidateCache();
-
-    List<String> classpath = cachedRuntimePathFactory.buildClasspath(
-        testMode,
-        testImports,
-        testSketch
-    );
-
-    assertEquals(1, classpath.size());
-    assertEquals("Test1", classpath.get(0));
+  public void testBuildClasspathContent() {
+    assertEquals("test1", classpath.get(0));
+    assertEquals("test2", classpath.get(1));
   }
 
 }
