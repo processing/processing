@@ -494,6 +494,7 @@ X   https://github.com/processing/processing/issues/3965
 X   https://github.com/processing/processing/pull/4762
 X Report missing brace in correct tab, suppress other errors until fixed
 X   https://github.com/processing/processing/pull/4777
+X   https://github.com/processing/processing/issues/4702
 X Improvements to sketch launching and stopping
 X   https://github.com/processing/processing/pull/4848
 X several Contribution Manager fixes
