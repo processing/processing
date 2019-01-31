@@ -1,6 +1,7 @@
 0269 (3.5.3)
 X deal with possible resource leak when loading URLs
 X create intermediate folders when saving temp files
+X fix resource leaks (open files) in loadJSONObject and loadJSONArray
 
 
 contrib
