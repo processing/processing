@@ -153,6 +153,7 @@ _   https://github.com/processing/processing/issues/4094
 _   https://github.com/processing/processing/pull/4097
 _   solution is to create a sprite sheet as a psd that'll have better type
 _     no way we're gonna fix the sizing and spacing for all platforms
+_     more than a certain amount should just be 10+, +, or whatever
 _ text gutter doesn't seem to be hidpi
 X   or is it b/c screen not quite 2x? (nope)
 _ Tooltip over variable decl has wrong style and content

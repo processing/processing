@@ -7298,10 +7298,10 @@ public class PApplet implements PConstants {
       // If this looks like a URL, try to load it that way. Use the fact that
       // URL connections may have a content length header to size the array.
       if (filename.contains(":")) {  // at least smells like URL
+        InputStream input = null;
         try {
           URL url = new URL(filename);
           URLConnection conn = url.openConnection();
-          InputStream input = null;
           int length = -1;
 
           if (conn instanceof HttpURLConnection) {
@@ -7347,6 +7347,15 @@ public class PApplet implements PConstants {
         } catch (IOException e) {
           printStackTrace(e);
           return null;
+
+        } finally {
+          if (input != null) {
+            try {
+              input.close();
+            } catch (IOException e) {
+              // just deal
+            }
+          }
         }
       }
     }
@@ -7768,6 +7777,9 @@ public class PApplet implements PConstants {
    */
   static private File createTempFile(File file) throws IOException {
     File parentDir = file.getParentFile();
+    if (!parentDir.exists()) {
+      parentDir.mkdirs();
+    }
     String name = file.getName();
     String prefix;
     String suffix = null;

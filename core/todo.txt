@@ -1,4 +1,6 @@
 0269 (3.5.3)
+X deal with possible resource leak when loading URLs
+X create intermediate folders when saving temp files
 
 
 contrib
