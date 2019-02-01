@@ -1,3 +1,47 @@
+PROCESSING 3.5.3 (REV 0269) - 1 February 2019
+
+This fixes a typo that left the "Redo" command with the wrong
+key shortcut on Windows in the last release, adds updated reference,
+and includes a handful of other smaller fixes.
+
+
+[ fixes ]
+
++ "Redo" key shortcut for Windows screwed up
+  https://github.com/processing/processing/issues/5773
+
++ Fix an editor problem with plain text (css, etc) files
+  https://github.com/processing/processing/issues/5628
+
++ Default to using java.awt.Desktop methods for URLs/files when available
+  on Linux. Also cover a few weird cases that were failing silently.
+
++ Ignore .class files found in the META-INF folder for imported JARs
+  https://github.com/processing/processing/issues/5778
+
+
++ Fix up and clean a few file i/o issues that were causing resource
+  leaks with loadXxxx() commands, and intermediate folders not being
+  created for temporary files used by the saveXxxx() commands.
+
+
+[ additions ]
+
++ Added reference for circle(), square(), push(), pop()
+
+
+[ contributions ]
+
++ Updated translation of the word "sketch" for Russian speakers
+  https://github.com/processing/processing/pull/5673
+
++ Update missing @Deprecated tags in PApplet.java
+  https://github.com/processing/processing/pull/5686
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.5.2 (REV 0268) - 22 January 2019
 
 Fixed a pair of nasty regressions, and adding a couple key shortcuts
