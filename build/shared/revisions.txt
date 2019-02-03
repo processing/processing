@@ -19,6 +19,7 @@ and includes a handful of other smaller fixes.
 + Ignore .class files found in the META-INF folder for imported JARs
   https://github.com/processing/processing/issues/5778
 
++ Get rid of errant 'Could not parse -1 for display' message.
 
 + Fix up and clean a few file i/o issues that were causing resource
   leaks with loadXxxx() commands, and intermediate folders not being

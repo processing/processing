@@ -10758,9 +10758,11 @@ public class PApplet implements PConstants {
           editorLocation = parseInt(split(value, ','));
 
         } else if (param.equals(ARGS_DISPLAY)) {
-          displayNum = parseInt(value, -1);
-          if (displayNum == -1) {
-            System.err.println("Could not parse " + value + " for " + ARGS_DISPLAY);
+          displayNum = parseInt(value, -2);
+          if (displayNum == -2) {
+            // this means the display value couldn't be parsed properly
+            System.err.println(value + " is not a valid choice for " + ARGS_DISPLAY);
+            displayNum = -1;  // use the default
           }
 
         } else if (param.equals(ARGS_WINDOW_COLOR)) {

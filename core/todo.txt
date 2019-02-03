@@ -3,6 +3,7 @@ X fix/clean a few file i/o issues
 X   deal with possible resource leak when loading URLs
 X   create intermediate folders when saving temp files
 X   fix resource leaks (open files) in loadJSONObject and loadJSONArray
+X get rid of errant 'Could not parse -1 for display' message
 
 contrib
 X Update missing @Deprecated tags in PApplet.java
