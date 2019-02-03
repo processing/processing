@@ -1,4 +1,4 @@
-PROCESSING 3.5.3 (REV 0269) - 1 February 2019
+PROCESSING 3.5.3 (REV 0269) - 3 February 2019
 
 This fixes a typo that left the "Redo" command with the wrong
 key shortcut on Windows in the last release, adds updated reference,
