@@ -12162,11 +12162,11 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from square.xml )
    *
-   * Draws a square to the screen. A square is a four-sided shape with
-   * every angle at ninety degrees and each side is the same length.
-   * By default, the first two parameters set the location of the
-   * upper-left corner, the third sets the width and height. The way
-   * these parameters are interpreted, however, may be changed with the
+   * Draws a square to the screen. A square is a four-sided shape with 
+   * every angle at ninety degrees and each side is the same length. 
+   * By default, the first two parameters set the location of the 
+   * upper-left corner, the third sets the width and height. The way 
+   * these parameters are interpreted, however, may be changed with the 
    * <b>rectMode()</b> function.
    *
    * ( end auto-generated )
@@ -12275,9 +12275,9 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from circle.xml )
    *
-   * Draws a circle to the screen. By default, the first two parameters
-   * set the location of the center, and the third sets the shape's width
-   * and height. The origin may be changed with the <b>ellipseMode()</b>
+   * Draws a circle to the screen. By default, the first two parameters 
+   * set the location of the center, and the third sets the shape's width 
+   * and height. The origin may be changed with the <b>ellipseMode()</b> 
    * function.
    *
    * ( end auto-generated )
@@ -13319,28 +13319,28 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from push.xml )
    *
-   * The <b>push()</b> function saves the current drawing style
-   * settings and transformations, while <b>pop()</b> restores these
-   * settings. Note that these functions are always used together.
-   * They allow you to change the style and transformation settings
-   * and later return to what you had. When a new state is started
-   * with push(), it builds on the current style and transform
+   * The <b>push()</b> function saves the current drawing style 
+   * settings and transformations, while <b>pop()</b> restores these 
+   * settings. Note that these functions are always used together. 
+   * They allow you to change the style and transformation settings 
+   * and later return to what you had. When a new state is started 
+   * with push(), it builds on the current style and transform 
    * information.<br />
    * <br />
-   * <b>push()</b> stores information related to the current
-   * transformation state and style settings controlled by the
-   * following functions: <b>rotate()</b>, <b>translate()</b>,
-   * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>,
-   * <b>strokeWeight()</b>, <b>strokeCap()</b>, <b>strokeJoin()</b>,
-   * <b>imageMode()</b>, <b>rectMode()</b>, <b>ellipseMode()</b>,
-   * <b>colorMode()</b>, <b>textAlign()</b>, <b>textFont()</b>,
+   * <b>push()</b> stores information related to the current 
+   * transformation state and style settings controlled by the 
+   * following functions: <b>rotate()</b>, <b>translate()</b>, 
+   * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>, 
+   * <b>strokeWeight()</b>, <b>strokeCap()</b>, <b>strokeJoin()</b>, 
+   * <b>imageMode()</b>, <b>rectMode()</b>, <b>ellipseMode()</b>, 
+   * <b>colorMode()</b>, <b>textAlign()</b>, <b>textFont()</b>, 
    * <b>textMode()</b>, <b>textSize()</b>, <b>textLeading()</b>.<br />
    * <br />
-   * The <b>push()</b> and <b>pop()</b> functions were added with
-   * Processing 3.5. They can be used in place of <b>pushMatrix()</b>,
-   * <b>popMatrix()</b>, <b>pushStyles()</b>, and <b>popStyles()</b>.
-   * The difference is that push() and pop() control both the
-   * transformations (rotate, scale, translate) and the drawing styles
+   * The <b>push()</b> and <b>pop()</b> functions were added with 
+   * Processing 3.5. They can be used in place of <b>pushMatrix()</b>, 
+   * <b>popMatrix()</b>, <b>pushStyles()</b>, and <b>popStyles()</b>. 
+   * The difference is that push() and pop() control both the 
+   * transformations (rotate, scale, translate) and the drawing styles 
    * at the same time.
    *
    * ( end auto-generated )
@@ -13357,28 +13357,28 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from pop.xml )
    *
-   * The <b>pop()</b> function restores the previous drawing style
-   * settings and transformations after <b>push()</b> has changed them.
-   * Note that these functions are always used together. They allow
-   * you to change the style and transformation settings and later
-   * return to what you had. When a new state is started with push(),
+   * The <b>pop()</b> function restores the previous drawing style 
+   * settings and transformations after <b>push()</b> has changed them. 
+   * Note that these functions are always used together. They allow 
+   * you to change the style and transformation settings and later 
+   * return to what you had. When a new state is started with push(), 
    * it builds on the current style and transform information.<br />
    * <br />
    * <br />
-   * <b>push()</b> stores information related to the current
-   * transformation state and style settings controlled by the
-   * following functions: <b>rotate()</b>, <b>translate()</b>,
-   * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>,
-   * <b>strokeWeight()</b>, <b>strokeCap()</b>, <b>strokeJoin()</b>,
-   * <b>imageMode()</b>, <b>rectMode()</b>, <b>ellipseMode()</b>,
-   * <b>colorMode()</b>, <b>textAlign()</b>, <b>textFont()</b>,
+   * <b>push()</b> stores information related to the current 
+   * transformation state and style settings controlled by the 
+   * following functions: <b>rotate()</b>, <b>translate()</b>, 
+   * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>, 
+   * <b>strokeWeight()</b>, <b>strokeCap()</b>, <b>strokeJoin()</b>, 
+   * <b>imageMode()</b>, <b>rectMode()</b>, <b>ellipseMode()</b>, 
+   * <b>colorMode()</b>, <b>textAlign()</b>, <b>textFont()</b>, 
    * <b>textMode()</b>, <b>textSize()</b>, <b>textLeading()</b>.<br />
    * <br />
-   * The <b>push()</b> and <b>pop()</b> functions were added with
-   * Processing 3.5. They can be used in place of <b>pushMatrix()</b>,
-   * <b>popMatrix()</b>, <b>pushStyles()</b>, and <b>popStyles()</b>.
-   * The difference is that push() and pop() control both the
-   * transformations (rotate, scale, translate) and the drawing styles
+   * The <b>push()</b> and <b>pop()</b> functions were added with 
+   * Processing 3.5. They can be used in place of <b>pushMatrix()</b>, 
+   * <b>popMatrix()</b>, <b>pushStyles()</b>, and <b>popStyles()</b>. 
+   * The difference is that push() and pop() control both the 
+   * transformations (rotate, scale, translate) and the drawing styles 
    * at the same time.
    *
    * ( end auto-generated )
