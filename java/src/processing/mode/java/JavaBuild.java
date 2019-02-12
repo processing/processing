@@ -801,7 +801,7 @@ public class JavaBuild {
     if (exportPlatform == PConstants.MACOSX) {
       dotAppFolder = new File(destFolder, sketch.getName() + ".app");
 
-      File contentsOrig = new File(Platform.getJavaHome(), "../../../../..");
+      File contentsOrig = new File(Platform.getJavaHome(), "../../../..");
 
       if (embedJava) {
         File jdkFolder = new File(Platform.getJavaHome(), "../../..");
