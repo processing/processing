@@ -54,6 +54,8 @@ import processing.core.PConstants;
 import processing.data.StringList;
 import processing.data.XML;
 import processing.mode.java.pdex.SourceUtils;
+import processing.mode.java.pdex.util.runtime.RuntimeConst;
+import processing.mode.java.pdex.util.runtime.strategy.JavaFxRuntimePathFactory;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PreprocessorResult;
 import processing.mode.java.preproc.SurfaceInfo;
@@ -958,7 +960,6 @@ public class JavaBuild {
         }
       }
     }
-
 
     /// create platform-specific CLASSPATH based on included jars
 

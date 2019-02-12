@@ -1,12 +1,12 @@
-# If you want to support more platforms, visit jogamp.org to get the 
-# natives libraries for the platform in question (i.e. Solaris). 
+# If you want to support more platforms, visit jogamp.org to get the
+# natives libraries for the platform in question (i.e. Solaris).
 
-name = OpenGL
+name = CoreOpenJFXOpenGL
 
-application.macosx=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-macosx-universal.jar,gluegen-rt-natives-macosx-universal.jar
-application.windows32=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-windows-i586.jar,gluegen-rt-natives-windows-i586.jar
-application.windows64=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-windows-amd64.jar,gluegen-rt-natives-windows-amd64.jar
-application.linux32=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-i586.jar,gluegen-rt-natives-linux-i586.jar
-application.linux64=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-amd64.jar,gluegen-rt-natives-linux-amd64.jar
-application.linux-armv6hf=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-armv6hf.jar,gluegen-rt-natives-linux-armv6hf.jar
-application.linux-arm64=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-aarch64.jar,gluegen-rt-natives-linux-aarch64.jar
+application.macosx=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-macosx-universal.jar,gluegen-rt-natives-macosx-universal.jar,javafx-swt.jar,javafx.base.jar,javafx.controls.jar,javafx.fxml.jar,javafx.graphics.jar,javafx.media.jar,javafx.swing.jar,javafx.web.jar,libdecora_sse.dylib,libfxplugins.dylib,libglass.dylib,libglib-lite.dylib,libgstreamer-lite.dylib,libjavafx_font.dylib,libjavafx_iio.dylib,libjfxmedia.dylib,libjfxmedia_avf.dylib,libjfxwebkit.dylib,libprism_common.dylib,libprism_es2.dylib,libprism_sw.dylib
+application.windows32=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-windows-i586.jar,gluegen-rt-natives-windows-i586.jar,javafx-swt.jar,javafx.base.jar,javafx.controls.jar,javafx.fxml.jar,javafx.graphics.jar,javafx.media.jar,javafx.swing.jar,javafx.web.jar
+application.windows64=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-windows-amd64.jar,gluegen-rt-natives-windows-amd64.jar,javafx-swt.jar,javafx.base.jar,javafx.controls.jar,javafx.fxml.jar,javafx.graphics.jar,javafx.media.jar,javafx.swing.jar,javafx.web.jar
+application.linux32=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-i586.jar,gluegen-rt-natives-linux-i586.jar,javafx-swt.jar,javafx.base.jar,javafx.controls.jar,javafx.fxml.jar,javafx.graphics.jar,javafx.media.jar,javafx.swing.jar,javafx.web.jar
+application.linux64=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-amd64.jar,gluegen-rt-natives-linux-amd64.jar,javafx-swt.jar,javafx.base.jar,javafx.controls.jar,javafx.fxml.jar,javafx.graphics.jar,javafx.media.jar,javafx.swing.jar,javafx.web.jar
+application.linux-armv6hf=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-armv6hf.jar,gluegen-rt-natives-linux-armv6hf.jar,javafx-swt.jar,javafx.base.jar,javafx.controls.jar,javafx.fxml.jar,javafx.graphics.jar,javafx.media.jar,javafx.swing.jar,javafx.web.jar
+application.linux-arm64=core.jar,jogl-all.jar,gluegen-rt.jar,jogl-all-natives-linux-aarch64.jar,gluegen-rt-natives-linux-aarch64.jar,javafx-swt.jar,javafx.base.jar,javafx.controls.jar,javafx.fxml.jar,javafx.graphics.jar,javafx.media.jar,javafx.swing.jar,javafx.web.jar
