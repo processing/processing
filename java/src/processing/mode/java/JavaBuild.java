@@ -804,7 +804,7 @@ public class JavaBuild {
       File contentsOrig = new File(Platform.getJavaHome(), "../../../..");
 
       if (embedJava) {
-        File jdkFolder = new File(Platform.getJavaHome(), "../../..");
+        File jdkFolder = new File(Platform.getJavaHome(), "../..");
         String jdkFolderName = jdkFolder.getCanonicalFile().getName();
         jvmRuntime = "<key>JVMRuntime</key>\n    <string>" + jdkFolderName + "</string>";
         jdkPath = new File(dotAppFolder, "Contents/PlugIns/" + jdkFolderName).getAbsolutePath();
