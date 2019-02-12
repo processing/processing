@@ -666,11 +666,6 @@
       <arg line="${jdk.path.macosx}/Contents/Home/conf macosx/work/Processing.app/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/conf"/>
     </exec>
 
-    <exec executable="cp">
-      <arg value="-r"/>
-      <arg line="${env.PATH_TO_FX} macosx/work/Processing.app/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/lib"/>
-    </exec>
-
     <property name="contents.dir"
               location="macosx/work/Processing.app/Contents" />
 
@@ -688,6 +683,12 @@
       <fileset dir="shared" includes="lib/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
+
+    <!-- Pull in OpenJFX (separated from mainline Java in JDK 11). -->
+    <exec executable="cp">
+      <arg value="-r"/>
+      <arg line="${env.PATH_TO_FX}/ macosx/work/Processing.app/Contents/Java/core/library/"/>
+    </exec>
 
     <!-- Use the Processing executable as the stub for exported apps.
          This works b/c everything app-specific is in Info.plist. -->
