@@ -1157,6 +1157,12 @@
       <fileset file="shared/revisions.txt" />
     </copy>
 
+    <!-- Pull in OpenJFX (separated from mainline Java in JDK 11). -->
+    <copy todir="windows/work/core/library">
+      <fileset dir="${env.PATH_TO_FX}" includes="*.jar"/>
+      <fileset dir="${env.PATH_TO_FX}/../bin" includes="*.dll"/>
+    </copy>
+
     <fixcrlf file="windows/work/revisions.txt" eol="crlf" encoding="UTF-8" />
 
     <antcall target="assemble">
