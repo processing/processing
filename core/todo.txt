@@ -1,4 +1,6 @@
 0270 (3.5.4 or 3.6)
+_ size() issues on Mojave?
+_   https://github.com/processing/processing/issues/5791
 
 
 high-ish

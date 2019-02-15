@@ -1,4 +1,16 @@
 0270 (3.5.4 or 3.6)
+X use ctrl-page up/down for tabs on Windows
+X   https://github.com/processing/processing/issues/5794
+
+
+_ show the recommended sw version on the download page
+_ just skip the welcome screen on Windows hidpi dipslays?
+
+_ refresh option for sketchbook
+_ import option for sketchbook
+_ 'show sketch folder' weird when in temp folder
+_   ask to save first (sketch has not been saved yet)
+_ same with adding files to an unsaved sketch, do we block that?
 
 
 contrib
@@ -9,9 +21,13 @@ _   https://github.com/processing/processing/pull/4040
 
 
 high
+_ run button not deactivating
+_   https://github.com/processing/processing/issues/5786
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
 _   https://github.com/processing/processing/issues/5562
 _   https://github.com/processing/processing/pull/5642
+_ sketch window placement not recorded
+_   https://github.com/processing/processing/issues/5781
 _ errors inside setup() aren't coming through at all?
 _   seen in Eclipse; have to turn on the debugger... same as #4703?
 _ Welcome screen doesn't size properly for HiDPI screens
