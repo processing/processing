@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import processing.app.Base;
+import processing.app.Language;
 import processing.app.Messages;
 import processing.app.Mode;
 import processing.app.Util;
@@ -89,6 +90,7 @@ public class ModeContribution extends LocalContribution {
       Messages.log("Got mode class " + modeClass);
       Constructor con = modeClass.getConstructor(Base.class, File.class);
       mode = (Mode) con.newInstance(base, folder);
+      Language.addModeStrings(mode);
       mode.setClassLoader(loader);
       if (base != null) {
         mode.setupGUI();
