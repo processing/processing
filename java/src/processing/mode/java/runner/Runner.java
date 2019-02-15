@@ -352,8 +352,10 @@ public class Runner implements MessageConsumer {
 
     // sketch.libraryPath might be ""
     // librariesClassPath will always have sep char prepended
+    String javaLibraryPath = build.getJavaLibraryPath();
+
     params.append("-Djava.library.path=" +
-                  build.getJavaLibraryPath() +
+                  javaLibraryPath +
                   File.pathSeparator +
                   System.getProperty("java.library.path"));
 
