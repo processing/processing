@@ -39,20 +39,6 @@ public class LinuxPlatform extends DefaultPlatform {
   public void initBase(Base base) {
     super.initBase(base);
 
-    String javaVendor = System.getProperty("java.vendor");
-    String javaVM = System.getProperty("java.vm.name");
-    if (javaVendor == null ||
-        (!javaVendor.contains("Sun") && !javaVendor.contains("Oracle")) ||
-        javaVM == null || !javaVM.contains("Java")) {
-      Messages.showWarning("Not fond of this Java VM",
-                           "Processing requires Java 8 from Oracle.\n" +
-                           "Other versions such as OpenJDK, IcedTea,\n" +
-                           "and GCJ are strongly discouraged. Among other things, you're\n" +
-                           "likely to run into problems with sketch window size and\n" +
-                           "placement. For more background, please read the wiki:\n" +
-                           "https://github.com/processing/processing/wiki/Supported-Platforms#linux", null);
-    }
-
     // Set x11 WM_CLASS property which is used as the application
     // name by Gnome3 and other window managers.
     // https://github.com/processing/processing/issues/2534

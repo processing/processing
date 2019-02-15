@@ -862,6 +862,11 @@
       <fileset refid="runtime.jars" />
     </copy>
 
+    <copy todir="linux/work/core/library" flatten="true">
+      <fileset refid="${env.PATH_TO_FX}" includes="*.jar"/>
+      <fileset refid="${env.PATH_TO_FX}" includes="*.so"/>
+    </copy>
+
     <copy file="linux/processing" todir="linux/work" />
     <chmod perm="ugo+x" file="linux/work/processing" />
 
