@@ -2681,6 +2681,17 @@ public class PApplet implements PConstants {
       mouseX = event.getX();
       mouseY = event.getY();
     }
+    else if (action == MouseEvent.EXIT) {
+      // https://github.com/processing/processing/issues/4057
+      // Fix for OSX where mouseY can't reach 0 when using the
+      // default renderer, cause the action is MouseEvent.EXIT
+      // This also gives a better mouse position on exit, see:
+      //  https://github.com/processing/processing/issues/4057#issuecomment-464332982
+      pmouseX = emouseX;
+      pmouseY = emouseY;
+      mouseX = constrain(event.getX(), 0, width-1);
+      mouseY = constrain(event.getY(), 0, height-1);
+    }
 
     int button = event.getButton();
 
