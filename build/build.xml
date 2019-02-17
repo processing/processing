@@ -685,10 +685,10 @@
     </copy>
 
     <!-- Pull in OpenJFX (separated from mainline Java in JDK 11). -->
-    <exec executable="cp">
-      <arg value="-r"/>
-      <arg line="${env.PATH_TO_FX}/ macosx/work/Processing.app/Contents/Java/core/library/"/>
-    </exec>
+    <copy todir="macosx/work/Processing.app/Contents/Java/core/library" overwrite="true">
+      <fileset dir="${env.PATH_TO_FX}" includes="*.jar"/>
+      <fileset dir="${env.PATH_TO_FX}" includes="*.dylib"/>
+    </copy>
 
     <!-- Use the Processing executable as the stub for exported apps.
          This works b/c everything app-specific is in Info.plist. -->
@@ -862,15 +862,10 @@
       <fileset refid="runtime.jars" />
     </copy>
 
-    <exec executable="cp">
-      <arg value="-r"/>
-      <arg line="/home/apottinger/javafx-sdk-11.0.1/lib/*.jar linux/work/core/library/"/>
-    </exec>
-
-    <exec executable="cp">
-      <arg value="-r"/>
-      <arg line="/home/apottinger/javafx-sdk-11.0.1/lib/*.so linux/work/core/library/"/>
-    </exec>
+    <copy todir="linux/work/core/library" overwrite="true">
+      <fileset dir="${env.PATH_TO_FX}" includes="*.jar"/>
+      <fileset dir="${env.PATH_TO_FX}" includes="*.so"/>
+    </copy>
 
     <copy file="linux/processing" todir="linux/work" />
     <chmod perm="ugo+x" file="linux/work/processing" />
