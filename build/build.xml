@@ -864,12 +864,12 @@
 
     <exec executable="cp">
       <arg value="-r"/>
-      <arg value="/home/apottinger/javafx-sdk-11.0.1/lib/*.jar linux/work/core/library"/>
+      <arg line="/home/apottinger/javafx-sdk-11.0.1/lib/*.jar linux/work/core/library/"/>
     </exec>
 
     <exec executable="cp">
       <arg value="-r"/>
-      <arg value="/home/apottinger/javafx-sdk-11.0.1/lib/*.so linux/work/core/library"/>
+      <arg line="/home/apottinger/javafx-sdk-11.0.1/lib/*.so linux/work/core/library/"/>
     </exec>
 
     <copy file="linux/processing" todir="linux/work" />
