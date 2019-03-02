@@ -3,6 +3,7 @@ package processing.data;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import processing.core.PApplet;
 
@@ -607,21 +608,22 @@ public class FloatDict {
    * @webref floatdict:method
    * @brief Remove a key/value pair
    */
-  public int remove(String key) {
+  public float remove(String key) {
     int index = index(key);
-    if (index != -1) {
-      removeIndex(index);
+    if (index == -1) {
+      throw new NoSuchElementException("'" + key + "' not found");
     }
-    return index;
+    float value = values[index];
+    removeIndex(index);
+    return value;
   }
 
 
-  public String removeIndex(int index) {
+  public float removeIndex(int index) {
     if (index < 0 || index >= count) {
       throw new ArrayIndexOutOfBoundsException(index);
     }
-    String key = keys[index];
-    //System.out.println("index is " + which + " and " + keys[which]);
+    float value = values[index];
     indices.remove(keys[index]);
     for (int i = index; i < count-1; i++) {
       keys[i] = keys[i+1];
@@ -631,7 +633,7 @@ public class FloatDict {
     count--;
     keys[count] = null;
     values[count] = 0;
-    return key;
+    return value;
   }
 
 

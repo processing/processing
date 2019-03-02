@@ -141,7 +141,6 @@ public class PApplet implements PConstants {
    * Do not use; javaPlatform or javaVersionName are better options.
    * For instance, javaPlatform is useful when you need a number for
    * comparison, i.e. "if (javaPlatform >= 9)".
-   * @deprecated
    */
   @Deprecated
   public static final float javaVersion = 1 + javaPlatform / 10f;
@@ -561,6 +560,14 @@ public class PApplet implements PConstants {
    */
   public boolean mousePressed;
 
+  // MACOSX: CTRL + Left Mouse is converted to Right Mouse. This boolean keeps
+  // track of whether the conversion happened on PRESS, because we should report
+  // the same button during DRAG and on RELEASE, even though CTRL might have
+  // been released already. Otherwise the events are inconsistent, e.g.
+  // Left Pressed - Left Drag - CTRL Pressed - Right Drag - Right Released.
+  // See: https://github.com/processing/processing/issues/5672
+  private boolean macosxLeftButtonWithCtrlPressed;
+
 
   /** @deprecated Use a mouse event handler that passes an event instead. */
   @Deprecated
@@ -705,7 +712,7 @@ public class PApplet implements PConstants {
    * @see PApplet#frameRate(float)
    * @see PApplet#frameCount
    */
-  public float frameRate = 10;
+  public float frameRate = 60;
 
   protected boolean looping = true;
 
@@ -2426,9 +2433,34 @@ public class PApplet implements PConstants {
 
     } else {  // frameCount > 0, meaning an actual draw()
       // update the current frameRate
-      double rate = 1000000.0 / ((now - frameRateLastNanos) / 1000000.0);
-      float instantaneousRate = (float) (rate / 1000.0);
-      frameRate = (frameRate * 0.9f) + (instantaneousRate * 0.1f);
+
+      // Calculate frameRate through average frame times, not average fps, e.g.:
+      //
+      // Alternating 2 ms and 20 ms frames (JavaFX or JOGL sometimes does this)
+      // is around 90.91 fps (two frames in 22 ms, one frame 11 ms).
+      //
+      // However, averaging fps gives us: (500 fps + 50 fps) / 2 = 275 fps.
+      // This is because we had 500 fps for 2 ms and 50 fps for 20 ms, but we
+      // counted them with equal weight.
+      //
+      // If we average frame times instead, we get the right result:
+      // (2 ms + 20 ms) / 2 = 11 ms per frame, which is 1000/11 = 90.91 fps.
+      //
+      // The counter below uses exponential moving average. To do the
+      // calculation, we first convert the accumulated frame rate to average
+      // frame time, then calculate the exponential moving average, and then
+      // convert the average frame time back to frame rate.
+      {
+        // Get the frame time of the last frame
+        double frameTimeSecs = (now - frameRateLastNanos) / 1e9;
+        // Convert average frames per second to average frame time
+        double avgFrameTimeSecs = 1.0 / frameRate;
+        // Calculate exponential moving average of frame time
+        final double alpha = 0.05;
+        avgFrameTimeSecs = (1.0 - alpha) * avgFrameTimeSecs + alpha * frameTimeSecs;
+        // Convert frame time back to frames per second
+        frameRate = (float) (1.0 / avgFrameTimeSecs);
+      }
 
       if (frameCount != 0) {
         handleMethods("pre");
@@ -2650,8 +2682,27 @@ public class PApplet implements PConstants {
       mouseY = event.getY();
     }
 
+    int button = event.getButton();
+
+    // If running on Mac OS, allow ctrl-click as right mouse.
+    if (PApplet.platform == PConstants.MACOSX && event.getButton() == PConstants.LEFT) {
+      if (action == MouseEvent.PRESS && event.isControlDown()) {
+        macosxLeftButtonWithCtrlPressed = true;
+      }
+      if (macosxLeftButtonWithCtrlPressed) {
+        button = PConstants.RIGHT;
+        event = new MouseEvent(event.getNative(), event.getMillis(),
+                               event.getAction(), event.getModifiers(),
+                               event.getX(), event.getY(),
+                               button, event.getCount());
+      }
+      if (action == MouseEvent.RELEASE) {
+        macosxLeftButtonWithCtrlPressed = false;
+      }
+    }
+
     // Get the (already processed) button code
-    mouseButton = event.getButton();
+    mouseButton = button;
 
     /*
     // Compatibility for older code (these have AWT object params, not P5)
@@ -6025,14 +6076,31 @@ public class PApplet implements PConstants {
    * @see PApplet#saveJSONArray(JSONArray, String)
    */
   public JSONObject loadJSONObject(String filename) {
-    return new JSONObject(createReader(filename));
+    // can't pass of createReader() to the constructor b/c of resource leak
+    BufferedReader reader = createReader(filename);
+    JSONObject outgoing = new JSONObject(reader);
+    try {
+      reader.close();
+    } catch (IOException e) {  // not sure what would cause this
+      e.printStackTrace();
+    }
+    return outgoing;
   }
+
 
   /**
    * @nowebref
    */
   static public JSONObject loadJSONObject(File file) {
-    return new JSONObject(createReader(file));
+    // can't pass of createReader() to the constructor b/c of resource leak
+    BufferedReader reader = createReader(file);
+    JSONObject outgoing = new JSONObject(reader);
+    try {
+      reader.close();
+    } catch (IOException e) {  // not sure what would cause this
+      e.printStackTrace();
+    }
+    return outgoing;
   }
 
 
@@ -6049,6 +6117,7 @@ public class PApplet implements PConstants {
   public boolean saveJSONObject(JSONObject json, String filename) {
     return saveJSONObject(json, filename, null);
   }
+
 
   /**
    * @param options "compact" and "indent=N", replace N with the number of spaces
@@ -6078,12 +6147,28 @@ public class PApplet implements PConstants {
    * @see PApplet#saveJSONArray(JSONArray, String)
    */
   public JSONArray loadJSONArray(String filename) {
-    return new JSONArray(createReader(filename));
+    // can't pass of createReader() to the constructor b/c of resource leak
+    BufferedReader reader = createReader(filename);
+    JSONArray outgoing = new JSONArray(reader);
+    try {
+      reader.close();
+    } catch (IOException e) {  // not sure what would cause this
+      e.printStackTrace();
+    }
+    return outgoing;
   }
 
 
   static public JSONArray loadJSONArray(File file) {
-    return new JSONArray(createReader(file));
+    // can't pass of createReader() to the constructor b/c of resource leak
+    BufferedReader reader = createReader(file);
+    JSONArray outgoing = new JSONArray(reader);
+    try {
+      reader.close();
+    } catch (IOException e) {  // not sure what would cause this
+      e.printStackTrace();
+    }
+    return outgoing;
   }
 
 
@@ -6264,18 +6349,6 @@ public class PApplet implements PConstants {
           "to the data folder of your sketch.", e);
     }
     return null;
-  }
-
-
-  /**
-   * Used by PGraphics to remove the requirement for loading a font!
-   */
-  protected PFont createDefaultFont(float size) {
-//    Font f = new Font("SansSerif", Font.PLAIN, 12);
-//    println("n: " + f.getName());
-//    println("fn: " + f.getFontName());
-//    println("ps: " + f.getPSName());
-    return createFont("Lucida Sans", size, true, null);
   }
 
 
@@ -7259,10 +7332,10 @@ public class PApplet implements PConstants {
       // If this looks like a URL, try to load it that way. Use the fact that
       // URL connections may have a content length header to size the array.
       if (filename.contains(":")) {  // at least smells like URL
+        InputStream input = null;
         try {
           URL url = new URL(filename);
           URLConnection conn = url.openConnection();
-          InputStream input = null;
           int length = -1;
 
           if (conn instanceof HttpURLConnection) {
@@ -7308,6 +7381,15 @@ public class PApplet implements PConstants {
         } catch (IOException e) {
           printStackTrace(e);
           return null;
+
+        } finally {
+          if (input != null) {
+            try {
+              input.close();
+            } catch (IOException e) {
+              // just deal
+            }
+          }
         }
       }
     }
@@ -7729,6 +7811,9 @@ public class PApplet implements PConstants {
    */
   static private File createTempFile(File file) throws IOException {
     File parentDir = file.getParentFile();
+    if (!parentDir.exists()) {
+      parentDir.mkdirs();
+    }
     String name = file.getName();
     String prefix;
     String suffix = null;
@@ -8259,10 +8344,10 @@ public class PApplet implements PConstants {
     System.arraycopy(src, 0, dst, 0, Array.getLength(src));
   }
 
-  //
   /**
-   * @deprecated Use arrayCopy() instead.
+   * Use arrayCopy() instead.
    */
+  @Deprecated
   static public void arraycopy(Object src, int srcPosition,
                                Object dst, int dstPosition,
                                int length) {
@@ -8270,18 +8355,21 @@ public class PApplet implements PConstants {
   }
 
   /**
-   * @deprecated Use arrayCopy() instead.
+   * Use arrayCopy() instead.
    */
+  @Deprecated
   static public void arraycopy(Object src, Object dst, int length) {
     System.arraycopy(src, 0, dst, 0, length);
   }
 
   /**
-   * @deprecated Use arrayCopy() instead.
+   * Use arrayCopy() instead.
    */
+  @Deprecated
   static public void arraycopy(Object src, Object dst) {
     System.arraycopy(src, 0, dst, 0, Array.getLength(src));
   }
+
 
   /**
    * ( begin auto-generated from expand.xml )
@@ -10670,9 +10758,11 @@ public class PApplet implements PConstants {
           editorLocation = parseInt(split(value, ','));
 
         } else if (param.equals(ARGS_DISPLAY)) {
-          displayNum = parseInt(value, -1);
-          if (displayNum == -1) {
-            System.err.println("Could not parse " + value + " for " + ARGS_DISPLAY);
+          displayNum = parseInt(value, -2);
+          if (displayNum == -2) {
+            // this means the display value couldn't be parsed properly
+            System.err.println(value + " is not a valid choice for " + ARGS_DISPLAY);
+            displayNum = -1;  // use the default
           }
 
         } else if (param.equals(ARGS_WINDOW_COLOR)) {
@@ -12070,6 +12160,31 @@ public class PApplet implements PConstants {
 
 
   /**
+   * ( begin auto-generated from square.xml )
+   *
+   * Draws a square to the screen. A square is a four-sided shape with 
+   * every angle at ninety degrees and each side is the same length. 
+   * By default, the first two parameters set the location of the 
+   * upper-left corner, the third sets the width and height. The way 
+   * these parameters are interpreted, however, may be changed with the 
+   * <b>rectMode()</b> function.
+   *
+   * ( end auto-generated )
+   *
+   * @webref shape:2d_primitives
+   * @param x x-coordinate of the rectangle by default
+   * @param y y-coordinate of the rectangle by default
+   * @param extent width and height of the rectangle by default
+   * @see PGraphics#rect(float, float, float, float)
+   * @see PGraphics#rectMode(int)
+   */
+  public void square(float x, float y, float extent) {
+    if (recorder != null) recorder.square(x, y, extent);
+    g.square(x, y, extent);
+  }
+
+
+  /**
    * ( begin auto-generated from ellipseMode.xml )
    *
    * The origin of the ellipse is modified by the <b>ellipseMode()</b>
@@ -12154,6 +12269,28 @@ public class PApplet implements PConstants {
                   float start, float stop, int mode) {
     if (recorder != null) recorder.arc(a, b, c, d, start, stop, mode);
     g.arc(a, b, c, d, start, stop, mode);
+  }
+
+
+  /**
+   * ( begin auto-generated from circle.xml )
+   *
+   * Draws a circle to the screen. By default, the first two parameters 
+   * set the location of the center, and the third sets the shape's width 
+   * and height. The origin may be changed with the <b>ellipseMode()</b> 
+   * function.
+   *
+   * ( end auto-generated )
+   * @webref shape:2d_primitives
+   * @param x x-coordinate of the ellipse
+   * @param y y-coordinate of the ellipse
+   * @param extent width and height of the ellipse by default
+   * @see PApplet#ellipse(float, float, float, float)
+   * @see PApplet#ellipseMode(int)
+   */
+  public void circle(float x, float y, float extent) {
+    if (recorder != null) recorder.circle(x, y, extent);
+    g.circle(x, y, extent);
   }
 
 
@@ -13176,6 +13313,82 @@ public class PApplet implements PConstants {
   public void text(float num, float x, float y, float z) {
     if (recorder != null) recorder.text(num, x, y, z);
     g.text(num, x, y, z);
+  }
+
+
+  /**
+   * ( begin auto-generated from push.xml )
+   *
+   * The <b>push()</b> function saves the current drawing style 
+   * settings and transformations, while <b>pop()</b> restores these 
+   * settings. Note that these functions are always used together. 
+   * They allow you to change the style and transformation settings 
+   * and later return to what you had. When a new state is started 
+   * with push(), it builds on the current style and transform 
+   * information.<br />
+   * <br />
+   * <b>push()</b> stores information related to the current 
+   * transformation state and style settings controlled by the 
+   * following functions: <b>rotate()</b>, <b>translate()</b>, 
+   * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>, 
+   * <b>strokeWeight()</b>, <b>strokeCap()</b>, <b>strokeJoin()</b>, 
+   * <b>imageMode()</b>, <b>rectMode()</b>, <b>ellipseMode()</b>, 
+   * <b>colorMode()</b>, <b>textAlign()</b>, <b>textFont()</b>, 
+   * <b>textMode()</b>, <b>textSize()</b>, <b>textLeading()</b>.<br />
+   * <br />
+   * The <b>push()</b> and <b>pop()</b> functions were added with 
+   * Processing 3.5. They can be used in place of <b>pushMatrix()</b>, 
+   * <b>popMatrix()</b>, <b>pushStyles()</b>, and <b>popStyles()</b>. 
+   * The difference is that push() and pop() control both the 
+   * transformations (rotate, scale, translate) and the drawing styles 
+   * at the same time.
+   *
+   * ( end auto-generated )
+   *
+   * @webref structure
+   * @see PGraphics#pop()
+   */
+  public void push() {
+    if (recorder != null) recorder.push();
+    g.push();
+  }
+
+
+  /**
+   * ( begin auto-generated from pop.xml )
+   *
+   * The <b>pop()</b> function restores the previous drawing style 
+   * settings and transformations after <b>push()</b> has changed them. 
+   * Note that these functions are always used together. They allow 
+   * you to change the style and transformation settings and later 
+   * return to what you had. When a new state is started with push(), 
+   * it builds on the current style and transform information.<br />
+   * <br />
+   * <br />
+   * <b>push()</b> stores information related to the current 
+   * transformation state and style settings controlled by the 
+   * following functions: <b>rotate()</b>, <b>translate()</b>, 
+   * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>, 
+   * <b>strokeWeight()</b>, <b>strokeCap()</b>, <b>strokeJoin()</b>, 
+   * <b>imageMode()</b>, <b>rectMode()</b>, <b>ellipseMode()</b>, 
+   * <b>colorMode()</b>, <b>textAlign()</b>, <b>textFont()</b>, 
+   * <b>textMode()</b>, <b>textSize()</b>, <b>textLeading()</b>.<br />
+   * <br />
+   * The <b>push()</b> and <b>pop()</b> functions were added with 
+   * Processing 3.5. They can be used in place of <b>pushMatrix()</b>, 
+   * <b>popMatrix()</b>, <b>pushStyles()</b>, and <b>popStyles()</b>. 
+   * The difference is that push() and pop() control both the 
+   * transformations (rotate, scale, translate) and the drawing styles 
+   * at the same time.
+   *
+   * ( end auto-generated )
+   *
+   * @webref structure
+   * @see PGraphics#push()
+   */
+  public void pop() {
+    if (recorder != null) recorder.pop();
+    g.pop();
   }
 
 

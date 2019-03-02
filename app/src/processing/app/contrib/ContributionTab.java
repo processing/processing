@@ -73,23 +73,13 @@ public class ContributionTab extends JPanel {
     this.contribDialog = dialog;
     this.contribType = type;
 
-    filter = new Contribution.Filter() {
-      public boolean matches(Contribution contrib) {
-        return contrib.getType() == contribType;
-      }
-    };
+    filter = contrib -> contrib.getType() == contribType;
 
     contribListing = ContributionListing.getInstance();
     statusPanel = new StatusPanel(this, 650);
-    contributionListPanel = new ListPanel(this, filter);
+    contributionListPanel = new ListPanel(this, filter, false);
     contribListing.addListener(contributionListPanel);
   }
-
-
-//  public boolean hasUpdates(Base base) {
-//    return contribListing.hasUpdates(base);
-//  }
-
 
   public void showFrame(final Editor editor, boolean error, boolean loading) {
     this.editor = editor;
@@ -277,9 +267,7 @@ public class ContributionTab extends JPanel {
 
 
   protected void filterLibraries(String category, List<String> filters) {
-    List<Contribution> filteredLibraries =
-      contribListing.getFilteredLibraryList(category, filters);
-    contributionListPanel.filterLibraries(filteredLibraries);
+    contributionListPanel.filterLibraries(category, filters);
   }
 
 
@@ -449,15 +437,16 @@ public class ContributionTab extends JPanel {
       contributionListPanel.panelByContribution.values();
     for (DetailPanel detailPanel : collection) {
       detailPanel.update();
-
-    // Refreshing the ContributionUpdateTab's status icons
-    contributionListPanel.updatePanelOrdering(contributionListPanel
-      .panelByContribution.keySet());
     }
+    contributionListPanel.model.fireTableDataChanged();
   }
 
 
   protected boolean hasUpdates() {
     return contributionListPanel.getRowCount() > 0;
+  }
+
+  public boolean filterHasFocus() {
+      return filterField != null && filterField.hasFocus();
   }
 }

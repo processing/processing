@@ -2,7 +2,8 @@
 
 /*
   Part of the Processing project - http://processing.org
-  Copyright (c) 2012-16 The Processing Foundation
+
+  Copyright (c) 2012-19 The Processing Foundation
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -39,6 +40,7 @@ import javax.swing.JTree; // needed for javadocs
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import processing.app.Messages;
+import processing.app.RunnerListenerEdtAdapter;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.mode.java.debug.*;
@@ -201,7 +203,7 @@ public class Debugger {
         //lineMap = LineMapping.generateMapping(srcPath + File.separator + mainClassName + ".java");
 
         log("launching debuggee runtime");
-        runtime = new Runner(build, editor);
+        runtime = new Runner(build, new RunnerListenerEdtAdapter(editor));
         VirtualMachine vm = runtime.debug(null); // non-blocking
         if (vm == null) {
           loge("error 37: launch failed", null);
