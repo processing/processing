@@ -1,6 +1,8 @@
 0270 (3.5.4 or 3.6)
 _ size() issues on Mojave?
 _   https://github.com/processing/processing/issues/5791
+_ use exit event to set mouseY to 0 on macOS
+_   https://github.com/processing/processing/pull/5796/files
 
 
 high-ish

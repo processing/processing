@@ -1,7 +1,15 @@
 0270 (3.5.4 or 3.6)
 X use ctrl-page up/down for tabs on Windows
 X   https://github.com/processing/processing/issues/5794
+X fix potential highlighting issue that wasn't selecting portions of text
 
+_ "Could not get the settings folder" isn't very helpful
+_   https://github.com/processing/processing/issues/5744
+_   need to check the locations it'd be writing to, and see if available
+_   then tell the user which folder to fix
+
+_ i18n support for Modes
+_   https://github.com/processing/processing/commit/0ed2fc139c3c5dfe0a1702ed8348987b3c6a5c9d
 
 _ show the recommended sw version on the download page
 _ just skip the welcome screen on Windows hidpi dipslays?
