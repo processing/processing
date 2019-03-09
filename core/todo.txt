@@ -4,6 +4,9 @@ _   https://github.com/processing/processing/issues/5791
 _ use exit event to set mouseY to 0 on macOS
 _   https://github.com/processing/processing/pull/5796/files
 
+_ possible fix for precision issues with PDF
+_   https://github.com/processing/processing/issues/5801#issuecomment-466632459
+
 
 high-ish
 _ add separator option to loadTable()
