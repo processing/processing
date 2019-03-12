@@ -648,22 +648,22 @@
          Unix systems, we need to use <exec executable="cp" ... > instead -->
     <exec executable="cp">
       <arg value="-r"/>
-      <arg line="${jdk.path.macosx}/Contents/Home/bin macosx/work/Processing.app/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/bin"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/bin macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/bin"/>
     </exec>
 
     <exec executable="cp">
       <arg value="-r"/>
-      <arg line="${jdk.path.macosx}/Contents/Home/jmods macosx/work/Processing.app/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/jmods"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/jmods macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/jmods"/>
     </exec>
 
     <exec executable="cp">
       <arg value="-r"/>
-      <arg line="${jdk.path.macosx}/Contents/Home/legal macosx/work/Processing.app/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/legal"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/legal macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/legal"/>
     </exec>
 
     <exec executable="cp">
       <arg value="-r"/>
-      <arg line="${jdk.path.macosx}/Contents/Home/conf macosx/work/Processing.app/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/conf"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/conf macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/conf"/>
     </exec>
 
     <property name="contents.dir"
@@ -671,7 +671,7 @@
 
     <!-- Replace libjli.dylib symlink with actual file.
          Deals with code signing issues on OS X 10.9.5+ -->
-    <property name="jli.path" value="${contents.dir}/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/MacOS/libjli.dylib" />
+    <property name="jli.path" value="${contents.dir}/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/MacOS/libjli.dylib" />
     <delete file="${jli.path}" />
     <exec executable="cp">
       <arg line="${jdk.path.macosx}/Contents/Home/lib/jli/libjli.dylib ${jli.path}"/>
