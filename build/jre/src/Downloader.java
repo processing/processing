@@ -34,6 +34,8 @@ public class Downloader extends Task {
   static final String COOKIE =
     "oraclelicense=accept-securebackup-cookie";
 
+  private static final boolean PRINT_LOGGING = true;
+
   private boolean openJdk; // If using openJDK.
   private String platform; // macos
   private int train;  // Java 11 (was 1 through Java 8)
@@ -51,57 +53,108 @@ public class Downloader extends Task {
   private String path;  // target path
 
 
+  /**
+   * Create a new downloader.
+   **/
   public Downloader() { }
 
+  /**
+   * Set the platform being used.
+   *
+   * @param platform The platfom for which files are being downloaded like macosx.
+   */
   public void setPlatform(String platform) {
     this.platform = platform;
   }
 
+  /**
+   * Indicate if the OpenJDK is being used.
+   *
+   * @param openJdk True if OpenJDK is being used. False if Oracle JDK is being used.
+   */
   public void setOpenJdk(boolean openJdk) {
     this.openJdk = openJdk;
   }
 
+  /**
+   * Specify the build train being used.
+   *
+   * @param train The build train like 1 (Java 8 and before) or 11 (Java 11).
+   */
   public void setTrain(int train) {
     this.train = train;
   }
 
+  /**
+   * Set the version to download within the given build train.
+   *
+   * @param version The version within the train to use like 0 for "11.0.1_13".
+   */
   public void setVersion(int version) {
     this.version = version;
   }
 
-
+  /**
+   * Set the update number to download within the given build train.
+   *
+   * @param update The update within the version to use like 1 for "11.0.1_13".
+   */
   public void setUpdate(int update) {
     this.update = update;
   }
 
-
+  /**
+   * Set the build number to download.
+   *
+   * @param build The build number to use within the build train like 13 for "11.0.1_13".
+   */
   public void setBuild(int build) {
     this.build = build;
   }
 
-
+  /**
+   * Set the expected hash of the download.
+   *
+   * @param hash The hash set.
+   */
   public void setHash(String hash) {
     this.hash = hash;
   }
 
-
+  /**
+   * Indicate if the JDK or the JRE are being used.
+   *
+   * @param jdk True if the full JDK is being used. False if using JRE. Note that, after Java 11,
+   *    only JDK option is available.
+   */
   public void setJDK(boolean jdk) {
     this.jdk = jdk;
   }
 
-
+  /**
+   * Indicate the file flavor to be downloaded.
+   *
+   * @param flavor The flavor of file (dependent on platform) to be downloaded. Like "-x64.tar.gz".
+   */
   public void setFlavor(String flavor) {
     this.flavor = flavor;
   }
 
-
+  /**
+   * Set the path to which the file should be downloaded.
+   *
+   * @param path The path to which the file should be downloaded.
+   */
   public void setPath(String path) {
     this.path = path;
   }
 
-
+  /**
+   * Download the JDK or JRE.
+   */
   public void execute() throws BuildException {
     if (train == 0) {
+      // 1 if prior to Java 9
       throw new BuildException("Train (i.e. 1 or 11) must be set");
     }
 
@@ -130,6 +183,9 @@ public class Downloader extends Task {
     }
   }
 
+  /**
+   * Download the package from AdoptOpenJDK or Oracle.
+   */
   void download() throws IOException {
     DownloadUrlGenerator downloadUrlGenerator;
 
@@ -163,7 +219,7 @@ public class Downloader extends Task {
             hash
     );
 
-    System.out.println("Attempting download at " + url);
+    println("Attempting download at " + url);
 
     HttpURLConnection conn =
       (HttpURLConnection) new URL(url).openConnection();
@@ -176,7 +232,7 @@ public class Downloader extends Task {
       List<String> location = headers.get("Location");
       if (location.size() == 1) {
         url = location.get(0);
-        System.out.println("Redirecting to " + url);
+        println("Redirecting to " + url);
       } else {
         throw new BuildException("Got " + location.size() + " locations.");
       }
@@ -195,7 +251,10 @@ public class Downloader extends Task {
       InputStream input = conn.getInputStream();
       BufferedInputStream bis = new BufferedInputStream(input);
       File outputFile = new File(path); //folder, filename);
-      System.out.format("Downloading %s from %s%n", outputFile.getAbsolutePath(), url);
+
+      String msg = String.format("Downloading %s from %s%n", outputFile.getAbsolutePath(), url);
+      println(msg);
+
       // Write to a temp file so that we don't have an incomplete download
       // masquerading as a good archive.
       File tempFile = File.createTempFile("download", "", outputFile.getParentFile());
@@ -226,19 +285,50 @@ public class Downloader extends Task {
     }
   }
 
-
+  /**
+   * Print the headers used for {URLConnection}.
+   */
   static void printHeaders(URLConnection conn) {
     Map<String, List<String>> headers = conn.getHeaderFields();
     Set<Map.Entry<String, List<String>>> entrySet = headers.entrySet();
     for (Map.Entry<String, List<String>> entry : entrySet) {
       String headerName = entry.getKey();
-      System.out.println("Header Name:" + headerName);
+      println("Header Name:" + headerName);
       List<String> headerValues = entry.getValue();
       for (String value : headerValues) {
-        System.out.print("Header value:" + value);
+        print("Header value:" + value);
       }
-      System.out.println();
-      System.out.println();
+      printEmptyLine();
+      printEmptyLine();
     }
+  }
+
+  /**
+   * Print a line out to console if logging is enabled.
+   *
+   * @param message The message to be printed.
+   */
+  private static void println(String message) {
+    if (PRINT_LOGGING) {
+      System.out.println(message);
+    }
+  }
+
+  /**
+   * Print a line out to console if logging is enabled without a newline.
+   *
+   * @param message The message to be printed.
+   */
+  private static void print(String message) {
+    if (PRINT_LOGGING) {
+      System.out.print(message);
+    }
+  }
+
+  /**
+   * Print an empty line to the system.out.
+   */
+  private static void printEmptyLine() {
+    println("");
   }
 }

@@ -1,6 +1,33 @@
+/*
+Part of the Processing project - http://processing.org
+
+Copyright (c) 2019 The Processing Foundation
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 package processing.mode.java.pdex.util.runtime;
 
+
+/**
+ * Constants related to runtime component enumeration.
+ */
 public class RuntimeConst {
+
+  /**
+   * The modules comprising the Java standard modules.
+   */
   public static final String[] STANDARD_MODULES = {
       "java.base.jmod",
       "java.compiler.jmod",
@@ -74,6 +101,9 @@ public class RuntimeConst {
       "jdk.zipfs.jmod"
   };
 
+  /**
+   * The jars required for OpenJFX.
+   */
   public static final String[] JAVA_FX_JARS = {
       "javafx-swt.jar",
       "javafx.base.jar",
@@ -84,4 +114,5 @@ public class RuntimeConst {
       "javafx.swing.jar",
       "javafx.web.jar"
   };
+
 }

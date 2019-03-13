@@ -989,19 +989,6 @@ public class JavaBuild {
     }
     // https://github.com/processing/processing/issues/2239
     runOptions.append("-Djna.nosys=true");
-    // https://github.com/processing/processing/issues/4608
-    /*if (embedJava) {
-      // if people don't embed Java, it might be a mess, but what can we do?
-      if (exportPlatform == PConstants.MACOSX) {
-        runOptions.append("-Djava.ext.dirs=$APP_ROOT/Contents/PlugIns/jdk" +
-                          PApplet.javaVersionName +
-                          ".jdk/Contents/Home/jre/lib/ext");
-      } else if (exportPlatform == PConstants.WINDOWS) {
-        runOptions.append("-Djava.ext.dirs=\"%EXEDIR%\\java\\lib\\ext\"");
-      } else if (exportPlatform == PConstants.LINUX) {
-        runOptions.append("-Djava.ext.dirs=\"$APPDIR/java/lib/ext\"");
-      }
-    }*/
 
     // https://github.com/processing/processing/issues/2559
     if (exportPlatform == PConstants.WINDOWS) {

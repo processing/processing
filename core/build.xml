@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <project name="Processing Core" default="build">
 
+  <property environment="env"/>
+
   <target name="clean" description="Clean out the build directories">
     <delete dir="bin" />
     <delete file="library/core.jar" />
@@ -26,11 +28,12 @@
       <!-- Where can I expect to find Java Mode JARs? -->
       <property name="java.mode" value="../java/mode/" />
 
-      <!-- JavaFX got removed from the Oracle's JDK for arm -->
+      <!-- JavaFX got removed from the Oracle's JDK for arm and Java 11 -->
       <condition property="fx.unavailable" value="true">
         <or>
           <equals arg1="${os.arch}" arg2="arm" />
           <equals arg1="${os.arch}" arg2="aarch64" />
+          <not><isset property="env.PATH_TO_FX"/></not>
         </or>
       </condition>
 
