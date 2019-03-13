@@ -54,7 +54,7 @@ public class Downloader extends Task {
 
 
   /**
-   * Create a new downloader.
+   * Create a new downloader without tag attributes filled in.
    **/
   public Downloader() { }
 
