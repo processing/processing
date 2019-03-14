@@ -24,6 +24,7 @@
 package processing.core.util.io;
 
 import org.junit.Test;
+import processing.core.util.common.CommonInputTestUtil;
 
 import java.io.*;
 
@@ -34,8 +35,10 @@ public class InputFactoryTest {
 
   @Test
   public void testCreateInputFile() throws IOException {
+    File targetFile = CommonInputTestUtil.getFile("resource-test/test.txt");
+
     InputStream inputStream = InputFactory.createInput(
-        new File("resource-test/test.txt")
+        targetFile
     );
 
     BufferedReader reader = new BufferedReader(

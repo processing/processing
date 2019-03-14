@@ -36,6 +36,7 @@
 
   <path id="classpath.test">
     <pathelement location="library-test/junit-4.8.1.jar" />
+    <pathelement location="library-test/mockito-all-1.10.19.jar" />
     <pathelement location="bin-test" />
     <path refid="classpath.base" />
   </path>
@@ -104,8 +105,11 @@
     <junit haltonfailure="true">
       <classpath refid="classpath.test" />
       <formatter type="brief" usefile="false" />
-      <test name="processing.core.util.io.PathUtilTest" />
-      <test name="processing.core.util.io.InputFactoryTest" />
+      <batchtest>
+        <fileset dir="test">
+          <include name="**/*Test.java" />
+        </fileset>
+      </batchtest>
     </junit>
   </target>
 
