@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <project name="Processing" default="build">
 
+  <property environment="env"/>
+
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+    <classpath>
+      <pathelement location="library/ant-contrib-0.6.jar"/>
+    </classpath>
+  </taskdef>
+
   <!-- Sets properties for macosx/windows/linux depending on current system -->
   <condition property="platform" value="macosx">
     <os family="mac" />
@@ -53,7 +61,7 @@
     <property name="linux.dist" value="linux/processing-${version}-linux-arm64.tgz" />
   </target>
 
-  <!-- Require Java 8 everywhere. -->
+  <!-- Require Java 11 everywhere. -->
   <fail message="Unsupported Java version: ${java.version}. To build, make sure that Java 11 is installed.">
     <condition>
       <not>
@@ -63,6 +71,15 @@
       </not>
     </condition>
   </fail>
+
+  <!-- JavaFX got removed from the Oracle's JDK for arm and Java 11 -->
+  <condition property="fx.available" value="true">
+    <and>
+      <not><equals arg1="${os.arch}" arg2="arm" /></not>
+      <not><equals arg1="${os.arch}" arg2="aarch64" /></not>
+      <isset property="env.PATH_TO_FX"/>
+    </and>
+  </condition>
 
   <!-- could prompt here to download the necessary JRE
        (Windows/Linux) or JDK (on Mac OS X) -->
@@ -74,7 +91,7 @@
   <property name="jdk.version" value="0" />
   <property name="jdk.update" value="1" />
   <property name="jdk.build" value="13" />
-  
+
   <!-- See https://gist.github.com/P7h/9741922
        or http://stackoverflow.com/q/10268583 -->
   <property name="jdk.hash" value="1961070e4c9b4e26a04e7f5a083f551e" />
@@ -213,8 +230,6 @@
   <!-- Set a property named macosx, linux, or windows.
        The 'value' chosen is arbitrary. -->
   <property name="${platform}" value="${platform}" />
-
-  <property environment="env" />
 
   <property name="jre.tgz.path" value="${platform}/jre-${jdk.short}.tgz" />
 
@@ -648,7 +663,22 @@
          Unix systems, we need to use <exec executable="cp" ... > instead -->
     <exec executable="cp">
       <arg value="-r"/>
-      <arg line="${jdk.path.macosx}/Contents/Home/bin macosx/work/Processing.app/Contents/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/Home/bin"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/bin macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/bin"/>
+    </exec>
+
+    <exec executable="cp">
+      <arg value="-r"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/jmods macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/jmods"/>
+    </exec>
+
+    <exec executable="cp">
+      <arg value="-r"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/legal macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/legal"/>
+    </exec>
+
+    <exec executable="cp">
+      <arg value="-r"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/conf macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/conf"/>
     </exec>
 
     <property name="contents.dir"
@@ -656,7 +686,7 @@
 
     <!-- Replace libjli.dylib symlink with actual file.
          Deals with code signing issues on OS X 10.9.5+ -->
-    <property name="jli.path" value="${contents.dir}/PlugIns/adoptopenjdk-11.0.1.jdk/Contents/MacOS/libjli.dylib" />
+    <property name="jli.path" value="${contents.dir}/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/MacOS/libjli.dylib" />
     <delete file="${jli.path}" />
     <exec executable="cp">
       <arg line="${jdk.path.macosx}/Contents/Home/lib/jli/libjli.dylib ${jli.path}"/>
@@ -668,6 +698,25 @@
       <fileset dir="shared" includes="lib/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
+
+    <!-- Pull in OpenJFX (separated from mainline Java in JDK 11). -->
+    <if>
+      <equals arg1="${fx.available}" arg2="true" />
+      <then>
+
+        <copy todir="macosx/work/Processing.app/Contents/Java/core/library" overwrite="true">
+          <fileset dir="${env.PATH_TO_FX}" includes="*.jar"/>
+          <fileset dir="${env.PATH_TO_FX}" includes="*.dylib"/>
+        </copy>
+
+        <mkdir dir="macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/legal/openjfx" />
+
+        <copy todir="macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/legal/openjfx" overwrite="true">
+          <fileset dir="${env.PATH_TO_FX}/../legal" includes="**"/>
+        </copy>
+
+      </then>
+    </if>
 
     <!-- Use the Processing executable as the stub for exported apps.
          This works b/c everything app-specific is in Info.plist. -->
@@ -840,6 +889,23 @@
     <copy todir="linux/work/lib" flatten="true">
       <fileset refid="runtime.jars" />
     </copy>
+
+    <!-- Pull in OpenJFX (separated from mainline Java in JDK 11). -->
+    <if>
+      <equals arg1="${fx.available}" arg2="true" />
+      <then>
+        <copy todir="linux/work/core/library" overwrite="true">
+          <fileset dir="${env.PATH_TO_FX}" includes="*.jar"/>
+          <fileset dir="${env.PATH_TO_FX}" includes="*.so"/>
+        </copy>
+
+        <mkdir dir="linux/work/core/java/legal/openjfx" />
+
+        <copy todir="linux/work/core/java/legal/openjfx" overwrite="true">
+          <fileset dir="${env.PATH_TO_FX}/../legal" includes="**"/>
+        </copy>
+      </then>
+    </if>
 
     <copy file="linux/processing" todir="linux/work" />
     <chmod perm="ugo+x" file="linux/work/processing" />
@@ -1135,6 +1201,25 @@
       <fileset dir="shared" includes="modes/**" />
       <fileset file="shared/revisions.txt" />
     </copy>
+
+    <!-- Pull in OpenJFX (separated from mainline Java in JDK 11). -->
+    <if>
+      <equals arg1="${fx.available}" arg2="true" />
+      <then>
+
+        <copy todir="windows/work/core/library">
+          <fileset dir="${env.PATH_TO_FX}" includes="*.jar"/>
+          <fileset dir="${env.PATH_TO_FX}/../bin" includes="*.dll"/>
+        </copy>
+
+        <mkdir dir="windows/work/java/legal/openjfx" />
+
+        <copy todir="windows/work/java/legal/openjfx" overwrite="true">
+          <fileset dir="${env.PATH_TO_FX}/../legal" includes="**"/>
+        </copy>
+
+      </then>
+    </if>
 
     <fixcrlf file="windows/work/revisions.txt" eol="crlf" encoding="UTF-8" />
 

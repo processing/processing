@@ -1,0 +1,2 @@
+JUnit under EPL license: https://junit.org/junit4/license.html.
+Mockito under MIT license: https://github.com/mockito/mockito/blob/master/LICENSE.

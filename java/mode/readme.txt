@@ -13,7 +13,7 @@ This Mode does not use ecj.jar from the original Java mode, because its files ar
 For 3.0 alpha 11, the signature files were removed from oorg.eclipse.jdt.core.jar to fix a signing conflict with Android Mode and Ant.
 https://github.com/processing/processing/pull/3324
 
-. . . 
+. . .
 
 http://download.eclipse.org/eclipse/updates/4.5/R-4.5.2-201602121500/plugins/com.ibm.icu_54.1.1.v201501272100.jar
 
@@ -35,7 +35,7 @@ http://download.eclipse.org/eclipse/updates/4.5/R-4.5.2-201602121500/plugins/org
 
 http://download.eclipse.org/eclipse/updates/4.5/R-4.5.2-201602121500/plugins/org.eclipse.text_3.5.400.v20150505-1044.jar
 
-. . . 
+. . .
 
 Updated 19 January 2015 to fix Java 8 support. The previous versions gave an "Annotation processing got disabled, since it requires a 1.6 compliant JVM" error.
 
@@ -43,3 +43,7 @@ Updated 21 March 2016 to newest version (from R-4.4.1-201409250400 to R-4.5.2-20
 
 Finally, the archive site contains additional jars for the 4.5.2 release, including the JDT Core Batch Compiler (ECJ):
 http://archive.eclipse.org/eclipse/downloads/drops4/R-4.5.2-201602121500/
+
+. . .
+
+Updated the org.eclipse libs. For eclipse projects, please see https://www.eclipse.org/legal/epl-2.0/ for licensing.

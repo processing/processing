@@ -103,6 +103,7 @@ class ErrorChecker {
 
     if (problems.isEmpty()) {
       AtomicReference<ClassPath> searchClassPath = new AtomicReference<>(null);
+
       List<Problem> cuProblems = Arrays.stream(iproblems)
           // Filter Warnings if they are not enabled
           .filter(iproblem -> !(iproblem.isWarning() && !JavaMode.warningsEnabled))

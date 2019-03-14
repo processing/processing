@@ -2,7 +2,7 @@
 
 /*
 Part of the Processing project - http://processing.org
-Copyright (c) 2012-15 The Processing Foundation
+Copyright (c) 2012-19 The Processing Foundation
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 2
@@ -20,20 +20,8 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 
 package processing.mode.java.pdex;
 
-import com.google.classpath.ClassPathFactory;
-
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -54,17 +42,16 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import processing.app.Library;
 import processing.app.Messages;
 import processing.app.Sketch;
 import processing.app.SketchCode;
-import processing.app.SketchException;
 import processing.app.Util;
 import processing.data.IntList;
 import processing.data.StringList;
 import processing.mode.java.JavaEditor;
 import processing.mode.java.JavaMode;
 import processing.mode.java.pdex.TextTransform.OffsetMapper;
+import processing.mode.java.pdex.util.runtime.RuntimePathBuilder;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PdePreprocessor.Mode;
 
@@ -77,8 +64,6 @@ public class PreprocessingService {
   protected final JavaEditor editor;
 
   protected final ASTParser parser = ASTParser.newParser(AST.JLS8);
-
-  private final ClassPathFactory classPathFactory = new ClassPathFactory();
 
   private final Thread preprocessingThread;
   private final BlockingQueue<Boolean> requestQueue = new ArrayBlockingQueue<>(1);
@@ -326,22 +311,15 @@ public class PreprocessingService {
     toParsable.addAll(SourceUtils.wrapSketch(sketchMode, className, workBuffer.length()));
 
     { // Refresh sketch classloader and classpath if imports changed
-      if (javaRuntimeClassPath == null) {
-        javaRuntimeClassPath = buildJavaRuntimeClassPath();
-        sketchModeClassPath = buildModeClassPath(javaMode, false);
-        searchModeClassPath = buildModeClassPath(javaMode, true);
-      }
-
       if (reloadLibraries) {
-        coreLibraryClassPath = buildCoreLibraryClassPath(javaMode);
+        runtimePathBuilder.markLibrariesChanged();
       }
 
       boolean rebuildLibraryClassPath = reloadLibraries ||
           checkIfImportsChanged(programImports, prevResult.programImports);
 
       if (rebuildLibraryClassPath) {
-        sketchLibraryClassPath = buildSketchLibraryClassPath(javaMode, programImports);
-        searchLibraryClassPath = buildSearchLibraryClassPath(javaMode);
+        runtimePathBuilder.markLibraryImportsChanged();
       }
 
       boolean rebuildClassPath = reloadCodeFolder || rebuildLibraryClassPath ||
@@ -349,45 +327,11 @@ public class PreprocessingService {
           prevResult.classPathArray == null || prevResult.searchClassPathArray == null;
 
       if (reloadCodeFolder) {
-        codeFolderClassPath = buildCodeFolderClassPath(sketch);
+        runtimePathBuilder.markCodeFolderChanged();
       }
 
       if (rebuildClassPath) {
-        { // Sketch class path
-          List<String> sketchClassPath = new ArrayList<>();
-          sketchClassPath.addAll(javaRuntimeClassPath);
-          sketchClassPath.addAll(sketchModeClassPath);
-          sketchClassPath.addAll(sketchLibraryClassPath);
-          sketchClassPath.addAll(coreLibraryClassPath);
-          sketchClassPath.addAll(codeFolderClassPath);
-
-          String[] classPathArray = sketchClassPath.stream().toArray(String[]::new);
-          URL[] urlArray = Arrays.stream(classPathArray)
-              .map(path -> {
-                try {
-                  return Paths.get(path).toUri().toURL();
-                } catch (MalformedURLException e) {
-                  Messages.loge("malformed URL when preparing sketch classloader", e);
-                  return null;
-                }
-              })
-              .filter(url -> url != null)
-              .toArray(URL[]::new);
-          result.classLoader = new URLClassLoader(urlArray, null);
-          result.classPath = classPathFactory.createFromPaths(classPathArray);
-          result.classPathArray = classPathArray;
-        }
-
-        { // Search class path
-          List<String> searchClassPath = new ArrayList<>();
-          searchClassPath.addAll(javaRuntimeClassPath);
-          searchClassPath.addAll(searchModeClassPath);
-          searchClassPath.addAll(searchLibraryClassPath);
-          searchClassPath.addAll(coreLibraryClassPath);
-          searchClassPath.addAll(codeFolderClassPath);
-
-          result.searchClassPathArray = searchClassPath.stream().toArray(String[]::new);
-        }
+        runtimePathBuilder.prepareClassPath(result, javaMode);
       } else {
         result.classLoader = prevResult.classLoader;
         result.classPath = prevResult.classPath;
@@ -493,141 +437,7 @@ public class PreprocessingService {
 
   /// CLASSPATHS ---------------------------------------------------------------
 
-
-  private List<String> javaRuntimeClassPath;
-
-  private List<String> sketchModeClassPath;
-  private List<String> searchModeClassPath;
-
-  private List<String> coreLibraryClassPath;
-
-  private List<String> codeFolderClassPath;
-
-  private List<String> sketchLibraryClassPath;
-  private List<String> searchLibraryClassPath;
-
-
-  private static List<String> buildCodeFolderClassPath(Sketch sketch) {
-    StringBuilder classPath = new StringBuilder();
-
-    // Code folder
-    if (sketch.hasCodeFolder()) {
-      File codeFolder = sketch.getCodeFolder();
-      String codeFolderClassPath = Util.contentsToClassPath(codeFolder);
-      classPath.append(codeFolderClassPath);
-    }
-
-    return sanitizeClassPath(classPath.toString());
-  }
-
-
-  private static List<String> buildModeClassPath(JavaMode mode, boolean search) {
-    StringBuilder classPath = new StringBuilder();
-
-    if (search) {
-      String searchClassPath = mode.getSearchPath();
-      if (searchClassPath != null) {
-        classPath.append(File.pathSeparator).append(searchClassPath);
-      }
-    } else {
-      Library coreLibrary = mode.getCoreLibrary();
-      String coreClassPath = coreLibrary != null ?
-          coreLibrary.getClassPath() : mode.getSearchPath();
-      if (coreClassPath != null) {
-        classPath.append(File.pathSeparator).append(coreClassPath);
-      }
-    }
-
-    return sanitizeClassPath(classPath.toString());
-  }
-
-
-  private static List<String> buildCoreLibraryClassPath(JavaMode mode) {
-    StringBuilder classPath = new StringBuilder();
-
-    for (Library lib : mode.coreLibraries) {
-      classPath.append(File.pathSeparator).append(lib.getClassPath());
-    }
-
-    return sanitizeClassPath(classPath.toString());
-  }
-
-
-  private static List<String> buildSearchLibraryClassPath(JavaMode mode) {
-    StringBuilder classPath = new StringBuilder();
-
-    for (Library lib : mode.contribLibraries) {
-      classPath.append(File.pathSeparator).append(lib.getClassPath());
-    }
-
-    return sanitizeClassPath(classPath.toString());
-  }
-
-
-  static private List<String> buildSketchLibraryClassPath(JavaMode mode,
-                                                          List<ImportStatement> programImports) {
-    StringBuilder classPath = new StringBuilder();
-
-    programImports.stream()
-        .map(ImportStatement::getPackageName)
-        .filter(pckg -> !ignorableImport(pckg))
-        .map(pckg -> {
-          try {
-            return mode.getLibrary(pckg);
-          } catch (SketchException e) {
-            return null;
-          }
-        })
-        .filter(lib -> lib != null)
-        .map(Library::getClassPath)
-        .forEach(cp -> classPath.append(File.pathSeparator).append(cp));
-
-    return sanitizeClassPath(classPath.toString());
-  }
-
-
-  static private List<String> buildJavaRuntimeClassPath() {
-    StringBuilder classPath = new StringBuilder();
-
-    { // Java runtime
-      String rtPath = System.getProperty("java.home") +
-          File.separator + "lib" + File.separator + "rt.jar";
-      if (new File(rtPath).exists()) {
-        classPath.append(File.pathSeparator).append(rtPath);
-      } else {
-        rtPath = System.getProperty("java.home") + File.separator +
-            File.separator + "lib" + File.separator + "rt.jar";
-        if (new File(rtPath).exists()) {
-          classPath.append(File.pathSeparator).append(rtPath);
-        }
-      }
-    }
-
-    { // JavaFX runtime
-      String jfxrtPath = System.getProperty("java.home") +
-          File.separator + "lib" + File.separator + "ext" + File.separator + "jfxrt.jar";
-      if (new File(jfxrtPath).exists()) {
-        classPath.append(File.pathSeparator).append(jfxrtPath);
-      } else {
-        jfxrtPath = System.getProperty("java.home") + File.separator +
-            File.separator + "lib" + File.separator + "ext" + File.separator + "jfxrt.jar";
-        if (new File(jfxrtPath).exists()) {
-          classPath.append(File.pathSeparator).append(jfxrtPath);
-        }
-      }
-    }
-
-    return sanitizeClassPath(classPath.toString());
-  }
-
-
-  private static List<String> sanitizeClassPath(String classPathString) {
-    // Make sure class path does not contain empty string (home dir)
-    return Arrays.stream(classPathString.split(File.pathSeparator))
-        .filter(p -> p != null && !p.trim().isEmpty())
-        .distinct()
-        .collect(Collectors.toList());
-  }
+  private RuntimePathBuilder runtimePathBuilder = new RuntimePathBuilder();
 
   /// --------------------------------------------------------------------------
 
@@ -662,20 +472,13 @@ public class PreprocessingService {
   }
 
 
-  /**
-   * Ignore processing packages, java.*.*. etc.
-   */
-  static private boolean ignorableImport(String packageName) {
-    return (packageName.startsWith("java.") ||
-            packageName.startsWith("javax."));
-  }
-
-
   static private final Map<String, String> COMPILER_OPTIONS;
   static {
     Map<String, String> compilerOptions = new HashMap<>();
 
-    JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, compilerOptions);
+    compilerOptions.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_11);
+    compilerOptions.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_11);
+    compilerOptions.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_11);
 
     // See http://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.jdt.doc.isv%2Fguide%2Fjdt_api_options.htm&anchor=compiler
 

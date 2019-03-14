@@ -20,6 +20,7 @@
 
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
+    <delete dir="bin-test" />
     <delete file="${mode_jar}" />
     <delete>
       <fileset dir="${generated}">
@@ -75,71 +76,102 @@
     <!-- end of workaround for old antlr -->
   </target>
 
-  <target name="compile" depends="preproc" description="Compile sources">
-    <condition property="core-built">
-      <available file="../core/library/core.jar" />
-    </condition>
-    <fail unless="core-built" message="Please first build the core library and make sure it is located at ../core/library/core.jar" />
+  <path id="classpath.base">
+    <pathelement location="../core/library/core.jar" />
+    <pathelement location="../app/pde.jar" />
+    <pathelement location="../app/lib/ant.jar" />
+    <pathelement location="../app/lib/ant-launcher.jar" />
+    <pathelement location="../app/lib/apple.jar" />
+    <pathelement location="../app/lib/jna.jar" />
+    <pathelement location="../app/lib/jna-platform.jar" />
+    <pathelement location="mode/antlr.jar" />
+    <pathelement location="mode/classpath-explorer-1.0.jar" />
+    <pathelement location="mode/jsoup-1.7.1.jar" />
+    <pathelement location="mode/org.netbeans.swing.outline.jar" />
+    <pathelement location="mode/jdi.jar" />
+    <pathelement location="mode/jdimodel.jar" />
+    <pathelement location="mode/com.ibm.icu.jar" />
+    <pathelement location="mode/org.eclipse.core.contenttype.jar" />
+    <pathelement location="mode/org.eclipse.core.jobs.jar" />
+    <pathelement location="mode/org.eclipse.core.resources.jar" />
+    <pathelement location="mode/org.eclipse.core.runtime.jar" />
+    <pathelement location="mode/org.eclipse.equinox.common.jar" />
+    <pathelement location="mode/org.eclipse.equinox.preferences.jar" />
+    <pathelement location="mode/org.eclipse.jdt.compiler.apt.jar" />
+    <pathelement location="mode/org.eclipse.jdt.core.jar" />
+    <pathelement location="mode/org.eclipse.osgi.jar" />
+    <pathelement location="mode/org.eclipse.text.jar" />
+  </path>
 
-    <condition property="app-built">
-      <available file="../app/pde.jar" />
-    </condition>
-    <fail unless="app-built" message="Please build app first and make sure it is located at ../app/pde.jar" />
+  <path id="classpath.test">
+    <pathelement location="../core/library-test/junit-4.8.1.jar" />
+    <pathelement location="../core/library-test/mockito-all-1.10.19.jar" />
+    <pathelement location = "bin-test" />
+    <path refid="classpath.base" />
+  </path>
 
+  <macrodef name="compilecommon">
+    <attribute name="destdir"/>
+    <attribute name="srcdir"/>
+    <attribute name="classpath"/>
+    <sequential>
+      <condition property="core-built">
+        <available file="../core/library/core.jar" />
+      </condition>
+      <fail unless="core-built" message="Please first build the core library and make sure it is located at ../core/library/core.jar" />
 
-    <mkdir dir="bin" />
+      <condition property="app-built">
+        <available file="../app/pde.jar" />
+      </condition>
+      <fail unless="app-built" message="Please build app first and make sure it is located at ../app/pde.jar" />
 
-    <!-- in some cases, pde.jar was not getting built
-	 https://github.com/processing/processing/issues/1792 -->
-    <delete file="${mode_jar}" />
+      <mkdir dir="@{destdir}" />
 
-    <!-- env used to set classpath below -->
-    <property environment="env" />
+      <!-- in some cases, pde.jar was not getting built
+  	 https://github.com/processing/processing/issues/1792 -->
+      <delete file="${mode_jar}" />
 
-    <javac source="1.8"
-	   target="1.8"
-	   destdir="bin"
-	   excludes="**/tools/format/**"
-	   encoding="UTF-8"
-	   includeAntRuntime="false"
-	   classpath="../core/library/core.jar;
+      <!-- env used to set classpath below -->
+      <property environment="env" />
 
-                      ../app/pde.jar;
-                      ../app/lib/ant.jar;
-                      ../app/lib/ant-launcher.jar;
-                      ../app/lib/apple.jar;
-                      ../app/lib/jna.jar;
-                      ../app/lib/jna-platform.jar;
+      <javac source="1.8"
+  	   target="1.8"
+  	   destdir="@{destdir}"
+  	   excludes="**/tools/format/**"
+  	   encoding="UTF-8"
+  	   includeAntRuntime="false"
+  	   debug="on"
+  	   nowarn="true"
+  	   compiler="modern">
+        <src path="@{srcdir}" />
+        <src path="generated" />
+        <classpath refid="@{classpath}"/>
+      </javac>
+    </sequential>
+  </macrodef>
 
-                      mode/antlr.jar;
-                      mode/classpath-explorer-1.0.jar;
-                      mode/jsoup-1.7.1.jar;
-                      mode/org.netbeans.swing.outline.jar;
+  <target name="test-compile" depends="preproc">
+    <compilecommon srcdir="src; test" destdir="bin-test" classpath="classpath.test" />
+  </target>
 
-                      mode/jdi.jar;
-                      mode/jdimodel.jar;
+  <target name="test" depends="test-compile">
+    <junit haltonfailure="true">
+      <classpath refid="classpath.test" />
+      <formatter type="brief" usefile="false" />
+      <batchtest>
+        <fileset dir="test">
+          <include name="**/*Test.java" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
 
-                      mode/com.ibm.icu.jar;
-
-                      mode/org.eclipse.core.contenttype.jar;
-                      mode/org.eclipse.core.jobs.jar;
-                      mode/org.eclipse.core.resources.jar;
-                      mode/org.eclipse.core.runtime.jar;
-                      mode/org.eclipse.equinox.common.jar;
-                      mode/org.eclipse.equinox.preferences.jar;
-                      mode/org.eclipse.jdt.compiler.apt.jar;
-                      mode/org.eclipse.jdt.core.jar;
-                      mode/org.eclipse.osgi.jar;
-                      mode/org.eclipse.text.jar"
-	   debug="on"
-	   nowarn="true"
-	   compiler="modern">
-      <src path="src" />
-      <src path="generated" />
-    </javac>
+  <target name="compile" depends="test" description="Compile sources">
+    <compilecommon srcdir="src" destdir="bin" classpath="classpath.base" />
   </target>
 
   <target name="build" depends="compile" description="Build PDE">
     <jar basedir="bin" destfile="${mode_jar}" />
   </target>
+
 </project>

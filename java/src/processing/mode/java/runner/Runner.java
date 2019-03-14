@@ -349,12 +349,17 @@ public class Runner implements MessageConsumer {
       //params.append("-Dcom.apple.mrj.application.apple.menu.about.name=" +
       //              build.getSketchClassName());
     }
+
     // sketch.libraryPath might be ""
     // librariesClassPath will always have sep char prepended
-    /*params.append("-Djava.library.path=" +
-                  build.getJavaLibraryPath() +
+    String javaLibraryPath = build.getJavaLibraryPath();
+
+    String javaLibraryPathParam = "-Djava.library.path=" +
+                  javaLibraryPath +
                   File.pathSeparator +
-                  System.getProperty("java.library.path"));*/
+                  System.getProperty("java.library.path");
+
+    params.append(javaLibraryPathParam);
 
     params.append("-cp");
     params.append(build.getClassPath());

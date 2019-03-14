@@ -246,6 +246,7 @@ public class PSurfaceFX implements PSurface {
 
       PApplet sketch = surface.sketch;
 
+      // See JEP 263
       float renderScale = Screen.getMainScreen().getRecommendedOutputScaleX();
       if (PApplet.platform == PConstants.MACOSX) {
         for (Screen s : Screen.getScreens()) {
