@@ -550,7 +550,7 @@ class DetailPanel extends JPanel {
 
       ContribProgressBar downloadProgress = new ContribProgressBar(installProgressBar) {
         public void finishedAction() {
-          // nothing?
+          JOptionPane.showMessageDialog(null, "Installation Completed");
         }
 
         public void cancelAction() {
@@ -842,6 +842,7 @@ class DetailPanel extends JPanel {
     public void finishedAction() {
       // Finished uninstalling the library
       preAction();
+      JOptionPane.showMessageDialog(null, "Contribution has been deleted");
     }
 
     public void cancelAction() {
