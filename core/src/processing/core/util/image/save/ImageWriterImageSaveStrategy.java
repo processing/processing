@@ -51,7 +51,9 @@ public class ImageWriterImageSaveStrategy implements ImageSaveStrategy {
    * <TT>println(javax.imageio.ImageIO.getReaderFormatNames())</TT>
    */
   @Override
-  public boolean save(int[] pixels, int pixelWidth, int pixelHeight, int format, String path) throws IOException {
+  public boolean save(int[] pixels, int pixelWidth, int pixelHeight, int format,
+      String path) throws IOException {
+
     try {
       int outputFormat = (format == PConstants.ARGB) ?
           BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;

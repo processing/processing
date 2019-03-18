@@ -315,6 +315,8 @@ public class PImage implements PConstants, Cloneable {
     this.format = format;
     this.pixelDensity = factor;
     this.pixels = pixels;
+    this.pixelWidth = width * pixelDensity;
+    this.pixelHeight = height * pixelDensity;
   }
 
   /**

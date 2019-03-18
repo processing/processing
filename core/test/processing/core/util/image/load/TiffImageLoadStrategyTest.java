@@ -30,16 +30,16 @@ import processing.core.util.common.CommonInputTestUtil;
 import java.io.IOException;
 
 
-public class AwtImageLoadStrategyTest {
+public class TiffImageLoadStrategyTest {
 
   @Test
   public void testLoad() throws IOException {
     PApplet testApplet = CommonInputTestUtil.getFakePApplet();
 
-    AwtImageLoadStrategy strategy = new AwtImageLoadStrategy();
-    PImage results = strategy.load(testApplet, "resource-test/test.png", "png");
+    TiffImageLoadStrategy strategy = new TiffImageLoadStrategy();
+    PImage results = strategy.load(testApplet, "resource-test/test.tiff", "tiff");
 
-    CommonInputTestUtil.assertPImagePattern(results);
+    CommonInputTestUtil.assertPImageDot(results);
   }
 
 }

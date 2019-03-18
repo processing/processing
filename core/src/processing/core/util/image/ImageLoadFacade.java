@@ -73,15 +73,16 @@ public class ImageLoadFacade {
 
     ImageLoadStrategy awtImageLoadStrategy = new AwtImageLoadStrategy();
     defaultImageLoadStrategy = new ImageIoImageLoadStrategy();
-    ImageLoadStrategy imageIoWithFallbackStrategy = new FallbackImageLoadStrategy(
+
+    ImageLoadStrategy awtFallbackStrategy = new FallbackImageLoadStrategy(
         awtImageLoadStrategy,
         defaultImageLoadStrategy
     );
-    loadStrategies.put("jpg", imageIoWithFallbackStrategy);
-    loadStrategies.put("jpeg", imageIoWithFallbackStrategy);
-    loadStrategies.put("gif", imageIoWithFallbackStrategy);
-    loadStrategies.put("png", imageIoWithFallbackStrategy);
-    loadStrategies.put("unknown", imageIoWithFallbackStrategy);
+    loadStrategies.put("jpg", awtFallbackStrategy);
+    loadStrategies.put("jpeg", awtFallbackStrategy);
+    loadStrategies.put("gif", awtFallbackStrategy);
+    loadStrategies.put("png", awtFallbackStrategy);
+    loadStrategies.put("unknown", awtFallbackStrategy);
   }
 
   /**

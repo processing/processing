@@ -106,7 +106,7 @@ public class InputFactory {
    * perform some pre-processing.
    * </p>
    *
-   * @param pApplet The PApplet whose sketch path informatino should be used.
+   * @param pApplet The PApplet whose sketch path information should be used.
    * @param filename THe filename (url, absolute path, or relative path) to open.
    * @return InputStream for the given filename or null if no input path could be created.
    */
@@ -172,6 +172,7 @@ public class InputFactory {
       // First see if it's in a data folder. This may fail by throwing
       // a SecurityException. If so, this whole block will be skipped.
       File file = new File(pApplet.dataPath(filename));
+
       if (!file.exists()) {
         // next see if it's just in the sketch folder
         file = pApplet.sketchFile(filename);
@@ -202,7 +203,9 @@ public class InputFactory {
 
       // if this file is ok, may as well just load it
       stream = new FileInputStream(file);
-      if (stream != null) return stream;
+      if (stream != null) {
+        return stream;
+      }
 
       // have to break these out because a general Exception might
       // catch the RuntimeException being thrown above
