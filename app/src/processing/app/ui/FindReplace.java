@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2012-19 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -424,10 +425,10 @@ public class FindReplace extends JFrame {
  */
   public void replace(boolean isCompoundEdit) {
     editor.setSelectedText(replaceField.getText(), isCompoundEdit);
-    
+
     editor.getSketch().setModified(true);  // This necessary- calling replace()
     // doesn't seem to mark a sketch as modified
-    
+
     setFound(false);
   }
 

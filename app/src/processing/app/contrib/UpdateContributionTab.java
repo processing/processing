@@ -11,18 +11,18 @@ import processing.app.ui.Toolkit;
 
 public class UpdateContributionTab extends ContributionTab {
 
-  public UpdateContributionTab(ManagerFrame dialog, ContributionType type) {
+  public UpdateContributionTab(ManagerFrame dialog) {
     super();
     this.contribDialog = dialog;
-    this.contribType = type;
 
-    filter = new Contribution.Filter() {
-      public boolean matches(Contribution contrib) {
-        if (contrib instanceof LocalContribution) {
-          return ContributionListing.getInstance().hasUpdates(contrib);
-        }
-        return false;
+    filter = contrib -> {
+      if (contrib instanceof ListPanel.SectionHeaderContribution) {
+        return true;
       }
+      if (contrib instanceof LocalContribution) {
+        return ContributionListing.getInstance().hasUpdates(contrib);
+      }
+      return false;
     };
     contributionListPanel = new UpdateListPanel(this, filter);
 //    contributionListPanel.setBorder(new EmptyBorder(8, 8, 8, 8));
@@ -66,5 +66,10 @@ public class UpdateContributionTab extends ContributionTab {
     layout.setHonorsVisibility(contributionListPanel, false);
 
     setBackground(Color.WHITE);
+  }
+
+  @Override
+  public void updateStatusPanel(DetailPanel contributionPanel) {
+    // Do nothing
   }
 }

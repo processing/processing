@@ -604,12 +604,6 @@ public class TextAreaPainter extends JComponent implements TabExpander {
   }
 
 
-//  /** Old paintLine() method with kooky args order, kept around for X Mode. */
-//  @Deprecated
-//  protected void paintLine(Graphics gfx, TokenMarker tokenMarker,
-//                           int line, int x) {
-//    Font defaultFont = getFont();
-//    Color defaultColor = getForeground();
   protected void paintLine(Graphics gfx, int line, int x,
                            TokenMarkerState tokenMarker) {
     currentLineIndex = line;
@@ -625,40 +619,37 @@ public class TextAreaPainter extends JComponent implements TabExpander {
   }
 
 
-//  protected void paintLine(Graphics gfx, int line, int x,
-//                           TokenMarker tokenMarker) {
-//    paintLine(gfx, tokenMarker, line, x);
-//  }
-
-
-//  protected void paintPlainLine(Graphics gfx, int line, Font defaultFont,
-//                                Color defaultColor, int x, int y) {
   protected void paintPlainLine(Graphics gfx, int line, int x, int y) {
-    paintHighlight(gfx,line,y);
-    textArea.getLineText(line, currentLine);
+    paintHighlight(gfx, line, y);
 
-//    gfx.setFont(plainFont);
-//    gfx.setFont(defaultFont);
-//    gfx.setColor(defaultColor);
+    // don't try to draw lines past where they exist in the document
+    // https://github.com/processing/processing/issues/5628
+    if (line < textArea.getLineCount()) {
+      textArea.getLineText(line, currentLine);
 
-    int x0 = x - textArea.getHorizontalOffset();
+      int x0 = x - textArea.getHorizontalOffset();
+      // prevent the blinking from drawing with last color used
+      // https://github.com/processing/processing/issues/5628
+      gfx.setColor(defaults.fgcolor);
+      gfx.setFont(plainFont);
 
-    y += fm.getHeight();
-    // doesn't respect fixed width like it should
+      y += fm.getHeight();
+      // doesn't respect fixed width like it should
 //    x = Utilities.drawTabbedText(currentLine, x, y, gfx, this, 0);
 //    int w = fm.charWidth(' ');
-    for (int i = 0; i < currentLine.count; i++) {
-      gfx.drawChars(currentLine.array, currentLine.offset+i, 1, x, y);
-      x = currentLine.array[currentLine.offset + i] == '\t' ?
+      for (int i = 0; i < currentLine.count; i++) {
+        gfx.drawChars(currentLine.array, currentLine.offset+i, 1, x, y);
+        x = currentLine.array[currentLine.offset + i] == '\t' ?
           x0 + (int)nextTabStop(x - x0, i) :
           x + fm.charWidth(currentLine.array[currentLine.offset+i]);
-      textArea.offsetToX(line, currentLine.offset + i);
-    }
+        //textArea.offsetToX(line, currentLine.offset + i);
+      }
 
-    // Draw characters via input method.
-    if (compositionTextPainter != null &&
+      // Draw characters via input method.
+      if (compositionTextPainter != null &&
         compositionTextPainter.hasComposedTextLayout()) {
-      compositionTextPainter.draw(gfx, defaults.lineHighlightColor);
+        compositionTextPainter.draw(gfx, defaults.lineHighlightColor);
+      }
     }
     if (defaults.eolMarkers) {
       gfx.setColor(defaults.eolMarkerColor);
@@ -667,9 +658,6 @@ public class TextAreaPainter extends JComponent implements TabExpander {
   }
 
 
-//  protected void paintSyntaxLine(Graphics gfx, TokenMarker tokenMarker,
-//                                 int line, Font defaultFont,
-//                                 Color defaultColor, int x, int y) {
   protected void paintSyntaxLine(Graphics gfx, int line, int x, int y,
                                  TokenMarkerState tokenMarker) {
     textArea.getLineText(currentLineIndex, currentLine);

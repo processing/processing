@@ -3,6 +3,7 @@ package processing.data;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import processing.core.PApplet;
 
@@ -433,12 +434,14 @@ public class StringDict {
    * @webref stringdict:method
    * @brief Remove a key/value pair
    */
-  public int remove(String key) {
+  public String remove(String key) {
     int index = index(key);
-    if (index != -1) {
-      removeIndex(index);
+    if (index == -1) {
+      throw new NoSuchElementException("'" + key + "' not found");
     }
-    return index;
+    String value = values[index];
+    removeIndex(index);
+    return value;
   }
 
 
@@ -446,9 +449,8 @@ public class StringDict {
     if (index < 0 || index >= count) {
       throw new ArrayIndexOutOfBoundsException(index);
     }
-    //System.out.println("index is " + which + " and " + keys[which]);
-    String key = keys[index];
-    indices.remove(key);
+    String value = values[index];
+    indices.remove(keys[index]);
     for (int i = index; i < count-1; i++) {
       keys[i] = keys[i+1];
       values[i] = values[i+1];
@@ -457,8 +459,9 @@ public class StringDict {
     count--;
     keys[count] = null;
     values[count] = null;
-    return key;
+    return value;
   }
+
 
 
   public void swap(int a, int b) {

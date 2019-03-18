@@ -4,7 +4,8 @@
   PdePreprocessor - wrapper for default ANTLR-generated parser
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-15 Ben Fry and Casey Reas
+  Copyright (c) 2012-19 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   ANTLR-generated parser and several supporting classes written
@@ -153,6 +154,7 @@ public class PdePreprocessor {
   Set<String> foundMethods;
 
   SurfaceInfo sizeInfo;
+  boolean settingsMethod;
 
 
   /**
@@ -175,6 +177,8 @@ public class PdePreprocessor {
   static private final Pattern VOID_SETUP_REGEX =
     Pattern.compile("(?:^|\\s|;)void\\s+setup\\s*\\(", Pattern.MULTILINE);
 
+  static private final Pattern VOID_SETTINGS_REGEX =
+    Pattern.compile("(?:^|\\s|;)void\\s+settings\\s*\\(", Pattern.MULTILINE);
 
   // Can't only match any 'public class', needs to be a PApplet
   // http://code.google.com/p/processing/issues/detail?id=551
@@ -204,8 +208,9 @@ public class PdePreprocessor {
   }
 
 
+  /** Parse the sketch size and set the internal sizeInfo variable */
   public SurfaceInfo initSketchSize(String code,
-                                 boolean sizeWarning) throws SketchException {
+                                    boolean sizeWarning) throws SketchException {
     sizeInfo = parseSketchSize(code, sizeWarning);
     return sizeInfo;
   }
@@ -251,6 +256,13 @@ public class PdePreprocessor {
   }
 
 
+  // if there's a settings() method, we do less moving things around
+  static public boolean hasSettingsMethod(String code) {
+    final String uncommented = scrubComments(code);
+    return findInCurrentScope(VOID_SETTINGS_REGEX, uncommented) != null;
+  }
+
+
   /**
    * Parse a chunk of code and extract the size() command and its contents.
    * Also goes after fullScreen(), smooth(), and noSmooth().
@@ -259,26 +271,21 @@ public class PdePreprocessor {
    * @return null if there was an error, otherwise an array (might contain some/all nulls)
    */
   static public SurfaceInfo parseSketchSize(String code,
-                                         boolean fussy) throws SketchException {
+                                            boolean fussy) throws SketchException {
     // This matches against any uses of the size() function, whether numbers
     // or variables or whatever. This way, no warning is shown if size() isn't
     // actually used in the applet, which is the case especially for anyone
     // who is cutting/pasting from the reference.
 
-//    String scrubbed = scrubComments(sketch.getCode(0).getProgram());
-//    String[] matches = PApplet.match(scrubbed, SIZE_REGEX);
-//    String[] matches = PApplet.match(scrubComments(code), SIZE_REGEX);
+    // 1. no size() or fullScreen() method at all
+    //    will use the non-overridden settings() method in PApplet
+    // 2. size() or fullScreen() found inside setup() (static mode sketch or otherwise)
+    //    make sure that it uses numbers (or displayWidth/Height), copy into settings
+    // 3. size() or fullScreen() already in settings()
+    //    don't mess with the sketch, don't insert any defaults
+    //
+    // really only need to deal with situation #2.. nothing to be done for 1 and 3
 
-      /*
-   1. no size() or fullScreen() method at all
-      will use the non-overridden settings() method in PApplet
-   2. size() or fullScreen() found inside setup() (static mode sketch or otherwise)
-      make sure that it uses numbers (or displayWidth/Height), copy into settings
-   3. size() or fullScreen() already in settings()
-      don't mess with the sketch, don't insert any defaults
-
-   really only need to deal with situation #2.. nothing to be done for 1 and 3
-   */
     // if static mode sketch, all we need is regex
     // easy proxy for static in this case is whether [^\s]void\s is present
 
@@ -288,33 +295,30 @@ public class PdePreprocessor {
 
     String searchArea = null;
 
-    switch (mode) {
-      case JAVA:
-        // it's up to the user
-        searchArea = null;
-        break;
-      case ACTIVE:
-        // active mode, limit scope to setup
+    if (mode == Mode.JAVA) {
+      // it's up to the user
+      searchArea = null;
 
-        // Find setup() in global scope
-        MatchResult setupMatch = findInCurrentScope(VOID_SETUP_REGEX, uncommented);
-        if (setupMatch != null) {
-          int start = uncommented.indexOf("{", setupMatch.end());
-          if (start >= 0) {
-            // Find a closing brace
-            MatchResult match = findInCurrentScope(CLOSING_BRACE, uncommented, start);
-            if (match != null) {
-              searchArea = uncommented.substring(start + 1, match.end() - 1);
-            } else {
-              throw new SketchException("Found a { that's missing a matching }", false);
-            }
+    } else if (mode == Mode.ACTIVE) {
+      // active mode, limit scope to setup
+
+      // Find setup() in global scope
+      MatchResult setupMatch = findInCurrentScope(VOID_SETUP_REGEX, uncommented);
+      if (setupMatch != null) {
+        int start = uncommented.indexOf("{", setupMatch.end());
+        if (start >= 0) {
+          // Find a closing brace
+          MatchResult match = findInCurrentScope(CLOSING_BRACE, uncommented, start);
+          if (match != null) {
+            searchArea = uncommented.substring(start + 1, match.end() - 1);
+          } else {
+            throw new SketchException("Found a { that's missing a matching }", false);
           }
         }
-        break;
-      case STATIC:
-        // static mode, look everywhere
-        searchArea = uncommented;
-        break;
+      }
+    } else if (mode == Mode.STATIC) {
+      // static mode, look everywhere
+      searchArea = uncommented;
     }
 
     if (searchArea == null) {
@@ -420,9 +424,6 @@ public class PdePreprocessor {
       }
       info.width = "displayWidth";
       info.height = "displayHeight";
-//      if (extraStatements.size() != 0) {
-//        info.statement += extraStatements.join(" ");
-//      }
       info.addStatements(extraStatements);
       info.checkEmpty();
       return info;
@@ -432,71 +433,21 @@ public class PdePreprocessor {
     // need to pull out the noSmooth() and smooth(N) methods.
     if (extraStatements.size() != 0) {
       SurfaceInfo info = new SurfaceInfo();
-//      info.statement = extraStatements.join(" ");
       info.addStatements(extraStatements);
       return info;
     }
 
     // not an error, just no size() specified
-    //return new String[] { null, null, null, null, null };
     return new SurfaceInfo();
   }
-
-/*
-  static String readSingleQuote(char[] c, int i) {
-    StringBuilder sb = new StringBuilder();
-    try {
-      sb.append(c[i++]);  // add the quote
-      if (c[i] == '\\') {
-        sb.append(c[i++]);  // add the escape
-        if (c[i] == 'u') {
-          // grabs uNNN and the fourth N will be added below
-          for (int j = 0; j < 4; j++) {
-            sb.append(c[i++]);
-          }
-        }
-      }
-      sb.append(c[i++]);  // get the char, escapee, or last unicode digit
-      sb.append(c[i++]);  // get the closing quote
-
-    } catch (ArrayIndexOutOfBoundsException ignored) {
-      // this means they have bigger problems with their code
-    }
-    return sb.toString();
-  }
-
-
-  static String readDoubleQuote(char[] c, int i) {
-    StringBuilder sb = new StringBuilder();
-    try {
-      sb.append(c[i++]);  // add the quote
-      while (i < c.length) {
-        if (c[i] == '\\') {
-          sb.append(c[i++]);  // add the escape
-          sb.append(c[i++]);  // add whatever was escaped
-        } else if (c[i] == '\"') {
-          sb.append(c[i++]);
-          break;
-        } else {
-          sb.append(c[i++]);
-        }
-      }
-    } catch (ArrayIndexOutOfBoundsException ignored) {
-      // this means they have bigger problems with their code
-    }
-    return sb.toString();
-  }
-*/
 
 
   /**
    * Parses the code and determines the mode of the sketch.
-   *
    * @param code code without comments
    * @return determined mode
    */
   static public Mode parseMode(CharSequence code) {
-
     // See if we can find any function in the global scope
     if (findInCurrentScope(FUNCTION_DECL, code) != null) {
       return Mode.ACTIVE;
@@ -761,23 +712,12 @@ public class PdePreprocessor {
   }
 
 
-//  public void setFoundMain(boolean foundMain) {
-//    this.foundMain = foundMain;
-//  }
-
-
-//  public boolean getFoundMain() {
-//    return foundMain;
-//  }
-
-
   public void setAdvClassName(final String advClassName) {
     this.advClassName = advClassName;
   }
 
 
   public void setMode(final Mode mode) {
-    //System.err.println("Setting mode to " + mode);
     this.mode = mode;
   }
 
@@ -897,7 +837,7 @@ public class PdePreprocessor {
   }
 
 
-  public PreprocessorResult write(final Writer out, String program)
+  public PreprocessorResult write(final Writer out, final String program)
       throws SketchException, RecognitionException, TokenStreamException {
     return write(out, program, null);
   }
@@ -941,10 +881,8 @@ public class PdePreprocessor {
       m = importPattern.matcher(scrubbed);
       found = m.find(offset);
       if (found) {
-//        System.out.println("found " + m.groupCount() + " groups");
         String before = m.group(1);
         String piece = m.group(2) + m.group(3) + m.group(4);
-//        int len = piece.length(); // how much to trim out
 
         if (!ignoreImport(m.group(3))) {
           programImports.add(m.group(3)); // the package name
@@ -953,9 +891,6 @@ public class PdePreprocessor {
         // find index of this import in the program
         int start = m.start() + before.length();
         int stop = start + piece.length();
-//        System.out.println(start + " " + stop + " " + piece);
-        //System.out.println("found " + m.group(3));
-//        System.out.println("removing '" + program.substring(start, stop) + "'");
 
         // Remove the import from the main program
         program = program.substring(0, start) + program.substring(stop);
@@ -965,8 +900,6 @@ public class PdePreprocessor {
         offset = m.start();
       }
     } while (found);
-//    System.out.println("program now:");
-//    System.out.println(program);
 
     if (codeFolderPackages != null) {
       for (String item : codeFolderPackages) {
@@ -994,35 +927,32 @@ public class PdePreprocessor {
     String uncomment = scrubComments(program);
     PdeRecognizer parser = createParser(program);
     Mode mode = parseMode(uncomment);
-    switch (mode) {
-      case JAVA:
+
+    if (mode == Mode.JAVA) {
+      try {
+        final PrintStream saved = System.err;
         try {
-          final PrintStream saved = System.err;
-          try {
-            // throw away stderr for this tentative parse
-            System.setErr(new PrintStream(new ByteArrayOutputStream()));
-            parser.javaProgram();
-          } finally {
-            System.setErr(saved);
-          }
-          setMode(Mode.JAVA);
-        } catch (Exception e) {
-          // I can't figure out any other way of resetting the parser.
-          parser = createParser(program);
-          parser.pdeProgram();
+          // throw away stderr for this tentative parse
+          System.setErr(new PrintStream(new ByteArrayOutputStream()));
+          parser.javaProgram();
+        } finally {
+          System.setErr(saved);
         }
-        break;
-      case ACTIVE:
-        setMode(Mode.ACTIVE);
-        parser.activeProgram();
-        break;
-      case STATIC:
+        setMode(Mode.JAVA);
+      } catch (Exception e) {
+        // I can't figure out any other way of resetting the parser.
+        parser = createParser(program);
         parser.pdeProgram();
-        break;
+      }
+    } else if (mode == Mode.ACTIVE) {
+      setMode(Mode.ACTIVE);
+      parser.activeProgram();
+
+    } else if (mode == Mode.STATIC) {
+      parser.pdeProgram();
     }
 
     // set up the AST for traversal by PdeEmitter
-    //
     ASTFactory factory = new ASTFactory();
     AST parserAST = parser.getAST();
     AST rootNode = factory.create(ROOT_ID, "AST ROOT");
@@ -1031,7 +961,6 @@ public class PdePreprocessor {
     makeSimpleMethodsPublic(rootNode);
 
     // unclear if this actually works, but it's worth a shot
-    //
     //((CommonAST)parserAST).setVerboseStringConversion(
     //  true, parser.getTokenNames());
     // (made to use the static version because of jikes 1.22 warning)
@@ -1039,7 +968,7 @@ public class PdePreprocessor {
 
     final String className;
     if (mode == Mode.JAVA) {
-      // if this is an advanced program, the classname is already defined.
+      // in this mode, the class name is already defined.
       className = getFirstClassName(parserAST);
     } else {
       className = this.name;
@@ -1047,7 +976,6 @@ public class PdePreprocessor {
 
     // if 'null' was passed in for the name, but this isn't
     // a 'java' mode class, then there's a problem, so punt.
-    //
     if (className == null)
       return null;
 
@@ -1249,41 +1177,14 @@ public class PdePreprocessor {
     }
 
     if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
-      // doesn't remove the original size() method, but calling size()
-      // again in setup() is harmless.
+      // doesn't remove the original size() method,
+      // but calling size() again in setup() is harmless.
       if (!hasMethod("settings") && sizeInfo.hasSettings()) {
         out.println(indent + "public void settings() { " + sizeInfo.getSettings() + " }");
-//        out.println(indent + "public void settings() {");
-//        out.println(indent + indent + sizeStatement);
-//        out.println(indent + "}");
       }
-      /*
-      if (sketchWidth != null && !hasMethod("sketchWidth")) {
-        // Only include if it's a number (a variable will be a problem)
-        if (PApplet.parseInt(sketchWidth, -1) != -1 || sketchWidth.equals("displayWidth")) {
-          out.println(indent + "public int sketchWidth() { return " + sketchWidth + "; }");
-        }
-      }
-      if (sketchHeight != null && !hasMethod("sketchHeight")) {
-        // Only include if it's a number
-        if (PApplet.parseInt(sketchHeight, -1) != -1 || sketchHeight.equals("displayHeight")) {
-          out.println(indent + "public int sketchHeight() { return " + sketchHeight + "; }");
-        }
-      }
-      if (sketchRenderer != null && !hasMethod("sketchRenderer")) {
-        // Only include if it's a known renderer (otherwise it might be a variable)
-        //if (PConstants.rendererList.hasValue(sketchRenderer)) {
-        out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
-        //}
-      }
-      if (sketchOutputPath != null && !hasMethod("sketchOutputPath")) {
-        out.println(indent + "public String sketchOutputPath() { return " + sketchOutputPath + "; }");
-      }
-      */
 
       if (!hasMethod("main")) {
         out.println(indent + "static public void main(String[] passedArgs) {");
-        //out.print(indent + indent + "PApplet.main(new String[] { ");
         out.print(indent + indent + "String[] appletArgs = new String[] { ");
 
         if (Preferences.getBoolean("export.application.present")) {
@@ -1298,11 +1199,6 @@ public class PdePreprocessor {
           } else {
             out.print("\"" + PApplet.ARGS_HIDE_STOP + "\", ");
           }
-//        } else {
-//          // This is set initially based on the system control color, just
-//          // sets the color for what goes behind the sketch before it's added.
-//          String farbe = Preferences.get("run.window.bgcolor");
-//          out.print("\"" + PApplet.ARGS_BGCOLOR + "=" + farbe + "\", ");
         }
         out.println("\"" + className + "\" };");
 

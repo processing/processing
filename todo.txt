@@ -1,78 +1,47 @@
-0266 (3.4.1 or 3.5)
-X update to Java 8u192
-o processing-java doesn't handle sketch exceptions by quitting the sketch
-X   https://github.com/processing/processing/issues/5375
-X   this is by design/follows PDE behavior
-X fix the link to the FAQ in the menu
-X   https://github.com/processing/processing/issues/5729
-X update to Java 8u202
-X "Sketch disappeared" infinite pop up dialogs
-X   https://github.com/processing/processing/pull/4808
-X   https://github.com/processing/processing/issues/4805
+0270 (3.5.4 or 3.6)
+X use ctrl-page up/down for tabs on Windows
+X   https://github.com/processing/processing/issues/5794
+X fix potential highlighting issue that wasn't selecting portions of text
 
-fixed earlier
-X Could not initialize class com.sun.jna.Native on startup (Windows)
-X   https://github.com/processing/processing/issues/4929
-X   closed earlier; fixed as best we could
-X sharing usage metrics about libraries
-X   https://github.com/processing/processing/issues/4708
+_ "Could not get the settings folder" isn't very helpful
+_   https://github.com/processing/processing/issues/5744
+_   need to check the locations it'd be writing to, and see if available
+_   then tell the user which folder to fix
+
+_ i18n support for Modes
+_   https://github.com/processing/processing/commit/0ed2fc139c3c5dfe0a1702ed8348987b3c6a5c9d
+
+_ show the recommended sw version on the download page
+_ just skip the welcome screen on Windows hidpi dipslays?
+
+_ refresh option for sketchbook
+_ import option for sketchbook
+_ 'show sketch folder' weird when in temp folder
+_   ask to save first (sketch has not been saved yet)
+_ same with adding files to an unsaved sketch, do we block that?
+
 
 contrib
-X Updated russian translation, now can choose russian in preferences
-X   https://github.com/processing/processing/pull/5619
-X Turkish translation updates
-X   https://github.com/processing/processing/pull/5636
-X Examples dialog causes high CPU load
-X   https://github.com/processing/processing/issues/5246
-X   https://github.com/processing/processing/pull/5654
-X console hiding button
-X   https://github.com/processing/processing/pull/5115
-_ NullPointerException in Contribution Manager
-_   https://github.com/processing/processing/issues/5524
-_   https://github.com/processing/processing/pull/5742
-
-jakub
-X Fix sketch exception getting hidden by warning
-X   https://github.com/processing/processing/pull/5486
-X   https://github.com/processing/processing/issues/5412
-X EventQueue problems with "could not find sketch size" message
-X   https://github.com/processing/processing/issues/4893
-X   https://github.com/processing/processing/pull/5708
-X   https://github.com/processing/processing/issues/5030 (duplicate)
-X size(0, 0) just freezes instead of showing an error
-X   https://github.com/processing/processing/issues/5233 (duplicate)
+_ Saving sketch with the same name as a class
+_   https://github.com/processing/processing/pull/4033
+_ Pasting text into PDE results in "Clipboard does not contain a string"
+_   https://github.com/processing/processing/pull/4040
 
 
+high
+_ run button not deactivating
+_   https://github.com/processing/processing/issues/5786
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
 _   https://github.com/processing/processing/issues/5562
 _   https://github.com/processing/processing/pull/5642
-_   discuss with Casey
+_ sketch window placement not recorded
+_   https://github.com/processing/processing/issues/5781
+_ errors inside setup() aren't coming through at all?
+_   seen in Eclipse; have to turn on the debugger... same as #4703?
 _ Welcome screen doesn't size properly for HiDPI screens
 _   https://github.com/processing/processing/issues/4896
-
-
-nasty ones
-_ errors inside setup() aren't coming through at all?
-_   seen in Eclipse; have to turn on the debugger
-
-
-manager
-_ Manager fails to complete install of PythonMode when no windows open
-_   https://github.com/processing/processing/issues/5309
-_ an incompatible Mode prevents the PDE from quitting after last window is closed
-_   https://github.com/processing/processing/issues/5112
-_ “could not move the contribution to the backup folder” message while updating
-_   problem is that any sketch that uses a library, the lib is stuck as "in use"
-_   https://github.com/processing/processing/issues/4973
-_ issues with updating modes
-_   https://github.com/processing/processing/issues/5424
-_ examples window not updating on install
-_   open examples window
-_   mode > add mode > libraries > install video
-_   did not update the examples window, had to restart pde
-_ was able to save over the video capture examples b/c they were a library
-_   lib examples not properly marked as read-only
-_ "Could not find a examples in the downloaded file" is a poorly worded message
+_ sketch window resets position after each run (regression from 3.4?)
+_   https://github.com/processing/processing/issues/5781
 
 
 temp
@@ -94,18 +63,28 @@ _   don't allow adding files w/o saving
 _   others?
 _ clean Windows temp folders
 _   https://github.com/processing/processing/issues/1896
+_ could not write to temporary directory (virus checker problems)
+_   https://github.com/processing/processing/issues/4757
 
 
+modes
 _ sketch.properties not being written if initial mode is p5.js?
 _ when creating a sketch within non-Java mode, should write the settings file
 _   so that it re-loads in the proper environment
 _ remove sketch.properties when moving back to the default?
 _   or can we not do this, because it's used to set the 'next' mode
+_ allow modes to specify their own base file name
+_   need to move "is this a sketch?" handling into Mode
+_ fix extension check for other modes
+_   https://github.com/processing/processing/issues/3980
+_ mode list does not update after changing sketchbook folder
+_   already reported?
 
+
+sketch/launching
 _ what to double-click when opening p5 projects
 _   lack of a project file makes this a pain
 _   dropping a sketch folder onto the PDE should also be implemented
-
 _ some type of sketch archive format for posting examples (.psk?)
 _   would be nice to open a sketch directly from a zip file
 _   https://github.com/processing/processing/issues/73
@@ -121,37 +100,11 @@ _   see the 'examples' section below
 _ how are file associations handled in Linux? (for .pde, .psk)
 
 
-_ implement fallback fonts instead of giving up and using Dialog and Mono
-_   https://github.com/processing/processing/issues/5023
-
-_ "Required files could not be found" when trying to run from the .zip file
-_   https://github.com/processing/processing/issues/5022
-_   use an installer instead?
-
-_ mode list does not update after changing sketchbook folder
-_   already reported?
-_ swap font smoothing for tab size?
-_   implement simple table for prefs?
-
-_ "error during export" message, but no error message contents come through
-_   e.g. https://github.com/processing/processing/issues/4792
-
-_ report of a library or tool (probably includes 2.x? 1.x?) breaking things
-_   NoSuchFieldError: useNativeSelect
-_   https://github.com/processing/processing/issues/4821
-
-_ allow modes to specify their own base file name
-_   need to move "is this a sketch?" handling into Mode
-_ fix extension check for other modes
-_   https://github.com/processing/processing/issues/3980
-
+teaching
+_ teacher wants user input on the console
+_   https://github.com/processing/processing/issues/5779
 _ did we lose settings.path because it was too buggy?
 _   https://github.com/processing/processing/issues/3948
-
-_ update list of optional JRE files for Java 8
-_   Andres provided some updates
-_   https://github.com/processing/processing/issues/3288
-
 _ proxy trouble with p5? since adding the system proxy?
 _   https://github.com/processing/processing/pull/3251/files
 _   larger problem thread https://github.com/processing/processing/issues/3891
@@ -160,84 +113,28 @@ _   malformed proxy issues http://stackoverflow.com/q/376101
 _   docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html
 _   https://github.com/processing/processing/issues/1476#issuecomment-23229990
 
-_ could not write to temporary directory (virus checker problems)
-_   https://github.com/processing/processing/issues/4757
 
-_ fix appbundler problems due to rollback
-_   https://github.com/processing/processing/issues/3790
-_   the rollback re-introduces two bugs (serial export and scrolling)
-_   and any other changes later than 16 November 2014:
-_   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
-_   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
-_   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
-_   https://bitbucket.org/infinitekind/appbundler
+_ "Required files could not be found" when trying to run from the .zip file
+_   https://github.com/processing/processing/issues/5022
+_   use an installer instead?
 
-_ settings() present and pixelDensity() is in setup(), nothing set/no error
-_   https://github.com/processing/processing/issues/4703
+_ "error during export" message, but no error message contents come through
+_   e.g. https://github.com/processing/processing/issues/4792
 
-_ right bracket missing error
-_   https://github.com/processing/processing/issues/4702
-
-_ library compilations handled oddly
+_ library compilations not ordered properly w/ sorting
+_   do we still support library compilations? that was from 2016
 _   https://github.com/processing/processing/issues/4630
 
 _ editor windows always open on display 1
 _   https://github.com/processing/processing/issues/1566
 
-_ modify line number color when no lines extend that far?
-_   https://github.com/processing/processing/pull/4560
-_ text gutter doesn't seem to be hidpi
-X   or is it b/c screen not quite 2x? (nope)
-_ swap out the fonts?
 
-_ Help Menu disabled on OS X
-_   https://github.com/processing/processing/issues/4353#issuecomment-237715947
-
-medium
-_ detect changes in case with libraries
-_   https://github.com/processing/processing/issues/4507
-_ make when opening new editor window, open on the same display as current
-_   https://github.com/processing/processing/issues/4526
-_ Library path mismatch between processing-java and export
-_   https://github.com/processing/processing/issues/4493
-
-shortcuts
-_ problems with non-US keyboards and some shortcuts
-_   https://github.com/processing/processing/issues/2199
-_ Determine shortcut for Export vs Use Selection for Find
-_   https://github.com/processing/processing/issues/2985
-_ Determine new keyboard shortcut for Step Out
-_   https://github.com/processing/processing/issues/3538
-
-
-needs more review
+needs review
 _ createPreprocessor() added to JavaEditor, creating a mess
 _   https://github.com/processing/processing/commit/2ecdc36ac7c680eb36e271d17ad80b657b3ae6a0
 _ patch to core classpath by Manindra?
 
-_ spacing of the updates number/circle in the lower right is off
-_   https://github.com/processing/processing/issues/4094
-_   https://github.com/processing/processing/pull/4097
-_   solution is to create a sprite sheet as a psd that'll have better type
-_     no way we're gonna fix the sizing and spacing for all platforms
 
-
-_ setting a bad font/size causes a crash on startup
-_   https://github.com/processing/processing/issues/4085
-o   https://github.com/processing/processing/pull/4087
-
-
-translations
-_ need docs for translations
-_   https://github.com/processing/processing/issues/4018
-_ question about PDE_pt-br instead of PDE_pt
-_   https://github.com/processing/processing/issues/4018
-
-more contribs
-_ Saving sketch with the same name as a class
-_   https://github.com/processing/processing/pull/4033
-_ Pasting text into PDE results in "Clipboard does not contain a string"
-_   https://github.com/processing/processing/pull/4040
 
 known issues
 _ launch4j doesn't work from folders with non-native charsets
@@ -253,14 +150,15 @@ _   related: https://github.com/processing/processing/issues/3543
 _ mouse events (i.e. toggle breakpoint) seem to be firing twice
 
 
-run/debug
-_ Tweak Mode sometimes freezes while running, require a force quit
-_   https://github.com/processing/processing/issues/3928
-_ TweakMode listener mess in JavaTextArea
-_   https://github.com/processing/processing/issues/4605
-
-
 gui
+_ spacing of the updates number/circle in the lower right is off
+_   https://github.com/processing/processing/issues/4094
+_   https://github.com/processing/processing/pull/4097
+_   solution is to create a sprite sheet as a psd that'll have better type
+_     no way we're gonna fix the sizing and spacing for all platforms
+_     more than a certain amount should just be 10+, +, or whatever
+_ text gutter doesn't seem to be hidpi
+X   or is it b/c screen not quite 2x? (nope)
 _ Tooltip over variable decl has wrong style and content
 _   make all tooltips run through our style
 _   https://github.com/processing/processing/issues/3940
@@ -299,9 +197,23 @@ _ how are we going to handle fonts for other languages?
 _   two new fonts have been added, other languages will need more
 _   need a decent sans with with Unicode coverage
 _   i.e. https://github.com/processing/processing/pull/3025
+_ Implement fallback fonts so we can use Source et al with CJK/Greek/Arabic
+_   https://github.com/processing/processing/issues/5023
 
 
 pde/build
+_ update list of optional JRE files for Java 8
+_   Andres provided some updates
+_   https://github.com/processing/processing/issues/3288
+_   these will change again for Java 11, so wait until then
+_ fix appbundler problems due to rollback
+_   https://github.com/processing/processing/issues/3790
+_   the rollback re-introduces two bugs (serial export and scrolling)
+_   and any other changes later than 16 November 2014:
+_   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
+_   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
+_   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
+_   https://bitbucket.org/infinitekind/appbundler
 _ unsupported java version when trying ant run with 7u65
 _   no helpful message about how to automatically download 8u51
 _ ignore-tools in build.xml not being called for some reason
@@ -361,6 +273,10 @@ _   might be something with libraries (native or otherwise)
 
 
 medium
+_ detect changes in case with libraries
+_   https://github.com/processing/processing/issues/4507
+_ Library path mismatch between processing-java and export
+_   https://github.com/processing/processing/issues/4493
 _ remove toolbar menu references and code to rebuild
 _ fix single instance server on OS X to load double-clicked files
 _   when run from Eclipse, the single instance thing punts
@@ -755,6 +671,22 @@ _   e.g. ocd is broken in 0125 because of method signature changes
 
 PDE / Manager
 
+_ Manager fails to complete install of PythonMode when no windows open
+_   https://github.com/processing/processing/issues/5309
+_ an incompatible Mode prevents the PDE from quitting after last window is closed
+_   https://github.com/processing/processing/issues/5112
+_ “could not move the contribution to the backup folder” message while updating
+_   problem is that any sketch that uses a library, the lib is stuck as "in use"
+_   https://github.com/processing/processing/issues/4973
+_ issues with updating modes
+_   https://github.com/processing/processing/issues/5424
+_ examples window not updating on install
+_   open examples window
+_   mode > add mode > libraries > install video
+_   did not update the examples window, had to restart pde
+_ was able to save over the video capture examples b/c they were a library
+_   lib examples not properly marked as read-only
+_ "Could not find a examples in the downloaded file" is a poorly worded message
 _ 'version' should be x.y or x.y.z, not some extra long string
 _   enforce this by disallowing spaces? on the import script?
 _ Progress bar height on macOS is too thin
@@ -846,6 +778,12 @@ _   set finished to true, then join() the animation thread
 _ dispose handlers not called when stop button pressed
 _   https://github.com/processing/processing/issues/4445
 _ need to set dock icon title on osx
+
+
+PDE / Tweak
+
+_ TweakMode listener mess in JavaTextArea
+_   https://github.com/processing/processing/issues/4605
 
 
 PDE / Sketch & Sketchbook
@@ -986,6 +924,8 @@ _   this may already work with SingleInstance stuff
 
 DIST / Mac OS X
 
+_ Help Menu disabled on OS X (looks like a JVM bug)
+_   https://github.com/processing/processing/issues/4353#issuecomment-237715947
 _ Java bug prevents us from setting the dock name of a sketch run from the PDE
 _   https://github.com/processing/processing/issues/5045
 _ client properties

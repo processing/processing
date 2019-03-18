@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012-15 The Processing Foundation
+  Copyright (c) 2012-19 The Processing Foundation
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -103,6 +103,8 @@ public class Toolkit {
   static public final KeyStroke WINDOW_CLOSE_KEYSTROKE =
     KeyStroke.getKeyStroke('W', SHORTCUT_KEY_MASK);
 
+  static final String BAD_KEYSTROKE =
+    "'%s' is not understood, please re-read the Java reference for KeyStroke";
 
   /**
    * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
@@ -114,6 +116,57 @@ public class Toolkit {
     // Made into a method so that calling Toolkit methods doesn't require
     // the languages to be loaded, and with that, Base initialized completely
     return zoom(Integer.parseInt(Language.text("preferences.button.width")));
+  }
+
+
+  /**
+   * Return the correct KeyStroke per locale and platform.
+   * Also checks for any additional overrides in preferences.txt.
+   * @param base the localization key for the menu item
+   *             (.keystroke and .platform will be added to the end)
+   * @return KeyStroke for base + .keystroke + .platform
+   *         (or the value from preferences) or null if none found
+   */
+  static public KeyStroke getKeyStrokeExt(String base) {
+    String key = base + ".keystroke";
+
+    // see if there's an override in preferences.txt
+    String sequence = Preferences.get(key);
+    if (sequence != null) {
+      KeyStroke ks = KeyStroke.getKeyStroke(sequence);
+      if (ks != null) {
+        return ks;  // user did good, we're all set
+
+      } else {
+        System.err.format(BAD_KEYSTROKE, sequence);
+      }
+    }
+
+    sequence = Language.text(key + "." + Platform.getName());
+    KeyStroke ks = KeyStroke.getKeyStroke(sequence);
+    if (ks == null) {
+      // this can only happen if user has screwed up their language files
+      System.err.format(BAD_KEYSTROKE, sequence);
+      //return KeyStroke.getKeyStroke(0, 0);  // badness
+    }
+    return ks;
+  }
+
+
+  /**
+   * Create a menu item and set its KeyStroke by name (so it can be stored
+   * in the language settings or the preferences. Syntax is here:
+   * https://docs.oracle.com/javase/8/docs/api/javax/swing/KeyStroke.html#getKeyStroke-java.lang.String-
+   * @param sequence the name, as outlined by the KeyStroke API
+   * @param fallback what to use if getKeyStroke() comes back null
+   */
+  static public JMenuItem newJMenuItemExt(String base) {
+    JMenuItem menuItem = new JMenuItem(Language.text(base));
+    KeyStroke ks = getKeyStrokeExt(base);  // will print error if necessary
+    if (ks != null) {
+      menuItem.setAccelerator(ks);
+    }
+    return menuItem;
   }
 
 

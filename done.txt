@@ -1,3 +1,112 @@
+0269 (3.5.3)
+X added reference for circle(), square(), push(), pop()
+X   has the reference.zip file been fixed? (yep)
+X redo key command for Windows screwed up
+X   https://github.com/processing/processing/issues/5773
+X fix an editor problem with plain text (css, etc) files
+X   https://github.com/processing/processing/issues/5628
+X default to using Desktop methods for URLs and files when available on Linux
+X   also cover a few weird cases that were failing silently
+X The package "META" does not exist when .class files found in META-INF folder
+X   https://github.com/processing/processing/issues/5778
+
+contrib
+X update translation of "sketch" for Russian speakers
+X   https://github.com/processing/processing/pull/5673
+
+cleaning
+o modify line number color when no lines extend that far?
+o   https://github.com/processing/processing/pull/4560
+o when opening new editor window, open on the same display as current
+o   https://github.com/processing/processing/issues/4526
+X   closing as dupe of the other issue
+
+
+0268 (3.5.2)
+X shortcuts not working on Windows/Linux (using meta)
+X   https://github.com/processing/processing/issues/5763
+X   update https://github.com/processing/processing/wiki/Localization#shortcuts-and-key-bindings
+
+
+0267 (3.5.1)
+X size() command not working properly
+X   https://github.com/processing/processing/issues/5759
+
+
+0266 (3.5)
+X update to Java 8u192
+o processing-java doesn't handle sketch exceptions by quitting the sketch
+X   https://github.com/processing/processing/issues/5375
+X   this is by design/follows PDE behavior
+X fix the link to the FAQ in the menu
+X   https://github.com/processing/processing/issues/5729
+X update to Java 8u202
+X "Sketch disappeared" infinite pop up dialogs
+X   https://github.com/processing/processing/pull/4808
+X   https://github.com/processing/processing/issues/4805
+X text("test", 10, 10); is still slow with lots of fonts
+X   https://bugs.openjdk.java.net/browse/JDK-8179209
+X   added a note to the Known Issues section in the Changes wiki
+X update the about screen to 2019
+o report of a library or tool (probably includes 2.x? 1.x?) breaking things
+o   NoSuchFieldError: useNativeSelect
+X   https://github.com/processing/processing/issues/4821
+X   closed, no response
+X problems with non-US keyboards and some shortcuts
+X   https://github.com/processing/processing/issues/2199
+X   https://github.com/processing/processing/wiki/Localization#shortcuts-and-key-bindings
+o Determine new keyboard shortcut for Step Out
+X   https://github.com/processing/processing/issues/3538
+X   all set based on #2199
+X settings() present and pixelDensity() is in setup(), nothing set/no error
+X   https://github.com/processing/processing/issues/4703
+
+cleaning
+X Could not initialize class com.sun.jna.Native on startup (Windows)
+X   https://github.com/processing/processing/issues/4929
+X   closed earlier; fixed as best we could
+X sharing usage metrics about libraries
+X   https://github.com/processing/processing/issues/4708
+X Determine shortcut for Export vs Use Selection for Find
+X   https://github.com/processing/processing/issues/2985
+o swap font smoothing for tab size?
+o implement simple table for prefs?
+X   still requires restart of the software, so problematic
+X need docs for translations
+X   https://github.com/processing/processing/issues/4018
+X setting a bad font/size in preferences.txt causes a crash on startup
+X   https://github.com/processing/processing/issues/4085
+o   https://github.com/processing/processing/pull/4087
+X   can't reproduce with current code
+
+contrib
+X Updated russian translation, now can choose russian in preferences
+X   https://github.com/processing/processing/pull/5619
+X Turkish translation updates
+X   https://github.com/processing/processing/pull/5636
+X Examples dialog causes high CPU load
+X   https://github.com/processing/processing/issues/5246
+X   https://github.com/processing/processing/pull/5654
+X console hiding button
+X   https://github.com/processing/processing/pull/5115
+X NullPointerException in Contribution Manager when installing
+X   https://github.com/processing/processing/issues/5524
+X   https://github.com/processing/processing/pull/5742
+X Improvements to appdata.xml for Linux
+X   https://github.com/processing/processing/pull/5604
+
+jakub
+X Fix sketch exception getting hidden by warning
+X   https://github.com/processing/processing/pull/5486
+X   https://github.com/processing/processing/issues/5412
+X EventQueue problems with "could not find sketch size" message
+X   https://github.com/processing/processing/issues/4893
+X   https://github.com/processing/processing/pull/5708
+X   https://github.com/processing/processing/issues/5030 (duplicate)
+X size(0, 0) just freezes instead of showing an error
+X   https://github.com/processing/processing/issues/5233 (duplicate)
+
+
 0265 (3.4)
 X make it possible to override theme.txt with a file in the sketchbook folder
 X   https://github.com/processing/processing/issues/5445
@@ -21,7 +130,7 @@ X   https://github.com/processing/processing/commit/8dda8a4d02bc9a1d15e81fee3e6c
 X   https://github.com/processing/processing/commit/ff7dc4d5094ccf1cc35189c9412adda93153b436
 X add pyde as a supported extension
 X   https://github.com/jdf/processing.py/issues/284
-o update to launch4j 3.11? 
+o update to launch4j 3.11?
 o   http://launch4j.sourceforge.net/changelog.html
 X update to Java 8u172
 X show alternate error message on windows when JNA breaks or core.jar is missing
@@ -45,7 +154,7 @@ X   https://github.com/processing/processing/issues/3911
 o Welcome dialog rewritten in Swing
 X   https://github.com/processing/processing/pull/5210
 
-gohai 
+gohai
 X additional I/O improvements
 X   https://github.com/processing/processing/pull/5581
 X rpi regressions in 3.3.7.1
@@ -234,7 +343,7 @@ X   https://github.com/processing/processing/pull/4849
 X Warn user to use L when creating a number constant that won't fit into an int
 X   https://github.com/processing/processing/issues/4878
 X   https://github.com/processing/processing/pull/5077
-X add install/uninstall scripts for Linux and correct mime types for IDE 
+X add install/uninstall scripts for Linux and correct mime types for IDE
 X   https://github.com/processing/processing/pull/5106
 
 
@@ -363,7 +472,7 @@ X   https://github.com/processing/processing/issues/3933
 0256 (3.2.4)
 X only require reference.zip (and internet connection) when building dist
 X set text style properly for Contribution Manager error message
-X Detect changes to 'hosts' file in case users modify/remove localhost 
+X Detect changes to 'hosts' file in case users modify/remove localhost
 X   https://github.com/processing/processing/issues/4738
 X No sketch window opens after hitting Run if hosts file changed
 X   https://github.com/processing/processing/issues/1868
@@ -409,6 +518,7 @@ X   https://github.com/processing/processing/issues/3965
 X   https://github.com/processing/processing/pull/4762
 X Report missing brace in correct tab, suppress other errors until fixed
 X   https://github.com/processing/processing/pull/4777
+X   https://github.com/processing/processing/issues/4702
 X Improvements to sketch launching and stopping
 X   https://github.com/processing/processing/pull/4848
 X several Contribution Manager fixes
@@ -445,7 +555,7 @@ X   https://github.com/processing/processing/issues/2955
 X   fixed 2015-11 https://github.com/processing/processing/pull/2977
 X need to handle the 2.x to 3.x sketchbook transition
 X   prefs are the same file, but sketchbook location pref is different
-o performance 
+o performance
 o   video stinks.. java2d stinks.. macs stink
 o   note in the 'drawing in 2d' section of faq
 o fastest machine possible
@@ -875,7 +985,7 @@ X Add i18n support for the PopUp menu
 X   https://github.com/processing/processing/pull/4060
 X Add Turkish to the list of languages
 X   https://github.com/processing/processing/pull/4073
-X Make the error message for stack overflows clearer 
+X Make the error message for stack overflows clearer
 X   https://github.com/processing/processing/pull/4152
 X get rid of dt_socket message, making command line run a little better
 X   https://github.com/processing/processing/issues/4098
@@ -1030,7 +1140,7 @@ X implement side gradient on the editor
 X if fewer lines in sketch than can be shown in window, show ticks adjacent
 X   error/warning location is awkward when no scroll bar is in use
 X   when only one screen-full, show ticks at exact location
-X   simpler/less confusing to not show at all? 
+X   simpler/less confusing to not show at all?
 X   MarkerColumn.recalculateMarkerPositions()
 X   https://github.com/processing/processing/pull/3903
 X Update status error/warning when changing the line
@@ -1067,7 +1177,7 @@ X   change selection highlight color
 o   put some margin around it
 X   https://github.com/processing/processing/issues/3906
 X completion panel
-X   what should the background color be? 
+X   what should the background color be?
 X   test fg/bg color on other operating systems
 J   fix icon sizes/design
 X set a better minimum size for the number of updates available
@@ -1135,7 +1245,7 @@ X   need to check if "save as" thing is causing trouble
 X "Your sketch has been modified externally" with encrypted OS X volumes
 X   https://github.com/processing/processing/issues/3650
 o add this to the preferences?
-o use watcher service after all? 
+o use watcher service after all?
 o   https://docs.oracle.com/javase/tutorial/essential/io/notification.html
 
 jna problems
@@ -1173,7 +1283,7 @@ o Contributions Manager UI design
 X   https://github.com/processing/processing/issues/3482
 X   closing in favor of separate issues
 X updates tab has ugly horizontal line at top
-X CM selected tabs are too tall 
+X CM selected tabs are too tall
 X   https://github.com/processing/processing/issues/3598
 X why the aqua background when opening the window?
 X get rid of gross italic subheads on the Updates page
@@ -1217,7 +1327,7 @@ X   https://github.com/processing/processing/pull/3856
 X Red error underline is sometimes at wrong location
 X   https://github.com/processing/processing/issues/3759
 X   https://github.com/processing/processing/pull/3848
-X using "new color()" instead of "color()" results in "color type detected" 
+X using "new color()" instead of "color()" results in "color type detected"
 X   happens when user does 'new color' instead of 'color'
 X   https://github.com/processing/processing/issues/3739
 X   https://github.com/processing/processing/pull/3850
@@ -1230,8 +1340,8 @@ X   problem was that the example was creating files inside Processing.app
 X Casey reports that exported app still asks to download Java
 X   could this be a JOGL bug (linking against the app stub?)
 X   ran otool -L on the binaries and saw nothing
-X deal with ConcurrentModificationException in Editor 
-X   "Error repainting line range" and ConcurrentModificationException 
+X deal with ConcurrentModificationException in Editor
+X   "Error repainting line range" and ConcurrentModificationException
 X   https://github.com/processing/processing/issues/3726
 X repairs to prevent memory leak in EditorConsole
 o Claim that an exported application does not copy data directory
@@ -1373,7 +1483,7 @@ o need an "install library" option to deal with urls..
 X need better platform designation setup for libs
 X library installation should use the sketchbook folder, not the p5 folder
 o   actually enforce this, give users a warning about other libs
-o versioning info 
+o versioning info
 o   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/versioning.html
 X changing the sketchbook folder will make libraries show up
 o   but it won't reload the library mapping table
@@ -1456,7 +1566,7 @@ X Comment/Uncomment should ignore leading whitespace
 X   https://github.com/processing/processing/issues/1961
 X Export unsaved sketch > agree to save prompt > export doesn't finish
 X   https://github.com/processing/processing/issues/2724
-X Add disconnectEvent() to Server 
+X Add disconnectEvent() to Server
 X   https://github.com/processing/processing/issues/2133
 X False positive for mixing active/static mode in Tweak Mode 3.0 alpha 5
 X   https://github.com/processing/processing/issues/3140
@@ -1508,7 +1618,7 @@ o Invalid code signature on OS X
 X   https://github.com/processing/processing/issues/3575
 X   cannot reproduce
 
-gsoc 
+gsoc
 X Breakpoints don't 'jump' after hitting Enter on blank line
 X   https://github.com/processing/processing/issues/3552
 X   https://github.com/processing/processing/pull/3571
@@ -1797,7 +1907,7 @@ X   https://github.com/processing/processing/issues/498
 X should be able to build p5 without a JDK install, just a JRE
 X   https://github.com/processing/processing/issues/1840
 X   need to have ecj.jar accessible to ant, then modify build.xml to use this:
-X   <property name="build.compiler" 
+X   <property name="build.compiler"
 X             value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 X   http://help.eclipse.org/juno/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Ftasks%2Ftask-ant_javac_adapter.htm
 
@@ -1908,7 +2018,7 @@ X   https://github.com/processing/processing/issues/3209
 X sketchbook window is completely empty w/ no sketches
 X   requires restart of p5 before it updates
 X   https://github.com/processing/processing/issues/3214
-X Replace & Find was reading "Find & Replace" 
+X Replace & Find was reading "Find & Replace"
 X   https://github.com/processing/processing/issues/3247
 X "one file added to sketch" message when two files added
 X   turned out to be really messy ProgressFrame code
@@ -1922,7 +2032,7 @@ X   https://github.com/processing/processing/wiki/Running-without-a-Display
 X write up code guidelines for project
 X   make proper Eclipse style prefs to reinforce
 X   https://github.com/processing/processing/wiki/Style-Guidelines
-X change preproc to write settings() method instead of sketchXxxx() 
+X change preproc to write settings() method instead of sketchXxxx()
 
 cleaning
 X better text editor / live debugging (integrate Eclipse JDT)
@@ -2009,7 +2119,7 @@ X   https://github.com/processing/processing/pull/3216
 0233 (3.0a6)
 X post a note about the "help" stuff
 X   https://github.com/processing/processing/labels/help
-X Deal with ctrl-alt-n regression 
+X Deal with ctrl-alt-n regression
 X   https://github.com/processing/processing/issues/2979
 X don't add a ^M to files when writing
 X   https://github.com/processing/processing/issues/3014
@@ -2047,7 +2157,7 @@ X   was because of the readSettings() change
 integration of pdex/debug
 o make the tabs have a default minimum size
 o   multiple sizes as they get smaller (web browser style)
-X merge experimental into the main Java mode 
+X merge experimental into the main Java mode
 X   thereby removing Java 2.0 mode from the next release
 X   otherwise redoing the design for 2 modes
 X changed JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
@@ -2080,7 +2190,7 @@ o   update ld and windres: https://github.com/processing/processing/tree/master/
 o   also xstream.jar https://github.com/processing/processing/tree/master/java/application/launch4j/lib
 
 earlier
-X any problems with new code signing crap? 
+X any problems with new code signing crap?
 X   issues raised around the symlink (just replace with a copy of the binary?)
 X   fixed the short-term problem, filed an issue for the rest
 X   https://developer.apple.com/library/prerelease/mac/technotes/tn2206/_index.html#//apple_ref/doc/uid/DTS40007919-CH1-TNTAG205
@@ -2209,7 +2319,7 @@ X   https://github.com/processing/processing/issues/3133
 X   https://github.com/processing/processing/pull/3177
 X Fix ColorChooser cursor
 X   https://github.com/processing/processing/pull/3186
-X Improve Spanish localization 
+X Improve Spanish localization
 X   https://github.com/processing/processing/pull/3185
 X internationalization of editor error messages and greek translations
 X   https://github.com/processing/processing/pull/3189
@@ -2280,7 +2390,7 @@ pulls (net)
 X NullPointerException message when Server writes to a disconnected client
 X   https://github.com/processing/processing/issues/2577
 X   https://github.com/processing/processing/pull/2578
-X Implement the active() method for Serial and Server 
+X Implement the active() method for Serial and Server
 X   https://github.com/processing/processing/issues/2364
 X   https://github.com/processing/processing/pull/2588
 
@@ -2325,7 +2435,7 @@ X   closed by Dan post-3.0a3
 X move sketchbook into its own window
 X move recent into the sketchbook menu
 X try installing 10.7.3 on Mac Mini and check whether things run
-X   make sure it's only running on 64-bit machines? 
+X   make sure it's only running on 64-bit machines?
 
 gsoc
 X remove dependency on oscp5 library for tweak mode
@@ -2477,7 +2587,7 @@ X fix "No such file or directory" error when exporting an application on OSX
 X   this also resulted in the application not being signed at all
 X   https://github.com/processing/processing/issues/2614
 X   this is a fairly major issue...
-X possible to open a sketch multiple times 
+X possible to open a sketch multiple times
 X   by double-clicking one of its files instead of the main pde file
 X   user opens non-main pde of already open sketch, it'll open again
 X   https://github.com/processing/processing/issues/2506
@@ -2494,7 +2604,7 @@ X   some aren't being removed properly
 X fix the build scripts to include the examples
 X   https://github.com/processing/processing/issues/2652
 X   all examples are out of "processing/java" and are now in "processing-docs/content/". The Book examples have been removed entirely from our repositories.
-o "Platform is ${platform}" message during 'ant clean' 
+o "Platform is ${platform}" message during 'ant clean'
 o   on OS X, but not Windows (haven't checked Linux)
 X   this was in pdex/build.xml
 X remove welcome message from the sound library
@@ -2536,7 +2646,7 @@ X   https://github.com/processing/processing/pull/2657
 pulls
 X insert tabs properly when prefs set for tabs mode
 X   https://github.com/processing/processing/pull/2607
-X improve look of Nimbus LAF 
+X improve look of Nimbus LAF
 X   https://github.com/processing/processing/pull/2671
 
 earlier
@@ -2549,7 +2659,7 @@ X   https://github.com/processing/processing/issues/2141
 o double-clicking a .pde file doesn't open properly on OS X
 o   https://github.com/processing/processing/issues/2639
 X moving p5 examples to the web repo
-X move examples into web repo 
+X move examples into web repo
 o OS X not opening a sketch at all on pde double-click? (though opening the app)
 X Chinese text is overlapped in Processing 2.1 editor
 X   https://github.com/processing/processing/issues/2173
@@ -2570,7 +2680,7 @@ X   https://github.com/processing/processing/issues/2545
 
 earlier
 X cpu usage when nothing happening (unmarked duplicate)
-X   https://github.com/processing/processing/issues/1074 
+X   https://github.com/processing/processing/issues/1074
 
 gsoc
 X Line coloring incorrect for filtered contribution listings
@@ -2618,7 +2728,7 @@ X missing 'version' in contrib causes NPE
 X   https://github.com/processing/processing/issues/2517
 X bring back setIcon(Frame) for PDE X and others
 X   https://github.com/processing/processing-experimental/issues/64
-X how was PDE X able to crash 2.2? 
+X how was PDE X able to crash 2.2?
 X   add additional code to rework how this is handled
 X Auto Format patch mess
 X   https://github.com/processing/processing/pull/2271
@@ -2660,7 +2770,7 @@ X   fix for Windows command line
 X   fix for Linux launcher
 X   fix for Linux export
 X   fix for Linux command line
-X   fix for OS X launcher 
+X   fix for OS X launcher
 X   fix for OS X export
 X   fix for OS X command line
 X import static causes exception (with fix)
@@ -2807,7 +2917,7 @@ G Handle the UnsatisfiedLinkError when loading the native library fails
 G   https://github.com/processing/processing/pull/2266
 
 fixed in 2.1
-X init() not called on tools until later 
+X init() not called on tools until later
 X   https://github.com/processing/processing/issues/1859
 X Finish changes so the PDE can use an unmodified JRE
 X   https://github.com/processing/processing/issues/1840
@@ -2815,8 +2925,8 @@ X   https://github.com/processing/processing/issues/1840
 
 0223 pde (2.1)
 X reset font smoothing for everyone to its default by changing the pref
-X   To reset everyone's default, replaced editor.antialias with editor.smooth 
-X   for 2.1. Fonts are unusably gross on OS X (and Linux) w/o smoothing and 
+X   To reset everyone's default, replaced editor.antialias with editor.smooth
+X   for 2.1. Fonts are unusably gross on OS X (and Linux) w/o smoothing and
 X   the Oracle JVM, and many longtime users have anti-aliasing turned off.
 X   https://github.com/processing/processing/issues/2164
 X   https://github.com/processing/processing/issues/2160
@@ -2888,7 +2998,7 @@ X spacing problem with large sizes (on retina?)
 X   not just retina, was problem with non-mono text from Java
 X control text size in console
 o   why aren't prefs from theme.txt showing up in preferences.txt? hrm
-o   or rather, why can't they be overridden? 
+o   or rather, why can't they be overridden?
 X     because theme.txt data is a different animal / that's part of the point
 X   should fonts at least be in prefs.txt?
 X   http://code.google.com/p/processing/issues/detail?id=226
@@ -2916,7 +3026,7 @@ X   had already been closed
 X serial ports missing from list (OS X)
 X   http://code.google.com/p/processing/issues/detail?id=52
 X   also was marked fixed...
-X Serial.write problem with Bluetooth SPP virtual serial port 
+X Serial.write problem with Bluetooth SPP virtual serial port
 X   http://code.google.com/p/processing/issues/detail?id=318
 X   was marked duplicate of #52
 X Serial silently fails when invalid port entered as string
@@ -3048,7 +3158,7 @@ X   fix submitted by hamoid
 
 
 0220 pde (2.0.2)
-X fix "less less" typo 
+X fix "less less" typo
 X   https://github.com/processing/processing/issues/1928
 X slash breaks syntax highlighting (with spaces)
 X   https://github.com/processing/processing/issues/1681
@@ -3066,11 +3176,11 @@ X   https://github.com/processing/processing/issues/1908
 X Update JNA from 3.2.4 to 3.5.2
 X   https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/3.5.2/jna-3.5.2.jar
 X   https://maven.java.net/content/repositories/releases/net/java/dev/jna/platform/3.5.2/platform-3.5.2.jar
-X problem with associating .pde files 
+X problem with associating .pde files
 X   https://github.com/processing/processing/issues/286
 X   http://code.google.com/p/processing/issues/detail?id=247
 o   In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find your .exe name. Navigate under its name to shell>open>command. In the Default change its location to the actual location of the executable, hit okay and then try and reassociate the file type as you normally would.
-X UnsatisfiedLinkError causes huge message... 
+X UnsatisfiedLinkError causes huge message...
 X   error report cleanups haven't been fixed yet
 X   reported by Dan
 X   this should be better now
@@ -3188,7 +3298,7 @@ o   check if libraries folder does not exist
 o   check to see if other libraries are installed
 X   warn user about moving libraries and restarting
 X add "pretty menu name" to the export.txt file
-o move export.txt to xml? 
+o move export.txt to xml?
 X   nah, it's only flat information
 X tools -> get library
 X   library url: [ http://blahblah.org/something ]
@@ -3268,7 +3378,7 @@ o   also send pull request for Florian
 manager
 X "New version available" mesage is showing html tags around it
 X   https://github.com/processing/processing/issues/1684
-X shift color of installed items when selected 
+X shift color of installed items when selected
 X   was ugly gray over selection color
 X fix layout of the update button
 X get update text to align vertically
@@ -3282,7 +3392,7 @@ X MovieMaker tool will not start on Windows 8
 X   make a little less fragile by not launching as separate process
 X   http://code.google.com/p/processing/issues/detail?id=1447
 X clean up the code and interface for the Movie Maker tool
-X   http://code.google.com/p/processing/issues/detail?id=836 
+X   http://code.google.com/p/processing/issues/detail?id=836
 X on Windows, the Help menu seems to start with a separator
 X add 6u37 as the Java runtime
 o TextAreaDefaults - is editable in use?
@@ -3306,7 +3416,7 @@ X   <key>NSHighResolutionCapable</key>
 X   <string>true</string>
 X add basics of retina support to the toolbar and header
 X   getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
-X paper over ArrayIndexOutOfBoundsException in JEditTextArea.xToOffset() 
+X paper over ArrayIndexOutOfBoundsException in JEditTextArea.xToOffset()
 X Fix IllegalStateException on Windows/Linux in Save prompt
 X   happened when hitting ESC or otherwise closing the window
 X "Find in Reference" largely broken in 2.0b7
@@ -3315,7 +3425,7 @@ X discern variable vs function with Find in Reference
 X if no selection, attempt to expand the selection for Find in Reference
 X add cmd-shift-O to "Open Examples" on OS X with no window open
 X go through vida examples to make sure extra imports are not being used
-o   do command line to run through all examples? 
+o   do command line to run through all examples?
 X remove Quaqua
 X   http://code.google.com/p/processing/issues/detail?id=1509
 X   remove separate launch of QT movie creator
@@ -3379,7 +3489,7 @@ tool manager
 X from Casey
 X   list in the PDE would be updated automatically by querying a web service
 X   list on the website would be generated using the same web service
-X   All I would need to do is update web/contrib_generate/sources.conf 
+X   All I would need to do is update web/contrib_generate/sources.conf
 X     and the rest would happen automatically.
 X general cleanup of the visuals/layout
 X extra files still being left around during install
@@ -3399,7 +3509,7 @@ X   http://code.google.com/p/processing/issues/detail?id=1387
 
 
 0215 pde (2.0b7)
-X "expecting EOF, found 'import'" on previously working sketch 
+X "expecting EOF, found 'import'" on previously working sketch
 X   http://code.google.com/p/processing/issues/detail?id=1376
 X changing default imports to only cover those we have in the reference
 X   also on the Android side as well
@@ -3460,7 +3570,7 @@ X   http://code.google.com/p/processing/issues/detail?id=1426
 X double textMode() error message with P3D:
 X   textMode(SCREEN) has been removed from Processing 2.0.
 X   textMode(256) is not supported by this renderer.
-X errors that cannot be placed (i.e. missing brace) 
+X errors that cannot be placed (i.e. missing brace)
 X   this makes things to jump to the last tab
 X   also happens with stray characters sometimes...
 X   casey: accidentally typing a letter at the top of the tab
@@ -3526,7 +3636,7 @@ X   (stubbing things in for artwork update later)
 
 
 0212 pde (2.0b4)
-M implement find & replace over multiple tabs 
+M implement find & replace over multiple tabs
 M   http://code.google.com/p/processing/issues/detail?id=25
 M   added to the projects list
 X change all build.xml files to use Java 6 as both source and target
@@ -3595,7 +3705,7 @@ X make Mode menu into a radio button, so it cannot be de-selected
 X   http://code.google.com/p/processing/issues/detail?id=1227
 X no response with registerMethod keyEvent when key pressed or released
 X   http://code.google.com/p/processing/issues/detail?id=1225
-o running at size(7000, 4000) followed by size(100, 100) 
+o running at size(7000, 4000) followed by size(100, 100)
 X   http://code.google.com/p/processing/issues/detail?id=1213
 X   won't fix, too hairy and messy
 X clean up handling of untitled sketches
@@ -3616,7 +3726,7 @@ X no changes
 
 0209 pde (2.0b1)
 X require Mac OS X 10.6.8 as the minimum
-X replace/find need to dim out the buttons 
+X replace/find need to dim out the buttons
 X   i.e. hitting 'replace' multiple times causes weirdness
 X   and replace/replace+find buttons shouldn't be active until after a find
 X   http://code.google.com/p/processing/issues/detail?id=1056
@@ -3638,11 +3748,11 @@ X   problem was 'extends' after 'implements'
 X "Open" dialog on Linux wasn't showing directories
 X   http://code.google.com/p/processing/issues/detail?id=1151
 X switch Platform to just use java.awt.Desktop classes
-X for Java 1.6, replace com.apple.eio.FileManager.openURL(url); 
+X for Java 1.6, replace com.apple.eio.FileManager.openURL(url);
 X   with java.awt.Desktop.browse() and java.awt.Desktop.open()
 X   causes a deprecation warning whenever building on osx
 o   instead of "show sketch folder" method, use:
-The com.apple.eio.FileManager now has two new desktop interaction methods, revealInFinder(File) and moveToTrash(File). You can use revealInFinder() to open a Finder window in the parent directory of of a file and select it. You can use moveToTrash() to move a file to the most appropriate Trash directory for the volume that contains that file. 
+The com.apple.eio.FileManager now has two new desktop interaction methods, revealInFinder(File) and moveToTrash(File). You can use revealInFinder() to open a Finder window in the parent directory of of a file and select it. You can use moveToTrash() to move a file to the most appropriate Trash directory for the volume that contains that file.
 X added 64-bit RXTX for Mac OS X
 X   http://blog.iharder.net/2009/08/18/rxtx-java-6-and-librxtxserial-jnilib-on-intel-mac-os-x/
 X bufferUntil() with values above 127 do not work properly
@@ -3672,18 +3782,18 @@ o shift-tab with no selection should go back two spaces
 cleaning
 o switching into present mode in info.plist
 o        <key>LSUIPresentationMode</key>
-o        <integer>4</integer> 
+o        <integer>4</integer>
 o errors with serial and libraries
 Exception in thread "Thread-2" java.lang.NoClassDefFoundError:
 processing/core/PApplet
-    at processing.serial.Serial.<init>(Serial.java:156) 
+    at processing.serial.Serial.<init>(Serial.java:156)
 generally, that error means that something is missing from the
 CLASSPATH. the NoClassDefError gives erroneous feedback about *what*
 class is actually missing, as of java 1.3+ (yay!)
 so perhaps conflicting versions of a library in the sketchbook (solve
 this by setting to an empty sketchbook temporarily) or files might be
 installed in the CLASSPATH variable or something conflicting in
-/System/Library/Extensions. 
+/System/Library/Extensions.
 F add processing.js export tool from florian
 F   http://github.com/fjenett/processingjstool/
 F   http://github.com/fjenett/processingjstool/zipball/v0.0.6
@@ -3739,7 +3849,7 @@ o   this would take care of nasty macosx 1.4 vs 1.5 issues
 o   /System/Library/Frameworks/JavaVM.framework/Versions/1.3.1/Commands/java
 o   /System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Commands/java
 o   /System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Commands/java
-o   canonical path for 
+o   canonical path for
 o   /System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK
 o   will return 1.5.0 (or maybe 1.6 for others?)
 X   nope, just using a local JRE/JDK from now on
@@ -3764,7 +3874,7 @@ X   http://code.google.com/p/processing/issues/detail?id=72
 X   doesn't seem to be a problem on modern machines
 X in rebuild sketch menu - disable subfolders working as libraries
 X   if a sketch, don't allow subfolders
-o   or maybe just that libraries must be in the root? 
+o   or maybe just that libraries must be in the root?
 o   nah, cuz that would mean can't make subfolder called "libraries"
 X   no longer possible since separate libraries folder is in use
 X is the 'hide' option for code dumb? i've never used it
@@ -3785,8 +3895,8 @@ X   http://code.google.com/p/processing/issues/detail?id=32
 X   http://code.google.com/p/processing/issues/detail?id=958
 X   decided not to: simple workaround available
 o setting sketchbook to a folder on a network mounted drive
-o   does this work? test on both on mac and pc.. 
-o   or if not, should recommend people against it 
+o   does this work? test on both on mac and pc..
+o   or if not, should recommend people against it
 o   (i.e. folders disappearing if net has trouble)
 X   http://code.google.com/p/processing/issues/detail?id=33
 X   decided wontfix, nobody has ever followed up
@@ -3830,7 +3940,7 @@ o   http://dev.processing.org/bugs/show_bug.cgi?id=562
 X   Monaco can no longer be disabled
 X modes have their own methods for digging through sketch & libraries folders
 o   therefore it need only check the sketch.txt file to see if it's ok
-o   (between android and java) 
+o   (between android and java)
 o   but more importantly, if it's something totally different (.py) then
 o   that'll be ok, and work fine
 o   need another extension for the p5 py stuff
@@ -3931,7 +4041,7 @@ o don't re-open new window on top of another
 X   changing how this is handled
 X detect mode and library example folders for recent menu
 o with the same sketch open, a handleOpen() might open a second on top of it
-X   should be fixed up 
+X   should be fixed up
 
 applets
 o tool to run in appletviewer? sun.applet.Main is appletviewer
@@ -3942,11 +4052,11 @@ o courseware
 o   export sketch as applet when uploading
 o   save sketch zip files
 o   have a means to load them from "teacher" version of p5
-o   figure out how to use the 
+o   figure out how to use the
 o items from the 'code' folder not included with applet export
 o add tool to "Add custom html to sketch"
-o   that copies applet.html, 
-o   opens sketch folder, 
+o   that copies applet.html,
+o   opens sketch folder,
 o   and gives info about what to do next (how to edit)
 o   http://dev.processing.org/bugs/show_bug.cgi?id=143
 
@@ -3985,7 +4095,7 @@ X   not seen for a while, closed
 o multiple entries in file menu
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1260
 X   should be fixed, not seen
-o "src/processing/xxxx/Xxxxxxxx.java uses unchecked or unsafe operations." 
+o "src/processing/xxxx/Xxxxxxxx.java uses unchecked or unsafe operations."
 X   http://code.google.com/p/processing/issues/detail?id=101
 o use pack200/unpack200 to make p5 download smaller
 X   http://code.google.com/p/processing/issues/detail?id=95
@@ -4024,7 +4134,7 @@ X export and export to application fail with umlauts in folder name
 X   http://dev.processing.org/bugs/show_bug.cgi?id=252
 X   fixed in 0140, but no confirmation
 o stop button needs to update itself and work properly
-o   also editor buttons to light up and clear properly 
+o   also editor buttons to light up and clear properly
 X   http://dev.processing.org/bugs/show_bug.cgi?id=396
 o   need someone to go out and test all scenarios of this
 X   this particular version was fixed (though broken again later)
@@ -4067,8 +4177,8 @@ X   marked cantfix
 o using a processing keyword as a variable name gives unhelpful error message
 X   http://dev.processing.org/bugs/show_bug.cgi?id=213
 X   fixed issue specific to handleDisplay
-o not enough args for triangle (or args in general) 
-o   throws out bizarre message 
+o not enough args for triangle (or args in general)
+o   throws out bizarre message
 o   http://dev.processing.org/bugs/show_bug.cgi?id=17
 X   fixed up later
 X expecting RPAREN messages are ugly
@@ -4076,7 +4186,7 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=15
 o unchecking 'use external editor' sketch should not set modified
 o   dangerous if a version that hasn't been re-loaded has possibility
 o   to overwrite. i.e. make a change and save in external editor,
-o   don't actually 
+o   don't actually
 o comments shown as code / code shown as comments
 o   http://code.google.com/p/processing/issues/detail?id=164
 X   merged into new editor issue
@@ -4084,7 +4194,7 @@ o program sometimes goes gray because it thinks everything is in a comment
 o   http://code.google.com/p/processing/issues/detail?id=564
 X   merged into new editor issue
 o failed export still copies random files
-o   Failed compile on Export or Export to Application 
+o   Failed compile on Export or Export to Application
 o   still creates folder and leaves mess behind
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1050
 X   opted not to fix (rationale in the report)
@@ -4138,8 +4248,8 @@ o   http://dev.processing.org/bugs/show_bug.cgi?id=114
 o   when drawing large video, the two triangles for the rect are out of sync
 o     only shows up in P3D
 o pause and frameRate aren't working
-o   framerate does set the frequency which movieEvent will be called, 
-o   but it is not setting the "available" field corrrectly. 
+o   framerate does set the frequency which movieEvent will be called,
+o   but it is not setting the "available" field corrrectly.
 o     in fact, speed() should be used to set the rate, not frameRate
 o   sketch .zip file in casey's email message
 X   http://dev.processing.org/bugs/show_bug.cgi?id=370
@@ -4151,11 +4261,11 @@ o include a separate video class to handle just playback
 o   video playback can be much faster if not messing with pixels
 o   could instead use texsubimage in opengl, etc
 o   only supports tint() (to set alpha or color) and drawing? just drawing?
-o stop button won't kill a video sketch (bug 150 example does this) 
+o stop button won't kill a video sketch (bug 150 example does this)
 X   although ESC seems to work? (not sure, didn't test)
 o   or audio won't stop even after hitting stop
 o when an exception comes through during cameraEvent, not printed
-o   need to show an actual stack trace (InvocationTargetEx) 
+o   need to show an actual stack trace (InvocationTargetEx)
 o   because otherwise it's impossible to debug this stuff
 o video library not working on export to web
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1421
@@ -4170,7 +4280,7 @@ o fix "reply" garbage added
 o fix "back to bug# 778"
 o remove patch designation
 o make severity a radio button (people aren't using it)
-o   change to just ( ) Problem ( ) Feature Request (remove 'severity') 
+o   change to just ( ) Problem ( ) Feature Request (remove 'severity')
 o remove 'platform' dropdown
 o specify some versions? also add back a "target version" for fix?
 o explanation of P1 through P5
@@ -4196,7 +4306,7 @@ o layout problems with attachments page
 o   http://dev.processing.org/bugs/show_bug.cgi?id=254
 o layout problems with logout page
 o   http://dev.processing.org/bugs/show_bug.cgi?id=255
-o bug duplicate text field doesn't retain focus 
+o bug duplicate text field doesn't retain focus
 o   http://dev.processing.org/bugs/show_bug.cgi?id=256
 o finish putting all the bugs into bugzilla
 o   add a notation to the bugs site re: reading the faq and searching first
@@ -4307,7 +4417,7 @@ X   and fixed again for non-greedy regex
 X make note of when library is not available (serial) with error msg
 X   i.e. if running in 64-bit mode on OS X, can't do serial
 X update to Java 6u29 for Linux and Windows (OS X now updated)
-X don't show library conflict warning until someone tries to build 
+X don't show library conflict warning until someone tries to build
 X   with code that actually calls on one of those packages
 X   too many people seem to think this is an error
 X work on code to quit if multiple instances are running
@@ -4426,7 +4536,7 @@ o add deployJava.js to local sketch folder (causes internet requirement)
 X   http://code.google.com/p/processing/issues/detail?id=650
 X   http://www.java.com/js/deployJava.js
 X   bad idea, since it adds 17k to every download
-X make examples window respond to ESC 
+X make examples window respond to ESC
 X   and double-click events to expand/collapse nodes
 X examples window placed off-screen when PDE window is maximized
 X   http://code.google.com/p/processing/issues/detail?id=669
@@ -4436,7 +4546,7 @@ X New/Rename Tab commands inhibited when Console/Message Area is hidden
 X   http://code.google.com/p/processing/issues/detail?id=745
 X make sketch.properties usable elsewhere by loading/reloading
 X   http://code.google.com/p/processing/issues/detail?id=722
-X Export to Application reports "Could not copy source file:" 
+X Export to Application reports "Could not copy source file:"
 X   http://code.google.com/p/processing/issues/detail?id=638
 X automatically insert the 'import processing.opengl' when P3D used
 X   add support for automatically including OpenGL when asking for P3D
@@ -4446,8 +4556,8 @@ X   http://code.google.com/p/processing/issues/detail?id=747
 
 cleanup
 X how is autoformat doing? good now
-X catch 1.5 code in libraries - is this still an issue for 1.6 on 1.5? 
-X   Exception in thread "main" java.lang.UnsupportedClassVersionError: quicktime/QTException (Unsupported major.minor version 49.0) 
+X catch 1.5 code in libraries - is this still an issue for 1.6 on 1.5?
+X   Exception in thread "main" java.lang.UnsupportedClassVersionError: quicktime/QTException (Unsupported major.minor version 49.0)
 o javascript and liveconnect to preload applets
 o   http://code.google.com/p/processing/issues/detail?id=66
 X   let's not bother
@@ -4458,7 +4568,7 @@ o   package cc.arduino.*
 X   no thanks, they've abandoned it
 o add page numbers and file name to printing in p5
 o   also add something to control the font & font size
-X   -> jer: "can we put fax support in there too?" 
+X   -> jer: "can we put fax support in there too?"
 o prevent people from setting the font size too small in the editor
 o   how do we figure out what "too small" is?
 X   -> everyone thinks this is funny
@@ -4510,7 +4620,7 @@ X   http://code.google.com/p/processing/issues/detail?id=627
 X file-save stops running sketch
 X   http://dev.processing.org/bugs/show_bug.cgi?id=810
 X   http://code.google.com/p/processing/issues/detail?id=100
-X fix bug in loadfile2 example 
+X fix bug in loadfile2 example
 X   http://code.google.com/p/processing/issues/detail?id=522
 o when running with external editor, hide the editor text area
 o   http://dev.processing.org/bugs/show_bug.cgi?id=20
@@ -4531,7 +4641,7 @@ X run the javadoc for 1.5
 X remove opengl2 for 1.5 and examples for the final 1.5
 X need to get a new stable release out there, the docs/ref are out of sync
 
-from peter n lewis 
+from peter n lewis
 X Use Selection For Find
 X   http://code.google.com/p/processing/issues/detail?id=571
 X double-clicking whitespace selects adjacent chars
@@ -4678,7 +4788,7 @@ o   can make full screen work via Info.plist key
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1135921427;start=7#7
 X   added to export defaults in a much earlier version
 X when running externally, set window frame title to the sketch name
-X   is this only a problem on macosx? 
+X   is this only a problem on macosx?
 
 console, preferences
 X removed build.path from preferences.txt
@@ -4826,7 +4936,7 @@ X   don't keep repeating them
 0190 (pre)
 X be more specific about linux/sun/java error messages
 X allow 'oracle' in java version name string
-X the open button on the toolbar is goofed up 
+X the open button on the toolbar is goofed up
 X   http://code.google.com/p/processing/issues/detail?id=323
 X changed how "Save As" works, now copies everything in the folder
 X   but ignores applet, application.*, screen-* files/folders
@@ -4836,9 +4946,9 @@ X   also fixed unicode entities
 
 earlier
 X add warning message when not using a version of sun java w/ p5 on linux
-X Ctrl-Z will undo, but not scroll to where the undo happens. 
+X Ctrl-Z will undo, but not scroll to where the undo happens.
 X   is this now somehow fixed? (or only on os x?)
-X   so user thinks nothing is happening and overundo. 
+X   so user thinks nothing is happening and overundo.
 X   http://dev.processing.org/bugs/show_bug.cgi?id=35
 X   http://code.google.com/p/processing/issues/detail?id=15
 
@@ -4856,7 +4966,7 @@ X update the about screens (about.jpg and about.bmp)
 0187 pde (pre)
 X don't require an editor window to be open at all times
 X   The com.apple.eawt.Application now has a setDefaultMenuBar(JMenuBar) method
-X   that sets a default menu bar when no other Frames are open. 
+X   that sets a default menu bar when no other Frames are open.
 X   could check for availability of method
 X   and if it's there, don't require people to quit
 X Prevent horizontal scroll offset from disappearing
@@ -4866,7 +4976,7 @@ o   http://dev.processing.org/bugs/show_bug.cgi?id=23
 X Fix NullPointerException when making a new sketch on non-English systems
 X   http://code.google.com/p/processing/issues/detail?id=283
 X show warning message on linux if sun java is not in use
-X   there isn't a perfect way to detect whether sun java is in use, 
+X   there isn't a perfect way to detect whether sun java is in use,
 X   so please report false positives (or negatives, for that matter)
 X bad strlen() problem in windows launcher.cpp
 X   http://code.google.com/p/processing/issues/detail?id=303
@@ -4887,7 +4997,7 @@ X   thanks to Larry Kyrala
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1549
 X fix for PDF library to support createFont() on Linux
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1566
-X   thanks to Matthias Breuer 
+X   thanks to Matthias Breuer
 X add option to change the formatting for untitled sketch naming
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1091
 X Can't input full-width space when Japanese IME is on.
@@ -4911,7 +5021,7 @@ X   http://code.google.com/p/processing/issues/detail?id=245
 
 0184 pde (pre)
 X other libraries that use opengl weren't using the jnlp launcher
-X   fix OpenGL detection in sketches so that proper version of 
+X   fix OpenGL detection in sketches so that proper version of
 X     export template is used
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1530
 X single-line html comments not handled properly on export
@@ -5014,11 +5124,11 @@ J casting problems in the parser
 J   straighten out int() -> toInt() conversions
 J   float u = float(x)/width; works.
 J   float u = (float(x)/width); doesn't work: "unexpected token: float".
-J   float u = (x/float(width)); works! 
+J   float u = (x/float(width)); works!
 J   http://dev.processing.org/bugs/show_bug.cgi?id=4
 J   return (int(5.5)) causes an error
 J preprocessor error if last line of code is a comment with no CR after it,
-J   an OutOfMemoryError wants to happen, 
+J   an OutOfMemoryError wants to happen,
 J   but right now there's a hack to add a CR in PdePreprocessor
 J   http://dev.processing.org/bugs/show_bug.cgi?id=5
 J preproc can't handle labels to break/continue nested loops
@@ -5104,7 +5214,7 @@ X     fix this for windows and linux
 X PApplet.main() overwritten
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1446
 o need to do a better job of error handling inside main()
-X applets now use the deployjava.js file 
+X applets now use the deployjava.js file
 X   not opengl, but the others do
 X NullPointerException in JOGLAppletLanucher with Java 6 Update 18 on Windows
 X   switching to more efficient JNLP export
@@ -5118,7 +5228,7 @@ X processing 0142 japanese input problem
 X   http://dev.processing.org/bugs/show_bug.cgi?id=854
 X update JNA to version 3.2.4 to support Windows 7 64-bit
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1424
-X fix LITERAL_class in PDE code (help from Christian Thiemann) 
+X fix LITERAL_class in PDE code (help from Christian Thiemann)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1466
 X replace applet.html and applet-opengl.html
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1057
@@ -5286,7 +5396,7 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1260
 X try adding a space to the name of the help menu for beachball problems
 X   this works, might be useful to make the switch (done)
 X remove isManagingFocus problem inside JEditTextArea
-X IDE crashed when changing color scheme on windows 
+X IDE crashed when changing color scheme on windows
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1237
 X space in front of linux shell script prevents it from running
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1250
@@ -5305,7 +5415,7 @@ X update to java 6u14 on linux
 
 
 0165 pde (1.0.3)
-X no changes in this release 
+X no changes in this release
 
 
 0164 pde (1.0.2)
@@ -5348,11 +5458,11 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=986
 
 0163 pde (1.0.1)
 X ArrayIndexOutOfBoundsException with File > New (Processing 1.0)
-X   maybe a /tmp permissions problem? 
+X   maybe a /tmp permissions problem?
 X   are we not checking errors properly on this route?
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1067
 X   need to look into why this didn't give a better error message
-X "[JavaAppLauncher Error] CallStaticVoidMethod() threw an exception" 
+X "[JavaAppLauncher Error] CallStaticVoidMethod() threw an exception"
 X   on startup with OS X
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1063
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1078
@@ -5367,13 +5477,13 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1073
 X "space-import-space-quote-semicolon" Causes Error in String or Comment
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1064
 X the changes page doesn't have a toc entry for the 1.0 release notes
-X add minim to the changes page 
+X add minim to the changes page
 
 
 0162 pde (1.0)
 X update revisions.html
 X write revisions.txt
-X in 0149, removed /System/Library/Java 
+X in 0149, removed /System/Library/Java
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1045
 X do we need to shore up server setup for 1.0 release pounding?
 o   what's the deal with disk space?
@@ -5501,7 +5611,7 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=886
 X rename GettingStarted_Shape example
 
 invalid
-o launch4j "An error occurred while starting the application" 
+o launch4j "An error occurred while starting the application"
 o   http://dev.processing.org/bugs/show_bug.cgi?id=986
 o tabs menu not working on osx ppc (can't confirm)
 o   http://dev.processing.org/bugs/show_bug.cgi?id=993
@@ -5529,9 +5639,9 @@ X   bug report:
 X     create a new sketch, write something in it
 X     create a new tab, name it "something.java", write something into it
 X     rename main tab (sketch) to "something" (without ".java")
-X     the contents in the files are not the same, but the main-tab is 
-X     showing the contents of the .java tab, so if you press save 
-X     you will overwrite your original code from the main-tab. 
+X     the contents in the files are not the same, but the main-tab is
+X     showing the contents of the .java tab, so if you press save
+X     you will overwrite your original code from the main-tab.
 X com.sun.jdi.AbsentInformationException when running a sketch
 X   http://dev.processing.org/bugs/show_bug.cgi?id=971
 
@@ -5544,7 +5654,7 @@ X   include javac? would this be a good solution for linux?
 X   http://dev.processing.org/bugs/show_bug.cgi?id=8
 X an empty .java tab will throw an error
 X   http://dev.processing.org/bugs/show_bug.cgi?id=10
-X warn about writing non-1.1 code. 
+X warn about writing non-1.1 code.
 X   http://dev.processing.org/bugs/show_bug.cgi?id=11
 X java.lang.NoClassDefFoundError: quicktime/std/StdQTException
 X   people not installing qt? no QTJAVA set?
@@ -5552,7 +5662,7 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=669
 o   simulate this by removing qtjava.zip, then make a handler for it
 o   which will open the reference for it
 X   use the registry key, and warn the user when it's not there
-X mouse wheel broken in the text editor? (windows jdk 1.5?) 
+X mouse wheel broken in the text editor? (windows jdk 1.5?)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=24
 
 
@@ -5643,7 +5753,7 @@ o sketch must be saved to use a constructor
 X   http://dev.processing.org/bugs/show_bug.cgi?id=929
 X   reference bug, example cannot have same name as an inner class
 
-structural 
+structural
 X processing.candy has been removed
 X processing.xml is now part of core.jar, no need to import
 X user-contributed tools and libraries should only be placed in the sketchbook
@@ -5660,13 +5770,13 @@ X createInput() (nee openStream), createInputRaw(), createOutput()
 
 cleanup
 o how to grab the java2d object from PGraphics2D
-o example for using mediatracker to load images 
-o   simple example for threaded image loading "load several" 
+o example for using mediatracker to load images
+o   simple example for threaded image loading "load several"
 o   (rather than blocking on each)
 o   maybe add a loadImages(String files[]) function?
 o   use a MediaTracker that's shared, so that while an image is still
 o   loading, other calls to loadImage might be able to add things to the
-o   queue. or maybe beginImage() and endImage()? or a mode that lets 
+o   queue. or maybe beginImage() and endImage()? or a mode that lets
 o   you wait for the images to download (size is zero until they're ready)
 o   MediaTracker blocking is prolly making jar download really slow
 o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089914280
@@ -5782,13 +5892,13 @@ o   3 column input file
 o   regexp to find, to replace, human readable description
 o   (void\s+)loop(\s+{) -> $1draw$2 (maintain all whitespace stuff)
 o   "The loop() method is now called draw() as of beta"
-o   "angleMode no longer exists, use radians() around your angles" 
+o   "angleMode no longer exists, use radians() around your angles"
 o   (comment out the line)
 X   this would only fix the minor stuff, not the important stuff
 X   it also has a lot of potential problems and corner cases
 X   just not worth the effort
 X tools api
-X   need to support the basic set of functions that are expected 
+X   need to support the basic set of functions that are expected
 X   to be used, otherwise it's gonna be total hell when we make a real api
 X   getEditor()
 X   get/setSelStart/End
@@ -5814,7 +5924,7 @@ X       no, bad idea.. don't want a zillion submenus on things
 
 
 0146 pde
-X fix problem with comment/uncomment and indent/outdent 
+X fix problem with comment/uncomment and indent/outdent
 X   when no selection, and on the first pos of the line
 X on comment/uncomment, need to check if *all* lines are commented
 X   otherwise should be comment (never uncomment unless all selected)
@@ -5826,11 +5936,11 @@ X   also highlighting the correct line
 X Exceptions not being reported properly to the PDE
 X   lines with errors not highlighting
 X   http://dev.processing.org/bugs/show_bug.cgi?id=877
-X   was ok in 0144, but 0145 things broke 
+X   was ok in 0144, but 0145 things broke
 X   probably b/c not catching ex inside the run() method
 X getMessage() not sufficient for exceptions coming through
 X   get actual message text, plus the exception itself
-X now using actual sketch name (instead of temp name) 
+X now using actual sketch name (instead of temp name)
 X   this should be safe since launching an external vm to run
 X make the p5 icon show up for the window
 X   when launching a new sketch
@@ -5846,7 +5956,7 @@ X   http://processing.org/bugs/show_bug.cgi?id=42
 X exceptions in draw() apps aren't caught
 X   the program resize(200, 200); just does nothing (doesn't complain)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=81
-X exception in setup() on external app doesn't kill run button 
+X exception in setup() on external app doesn't kill run button
 X   also doesn't kill external vm
 X   http://dev.processing.org/bugs/show_bug.cgi?id=79
 X   fixed in the 0140s
@@ -5904,7 +6014,7 @@ o     this is particularly bad with threaded applications
 
 0143 pde
 X fixed build problems with macosx and linux, thanks to reports
-o need to compare with localized version of javac strings 
+o need to compare with localized version of javac strings
 X   http://dev.processing.org/bugs/show_bug.cgi?id=828
 X   just moving to ecj instead of javac
 X preproc code showing through since it's on line 0:
@@ -5942,7 +6052,7 @@ o   2) its mod date is earlier than when p5 0125 was installed
 o   point the user to Tools -> Reload sketch with local encoding
 o   then re-save the file to update the mod date
 o   ...or, when first running p5 0125, offer to update sketches
-o     this is a bad idea--since it's probably 
+o     this is a bad idea--since it's probably
 X need to set a default charset for use in files (utf8)
 X   add option to change charset or specify as part of loading
 X   need to specify the default encoding
@@ -5964,12 +6074,12 @@ X   can't seem to verify this
 X occasional division by zero on windows
 X   http://dev.processing.org/bugs/show_bug.cgi?id=777
 X   should be fixed, but need to verify once a release candidate is ready
-X two fixes for readBytesUntil() and bufferUntil() 
+X two fixes for readBytesUntil() and bufferUntil()
 X   also not calling serialEvent()
 X   http://dev.processing.org/bugs/show_bug.cgi?id=96
 X fix goof with console preference in preferences.txt
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1213042400
-X need to add usequartz when running externally? 
+X need to add usequartz when running externally?
 X   no, tested and it seems to be working
 
 cleaning
@@ -6023,14 +6133,14 @@ X xml.getIntAttribute() returns a float
 X   http://dev.processing.org/bugs/show_bug.cgi?id=790
 X include memory settings with exported applications on macosx
 X   http://dev.processing.org/bugs/show_bug.cgi?id=803
-X error highlighting broken 
+X error highlighting broken
 X   http://dev.processing.org/bugs/show_bug.cgi?id=795
 
 
 0138 pde
 X importing a library results in "expecting EOF, found ..." error
 X   http://dev.processing.org/bugs/show_bug.cgi?id=788
-X remove console variable from preferences.txt 
+X remove console variable from preferences.txt
 X run only works with primary window in 0136, 0137
 X   http://dev.processing.org/bugs/show_bug.cgi?id=784
 X   throwing a stackoverflowexception because the console is broken
@@ -6043,7 +6153,7 @@ X remove debug messages from export
 
 
 0137 pde
-X move to multiple jars whenever 
+X move to multiple jars whenever
 X   1) a lib is in use, 2) code folder, 3) multiple files
 X remove oro.jar dependency (not needed with PApplet.match)
 X   this is kind of messy and requires a bit of testing to ensure proper
@@ -6055,7 +6165,7 @@ X applet export fails with opengl/code folder
 X   http://dev.processing.org/bugs/show_bug.cgi?id=714
 X synchronized (something) { } is horking up the preproc
 X   http://dev.processing.org/bugs/show_bug.cgi?id=136
-o inside the preproc 
+o inside the preproc
 o   change the arrays of default imports (now using 1.5+, so no 1.1,1.3,1.4)
 X   don't bother, they're cumulative
 X improvements to the linux startup script
@@ -6080,13 +6190,13 @@ X   fixed in newer qtjava
 o   http://dev.processing.org/bugs/show_bug.cgi?id=496
 X add to p5 app bundle
 X   mention re: apple slowness
-X   -Dapple.awt.graphics.UseQuartz=true 
+X   -Dapple.awt.graphics.UseQuartz=true
 X net library dies unceremoniously on "Connection Refused"
 X   just need to catch another exception
 X   http://dev.processing.org/bugs/show_bug.cgi?id=751
 X ctrl-/ to comment block
 X eeepc support for environment:
-X   splitPane.setMinimumSize(new Dimension(600, 600)); 
+X   splitPane.setMinimumSize(new Dimension(600, 600));
 X   change to: splitPane.setMinimumSize(new Dimension(600, 400));
 o   prolly need to have a param for this guy
 X switch to nanoxml instead of nanoxml-lite (29k vs. 5k)
@@ -6094,19 +6204,19 @@ X   check against ods
 X   http://dev.processing.org/bugs/show_bug.cgi?id=757
 X space after OPENGL param breaks export
 X   http://dev.processing.org/bugs/show_bug.cgi?id=769
-X svg demos are broken 
+X svg demos are broken
 X   because of weird ENTITY setup
 X   because of weird (default?) filling problem
 X remove support for random .class files in code and library folders
 X   need to put everything in jar files
 X opengl currently broken in svn (probably the native libs not included?)
-X   mistakes wrt 'library.path' 
+X   mistakes wrt 'library.path'
 X   also, don't add /library/ for each lib to the classpath
 X remove unused libraries from default run path
 X   note that this will hose svg b/c xml not available
 X   so when this change is made, the lib depends needs to be implemented too
 
-X changing to java 1.5 
+X changing to java 1.5
 o   switch to java 1.4.2_16 on linux and windows (now that osx is there?)
 X   change to 1.5+ (instead of 1.4*) in Info.plist for Processing.app
 X   updated linux to java 1.5.0_15
@@ -6146,7 +6256,7 @@ X change software to point at correct reference locations
 
 
 0135 pde
-o opening a file from right-click in osx 
+o opening a file from right-click in osx
 o   opens the new thing directly behind an untitled document
 X improve how fonts are parsed from the preferences file
 X   this was causing strange errors as prefs files became corrupted
@@ -6171,14 +6281,14 @@ o   "reload sketchbook" option
 o   "show sketchbook folder"
 X start removing pre-1.4 support
 X multiple windows
-o what happens when p5 is launched without all its pieces? 
+o what happens when p5 is launched without all its pieces?
 o   both on windows and mac... is there a way put up useful message
 o if everything moved into the .app file, how do you add applet.html?
 o can we use useragent to determine whether java 1.4 is in use?
 o   for mac, could see if it's an old safari (1.3) or firefox (also 1.3)
 o   for windows, the classid will take care of it all (firefox too?)
 o   for linux, everyone's using 1.4/1.5 anyway
-X rewrite section on versions of java 
+X rewrite section on versions of java
 X   we're dropping support for anything before 1.4
 X   and don't recommend anything before 1.4.2
 X   we'll support 1.5 a little more now, but only libraries, not syntax
@@ -6262,7 +6372,7 @@ X   when new/open from menu, creates a new window
 o don't bug the user about new release of p5 when they have it
 o   add prefs option for "latest version run"
 o   something also to track--people going to older releases
-X   keeping this behavior, it's also the only way to know you're 
+X   keeping this behavior, it's also the only way to know you're
 X   running the wrong version when you accidentally open an oldie
 X createFont() needs to run 1.3+, and not in applets
 X   where is the bug reference for this.. and can it be fixed?
@@ -6352,7 +6462,7 @@ X   move examples folder to top-level menu
 X   move open menu to its own
 X BGraphics, BImage, void loop() -> give an error saying it's old code
 X   better yet, only do this when "not found" errors come up
-X need to fix changes.html because it lists out of date alpha->beta changes 
+X need to fix changes.html because it lists out of date alpha->beta changes
 X added getChild(name/path), getChildren(name/path) to xml library
 o   add notes about these to the reference
 o   needs a better example that includes subitems
@@ -6450,7 +6560,7 @@ X   add documentation
 X   add() or addFrame()?
 X find/replace - replace should do auto find next(?)
 X   or have a replace & find button
-X   placing "replace" next to "find" ... (hitting "replace all" by accident) 
+X   placing "replace" next to "find" ... (hitting "replace all" by accident)
 X   have a button "replace & find next"
 X   http://dev.processing.org/bugs/show_bug.cgi?id=68
 X only rebuild sketchbook on "save as" or "rename" of sketch
@@ -6475,7 +6585,7 @@ X   do a trim() on the selection for find in reference
 X   reorganize find in reference commands
 X add setDTR() method from tom hulbert
 X moviemaker is broken
-X updatePixels reference was cut off 
+X updatePixels reference was cut off
 X   double-check this after rebuild of reference
 X examples
 X   animated sprite example should use tabs
@@ -6506,12 +6616,12 @@ X slight improvements to some preproc/compiler error messages
 X   http://dev.processing.org/bugs/show_bug.cgi?id=12
 X   http://dev.processing.org/bugs/show_bug.cgi?id=13
 X   http://dev.processing.org/bugs/show_bug.cgi?id=15
-X deal with strange problem with KeyListener and {} on same line 
+X deal with strange problem with KeyListener and {} on same line
 X   http://dev.processing.org/bugs/show_bug.cgi?id=484
-X copy custom applet.html file on "Save As" 
+X copy custom applet.html file on "Save As"
 X   http://dev.processing.org/bugs/show_bug.cgi?id=485
 o preferences file gone corrupt (on osx only?)
-o   changing font size, 
+o   changing font size,
 o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1160057791
 X   http://dev.processing.org/bugs/show_bug.cgi?id=406
 o temporarily added log4j and jalopy (for the autoformatter)
@@ -6573,7 +6683,7 @@ X finish draw(x, y, c, d)
 
 
 0121 pde
-X fix button fatness on osx 
+X fix button fatness on osx
 X   quaqua already takes care of this for us
 X implement page setup and print
 X   pretty printing of code in project
@@ -6632,7 +6742,7 @@ X add PGraphicsOpenGL change to revisions.txt and the changes faq
 
 
 0116 pde
-o including function outlines in the code? 
+o including function outlines in the code?
 o   i.e. make setup() and draw() for people? seems silly.. not much to do
 o when importing a library, insert 'captureEvent'?
 o   again, seems to fraught with potential problems
@@ -6668,13 +6778,13 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=233
 o   external apps should inherit memory settings from p5 itself
 X   too confusing to set the memory in two places
 X   or perhaps, have a setting in the ide for it
-o   and allow a checkbox for "always run externally" 
+o   and allow a checkbox for "always run externally"
 X   that way people don't have to adjust the memory settings for p5 itself
 X   perhaps the memory setting should be enabled/disabled
 X     that way if it's enabled, will always run externally
 o menu weirdness (benelek)
 o   when you've got a menu open, move a cursor over the text area
-o   and back over the menu, the text-area cursor type remains. 
+o   and back over the menu, the text-area cursor type remains.
 X   mark this as wontfix, since it's just a java bug
 X   http://dev.processing.org/bugs/show_bug.cgi?id=30
 X remove the second movie from the movie playback example
@@ -6743,7 +6853,7 @@ X   add more information about setting the memory
 X   move memory setting to troubleshooting page on bugs db
 X the source code to the libs are included
 X   this makes them easy to modify (in another app)
-X   or you can remove the package statements and embed them 
+X   or you can remove the package statements and embed them
 X   serial is a little trickier since you'd have to put stuff in code/
 X windows, may need to install new version of video drivers
 X   add to opengl doc/faq
@@ -6779,7 +6889,7 @@ X move troubleshooting page to the reference
 
 faq / platforms
 X add notes about running processing on various platforms
-o directions for rebuilding jikes, etc (where is this?) 
+o directions for rebuilding jikes, etc (where is this?)
 o and then link to posts on the discourse site about how to do it
 
 faq / export
@@ -6835,7 +6945,7 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=315
 
 0111 pde
 X switch back to rev b3 of jogl so that applets will work
-X fix color picker: 
+X fix color picker:
 X   http://dev.processing.org/bugs/show_bug.cgi?id=308
 X   also add esc/ctrl-w for closing the picker
 X update information on mactels in the faq, also java 1.6
@@ -6869,12 +6979,12 @@ X adding dxf library to distribution
 X fix bug with drag & drop of files to sketch on macosx
 X need space between bullet points in faq css
 X   also need the absolute url stuff to work
-X add discourse formatter tool 
+X add discourse formatter tool
 
 
 0107 pde
 X fix yet another save bug, context menu paste/cut not setting modified
-X undoing to the code's original state won't unset it as "modified" 
+X undoing to the code's original state won't unset it as "modified"
 X   http://dev.processing.org/bugs/show_bug.cgi?id=248
 
 
@@ -6891,7 +7001,7 @@ X removed "yep yep yep" when using "Create Font"
 X p5 not saving changes on quit, even if you say 'yes'
 X   http://dev.processing.org/bugs/show_bug.cgi?id=276
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1139519266
-X update osx for intel binary (if necessary) 
+X update osx for intel binary (if necessary)
 X   if running on 10.4, univerals jikes installed in /usr/bin/jikes
 X     updated the jikes included with p5 to be the universal version
 X   add notes to the faq about status
@@ -6948,7 +7058,7 @@ X make editor save button highlight on ctrl-s
 X   same goes for the other editor buttons
 X   http://dev.processing.org/bugs/show_bug.cgi?id=242
 X deal with "could not delete stderr.txt" messages
-X   probably screwed up the temp folder stuff 
+X   probably screwed up the temp folder stuff
 X   build folder is randomized, being recreated on each build
 X mark temp build folder for deletion on exit
 X properly remove console files on exit
@@ -6959,9 +7069,9 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 
 tab handling
 X indent/outdent with curly braces
-X tab to just indent lines properly, 
+X tab to just indent lines properly,
 X   rather than having it convert to spaces
-X   need a smarter handler (rather than the editor listener) 
+X   need a smarter handler (rather than the editor listener)
 X   could look at previous line for its indent
 X   and when hitting } do a proper outdent (if only spaces before it)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=22
@@ -7069,7 +7179,7 @@ X console text selection immediately de-selects
 X   suspect console is updated every 250 ms even when the app isn't running
 X   simplest to just not update the console if nothing is waiting in buffer
 X   http://dev.processing.org/bugs/show_bug.cgi?id=180
-X problem with using qtjava is probably the quotes.. 
+X problem with using qtjava is probably the quotes..
 X   remove them because they're matching quotes elsewhere
 X drag & drop implementation to add files to sketch
 X   http://dev.processing.org/bugs/show_bug.cgi?id=21
@@ -7092,7 +7202,7 @@ X   need to figure out threading etc
 X   problem with it launching a new thread for every single update!
 X   http://processing.org/bugs/show_bug.cgi?id=19
 X make a note that video doesn't currently work in applets in the faq
-X scanning sketchbook folder may be extremely slow 
+X scanning sketchbook folder may be extremely slow
 X   when lots of frames saved out, takes forever to scan the folder
 X   some dumb sorting code was responsible
 X   and each file was being treated as a directory. oops.
@@ -7105,9 +7215,9 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=48
 o auto-run the javadoc in dist.sh
 o   doctor a copy of the css file to use p5 defaults
 o   and re-copy the css in after generating the doc each time
-X timing fix introduce regression on linux 
+X timing fix introduce regression on linux
 X   extra (NUL?) chars are added
-X   i.e. on first run, the ten blank lines each have a li'l box 
+X   i.e. on first run, the ten blank lines each have a li'l box
 X   http://dev.processing.org/bugs/show_bug.cgi?id=118
 X faq: "my applet doesn't work on export"... where to check for errors
 X   very common: cached version is being used
@@ -7122,18 +7232,18 @@ fixed in previous releases
 X closing window w/o first hitting stop() causes freak out
 X   opengl gives an OutOfMemoryError
 X   java2d just goes into a lock
-X   could also be code that's in an infinite loop (i.e. text error) 
+X   could also be code that's in an infinite loop (i.e. text error)
 X     which then causes a full lock
 X something really bad happened with println() in this release
 X   perhaps only without a code folder and/or running in java2d mode?
-X   this may also be what's hosing 
+X   this may also be what's hosing
 X external apps don't stop at all when 'stop' is hit
 X   worker thread is halting the app ala code folder bug
-X   could this be dealt with by using nio? 
+X   could this be dealt with by using nio?
 X     host environment will be running 1.4 so...
 o make note that changing screen config requires restart of processing
 o   static { checkScreens(); }
-o   static void PApplet.checkScreens() { } 
+o   static void PApplet.checkScreens() { }
 o   to run explicitly later
 o   this seems too complicated.. just make people restart
 o convert spaces to underscores and vice versa for sketch/tab names
@@ -7142,7 +7252,7 @@ o   only needs to be underscored when passed off to java
 o   although then if people *want* underscores, there's gonna be trouble
 o   http://dev.processing.org/bugs/show_bug.cgi?id=76
 o if in full java mode
-o   if extends PApplet.. or rather, put PApplet cast into a 
+o   if extends PApplet.. or rather, put PApplet cast into a
 o   try/catch block.. if it doesn't work, try applet. if that
 o   doesn't work, try using the class' main() to run it
 X   not gonna do this, p5 is not a java editor
@@ -7161,11 +7271,11 @@ X buglist.cgi
 X   replace the platform column with the os column (uses icons for os)
 X   sorting based on any of the headings gives an error
 X   "102 bugs found. 102 bugs found."
-X   remove the severity column 
+X   remove the severity column
 X     it's normal or enhanced, and enhanced is already gray
-X make os into: Mac OS, Windows, Linux, Other 
+X make os into: Mac OS, Windows, Linux, Other
 X   while other categories might exist, it's too confusing for minimal benefit
-o   make things that are P5 into "enhancement" 
+o   make things that are P5 into "enhancement"
 o   unless a P6 can be added? or something called "enhancement"?
 X is there a way to list "all" bugs (especially sorted by priority?)
 X   or at least the first 20 listed by priority?
@@ -7195,7 +7305,7 @@ X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115787397;start=0
 X wasn't using runner stop button color
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Suggestions;action=display;num=1116166897;start=0
-X fix up the video crap because nobody reads the faq 
+X fix up the video crap because nobody reads the faq
 X   and no cameras means that the list comes back null
 X can't seem to find build dir on operating systems w/ non-ascii chars
 X   or rather, when user accounts have non-ascii chars in the name
@@ -7226,7 +7336,7 @@ X   not seen for a long time
 o   this may be fixed?
 o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076358432;start=0
 o package processing.app for PdeBase, PdeEditor..
-o if NullPointerEx on a line that includes a "pixels[" 
+o if NullPointerEx on a line that includes a "pixels["
 o   give an error message saying "you may need to call loadPixels"
 
 discuss with casey
@@ -7246,7 +7356,7 @@ X   we've attempted for less confusion over speed in some cases
 X   get(), set() and red() et al are one such example
 X web colors with alpha: 0xffcc0080 or unhex("ffcc0080")
 `X the draw() method must exist, otherwise the sketch won't run
-X   i.e. can't just have mousePressed() 
+X   i.e. can't just have mousePressed()
 o make a sketch that shows loading from the web
 o make another sketch that shows loading from a file
 X make notes about preproc
@@ -7342,15 +7452,15 @@ o   System.err was getting cut off before finishing
 o no transformations before background() is called
 o   implementation specific, may cause trouble
 o must call depth() for 3D applications
-o lights cannot be enabled/disabled throughout 
+o lights cannot be enabled/disabled throughout
 o   lighting will be based on what's left at endFrame()
 X images should be a power of 2, or call modified()
-X document the use of "die" 
+X document the use of "die"
 X   can override the method to do your own handling
 X sketches no longer require a "data" folder
 X example that uses loop/noLoop, or redraw?
 X talk to creas about making html files for bugs, readme, revisions.
-X   or how they should relate to the 'faq'.. readme -> faq? 
+X   or how they should relate to the 'faq'.. readme -> faq?
 X loadImage() mixed case problems
 
 
@@ -7380,7 +7490,7 @@ X   righthand max isn't being updated for that second line
 X   or it's getting written over by the line below it
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1113932608
 X include platform information when checking for updates
-X   send over the int as long hex number? 
+X   send over the int as long hex number?
 X   64 bits hex is gonna be 16 digits.. much cleaner
 o when people are running 1.5, warn them?
 o   if p5 is running 1.5, let them know to use the standard install
@@ -7389,9 +7499,9 @@ X   nah, this seems like overkill.. problems haven't been *that* bad (yet)
 X make sure that when running ext, using the local java
 X macosx 10.2 needs libiconv to run jikes
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114113204;start=0
-o   either compile jikes not to use it: 
+o   either compile jikes not to use it:
 o     http://jikes.sourceforge.net/faq/dev-win32.shtml
-o   or maybe include an installer: 
+o   or maybe include an installer:
 o     http://www.bluem.net/downloads/libiconv_en/
 o   gnu page for libiconv
 o     http://www.gnu.org/software/libiconv/
@@ -7430,15 +7540,15 @@ X wontstart wasn't properly linked
 X watch out for upper/lowercase changes
 X   methods and functions always start lowercase, and have inner caps
 X faq - java 1.5
-X   seems to run things more slowly.. 
+X   seems to run things more slowly..
 X   if using p5 standard, will be running 1.4
 X   but if 1.5 installed, browser will probably use that
 X   opengl only runs with 1.4
 X   opengl not tested for applets
 X   to get to opengl functions, put this after size:
 X     GL gl = ((PGraphicsGL)g).gl;
-X     and then can make opengl calls. this is not supported, 
-X     and if things don't work, sorry. 
+X     and then can make opengl calls. this is not supported,
+X     and if things don't work, sorry.
 X faq - known bugs
 X   1 pixel stroke weight in opengl (temporary)
 X   make clear that P2D is not working if not clear enough
@@ -7476,7 +7586,7 @@ X   a bunch of stuff from revisions.txt on 84 and 82
 o   how to deal with bugs, since there are so many known...
 
 save as... bugs
-X always make sure that the sketch folder still exists 
+X always make sure that the sketch folder still exists
 X   otherwise editor gets into a weird state
 (v74) if a project folder is made (with save as), and then deleted
 while processing is still open, there is an error (of course).  but
@@ -7489,7 +7599,7 @@ saving a project over an already existing project does not get rid of
 the .pde files that arent overwritten.  not sure if this is feature or
 bug, but it took me by surprise.  it seemed to only overwrite .pde
 files with the same name, but everything else in that project folder
-stays as is. 
+stays as is.
 
 X sketch renaming fixed
 X   rename, change, was asking about the old sketch name
@@ -7507,7 +7617,7 @@ File>Open some other file
 File>Open original file
 file is empty.
 the only way to make File>Save As actually save new files, as far as i
-can tell, is to Save As once, make at least one change, then Save. 
+can tell, is to Save As once, make at least one change, then Save.
 
 X fix hide/unhide bug... just was dumb code
 create a new sketch
@@ -7523,7 +7633,7 @@ where did "a_2" go ?
 0083 pde
 X move everything to packages, and start auto-javadoc
 X how to get preproc to automatically prepend packages
-o   only build preproc from preproc/make.sh? 
+o   only build preproc from preproc/make.sh?
 o   and check in the preproc'd code to cvs?
 X need to add classes dir to cp for jikes make (on win and linux)
 X get both versions of size() properly detected on export
@@ -7568,9 +7678,9 @@ o should loadPixels be grabPixels? (nope)
 saturday evening
 X update processing/build/howto.txt
 X   add 'make' to list of things that should be installed
-X update libraries/howto.txt 
+X update libraries/howto.txt
 o   should we queue lib events until the end of loop?
-X   nope, libraries can handle that themselves, 
+X   nope, libraries can handle that themselves,
 X     and queue events by registering for draw or whatever they'd like
 X   lib could call queueEvent with the args
 X   then call them inside post()
@@ -7618,7 +7728,7 @@ o   fix for 78 since not sure when simon's new version is happening
 X   requires because uses 3D.. oh well
 o "draw" is not highlighted as a keyword.. other keywords?
 o   draw(), PGraphics(), NO_DEPTH_TEST, PMovie(), PMovie.repeat()
-o   PClient(), PClient.available(), PClient.read(), 
+o   PClient(), PClient.available(), PClient.read(),
 o   PServer(), PServer.dispose(), PServer.write(), attach(), length
 o   round() is not colored
 
@@ -7672,7 +7782,7 @@ X include "you need to install java" text on default export page
 X make compatible with jikes 1.22
 X   fix all warnings generated by the new jikes
 X   update windows version of jikes.exe
-X   update macosx version of jikes 
+X   update macosx version of jikes
 X     get source and build on osx (or is it shipped by default?)
 X     make sure that fink is not in the path when building
 X     what are the args to configure a release version?
@@ -7714,7 +7824,7 @@ X   is PdeEditorHeader one pixel too tall
 X   move the tabs over just slightly
 X resize box intrudes on the scroller for the console area
 X   need to set grow boxes intruding to false
-X   1.3 version (deprecated): 
+X   1.3 version (deprecated):
 X     -Dcom.apple.mrj.application.growbox.intrudes=false
 X   1.4 version (much nicer): -Dapple.awt.showGrowBox=false
 X add mkdmg script to macosx build process
@@ -7754,11 +7864,11 @@ X   also put something in lib/preferences.txt for default location
 X     this way a course admin can change the default location
 o need to check if volume is read-only, notify and quit if it is
 o   people are trying to run off the disk image
-o   actually that should be fine.. 
+o   actually that should be fine..
 o     but make sure the prefs location can be written
 o   need to pay attention to when running from read-only drive
 o     reported by brandenberg
-o    "p5 will launch from the disk image, but will 
+o    "p5 will launch from the disk image, but will
 o     not draw the sketch name bar doesn't appear"
 X include preferences.txt option to write to p5 folder first
 X   this can be altered by instructors and re-packaged
@@ -7767,7 +7877,7 @@ X put 'play' on a SwingWorker thread
 X   test this on a pc to see how it goes, especially with opengl
 X   doesn't seem to help anything
 X PdeRuntime -> SystemOutSiphon, removed MIN_PRIORITY setting
-o hack to not use console on the code folder 
+o hack to not use console on the code folder
 o   no errors will propogate, but it should run fine
 X lib/build should not be a subfolder of p5
 X   p5 environment installed to /Applications on lab machines
@@ -7775,7 +7885,7 @@ X   instead use a temp folder
 X   maybe when running on lab machines in that case, always java mode?
 X   or is it possible to add to java.class.path while app is running?
 X     have to use a special class loader
-X new class loader for single files 
+X new class loader for single files
 X   if more than one class defined, forces it to run externally
 X     (basically any time it sees "class" in the code..
 X     may be subject to errors, but errs on side of just running ext)
@@ -7792,7 +7902,7 @@ X make preproc only build once (across osx, windows, linux)
 X preproc: making all functions public that have no specifier
 X   this will make draw() etc all much easier
 X   as well as the library events
-X   focusGained/focusLost was added.. 
+X   focusGained/focusLost was added..
 o if a data file is in the sketch (not data) folder export breaks
 o   works fine in the editor, but on export gets a nullpointer ex
 X   no way around this, because needs to be able to read from local dir
@@ -7820,10 +7930,10 @@ X  serialEvent, clientEvent, serverEvent
 X if videoEvent exists, don't auto-read?
 X   though for serial this would only grab the last byte
 X   video bug on osx? an error message when quitting video sketches:
-X   java.io.IOException: Bad file descriptor 
-X     at java.io.FileInputStream.readBytes(Native Method) etc... ). 
+X   java.io.IOException: Bad file descriptor
+X     at java.io.FileInputStream.readBytes(Native Method) etc... ).
 o bring back some form of beginSerial/beginVideo
-o   openSerial(), serial().. 
+o   openSerial(), serial()..
 o   should it prompt or use the first available if none specified?
 X run library destroy after hitting 'stop'
 X   quicktime audio doesn't stop after hitting 'stop'
@@ -7847,7 +7957,7 @@ X keypressed hanging on applets with a code folder
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081450102
 X problems running external vm/vm is hanging
 X   seems to be happening because of virus scanning software (norton)
-o   may need to launch the applet (using 'start') 
+o   may need to launch the applet (using 'start')
 o     and talk over a socket instead
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067867520;start=0
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067643186
@@ -7862,18 +7972,18 @@ output to the console and see if it'll still crash.
 run via a disconnected process, using "cmd /c start java", the thing
 will never hang. in that instance, the process terminates almost
 immediately, and no i/o needs to happen (since it's a cmd prompt that
-never shows up). 
+never shows up).
 * it could also be a graphics sync bug that just gets more testy
 because the environment, a second java process, is running at the same
 time. mis.newPixels() may hork since it's over in the applet's thread,
 and it might be calling repaint() or Toolkit.sync() to update the
-image on-screen. 
+image on-screen.
 * shows up on key presses.. not sure if this is because of the actual
 key press, or if it's because they're often accompanied by a println()
 * blank spaces in filenames/parent folder often cause trouble.. not
 sure if related. same for PATH and CLASSPATH.
 * some virus scanning software, particularly older NAV versions cause
-the trouble. 
+the trouble.
 
 
 0074 pde
@@ -7907,14 +8017,14 @@ X   uppercase being capitalized before lowercase
 X   need to mix case.. use toLowerCase before compare
 X add a little gap on editor frame at the left
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1097363967;start=0
-X add to readme or bugs.. 
+X add to readme or bugs..
 X   menus that are too long just get clipped on the screen
 X     can't be fixed because it's a java/os issue
 X   also strange menu behavior for popups, especially on osx we can't fix
 o if applet.html is present, open that in the editor too.
 o   or do we make people use dreamweaver?
 o   nixed by casey, we're not dreamweaver
-X macosx not exporting core.jar 
+X macosx not exporting core.jar
 X   the jar is buried Contents/Resources/Java
 X don't enable externalRuntime with multiple code files that are pde
 X   no longer separate classes
@@ -7932,7 +8042,7 @@ X remove grow box from applet frame
 
 macosx
 X verify that export is working from processing.app
-o check into ryan's macosx java bug.. 
+o check into ryan's macosx java bug..
 o   see why coords are going negative
 
 
@@ -7953,11 +8063,11 @@ X   sketch is changing before the "save changes?" is complete
 X     as a result, 'cancel' does nothing
 X   always ask save changes, even if nothing changed
 
-040620 sunday 
+040620 sunday
 X remove 'sketchbook.prompt' (comment it out)
 X   not really needed
 X   remove prompt stuff from the preferences panel
-X clean up the "more options" in prefs panel 
+X clean up the "more options" in prefs panel
 X   to use JLabel instead of JTextArea
 X   font was wrong on windows
 X start working on "save as"
@@ -7998,7 +8108,7 @@ X   reads sketchbook properly from other folder
 X   but creates a new folder for new sketches to go into
 X sketchbook.dir not properly read or written
 X install sketchbook into another location on person's machine
-X   use System.getProperty("user.home"); 
+X   use System.getProperty("user.home");
 X   remove the 'default' for sketchbook
 X   bring this up on bboard and get votes
 X   win2k: my documents, macosx: ~/Documents, linux: ~/sketchbook
@@ -8047,14 +8157,14 @@ X   sometimes nice just to have it create an unnamed sketch quickly
 X   shift-new will always prompt with filedialog
 X dashes shouldn't be allowed in filenames for sketches
 X   actually, lost the naming stuff because now using FileDialog
-X   this also needs to be checked when building the sketch menu 
+X   this also needs to be checked when building the sketch menu
 X rewrite sketchbook.clean()
 X   prompt user if they don't have it set to auto
 X   add a pref to the preferences window
 
 040622 monday late night
 X set handleOpen to use editor as its parent frame
-X what happens when the .pde file isn't named 
+X what happens when the .pde file isn't named
 X   the same as the enclosing folder?
 X   maybe put up a window saying no way, and ask:
 X   ( ) rename enclosing or ( ) add a subfolder
@@ -8062,7 +8172,7 @@ X   or maybe even ( ) rename the sketch file
 X   also double-check to see if there *is* a proper pde in the folder
 X     in which case, default to that (maybe show a message?)
 X   it's useful to have loose .pde files be runnable..
-X   i.e. when double-clicking on them.. downloaded off web.. 
+X   i.e. when double-clicking on them.. downloaded off web..
 X     but need to deal with simply, not providing a new exception case
 X begin writing 'new text file'
 
@@ -8106,7 +8216,7 @@ X what should the prefs file be named?
 X horizontal buttons? need final decision [yes]
 X remove underscores from the tab title?
 X   nope, casey says not necessary
-X need nice yes/no dialog boxes, also 
+X need nice yes/no dialog boxes, also
 o does "Open" go at the beginning or end of the sketch popup
 X we need opengl support in there
 X   otherwise we're going to be stuck behind director
@@ -8134,7 +8244,7 @@ X add .java to file name in the tab
 X change name of prefs to Processing Preferences.txt
 X implement clone for BImage
 X api name changes for imaging functions
-X   constant SUBSTRACT -> SUBTRACT 
+X   constant SUBSTRACT -> SUBTRACT
 
 040707 afternoon
 X minor bug with when setting sketchbook to a bad location
@@ -8172,7 +8282,7 @@ X modify preproc to handle "void setup" -> "public void setup"
 o preproc bug: text(String.valueOf(i+1), left + i*20, top);
 o   unexpected token "String"
 X make more things public (i.e. pixels)
-X get casting working properly.. int() maps to toInt()? 
+X get casting working properly.. int() maps to toInt()?
 X   what is performance hit for this thing?
 X remove substitute_image/font
 X remove String casting
@@ -8218,7 +8328,7 @@ X processing.serial -> PSerial, [PUsb]
 
 other stuff / cleaning up
 X don't allow apostrophe (i.e. casey's_cells) when naming sketch!
-X when exporting applet, line numbers will be off.. 
+X when exporting applet, line numbers will be off..
 o   when not exporting with new preproc code, imports all on same line
 o   make preproc keep track of how many lines were added
 X rewrite video, net, serial libraries to be separate
@@ -8244,7 +8354,7 @@ o ability to include other .java and .pde code from sketchbook folder
 o   'add files' for .java or .pde pulls into the folder
 X split to take strings (ie. for ", ")
 o image(BImage, x, y, float scale) (found in illustrator stuff)
-o begin/end.. beginSerial/endSerial -> 
+o begin/end.. beginSerial/endSerial ->
 o   openSerial/closeSerial ?
 o   startSerial/stopSerial
 X punting on api
@@ -8282,8 +8392,8 @@ X     load that before the other stuff
 X     -> was already implemented like that
 o fix the problem causing all the "couldn't delete" messages
 o class naming from dan
-o   If you name a class the same name as the sketch project, 
-o   you get an error about contained classes with duplicate names 
+o   If you name a class the same name as the sketch project,
+o   you get an error about contained classes with duplicate names
 o   when you try to export for web.
 o quick fix inside PdeRuntime
 o   if (loop == false) and (draw == false) then provide an error
@@ -8305,7 +8415,7 @@ shape class Something {
   void setup() {
     // not used, or called on first draw
 
-    // but maybe required (even if behind the scenes) 
+    // but maybe required (even if behind the scenes)
     // so that this can use "implements ShapeInterface"
   }
 
@@ -8328,7 +8438,7 @@ shape(ShapeInterface o) {
 
 X run java mode when large 'data' folder is in use
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081542378
-X fixed one bug in PdeRuntime error message stuff 
+X fixed one bug in PdeRuntime error message stuff
 X   was this the big one? a big one?
 
 040715 late
@@ -8353,15 +8463,15 @@ X   i.e. cut -> new file -> paste doesn't mark any as changed
 X "include all chars" and all the bugs it represents
 X working on datatype conversions
 
-040717 
+040717
 o dll and jnilib files have to be in the p5 folder (confirmed by amit)
-o   there should be other places that they work.. 
+o   there should be other places that they work..
 o   could even copy the dll to the p5 folder from the code folder
 o   already fixed with LD_LIBRARY_PATH stuff
 
 040902
-X building Processing from scratch 
-X   not able to write "preferences.txt" on the first run 
+X building Processing from scratch
+X   not able to write "preferences.txt" on the first run
 
 040903
 X examples should be in a submenu of open
@@ -8376,14 +8486,14 @@ o   need to be able to select between which to include
 o   auto-resolve by saying java.* wins, others ask
 X make built-in libraries read-only
 
-040912 
-X several menu changes as discussed with casey 
+040912
+X several menu changes as discussed with casey
 X   (capitalization, export/export app, tools)
 X add preference for showing library stuff
 
 040913 morning
 X figure out why user libraries not being added
-X in lib mode, show internal libraries as part of the 'open' menu 
+X in lib mode, show internal libraries as part of the 'open' menu
 X make a note that p5 has to be restarted for libs
 X import all libraries into classpath
 X   all libs found during sketchbook build + all libs in libraries
@@ -8397,7 +8507,7 @@ X "Processing" folder not properly created on new install
 X add noLoop() to static mode apps
 X remove "loop" from special inserts on preproc
 
-040921 afternoon 
+040921 afternoon
 o when running externally, build into sketch folder?
 X add all imported libs to hash table of jars
 
@@ -8423,7 +8533,7 @@ X   errorMessage in PSerial/PClient/PServer are all using System.out
 X write handler for loop() error, warning user to rename loop to draw
 X   c:/fry/processing/build/windows/work/lib/build/Temporary_1452_9170.java:29:6:29:11: Semantic Error: The method "void loop();" with default access cannot replace the accessible method "void loop();" with public access declared in type "processing.core.PApplet".
 
-040925 
+040925
 X change how export.txt works
 X make p2 dist for amit
 X break out BSerial as separate object like BVideo
@@ -8438,7 +8548,7 @@ o   http://docs.info.apple.com/article.html?artnum=93414&sessionID=anonymous%7C2
 o   "Type quicktime.std.stdQTConstants was not found"
 o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1066358763
 o   http://docs.info.apple.com/article.html?artnum=120255
-X split classes to BVideo and BMovie ? 
+X split classes to BVideo and BMovie ?
 X don't force install of qtjava
 X   this requires a separate version of bagel that doesn't use video
 X   or a version that loads video dynamically. that kinda sucks.
@@ -8467,7 +8577,7 @@ X selecting input source (wintv board and quickcam installed.. problem)
 
 network
 o don't send unicode data
-X when you stop the client, it freezes 
+X when you stop the client, it freezes
 X   until you quit the processing running the server
 X   (the server starts and stops fine)
 X add constants for building NET, move stuff around in bagel dir
@@ -8485,7 +8595,7 @@ X remove fonts from distribution
 X be able to link against, but not export, certain parts of lib
 X   jsyn.jar not needed on export, netscape libs not needed on export
 o crap.. libraries need to be in packages for this to work
-o   but annoying: attach("simong.particlesystem.ParticleSystem") 
+o   but annoying: attach("simong.particlesystem.ParticleSystem")
 X disable "export application"
 X font builder
 X   properly update the font on new selection
@@ -8530,7 +8640,7 @@ X   go through the board and move messages
 X a garbage filled classpath can cause trouble
 X   http://processing.org/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1096302833;start=0
 X processing won't start..
-X   people with non-ascii chars in the folder name 
+X   people with non-ascii chars in the folder name
 X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062794781;start=0
 X     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1067764732
 X   other errors with spinning and not doing much
@@ -8557,7 +8667,7 @@ X   update to new shell runner (old mrj guy was ancient)
 0070p7
 X fix run.bat and run-expert.bat
 X remove library path debug message
-X catch error message for "quicktime.std" 
+X catch error message for "quicktime.std"
 X move packages to processing.video, processing.serial, etc.
 X   need to update the set of new examples
 X make sure the library features are disabled by default
@@ -8575,7 +8685,7 @@ X update with other examples
 0070p8 (final)
 X height for applets wasn't working properly
 X debug font stuff in processing.core
-X   mbox wasn't set properly (not a power of 2) 
+X   mbox wasn't set properly (not a power of 2)
 X debug framerate() stuff with noLoop()
 X re-enabled printarr(Object[])
 X remove SystemOutSiphon: i just died message
@@ -8588,7 +8698,7 @@ X examples updated
 
 
 0069 pde
-X font builder 
+X font builder
 X   crashing on small sizes for many fonts
 X   make the text area not selectable or highlightable
 X   add a few more rows
@@ -8746,7 +8856,7 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 0066
 X BImage.replicate for straight 1:1 copy, blend() for blended version
-X   remove the blendMode function because it's confusing 
+X   remove the blendMode function because it's confusing
 X big changes to image code from toxi
 X repaired smoothing so that it doesn't crush the last line
 X bresenham ellipses/circle ignore alpha
@@ -8768,7 +8878,7 @@ X   if saveas/rename names match, use renameTo
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066495952;start=0
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1066497131;start=0
 X include JSObject with p5's pde.jar
-X   jaws.jar is already included on mac.. 
+X   jaws.jar is already included on mac..
 X   check to see if ok on pc (empty project -> new JSObject())
 X   files are in jaws.jar: JSObject, JSException and JSUtil
 X curvePoint not initializing
@@ -8802,7 +8912,7 @@ X fix SMOOTH_IMAGES problem with how text had been modified
 X include version number in the about box
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242
 X Ctrl-B will beautify the code and send the cursor back to the
-X   beginning of the the text. Then you have to scroll back to 
+X   beginning of the the text. Then you have to scroll back to
 X   where you were... ok, so maybe I am a heavy user of Ctrl-B.
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1064220242;start=0
 
@@ -8818,9 +8928,9 @@ X   removed the cancel button
 0063
 X beautify menu became disabled when moved
 X BImage(int width, int height) constructor
-X trying to track down sluggishness with applets.. 
+X trying to track down sluggishness with applets..
 X   beginShape/endShape.. 3D scenes with boxes..
-X   newPixels is in BGraphics.endFrame, 
+X   newPixels is in BGraphics.endFrame,
 X   screen.drawImage is in BApplet.paint
 X   need to move both to BApplet.paint()
 X external applet stuff
@@ -8877,7 +8987,7 @@ X open applet folder after exporting sketch
 X switch back to red instead of yellow for errors. whups.
 
 from carlos' contract, but implemented by fry
-X get font things sewn up 
+X get font things sewn up
 X  create a simple generator for grayscale bdf fonts
 X     document the change and make several of them
 X   font smoothing (unless hint SMOOTH_IMAGES enabled) is broken
@@ -8948,16 +9058,16 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062483060;start=0
 X if there's a bug in bagel, PdeRuntime.message() ignores it
 X   just says "NullPointerException" but provides no info
-X   now at least spews the exception 
+X   now at least spews the exception
 X removed ugly white borders from ui on macosx java 1.3
 X   is there anything better that can be done for osx java 1.3
 X   setInsets() to zero or something?
-X font.stringWidth -> font.width(char c) or width(String s) 
+X font.stringWidth -> font.width(char c) or width(String s)
 X removed extra push()/pop() in text(String s) that may save time
 X bezier error, goes up at the end
 X   also when using bezierMode, doesn't draw the first vertex
 X   size(300,200);
-X   bezier(0,100,width/3,100,2*width/3,100,3*width/3,100); 
+X   bezier(0,100,width/3,100,2*width/3,100,3*width/3,100);
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166242;start=0
 X add note to tga spec
 X   http://organicbit.com/closecombat/formats/tga.html
@@ -8982,12 +9092,12 @@ X   resize is maybe goofy, so just size() for all?
 X color() with alpha now works properly
 X removed SMOOTH_IMAGES
 X removed shearX and shearY
-X toxi image code (!) 
+X toxi image code (!)
 X   need background(BImage) and scaling, copy area, etc.
 X vertex(x, y, u, v) and vertex(x, y, z, u, v)
 X don't cast color()
 X   since more important for color(v1, v2, v3) to work
-X getPixel/setPixel -> get/set.. 
+X getPixel/setPixel -> get/set..
 X   get(x, y, w, h) is nice but no set(x,y,w,h)
 X   though set(x,y,w,h) could be nice
 X   and copy() to copy a section of pixels
@@ -9019,11 +9129,11 @@ X some flag to know whether applet is online or not
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1051758365;start=0
 X colorMode is defaulting to 255, 255, 255, 1.. oops
 X   though setting it differently hoses everything (clears everything)
-X setup (200, 200) causes the default size to be used 
+X setup (200, 200) causes the default size to be used
 X be able to draw something inside setup (?)
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1044689650;start=0
 X no time to ask for "save changes" before quit
-X   PdeEditor, around line 910.. not blocking until input 
+X   PdeEditor, around line 910.. not blocking until input
 X   read up on how to properly block for input in a java app
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165653;start=0
 X do not delete sketch folder if empty sketch but non-empty data dir
@@ -9055,9 +9165,9 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;
 
 fixes because of dmose parser
 dm X move to antlr
-dm X float z= float(x) + float(y); 
+dm X float z= float(x) + float(y);
 dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062471182;start=0
-dm X compiler barfs on: float[] moo = new int[10];  
+dm X compiler barfs on: float[] moo = new int[10];
 dm X   although no error comes through to p5 (benelek)
 dm X   this was a kjc error, so it's fixed with jikes
 dm X int() doesn't work inside other functions
@@ -9070,7 +9180,7 @@ dm X setup( ){} has an error, setup(){} does not
 dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062461971;start=0
 dm X weird comments bug (// on last line causes oro trouble)
 dm X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1062462227;start=0
-dm X unexpected token 'void' in letters sketch.. 
+dm X unexpected token 'void' in letters sketch..
 dm X   being parsed as static mode app
 dm X extra parens confusing things (toxi message)
 bf X http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064165730;start=0
@@ -9119,7 +9229,7 @@ X textureImage() -> texture()
 X textureMode() IMAGE_SPACE or NORMAL_SPACE
 X vertexNormal() -> normal();
 X vertexTexture -> vertex(... u, v);
-X bezier(... t) -> bezierPoint() 
+X bezier(... t) -> bezierPoint()
 X curveTangent and bezierTangent are in there
 X curve(... t) -> curvePoint()
 X bezierMode -> bezierSegments
@@ -9143,8 +9253,8 @@ X   ALIGN_XXXX becuase LEFT already used for keys
 X implement text(int something) and text(float something)
 o   and perhaps others?
 X textSpace SCREEN_SPACE and OBJECT_SPACE
-X strokeMode/strokeWidth -> 
-X   strokeWeight, strokeJoin, strokeMiter  
+X strokeMode/strokeWidth ->
+X   strokeWeight, strokeJoin, strokeMiter
 X param(), online(), and status() functions
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=BugFixes;action=display;num=1064166444;start=0
 
@@ -9198,7 +9308,7 @@ o   jre icon not appearing in the systray
 o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1030538508
 o getting mouse movement outside the window
 o   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1051916278;start=0
-X building releases from scratch 
+X building releases from scratch
 X   this is a useful developer task before release
 X     build all releases from a clean cvs
 X   tries to make work/ without bagel serial existing and blows up
@@ -9229,13 +9339,13 @@ X optimize color() when in colorMode(RGB, 255) to just pack the int
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1062072434;start=0
 X imageMode() shouldn't affect fonts
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1060207942;start=0
-X replacing spaces with underscores.. 
+X replacing spaces with underscores..
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1062103523;start=0
 X   patch keyTyped event instead of keyPressed
 X   remove reference in readme about macosx problem w/ it
 X   test on macosx
 X   test on linux
-X Event.consume() doesn't work on entry fields 
+X Event.consume() doesn't work on entry fields
 X   manifests itself in sketch naming, can't be constrained
 X   may not be the case under swing?
 X   it's probably because of keyTyped() being the important one
@@ -9258,7 +9368,7 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 known issues/bugs
 * quicktime for java is *required* on windows.. it's installed by
-default on macosx, and not used at all on linux. 
+default on macosx, and not used at all on linux.
 * QTJAVA environment variable is used to find quicktime. if that's not
 properly set, then you won't be able to run.
 * lots of 'cannot delete ...' messages
@@ -9307,7 +9417,7 @@ X write proper build instructions for bagel
 X   email about bagel doesn't have proper build instructions
 X   need to install cygwin, set CLASSPATH to build
 X   specific version of jikes (currently)
-X make mac version require head/tail from fink ? 
+X make mac version require head/tail from fink ?
 X   test to see if /sw/bin/head exists, if so use it
 X get dmose's new launcher running
 X   cleanup cvs bunk
@@ -9366,12 +9476,12 @@ X   removes a random ArrayIndexOutOfBoundsException
 X Thread.stop is deprecated (and has been since 1.2)
 X   http://java.sun.com/products/jdk/1.2/docs/guide/misc/threadPrimitiveDeprecation.html
 X   remove finished in favor of just setting thread to null in BApplet
-X check to see if setting threads to null works on windows 
+X check to see if setting threads to null works on windows
 X   the multiple thread killing code was in there for a reason
-X   not tested on macos9.. 
+X   not tested on macos9..
 X hiding the cursor. noCursor(), cursor()/cursor(ARROW), cursor(HAND), cursor(CROSS), cursor(image_file)
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1059485109
-X default size of console is bad.. 
+X default size of console is bad..
 o   prolly need to stuff in 4 blank lines
 o runtime exceptions not coming through on either mac or windows
 X   works fine on windows
@@ -9415,20 +9525,20 @@ X   seems that file names changed between 1.3 and 1.4
 X   sorted this issue out, now it's re-enabled
 X change default font for jdk 1.4
 X reference launching working properly
-X reference doesn't launch on mac (mKoser) 
+X reference doesn't launch on mac (mKoser)
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038424448
-X tweak for java 1.4 
+X tweak for java 1.4
 X   need to add a line to the properties file
 o   include a note about this in the readme, include url for download
 o     connect.apple.com
 X   bug on p5 bboard: http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1037829938;start=0
 running 1.4 from the command line:
-/System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/Commands/java 
+/System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/Commands/java
 Info.plist, setting JVMVersion
-* 1.3.1 - only use JDK 1.3.1, even if later versions are available. 
+* 1.3.1 - only use JDK 1.3.1, even if later versions are available.
 * 1.3* - use any version of JDK 1.3.x. Do not use JDK 1.4 even if it's dflt.
-* 1.3+ - use the latest JDK version from JDK 1.3 onward, up to default JDK. 
-* 1.4+ - use JDK 1.4 or later, even if an earlier JDK is the default. 
+* 1.3+ - use the latest JDK version from JDK 1.3 onward, up to default JDK.
+* 1.4+ - use JDK 1.4 or later, even if an earlier JDK is the default.
 o and then edit Info.plist to include the following lines:
 o <key>JVMVersion</key> <string>1.3.1</string>
 X control-click (right-click?) for macosx doesn't show popup
@@ -9443,7 +9553,7 @@ X   currently the only fix is to switch to java 1.3
 X update the readme to note that macos9 is suspended
 X why doesn't processing.app work anymore
 X   machine was screwy
-X perlin noise 1D. noise() 
+X perlin noise 1D. noise()
 X double-check to see if wheel mouse is working
 X macosx quit handler takes over ctrl-q
 X   so file->quit doesn't get called on close
@@ -9475,7 +9585,7 @@ X   puts a couple dots on random lines
 X modify build scripts for rxtx on osx
 X   libs from 2.1.6 download for osx seem to work
 X   write script to handle installation, etc.
-X     (maybe do this from inside p5?) 
+X     (maybe do this from inside p5?)
 X get jikes118 in there.. also in cvs
 o   add note to instructions for how to use
 X change Proce55ing.app to Processing.app
@@ -9530,7 +9640,7 @@ dm X   write handlers for jikes-style of error messages
 
 
 post-0057c1
-X deal with spaces in user.dir (!) 
+X deal with spaces in user.dir (!)
 X   affects reference, and prolly compiling too
 X alt key pressed spews errors about components
 X   prolly because of swing/awt component problems
@@ -9562,7 +9672,7 @@ X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 X String wasn't colored, so added parts of java.lang
 X BFont was allocating too much memory for fonts (found by arielm)
 X modified all scripts to unpack the new reference
-X simage() has been enabled again 
+X simage() has been enabled again
 X   https://sourceforge.net/tracker/index.php?func=detail&aid=750867&group_id=63445&atid=504000
 X image_mode has been ironed out
 X   https://sourceforge.net/tracker/index.php?func=detail&aid=750886&group_id=63445&atid=504000
@@ -9614,7 +9724,7 @@ bf X   reported by benelek
 hb X patch for server makes netEvent messages
 
 
-moved to sourceforge by arielm 
+moved to sourceforge by arielm
 
 
 BAGEL / Bugs
@@ -9625,7 +9735,7 @@ BAGEL / Bugs
    b _ image(img, x, y) in CENTER_DIAMETER is actually center radius
    b _    should make sure that x, y just makes it proper size
 
-   b _ simage() is screwy.. 
+   b _ simage() is screwy..
    b _   its invocation is broken (image_mode can't be two things at once)
    b _   doesn't actually use image_mode for placement
    b _   also doesn't support RGBA
@@ -9647,7 +9757,7 @@ BAGEL / Bugs
    b _   single pixel lines have no alpha and no z
    b _   fix all the random line types to support alpha
 
-   b _ anti-aliasing. smooth(), noSmooth() 
+   b _ anti-aliasing. smooth(), noSmooth()
    b _   need to verify that this works consistently throughout
 
    b _ alpha. fill(r, g, b, a), stroke(r, g, b, a),
@@ -9662,7 +9772,7 @@ X   use nfs (number format signed), with a bool for + or spc
 X does a[3] == Float.NaN work? (for testing with splitFloats)
 X   no, if NaN, then comparison will always return false
 X sort() functions for arrays of ints, floats, doubles, and Strings
-X add casey to sourceforge with admin privileges as 'reas' 
+X add casey to sourceforge with admin privileges as 'reas'
 X fix wheel mouse handler so that it works under jdk 1.3
 X   no difference between 1.3 and 1.4 code
 X   add WheelHandler to cvs
@@ -9697,7 +9807,7 @@ X image of 256x256 doesn't draw the last line of pixels
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1045697665;start=0
 X weird line in showing in the center of an image
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1044901171;start=0
-X color() should work for alpha.. 
+X color() should work for alpha..
 X   also #rrggbbaa
 X   http://proce55ing.net/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1049141984
 X blend() (or any other 'final' functions) is causing trouble
@@ -9720,17 +9830,17 @@ X   modelX or objectX could do the amit style thing
 X     creas says object
 X better access to projX et al
 X   what's a better name? calcX? or write to an array?
-X   projectX, projectY, .. or projectedX ? 
+X   projectX, projectY, .. or projectedX ?
 X   also projectSize should just be project()
 X smooth() and noSmooth()
 X possible dist() and constrain() functions
-X   reas: I like people making these themselves and then later 
+X   reas: I like people making these themselves and then later
 X         they can be added to their code libraries
 X join() like split
 X   also add additional item for NaN data
 X   add doubles and longs for genome stuff
 X numberFormat (formerly zeroPad)
-X   numberFormat(float num, int left, int right) 
+X   numberFormat(float num, int left, int right)
 X     zero means any number of digits, don't pad
 X   numberFormat(int num, int left) for 27 -> 0027
 X camera work
@@ -9843,10 +9953,10 @@ X new colors chosen by casey (replace pde.properties and buttons.gif)
 /   works in 'insert' mode
 X   just disabled it ever hiding.. we'll see if it fixes
 X flush() after every println()
-X   incremental printout 
+X   incremental printout
 X uncovered bug with long line lengths in console
 / pmouseX problem reported by casey (in bugs.txt)
-o images don't load during setup [reas] 
+o images don't load during setup [reas]
 X   //This is not a problem -- Casey
 X framerate() and framerate(15)
 X delay() should sleep the thread [glen murphy]
@@ -9857,13 +9967,13 @@ X   add framerate to colored things list
 
 MISC (pruned from crusty todo list)
 
-X text editor? jedit's textarea class? hmm? hmm?  // Yeah for jedit! 
+X text editor? jedit's textarea class? hmm? hmm?  // Yeah for jedit!
 X document imageMode, planeMode, ellipseMode
 X 'rot' example not working in release 18
 X make note in documentation about getting access to pixel array
 X   pixels[] is in ProcessingApplet
 X build a linux/x86 release
-X fix buzz.pl to not create ../../bagel 
+X fix buzz.pl to not create ../../bagel
 X how to use ssh identity file to maintain auth for brancusi
 X write dist.bat for releases
 X   don't forget to update 'export' dir with processing releases
@@ -9874,7 +9984,7 @@ X bug in paren balancing
 X   paren problems comes from overusing parens (too many closing)
 X   image[first[i], 0, 0) hitting last paren causes jump to top
 X beautify is broken // I think this is fixed
-X sketch: sketch-000 is dumb  
+X sketch: sketch-000 is dumb
 X   // Just number successively 0001, 0002 like a digital camera
 X color won't set for fonts //This works
 o 'image' is too generic a variable to have inside BApplet
@@ -9900,12 +10010,12 @@ X include note in the readme that 1.4 is not supported
 X is sketch.properties saving properly under macosx?
 X text in editor is anti-aliased, allow to turn off (franklin_mint)
 X   also make text courier instead of monospaced
-public void paint(Graphics g) 
-{       
-  Graphics2D g2 = (Graphics2D) g; 
-  g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
-                      RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);                
-  super.paint(g2);       
+public void paint(Graphics g)
+{
+  Graphics2D g2 = (Graphics2D) g;
+  g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                      RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+  super.paint(g2);
 }
 
 pde
@@ -9923,24 +10033,24 @@ X add -Xmx128m -Xms128m because people running out of memory (pitaru)
 X   tried with a 3k x 1k image and things broke
 o   maybe command line read properties from a file in lib
 
-macos9 
+macos9
 X do some font tweaking (monaco 9 or 10 might be good)
 
 
 0047
 X reported by fdb and brendanberg
-After creating about 27 sketches, proce55ing (0046 on OS X) no longer would startup, giving me the following error: 
-Exception in thread "main" java.lang.NullPointerException 
-  at PdeBase.addSketches(PdeBase.java:598 ) 
-  at PdeBase.addSketches(PdeBase.java:615) 
-  at PdeBase.rebuildSketchbookMenu(PdeBase.java:575) 
-  at PdeBase.<init>(PdeBase.java:362) 
-  at PdeBase.main(PdeBase.java:102) 
-Removing all sketches would solve the problem. 
+After creating about 27 sketches, proce55ing (0046 on OS X) no longer would startup, giving me the following error:
+Exception in thread "main" java.lang.NullPointerException
+  at PdeBase.addSketches(PdeBase.java:598 )
+  at PdeBase.addSketches(PdeBase.java:615)
+  at PdeBase.rebuildSketchbookMenu(PdeBase.java:575)
+  at PdeBase.<init>(PdeBase.java:362)
+  at PdeBase.main(PdeBase.java:102)
+Removing all sketches would solve the problem.
 / lots of problems in moving sketches over
- i managed to run p5 from the applications folder once, but i think when i moved my sketches over from 0044 it broke: "uncaught exception in main method: java.lang.NullPointerException" 
- i tried reinstalling and running 'java -cp lib:lib/build: ...' and it worked fine (and would open from the icon afterwards) 
-again, after i moved my sketches over it broke permanently... 
+ i managed to run p5 from the applications folder once, but i think when i moved my sketches over from 0044 it broke: "uncaught exception in main method: java.lang.NullPointerException"
+ i tried reinstalling and running 'java -cp lib:lib/build: ...' and it worked fine (and would open from the icon afterwards)
+again, after i moved my sketches over it broke permanently...
 / 46 dies when run from desktop on some machines [jes]
 /   spaces in the dir name?
 o is sketch.properties getting mangled on the mac?
@@ -10012,7 +10122,7 @@ X method to set a folder for the sketchbook
 X when trying to use serial, provide error if things not installed
 
 
-0046 
+0046
 X install new swing-based textarea with syntax highlighting
 X   improve the flicker problems (re-enable backing store?)
 X   set better defaults for coloring
@@ -10053,20 +10163,20 @@ X preprocessor tweaks
 X   "http://acg.media.mit.edu" doesn't work because of //
 X   "color.jpg" -> "int.jpg" causes trouble
 X why does this line cause an error?
-// String url = "http:\u002f\u002fwww.Proce55ing.net"; 
+// String url = "http:\u002f\u002fwww.Proce55ing.net";
 X   it's not in the preprocessor, but kopi seems to be having trouble
-X seems that file i/o may be picking up lots of extra \r 
+X seems that file i/o may be picking up lots of extra \r
 X   perhaps when doing setText, it's goobering things up
-X when renaming a sketch, select the text in the field, 
-X   so you can type the new name immediately. 
+X when renaming a sketch, select the text in the field,
+X   so you can type the new name immediately.
 X added 'rename' command
 X   also the default for clicking on the sketch's title
 o   option to rename when doing a 'save as' (remove old files)
 X remove .class files on save as [dimitre]
 X   remove .jar, .class, and .java files from the 'applet' dir
-When I am working in a project and I save it with another name, 
-all the old files are copyied to new directory, and some of the old 
-unused .class files and images remains inside new project JAR files. 
+When I am working in a project and I save it with another name,
+all the old files are copyied to new directory, and some of the old
+unused .class files and images remains inside new project JAR files.
 X serial port
 X   better message for PortInUseException (full explanation)
 X   better message for when serial port code not available/not installed
@@ -10076,42 +10186,42 @@ X   this was previous unknown, but likely several found it (!)
 X macosx - check to see if swing is working properly
 X macosx - update build script to work with new layout
 X Add an Edit menu containing Undo/Redo/Cut/Copy/Paste/Select
-  All. It's standard Mac behaviour. 
+  All. It's standard Mac behaviour.
 X long list from frederik (fdb)
-X If the cursor is at the last character of the last line of the 
-  text area, moving the cursor up or down using the arrow keys throws 
-  the following exception: 
-  java.lang.ArrayIndexOutOfBoundsException 
-    at PdeEditorListener.keyPressed(PdeEditorListener.java:86) 
-    at java.awt.Component.processKeyEvent(Component.java:3673) 
+X If the cursor is at the last character of the last line of the
+  text area, moving the cursor up or down using the arrow keys throws
+  the following exception:
+  java.lang.ArrayIndexOutOfBoundsException
+    at PdeEditorListener.keyPressed(PdeEditorListener.java:86)
+    at java.awt.Component.processKeyEvent(Component.java:3673)
 X If the cursor is at the last character of the first line of the text
   area, moving the cursor up using the arrow keys throws the same
-  exception. However, moving the cursor down doesn't throw one.  
+  exception. However, moving the cursor down doesn't throw one.
 X Double-clicking a word doesn't select it, but the character after
-  it. (however, sometimes the behaviour is correct) 
+  it. (however, sometimes the behaviour is correct)
 X Scrolling action when using cursor keys is not consistent with other
   editors: The window should only scroll when it needs to; it now tries
-  to keep the cursor on the current line. (or one line below it) 
+  to keep the cursor on the current line. (or one line below it)
 X Using Apple-shift-arrowLeft to select from the cursor pos to the
   beginning of the line, selects one character too little at the right
   side. Apple-shift-arrowRight has the same issue (selects one char too
-  little at the left side). 
+  little at the left side).
 X Using Apple-shift-arrowDown selects only from the beginning of this
   line to the end of the following line. It doesn't extend the
   selection when pressed twice. It also selects the line under the
-  current line. 
+  current line.
 X Pressing the tab key moves to the bottom of the text area.
 X hopefully fixed, but needs to be tested
-? Select All (Apple-A) closes the application 
-  (Ctrl-Q) on Azerty-keyboards 
-X use date in the sketch name sketch_021104 
+? Select All (Apple-A) closes the application
+  (Ctrl-Q) on Azerty-keyboards
+X use date in the sketch name sketch_021104
 X   with a _2 if needed or '021104a' '021104b' etc
 X   when using save as, allow to remove the old (numbered) sketch
 X better default size than 300x300 when starting up first time
 X bug report from the site
 resizing the editor window in Mac OS X leaves the status bar in
 place. The result is an editor window with a grey bar layered on top,
-obscuring the editable text. 
+obscuring the editable text.
 X fix default fonts, font size on mac
 X fix lots of annoying crap about highlighting lines on errors
 X re-enable console, add synchronized (hrmph)
@@ -10154,7 +10264,7 @@ X   for now, disallow the / or : characters
 X   there was a bug that required a noop() b/c of jikes or 1.3 problems
 X is problem w/ beautify that it has no menu event handler?
 X   write event handler, and make sure it doesn't work for external ed
-X don't popup offscreen if editor window is way left. 
+X don't popup offscreen if editor window is way left.
 X   just make sure the x coord > 10 or so (if not presenting)
 X     if so, pop up window 50, 50 from upper left corner
 X   if it still won't fit, center the window on screen
@@ -10191,7 +10301,7 @@ X escape on presentation mode--no key events seem to be coming through
 X make default font size for editor the next size smaller
 X include names of all people who submitted bugs
 X use self-extractor and make sure no 8.3 filenames
-X use a .dmg to distribute 
+X use a .dmg to distribute
 X   make sure no DS_Store files are included
 
 
@@ -10243,7 +10353,7 @@ X remove projects if created but nothing happens to them
 X   maybe do this on open or quit?
 X first a syntax error, when fixed, causes NullPointerException 
 X   quitting the app makes things all better. argh.
-X   this just started with version37, it happens extrememely 
+X   this just started with version37, it happens extrememely
 X     frequently and should be easy to reproduce the error
 X images with imageMode set for simage() weren't working
 
@@ -10267,7 +10377,7 @@ X   some method for getting list of serial ports
 X     pde menu item for listing serial ports available
 o     could just println them to the console
 X   import javax.comm stuff as standard in kjc (but not export)
-X can't get fonts to load - tested working ok 
+X can't get fonts to load - tested working ok
 X   bagel complaint: could not load font Univerx76.vlw.gz
 X   why the x? what's going on?
 X try using serial on macosx
@@ -10330,7 +10440,7 @@ X how to make double-clickable version for osx
 X   might be as simple as combined jar with manifest and symlink
 X   jar doesn't like opening pde.properties b/c getClass fails
 X app title comes up as PdeBase
-X   -Xdock:name property or 
+X   -Xdock:name property or
 X   com.apple.mrj.application.apple.menu.about.name (gulp)
 X -XDock:icon (lowercase dock?) to set icon, or
 X   .icns file in the Contents/Resources of the bundle
@@ -10340,7 +10450,7 @@ X serial works poorly for starting/stopping applets
 X   appears to be fixed through use of static object in bagel
 X   breaks on every 2nd run when using serial apps (or others?)
 X     try calling gc on stop as well
-X make it simpler to build the code.. 
+X make it simpler to build the code..
 X   buzz.pl actually no longer needed (no ifdefs)
 o   use a regular makefile for everything
 X getResource stuff breaks, sketch.properties can't save
@@ -10387,7 +10497,7 @@ X   tested, seems to be fine?
 X console - convert tabs to spaces
 o   line wrapping (but save info for resize? noo..)
 X fix to line numbers being off for KjcEngine exception highlights
-X changed error color slightly for console to fit status error 
+X changed error color slightly for console to fit status error
 X size() not being called in setup is gonna cause lots of headaches
 X   hack: put exception handler around setup and re-call if necessary
 X linefeeds were wrong in BApplet
@@ -10398,7 +10508,7 @@ X   mark each as 'save', 'autosave', 'failed' or 'successful' compile
 X   also include a timestamp
 X   if a selection is made from the menu:
 X     autosave, replace text, mark as edited
-X     if there have been no edits, and last thing was hist change, 
+X     if there have been no edits, and last thing was hist change,
 X       should *not* do another autosave
 X       ensure this by historyLast being set on change.. heh. nice.
 X write message to people who signed up for p5 alpha
@@ -10419,11 +10529,11 @@ X   same under windows, just wasn't being set properly before
 X   header font needed to be set each time as well
 X introduce pde.properties_OSNAME
 X   tested to make sure it joins with the other pde.properties ok
-X setPixel(i, j, #99CC00);  
+X setPixel(i, j, #99CC00);
 X   not working anymore Syntax error: unexpected token: CC00
-X   problem was substitute only worked along with = 
+X   problem was substitute only worked along with =
 X perl should be ok to be cygwin perl.. try deinstalling activestate
-o should fix paren balancing bug.. 
+o should fix paren balancing bug..
 X   just disable by default for alpha
 o background() not working
 X   checked but couldn't duplicate
@@ -10449,7 +10559,7 @@ X   just removed the listeners on the window.. don't seem to be needed
 
 
 0035
-X fixed a NullPointerException on startup 
+X fixed a NullPointerException on startup
 X   when sketch.properties didn't exist, shouldn't print error
 X fix status standard message color text color
 X mousePressed() not working, also mouseReleased
@@ -10495,7 +10605,7 @@ X in progress working on presentation mode
 
 0032
 already finished
-X need to update PdeKeyListener for new ui.. 
+X need to update PdeKeyListener for new ui..
 X   remove open, add d for duplicate, r for rename, others ?
 X 'open' button is a switch-to button
 X   pops up list of everything in the sketchbook
@@ -10545,7 +10655,7 @@ X make close() work to kill applet in kjc
 X save window x, y, width, height to pde.properties on exit
 X stderr in red color
 X 'data' directory for all media
-X   make included media part of the .jar file 
+X   make included media part of the .jar file
 X   it's really a pain to use external files in processing
 X     getStream sucks (zach rewrote)
 X     should be able to work for application or applets
@@ -10688,7 +10798,7 @@ X   font file names are getting mangled on mac (too long)
 X   new set of fonts, make sure the names are ok
 
 
-0024 
+0024
 X bug fixes (lighting was broken)
 
 
@@ -10718,7 +10828,7 @@ o also problem filling on beginShape() triangle stuff
 X z coordinates are backwards from gl (at least from mazo)
 X   looked into it, this doesn't appear to be the case..
 X   how did this happen? what's the appropriate way to fix?
-X   in gl, positive z goes into the screen 
+X   in gl, positive z goes into the screen
 X   may be able to do a scale(0, 0, -1) that doesn't affect dims
 X     then when dims set to 3, will fix the z coords
 X   this will also affect zbuffer ordering
@@ -10731,9 +10841,9 @@ X introduce pImage, pFont, pGraphics, pConstants (pSound)
 
 0019
 questions answered..
-X is day, month, year overkill inside processingapplet? 
+X is day, month, year overkill inside processingapplet?
 X   decided no
-X loadImage or getImage? 
+X loadImage or getImage?
 X   loadImage sounds better to ben and casey
 X circle/square functions
 X   doesn't seem necessary
@@ -10756,7 +10866,7 @@ X beginShape() defaults to POLYGON
 X   introduce constants for other poly modes
 X add ellipseMode(), rectMode()
 X   CENTER_RADIUS, CENTER_DIAMETER, CORNER, TWO_CORNERS
-X bezier and catmullrom aren't setting ndim to at least two 
+X bezier and catmullrom aren't setting ndim to at least two
 X   ?? not sure why they would
 X translate(x, y) doesn't seem to affect a rect()
 X   flat_rect was being used where ndim was 2, not 0
@@ -10805,7 +10915,7 @@ X   switched to ibm java vm
 
 
 0014
-X fix z coordinate, ndims not being set to 3 
+X fix z coordinate, ndims not being set to 3
 X put bezierCurve and catmullRomCurve back in
 X examples - setting background using a full screen image
 X   uses System.arraycopy for speed
@@ -10821,14 +10931,14 @@ X may have fixed OutOfMemoryError problems
 X   run.bat had included -ms256m -mx256m
 
 
-0013 
+0013
 X ellipse draws in the opposite direction of the origin
 X actually fix the bug with extends
 X   wasn't included in previous release
 X option to set full screen background color
 X   uses fullscreen.bgcolor in lib/pde.properties
 X remove 'colorScale' from the default program in pde
-X fix color cube applet 
+X fix color cube applet
 X   make it run in current version of processing
 X   fix background from showing up black
 X screenGrab() code (single frame to tif)
@@ -10867,14 +10977,14 @@ X got rid of colorscale and using colormode for all instead
 X   make changes in documentation
 X 'ellipse' instead of 'oval'?
 X   make note in documentation
-X catmullrom is broken 
+X catmullrom is broken
 X   write documentation for new curve functions
 o make note in docs about removal of LINE from LINES
 X setting origins
 X   should shapes draw from center or from upper left?
 X   should ovals use radius or diameter?
 X   should shapes use x1, y1 - x2, y2 or x, y, w, h?
-X nice to have a random number generator between -1..1 
+X nice to have a random number generator between -1..1
 X   as well as an integer random; instead of just 0..1
 X show creas how to get access to cvs
 X documentation says 'mouseDown' even though it's 'mousePressed'
@@ -10894,9 +11004,9 @@ X   worked fine for me
 
 0009
 X bagel fixes
-X   beginShape(POINTS) is not working, no marks are appearing 
+X   beginShape(POINTS) is not working, no marks are appearing
 X     this was a pain in the ass to fix
-X   beginShape(LINE_LOOP) is not looping around 
+X   beginShape(LINE_LOOP) is not looping around
 X   stroked POLYGON should emulate a LINE_LOOP
 X   fill white, stroke black, background white default in bagel
 X   remove duplicates: LINE/LINES etc
@@ -10946,7 +11056,7 @@ X   or copy bagel's image, and kill that too?
 
 
 0004
-X put debugging stuff back into Kjc (i disabled some stuff) 
+X put debugging stuff back into Kjc (i disabled some stuff)
 
 
 0001
