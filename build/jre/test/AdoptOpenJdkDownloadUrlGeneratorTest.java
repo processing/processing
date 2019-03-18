@@ -70,7 +70,7 @@ public class AdoptOpenJdkDownloadUrlGeneratorTest {
   @Test
   public void testBuildUrlMac() {
     String url = urlGenerator.buildUrl(
-      "macos",
+      "macosx64",
       JDK,
       TRAIN,
       VERSION,

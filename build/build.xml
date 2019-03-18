@@ -98,7 +98,7 @@
 
   <property name="jdk.short" value="${jdk.version}u${jdk.update}" />
 
-  <property name="jdk.prefix" value="adoptopenjdk" />
+  <property name="jdk.prefix" value="jdk" />
   <property name="jdk.separator" value="-" />
   <property name="jdk.esoteric" value="${jdk.train}.${jdk.version}.${jdk.update}" />
 
@@ -283,24 +283,13 @@
                 path="${jre.tgz.path}" />
   </target>
 
-  <target name="download-jdk-macosx" depends="downloader-setup">
-    <downloader version="${jdk.version}"
-                update="${jdk.update}"
-                build="${jdk.build}"
-                hash="${jdk.hash}"
-                jdk="true"
-                flavor="macosx-x64.dmg"
-                path="${env.HOME}/Desktop/jdk-${jdk.short}.dmg" />
-  </target>
-
   <!-- code signing hack, turns on code signing during dist -->
   <condition property="codesign">
     <equals arg1="${env.USER}" arg2="fry" />
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.path.macosx"
-            value="/Library/Java/JavaVirtualMachines/${jdk.prefix}${jdk.separator}${jdk.esoteric}.jdk" />
+  <property name="jdk.path.macosx" value="/Users/apottinger/processing/build/macosx/jdk-${jdk.esoteric}+${jdk.build}" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
@@ -544,16 +533,34 @@
     <fail message="wrong platform (${os.name})" />
   </target>
 
-  <target name="macosx-build" if="macosx" depends="revision-check, macosx-check-os, subprojects-build" description="Build Mac OS X version">
-
-    <!-- Require that a JDK be installed, but call this on build, so that
-         the download-jdk-macosx target can be called. -->
-    <fail unless="macosx_jdk_found"
-          message="JDK ${jdk.short} required.${line.separator}To build on OS X, you must install Oracle's JDK ${jdk.short} from${line.separator}http://www.oracle.com/technetwork/java/javase/downloads${line.separator}Or... type 'ant download-jdk-macosx' to download it to your Desktop.${line.separator}Note that only ${jdk.short} (not a later or earlier version) will work. ${line.separator}And it must be the JDK, not the JRE. And do not try to defy me again." />
+  <target name="macosx-build" if="macosx" depends="revision-check, macosx-check-os, subprojects-build, jre-download" description="Build Mac OS X version">
 
     <mkdir dir="macosx/work" />
 
-    <!-- app bundler for OS X and Java 1.7 -->
+    <!-- Extract JDK -->
+    <exec executable="tar" dir="macosx">
+      <!-- Change directory -->
+      <!--
+      <arg value="-C" />
+      <arg value="linux/work" />
+      <arg value="-xzpf" />
+      -->
+      <arg value="xfz" />
+      <arg value="../${jre.tgz.path}"/>
+    </exec>
+
+    <condition property="jre.dir" value="macosx/work/jdk-${jdk.esoteric}+${jdk.build}.jdk">
+      <equals arg1="${jdk.train}" arg2="1" />
+    </condition>
+
+    <!-- Force full JDK when not on train 1 (starts with java 11) -->
+    <condition property="jre.dir" value="macosx/work/jdk-${jdk.esoteric}+${jdk.build}.jdk/">
+      <not>
+        <equals arg1="${jdk.train}" arg2="1" />
+      </not>
+    </condition>
+
+    <!-- app bundler for OS X and Java -->
     <taskdef name="bundleapp"
              classname="com.oracle.appbundler.AppBundlerTask"
              classpath="macosx/appbundler.jar" />
@@ -663,22 +670,22 @@
          Unix systems, we need to use <exec executable="cp" ... > instead -->
     <exec executable="cp">
       <arg value="-r"/>
-      <arg line="${jdk.path.macosx}/Contents/Home/bin macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/bin"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/bin macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}+${jdk.build}/Contents/Home/bin"/>
     </exec>
 
     <exec executable="cp">
       <arg value="-r"/>
-      <arg line="${jdk.path.macosx}/Contents/Home/jmods macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/jmods"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/jmods macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}+${jdk.build}/Contents/Home/jmods"/>
     </exec>
 
     <exec executable="cp">
       <arg value="-r"/>
-      <arg line="${jdk.path.macosx}/Contents/Home/legal macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/legal"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/legal macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}+${jdk.build}/Contents/Home/legal"/>
     </exec>
 
     <exec executable="cp">
       <arg value="-r"/>
-      <arg line="${jdk.path.macosx}/Contents/Home/conf macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/conf"/>
+      <arg line="${jdk.path.macosx}/Contents/Home/conf macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}+${jdk.build}/Contents/Home/conf"/>
     </exec>
 
     <property name="contents.dir"
@@ -686,7 +693,7 @@
 
     <!-- Replace libjli.dylib symlink with actual file.
          Deals with code signing issues on OS X 10.9.5+ -->
-    <property name="jli.path" value="${contents.dir}/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/MacOS/libjli.dylib" />
+    <property name="jli.path" value="${contents.dir}/PlugIns/${jdk.prefix}-${jdk.esoteric}+${jdk.build}/Contents/MacOS/libjli.dylib" />
     <delete file="${jli.path}" />
     <exec executable="cp">
       <arg line="${jdk.path.macosx}/Contents/Home/lib/jli/libjli.dylib ${jli.path}"/>
@@ -709,9 +716,9 @@
           <fileset dir="${env.PATH_TO_FX}" includes="*.dylib"/>
         </copy>
 
-        <mkdir dir="macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/legal/openjfx" />
+        <mkdir dir="macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}+${jdk.build}/Contents/Home/legal/openjfx" />
 
-        <copy todir="macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}.jdk/Contents/Home/legal/openjfx" overwrite="true">
+        <copy todir="macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}+${jdk.build}/Contents/Home/legal/openjfx" overwrite="true">
           <fileset dir="${env.PATH_TO_FX}/../legal" includes="**"/>
         </copy>
 
@@ -784,7 +791,7 @@
       <arg value="--force" />
       <arg value="--sign" />
       <arg value="Developer ID Application" />
-      <arg value="Processing.app/Contents/PlugIns/jdk${jdk.esoteric}.jdk" />
+      <arg value="Processing.app/Contents/PlugIns/jdk${jdk.esoteric}+${jdk.build}" />
     </exec>
 
     <exec executable="/usr/bin/codesign" dir="macosx/work">

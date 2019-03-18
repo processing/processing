@@ -60,7 +60,7 @@ public class AdoptOpenJdkDownloadUrlGenerator extends DownloadUrlGenerator {
     switch (downloadPlatform.toLowerCase()) {
       case "windows32": return "jdk_x86-32_windows_hotspot";
       case "windows64": return "jdk_x64_windows_hotspot";
-      case "macos": return "jdk_x64_mac_hotspot";
+      case "macosx64": return "jdk_x64_mac_hotspot";
       case "linux32": throw new RuntimeException("Linux32 not supported by AdoptOpenJDK.");
       case "linux64": return "jdk_x64_linux_hotspot";
       case "linuxArm": return "jdk_aarch64_linux_hotspot";
