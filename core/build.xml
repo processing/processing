@@ -5,6 +5,8 @@
 
   <target name="clean" description="Clean out the build directories">
     <delete dir="bin" />
+    <delete dir="bin-test" />
+    <delete dir="resource-test/scratch" />
     <delete file="library/core.jar" />
   </target>
 
@@ -16,9 +18,33 @@
     <subant buildpath="methods" target="dist" />
   </target>
 
+  <path id="classpath.base">
+    <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
+    <pathelement location="apple.jar" />
+    <pathelement location="library/jogl-all.jar" />
+    <pathelement location="library/gluegen-rt.jar" />
+    <pathelement location="library/javafx-swt.jar" />
+    <pathelement location="library/javafx.base.jar" />
+    <pathelement location="library/javafx.controls.jar" />
+    <pathelement location="library/javafx.fxml.jar" />
+    <pathelement location="library/javafx.graphics.jar" />
+    <pathelement location="library/javafx.media.jar" />
+    <pathelement location="library/javafx.properties" />
+    <pathelement location="library/javafx.swing.jar" />
+    <pathelement location="library/javafx.web.jar" />
+  </path>
+
+  <path id="classpath.test">
+    <pathelement location="library-test/junit-4.8.1.jar" />
+    <pathelement location="library-test/mockito-all-1.10.19.jar" />
+    <pathelement location="bin-test" />
+    <path refid="classpath.base" />
+  </path>
+
   <macrodef name="compilecommon">
     <attribute name="destdir"/>
     <attribute name="srcdir"/>
+    <attribute name="classpath"/>
     <sequential>
       <taskdef name="methods"
   	     classname="PAppletMethods"
@@ -45,19 +71,8 @@
   	   includeAntRuntime="false"
   	   debug="true"
   	   destdir="@{destdir}"
-  	   classpath="apple.jar;
-                        library/jogl-all.jar;
-                        library/gluegen-rt.jar;
-                        library/javafx-swt.jar;
-                        library/javafx.base.jar;
-                        library/javafx.controls.jar;
-                        library/javafx.fxml.jar;
-                        library/javafx.graphics.jar;
-                        library/javafx.media.jar;
-                        library/javafx.properties;
-                        library/javafx.swing.jar;
-                        library/javafx.web.jar"
   	   nowarn="true">
+        <classpath refid="@{classpath}"/>
         <src path="@{srcdir}" />
         <include name="processing/**" />
         <exclude name="processing/javafx/**" if="fx.unavailable" />
@@ -78,8 +93,28 @@
     </sequential>
   </macrodef>
 
-  <target name="compile" description="Compile" depends="methods-build">
-    <compilecommon srcdir="src" destdir="bin" />
+  <target name="test-compile" description="Compile">
+    <compilecommon srcdir="src; test" destdir="bin-test" classpath="classpath.test" />
+  </target>
+
+  <target name="clean-pre-test" description="Required step prior to test">
+    <delete dir="resource-test/scratch" />
+  </target>
+
+  <target name="test" depends="test-compile, clean-pre-test">
+    <junit haltonfailure="true">
+      <classpath refid="classpath.test" />
+      <formatter type="brief" usefile="false" />
+      <batchtest>
+        <fileset dir="test">
+          <include name="**/*Test.java" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <target name="compile" description="Compile" depends="test">
+    <compilecommon srcdir="src" destdir="bin" classpath="classpath.base" />
   </target>
 
   <target name="build" depends="compile" description="Build core library">
