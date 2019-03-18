@@ -632,6 +632,7 @@ public class WindowsPlatform extends DefaultPlatform {
 
 
   public int getSystemDPI() {
+    // Note that this is supported "natively" within Java - See JEP 263.
     return WINDOWS_NATIVE_DPI;
   }
 
