@@ -35,14 +35,14 @@
   <!-- detetect Raspberry Pi and friends -->
   <condition property="linux-arm32" value="linux-arm32">
     <and>
-      <equals arg1="${platform}" arg2="linux" />
+      <equals arg1="${target-platform}" arg2="linux" />
       <equals arg1="${os.arch}" arg2="arm" />
       <equals arg1="${sun.arch.data.model}" arg2="32" />
     </and>
   </condition>
   <condition property="linux-arm64" value="linux-arm64">
     <and>
-      <equals arg1="${platform}" arg2="linux" />
+      <equals arg1="${target-platform}" arg2="linux" />
       <equals arg1="${os.arch}" arg2="aarch64" />
       <equals arg1="${sun.arch.data.model}" arg2="64" />
     </and>
@@ -106,11 +106,11 @@
   <!-- Figure out the JRE download location for Linux and Windows. -->
   <!--
   <condition property="jre.file"
-             value="jre-${jdk.short}-${platform}-i586.tar.gz">
+             value="jre-${jdk.short}-${target-platform}-i586.tar.gz">
     <equals arg1="${sun.arch.data.model}" arg2="32" />
   </condition>
   <condition property="jre.file"
-             value="jre-${jdk.short}-${platform}-x64.tar.gz">
+             value="jre-${jdk.short}-${target-platform}-x64.tar.gz">
     <equals arg1="${sun.arch.data.model}" arg2="64" />
   </condition>
   -->
@@ -118,7 +118,7 @@
   <!-- JDK location for Mac OS X -->
   <!--
   <condition property="jdk.file" value="jdk-${jdk.short}-macosx-x64.dmg">
-    <equals arg1="${platform}" arg2="macosx" />
+    <equals arg1="${target-platform}" arg2="macosx" />
   </condition>
   -->
 
@@ -174,7 +174,7 @@
        However, we're now looking into using JavaFX as the default 2D
        renderer for 3.0. So in 3.0a8, we're no longer removing javafx. -->
 
-  <fileset dir="${platform}/work/java" id="javafx-basics">
+  <fileset dir="${target-platform}/work/java" id="javafx-basics">
     <include name="THIRDPARTYLICENSEREADME-JAVAFX.txt" />
     <include name="lib/javafx.properties" />
     <include name="lib/jfxrt.jar" />
@@ -229,19 +229,25 @@
 
   <!-- Set a property named macosx, linux, or windows.
        The 'value' chosen is arbitrary. -->
-  <property name="${platform}" value="${platform}" />
+  <macrodef name="settarget">
+    <attribute name="platform"/>
+    <sequential>
+      <property name="target-platform" value="@{platform}" />
+      <property name="${target-platform}" value="${target-platform}" />
 
-  <property name="jre.tgz.path" value="${platform}/jre-${jdk.short}.tgz" />
+      <property name="jre.tgz.path" value="${target-platform}/jre-${jdk.short}.tgz" />
 
-  <condition property="jre.tgz.path" value="${platform}/jre-${jdk.short}.tgz">
-    <not>
-      <equals arg1="${platform}" arg2="windows" />
-    </not>
-  </condition>
+      <condition property="jre.tgz.path" value="${target-platform}/jre-${jdk.short}.tgz">
+        <not>
+          <equals arg1="${target-platform}" arg2="windows" />
+        </not>
+      </condition>
 
-  <condition property="jre.tgz.path" value="${platform}/jre-${jdk.short}.zip">
-    <equals arg1="${platform}" arg2="windows" />
-  </condition>
+      <condition property="jre.tgz.path" value="${target-platform}/jre-${jdk.short}.zip">
+        <equals arg1="${target-platform}" arg2="windows" />
+      </condition>
+    </sequential>
+  </macrodef>
 
   <target name="jre-check">
     <available file="${jre.tgz.path}" property="jre.tgz.downloaded" />
@@ -263,18 +269,18 @@
     <property name="jre.download.jdk" value="true" />
 
     <condition property="jre.downloader"
-               value="${platform}-i586.tar.gz">
+               value="${target-platform}-i586.tar.gz">
         <equals arg1="${sun.arch.data.model}" arg2="32" />
     </condition>
     <condition property="jre.downloader"
-               value="${platform}-x64.tar.gz">
+               value="${target-platform}-x64.tar.gz">
       <equals arg1="${sun.arch.data.model}" arg2="64" />
     </condition>
 
     <downloader train="${jdk.train}"
                 version="${jdk.version}"
                 openJdk="true"
-                platform="${platform}${sun.arch.data.model}"
+                platform="${target-platform}${sun.arch.data.model}"
                 update="${jdk.update}"
                 build="${jdk.build}"
                 hash="${jdk.hash}"
@@ -289,7 +295,7 @@
   </condition>
 
   <!-- Set the version of Java that must be present to build. -->
-  <property name="jdk.path.macosx" value="/Users/apottinger/processing/build/macosx/jdk-${jdk.esoteric}+${jdk.build}" />
+  <property name="jdk.path.macosx" value="macosx/jdk-${jdk.esoteric}+${jdk.build}" />
 
   <available file="${jdk.path.macosx}" property="macosx_jdk_found" />
 
@@ -324,18 +330,34 @@
   </fileset>
 
   <target name="build" description="Build Processing.">
-    <antcall target="${platform}-build" />
+    <settarget platform="${platform}" />
+    <antcall target="${target-platform}-build" />
+  </target>
+
+  <target name="cross-build-macosx" description="Build Processing.">
+    <settarget platform="macosx" />
+    <antcall target="macosx-build" />
+  </target>
+
+  <target name="cross-build-linux" description="Build Processing.">
+    <settarget platform="linux" />
+    <antcall target="linux-build" />
+  </target>
+
+  <target name="cross-build-windows" description="Build Processing.">
+    <settarget platform="windows" />
+    <antcall target="windows-build" />
   </target>
 
   <target name="run" description="Run Processing.">
-    <antcall target="${platform}-run" />
+    <antcall target="${target-platform}-run" />
   </target>
 
   <!-- Run the app in a more "native" manner, i.e. no additional
        console for debugging. Ensures that double-clicking shortcuts
        and other desktop integration features work properly. -->
   <target name="app" description="Run Processing w/o console.">
-    <antcall target="${platform}-run-app" />
+    <antcall target="${target-platform}-run-app" />
   </target>
 
   <target name="dist" depends="revision-check"
@@ -352,7 +374,7 @@
       <arg line="pull" />
     </exec>
 
-    <antcall target="${platform}-dist" />
+    <antcall target="${target-platform}-dist" />
   </target>
 
   <!-- "§$§$&, ant doesn't have a built-in help target :(  -->
@@ -533,11 +555,12 @@
     <fail message="wrong platform (${os.name})" /> -->
   </target>
 
-  <target name="macosx-build" if="macosx" depends="revision-check, macosx-check-os, subprojects-build, jre-download" description="Build Mac OS X version">
+  <target name="macosx-build" depends="revision-check, macosx-check-os, subprojects-build, jre-download" description="Build Mac OS X version">
 
     <mkdir dir="macosx/work" />
 
     <!-- Extract JDK -->
+    <echo message="Target jre: ${jre.tgz.path}"/>
     <exec executable="tar" dir="macosx">
       <!-- Change directory -->
       <!--
