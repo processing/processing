@@ -364,6 +364,8 @@ public class Runner implements MessageConsumer {
     params.append("-cp");
     params.append(build.getClassPath());
 
+    params.append("-Dprism.verbose=true");
+
     // enable assertions
     // http://dev.processing.org/bugs/show_bug.cgi?id=1188
     params.append("-ea");

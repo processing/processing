@@ -922,7 +922,6 @@ public class JavaBuild {
     for (Library library : importedLibraries) {
       // add each item from the library folder / export list to the output
       for (File exportFile : library.getApplicationExports(exportPlatform, exportVariant)) {
-//        System.out.println("export: " + exportFile);
         String exportName = exportFile.getName();
         if (!exportFile.exists()) {
           System.err.println(exportFile.getName() +
