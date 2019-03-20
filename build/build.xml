@@ -246,6 +246,8 @@
     <attribute name="datamodel"/>
     <sequential>
 
+      <property name="host-platform" value="${platform}" />
+
       <!-- Set a property named macosx, linux, or windows.
            The 'value' chosen is arbitrary. -->
       <property name="target-platform" value="@{platform}" />
@@ -1341,12 +1343,31 @@
     <move file="${launch4j.dir}/bin/ld-windows.exe"
           tofile="${launch4j.dir}/bin/ld.exe" />
 
-    <!-- remove the others -->
-    <delete failonerror="true">
-      <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
-      <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
-    </delete>
+    <!-- check for cross-build -->
+    <if>
+      <not><equals arg1="${host-platform}" arg2="windows" /></not>
+      <then>
 
+        <move file="${launch4j.dir}/bin/windres-${host-platform}"
+              tofile="${launch4j.dir}/bin/windres" />
+
+        <move file="${launch4j.dir}/bin/ld-${host-platform}"
+              tofile="${launch4j.dir}/bin/ld" />
+
+        <exec executable="chmod">
+          <arg value="+x"/>
+          <arg line="${launch4j.dir}/bin/windres"/>
+        </exec>
+
+        <exec executable="chmod">
+          <arg value="+x"/>
+          <arg line="${launch4j.dir}/bin/ld"/>
+        </exec>
+
+      </then>
+    </if>
+
+    <!-- Execute launch4j task -->
     <taskdef name="launch4j"
              classname="net.sf.launch4j.ant.Launch4jTask"
              classpath="${launch4j.dir}/launch4j.jar; ${launch4j.dir}/lib/xstream.jar" />
@@ -1355,6 +1376,14 @@
          file (i.e. the icon param doesn't work), so use a config file -->
     <launch4j configFile="windows/config.xml" />
     <launch4j configFile="windows/config-cmd.xml" />
+
+    <!-- remove the other launch4j executables -->
+    <delete failonerror="true">
+      <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
+      <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
+      <fileset dir="${launch4j.dir}/bin" includes="windres" />
+      <fileset dir="${launch4j.dir}/bin" includes="ld" />
+    </delete>
 
     <!-- cygwin requires html, dll, and exe to have the +x flag -->
     <chmod perm="ugo+x">
