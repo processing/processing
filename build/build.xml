@@ -159,28 +159,26 @@
     <include name="lib/cmm/PYCC.pf" />
   </fileset>
 
-  <fileset dir="linux/work/java" id="jdk-optional-linux">
-    <include name="bin/keytool" /> <!-- needed for Android -->
+  <fileset dir="linux/work" id="jdk-optional-linux">
+    <include name="java/bin/keytool" /> <!-- needed for Android -->
 
-    <include name="lib/ext/dnsns.jar" />
+    <include name="java/lib/ext/dnsns.jar" />
 
-    <include name="bin/orbd" />
-    <include name="bin/policytool" />
-    <include name="bin/rmid" />
-    <include name="bin/rmiregistry" />
-    <include name="bin/servertool" />
-    <include name="bin/tnameserv" />
+    <include name="java/bin/orbd" />
+    <include name="java/bin/policytool" />
+    <include name="java/bin/rmid" />
+    <include name="java/bin/rmiregistry" />
+    <include name="java/bin/servertool" />
+    <include name="java/bin/tnameserv" />
 
-    <include name="bin/javaws" />
-    <include name="lib/javaws.jar" />
-
-    <include name="lib/src.zip" />
+    <include name="java/bin/javaws" />
+    <include name="java/lib/javaws.jar" />
 
     <include name="java/lib/src.zip" />
 
     <include name="core/library/libjfxwebkit.so" />
 
-    <include name="lib/cmm/PYCC.pf" />
+    <include name="java/lib/cmm/PYCC.pf" />
   </fileset>
 
   <!-- Unused JavaFX files that can be removed from the JRE on Windows
