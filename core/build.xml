@@ -92,7 +92,7 @@
     </sequential>
   </macrodef>
 
-  <target name="test-compile" description="Compile">
+  <target name="test-compile" description="Compile" depends="methods-build">
     <compilecommon srcdir="src; test" destdir="bin-test" classpath="classpath.test" />
   </target>
 
