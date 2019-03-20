@@ -59,7 +59,6 @@
         <or>
           <equals arg1="${os.arch}" arg2="arm" />
           <equals arg1="${os.arch}" arg2="aarch64" />
-          <not><isset property="env.PATH_TO_FX"/></not>
         </or>
       </condition>
 

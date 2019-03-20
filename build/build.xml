@@ -37,27 +37,27 @@
     <and>
       <equals arg1="${target-platform}" arg2="linux" />
       <equals arg1="${os.arch}" arg2="arm" />
-      <equals arg1="${sun.arch.data.model}" arg2="32" />
+      <equals arg1="${jdk.data.model}" arg2="32" />
     </and>
   </condition>
   <condition property="linux-arm64" value="linux-arm64">
     <and>
       <equals arg1="${target-platform}" arg2="linux" />
       <equals arg1="${os.arch}" arg2="aarch64" />
-      <equals arg1="${sun.arch.data.model}" arg2="64" />
+      <equals arg1="${jdk.data.model}" arg2="64" />
     </and>
   </condition>
 
   <!-- there is currently no JRE available for ARM -->
   <target name="check-linux-arm32" if="linux-arm32">
-    <property name="jre.download.jdk" value="true" />
-    <property name="jre.downloader" value="linux-arm32-vfp-hflt.tar.gz" />
+    <property name="jdk.download.jdk" value="true" />
+    <property name="jdk.downloader" value="linux-arm32-vfp-hflt.tar.gz" />
     <property name="linux.dist" value="linux/processing-${version}-linux-armv6hf.tgz" />
     <property name="launch4j.variant" value="linux-armv6hf" />
   </target>
   <target name="check-linux-arm64" if="linux-arm64">
-    <property name="jre.download.jdk" value="true" />
-    <property name="jre.downloader" value="linux-arm64-vfp-hflt.tar.gz" />
+    <property name="jdk.download.jdk" value="true" />
+    <property name="jdk.downloader" value="linux-arm64-vfp-hflt.tar.gz" />
     <property name="linux.dist" value="linux/processing-${version}-linux-arm64.tgz" />
   </target>
 
@@ -73,11 +73,9 @@
   </fail>
 
   <!-- JavaFX got removed from the Oracle's JDK for arm and Java 11 -->
-  <condition property="fx.available" value="true">
+  <condition property="jfx.available" value="true">
     <and>
       <not><equals arg1="${os.arch}" arg2="arm" /></not>
-      <not><equals arg1="${os.arch}" arg2="aarch64" /></not>
-      <isset property="env.PATH_TO_FX"/>
     </and>
   </condition>
 
@@ -92,6 +90,11 @@
   <property name="jdk.update" value="1" />
   <property name="jdk.build" value="13" />
 
+  <property name="jfx.train" value="11" />
+  <property name="jfx.version" value="0" />
+  <property name="jfx.update" value="2" />
+  <property name="jfx.build" value="0" />
+
   <!-- See https://gist.github.com/P7h/9741922
        or http://stackoverflow.com/q/10268583 -->
   <property name="jdk.hash" value="1961070e4c9b4e26a04e7f5a083f551e" />
@@ -102,16 +105,18 @@
   <property name="jdk.separator" value="-" />
   <property name="jdk.esoteric" value="${jdk.train}.${jdk.version}.${jdk.update}" />
 
+  <property name="jfx.name" value="${jfx.train}.${jfx.version}.${jfx.update}" />
+
 
   <!-- Figure out the JRE download location for Linux and Windows. -->
   <!--
-  <condition property="jre.file"
-             value="jre-${jdk.short}-${target-platform}-i586.tar.gz">
-    <equals arg1="${sun.arch.data.model}" arg2="32" />
+  <condition property="jdk.file"
+             value="jdk-${jdk.short}-${target-platform}-i586.tar.gz">
+    <equals arg1="${jdk.data.model}" arg2="32" />
   </condition>
-  <condition property="jre.file"
-             value="jre-${jdk.short}-${target-platform}-x64.tar.gz">
-    <equals arg1="${sun.arch.data.model}" arg2="64" />
+  <condition property="jdk.file"
+             value="jdk-${jdk.short}-${target-platform}-x64.tar.gz">
+    <equals arg1="${jdk.data.model}" arg2="64" />
   </condition>
   -->
 
@@ -123,10 +128,10 @@
   -->
 
   <!-- These lists haven't been updated since Java 6. The new list:
-       http://www.oracle.com/technetwork/java/javase/jre-8-readme-2095710.html
+       http://www.oracle.com/technetwork/java/javase/jdk-8-readme-2095710.html
        Please help: https://github.com/processing/processing/issues/3288 -->
 
-  <fileset dir="windows/work/java" id="jre-optional-windows">
+  <fileset dir="windows/work/java" id="jdk-optional-windows">
     <include name="lib/ext/dnsns.jar" />
 
     <include name="bin/dtplugin" />
@@ -150,7 +155,7 @@
     <include name="lib/cmm/PYCC.pf" />
   </fileset>
 
-  <fileset dir="linux/work/java" id="jre-optional-linux">
+  <fileset dir="linux/work/java" id="jdk-optional-linux">
     <include name="bin/keytool" /> <!-- needed for Android -->
 
     <include name="lib/ext/dnsns.jar" />
@@ -227,30 +232,60 @@
   <echo message="${java.class.path}" />
   -->
 
-  <!-- Set a property named macosx, linux, or windows.
-       The 'value' chosen is arbitrary. -->
+  <!-- Macro to help set the platform ant vars appropriately -->
   <macrodef name="settarget">
     <attribute name="platform"/>
+    <attribute name="datamodel"/>
     <sequential>
+
+      <!-- Set a property named macosx, linux, or windows.
+           The 'value' chosen is arbitrary. -->
       <property name="target-platform" value="@{platform}" />
       <property name="${target-platform}" value="${target-platform}" />
 
-      <property name="jre.tgz.path" value="${target-platform}/jre-${jdk.short}.tgz" />
+      <property name="jdk.tgz.path" value="${target-platform}/jdk-${jdk.short}.tgz" />
 
-      <condition property="jre.tgz.path" value="${target-platform}/jre-${jdk.short}.tgz">
+      <property name="jdk.data.model" value="@{datamodel}" />
+
+      <property name="jfx.path.zip" value="${target-platform}/jfx-${jfx.name}.zip" />
+
+      <property name="jfx.path.dist" value="${target-platform}/javafx-sdk-${jfx.name}" />
+
+      <property name="jfx.path.lib" value="${jfx.path.dist}/lib" />
+
+      <condition property="jdk.tgz.path" value="${target-platform}/jdk-${jdk.short}.tgz">
         <not>
           <equals arg1="${target-platform}" arg2="windows" />
         </not>
       </condition>
 
-      <condition property="jre.tgz.path" value="${target-platform}/jre-${jdk.short}.zip">
+      <condition property="jdk.tgz.path" value="${target-platform}/jdk-${jdk.short}.zip">
         <equals arg1="${target-platform}" arg2="windows" />
       </condition>
     </sequential>
   </macrodef>
 
-  <target name="jre-check">
-    <available file="${jre.tgz.path}" property="jre.tgz.downloaded" />
+  <macrodef name="preparejfx">
+    <sequential>
+      <if>
+        <equals arg1="${jfx.available}" arg2="true" />
+        <then>
+          <!-- Extract JFX -->
+          <echo message="Target jfx: ${jfx.path.zip}"/>
+          <unzip dest="${target-platform}" src="${jfx.path.zip}" overwrite="true"/>
+        </then>
+      </if>
+    </sequential>
+  </macrodef>
+
+  <target name="jdk-check">
+    <echo message="Checking for ${jdk.tgz.path}" />
+    <available file="${jdk.tgz.path}" property="jdk.tgz.downloaded" />
+    <echo message="Result: ${jdk.tgz.downloaded}" />
+  </target>
+
+  <target name="jfx-check">
+    <available file="${jfx.path.zip}" property="jfx.zip.downloaded" />
   </target>
 
   <target name="downloader-setup">
@@ -263,30 +298,47 @@
              classpath="jre/downloader.jar" />
   </target>
 
-  <target name="jre-download" depends="jre-check, downloader-setup"
-          unless="jre.tgz.downloaded">
-    <!-- we normally download a JRE, except on arm -->
-    <property name="jre.download.jdk" value="true" />
+  <target name="jdk-download" depends="jdk-check, downloader-setup"
+          unless="jdk.tgz.downloaded">
 
-    <condition property="jre.downloader"
+    <!-- we normally download a JRE, except on arm -->
+    <property name="jdk.download.jdk" value="true" />
+
+    <condition property="jdk.downloader"
                value="${target-platform}-i586.tar.gz">
-        <equals arg1="${sun.arch.data.model}" arg2="32" />
+        <equals arg1="${jdk.data.model}" arg2="32" />
     </condition>
-    <condition property="jre.downloader"
+    <condition property="jdk.downloader"
                value="${target-platform}-x64.tar.gz">
-      <equals arg1="${sun.arch.data.model}" arg2="64" />
+      <equals arg1="${jdk.data.model}" arg2="64" />
     </condition>
 
     <downloader train="${jdk.train}"
                 version="${jdk.version}"
                 openJdk="true"
-                platform="${target-platform}${sun.arch.data.model}"
+                platform="${target-platform}${jdk.data.model}"
                 update="${jdk.update}"
                 build="${jdk.build}"
                 hash="${jdk.hash}"
-                jdk="${jre.download.jdk}"
-                flavor="${jre.downloader}"
-                path="${jre.tgz.path}" />
+                component="JDK"
+                flavor="${jdk.downloader}"
+                path="${jdk.tgz.path}" />
+  </target>
+
+  <target name="jfx-download" depends="jfx-check, downloader-setup"
+          unless="jfx.zip.downloaded">
+
+    <downloader train="${jfx.train}"
+                version="${jfx.version}"
+                openJdk="true"
+                platform="${target-platform}${jdk.data.model}"
+                update="${jfx.update}"
+                build="1"
+                hash="${jfx.hash}"
+                component="JFX"
+                flavor="${target-platform}${jdk.data.model}.zip"
+                path="${jfx.path.zip}" />
+
   </target>
 
   <!-- code signing hack, turns on code signing during dist -->
@@ -330,26 +382,32 @@
   </fileset>
 
   <target name="build" description="Build Processing.">
-    <settarget platform="${platform}" />
+    <settarget platform="${platform}" datamodel="${sun.arch.data.model}" />
     <antcall target="${target-platform}-build" />
   </target>
 
   <target name="cross-build-macosx" description="Build Processing.">
-    <settarget platform="macosx" />
+    <settarget platform="macosx" datamodel="x64" />
     <antcall target="macosx-build" />
   </target>
 
-  <target name="cross-build-linux" description="Build Processing.">
-    <settarget platform="linux" />
+  <target name="cross-build-linux-x64" description="Build Processing.">
+    <settarget platform="linux" datamodel="x64" />
+    <antcall target="linux-build" />
+  </target>
+
+  <target name="cross-build-linux-aarch64" description="Build Processing.">
+    <settarget platform="linux" datamodel="aarch64" />
     <antcall target="linux-build" />
   </target>
 
   <target name="cross-build-windows" description="Build Processing.">
-    <settarget platform="windows" />
+    <settarget platform="windows" datamodel="x64" />
     <antcall target="windows-build" />
   </target>
 
   <target name="run" description="Run Processing.">
+    <settarget platform="${platform}" datamodel="${sun.arch.data.model}" />
     <antcall target="${target-platform}-run" />
   </target>
 
@@ -555,12 +613,9 @@
     <fail message="wrong platform (${os.name})" /> -->
   </target>
 
-  <target name="macosx-build" depends="revision-check, macosx-check-os, subprojects-build, jre-download" description="Build Mac OS X version">
-
-    <mkdir dir="macosx/work" />
-
+  <target name="macosx-build" depends="revision-check, macosx-check-os, subprojects-build, jdk-download, jfx-download" description="Build Mac OS X version">
     <!-- Extract JDK -->
-    <echo message="Target jre: ${jre.tgz.path}"/>
+    <echo message="Target jdk: ${jdk.tgz.path}"/>
     <exec executable="tar" dir="macosx">
       <!-- Change directory -->
       <!--
@@ -569,15 +624,15 @@
       <arg value="-xzpf" />
       -->
       <arg value="xfz" />
-      <arg value="../${jre.tgz.path}"/>
+      <arg value="../${jdk.tgz.path}"/>
     </exec>
 
-    <condition property="jre.dir" value="macosx/work/jdk-${jdk.esoteric}+${jdk.build}.jdk">
+    <condition property="jdk.dir" value="macosx/work/jdk-${jdk.esoteric}+${jdk.build}.jdk">
       <equals arg1="${jdk.train}" arg2="1" />
     </condition>
 
     <!-- Force full JDK when not on train 1 (starts with java 11) -->
-    <condition property="jre.dir" value="macosx/work/jdk-${jdk.esoteric}+${jdk.build}.jdk/">
+    <condition property="jdk.dir" value="macosx/work/jdk-${jdk.esoteric}+${jdk.build}.jdk/">
       <not>
         <equals arg1="${jdk.train}" arg2="1" />
       </not>
@@ -601,12 +656,12 @@
                mainClassName="processing.app.BaseSplash">
 
       <!-- The appbundler task needs a couple files (the Info.plist and
-           anything else outside /jre) from the full JDK, even though
+           anything else outside /jdk) from the full JDK, even though
            it's primarily copying over the JRE folder. -->
       <runtime dir="${jdk.path.macosx}/Contents/Home" />
       <!-- Eventually we'll want to load the JRE directly from
            the .tgz on the Oracle site, though it's in a folder called
-           jre1.7.0_40.jre, so we'll need to strip that out. -->
+           jdk1.7.0_40.jdk, so we'll need to strip that out. -->
 
       <!-- Same as runtime.jars, seen above; plus core.jar. -->
       <classpath file="../app/pde.jar" />
@@ -729,20 +784,22 @@
       <fileset file="shared/revisions.txt" />
     </copy>
 
+    <preparejfx />
+
     <!-- Pull in OpenJFX (separated from mainline Java in JDK 11). -->
     <if>
-      <equals arg1="${fx.available}" arg2="true" />
+      <equals arg1="${jfx.available}" arg2="true" />
       <then>
 
         <copy todir="macosx/work/Processing.app/Contents/Java/core/library" overwrite="true">
-          <fileset dir="${env.PATH_TO_FX}" includes="*.jar"/>
-          <fileset dir="${env.PATH_TO_FX}" includes="*.dylib"/>
+          <fileset dir="${jfx.path.lib}" includes="*.jar"/>
+          <fileset dir="${jfx.path.lib}" includes="*.dylib"/>
         </copy>
 
         <mkdir dir="macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}+${jdk.build}/Contents/Home/legal/openjfx" />
 
         <copy todir="macosx/work/Processing.app/Contents/PlugIns/${jdk.prefix}-${jdk.esoteric}+${jdk.build}/Contents/Home/legal/openjfx" overwrite="true">
-          <fileset dir="${env.PATH_TO_FX}/../legal" includes="**"/>
+          <fileset dir="${jfx.path.dist}/legal" includes="**"/>
         </copy>
 
       </then>
@@ -880,9 +937,7 @@
     <fail message="wrong platform (${os.name})" /> -->
   </target>
 
-  <target name="linux-build" depends="ignore-tools, check-linux-arm32, check-linux-arm64, revision-check, linux-check-os, jre-download, subprojects-build, subprojects-build-linux-arm32, subprojects-build-linux-arm64" description="Build Linux version">
-    <mkdir dir="linux/work" />
-
+  <target name="linux-build" depends="ignore-tools, check-linux-arm32, check-linux-arm64, revision-check, linux-check-os, jdk-download, jfx-download, subprojects-build, subprojects-build-linux-arm32, subprojects-build-linux-arm64" description="Build Linux version">
     <copy todir="linux/work">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
@@ -920,19 +975,21 @@
       <fileset refid="runtime.jars" />
     </copy>
 
+    <preparejfx />
+
     <!-- Pull in OpenJFX (separated from mainline Java in JDK 11). -->
     <if>
-      <equals arg1="${fx.available}" arg2="true" />
+      <equals arg1="${jfx.available}" arg2="true" />
       <then>
         <copy todir="linux/work/core/library" overwrite="true">
-          <fileset dir="${env.PATH_TO_FX}" includes="*.jar"/>
-          <fileset dir="${env.PATH_TO_FX}" includes="*.so"/>
+          <fileset dir="${jfx.path.lib}" includes="*.jar"/>
+          <fileset dir="${jfx.path.lib}" includes="*.so"/>
         </copy>
 
         <mkdir dir="linux/work/core/java/legal/openjfx" />
 
         <copy todir="linux/work/core/java/legal/openjfx" overwrite="true">
-          <fileset dir="${env.PATH_TO_FX}/../legal" includes="**"/>
+          <fileset dir="${jfx.path.dist}/legal" includes="**"/>
         </copy>
       </then>
     </if>
@@ -968,7 +1025,7 @@
     Cannot use ant version of tar because it doesn't preserve properties.
     <untar compression="gzip"
            dest="linux/work"
-           src="linux/jre.tgz"
+           src="linux/jdk.tgz"
            overwrite="false"/>
 -->
 
@@ -983,30 +1040,30 @@
       <arg value="-xzpf" />
       -->
       <arg value="xfz" />
-      <arg value="../${jre.tgz.path}"/>
+      <arg value="../${jdk.tgz.path}"/>
     </exec>
 
-    <!-- use the jre subfolder when having downloaded a JDK file -->
-    <condition property="jre.dir" value="jdk${jdk.esoteric}">
+    <!-- use the jdk subfolder when having downloaded a JDK file -->
+    <condition property="jdk.dir" value="jdk${jdk.esoteric}">
       <!-- property might not be set, but it is for arm -->
       <and>
-        <equals arg1="${jre.download.jdk}" arg2="true" />
+        <equals arg1="${jdk.download.jdk}" arg2="true" />
         <equals arg1="${jdk.train}" arg2="1" />
       </and>
     </condition>
 
     <!-- use top level JRE otherwise -->
-    <condition property="jre.dir" value="jre${jdk.esoteric}">
+    <condition property="jdk.dir" value="jdk${jdk.esoteric}">
       <and>
         <not>
-          <equals arg1="${jre.download.jdk}" arg2="true" />
+          <equals arg1="${jdk.download.jdk}" arg2="true" />
         </not>
         <equals arg1="${jdk.train}" arg2="1" />
       </and>
     </condition>
 
     <!-- Force full JDK when not on train 1 (starts with java 11) -->
-    <condition property="jre.dir" value="jdk-${jdk.esoteric}+${jdk.build}/">
+    <condition property="jdk.dir" value="jdk-${jdk.esoteric}+${jdk.build}/">
       <not>
         <equals arg1="${jdk.train}" arg2="1" />
       </not>
@@ -1015,20 +1072,20 @@
     <exec executable="rsync" dir="linux">
       <arg value="-a" />
       <arg value="--delete" />
-      <arg value="${jre.dir}" />
+      <arg value="${jdk.dir}" />
       <arg value="work/java/" />
     </exec>
 
-    <delete dir="linux/jre${jdk.esoteric}" failonerror="false" />
+    <delete dir="linux/jdk${jdk.esoteric}" failonerror="false" />
     <delete dir="linux/jdk${jdk.esoteric}" failonerror="false" />
 
     <!-- Remove unused JRE bloat. -->
     <delete failonerror="true">
       <!--
       <fileset refid="javafx-basics" />
-      <fileset refid="javafx-linux-${sun.arch.data.model}" />
+      <fileset refid="javafx-linux-${jdk.data.model}" />
       -->
-      <fileset refid="jre-optional-linux" />
+      <fileset refid="jdk-optional-linux" />
     </delete>
   </target>
 
@@ -1049,7 +1106,7 @@
    <!-- rename the work folder temporarily -->
    <move file="linux/work" tofile="linux/processing-${version}" />
 
-   <property name="linux.dist" value="linux/processing-${version}-linux${sun.arch.data.model}.tgz" />
+   <property name="linux.dist" value="linux/processing-${version}-linux${jdk.data.model}.tgz" />
 
    <exec executable="tar">
      <arg value="--directory=linux" />
@@ -1108,7 +1165,7 @@
    <condition property="linux.deb" value="linux/processing-${version}-linux-arm64.deb">
      <equals arg1="${linux-arm64}" arg2="linux-arm64" />
    </condition>
-   <property name="linux.deb" value="linux/processing-${version}-linux${sun.arch.data.model}.deb" />
+   <property name="linux.deb" value="linux/processing-${version}-linux${jdk.data.model}.deb" />
 
    <!-- Raspbian seems to borrow armhf for armv6hf, so this works -->
    <condition property="deb.arch" value="armhf">
@@ -1118,10 +1175,10 @@
      <equals arg1="${linux-arm64}" arg2="linux-arm64" />
    </condition>
    <condition property="deb.arch" value="i386">
-     <equals arg1="${sun.arch.data.model}" arg2="32" />
+     <equals arg1="${jdk.data.model}" arg2="32" />
    </condition>
    <condition property="deb.arch" value="amd64">
-     <equals arg1="${sun.arch.data.model}" arg2="64" />
+     <equals arg1="${jdk.data.model}" arg2="64" />
    </condition>
 
    <length property="deb.bsize" >
@@ -1198,9 +1255,7 @@
     <fail message="wrong platform (${os.name})" /> -->
   </target>
 
-  <target name="windows-build" depends="ignore-tools, revision-check, windows-check-os, jre-download, subprojects-build" description="Build Windows version">
-    <mkdir dir="windows/work" />
-
+  <target name="windows-build" depends="ignore-tools, revision-check, windows-check-os, jdk-download, jfx-download, subprojects-build" description="Build Windows version">
     <!-- assemble the pde -->
     <mkdir dir="windows/work/lib" />
     <copy todir="windows/work/lib" flatten="true">
@@ -1211,10 +1266,10 @@
          https://github.com/processing/processing/issues/3624 -->
 
     <condition property="jna.subfolder" value="win32-x86">
-      <equals arg1="${sun.arch.data.model}" arg2="32" />
+      <equals arg1="${jdk.data.model}" arg2="32" />
     </condition>
     <condition property="jna.subfolder" value="win32-x86-64">
-      <equals arg1="${sun.arch.data.model}" arg2="64" />
+      <equals arg1="${jdk.data.model}" arg2="64" />
     </condition>
 
     <unzip src="../app/lib/jna.jar" dest="windows/work/lib">
@@ -1232,20 +1287,22 @@
       <fileset file="shared/revisions.txt" />
     </copy>
 
+    <preparejfx />
+
     <!-- Pull in OpenJFX (separated from mainline Java in JDK 11). -->
     <if>
-      <equals arg1="${fx.available}" arg2="true" />
+      <equals arg1="${jfx.available}" arg2="true" />
       <then>
 
         <copy todir="windows/work/core/library">
-          <fileset dir="${env.PATH_TO_FX}" includes="*.jar"/>
-          <fileset dir="${env.PATH_TO_FX}/../bin" includes="*.dll"/>
+          <fileset dir="${jfx.path.lib}" includes="*.jar"/>
+          <fileset dir="${jfx.path.lib}/../bin" includes="*.dll"/>
         </copy>
 
         <mkdir dir="windows/work/java/legal/openjfx" />
 
         <copy todir="windows/work/java/legal/openjfx" overwrite="true">
-          <fileset dir="${env.PATH_TO_FX}/../legal" includes="**"/>
+          <fileset dir="${jfx.path.dist}/legal" includes="**"/>
         </copy>
 
       </then>
@@ -1287,32 +1344,32 @@
 
     <!-- starting with 2.0a7, require the local JRE + tools.jar -->
 <!--
-    <get src="http://download.processing.org/java/${jre.file}"
-         dest="windows/jre.tgz"
+    <get src="http://download.processing.org/java/${jdk.file}"
+         dest="windows/jdk.tgz"
          usetimestamp="true" />
 -->
 
     <!--
-    <unzip dest="windows/work" src="windows/jre.zip" overwrite="false"/>
+    <unzip dest="windows/work" src="windows/jdk.zip" overwrite="false"/>
     -->
     <!-- Hopefully this is OK with the permissions (unlike Linux),
          since those shouldn't matter on Windows. -->
     <unzip dest="windows/work"
-           src="${jre.tgz.path}"
+           src="${jdk.tgz.path}"
            overwrite="false" />
 
-    <condition property="jre.dir" value="windows/work/jre${jdk.esoteric}">
+    <condition property="jdk.dir" value="windows/work/jdk${jdk.esoteric}">
       <equals arg1="${jdk.train}" arg2="1" />
     </condition>
 
     <!-- Force full JDK when not on train 1 (starts with java 11) -->
-    <condition property="jre.dir" value="windows/work/jdk-${jdk.esoteric}+${jdk.build}/">
+    <condition property="jdk.dir" value="windows/work/jdk-${jdk.esoteric}+${jdk.build}/">
       <not>
         <equals arg1="${jdk.train}" arg2="1" />
       </not>
     </condition>
 
-    <move file="${jre.dir}" tofile="windows/work/java" />
+    <move file="${jdk.dir}" tofile="windows/work/java" />
 
     <!-- Remove unused JRE bloat. -->
     <delete failonerror="true">
@@ -1320,7 +1377,7 @@
       <fileset refid="javafx-basics" />
       <fileset refid="javafx-windows" />
       -->
-      <fileset refid="jre-optional-windows" />
+      <fileset refid="jdk-optional-windows" />
     </delete>
   </target>
 
@@ -1342,7 +1399,7 @@
          excludes="java/**" />
     -->
 
-    <property name="windows.dist" value="windows/processing-${version}-windows${sun.arch.data.model}.zip" />
+    <property name="windows.dist" value="windows/processing-${version}-windows${jdk.data.model}.zip" />
 
     <zip destfile="${windows.dist}">
       <zipfileset dir="windows/work"
