@@ -387,22 +387,22 @@
   </target>
 
   <target name="cross-build-macosx" description="Build Processing.">
-    <settarget platform="macosx" datamodel="x64" />
+    <settarget platform="macosx" datamodel="64" />
     <antcall target="macosx-build" />
   </target>
 
   <target name="cross-build-linux-x64" description="Build Processing.">
-    <settarget platform="linux" datamodel="x64" />
+    <settarget platform="linux" datamodel="64" />
     <antcall target="linux-build" />
   </target>
 
   <target name="cross-build-linux-aarch64" description="Build Processing.">
-    <settarget platform="linux" datamodel="aarch64" />
+    <settarget platform="linux" datamodel="Arm" />
     <antcall target="linux-build" />
   </target>
 
   <target name="cross-build-windows" description="Build Processing.">
-    <settarget platform="windows" datamodel="x64" />
+    <settarget platform="windows" datamodel="64" />
     <antcall target="windows-build" />
   </target>
 
