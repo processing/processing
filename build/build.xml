@@ -614,6 +614,8 @@
   </target>
 
   <target name="macosx-build" depends="revision-check, macosx-check-os, subprojects-build, jdk-download, jfx-download" description="Build Mac OS X version">
+    <mkdir dir="macosx/work" />
+
     <!-- Extract JDK -->
     <echo message="Target jdk: ${jdk.tgz.path}"/>
     <exec executable="tar" dir="macosx">
@@ -938,6 +940,8 @@
   </target>
 
   <target name="linux-build" depends="ignore-tools, check-linux-arm32, check-linux-arm64, revision-check, linux-check-os, jdk-download, jfx-download, subprojects-build, subprojects-build-linux-arm32, subprojects-build-linux-arm64" description="Build Linux version">
+    <mkdir dir="linux/work" />
+
     <copy todir="linux/work">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
@@ -1256,6 +1260,8 @@
   </target>
 
   <target name="windows-build" depends="ignore-tools, revision-check, windows-check-os, jdk-download, jfx-download, subprojects-build" description="Build Windows version">
+    <mkdir dir="windows/work" />
+
     <!-- assemble the pde -->
     <mkdir dir="windows/work/lib" />
     <copy todir="windows/work/lib" flatten="true">
