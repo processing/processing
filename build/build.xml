@@ -170,6 +170,12 @@
     <include name="bin/javaws" />
     <include name="lib/javaws.jar" />
 
+    <include name="lib/src.zip" />
+
+    <include name="java/lib/src.zip" />
+
+    <include name="core/library/libjfxwebkit.so" />
+
     <include name="lib/cmm/PYCC.pf" />
   </fileset>
 
