@@ -131,6 +131,10 @@
        http://www.oracle.com/technetwork/java/javase/jdk-8-readme-2095710.html
        Please help: https://github.com/processing/processing/issues/3288 -->
 
+  <fileset dir="macosx/work/Processing.app/Contents" id="jdk-optional-macosx">
+    <include name="Java/core/library/libjfxwebkit.dylib" />
+  </fileset>
+
   <fileset dir="windows/work/java" id="jdk-optional-windows">
     <include name="lib/ext/dnsns.jar" />
 
@@ -827,6 +831,10 @@
       <param name="target.path" value="${contents.dir}/Java" />
     </antcall>
 
+    <delete failonerror="true">
+      <fileset refid="jdk-optional-macosx" />
+    </delete>
+
     <exec executable="macosx/language_gen.py" />
 
     <property name="launch4j.dir" value="${contents.dir}/Java/modes/java/application/launch4j" />
@@ -846,6 +854,7 @@
       <fileset dir="${launch4j.dir}/bin" includes="ld-*" />
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
+
   </target>
 
   <target name="macosx-run" depends="macosx-build"
