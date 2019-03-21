@@ -293,6 +293,11 @@
     <attribute name="dest"/>
     <sequential>
 
+      <local name="src-abs"/>
+      <local name="dest-abs"/>
+      <local name="src-local"/>
+      <local name="dest-local"/>
+
       <property name="src-abs" value="${basedir}/@{src}"/>
       <property name="dest-abs" value="${basedir}/@{dest}"/>
 
@@ -310,16 +315,21 @@
               replace="\\\\"
               global="true" />
 
-          <echo message="${src-local} ${dest-local}" />
+          <echo message="Native copy of ${src-local} to ${dest-local}" />
           <exec executable="cmd">
             <arg line="/C xcopy /s/Y ${src-local} ${dest-local}" />
           </exec>
         </then>
-        <else>
-          <exec executable="cp">
-            <arg line="${src-abs} ${dest-abs}"/>
+      </if>
+
+      <if>
+        <not><equals arg1="${host-platform}" arg2="windows" /></not>
+        <then>
+          <echo message="Native copy of ${src-abs} to ${dest-abs}" />
+          <exec executable="sh">
+            <arg line="-c 'cp ${src-abs} ${dest-abs}'"/>
           </exec>
-        </else>
+        </then>
       </if>
     </sequential>
   </macrodef>
