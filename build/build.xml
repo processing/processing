@@ -135,28 +135,32 @@
     <include name="Java/core/library/libjfxwebkit.dylib" />
   </fileset>
 
-  <fileset dir="windows/work/java" id="jdk-optional-windows">
-    <include name="lib/ext/dnsns.jar" />
+  <fileset dir="windows/work" id="jdk-optional-windows">
+    <include name="java/lib/ext/dnsns.jar" />
 
-    <include name="bin/dtplugin" />
-    <include name="bin/plugin2" />
+    <include name="java/bin/dtplugin" />
+    <include name="java/bin/plugin2" />
 
-    <include name="bin/kinit.exe" />
-    <include name="bin/klist.exe" />
-    <include name="bin/ktab.exe" />
+    <include name="java/bin/kinit.exe" />
+    <include name="java/bin/klist.exe" />
+    <include name="java/bin/ktab.exe" />
 
-    <include name="bin/keytool" /> <!-- needed for Android -->
-    <include name="bin/orbd" />
-    <include name="bin/policytool" />
-    <include name="bin/rmid" />
-    <include name="bin/rmiregistry" />
-    <include name="bin/servertool" />
-    <include name="bin/tnameserv" />
+    <include name="java/bin/keytool" /> <!-- needed for Android -->
+    <include name="java/bin/orbd" />
+    <include name="java/bin/policytool" />
+    <include name="java/bin/rmid" />
+    <include name="java/bin/rmiregistry" />
+    <include name="java/bin/servertool" />
+    <include name="java/bin/tnameserv" />
 
-    <include name="bin/javaws.exe" />
-    <include name="lib/javaws.jar" />
+    <include name="java/bin/javaws.exe" />
+    <include name="java/lib/javaws.jar" />
 
-    <include name="lib/cmm/PYCC.pf" />
+    <include name="java/lib/cmm/PYCC.pf" />
+
+    <include name="java/lib/src.zip" />
+
+    <include name="core/library/jfxwebkit.dll" />
   </fileset>
 
   <fileset dir="linux/work" id="jdk-optional-linux">
