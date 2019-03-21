@@ -288,6 +288,42 @@
     </sequential>
   </macrodef>
 
+  <macrodef name="nativecopy">
+    <attribute name="src"/>
+    <attribute name="dest"/>
+    <sequential>
+
+      <property name="src-abs" value="${basedir}/@{src}"/>
+      <property name="dest-abs" value="${basedir}/@{dest}"/>
+
+      <if>
+        <equals arg1="${host-platform}" arg2="windows" />
+        <then>
+          <propertyregex property="src-local"
+               input="${src-abs}"
+               regexp="/"
+               replace="\\\\"
+               global="true" />
+          <propertyregex property="dest-local"
+              input="${dest-abs}"
+              regexp="/"
+              replace="\\\\"
+              global="true" />
+
+          <echo message="${src-local} ${dest-local}" />
+          <exec executable="cmd">
+            <arg line="/C xcopy /s/Y ${src-local} ${dest-local}" />
+          </exec>
+        </then>
+        <else>
+          <exec executable="cp">
+            <arg line="${src-abs} ${dest-abs}"/>
+          </exec>
+        </else>
+      </if>
+    </sequential>
+  </macrodef>
+
   <target name="jdk-check">
     <echo message="Checking for ${jdk.tgz.path}" />
     <available file="${jdk.tgz.path}" property="jdk.tgz.downloaded" />
@@ -1315,10 +1351,17 @@
       <equals arg1="${jfx.available}" arg2="true" />
       <then>
 
-        <copy todir="windows/work/core/library">
-          <fileset dir="${jfx.path.lib}" includes="*.jar"/>
-          <fileset dir="${jfx.path.lib}/../bin" includes="*.dll"/>
-        </copy>
+        <!-- Use native copy command due to binary file corruption. See
+          https://ant.apache.org/manual/Tasks/copy.html#encoding. Extraneous
+          files removed later. -->
+
+        <nativecopy
+          src="${jfx.path.lib}/*.jar"
+          dest="windows/work/core/library" />
+
+        <nativecopy
+          src="${jfx.path.dist}/bin/*.dll"
+          dest="windows/work/core/library" />
 
         <mkdir dir="windows/work/java/legal/openjfx" />
 
