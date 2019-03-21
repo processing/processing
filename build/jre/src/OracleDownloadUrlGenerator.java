@@ -20,16 +20,34 @@
 */
 
 
+import java.util.Optional;
+
 /**
  * Utility to generate the download URL from Oracle.
  */
-public class OracleDownloadUrlGenerator extends DownloadUrlGenerator{
+public class OracleDownloadUrlGenerator extends DownloadUrlGenerator {
+  private static final String COOKIE =
+      "oraclelicense=accept-securebackup-cookie";
+
 
   @Override
-  public String buildUrl(String platform, boolean jdk, int train, int version, int update,
+  public String buildUrl(String platform, String component, int train, int version, int update,
       int build, String flavor, String hash) {
 
-    String filename = getLocalFilename(platform, jdk, train, version, update, build, flavor, hash);
+    if (!component.equalsIgnoreCase("jdk")) {
+      throw new RuntimeException("Can only generate JDK download URLs for Oracle.");
+    }
+
+    String filename = getLocalFilename(
+        platform,
+        component,
+        train,
+        version,
+        update,
+        build,
+        flavor,
+        hash
+    );
 
     String url = "http://download.oracle.com/otn-pub/java/jdk/" +
         (update == 0 ?
@@ -45,6 +63,10 @@ public class OracleDownloadUrlGenerator extends DownloadUrlGenerator{
     url += filename;
 
     return url;
+  }
+
+  public Optional<String> getCookie() {
+    return Optional.of(COOKIE);
   }
 
 }

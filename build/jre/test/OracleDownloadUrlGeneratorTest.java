@@ -41,7 +41,7 @@ public class OracleDownloadUrlGeneratorTest {
   public void testBuildUrl() {
     String url = urlGenerator.buildUrl(
       "macos",
-      true,
+      "jdk",
       1,
       8,
       131,

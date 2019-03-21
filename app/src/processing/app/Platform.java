@@ -339,7 +339,7 @@ public class Platform {
       File[] plugins = getContentFile("../PlugIns").listFiles(new FilenameFilter() {
         public boolean accept(File dir, String name) {
           return dir.isDirectory() &&
-            name.endsWith(".jdk") && !name.startsWith(".");
+            name.contains("jdk") && !name.startsWith(".");
         }
       });
       return new File(plugins[0], "Contents/Home");

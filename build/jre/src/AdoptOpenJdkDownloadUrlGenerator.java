@@ -27,8 +27,12 @@ public class AdoptOpenJdkDownloadUrlGenerator extends DownloadUrlGenerator {
   private static final String BASE_URL = "https://github.com/AdoptOpenJDK/openjdk%d-binaries/releases/download/jdk-%d.%d.%d%%2B%d/OpenJDK%dU-%s_%d.%d.%d_%d.%s";
 
   @Override
-  public String buildUrl(String platform, boolean jdk, int train, int version, int update,
+  public String buildUrl(String platform, String component, int train, int version, int update,
       int build, String flavor, String hash) {
+
+    if (!component.equalsIgnoreCase("jdk")) {
+      throw new RuntimeException("Can only generate JDK download URLs for AdoptOpenJDK.");
+    }
 
     String filename = buildDownloadRemoteFilename(platform);
     String fileExtension = buildFileExtension(platform);
@@ -60,7 +64,7 @@ public class AdoptOpenJdkDownloadUrlGenerator extends DownloadUrlGenerator {
     switch (downloadPlatform.toLowerCase()) {
       case "windows32": return "jdk_x86-32_windows_hotspot";
       case "windows64": return "jdk_x64_windows_hotspot";
-      case "macos": return "jdk_x64_mac_hotspot";
+      case "macosx64": return "jdk_x64_mac_hotspot";
       case "linux32": throw new RuntimeException("Linux32 not supported by AdoptOpenJDK.");
       case "linux64": return "jdk_x64_linux_hotspot";
       case "linuxArm": return "jdk_aarch64_linux_hotspot";
