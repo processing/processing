@@ -944,7 +944,7 @@
       <arg value="--force" />
       <arg value="--sign" />
       <arg value="Developer ID Application" />
-      <arg value="Processing.app/Contents/PlugIns/jdk${jdk.esoteric}+${jdk.build}" />
+      <arg value="Processing.app/Contents/PlugIns/jdk-${jdk.esoteric}+${jdk.build}" />
     </exec>
 
     <exec executable="/usr/bin/codesign" dir="macosx/work">
