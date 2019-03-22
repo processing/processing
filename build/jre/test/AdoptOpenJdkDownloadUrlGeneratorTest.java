@@ -32,6 +32,7 @@ public class AdoptOpenJdkDownloadUrlGeneratorTest {
   private static final String EXPECTED_WIN64_URL = "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.1%2B13/OpenJDK11U-jdk_x64_windows_hotspot_11.0.1_13.zip";
   private static final String EXPECTED_MAC_URL = "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.1%2B13/OpenJDK11U-jdk_x64_mac_hotspot_11.0.1_13.tar.gz";
   private static final String EXPECTED_LINUX_URL = "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.1%2B13/OpenJDK11U-jdk_x64_linux_hotspot_11.0.1_13.tar.gz";
+  private static final String EXPECTED_LINUX_URL_ARM = "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.1%2B13/OpenJDK11U-jdk_aarch64_linux_hotspot_11.0.1_13.tar.gz";
 
   private static final String COMPONENT = "jdk";
   private static final int TRAIN = 11;
@@ -87,7 +88,7 @@ public class AdoptOpenJdkDownloadUrlGeneratorTest {
   }
 
   @Test
-  public void testBuildUrlLinux() {
+  public void testBuildUrlLinux64() {
     String url = urlGenerator.buildUrl(
       "linux64",
       COMPONENT,
@@ -101,6 +102,25 @@ public class AdoptOpenJdkDownloadUrlGeneratorTest {
 
     assertEquals(
       EXPECTED_LINUX_URL,
+      url
+    );
+  }
+
+  @Test
+  public void testBuildUrlLinuxArm() {
+    String url = urlGenerator.buildUrl(
+      "linuxArm",
+      COMPONENT,
+      TRAIN,
+      VERSION,
+      UPDATE,
+      BUILD,
+      "linuxArm" + FLAVOR_SUFFIX,
+      HASH
+    );
+
+    assertEquals(
+      EXPECTED_LINUX_URL_ARM,
       url
     );
   }

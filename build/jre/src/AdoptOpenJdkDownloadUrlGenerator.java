@@ -67,7 +67,7 @@ public class AdoptOpenJdkDownloadUrlGenerator extends DownloadUrlGenerator {
       case "macosx64": return "jdk_x64_mac_hotspot";
       case "linux32": throw new RuntimeException("Linux32 not supported by AdoptOpenJDK.");
       case "linux64": return "jdk_x64_linux_hotspot";
-      case "linuxArm": return "jdk_aarch64_linux_hotspot";
+      case "linuxarm": return "jdk_aarch64_linux_hotspot";
       default: throw new RuntimeException("Unknown platform: " + downloadPlatform);
     }
   }
