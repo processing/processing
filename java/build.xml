@@ -46,44 +46,6 @@
     </java>
   </target>
 
-  <target name="compile" depends="preproc" description="Compile sources">
-    <condition property="core-built">
-      <available file="../core/library/core.jar" />
-    </condition>
-    <fail unless="core-built" message="Please first build the core library and make sure it is located at ../core/library/core.jar" />
-
-    <!-- clean up the warning mess caused by this old antlr version -->
-    <!--<property name="uuc" value="@SuppressWarnings({ &quot;unused&quot;, &quot;unchecked&quot;, &quot;cast&quot; })${line.separator}" />-->
-    <property name="uucr" value="@SuppressWarnings({ &quot;unused&quot;, &quot;unchecked&quot;, &quot;cast&quot;, &quot;rawtypes&quot;  })${line.separator}" />
-    <property name="uc" value="@SuppressWarnings({ &quot;unused&quot;, &quot;cast&quot; })${line.separator}" />
-
-    <!-- need to match against the previous line so that we don't re-add -->
-    <replaceregexp
-        file="generated/processing/mode/java/preproc/JavaLexer.java"
-        match="(\n\n)(public class JavaLexer .*)"
-        replace="\1${uucr}\2">
-    </replaceregexp>
-
-    <replaceregexp
-        file="generated/processing/mode/java/preproc/JavaRecognizer.java"
-        match="(\*/\n)(public class JavaRecognizer .*)"
-        replace="\1${uc}\2">
-    </replaceregexp>
-
-    <replaceregexp
-        file="generated/processing/mode/java/preproc/PdeLexer.java"
-        match="(\n\n)(public class PdeLexer .*)"
-        replace="\1${uucr}\2">
-    </replaceregexp>
-
-    <replaceregexp
-        file="generated/processing/mode/java/preproc/PdeRecognizer.java"
-        match="(\n\n)(public class PdeRecognizer .*)"
-        replace="\1${uc}\2">
-    </replaceregexp>
-    <!-- end of workaround for old antlr -->
-  </target>
-
   <path id="classpath.base">
     <pathelement location="../core/library/core.jar" />
     <pathelement location="../app/pde.jar" />
@@ -176,10 +138,6 @@
 
   <target name="compile" depends="test" description="Compile sources">
     <compilecommon srcdir="src" destdir="bin" classpath="classpath.base" />
-  </target>
-
-  <target name="build" depends="compile" description="Build PDE">
-    <jar basedir="bin" destfile="${mode_jar}" />
   </target>
 
 </project>
