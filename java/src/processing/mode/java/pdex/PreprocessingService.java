@@ -273,12 +273,11 @@ public class PreprocessingService {
 
     String pdeStage = result.pdeCode = workBuffer.toString();
 
-
     boolean reloadCodeFolder = firstCheck || codeFolderChanged.getAndSet(false);
     boolean reloadLibraries = firstCheck || librariesChanged.getAndSet(false);
 
     // Core and default imports
-    PdePreprocessor preProcessor = editor.createPreprocessor(null);
+    PdePreprocessor preProcessor = editor.createPreprocessor(editor.getSketch().getName());
     if (coreAndDefaultImports == null) {
       coreAndDefaultImports = buildCoreAndDefaultImports(preProcessor);
     }
