@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 
-import org.antlr.v4.runtime.ANTLRErrorStrategy;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -50,7 +49,7 @@ public class PdePreprocessor {
                                   Iterable<String> codeFolderPackages)
                                     throws SketchException {
 
-    ArrayList<String> codeFolderImports = new ArrayList<String>();
+    ArrayList<String> codeFolderImports = new ArrayList<>();
     if (codeFolderPackages != null) {
       for (String item : codeFolderPackages) {
         codeFolderImports.add(item + ".*");
@@ -82,6 +81,8 @@ public class PdePreprocessor {
     ParseTree tree;
     {
       ProcessingParser parser = new ProcessingParser(tokens);
+      parser.removeErrorListeners();
+      parser.addErrorListener(PdeIgnoreErrorListener.getInstance());
       parser.setBuildParseTree(true);
       tree = parser.processingSketch();
     }

@@ -300,7 +300,8 @@ public class PreprocessingService {
     try {
       sketchMode = preProcessor.write(new StringWriter(), result.scrubbedPdeCode).programType;
     } catch (SketchException e) {
-      throw new RuntimeException("Failed to determine mode: " + e.getMessage());
+      result.hasCompilationErrors = true;
+      return result.build();
     }
 
     // Prepare transforms to convert pde code into parsable code

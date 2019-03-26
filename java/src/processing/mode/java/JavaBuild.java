@@ -32,6 +32,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.antlr.v4.runtime.RecognitionException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -59,6 +60,7 @@ import processing.mode.java.pdex.util.runtime.strategy.JavaFxRuntimePathFactory;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PreprocessorResult;
 import processing.mode.java.preproc.SurfaceInfo;
+import processing.mode.java.preproc.err.PdeFoundCompileIssueException;
 
 
 public class JavaBuild {
@@ -370,7 +372,26 @@ public class JavaBuild {
             packageFolder.mkdirs();
             Util.saveFile(javaCode, new File(packageFolder, filename));
           }
+        } catch (PdeFoundCompileIssueException re) {
+          // re also returns a column that we're not bothering with for now
+          // first assume that it's the main file
+          //      int errorFile = 0;
+          int errorLine = re.getLine() - 1;
 
+          // then search through for anyone else whose preprocName is null,
+          // since they've also been combined into the main pde.
+          int errorFile = findErrorFile(errorLine);
+          errorLine -= sketch.getCode(errorFile).getPreprocOffset();
+
+          String msg = re.getMessage();
+
+          throw new SketchException(
+              msg,
+              errorFile,
+              errorLine,
+              re.getColumn(),
+              false
+          );
         } catch (IOException e) {
           e.printStackTrace();
           String msg = "Problem moving " + filename + " to the build folder";
