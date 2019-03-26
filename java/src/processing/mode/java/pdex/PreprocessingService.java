@@ -300,8 +300,7 @@ public class PreprocessingService {
     try {
       sketchMode = preProcessor.write(new StringWriter(), result.scrubbedPdeCode).programType;
     } catch (SketchException e) {
-      result.hasCompilationErrors = true;
-      return result.build();
+      sketchMode = Mode.STATIC;
     }
 
     // Prepare transforms to convert pde code into parsable code
