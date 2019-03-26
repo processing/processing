@@ -100,7 +100,7 @@ public class JavaBuild {
   /**
    * Run the build inside a temporary build folder. Used for run/present.
    * @return null if compilation failed, main class name if not
-   * @throws RunnerException
+   * @throws SketchException
    */
   public String build(boolean sizeWarning) throws SketchException {
     return build(sketch.makeTempFolder(), sketch.makeTempFolder(), sizeWarning);
@@ -150,7 +150,7 @@ public class JavaBuild {
    * with purty set to false to make sure there are no errors, then once
    * successful, re-export with purty set to true.
    *
-   * @param buildPath Location to copy all the .java files
+   * @param srcFolder Location to copy all the .java files
    * @return null if compilation failed, main class name if not
    */
   public String preprocess(File srcFolder, boolean sizeWarning) throws SketchException {
@@ -238,148 +238,20 @@ public class JavaBuild {
     PreprocessorResult result;
     try {
       File outputFolder = (packageName == null) ?
-        srcFolder : new File(srcFolder, packageName.replace('.', '/'));
+          srcFolder : new File(srcFolder, packageName.replace('.', '/'));
       outputFolder.mkdirs();
+//      Base.openFolder(outputFolder);
       final File java = new File(outputFolder, sketch.getName() + ".java");
+      final PrintWriter stream = new PrintWriter(new FileWriter(java));
       try {
-        final PrintWriter writer = PApplet.createWriter(java);
-        try {
-          result = preprocessor.write(writer, bigCode.toString(), codeFolderPackages);
-        } finally {
-          writer.close();
-        }
-      } catch (RuntimeException re) {
-        re.printStackTrace();
-        throw new SketchException("Could not write " + java.getAbsolutePath());
+        result = preprocessor.write(stream, bigCode.toString(), codeFolderPackages);
+      } finally {
+        stream.close();
       }
-    } catch (antlr.RecognitionException re) {
-      // re also returns a column that we're not bothering with for now
-      // first assume that it's the main file
-//      int errorFile = 0;
-      int errorLine = re.getLine() - 1;
-
-      // then search through for anyone else whose preprocName is null,
-      // since they've also been combined into the main pde.
-      int errorFile = findErrorFile(errorLine);
-      errorLine -= sketch.getCode(errorFile).getPreprocOffset();
-
-      String msg = re.getMessage();
-
-      if (msg.contains("expecting RCURLY") || msg.contains("expecting LCURLY")) {
-        for (int i = 0; i < sketch.getCodeCount(); i++) {
-          SketchCode sc = sketch.getCode(i);
-          if (sc.isExtension("pde")) {
-            String s = sc.getProgram();
-            int[] braceTest = SourceUtils.checkForMissingBraces(
-                SourceUtils.scrubCommentsAndStrings(s) + "\n", 0, s.length()+1);
-            if (braceTest[0] == 0) continue;
-
-            // Completely ignoring the errorFile/errorLine given since it's
-            // likely to be the wrong tab. For the same reason, I'm not showing
-            // the result of PApplet.match(msg, "found ('.*')") on missing
-            // LCURLY.
-            throw new SketchException(braceTest[0] > 0
-              ? "Found an extra { character without a } to match it."
-              : "Found an extra } character without a { to match it.",
-              i, braceTest[1], braceTest[2], false);
-          }
-        }
-        // If we're still here, there's the right brackets, just not in the
-        // right place. Passing on the original error.
-        throw new SketchException(
-            msg.replace("LCURLY", "{").replace("RCURLY", "}"),
-            errorFile, errorLine, re.getColumn(), false);
-      }
-
-      if (msg.indexOf("expecting RBRACK") != -1) {
-        System.err.println(msg);
-        throw new SketchException("Syntax error, " +
-                                  "maybe a missing ] character?",
-                                  errorFile, errorLine, re.getColumn(), false);
-      }
-
-      if (msg.indexOf("expecting SEMI") != -1) {
-        System.err.println(msg);
-        throw new SketchException("Syntax error, " +
-                                  "maybe a missing semicolon?",
-                                  errorFile, errorLine, re.getColumn(), false);
-      }
-
-      if (msg.indexOf("expecting RPAREN") != -1) {
-        System.err.println(msg);
-        throw new SketchException("Syntax error, " +
-                                  "maybe a missing right parenthesis?",
-                                  errorFile, errorLine, re.getColumn(), false);
-      }
-
-      if (msg.indexOf("preproc.web_colors") != -1) {
-        throw new SketchException("A web color (such as #ffcc00) " +
-                                  "must be six digits.",
-                                  errorFile, errorLine, re.getColumn(), false);
-      }
-
-      //System.out.println("msg is " + msg);
-      throw new SketchException(msg, errorFile,
-                                errorLine, re.getColumn(), false);
-
-    } catch (antlr.TokenStreamRecognitionException tsre) {
-      // while this seems to store line and column internally,
-      // there doesn't seem to be a method to grab it..
-      // so instead it's done using a regexp
-
-//      System.err.println("and then she tells me " + tsre.toString());
-      // TODO not tested since removing ORO matcher.. ^ could be a problem
-      String locationRegex = "^line (\\d+):(\\d+):\\s";
-      String message = tsre.getMessage();
-      String[] m;
-
-      if (null != (m = PApplet.match(tsre.toString(),
-              "unexpected char: (.*)"))) {
-        char c = 0;
-        if (m[1].startsWith("0x")) {     // Hex
-          c = (char) PApplet.unhex(m[1].substring(2));
-        } else if (m[1].length() == 3) { // Quoted
-          c = m[1].charAt(1);
-        } else if (m[1].length() == 1) { // Alone
-          c = m[1].charAt(0);
-        }
-        if (c == '\u201C' || c == '\u201D' || // “”
-            c == '\u2018' || c == '\u2019') { // ‘’
-          message = Language.interpolate("editor.status.bad_curly_quote", c);
-        } else if (c != 0) {
-          message = "Not expecting symbol " + m[1] +
-              ", which is " + Character.getName(c) + ".";
-        }
-      }
-
-      String[] matches = PApplet.match(tsre.toString(), locationRegex);
-      if (matches != null) {
-        int errorLine = Integer.parseInt(matches[1]) - 1;
-        int errorColumn = Integer.parseInt(matches[2]);
-
-        int errorFile = 0;
-        for (int i = 1; i < sketch.getCodeCount(); i++) {
-          SketchCode sc = sketch.getCode(i);
-          if (sc.isExtension("pde") &&
-              (sc.getPreprocOffset() < errorLine)) {
-            errorFile = i;
-          }
-        }
-        errorLine -= sketch.getCode(errorFile).getPreprocOffset();
-
-        throw new SketchException(message,
-                                  errorFile, errorLine, errorColumn);
-
-      } else {
-        // this is bad, defaults to the main class.. hrm.
-        String msg = tsre.toString();
-        throw new SketchException(msg, 0, -1, -1);
-      }
-
     } catch (FileNotFoundException fnfe) {
-        fnfe.printStackTrace();
-        String msg = "Build folder disappeared or could not be written";
-        throw new SketchException(msg);
+      fnfe.printStackTrace();
+      String msg = "Build folder disappeared or could not be written";
+      throw new SketchException(msg);
     } catch (SketchException pe) {
       // RunnerExceptions are caught here and re-thrown, so that they don't
       // get lost in the more general "Exception" handler below.
@@ -608,8 +480,8 @@ public class JavaBuild {
    * Map an error from a set of processed .java files back to its location
    * in the actual sketch.
    * @param message The error message.
-   * @param filename The .java file where the exception was found.
-   * @param line Line number of the .java file for the exception (0-indexed!)
+   * @param dotJavaFilename The .java file where the exception was found.
+   * @param dotJavaLine Line number of the .java file for the exception (0-indexed!)
    * @return A RunnerException to be sent to the editor, or null if it wasn't
    *         possible to place the exception to the sketch code.
    */

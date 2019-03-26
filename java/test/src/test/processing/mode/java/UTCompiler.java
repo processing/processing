@@ -26,19 +26,18 @@ class UTCompiler {
     }
     this.classpath = sb.toString();
 
-    final Platform p = Base.getPlatform();
     final String javaHomeProp = System.getProperty("java.home");
     if (javaHomeProp == null) {
       throw new RuntimeException(
                                  "I don't know how to deal with a null java.home proprty, to be quite frank.");
     }
     final File javaHome = new File(javaHomeProp).getCanonicalFile();
-    p.setenv("JAVA_HOME", javaHome.getCanonicalPath());
+    Platform.setenv("JAVA_HOME", javaHome.getCanonicalPath());
 
     final String path = new File(javaHome, "bin").getCanonicalPath()
-        + File.pathSeparator + p.getenv("PATH");
+        + File.pathSeparator + Platform.getenv("PATH");
 
-    p.setenv("PATH", path);
+    Platform.setenv("PATH", path);
   }
 
   ProcessResult compile(final String name, final String program)

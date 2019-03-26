@@ -5,11 +5,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import processing.app.Base;
 import processing.app.Preferences;
 import processing.app.SketchException;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.AutoFormat;
+
+import test.processing.mode.java.UTCompiler;
+
 
 public class ProcessingTestUtil {
   static void init() {
@@ -21,7 +23,6 @@ public class ProcessingTestUtil {
 
   static {
     try {
-      Base.initPlatform();
       COMPILER = new UTCompiler(new File("bin"), new File("../core/bin"));
       Preferences.load(new FileInputStream(res("preferences.txt")));
     } catch (IOException e) {

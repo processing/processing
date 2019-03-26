@@ -54,7 +54,7 @@
     <pathelement location="../app/lib/apple.jar" />
     <pathelement location="../app/lib/jna.jar" />
     <pathelement location="../app/lib/jna-platform.jar" />
-    <pathelement location="mode/antlr-4.5-complete.jar.jar" />
+    <pathelement location="mode/antlr-4.5-complete.jar" />
     <pathelement location="mode/classpath-explorer-1.0.jar" />
     <pathelement location="mode/jsoup-1.7.1.jar" />
     <pathelement location="mode/org.netbeans.swing.outline.jar" />
@@ -138,6 +138,10 @@
 
   <target name="compile" depends="test" description="Compile sources">
     <compilecommon srcdir="src" destdir="bin" classpath="classpath.base" />
+  </target>
+
+  <target name="build" depends="compile" description="Build PDE">
+    <jar basedir="bin" destfile="${mode_jar}" />
   </target>
 
 </project>

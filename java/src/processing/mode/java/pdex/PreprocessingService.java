@@ -21,6 +21,7 @@ along with this program; if not, write to the Free Software Foundation, Inc.
 package processing.mode.java.pdex;
 
 import java.io.File;
+import java.io.StringWriter;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -42,10 +43,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import processing.app.Messages;
-import processing.app.Sketch;
-import processing.app.SketchCode;
-import processing.app.Util;
+import processing.app.*;
 import processing.data.IntList;
 import processing.data.StringList;
 import processing.mode.java.JavaEditor;
@@ -280,9 +278,9 @@ public class PreprocessingService {
     boolean reloadLibraries = firstCheck || librariesChanged.getAndSet(false);
 
     // Core and default imports
+    PdePreprocessor preProcessor = editor.createPreprocessor(null);
     if (coreAndDefaultImports == null) {
-      PdePreprocessor p = editor.createPreprocessor(null);
-      coreAndDefaultImports = buildCoreAndDefaultImports(p);
+      coreAndDefaultImports = buildCoreAndDefaultImports(preProcessor);
     }
     result.coreAndDefaultImports.addAll(coreAndDefaultImports);
 
@@ -299,7 +297,12 @@ public class PreprocessingService {
 
     result.scrubbedPdeCode = workBuffer.toString();
 
-    Mode sketchMode = PdePreprocessor.parseMode(workBuffer);
+    Mode sketchMode = null;
+    try {
+      sketchMode = preProcessor.write(new StringWriter(), result.scrubbedPdeCode).programType;
+    } catch (SketchException e) {
+      throw new RuntimeException("Failed to determine mode: " + e.getMessage());
+    }
 
     // Prepare transforms to convert pde code into parsable code
     TextTransform toParsable = new TextTransform(pdeStage);

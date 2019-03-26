@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import processing.app.Preferences;
 import processing.app.SketchException;
 
+
 public class PdePreprocessor {
 
   public static enum Mode {
@@ -45,7 +46,7 @@ public class PdePreprocessor {
   }
 
   public PreprocessorResult write(Writer outWriter, String inProgram,
-                                  String codeFolderPackages[])
+                                  Iterable<String> codeFolderPackages)
                                     throws SketchException {
 
     ArrayList<String> codeFolderImports = new ArrayList<String>();

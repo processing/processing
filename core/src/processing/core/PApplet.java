@@ -770,6 +770,10 @@ public class PApplet implements PConstants {
 
 //  static public final String ARGS_SPAN_DISPLAYS = "--span";
 
+  static public final String ARGS_BGCOLOR = "--bgcolor";
+
+  static public final String ARGS_FULL_SCREEN = "--full-screen";
+
   static public final String ARGS_WINDOW_COLOR = "--window-color";
 
   static public final String ARGS_PRESENT = "--present";
