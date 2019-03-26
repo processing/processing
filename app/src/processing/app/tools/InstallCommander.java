@@ -84,6 +84,7 @@ public class InstallCommander implements Tool {
 
       File file = File.createTempFile("processing", "commander");
       PrintWriter writer = PApplet.createWriter(file);
+<<<<<<< HEAD
       writer.print("#!/bin/sh\n\n");
 
       writer.print("# Prevents processing-java from stealing focus, see:\n" +
@@ -104,6 +105,30 @@ public class InstallCommander implements Tool {
       addJarList(jarList, new File(javaRoot, "modes/java/mode"));
       String classPath = jarList.join(":").replaceAll(javaRoot + "\\/?", "");
 
+=======
+      writer.println("#!/bin/sh");
+
+      String[] jarList = new String[] {
+        "pde.jar",
+        "antlr-4.5-complete.jar",
+        "jna.jar",
+        "ant.jar",
+        "ant-launcher.jar",
+
+        // extra libraries for new JDI setup
+        "org-netbeans-swing-outline.jar",
+        "com.ibm.icu_4.4.2.v20110823.jar",
+        "jdi.jar",
+        "jdimodel.jar",
+        "org.eclipse.osgi_3.8.1.v20120830-144521.jar",
+
+        "core/library/core.jar"        
+      };
+      String classPath = PApplet.join(jarList, ":");
+
+      //String javaRoot = System.getProperty("javaroot");
+      String javaRoot = Base.getContentFile(".").getCanonicalPath();
+>>>>>>> 6234762cc77ecfb9b8e8d853b27ae8c74f804c3c
       writer.println("cd \"" + javaRoot + "\" && " +
                      Platform.getJavaPath().replaceAll(" ", "\\\\ ") +
                      " -Djna.nosys=true" +

@@ -210,38 +210,30 @@ public class JavaBuild {
       }
     }
 
-    // initSketchSize() sets the internal sketchWidth/Height/Renderer vars
-    // in the preprocessor. Those are used in preproc.write() so that they
-    // can be used to add methods (settings() or sketchXxxx())
-    //String[] sizeParts =
-    SurfaceInfo sizeInfo =
-      preprocessor.initSketchSize(sketch.getMainProgram(), sizeWarning);
-    if (sizeInfo == null) {
-      // An error occurred while trying to pull out the size, so exit here
-      return null;
-    }
-    //System.out.format("size() is '%s'%n", info[0]);
+//    // initSketchSize() sets the internal sketchWidth/Height/Renderer vars
+//    // in the preprocessor. Those are used in preproc.write() so that they
+//    // can be turned into sketchXxxx() methods.
+//    // This also returns the size info as an array so that we can figure out
+//    // if this fella is OpenGL, and if so, to add the import. It's messy and
+//    // gross and someday we'll just always include OpenGL.
+//    String[] sizeInfo =
 
-    // Remove the entries being moved to settings(). They will be re-inserted
-    // by writeFooter() when it emits the settings() method.
-    // If the user already has a settings() method, don't mess with anything.
-    // https://github.com/processing/processing/issues/4703
-    if (!PdePreprocessor.hasSettingsMethod(bigCode.toString()) &&
-        sizeInfo != null && sizeInfo.hasSettings()) {
-      for (String stmt : sizeInfo.getStatements()) {
-        // Don't remove newlines (and while you're at it, just keep spaces)
-        // https://github.com/processing/processing/issues/3654
-        stmt = stmt.trim();
-        int index = bigCode.indexOf(stmt);
-        if (index != -1) {
-          bigCode.delete(index, index + stmt.length());
-        } else {
-          // TODO remove once we hit final; but prevent an exception like in
-          // https://github.com/processing/processing/issues/3531
-          System.err.format("Error removing '%s' from the code.", stmt);
-        }
-      }
-    }
+/* next line commented out for ANTLR 4 - PdePreprocessor now does this when
+ * walking the tree
+ */
+//    preprocessor.initSketchSize(sketch.getMainProgram(), sizeWarning);
+
+//      //PdePreprocessor.parseSketchSize(sketch.getMainProgram(), false);
+//    if (sizeInfo != null) {
+//      String sketchRenderer = sizeInfo[3];
+//      if (sketchRenderer != null) {
+//        if (sketchRenderer.equals("P2D") ||
+//            sketchRenderer.equals("P3D") ||
+//            sketchRenderer.equals("OPENGL")) {
+//          bigCode.insert(0, "import processing.opengl.*; ");
+//        }
+//      }
+//    }
 
     PreprocessorResult result;
     try {
@@ -384,6 +376,10 @@ public class JavaBuild {
         throw new SketchException(msg, 0, -1, -1);
       }
 
+    } catch (FileNotFoundException fnfe) {
+        fnfe.printStackTrace();
+        String msg = "Build folder disappeared or could not be written";
+        throw new SketchException(msg);
     } catch (SketchException pe) {
       // RunnerExceptions are caught here and re-thrown, so that they don't
       // get lost in the more general "Exception" handler below.
@@ -514,7 +510,7 @@ public class JavaBuild {
         sc.addPreprocOffset(result.headerOffset);
       }
     }
-    foundMain = preprocessor.hasMethod("main");
+    foundMain = preprocessor.hasMain();
     return result.className;
   }
 

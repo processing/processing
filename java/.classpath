@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="generated"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="mode/antlr.jar"/>
+	<classpathentry kind="lib" path="mode/antlr-4.5-complete.jar"/>
 	<classpathentry kind="lib" path="mode/classpath-explorer-1.0.jar"/>
 	<classpathentry kind="lib" path="mode/com.ibm.icu.jar"/>
 	<classpathentry kind="lib" path="mode/jdi.jar"/>
@@ -19,6 +19,7 @@
 	<classpathentry kind="lib" path="mode/org.eclipse.osgi.jar"/>
 	<classpathentry kind="lib" path="mode/org.eclipse.text.jar"/>
 	<classpathentry kind="lib" path="mode/org.netbeans.swing.outline.jar"/>
+	<classpathentry kind="lib" path="test/lib/junit-4.8.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-app"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/processing-core"/>

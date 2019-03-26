@@ -18,12 +18,26 @@
 
   <classPath>
     <mainClass>processing.mode.java.Commander</mainClass>
+<<<<<<< HEAD
 
     <cp>lib/*.jar</cp>
     <cp>core/library/*.jar</cp>
     <cp>modes/java/mode/*.jar</cp>
 
     <!-- If using a full JDK, link to the tools.jar file -->
+=======
+    <cp>lib/pde.jar</cp>
+    <cp>core/library/core.jar</cp>
+    <cp>lib/jna.jar</cp>
+    <cp>lib/antlr-4.5-complete.jar</cp>
+    <cp>lib/ant.jar</cp>
+    <cp>lib/ant-launcher.jar</cp>
+    <cp>lib/org-netbeans-swing-outline.jar</cp>
+    <cp>lib/com.ibm.icu_4.4.2.v20110823.jar</cp>
+    <cp>lib/jdi.jar</cp>
+    <cp>lib/jdimodel.jar</cp>
+    <cp>lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar</cp>
+>>>>>>> 6234762cc77ecfb9b8e8d853b27ae8c74f804c3c
     <!-- <cp>%EXEDIR%/java/lib/tools.jar</cp> -->
   </classPath>
 

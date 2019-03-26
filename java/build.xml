@@ -9,7 +9,7 @@
 	    value="${basedir}/src/processing/mode/java/preproc" />
 
   <property name="antlr_jar"
-	    value="${basedir}/mode/antlr.jar" />
+	    value="${basedir}/mode/antlr-4.5-complete.jar" />
 
   <property name="mode_jar"
             value="${basedir}/mode/JavaMode.jar" />
@@ -34,15 +34,23 @@
     </delete>
   </target>
 
-  <target name="preproc" description="Compile ANTLR grammar">
-    <antlr target="${grammars}/java15.g" outputdirectory="${generated}">
+  <target name="preproc" description="Compile ANTLR 4 grammar">
+    <java classname="org.antlr.v4.Tool"
+        failonerror="true">
       <classpath path="${antlr_jar}" />
-    </antlr>
-    <antlr target="${grammars}/pde.g"
-	   outputdirectory="${generated}"
-	   glib="${grammars}/java15.g">
-      <classpath path="${antlr_jar}" />
-    </antlr>
+      <arg value="-o" />
+      <arg value="${generated}" />
+      <arg value="-package" />
+      <arg value="processing.mode.java.preproc" />
+      <arg value="${grammars}/Processing.g4" />
+    </java>
+  </target>
+
+  <target name="compile" depends="preproc" description="Compile sources">
+    <condition property="core-built">
+      <available file="../core/library/core.jar" />
+    </condition>
+    <fail unless="core-built" message="Please first build the core library and make sure it is located at ../core/library/core.jar" />
 
     <!-- clean up the warning mess caused by this old antlr version -->
     <!--<property name="uuc" value="@SuppressWarnings({ &quot;unused&quot;, &quot;unchecked&quot;, &quot;cast&quot; })${line.separator}" />-->
@@ -84,7 +92,7 @@
     <pathelement location="../app/lib/apple.jar" />
     <pathelement location="../app/lib/jna.jar" />
     <pathelement location="../app/lib/jna-platform.jar" />
-    <pathelement location="mode/antlr.jar" />
+    <pathelement location="mode/antlr-4.5-complete.jar.jar" />
     <pathelement location="mode/classpath-explorer-1.0.jar" />
     <pathelement location="mode/jsoup-1.7.1.jar" />
     <pathelement location="mode/org.netbeans.swing.outline.jar" />
