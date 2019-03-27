@@ -310,4 +310,14 @@ public class ParserTests {
   public void annotations() {
     expectGood("annotations", true);
   }
+
+  @Test
+  public void generics() {
+    expectGood("generics", true);
+  }
+
+  @Test
+  public void lambda() {
+    expectGood("lambda", true);
+  }
 }
