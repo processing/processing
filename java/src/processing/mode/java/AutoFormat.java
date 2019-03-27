@@ -854,7 +854,17 @@ public class AutoFormat implements Formatter {
 
     if (buf.length() > 0) writeIndentedLine();
 
-    final String formatted = result.toString();
+    final String formatted = simpleRegexCleanup(result.toString());
     return formatted.equals(cleanText) ? source : formatted;
+  }
+
+  /**
+   * Make minor regex-based find / replace changes to execute simple fixes to limited artifacts.
+   *
+   * @param result The code to format.
+   * @return The formatted code.
+   */
+  private String simpleRegexCleanup(String result) {
+    return result.replaceAll("([^ \n]+) +\n", "$1\n"); // Remove trail whitespace
   }
 }

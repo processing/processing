@@ -50,6 +50,7 @@ import processing.mode.java.JavaEditor;
 import processing.mode.java.JavaMode;
 import processing.mode.java.pdex.TextTransform.OffsetMapper;
 import processing.mode.java.pdex.util.runtime.RuntimePathBuilder;
+import processing.mode.java.preproc.PdePreprocessIssueException;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PdePreprocessor.Mode;
 
@@ -298,8 +299,11 @@ public class PreprocessingService {
 
     Mode sketchMode = null;
     try {
-      sketchMode = preProcessor.write(new StringWriter(), result.scrubbedPdeCode).programType;
-    } catch (SketchException e) {
+      sketchMode = preProcessor.write(
+          new StringWriter(),
+          result.scrubbedPdeCode
+      ).programType;
+    } catch (SketchException | PdePreprocessIssueException e) {
       sketchMode = Mode.STATIC;
     }
 

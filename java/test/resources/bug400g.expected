@@ -15,18 +15,14 @@ import java.io.IOException;
 public class bug400g extends PApplet {
 
 ////
-public void setup(){
-  size(100,100);
+public void settings() { size(480,120); }
 
+public void setup(){
     if(true){
     }
     else{ // Syntax error on token "else", } expected
     }
 }
-
-    public int sketchWidth() { return 100; }
-
-    public int sketchHeight() { return 100; }
 
     static public void main(String[] passedArgs) {
         String[] appletArgs = new String[] { "bug400g" };

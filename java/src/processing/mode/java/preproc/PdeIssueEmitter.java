@@ -25,25 +25,20 @@ import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 
-import java.util.concurrent.atomic.AtomicReference;
 
+public class PdeIssueEmitter extends BaseErrorListener {
 
-public class PdeIgnoreErrorListener extends BaseErrorListener {
+  private final PdePreprocessIssueListener listener;
 
-  private static AtomicReference<PdeIgnoreErrorListener> instance = new AtomicReference<>();
-
-  public static PdeIgnoreErrorListener getInstance() {
-    instance.compareAndSet(null, new PdeIgnoreErrorListener());
-    return instance.get();
+  public PdeIssueEmitter(PdePreprocessIssueListener newListener) {
+    listener = newListener;
   }
-
-  private PdeIgnoreErrorListener() {}
 
   @Override
   public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line,
                           int charPositionInLine, String msg, RecognitionException e) {
 
-    // Ignore syntax errors and let it get caught down the line.
+    listener.onIssue(new PdePreprocessIssue(line, charPositionInLine, msg));
   }
 
 }

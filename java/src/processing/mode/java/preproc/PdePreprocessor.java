@@ -82,7 +82,9 @@ public class PdePreprocessor {
     {
       ProcessingParser parser = new ProcessingParser(tokens);
       parser.removeErrorListeners();
-      parser.addErrorListener(PdeIgnoreErrorListener.getInstance());
+      parser.addErrorListener(new PdeIssueEmitter(
+          (x) -> { throw new PdePreprocessIssueException(x); }
+      ));
       parser.setBuildParseTree(true);
       tree = parser.processingSketch();
     }

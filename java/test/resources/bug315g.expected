@@ -15,7 +15,7 @@ import java.io.IOException;
 public class bug315g extends PApplet {
 
     public void setup() {
-size(480, 120);
+/* commented out by preprocessor: size(480, 120) */;
 smooth();
 int y;
 y = 60;
@@ -25,9 +25,7 @@ ellipse(75, y, d, d);
         noLoop();
     }
 
-    public int sketchWidth() { return 480; }
-
-    public int sketchHeight() { return 120; }
+    public void settings() { size(480,120); }
 
     static public void main(String[] passedArgs) {
         String[] appletArgs = new String[] { "bug315g" };

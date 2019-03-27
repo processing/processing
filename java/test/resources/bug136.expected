@@ -31,10 +31,6 @@ alist.get(0);
 }
 }
 
-    public int sketchWidth() { return 400; }
-
-    public int sketchHeight() { return 200; }
-
     static public void main(String[] passedArgs) {
         String[] appletArgs = new String[] { "bug136" };
         if (passedArgs != null) {

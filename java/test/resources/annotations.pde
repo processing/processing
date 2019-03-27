@@ -19,7 +19,7 @@ class Apple implements Serializable {
 
 }
 
-@javax.annotation.Generated(value = {"com.mrfeinberg.ImmortalAroma" 
+@javax.annotation.processing.Generated(value = {"com.mrfeinberg.ImmortalAroma"
 }, 
     comments="Shazam!", 
     date="2001-07-04T12:08:56.235-0700")

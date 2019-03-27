@@ -1,4 +1,4 @@
-println("Here comes an unterminated comment!")
+println("Here comes an unterminated comment!");
 
 /*
    banana
@@ -6,4 +6,4 @@ println("Here comes an unterminated comment!")
    pear
 * /
 
-println("Do you see what I did there?")
+println("Do you see what I did there?");
