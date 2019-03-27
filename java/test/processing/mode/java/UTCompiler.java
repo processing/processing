@@ -1,9 +1,8 @@
-package test.processing.mode.java;
+package processing.mode.java;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import processing.app.Base;
 import processing.app.Platform;
 import processing.app.exec.ProcessHelper;
 import processing.app.exec.ProcessResult;
@@ -25,19 +24,6 @@ class UTCompiler {
       sb.append(f.getAbsolutePath());
     }
     this.classpath = sb.toString();
-
-    final String javaHomeProp = System.getProperty("java.home");
-    if (javaHomeProp == null) {
-      throw new RuntimeException(
-                                 "I don't know how to deal with a null java.home proprty, to be quite frank.");
-    }
-    final File javaHome = new File(javaHomeProp).getCanonicalFile();
-    Platform.setenv("JAVA_HOME", javaHome.getCanonicalPath());
-
-    final String path = new File(javaHome, "bin").getCanonicalPath()
-        + File.pathSeparator + Platform.getenv("PATH");
-
-    Platform.setenv("PATH", path);
   }
 
   ProcessResult compile(final String name, final String program)

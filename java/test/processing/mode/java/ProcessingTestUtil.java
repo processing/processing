@@ -1,4 +1,4 @@
-package test.processing.mode.java;
+package processing.mode.java;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,9 +8,6 @@ import java.io.StringWriter;
 import processing.app.Preferences;
 import processing.app.SketchException;
 import processing.mode.java.preproc.PdePreprocessor;
-import processing.mode.java.AutoFormat;
-
-import test.processing.mode.java.UTCompiler;
 
 
 public class ProcessingTestUtil {
@@ -19,13 +16,14 @@ public class ProcessingTestUtil {
   }
   
   private static final String RESOURCES = "test/resources/";
+  private static final String RESOURCES_UP_DIR = "../java/test/resources";
   static final UTCompiler COMPILER;
 
   static {
     try {
-      COMPILER = new UTCompiler(new File("bin"), new File("../core/bin"));
+      COMPILER = new UTCompiler(new File("bin-test"), new File("../core/bin"));
       Preferences.load(new FileInputStream(res("preferences.txt")));
-    } catch (IOException e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
     //System.err.println("ProcessingTestUtil initialized.");
@@ -53,7 +51,11 @@ public class ProcessingTestUtil {
   }
 
   static File res(final String resourceName) {
-    return new File(RESOURCES, resourceName);
+    File target = new File(RESOURCES, resourceName);
+    if (target.exists()) {
+      return target;
+    }
+    return new File(RESOURCES_UP_DIR, resourceName);
   }
 
   static String read(final File f) {

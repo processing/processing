@@ -1,10 +1,8 @@
-package test.processing.mode.java;
+package processing.mode.java;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static test.processing.mode.java.ProcessingTestUtil.COMPILER;
-import static test.processing.mode.java.ProcessingTestUtil.preprocess;
-import static test.processing.mode.java.ProcessingTestUtil.res;
+import static processing.mode.java.ProcessingTestUtil.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,6 +14,7 @@ import org.junit.Test;
 import processing.app.SketchException;
 import processing.app.exec.ProcessResult;
 import org.antlr.v4.runtime.RecognitionException;
+
 
 public class ParserTests {
 
@@ -66,8 +65,7 @@ public class ParserTests {
                                       final String expectedMessage,
                                       final int expectedLine) {
     try {
-      final String program = ProcessingTestUtil
-          .preprocess(id, res(id + ".pde"));
+      final String program = preprocess(id, res(id + ".pde"));
       final ProcessResult compilerResult = COMPILER.compile(id, program);
       if (compilerResult.succeeded()) {
         fail("Expected to fail with \"" + expectedMessage + "\" on line "
@@ -88,8 +86,7 @@ public class ParserTests {
 
   static void expectGood(final String id) {
     try {
-      final String program = ProcessingTestUtil
-          .preprocess(id, res(id + ".pde"));
+      final String program = preprocess(id, res(id + ".pde"));
       final ProcessResult compilerResult = COMPILER.compile(id, program);
       if (!compilerResult.succeeded()) {
         System.err.println(program);

@@ -1,8 +1,8 @@
-package test.processing.mode.java;
+package processing.mode.java;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static test.processing.mode.java.ProcessingTestUtil.res;
+import static processing.mode.java.ProcessingTestUtil.res;
 
 import java.io.File;
 import java.io.FileWriter;
