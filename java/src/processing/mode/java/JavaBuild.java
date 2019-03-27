@@ -60,7 +60,6 @@ import processing.mode.java.pdex.util.runtime.strategy.JavaFxRuntimePathFactory;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PreprocessorResult;
 import processing.mode.java.preproc.SurfaceInfo;
-import processing.mode.java.preproc.err.PdeFoundCompileIssueException;
 
 
 public class JavaBuild {
@@ -364,7 +363,7 @@ public class JavaBuild {
           } else {
             if (packageMatch == null) {
               // use the default package name, since mixing with package-less code will break
-              packageMatch = new String[] { "", packageName };
+              packageMatch = new String[]{"", packageName};
               // add the package name to the source before writing it
               javaCode = "package " + packageName + ";" + javaCode;
             }
@@ -372,26 +371,6 @@ public class JavaBuild {
             packageFolder.mkdirs();
             Util.saveFile(javaCode, new File(packageFolder, filename));
           }
-        } catch (PdeFoundCompileIssueException re) {
-          // re also returns a column that we're not bothering with for now
-          // first assume that it's the main file
-          //      int errorFile = 0;
-          int errorLine = re.getLine() - 1;
-
-          // then search through for anyone else whose preprocName is null,
-          // since they've also been combined into the main pde.
-          int errorFile = findErrorFile(errorLine);
-          errorLine -= sketch.getCode(errorFile).getPreprocOffset();
-
-          String msg = re.getMessage();
-
-          throw new SketchException(
-              msg,
-              errorFile,
-              errorLine,
-              re.getColumn(),
-              false
-          );
         } catch (IOException e) {
           e.printStackTrace();
           String msg = "Problem moving " + filename + " to the build folder";
