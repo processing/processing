@@ -4,10 +4,7 @@ package processing.mode.java.preproc;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -45,11 +42,9 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
   protected String sketchHeight;
   protected String sketchRenderer;
 
-  protected boolean hasSketchWidthMethod;
-  protected boolean hasSketchHeightMethod;
-  protected boolean hasSketchRendererMethod;
-  
-  protected boolean isSizeValid;
+  protected boolean hasSettingsMethod;
+
+  protected boolean isSizeValidInGlobal;
   
   protected SketchException sketchException;
 
@@ -174,25 +169,29 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
     footer.println(indent2 +   "noLoop();");
     footer.println(indent1 + "}");
   }
-  
+
   protected void writeExtraFieldsAndMethods(PrintWriter classBody) {
     // can be overriden
-    
-    if (isSizeValid) {
-      if (sketchWidth != null && !hasSketchWidthMethod) {
-        classBody.println();
-        classBody.println(indent1 + "public int sketchWidth() { return " + sketchWidth + "; }");
-      }
-      if (sketchHeight != null && !hasSketchHeightMethod) {
-        classBody.println();
-        classBody.println(indent1 + "public int sketchHeight() { return " + sketchHeight + "; }");
-      }
-      if (sketchRenderer != null && !hasSketchRendererMethod) {
-        classBody.println();
-        classBody.println(indent1 +
-            "public String sketchRenderer() { return " + sketchRenderer + "; }");
-      }
+
+    if (!isSizeValidInGlobal) {
+      return;
     }
+
+    if (sketchWidth == null || sketchHeight == null || hasSettingsMethod) {
+      return;
+    }
+
+    StringJoiner argJoiner = new StringJoiner(",");
+    argJoiner.add(sketchWidth);
+    argJoiner.add(sketchHeight);
+    if (sketchRenderer != null) {
+      argJoiner.add(sketchRenderer);
+    }
+
+    String settingsBody = String.format("size(%s);", argJoiner.toString());
+
+    classBody.println();
+    classBody.println(indent1 + String.format("public void settings() { %s }", settingsBody));
 }
   
   protected void writeMain(PrintWriter footer) {
@@ -257,12 +256,12 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
   protected void incLineOffset() {
     lineOffset++;
   }
-  
+
   public void exitApiSizeFunction(ProcessingParser.ApiSizeFunctionContext ctx) {
-    // this tree climbing could be avoided if grammar is 
+    // this tree climbing could be avoided if grammar is
     // adjusted to force context of size()
-    
-    ParserRuleContext testCtx = 
+
+    ParserRuleContext testCtx =
       ctx.getParent() // apiFunction
       .getParent() // expression
       .getParent() // statementExpression
@@ -270,51 +269,37 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
       .getParent() // blockStatement
       .getParent(); // block or staticProcessingSketch
 
-    boolean isSizeInSetupOrGlobal = 
+    boolean isInGlobal =
       testCtx instanceof ProcessingParser.StaticProcessingSketchContext;
 
-    if (!isSizeInSetupOrGlobal) {
-      testCtx =
-        testCtx.getParent() // methodBody of setup()
-        .getParent(); // methodDeclaration of setup()
+    isSizeValidInGlobal = false;
 
-      String methodName = testCtx.getChild(1).getText();
-      testCtx = testCtx.getParent() // memberDeclaration
-        .getParent() // classBodyDeclaration
-        .getParent(); // activeProcessingSketch
-
-      isSizeInSetupOrGlobal = 
-        methodName.equals("setup") && 
-        testCtx instanceof ProcessingParser.ActiveProcessingSketchContext;
-    }
-    
-    isSizeValid = false;
-
-    if (isSizeInSetupOrGlobal) {
-      isSizeValid = true;
+    if (isInGlobal) {
+      isSizeValidInGlobal = true;
       sketchWidth = ctx.getChild(2).getText();
       if (PApplet.parseInt(sketchWidth, -1) == -1 &&
           !sketchWidth.equals("displayWidth")) {
-        isSizeValid = false;
+        isSizeValidInGlobal = false;
       }
       sketchHeight = ctx.getChild(4).getText();
       if (PApplet.parseInt(sketchHeight, -1) == -1 &&
           !sketchHeight.equals("displayHeight")) {
-        isSizeValid = false;
-      }      
+        isSizeValidInGlobal = false;
+      }
       if (ctx.getChildCount() > 6) {
         sketchRenderer = ctx.getChild(6).getText();
         if (!(sketchRenderer.equals("P2D") ||
               sketchRenderer.equals("P3D") ||
               sketchRenderer.equals("OPENGL") ||
-              sketchRenderer.equals("JAVA2D"))) {
-          isSizeValid = false;
-        } 
+              sketchRenderer.equals("JAVA2D") ||
+              sketchRenderer.equals("FX2D"))) {
+          isSizeValidInGlobal = false;
+        }
       }
-      if (isSizeValid) {
+      if (isSizeValidInGlobal) {
         // TODO: uncomment if size is supposed to be removed from setup()
-        //rewriter.insertBefore(ctx.start, "/* commented out by preprocessor: ");
-        //rewriter.insertAfter(ctx.stop, " */");
+        rewriter.insertBefore(ctx.start, "/* commented out by preprocessor: ");
+        rewriter.insertAfter(ctx.stop, " */");
       }
     }
   }
@@ -324,9 +309,7 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
    */
   public void exitApiMethodDeclaration(ProcessingParser.ApiMethodDeclarationContext ctx) {
     String methodName = ctx.getChild(1).getText();
-    if      (methodName.equals("sketchWidth"   )) hasSketchWidthMethod    = true;
-    else if (methodName.equals("sketchHeight"  )) hasSketchWidthMethod    = true;
-    else if (methodName.equals("sketchRenderer")) hasSketchRendererMethod = true;
+    if      (methodName.equals("settings"   )) hasSettingsMethod = true;
   }
 
   /**

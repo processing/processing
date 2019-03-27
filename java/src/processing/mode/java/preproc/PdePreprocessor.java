@@ -95,7 +95,6 @@ public class PdePreprocessor {
 
     String outputProgram = listener.getOutputProgram();
     PrintWriter outPrintWriter = new PrintWriter(outWriter);
-    //System.out.println(outputProgram);
     outPrintWriter.print(outputProgram);
 
     hasMain = listener.foundMain();
