@@ -27,43 +27,39 @@ public class ParserTests {
   static void expectRecognitionException(final String id,
                                          final String expectedMessage,
                                          final int expectedLine) {
-    fail("recognition exception testing not yet implemented");
-    
-// TODO: fix error testing
-//    try {
-//      preprocess(id, res(id + ".pde"));
-//      fail("Expected to fail with \"" + expectedMessage + "\" on line "
-//          + expectedLine);
-//    } catch (RecognitionException e) {
-//      assertEquals(expectedMessage, e.getMessage());
-//      assertEquals(expectedLine, e.getLine());
-//    } catch (Exception e) {
-//      if (!e.equals(e.getCause()) && e.getCause() != null)
-//        fail(e.getCause().toString());
-//      else
-//        fail(e.toString());
-//    }
+
+    try {
+      preprocess(id, res(id + ".pde"));
+      fail("Expected to fail with \"" + expectedMessage + "\" on line "
+          + expectedLine);
+    } catch (RecognitionException e) {
+      assertEquals(expectedMessage, e.getMessage());
+      assertEquals(expectedLine, e.getOffendingToken().getLine());
+    } catch (Exception e) {
+      if (!e.equals(e.getCause()) && e.getCause() != null)
+        fail(e.getCause().toString());
+      else
+        fail(e.toString());
+    }
   }
 
   static void expectRunnerException(final String id,
                                     final String expectedMessage,
                                     final int expectedLine) {
-    fail("runner exception testing not yet implemented");
-    
-// TODO: fix error testing
-//    try {
-//      preprocess(id, res(id + ".pde"));
-//      fail("Expected to fail with \"" + expectedMessage + "\" on line "
-//          + expectedLine);
-//    } catch (SketchException e) {
-//      assertEquals(expectedMessage, e.getMessage());
-//      assertEquals(expectedLine, e.getCodeLine());
-//    } catch (Exception e) {
-//      if (!e.equals(e.getCause()) && e.getCause() != null)
-//        fail(e.getCause().toString());
-//      else
-//        fail(e.toString());
-//    }
+
+    try {
+      preprocess(id, res(id + ".pde"));
+      fail("Expected to fail with \"" + expectedMessage + "\" on line "
+          + expectedLine);
+    } catch (SketchException e) {
+      assertEquals(expectedMessage, e.getMessage());
+      assertEquals(expectedLine, e.getCodeLine());
+    } catch (Exception e) {
+      if (!e.equals(e.getCause()) && e.getCause() != null)
+        fail(e.getCause().toString());
+      else
+        fail(e.toString());
+    }
   }
 
   static void expectCompilerException(final String id,

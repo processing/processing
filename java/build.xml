@@ -131,6 +131,7 @@
       <batchtest>
         <fileset dir="test">
           <include name="**/*Test.java" />
+          <include name="**/*Tests.java" />
         </fileset>
       </batchtest>
     </junit>
