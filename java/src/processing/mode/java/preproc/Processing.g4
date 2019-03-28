@@ -45,7 +45,7 @@ importDeclaration
     
 // to easily intercept imports in usable format
 importString
-    :   'static'? qualifiedName ('.' '*')?
+    :   'static'? packageOrTypeName ('.' '*')?
     ;
 
 variableDeclaratorId
@@ -62,55 +62,6 @@ warnTypeAsVariableName
         }
     ;
 
-// add support for converter functions int(), float(), ..
-// Only the line with "functionWithPrimitiveTypeName" was added
-// at a location before any "type" is being matched
-expression
-    :   primary
-    |   expression '.' Identifier
-    |   expression '.' 'this'
-    |   expression '.' 'new' nonWildcardTypeArguments? innerCreator
-    |   expression '.' 'super' superSuffix
-    |   expression '.' explicitGenericInvocation
-    |   expression '[' expression ']'
-    |   apiFunction
-    |   expression '(' expressionList? ')'
-    |   'new' creator
-    |   functionWithPrimitiveTypeName
-    |   '(' type ')' expression
-    |   expression ('++' | '--')
-    |   ('+'|'-'|'++'|'--') expression
-    |   ('~'|'!') expression
-    |   expression ('*'|'/'|'%') expression
-    |   expression ('+'|'-') expression
-    |   expression ('<' '<' | '>' '>' '>' | '>' '>') expression
-    |   expression ('<=' | '>=' | '>' | '<') expression
-    |   expression 'instanceof' type
-    |   expression ('==' | '!=') expression
-    |   expression '&' expression
-    |   expression '^' expression
-    |   expression '|' expression
-    |   expression '&&' expression
-    |   expression '||' expression
-    |   expression '?' expression ':' expression
-    |   warnTypeAsVariableName
-    |   <assoc=right> expression
-        (   '='
-        |   '+='
-        |   '-='
-        |   '*='
-        |   '/='
-        |   '&='
-        |   '|='
-        |   '^='
-        |   '>>='
-        |   '>>>='
-        |   '<<='
-        |   '%='
-        )
-        expression
-    ;
-
 // catch special API function calls that we are interested in
 apiFunction
     :   apiSizeFunction
@@ -118,27 +69,6 @@ apiFunction
 
 apiSizeFunction
     : 'size' '(' expression ',' expression ( ',' expression )? ')'
-    ;
-    
-memberDeclaration
-    :   methodDeclaration
-    |   apiMethodDeclaration
-    |   genericMethodDeclaration
-    |   fieldDeclaration
-    |   constructorDeclaration
-    |   genericConstructorDeclaration
-    |   interfaceDeclaration
-    |   annotationTypeDeclaration
-    |   classDeclaration
-    |   enumDeclaration
-    ;
-    
-apiMethodDeclaration
-    :   (type|'void') ('sketchWidth' | 'sketchHeight' | 'sketchRenderer') '(' ')'  ('[' ']')*
-        ('throws' qualifiedNameList)?
-        (   methodBody
-        |   ';'
-        )
     ;
 
 // these are primitive type names plus "()"
@@ -150,7 +80,7 @@ functionWithPrimitiveTypeName
 		|	'float'
 		|	'int'
         |   'color'
-		) '(' expressionList ')'
+		) '(' statementExpressionList ')'
 	;
 
 // adding support for "color" primitive
