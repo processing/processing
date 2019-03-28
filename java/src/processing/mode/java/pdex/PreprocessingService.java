@@ -60,6 +60,8 @@ import processing.mode.java.preproc.PdePreprocessor.Mode;
  */
 public class PreprocessingService {
 
+  private final static int TIMEOUT_MILLIS = 100;
+
   protected final JavaEditor editor;
 
   protected final ASTParser parser = ASTParser.newParser(AST.JLS8);
@@ -117,7 +119,7 @@ public class PreprocessingService {
         // If new request arrives while waiting, break out and start preprocessing
         while (requestQueue.isEmpty() && runningCallbacks != null) {
           try {
-            runningCallbacks.get(10, TimeUnit.MILLISECONDS);
+            runningCallbacks.get(TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
             runningCallbacks = null;
           } catch (TimeoutException e) { }
         }
