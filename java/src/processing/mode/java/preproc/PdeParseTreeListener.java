@@ -253,6 +253,12 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
     }
   }
 
+  public void exitSpecialMethodDeclaration(ProcessingParser.SpecialMethodDeclarationContext ctx) {
+    if (!ctx.getChild(0).getText().equals("public")) {
+      rewriter.insertBefore(ctx.start, "public ");
+    }
+  }
+
   protected void incLineOffset() {
     lineOffset++;
   }

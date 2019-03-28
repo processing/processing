@@ -62,6 +62,19 @@ warnTypeAsVariableName
         }
     ;
 
+// Catch setup, draw, and settings method declarations
+methodDeclaration
+    :   specialMethodDeclaration
+	|	methodModifier* methodHeader methodBody
+	;
+
+specialMethodDeclaration
+	:	'public'? 'void' ( 'setup'
+		|	'draw'
+		|	'settings'
+		) '(' ')' methodBody
+	;
+
 // catch special API function calls that we are interested in
 methodInvocation
     :   apiFunction
