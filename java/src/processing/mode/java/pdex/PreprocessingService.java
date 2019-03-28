@@ -299,7 +299,7 @@ public class PreprocessingService {
 
     result.scrubbedPdeCode = workBuffer.toString();
 
-    Mode sketchMode = null;
+    Mode sketchMode;
     try {
       sketchMode = preProcessor.write(
           new StringWriter(),

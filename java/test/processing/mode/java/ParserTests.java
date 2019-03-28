@@ -307,6 +307,11 @@ public class ParserTests {
   }
 
   @Test
+  public void color() {
+    expectGood("color", true);
+  }
+
+  @Test
   public void annotations() {
     expectGood("annotations", true);
   }

@@ -118,25 +118,17 @@ functionWithPrimitiveTypeName
 	;
 
 // adding support for "color" primitive
-primitiveType
-	:	colorPrimitiveType
-	|	javaPrimitiveType
+integralType
+	:	'byte'
+	|	'short'
+	|	'int'
+	|	'long'
+	|	'char'
+	|   colorPrimitiveType
 	;
 
 colorPrimitiveType
     :   'color'
-    ;
-
-// original Java.g4 primitiveType
-javaPrimitiveType
-    :   'boolean'
-    |   'char'
-    |   'byte'
-    |   'short'
-    |   'int'
-    |   'long'
-    |   'float'
-    |   'double'
     ;
 
 // added HexColorLiteral
