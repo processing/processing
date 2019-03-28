@@ -131,40 +131,40 @@ public class ParserTests {
     }
   }
 
-//  @Test
-//  public void bug4() {
-//    expectGood("bug4");
-//  }
-//
-//  @Test
-//  public void bug5a() {
-//    expectGood("bug5a");
-//  }
-//
-//  @Test
-//  public void bug5b() {
-//    expectGood("bug5b");
-//  }
-//
-//  @Test
-//  public void bug6() {
-//    expectRecognitionException("bug6", 1);
-//  }
-//
-//  @Test
-//  public void bug16() {
-//    expectRunnerException("bug16", 3);
-//  }
-//
-//  @Test
-//  public void bug136() {
-//    expectGood("bug136", true);
-//  }
-//
-//  @Test
-//  public void bug196() {
-//    expectRecognitionException("bug196", 5);
-//  }
+  @Test
+  public void bug4() {
+    expectGood("bug4");
+  }
+
+  @Test
+  public void bug5a() {
+    expectGood("bug5a");
+  }
+
+  @Test
+  public void bug5b() {
+    expectGood("bug5b");
+  }
+
+  @Test
+  public void bug6() {
+    expectRecognitionException("bug6", 1);
+  }
+
+  @Test
+  public void bug16() {
+    expectRunnerException("bug16", 3);
+  }
+
+  @Test
+  public void bug136() {
+    expectGood("bug136", true);
+  }
+
+  @Test
+  public void bug196() {
+    expectRecognitionException("bug196", 5);
+  }
 //
 //  @Test
 //  public void bug281() {

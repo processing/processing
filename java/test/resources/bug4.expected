@@ -16,7 +16,7 @@ public class bug4 extends PApplet {
 
     public void setup() {
 int x = 12;
-float u = (PApplet.parseFloat(x)/width); 
+float u = (PApplet.parseFloat(x)/width);
         noLoop();
     }
 

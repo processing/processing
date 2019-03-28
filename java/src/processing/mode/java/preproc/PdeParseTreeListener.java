@@ -263,10 +263,12 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
 
     ParserRuleContext testCtx =
       ctx.getParent() // apiFunction
-      .getParent() // expression
+      .getParent() // methodInvocation
       .getParent() // statementExpression
+      .getParent() // expressionStatement
+      .getParent() // statementWithoutTrailingSubstatement
       .getParent() // statement
-      .getParent() // blockStatement
+      .getParent()
       .getParent(); // block or staticProcessingSketch
 
     boolean isInGlobal =
@@ -302,14 +304,6 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
         rewriter.insertAfter(ctx.stop, " */");
       }
     }
-  }
-  
-  /**
-   * Find sketch methods
-   */
-  public void exitApiMethodDeclaration(ProcessingParser.ApiMethodDeclarationContext ctx) {
-    String methodName = ctx.getChild(1).getText();
-    if      (methodName.equals("settings"   )) hasSettingsMethod = true;
   }
 
   /**

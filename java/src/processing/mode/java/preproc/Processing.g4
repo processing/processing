@@ -63,6 +63,27 @@ warnTypeAsVariableName
     ;
 
 // catch special API function calls that we are interested in
+methodInvocation
+    :   apiFunction
+    |   functionWithPrimitiveTypeName
+	|	methodName '(' argumentList? ')'
+	|	typeName '.' typeArguments? Identifier '(' argumentList? ')'
+	|	expressionName '.' typeArguments? Identifier '(' argumentList? ')'
+	|	primary '.' typeArguments? Identifier '(' argumentList? ')'
+	|	'super' '.' typeArguments? Identifier '(' argumentList? ')'
+	|	typeName '.' 'super' '.' typeArguments? Identifier '(' argumentList? ')'
+	;
+
+methodInvocation_lfno_primary
+    :   apiFunction
+    |   functionWithPrimitiveTypeName
+	|	methodName '(' argumentList? ')'
+	|	typeName '.' typeArguments? Identifier '(' argumentList? ')'
+	|	expressionName '.' typeArguments? Identifier '(' argumentList? ')'
+	|	'super' '.' typeArguments? Identifier '(' argumentList? ')'
+	|	typeName '.' 'super' '.' typeArguments? Identifier '(' argumentList? ')'
+	;
+
 apiFunction
     :   apiSizeFunction
     ;
@@ -80,7 +101,7 @@ functionWithPrimitiveTypeName
 		|	'float'
 		|	'int'
         |   'color'
-		) '(' statementExpressionList ')'
+		) '(' argumentList? ')'
 	;
 
 // adding support for "color" primitive
