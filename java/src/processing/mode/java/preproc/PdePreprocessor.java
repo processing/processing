@@ -68,6 +68,7 @@ public class PdePreprocessor {
     {
       ANTLRInputStream antlrInStream = new ANTLRInputStream(inProgram);
       ProcessingLexer lexer = new ProcessingLexer(antlrInStream);
+      lexer.removeErrorListeners();
       tokens = new CommonTokenStream(lexer);
     }
 

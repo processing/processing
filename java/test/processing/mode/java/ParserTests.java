@@ -278,7 +278,7 @@ public class ParserTests {
 
   @Test
   public void bug1532() {
-    expectRecognitionException("bug1532", 50);
+    expectRecognitionException("bug1532", 46);
   }
 
   @Test
@@ -309,5 +309,15 @@ public class ParserTests {
   @Test
   public void annotations() {
     expectGood("annotations", true);
+  }
+
+  @Test
+  public void generics() {
+    expectGood("generics", true);
+  }
+
+  @Test
+  public void lambda() {
+    expectGood("lambdaexample", true);
   }
 }

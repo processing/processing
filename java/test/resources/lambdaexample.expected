@@ -3,6 +3,7 @@ import processing.data.*;
 import processing.event.*;
 import processing.opengl.*;
 
+import java.util.*;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.io.File;
@@ -12,16 +13,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 
-public class bug4 extends PApplet {
+public class lambdaexample extends PApplet {
 
     public void setup() {
-int x = 12;
-float u = (PApplet.parseFloat(x)/width);
-        noLoop();
+List<String> test = new ArrayList<>();
+test.add("a");
+test.add("b");
+test.forEach((x) -> { println(x); });
+    noLoop();
     }
 
     static public void main(String[] passedArgs) {
-        String[] appletArgs = new String[] { "bug4" };
+        String[] appletArgs = new String[] { "lambdaexample" };
         if (passedArgs != null) {
             PApplet.main(concat(appletArgs, passedArgs));
         } else {

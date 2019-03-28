@@ -22,8 +22,13 @@
 package processing.mode.java.preproc;
 
 import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.atn.ATNConfigSet;
+import org.antlr.v4.runtime.dfa.DFA;
+
+import java.util.BitSet;
 
 
 public class PdeIssueEmitter extends BaseErrorListener {
@@ -39,6 +44,15 @@ public class PdeIssueEmitter extends BaseErrorListener {
                           int charPositionInLine, String msg, RecognitionException e) {
 
     listener.onIssue(new PdePreprocessIssue(line, charPositionInLine, msg));
+  }
+
+  public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
+  }
+
+  public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex, BitSet conflictingAlts, ATNConfigSet configs) {
+  }
+
+  public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
   }
 
 }
