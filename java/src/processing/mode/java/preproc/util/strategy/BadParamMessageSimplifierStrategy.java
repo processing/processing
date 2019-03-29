@@ -5,7 +5,7 @@ public class BadParamMessageSimplifierStrategy
 
   @Override
   public String getRegexPattern() {
-    return "[a-zA-Z0-9_]+\\s*,";
+    return "([a-zA-Z0-9_]+\\s*,|[a-zA-Z0-9_]\\))";
   }
 
   @Override

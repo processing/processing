@@ -49,8 +49,7 @@ public class PdeIssueEmitter extends BaseErrorListener {
     if (msg.contains("\\n")) {
       String msgContent = MessageSimplifierUtil.getOffendingArea(msg, false);
       line -= MessageSimplifierUtil.getCount(msgContent, "\\n");
-      String firstLine = msgContent.split("\\\\n")[0];
-      charPositionInLine = firstLine.length();
+      charPositionInLine = msgContent.length();
     }
 
     listener.onIssue(new PdePreprocessIssue(
