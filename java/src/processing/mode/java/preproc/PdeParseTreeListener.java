@@ -463,7 +463,7 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
     rewriter.insertAfter(start, text);
 
     edits.add(TextTransform.Edit.insert(
-        start.getStopIndex(),
+        start.getStopIndex() + 1,
         text
     ));
   }

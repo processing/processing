@@ -21,13 +21,14 @@ public class SyntaxIssueMessageSimplifier {
 
   private SyntaxIssueMessageSimplifier() {
     strategies = new ArrayList<>();
+    strategies.add(new MissingIdentifierMessageSimplifierStrategy());
     strategies.add(new MissingDoubleQuoteMessageSimplifierStrategy());
     strategies.add(new MissingSingleQuoteMessageSimplifierStrategy());
     strategies.add(new MissingVariableNameMessageSimplifierStrategy());
     strategies.add(new AssignmentMessageSimplifierStrategy());
+    strategies.add(new BadIdentifierMessageSimplifierStrategy());
     strategies.add(new MissingClassNameMessageSimplifierStrategy());
     strategies.add(new MissingMethodNameMessageSimplifierStrategy());
-    strategies.add(new BadIdentifierMessageSimplifierStrategy());
     strategies.add(new BadParamMessageSimplifierStrategy());
     strategies.add(new MissingParenMessageSimplifierStrategy());
     strategies.add(new MissingCaretMessageSimplifierStrategy());

@@ -1,5 +1,7 @@
 package processing.mode.java.preproc.util.strategy;
 
+import processing.mode.java.preproc.util.SyntaxUtil;
+
 import java.util.Optional;
 
 public abstract class TokenPairTemplateMessageSimplifierStrategy
@@ -9,8 +11,8 @@ public abstract class TokenPairTemplateMessageSimplifierStrategy
   public Optional<String> simplify(String message) {
     String messageContent = MessageSimplifierUtil.getOffendingArea(message);
 
-    int count1 = MessageSimplifierUtil.getCount(messageContent, getToken1());
-    int count2 = MessageSimplifierUtil.getCount(messageContent, getToken2());
+    int count1 = SyntaxUtil.getCount(messageContent, getToken1());
+    int count2 = SyntaxUtil.getCount(messageContent, getToken2());
 
     if (count1 == count2) {
       return Optional.empty();

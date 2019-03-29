@@ -23,6 +23,12 @@ public class AssignmentMessageSimplifierStrategyTest {
   }
 
   @Test
+  public void testPresentDiamond() {
+    Optional<String> msg = strategy.simplify("  List<Integer> x =");
+    Assert.assertTrue(msg.isPresent());
+  }
+
+  @Test
   public void testNotPresent() {
     Optional<String> msg = strategy.simplify("class {");
     Assert.assertTrue(msg.isEmpty());

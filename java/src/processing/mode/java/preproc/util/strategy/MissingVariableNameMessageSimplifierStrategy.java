@@ -10,6 +10,6 @@ public class MissingVariableNameMessageSimplifierStrategy
 
   @Override
   public String getMessageTemplate() {
-    return "Did you forget to give a variable its name or forget to call a method?";
+    return "Did you forget to finish declaring a variable or to call a method?";
   }
 }

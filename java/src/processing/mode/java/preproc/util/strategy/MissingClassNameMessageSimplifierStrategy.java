@@ -4,12 +4,12 @@ public class MissingClassNameMessageSimplifierStrategy extends RegexTemplateMess
 
   @Override
   public String getRegexPattern() {
-    return ".*class\\s*[a-zA-Z0-9_]*\\s+(extends|implements|<.*>)?\\s*[a-zA-Z0-9_]*\\s*\\{.*";
+    return ".*(class|interface)\\s*[a-zA-Z0-9_]*\\s+(extends|implements|<.*>)?\\s*[a-zA-Z0-9_]*\\s*\\{.*";
   }
 
   @Override
   public String getMessageTemplate() {
-    return "Did you forget to give a class name near '%s'?";
+    return "Forget class or interface name near '%s'?";
   }
 
 }

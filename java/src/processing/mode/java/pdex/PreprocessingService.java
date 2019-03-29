@@ -55,6 +55,7 @@ import processing.mode.java.preproc.PdePreprocessIssueException;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PdePreprocessor.Mode;
 import processing.mode.java.preproc.PreprocessorResult;
+import processing.mode.java.preproc.util.SyntaxUtil;
 
 
 /**
@@ -347,20 +348,29 @@ public class PreprocessingService {
     StringBuilder workBuffer = new StringBuilder();
 
     // Combine code into one buffer
+    int numLines = 0;
     IntList tabStartsList = new IntList();
+    List<Integer> tabLineStarts = new ArrayList<>();
     for (SketchCode sc : sketch.getCode()) {
       if (sc.isExtension("pde")) {
         tabStartsList.append(workBuffer.length());
+        tabLineStarts.add(numLines);
+
+        StringBuilder newPiece = new StringBuilder();
         if (sc.getDocument() != null) {
           try {
-            workBuffer.append(sc.getDocumentText());
+            newPiece.append(sc.getDocumentText());
           } catch (BadLocationException e) {
             e.printStackTrace();
           }
         } else {
-          workBuffer.append(sc.getProgram());
+          newPiece.append(sc.getProgram());
         }
-        workBuffer.append('\n');
+        newPiece.append('\n');
+
+        String newPieceBuilt = newPiece.toString();
+        numLines += SyntaxUtil.getCount(newPieceBuilt, "\n") + 1;
+        workBuffer.append(newPieceBuilt);
       }
     }
     result.tabStartOffsets = tabStartsList.array();
@@ -398,7 +408,7 @@ public class PreprocessingService {
       );
     } catch (PdePreprocessIssueException e) {
       result.hasSyntaxErrors = true;
-      result.otherProblems.add(ProblemFactory.build(e.getIssue(), tabStartsList, editor));
+      result.otherProblems.add(ProblemFactory.build(e.getIssue(), tabLineStarts, editor));
       return result.build();
     } catch (SketchException e) {
       throw new RuntimeException("Unexpected sketch exception in preprocessing: " + e);
@@ -442,6 +452,7 @@ public class PreprocessingService {
     OffsetMapper parsableMapper = toParsable.getMapper();
 
     // Create intermediate AST for advanced preprocessing
+    //System.out.println(new String(parsableStage.toCharArray()));
     CompilationUnit parsableCU =
         makeAST(parser, parsableStage.toCharArray(), COMPILER_OPTIONS);
 

@@ -1,5 +1,7 @@
 package processing.mode.java.preproc.util.strategy;
 
+import processing.mode.java.preproc.util.SyntaxUtil;
+
 import java.util.Optional;
 
 public abstract class EvenCountTemplateMessageSimplifierStrategy
@@ -13,7 +15,7 @@ public abstract class EvenCountTemplateMessageSimplifierStrategy
       messageContent = messageContent.replace(getFilter().get(), "");
     }
 
-    int count = MessageSimplifierUtil.getCount(messageContent, getToken());
+    int count = SyntaxUtil.getCount(messageContent, getToken());
 
     if (count % 2 == 0) {
       return Optional.empty();
