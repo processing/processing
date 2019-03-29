@@ -37,22 +37,14 @@ import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 
-import processing.app.Base;
-import processing.app.Language;
-import processing.app.Library;
-import processing.app.Messages;
-import processing.app.Mode;
-import processing.app.Platform;
-import processing.app.Preferences;
-import processing.app.Sketch;
-import processing.app.SketchCode;
-import processing.app.SketchException;
-import processing.app.Util;
+import processing.app.*;
 import processing.app.exec.ProcessHelper;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.data.StringList;
 import processing.data.XML;
+import processing.mode.java.pdex.util.ProblemFactory;
+import processing.mode.java.preproc.PdePreprocessIssueException;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PreprocessorResult;
 
@@ -197,14 +189,17 @@ public class JavaBuild {
 
     StringBuilder bigCode = new StringBuilder();
     int bigCount = 0;
+    List<Integer> linesPerTab = new ArrayList<>();
     for (SketchCode sc : sketch.getCode()) {
       if (sc.isExtension("pde")) {
         sc.setPreprocOffset(bigCount);
         bigCode.append(sc.getProgram());
         bigCode.append('\n');
+        linesPerTab.add(bigCount);
         bigCount += sc.getLineCount();
       }
     }
+    linesPerTab.add(bigCount);
 
 //    // initSketchSize() sets the internal sketchWidth/Height/Renderer vars
 //    // in the preprocessor. Those are used in preproc.write() so that they
@@ -248,6 +243,18 @@ public class JavaBuild {
       fnfe.printStackTrace();
       String msg = "Build folder disappeared or could not be written";
       throw new SketchException(msg);
+    } catch (PdePreprocessIssueException pe) {
+      Problem problem = ProblemFactory.build(
+          pe.getIssue(),
+          linesPerTab
+      );
+
+      throw new SketchException(
+          problem.getMessage(),
+          problem.getTabIndex(),
+          problem.getLineNumber() - 1,
+          0
+      );
     } catch (SketchException pe) {
       // RunnerExceptions are caught here and re-thrown, so that they don't
       // get lost in the more general "Exception" handler below.

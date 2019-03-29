@@ -23,6 +23,12 @@ public class MissingMethodNameMessageSimplifierStrategyTest {
   }
 
   @Test
+  public void testPresentNoSpace() {
+    Optional<String> msg = strategy.simplify("test(int x) \n{");
+    Assert.assertTrue(msg.isPresent());
+  }
+
+  @Test
   public void testPresentUnderscore() {
     Optional<String> msg = strategy.simplify("void (int x_y) \n{");
     Assert.assertTrue(msg.isPresent());

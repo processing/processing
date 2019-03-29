@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import processing.app.SketchException;
+import processing.mode.java.pdex.TextTransform;
 
 /**
  * 
@@ -16,10 +17,12 @@ public class PreprocessorResult {
   public final String className;
   public final List<String> extraImports;
   public final PdePreprocessor.Mode programType;
+  public final List<TextTransform.Edit> edits;
 
   public PreprocessorResult(PdePreprocessor.Mode programType,
-                          int headerOffset, String className,
-                          final List<String> extraImports) throws SketchException {
+                            int headerOffset, String className,
+                            List<String> extraImports,
+                            List<TextTransform.Edit> edits) throws SketchException {
     if (className == null) {
       throw new SketchException("Could not find main class");
     }
@@ -27,6 +30,7 @@ public class PreprocessorResult {
     this.className = className;
     this.extraImports = Collections.unmodifiableList(new ArrayList<String>(extraImports));
     this.programType = programType;
+    this.edits = edits;
   }
 
 }

@@ -6,14 +6,13 @@ import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.antlr.v4.runtime.BufferedTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.TokenStreamRewriter;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Interval;
 
 import processing.app.Preferences;
 import processing.app.SketchException;
 import processing.core.PApplet;
+import processing.mode.java.pdex.TextTransform;
 import processing.mode.java.preproc.PdePreprocessor.Mode;
 
 public class PdeParseTreeListener extends ProcessingBaseListener {
@@ -33,6 +32,7 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
   protected ArrayList<String> defaultImports = new ArrayList<String>();
   protected ArrayList<String> codeFolderImports = new ArrayList<String>();
   protected ArrayList<String> foundImports = new ArrayList<String>();
+  protected ArrayList<TextTransform.Edit> edits = new ArrayList<>();
 
   private String indent1 = "";
   private String indent2 = "";
@@ -97,7 +97,7 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
   }
   
   public PreprocessorResult getResult() throws SketchException {
-    return new PreprocessorResult(mode, lineOffset, sketchName, foundImports);
+    return new PreprocessorResult(mode, lineOffset, sketchName, foundImports, edits);
   }
 
   protected boolean reportSketchException(SketchException sketchException) {
@@ -241,7 +241,7 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
       StringWriter headerSW = new StringWriter();
       PrintWriter headerPW = new PrintWriter(headerSW);
       writeHeader(headerPW);
-      rewriter.insertBefore(0, headerSW.getBuffer().toString());
+      createInsertBefore(ctx, 0, headerSW.getBuffer().toString());
     }
 
     { // footer
@@ -249,13 +249,21 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
       PrintWriter footerPW = new PrintWriter(footerSW);
       footerPW.println();
       writeFooter(footerPW);
-      rewriter.insertAfter(rewriter.getTokenStream().size(), footerSW.getBuffer().toString());
+
+      TokenStream tokenStream = rewriter.getTokenStream();
+      int tokens = tokenStream.size();
+      int length = tokenStream.get(tokens-1).getStopIndex() + 1;
+
+      String footerText = footerSW.getBuffer().toString();
+
+      edits.add(TextTransform.Edit.insert(length, footerText));
+      rewriter.insertAfter(tokens, footerText);
     }
   }
 
   public void exitSpecialMethodDeclaration(ProcessingParser.SpecialMethodDeclarationContext ctx) {
     if (!ctx.getChild(0).getText().equals("public")) {
-      rewriter.insertBefore(ctx.start, "public ");
+      createInsertBefore(ctx, ctx.start, "public ");
     }
   }
 
@@ -306,8 +314,8 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
       }
       if (isSizeValidInGlobal) {
         // TODO: uncomment if size is supposed to be removed from setup()
-        rewriter.insertBefore(ctx.start, "/* commented out by preprocessor: ");
-        rewriter.insertAfter(ctx.stop, " */");
+        createInsertBefore(ctx, ctx.start, "/* commented out by preprocessor: ");
+        createInsertAfter(ctx, ctx.stop, " */");
       }
     }
   }
@@ -316,7 +324,7 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
    * Remove import declarations, they will be included in the header.
    */
   public void exitImportDeclaration(ProcessingParser.ImportDeclarationContext ctx) {
-    rewriter.delete(ctx.start, ctx.stop);
+    createDelete(ctx, ctx.start, ctx.stop);
   }
   
   /**
@@ -337,7 +345,7 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
   public void exitDecimalfloatingPointLiteral(ProcessingParser.DecimalfloatingPointLiteralContext ctx) {
     String cTxt = ctx.getText().toLowerCase();
     if (!cTxt.endsWith("f") && !cTxt.endsWith("d")) {
-      rewriter.insertAfter(ctx.stop, "f");
+      createInsertAfter(ctx, ctx.stop, "f");
     }
   }
 
@@ -385,7 +393,7 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
     boolean hasModifier = clsBdyDclCtx.getChild(0) != memCtx;
 
     if (!hasModifier && inPAppletContext && voidType) {
-      rewriter.insertBefore(memCtx.start, "public ");
+      createInsertBefore(ctx, memCtx.start, "public ");
     }
 
     if ((inSketchContext || inPAppletContext) && 
@@ -406,8 +414,8 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
     String fn = ctx.getChild(0).getText();
     if (!fn.equals("color")) {
       fn = "PApplet.parse" + fn.substring(0,1).toUpperCase() + fn.substring(1);
-      rewriter.insertBefore(ctx.start, fn);
-      rewriter.delete(ctx.start);
+      createInsertBefore(ctx, ctx.start, fn);
+      createDelete(ctx, ctx.start);
     }
   }
 
@@ -416,8 +424,8 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
    */
   public void exitColorPrimitiveType(ProcessingParser.ColorPrimitiveTypeContext ctx) {
     if (ctx.getText().equals("color")) {
-      rewriter.insertBefore(ctx.start, "int");
-      rewriter.delete(ctx.start, ctx.stop);
+      createInsertBefore(ctx, ctx.start, "int");
+      createDelete(ctx, ctx.start, ctx.stop);
     }
   }
 
@@ -425,7 +433,57 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
    * Fix hex color literal
    */
   public void exitHexColorLiteral(ProcessingParser.HexColorLiteralContext ctx) {
-    rewriter.insertBefore(ctx.start, ctx.getText().toUpperCase().replace("#","0xFF"));
-    rewriter.delete(ctx.start, ctx.stop);
+    createInsertBefore(
+        ctx,
+        ctx.start,
+        ctx.getText().toUpperCase().replace("#","0xFF")
+    );
+
+    createDelete(ctx, ctx.start, ctx.stop);
   }
+
+  private void createDelete(ParserRuleContext ctx, Token start) {
+    rewriter.delete(start);
+    edits.add(TextTransform.Edit.delete(start.getStartIndex(), start.getText().length()));
+  }
+
+  private void createDelete(ParserRuleContext ctx, Token start, Token stop) {
+    rewriter.delete(start, stop);
+
+    int startIndex = start.getStartIndex();
+    int length = stop.getStopIndex() - startIndex + 1;
+
+    edits.add(TextTransform.Edit.delete(
+        startIndex,
+        length
+    ));
+  }
+
+  private void createInsertAfter(ParserRuleContext ctx, Token start, String text) {
+    rewriter.insertAfter(start, text);
+
+    edits.add(TextTransform.Edit.insert(
+        start.getStopIndex(),
+        text
+    ));
+  }
+
+  private void createInsertBefore(ParserRuleContext ctx, Token before, String text) {
+    rewriter.insertBefore(before, text);
+
+    edits.add(TextTransform.Edit.insert(
+        before.getStartIndex(),
+        text
+    ));
+  }
+
+  private void createInsertBefore(ParserRuleContext ctx, int before, String text) {
+    rewriter.insertBefore(before, text);
+
+    edits.add(TextTransform.Edit.insert(
+        before,
+        text
+    ));
+  }
+
 }

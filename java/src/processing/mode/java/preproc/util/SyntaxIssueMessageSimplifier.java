@@ -23,17 +23,21 @@ public class SyntaxIssueMessageSimplifier {
     strategies = new ArrayList<>();
     strategies.add(new MissingDoubleQuoteMessageSimplifierStrategy());
     strategies.add(new MissingSingleQuoteMessageSimplifierStrategy());
+    strategies.add(new MissingVariableNameMessageSimplifierStrategy());
     strategies.add(new AssignmentMessageSimplifierStrategy());
     strategies.add(new MissingClassNameMessageSimplifierStrategy());
     strategies.add(new MissingMethodNameMessageSimplifierStrategy());
-    strategies.add(new MissingParamTypeMessageSimplifierStrategy());
+    strategies.add(new BadIdentifierMessageSimplifierStrategy());
+    strategies.add(new BadParamMessageSimplifierStrategy());
     strategies.add(new MissingParenMessageSimplifierStrategy());
     strategies.add(new MissingCaretMessageSimplifierStrategy());
+    strategies.add(new MissingCurlyMessageSimplifierStrategy());
     strategies.add(new SemicolonMessageSimplifierStrategy());
     strategies.add(new DefaultMessageSimplifier());
   }
 
   public String simplify(String originalMessage) {
+    System.err.println(originalMessage);
     Optional<String> matching = strategies.stream()
         .map((x) -> x.simplify(originalMessage))
         .filter(Optional::isPresent)

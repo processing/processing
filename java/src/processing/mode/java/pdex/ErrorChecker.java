@@ -97,7 +97,9 @@ class ErrorChecker {
       iproblems = ps.compilationUnit.getProblems();
     }
 
-    { // Check for curly quotes
+    problems.addAll(ps.otherProblems);
+
+    if (problems.isEmpty()) { // Check for curly quotes
       List<JavaProblem> curlyQuoteProblems = checkForCurlyQuotes(ps);
       problems.addAll(curlyQuoteProblems);
     }
@@ -105,10 +107,6 @@ class ErrorChecker {
     if (problems.isEmpty()) { // Check for missing braces
       List<JavaProblem> missingBraceProblems = checkForMissingBraces(ps);
       problems.addAll(missingBraceProblems);
-    }
-
-    if (problems.isEmpty()) {
-      problems.addAll(ps.otherProblems);
     }
 
     if (problems.isEmpty()) {

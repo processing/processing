@@ -17,7 +17,7 @@ public abstract class TokenPairTemplateMessageSimplifierStrategy
     }
 
     String newMessage = String.format(
-        "Syntax error. Hint: There are unequal '%s' and '%s'. Did you forget one?",
+        "Syntax error. Hint: Maybe unequal '%s' and '%s'. Forget one or have unterminated strings / comment?",
         getToken1().replace("\\", ""),
         getToken2().replace("\\", "")
     );

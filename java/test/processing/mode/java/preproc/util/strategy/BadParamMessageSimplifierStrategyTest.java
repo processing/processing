@@ -7,13 +7,13 @@ import org.junit.Test;
 import java.util.Optional;
 
 
-public class MissingParamTypeMessageSimplifierStrategyTest {
+public class BadParamMessageSimplifierStrategyTest {
 
-  private MissingParamTypeMessageSimplifierStrategy strategy;
+  private BadParamMessageSimplifierStrategy strategy;
 
   @Before
   public void setup() {
-    strategy = new MissingParamTypeMessageSimplifierStrategy();
+    strategy = new BadParamMessageSimplifierStrategy();
   }
 
   @Test

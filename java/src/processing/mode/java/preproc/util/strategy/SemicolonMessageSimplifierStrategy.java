@@ -11,7 +11,7 @@ public class SemicolonMessageSimplifierStrategy implements SyntaxIssueMessageSim
     }
 
     String newMessage = String.format(
-        "Syntax error. Hint: Are you missing a semicolon near '%s'?",
+        "Syntax error. Hint: Are you missing a semicolon or identifier near '%s'?",
         MessageSimplifierUtil.getOffendingArea(message)
     );
 

@@ -28,7 +28,9 @@ import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import processing.mode.java.preproc.util.SyntaxIssueMessageSimplifier;
+import processing.mode.java.preproc.util.strategy.MessageSimplifierUtil;
 
+import java.util.Arrays;
 import java.util.BitSet;
 
 
@@ -43,6 +45,13 @@ public class PdeIssueEmitter extends BaseErrorListener {
   @Override
   public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line,
                           int charPositionInLine, String msg, RecognitionException e) {
+
+    if (msg.contains("\\n")) {
+      String msgContent = MessageSimplifierUtil.getOffendingArea(msg, false);
+      line -= MessageSimplifierUtil.getCount(msgContent, "\\n");
+      String firstLine = msgContent.split("\\\\n")[0];
+      charPositionInLine = firstLine.length();
+    }
 
     listener.onIssue(new PdePreprocessIssue(
         line,

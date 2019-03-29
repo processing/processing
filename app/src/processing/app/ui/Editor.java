@@ -3074,6 +3074,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
       for (Problem p : problems) {
         String message = p.getMessage();
+        System.err.println("******* " + message);
         errorTable.addRow(p, message,
                           sketch.getCode(p.getTabIndex()).getPrettyName(),
                           Integer.toString(p.getLineNumber() + 1));
