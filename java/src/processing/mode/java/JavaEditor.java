@@ -2296,16 +2296,19 @@ public class JavaEditor extends Editor {
     errorTable.clearRows();
 
     for (Problem p : problems) {
-      JavaProblem jp = (JavaProblem) p;
       String message = p.getMessage();
-      if (JavaMode.importSuggestEnabled &&
-          jp.getImportSuggestions() != null &&
-          jp.getImportSuggestions().length > 0) {
-        message += " (double-click for suggestions)";
+
+      if (p.getClass().equals(JavaProblem.class)) {
+        JavaProblem jp = (JavaProblem) p;
+        if (JavaMode.importSuggestEnabled &&
+            jp.getImportSuggestions() != null &&
+            jp.getImportSuggestions().length > 0) {
+          message += " (double-click for suggestions)";
+        }
       }
 
       errorTable.addRow(p, message,
-                   sketch.getCode(jp.getTabIndex()).getPrettyName(),
+                   sketch.getCode(p.getTabIndex()).getPrettyName(),
                    Integer.toString(p.getLineNumber() + 1));
       // Added +1 because lineNumbers internally are 0-indexed
     }
@@ -2314,6 +2317,10 @@ public class JavaEditor extends Editor {
 
   @Override
   public void errorTableDoubleClick(Object item) {
+    if (!item.getClass().equals(JavaProblem.class)) {
+      errorTableClick(item);
+    }
+
     JavaProblem p = (JavaProblem) item;
 
 //    MouseEvent evt = null;

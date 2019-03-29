@@ -32,7 +32,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.antlr.v4.runtime.RecognitionException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -54,12 +53,8 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.data.StringList;
 import processing.data.XML;
-import processing.mode.java.pdex.SourceUtils;
-import processing.mode.java.pdex.util.runtime.RuntimeConst;
-import processing.mode.java.pdex.util.runtime.strategy.JavaFxRuntimePathFactory;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PreprocessorResult;
-import processing.mode.java.preproc.SurfaceInfo;
 
 
 public class JavaBuild {

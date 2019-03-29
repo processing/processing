@@ -84,12 +84,18 @@ class ErrorChecker {
 
 
   private void handleSketchProblems(PreprocessedSketch ps) {
+
     Map<String, String[]> suggCache =
         JavaMode.importSuggestEnabled ? new HashMap<>() : Collections.emptyMap();
 
     final List<Problem> problems = new ArrayList<>();
 
-    IProblem[] iproblems = ps.compilationUnit.getProblems();
+    IProblem[] iproblems;
+    if (ps.compilationUnit == null) {
+      iproblems = new IProblem[0];
+    } else {
+      iproblems = ps.compilationUnit.getProblems();
+    }
 
     { // Check for curly quotes
       List<JavaProblem> curlyQuoteProblems = checkForCurlyQuotes(ps);
@@ -99,6 +105,10 @@ class ErrorChecker {
     if (problems.isEmpty()) { // Check for missing braces
       List<JavaProblem> missingBraceProblems = checkForMissingBraces(ps);
       problems.addAll(missingBraceProblems);
+    }
+
+    if (problems.isEmpty()) {
+      problems.addAll(ps.otherProblems);
     }
 
     if (problems.isEmpty()) {
@@ -188,6 +198,10 @@ class ErrorChecker {
     Pattern.compile("([“”‘’])", Pattern.UNICODE_CHARACTER_CLASS);
 
   static private List<JavaProblem> checkForCurlyQuotes(PreprocessedSketch ps) {
+    if (ps.compilationUnit == null) {
+      return new ArrayList<>();
+    }
+
     List<JavaProblem> problems = new ArrayList<>(0);
 
     // Go through the scrubbed code and look for curly quotes (they should not be any)

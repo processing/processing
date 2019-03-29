@@ -325,4 +325,5 @@ public class ParserTests {
   public void lambda() {
     expectGood("lambdaexample", true);
   }
+
 }

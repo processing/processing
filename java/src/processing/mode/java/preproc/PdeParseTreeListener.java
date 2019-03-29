@@ -45,7 +45,7 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
   protected boolean hasSettingsMethod;
 
   protected boolean isSizeValidInGlobal;
-  
+
   protected SketchException sketchException;
 
   PdeParseTreeListener(BufferedTokenStream tokens, String sketchName) {
@@ -99,7 +99,7 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
   public PreprocessorResult getResult() throws SketchException {
     return new PreprocessorResult(mode, lineOffset, sketchName, foundImports);
   }
-  
+
   protected boolean reportSketchException(SketchException sketchException) {
     if (this.sketchException == null) {
       this.sketchException = sketchException;
@@ -107,7 +107,7 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
     }
     return false;
   }
-  
+
   public SketchException getSketchException() {
     return sketchException;
   }

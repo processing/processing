@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import processing.app.Problem;
 import processing.app.Sketch;
 import processing.core.PApplet;
 import processing.mode.java.pdex.TextTransform.OffsetMapper;
@@ -42,8 +43,7 @@ public class PreprocessedSketch {
   public final List<ImportStatement> programImports;
   public final List<ImportStatement> coreAndDefaultImports;
   public final List<ImportStatement> codeFolderImports;
-
-
+  public final List<Problem> otherProblems;
 
   /// JAVA -> SKETCH -----------------------------------------------------------
 
@@ -235,6 +235,7 @@ public class PreprocessedSketch {
     public final List<ImportStatement> programImports = new ArrayList<>();
     public final List<ImportStatement> coreAndDefaultImports = new ArrayList<>();
     public final List<ImportStatement> codeFolderImports = new ArrayList<>();
+    public final List<Problem> otherProblems = new ArrayList<>();
 
     public PreprocessedSketch build() {
       return new PreprocessedSketch(this);
@@ -266,6 +267,8 @@ public class PreprocessedSketch {
 
     hasSyntaxErrors = b.hasSyntaxErrors;
     hasCompilationErrors = b.hasCompilationErrors;
+
+    otherProblems = b.otherProblems;
 
     programImports = Collections.unmodifiableList(b.programImports);
     coreAndDefaultImports = Collections.unmodifiableList(b.coreAndDefaultImports);

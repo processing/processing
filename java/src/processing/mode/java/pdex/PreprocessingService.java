@@ -49,6 +49,7 @@ import processing.data.StringList;
 import processing.mode.java.JavaEditor;
 import processing.mode.java.JavaMode;
 import processing.mode.java.pdex.TextTransform.OffsetMapper;
+import processing.mode.java.pdex.util.ProblemFactory;
 import processing.mode.java.pdex.util.runtime.RuntimePathBuilder;
 import processing.mode.java.preproc.PdePreprocessIssueException;
 import processing.mode.java.preproc.PdePreprocessor;
@@ -305,7 +306,11 @@ public class PreprocessingService {
           new StringWriter(),
           result.scrubbedPdeCode
       ).programType;
-    } catch (SketchException | PdePreprocessIssueException e) {
+    } catch (PdePreprocessIssueException e) {
+      result.hasSyntaxErrors = true;
+      result.otherProblems.add(ProblemFactory.build(e.getIssue(), tabStartsList, editor));
+      return result.build();
+    } catch (SketchException e) {
       sketchMode = Mode.STATIC;
     }
 
