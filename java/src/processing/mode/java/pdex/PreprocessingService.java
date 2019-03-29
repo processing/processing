@@ -348,7 +348,7 @@ public class PreprocessingService {
     StringBuilder workBuffer = new StringBuilder();
 
     // Combine code into one buffer
-    int numLines = 0;
+    int numLines = 1;
     IntList tabStartsList = new IntList();
     List<Integer> tabLineStarts = new ArrayList<>();
     for (SketchCode sc : sketch.getCode()) {
@@ -369,7 +369,7 @@ public class PreprocessingService {
         newPiece.append('\n');
 
         String newPieceBuilt = newPiece.toString();
-        numLines += SyntaxUtil.getCount(newPieceBuilt, "\n") + 1;
+        numLines += SyntaxUtil.getCount(newPieceBuilt, "\n");
         workBuffer.append(newPieceBuilt);
       }
     }

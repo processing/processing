@@ -38,7 +38,6 @@ public class SyntaxIssueMessageSimplifier {
   }
 
   public String simplify(String originalMessage) {
-    System.err.println(originalMessage);
     Optional<String> matching = strategies.stream()
         .map((x) -> x.simplify(originalMessage))
         .filter(Optional::isPresent)
