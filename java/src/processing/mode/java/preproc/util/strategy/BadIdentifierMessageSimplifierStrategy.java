@@ -4,7 +4,7 @@ public class BadIdentifierMessageSimplifierStrategy extends RegexTemplateMessage
 
   @Override
   public String getRegexPattern() {
-    return "([.\\s]*[0-9]+[a-zA-Z_]+[0-9a-zA-Z_]*|\\s+\\d+[a-zA-Z_]+)";
+    return "([.\\s]*[0-9]+[a-zA-Z_<>]+[0-9a-zA-Z_<>]*|\\s+\\d+[a-zA-Z_<>]+|[0-9a-zA-Z_<>]+\\s+[0-9]+)";
   }
 
   @Override
