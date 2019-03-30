@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class LineOffsetFactory {
 
   // Derived from ANTLR grammar
-  private static final String SKIP_PATTERN_STR = "([ \\t\\r\\n\\u000C]+|\\/\\*(.|[\\n])*?\\*\\/|\\/\\*\\*\\/|\\/\\/[^\\r\\n]*)+$";
+  private static final String SKIP_PATTERN_STR = "([ \\t\\r\\n\\u000C]+|\\/\\*(.|\\n)*?\\*\\/|\\/\\*\\*\\/|\\/\\/[^\\r\\n]*)+$";
 
   private static final AtomicReference<LineOffsetFactory> instance = new AtomicReference<>();
 
@@ -51,7 +51,7 @@ public class LineOffsetFactory {
     try {
       found = matcher.find();
     } catch (Exception | Error e) {
-      String innerMessage = e.getMessage().substring(0,100);
+      String innerMessage = e.getMessage().substring(0, 100);
       System.err.println("Error parsing whitespace: " + innerMessage + ". However, showing error.");
       found = false;
     }

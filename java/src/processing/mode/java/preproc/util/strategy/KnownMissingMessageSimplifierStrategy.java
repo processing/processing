@@ -21,7 +21,7 @@ public class KnownMissingMessageSimplifierStrategy implements SyntaxIssueMessage
       );
 
       return Optional.of(
-          new IssueMessageSimplification(newMessage, true)
+          new IssueMessageSimplification(newMessage)
       );
     } else {
       return Optional.empty();
