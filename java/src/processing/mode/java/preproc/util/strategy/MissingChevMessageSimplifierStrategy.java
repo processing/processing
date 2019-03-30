@@ -1,6 +1,9 @@
 package processing.mode.java.preproc.util.strategy;
 
-public class MissingCaretMessageSimplifierStrategy
+/**
+ * Strategy to check for a missing chevron.
+ */
+public class MissingChevMessageSimplifierStrategy
     extends TokenPairTemplateMessageSimplifierStrategy {
 
   @Override

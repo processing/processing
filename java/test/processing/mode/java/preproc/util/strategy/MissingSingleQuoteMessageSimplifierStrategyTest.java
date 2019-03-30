@@ -3,6 +3,7 @@ package processing.mode.java.preproc.util.strategy;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import processing.mode.java.preproc.util.IssueMessageSimplification;
 
 import java.util.Optional;
 
@@ -19,13 +20,13 @@ public class MissingSingleQuoteMessageSimplifierStrategyTest {
 
   @Test
   public void testPresent() {
-    Optional<String> msg = strategy.simplify("char x = '");
+    Optional<IssueMessageSimplification> msg = strategy.simplify("char x = '");
     Assert.assertTrue(msg.isPresent());
   }
 
   @Test
   public void testNotPresent() {
-    Optional<String> msg = strategy.simplify("char x = '\\''");
+    Optional<IssueMessageSimplification> msg = strategy.simplify("char x = '\\''");
     Assert.assertTrue(msg.isEmpty());
   }
 

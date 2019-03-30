@@ -1,5 +1,9 @@
 package processing.mode.java.preproc.util.strategy;
 
+
+/**
+ * Strategy to describe an issue in an assignment.
+ */
 public class AssignmentMessageSimplifierStrategy extends RegexTemplateMessageSimplifierStrategy {
 
   @Override
@@ -8,7 +12,7 @@ public class AssignmentMessageSimplifierStrategy extends RegexTemplateMessageSim
   }
 
   @Override
-  public String getMessageTemplate() {
+  public String getHintTemplate() {
     return "Possible issue in assignment: '%s'. Forgotten value, var name, semicolon, or loose '='?";
   }
 

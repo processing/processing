@@ -7,25 +7,24 @@ import processing.mode.java.preproc.util.IssueMessageSimplification;
 
 import java.util.Optional;
 
+public class NonTermMessageSimplifierStrategyTest {
 
-public class MissingVariableNameMessageSimplifierStrategyTest {
-
-  private MissingVariableNameMessageSimplifierStrategy strategy;
+  private NonTermMessageSimplifierStrategy strategy;
 
   @Before
   public void setup() {
-    strategy = new MissingVariableNameMessageSimplifierStrategy();
+    strategy = new NonTermMessageSimplifierStrategy();
   }
 
   @Test
   public void testPresent() {
-    Optional<IssueMessageSimplification> msg = strategy.simplify("char = '");
+    Optional<IssueMessageSimplification> msg = strategy.simplify("int x = ((5 + 4) / 3");
     Assert.assertTrue(msg.isPresent());
   }
 
   @Test
   public void testNotPresent() {
-    Optional<IssueMessageSimplification> msg = strategy.simplify("class test {");
+    Optional<IssueMessageSimplification> msg = strategy.simplify("int x = y;");
     Assert.assertTrue(msg.isEmpty());
   }
 

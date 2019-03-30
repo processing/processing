@@ -517,7 +517,12 @@ public class PreprocessingService {
     return result;
   }
 
-
+  /**
+   * Create import statements for items in the code folder itself.
+   *
+   * @param sketch The sketch for which the import statements should be created.
+   * @return The new import statements.
+   */
   private static List<ImportStatement> buildCodeFolderImports(Sketch sketch) {
     if (sketch.hasCodeFolder()) {
       File codeFolder = sketch.getCodeFolder();
@@ -530,7 +535,14 @@ public class PreprocessingService {
     return Collections.emptyList();
   }
 
-
+  /**
+   * Determine if imports have changed.
+   *
+   * @param prevImports The last iteration imports.
+   * @param imports The current iterations imports.
+   * @return True if the list of imports changed and false otherwise.
+   *    This includes change in order.
+   */
   private static boolean checkIfImportsChanged(List<ImportStatement> prevImports,
                                                  List<ImportStatement> imports) {
     if (imports.size() != prevImports.size()) {
@@ -555,7 +567,14 @@ public class PreprocessingService {
   /// --------------------------------------------------------------------------
 
 
-
+  /**
+   * Create a JDT compilation unit.
+   *
+   * @param parser The parser to use to read the source.
+   * @param source The source after processing with ANTLR.
+   * @param options The JDT compiler options.
+   * @return The JDT parsed compilation unit.
+   */
   private static CompilationUnit makeAST(ASTParser parser,
                                            char[] source,
                                            Map<String, String> options) {
@@ -567,7 +586,16 @@ public class PreprocessingService {
     return (CompilationUnit) parser.createAST(null);
   }
 
-
+  /**
+   * Establish parser options before creating a JDT compilation unit.
+   *
+   * @param parser The parser to use to read the source.
+   * @param source The source after processing with ANTLR.
+   * @param options The JDT compiler options.
+   * @param className The name of the sketch.
+   * @param classPath The classpath to use in compliation.
+   * @return The JDT parsed compilation unit.
+   */
   private static CompilationUnit makeASTWithBindings(ASTParser parser,
                                                        char[] source,
                                                        Map<String, String> options,
@@ -628,7 +656,11 @@ public class PreprocessingService {
     COMPILER_OPTIONS = Collections.unmodifiableMap(compilerOptions);
   }
 
-
+  /**
+   * Emit events and update internal state (isEnabled) if java tabs added or modified.
+   *
+   * @param hasJavaTabs True if java tabs are in the sketch and false otherwise.
+   */
   public void handleHasJavaTabsChange(boolean hasJavaTabs) {
     isEnabled = !hasJavaTabs;
     if (isEnabled) {

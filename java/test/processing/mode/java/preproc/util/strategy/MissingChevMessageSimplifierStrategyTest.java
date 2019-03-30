@@ -8,24 +8,24 @@ import processing.mode.java.preproc.util.IssueMessageSimplification;
 import java.util.Optional;
 
 
-public class MissingVariableNameMessageSimplifierStrategyTest {
+public class MissingChevMessageSimplifierStrategyTest {
 
-  private MissingVariableNameMessageSimplifierStrategy strategy;
+  private MissingChevMessageSimplifierStrategy strategy;
 
   @Before
   public void setup() {
-    strategy = new MissingVariableNameMessageSimplifierStrategy();
+    strategy = new MissingChevMessageSimplifierStrategy();
   }
 
   @Test
   public void testPresent() {
-    Optional<IssueMessageSimplification> msg = strategy.simplify("char = '");
+    Optional<IssueMessageSimplification> msg = strategy.simplify("class Test <a extends {");
     Assert.assertTrue(msg.isPresent());
   }
 
   @Test
   public void testNotPresent() {
-    Optional<IssueMessageSimplification> msg = strategy.simplify("class test {");
+    Optional<IssueMessageSimplification> msg = strategy.simplify("class {");
     Assert.assertTrue(msg.isEmpty());
   }
 

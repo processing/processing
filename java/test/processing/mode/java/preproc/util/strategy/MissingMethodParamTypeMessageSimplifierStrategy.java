@@ -7,7 +7,7 @@ public class MissingMethodParamTypeMessageSimplifierStrategy extends RegexTempla
   }
 
   @Override
-  public String getMessageTemplate() {
+  public String getHintTemplate() {
     return "Is there an issue with a parameter definition near '%s'?";
   }
 }

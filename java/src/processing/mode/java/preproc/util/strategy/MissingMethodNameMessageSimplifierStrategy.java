@@ -1,7 +1,9 @@
 package processing.mode.java.preproc.util.strategy;
 
-import java.util.Optional;
 
+/**
+ * Strategy to check for a method declaration without a name or return type.
+ */
 public class MissingMethodNameMessageSimplifierStrategy
     extends RegexTemplateMessageSimplifierStrategy{
 
@@ -11,7 +13,7 @@ public class MissingMethodNameMessageSimplifierStrategy
   }
 
   @Override
-  public String getMessageTemplate() {
+  public String getHintTemplate() {
     return "Did you forget to give your method a name or return type near '%s'?";
   }
 

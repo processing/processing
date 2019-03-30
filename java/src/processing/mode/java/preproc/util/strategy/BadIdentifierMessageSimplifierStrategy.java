@@ -1,5 +1,8 @@
 package processing.mode.java.preproc.util.strategy;
 
+/**
+ * Strategy to describe issue in an identifier name like an identifier starting with a digit.
+ */
 public class BadIdentifierMessageSimplifierStrategy extends RegexTemplateMessageSimplifierStrategy{
 
   @Override
@@ -8,7 +11,7 @@ public class BadIdentifierMessageSimplifierStrategy extends RegexTemplateMessage
   }
 
   @Override
-  public String getMessageTemplate() {
+  public String getHintTemplate() {
     return "Do you have an identifier starting with digits?";
   }
 

@@ -27,6 +27,7 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
+import processing.mode.java.preproc.util.IssueMessageSimplification;
 import processing.mode.java.preproc.util.SyntaxIssueMessageSimplifier;
 import processing.mode.java.preproc.util.SyntaxUtil;
 import processing.mode.java.preproc.util.strategy.MessageSimplifierUtil;
@@ -52,10 +53,12 @@ public class PdeIssueEmitter extends BaseErrorListener {
       charPositionInLine = msgContent.length();
     }
 
+    IssueMessageSimplification simplification = SyntaxIssueMessageSimplifier.get().simplify(msg);
+
     listener.onIssue(new PdePreprocessIssue(
-        line,
+        line + simplification.getLineOffset(),
         charPositionInLine,
-        SyntaxIssueMessageSimplifier.get().simplify(msg)
+        simplification.getMessage()
     ));
   }
 

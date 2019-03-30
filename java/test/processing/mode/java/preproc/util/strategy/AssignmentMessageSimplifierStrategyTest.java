@@ -3,6 +3,7 @@ package processing.mode.java.preproc.util.strategy;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import processing.mode.java.preproc.util.IssueMessageSimplification;
 
 import java.util.Optional;
 
@@ -18,19 +19,19 @@ public class AssignmentMessageSimplifierStrategyTest {
 
   @Test
   public void testPresent() {
-    Optional<String> msg = strategy.simplify("  int x =");
+    Optional<IssueMessageSimplification> msg = strategy.simplify("  int x =");
     Assert.assertTrue(msg.isPresent());
   }
 
   @Test
   public void testPresentDiamond() {
-    Optional<String> msg = strategy.simplify("  List<Integer> x =");
+    Optional<IssueMessageSimplification> msg = strategy.simplify("  List<Integer> x =");
     Assert.assertTrue(msg.isPresent());
   }
 
   @Test
   public void testNotPresent() {
-    Optional<String> msg = strategy.simplify("class {");
+    Optional<IssueMessageSimplification> msg = strategy.simplify("class {");
     Assert.assertTrue(msg.isEmpty());
   }
 

@@ -1,5 +1,8 @@
 package processing.mode.java.preproc.util.strategy;
 
+/**
+ * Strategy to check for an error in specifying a parameter value.
+ */
 public class BadParamMessageSimplifierStrategy
     extends RegexTemplateMessageSimplifierStrategy {
 
@@ -9,7 +12,7 @@ public class BadParamMessageSimplifierStrategy
   }
 
   @Override
-  public String getMessageTemplate() {
+  public String getHintTemplate() {
     return "Issue with parameter near '%s'?";
   }
 

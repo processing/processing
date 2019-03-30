@@ -1,5 +1,8 @@
 package processing.mode.java.preproc.util.strategy;
 
+/**
+ * Strategy to check for a class definition without a name.
+ */
 public class MissingClassNameMessageSimplifierStrategy extends RegexTemplateMessageSimplifierStrategy {
 
   @Override
@@ -8,7 +11,7 @@ public class MissingClassNameMessageSimplifierStrategy extends RegexTemplateMess
   }
 
   @Override
-  public String getMessageTemplate() {
+  public String getHintTemplate() {
     return "Forget class or interface name near '%s'?";
   }
 

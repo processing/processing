@@ -1,5 +1,8 @@
 package processing.mode.java.preproc.util.strategy;
 
+/**
+ * Strategy that checks for a variable decalaration missing its name or its type.
+ */
 public class MissingVariableNameMessageSimplifierStrategy
     extends RegexTemplateMessageSimplifierStrategy {
 
@@ -9,7 +12,7 @@ public class MissingVariableNameMessageSimplifierStrategy
   }
 
   @Override
-  public String getMessageTemplate() {
+  public String getHintTemplate() {
     return "Did you forget to finish declaring a variable or to call a method?";
   }
 }
