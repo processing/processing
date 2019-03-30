@@ -41,6 +41,8 @@ public class SyntaxIssueMessageSimplifier {
   private SyntaxIssueMessageSimplifier() {
     strategies = new ArrayList<>();
     strategies.add(new MissingIdentifierMessageSimplifierStrategy());
+    strategies.add(new KnownMissingMessageSimplifierStrategy());
+    strategies.add(new ExtraneousInputMessageSimplifierStrategy());
     strategies.add(new MismatchedInputMessageSimplifierStrategy());
     strategies.add(new MissingVariableNameMessageSimplifierStrategy());
     strategies.add(new AssignmentMessageSimplifierStrategy());
