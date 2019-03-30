@@ -66,14 +66,13 @@ public class SyntaxIssueMessageSimplifier {
    * @return An improved error message or the originalMessage if no improvements could be made.
    */
   public IssueMessageSimplification simplify(String originalMessage) {
-    //System.err.println(originalMessage);
     Optional<IssueMessageSimplification> matching = strategies.stream()
         .map((x) -> x.simplify(originalMessage))
         .filter(Optional::isPresent)
         .map(Optional::get)
         .findFirst();
 
-    return matching.orElse(new IssueMessageSimplification(originalMessage, 0));
+    return matching.orElse(new IssueMessageSimplification(originalMessage));
   }
 
 }

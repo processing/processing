@@ -27,20 +27,26 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
-import processing.mode.java.preproc.util.IssueMessageSimplification;
-import processing.mode.java.preproc.util.SyntaxIssueMessageSimplifier;
-import processing.mode.java.preproc.util.SyntaxUtil;
+import processing.mode.java.preproc.util.*;
 import processing.mode.java.preproc.util.strategy.MessageSimplifierUtil;
 
 import java.util.BitSet;
+import java.util.Optional;
 
 
 public class PdeIssueEmitter extends BaseErrorListener {
 
   private final PdePreprocessIssueListener listener;
+  private final Optional<String> sourceMaybe;
 
   public PdeIssueEmitter(PdePreprocessIssueListener newListener) {
     listener = newListener;
+    sourceMaybe = Optional.empty();
+  }
+
+  public PdeIssueEmitter(PdePreprocessIssueListener newListener, String newSource) {
+    listener = newListener;
+    sourceMaybe = Optional.of(newSource);
   }
 
   @Override
@@ -55,9 +61,22 @@ public class PdeIssueEmitter extends BaseErrorListener {
 
     IssueMessageSimplification simplification = SyntaxIssueMessageSimplifier.get().simplify(msg);
 
+    LineOffset lineOffset;
+
+    if (sourceMaybe.isPresent()) {
+      lineOffset = LineOffsetFactory.get().getLineWithOffset(
+          simplification,
+          line,
+          charPositionInLine,
+          sourceMaybe.get()
+      );
+    } else {
+      lineOffset = new LineOffset(line, charPositionInLine);
+    }
+
     listener.onIssue(new PdePreprocessIssue(
-        line + simplification.getLineOffset(),
-        charPositionInLine,
+        lineOffset.getLine(),
+        lineOffset.getCharPosition(),
         simplification.getMessage()
     ));
   }

@@ -12,7 +12,7 @@ public class MissingClassNameMessageSimplifierStrategy extends RegexTemplateMess
 
   @Override
   public String getHintTemplate() {
-    return "Forget class or interface name near '%s'?";
+    return "Forget class / interface name or body near '%s'?";
   }
 
 }

@@ -240,7 +240,7 @@ public class LineID implements DocumentListener {
    * is edited. This happens when text is inserted or removed.
    */
   protected void editEvent(DocumentEvent de) {
-    //System.out.println("document edit @ " + de.getOffset());
+    //System.out.println("document edit @ " + de.getCharPosition());
     if (de.getOffset() <= pos.getOffset()) {
       updatePosition();
       //System.out.println("updating, new line no: " + lineNo);

@@ -19,7 +19,7 @@ public class MissingIdentifierMessageSimplifierStrategy
           message.replace("missing Identifier at", "")
       );
       return Optional.of(
-          new IssueMessageSimplification(newMessage, -1)
+          new IssueMessageSimplification(newMessage)
       );
     } else {
       return Optional.empty();

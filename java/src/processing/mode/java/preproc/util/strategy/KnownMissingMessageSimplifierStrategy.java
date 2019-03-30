@@ -13,9 +13,15 @@ public class KnownMissingMessageSimplifierStrategy implements SyntaxIssueMessage
   @Override
   public Optional<IssueMessageSimplification> simplify(String message) {
     if (message.toLowerCase().contains("missing")) {
-      String newMessage = String.format("Syntax error. Hint: Are you %s?", message);
+      String newContents = message.replaceAll("' at '.*", "' near here");
+
+      String newMessage = String.format(
+          "Syntax error. Hint: Are you %s?",
+          newContents
+      );
+
       return Optional.of(
-          new IssueMessageSimplification(newMessage)
+          new IssueMessageSimplification(newMessage, true)
       );
     } else {
       return Optional.empty();

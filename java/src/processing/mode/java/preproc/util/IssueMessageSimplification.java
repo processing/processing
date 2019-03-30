@@ -3,24 +3,24 @@ package processing.mode.java.preproc.util;
 public class IssueMessageSimplification {
 
   private final String message;
-  private final int lineOffset;
+  private final boolean attributeToPriorToken;
 
   public IssueMessageSimplification(String newMessage) {
     message = newMessage;
-    lineOffset = 0;
+    attributeToPriorToken = false;
   }
 
-  public IssueMessageSimplification(String newMessage, int newLineOffset) {
+  public IssueMessageSimplification(String newMessage, boolean newAttributeToPriorToken) {
     message = newMessage;
-    lineOffset = newLineOffset;
+    attributeToPriorToken = newAttributeToPriorToken;
   }
 
   public String getMessage() {
     return message;
   }
 
-  public int getLineOffset() {
-    return lineOffset;
+  public boolean getAttributeToPriorToken() {
+    return attributeToPriorToken;
   }
 
 }
