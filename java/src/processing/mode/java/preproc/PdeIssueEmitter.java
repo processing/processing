@@ -34,16 +34,44 @@ import java.util.BitSet;
 import java.util.Optional;
 
 
+/**
+ * ANTLR error listener to inform a preprocess issue listener when syntax errors are encountered.
+ *
+ * <p>
+ *   A {BaseErrorListener} which looks for syntax errors reported by ANTLR and converts them to
+ *   {PdePreprocessIssue}s that are consumable by a {PdePreprocessIssueListener}. It does this by
+ *   running the {SyntaxIssueMessageSimplifier} to generate a more user-friendly error message
+ *   before informing the provided listener.
+ * </p>
+ */
 public class PdeIssueEmitter extends BaseErrorListener {
 
   private final PdePreprocessIssueListener listener;
   private final Optional<SourceEmitter> sourceMaybe;
 
+  /**
+   * Create a new issue emitter.
+   *
+   * <p>
+   *    Create a new issue emitter when access to the processing sketch source is not available.
+   *    Note that this will not allow some error beautification and, if sketch source is available,
+   *    use other constructor.
+   * </p>
+   *
+   * @param newListener The listener to inform when encountering a syntax error.
+   */
   public PdeIssueEmitter(PdePreprocessIssueListener newListener) {
     listener = newListener;
     sourceMaybe = Optional.empty();
   }
 
+  /**
+   * Create a new issue emitter.
+   *
+   * @param newListener The listener to inform when encountering a syntax error.
+   * @param newSourceEmitter The sketch source to use when helping beautify certain syntax error
+   *    messages.
+   */
   public PdeIssueEmitter(PdePreprocessIssueListener newListener, SourceEmitter newSourceEmitter) {
     listener = newListener;
     sourceMaybe = Optional.of(newSourceEmitter);
@@ -61,34 +89,37 @@ public class PdeIssueEmitter extends BaseErrorListener {
 
     IssueMessageSimplification simplification = SyntaxIssueMessageSimplifier.get().simplify(msg);
 
-    LineOffset lineOffset;
+    IssueLocation issueLocation;
 
     if (sourceMaybe.isPresent()) {
-      lineOffset = LineOffsetFactory.getLineWithOffset(
+      issueLocation = IssueLocationFactory.getLineWithOffset(
           simplification,
           line,
           charPositionInLine,
           sourceMaybe.get().getSource()
       );
     } else {
-      lineOffset = new LineOffset(line, charPositionInLine);
+      issueLocation = new IssueLocation(line, charPositionInLine);
     }
 
     listener.onIssue(new PdePreprocessIssue(
-        lineOffset.getLine(),
-        lineOffset.getCharPosition(),
+        issueLocation.getLine(),
+        issueLocation.getCharPosition(),
         simplification.getMessage()
     ));
   }
 
+  @Override
   public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
       boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
   }
 
+  @Override
   public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
       BitSet conflictingAlts, ATNConfigSet configs) {
   }
 
+  @Override
   public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
       int prediction, ATNConfigSet configs) {
   }

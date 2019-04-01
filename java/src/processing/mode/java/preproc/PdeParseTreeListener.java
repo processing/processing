@@ -1,4 +1,24 @@
 /* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+  Part of the Processing project - http://processing.org
+
+  Copyright (c) 2019 The Processing Foundation
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License version 2
+  as published by the Free Software Foundation.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software Foundation,
+  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 package processing.mode.java.preproc;
 
 import java.io.PrintWriter;
@@ -15,6 +35,17 @@ import processing.core.PApplet;
 import processing.mode.java.pdex.TextTransform;
 import processing.mode.java.preproc.PdePreprocessor.Mode;
 
+
+/**
+ * ANTLR tree traversal listener that preforms code rewrites as part of sketch preprocessing.
+ *
+ * <p>
+ *   ANTLR tree traversal listener that preforms code rewrites as part of sketch preprocessing,
+ *   turning sketch source into compilable Java code. Note that this emits both the Java source
+ *   when using javac directly as part of {JavaBuild} as well as {TextTransform.Edit}s when using
+ *   the JDT via the {PreprocessingService}.
+ * </p>
+ */
 public class PdeParseTreeListener extends ProcessingBaseListener {
 
   protected final static String version = "3.0.0";
@@ -48,6 +79,12 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
 
   protected SketchException sketchException;
 
+  /**
+   * Create a new listener.
+   *
+   * @param tokens The tokens over which to rewrite.
+   * @param sketchName The name of the sketch being traversed.
+   */
   PdeParseTreeListener(BufferedTokenStream tokens, String sketchName) {
     rewriter = new TokenStreamRewriter(tokens);
     this.sketchName = sketchName;

@@ -5,10 +5,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class LineOffsetFactoryTest {
+public class IssueLocationFactoryTest {
 
   private String source;
-  private LineOffset lineOffset;
+  private IssueLocation issueLocation;
 
   @Before
   public void setup() {
@@ -30,41 +30,41 @@ public class LineOffsetFactoryTest {
 
   @Test
   public void getLineWithOffsetApplies() {
-    lineOffset = LineOffsetFactory.getLineWithOffset(
+    issueLocation = IssueLocationFactory.getLineWithOffset(
         new IssueMessageSimplification("test message", true),
         15,
         0,
         source
     );
 
-    Assert.assertEquals(5, lineOffset.getLine());
-    Assert.assertEquals(20, lineOffset.getCharPosition());
+    Assert.assertEquals(5, issueLocation.getLine());
+    Assert.assertEquals(20, issueLocation.getCharPosition());
   }
 
   /*@Test
   public void getLineWithOffsetNotApplies() {
-    lineOffset = LineOffsetFactory.getLineWithOffset(
+    issueLocation = IssueLocationFactory.getLineWithOffset(
         new IssueMessageSimplification("test message", false),
         15,
         0,
         source
     );
 
-    Assert.assertEquals(15, lineOffset.getLine());
-    Assert.assertEquals(0, lineOffset.getCharPosition());
+    Assert.assertEquals(15, issueLocation.getLine());
+    Assert.assertEquals(0, issueLocation.getCharPosition());
   }
 
   @Test
   public void getLineWithOffsetNoMatch() {
-    lineOffset = LineOffsetFactory.getLineWithOffset(
+    issueLocation = IssueLocationFactory.getLineWithOffset(
         new IssueMessageSimplification("test message", true),
         13,
         0,
         "\n\n\n\n\n\n\n\n\n\n\nnoFill()\nellipse(50,50,50,50)"
     );
 
-    Assert.assertEquals(12, lineOffset.getLine());
-    Assert.assertEquals(8, lineOffset.getCharPosition());
+    Assert.assertEquals(12, issueLocation.getLine());
+    Assert.assertEquals(8, issueLocation.getCharPosition());
   }*/
 
 }
