@@ -277,7 +277,7 @@ public class JavaBuild {
       javaLibraryPath += File.pathSeparator + core.getNativePath();
     }
 
-    for (String item : result.extraImports) {
+    for (String item : result.getExtraImports()) {
       // remove things up to the last dot
       int dot = item.lastIndexOf('.');
       // http://dev.processing.org/bugs/show_bug.cgi?id=1145
@@ -381,11 +381,11 @@ public class JavaBuild {
 
       } else if (sc.isExtension("pde")) {
         // The compiler and runner will need this to have a proper offset
-        sc.addPreprocOffset(result.headerOffset);
+        sc.addPreprocOffset(result.getHeaderOffset());
       }
     }
     foundMain = preprocessor.hasMain();
-    return result.className;
+    return result.getClassName();
   }
 
 

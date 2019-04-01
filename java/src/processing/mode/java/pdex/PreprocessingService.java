@@ -415,7 +415,7 @@ public class PreprocessingService {
 
     // Prepare transforms to convert pde code into parsable code
     TextTransform toParsable = new TextTransform(pdeStage);
-    toParsable.addAll(preprocessorResult.edits);
+    toParsable.addAll(preprocessorResult.getEdits());
     { // Refresh sketch classloader and classpath if imports changed
       if (reloadLibraries) {
         runtimePathBuilder.markLibrariesChanged();

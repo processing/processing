@@ -123,10 +123,12 @@ public class ParserTests {
       }
 
     } catch (Exception e) {
-      if (!e.equals(e.getCause()) && e.getCause() != null)
+      if (!e.equals(e.getCause()) && e.getCause() != null) {
         fail(e.getCause().toString());
-      else
+      } else {
+        e.printStackTrace();
         fail(e.toString());
+      }
     }
   }
 

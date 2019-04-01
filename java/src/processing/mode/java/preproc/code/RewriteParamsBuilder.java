@@ -49,7 +49,7 @@ public class RewriteParamsBuilder {
   }
 
   public void setSketchName(String newSketchName) {
-    sketchName = Optional.of(newSketchName);
+    sketchName = Optional.ofNullable(newSketchName);
   }
 
   public void setIsTested(boolean newIsTested) {
@@ -57,11 +57,11 @@ public class RewriteParamsBuilder {
   }
 
   public void setRewriter(TokenStreamRewriter newRewriter) {
-    rewriter = Optional.of(newRewriter);
+    rewriter = Optional.ofNullable(newRewriter);
   }
 
   public void setMode(PdePreprocessor.Mode newMode) {
-    mode = Optional.of(newMode);
+    mode = Optional.ofNullable(newMode);
   }
 
   public void setFoundMain(boolean newFoundMain) {
@@ -73,15 +73,15 @@ public class RewriteParamsBuilder {
   }
 
   public void setSketchWidth(String newSketchWidth) {
-    sketchWidth = Optional.of(newSketchWidth);
+    sketchWidth = Optional.ofNullable(newSketchWidth);
   }
 
   public void setSketchHeight(String newSketchHeight) {
-    sketchHeight = Optional.of(newSketchHeight);
+    sketchHeight = Optional.ofNullable(newSketchHeight);
   }
 
   public void setSketchRenderer(String newSketchRenderer) {
-    sketchRenderer = Optional.of(newSketchRenderer);
+    sketchRenderer = Optional.ofNullable(newSketchRenderer);
   }
 
   public void setIsSizeValidInGlobal(boolean newIsSizeValidInGlobal) {
@@ -145,18 +145,6 @@ public class RewriteParamsBuilder {
       throw new RuntimeException("Expected lineOffset to be set");
     }
 
-    if (sketchWidth.isEmpty()) {
-      throw new RuntimeException("Expected sketchWidth to be set");
-    }
-
-    if (sketchHeight.isEmpty()) {
-      throw new RuntimeException("Expected sketchHeight to be set");
-    }
-
-    if (sketchRenderer.isEmpty()) {
-      throw new RuntimeException("Expected sketchRenderer to be set");
-    }
-
     if (isSizeValidInGlobal.isEmpty()) {
       throw new RuntimeException("Expected isSizeValidInGlobal to be set");
     }
@@ -173,9 +161,9 @@ public class RewriteParamsBuilder {
         defaultImports,
         codeFolderImports,
         foundImports,
-        sketchWidth.get(),
-        sketchHeight.get(),
-        sketchRenderer.get(),
+        sketchWidth,
+        sketchHeight,
+        sketchRenderer,
         isSizeValidInGlobal.get()
     );
   }

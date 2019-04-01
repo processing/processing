@@ -1,23 +1,26 @@
 package processing.mode.java.preproc.code;
 
+import org.antlr.v4.runtime.TokenStreamRewriter;
 import processing.mode.java.pdex.TextTransform;
 
 import java.io.PrintWriter;
 
 public class PrintWriterWithEditGen {
 
-  private final PrintWriter writer;
+  private final TokenStreamRewriter writer;
   private final RewriteResultBuilder rewriteResultBuilder;
   private final int insertPoint;
   private final StringBuilder editBuilder;
+  private final boolean before;
 
-  public PrintWriterWithEditGen(PrintWriter writer, RewriteResultBuilder newRewriteResultBuilder,
-        int newInsertPoint) {
+  public PrintWriterWithEditGen(TokenStreamRewriter writer,
+        RewriteResultBuilder newRewriteResultBuilder, int newInsertPoint, boolean newBefore) {
 
     this.writer = writer;
     rewriteResultBuilder = newRewriteResultBuilder;
     insertPoint = newInsertPoint;
     editBuilder = new StringBuilder();
+    before = newBefore;
   }
 
   public void addEmptyLine() {
@@ -35,9 +38,20 @@ public class PrintWriterWithEditGen {
   public void finish() {
     String newCode = editBuilder.toString();
 
-    writer.print(newCode);
+    if (before) {
+      rewriteResultBuilder.addEdit(CodeEditOperationUtil.createInsertBefore(
+          insertPoint,
+          newCode,
+          writer
+      ));
+    } else {
+      rewriteResultBuilder.addEdit(CodeEditOperationUtil.createInsertAfter(
+          insertPoint,
+          newCode,
+          writer
+      ));
+    }
 
-    rewriteResultBuilder.addEdit(TextTransform.Edit.insert(insertPoint, newCode));
     rewriteResultBuilder.addOffset(SyntaxUtil.getCount(newCode, "\n"));
   }
 

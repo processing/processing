@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.TokenStreamRewriter;
 import processing.mode.java.preproc.PdePreprocessor;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public class RewriteParams {
@@ -19,17 +20,18 @@ public class RewriteParams {
   private final List<String> defaultImports;
   private final List<String> codeFolderImports;
   private final List<String> foundImports;
-  private final String sketchWidth;
-  private final String sketchHeight;
-  private final String sketchRenderer;
+  private final Optional<String> sketchWidth;
+  private final Optional<String> sketchHeight;
+  private final Optional<String> sketchRenderer;
   private final boolean isSizeValidInGlobal;
 
   public RewriteParams(String newVersion, String newSketchName, boolean newIsTested,
                        TokenStreamRewriter newRewriter, PdePreprocessor.Mode newMode,
                        boolean newFoundMain, int newLineOffset, List<String> newCoreImports,
                        List<String> newDefaultImports, List<String> newCodeFolderImports,
-                       List<String> newFoundImports, String newSketchWidth,  String newSketchHeight,
-                       String newSketchRenderer, boolean newIsSizeValidInGlobal) {
+                       List<String> newFoundImports, Optional<String> newSketchWidth,
+                       Optional<String> newSketchHeight, Optional<String> newSketchRenderer,
+                       boolean newIsSizeValidInGlobal) {
 
     version = newVersion;
     sketchName = newSketchName;
@@ -92,15 +94,15 @@ public class RewriteParams {
     return foundImports;
   }
 
-  public String getSketchWidth() {
+  public Optional<String> getSketchWidth() {
     return sketchWidth;
   }
 
-  public String getSketchHeight() {
+  public Optional<String> getSketchHeight() {
     return sketchHeight;
   }
 
-  public String getSketchRenderer() {
+  public Optional<String> getSketchRenderer() {
     return sketchRenderer;
   }
 

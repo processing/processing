@@ -1,5 +1,6 @@
 package processing.mode.java.preproc.code;
 
+import org.antlr.v4.runtime.TokenStreamRewriter;
 import processing.app.Preferences;
 import processing.core.PApplet;
 import processing.mode.java.preproc.PdePreprocessor;
@@ -38,14 +39,15 @@ public class RewriterCodeGenerator {
    * @param params The parameters for the rewrite.
    * @return Information about the completed rewrite.
    */
-  public RewriteResult writeHeader(PrintWriter headerWriter, RewriteParams params) {
+  public RewriteResult writeHeader(TokenStreamRewriter headerWriter, RewriteParams params) {
 
     RewriteResultBuilder resultBuilder = new RewriteResultBuilder();
 
     PrintWriterWithEditGen decoratedWriter = new PrintWriterWithEditGen(
         headerWriter,
         resultBuilder,
-        0
+        0,
+        true
     );
 
     if (!params.getIsTested()) writePreprocessorComment(decoratedWriter, params, resultBuilder);
@@ -79,7 +81,7 @@ public class RewriterCodeGenerator {
    * @param insertPoint The loction at which the footer should be written.
    * @return Information about the completed rewrite.
    */
-  public RewriteResult writeFooter(PrintWriter footerWriter, RewriteParams params,
+  public RewriteResult writeFooter(TokenStreamRewriter footerWriter, RewriteParams params,
         int insertPoint) {
 
     RewriteResultBuilder resultBuilder = new RewriteResultBuilder();
@@ -87,7 +89,9 @@ public class RewriterCodeGenerator {
     PrintWriterWithEditGen decoratedWriter = new PrintWriterWithEditGen(
         footerWriter,
         resultBuilder,
-        insertPoint);
+        insertPoint,
+        false
+    );
 
     decoratedWriter.addEmptyLine();
 
@@ -246,15 +250,15 @@ public class RewriterCodeGenerator {
       return;
     }
 
-    if (params.getSketchWidth() == null || params.getSketchHeight() == null) {
+    if (params.getSketchWidth().isEmpty() || params.getSketchHeight().isEmpty()) {
       return;
     }
 
     StringJoiner argJoiner = new StringJoiner(",");
-    argJoiner.add(params.getSketchWidth());
-    argJoiner.add(params.getSketchHeight());
-    if (params.getSketchRenderer() != null) {
-      argJoiner.add(params.getSketchRenderer());
+    argJoiner.add(params.getSketchWidth().get());
+    argJoiner.add(params.getSketchHeight().get());
+    if (params.getSketchRenderer().isPresent()) {
+      argJoiner.add(params.getSketchRenderer().get());
     }
 
     String settingsOuterTemplate = indent1 + "public void settings() { %s }";

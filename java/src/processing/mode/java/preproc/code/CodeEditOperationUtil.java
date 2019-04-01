@@ -53,6 +53,25 @@ public class CodeEditOperationUtil {
   /**
    * Insert text after a token.
    *
+   * @param start The position after which the text should be inserted.
+   * @param text The text to insert.
+   * @param rewriter The rewriter in which to immediately edit.
+   * @return The {TextTransform.Edit} corresponding to this change.
+   */
+  public static TextTransform.Edit createInsertAfter(int start, String text,
+        TokenStreamRewriter rewriter) {
+
+    rewriter.insertAfter(start, text);
+
+    return TextTransform.Edit.insert(
+        start + 1,
+        text
+    );
+  }
+
+  /**
+   * Insert text after a token.
+   *
    * @param start The token after which the text should be inserted.
    * @param text The text to insert.
    * @param rewriter The rewriter in which to immediately edit.

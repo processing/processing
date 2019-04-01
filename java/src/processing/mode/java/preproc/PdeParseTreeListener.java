@@ -179,14 +179,13 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
     return rewriter;
   }
 
+  /**
+   * Get the result of the last preprocessing.
+   *
+   * @return The result of the last preprocessing.
+   */
   public PreprocessorResult getResult() {
-    return new PreprocessorResult(
-        mode,
-        headerOffset,
-        sketchName,
-        foundImports,
-        edits
-    );
+    return new PreprocessorResult(mode, lineOffset, sketchName, foundImports, edits);
   }
 
   // --------------------------------------------------- listener impl
@@ -198,26 +197,20 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
    */
   public void exitProcessingSketch(ProcessingParser.ProcessingSketchContext ctx) {
     // header
-    StringWriter headerSW = new StringWriter();
-    PrintWriter headerPW = new PrintWriter(headerSW);
-
     RewriteParams rewriteParams = createRewriteParams();
 
     RewriterCodeGenerator codeGen = new RewriterCodeGenerator(tabSize);
 
-    RewriteResult headerResult = codeGen.writeHeader(headerPW, rewriteParams);
+    RewriteResult headerResult = codeGen.writeHeader(rewriter, rewriteParams);
     edits.addAll(headerResult.getEdits());
     lineOffset += headerResult.getLineOffset();
 
     // footer
-    StringWriter footerSW = new StringWriter();
-    PrintWriter footerPW = new PrintWriter(footerSW);
-
     TokenStream tokenStream = rewriter.getTokenStream();
     int tokens = tokenStream.size();
-    int length = tokenStream.get(tokens-1).getStopIndex() + 1;
+    int length = tokenStream.get(tokens-1).getStopIndex();
 
-    RewriteResult footerResult = codeGen.writeFooter(footerPW, rewriteParams, length);
+    RewriteResult footerResult = codeGen.writeFooter(rewriter, rewriteParams, length);
     edits.addAll(footerResult.getEdits());
     lineOffset += footerResult.getLineOffset();
   }
