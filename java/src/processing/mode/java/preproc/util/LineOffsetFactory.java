@@ -2,6 +2,7 @@ package processing.mode.java.preproc.util;
 
 import processing.mode.java.preproc.util.strategy.MessageSimplifierUtil;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,24 +13,8 @@ import java.util.regex.Pattern;
  */
 public class LineOffsetFactory {
 
-  // Derived from ANTLR grammar
-  private static final String SKIP_PATTERN_STR = "([ \\t\\r\\n\\u000C]+|\\/\\*(.|\\n)*?\\*\\/|\\/\\*\\*\\/|\\/\\/[^\\r\\n]*)+$";
-
-  private static final AtomicReference<LineOffsetFactory> instance = new AtomicReference<>();
-
-  private final Pattern skipPattern;
-
-  public static LineOffsetFactory get() {
-    instance.compareAndSet(null, new LineOffsetFactory());
-    return instance.get();
-  }
-
-  private LineOffsetFactory() {
-    skipPattern = Pattern.compile(SKIP_PATTERN_STR);
-  }
-
-  public LineOffset getLineWithOffset(IssueMessageSimplification simplification, int originalLine,
-        int originalOffset, String source) {
+  public static LineOffset getLineWithOffset(IssueMessageSimplification simplification,
+        int originalLine, int originalOffset, String source) {
 
     int finalLine = SyntaxUtil.getCount(source, "\n");
 
@@ -42,23 +27,21 @@ public class LineOffsetFactory {
 
     String priorCode = getContentsUpToLine(source, originalLine);
 
-    Matcher matcher = skipPattern.matcher(priorCode);
+    PriorTokenFinder finder = new PriorTokenFinder();
+    int charPos = priorCode.length();
+    while (!finder.isDone() && charPos > 0) {
+      charPos--;
+      finder.step(priorCode.charAt(charPos));
+    }
 
+    Optional<Integer> foundStartOfMatchMaybe = finder.getTokenPositionMaybe();
     int startOfMatch;
     int linesOffset;
 
-    boolean found;
-    try {
-      found = matcher.find();
-    } catch (Exception | Error e) {
-      String innerMessage = e.getMessage().substring(0, 100);
-      System.err.println("Error parsing whitespace: " + innerMessage + ". However, showing error.");
-      found = false;
-    }
-
-    if (found) {
-      startOfMatch = matcher.start();
+    if (foundStartOfMatchMaybe.isPresent()) {
+      startOfMatch = priorCode.length() - foundStartOfMatchMaybe.get();
       String contentsOfMatch = priorCode.substring(startOfMatch);
+      System.err.println(contentsOfMatch);
       linesOffset = SyntaxUtil.getCount(contentsOfMatch, "\n");
     } else {
       startOfMatch = priorCode.length();
@@ -72,7 +55,7 @@ public class LineOffsetFactory {
     return new LineOffset(newLine, col);
   }
 
-  private String getContentsUpToLine(String source, int originalLine) {
+  private static String getContentsUpToLine(String source, int originalLine) {
     int line = 0;
     int stringCursor = 0;
     int strLength = source.length();

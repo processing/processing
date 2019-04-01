@@ -85,7 +85,7 @@ public class PdePreprocessor {
       parser.removeErrorListeners();
       parser.addErrorListener(new PdeIssueEmitter(
           (x) -> { throw new PdePreprocessIssueException(x); },
-          inProgram
+          () -> listener.rewriter.getText()
       ));
       parser.setBuildParseTree(true);
       tree = parser.processingSketch();

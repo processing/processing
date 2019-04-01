@@ -37,16 +37,16 @@ import java.util.Optional;
 public class PdeIssueEmitter extends BaseErrorListener {
 
   private final PdePreprocessIssueListener listener;
-  private final Optional<String> sourceMaybe;
+  private final Optional<SourceEmitter> sourceMaybe;
 
   public PdeIssueEmitter(PdePreprocessIssueListener newListener) {
     listener = newListener;
     sourceMaybe = Optional.empty();
   }
 
-  public PdeIssueEmitter(PdePreprocessIssueListener newListener, String newSource) {
+  public PdeIssueEmitter(PdePreprocessIssueListener newListener, SourceEmitter newSourceEmitter) {
     listener = newListener;
-    sourceMaybe = Optional.of(newSource);
+    sourceMaybe = Optional.of(newSourceEmitter);
   }
 
   @Override
@@ -64,11 +64,11 @@ public class PdeIssueEmitter extends BaseErrorListener {
     LineOffset lineOffset;
 
     if (sourceMaybe.isPresent()) {
-      lineOffset = LineOffsetFactory.get().getLineWithOffset(
+      lineOffset = LineOffsetFactory.getLineWithOffset(
           simplification,
           line,
           charPositionInLine,
-          sourceMaybe.get()
+          sourceMaybe.get().getSource()
       );
     } else {
       lineOffset = new LineOffset(line, charPositionInLine);

@@ -14,6 +14,8 @@ public class LineOffsetFactoryTest {
   public void setup() {
     source = "//Test\n" +
         "noFill();\n" +
+        "/**\n" +
+        "**/\n" +
         "ellipse(50,50,50,50)\n" +
         "\n" +
         "/**\n" +
@@ -27,39 +29,34 @@ public class LineOffsetFactoryTest {
   }
 
   @Test
-  public void getInitialized() {
-    Assert.assertNotNull(LineOffsetFactory.get());
-  }
-
-  /*@Test
   public void getLineWithOffsetApplies() {
-    lineOffset = LineOffsetFactory.get().getLineWithOffset(
+    lineOffset = LineOffsetFactory.getLineWithOffset(
         new IssueMessageSimplification("test message", true),
-        13,
+        15,
         0,
         source
     );
 
-    Assert.assertEquals(3, lineOffset.getLine());
+    Assert.assertEquals(5, lineOffset.getLine());
     Assert.assertEquals(20, lineOffset.getCharPosition());
   }
 
-  @Test
+  /*@Test
   public void getLineWithOffsetNotApplies() {
-    lineOffset = LineOffsetFactory.get().getLineWithOffset(
+    lineOffset = LineOffsetFactory.getLineWithOffset(
         new IssueMessageSimplification("test message", false),
-        13,
+        15,
         0,
         source
     );
 
-    Assert.assertEquals(13, lineOffset.getLine());
+    Assert.assertEquals(15, lineOffset.getLine());
     Assert.assertEquals(0, lineOffset.getCharPosition());
   }
 
   @Test
   public void getLineWithOffsetNoMatch() {
-    lineOffset = LineOffsetFactory.get().getLineWithOffset(
+    lineOffset = LineOffsetFactory.getLineWithOffset(
         new IssueMessageSimplification("test message", true),
         13,
         0,

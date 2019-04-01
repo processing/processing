@@ -10,7 +10,8 @@ public class MismatchedInputMessageSimplifierStrategy implements SyntaxIssueMess
     if (message.toLowerCase().contains("mismatched input")) {
       return Optional.of(
           new IssueMessageSimplification(
-              "Syntax error. Hint: Did you forget an operator or semicolon here?"
+              "Syntax error. Hint: Did you forget an operator or semicolon here?",
+              true
           )
       );
     } else {
