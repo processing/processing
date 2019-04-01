@@ -15,8 +15,7 @@ import org.junit.Test;
 
 import processing.app.SketchException;
 import processing.app.exec.ProcessResult;
-import org.antlr.v4.runtime.RecognitionException;
-import processing.mode.java.preproc.PdePreprocessIssueException;
+import processing.mode.java.preproc.issue.PdePreprocessIssueException;
 
 
 public class ParserTests {

@@ -23,17 +23,15 @@ package processing.mode.java.preproc;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Interval;
 
-import processing.app.Preferences;
-import processing.app.SketchException;
 import processing.core.PApplet;
 import processing.mode.java.pdex.TextTransform;
 import processing.mode.java.preproc.PdePreprocessor.Mode;
+import processing.mode.java.preproc.code.*;
 
 
 /**
@@ -48,266 +46,198 @@ import processing.mode.java.preproc.PdePreprocessor.Mode;
  */
 public class PdeParseTreeListener extends ProcessingBaseListener {
 
-  protected final static String version = "3.0.0";
-  
-  protected String sketchName;
-  protected boolean isTested;
-  protected TokenStreamRewriter rewriter;
-  
+  private final static String VERSION_STR = "3.0.0";
+  private final int tabSize;
+
+  private int headerOffset;
+
+  private String sketchName;
+  private boolean isTested;
+  private TokenStreamRewriter rewriter;
+
   protected Mode mode = Mode.JAVA;
-  protected boolean foundMain;
-  
-  protected int lineOffset;
-  
-  protected ArrayList<String> coreImports = new ArrayList<String>();
-  protected ArrayList<String> defaultImports = new ArrayList<String>();
-  protected ArrayList<String> codeFolderImports = new ArrayList<String>();
-  protected ArrayList<String> foundImports = new ArrayList<String>();
-  protected ArrayList<TextTransform.Edit> edits = new ArrayList<>();
+  private boolean foundMain;
 
-  private String indent1 = "";
-  private String indent2 = "";
-  private String indent3 = "";
-  
-  protected String sketchWidth;
-  protected String sketchHeight;
-  protected String sketchRenderer;
+  private int lineOffset;
 
-  protected boolean hasSettingsMethod;
+  private ArrayList<String> coreImports = new ArrayList<>();
+  private ArrayList<String> defaultImports = new ArrayList<>();
+  private ArrayList<String> codeFolderImports = new ArrayList<>();
+  private ArrayList<String> foundImports = new ArrayList<>();
+  private ArrayList<TextTransform.Edit> edits = new ArrayList<>();
 
-  protected boolean isSizeValidInGlobal;
+  private String sketchWidth;
+  private String sketchHeight;
+  private String sketchRenderer;
 
-  protected SketchException sketchException;
+  private boolean isSizeValidInGlobal;
 
   /**
    * Create a new listener.
    *
    * @param tokens The tokens over which to rewrite.
-   * @param sketchName The name of the sketch being traversed.
+   * @param newSketchName The name of the sketch being traversed.
+   * @param newTabSize Size of tab / indent.
    */
-  PdeParseTreeListener(BufferedTokenStream tokens, String sketchName) {
+  PdeParseTreeListener(BufferedTokenStream tokens, String newSketchName, int newTabSize) {
     rewriter = new TokenStreamRewriter(tokens);
-    this.sketchName = sketchName;
+    sketchName = newSketchName;
+    tabSize = newTabSize;
   }
-  
-  protected void setCodeFolderImports(List<String> codeFolderImports) {
+
+  /**
+   * Indicate imports for code folders.
+   *
+   * @param codeFolderImports List of imports for sources sitting in the sketch code folder.
+   */
+  public void setCodeFolderImports(List<String> codeFolderImports) {
     this.codeFolderImports.clear();
     this.codeFolderImports.addAll(codeFolderImports);
   }
-  
-  protected void setCoreImports(String[] coreImports) {
+
+  /**
+   * Indicate list of imports required for all sketches to be inserted in preprocessing.
+   *
+   * @param coreImports The list of imports required for all sketches.
+   */
+  public void setCoreImports(String[] coreImports) {
     setCoreImports(Arrays.asList(coreImports));
   }
-  
-  protected void setCoreImports(List<String> coreImports) {
+
+  /**
+   * Indicate list of imports required for all sketches to be inserted in preprocessing.
+   *
+   * @param coreImports The list of imports required for all sketches.
+   */
+  public void setCoreImports(List<String> coreImports) {
     this.coreImports.clear();
     this.coreImports.addAll(coreImports);
   }
-  
-  protected void setDefaultImports(String[] defaultImports) {
+
+  /**
+   * Indicate list of default convenience imports.
+   *
+   * <p>
+   *    Indicate list of imports that are not required for sketch operation but included for the
+   *    user's convenience regardless.
+   * </p>
+   *
+   * @param defaultImports The list of imports to include for user convenience.
+   */
+  public void setDefaultImports(String[] defaultImports) {
     setDefaultImports(Arrays.asList(defaultImports));
   }
-  
-  protected void setDefaultImports(List<String> defaultImports) {
+
+  /**
+   * Indicate list of default convenience imports.
+   *
+   * <p>
+   *    Indicate list of imports that are not required for sketch operation but included for the
+   *    user's convenience regardless.
+   * </p>
+   *
+   * @param defaultImports The list of imports to include for user convenience.
+   */
+  public void setDefaultImports(List<String> defaultImports) {
     this.defaultImports.clear();
     this.defaultImports.addAll(defaultImports);
   }
-  
-  protected void setIndent(int indent) {
-    final char[] indentChars = new char[indent];
-    Arrays.fill(indentChars, ' ');
-    indent1 = new String(indentChars);
-    indent2 = indent1 + indent1;
-    indent3 = indent2 + indent1;
-  }
-  
+
+  /**
+   * Indicate if running in unit tests.
+   *
+   * @param isTested True if running as part of tests and false otherwise.
+   */
   public void setTested(boolean isTested) {
     this.isTested = isTested;
   }
-  
+
+  /**
+   * Determine if the user provided their own "main" method.
+   *
+   * @return True if the sketch code provides a main method. False otherwise.
+   */
   public boolean foundMain() {
     return foundMain;
   }
-  
+
+  /**
+   * Get the sketch code transformed to grammatical Java.
+   *
+   * @return Complete sketch code as Java.
+   */
   public String getOutputProgram() {
     return rewriter.getText();
   }
-  
-  public PreprocessorResult getResult() throws SketchException {
-    return new PreprocessorResult(mode, lineOffset, sketchName, foundImports, edits);
+
+  /**
+   * Get the rewriter used by this listener.
+   *
+   * @return Listener's rewriter.
+   */
+  public TokenStreamRewriter getRewriter() {
+    return rewriter;
   }
 
-  protected boolean reportSketchException(SketchException sketchException) {
-    if (this.sketchException == null) {
-      this.sketchException = sketchException;
-      return true;
-    }
-    return false;
-  }
-
-  public SketchException getSketchException() {
-    return sketchException;
-  }
-  
-  // ------------------------ writers
-  
-  protected void writeHeader(PrintWriter header) {       
-    if (!isTested) writePreprocessorComment(header);
-    writeImports(header);
-    if (mode == Mode.STATIC || mode == Mode.ACTIVE) writeClassHeader(header);
-    if (mode == Mode.STATIC) writeStaticSketchHeader(header);
-  }
-  
-  protected void writePreprocessorComment(PrintWriter header) {
-    incLineOffset(); header.println(String.format(
-      "/* autogenerated by Processing preprocessor v%s on %s */",
-      version, new SimpleDateFormat("YYYY-MM-dd").format(new Date())));
-  }
-  
-  protected void writeImports(PrintWriter header) {
-    writeImportList(header, coreImports);
-    writeImportList(header, codeFolderImports);
-    writeImportList(header, foundImports);
-    writeImportList(header, defaultImports);
-  }
-  
-  protected void writeImportList(PrintWriter header, List<String> imports) {
-    writeImportList(header, imports.toArray(new String[0]));
-  }
-  
-  protected void writeImportList(PrintWriter header, String[] imports) {
-    for (String importDecl : imports) {
-      incLineOffset(); header.println("import " + importDecl + ";");
-    }
-    if (imports.length > 0) {
-      incLineOffset(); header.println();
-    }
-  }
-  
-  protected void writeClassHeader(PrintWriter header) {
-    incLineOffset(); header.println("public class " + sketchName + " extends PApplet {");
-    incLineOffset(); header.println();
-  }
-  
-  protected void writeStaticSketchHeader(PrintWriter header) {
-    incLineOffset(); header.println(indent1 + "public void setup() {");
-  }
-  
-  protected void writeFooter(PrintWriter footer) {
-    if (mode == Mode.STATIC) writeStaticSketchFooter(footer);
-    if (mode == Mode.STATIC || mode == Mode.ACTIVE) {
-      writeExtraFieldsAndMethods(footer);
-      if (!foundMain) writeMain(footer); 
-      writeClassFooter(footer);
-    }
-  }
-  
-  protected void writeStaticSketchFooter(PrintWriter footer) {
-    footer.println(indent2 +   "noLoop();");
-    footer.println(indent1 + "}");
-  }
-
-  protected void writeExtraFieldsAndMethods(PrintWriter classBody) {
-    // can be overriden
-
-    if (!isSizeValidInGlobal) {
-      return;
-    }
-
-    if (sketchWidth == null || sketchHeight == null || hasSettingsMethod) {
-      return;
-    }
-
-    StringJoiner argJoiner = new StringJoiner(",");
-    argJoiner.add(sketchWidth);
-    argJoiner.add(sketchHeight);
-    if (sketchRenderer != null) {
-      argJoiner.add(sketchRenderer);
-    }
-
-    String settingsBody = String.format("size(%s);", argJoiner.toString());
-
-    classBody.println();
-    classBody.println(indent1 + String.format("public void settings() { %s }", settingsBody));
-}
-  
-  protected void writeMain(PrintWriter footer) {
-    footer.println();
-    footer.println(indent1 + "static public void main(String[] passedArgs) {");
-    footer.print  (indent2 +   "String[] appletArgs = new String[] { ");
-
-    { // assemble line with applet args
-      if (Preferences.getBoolean("export.application.fullscreen")) {
-        footer.print("\"" + PApplet.ARGS_FULL_SCREEN + "\", ");
-
-        String bgColor = Preferences.get("run.present.bgcolor");
-        footer.print("\"" + PApplet.ARGS_BGCOLOR + "=" + bgColor + "\", ");
-
-        if (Preferences.getBoolean("export.application.stop")) {
-          String stopColor = Preferences.get("run.present.stop.color");
-          footer.print("\"" + PApplet.ARGS_STOP_COLOR + "=" + stopColor + "\", ");
-        } else {
-          footer.print("\"" + PApplet.ARGS_HIDE_STOP + "\", ");
-        }
-      }
-      footer.print("\"" + sketchName + "\"");
-    }
-    
-    footer.println(" };");
-    
-    footer.println(indent2 +   "if (passedArgs != null) {");
-    footer.println(indent3 +     "PApplet.main(concat(appletArgs, passedArgs));");
-    footer.println(indent2 +   "} else {");
-    footer.println(indent3 +     "PApplet.main(appletArgs);");
-    footer.println(indent2 +   "}");
-    footer.println(indent1 + "}");
-  }
-  
-  protected void writeClassFooter(PrintWriter footer) {
-    footer.println("}");
+  public PreprocessorResult getResult() {
+    return new PreprocessorResult(
+        mode,
+        headerOffset,
+        sketchName,
+        foundImports,
+        edits
+    );
   }
 
   // --------------------------------------------------- listener impl
   
   /**
-   * Wrap the sketch code inside a class definition and
-   * add all imports found to the top incl. the default ones
+   * Endpoint for ANTLR to call when having finished parsing a processing sketch.
+   *
+   * @param ctx The context from ANTLR for the processing sketch.
    */
   public void exitProcessingSketch(ProcessingParser.ProcessingSketchContext ctx) {
-    { // header
-      StringWriter headerSW = new StringWriter();
-      PrintWriter headerPW = new PrintWriter(headerSW);
-      writeHeader(headerPW);
-      createInsertBefore(ctx, 0, headerSW.getBuffer().toString());
-    }
+    // header
+    StringWriter headerSW = new StringWriter();
+    PrintWriter headerPW = new PrintWriter(headerSW);
 
-    { // footer
-      StringWriter footerSW = new StringWriter();
-      PrintWriter footerPW = new PrintWriter(footerSW);
-      footerPW.println();
-      writeFooter(footerPW);
+    RewriteParams rewriteParams = createRewriteParams();
 
-      TokenStream tokenStream = rewriter.getTokenStream();
-      int tokens = tokenStream.size();
-      int length = tokenStream.get(tokens-1).getStopIndex() + 1;
+    RewriterCodeGenerator codeGen = new RewriterCodeGenerator(tabSize);
 
-      String footerText = footerSW.getBuffer().toString();
+    RewriteResult headerResult = codeGen.writeHeader(headerPW, rewriteParams);
+    edits.addAll(headerResult.getEdits());
+    lineOffset += headerResult.getLineOffset();
 
-      edits.add(TextTransform.Edit.insert(length, footerText));
-      rewriter.insertAfter(tokens, footerText);
-    }
+    // footer
+    StringWriter footerSW = new StringWriter();
+    PrintWriter footerPW = new PrintWriter(footerSW);
+
+    TokenStream tokenStream = rewriter.getTokenStream();
+    int tokens = tokenStream.size();
+    int length = tokenStream.get(tokens-1).getStopIndex() + 1;
+
+    RewriteResult footerResult = codeGen.writeFooter(footerPW, rewriteParams, length);
+    edits.addAll(footerResult.getEdits());
+    lineOffset += footerResult.getLineOffset();
   }
 
+  /**
+   * Endpoint for ANTLR to call when finished parsing a special method declaration like setup.
+   *
+   * @param ctx The ANTLR context for the method declaration.
+   */
   public void exitSpecialMethodDeclaration(ProcessingParser.SpecialMethodDeclarationContext ctx) {
     if (!ctx.getChild(0).getText().equals("public")) {
-      createInsertBefore(ctx, ctx.start, "public ");
+      createInsertBefore(ctx.start, "public ");
     }
   }
 
-  protected void incLineOffset() {
-    lineOffset++;
-  }
-
+  /**
+   * Endpoint for ANTLR to call when finished parsing a size function call.
+   *
+   * @param ctx The ANTLR context for the method call.
+   */
   public void exitApiSizeFunction(ProcessingParser.ApiSizeFunctionContext ctx) {
     // this tree climbing could be avoided if grammar is
     // adjusted to force context of size()
@@ -351,22 +281,39 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
       }
       if (isSizeValidInGlobal) {
         // TODO: uncomment if size is supposed to be removed from setup()
-        createInsertBefore(ctx, ctx.start, "/* commented out by preprocessor: ");
-        createInsertAfter(ctx, ctx.stop, " */");
+        createInsertBefore(
+            ctx.start,
+            "/* commented out by preprocessor: "
+        );
+
+        createInsertAfter(ctx.stop, " */");
       }
     }
   }
 
   /**
-   * Remove import declarations, they will be included in the header.
+   * Endpoint for ANTLR to call when finished parsing an import declaration.
+   *
+   * <p>
+   *    Endpoint for ANTLR to call when finished parsing an import declaration, remvoing those
+   *    declarations from sketch body so that they can be included in the header.
+   * </p>
+   *
+   * @param ctx ANTLR context for the import declaration.
    */
   public void exitImportDeclaration(ProcessingParser.ImportDeclarationContext ctx) {
-    createDelete(ctx, ctx.start, ctx.stop);
+    createDelete(ctx.start, ctx.stop);
   }
-  
+
   /**
-   * Save qualified import name (with static modifier when present)
-   * for inclusion in the header.
+   * Endpoint for ANTLR to call when finish parsing a single import declaration.
+   *
+   * <p>
+   *   Endpoint for ANTLR to call when finish parsing a single import declaration, saving a
+   *   qualified import name (with static modifier when present) for inclusion in the header.
+   * </p>
+   *
+   * @param ctx ANTLR context for the import declaration.
    */
   public void exitImportString(ProcessingParser.ImportStringContext ctx) {
     Interval interval =
@@ -376,36 +323,67 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
   }
 
   /**
-   * Any floating point number that has not float / double suffix
-   * will get a 'f' appended to make it float.
+   * Endpoint for ANTLR to call after parsing a decimal point literal.
+   *
+   * <p>
+   *   Endpoint for ANTLR to call when finished parsing a floating point literal, adding an 'f' at
+   *   the end to force it float instead of double for API compatability.
+   * </p>
+   *
+   * @param ctx ANTLR context for the literal.
    */
   public void exitDecimalfloatingPointLiteral(ProcessingParser.DecimalfloatingPointLiteralContext ctx) {
     String cTxt = ctx.getText().toLowerCase();
     if (!cTxt.endsWith("f") && !cTxt.endsWith("d")) {
-      createInsertAfter(ctx, ctx.stop, "f");
+      createInsertAfter(ctx.stop, "f");
     }
   }
 
   /**
-   * Detect "static sketches"
+   * Endpoint for ANTLR to call after parsing a static processing sketch.
+   *
+   * <p>
+   *   Endpoint for ANTLR to call after parsing a static processing sketch, informing this parser
+   *   that it is operating on a static sketch (no method or class declarations) so that it writes
+   *   the correct header / footer.
+   * </p>
+   *
+   * @param ctx ANTLR context for the sketch.
    */
   public void exitStaticProcessingSketch(ProcessingParser.StaticProcessingSketchContext ctx) {
     mode = Mode.STATIC;
   }
-  
+
   /**
-   * Detect "active sketches"
+   * Endpoint for ANTLR to call after parsing a "active" processing sketch.
+   *
+   * <p>
+   *   Endpoint for ANTLR to call after parsing a "active" processing sketch, informing this parser
+   *   that it is operating on an active sketch so that it writes the correct header / footer.
+   * </p>
+   *
+   * @param ctx ANTLR context for the sketch.
    */
   public void exitActiveProcessingSketch(ProcessingParser.ActiveProcessingSketchContext ctx) {
     mode = Mode.ACTIVE;
   }
 
   /**
-   * Make any method "public" that has:
-   * - no other access modifier
-   * - return type "void"
-   * - is either in the context of the sketch class
-   * - or is in the context of a class definition that extends PApplet
+   * Endpoint for ANTLR to call after parsing a method declaration.
+   *
+   * <p>
+   *   Endpoint for ANTLR to call after parsing a method declaration, making any method "public"
+   *   that has:
+   *
+   *   <ul>
+   *     <li>no other access modifier</li>
+   *     <li>return type "void"</li>
+   *     <li>is either in the context of the sketch class</li>
+   *     <li>is in the context of a class definition that extends PApplet</li>
+   *   </ul>
+   * </p>
+   *
+   * @param ctx ANTLR context for the method declaration
    */
   public void exitMethodDeclaration(ProcessingParser.MethodDeclarationContext ctx) {
     ParserRuleContext memCtx = ctx.getParent();
@@ -430,7 +408,7 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
     boolean hasModifier = clsBdyDclCtx.getChild(0) != memCtx;
 
     if (!hasModifier && inPAppletContext && voidType) {
-      createInsertBefore(ctx, memCtx.start, "public ");
+      createInsertBefore(memCtx.start, "public ");
     }
 
     if ((inSketchContext || inPAppletContext) && 
@@ -441,86 +419,132 @@ public class PdeParseTreeListener extends ProcessingBaseListener {
   }
 
   /**
-   * Change any "value converters" with the name of a primitive type
-   * to their proper names:
-   * int() --> parseInt()
-   * float() --> parseFloat()
-   * ...
+   * Endpoint for ANTLR to call after parsing a primitive type name.
+   *
+   * <p>
+   *   Endpoint for ANTLR to call after parsing a primitive type name, possibly converting that type
+   *   to a parse function as part of the Processing API.
+   * </p>
+   *
+   * @param ctx ANTLR context for the primitive name token.
    */
-  public void exitFunctionWithPrimitiveTypeName(ProcessingParser.FunctionWithPrimitiveTypeNameContext ctx) {
+  public void exitFunctionWithPrimitiveTypeName(
+      ProcessingParser.FunctionWithPrimitiveTypeNameContext ctx) {
+
     String fn = ctx.getChild(0).getText();
     if (!fn.equals("color")) {
       fn = "PApplet.parse" + fn.substring(0,1).toUpperCase() + fn.substring(1);
-      createInsertBefore(ctx, ctx.start, fn);
-      createDelete(ctx, ctx.start);
+      createInsertBefore(ctx.start, fn);
+      createDelete(ctx.start);
     }
   }
 
   /**
-   * Fix "color type" to be "int".
+   * Endpoint for ANTLR to call after parsing a color primitive token.
+   *
+   * <p>
+   *   Endpoint for ANTLR to call after parsing a color primitive token, fixing "color type" to be
+   *   "int" as part of the processing API.
+   * </p>
+   *
+   * @param ctx ANTLR context for the type token.
    */
   public void exitColorPrimitiveType(ProcessingParser.ColorPrimitiveTypeContext ctx) {
     if (ctx.getText().equals("color")) {
-      createInsertBefore(ctx, ctx.start, "int");
-      createDelete(ctx, ctx.start, ctx.stop);
+      createInsertBefore(ctx.start, "int");
+      createDelete(ctx.start, ctx.stop);
     }
   }
 
   /**
-   * Fix hex color literal
+   * Endpoint for ANTLR to call after parsing a hex color literal.
+   *
+   * @param ctx ANTLR context for the literal.
    */
   public void exitHexColorLiteral(ProcessingParser.HexColorLiteralContext ctx) {
     createInsertBefore(
-        ctx,
         ctx.start,
         ctx.getText().toUpperCase().replace("#","0xFF")
     );
 
-    createDelete(ctx, ctx.start, ctx.stop);
+    createDelete(ctx.start, ctx.stop);
   }
 
-  private void createDelete(ParserRuleContext ctx, Token start) {
-    rewriter.delete(start);
-    edits.add(TextTransform.Edit.delete(start.getStartIndex(), start.getText().length()));
+  // -- Wrappers around CodeEditOperationUtil --
+
+  /**
+   * Insert text before a token.
+   *
+   * @param location The token before which code should be added.
+   * @param text The text to add.
+   */
+  private void createInsertBefore(Token location, String text) {
+    edits.add(CodeEditOperationUtil.createInsertBefore(location, text, rewriter));
   }
 
-  private void createDelete(ParserRuleContext ctx, Token start, Token stop) {
-    rewriter.delete(start, stop);
-
-    int startIndex = start.getStartIndex();
-    int length = stop.getStopIndex() - startIndex + 1;
-
-    edits.add(TextTransform.Edit.delete(
-        startIndex,
-        length
-    ));
+  /**
+   * Insert text before a location in code.
+   *
+   * @param location Character offset from start.
+   * @param text Text to add.
+   */
+  private void createInsertBefore(int location, String text) {
+    edits.add(CodeEditOperationUtil.createInsertBefore(location, text, rewriter));
   }
 
-  private void createInsertAfter(ParserRuleContext ctx, Token start, String text) {
-    rewriter.insertAfter(start, text);
-
-    edits.add(TextTransform.Edit.insert(
-        start.getStopIndex() + 1,
-        text
-    ));
+  /**
+   * Insert text after a location in code.
+   *
+   * @param location The token after which to insert code.
+   * @param text The text to insert.
+   */
+  private void createInsertAfter(Token location, String text) {
+    edits.add(CodeEditOperationUtil.createInsertAfter(location, text, rewriter));
   }
 
-  private void createInsertBefore(ParserRuleContext ctx, Token before, String text) {
-    rewriter.insertBefore(before, text);
-
-    edits.add(TextTransform.Edit.insert(
-        before.getStartIndex(),
-        text
-    ));
+  /**
+   * Delete from a token to a token inclusive.
+   *
+   * @param start First token to delete.
+   * @param stop Last token to delete.
+   */
+  private void createDelete(Token start, Token stop) {
+    edits.add(CodeEditOperationUtil.createDelete(start, stop, rewriter));
   }
 
-  private void createInsertBefore(ParserRuleContext ctx, int before, String text) {
-    rewriter.insertBefore(before, text);
-
-    edits.add(TextTransform.Edit.insert(
-        before,
-        text
-    ));
+  /**
+   * Delete a single token.
+   *
+   * @param location Token to delete.
+   */
+  private void createDelete(Token location) {
+    edits.add(CodeEditOperationUtil.createDelete(location, rewriter));
   }
 
+  /**
+   * Create parameters required by the RewriterCodeGenerator.
+   *
+   * @return Newly created rewrite params.
+   */
+  private RewriteParams createRewriteParams() {
+    RewriteParamsBuilder builder = new RewriteParamsBuilder(VERSION_STR);
+
+    builder.setSketchName(sketchName);
+    builder.setIsTested(isTested);
+    builder.setRewriter(rewriter);
+    builder.setMode(mode);
+    builder.setFoundMain(foundMain);
+    builder.setLineOffset(lineOffset);
+    builder.setSketchWidth(sketchWidth);
+    builder.setSketchHeight(sketchHeight);
+    builder.setSketchRenderer(sketchRenderer);
+    builder.setIsSizeValidInGlobal(isSizeValidInGlobal);
+
+    builder.addCoreImports(coreImports);
+    builder.addDefaultImports(defaultImports);
+    builder.addCodeFolderImports(codeFolderImports);
+    builder.addFoundImports(foundImports);
+
+    return builder.build();
+  }
 }

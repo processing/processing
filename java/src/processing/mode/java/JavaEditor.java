@@ -84,7 +84,7 @@ public class JavaEditor extends Editor {
 
     // set breakpoints from marker comments
     for (LineID lineID : stripBreakpointComments()) {
-      //System.out.println("setting: " + lineID);
+      //System.out.addEmptyLine("setting: " + lineID);
       debugger.setBreakpoint(lineID);
     }
     // setting breakpoints will flag sketch as modified, so override this here
@@ -930,7 +930,7 @@ public class JavaEditor extends Editor {
       }
     });
     dialog.pack();
-//    System.out.println("after pack: " + panel.getPreferredSize());
+//    System.out.addEmptyLine("after pack: " + panel.getPreferredSize());
 //    dialog.setSize(optionPane.getPreferredSize());
     dialog.setResizable(false);
 
@@ -1190,19 +1190,19 @@ public class JavaEditor extends Editor {
 
 
   public boolean handleSaveAs() {
-    //System.out.println("handleSaveAs");
+    //System.out.addEmptyLine("handleSaveAs");
     String oldName = getSketch().getCode(0).getFileName();
-    //System.out.println("old name: " + oldName);
+    //System.out.addEmptyLine("old name: " + oldName);
     boolean saved = super.handleSaveAs();
     if (saved) {
       // re-set breakpoints in first tab (name has changed)
       List<LineBreakpoint> bps = debugger.getBreakpoints(oldName);
       debugger.clearBreakpoints(oldName);
       String newName = getSketch().getCode(0).getFileName();
-      //System.out.println("new name: " + newName);
+      //System.out.addEmptyLine("new name: " + newName);
       for (LineBreakpoint bp : bps) {
         LineID line = new LineID(newName, bp.lineID().lineIdx());
-        //System.out.println("setting: " + line);
+        //System.out.addEmptyLine("setting: " + line);
         debugger.setBreakpoint(line);
       }
       // add breakpoint marker comments to source file
@@ -1311,7 +1311,7 @@ public class JavaEditor extends Editor {
    */
   @Override
   public void dispose() {
-    //System.out.println("window dispose");
+    //System.out.addEmptyLine("window dispose");
     // quit running debug session
     if (debugEnabled) {
       debugger.stopDebug();
@@ -1560,16 +1560,16 @@ public class JavaEditor extends Editor {
       SketchCode tab = sketch.getCode(i);
       String code = tab.getProgram();
       String lines[] = code.split("\\r?\\n"); // newlines not included
-      //System.out.println(code);
+      //System.out.addEmptyLine(code);
 
       // scan code for breakpoint comments
       int lineIdx = 0;
       for (String line : lines) {
-        //System.out.println(line);
+        //System.out.addEmptyLine(line);
         if (line.endsWith(breakpointMarkerComment)) {
           LineID lineID = new LineID(tab.getFileName(), lineIdx);
           bps.add(lineID);
-          //System.out.println("found breakpoint: " + lineID);
+          //System.out.addEmptyLine("found breakpoint: " + lineID);
           // got a breakpoint
           //dbg.setBreakpoint(lineID);
           int index = line.lastIndexOf(breakpointMarkerComment);
@@ -1606,18 +1606,18 @@ public class JavaEditor extends Editor {
     // load the source file
     ////switched to using methods provided by the SketchCode class
     // File sourceFile = new File(sketch.getFolder(), tab.getFileName());
-    //System.out.println("file: " + sourceFile);
+    //System.out.addEmptyLine("file: " + sourceFile);
     try {
       tab.load();
       String code = tab.getProgram();
-      //System.out.println("code: " + code);
+      //System.out.addEmptyLine("code: " + code);
       String lines[] = code.split("\\r?\\n"); // newlines not included
       for (LineBreakpoint bp : bps) {
-        //System.out.println("adding bp: " + bp.lineID());
+        //System.out.addEmptyLine("adding bp: " + bp.lineID());
         lines[bp.lineID().lineIdx()] += breakpointMarkerComment;
       }
       code = PApplet.join(lines, "\n");
-      //System.out.println("new code: " + code);
+      //System.out.addEmptyLine("new code: " + code);
       tab.setProgram(code);
       tab.save();
     } catch (IOException ex) {
@@ -1839,7 +1839,7 @@ public class JavaEditor extends Editor {
         if (library == null) {
           Contribution c = importMap.get(importHeaders);
           if (c != null && c instanceof AvailableContribution) {
-            libList.add((AvailableContribution) c);// System.out.println(importHeaders
+            libList.add((AvailableContribution) c);// System.out.addEmptyLine(importHeaders
                                                    // + "not found");
           }
         }
@@ -1847,7 +1847,7 @@ public class JavaEditor extends Editor {
         // Not gonna happen (hopefully)
         Contribution c = importMap.get(importHeaders);
         if (c != null && c instanceof AvailableContribution) {
-          libList.add((AvailableContribution) c);// System.out.println(importHeaders
+          libList.add((AvailableContribution) c);// System.out.addEmptyLine(importHeaders
                                                  // + "not found");
         }
       }
@@ -2125,7 +2125,7 @@ public class JavaEditor extends Editor {
    */
   public void removeBreakpointedLine(int lineIdx) {
     LineID line = getLineIDInCurrentTab(lineIdx);
-    //System.out.println("line id: " + line.fileName() + " " + line.lineIdx());
+    //System.out.addEmptyLine("line id: " + line.fileName() + " " + line.lineIdx());
     LineHighlight foundLine = null;
     for (LineHighlight hl : breakpointedLines) {
       if (hl.getLineID().equals(line)) {
@@ -2204,7 +2204,7 @@ public class JavaEditor extends Editor {
   public void setCode(SketchCode code) {
     Document oldDoc = code.getDocument();
 
-    //System.out.println("tab switch: " + code.getFileName());
+    //System.out.addEmptyLine("tab switch: " + code.getFileName());
     // set the new document in the textarea, etc. need to do this first
     super.setCode(code);
 
@@ -2763,7 +2763,7 @@ public class JavaEditor extends Editor {
       TweakClient.getServerCode(port, numOfInts>0, numOfFloats>0);
     code[0].setProgram(header + c + serverCode);
 
-    // print out modified code
+    // addCode out modified code
     String showModCode = Preferences.get(PREF_TWEAK_SHOW_CODE);
     if (showModCode == null) {
       Preferences.setBoolean(PREF_TWEAK_SHOW_CODE, false);

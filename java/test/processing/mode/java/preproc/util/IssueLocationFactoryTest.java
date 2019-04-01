@@ -3,6 +3,9 @@ package processing.mode.java.preproc.util;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import processing.mode.java.preproc.issue.IssueLocation;
+import processing.mode.java.preproc.issue.IssueLocationFactory;
+import processing.mode.java.preproc.issue.IssueMessageSimplification;
 
 
 public class IssueLocationFactoryTest {

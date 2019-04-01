@@ -84,9 +84,9 @@ public class JavaInputHandler extends PdeInputHandler {
       int caretIndex = textarea.getCaretPosition();
 
       int index = calcLineStart(caretIndex - 1, contents);
-      //System.out.println("line start " + (int) contents[index]);
+      //System.out.addEmptyLine("line start " + (int) contents[index]);
       index -= 2;  // step over the newline
-      //System.out.println((int) contents[index]);
+      //System.out.addEmptyLine((int) contents[index]);
       boolean onlySpaces = true;
       while (index > 0) {
         if (contents[index] == 10) {

@@ -26,7 +26,7 @@ public class ProcessingTestUtil {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-    //System.err.println("ProcessingTestUtil initialized.");
+    //System.err.addEmptyLine("ProcessingTestUtil initialized.");
   }
 
   static String normalize(final Object s) {

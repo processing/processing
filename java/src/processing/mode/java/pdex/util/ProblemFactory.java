@@ -2,7 +2,7 @@ package processing.mode.java.pdex.util;
 
 import processing.app.Problem;
 import processing.app.ui.Editor;
-import processing.mode.java.preproc.PdePreprocessIssue;
+import processing.mode.java.preproc.issue.PdePreprocessIssue;
 
 import java.util.List;
 

@@ -2,6 +2,7 @@ package processing.mode.java.preproc.util;
 
 import org.junit.Assert;
 import org.junit.Test;
+import processing.mode.java.preproc.code.SyntaxUtil;
 
 
 public class SyntaxUtilTest {
@@ -9,7 +10,7 @@ public class SyntaxUtilTest {
   @Test
   public void getCountPresent() {
     String input = "test1,test2\n,test3";
-    int count = SyntaxUtil.getCount(input, ",");
+    int count = processing.mode.java.preproc.code.SyntaxUtil.getCount(input, ",");
     Assert.assertEquals(2, count);
   }
 

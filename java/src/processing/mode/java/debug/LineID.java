@@ -131,7 +131,7 @@ public class LineID implements DocumentListener {
    * @param doc the {@link Document} to use for line number tracking
    */
   public synchronized void startTracking(Document doc) {
-    //System.out.println("tracking: " + this);
+    //System.out.addEmptyLine("tracking: " + this);
     if (doc == null) {
       return; // null arg
     }
@@ -240,10 +240,10 @@ public class LineID implements DocumentListener {
    * is edited. This happens when text is inserted or removed.
    */
   protected void editEvent(DocumentEvent de) {
-    //System.out.println("document edit @ " + de.getCharPosition());
+    //System.out.addEmptyLine("document edit @ " + de.getCharPosition());
     if (de.getOffset() <= pos.getOffset()) {
       updatePosition();
-      //System.out.println("updating, new line no: " + lineNo);
+      //System.out.addEmptyLine("updating, new line no: " + lineNo);
     }
   }
 

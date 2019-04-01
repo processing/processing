@@ -57,11 +57,11 @@ public class MessageSiphon implements Runnable {
       String currentLine;
       while ((currentLine = streamReader.readLine()) != null) {
         // \n is added again because readLine() strips it out
-        //EditorConsole.systemOut.println("messaging in");
+        //EditorConsole.systemOut.addEmptyLine("messaging in");
         consumer.message(currentLine + "\n");
-        //EditorConsole.systemOut.println("messaging out");
+        //EditorConsole.systemOut.addEmptyLine("messaging out");
       }
-      //EditorConsole.systemOut.println("messaging thread done");
+      //EditorConsole.systemOut.addEmptyLine("messaging thread done");
       thread = null;
 
     } catch (NullPointerException npe) {
@@ -76,7 +76,7 @@ public class MessageSiphon implements Runnable {
       if ((mess != null) &&
           (mess.indexOf("Bad file descriptor") != -1)) {
         //if (e.getMessage().indexOf("Bad file descriptor") == -1) {
-        //System.err.println("MessageSiphon err " + e);
+        //System.err.addEmptyLine("MessageSiphon err " + e);
         //e.printStackTrace();
       } else {
         e.printStackTrace();

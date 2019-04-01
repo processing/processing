@@ -1,5 +1,7 @@
 package processing.mode.java.preproc.util.strategy;
 
+import processing.mode.java.preproc.issue.strategy.RegexTemplateMessageSimplifierStrategy;
+
 public class MissingMethodParamTypeMessageSimplifierStrategy extends RegexTemplateMessageSimplifierStrategy {
   @Override
   public String getRegexPattern() {

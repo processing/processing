@@ -12,6 +12,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import processing.app.Preferences;
 import processing.app.SketchException;
+import processing.mode.java.preproc.issue.PdeIssueEmitter;
+import processing.mode.java.preproc.issue.PdePreprocessIssueException;
 
 
 public class PdePreprocessor {
@@ -74,7 +76,6 @@ public class PdePreprocessor {
 
     PdeParseTreeListener listener = createListener(tokens, sketchName);
     listener.setTested(isTested);
-    listener.setIndent(tabSize);
     listener.setCoreImports(getCoreImports());
     listener.setDefaultImports(getDefaultImports());
     listener.setCodeFolderImports(codeFolderImports);
@@ -85,7 +86,7 @@ public class PdePreprocessor {
       parser.removeErrorListeners();
       parser.addErrorListener(new PdeIssueEmitter(
           (x) -> { throw new PdePreprocessIssueException(x); },
-          () -> listener.rewriter.getText()
+          () -> listener.getRewriter().getText()
       ));
       parser.setBuildParseTree(true);
       tree = parser.processingSketch();
@@ -93,9 +94,6 @@ public class PdePreprocessor {
 
     ParseTreeWalker treeWalker = new ParseTreeWalker();
     treeWalker.walk(listener, tree);
-
-    SketchException sketchException = listener.getSketchException();
-    if (sketchException != null) throw sketchException;
 
     String outputProgram = listener.getOutputProgram();
     PrintWriter outPrintWriter = new PrintWriter(outWriter);
@@ -107,7 +105,7 @@ public class PdePreprocessor {
   }
 
   protected PdeParseTreeListener createListener(CommonTokenStream tokens, String sketchName) {
-    return new PdeParseTreeListener(tokens, sketchName);
+    return new PdeParseTreeListener(tokens, sketchName, tabSize);
   }
 
   public boolean hasMain() {
@@ -167,6 +165,7 @@ public class PdePreprocessor {
     return new String[] {
       "java.util.HashMap",
       "java.util.ArrayList",
+      "java.util.List",
       "java.io.File",
       "java.io.BufferedReader",
       "java.io.PrintWriter",

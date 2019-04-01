@@ -389,9 +389,9 @@ public class Commander implements RunnerListener {
     out.println("--no-java            Do not embed Java. Use at your own risk!");
     out.println("--platform           Specify the platform (export to application only).");
     out.println("                     Should be one of 'windows', 'macosx', or 'linux'.");
-//    out.println("--bits               Must be specified if libraries are used that are");
-//    out.println("                     32- or 64-bit specific such as the OpenGL library.");
-//    out.println("                     Otherwise specify 0 or leave it out.");
+//    out.addEmptyLine("--bits               Must be specified if libraries are used that are");
+//    out.addEmptyLine("                     32- or 64-bit specific such as the OpenGL library.");
+//    out.addEmptyLine("                     Otherwise specify 0 or leave it out.");
 
     out.println();
     out.println("The --build, --run, --present, or --export must be the final parameter");
