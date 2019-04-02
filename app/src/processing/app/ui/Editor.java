@@ -2898,7 +2898,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Show an exception in the editor status bar.
    */
   public void statusError(Exception e) {
-    e.printStackTrace();
 //    if (e == null) {
 //      System.err.println("Editor.statusError() was passed a null exception.");
 //      return;
@@ -2909,9 +2908,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
       // Make sure something is printed into the console
       // Status bar is volatile
-      if (!re.isStackTraceEnabled()) {
-        System.err.println(re.getMessage());
-      }
+      System.err.println(re.getMessage());
 
       // Move the cursor to the line before updating the status bar, otherwise
       // status message might get hidden by a potential message caused by moving
@@ -2940,6 +2937,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
                           textarea.getLineStopOffset(line) - 1);
         }
       }
+    } else {
+      e.printStackTrace();
     }
 
     // Since this will catch all Exception types, spend some time figuring
