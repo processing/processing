@@ -45,12 +45,10 @@ public abstract class RegexTemplateMessageSimplifierStrategy
   @Override
   public Optional<IssueMessageSimplification> simplify(String message) {
     if (pattern.matcher(message).find()) {
-      String hint = String.format(
+      String newMessage = String.format(
           getHintTemplate(),
           MessageSimplifierUtil.getOffendingArea(message)
       );
-
-      String newMessage = "Syntax error. Hint: " + hint;
 
       return Optional.of(
           new IssueMessageSimplification(newMessage)

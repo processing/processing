@@ -33,7 +33,9 @@ public class BadIdentifierMessageSimplifierStrategy extends RegexTemplateMessage
 
   @Override
   public String getHintTemplate() {
-    return "Do you have an identifier starting with digits?";
+    return MessageSimplifierUtil.getLocalStr(
+        "editor.status.bad.identifier"
+    );
   }
 
 }

@@ -24,6 +24,8 @@ package processing.mode.java.preproc.issue.strategy;
 import processing.mode.java.preproc.issue.IssueMessageSimplification;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -31,15 +33,29 @@ import java.util.Optional;
  */
 public class KnownMissingMessageSimplifierStrategy implements PreprocIssueMessageSimplifierStrategy {
 
+  private static final String PARSE_PATTERN_STR = ".*missing '(.*)' at .*";
+
+  private final Pattern parsePattern;
+
+  public KnownMissingMessageSimplifierStrategy() {
+    parsePattern = Pattern.compile(PARSE_PATTERN_STR);
+  }
+
   @Override
   public Optional<IssueMessageSimplification> simplify(String message) {
     if (message.toLowerCase().contains("missing")) {
-      String newContents = message.replaceAll("' at '.*", "' near here");
+      String missingPiece;
+      Matcher matcher = parsePattern.matcher(message);
+      if (matcher.find()) {
+        missingPiece = matcher.group(1);
+      } else {
+        missingPiece = "character";
+      }
 
-      String newMessage = String.format(
-          "Syntax error. Hint: Are you %s?",
-          newContents
-      );
+      String langTemplate = MessageSimplifierUtil.getLocalStr("editor.status.missing.default")
+          .replace("%c", "%s");
+
+      String newMessage = String.format(langTemplate, missingPiece);
 
       return Optional.of(
           new IssueMessageSimplification(newMessage, true)

@@ -35,7 +35,7 @@ public class MissingMethodNameMessageSimplifierStrategy
 
   @Override
   public String getHintTemplate() {
-    return "Did you forget to give your method a name or return type near '%s'?";
+    return MessageSimplifierUtil.getLocalStr("editor.status.missing.name");
   }
 
 }

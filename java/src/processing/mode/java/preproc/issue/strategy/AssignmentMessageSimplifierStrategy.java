@@ -34,7 +34,7 @@ public class AssignmentMessageSimplifierStrategy extends RegexTemplateMessageSim
 
   @Override
   public String getHintTemplate() {
-    return "Possible issue in assignment: '%s'. Forgotten value, var name, semicolon, or loose '='?";
+    return MessageSimplifierUtil.getLocalStr("editor.status.bad.assignment");
   }
 
 }

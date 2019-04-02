@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import processing.app.Platform;
 import processing.app.SketchException;
 import processing.app.exec.ProcessResult;
 import processing.mode.java.preproc.issue.PdePreprocessIssueException;

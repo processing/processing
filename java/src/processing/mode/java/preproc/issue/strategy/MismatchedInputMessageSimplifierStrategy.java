@@ -24,6 +24,8 @@ package processing.mode.java.preproc.issue.strategy;
 import processing.mode.java.preproc.issue.IssueMessageSimplification;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -31,12 +33,29 @@ import java.util.Optional;
  */
 public class MismatchedInputMessageSimplifierStrategy implements PreprocIssueMessageSimplifierStrategy {
 
+  private static final String PARSER_STR = "mismatched input '(.*)' expecting ";
+  private final Pattern parser;
+
+  /**
+   * Create a new strategy for mismatched input.
+   */
+  public MismatchedInputMessageSimplifierStrategy() {
+    parser = Pattern.compile(PARSER_STR);
+  }
+
   @Override
   public Optional<IssueMessageSimplification> simplify(String message) {
     if (message.toLowerCase().contains("mismatched input")) {
+      Matcher matcher = parser.matcher(message);
+
+      String newMessage = String.format(
+          MessageSimplifierUtil.getLocalStr("editor.status.mismatched"),
+          matcher.find() ? matcher.group(1) : message
+      );
+
       return Optional.of(
           new IssueMessageSimplification(
-              "Syntax error. Hint: Did you forget an operator or semicolon here?",
+              newMessage,
               true
           )
       );

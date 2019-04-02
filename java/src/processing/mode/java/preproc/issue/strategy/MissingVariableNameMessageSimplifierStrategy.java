@@ -21,6 +21,8 @@ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package processing.mode.java.preproc.issue.strategy;
 
+import processing.app.Language;
+
 /**
  * Strategy that checks for a variable decalaration missing its name or its type.
  */
@@ -34,6 +36,6 @@ public class MissingVariableNameMessageSimplifierStrategy
 
   @Override
   public String getHintTemplate() {
-    return "Did you forget to finish declaring a variable or to call a method?";
+    return MessageSimplifierUtil.getLocalStr("editor.status.missing.type");
   }
 }

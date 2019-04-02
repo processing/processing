@@ -18,7 +18,7 @@ public class PreprocessIssueMessageSimplifierTest {
   public void testBadIdentifier() {
     String input = "List<ColoredCircle> 9";
     String output = PreprocessIssueMessageSimplifier.get().simplify(input).getMessage();
-    Assert.assertTrue(output.contains("starting with digit"));
+    Assert.assertTrue(output.contains("digit"));
   }
 
   @Test
@@ -39,14 +39,14 @@ public class PreprocessIssueMessageSimplifierTest {
   public void testCaret() {
     String input = "List<ColoredCircle circles";
     String output = PreprocessIssueMessageSimplifier.get().simplify(input).getMessage();
-    Assert.assertTrue(output.contains("<"));
+    Assert.assertTrue(output.contains(">"));
   }
 
   @Test
   public void testMissingIdentifier() {
     String input = "missing Identifier at '{'";
     String output = PreprocessIssueMessageSimplifier.get().simplify(input).getMessage();
-    Assert.assertTrue(output.contains("identifier"));
+    Assert.assertTrue(output.contains("{"));
   }
 
   @Test

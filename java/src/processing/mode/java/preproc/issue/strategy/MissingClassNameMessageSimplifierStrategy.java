@@ -33,7 +33,7 @@ public class MissingClassNameMessageSimplifierStrategy extends RegexTemplateMess
 
   @Override
   public String getHintTemplate() {
-    return "Forget class / interface name or body near '%s'?";
+    return MessageSimplifierUtil.getLocalStr("editor.status.missing.name");
   }
 
 }

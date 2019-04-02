@@ -35,7 +35,7 @@ public class DefaultMessageSimplifier implements PreprocIssueMessageSimplifierSt
   public Optional<IssueMessageSimplification> simplify(String message) {
     if (message.contains("viable alternative")) {
       String newMessage = String.format(
-          "Syntax error on '%s'. Did you misspell something or forget to call a method?",
+          MessageSimplifierUtil.getLocalizedGenericError("%s"),
           MessageSimplifierUtil.getOffendingArea(message)
       );
       return Optional.of(

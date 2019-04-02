@@ -34,7 +34,7 @@ public class BadParamMessageSimplifierStrategy
 
   @Override
   public String getHintTemplate() {
-    return "Issue with parameter near '%s'?";
+    return MessageSimplifierUtil.getLocalStr("editor.status.bad.parameter");
   }
 
 }

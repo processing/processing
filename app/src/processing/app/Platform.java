@@ -75,6 +75,10 @@ public class Platform {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  static public boolean isInit() {
+    return inst != null;
+  }
+
 
   static public void init() {
     try {

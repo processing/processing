@@ -35,7 +35,10 @@ public class ExtraneousInputMessageSimplifierStrategy
   @Override
   public Optional<IssueMessageSimplification> simplify(String message) {
     if (message.toLowerCase().contains("extraneous")) {
-      String newMessage = String.format("Syntax error. Hint: %s.", message);
+      String innerMsg = MessageSimplifierUtil.getOffendingArea(message);
+
+      String newMessage = MessageSimplifierUtil.getLocalStr("editor.status.extraneous");
+
       return Optional.of(
           new IssueMessageSimplification(newMessage)
       );

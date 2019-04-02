@@ -36,7 +36,7 @@ public class MissingIdentifierMessageSimplifierStrategy
   public Optional<IssueMessageSimplification> simplify(String message) {
     if (message.toLowerCase().contains("missing identifier at")) {
       String newMessage = String.format(
-          "Syntax error. Hint: Did you forget an identifier near %s ?",
+          MessageSimplifierUtil.getLocalStr("editor.status.missing.name"),
           message.replace("missing Identifier at", "")
       );
       return Optional.of(

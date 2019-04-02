@@ -21,6 +21,12 @@ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package processing.mode.java.preproc.issue.strategy;
 
+import processing.app.Language;
+import processing.app.Platform;
+
+import java.util.Map;
+
+
 /**
  * Convenience functions useful for generating simplified messages.
  */
@@ -65,4 +71,36 @@ public class MessageSimplifierUtil {
     }
   }
 
+  /**
+   * Generate an generic error message.
+   *
+   * @param unlocalized The unlocalized string. Will be included in resulting message but with
+   *    surrounding localized text.
+   * @return Semi-localized message.
+   */
+  public static String getLocalizedGenericError(String unlocalized) {
+    String template = getLocalStr("editor.status.error_on");
+    return String.format(template, unlocalized);
+  }
+
+  /**
+   * Get a localized template string.
+   *
+   * @param stringName Name of the template.
+   * @return The template's contents prior to rendering.
+   */
+  public static String getLocalStr(String stringName) {
+    String errStr;
+    String retStr;
+
+    if (Platform.isInit()) {
+      errStr = Language.text("editor.status.error");
+      retStr = Language.text(stringName);
+    } else {
+      errStr = DefaultLocalStrSet.get().get("editor.status.error").orElse("Error");
+      retStr = DefaultLocalStrSet.get().get(stringName).orElse(stringName);
+    }
+
+    return String.format("[%s] %s", errStr, retStr);
+  }
 }

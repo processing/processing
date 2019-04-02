@@ -21,6 +21,7 @@ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package processing.mode.java.preproc.issue.strategy;
 
+import processing.app.Language;
 import processing.mode.java.preproc.issue.IssueMessageSimplification;
 import processing.mode.java.preproc.code.SyntaxUtil;
 
@@ -49,11 +50,16 @@ public abstract class TokenPairTemplateMessageSimplifierStrategy
       return Optional.empty();
     }
 
+    String missingToken;
+    if (count1 < count2) {
+      missingToken = getToken1();
+    } else {
+      missingToken = getToken2();
+    }
+
     String newMessage = String.format(
-        "Syntax error. Hint: Maybe unequal '%s' and '%s'. Forget one or have unterminated strings / comment?",
-        getToken1().replace("\\", ""),
-        getToken2().replace("\\", "")
-    );
+        MessageSimplifierUtil.getLocalStr("editor.status.missing.default")
+            .replace("%c", "%s"), missingToken);
 
     return Optional.of(
         new IssueMessageSimplification(newMessage)

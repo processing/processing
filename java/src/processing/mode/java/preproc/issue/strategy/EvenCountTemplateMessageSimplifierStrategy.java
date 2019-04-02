@@ -21,6 +21,7 @@ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package processing.mode.java.preproc.issue.strategy;
 
+import processing.app.Language;
 import processing.mode.java.preproc.issue.IssueMessageSimplification;
 import processing.mode.java.preproc.code.SyntaxUtil;
 
@@ -52,7 +53,7 @@ public abstract class EvenCountTemplateMessageSimplifierStrategy
       return Optional.empty();
     } else {
       String newMessage = String.format(
-          "Syntax error. Hint: There are an uneven number of '%s'. Did you forget one?",
+          MessageSimplifierUtil.getLocalStr("editor.status.missing.default").replace("%c", "%s"),
           getToken()
       );
       return Optional.of(
