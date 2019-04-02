@@ -5,7 +5,6 @@ import processing.app.Preferences;
 import processing.core.PApplet;
 import processing.mode.java.preproc.PdePreprocessor;
 
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -13,6 +12,9 @@ import java.util.List;
 import java.util.StringJoiner;
 
 
+/**
+ * Utility to rewrite code as part of preprocessing.
+ */
 public class RewriterCodeGenerator {
 
   private final String indent1;

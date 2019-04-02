@@ -1,6 +1,5 @@
 package processing.mode.java.preproc.code;
 
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenStreamRewriter;
 import processing.mode.java.pdex.TextTransform;

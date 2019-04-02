@@ -8,6 +8,9 @@ import java.util.Collection;
 import java.util.Optional;
 
 
+/**
+ * Builder to help generate a {RewriteParams}.
+ */
 public class RewriteParamsBuilder {
 
   private final String version;
@@ -28,6 +31,11 @@ public class RewriteParamsBuilder {
   private ArrayList<String> codeFolderImports;
   private ArrayList<String> foundImports;
 
+  /**
+   * Create a new params build.
+   *
+   * @param newVersion The version to include in generated RewriteParams.
+   */
   public RewriteParamsBuilder(String newVersion) {
     version = newVersion;
 
@@ -48,78 +56,140 @@ public class RewriteParamsBuilder {
     isSizeValidInGlobal = Optional.empty();
   }
 
+  /**
+   * Specify the name of the sketch.
+   *
+   * @param newSketchName The name of the sketch.
+   */
   public void setSketchName(String newSketchName) {
     sketchName = Optional.ofNullable(newSketchName);
   }
 
+  /**
+   * Specify if this is being run as part of automated testing.
+   *
+   * @param newIsTested Flag indicating if this is being run as part of automated testing.
+   */
   public void setIsTested(boolean newIsTested) {
     isTested = Optional.of(newIsTested);
   }
 
+  /**
+   * Specify rewriter into which edits should be made.
+   *
+   * @param newRewriter The rewriter into which edits should be made.
+   */
   public void setRewriter(TokenStreamRewriter newRewriter) {
     rewriter = Optional.ofNullable(newRewriter);
   }
 
+  /**
+   * Specify mode (like STATIC) in which processing is being run.
+   *
+   * @param newMode The mode (like STATIC) in which processing is being run.
+   */
   public void setMode(PdePreprocessor.Mode newMode) {
     mode = Optional.ofNullable(newMode);
   }
 
+  /**
+   * Specify if a user-provided main method was found in preprocessing.
+   *
+   * @param newFoundMain Flag indicating if a user-provided main method was found in preprocessing.
+   */
   public void setFoundMain(boolean newFoundMain) {
     foundMain = Optional.of(newFoundMain);
   }
 
+  /**
+   * Specify line offset of the preprocessor prior to rewrite.
+   *
+   * @param newLineOffset The line offset of the preprocessor prior to rewrite.
+   */
   public void setLineOffset(int newLineOffset) {
     lineOffset = Optional.of(newLineOffset);
   }
 
+  /**
+   * Specify width of the sketch.
+   *
+   * @param newSketchWidth The width of the sketch or code used to generate it. If not included,
+   *    call to size will not be made.
+   */
   public void setSketchWidth(String newSketchWidth) {
     sketchWidth = Optional.ofNullable(newSketchWidth);
   }
 
+  /**
+   * Specify height of the sketch.
+   *
+   * @param newSketchHeight The height of the sketch or code used to generate it. If not included,
+   *    call to size will not be made.
+   */
   public void setSketchHeight(String newSketchHeight) {
     sketchHeight = Optional.ofNullable(newSketchHeight);
   }
 
+  /**
+   * Specify renderer like P2D.
+   *
+   * @param newSketchRenderer The renderer like P2D.
+   */
   public void setSketchRenderer(String newSketchRenderer) {
     sketchRenderer = Optional.ofNullable(newSketchRenderer);
   }
 
+  /**
+   * Specify if the user made a valid call to size in sketch global context.
+   *
+   * @param newIsSizeValidInGlobal Flag indicating if a call to size is valid when that call to size
+   *    is made from sketch global context.
+   */
   public void setIsSizeValidInGlobal(boolean newIsSizeValidInGlobal) {
     isSizeValidInGlobal = Optional.of(newIsSizeValidInGlobal);
   }
 
-  public void addCoreImport(String newImport) {
-    coreImports.add(newImport);
-  }
-
-  public void addDefaultImport(String newImport) {
-    defaultImports.add(newImport);
-  }
-
-  public void addCodeFolderImport(String newImport) {
-    codeFolderImports.add(newImport);
-  }
-
-  public void addFoundImport(String newImport) {
-    foundImports.add(newImport);
-  }
-
+  /**
+   * Add imports required for processing to function.
+   *
+   * @param newImports The set of imports to include that are required for processing.
+   */
   public void addCoreImports(Collection<String> newImports) {
     coreImports.addAll(newImports);
   }
 
+  /**
+   * Add imports that are included ahead of time for the user.
+   *
+   * @param newImports The set of imports included for user convenience.
+   */
   public void addDefaultImports(Collection<String> newImports) {
     defaultImports.addAll(newImports);
   }
 
+  /**
+   * Add imports required for the sketch to reach code in its own code folder.
+   *
+   * @param newImports The imports required to include other code in the code folder.
+   */
   public void addCodeFolderImports(Collection<String> newImports) {
     codeFolderImports.addAll(newImports);
   }
 
+  /**
+   * Add imports included manually by the user.
+   *
+   * @param newImports The imports included by the user.
+   */
   public void addFoundImports(Collection<String> newImports) {
     foundImports.addAll(newImports);
   }
 
+  /**
+   * Build a new set of rewrite parameters.
+   *
+   * @return Parameters required to execute {RewriterCodeGenerator};
+   */
   public RewriteParams build() {
     if (sketchName.isEmpty()) {
       throw new RuntimeException("Expected sketchName to be set");
