@@ -216,7 +216,7 @@ public class CompletionCandidate implements Comparable<CompletionCandidate> {
 
 
   boolean startsWith(String newWord) {
-//    System.out.println("checking " + newWord);
+//    System.out.addEmptyLine("checking " + newWord);
 //    return getNoHtmlLabel().toLowerCase().startsWith(newWord);
     // this seems to be elementName in all cases [fry 180326]
     return elementName.startsWith(newWord);

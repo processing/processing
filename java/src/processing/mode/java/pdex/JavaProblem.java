@@ -82,7 +82,7 @@ public class JavaProblem implements Problem {
     } else if (iProblem.isWarning()) {
       type = WARNING;
     }
-    String message = ErrorMessageSimplifier.getSimplifiedErrorMessage(iProblem, badCode);
+    String message = CompileErrorMessageSimplifier.getSimplifiedErrorMessage(iProblem, badCode);
     return new JavaProblem(message, type, tabIndex, lineNumber);
   }
 

@@ -15,8 +15,7 @@ import org.junit.Test;
 
 import processing.app.SketchException;
 import processing.app.exec.ProcessResult;
-import org.antlr.v4.runtime.RecognitionException;
-import processing.mode.java.preproc.PdePreprocessIssueException;
+import processing.mode.java.preproc.issue.PdePreprocessIssueException;
 
 
 public class ParserTests {
@@ -83,7 +82,7 @@ public class ParserTests {
   }
 
   static void expectGood(final String id) {
-    expectGood(id, false);
+    expectGood(id, true);
   }
 
   static void expectGood(final String id, boolean ignoreWhitespace) {
@@ -124,10 +123,12 @@ public class ParserTests {
       }
 
     } catch (Exception e) {
-      if (!e.equals(e.getCause()) && e.getCause() != null)
+      if (!e.equals(e.getCause()) && e.getCause() != null) {
         fail(e.getCause().toString());
-      else
+      } else {
+        e.printStackTrace();
         fail(e.toString());
+      }
     }
   }
 

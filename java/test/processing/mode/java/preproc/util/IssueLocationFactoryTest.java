@@ -3,6 +3,9 @@ package processing.mode.java.preproc.util;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import processing.mode.java.preproc.issue.IssueLocation;
+import processing.mode.java.preproc.issue.IssueLocationFactory;
+import processing.mode.java.preproc.issue.IssueMessageSimplification;
 
 
 public class IssueLocationFactoryTest {
@@ -41,7 +44,7 @@ public class IssueLocationFactoryTest {
     Assert.assertEquals(20, issueLocation.getCharPosition());
   }
 
-  /*@Test
+  @Test
   public void getLineWithOffsetNotApplies() {
     issueLocation = IssueLocationFactory.getLineWithOffset(
         new IssueMessageSimplification("test message", false),
@@ -55,16 +58,16 @@ public class IssueLocationFactoryTest {
   }
 
   @Test
-  public void getLineWithOffsetNoMatch() {
+  public void getLineWithOffsetEndWhite() {
     issueLocation = IssueLocationFactory.getLineWithOffset(
         new IssueMessageSimplification("test message", true),
-        13,
+        14,
         0,
-        "\n\n\n\n\n\n\n\n\n\n\nnoFill()\nellipse(50,50,50,50)"
+        "\n\n\n\n\n\n\n\n\n\n\nnoFill()\nellipse(50,50,50,50)\n"
     );
 
-    Assert.assertEquals(12, issueLocation.getLine());
-    Assert.assertEquals(8, issueLocation.getCharPosition());
-  }*/
+    Assert.assertEquals(13, issueLocation.getLine());
+    Assert.assertEquals(20, issueLocation.getCharPosition());
+  }
 
 }

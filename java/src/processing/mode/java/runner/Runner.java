@@ -233,7 +233,7 @@ public class Runner implements MessageConsumer {
 
     AttachingConnector connector = (AttachingConnector)
       findConnector("com.sun.jdi.SocketAttach");
-    //PApplet.println(connector);  // gets the defaults
+    //PApplet.addEmptyLine(connector);  // gets the defaults
 
     Map<String, Argument> arguments = connector.defaultArguments();
 
@@ -247,11 +247,11 @@ public class Runner implements MessageConsumer {
 //      (Connector.Argument)arguments.get("timeout");
 //    timeoutArg.setValue("10000");
 
-    //PApplet.println(connector);  // prints the current
+    //PApplet.addEmptyLine(connector);  // prints the current
     //com.sun.tools.jdi.AbstractLauncher al;
     //com.sun.tools.jdi.RawCommandLineLauncher rcll;
 
-    //System.out.println(PApplet.javaVersion);
+    //System.out.addEmptyLine(PApplet.javaVersion);
     // http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#sunlaunch
 
     try {
@@ -280,7 +280,7 @@ public class Runner implements MessageConsumer {
           // This will fire ConnectException (socket not available) until
           // the VM finishes starting up and opens its socket for us.
           Messages.log(getClass().getName() + " socket for VM not ready");
-//          System.out.println("waiting");
+//          System.out.addEmptyLine("waiting");
 //          e.printStackTrace();
           try {
             Thread.sleep(100);
@@ -367,7 +367,7 @@ public class Runner implements MessageConsumer {
     // enable assertions
     // http://dev.processing.org/bugs/show_bug.cgi?id=1188
     params.append("-ea");
-    //PApplet.println(PApplet.split(sketch.classPath, ':'));
+    //PApplet.addEmptyLine(PApplet.split(sketch.classPath, ':'));
 
     return params;
   }
@@ -499,20 +499,20 @@ public class Runner implements MessageConsumer {
   protected void launchJava(final String[] args) {
     new Thread(new Runnable() {
       public void run() {
-//        PApplet.println("java starting");
+//        PApplet.addEmptyLine("java starting");
         vmReturnedError = false;
         process = PApplet.exec(args);
         try {
-//          PApplet.println("java waiting");
+//          PApplet.addEmptyLine("java waiting");
           int result = process.waitFor();
-//          PApplet.println("java done waiting");
+//          PApplet.addEmptyLine("java done waiting");
           if (result != 0) {
             String[] errorStrings = PApplet.loadStrings(process.getErrorStream());
             String[] inputStrings = PApplet.loadStrings(process.getInputStream());
 
-//            PApplet.println("launchJava stderr:");
-//            PApplet.println(errorStrings);
-//            PApplet.println("launchJava stdout:");
+//            PApplet.addEmptyLine("launchJava stderr:");
+//            PApplet.addEmptyLine(errorStrings);
+//            PApplet.addEmptyLine("launchJava stdout:");
             PApplet.printArray(inputStrings);
 
             if (errorStrings != null && errorStrings.length > 1) {
@@ -594,12 +594,12 @@ public class Runner implements MessageConsumer {
 //            listener.vmEvent(eventSet);
 
             for (Event event : eventSet) {
-//              System.out.println("EventThread.handleEvent -> " + event);
+//              System.out.addEmptyLine("EventThread.handleEvent -> " + event);
               if (event instanceof VMStartEvent) {
                 vm.resume();
               } else if (event instanceof ExceptionEvent) {
 //                for (ThreadReference thread : vm.allThreads()) {
-//                  System.out.println("thread : " + thread);
+//                  System.out.addEmptyLine("thread : " + thread);
 ////                  thread.suspend();
 //                }
                 exceptionEvent((ExceptionEvent) event);
@@ -633,13 +633,13 @@ public class Runner implements MessageConsumer {
     try {
       if (eventThread != null) eventThread.join();  // is this the problem?
 
-//      System.out.println("in here");
+//      System.out.addEmptyLine("in here");
       // Bug #852 tracked to this next line in the code.
       // http://dev.processing.org/bugs/show_bug.cgi?id=852
       errThread.join(); // Make sure output is forwarded
-//      System.out.println("and then");
+//      System.out.addEmptyLine("and then");
       outThread.join(); // before we exit
-//      System.out.println("finished join for errThread and outThread");
+//      System.out.addEmptyLine("finished join for errThread and outThread");
 
       // At this point, disable the run button.
       // This happens when the sketch is exited by hitting ESC,
@@ -653,7 +653,7 @@ public class Runner implements MessageConsumer {
     } catch (InterruptedException exc) {
       // we don't interrupt
     }
-    //System.out.println("and leaving");
+    //System.out.addEmptyLine("and leaving");
   }
 
 
@@ -667,12 +667,12 @@ public class Runner implements MessageConsumer {
 //    Iterator iter2 = connectors.iterator();
 //    while (iter2.hasNext()) {
 //      Connector connector = (Connector)iter2.next();
-//      System.out.println("connector name is " + connector.name());
+//      System.out.addEmptyLine("connector name is " + connector.name());
 //    }
 
     for (Object c : connectors) {
       Connector connector = (Connector) c;
-//      System.out.println(connector.name());
+//      System.out.addEmptyLine(connector.name());
 //    }
 //    Iterator iter = connectors.iterator();
 //    while (iter.hasNext()) {
@@ -694,9 +694,9 @@ public class Runner implements MessageConsumer {
     String exceptionName = rt.name();
     //Field messageField = Throwable.class.getField("detailMessage");
     Field messageField = rt.fieldByName("detailMessage");
-//    System.out.println("field " + messageField);
+//    System.out.addEmptyLine("field " + messageField);
     Value messageValue = or.getValue(messageField);
-//    System.out.println("mess val " + messageValue);
+//    System.out.addEmptyLine("mess val " + messageValue);
 
     //"java.lang.ArrayIndexOutOfBoundsException"
     int last = exceptionName.lastIndexOf('.');
@@ -708,7 +708,7 @@ public class Runner implements MessageConsumer {
       }
       message += ": " + messageStr;
     }
-//    System.out.println("mess type " + messageValue.type());
+//    System.out.addEmptyLine("mess type " + messageValue.type());
     //StringReference messageReference = (StringReference) messageValue.type();
 
     // First just report the exception and its placement
@@ -806,7 +806,7 @@ public class Runner implements MessageConsumer {
     try {
       // use to dump the stack for debugging
 //      for (StackFrame frame : thread.frames()) {
-//        System.out.println("frame: " + frame);
+//        System.out.addEmptyLine("frame: " + frame);
 //      }
 
       List<StackFrame> frames = thread.frames();
@@ -832,7 +832,7 @@ public class Runner implements MessageConsumer {
         }
       }
     } catch (IncompatibleThreadStateException e) {
-      // This shouldn't happen, but if it does, print the exception in case
+      // This shouldn't happen, but if it does, addCode the exception in case
       // it's something that needs to be debugged separately.
       e.printStackTrace(sketchErr);
     } catch (Exception e) {
@@ -864,11 +864,11 @@ public class Runner implements MessageConsumer {
         }
       }
 //      for (Method m : ((ClassType) or.referenceType()).allMethods()) {
-//        System.out.println(m + " | " + m.signature() + " | " + m.genericSignature());
+//        System.out.addEmptyLine(m + " | " + m.signature() + " | " + m.genericSignature());
 //      }
       // Implemented for 2.0b9, writes a stack trace when there's an internal error inside core.
       method = ((ClassType) or.referenceType()).concreteMethodByName("printStackTrace", "()V");
-//      System.err.println("got method " + method);
+//      System.err.addEmptyLine("got method " + method);
       or.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
 
     } catch (Exception e) {
@@ -899,7 +899,7 @@ public class Runner implements MessageConsumer {
 
         } catch (com.sun.jdi.VMDisconnectedException vmde) {
           // if the vm has disconnected on its own, ignore message
-          //System.out.println("harmless disconnect " + vmde.getMessage());
+          //System.out.addEmptyLine("harmless disconnect " + vmde.getMessage());
           // TODO shouldn't need to do this, need to do more cleanup
         }
       }
@@ -911,15 +911,15 @@ public class Runner implements MessageConsumer {
   // attempted to remove synchronized for 0136 to fix bug #775 (no luck tho)
   // http://dev.processing.org/bugs/show_bug.cgi?id=775
   synchronized public void message(String s) {
-//    System.out.println("M" + s.length() + ":" + s.trim()); // + "MMM" + s.length());
+//    System.out.addEmptyLine("M" + s.length() + ":" + s.trim()); // + "MMM" + s.length());
 
     // this eats the CRLFs on the lines.. oops.. do it later
     //if (s.trim().length() == 0) return;
 
-    // this is PApplet sending a message (via System.out.println)
+    // this is PApplet sending a message (via System.out.addEmptyLine)
     // that signals that the applet has been quit.
     if (s.indexOf(PApplet.EXTERNAL_STOP) == 0) {
-      //System.out.println("external: quit");
+      //System.out.addEmptyLine("external: quit");
       if (editor != null) {
 //        editor.internalCloseRunner();  // [091124]
 //        editor.handleStop();  // prior to 0192
@@ -939,21 +939,21 @@ public class Runner implements MessageConsumer {
       int top = Integer.parseInt(nums.substring(space + 1));
       // this is only fired when connected to an editor
       editor.setSketchLocation(new Point(left, top));
-      //System.out.println("external: move to " + left + " " + top);
+      //System.out.addEmptyLine("external: move to " + left + " " + top);
       return;
     }
 
     // these are used for debugging, in case there are concerns
     // that some errors aren't coming through properly
 //    if (s.length() > 2) {
-//      System.err.println(newMessage);
-//      System.err.println("message " + s.length() + ":" + s);
+//      System.err.addEmptyLine(newMessage);
+//      System.err.addEmptyLine("message " + s.length() + ":" + s);
 //    }
 
     // always shove out the message, since it might not fall under
     // the same setup as we're expecting
     sketchErr.print(s);
-    //System.err.println("[" + s.length() + "] " + s);
+    //System.err.addEmptyLine("[" + s.length() + "] " + s);
     sketchErr.flush();
   }
 }

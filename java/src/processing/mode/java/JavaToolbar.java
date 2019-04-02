@@ -54,7 +54,7 @@ public class JavaToolbar extends EditorToolbar {
   public List<EditorButton> createButtons() {
     // jeditor not ready yet because this is called by super()
     final boolean debug = ((JavaEditor) editor).isDebuggerEnabled();
-//    System.out.println("creating buttons in JavaToolbar, debug:" + debug);
+//    System.out.addEmptyLine("creating buttons in JavaToolbar, debug:" + debug);
     List<EditorButton> outgoing = new ArrayList<>();
 
     final String runText = debug ?

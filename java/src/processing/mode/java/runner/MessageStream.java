@@ -51,7 +51,7 @@ class MessageStream extends OutputStream {
   }
 
   public void write(byte b[], int offset, int length) {
-    //System.out.println("leech2: " + new String(b));
+    //System.out.addEmptyLine("leech2: " + new String(b));
     this.messageConsumer.message(new String(b, offset, length));
   }
 

@@ -12,6 +12,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import processing.app.Preferences;
 import processing.app.SketchException;
+import processing.mode.java.preproc.issue.PdeIssueEmitter;
+import processing.mode.java.preproc.issue.PdePreprocessIssueException;
 
 
 public class PdePreprocessor {
@@ -49,6 +51,7 @@ public class PdePreprocessor {
                                   Iterable<String> codeFolderPackages)
                                     throws SketchException {
 
+    // Determine inports
     ArrayList<String> codeFolderImports = new ArrayList<>();
     if (codeFolderPackages != null) {
       for (String item : codeFolderPackages) {
@@ -60,10 +63,14 @@ public class PdePreprocessor {
       inProgram = substituteUnicode(inProgram);
     }
 
+    // Ensure ends with single newline
     while (inProgram.endsWith("\n")) {
       inProgram = inProgram.substring(0, inProgram.length() - 1);
     }
 
+    inProgram = inProgram + "\n";
+
+    // Lexer
     CommonTokenStream tokens;
     {
       ANTLRInputStream antlrInStream = new ANTLRInputStream(inProgram);
@@ -72,20 +79,21 @@ public class PdePreprocessor {
       tokens = new CommonTokenStream(lexer);
     }
 
+    // Parser
     PdeParseTreeListener listener = createListener(tokens, sketchName);
     listener.setTested(isTested);
-    listener.setIndent(tabSize);
     listener.setCoreImports(getCoreImports());
     listener.setDefaultImports(getDefaultImports());
     listener.setCodeFolderImports(codeFolderImports);
 
+    final String finalInProgram = inProgram;
     ParseTree tree;
     {
       ProcessingParser parser = new ProcessingParser(tokens);
       parser.removeErrorListeners();
       parser.addErrorListener(new PdeIssueEmitter(
           (x) -> { throw new PdePreprocessIssueException(x); },
-          () -> listener.rewriter.getText()
+          () -> finalInProgram
       ));
       parser.setBuildParseTree(true);
       tree = parser.processingSketch();
@@ -94,9 +102,7 @@ public class PdePreprocessor {
     ParseTreeWalker treeWalker = new ParseTreeWalker();
     treeWalker.walk(listener, tree);
 
-    SketchException sketchException = listener.getSketchException();
-    if (sketchException != null) throw sketchException;
-
+    // Return resultant program
     String outputProgram = listener.getOutputProgram();
     PrintWriter outPrintWriter = new PrintWriter(outWriter);
     outPrintWriter.print(outputProgram);
@@ -107,7 +113,7 @@ public class PdePreprocessor {
   }
 
   protected PdeParseTreeListener createListener(CommonTokenStream tokens, String sketchName) {
-    return new PdeParseTreeListener(tokens, sketchName);
+    return new PdeParseTreeListener(tokens, sketchName, tabSize);
   }
 
   public boolean hasMain() {

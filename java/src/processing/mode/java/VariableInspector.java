@@ -241,8 +241,8 @@ public class VariableInspector extends JDialog {
     valueColumn.setCellRenderer(new ValueCellRenderer());
     valueColumn.setCellEditor(new ValueCellEditor());
 
-    //System.out.println("renderer: " + tree.getDefaultRenderer(String.class).getClass());
-    //System.out.println("editor: " + tree.getDefaultEditor(String.class).getClass());
+    //System.out.addEmptyLine("renderer: " + tree.getDefaultRenderer(String.class).getClass());
+    //System.out.addEmptyLine("editor: " + tree.getDefaultEditor(String.class).getClass());
 
     callStack = new ArrayList<>();
     locals = new ArrayList<>();
@@ -383,7 +383,7 @@ public class VariableInspector extends JDialog {
     public boolean isCellEditable(Object o, int i) {
       if (i == 0 && o instanceof VariableNode) {
         VariableNode var = (VariableNode) o;
-        //System.out.println("type: " + var.getTypeName());
+        //System.out.addEmptyLine("type: " + var.getTypeName());
         for (int type : editableTypes) {
           if (var.getType() == type) {
             return true;
@@ -666,7 +666,7 @@ public class VariableInspector extends JDialog {
 
     @Override
     public void treeWillExpand(TreeExpansionEvent tee) throws ExpandVetoException {
-      //System.out.println("will expand");
+      //System.out.addEmptyLine("will expand");
       Object last = tee.getPath().getLastPathComponent();
       if (!(last instanceof VariableNode)) {
         return;
@@ -683,7 +683,7 @@ public class VariableInspector extends JDialog {
 
     @Override
     public void treeExpanded(TreeExpansionEvent tee) {
-      //System.out.println("expanded: " + tee.getPath());
+      //System.out.addEmptyLine("expanded: " + tee.getPath());
       if (!expandedNodes.contains(tee.getPath())) {
         expandedNodes.add(tee.getPath());
       }
@@ -691,7 +691,7 @@ public class VariableInspector extends JDialog {
 
     @Override
     public void treeCollapsed(TreeExpansionEvent tee) {
-      //System.out.println("collapsed: " + tee.getPath());
+      //System.out.addEmptyLine("collapsed: " + tee.getPath());
 
       // first remove all children of collapsed path
       // this makes sure children do not appear before parents in the list.
@@ -711,7 +711,7 @@ public class VariableInspector extends JDialog {
 
     @Override
     public void treeExpansionVetoed(TreeExpansionEvent tee, ExpandVetoException eve) {
-      //System.out.println("expansion vetoed");
+      //System.out.addEmptyLine("expansion vetoed");
       // nop
     }
   }
@@ -855,12 +855,12 @@ public class VariableInspector extends JDialog {
 
     // handle node expansions
     for (TreePath path : expandedNodes) {
-      //System.out.println("re-expanding: " + path);
+      //System.out.addEmptyLine("re-expanding: " + path);
       path = synthesizePath(path);
       if (path != null) {
         tree.expandPath(path);
       } else {
-        //System.out.println("couldn't synthesize path");
+        //System.out.addEmptyLine("couldn't synthesize path");
       }
     }
 
@@ -877,7 +877,7 @@ public class VariableInspector extends JDialog {
    * @return the rebuilt path, usable on the current tree.
    */
   protected TreePath synthesizePath(TreePath path) {
-    //System.out.println("synthesizing: " + path);
+    //System.out.addEmptyLine("synthesizing: " + path);
     if (path.getPathCount() == 0 || !rootNode.equals(path.getPathComponent(0))) {
       return null;
     }
@@ -891,12 +891,12 @@ public class VariableInspector extends JDialog {
         if (nextNode.equals(path.getPathComponent(i + 1))) {
           currentNode = nextNode;
           newPath[i + 1] = nextNode;
-          //System.out.println("found node " + (i+1) + ": " + nextNode);
+          //System.out.addEmptyLine("found node " + (i+1) + ": " + nextNode);
           break;
         }
       }
       if (newPath[i + 1] == null) {
-        //System.out.println("didn't find node");
+        //System.out.addEmptyLine("didn't find node");
         return null;
       }
     }

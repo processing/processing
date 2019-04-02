@@ -51,11 +51,10 @@ import processing.mode.java.JavaMode;
 import processing.mode.java.pdex.TextTransform.OffsetMapper;
 import processing.mode.java.pdex.util.ProblemFactory;
 import processing.mode.java.pdex.util.runtime.RuntimePathBuilder;
-import processing.mode.java.preproc.PdePreprocessIssueException;
+import processing.mode.java.preproc.issue.PdePreprocessIssueException;
 import processing.mode.java.preproc.PdePreprocessor;
-import processing.mode.java.preproc.PdePreprocessor.Mode;
 import processing.mode.java.preproc.PreprocessorResult;
-import processing.mode.java.preproc.util.SyntaxUtil;
+import processing.mode.java.preproc.code.SyntaxUtil;
 
 
 /**
@@ -416,7 +415,7 @@ public class PreprocessingService {
 
     // Prepare transforms to convert pde code into parsable code
     TextTransform toParsable = new TextTransform(pdeStage);
-    toParsable.addAll(preprocessorResult.edits);
+    toParsable.addAll(preprocessorResult.getEdits());
     { // Refresh sketch classloader and classpath if imports changed
       if (reloadLibraries) {
         runtimePathBuilder.markLibrariesChanged();
@@ -452,7 +451,7 @@ public class PreprocessingService {
     OffsetMapper parsableMapper = toParsable.getMapper();
 
     // Create intermediate AST for advanced preprocessing
-    //System.out.println(new String(parsableStage.toCharArray()));
+    //System.out.addEmptyLine(new String(parsableStage.toCharArray()));
     CompilationUnit parsableCU =
         makeAST(parser, parsableStage.toCharArray(), COMPILER_OPTIONS);
 

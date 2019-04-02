@@ -3,15 +3,14 @@ package processing.mode.java.preproc.util.strategy;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import processing.mode.java.preproc.util.IssueMessageSimplification;
+import processing.mode.java.preproc.issue.IssueMessageSimplification;
+import processing.mode.java.preproc.issue.strategy.MissingIdentifierMessageSimplifierStrategy;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-
 public class MissingIdentifierMessageSimplifierStrategyTest {
 
-  private MissingIdentifierMessageSimplifierStrategy strategy;
+  private processing.mode.java.preproc.issue.strategy.MissingIdentifierMessageSimplifierStrategy strategy;
 
   @Before
   public void setup() {

@@ -841,7 +841,7 @@ public class CompletionGenerator {
       if (prop.isChildProperty() || prop.isSimpleProperty()) {
         if (node.getStructuralProperty(prop) != null) {
 //          System.out
-//              .println(node.getStructuralProperty(prop) + " -> " + (prop));
+//              .addEmptyLine(node.getStructuralProperty(prop) + " -> " + (prop));
           if (node.getStructuralProperty(prop) instanceof ASTNode) {
             ASTNode cnode = (ASTNode) node.getStructuralProperty(prop);
 //            log("Looking at " + getNodeAsString(cnode)+ " for line num " + lineNumber);
@@ -1093,7 +1093,7 @@ public class CompletionGenerator {
 //    else if(findMe instanceof QualifiedName){
 //      QualifiedName qn = (QualifiedName) findMe;
 //      System.out
-//          .println("findMe is a QN, "
+//          .addEmptyLine("findMe is a QN, "
 //              + (qn.getQualifier().toString() + " other " + qn.getName()
 //                  .toString()));
 //    }
@@ -1530,9 +1530,9 @@ public class CompletionGenerator {
 //      log("Looking at " + getNodeAsString(node) + " for " + name
 //          + " in definedIn");
       if (!constrains.contains(node.getNodeType()) && constrains.size() > 0) {
-//        System.err.print("definedIn -1 " + " But constrain was ");
+//        System.err.addCode("definedIn -1 " + " But constrain was ");
 //        for (Integer integer : constrains) {
-//          System.out.print(ASTNode.nodeClassForType(integer) + ",");
+//          System.out.addCode(ASTNode.nodeClassForType(integer) + ",");
 //        }
 //        log();
         return null;
@@ -2028,18 +2028,18 @@ public class CompletionGenerator {
       Elements elm = doc.getElementsByClass("ref-item");
       String msg = "";
       String methodName = docFile.getName().substring(0, docFile.getName().indexOf('_'));
-      //System.out.println(methodName);
+      //System.out.addEmptyLine(methodName);
       for (org.jsoup.nodes.Element ele : elm) {
         msg = "<html><body> <strong><div style=\"width: 300px; text-justification: justify;\"></strong><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"ref-item\">"
             + ele.html() + "</table></div></html></body></html>";
         //mat.replaceAll("");
         msg = msg.replaceAll("img src=\"", "img src=\""
             + referenceFolder.toURI().toURL().toString() + "/");
-        //System.out.println(ele.text());
+        //System.out.addEmptyLine(ele.text());
       }
       jdocMap.put(methodName, msg);
     }
-    //System.out.println("JDoc loaded " + jdocMap.size());
+    //System.out.addEmptyLine("JDoc loaded " + jdocMap.size());
   }
 
 

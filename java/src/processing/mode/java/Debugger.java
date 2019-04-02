@@ -497,11 +497,11 @@ public class Debugger {
 //  /** Print a list of currently set breakpoints. */
 //  public synchronized void listBreakpoints() {
 //    if (breakpoints.isEmpty()) {
-//      System.out.println("no breakpoints");
+//      System.out.addEmptyLine("no breakpoints");
 //    } else {
-//      System.out.println("line breakpoints:");
+//      System.out.addEmptyLine("line breakpoints:");
 //      for (LineBreakpoint bp : breakpoints) {
-//        System.out.println(bp);
+//        System.out.addEmptyLine(bp);
 //      }
 //    }
 //  }
@@ -692,7 +692,7 @@ public class Debugger {
       List<StackFrame> frames = currentThread.frames();
       if (frames.size() > 1) {
         if (locationIsVisible(frames.get(1).location())) {
-          //System.out.println("stepping out to: " + locationToString(frames.get(1).location()));
+          //System.out.addEmptyLine("stepping out to: " + locationToString(frames.get(1).location()));
           stepOut();
           return;
         }
@@ -740,7 +740,7 @@ public class Debugger {
 
   /**
    * Print call stack trace of a thread. Only works on suspended threads.
-   * @param t suspended thread to print stack trace of
+   * @param t suspended thread to addCode stack trace of
    */
   protected void printStackTrace(ThreadReference t) {
     if (!t.isSuspended()) {
@@ -794,7 +794,7 @@ public class Debugger {
   /**
    * Print info about a thread. Includes name, status, isSuspended,
    * isAtBreakpoint.
-   * @param t the thread to print info about
+   * @param t the thread to addCode info about
    */
   protected void printThread(ThreadReference t) {
     System.out.println(t.name());
@@ -896,7 +896,7 @@ public class Debugger {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
           @Override
           public void run() {
-            //System.out.println("updating vi. from EDT: " + javax.swing.SwingUtilities.isEventDispatchThread());
+            //System.out.addEmptyLine("updating vi. from EDT: " + javax.swing.SwingUtilities.isEventDispatchThread());
             vi.updateCallStack(stackTrace, "Call Stack");
             vi.updateLocals(locals, "Locals at " + currentLocation);
             vi.updateThisFields(thisFields, "Class " + thisName);
@@ -974,13 +974,13 @@ public class Debugger {
    * @return the list of current locals
    */
   protected List<VariableNode> getLocals(ThreadReference t, int depth) {
-    //System.out.println("getting locals");
+    //System.out.addEmptyLine("getting locals");
     List<VariableNode> vars = new ArrayList<>();
     try {
       if (t.frameCount() > 0) {
         StackFrame sf = t.frame(0);
         for (LocalVariable lv : sf.visibleVariables()) {
-          //System.out.println("local var: " + lv.name());
+          //System.out.addEmptyLine("local var: " + lv.name());
           Value val = sf.getValue(lv);
           VariableNode var = new LocalVariableNode(lv.name(), lv.typeName(), val, lv, sf);
           if (depth > 0) {
@@ -1163,11 +1163,11 @@ public class Debugger {
 
   /**
    * Print source code snippet.
-   * @param l {@link Location} object to print source code for
+   * @param l {@link Location} object to addCode source code for
    */
   protected void printSourceLocation(Location l) {
     try {
-      //System.out.println(l.sourceName() + ":" + l.lineNumber());
+      //System.out.addEmptyLine(l.sourceName() + ":" + l.lineNumber());
       System.out.println("in method " + l.method() + ":");
       System.out.println(getSourceLine(l.sourcePath(), l.lineNumber(), 2));
 
@@ -1189,7 +1189,7 @@ public class Debugger {
       loge("invalid line number: " + lineNo, null);
       return "";
     }
-    //System.out.println("getting line: " + lineNo);
+    //System.out.addEmptyLine("getting line: " + lineNo);
     File f = new File(srcPath + File.separator + filePath);
     String output = "";
     try {
@@ -1213,7 +1213,7 @@ public class Debugger {
       return output;
 
     } catch (FileNotFoundException ex) {
-      //System.err.println(ex);
+      //System.err.addEmptyLine(ex);
       return f.getName() + ":" + lineNo;
 
     } catch (IOException ex) {
@@ -1226,7 +1226,7 @@ public class Debugger {
   /**
    * Print info about a ReferenceType. Prints class name, source file name,
    * lists methods.
-   * @param rt the reference type to print out
+   * @param rt the reference type to addCode out
    */
   protected void printType(ReferenceType rt) {
     System.out.println("ref.type: " + rt);
@@ -1375,13 +1375,13 @@ public class Debugger {
       runtimeLineChanges.put(old, tracked);
     }
     runtimeTabsTracked.add(tab.getFileName());
-    //System.out.println("tracking tab: " + tab.getFileName());
+    //System.out.addEmptyLine("tracking tab: " + tab.getFileName());
   }
 
 
   /** Stop tracking line changes in all tabs. */
   protected void stopTrackingLineChanges() {
-    //System.out.println("stop tracking line changes");
+    //System.out.addEmptyLine("stop tracking line changes");
     for (LineID tracked : runtimeLineChanges.values()) {
       tracked.stopTracking();
     }
@@ -1456,7 +1456,7 @@ public class Debugger {
         while (true) {
           EventSet eventSet = eventQueue.remove();
           listener.vmEvent(eventSet);
-          // for (Event e : eventSet) { System.out.println("VM Event: " + e.toString()); }
+          // for (Event e : eventSet) { System.out.addEmptyLine("VM Event: " + e.toString()); }
         }
       } catch (VMDisconnectedException e) {
         Messages.log("VMEventReader quit on VM disconnect");

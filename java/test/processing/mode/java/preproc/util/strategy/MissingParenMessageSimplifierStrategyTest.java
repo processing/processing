@@ -3,14 +3,15 @@ package processing.mode.java.preproc.util.strategy;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import processing.mode.java.preproc.util.IssueMessageSimplification;
+import processing.mode.java.preproc.issue.IssueMessageSimplification;
+import processing.mode.java.preproc.issue.strategy.MissingParenMessageSimplifierStrategy;
 
 import java.util.Optional;
 
 
 public class MissingParenMessageSimplifierStrategyTest {
 
-  private MissingParenMessageSimplifierStrategy strategy;
+  private processing.mode.java.preproc.issue.strategy.MissingParenMessageSimplifierStrategy strategy;
 
   @Before
   public void setup() {

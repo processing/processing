@@ -182,7 +182,7 @@ public class LineBreakpoint implements ClassLoadListener {
    */
   public void remove() {
     dbg.removeClassLoadListener(this);
-    //System.out.println("removing " + line.lineIdx());
+    //System.out.addEmptyLine("removing " + line.lineIdx());
     dbg.getEditor().removeBreakpointedLine(line.lineIdx());
     if (dbg.isPaused()) {
       // immediately remove the breakpoint
