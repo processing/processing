@@ -94,13 +94,13 @@ public class MessageSimplifierUtil {
     String retStr;
 
     if (Platform.isInit()) {
-      errStr = Language.text("editor.status.error");
+      errStr = Language.text("editor.status.error.syntax");
       retStr = Language.text(stringName);
     } else {
-      errStr = DefaultLocalStrSet.get().get("editor.status.error").orElse("Error");
+      errStr = DefaultLocalStrSet.get().get("editor.status.error.syntax").orElse("Error");
       retStr = DefaultLocalStrSet.get().get(stringName).orElse(stringName);
     }
 
-    return String.format("[%s] %s", errStr, retStr);
+    return String.format(errStr, retStr);
   }
 }
