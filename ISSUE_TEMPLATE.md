@@ -15,7 +15,7 @@
 <!--- Improvement? Tell us how you’d like it to work. -->
 
 ## Current Behavior
-<!--- Explain the difference from current behavior. -->
+<!--- Explain the difference between current behavior. -->
 
 ## Steps to Reproduce
 <!--- Provide an unambiguous set of steps to reproduce. -->
