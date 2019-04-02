@@ -36,7 +36,7 @@ import java.util.Optional;
  * </p>
  */
 public abstract class TokenPairTemplateMessageSimplifierStrategy
-    implements SyntaxIssueMessageSimplifierStrategy {
+    implements PreprocIssueMessageSimplifierStrategy {
 
   @Override
   public Optional<IssueMessageSimplification> simplify(String message) {

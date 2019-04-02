@@ -27,9 +27,9 @@ import java.util.Optional;
 
 
 /**
- * Interface for strategies that improve syntax error messages before showing them to the user.
+ * Interface for strategies that improve preprocess error messages before showing them to the user.
  */
-public interface SyntaxIssueMessageSimplifierStrategy {
+public interface PreprocIssueMessageSimplifierStrategy {
 
   /**
    * Attempt to simplify an error message.

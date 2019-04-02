@@ -41,7 +41,7 @@ import java.util.Optional;
  * <p>
  *   A {BaseErrorListener} which looks for syntax errors reported by ANTLR and converts them to
  *   {PdePreprocessIssue}s that are consumable by a {PdePreprocessIssueListener}. It does this by
- *   running the {SyntaxIssueMessageSimplifier} to generate a more user-friendly error message
+ *   running the {PreprocessIssueMessageSimplifier} to generate a more user-friendly error message
  *   before informing the provided listener.
  * </p>
  */
@@ -88,7 +88,7 @@ public class PdeIssueEmitter extends BaseErrorListener {
       charPositionInLine = msgContent.length();
     }
 
-    IssueMessageSimplification simplification = SyntaxIssueMessageSimplifier.get().simplify(msg);
+    IssueMessageSimplification simplification = PreprocessIssueMessageSimplifier.get().simplify(msg);
 
     IssueLocation issueLocation;
 

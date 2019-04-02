@@ -29,7 +29,7 @@ import java.util.Optional;
 /**
  * Default strategy to use if other message simplification strategies have failed.
  */
-public class DefaultMessageSimplifier implements SyntaxIssueMessageSimplifierStrategy {
+public class DefaultMessageSimplifier implements PreprocIssueMessageSimplifierStrategy {
 
   @Override
   public Optional<IssueMessageSimplification> simplify(String message) {

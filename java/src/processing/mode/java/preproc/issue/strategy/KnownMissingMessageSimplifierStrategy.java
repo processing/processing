@@ -29,7 +29,7 @@ import java.util.Optional;
 /**
  * Strategy to handle missing token messages.
  */
-public class KnownMissingMessageSimplifierStrategy implements SyntaxIssueMessageSimplifierStrategy {
+public class KnownMissingMessageSimplifierStrategy implements PreprocIssueMessageSimplifierStrategy {
 
   @Override
   public Optional<IssueMessageSimplification> simplify(String message) {

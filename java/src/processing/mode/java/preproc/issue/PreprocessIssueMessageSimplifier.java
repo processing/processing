@@ -22,7 +22,7 @@ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package processing.mode.java.preproc.issue;
 
 
-import processing.mode.java.preproc.issue.strategy.BadParamMessageSimplifierStrategy;
+import processing.mode.java.preproc.issue.strategy.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +38,18 @@ import java.util.concurrent.atomic.AtomicReference;
  * message when describing grammatically incorrect input. This is distinct from compiler errors
  * caused after generating an AST.
  * </p>
+ *
+ * <p>
+ *   Note that this is distinct from the {CompileErrorMessageSimplifier}. This operates on issues
+ *   caused in parsing and services all users whereas the {CompileErrorMessageSimplifier} only
+ *   operates on issues generated after preprocessing has been successful.
+ * </p>
  */
-public class SyntaxIssueMessageSimplifier {
+public class PreprocessIssueMessageSimplifier {
 
-  private static AtomicReference<SyntaxIssueMessageSimplifier> instance = new AtomicReference<>();
+  private static AtomicReference<PreprocessIssueMessageSimplifier> instance = new AtomicReference<>();
 
-  private List<processing.mode.java.preproc.issue.strategy.SyntaxIssueMessageSimplifierStrategy> strategies;
+  private List<PreprocIssueMessageSimplifierStrategy> strategies;
 
   /**
    * Get a shared instance of this singleton.
@@ -51,32 +57,32 @@ public class SyntaxIssueMessageSimplifier {
    * @return Shared instance of this singleton, creating that shared instance if one did not exist
    *    previously.
    */
-  public static SyntaxIssueMessageSimplifier get() {
-    instance.compareAndSet(null, new SyntaxIssueMessageSimplifier());
+  public static PreprocessIssueMessageSimplifier get() {
+    instance.compareAndSet(null, new PreprocessIssueMessageSimplifier());
     return instance.get();
   }
 
   /**
    * Create a new syntax issue message simplifier with the default simplifier strategies.
    */
-  private SyntaxIssueMessageSimplifier() {
+  private PreprocessIssueMessageSimplifier() {
     strategies = new ArrayList<>();
-    strategies.add(new processing.mode.java.preproc.issue.strategy.MissingIdentifierMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.KnownMissingMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.ExtraneousInputMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.MismatchedInputMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.MissingVariableNameMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.AssignmentMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.BadIdentifierMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.MissingClassNameMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.MissingMethodNameMessageSimplifierStrategy());
+    strategies.add(new MissingIdentifierMessageSimplifierStrategy());
+    strategies.add(new KnownMissingMessageSimplifierStrategy());
+    strategies.add(new ExtraneousInputMessageSimplifierStrategy());
+    strategies.add(new MismatchedInputMessageSimplifierStrategy());
+    strategies.add(new MissingVariableNameMessageSimplifierStrategy());
+    strategies.add(new AssignmentMessageSimplifierStrategy());
+    strategies.add(new BadIdentifierMessageSimplifierStrategy());
+    strategies.add(new MissingClassNameMessageSimplifierStrategy());
+    strategies.add(new MissingMethodNameMessageSimplifierStrategy());
     strategies.add(new BadParamMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.MissingDoubleQuoteMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.MissingSingleQuoteMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.MissingParenMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.MissingChevMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.MissingCurlyMessageSimplifierStrategy());
-    strategies.add(new processing.mode.java.preproc.issue.strategy.DefaultMessageSimplifier());
+    strategies.add(new MissingDoubleQuoteMessageSimplifierStrategy());
+    strategies.add(new MissingSingleQuoteMessageSimplifierStrategy());
+    strategies.add(new MissingParenMessageSimplifierStrategy());
+    strategies.add(new MissingChevMessageSimplifierStrategy());
+    strategies.add(new MissingCurlyMessageSimplifierStrategy());
+    strategies.add(new DefaultMessageSimplifier());
   }
 
   /**
@@ -86,6 +92,7 @@ public class SyntaxIssueMessageSimplifier {
    * @return An improved error message or the originalMessage if no improvements could be made.
    */
   public IssueMessageSimplification simplify(String originalMessage) {
+    //System.err.println(originalMessage);
     Optional<IssueMessageSimplification> matching = strategies.stream()
         .map((x) -> x.simplify(originalMessage))
         .filter(Optional::isPresent)

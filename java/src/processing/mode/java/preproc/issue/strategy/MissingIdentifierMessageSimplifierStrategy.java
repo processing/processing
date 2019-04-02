@@ -30,7 +30,7 @@ import java.util.Optional;
  * Strategy to check for an error indicating that an identifier was expected but not given.
  */
 public class MissingIdentifierMessageSimplifierStrategy
-    implements SyntaxIssueMessageSimplifierStrategy {
+    implements PreprocIssueMessageSimplifierStrategy {
 
   @Override
   public Optional<IssueMessageSimplification> simplify(String message) {

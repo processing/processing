@@ -36,7 +36,7 @@ import java.util.Optional;
  * </p>
  */
 public abstract class EvenCountTemplateMessageSimplifierStrategy
-    implements SyntaxIssueMessageSimplifierStrategy {
+    implements PreprocIssueMessageSimplifierStrategy {
 
   @Override
   public Optional<IssueMessageSimplification> simplify(String message) {

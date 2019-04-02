@@ -29,7 +29,7 @@ import java.util.Optional;
 /**
  * Strategy to explain a mismatched input issue.
  */
-public class MismatchedInputMessageSimplifierStrategy implements SyntaxIssueMessageSimplifierStrategy {
+public class MismatchedInputMessageSimplifierStrategy implements PreprocIssueMessageSimplifierStrategy {
 
   @Override
   public Optional<IssueMessageSimplification> simplify(String message) {

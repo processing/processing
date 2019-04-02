@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * Strategy that cleans up errors based on a regex matching the error message.
  */
 public abstract class RegexTemplateMessageSimplifierStrategy
-    implements SyntaxIssueMessageSimplifierStrategy {
+    implements PreprocIssueMessageSimplifierStrategy {
 
   private Pattern pattern;
 

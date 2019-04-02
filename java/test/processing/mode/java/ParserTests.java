@@ -82,7 +82,7 @@ public class ParserTests {
   }
 
   static void expectGood(final String id) {
-    expectGood(id, false);
+    expectGood(id, true);
   }
 
   static void expectGood(final String id, boolean ignoreWhitespace) {

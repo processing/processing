@@ -43,23 +43,21 @@ public class IssueLocationFactory {
   /**
    * Determine where an issue should be reported.
    *
-   * @param simplification The issue simplification generated from {SyntaxIssueMessageSimplifier}.
+   * @param simplification The issue simplification generated from {PreprocessIssueMessageSimplifier}.
    * @param originalLine The original line (1 indexed) on which the issue was reported.
    * @param originalOffset The original number of characters from the start of the line where the
    *    the issue was reported.
    * @param source The full concatenated source of the sketch being built.
+   * @param lineCount The total
    * @return The new location where the issue should be reported. This may be identical to the
    *    original location if the issue was not moved.
    */
   public static IssueLocation getLineWithOffset(IssueMessageSimplification simplification,
-                                                int originalLine, int originalOffset, String source) {
-
-    // Determine length of sketch
-    int finalLine = SyntaxUtil.getCount(source, "\n");
+        int originalLine, int originalOffset, String source) {
 
     // Determine if the issue should be relocated
     boolean shouldAttributeToPrior = simplification.getAttributeToPriorToken();
-    shouldAttributeToPrior = shouldAttributeToPrior && originalLine != finalLine;
+    shouldAttributeToPrior = shouldAttributeToPrior && originalLine != 0;
 
     if (!shouldAttributeToPrior) {
       return new IssueLocation(originalLine, originalOffset);

@@ -35,7 +35,7 @@ import processing.core.PApplet;
 import processing.data.StringList;
 
 
-public class ErrorMessageSimplifier {
+public class CompileErrorMessageSimplifier {
   /**
    * Mapping between ProblemID constant and the constant name. Holds about 650
    * of them. Also, this is just temporary, will be used to find the common

@@ -30,7 +30,7 @@ import java.util.Optional;
  * Strategy to handle extraneous input messages.
  */
 public class ExtraneousInputMessageSimplifierStrategy
-    implements SyntaxIssueMessageSimplifierStrategy {
+    implements PreprocIssueMessageSimplifierStrategy {
 
   @Override
   public Optional<IssueMessageSimplification> simplify(String message) {
