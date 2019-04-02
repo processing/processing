@@ -24,8 +24,6 @@ package processing.mode.java.preproc.issue.strategy;
 import processing.app.Language;
 import processing.app.Platform;
 
-import java.util.Map;
-
 
 /**
  * Convenience functions useful for generating simplified messages.
@@ -97,8 +95,8 @@ public class MessageSimplifierUtil {
       errStr = Language.text("editor.status.error.syntax");
       retStr = Language.text(stringName);
     } else {
-      errStr = DefaultLocalStrSet.get().get("editor.status.error.syntax").orElse("Error");
-      retStr = DefaultLocalStrSet.get().get(stringName).orElse(stringName);
+      errStr = DefaultErrorLocalStrSet.get().get("editor.status.error.syntax").orElse("Error");
+      retStr = DefaultErrorLocalStrSet.get().get(stringName).orElse(stringName);
     }
 
     return String.format(errStr, retStr);

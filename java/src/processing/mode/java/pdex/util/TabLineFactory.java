@@ -25,7 +25,7 @@ public class TabLineFactory {
    */
   public static TabLine getTab(List<Integer> tabStarts, int line) {
     OptionalInt tabMaybe = IntStream.range(0, tabStarts.size())
-        .filter((index) -> line > tabStarts.get(index))
+        .filter((index) -> line >= tabStarts.get(index))
         .max();
 
     int tab = tabMaybe.orElse(0);

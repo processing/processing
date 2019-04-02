@@ -8,9 +8,9 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Singleton with fallback error localizations.
  */
-public class DefaultLocalStrSet {
+public class DefaultErrorLocalStrSet {
 
-  private static final AtomicReference<DefaultLocalStrSet> instance = new AtomicReference<>();
+  private static final AtomicReference<DefaultErrorLocalStrSet> instance = new AtomicReference<>();
 
   private final Map<String, String> localizations = new HashMap<>();
 
@@ -19,15 +19,15 @@ public class DefaultLocalStrSet {
    *
    * @return Shared singleton copy.
    */
-  public static DefaultLocalStrSet get() {
-    instance.compareAndSet(null, new DefaultLocalStrSet());
+  public static DefaultErrorLocalStrSet get() {
+    instance.compareAndSet(null, new DefaultErrorLocalStrSet());
     return instance.get();
   }
 
   /**
    * Private hidden constructor.
    */
-  private DefaultLocalStrSet() {
+  private DefaultErrorLocalStrSet() {
     localizations.put("editor.status.error", "Error");
     localizations.put("editor.status.error.syntax", "Syntax Error - %s");
     localizations.put("editor.status.bad.assignment", "Error on variable assignment near %s?");
