@@ -252,7 +252,7 @@ public class JavaBuild {
       throw new SketchException(
           problem.getMessage(),
           problem.getTabIndex(),
-          problem.getLineNumber() + 1,
+          problem.getLineNumber() - 1,
           0
       );
     } catch (SketchException pe) {
