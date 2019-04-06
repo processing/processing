@@ -315,14 +315,14 @@ public class PSurfaceFX implements PSurface {
       int sketchHeight = sketch.sketchHeight();
 
       if (fullScreen || spanDisplays) {
-        sketchWidth = (int) (screenRect.getWidth() / uiScale);
-        sketchHeight = (int) (screenRect.getHeight() / uiScale);
+        sketchWidth = (int) screenRect.getWidth();
+        sketchHeight = (int) screenRect.getHeight();
 
         stage.initStyle(StageStyle.UNDECORATED);
-        stage.setX(screenRect.getMinX() / uiScale);
-        stage.setY(screenRect.getMinY() / uiScale);
-        stage.setWidth(screenRect.getWidth() / uiScale);
-        stage.setHeight(screenRect.getHeight() / uiScale);
+        stage.setX(screenRect.getMinX());
+        stage.setY(screenRect.getMinY());
+        stage.setWidth(screenRect.getWidth());
+        stage.setHeight(screenRect.getHeight());
       }
 
       Canvas canvas = surface.canvas;
