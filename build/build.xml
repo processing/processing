@@ -388,11 +388,11 @@
           message="Do not call assemble from the command line." />
 
     <!-- copy shared tools folder -->
-    <copy todir="${target.path}/tools">
+    <copy todir="${target.path}/tools" preservelastmodified="true">
       <fileset dir="shared/tools" />
     </copy>
 
-    <copy todir="${target.path}/modes/java">
+    <copy todir="${target.path}/modes/java" preservelastmodified="true">
       <fileset dir="../java">
         <!-- don't include LWJGL, it's not operational -->
         <exclude name="libraries/lwjgl/**" />
@@ -403,7 +403,8 @@
     </copy>
 
     <!-- get the examples folder, but don't require it to buid -->
-    <copy todir="${target.path}/modes/java/examples" failonerror="false">
+    <copy todir="${target.path}/modes/java/examples"
+          preservelastmodified="true" failonerror="false">
       <fileset dir="${examples.dir}" />
     </copy>
 
@@ -643,7 +644,7 @@
       <arg line="${jdk.path.macosx}/Contents/Home/jre/lib/jli/libjli.dylib ${jli.path}"/>
     </exec>
 
-    <copy todir="${contents.dir}/Java">
+    <copy todir="${contents.dir}/Java" preservelastmodified="true">
       <fileset dir=".." includes="core/library/**" /> <!-- why this? -->
       <!--<fileset dir="shared" includes="launch4j/**" />-->
       <fileset dir="shared" includes="lib/**" />
@@ -785,7 +786,7 @@
   <target name="linux-build" depends="ignore-tools, check-linux-arm32, check-linux-arm64, revision-check, linux-check-os, jre-download, subprojects-build, subprojects-build-linux-arm32, subprojects-build-linux-arm64" description="Build Linux version">
     <mkdir dir="linux/work" />
 
-    <copy todir="linux/work">
+    <copy todir="linux/work" preservelastmodified="true">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
       <fileset dir="shared" includes="lib/**"  />
@@ -818,7 +819,7 @@
       <fileset dir="${launch4j.dir}/bin" includes="windres-*" />
     </delete>
 
-    <copy todir="linux/work/lib" flatten="true">
+    <copy todir="linux/work/lib" flatten="true" preservelastmodified="true">
       <fileset refid="runtime.jars" />
     </copy>
 
@@ -1073,7 +1074,7 @@
 
     <!-- assemble the pde -->
     <mkdir dir="windows/work/lib" />
-    <copy todir="windows/work/lib" flatten="true">
+    <copy todir="windows/work/lib" flatten="true" preservelastmodified="true">
       <fileset refid="runtime.jars" />
     </copy>
 
@@ -1094,7 +1095,7 @@
       <mapper type="flatten"/>
     </unzip>
 
-    <copy todir="windows/work">
+    <copy todir="windows/work" preservelastmodified="true">
       <fileset dir=".." includes="core/library/**" />
       <fileset dir="shared" includes="launch4j/**" />
       <fileset dir="shared" includes="lib/**" />
