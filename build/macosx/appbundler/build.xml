@@ -33,8 +33,8 @@ questions.
     version=1.0ea
     -->
     <property name="arch64" value="-arch x86_64" />
-    <property name="arch32" value="-arch i386" />
-    <property name="archppc" value="-arch ppc" />
+    <!-- <property name="arch32" value="-arch i386" /> -->
+    <!-- <property name="archppc" value="-arch ppc" /> -->
     <property name="cc" value="gcc" />
 
     <property name="folder.src" value="src"/>
@@ -73,7 +73,8 @@ questions.
         </copy>
 
         <exec executable="${cc}">
-            <arg line="${arch64} ${arch32}"/>
+            <!-- <arg line="${arch64} ${arch32}"/> -->
+            <arg line="${arch64}"/>
             <arg value="-I"/>
             <arg value="${env.JAVA_HOME}/include"/>
             <arg value="-I"/>
@@ -87,10 +88,10 @@ questions.
             <arg value="-isysroot"/>
             <!--
             <arg value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk"/>
-            <arg value="-mmacosx-version-min=10.7"/> 
+            <arg value="-mmacosx-version-min=10.7"/>
             -->
-            <arg value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk"/>
-            <arg value="-mmacosx-version-min=10.8"/> 
+            <arg value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"/>
+            <arg value="-mmacosx-version-min=10.8"/>
             <arg value="native/main.m"/>
         </exec>
     </target>
