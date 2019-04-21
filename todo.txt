@@ -2,6 +2,8 @@
 X use ctrl-page up/down for tabs on Windows
 X   https://github.com/processing/processing/issues/5794
 X fix potential highlighting issue that wasn't selecting portions of text
+X update AppBundler to use newer SDK, recompile
+X edit build.xml files and appbundler to preserve more attributes
 
 _ "Could not get the settings folder" isn't very helpful
 _   https://github.com/processing/processing/issues/5744
