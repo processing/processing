@@ -111,7 +111,6 @@ public class Library extends LocalContribution {
   private Library(File folder, String groupName) {
     super(folder);
     this.group = groupName;
-
     libraryFolder = new File(folder, "library");
     examplesFolder = new File(folder, "examples");
     referenceFile = new File(folder, "reference/index.html");
@@ -476,6 +475,15 @@ public class Library extends LocalContribution {
       return (new File(dir, name).isDirectory());
     }
   };
+  
+  static protected FilenameFilter jarFileFilter = new FilenameFilter() {
+    public boolean accept(File dir, String name) {
+      if(name.endsWith(".jar")) {
+        return (new File(dir, name).exists());
+      }
+      return false;
+    }
+  };
 
 
   static public List<File> discover(File folder) {
@@ -491,23 +499,50 @@ public class Library extends LocalContribution {
       for (String potentialName : folderNames) {
         File baseFolder = new File(folder, potentialName);
         File libraryFolder = new File(baseFolder, "library");
-        File libraryJar = new File(libraryFolder, potentialName + ".jar");
+        //File libraryJar = new File(libraryFolder, potentialName + ".jar");
+        
+        /*Find all jar files within the folder
+          and then compare it with the folder name or library Name */
+        String[] libraryJar = libraryFolder.list(jarFileFilter);
+        
+        if(libraryJar != null) {
+          for(String jarFileName:libraryJar) {
+            String libraryName = jarFileName.substring(0,jarFileName.length()-4);
+            if(libraryName.toLowerCase().equals(potentialName.toLowerCase())) {
+              
+              String sanityCheck = Sketch.sanitizeName(potentialName);
+              if (sanityCheck.equals(potentialName)) {
+                libraries.add(baseFolder);
+
+              } else {
+                String mess = "The library \""
+                    + potentialName
+                    + "\" cannot be used.\n"
+                    + "Library names must contain only basic letters and numbers.\n"
+                    + "(ASCII only and no spaces, and it cannot start with a number)";
+                Messages.showMessage("Ignoring bad library name", mess);
+                continue;
+              }
+              
+            }
+          }
+        }
         // If a .jar file of the same prefix as the folder exists
         // inside the 'library' subfolder of the sketch
-        if (libraryJar.exists()) {
-          String sanityCheck = Sketch.sanitizeName(potentialName);
-          if (sanityCheck.equals(potentialName)) {
-            libraries.add(baseFolder);
-
-          } else {
-            String mess = "The library \""
-                + potentialName
-                + "\" cannot be used.\n"
-                + "Library names must contain only basic letters and numbers.\n"
-                + "(ASCII only and no spaces, and it cannot start with a number)";
-            Messages.showMessage("Ignoring bad library name", mess);
-            continue;
-          }
+//        if (libraryJar.exists()) {
+//          String sanityCheck = Sketch.sanitizeName(potentialName);
+//          if (sanityCheck.equals(potentialName)) {
+//            libraries.add(baseFolder);
+//
+//          } else {
+//            String mess = "The library \""
+//                + potentialName
+//                + "\" cannot be used.\n"
+//                + "Library names must contain only basic letters and numbers.\n"
+//                + "(ASCII only and no spaces, and it cannot start with a number)";
+//            Messages.showMessage("Ignoring bad library name", mess);
+//            continue;
+//          }
           /*
         } else {  // maybe it's a JS library
           // TODO this should be in a better location
@@ -516,7 +551,7 @@ public class Library extends LocalContribution {
             libraries.add(baseFolder);
           }
           */
-        }
+        //}
       }
     }
     return libraries;

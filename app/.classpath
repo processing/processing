@@ -9,5 +9,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/ant-launcher.jar"/>
 	<classpathentry kind="lib" path="test/lib/junit-4.8.1.jar"/>
 	<classpathentry kind="lib" path="/processing-core/apple.jar"/>
+	<classpathentry exported="true" kind="lib" path="/android-mode-sdkupdater/src"/>
+	<classpathentry kind="lib" path="/android-mode/src/processing/mode/android"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

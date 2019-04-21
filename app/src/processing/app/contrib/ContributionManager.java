@@ -617,7 +617,7 @@ public class ContributionManager {
         return folder.isFile();
       }
     });
-
+    
     for (File file : installList) {
       for (AvailableContribution contrib : listing.advertisedContributions) {
         if (file.getName().equals(contrib.getName())) {
