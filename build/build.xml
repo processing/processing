@@ -77,6 +77,12 @@
        or http://stackoverflow.com/q/10268583 -->
   <property name="jdk.hash" value="1961070e4c9b4e26a04e7f5a083f551e" />
 
+  <!-- these a*holes at Oracle... no longer works without a login
+  <property name="jdk.update" value="212" />
+  <property name="jdk.build" value="10" />
+  <property name="jdk.hash" value="59066701cf1a433da9770636fbc4c9aa" />
+  -->
+
   <property name="jdk.short" value="${jdk.version}u${jdk.update}" />
   <property name="jdk.esoteric" value="1.${jdk.version}.0_${jdk.update}" />
 
