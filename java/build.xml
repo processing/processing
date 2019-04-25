@@ -24,12 +24,12 @@
     <delete file="${mode_jar}" />
     <delete>
       <fileset dir="${generated}">
-	<include name="*.java" />
-	<include name="*.tokens" />
-	<include name="*.txt" />
-	<include name="*.g" />
-	<include name="*.smap" />
-	<include name="*.properties" />
+      	<include name="*.java" />
+      	<include name="*.tokens" />
+      	<include name="*.txt" />
+      	<include name="*.g" />
+      	<include name="*.smap" />
+      	<include name="*.properties" />
       </fileset>
     </delete>
   </target>
@@ -50,28 +50,24 @@
     <property name="uc" value="@SuppressWarnings({ &quot;unused&quot;, &quot;cast&quot; })${line.separator}" />
 
     <!-- need to match against the previous line so that we don't re-add -->
-    <replaceregexp
-        file="generated/processing/mode/java/preproc/JavaLexer.java"
-        match="(\n\n)(public class JavaLexer .*)"
-        replace="\1${uucr}\2">
+    <replaceregexp file="generated/processing/mode/java/preproc/JavaLexer.java"
+                   match="(\n\n)(public class JavaLexer .*)"
+                   replace="\1${uucr}\2">
     </replaceregexp>
 
-    <replaceregexp
-        file="generated/processing/mode/java/preproc/JavaRecognizer.java"
-        match="(\*/\n)(public class JavaRecognizer .*)"
-        replace="\1${uc}\2">
+    <replaceregexp file="generated/processing/mode/java/preproc/JavaRecognizer.java"
+                   match="(\*/\n)(public class JavaRecognizer .*)"
+                   replace="\1${uc}\2">
     </replaceregexp>
 
-    <replaceregexp
-        file="generated/processing/mode/java/preproc/PdeLexer.java"
-        match="(\n\n)(public class PdeLexer .*)"
-        replace="\1${uucr}\2">
+    <replaceregexp file="generated/processing/mode/java/preproc/PdeLexer.java"
+                   match="(\n\n)(public class PdeLexer .*)"
+                   replace="\1${uucr}\2">
     </replaceregexp>
 
-    <replaceregexp
-        file="generated/processing/mode/java/preproc/PdeRecognizer.java"
-        match="(\n\n)(public class PdeRecognizer .*)"
-        replace="\1${uc}\2">
+    <replaceregexp file="generated/processing/mode/java/preproc/PdeRecognizer.java"
+                   match="(\n\n)(public class PdeRecognizer .*)"
+                   replace="\1${uc}\2">
     </replaceregexp>
     <!-- end of workaround for old antlr -->
   </target>
