@@ -18,6 +18,7 @@
     <subant buildpath="methods" target="dist" />
   </target>
 
+<<<<<<< HEAD
   <path id="classpath.base">
     <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
     <pathelement location="apple.jar" />
@@ -114,6 +115,69 @@
 
   <target name="compile" description="Compile" depends="test">
     <compilecommon srcdir="src" destdir="bin" classpath="classpath.base" />
+=======
+  <target name="compile" description="Compile" depends="methods-build">
+    <taskdef name="methods"
+	     classname="PAppletMethods"
+	     classpath="methods/methods.jar" />
+    <methods dir="${basedir}/src/processing/core" recorder="true" />
+
+    <!-- Where can I expect to find Java Mode JARs? -->
+    <property name="java.mode" value="../java/mode/" />
+
+    <!-- Check for JDT compiler, since this is likely a PDE build. Using
+	 it allows us to build the PDE with only a JRE on Windows and Linux.
+	 So that the core can be built independently of the PDE,
+	 use javac (the "modern" compiler) if ecj is not present. -->
+    <property name="jdt.jar" value="${java.mode}/org.eclipse.jdt.core.jar" />
+    <condition property="build.compiler"
+	       value="org.eclipse.jdt.core.JDTCompilerAdapter"
+	       else="modern">
+      <available file="${jdt.jar}" />
+    </condition>
+    <!--<echo message="compiler is ${build.compiler}" />-->
+
+    <!-- JavaFX got removed from the Oracle's JDK for arm -->
+    <condition property="fx.unavailable" value="true">
+      <or>
+        <equals arg1="${os.arch}" arg2="arm" />
+        <equals arg1="${os.arch}" arg2="aarch64" />
+      </or>
+    </condition>
+
+    <!-- link against apple.jar for the ThinkDifferent class -->
+    <mkdir dir="bin" />
+    <javac source="1.8"
+	   target="1.8"
+	   encoding="UTF-8"
+	   includeAntRuntime="false"
+	   debug="true"
+	   destdir="bin"
+	   classpath="apple.jar;
+                      library/jogl-all.jar;
+                      library/gluegen-rt.jar"
+	   nowarn="true">
+      <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
+      <compilerclasspath path="${jdt.jar}; ${java.mode}/jdtCompilerAdapter.jar" />
+      <src path="src" />
+      <include name="processing/**" />
+      <exclude name="processing/javafx/**" if="fx.unavailable" />
+    </javac>
+
+    <!-- Copy the jnilib to the bin folder so it's included. -->
+    <copy todir="bin/japplemenubar"
+	        file="src/japplemenubar/libjAppleMenuBar.jnilib"
+          preservelastmodified="true" />
+
+    <!-- Copy shaders to bin. (Eclipse does this automatically.) -->
+    <copy todir="bin" preservelastmodified="true">
+      <fileset dir="src">
+        <include name="processing/opengl/shaders/*.glsl" />
+        <include name="processing/opengl/cursors/*.png" />
+        <include name="icon/*.png" />
+      </fileset>
+    </copy>
+>>>>>>> 37108add372272d7b1fc23d2500dce911c4d1098
   </target>
 
   <target name="build" depends="compile" description="Build core library">
