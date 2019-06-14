@@ -852,12 +852,15 @@ public abstract class PGL {
         saveFirstFrame();
       }
 
-      if (!clearColor && 0 < sketch.frameCount || !sketch.isLooping()) {
-        enableFBOLayer();
-        if (SINGLE_BUFFERED) {
-          createFBOLayer();
+      if(sketch.getSurface().isFboAllowed()){
+        if (!clearColor && 0 < sketch.frameCount || !sketch.isLooping()) {
+          enableFBOLayer();
+          if (SINGLE_BUFFERED) {
+            createFBOLayer();
+          }
         }
       }
+
     }
   }
 

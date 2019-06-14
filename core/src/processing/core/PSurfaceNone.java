@@ -245,6 +245,10 @@ public class PSurfaceNone implements PSurface {
     //g.setFrameRate(fps);
   }
 
+  @Override
+  public boolean isFboAllowed() {
+    return true;
+  }
 
   public class AnimationThread extends Thread {
 

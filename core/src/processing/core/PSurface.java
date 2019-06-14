@@ -158,4 +158,6 @@ public interface PSurface {
   public boolean stopThread();
 
   public boolean isStopped();
+
+  public boolean isFboAllowed();
 }

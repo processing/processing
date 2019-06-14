@@ -25,6 +25,7 @@
 package processing.opengl;
 
 import java.awt.Component;
+import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
@@ -73,6 +74,8 @@ import processing.core.PImage;
 import processing.core.PSurface;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
+import sun.java2d.opengl.CGLGraphicsConfig;
+import sun.java2d.pipe.hw.ContextCapabilities;
 
 
 public class PSurfaceJOGL implements PSurface {
@@ -108,6 +111,26 @@ public class PSurfaceJOGL implements PSurface {
   protected float[] currentPixelScale = {0, 0};
 
   protected boolean external = false;
+
+  /**
+   * Defines if FBO Layer is allowed in the given environment.
+   * Using FBO can cause a fatal error during runtime for a
+   * specific environment, as strongly reported via
+   * <a href="https://github.com/processing/processing/issues/4104">GitHub</a>.
+   * The value remains as 'true' as long as the environment detected
+   * is different from those known by causing the issue.
+   */
+  protected boolean fboAllowed = true;
+
+  /**
+   * Contains information about the environments on which FBO should NOT be used.
+   * Each position of the array contains a pair of {@link String}s correspondent to
+   * the operating system (based on {@link PConstants}) and the name of the
+   * hardware (based on {@link ContextCapabilities#adapterId}), respectively.
+   */
+  final protected String[][] antiFboEnvironments = new String[][]{
+          {String.valueOf(PConstants.MACOSX), "Intel HD Graphics 3000"}
+  };
 
   public PSurfaceJOGL(PGraphics graphics) {
     this.graphics = graphics;
@@ -175,8 +198,34 @@ public class PSurfaceJOGL implements PSurface {
     }
 
     displayRect = awtDisplayDevice.getDefaultConfiguration().getBounds();
+    initFboControl(awtDisplayDevice.getDefaultConfiguration());
   }
 
+  /**
+   * Checks the host operating system and hardware against {@link #antiFboEnvironments},
+   * changing the value of {@link #fboAllowed} to 'false' if there is a pair of match.
+   * The current logic operates only with Mac, as a safety redundancy.
+   * If in future this resource must be used by other platforms, the main 'if' clause
+   * should be removed, allowing direct access to its inner logic.
+   */
+  private void initFboControl(GraphicsConfiguration config){
+    if(PApplet.platform == PApplet.MACOSX){
+      for(String[] pair : antiFboEnvironments){
+        if(pair[0].equals(String.valueOf(PApplet.platform))){
+          String adapterId = ((CGLGraphicsConfig) config).getContextCapabilities().getAdapterId();
+          if(adapterId.toLowerCase().contains(pair[1].toLowerCase())){
+            this.fboAllowed = false;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  @Override
+  public boolean isFboAllowed(){
+    return this.fboAllowed;
+  }
 
   protected void initGL() {
 //  System.out.println("*******************************");
