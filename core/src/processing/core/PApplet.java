@@ -13220,6 +13220,8 @@ public class PApplet implements PConstants {
    * Newlines that are \n (Unix newline or linefeed char, ascii 10)
    * are honored, but \r (carriage return, Windows and Mac OS) are
    * ignored.
+   *
+   * @param str the String to be displayed
    */
   public void text(String str, float x, float y) {
     if (recorder != null) recorder.text(str, x, y);
