@@ -2002,7 +2002,7 @@ public class PApplet implements PConstants {
    * @see PApplet#height
    * @see PApplet#setup()
    * @see PApplet#settings()
-   * @see PApplet#fullscreen()
+   * @see PApplet#fullScreen()
    */
   public void size(int width, int height) {
     // Check to make sure the width/height have actually changed. It's ok to
@@ -13223,8 +13223,6 @@ public class PApplet implements PConstants {
    * Newlines that are \n (Unix newline or linefeed char, ascii 10)
    * are honored, but \r (carriage return, Windows and Mac OS) are
    * ignored.
-   *
-   * @param str the String to be displayed
    */
   public void text(String str, float x, float y) {
     if (recorder != null) recorder.text(str, x, y);
@@ -14860,6 +14858,8 @@ public class PApplet implements PConstants {
 
 /**
  * gray number specifying value between white and black
+ * 
+ * @param gray value between black and white, by default 0 to 255
  */
   public void specular(float gray) {
     if (recorder != null) recorder.specular(gray);
@@ -14925,6 +14925,8 @@ public class PApplet implements PConstants {
 
   /**
    * gray number specifying value between white and black
+   * 
+   * @param gray value between black and white, by default 0 to 255
    */
   public void emissive(float gray) {
     if (recorder != null) recorder.emissive(gray);

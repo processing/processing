@@ -6940,6 +6940,8 @@ public class PGraphics extends PImage implements PConstants {
 
 /**
  * gray number specifying value between white and black
+ * 
+ * @param gray value between black and white, by default 0 to 255
  */
   public void specular(float gray) {
     colorCalc(gray);
@@ -7017,6 +7019,8 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * gray number specifying value between white and black
+   * 
+   * @param gray value between black and white, by default 0 to 255
    */
   public void emissive(float gray) {
     colorCalc(gray);
