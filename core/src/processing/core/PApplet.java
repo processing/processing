@@ -2000,6 +2000,9 @@ public class PApplet implements PConstants {
    * @param height height of the display window in units of pixels
    * @see PApplet#width
    * @see PApplet#height
+   * @see PApplet#setup()
+   * @see PApplet#settings()
+   * @see PApplet#fullscreen()
    */
   public void size(int width, int height) {
     // Check to make sure the width/height have actually changed. It's ok to
