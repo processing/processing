@@ -281,6 +281,9 @@ public class PApplet implements PConstants {
    * @see PApplet#get(int, int, int, int)
    * @see PApplet#set(int, int, int)
    * @see PImage
+   * @see PApplet#pixelDensity()
+   * @see PApplet#pixelWidth
+   * @see PApplet#pixelHeight
    */
   public int[] pixels;
 
@@ -1210,7 +1213,8 @@ public class PApplet implements PConstants {
  /**
   * @webref environment
   * @param density 1 or 2
-  *
+  * @see PApplet#pixelWidth
+  * @see PApplet#pixelHeight
   */
   public void pixelDensity(int density) {
     //println(density + " " + this.pixelDensity);
