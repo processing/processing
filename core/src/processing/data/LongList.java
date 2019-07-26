@@ -22,7 +22,7 @@ import processing.core.PApplet;
  * Functions like sort() and shuffle() always act on the list itself. To get
  * a sorted copy, use list.copy().sort().
  *
- * @webref data:composite
+ * @nowebref
  * @see FloatList
  * @see StringList
  */
