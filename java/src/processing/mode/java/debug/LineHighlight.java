@@ -47,7 +47,7 @@ public class LineHighlight {
     this.editor = editor;
     lineID.addListener(this);
     lineID.startTracking(editor.getTab(lineID.fileName()).getDocument()); // TODO: overwrite a previous doc?
-    paint(); // already checks if on current tab
+    setTextSelection(); // already checks if on current tab
     allHighlights.add(this);
   }
 
@@ -93,7 +93,7 @@ public class LineHighlight {
    */
   public void setMarker(String marker) {
     this.marker = marker;
-    paint();
+    setTextSelection();
   }
 
 
@@ -136,7 +136,7 @@ public class LineHighlight {
     // but only if it's on top -> fixes current line being hidden by breakpoint moving it down.
     // lineChanged events seem to come in inverse order of startTracking the LineID. (and bp is created first...)
     if (LineHighlight.isHighestPriority(this)) {
-      paint();
+      setTextSelection();
     }
   }
 
@@ -155,7 +155,7 @@ public class LineHighlight {
   /**
    * (Re-)paint this line highlight.
    */
-  public void paint() {
+  public void setTextSelection() {
     if (editor.isInCurrentTab(lineID)) {
       if (marker != null) {
         editor.getJavaTextArea().setGutterText(lineID.lineIdx(), marker);

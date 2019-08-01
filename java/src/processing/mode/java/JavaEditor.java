@@ -2094,7 +2094,7 @@ public class JavaEditor extends Editor {
       // revert to breakpoint color if any is set on this line
       for (LineHighlight hl : breakpointedLines) {
         if (hl.getLineID().equals(currentLine.getLineID())) {
-          hl.paint();
+          hl.setTextSelection();
           break;
         }
       }
@@ -2113,7 +2113,7 @@ public class JavaEditor extends Editor {
     breakpointedLines.add(hl);
     // repaint current line if it's on this line
     if (currentLine != null && currentLine.getLineID().equals(lineID)) {
-      currentLine.paint();
+      currentLine.setTextSelection();
     }
   }
 
@@ -2139,7 +2139,7 @@ public class JavaEditor extends Editor {
       foundLine.dispose();
       // repaint current line if it's on this line
       if (currentLine != null && currentLine.getLineID().equals(line)) {
-        currentLine.paint();
+        currentLine.setTextSelection();
       }
     }
   }
@@ -2158,7 +2158,7 @@ public class JavaEditor extends Editor {
 
     // repaint current line
     if (currentLine != null) {
-      currentLine.paint();
+      currentLine.setTextSelection();
     }
   }
 
@@ -2223,14 +2223,14 @@ public class JavaEditor extends Editor {
       if (breakpointedLines != null) {
         for (LineHighlight hl : breakpointedLines) {
           if (isInCurrentTab(hl.getLineID())) {
-            hl.paint();
+            hl.setTextSelection();
           }
         }
       }
       // now paint current line (if any)
       if (currentLine != null) {
         if (isInCurrentTab(currentLine.getLineID())) {
-          currentLine.paint();
+          currentLine.setTextSelection();
         }
       }
     }
