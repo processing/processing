@@ -241,7 +241,7 @@ public class PreprocessedSketch {
     }
   }
 
-  public static PreprocessedSketch empty() {
+  public static PreprocessedSketch getSketchInstance() {
     return new Builder().build();
   }
 
