@@ -223,7 +223,7 @@ public class Server implements Runnable {
    * @webref server
    * @usage application
    */
-  public Client available() {
+  public Client getNextActiveClients() {
     synchronized (clientsLock) {
       int index = lastAvailable + 1;
       if (index >= clientCount) index = 0;
