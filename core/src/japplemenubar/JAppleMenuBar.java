@@ -51,19 +51,19 @@ public class JAppleMenuBar {
 	        instance = new JAppleMenuBar();
 
 	      } else {
-	        sadness("Problem saving " + FILENAME + " for full screen use.");
+	        printError("Problem saving " + FILENAME + " for full screen use.");
 	      }
 	    } else {
-        sadness("Could not load " + FILENAME + " from core.jar");
+        printError("Could not load " + FILENAME + " from core.jar");
 	    }
 	  } catch (IOException e) {
-	    sadness("Unknown error, here's the stack trace.");
+	    printError("Unknown error, here's the stack trace.");
 	    e.printStackTrace();
 	  }
 	}
 	
 	
-	static void sadness(String msg) {
+	static void printError(String msg) {
 	  System.err.println("Full screen mode disabled. " + msg);
 	}
 
