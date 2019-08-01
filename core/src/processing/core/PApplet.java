@@ -1810,7 +1810,7 @@ public class PApplet implements PConstants {
  * @webref structure
  * @usage web_application
  * @see PApplet#size(int, int)
- * @see PApplet#loop()
+ * @see PApplet#enableLooping()
  * @see PApplet#noLoop()
  * @see PApplet#draw()
  */
@@ -1840,7 +1840,7 @@ public class PApplet implements PConstants {
  * @webref structure
  * @usage web_application
  * @see PApplet#setup()
- * @see PApplet#loop()
+ * @see PApplet#enableLooping()
  * @see PApplet#noLoop()
  * @see PApplet#redraw()
  * @see PApplet#frameRate(float)
@@ -2544,7 +2544,7 @@ public class PApplet implements PConstants {
  * @webref structure
  * @usage web_application
  * @see PApplet#draw()
- * @see PApplet#loop()
+ * @see PApplet#enableLooping()
  * @see PApplet#noLoop()
  * @see PApplet#frameRate(float)
  */
@@ -2578,7 +2578,7 @@ public class PApplet implements PConstants {
  * @see PApplet#redraw()
  * @see PApplet#draw()
  */
-  synchronized public void loop() {
+  synchronized public void enableLooping() {
     if (!looping) {
       looping = true;
     }
@@ -2607,7 +2607,7 @@ public class PApplet implements PConstants {
    * ( end auto-generated )
  * @webref structure
  * @usage web_application
- * @see PApplet#loop()
+ * @see PApplet#enableLooping()
  * @see PApplet#redraw()
  * @see PApplet#draw()
  */
@@ -3409,7 +3409,7 @@ public class PApplet implements PConstants {
    * @see PApplet#frameCount
    * @see PApplet#setup()
    * @see PApplet#draw()
-   * @see PApplet#loop()
+   * @see PApplet#enableLooping()
    * @see PApplet#noLoop()
    * @see PApplet#redraw()
    */
@@ -3895,7 +3895,7 @@ public class PApplet implements PConstants {
    * @param name name of the function to be executed in a separate thread
    * @see PApplet#setup()
    * @see PApplet#draw()
-   * @see PApplet#loop()
+   * @see PApplet#enableLooping()
    * @see PApplet#noLoop()
    */
   public void thread(final String name) {
