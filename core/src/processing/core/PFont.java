@@ -883,7 +883,7 @@ public class PFont implements PConstants {
    * @usage application
    * @brief     Gets a list of the fonts installed on the system
    */
-  static public String[] list() {
+  static public String[] getFonts() {
     loadFonts();
     String list[] = new String[fonts.length];
     for (int i = 0; i < list.length; i++) {
