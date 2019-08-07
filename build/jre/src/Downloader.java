@@ -28,12 +28,9 @@ import org.apache.tools.ant.Task;
 
 
 /**
- * Ant Task for downloading the latest JRE or JDK from Oracle.
+ * Ant Task for downloading the latest JRE, JDK, or OpenJFX release.
  */
 public class Downloader extends Task {
-  static final String COOKIE =
-    "oraclelicense=accept-securebackup-cookie";
-
   private static final boolean PRINT_LOGGING = true;
 
   private boolean openJdk; // If using openJDK.
@@ -46,9 +43,9 @@ public class Downloader extends Task {
   // http://stackoverflow.com/q/10268583
   private String hash;  // d54c1d3a095b4ff2b6607d096fa80163
 
-  private boolean jdk;  // false if JRE
+  private String component;  // "JRE", "JDK", or "JFX"
 
-  private String flavor;
+  private String flavor; // Like "zip"
 
   private String path;  // target path
 
@@ -122,13 +119,12 @@ public class Downloader extends Task {
   }
 
   /**
-   * Indicate if the JDK or the JRE are being used.
+   * Indicate what component or release type of Java is being downloaded.
    *
-   * @param jdk True if the full JDK is being used. False if using JRE. Note that, after Java 11,
-   *    only JDK option is available.
+   * @param component The component to download like "JDK", "JRE", or "OpenJFX".
    */
-  public void setJDK(boolean jdk) {
-    this.jdk = jdk;
+  public void setComponent(String component) {
+    this.component = component;
   }
 
   /**
@@ -187,43 +183,34 @@ public class Downloader extends Task {
    * Download the package from AdoptOpenJDK or Oracle.
    */
   void download() throws IOException {
-    DownloadUrlGenerator downloadUrlGenerator;
+    DownloadItem downloadItem;
 
-    if (openJdk) {
-      downloadUrlGenerator = new AdoptOpenJdkDownloadUrlGenerator();
+    // Determine url generator for task
+    Optional<DownloadItem> downloadItemMaybe = getDownloadItem();
+    if (downloadItemMaybe.isEmpty()) {
+      return; // There is nothing to do.
     } else {
-      downloadUrlGenerator = new OracleDownloadUrlGenerator();
+      downloadItem = downloadItemMaybe.get();
     }
 
+    // Build URL and path
     if (path == null) {
-      path = downloadUrlGenerator.getLocalFilename(
-              platform,
-              jdk,
-              train,
-              version,
-              update,
-              build,
-              flavor,
-              hash
-      );
+      path = downloadItem.getLocalPath();
     }
 
-    String url = downloadUrlGenerator.buildUrl(
-            platform,
-            jdk,
-            train,
-            version,
-            update,
-            build,
-            flavor,
-            hash
-    );
+    String url = downloadItem.getUrl();
 
+    // Downlaod
     println("Attempting download at " + url);
 
     HttpURLConnection conn =
       (HttpURLConnection) new URL(url).openConnection();
-    conn.setRequestProperty("Cookie", COOKIE);
+
+    Optional<String> cookieMaybe = downloadItem.getCookie();
+
+    if (cookieMaybe.isPresent()) {
+      conn.setRequestProperty("Cookie", cookieMaybe.get());
+    }
 
     //printHeaders(conn);
     //conn.connect();
@@ -243,7 +230,11 @@ public class Downloader extends Task {
           conn.setRequestProperty("Cookie", cookie);
         }
       }
-      conn.setRequestProperty("Cookie", COOKIE);
+
+      if (cookieMaybe.isPresent()) {
+        conn.setRequestProperty("Cookie", cookieMaybe.get());
+      }
+
       conn.connect();
     }
 
@@ -301,6 +292,63 @@ public class Downloader extends Task {
       printEmptyLine();
       printEmptyLine();
     }
+  }
+
+  /**
+   * Get the item to be downloaded for this task.
+   *
+   * @return The to be downloaded or empty if there is no download required.
+   */
+  private Optional<DownloadItem> getDownloadItem() {
+    // Determine download type
+    boolean isJavaDownload = component.equalsIgnoreCase("jdk");
+    isJavaDownload = isJavaDownload || component.equalsIgnoreCase("jre");
+
+    boolean isJfxDownload = component.equalsIgnoreCase("jfx");
+
+    DownloadUrlGenerator downloadUrlGenerator;
+
+    // Determine url generator
+    if (isJavaDownload) {
+      if (openJdk) {
+        downloadUrlGenerator = new AdoptOpenJdkDownloadUrlGenerator();
+      } else {
+        downloadUrlGenerator = new OracleDownloadUrlGenerator();
+      }
+    } else if (isJfxDownload) {
+      if (openJdk) {
+        downloadUrlGenerator = new GluonHqDownloadUrlGenerator();
+      } else {
+        return Optional.empty(); // Nothing to download
+      }
+    } else {
+      throw new RuntimeException("Do not know how to download: " + component);
+    }
+
+    // Build download item
+    String path = downloadUrlGenerator.getLocalFilename(
+        platform,
+        component,
+        train,
+        version,
+        update,
+        build,
+        flavor,
+        hash
+    );
+
+    String url = downloadUrlGenerator.buildUrl(
+        platform,
+        component,
+        train,
+        version,
+        update,
+        build,
+        flavor,
+        hash
+    );
+
+    return Optional.of(new DownloadItem(url, path, downloadUrlGenerator.getCookie()));
   }
 
   /**

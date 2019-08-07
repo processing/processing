@@ -244,10 +244,10 @@ public class VariableInspector extends JDialog {
     //System.out.println("renderer: " + tree.getDefaultRenderer(String.class).getClass());
     //System.out.println("editor: " + tree.getDefaultEditor(String.class).getClass());
 
-    callStack = new ArrayList<DefaultMutableTreeNode>();
-    locals = new ArrayList<VariableNode>();
-    thisFields = new ArrayList<VariableNode>();
-    declaredThisFields = new ArrayList<VariableNode>();
+    callStack = new ArrayList<>();
+    locals = new ArrayList<>();
+    thisFields = new ArrayList<>();
+    declaredThisFields = new ArrayList<>();
 
     // Remove ugly (and unused) focus border on OS X
     scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));

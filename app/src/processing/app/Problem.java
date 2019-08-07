@@ -26,7 +26,7 @@ public interface Problem {
   public boolean isWarning();
 
   public int getTabIndex();
-  public int getLineNumber();
+  public int getLineNumber();  // 0-indexed
   public String getMessage();
 
   public int getStartOffset();

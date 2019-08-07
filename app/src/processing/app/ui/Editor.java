@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012-15 The Processing Foundation
+  Copyright (c) 2012-19 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -881,13 +881,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     undoItem = Toolkit.newJMenuItem(undoAction = new UndoAction(), 'Z');
     menu.add(undoItem);
 
-    // Gotta follow them interface guidelines
-    // http://code.google.com/p/processing/issues/detail?id=363
-    if (Platform.isWindows()) {
-      redoItem = Toolkit.newJMenuItem(redoAction = new RedoAction(), 'Y');
-    } else {  // Linux and OS X
-      redoItem = Toolkit.newJMenuItemShift(redoAction = new RedoAction(), 'Z');
-    }
+    redoItem = new JMenuItem(redoAction = new RedoAction());
+    redoItem.setAccelerator(Toolkit.getKeyStrokeExt("menu.edit.redo"));
     menu.add(redoItem);
 
     menu.addSeparator();
@@ -956,7 +951,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem(Language.text("menu.edit.comment_uncomment"), '/');
+    item = Toolkit.newJMenuItemExt("menu.edit.comment_uncomment");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleCommentUncomment();
@@ -964,7 +959,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem("\u2192 "+Language.text("menu.edit.increase_indent"), ']');
+    item = Toolkit.newJMenuItemExt("menu.edit.increase_indent");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(true);
@@ -972,7 +967,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     menu.add(item);
 
-    item = Toolkit.newJMenuItem("\u2190 "+Language.text("menu.edit.decrease_indent"), '[');
+    item = Toolkit.newJMenuItemExt("menu.edit.decrease_indent");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleIndentOutdent(false);
@@ -3088,9 +3083,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-    public void highlight(Problem p) {
+  public void highlight(Problem p) {
     if (p != null) {
-      highlight(p.getTabIndex(), p.getStartOffset(), p.getStartOffset());
+      highlight(p.getTabIndex(), p.getStartOffset(), p.getStopOffset());
     }
   }
 

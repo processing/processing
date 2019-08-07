@@ -936,14 +936,16 @@ public class AppBundlerTask extends Task {
 
         destination.getParentFile().mkdirs();
 
-        Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(sourcePath, destinationPath,
+               StandardCopyOption.REPLACE_EXISTING,
+               StandardCopyOption.COPY_ATTRIBUTES,
+               LinkOption.NOFOLLOW_LINKS);
 
         if (Files.isDirectory(sourcePath)) {
             String[] files = source.list();
 
-            for (int i = 0; i < files.length; i++) {
-                String file = files[i];
-                copy(new File(source, file), new File(destination, file));
+            for (String file : files) {
+              copy(new File(source, file), new File(destination, file));
             }
         }
     }

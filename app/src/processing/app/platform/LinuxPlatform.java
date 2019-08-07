@@ -23,6 +23,7 @@
 package processing.app.platform;
 
 import java.io.File;
+import java.awt.Desktop;
 import java.awt.Toolkit;
 
 import processing.app.Base;
@@ -83,26 +84,34 @@ public class LinuxPlatform extends DefaultPlatform {
   }
 
 
+  @Override
   public File getSettingsFolder() throws Exception {
     return new File(getHomeDir(), ".processing");
   }
 
 
+  @Override
   public File getDefaultSketchbookFolder() throws Exception {
     return new File(getHomeDir(), "sketchbook");
   }
 
 
+  @Override
   public void openURL(String url) throws Exception {
-    if (openFolderAvailable()) {
-      String launcher = Preferences.get("launcher");
-      if (launcher != null) {
-        Runtime.getRuntime().exec(new String[] { launcher, url });
-      }
+    if (Desktop.isDesktopSupported()) {
+      super.openURL(url);
+
+    } else if (openFolderAvailable()) {
+      String launcher = Preferences.get("launcher");  // guaranteed non-null
+      Runtime.getRuntime().exec(new String[] { launcher, url });
+
+    } else {
+      System.err.println("No launcher set, cannot open " + url);
     }
   }
 
 
+  @Override
   public boolean openFolderAvailable() {
     if (Preferences.get("launcher") != null) {
       return true;
@@ -137,19 +146,18 @@ public class LinuxPlatform extends DefaultPlatform {
   }
 
 
+  @Override
   public void openFolder(File file) throws Exception {
-    if (openFolderAvailable()) {
-      String lunch = Preferences.get("launcher");
-      try {
-        String[] params = new String[] { lunch, file.getAbsolutePath() };
-        //processing.core.PApplet.println(params);
-        /*Process p =*/ Runtime.getRuntime().exec(params);
-        /*int result =*/ //p.waitFor();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+    if (Desktop.isDesktopSupported()) {
+      super.openFolder(file);
+
+    } else if (openFolderAvailable()) {
+      String launcher = Preferences.get("launcher");
+      String[] params = new String[] { launcher, file.getAbsolutePath() };
+      Runtime.getRuntime().exec(params);
+
     } else {
-      System.out.println("No launcher set, cannot open " +
+      System.err.println("No launcher set, cannot open " +
                          file.getAbsolutePath());
     }
   }

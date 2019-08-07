@@ -57,7 +57,6 @@
         <or>
           <equals arg1="${os.arch}" arg2="arm" />
           <equals arg1="${os.arch}" arg2="aarch64" />
-          <not><isset property="env.PATH_TO_FX"/></not>
         </or>
       </condition>
 
@@ -91,7 +90,7 @@
     </sequential>
   </macrodef>
 
-  <target name="test-compile" description="Compile">
+  <target name="test-compile" description="Compile" depends="methods-build">
     <compilecommon srcdir="src; test" destdir="bin-test" classpath="classpath.test" />
   </target>
 

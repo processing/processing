@@ -45,14 +45,13 @@ import processing.app.ui.Toolkit;
 public class ListPanel extends JPanel
 implements Scrollable, ContributionListing.ChangeListener {
   ContributionTab contributionTab;
-  TreeMap<Contribution, DetailPanel> panelByContribution = new TreeMap<Contribution, DetailPanel>(ContributionListing.COMPARATOR);
-  Set<Contribution> visibleContributions = new TreeSet<Contribution>(ContributionListing.COMPARATOR);
+  TreeMap<Contribution, DetailPanel> panelByContribution = new TreeMap<>(ContributionListing.COMPARATOR);
 
   private DetailPanel selectedPanel;
-  protected Contribution.Filter filter;
-  protected ContributionListing contribListing = ContributionListing.getInstance();
+  protected ContributionRowFilter filter;
   protected JTable table;
-  DefaultTableModel model;
+  protected TableRowSorter<ContributionTableModel> sorter;
+  ContributionTableModel model;
   JScrollPane scrollPane;
 
   static Icon upToDateIcon;
@@ -63,7 +62,15 @@ implements Scrollable, ContributionListing.ChangeListener {
 
   // Should this be in theme.txt? Of course! Is it? No.
   static final Color HEADER_BGCOLOR = new Color(0xffEBEBEB);
+  static final Color SECTION_COLOR = new Color(0xFFf8f8f8);
+  static final Color SELECTION_COLOR = new Color(0xffe0fffd);
 
+  static final SectionHeaderContribution[] sections = {
+          new SectionHeaderContribution(ContributionType.LIBRARY),
+          new SectionHeaderContribution(ContributionType.MODE),
+          new SectionHeaderContribution(ContributionType.TOOL),
+          new SectionHeaderContribution(ContributionType.EXAMPLES)
+  };
 
   public ListPanel() {
     if (upToDateIcon == null) {
@@ -77,30 +84,42 @@ implements Scrollable, ContributionListing.ChangeListener {
 
 
   public ListPanel(final ContributionTab contributionTab,
-                   Contribution.Filter filter) {
+                   final Contribution.Filter filter,
+                   final boolean enableSections,
+                   final ContributionColumn... columns) {
+    this();
     this.contributionTab = contributionTab;
-    this.filter = filter;
+    this.filter = new ContributionRowFilter(filter);
 
     setLayout(new GridBagLayout());
     setOpaque(true);
     setBackground(Color.WHITE);
-    model = new ContribTableModel();
+    model = new ContributionTableModel(columns);
+    model.enableSections(enableSections);
     table = new JTable(model) {
       @Override
       public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
         Component c = super.prepareRenderer(renderer, row, column);
-        if (isRowSelected(row)) {
-          c.setBackground(new Color(0xe0fffd));
+        Object rowValue = getValueAt(row, column);
+        if (rowValue instanceof SectionHeaderContribution) {
+          c.setBackground(SECTION_COLOR);
+        } else if (isRowSelected(row)) {
+          c.setBackground(SELECTION_COLOR);
         } else {
           c.setBackground(Color.white);
         }
         return c;
       }
+
+      @Override
+      public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
+        if (!(getValueAt(rowIndex, columnIndex) instanceof SectionHeaderContribution)) {
+          super.changeSelection(rowIndex, columnIndex, toggle, extend);
+        }
+      }
     };
 
     // There is a space before Status
-    String[] colName = { " Status", "Name", "Author" };
-    model.setColumnIdentifiers(colName);
     scrollPane = new JScrollPane(table);
     scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -128,55 +147,22 @@ implements Scrollable, ContributionListing.ChangeListener {
             setSelectedPanel(panelByContribution.get(table.getValueAt(table
               .getSelectedRow(), 0)));
             // Preventing the focus to move out of filterField after typing every character
-            if (!contributionTab.filterField.hasFocus()) {
+            if (!contributionTab.filterHasFocus()) {
               table.requestFocusInWindow();
             }
           }
         }
       });
 
-    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
+    sorter = new TableRowSorter<>(model);
     table.setRowSorter(sorter);
-    sorter.setComparator(1, ContributionListing.COMPARATOR);
-    sorter.setComparator(2, new Comparator<Contribution>() {
-
-      @Override
-      public int compare(Contribution o1, Contribution o2) {
-        return getAuthorNameWithoutMarkup(o1.getAuthorList())
-          .compareTo(getAuthorNameWithoutMarkup(o2.getAuthorList()));
+    sorter.setRowFilter(this.filter);
+    for (int i=0; i < model.getColumnCount(); i++) {
+      if (model.columns[i] == ContributionColumn.NAME) {
+        sorter.setSortKeys(Collections.singletonList(new SortKey(i, SortOrder.ASCENDING)));
       }
-    });
-    sorter.setComparator(0, new Comparator<Contribution>() {
-
-      @Override
-      public int compare(Contribution o1, Contribution o2) {
-        int pos1 = 0;
-        if (o1.isInstalled()) {
-          pos1 = 1;
-          if (contribListing.hasUpdates(o1)) {
-            pos1 = 2;
-          }
-          if (!o1.isCompatible(Base.getRevision())) {
-            pos1 = 3;
-          }
-        } else {
-          pos1 = 4;
-        }
-        int pos2 = 0;
-        if (o2.isInstalled()) {
-          pos2 = 1;
-          if (contribListing.hasUpdates(o2)) {
-            pos2 = 2;
-          }
-          if (!o2.isCompatible(Base.getRevision())) {
-            pos2 = 3;
-          }
-        } else {
-          pos2 = 4;
-        }
-        return pos1 - pos2;
-      }
-    });
+      sorter.setComparator(i, model.columns[i].getComparator());
+    }
     table.getTableHeader().setDefaultRenderer(new ContribHeaderRenderer());
 
     GroupLayout layout = new GroupLayout(this);
@@ -187,6 +173,19 @@ implements Scrollable, ContributionListing.ChangeListener {
     table.setVisible(true);
   }
 
+  private static int getContributionStatusRank(Contribution c) {
+    int pos = 4;
+    if (c.isInstalled()) {
+      pos = 1;
+      if (ContributionListing.getInstance().hasUpdates(c)) {
+        pos = 2;
+      }
+      if (!c.isCompatible(Base.getRevision())) {
+        pos = 3;
+      }
+    }
+    return pos;
+  }
 
   class ContribHeaderRenderer extends DefaultTableCellRenderer {
 
@@ -264,16 +263,11 @@ implements Scrollable, ContributionListing.ChangeListener {
      * @return the SortKey, or null if the column is unsorted
      */
     protected SortKey getSortKey(JTable table, int column) {
-      RowSorter rowSorter = table.getRowSorter();
-      if (rowSorter == null) {
-        return null;
-      }
+      return Optional.ofNullable(table.getRowSorter())
+              .map(RowSorter::getSortKeys)
+              .map(columns -> columns.isEmpty() ? null : columns.get(0))
+              .orElse(null);
 
-      List sortedColumns = rowSorter.getSortKeys();
-      if (sortedColumns.size() > 0) {
-        return (SortKey) sortedColumns.get(0);
-      }
-      return null;
     }
   }
 
@@ -292,130 +286,269 @@ implements Scrollable, ContributionListing.ChangeListener {
                                                    int column) {
       Contribution contribution = (Contribution) value;
       JLabel label = new JLabel();
+      ContributionColumn col = model.columns[column];
       if (value == null) {
         // Working on https://github.com/processing/processing/issues/3667
         //System.err.println("null value seen in getTableCellRendererComponent()");
         // TODO this is now working, but the underlying issue is not fixed
         return label;
       }
-      if (column == 0) {
-        Icon icon = null;
-        label.setFont(ManagerFrame.NORMAL_PLAIN);
-        if (contribution.isInstalled()) {
-          icon = upToDateIcon;
-          if (contribListing.hasUpdates(contribution)) {
-            icon = updateAvailableIcon;
-          }
-          if (!contribution.isCompatible(Base.getRevision())) {
-            icon = incompatibleIcon;
-          }
-        }
-        if ((panelByContribution.get(contribution)).updateInProgress ||
-          (panelByContribution.get(contribution)).installInProgress) {
-          // Display "Loading icon" if download/install in progress
-          label.setIcon(downloadingIcon);
-        } else {
-          label.setIcon(icon);
-        }
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        if (isSelected) {
-          label.setBackground(new Color(0xe0fffd));
-        }
-        label.setOpaque(true);
-//        return table.getDefaultRenderer(Icon.class).getTableCellRendererComponent(table, icon, isSelected, false, row, column);
 
-      } else if (column == 1) {
-        // Generating ellipses based on fontMetrics
-        final Font boldFont = ManagerFrame.NORMAL_BOLD;
-        String fontFace = "<font face=\"" + boldFont.getName() + "\">";
-        FontMetrics fontMetrics = table.getFontMetrics(boldFont); //table.getFont());
-        int colSize = table.getColumnModel().getColumn(1).getWidth();
-        String sentence = contribution.getSentence();
-        //int currentWidth = table.getFontMetrics(table.getFont().deriveFont(Font.BOLD)).stringWidth(contribution.getName() + " | ");
-        int currentWidth = table.getFontMetrics(boldFont).stringWidth(contribution.getName() + " | ");
-        int ellipsesWidth = fontMetrics.stringWidth("...");
-        //String name = "<html><body><b>" + contribution.getName();
-        String name = "<html><body>" + fontFace + contribution.getName();
-        if (sentence == null) {
-          label.setText(name + "</font></body></html>");
-        } else {
-          sentence = " | </font>" + sentence;
-          currentWidth += ellipsesWidth;
-          int i = 0;
-          for (i = 0; i < sentence.length(); i++) {
-            currentWidth += fontMetrics.charWidth(sentence.charAt(i));
-            if (currentWidth >= colSize) {
-              break;
-            }
-          }
-          // Adding ellipses only if text doesn't fits into the column
-          if(i != sentence.length()){
-            label.setText(name + sentence.substring(0, i) + "...</body></html>");
-          }else {
-            label.setText(name + sentence + "</body></html>");
-          }
-        }
-        if (!contribution.isCompatible(Base.getRevision())) {
-          label.setForeground(Color.LIGHT_GRAY);
-        }
-        if (table.isRowSelected(row)) {
-          label.setBackground(new Color(0xe0fffd));
-        }
-        label.setFont(ManagerFrame.NORMAL_PLAIN);
-        label.setOpaque(true);
-      } else {
-        if (contribution.isSpecial()) {
-          label = new JLabel(foundationIcon);
-        } else {
-          label = new JLabel();
-        }
-        String authorList = contribution.getAuthorList();
-        String name = getAuthorNameWithoutMarkup(authorList);
-        label.setText(name);
-        label.setHorizontalAlignment(SwingConstants.LEFT);
-        if(!contribution.isCompatible(Base.getRevision())){
-          label.setForeground(Color.LIGHT_GRAY);
-        }else{
-          label.setForeground(Color.BLACK);
-        }
-        if (table.isRowSelected(row)) {
-          label.setBackground(new Color(0xe0fffd));
-        }
-        label.setFont(ManagerFrame.NORMAL_BOLD);
-        label.setOpaque(true);
+      label.setOpaque(true);
+
+      if (value instanceof SectionHeaderContribution && col != ContributionColumn.NAME) {
+        return label;
+      }
+      switch (col) {
+        case STATUS:
+        case STATUS_NO_HEADER:
+          configureStatusColumnLabel(label, contribution);
+          break;
+        case NAME:
+          configureNameColumnLabel(table, label, contribution);
+          break;
+        case AUTHOR:
+          configureAuthorsColumnLabel(label, contribution);
+          break;
+        case INSTALLED_VERSION:
+          label.setText(contribution.getBenignVersion());
+          break;
+        case AVAILABLE_VERSION:
+          label.setText(ContributionListing.getInstance().getLatestPrettyVersion(contribution));
+          break;
+      }
+
+      if(!contribution.isCompatible(Base.getRevision())){
+        label.setForeground(Color.LIGHT_GRAY);
       }
       return label;
     }
+
+    private void configureStatusColumnLabel(JLabel label, Contribution contribution) {
+      Icon icon = null;
+      label.setFont(ManagerFrame.NORMAL_PLAIN);
+      if ((panelByContribution.get(contribution)).updateInProgress ||
+              (panelByContribution.get(contribution)).installInProgress) {
+        // Display "Loading icon" if download/install in progress
+        icon = downloadingIcon;
+      } else if (contribution.isInstalled()) {
+        if (!contribution.isCompatible(Base.getRevision())) {
+          icon = incompatibleIcon;
+        } else if (ContributionListing.getInstance().hasUpdates(contribution)) {
+          icon = updateAvailableIcon;
+        } else if (panelByContribution.get(contribution).installInProgress
+                || panelByContribution.get(contribution).updateInProgress) {
+          icon = downloadingIcon;
+        } else {
+          icon = upToDateIcon;
+        }
+      }
+
+      label.setIcon(icon);
+      label.setHorizontalAlignment(SwingConstants.CENTER);
+    }
+
+    private void configureNameColumnLabel(JTable table, JLabel label, Contribution contribution) {
+      // Generating ellipses based on fontMetrics
+      final Font boldFont = ManagerFrame.NORMAL_BOLD;
+      FontMetrics fontMetrics = table.getFontMetrics(boldFont); //table.getFont());
+      int colSize = table.getColumnModel().getColumn(1).getWidth();
+      int currentWidth = fontMetrics.stringWidth(contribution.getName() + " | ...");
+      String sentence = contribution.getSentence();
+      StringBuilder text = new StringBuilder("<html><body><font face=\"")
+              .append(boldFont.getName())
+              .append("\">")
+              .append(contribution.getName());
+
+      if (sentence == null) {
+        text.append("</font>");
+      } else {
+        int i = 0;
+        for (i = 0; i < sentence.length(); i++) {
+          currentWidth += fontMetrics.charWidth(sentence.charAt(i));
+          if (currentWidth >= colSize) {
+            break;
+          }
+        }
+        text.append(" | </font>").append(sentence, 0, i);
+        // Adding ellipses only if text doesn't fits into the column
+        if(i != sentence.length()) {
+          text.append("...");
+        }
+      }
+      text.append("</body></html>");
+      label.setText(text.toString());
+      label.setFont(ManagerFrame.NORMAL_PLAIN);
+    }
+
+    private void configureAuthorsColumnLabel(JLabel label, Contribution contribution) {
+      if (contribution.isSpecial()) {
+        label.setIcon(foundationIcon);
+      }
+      String authorList = contribution.getAuthorList();
+      String name = getAuthorNameWithoutMarkup(authorList);
+      label.setText(name);
+      label.setHorizontalAlignment(SwingConstants.LEFT);
+      label.setForeground(Color.BLACK);
+      label.setFont(ManagerFrame.NORMAL_BOLD);
+    }
   }
 
+  protected enum ContributionColumn {
+    STATUS(" Status"),
+    NAME("Name"),
+    AUTHOR("Author"),
+    INSTALLED_VERSION("Installed"),
+    AVAILABLE_VERSION("Available"),
+    STATUS_NO_HEADER("");
 
-  static private class ContribTableModel extends DefaultTableModel {
+    final String name;
+
+    ContributionColumn(String name) {
+      this.name = name;
+    }
+
+    Comparator<Contribution> getComparator() {
+      Comparator<Contribution> comparator = Comparator.comparing(Contribution::getType)
+              .thenComparingInt(contribution -> contribution instanceof SectionHeaderContribution ? 0 : 1);
+      switch (this) {
+        case STATUS:
+        case STATUS_NO_HEADER:
+          return comparator.thenComparingInt(ListPanel::getContributionStatusRank);
+        case AUTHOR:
+          return comparator.thenComparing(contribution -> getAuthorNameWithoutMarkup(contribution.getAuthorList()));
+        case NAME:
+        default:
+          return comparator.thenComparing(Contribution::getName);
+      }
+    }
+  }
+
+  protected class ContributionTableModel extends AbstractTableModel {
+
+    ContributionColumn[] columns = { ContributionColumn.STATUS, ContributionColumn.NAME, ContributionColumn.AUTHOR };
+    boolean sectionsEnabled;
+
+    ContributionTableModel(ContributionColumn... columns) {
+      if (columns.length > 0) {
+        this.columns = columns;
+      }
+    }
+
     @Override
-    public boolean isCellEditable(int row, int column) {
-      return false;
+    public int getRowCount() {
+      return ContributionListing.getInstance().allContributions.size() + (sectionsEnabled ? 4 : 0);
+    }
+
+    @Override
+    public int getColumnCount() {
+      return columns.length;
+    }
+
+    @Override
+    public String getColumnName(int column) {
+      if (column < 0 || column > columns.length) {
+        return "";
+      }
+
+      return columns[column].name;
     }
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
       return Contribution.class;
     }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+      if (rowIndex >= ContributionListing.getInstance().allContributions.size()) {
+        return sections[rowIndex - ContributionListing.getInstance().allContributions.size()];
+      }
+
+      return ContributionListing.getInstance().allContributions.stream().skip(rowIndex).findFirst().orElse(null);
+    }
+
+    public void setColumns(ContributionColumn[] columns) {
+      this.columns = columns;
+    }
+
+    public void enableSections(boolean enable) {
+      this.sectionsEnabled = enable;
+    }
   }
 
+  protected class ContributionRowFilter extends RowFilter<ContributionTableModel, Integer> {
+    Contribution.Filter contributionFilter;
+    Optional<String> categoryFilter = Optional.empty();
+    List<String> stringFilters = Collections.emptyList();
 
-  String getAuthorNameWithoutMarkup(String authorList) {
-    StringBuilder name = new StringBuilder("");
+    ContributionRowFilter(Contribution.Filter contributionFilter) {
+      this.contributionFilter = contributionFilter;
+    }
+
+    public void setCategoryFilter(String categoryFilter) {
+      this.categoryFilter = Optional.ofNullable(categoryFilter);
+    }
+
+    public void setStringFilters(List<String> filters) {
+      this.stringFilters = filters;
+    }
+
+    @Override
+    public boolean include(Entry<? extends ContributionTableModel, ? extends Integer> entry) {
+      Contribution contribution = (Contribution) entry.getValue(0);
+      if (contribution instanceof SectionHeaderContribution) {
+        return includeSection((SectionHeaderContribution) contribution);
+      }
+      return includeContribution(contribution);
+    }
+
+    private boolean includeContribution(Contribution contribution) {
+      return contributionFilter.matches(contribution)
+              && categoryFilter.map(contribution::hasCategory).orElse(true)
+              && stringFilters.stream().allMatch(pattern -> ContributionListing.getInstance().matches(contribution, pattern));
+    }
+
+    private boolean includeSection(SectionHeaderContribution section) {
+      return ContributionListing.getInstance().allContributions.stream()
+              .filter(contribution -> contribution.getType() == section.getType())
+              .anyMatch(this::includeContribution);
+    }
+  }
+
+  protected static class SectionHeaderContribution extends Contribution {
+    ContributionType type;
+
+    SectionHeaderContribution(ContributionType type) {
+      this.type = type;
+      this.name = getTypeName();
+    }
+
+    @Override
+    public ContributionType getType() {
+      return type;
+    }
+
+    @Override
+    public boolean isInstalled() {
+      return false;
+    }
+  }
+
+  static String getAuthorNameWithoutMarkup(String authorList) {
+    StringBuilder name = new StringBuilder();
     if (authorList != null) {
+      int parentheses = 0;
       for (int i = 0; i < authorList.length(); i++) {
 
         if (authorList.charAt(i) == '[' || authorList.charAt(i) == ']') {
           continue;
         }
         if (authorList.charAt(i) == '(') {
-          i++;
-          while (authorList.charAt(i) != ')') {
-            i++;
-          }
-        } else {
+          parentheses++;
+        } else if (authorList.charAt(i) == ')') {
+          parentheses--;
+        } else if (parentheses == 0) {
           name.append(authorList.charAt(i));
         }
       }
@@ -424,58 +557,35 @@ implements Scrollable, ContributionListing.ChangeListener {
   }
 
   // Thread: EDT
-  void updatePanelOrdering(Set<Contribution> contributionsSet) {
-    model.getDataVector().removeAllElements();
-    int rowCount = 0;
-    for (Contribution entry : contributionsSet) {
-      model.addRow(new Object[]{entry, entry, entry});
-      if (selectedPanel != null &&
-          entry.getName().equals(selectedPanel.getContrib().getName())) {
-        table.setRowSelectionInterval(rowCount, rowCount);
-      }
-      rowCount++;
-    }
-    model.fireTableDataChanged();
-  }
-
-
-  // Thread: EDT
   public void contributionAdded(final Contribution contribution) {
-    if (filter.matches(contribution)) {
-      if (!panelByContribution.containsKey(contribution)) {
-        DetailPanel newPanel =
-          new DetailPanel(ListPanel.this);
-        panelByContribution.put(contribution, newPanel);
-        visibleContributions.add(contribution);
-        newPanel.setContribution(contribution);
-        add(newPanel);
-        updatePanelOrdering(visibleContributions);
-        updateColors();  // XXX this is the place
-      }
+    if (!panelByContribution.containsKey(contribution)) {
+      DetailPanel newPanel =
+              new DetailPanel(this);
+      panelByContribution.put(contribution, newPanel);
+      newPanel.setContribution(contribution);
+      add(newPanel);
+      model.fireTableDataChanged();
+      updateColors();  // XXX this is the place
     }
   }
 
 
   // Thread: EDT
   public void contributionRemoved(final Contribution contribution) {
-    if (filter.matches(contribution)) {
       DetailPanel panel = panelByContribution.get(contribution);
       if (panel != null) {
         remove(panel);
         panelByContribution.remove(contribution);
       }
-      visibleContributions.remove(contribution);
-      updatePanelOrdering(visibleContributions);
+      model.fireTableDataChanged();
       updateColors();
       updateUI();
-    }
   }
 
 
   // Thread: EDT
   public void contributionChanged(final Contribution oldContrib,
                                   final Contribution newContrib) {
-    if (filter.matches(oldContrib) || filter.matches(newContrib)) {
       DetailPanel panel = panelByContribution.get(oldContrib);
       if (panel == null) {
         contributionAdded(newContrib);
@@ -483,39 +593,16 @@ implements Scrollable, ContributionListing.ChangeListener {
         panelByContribution.remove(oldContrib);
         panel.setContribution(newContrib);
         panelByContribution.put(newContrib, panel);
+        model.fireTableDataChanged();
       }
-      if (visibleContributions.contains(oldContrib)) {
-        visibleContributions.remove(oldContrib);
-        visibleContributions.add(newContrib);
-      }
-      updatePanelOrdering(visibleContributions);
-    }
   }
 
 
   // Thread: EDT
-  public void filterLibraries(List<Contribution> filteredContributions) {
-    visibleContributions.clear();
-    for (Contribution contribution : panelByContribution.keySet()) {
-      if (contribution.getType() == contributionTab.contribType) {
-        // contains() uses equals() and there can be multiple instances,
-        // so Contribution.equals() has to be overridden
-        if (filteredContributions.contains(contribution)) {
-          if (panelByContribution.keySet().contains(contribution)) {
-            visibleContributions.add(contribution);
-          }
-        }
-      }
-    }
-    // TODO: Make the following loop work for optimization
-//  for (Contribution contribution : filteredContributions) {
-//    if (contribution.getType() == contributionTab.contribType) {
-//      if(panelByContribution.keySet().contains(contribution)){
-//       visibleContributions.add(contribution);
-//      }
-//    }
-//  }
-    updatePanelOrdering(visibleContributions);
+  public void filterLibraries(String category, List<String> filters) {
+    filter.setCategoryFilter(category);
+    filter.setStringFilters(filters);
+    model.fireTableDataChanged();
   }
 
 
@@ -554,38 +641,35 @@ implements Scrollable, ContributionListing.ChangeListener {
     int count = 0;
     for (Entry<Contribution, DetailPanel> entry : panelByContribution.entrySet()) {
       DetailPanel panel = entry.getValue();
+      Border border = BorderFactory.createEmptyBorder(1, 1, 1, 1);
 
-      if (panel.isVisible() && panel.isSelected()) {
-        panel.setBackground(UIManager.getColor("List.selectionBackground"));
-        panel.setForeground(UIManager.getColor("List.selectionForeground"));
-        panel.setBorder(UIManager.getBorder("List.focusCellHighlightBorder"));
+      if (panel.isVisible()) {
+        boolean oddRow = count % 2 == 1;
+        Color bgColor = null;
+        Color fgColor = UIManager.getColor("List.foreground");
+
+        if (panel.isSelected()) {
+          bgColor = UIManager.getColor("List.selectionBackground");
+          fgColor = UIManager.getColor("List.selectionForeground");
+          border = UIManager.getBorder("List.focusCellHighlightBorder");
+        } else if (Platform.isMacOS()) {
+          border = oddRow
+                  ? UIManager.getBorder("List.oddRowBackgroundPainter")
+                  : UIManager.getBorder("List.evenRowBackgroundPainter");
+        } else {
+          bgColor = oddRow
+                  ? new Color(219, 224, 229)
+                  : new Color(241, 241, 241);
+        }
+
+        panel.setForeground(fgColor);
+        if (bgColor != null) {
+          panel.setBackground(bgColor);
+        }
         count++;
-
-      } else {
-        Border border = null;
-        if (panel.isVisible()) {
-          if (Platform.isMacOS()) {
-            if (count % 2 == 1) {
-              border = UIManager.getBorder("List.oddRowBackgroundPainter");
-            } else {
-              border = UIManager.getBorder("List.evenRowBackgroundPainter");
-            }
-          } else {
-            if (count % 2 == 1) {
-              panel.setBackground(new Color(219, 224, 229));
-            } else {
-              panel.setBackground(new Color(241, 241, 241));
-            }
-          }
-          count++;
-        }
-
-        if (border == null) {
-          border = BorderFactory.createEmptyBorder(1, 1, 1, 1);
-        }
-        panel.setBorder(border);
-        panel.setForeground(UIManager.getColor("List.foreground"));
       }
+
+      panel.setBorder(border);
     }
   }
 
@@ -623,39 +707,38 @@ implements Scrollable, ContributionListing.ChangeListener {
    */
   @Override
   public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-    if (orientation == SwingConstants.VERTICAL) {
-      int lastHeight = 0, height = 0;
-      int bottomOfScrollArea = visibleRect.y + visibleRect.height;
+    if (orientation != SwingConstants.VERTICAL) {
+      return 0;
+    }
+    int lastHeight = 0;
+    int height = 0;
+    int bottomOfScrollArea = visibleRect.y + visibleRect.height;
 
-      for (Component c : getComponents()) {
-        if (c.isVisible()) {
-          if (c instanceof DetailPanel) {
-            Dimension d = c.getPreferredSize();
+    for (Component c : getComponents()) {
+      if (!(c.isVisible() && c instanceof DetailPanel)) {
+        continue;
+      }
+      Dimension d = c.getPreferredSize();
 
-            int nextHeight = height + d.height;
+      int nextHeight = height + d.height;
 
-            if (direction > 0) {
-              // scrolling down
-              if (nextHeight > bottomOfScrollArea) {
-                return nextHeight - bottomOfScrollArea;
-              }
-            } else {
-              // scrolling up
-              if (nextHeight > visibleRect.y) {
-                if (visibleRect.y != height) {
-                  return visibleRect.y - height;
-                } else {
-                  return visibleRect.y - lastHeight;
-                }
-              }
-            }
-
-            lastHeight = height;
-            height = nextHeight;
-          }
+      if (direction > 0) {
+        // scrolling down
+        if (nextHeight > bottomOfScrollArea) {
+          return nextHeight - bottomOfScrollArea;
+        }
+      } else if (nextHeight > visibleRect.y) {
+        if (visibleRect.y != height) {
+          return visibleRect.y - height;
+        } else {
+          return visibleRect.y - lastHeight;
         }
       }
+
+      lastHeight = height;
+      height = nextHeight;
     }
+
     return 0;
   }
 
@@ -673,6 +756,7 @@ implements Scrollable, ContributionListing.ChangeListener {
 
 
   public int getRowCount() {
-    return panelByContribution.size();
+    // This will count section headers, but it is only used to check if any rows are shown
+    return sorter.getViewRowCount();
   }
 }

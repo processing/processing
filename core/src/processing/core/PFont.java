@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012-15 The Processing Foundation
+  Copyright (c) 2012-19 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry & Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -146,10 +146,10 @@ public class PFont implements PConstants {
   protected boolean fontSearched;
 
   /**
-   * The name of the font that is used as default when a font isn't found.
+   * The name of the font that Java uses when a font isn't found.
    * See {@link #findFont(String)} and {@link #loadFonts()} for more info.
    */
-  static protected String defaultFontName;
+  static protected String systemFontName;
 
   /**
    * Array of the native system fonts. Used to lookup native fonts by their
@@ -157,22 +157,13 @@ public class PFont implements PConstants {
    * bug that they can't be bothered to fix.
    */
   static protected Font[] fonts;
-  static protected HashMap<String,Font> fontDifferent;
+  static protected HashMap<String, Font> fontDifferent;
 
-//  /**
-//   * If not null, this font is set to load dynamically. This is the default
-//   * when createFont() method is called without a character set. Bitmap
-//   * versions of characters are only created when prompted by an index() call.
-//   */
-//  protected Font lazyFont;
   protected BufferedImage lazyImage;
   protected Graphics2D lazyGraphics;
   protected FontMetrics lazyMetrics;
   protected int[] lazySamples;
 
-
-  /** for subclasses that need to store metadata about the font */
-//  protected HashMap<PGraphics, Object> cacheMap;
 
   /**
    * @nowebref
@@ -902,18 +893,33 @@ public class PFont implements PConstants {
   }
 
 
+  /**
+   * Make an internal list of all installed fonts.
+   *
+   * This can take a while with a lot of fonts installed, but running it on
+   * a separate thread may not help much. As of the commit that's adding this
+   * note, loadFonts() will only be called by PFont.list() and when loading a
+   * font by name, both of which are occasions when we'd need to block until
+   * this was finished anyway. It's also possible that running getAllFonts()
+   * on a non-EDT thread could cause graphics system issues. Further, the first
+   * fonts are usually loaded at the beginning of a sketch, meaning that sketch
+   * startup time will still be affected, even with threading in place.
+   *
+   * Where we're getting killed on font performance is due to this bug:
+   * https://bugs.openjdk.java.net/browse/JDK-8179209
+   */
   static public void loadFonts() {
     if (fonts == null) {
       GraphicsEnvironment ge =
         GraphicsEnvironment.getLocalGraphicsEnvironment();
       fonts = ge.getAllFonts();
-      defaultFontName = new Font("",Font.PLAIN,1).getFontName();
+
       if (PApplet.platform == PConstants.MACOSX) {
-        fontDifferent = new HashMap<String,Font>();
+        fontDifferent = new HashMap<>();
         for (Font font : fonts) {
-          // getName() returns the PostScript name on OS X 10.6 w/ Java 6.
+          // No need to use getPSName() anymore because getName()
+          // returns the PostScript name on OS X 10.6 w/ Java 6.
           fontDifferent.put(font.getName(), font);
-          //fontDifferent.put(font.getPSName(), font);
         }
       }
     }
@@ -924,30 +930,33 @@ public class PFont implements PConstants {
    * Starting with Java 1.5, Apple broke the ability to specify most fonts.
    * This bug was filed years ago as #4769141 at bugreporter.apple.com. More:
    * <a href="http://dev.processing.org/bugs/show_bug.cgi?id=407">Bug 407</a>.
-   *<br>
-   * This function displays a warning when the font isn't found and the default font is
-   * used.
+   * <br>
+   * This function displays a warning when the font is not found
+   * and Java's system font is used.
    * See: <a href="https://github.com/processing/processing/issues/5481">issue #5481</a>
    */
   static public Font findFont(String name) {
-    loadFonts();
     if (PApplet.platform == PConstants.MACOSX) {
+      loadFonts();
       Font maybe = fontDifferent.get(name);
       if (maybe != null) {
         return maybe;
       }
-//      for (int i = 0; i < fonts.length; i++) {
-//        if (name.equals(fonts[i].getName())) {
-//          return fonts[i];
-//        }
-//      }
     }
     Font font = new Font(name, Font.PLAIN, 1);
-    if(!defaultFontName.equals(name) && font.getFontName().equals(defaultFontName)) {
-      System.err.println("Warning: font \"" + name
-                         + "\" is missing or inaccessible on this system. Default font \""
-                         + defaultFontName + "\" is used.");
 
+    // make sure we have the name of the system fallback font
+    if (systemFontName == null) {
+      // Figure out what the font is named when things fail
+      systemFontName = new Font("", Font.PLAIN, 1).getFontName();
+    }
+
+    // warn the user if they didn't get the font they want
+    if (!name.equals(systemFontName) &&
+        font.getFontName().equals(systemFontName)) {
+      PGraphics.showWarning("\"" + name + "\" is not available, " +
+                            "so another font will be used. " +
+                            "Use PFont.list() to show available fonts.");
     }
     return font;
   }

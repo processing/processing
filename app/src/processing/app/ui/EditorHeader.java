@@ -3,8 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013-15 The Processing Foundation
-  Copyright (c) 2004-13 Ben Fry and Casey Reas
+  Copyright (c) 2012-19 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -494,47 +494,29 @@ public class EditorHeader extends JComponent {
 
     //  KeyEvent.VK_LEFT and VK_RIGHT will make Windows beep
 
-    final String prevTab = Language.text("editor.header.previous_tab");
-    if (Platform.isLinux()) {
-      item = Toolkit.newJMenuItem(prevTab, KeyEvent.VK_PAGE_UP);
-    } else {
-      item = Toolkit.newJMenuItemAlt(prevTab, KeyEvent.VK_LEFT);
-    }
+    mapKey = "editor.header.previous_tab";
+    item = Toolkit.newJMenuItemExt(mapKey);
     action = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         editor.getSketch().handlePrevCode();
       }
     };
-    mapKey = "editor.header.previous_tab";
-    if (Platform.isLinux()) {
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, Toolkit.SHORTCUT_KEY_MASK);
-    } else {
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, Toolkit.SHORTCUT_ALT_KEY_MASK);
-    }
+    keyStroke = item.getAccelerator();
     inputMap.put(keyStroke, mapKey);
     actionMap.put(mapKey, action);
     item.addActionListener(action);
     menu.add(item);
 
-    final String nextTab = Language.text("editor.header.next_tab");
-    if (Platform.isLinux()) {
-      item = Toolkit.newJMenuItem(nextTab, KeyEvent.VK_PAGE_DOWN);
-    } else {
-      item = Toolkit.newJMenuItemAlt(nextTab, KeyEvent.VK_RIGHT);
-    }
+    mapKey = "editor.header.next_tab";
+    item = Toolkit.newJMenuItemExt(mapKey);
     action = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         editor.getSketch().handleNextCode();
       }
     };
-    mapKey = "editor.header.next_tab";
-    if (Platform.isLinux()) {
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, Toolkit.SHORTCUT_KEY_MASK);
-    } else {
-      keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, Toolkit.SHORTCUT_ALT_KEY_MASK);
-    }
+    keyStroke = item.getAccelerator();
     inputMap.put(keyStroke, mapKey);
     actionMap.put(mapKey, action);
     item.addActionListener(action);

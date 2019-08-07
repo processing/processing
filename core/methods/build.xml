@@ -2,36 +2,22 @@
 
   <target name="compile">
 
-    <!-- Check for JDT compiler, since this is likely a PDE build. Using
-	 it allows us to build the PDE with only a JRE on Windows and Linux.
-	 So that the core can be built independently of the PDE, 
-	 use javac (the "modern" compiler) if ecj is not present. -->
-    <property name="jdt.jar" value="../../java/mode/org.eclipse.jdt.core.jar" />
-    <condition property="build.compiler" 
-	       value="org.eclipse.jdt.core.JDTCompilerAdapter"
-	       else="modern">
-      <available file="${jdt.jar}" />
-    </condition>
-    <!--<echo message="compiler is ${build.compiler}" />-->
-
     <mkdir dir="bin" />
     <javac source="1.8"
            target="1.8"
-	   srcdir="src" 
-           destdir="bin" 
-	   debug="true" 
+	   srcdir="src"
+           destdir="bin"
+	   debug="true"
 	   includeantruntime="true"
 	   nowarn="true">
-      <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
-      <compilerclasspath path="${jdt.jar}; 
-                               ../../java/mode/jdtCompilerAdapter.jar" />
+     
     </javac>
   </target>
-  
+
   <target name="dist" depends="compile">
     <jar basedir="bin" destfile="methods.jar" />
   </target>
-  
+
   <target name="demo" depends="dist">
     <mkdir dir="demo" />
 
@@ -41,12 +27,12 @@
       <fileset file="../src/processing/core/PImage.java" />
     </copy>
 
-    <taskdef name="methods" 
-	     classname="PAppletMethods" 
+    <taskdef name="methods"
+	     classname="PAppletMethods"
 	     classpath="methods.jar" />
     <methods dir="demo"/>
   </target>
-  
+
   <target name="clean">
     <delete dir="bin" />
     <delete file="methods.jar" />
