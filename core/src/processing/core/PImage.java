@@ -24,8 +24,6 @@
 
 package processing.core;
 
-import processing.core.util.image.TifConstants;
-
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
@@ -62,6 +60,15 @@ import javax.imageio.metadata.*;
  * @see PApplet#createImage(int, int, int)
  */
 public class PImage implements PConstants, Cloneable {
+
+  private static final byte TIFF_HEADER[] = {
+    77, 77, 0, 42, 0, 0, 0, 8, 0, 9, 0, -2, 0, 4, 0, 0, 0, 1, 0, 0,
+    0, 0, 1, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 3, 0, 0, 0, 1,
+    0, 0, 0, 0, 1, 2, 0, 3, 0, 0, 0, 3, 0, 0, 0, 122, 1, 6, 0, 3, 0,
+    0, 0, 1, 0, 2, 0, 0, 1, 17, 0, 4, 0, 0, 0, 1, 0, 0, 3, 0, 1, 21,
+    0, 3, 0, 0, 0, 1, 0, 3, 0, 0, 1, 22, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0,
+    1, 23, 0, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8, 0, 8
+  };
 
   /**
    * Format for this image, one of RGB, ARGB or ALPHA.
@@ -2994,11 +3001,11 @@ int testFunction(int dst, int src) {
     try {
       byte tiff[] = new byte[768];
       System.arraycopy(
-          TifConstants.TIFF_HEADER,
+          TIFF_HEADER,
           0,
           tiff,
           0,
-          TifConstants.TIFF_HEADER.length
+          TIFF_HEADER.length
       );
 
       tiff[30] = (byte) ((pixelWidth >> 8) & 0xff);
@@ -3308,10 +3315,10 @@ int testFunction(int dst, int src) {
   /**
    * ( begin auto-generated from PImage_save.xml )
    *
-   * Saves the image into a file. Append a file extension to the name of 
-   * the file, to indicate the file format to be used: either TIFF (.tif), 
-   * TARGA (.tga), JPEG (.jpg), or PNG (.png). If no extension is included 
-   * in the filename, the image will save in TIFF format and .tif will be 
+   * Saves the image into a file. Append a file extension to the name of
+   * the file, to indicate the file format to be used: either TIFF (.tif),
+   * TARGA (.tga), JPEG (.jpg), or PNG (.png). If no extension is included
+   * in the filename, the image will save in TIFF format and .tif will be
    * added to the name.  These files are saved to the sketch's folder, which
    * may be opened by selecting "Show sketch folder" from the "Sketch" menu.
    * <br /><br />To save an image created within the code, rather
@@ -3351,17 +3358,68 @@ int testFunction(int dst, int src) {
    * @usage application
    * @param filename a sequence of letters and numbers
    */
-  public boolean save(String filename) {
-    // Make sure the pixel data is ready to go
-    loadPixels();
+   public boolean save(String filename) {  // ignore
+     boolean success = false;
 
-    return ImageSaveFacade.get().save(
-        pixels,
-        pixelWidth,
-        pixelHeight,
-        format,
-        filename,
-        parent
-    );
-  }
+     if (parent != null) {
+       // use savePath(), so that the intermediate directories are created
+       filename = parent.savePath(filename);
+
+     } else {
+       File file = new File(filename);
+       if (file.isAbsolute()) {
+         // make sure that the intermediate folders have been created
+         PApplet.createPath(file);
+       } else {
+         String msg =
+           "PImage.save() requires an absolute path. " +
+           "Use createImage(), or pass savePath() to save().";
+         PGraphics.showException(msg);
+       }
+     }
+
+     // Make sure the pixel data is ready to go
+     loadPixels();
+
+     try {
+       OutputStream os = null;
+
+       if (saveImageFormats == null) {
+         saveImageFormats = javax.imageio.ImageIO.getWriterFormatNames();
+       }
+       if (saveImageFormats != null) {
+         for (int i = 0; i < saveImageFormats.length; i++) {
+           if (filename.endsWith("." + saveImageFormats[i])) {
+             if (!saveImageIO(filename)) {
+               System.err.println("Error while saving image.");
+               return false;
+             }
+             return true;
+           }
+         }
+       }
+
+       if (filename.toLowerCase().endsWith(".tga")) {
+         os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
+         success = saveTGA(os); //, pixels, width, height, format);
+
+       } else {
+         if (!filename.toLowerCase().endsWith(".tif") &&
+             !filename.toLowerCase().endsWith(".tiff")) {
+           // if no .tif extension, add it..
+           filename += ".tif";
+         }
+         os = new BufferedOutputStream(new FileOutputStream(filename), 32768);
+         success = saveTIFF(os); //, pixels, width, height);
+       }
+       os.flush();
+       os.close();
+
+     } catch (IOException e) {
+       System.err.println("Error while saving image.");
+       e.printStackTrace();
+       success = false;
+     }
+     return success;
+   }
 }
