@@ -68,8 +68,8 @@
   	   includeAntRuntime="false"
   	   debug="true"
   	   destdir="@{destdir}"
-	   classpath=""
   	   nowarn="true">
+        <classpath refid="@{classpath}"/>
         <src path="@{srcdir}" />
         <include name="processing/**" />
         <exclude name="processing/javafx/**" if="fx.unavailable" />
@@ -102,8 +102,7 @@
     <junit haltonfailure="true">
       <classpath refid="classpath.test" />
       <formatter type="brief" usefile="false" />
-      <test name="processing.core.util.io.PathUtilTest" />
-      <test name="processing.core.util.io.InputFactoryTest" />
+      <!-- Plauceholder for future tests to make consistent with other modules. -->
     </junit>
   </target>
 
