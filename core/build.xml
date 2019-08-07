@@ -102,7 +102,11 @@
     <junit haltonfailure="true">
       <classpath refid="classpath.test" />
       <formatter type="brief" usefile="false" />
-      <!-- Plauceholder for future tests to make consistent with other modules. -->
+      <batchtest>
+        <fileset dir="test">
+          <include name="**/*Test.java" />
+        </fileset>
+      </batchtest>
     </junit>
   </target>
 
