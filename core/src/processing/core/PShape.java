@@ -1936,7 +1936,11 @@ public class PShape implements PConstants {
     boolean requiresCheckAlpha = extension.equals("gif") || extension.equals("png") ||
         extension.equals("unknown");
 
-    PImage loadedImage = new PImage(awtImage, requiresCheckAlpha);
+    PImage loadedImage = new PImage(awtImage);
+
+    if (requiresCheckAlpha) {
+        loadedImage.checkAlpha();
+    }
 
     if (loadedImage.width == -1) {
       // error...
