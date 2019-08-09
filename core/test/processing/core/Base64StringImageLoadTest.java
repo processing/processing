@@ -20,6 +20,7 @@ public class Base64StringImageLoadTest {
   }
 
   private static void assertPImagePattern(PImage results) {
+    // Simply check a few sample pixels from the above pattern
     Assert.assertEquals(7, results.pixelWidth);
     Assert.assertEquals(5, results.pixelHeight);
     Assert.assertEquals(7, results.width);
