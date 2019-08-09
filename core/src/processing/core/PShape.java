@@ -1941,6 +1941,7 @@ public class PShape implements PConstants {
       BufferedImage buffImage = (BufferedImage) awtImage;
       int space = buffImage.getColorModel().getColorSpace().getType();
       if (space == ColorSpace.TYPE_CMYK) {
+        System.err.println("Could not load CMYK color space on image: " + imagePath.substring(0, 20));
        return null;
       }
     }
