@@ -35,6 +35,7 @@
 
   <path id="classpath.test">
     <pathelement location="library-test/junit-4.8.1.jar" />
+    <pathelement location="library-test/mockito-all-1.10.19.jar" />
     <pathelement location="bin-test" />
     <path refid="classpath.base" />
   </path>

@@ -70,7 +70,7 @@ public class PImage implements PConstants, Cloneable {
     1, 23, 0, 4, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 8, 0, 8
   };
 
-  static final String TIFF_ERROR = "Error: Processing can only read its own TIFF files.";
+  private static final String TIFF_ERROR = "Error: Processing can only read its own TIFF files.";
 
   /**
    * Format for this image, one of RGB, ARGB or ALPHA.
