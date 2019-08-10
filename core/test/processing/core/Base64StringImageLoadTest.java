@@ -15,11 +15,8 @@ public class Base64StringImageLoadTest {
 
   @Test
   public void testLoad() {
-    PImage image = PShape.parseBase64Image(TEST_CONTENT);
-    assertPImagePattern(image);
-  }
+    PImage results = PShape.parseBase64Image(TEST_CONTENT);
 
-  private static void assertPImagePattern(PImage results) {
     // Simply check a few sample pixels from the above pattern
     Assert.assertEquals(7, results.pixelWidth);
     Assert.assertEquals(5, results.pixelHeight);
