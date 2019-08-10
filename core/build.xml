@@ -6,7 +6,6 @@
   <target name="clean" description="Clean out the build directories">
     <delete dir="bin" />
     <delete dir="bin-test" />
-    <delete dir="resource-test/scratch" />
     <delete file="library/core.jar" />
   </target>
 
