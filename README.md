@@ -4,9 +4,8 @@ Processing
 This is the official source code for the [Processing](http://processing.org) Development Environment (PDE),
 the “core” and the libraries that are included with the [download](http://processing.org/download).
 
-
-__command not found: processing-java ???__
-macOS -> brew cask install processing
+__Command line support__ [here] https://github.com/processing/processing/wiki/Command-Line 
+command not found: processing-java 
 Run App > Tools > install processing-java
 
 
