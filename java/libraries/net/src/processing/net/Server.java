@@ -73,8 +73,6 @@ public class Server implements Runnable {
     
     
   /**
-   * @param parent typically use "this"
-   * @param port port used to transfer data
    * @param host when multiple NICs are in use, the ip (or name) to bind from 
    */
   public Server(PApplet parent, int port, String host) {

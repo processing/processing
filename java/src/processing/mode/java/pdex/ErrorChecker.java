@@ -144,18 +144,21 @@ class ErrorChecker {
         EventQueue.invokeLater(() -> editor.setProblemList(problems));
       }
     };
-    scheduledUiUpdate = scheduler.schedule(uiUpdater, delay,
-                                           TimeUnit.MILLISECONDS);
+    scheduledUiUpdate =
+      scheduler.schedule(uiUpdater, delay, TimeUnit.MILLISECONDS);
   }
+
 
   static private JavaProblem convertIProblem(IProblem iproblem, PreprocessedSketch ps) {
     SketchInterval in = ps.mapJavaToSketch(iproblem);
-    if (in == SketchInterval.BEFORE_START) return null;
-    String badCode = ps.getPdeCode(in);
-    int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
-    JavaProblem p = JavaProblem.fromIProblem(iproblem, in.tabIndex, line, badCode);
-    p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
-    return p;
+    if (in != SketchInterval.BEFORE_START) {
+      String badCode = ps.getPdeCode(in);
+      int line = ps.tabOffsetToTabLine(in.tabIndex, in.startTabOffset);
+      JavaProblem p = JavaProblem.fromIProblem(iproblem, in.tabIndex, line, badCode);
+      p.setPDEOffsets(in.startTabOffset, in.stopTabOffset);
+      return p;
+    }
+    return null;
   }
 
 
@@ -168,23 +171,20 @@ class ErrorChecker {
 
 
   static private boolean isMissingBraceProblem(IProblem iproblem) {
-    switch (iproblem.getID()) {
-      case IProblem.ParsingErrorInsertToComplete: {
-        char brace = iproblem.getArguments()[0].charAt(0);
-        return brace == '{' || brace == '}';
-      }
-      case IProblem.ParsingErrorInsertTokenAfter: {
-        char brace = iproblem.getArguments()[1].charAt(0);
-        return brace == '{' || brace == '}';
-      }
-      default:
-        return false;
+    if (iproblem.getID() == IProblem.ParsingErrorInsertToComplete) {
+      char brace = iproblem.getArguments()[0].charAt(0);
+      return brace == '{' || brace == '}';
+
+    } else if (iproblem.getID() == IProblem.ParsingErrorInsertTokenAfter) {
+      char brace = iproblem.getArguments()[1].charAt(0);
+      return brace == '{' || brace == '}';
     }
+    return false;
   }
 
 
-  private static final Pattern CURLY_QUOTE_REGEX =
-      Pattern.compile("([“”‘’])", Pattern.UNICODE_CHARACTER_CLASS);
+  static private final Pattern CURLY_QUOTE_REGEX =
+    Pattern.compile("([“”‘’])", Pattern.UNICODE_CHARACTER_CLASS);
 
   static private List<JavaProblem> checkForCurlyQuotes(PreprocessedSketch ps) {
     List<JavaProblem> problems = new ArrayList<>(0);

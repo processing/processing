@@ -3083,9 +3083,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-    public void highlight(Problem p) {
+  public void highlight(Problem p) {
     if (p != null) {
-      highlight(p.getTabIndex(), p.getStartOffset(), p.getStartOffset());
+      highlight(p.getTabIndex(), p.getStartOffset(), p.getStopOffset());
     }
   }
 

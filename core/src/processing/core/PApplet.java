@@ -281,6 +281,9 @@ public class PApplet implements PConstants {
    * @see PApplet#get(int, int, int, int)
    * @see PApplet#set(int, int, int)
    * @see PImage
+   * @see PApplet#pixelDensity()
+   * @see PApplet#pixelWidth
+   * @see PApplet#pixelHeight
    */
   public int[] pixels;
 
@@ -1210,7 +1213,8 @@ public class PApplet implements PConstants {
  /**
   * @webref environment
   * @param density 1 or 2
-  *
+  * @see PApplet#pixelWidth
+  * @see PApplet#pixelHeight
   */
   public void pixelDensity(int density) {
     //println(density + " " + this.pixelDensity);
@@ -2000,6 +2004,9 @@ public class PApplet implements PConstants {
    * @param height height of the display window in units of pixels
    * @see PApplet#width
    * @see PApplet#height
+   * @see PApplet#setup()
+   * @see PApplet#settings()
+   * @see PApplet#fullScreen()
    */
   public void size(int width, int height) {
     // Check to make sure the width/height have actually changed. It's ok to
@@ -12573,17 +12580,17 @@ public class PApplet implements PConstants {
    * ( begin auto-generated from curvePoint.xml )
    *
    * Evalutes the curve at point t for points a, b, c, d. The parameter t
-   * varies between 0 and 1, a and d are points on the curve, and b and c are
-   * the control points. This can be done once with the x coordinates and a
+   * varies between 0 and 1, a and d are the control points, and b and c are
+   * the points on the curve. This can be done once with the x coordinates and a
    * second time with the y coordinates to get the location of a curve at t.
    *
    * ( end auto-generated )
    *
    * @webref shape:curves
-   * @param a coordinate of first point on the curve
-   * @param b coordinate of second point on the curve
-   * @param c coordinate of third point on the curve
-   * @param d coordinate of fourth point on the curve
+   * @param a coordinate of first control point
+   * @param b coordinate of first point on the curve
+   * @param c coordinate of second point on the curve
+   * @param d coordinate of second control point
    * @param t value between 0 and 1
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PGraphics#curveVertex(float, float)
@@ -14855,6 +14862,8 @@ public class PApplet implements PConstants {
 
 /**
  * gray number specifying value between white and black
+ * 
+ * @param gray value between black and white, by default 0 to 255
  */
   public void specular(float gray) {
     if (recorder != null) recorder.specular(gray);
@@ -14920,6 +14929,8 @@ public class PApplet implements PConstants {
 
   /**
    * gray number specifying value between white and black
+   * 
+   * @param gray value between black and white, by default 0 to 255
    */
   public void emissive(float gray) {
     if (recorder != null) recorder.emissive(gray);

@@ -90,7 +90,7 @@ public class PImage implements PConstants, Cloneable {
    *
    * @webref image:pixels
    * @usage web_application
-   * @brief     Array containing the color of every pixel in the image
+   * @brief Array containing the color of every pixel in the image
    */
   public int[] pixels;
 
