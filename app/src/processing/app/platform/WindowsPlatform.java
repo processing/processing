@@ -71,9 +71,14 @@ public class WindowsPlatform extends DefaultPlatform {
 
   public void initBase(Base base) {
     super.initBase(base);
+
     checkAssociations();
+
     //checkQuickTime();
     checkPath();
+
+    // Disable swing scaling (#5753)
+    System.setProperty("sun.java2d.uiScale", "1.0");
 
     /*
     File f = new File(System.getProperty("user.dir"), "recycle-test.txt");
