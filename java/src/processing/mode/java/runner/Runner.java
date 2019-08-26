@@ -351,7 +351,7 @@ public class Runner implements MessageConsumer {
     } else if (Platform.isWindows()) {
       // No scaling of swing (see #5753) on zoomed displays until some issues regarding JEP 263
       // with rendering artifacts are sorted out.
-      runOptions.append("-Dsun.java2d.uiScale=1");
+      params.append("-Dsun.java2d.uiScale=1");
     }
 
     // sketch.libraryPath might be ""
