@@ -976,6 +976,10 @@ public class JavaBuild {
     // https://github.com/processing/processing/issues/2559
     if (exportPlatform == PConstants.WINDOWS) {
       runOptions.append("-Djava.library.path=\"%EXEDIR%\\lib\"");
+
+      // No scaling of swing (see #5753) on zoomed displays until some issues regarding JEP 263
+      // with rendering artifacts are sorted out.
+      runOptions.append("-Dsun.java2d.uiScale=1");
     }
 
 

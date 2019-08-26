@@ -87,8 +87,8 @@
 
   <property name="jdk.train" value="11" />
   <property name="jdk.version" value="0" />
-  <property name="jdk.update" value="1" />
-  <property name="jdk.build" value="13" />
+  <property name="jdk.update" value="4" />
+  <property name="jdk.build" value="11" />
 
   <property name="jfx.train" value="11" />
   <property name="jfx.version" value="0" />

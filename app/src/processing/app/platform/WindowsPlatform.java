@@ -71,7 +71,9 @@ public class WindowsPlatform extends DefaultPlatform {
 
   public void initBase(Base base) {
     super.initBase(base);
+
     checkAssociations();
+
     //checkQuickTime();
     checkPath();
 
