@@ -44,6 +44,8 @@
     <opt>-Dsun.java2d.d3d=false</opt>
     <opt>-Dsun.java2d.ddoffscreen=false</opt>
     <opt>-Dsun.java2d.noddraw=true</opt>
+    <!-- No scaling of swing (see #5753) -->
+    <opt>-Dsun.java2d.uiScale=1</opt>
     <!-- starting in 3.0, require Java 8 -->
     <minVersion>1.8.0_60</minVersion>
     <!-- increase available per PDE X request -->
