@@ -76,11 +76,16 @@ public class JEditTextArea extends JComponent
   /** The size of the offset between the leftmost padding and the code */
   public static final int leftHandGutter = 6;
 
+  private final Segment TEST_SEGMENT;
+
   private InputMethodSupport inputMethodSupport;
 
   private TextAreaDefaults defaults;
 
   private Brackets bracketHelper = new Brackets();
+
+  private FontMetrics cachedPartialPixelWidthFont;
+  private float partialPixelWidth;
 
 
   /**
@@ -89,6 +94,9 @@ public class JEditTextArea extends JComponent
    */
   public JEditTextArea(TextAreaDefaults defaults, InputHandler inputHandler) {
     this.defaults = defaults;
+
+    char[] testSegmentContents = {'w'};
+    TEST_SEGMENT = new Segment(testSegmentContents, 0, 1);
 
     // Enable the necessary events
     enableEvents(AWTEvent.KEY_EVENT_MASK);
@@ -113,6 +121,8 @@ public class JEditTextArea extends JComponent
     lineSegment = new Segment();
     bracketLine = bracketPosition = -1;
     blink = true;
+    cachedPartialPixelWidthFont = null;
+    partialPixelWidth = 0;
 
     // Initialize the GUI
     setLayout(new ScrollLayout());
@@ -632,7 +642,7 @@ public class JEditTextArea extends JComponent
     // If syntax coloring is disabled, do simple translation
     if (tokenMarker == null) {
       lineSegment.count = offset;
-      return x + Utilities.getTabbedTextWidth(lineSegment, fm, x, painter, 0);
+      return x + getTabbedTextWidth(lineSegment, fm, x, painter, 0);
 
     } else {
       // If syntax coloring is enabled, we have to do this
@@ -664,10 +674,10 @@ public class JEditTextArea extends JComponent
         int length = tokens.length;
         if (offset + segmentOffset < lineSegment.offset + length) {
           lineSegment.count = offset - (lineSegment.offset - segmentOffset);
-          return x + Utilities.getTabbedTextWidth(lineSegment, fm, x, painter, 0);
+          return x + getTabbedTextWidth(lineSegment, fm, x, painter, 0);
         } else {
           lineSegment.count = length;
-          x += Utilities.getTabbedTextWidth(lineSegment, fm, x, painter, 0);
+          x += getTabbedTextWidth(lineSegment, fm, x, painter, 0);
           lineSegment.offset += length;
         }
         tokens = tokens.next;
@@ -1308,6 +1318,72 @@ public class JEditTextArea extends JComponent
       return CharacterKinds.Whitespace;
     else
       return CharacterKinds.Other;
+  }
+
+  /**
+   * Get the width in pixels of a segment of text within the IDE.
+   *
+   * <p>
+   * Fractional-font aware implementation of Utilities.getTabbedTextWidth that determines if there
+   * are fractional character widths present in a font in order to return a more accurate pixel
+   * width for an input segment.
+   * </p>
+   *
+   * @param s The segment of text for which a pixel width should be returned.
+   * @param metrics The metrics for the font in which the given segment will be drawn.
+   * @param x The x origin.
+   * @param expander The strategy for converting tabs into characters.
+   * @param startOffset The offset to apply before the text will be drawn.
+   * @return The width of the input segment in pixels with fractional character widths considered.
+   */
+  private int getTabbedTextWidth(Segment s, FontMetrics metrics, float x, TabExpander expander,
+      int startOffset) {
+
+    float additionalOffset = getPartialPixelWidth(metrics, x, expander, startOffset) * s.length();
+
+    return (int) Math.round(
+      Utilities.getTabbedTextWidth(s, metrics, x, expander, startOffset) + additionalOffset
+    );
+  }
+
+  /**
+   * Get any partial widths applied within a font.
+   *
+   * <p>
+   * Get any partial widths applied within a font, caching results for the latest requested font
+   * (as identified via a FontMetrics object). Note that this is calculated for a sample character
+   * and is only valid for extrapolation in a monospaced font (that one might want to use in an
+   * IDE).
+   * </p>
+   *
+   * @param candidateMetrics The FontMetrics for which partial character pixel widths should be
+   *    returned.
+   * @param x The x origin.
+   * @param expander The strategy for converting tabs into characters.
+   * @param startOffset The offset to apply before the text will be drawn.
+   * @return The partial width of a sample character within a font.
+   */
+  private float getPartialPixelWidth(FontMetrics candidateMetrics, float x, TabExpander expander,
+      int startOffset) {
+
+    // See https://github.com/sampottinger/processing/issues/103
+    // Requires reference not object equality check
+    if (candidateMetrics != cachedPartialPixelWidthFont) {
+      float withFractional = Utilities.getTabbedTextWidth​(
+        TEST_SEGMENT,
+        candidateMetrics,
+        x,
+        expander,
+        startOffset
+      );
+
+      int withoutFractional = (int) withFractional;
+
+      partialPixelWidth = withFractional - withoutFractional;
+      cachedPartialPixelWidthFont = candidateMetrics;
+    }
+
+    return partialPixelWidth;
   }
 
   protected void setNewSelectionWord( int line, int offset )
