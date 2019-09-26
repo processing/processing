@@ -817,7 +817,6 @@ public class PApplet implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-
   protected PSurface surface;
 
 
@@ -11318,7 +11317,17 @@ public class PApplet implements PConstants {
     g.updatePixels(x1, y1, x2, y2);
   }
 
-
+  public void translate(PVector p){
+    if(renderer.equals(P3D)){
+      if (recorder != null) recorder.translate(p.x, p.y, p.z);
+      g.translate(p.x, p.y, p.z);
+    } 
+    else if(renderer.equals(P2D) || renderer.equals(JAVA2D)){
+      if (recorder != null) recorder.translate(p.x, p.y);
+      g.translate(p.x, p.y);
+    }
+  }
+  
   //////////////////////////////////////////////////////////////
 
   // EVERYTHING BELOW THIS LINE IS AUTOMATICALLY GENERATED. DO NOT TOUCH!
