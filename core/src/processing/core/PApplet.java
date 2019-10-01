@@ -11318,14 +11318,30 @@ public class PApplet implements PConstants {
   }
 
   public void translate(PVector p){
-    if(renderer.equals(P3D)){
+    if(g.is3D()){
       if (recorder != null) recorder.translate(p.x, p.y, p.z);
       g.translate(p.x, p.y, p.z);
     } 
-    else if(renderer.equals(P2D) || renderer.equals(JAVA2D)){
+    else if(g.is2D()){
       if (recorder != null) recorder.translate(p.x, p.y);
       g.translate(p.x, p.y);
     }
+  }
+  
+  public void scale(PVector p) {
+    if(g.is3D()){
+      if (recorder != null) recorder.scale(p.x, p.y, p.z);
+      g.scale(p.x, p.y, p.z);
+    } 
+    else if(g.is2D()){
+      if (recorder != null) recorder.scale(p.x, p.y);
+      g.scale(p.x, p.y);
+    }
+  }
+  
+  public void rotate(float angle, PVector p) {
+    if (recorder != null) recorder.rotate(angle, p.x, p.y, p.z);
+    g.rotate(angle, p.x, p.y, p.z);
   }
   
   //////////////////////////////////////////////////////////////
