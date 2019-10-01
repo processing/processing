@@ -44,6 +44,7 @@ import java.awt.Image;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
 // allows us to remove our own MediaTracker code
 import javax.swing.ImageIcon;
 
@@ -60,7 +61,6 @@ import java.awt.Desktop;
 
 // used by desktopFile() method
 import javax.swing.filechooser.FileSystemView;
-
 // loadXML() error handling
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -5513,6 +5513,22 @@ public class PApplet implements PConstants {
       g.awaitAsyncSaveCompletion(filename);
     }
 
+    if(filename.startsWith("file://")){
+      filename = filename.substring(7);
+    }
+
+    boolean isBase64 = false;
+    String encoded = null;
+
+    if(filename.startsWith("data:image/")) {
+      String dataURL = filename.substring(0, filename.indexOf(","));
+      if (dataURL.endsWith("base64")) {
+        isBase64 = true;
+        extension = dataURL.substring(dataURL.indexOf("/")+1, dataURL.indexOf(";"));
+        encoded = filename.substring(dataURL.length()+1);
+      }
+    }
+
     if (extension == null) {
       String lower = filename.toLowerCase();
       int dot = filename.lastIndexOf('.');
@@ -5535,20 +5551,30 @@ public class PApplet implements PConstants {
     extension = extension.toLowerCase();
 
     if (extension.equals("tga")) {
-      try {
-        PImage image = loadImageTGA(filename);
-//        if (params != null) {
-//          image.setParams(g, params);
-//        }
-        return image;
-      } catch (IOException e) {
-        printStackTrace(e);
+      
+      if (isBase64) {
+        System.err.println("tga is not (yet) supported for base64.");
         return null;
       }
+      else {
+        try {
+          PImage image = loadImageTGA(filename);
+  //        if (params != null) {
+  //          image.setParams(g, params);
+  //        }
+          return image;
+        } catch (IOException e) {
+          printStackTrace(e);
+          return null;
+        }
+      }
+
     }
+     
 
     if (extension.equals("tif") || extension.equals("tiff")) {
-      byte bytes[] = loadBytes(filename);
+
+      byte bytes[] = isBase64 ? DatatypeConverter.parseBase64Binary(encoded) : loadBytes(filename);
       PImage image =  (bytes == null) ? null : PImage.loadTIFF(bytes);
 //      if (params != null) {
 //        image.setParams(g, params);
@@ -5563,7 +5589,7 @@ public class PApplet implements PConstants {
       if (extension.equals("jpg") || extension.equals("jpeg") ||
           extension.equals("gif") || extension.equals("png") ||
           extension.equals("unknown")) {
-        byte bytes[] = loadBytes(filename);
+        byte bytes[] = isBase64 ? DatatypeConverter.parseBase64Binary(encoded) : loadBytes(filename);
         if (bytes == null) {
           return null;
         } else {
