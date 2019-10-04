@@ -698,6 +698,8 @@ PDE / Manager
 
 _ Manager fails to complete install of PythonMode when no windows open
 _   https://github.com/processing/processing/issues/5309
+_ Python Mode not downloading?
+_   https://github.com/processing/processing/issues/5918
 _ an incompatible Mode prevents the PDE from quitting after last window is closed
 _   https://github.com/processing/processing/issues/5112
 _ “could not move the contribution to the backup folder” message while updating
