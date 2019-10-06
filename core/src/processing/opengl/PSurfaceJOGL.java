@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,8 +75,6 @@ import processing.core.PImage;
 import processing.core.PSurface;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
-import sun.java2d.opengl.CGLGraphicsConfig;
-import sun.java2d.pipe.hw.ContextCapabilities;
 
 
 public class PSurfaceJOGL implements PSurface {
@@ -126,7 +125,7 @@ public class PSurfaceJOGL implements PSurface {
    * Contains information about the environments on which FBO should NOT be used.
    * Each position of the array contains a pair of {@link String}s correspondent to
    * the operating system (based on {@link PConstants}) and the name of the
-   * hardware (based on {@link ContextCapabilities#adapterId}), respectively.
+   * hardware (based on sun.java2d.pipe.hw.ContextCapabilities#adapterId), respectively.
    */
   final protected String[][] antiFboEnvironments = new String[][]{
           {String.valueOf(PConstants.MACOSX), "Intel HD Graphics 3000"}
@@ -208,18 +207,41 @@ public class PSurfaceJOGL implements PSurface {
    * If in future this resource must be used by other platforms, the main 'if' clause
    * should be removed, allowing direct access to its inner logic.
    */
-  private void initFboControl(GraphicsConfiguration config){
-    if(PApplet.platform == PApplet.MACOSX){
-      for(String[] pair : antiFboEnvironments){
-        if(pair[0].equals(String.valueOf(PApplet.platform))){
-          String adapterId = ((CGLGraphicsConfig) config).getContextCapabilities().getAdapterId();
-          if(adapterId.toLowerCase().contains(pair[1].toLowerCase())){
-            this.fboAllowed = false;
-            break;
+  private void initFboControl(GraphicsConfiguration config) {
+    if (PApplet.platform == PApplet.MACOSX) {
+      try {
+        String adapterId = getAdapterId(config);
+        for (String[] pair : antiFboEnvironments) {
+          if (pair[0].equals(String.valueOf(PApplet.platform))) {
+            if (adapterId.toLowerCase().contains(pair[1].toLowerCase())) {
+              this.fboAllowed = false;
+              break;
+            }
           }
         }
+      } catch (Exception e) {
+        e.printStackTrace();
       }
     }
+  }
+
+  /**
+   * Evaluates the graphics configuration through reflection to safely get the adapter
+   * id from the hardware detected.
+   *
+   * @param config graphics configuration
+   * @return the name of the adapter id as a String
+   * @throws Exception when there is a problem with reflection
+   */
+  private String getAdapterId(GraphicsConfiguration config) throws Exception {
+    Class cglClass = Class.forName("sun.java2d.opengl.CGLGraphicsConfig");
+    Class ctcClass = Class.forName("sun.java2d.pipe.hw.ContextCapabilities");
+    Method cglMethod = cglClass.getMethod("getContextCapabilities");
+    Method ctcMethod = ctcClass.getMethod("getAdapterId");
+    Object cglInstance = cglClass.cast(config);
+    Object ctcInstance = cglMethod.invoke(cglInstance);
+    Object idInstance = ctcMethod.invoke(ctcInstance);
+    return String.valueOf(idInstance);
   }
 
   @Override

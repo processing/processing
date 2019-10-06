@@ -730,6 +730,11 @@ public class PSurfaceFX implements PSurface {
     return animation.getStatus() == Animation.Status.STOPPED;
   }
 
+  @Override
+  public boolean isFboAllowed() {
+    return true;
+  }
+
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
