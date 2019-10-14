@@ -15,7 +15,7 @@ Where possible, I've started locking issues once resolved. This helps reduce the
 
 __That [processing-bugs](https://github.com/processing-bugs) fella is suspicious.__
 The issues list has been imported from Google Code, so there are many spurious references
-amongst them since the numbering changed. Basically, any time you see references to
+amongst them since the numbering changed. Any time you see references to
 changes made by [processing-bugs](https://github.com/processing-bugs), it may be somewhat suspect.
 Over time this will clean itself up as bugs are fixed and new issues are added from within Github.
 Help speed this process along by helping us!
