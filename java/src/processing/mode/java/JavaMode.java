@@ -140,9 +140,7 @@ public class JavaMode extends Mode {
 
   /** Start a sketch in tweak mode */
   public Runner handleTweak(Sketch sketch,
-                            RunnerListener listener) throws SketchException {
-//                            final boolean present) throws SketchException {
-    final JavaEditor editor = (JavaEditor) listener;
+                            RunnerListener listener, JavaEditor editor) throws SketchException {
 
     // first try to build the unmodified code
     JavaBuild build = new JavaBuild(sketch);
