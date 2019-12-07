@@ -1482,10 +1482,10 @@ public class PGraphics extends PImage implements PConstants {
     // http://dev.processing.org/bugs/show_bug.cgi?id=444
     if (shape == POLYGON) {
       if (vertexCount > 0) {
+        float[] pvertex = vertices[vertexCount-1];
         if ((Math.abs(pvertex[X] - x) < EPSILON) &&
             (Math.abs(pvertex[Y] - y) < EPSILON) &&
             (Math.abs(pvertex[Z] - z) < EPSILON)) {
-        float[] pvertex = vertices[vertexCount-1];
           // this vertex is identical, don't add it,
           // because it will anger the triangulator
           return;
