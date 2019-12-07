@@ -3855,12 +3855,7 @@ public class PApplet implements PConstants {
    * @see PApplet#noLoop()
    */
   public void thread(final String name) {
-    Thread later = new Thread() {
-      @Override
-      public void run() {
-        method(name);
-      }
-    };
+    Thread later = new Thread(() -> method(name));
     later.start();
   }
 
@@ -6529,49 +6524,47 @@ public class PApplet implements PConstants {
                                    final Frame parentFrame,
                                    final int mode,
                                    final PApplet sketch) {
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        File selectedFile = null;
+    EventQueue.invokeLater(() -> {
+      File selectedFile = null;
 
-        boolean hide = (sketch != null) &&
-          (sketch.g instanceof PGraphicsOpenGL) && (platform == WINDOWS);
-        if (hide) sketch.surface.setVisible(false);
+      boolean hide = (sketch != null) &&
+        (sketch.g instanceof PGraphicsOpenGL) && (platform == WINDOWS);
+      if (hide) sketch.surface.setVisible(false);
 
-        if (useNativeSelect) {
-          FileDialog dialog = new FileDialog(parentFrame, prompt, mode);
-          if (defaultSelection != null) {
-            dialog.setDirectory(defaultSelection.getParent());
-            dialog.setFile(defaultSelection.getName());
-          }
-
-          dialog.setVisible(true);
-          String directory = dialog.getDirectory();
-          String filename = dialog.getFile();
-          if (filename != null) {
-            selectedFile = new File(directory, filename);
-          }
-
-        } else {
-          JFileChooser chooser = new JFileChooser();
-          chooser.setDialogTitle(prompt);
-          if (defaultSelection != null) {
-            chooser.setSelectedFile(defaultSelection);
-          }
-
-          int result = -1;
-          if (mode == FileDialog.SAVE) {
-            result = chooser.showSaveDialog(parentFrame);
-          } else if (mode == FileDialog.LOAD) {
-            result = chooser.showOpenDialog(parentFrame);
-          }
-          if (result == JFileChooser.APPROVE_OPTION) {
-            selectedFile = chooser.getSelectedFile();
-          }
+      if (useNativeSelect) {
+        FileDialog dialog = new FileDialog(parentFrame, prompt, mode);
+        if (defaultSelection != null) {
+          dialog.setDirectory(defaultSelection.getParent());
+          dialog.setFile(defaultSelection.getName());
         }
 
-        if (hide) sketch.surface.setVisible(true);
-        selectCallback(selectedFile, callbackMethod, callbackObject);
+        dialog.setVisible(true);
+        String directory = dialog.getDirectory();
+        String filename = dialog.getFile();
+        if (filename != null) {
+          selectedFile = new File(directory, filename);
+        }
+
+      } else {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle(prompt);
+        if (defaultSelection != null) {
+          chooser.setSelectedFile(defaultSelection);
+        }
+
+        int result = -1;
+        if (mode == FileDialog.SAVE) {
+          result = chooser.showSaveDialog(parentFrame);
+        } else if (mode == FileDialog.LOAD) {
+          result = chooser.showOpenDialog(parentFrame);
+        }
+        if (result == JFileChooser.APPROVE_OPTION) {
+          selectedFile = chooser.getSelectedFile();
+        }
       }
+
+      if (hide) sketch.surface.setVisible(true);
+      selectCallback(selectedFile, callbackMethod, callbackObject);
     });
   }
 
@@ -6616,45 +6609,43 @@ public class PApplet implements PConstants {
                                   final Object callbackObject,
                                   final Frame parentFrame,
                                   final PApplet sketch) {
-    EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        File selectedFile = null;
+    EventQueue.invokeLater(() -> {
+      File selectedFile = null;
 
-        boolean hide = (sketch != null) &&
-          (sketch.g instanceof PGraphicsOpenGL) && (platform == WINDOWS);
-        if (hide) sketch.surface.setVisible(false);
+      boolean hide = (sketch != null) &&
+        (sketch.g instanceof PGraphicsOpenGL) && (platform == WINDOWS);
+      if (hide) sketch.surface.setVisible(false);
 
-        if (platform == MACOSX && useNativeSelect != false) {
-          FileDialog fileDialog =
-            new FileDialog(parentFrame, prompt, FileDialog.LOAD);
-          if (defaultSelection != null) {
-            fileDialog.setDirectory(defaultSelection.getAbsolutePath());
-          }
-          System.setProperty("apple.awt.fileDialogForDirectories", "true");
-          fileDialog.setVisible(true);
-          System.setProperty("apple.awt.fileDialogForDirectories", "false");
-          String filename = fileDialog.getFile();
-          if (filename != null) {
-            selectedFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
-          }
-        } else {
-          checkLookAndFeel();
-          JFileChooser fileChooser = new JFileChooser();
-          fileChooser.setDialogTitle(prompt);
-          fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-          if (defaultSelection != null) {
-            fileChooser.setCurrentDirectory(defaultSelection);
-          }
-
-          int result = fileChooser.showOpenDialog(parentFrame);
-          if (result == JFileChooser.APPROVE_OPTION) {
-            selectedFile = fileChooser.getSelectedFile();
-          }
+      if (platform == MACOSX && useNativeSelect != false) {
+        FileDialog fileDialog =
+          new FileDialog(parentFrame, prompt, FileDialog.LOAD);
+        if (defaultSelection != null) {
+          fileDialog.setDirectory(defaultSelection.getAbsolutePath());
+        }
+        System.setProperty("apple.awt.fileDialogForDirectories", "true");
+        fileDialog.setVisible(true);
+        System.setProperty("apple.awt.fileDialogForDirectories", "false");
+        String filename = fileDialog.getFile();
+        if (filename != null) {
+          selectedFile = new File(fileDialog.getDirectory(), fileDialog.getFile());
+        }
+      } else {
+        checkLookAndFeel();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle(prompt);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (defaultSelection != null) {
+          fileChooser.setCurrentDirectory(defaultSelection);
         }
 
-        if (hide) sketch.surface.setVisible(true);
-        selectCallback(selectedFile, callbackMethod, callbackObject);
+        int result = fileChooser.showOpenDialog(parentFrame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+          selectedFile = fileChooser.getSelectedFile();
+        }
       }
+
+      if (hide) sketch.surface.setVisible(true);
+      selectCallback(selectedFile, callbackMethod, callbackObject);
     });
   }
 
@@ -10614,11 +10605,9 @@ public class PApplet implements PConstants {
     // Doesn't seem to do anything helpful here (that can't be done via Runner)
     //System.setProperty("com.apple.mrj.application.apple.menu.about.name", "potato");
 
-    Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-      public void uncaughtException(Thread t, Throwable e) {
-        e.printStackTrace();
-        uncaughtThrowable = e;
-      }
+    Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+      e.printStackTrace();
+      uncaughtThrowable = e;
     });
 
     // This doesn't work, need to mess with Info.plist instead
