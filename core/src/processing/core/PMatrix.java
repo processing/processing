@@ -39,127 +39,127 @@ public interface PMatrix {
   /**
    * Make this an identity matrix. Multiplying by it will have no effect.
    */
-  public void reset();
+  void reset();
   
   /**
    * Returns a copy of this PMatrix.
    */
-  public PMatrix get();  
+  PMatrix get();
 
   /**
    * Copies the matrix contents into a float array.
    * If target is null (or not the correct size), a new array will be created.
    */
-  public float[] get(float[] target);
+  float[] get(float[] target);
   
   
   /**
    * Make this matrix become a copy of src.
    */
-  public void set(PMatrix src);
+  void set(PMatrix src);
 
   /**
    * Set the contents of this matrix to the contents of source. Fills the
    * matrix left-to-right, starting in the top row.
    */
-  public void set(float[] source);
+  void set(float[] source);
 
   /**
    * Set the matrix content to this 2D matrix or its 3D equivalent.
    */
-  public void set(float m00, float m01, float m02, 
-                  float m10, float m11, float m12);
+  void set(float m00, float m01, float m02,
+           float m10, float m11, float m12);
 
   /**
    * Set the matrix content to the 3D matrix supplied, if this matrix is 3D.
    */
-  public void set(float m00, float m01, float m02, float m03,
-                  float m10, float m11, float m12, float m13,
-                  float m20, float m21, float m22, float m23,
-                  float m30, float m31, float m32, float m33);
+  void set(float m00, float m01, float m02, float m03,
+           float m10, float m11, float m12, float m13,
+           float m20, float m21, float m22, float m23,
+           float m30, float m31, float m32, float m33);
 
   
-  public void translate(float tx, float ty);
+  void translate(float tx, float ty);
   
-  public void translate(float tx, float ty, float tz);
+  void translate(float tx, float ty, float tz);
 
-  public void rotate(float angle);
+  void rotate(float angle);
 
-  public void rotateX(float angle);
+  void rotateX(float angle);
 
-  public void rotateY(float angle);
+  void rotateY(float angle);
 
-  public void rotateZ(float angle);
+  void rotateZ(float angle);
 
-  public void rotate(float angle, float v0, float v1, float v2);
+  void rotate(float angle, float v0, float v1, float v2);
 
-  public void scale(float s);
+  void scale(float s);
 
-  public void scale(float sx, float sy);
+  void scale(float sx, float sy);
 
-  public void scale(float x, float y, float z);
+  void scale(float x, float y, float z);
   
-  public void shearX(float angle);
+  void shearX(float angle);
   
-  public void shearY(float angle);
+  void shearY(float angle);
 
   /**
    * Multiply this matrix by another.
    */
-  public void apply(PMatrix source);
+  void apply(PMatrix source);
 
   /**
    * Multiply this matrix by another.
    */
-  public void apply(PMatrix2D source);
+  void apply(PMatrix2D source);
 
   /**
    * Multiply this matrix by another.
    */
-  public void apply(PMatrix3D source);
+  void apply(PMatrix3D source);
 
   /**
    * Multiply this matrix by another.
    */
-  public void apply(float n00, float n01, float n02, 
-                    float n10, float n11, float n12);
+  void apply(float n00, float n01, float n02,
+             float n10, float n11, float n12);
 
   /**
    * Multiply this matrix by another.
    */
-  public void apply(float n00, float n01, float n02, float n03,
-                    float n10, float n11, float n12, float n13,
-                    float n20, float n21, float n22, float n23,
-                    float n30, float n31, float n32, float n33);
+  void apply(float n00, float n01, float n02, float n03,
+             float n10, float n11, float n12, float n13,
+             float n20, float n21, float n22, float n23,
+             float n30, float n31, float n32, float n33);
 
   /**
    * Apply another matrix to the left of this one.
    */
-  public void preApply(PMatrix left);
+  void preApply(PMatrix left);
 
   /**
    * Apply another matrix to the left of this one.
    */
-  public void preApply(PMatrix2D left);
+  void preApply(PMatrix2D left);
 
   /**
    * Apply another matrix to the left of this one. 3D only.
    */
-  public void preApply(PMatrix3D left);
+  void preApply(PMatrix3D left);
 
   /**
    * Apply another matrix to the left of this one.
    */
-  public void preApply(float n00, float n01, float n02, 
-                       float n10, float n11, float n12);
+  void preApply(float n00, float n01, float n02,
+                float n10, float n11, float n12);
 
   /**
    * Apply another matrix to the left of this one. 3D only.
    */
-  public void preApply(float n00, float n01, float n02, float n03,
-                       float n10, float n11, float n12, float n13,
-                       float n20, float n21, float n22, float n23,
-                       float n30, float n31, float n32, float n33);
+  void preApply(float n00, float n01, float n02, float n03,
+                float n10, float n11, float n12, float n13,
+                float n20, float n21, float n22, float n23,
+                float n30, float n31, float n32, float n33);
 
   
   /**
@@ -168,7 +168,7 @@ public interface PMatrix {
    * will then be the matrix returned. This improves performance if you reuse
    * target, so it's recommended if you call this many times in draw().
    */
-  public PVector mult(PVector source, PVector target);
+  PVector mult(PVector source, PVector target);
   
   
   /**
@@ -176,7 +176,7 @@ public interface PMatrix {
    * Supplying and recycling a target array improves performance, so it's
    * recommended if you call this many times in draw().
    */
-  public float[] mult(float[] source, float[] target);
+  float[] mult(float[] source, float[] target);
   
   
 //  public float multX(float x, float y);
@@ -190,7 +190,7 @@ public interface PMatrix {
   /**
    * Transpose this matrix; rows become columns and columns rows.
    */
-  public void transpose();
+  void transpose();
 
   
   /**
@@ -198,11 +198,11 @@ public interface PMatrix {
    * map more than one point to the same image point, and so are irreversible.
    * @return true if successful
    */
-  public boolean invert();
+  boolean invert();
   
   
   /**
    * @return the determinant of the matrix
    */
-  public float determinant();
+  float determinant();
 }

@@ -2681,27 +2681,27 @@ public abstract class PGL {
 
 
   protected interface Tessellator {
-    public void setCallback(int flag);
-    public void setWindingRule(int rule);
-    public void setProperty(int property, int value);
+    void setCallback(int flag);
+    void setWindingRule(int rule);
+    void setProperty(int property, int value);
 
-    public void beginPolygon();
-    public void beginPolygon(Object data);
-    public void endPolygon();
-    public void beginContour();
-    public void endContour();
-    public void addVertex(double[] v);
-    public void addVertex(double[] v, int n, Object data);
+    void beginPolygon();
+    void beginPolygon(Object data);
+    void endPolygon();
+    void beginContour();
+    void endContour();
+    void addVertex(double[] v);
+    void addVertex(double[] v, int n, Object data);
   }
 
 
   protected interface TessellatorCallback  {
-    public void begin(int type);
-    public void end();
-    public void vertex(Object data);
-    public void combine(double[] coords, Object[] data,
-                        float[] weight, Object[] outData);
-    public void error(int errnum);
+    void begin(int type);
+    void end();
+    void vertex(Object data);
+    void combine(double[] coords, Object[] data,
+                 float[] weight, Object[] outData);
+    void error(int errnum);
   }
 
 
@@ -2727,9 +2727,9 @@ public abstract class PGL {
 
 
   protected interface FontOutline {
-    public boolean isDone();
-    public int currentSegment(float coords[]);
-    public void next();
+    boolean isDone();
+    int currentSegment(float[] coords);
+    void next();
   }
 
 

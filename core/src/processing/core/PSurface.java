@@ -31,11 +31,11 @@ public interface PSurface {
    * set of limitations. And for all I know, Linux probably allows window
    * sizes to be negative numbers.
    */
-  static public final int MIN_WINDOW_WIDTH = 128;
-  static public final int MIN_WINDOW_HEIGHT = 128;
+  int MIN_WINDOW_WIDTH = 128;
+  int MIN_WINDOW_HEIGHT = 128;
 
   // renderer that doesn't draw to the screen
-  public void initOffscreen(PApplet sketch);
+  void initOffscreen(PApplet sketch);
 
   // considering removal in favor of separate Component classes for appropriate renderers
   // (i.e. for Java2D or a generic Image surface, but not PDF, debatable for GL or FX)
@@ -44,7 +44,7 @@ public interface PSurface {
   //public Frame initFrame(PApplet sketch, Color backgroundColor,
 //  public void initFrame(PApplet sketch, int backgroundColor,
 //                        int deviceIndex, boolean fullScreen, boolean spanDisplays);
-  public void initFrame(PApplet sketch);
+  void initFrame(PApplet sketch);
 
   /**
    * Get the native window object associated with this drawing surface.
@@ -54,7 +54,7 @@ public interface PSurface {
    * implementation changes and that you won't throw a fit like a toddler
    * if your code breaks sometime in the future.
    */
-  public Object getNative();
+  Object getNative();
 
   //
 
@@ -63,39 +63,39 @@ public interface PSurface {
   // However, maybe prevents us from having to document the 'frame' variable?
 
   /** Set the window (and dock, or whatever necessary) title. */
-  public void setTitle(String title);
+  void setTitle(String title);
 
   /** Show or hide the window. */
-  public void setVisible(boolean visible);
+  void setVisible(boolean visible);
 
   /** Set true if we want to resize things (default is not resizable) */
-  public void setResizable(boolean resizable);
+  void setResizable(boolean resizable);
 
   /** Dumb name, but inherited from Frame and no better ideas. */
-  public void setAlwaysOnTop(boolean always);
+  void setAlwaysOnTop(boolean always);
 
-  public void setIcon(PImage icon);
+  void setIcon(PImage icon);
 
   //
 
 //  public void placeWindow(int[] location);
 
-  public void placeWindow(int[] location, int[] editorLocation);
+  void placeWindow(int[] location, int[] editorLocation);
 
   //public void placeFullScreen(boolean hideStop);
-  public void placePresent(int stopColor);
+  void placePresent(int stopColor);
 
   // Sketch is running from the PDE, set up messaging back to the PDE
-  public void setupExternalMessages();
+  void setupExternalMessages();
 
   //
 
   // sets displayWidth/Height inside PApplet
   //public void checkDisplaySize();
 
-  public void setLocation(int x, int y);
+  void setLocation(int x, int y);
 
-  public void setSize(int width, int height);
+  void setSize(int width, int height);
 
 //  /**
 //   * Called by {@link PApplet#createGraphics} to initialize the
@@ -118,7 +118,7 @@ public interface PSurface {
 //   */
 //  public void setSmooth(int level);
 
-  public void setFrameRate(float fps);
+  void setFrameRate(float fps);
 
 //  // called on the first frame so that the now-visible drawing surface can
 //  // receive key and mouse events
@@ -129,33 +129,33 @@ public interface PSurface {
 
   //
 
-  public void setCursor(int kind);
+  void setCursor(int kind);
 
-  public void setCursor(PImage image, int hotspotX, int hotspotY);
+  void setCursor(PImage image, int hotspotX, int hotspotY);
 
-  public void showCursor();
+  void showCursor();
 
-  public void hideCursor();
+  void hideCursor();
 
   //
 
   /** Start the animation thread */
-  public void startThread();
+  void startThread();
 
   /**
    * On the next trip through the animation thread, things should go sleepy-bye.
    * Does not pause the thread immediately because that needs to happen on the
    * animation thread itself, so fires on the next trip through draw().
    */
-  public void pauseThread();
+  void pauseThread();
 
-  public void resumeThread();
+  void resumeThread();
 
   /**
    * Stop the animation thread (set it null)
    * @return false if already stopped
    */
-  public boolean stopThread();
+  boolean stopThread();
 
-  public boolean isStopped();
+  boolean isStopped();
 }
