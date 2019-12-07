@@ -940,7 +940,7 @@ public class PImage implements PConstants, Cloneable {
    * @param maskArray array of integers used as the alpha channel, needs to be
    * the same length as the image's pixel array.
    */
-  public void mask(int maskArray[]) {  // ignore
+  public void mask(int[] maskArray) {  // ignore
     loadPixels();
     // don't execute if mask image is different size
     if (maskArray.length != pixels.length) {
@@ -1239,7 +1239,7 @@ public class PImage implements PConstants, Cloneable {
   protected void blurAlpha(float r) {
     int sum, cb;
     int read, ri, ym, ymi, bk0;
-    int b2[] = new int[pixels.length];
+    int[] b2 = new int[pixels.length];
     int yi = 0;
 
     buildBlurKernel(r);
@@ -1310,9 +1310,9 @@ public class PImage implements PConstants, Cloneable {
   protected void blurRGB(float r) {
     int sum, cr, cg, cb; //, k;
     int /*pixel,*/ read, ri, /*roff,*/ ym, ymi, /*riw,*/ bk0;
-    int r2[] = new int[pixels.length];
-    int g2[] = new int[pixels.length];
-    int b2[] = new int[pixels.length];
+    int[] r2 = new int[pixels.length];
+    int[] g2 = new int[pixels.length];
+    int[] b2 = new int[pixels.length];
     int yi = 0;
 
     buildBlurKernel(r);
@@ -1393,10 +1393,10 @@ public class PImage implements PConstants, Cloneable {
     int sum, cr, cg, cb, ca;
     int /*pixel,*/ read, ri, /*roff,*/ ym, ymi, /*riw,*/ bk0;
     int wh = pixels.length;
-    int r2[] = new int[wh];
-    int g2[] = new int[wh];
-    int b2[] = new int[wh];
-    int a2[] = new int[wh];
+    int[] r2 = new int[wh];
+    int[] g2 = new int[wh];
+    int[] b2 = new int[wh];
+    int[] a2 = new int[wh];
     int yi = 0;
 
     buildBlurKernel(r);
@@ -2948,7 +2948,7 @@ int testFunction(int dst, int src) {
   // FILE I/O
 
 
-  static byte TIFF_HEADER[] = {
+  static byte[] TIFF_HEADER = {
     77, 77, 0, 42, 0, 0, 0, 8, 0, 9, 0, -2, 0, 4, 0, 0, 0, 1, 0, 0,
     0, 0, 1, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 3, 0, 0, 0, 1,
     0, 0, 0, 0, 1, 2, 0, 3, 0, 0, 0, 3, 0, 0, 0, 122, 1, 6, 0, 3, 0,
@@ -2961,7 +2961,7 @@ int testFunction(int dst, int src) {
   static final String TIFF_ERROR =
     "Error: Processing can only read its own TIFF files.";
 
-  static protected PImage loadTIFF(byte tiff[]) {
+  static protected PImage loadTIFF(byte[] tiff) {
     if ((tiff[42] != tiff[102]) ||  // width/height in both places
         (tiff[43] != tiff[103])) {
       System.err.println(TIFF_ERROR);
@@ -3018,7 +3018,7 @@ int testFunction(int dst, int src) {
     }
     */
     try {
-      byte tiff[] = new byte[768];
+      byte[] tiff = new byte[768];
       System.arraycopy(TIFF_HEADER, 0, tiff, 0, TIFF_HEADER.length);
 
       tiff[30] = (byte) ((pixelWidth >> 8) & 0xff);
@@ -3069,7 +3069,7 @@ int testFunction(int dst, int src) {
    * <A HREF="http://www.wotsit.org/download.asp?f=tga">specification</A>
    */
   protected boolean saveTGA(OutputStream output) {
-    byte header[] = new byte[18];
+    byte[] header = new byte[18];
 
      if (format == ALPHA) {  // save ALPHA images as 8bit grayscale
        header[2] = 0x0B;

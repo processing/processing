@@ -475,7 +475,7 @@ public abstract class PGL {
   }
 
 
-  protected boolean isFBOBacked() {;
+  protected boolean isFBOBacked() {
     return fboLayerEnabled;
   }
 
@@ -2127,7 +2127,7 @@ public abstract class PGL {
     String[] parts = version.split(" ");
     for (int i = 0; i < parts.length; i++) {
       if (0 < parts[i].indexOf(".")) {
-        String nums[] = parts[i].split("\\.");
+        String[] nums = parts[i].split("\\.");
         try {
           res[0] = Integer.parseInt(nums[0]);
         } catch (NumberFormatException e) { }
