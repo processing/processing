@@ -1540,44 +1540,10 @@ public class PApplet implements PConstants {
    * @param target the target object that should receive the event
    */
   public void registerMethod(String methodName, Object target) {
-    if (methodName.equals("mouseEvent")) {
-      registerWithArgs("mouseEvent", target, new Class[] { processing.event.MouseEvent.class });
-
-    } else if (methodName.equals("keyEvent")) {
-      registerWithArgs("keyEvent", target, new Class[] { processing.event.KeyEvent.class });
-
-    } else if (methodName.equals("touchEvent")) {
-      registerWithArgs("touchEvent", target, new Class[] { processing.event.TouchEvent.class });
-
-    } else {
-      registerNoArgs(methodName, target);
-    }
+    registerWithArgs(methodName, target, resolveEventArgs(methodName));
   }
 
-
-  private void registerNoArgs(String name, Object o) {
-    Class<?> c = o.getClass();
-    try {
-      Method method = c.getMethod(name);
-      synchronized (registerLock) {
-        RegisteredMethods meth = registerMap.get(name);
-        if (meth == null) {
-          meth = new RegisteredMethods();
-          registerMap.put(name, meth);
-        }
-        meth.add(o, method);
-      }
-    } catch (NoSuchMethodException nsme) {
-      die("There is no public " + name + "() method in the class " +
-          o.getClass().getName());
-
-    } catch (Exception e) {
-      die("Could not register " + name + " + () for " + o, e);
-    }
-  }
-
-
-  private void registerWithArgs(String name, Object o, Class<?> cargs[]) {
+  private void registerWithArgs(String name, Object o, Class<?>...cargs) {
     Class<?> c = o.getClass();
     try {
       Method method = c.getMethod(name, cargs);
@@ -1598,11 +1564,18 @@ public class PApplet implements PConstants {
     }
   }
 
-
-//  public void registerMethod(String methodName, Object target, Object... args) {
-//    registerWithArgs(methodName, target, args);
-//  }
-
+  private Class<?>[] resolveEventArgs(String methodName) {
+    switch(methodName) {
+      case "mouseEvent":
+        return new Class[] { MouseEvent.class };
+      case "keyEvent":
+        return new Class[] { KeyEvent.class };
+      case "touchEvent":
+        return new Class[] { TouchEvent.class };
+      default:
+        return new Class[0];
+    }
+  }
 
   public void unregisterMethod(String name, Object target) {
     synchronized (registerLock) {
