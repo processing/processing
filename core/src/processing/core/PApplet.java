@@ -1387,24 +1387,6 @@ public class PApplet implements PConstants {
    */
   public void resume() { }
 
-
-//  /**
-//   * Called by the browser or applet viewer to inform this applet
-//   * that it is being reclaimed and that it should destroy
-//   * any resources that it has allocated.
-//   * <p/>
-//   * destroy() supposedly gets called as the applet viewer
-//   * is shutting down the applet. stop() is called
-//   * first, and then destroy() to really get rid of things.
-//   * no guarantees on when they're run (on browser quit, or
-//   * when moving between pages), though.
-//   */
-//  @Override
-//  public void destroy() {
-//    this.dispose();
-//  }
-
-
   //////////////////////////////////////////////////////////////
 
 
@@ -1481,8 +1463,6 @@ public class PApplet implements PConstants {
      * must be called multiple times if object is registered multiple times).
      * Does not shrink array afterwards, silently returns if method not found.
      */
-//    public void remove(Object object, Method method) {
-//      int index = findIndex(object, method);
     public void remove(Object object) {
       int index = findIndex(object);
       if (index != -1) {
@@ -1498,23 +1478,15 @@ public class PApplet implements PConstants {
       }
     }
 
-
-//    protected int findIndex(Object object, Method method) {
     protected int findIndex(Object object) {
       for (int i = 0; i < count; i++) {
         if (objects[i] == object) {
-//        if (objects[i] == object && methods[i].equals(method)) {
-          //objects[i].equals() might be overridden, so use == for safety
-          // since here we do care about actual object identity
-          //methods[i]==method is never true even for same method, so must use
-          // equals(), this should be safe because of object identity
           return i;
         }
       }
       return -1;
     }
   }
-
 
   /**
    * Register a built-in event so that it can be fired for libraries, etc.
@@ -1584,8 +1556,6 @@ public class PApplet implements PConstants {
         die("No registered methods with the name " + name + "() were found.");
       }
       try {
-//      Method method = o.getClass().getMethod(name, new Class[] {});
-//      meth.remove(o, method);
         meth.remove(target);
       } catch (Exception e) {
         die("Could not unregister " + name + "() for " + target, e);
@@ -1601,156 +1571,6 @@ public class PApplet implements PConstants {
       }
     }
   }
-
-
-  /*
-  @Deprecated
-  public void registerSize(Object o) {
-    System.err.println("The registerSize() command is no longer supported.");
-//    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
-//    registerWithArgs(sizeMethods, "size", o, methodArgs);
-  }
-
-
-  @Deprecated
-  public void registerPre(Object o) {
-    registerNoArgs("pre", o);
-  }
-
-
-  @Deprecated
-  public void registerDraw(Object o) {
-    registerNoArgs("draw", o);
-  }
-
-
-  @Deprecated
-  public void registerPost(Object o) {
-    registerNoArgs("post", o);
-  }
-
-
-  @Deprecated
-  public void registerDispose(Object o) {
-    registerNoArgs("dispose", o);
-  }
-
-
-  @Deprecated
-  public void unregisterSize(Object o) {
-    System.err.println("The unregisterSize() command is no longer supported.");
-//    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
-//    unregisterWithArgs(sizeMethods, "size", o, methodArgs);
-  }
-
-
-  @Deprecated
-  public void unregisterPre(Object o) {
-    unregisterMethod("pre", o);
-  }
-
-
-  @Deprecated
-  public void unregisterDraw(Object o) {
-    unregisterMethod("draw", o);
-  }
-
-
-  @Deprecated
-  public void unregisterPost(Object o) {
-    unregisterMethod("post", o);
-  }
-
-
-  @Deprecated
-  public void unregisterDispose(Object o) {
-    unregisterMethod("dispose", o);
-  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-  // Old methods with AWT API that should not be used.
-  // These were never implemented on Android so they're stored separately.
-
-  RegisteredMethods mouseEventMethods, keyEventMethods;
-
-
-  protected void reportDeprecation(Class<?> c, boolean mouse) {
-    if (g != null) {
-      PGraphics.showWarning("The class " + c.getName() +
-                            " is incompatible with Processing 2.0.");
-      PGraphics.showWarning("A library (or other code) is using register" +
-                            (mouse ? "Mouse" : "Key") + "Event() " +
-                            "which is no longer available.");
-      // This will crash with OpenGL, so quit anyway
-      if (g instanceof PGraphicsOpenGL) {
-        PGraphics.showWarning("Stopping the sketch because this code will " +
-                                          "not work correctly with OpenGL.");
-        throw new RuntimeException("This sketch uses a library that " +
-                                               "needs to be updated for Processing 2.0.");
-      }
-    }
-  }
-
-
-  @Deprecated
-  public void registerMouseEvent(Object o) {
-    Class<?> c = o.getClass();
-    reportDeprecation(c, true);
-    try {
-      Method method = c.getMethod("mouseEvent", new Class[] { java.awt.event.MouseEvent.class });
-      if (mouseEventMethods == null) {
-        mouseEventMethods = new RegisteredMethods();
-      }
-      mouseEventMethods.add(o, method);
-    } catch (Exception e) {
-      die("Could not register mouseEvent() for " + o, e);
-    }
-  }
-
-
-  @Deprecated
-  public void unregisterMouseEvent(Object o) {
-    try {
-//      Method method = o.getClass().getMethod("mouseEvent", new Class[] { MouseEvent.class });
-//      mouseEventMethods.remove(o, method);
-      mouseEventMethods.remove(o);
-    } catch (Exception e) {
-      die("Could not unregister mouseEvent() for " + o, e);
-    }
-  }
-
-
-  @Deprecated
-  public void registerKeyEvent(Object o) {
-    Class<?> c = o.getClass();
-    reportDeprecation(c, false);
-    try {
-      Method method = c.getMethod("keyEvent", new Class[] { java.awt.event.KeyEvent.class });
-      if (keyEventMethods == null) {
-        keyEventMethods = new RegisteredMethods();
-      }
-      keyEventMethods.add(o, method);
-    } catch (Exception e) {
-      die("Could not register keyEvent() for " + o, e);
-    }
-  }
-
-
-  @Deprecated
-  public void unregisterKeyEvent(Object o) {
-    try {
-//      Method method = o.getClass().getMethod("keyEvent", new Class[] { KeyEvent.class });
-//      keyEventMethods.remove(o, method);
-      keyEventMethods.remove(o);
-    } catch (Exception e) {
-      die("Could not unregister keyEvent() for " + o, e);
-    }
-  }
-  */
-
-
 
   //////////////////////////////////////////////////////////////
 
@@ -1816,20 +1636,6 @@ public class PApplet implements PConstants {
 
 
   //////////////////////////////////////////////////////////////
-
-
-  /*
-  protected void resizeRenderer(int newWidth, int newHeight) {
-    debug("resizeRenderer request for " + newWidth + " " + newHeight);
-    if (width != newWidth || height != newHeight) {
-      debug("  former size was " + width + " " + height);
-      g.setSize(newWidth, newHeight);
-      width = newWidth;
-      height = newHeight;
-    }
-  }
-  */
-
 
   /**
    * Create a full-screen sketch using the default renderer.
@@ -2017,72 +1823,6 @@ public class PApplet implements PConstants {
         this.outputPath = path;
       }
     }
-
-    /*
-    if (!renderer.equals(sketchRenderer())) {
-      if (external) {
-        // The PDE should have parsed it, but something still went wrong
-        final String msg =
-          String.format("Something bad happened when calling " +
-                        "size(%d, %d, %s, %s)", w, h, renderer, path);
-        throw new RuntimeException(msg);
-
-      } else {
-        System.err.println("Because you're not running from the PDE, add this to your code:");
-        System.err.println("public String sketchRenderer() {");
-        System.err.println("  return \"" + renderer + "\";");
-        System.err.println("}");
-        throw new RuntimeException("The sketchRenderer() method is not implemented.");
-      }
-    }
-    */
-
-    // size() shouldn't actually do anything here [3.0a8]
-//    surface.setSize(w, h);
-    // this won't be absolute, which will piss off PDF [3.0a8]
-//    g.setPath(path);  // finally, a path
-
-//    // Run this from the EDT, just cuz it's AWT stuff (or maybe later Swing)
-//   EventQueue.invokeLater(new Runnable() {
-//     public void run() {
-//    // Set the preferred size so that the layout managers can handle it
-//    setPreferredSize(new Dimension(w, h));
-//    setSize(w, h);
-//     }
-//   });
-//
-//    // ensure that this is an absolute path
-//    if (path != null) path = savePath(path);
-//
-//    String currentRenderer = g.getClass().getName();
-//    if (currentRenderer.equals(renderer)) {
-////      // Avoid infinite loop of throwing exception to reset renderer
-////      resizeRenderer(w, h);
-//      surface.setSize(w, h);
-//
-//    } else {  // renderer change attempted
-//      // no longer kosher with 3.0a5
-//      throw new RuntimeException("Y'all need to implement sketchRenderer()");
-//      /*
-//      // otherwise ok to fall through and create renderer below
-//      // the renderer is changing, so need to create a new object
-//      g = makeGraphics(w, h, renderer, path, true);
-//      this.width = w;
-//      this.height = h;
-//
-//      // fire resize event to make sure the applet is the proper size
-////      setSize(iwidth, iheight);
-//      // this is the function that will run if the user does their own
-//      // size() command inside setup, so set defaultSize to false.
-//      defaultSize = false;
-//
-//      // throw an exception so that setup() is called again
-//      // but with a properly sized render
-//      // this is for opengl, which needs a valid, properly sized
-//      // display before calling anything inside setup().
-//      throw new RendererChangeException();
-//      */
-//    }
   }
 
 
@@ -2179,22 +1919,7 @@ public class PApplet implements PConstants {
   public PGraphics createGraphics(int w, int h,
                                   String renderer, String path) {
     return makeGraphics(w, h, renderer, path, false);
-    /*
-    if (path != null) {
-      path = savePath(path);
-    }
-    PGraphics pg = makeGraphics(w, h, renderer, path, false);
-    //pg.parent = this;  // why wasn't setParent() used before 3.0a6?
-    //pg.setParent(this);  // make save() work
-    // Nevermind, parent is set in makeGraphics()
-    return pg;
-    */
   }
-
-
-//  public PGraphics makePrimaryGraphics(int wide, int high) {
-//    return makeGraphics(wide, high, sketchRenderer(), null, true);
-//  }
 
 
   /**
@@ -2204,14 +1929,6 @@ public class PApplet implements PConstants {
   protected PGraphics makeGraphics(int w, int h,
                                    String renderer, String path,
                                    boolean primary) {
-//    String openglError = external ?
-//      // This first one should no longer be possible
-//      "Before using OpenGL, first select " +
-//      "Import Library > OpenGL from the Sketch menu." :
-//       // Welcome to Java programming! The training wheels are off.
-//      "The Java classpath and native library path is not " +
-//      "properly set for using the OpenGL library.";
-
     if (!primary && !g.isGL()) {
       if (renderer.equals(P2D)) {
         throw new RuntimeException("createGraphics() with P2D requires size() to use P2D or P3D");
@@ -2232,10 +1949,6 @@ public class PApplet implements PConstants {
       if (path != null) {
         pg.setPath(savePath(path));
       }
-//      pg.setQuality(sketchQuality());
-//      if (!primary) {
-//        surface.initImage(pg, w, h);
-//      }
       pg.setSize(w, h);
 
       // everything worked, return it
@@ -2252,20 +1965,11 @@ public class PApplet implements PConstants {
       } else {
         printStackTrace(ite.getTargetException());
         Throwable target = ite.getTargetException();
-        /*
-        // removing for 3.2, we'll see
-        if (platform == MACOSX) {
-          target.printStackTrace(System.out);  // OS X bug (still true?)
-        }
-        */
+
         throw new RuntimeException(target.getMessage());
       }
 
     } catch (ClassNotFoundException cnfe) {
-//      if (cnfe.getMessage().indexOf("processing.opengl.PGraphicsOpenGL") != -1) {
-//        throw new RuntimeException(openglError +
-//                                   " (The library .jar file is missing.)");
-//      } else {
       if (external) {
         throw new RuntimeException("You need to use \"Import Library\" " +
                                    "to add " + renderer + " to your sketch.");
@@ -2290,11 +1994,6 @@ public class PApplet implements PConstants {
           throw new RuntimeException(msg);
         }
       } else {
-        /*
-        if (platform == MACOSX) {
-          e.printStackTrace(System.out);  // OS X bug (still true?)
-        }
-        */
         printStackTrace(e);
         throw new RuntimeException(e.getMessage());
       }
@@ -2353,25 +2052,8 @@ public class PApplet implements PConstants {
 
 
   public void handleDraw() {
-    //debug("handleDraw() " + g + " " + looping + " " + redraw + " valid:" + this.isValid() + " visible:" + this.isVisible());
-
-    // canDraw = g != null && (looping || redraw);
     if (g == null) return;
     if (!looping && !redraw) return;
-//    System.out.println("looping/redraw = " + looping + " " + redraw);
-
-    // no longer in use by any of our renderers
-//    if (!g.canDraw()) {
-//      debug("g.canDraw() is false");
-//      // Don't draw if the renderer is not yet ready.
-//      // (e.g. OpenGL has to wait for a peer to be on screen)
-//      return;
-//    }
-
-    // Store the quality setting in case it's changed during draw and the
-    // drawing context needs to be re-built before the next frame.
-//    int pquality = g.smooth;
-
     if (insideDraw) {
       System.err.println("handleDraw() called before finishing");
       System.exit(1);
@@ -2386,20 +2068,7 @@ public class PApplet implements PConstants {
     long now = System.nanoTime();
 
     if (frameCount == 0) {
-        // 3.0a5 should be no longer needed; handled by PSurface
-        //surface.checkDisplaySize();
-
-//        try {
-        //println("Calling setup()");
       setup();
-        //println("Done with setup()");
-
-//        } catch (RendererChangeException e) {
-//          // Give up, instead set the new renderer and re-attempt setup()
-//          return;
-//        }
-//      defaultSize = false;
-
     } else {  // frameCount > 0, meaning an actual draw()
       // update the current frameRate
 
@@ -2436,9 +2105,7 @@ public class PApplet implements PConstants {
       pmouseX = dmouseX;
       pmouseY = dmouseY;
 
-        //println("Calling draw()");
       draw();
-        //println("Done calling draw()");
 
       // dmouseX/Y is updated only once per frame (unlike emouseX/Y)
       dmouseX = mouseX;
@@ -2457,10 +2124,6 @@ public class PApplet implements PConstants {
     }
     g.endDraw();
 
-//    if (pquality != g.smooth) {
-//      surface.setSmooth(g.smooth);
-//    }
-
     if (recorder != null) {
       recorder.endDraw();
     }
@@ -2473,12 +2136,6 @@ public class PApplet implements PConstants {
     frameRateLastNanos = now;
     frameCount++;
   }
-
-
-//  /** Not official API, not guaranteed to work in the future. */
-//  public boolean canDraw() {
-//    return g != null && (looping || redraw);
-//  }
 
 
   //////////////////////////////////////////////////////////////
@@ -2509,17 +2166,6 @@ public class PApplet implements PConstants {
   synchronized public void redraw() {
     if (!looping) {
       redraw = true;
-//      if (thread != null) {
-//        // wake from sleep (necessary otherwise it'll be
-//        // up to 10 seconds before update)
-//        if (CRUSTY_THREADS) {
-//          thread.interrupt();
-//        } else {
-//          synchronized (blocker) {
-//            blocker.notifyAll();
-//          }
-//        }
-//      }
     }
   }
 
@@ -2669,17 +2315,6 @@ public class PApplet implements PConstants {
     // Get the (already processed) button code
     mouseButton = button;
 
-    /*
-    // Compatibility for older code (these have AWT object params, not P5)
-    if (mouseEventMethods != null) {
-      // Probably also good to check this, in case anyone tries to call
-      // postEvent() with an artificial event they've created.
-      if (event.getNative() != null) {
-        mouseEventMethods.handle(new Object[] { event.getNative() });
-      }
-    }
-    */
-
     // this used to only be called on mouseMoved and mouseDragged
     // change it back if people run into trouble
     if (firstMouse) {
@@ -2708,11 +2343,9 @@ public class PApplet implements PConstants {
 
     switch (action) {
     case MouseEvent.PRESS:
-//      mousePressed = true;
       mousePressed(event);
       break;
     case MouseEvent.RELEASE:
-//      mousePressed = false;
       mouseReleased(event);
       break;
     case MouseEvent.CLICK:
@@ -2994,10 +2627,6 @@ public class PApplet implements PConstants {
           ((event.isMetaDown() && platform == MACOSX) ||
            (event.isControlDown() && platform != MACOSX))) {
         // Can't use this native stuff b/c the native event might be NEWT
-//      if (external && event.getNative() instanceof java.awt.event.KeyEvent &&
-//          ((java.awt.event.KeyEvent) event.getNative()).getModifiers() ==
-//            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() &&
-//          event.getKeyCode() == 'W') {
         exit();
       }
     }
@@ -3341,13 +2970,9 @@ public class PApplet implements PConstants {
    * @see PApplet#draw()
    */
   public void delay(int napTime) {
-    //if (frameCount != 0) {
-    //if (napTime > 0) {
     try {
       Thread.sleep(napTime);
     } catch (InterruptedException e) { }
-    //}
-    //}
   }
 
 
@@ -3479,9 +3104,6 @@ public class PApplet implements PConstants {
       if (openLauncher != null) {
         params = new String[] { openLauncher };
       }
-    //} else {  // give up and just pass it to Runtime.exec()
-      //open(new String[] { filename });
-      //params = new String[] { filename };
     }
     if (params != null) {
       // If the 'open', 'gnome-open' or 'cmd' are already included
@@ -3822,10 +3444,6 @@ public class PApplet implements PConstants {
       Method method = getClass().getMethod(name);
       method.invoke(this);
 
-    } catch (IllegalArgumentException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
     } catch (InvocationTargetException e) {
       e.getTargetException().printStackTrace();
     } catch (NoSuchMethodException nsme) {
@@ -4147,18 +3765,6 @@ public class PApplet implements PConstants {
   }
 
 
-  /*
-  static public void print(Object what) {
-    if (what == null) {
-      // special case since this does fuggly things on > 1.1
-      System.out.print("null");
-    } else {
-      System.out.println(what.toString());
-    }
-  }
-  */
-
-
   /**
    * ( begin auto-generated from println.xml )
    *
@@ -4232,25 +3838,9 @@ public class PApplet implements PConstants {
    * @param variables list of data, separated by commas
    */
   static public void println(Object... variables) {
-//    System.out.println("got " + variables.length + " variables");
     print(variables);
     println();
   }
-
-
-  /*
-  // Breaking this out since the compiler doesn't know the difference between
-  // Object... and just Object (with an array passed in). This should take care
-  // of the confusion for at least the most common case (a String array).
-  // On second thought, we're going the printArray() route, since the other
-  // object types are also used frequently.
-  static public void println(String[] array) {
-    for (int i = 0; i < array.length; i++) {
-      System.out.println("[" + i + "] \"" + array[i] + "\"");
-    }
-    System.out.flush();
-  }
-  */
 
 
   /**
@@ -4371,21 +3961,6 @@ public class PApplet implements PConstants {
   static public void debug(String msg) {
     if (DEBUG) println(msg);
   }
-  //
-
-  /*
-  // not very useful, because it only works for public (and protected?)
-  // fields of a class, not local variables to methods
-  public void printvar(String name) {
-    try {
-      Field field = getClass().getDeclaredField(name);
-      println(name + " = " + field.get(this));
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-  */
-
 
   //////////////////////////////////////////////////////////////
 
@@ -4512,12 +4087,6 @@ public class PApplet implements PConstants {
     return (a > b) ? a : b;
   }
 
-  /*
-  static public final double max(double a, double b) {
-    return (a > b) ? a : b;
-  }
-  */
-
 /**
  * @param c third number to compare
  */
@@ -4557,26 +4126,6 @@ public class PApplet implements PConstants {
   }
 
 
-//  /**
-//   * Find the maximum value in an array.
-//   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
-//   * @param list the source array
-//   * @return The maximum value
-//   */
-  /*
-  static public final double max(double[] list) {
-    if (list.length == 0) {
-      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
-    }
-    double max = list[0];
-    for (int i = 1; i < list.length; i++) {
-      if (list[i] > max) max = list[i];
-    }
-    return max;
-  }
-  */
-
-
   static public final int min(int a, int b) {
     return (a < b) ? a : b;
   }
@@ -4584,13 +4133,6 @@ public class PApplet implements PConstants {
   static public final float min(float a, float b) {
     return (a < b) ? a : b;
   }
-
-  /*
-  static public final double min(double a, double b) {
-    return (a < b) ? a : b;
-  }
-  */
-
 
   static public final int min(int a, int b, int c) {
     return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
@@ -4611,13 +4153,6 @@ public class PApplet implements PConstants {
   static public final float min(float a, float b, float c) {
     return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
   }
-
-  /*
-  static public final double min(double a, double b, double c) {
-    return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
-  }
-  */
-
 
   /**
    * @param list array of numbers to compare
@@ -4643,27 +4178,6 @@ public class PApplet implements PConstants {
     }
     return min;
   }
-
-
-  /*
-   * Find the minimum value in an array.
-   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
-   * @param list the source array
-   * @return The minimum value
-   */
-  /*
-  static public final double min(double[] list) {
-    if (list.length == 0) {
-      throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
-    }
-    double min = list[0];
-    for (int i = 1; i < list.length; i++) {
-      if (list[i] < min) min = list[i];
-    }
-    return min;
-  }
-  */
-
 
   static public final int constrain(int amt, int low, int high) {
     return (amt < low) ? low : ((amt > high) ? high : amt);
@@ -5038,17 +4552,6 @@ public class PApplet implements PConstants {
     }
     return outgoing;
   }
-
-
-  /*
-  static public final double map(double value,
-                                 double istart, double istop,
-                                 double ostart, double ostop) {
-    return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
-  }
-  */
-
-
 
   //////////////////////////////////////////////////////////////
 
@@ -5434,23 +4937,8 @@ public class PApplet implements PConstants {
    * @see PGraphics#background(float, float, float, float)
    */
   public PImage loadImage(String filename) {
-//    return loadImage(filename, null, null);
     return loadImage(filename, null);
   }
-
-//  /**
-//   * @param extension the type of image to load, for example "png", "gif", "jpg"
-//   */
-//  public PImage loadImage(String filename, String extension) {
-//    return loadImage(filename, extension, null);
-//  }
-
-//  /**
-//   * @nowebref
-//   */
-//  public PImage loadImage(String filename, Object params) {
-//    return loadImage(filename, null, params);
-//  }
 
   /**
    * @param extension type of image to load, for example "png", "gif", "jpg"
@@ -5488,9 +4976,6 @@ public class PApplet implements PConstants {
     if (extension.equals("tga")) {
       try {
         PImage image = loadImageTGA(filename);
-//        if (params != null) {
-//          image.setParams(g, params);
-//        }
         return image;
       } catch (IOException e) {
         printStackTrace(e);
@@ -5501,9 +4986,6 @@ public class PApplet implements PConstants {
     if (extension.equals("tif") || extension.equals("tiff")) {
       byte[] bytes = loadBytes(filename);
       PImage image =  (bytes == null) ? null : PImage.loadTIFF(bytes);
-//      if (params != null) {
-//        image.setParams(g, params);
-//      }
       return image;
     }
 
@@ -5528,17 +5010,6 @@ public class PApplet implements PConstants {
               System.err.println(filename + " is a CMYK image, " +
                                  "only RGB images are supported.");
               return null;
-              /*
-              // wishful thinking, appears to not be supported
-              // https://community.oracle.com/thread/1272045?start=0&tstart=0
-              BufferedImage destImage =
-                new BufferedImage(buffImage.getWidth(),
-                                  buffImage.getHeight(),
-                                  BufferedImage.TYPE_3BYTE_BGR);
-              ColorConvertOp op = new ColorConvertOp(null);
-              op.filter(buffImage, destImage);
-              image = new PImage(destImage);
-              */
             }
           }
 
@@ -5554,9 +5025,6 @@ public class PApplet implements PConstants {
             image.checkAlpha();
           }
 
-//          if (params != null) {
-//            image.setParams(g, params);
-//          }
           image.parent = this;
           return image;
         }
@@ -5573,11 +5041,6 @@ public class PApplet implements PConstants {
       for (int i = 0; i < loadImageFormats.length; i++) {
         if (extension.equals(loadImageFormats[i])) {
           return loadImageIO(filename);
-//          PImage image = loadImageIO(filename);
-//          if (params != null) {
-//            image.setParams(g, params);
-//          }
-//          return image;
         }
       }
     }
@@ -5761,9 +5224,6 @@ public class PApplet implements PConstants {
 
     if (format == 0) {
       System.err.println("Unknown .tga file format for " + filename);
-                         //" (" + header[2] + " " +
-                         //(header[16] & 0xff) + " " +
-                         //hex(header[17], 2) + ")");
       return null;
     }
 
@@ -5851,7 +5311,6 @@ public class PApplet implements PConstants {
           case RGB:
             pixel = 0xFF000000 |
               is.read() | (is.read() << 8) | (is.read() << 16);
-            //(is.read() << 16) | (is.read() << 8) | is.read();
             break;
           case ARGB:
             pixel = is.read() |
@@ -5874,14 +5333,12 @@ public class PApplet implements PConstants {
             for (int i = 0; i < num; i++) {
               px[index++] = 0xFF000000 |
                 is.read() | (is.read() << 8) | (is.read() << 16);
-              //(is.read() << 16) | (is.read() << 8) | is.read();
             }
             break;
           case ARGB:
             for (int i = 0; i < num; i++) {
               px[index++] = is.read() | //(is.read() << 24) |
                 (is.read() << 8) | (is.read() << 16) | (is.read() << 24);
-              //(is.read() << 16) | (is.read() << 8) | is.read();
             }
             break;
           }
@@ -5907,26 +5364,6 @@ public class PApplet implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // DATA I/O
-
-
-//  /**
-//   * @webref input:files
-//   * @brief Creates a new XML object
-//   * @param name the name to be given to the root element of the new XML object
-//   * @return an XML object, or null
-//   * @see XML
-//   * @see PApplet#loadXML(String)
-//   * @see PApplet#parseXML(String)
-//   * @see PApplet#saveXML(XML, String)
-//   */
-//  public XML createXML(String name) {
-//    try {
-//      return new XML(name);
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//      return null;
-//    }
-//  }
 
 
   /**
@@ -6146,18 +5583,6 @@ public class PApplet implements PConstants {
   }
 
 
-
-//  /**
-//   * @webref input:files
-//   * @see Table
-//   * @see PApplet#loadTable(String)
-//   * @see PApplet#saveTable(Table, String)
-//   */
-//  public Table createTable() {
-//    return new Table();
-//  }
-
-
   /**
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
@@ -6226,17 +5651,6 @@ public class PApplet implements PConstants {
    * @param options can be one of "tsv", "csv", "bin", or "html"
    */
   public boolean saveTable(Table table, String filename, String options) {
-//    String ext = checkExtension(filename);
-//    if (ext != null) {
-//      if (ext.equals("csv") || ext.equals("tsv") || ext.equals("bin") || ext.equals("html")) {
-//        if (options == null) {
-//          options = ext;
-//        } else {
-//          options = ext + "," + options;
-//        }
-//      }
-//    }
-
     try {
       // Figure out location and make sure the target path exists
       File outputFile = saveFile(filename);
@@ -6374,33 +5788,6 @@ public class PApplet implements PConstants {
   //////////////////////////////////////////////////////////////
 
   // FILE/FOLDER SELECTION
-
-
-  /*
-  private Frame selectFrame;
-
-  private Frame selectFrame() {
-    if (frame != null) {
-      selectFrame = frame;
-
-    } else if (selectFrame == null) {
-      Component comp = getParent();
-      while (comp != null) {
-        if (comp instanceof Frame) {
-          selectFrame = (Frame) comp;
-          break;
-        }
-        comp = comp.getParent();
-      }
-      // Who you callin' a hack?
-      if (selectFrame == null) {
-        selectFrame = new Frame();
-      }
-    }
-    return selectFrame;
-  }
-  */
-
 
   static private boolean lookAndFeelCheck;
 
@@ -7076,7 +6463,6 @@ public class PApplet implements PConstants {
 
     if (filename.length() == 0) {
       // an error will be called by the parent function
-      //System.err.println("The filename passed to openStream() was empty.");
       return null;
     }
 
@@ -7141,8 +6527,6 @@ public class PApplet implements PConstants {
           String filenameShort = new File(filename).getName();
           // if the actual filename is the same, but capitalized
           // differently, warn the user.
-          //if (filenameActual.equalsIgnoreCase(filenameShort) &&
-          //!filenameActual.equals(filenameShort)) {
           if (!filenameActual.equals(filenameShort)) {
             throw new RuntimeException("This file is named " +
                                        filenameActual + " not " +
@@ -7559,7 +6943,6 @@ public class PApplet implements PConstants {
 
     } catch (IOException e) {
       e.printStackTrace();
-      //throw new RuntimeException("Error inside loadStrings()");
     }
     return null;
   }
@@ -8062,24 +7445,8 @@ public class PApplet implements PConstants {
     // Windows, Linux, or when not using a Mac OS X .app file
     File workingDirItem =
       new File(sketchPath + File.separator + "data" + File.separator + where);
-//    if (workingDirItem.exists()) {
     return workingDirItem;
-//    }
-//    // In some cases, the current working directory won't be set properly.
   }
-
-
-  /**
-   * On Windows and Linux, this is simply the data folder. On Mac OS X, this is
-   * the path to the data folder buried inside Contents/Java
-   */
-//  public File inputFile(String where) {
-//  }
-
-
-//  public String inputPath(String where) {
-//  }
-
 
   /**
    * Takes a path and creates any in-between folders if they don't
@@ -8429,9 +7796,6 @@ public class PApplet implements PConstants {
                      Math.min(Array.getLength(list), newSize));
     return temp;
   }
-
-  // contract() has been removed in revision 0124, use subset() instead.
-  // (expand() is also functionally equivalent)
 
   /**
    * ( begin auto-generated from append.xml )
@@ -9132,25 +8496,19 @@ public class PApplet implements PConstants {
     // do this so that the exception occurs inside the user's
     // program, rather than appearing to be a bug inside split()
     if (value == null) return null;
-    //return split(what, String.valueOf(delim));  // huh
 
     char[] chars = value.toCharArray();
-    int splitCount = 0; //1;
+    int splitCount = 0;
     for (int i = 0; i < chars.length; i++) {
       if (chars[i] == delim) splitCount++;
     }
-    // make sure that there is something in the input string
-    //if (chars.length > 0) {
-      // if the last char is a delimeter, get rid of it..
-      //if (chars[chars.length-1] == delim) splitCount--;
-      // on second thought, i don't agree with this, will disable
-    //}
+
     if (splitCount == 0) {
       String[] splits = new String[1];
       splits[0] = value;
       return splits;
     }
-    //int pieceCount = splitCount + 1;
+
     String[] splits = new String[splitCount + 1];
     int splitIndex = 0;
     int startIndex = 0;
@@ -9161,10 +8519,8 @@ public class PApplet implements PConstants {
         startIndex = i + 1;
       }
     }
-    //if (startIndex != chars.length) {
       splits[splitIndex] =
         new String(chars, startIndex, chars.length-startIndex);
-    //}
     return splits;
   }
 
@@ -9320,17 +8676,6 @@ public class PApplet implements PConstants {
 
   // CASTING FUNCTIONS, INSERTED BY PREPROC
 
-
-  /**
-   * Convert a char to a boolean. 'T', 't', and '1' will become the
-   * boolean value true, while 'F', 'f', or '0' will become false.
-   */
-  /*
-  static final public boolean parseBoolean(char what) {
-    return ((what == 't') || (what == 'T') || (what == '1'));
-  }
-  */
-
   /**
    * <p>Convert an integer to a boolean. Because of how Java handles upgrading
    * numbers, this will also cover byte and char (as they will upgrade to
@@ -9342,13 +8687,6 @@ public class PApplet implements PConstants {
     return (what != 0);
   }
 
-  /*
-  // removed because this makes no useful sense
-  static final public boolean parseBoolean(float what) {
-    return (what != 0);
-  }
-  */
-
   /**
    * Convert the string "true" or "false" to a boolean.
    * @return true if 'what' is "true" or "TRUE", false otherwise
@@ -9358,34 +8696,6 @@ public class PApplet implements PConstants {
   }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-  /*
-  // removed, no need to introduce strange syntax from other languages
-  static final public boolean[] parseBoolean(char what[]) {
-    boolean outgoing[] = new boolean[what.length];
-    for (int i = 0; i < what.length; i++) {
-      outgoing[i] =
-        ((what[i] == 't') || (what[i] == 'T') || (what[i] == '1'));
-    }
-    return outgoing;
-  }
-  */
-
-  /**
-   * Convert a byte array to a boolean array. Each element will be
-   * evaluated identical to the integer case, where a byte equal
-   * to zero will return false, and any other value will return true.
-   * @return array of boolean elements
-   */
-  /*
-  static final public boolean[] parseBoolean(byte what[]) {
-    boolean outgoing[] = new boolean[what.length];
-    for (int i = 0; i < what.length; i++) {
-      outgoing[i] = (what[i] != 0);
-    }
-    return outgoing;
-  }
-  */
 
   /**
    * Convert an int array to a boolean array. An int equal
@@ -9399,17 +8709,6 @@ public class PApplet implements PConstants {
     }
     return outgoing;
   }
-
-  /*
-  // removed, not necessary... if necessary, convert to int array first
-  static final public boolean[] parseBoolean(float what[]) {
-    boolean outgoing[] = new boolean[what.length];
-    for (int i = 0; i < what.length; i++) {
-      outgoing[i] = (what[i] != 0);
-    }
-    return outgoing;
-  }
-  */
 
   static final public boolean[] parseBoolean(String[] what) {
     boolean[] outgoing = new boolean[what.length];
@@ -9436,13 +8735,6 @@ public class PApplet implements PConstants {
   static final public byte parseByte(float what) {
     return (byte) what;
   }
-
-  /*
-  // nixed, no precedent
-  static final public byte[] parseByte(String what) {  // note: array[]
-    return what.getBytes();
-  }
-  */
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -9478,23 +8770,7 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  /*
-  static final public byte[][] parseByte(String what[]) {  // note: array[][]
-    byte outgoing[][] = new byte[what.length][];
-    for (int i = 0; i < what.length; i++) {
-      outgoing[i] = what[i].getBytes();
-    }
-    return outgoing;
-  }
-  */
-
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-  /*
-  static final public char parseChar(boolean what) {  // 0/1 or T/F ?
-    return what ? 't' : 'f';
-  }
-  */
 
   static final public char parseChar(byte what) {
     return (char) (what & 0xff);
@@ -9503,28 +8779,6 @@ public class PApplet implements PConstants {
   static final public char parseChar(int what) {
     return (char) what;
   }
-
-  /*
-  static final public char parseChar(float what) {  // nonsensical
-    return (char) what;
-  }
-
-  static final public char[] parseChar(String what) {  // note: array[]
-    return what.toCharArray();
-  }
-  */
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-  /*
-  static final public char[] parseChar(boolean what[]) {  // 0/1 or T/F ?
-    char outgoing[] = new char[what.length];
-    for (int i = 0; i < what.length; i++) {
-      outgoing[i] = what[i] ? 't' : 'f';
-    }
-    return outgoing;
-  }
-  */
 
   static final public char[] parseChar(byte[] what) {
     char[] outgoing = new char[what.length];
@@ -9541,24 +8795,6 @@ public class PApplet implements PConstants {
     }
     return outgoing;
   }
-
-  /*
-  static final public char[] parseChar(int[] what) {
-    char[] outgoing = new char[what.length];
-    for (int i = 0; i < what.length; i++) {
-      outgoing[i] = (char) what[i];
-    }
-    return outgoing;
-  }
-
-  static final public char[][] parseChar(String what[]) {  // note: array[][]
-    char outgoing[][] = new char[what.length][];
-    for (int i = 0; i < what.length; i++) {
-      outgoing[i] = what[i].toCharArray();
-    }
-    return outgoing;
-  }
-  */
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -9682,12 +8918,6 @@ public class PApplet implements PConstants {
   }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-  /*
-  static final public float parseFloat(boolean what) {
-    return what ? 1 : 0;
-  }
-  */
 
   /**
    * Convert an int to a float value. Also handles bytes because of
@@ -9920,14 +9150,6 @@ public class PApplet implements PConstants {
     return int_nf.format(num);
   }
 
-
-  /**
-   * number format signed (or space)
-   * Formats a number but leaves a blank space in the front
-   * when it's positive so that it can be properly aligned with
-   * numbers that have a negative sign in front of them.
-   */
-
   /**
    * ( begin auto-generated from nfs.xml )
    *
@@ -9961,13 +9183,6 @@ public class PApplet implements PConstants {
     return formatted;
   }
 
-  //
-
-  /**
-   * number format positive (or plus)
-   * Formats a number, always placing a - or + sign
-   * in the front when it's negative or positive.
-   */
  /**
    * ( begin auto-generated from nfp.xml )
    *
@@ -10211,11 +9426,6 @@ public class PApplet implements PConstants {
     return binary(value, 32);
   }
 
-  /*
-   * Returns a String that contains the binary value of an int.
-   * The digits parameter determines how many digits will be used.
-   */
-
  /**
    * ( begin auto-generated from binary.xml )
    *
@@ -10330,7 +9540,6 @@ public class PApplet implements PConstants {
         // then assume this is actually a #FF8800
         return (alpha << 24) | (gray & 0xFFFFFF);
       } else {
-        //if (gray > 255) gray = 255; else if (gray < 0) gray = 0;
         return (alpha << 24) | (gray << 16) | (gray << 8) | gray;
       }
     }
@@ -10581,20 +9790,6 @@ public class PApplet implements PConstants {
   // also suspecting that these "not showing up" bugs might be EDT issues.
   static public void runSketch(final String[] args,
                                final PApplet constructedSketch) {
-//    EventQueue.invokeLater(new Runnable() {
-//      public void run() {
-//        runSketchEDT(args, constructedSketch);
-//      }
-//    });
-//  }
-//
-//
-//  /**
-//   * Moving this to the EDT for 3.0a6 because that's the proper thing to do
-//   * when messing with Swing components. But mostly we're AWT, so who knows.
-//   */
-//  static protected void runSketchEDT(final String[] args,
-//                                     final PApplet constructedSketch) {
     // Supposed to help with flicker, but no effect on OS X.
     // TODO IIRC this helped on Windows, but need to double check.
     System.setProperty("sun.awt.noerasebackground", "true");
@@ -10609,27 +9804,6 @@ public class PApplet implements PConstants {
       e.printStackTrace();
       uncaughtThrowable = e;
     });
-
-    // This doesn't work, need to mess with Info.plist instead
-    /*
-    // In an exported application, add the Contents/Java folder to the
-    // java.library.path, so that native libraries work properly.
-    // Without this, the library path is only set to Contents/MacOS
-    // where the launcher binary lives.
-    if (platform == MACOSX) {
-      URL coreJarURL =
-        PApplet.class.getProtectionDomain().getCodeSource().getLocation();
-      // The jarPath from above will/may be URL encoded (%20 for spaces)
-      String coreJarPath = urlDecode(coreJarURL.getPath());
-      if (coreJarPath.endsWith("/Contents/Java/core.jar")) {
-        // remove the /core.jar part from the end
-        String javaPath = coreJarPath.substring(0, coreJarPath.length() - 9);
-        String libraryPath = System.getProperty("java.library.path");
-        libraryPath += File.pathSeparator + javaPath;
-        System.setProperty("java.library.path", libraryPath);
-      }
-    }
-    */
 
     // Catch any HeadlessException to provide more useful feedback
     try {
@@ -10660,9 +9834,7 @@ public class PApplet implements PConstants {
     boolean hideStop = false;
 
     int displayNum = -1;  // use default
-//    boolean fullScreen = false;
     boolean present = false;
-//    boolean spanDisplays = false;
     int density = -1;
 
     String param = null, value = null;
@@ -10723,9 +9895,6 @@ public class PApplet implements PConstants {
         if (args[argIndex].equals(ARGS_PRESENT)) {
           present = true;
 
-//        } else if (args[argIndex].equals(ARGS_SPAN_DISPLAYS)) {
-//          spanDisplays = true;
-
         } else if (args[argIndex].equals(ARGS_HIDE_STOP)) {
           hideStop = true;
 
@@ -10739,17 +9908,6 @@ public class PApplet implements PConstants {
       }
       argIndex++;
     }
-
-//    // Now that sketch path is passed in args after the sketch name
-//    // it's not set in the above loop(the above loop breaks after
-//    // finding sketch name). So setting sketch path here.
-//    // https://github.com/processing/processing/commit/0a14835e6f5f4766b022e73a8fe562318636727c
-//    // TODO this is a hack added for PDE X and needs to be removed [fry 141104]
-//    for (int i = 0; i < args.length; i++) {
-//      if (args[i].startsWith(ARGS_SKETCH_FOLDER)){
-//        folder = args[i].substring(args[i].indexOf('=') + 1);
-//      }
-//    }
 
     final PApplet sketch;
     if (constructedSketch != null) {
@@ -10794,10 +9952,6 @@ public class PApplet implements PConstants {
     // For 3.0.1, moved this above handleSettings() so that loadImage() can be
     // used inside settings(). Sets a terrible precedent, but the alternative
     // of not being able to size a sketch to an image is driving people loopy.
-    // A handful of things that need to be set before init/start.
-//    if (folder == null) {
-//      folder = calcSketchPath();
-//    }
     sketch.sketchPath = folder;
 
     // Don't set 'args' to a zero-length array if it should be null [3.0a8]
@@ -10808,25 +9962,7 @@ public class PApplet implements PConstants {
     }
 
     // Call the settings() method which will give us our size() call
-//    try {
     sketch.handleSettings();
-//    } catch (Throwable t) {
-//      System.err.println("I think I'm gonna hurl");
-//    }
-
-////    sketch.spanDisplays = spanDisplays;
-//    // If spanning screens, that means we're also full screen.
-////    fullScreen |= spanDisplays;
-//    if (spanDisplays) {
-//      displayIndex = SPAN;
-////      fullScreen = true;
-//    }
-
-//    // If the applet doesn't call for full screen, but the command line does,
-//    // enable it. Conversely, if the command line does not, don't disable it.
-//    // Query the applet to see if it wants to be full screen all the time.
-//    //fullScreen |= sketch.sketchFullScreen();
-//    sketch.fullScreen |= fullScreen;
 
     sketch.external = external;
 
@@ -10835,22 +9971,6 @@ public class PApplet implements PConstants {
     }
 
     final PSurface surface = sketch.initSurface();
-//      sketch.initSurface(windowColor, displayIndex, fullScreen, spanDisplays);
-
-    /*
-    // Wait until the applet has figured out its width. In a static mode app,
-    // everything happens inside setup(), so this will be after setup() has
-    // completed, and the empty draw() has set "finished" to true.
-    while (sketch.defaultSize && !sketch.finished) {
-      //System.out.println("default size");
-      try {
-        Thread.sleep(5);
-
-      } catch (InterruptedException e) {
-        //System.out.println("interrupt");
-      }
-    }
-    */
 
     if (present) {
       if (hideStop) {
@@ -10869,14 +9989,6 @@ public class PApplet implements PConstants {
 
     sketch.showSurface();
     sketch.startSurface();
-    /*
-    if (sketch.getGraphics().displayable()) {
-      surface.setVisible(true);
-    }
-
-    //sketch.init();
-    surface.startThread();
-    */
   }
 
 
@@ -10925,15 +10037,6 @@ public class PApplet implements PConstants {
             "use fullScreen() to get an undecorated full screen frame");
         }
 
-        // Can't override this one because it's called by Window's constructor
-        /*
-        @Override
-        public void setLocation(int x, int y) {
-          deprecationWarning("setLocation");
-          surface.setLocation(x, y);
-        }
-        */
-
         @Override
         public void setSize(int w, int h) {
           deprecationWarning("setSize");
@@ -10943,7 +10046,6 @@ public class PApplet implements PConstants {
         private void deprecationWarning(String method) {
           PGraphics.showWarning("Use surface." + method + "() instead of " +
                                 "frame." + method + " in Processing 3");
-          //new Exception(method).printStackTrace(System.out);
         }
       };
 
@@ -10954,36 +10056,8 @@ public class PApplet implements PConstants {
       surface.initOffscreen(this);  // for PDF/PSurfaceNone and friends
     }
 
-//    init();
     return surface;
   }
-
-
-//  protected void createSurface() {
-//    surface = g.createSurface();
-//    if (surface == null) {
-//      System.err.println("This renderer needs to be updated for Processing 3");
-//      System.err.println("The createSurface() method returned null.");
-//      System.exit(1);
-//    }
-//  }
-
-
-//  /**
-//   * Return a Canvas object that can be embedded into other Java GUIs.
-//   * This is necessary because PApplet no longer subclasses Component.
-//   *
-//   * <pre>
-//   * PApplet sketch = new EmbedSketch();
-//   * Canvas canvas = sketch.getCanvas();
-//   * // add the canvas object to your project and validate() it
-//   * sketch.init()  // start the animation thread
-//   */
-//  public Component getComponent() {
-//    g = createPrimaryGraphics();
-//    surface = g.createSurface();
-//    return surface.initComponent(this);
-//  }
 
 
   /** Convenience method, should only be called by PSurface subclasses. */
@@ -11158,17 +10232,6 @@ public class PApplet implements PConstants {
   public void endRaw() {
     g.endRaw();
   }
-
-
-  /**
-   * Starts shape recording and returns the PShape object that will
-   * contain the geometry.
-   */
-  /*
-  public PShape beginRecord() {
-    return g.beginRecord();
-  }
-  */
 
   //////////////////////////////////////////////////////////////
 
