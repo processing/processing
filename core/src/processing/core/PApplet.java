@@ -1190,7 +1190,7 @@ public class PApplet implements PConstants {
             field.setAccessible(true);
             Object scale = field.get(device);
 
-            if (scale instanceof Integer && ((Integer)scale).intValue() == 2) {
+            if (scale instanceof Integer && (Integer) scale == 2) {
               return 2;
             }
           }
@@ -1620,18 +1620,7 @@ public class PApplet implements PConstants {
     }
   }
 
-
-  protected void handleMethods(String methodName) {
-    synchronized (registerLock) {
-      RegisteredMethods meth = registerMap.get(methodName);
-      if (meth != null) {
-        meth.handle();
-      }
-    }
-  }
-
-
-  protected void handleMethods(String methodName, Object[] args) {
+  protected void handleMethods(String methodName, Object...args) {
     synchronized (registerLock) {
       RegisteredMethods meth = registerMap.get(methodName);
       if (meth != null) {
@@ -3018,7 +3007,7 @@ public class PApplet implements PConstants {
     }
     */
 
-    handleMethods("keyEvent", new Object[] { event });
+    handleMethods("keyEvent", event);
 
     // if someone else wants to intercept the key, they should
     // set key to zero (or something besides the ESC).
@@ -6715,8 +6704,8 @@ public class PApplet implements PConstants {
     try {
       Class<?> callbackClass = callbackObject.getClass();
       Method selectMethod =
-        callbackClass.getMethod(callbackMethod, new Class[] { File.class });
-      selectMethod.invoke(callbackObject, new Object[] { selectedFile });
+        callbackClass.getMethod(callbackMethod, File.class);
+      selectMethod.invoke(callbackObject, selectedFile);
 
     } catch (IllegalAccessException iae) {
       System.err.println(callbackMethod + "() must be public");
