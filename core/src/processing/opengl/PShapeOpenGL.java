@@ -4877,8 +4877,8 @@ public class PShapeOpenGL extends PShape {
 
   protected void renderPolys(PGraphicsOpenGL g, PImage textureImage) {
     boolean customShader = g.polyShader != null;
-    boolean needNormals = customShader ? g.polyShader.accessNormals() : false;
-    boolean needTexCoords = customShader ? g.polyShader.accessTexCoords() : false;
+    boolean needNormals = customShader && g.polyShader.accessNormals();
+    boolean needTexCoords = customShader && g.polyShader.accessTexCoords();
 
     Texture tex = textureImage != null ? g.getTexture(textureImage) : null;
 

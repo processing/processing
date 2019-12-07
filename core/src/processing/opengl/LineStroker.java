@@ -258,18 +258,14 @@ public class LineStroker  {
     if (side == 0) {
       centerSide = side(cx, cy, xa, ya, xb, yb);
     } else {
-      centerSide = (side == 1) ? true : false;
+      centerSide = side == 1;
     }
     for (int i = 0; i < numPenSegments; i++) {
       px = cx + pen_dx[i];
       py = cy + pen_dy[i];
 
       boolean penSide = side(px, py, xa, ya, xb, yb);
-      if (penSide != centerSide) {
-        penIncluded[i] = true;
-      } else {
-        penIncluded[i] = false;
-      }
+        penIncluded[i] = penSide != centerSide;
     }
 
     int start = -1, end = -1;

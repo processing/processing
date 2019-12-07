@@ -932,7 +932,7 @@ public class PShader implements PConstants {
 
   protected void validate() {
     pgl.getProgramiv(glProgram, PGL.LINK_STATUS, intBuffer);
-    boolean linked = intBuffer.get(0) == 0 ? false : true;
+    boolean linked = intBuffer.get(0) != 0;
     if (!linked) {
       PGraphics.showException("Cannot link shader program:\n" +
                               pgl.getProgramInfoLog(glProgram));
@@ -940,7 +940,7 @@ public class PShader implements PConstants {
 
     pgl.validateProgram(glProgram);
     pgl.getProgramiv(glProgram, PGL.VALIDATE_STATUS, intBuffer);
-    boolean validated = intBuffer.get(0) == 0 ? false : true;
+    boolean validated = intBuffer.get(0) != 0;
     if (!validated) {
       PGraphics.showException("Cannot validate shader program:\n" +
                               pgl.getProgramInfoLog(glProgram));
@@ -976,7 +976,7 @@ public class PShader implements PConstants {
     pgl.compileShader(glVertex);
 
     pgl.getShaderiv(glVertex, PGL.COMPILE_STATUS, intBuffer);
-    boolean compiled = intBuffer.get(0) == 0 ? false : true;
+    boolean compiled = intBuffer.get(0) != 0;
     if (!compiled) {
       PGraphics.showException("Cannot compile vertex shader:\n" +
                               pgl.getShaderInfoLog(glVertex));
@@ -995,7 +995,7 @@ public class PShader implements PConstants {
     pgl.compileShader(glFragment);
 
     pgl.getShaderiv(glFragment, PGL.COMPILE_STATUS, intBuffer);
-    boolean compiled = intBuffer.get(0) == 0 ? false : true;
+    boolean compiled = intBuffer.get(0) != 0;
     if (!compiled) {
       PGraphics.showException("Cannot compile fragment shader:\n" +
                               pgl.getShaderInfoLog(glFragment));

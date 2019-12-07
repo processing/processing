@@ -2446,21 +2446,17 @@ public class PApplet implements PConstants {
       // calculation, we first convert the accumulated frame rate to average
       // frame time, then calculate the exponential moving average, and then
       // convert the average frame time back to frame rate.
-      {
-        // Get the frame time of the last frame
-        double frameTimeSecs = (now - frameRateLastNanos) / 1e9;
-        // Convert average frames per second to average frame time
-        double avgFrameTimeSecs = 1.0 / frameRate;
-        // Calculate exponential moving average of frame time
-        final double alpha = 0.05;
-        avgFrameTimeSecs = (1.0 - alpha) * avgFrameTimeSecs + alpha * frameTimeSecs;
-        // Convert frame time back to frames per second
-        frameRate = (float) (1.0 / avgFrameTimeSecs);
-      }
+      // Get the frame time of the last frame
+      double frameTimeSecs = (now - frameRateLastNanos) / 1e9;
+      // Convert average frames per second to average frame time
+      double avgFrameTimeSecs = 1.0 / frameRate;
+      // Calculate exponential moving average of frame time
+      final double alpha = 0.05;
+      avgFrameTimeSecs = (1.0 - alpha) * avgFrameTimeSecs + alpha * frameTimeSecs;
+      // Convert frame time back to frames per second
+      frameRate = (float) (1.0 / avgFrameTimeSecs);
 
-      if (frameCount != 0) {
-        handleMethods("pre");
-      }
+      handleMethods("pre");
 
       // use dmouseX/Y as previous mouse pos, since this is the
       // last position the mouse was in during the previous draw.
@@ -3430,9 +3426,7 @@ public class PApplet implements PConstants {
         // Just pass it off to open() and hope for the best
         launch(url);
       }
-    } catch (IOException e) {
-      printStackTrace(e);
-    } catch (URISyntaxException e) {
+    } catch (IOException | URISyntaxException e) {
       printStackTrace(e);
     }
   }
@@ -3500,7 +3494,7 @@ public class PApplet implements PConstants {
         if (openLauncher != null) break;
         try {
           Process p = Runtime.getRuntime().exec(new String[] { launcher });
-          /*int result =*/ p.waitFor();
+          p.waitFor();
           // Not installed will throw an IOException (JDK 1.4.2, Ubuntu 7.04)
           openLauncher = launcher;
         } catch (Exception e) { }
@@ -3852,8 +3846,8 @@ public class PApplet implements PConstants {
    */
   public void method(String name) {
     try {
-      Method method = getClass().getMethod(name, new Class[] {});
-      method.invoke(this, new Object[] { });
+      Method method = getClass().getMethod(name);
+      method.invoke(this);
 
     } catch (IllegalArgumentException e) {
       e.printStackTrace();
@@ -5996,13 +5990,7 @@ public class PApplet implements PConstants {
 
       // can't use catch-all exception, since it might catch the
       // RuntimeException about the incorrect case sensitivity
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-
-    } catch (ParserConfigurationException e) {
-      throw new RuntimeException(e);
-
-    } catch (SAXException e) {
+    } catch (IOException | ParserConfigurationException | SAXException e) {
       throw new RuntimeException(e);
     }
   }
@@ -7149,10 +7137,8 @@ public class PApplet implements PConstants {
         } else if (conn instanceof JarURLConnection) {
           return url.openStream();
         }
-      } catch (MalformedURLException mfue) {
+      } catch (MalformedURLException | FileNotFoundException e) {
         // not a url, that's fine
-
-      } catch (FileNotFoundException fnfe) {
         // Added in 0119 b/c Java 1.5 throws FNFE when URL not available.
         // http://dev.processing.org/bugs/show_bug.cgi?id=403
 
@@ -7208,8 +7194,7 @@ public class PApplet implements PConstants {
 
       // have to break these out because a general Exception might
       // catch the RuntimeException being thrown above
-    } catch (IOException ioe) {
-    } catch (SecurityException se) { }
+    } catch (IOException | SecurityException e) { }
 
     // Using getClassLoader() prevents java from converting dots
     // to slashes or requiring a slash at the beginning.
@@ -7248,20 +7233,19 @@ public class PApplet implements PConstants {
       try {  // first try to catch any security exceptions
         try {
           stream = new FileInputStream(dataPath(filename));
-          if (stream != null) return stream;
-        } catch (IOException e2) { }
+          return stream;
+        } catch (IOException ignored) { }
 
         try {
           stream = new FileInputStream(sketchPath(filename));
-          if (stream != null) return stream;
-        } catch (Exception e) { }  // ignored
+          return stream;
+        } catch (Exception ignored) { }  // ignored
 
         try {
           stream = new FileInputStream(filename);
-          if (stream != null) return stream;
-        } catch (IOException e1) { }
-
-      } catch (SecurityException se) { }  // online, whups
+          return stream;
+        } catch (FileNotFoundException ignored) { }
+      } catch (SecurityException ignored) { }  // online, whups
 
     } catch (Exception e) {
       printStackTrace(e);
@@ -7367,10 +7351,8 @@ public class PApplet implements PConstants {
             input.close();
             return buffer;
           }
-        } catch (MalformedURLException mfue) {
-          // not a url, that's fine
-
-        } catch (FileNotFoundException fnfe) {
+        } catch (MalformedURLException | FileNotFoundException e) {
+          // not a url, that's fine or
           // Java 1.5+ throws FNFE when URL not available
           // http://dev.processing.org/bugs/show_bug.cgi?id=403
 

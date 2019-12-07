@@ -7446,7 +7446,7 @@ public class PGraphics extends PImage implements PConstants {
     backgroundGi = calcGi;
     backgroundBi = calcBi;
     backgroundAi = (format == RGB) ? 255 : calcAi;
-    backgroundAlpha = (format == RGB) ? false : calcAlpha;
+    backgroundAlpha = (format != RGB) && calcAlpha;
     backgroundColor = calcColor;
 
     backgroundImpl();
