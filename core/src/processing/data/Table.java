@@ -1712,19 +1712,19 @@ public class Table {
         columns[column] = new int[rowCount];
         break;
       case LONG:
-        columns[column] = new long[rowCount];;
+        columns[column] = new long[rowCount];
         break;
       case FLOAT:
-        columns[column] = new float[rowCount];;
+        columns[column] = new float[rowCount];
         break;
       case DOUBLE:
-        columns[column] = new double[rowCount];;
+        columns[column] = new double[rowCount];
         break;
       case STRING:
-        columns[column] = new String[rowCount];;
+        columns[column] = new String[rowCount];
         break;
       case CATEGORY:
-        columns[column] = new int[rowCount];;
+        columns[column] = new int[rowCount];
         break;
       default:
         throw new IllegalArgumentException(newType + " is not a valid column type.");

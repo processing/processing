@@ -327,7 +327,7 @@ public class PShapeOBJ extends PShape {
       while ((line = reader.readLine()) != null) {
         // Parse the line
         line = line.trim();
-        String parts[] = line.split("\\s+");
+        String[] parts = line.split("\\s+");
         if (parts.length > 0) {
           // Extract the material data.
           if (parts[0].equals("newmtl")) {
