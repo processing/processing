@@ -4,6 +4,13 @@ X   https://github.com/processing/processing/issues/5794
 X fix potential highlighting issue that wasn't selecting portions of text
 X update AppBundler to use newer SDK, recompile
 X edit build.xml files and appbundler to preserve more attributes
+X contrib listing names should not be case sensitive
+X   libs in all caps appeared above those in lowercase
+
+contribs
+X tweak mode not working
+X   https://github.com/processing/processing/issues/5805
+X   https://github.com/processing/processing/pull/5909
 
 _ windows anti-malware leaves browser stuck at 100%
 _   https://github.com/processing/processing/issues/5893
@@ -12,9 +19,6 @@ _ startup errors in contrib manager
 _   https://github.com/processing/processing/issues/5482
 _   https://github.com/processing/processing/issues/5916
 _   https://github.com/processing/processing/issues/5823
-
-fork issues
-_ processing-sam/build/macosx/jdk-0u1_macosx_64.tgz
 
 from Casey
 _ Issue with https and downloading the binaries, +Checksums?
