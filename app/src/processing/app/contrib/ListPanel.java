@@ -419,7 +419,7 @@ implements Scrollable, ContributionListing.ChangeListener {
           return comparator.thenComparing(contribution -> getAuthorNameWithoutMarkup(contribution.getAuthorList()));
         case NAME:
         default:
-          return comparator.thenComparing(Contribution::getName);
+          return comparator.thenComparing(Contribution::getName, String.CASE_INSENSITIVE_ORDER);
       }
     }
   }
