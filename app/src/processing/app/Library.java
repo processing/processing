@@ -128,7 +128,7 @@ public class Library extends LocalContribution {
     StringDict exportTable = exportSettings.exists() ?
       Util.readSettings(exportSettings) : new StringDict();
 
-    exportList = new HashMap<String, String[]>();
+    exportList = new HashMap<>();
 
     // get the list of files just in the library root
     String[] baseList = libraryFolder.list(standardFilter);
@@ -298,7 +298,7 @@ public class Library extends LocalContribution {
 //      Library library = importToLibraryTable.get(pkg);
       List<Library> libraries = importToLibraryTable.get(pkg);
       if (libraries == null) {
-        libraries = new ArrayList<Library>();
+        libraries = new ArrayList<>();
         importToLibraryTable.put(pkg, libraries);
       } else {
         if (Base.DEBUG) {
@@ -470,10 +470,10 @@ public class Library extends LocalContribution {
 
   static protected FilenameFilter junkFolderFilter = new FilenameFilter() {
     public boolean accept(File dir, String name) {
-      // skip .DS_Store files, .svn folders, etc
+      // skip .DS_Store files, .svn and .git folders, etc
       if (name.charAt(0) == '.') return false;
-      if (name.equals("CVS")) return false;
-      return (new File(dir, name).isDirectory());
+      if (name.equals("CVS")) return false;  // old skool
+      return new File(dir, name).isDirectory();
     }
   };
 
@@ -482,12 +482,14 @@ public class Library extends LocalContribution {
     List<File> libraries = new ArrayList<>();
     String[] folderNames = folder.list(junkFolderFilter);
 
-    // if a bad folder or something like that, this might come back null
+    // if a bad folder or unreadable, folderNames might be null
     if (folderNames != null) {
       // alphabetize list, since it's not always alpha order
       // replaced hella slow bubble sort with this feller for 0093
       Arrays.sort(folderNames, String.CASE_INSENSITIVE_ORDER);
 
+      // TODO some weirdness because ContributionType.LIBRARY.isCandidate()
+      // handles some, but not all, of this [fry 200116]
       for (String potentialName : folderNames) {
         File baseFolder = new File(folder, potentialName);
         File libraryFolder = new File(baseFolder, "library");
@@ -500,22 +502,13 @@ public class Library extends LocalContribution {
             libraries.add(baseFolder);
 
           } else {
-            String mess = "The library \""
-                + potentialName
-                + "\" cannot be used.\n"
-                + "Library names must contain only basic letters and numbers.\n"
-                + "(ASCII only and no spaces, and it cannot start with a number)";
+            final String mess =
+              "The library \"" + potentialName + "\" cannot be used.\n" +
+              "Library names must contain only basic letters and numbers.\n" +
+              "(ASCII only and no spaces, and it cannot start with a number)";
             Messages.showMessage("Ignoring bad library name", mess);
             continue;
           }
-          /*
-        } else {  // maybe it's a JS library
-          // TODO this should be in a better location
-          File jsLibrary = new File(libraryFolder, potentialName + ".js");
-          if (jsLibrary.exists()) {
-            libraries.add(baseFolder);
-          }
-          */
         }
       }
     }
@@ -532,6 +525,7 @@ public class Library extends LocalContribution {
       libraries.add(new Library(baseFolder));
     }
 
+    /*
     // Support libraries inside of one level of subfolders? I believe this was
     // the compromise for supporting library groups, but probably a bad idea
     // because it's not compatible with the Manager.
@@ -548,6 +542,7 @@ public class Library extends LocalContribution {
         }
       }
     }
+    */
     return libraries;
   }
 
