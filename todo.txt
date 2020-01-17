@@ -8,6 +8,12 @@ X contrib listing names should not be case sensitive
 X   libs in all caps appeared above those in lowercase
 X ignore library subfolders
 X don't unzip __MACOSX files with contribs
+X don't do library subfolders
+X show error when .properties file is missing from contribs
+X clean up a lot of bad temp file handling in the contrib manager
+X   https://github.com/processing/processing/issues/5845
+X don't remove entries from Recent menu on Save As
+X   https://github.com/processing/processing/issues/5902
 
 contribs
 X tweak mode not working
