@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013-16 The Processing Foundation
+  Copyright (c) 2013-20 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -237,7 +237,8 @@ public abstract class LocalContribution extends Contribution {
   LocalContribution copyAndLoad(Base base,
                                 boolean confirmReplace,
                                 StatusPanel status) {
-// NOTE: null status => function is called on startup when Editor objects, et al. aren't ready
+    // NOTE: null status => function is called on startup
+    // when Editor objects, et al. aren't ready
 
     String contribFolderName = getFolder().getName();
 
@@ -262,10 +263,17 @@ public abstract class LocalContribution extends Contribution {
             (oldContrib.getId() != null && oldContrib.getId().equals(getId()))) {
 
           if (oldContrib.getType().requiresRestart()) {
-            // XXX: We can't replace stuff, soooooo.... do something different
             if (!oldContrib.backup(false, status)) {
               return null;
             }
+            /*
+            try {
+              Platform.deleteFile(oldContrib.getFolder());
+            } catch (IOException e) {
+              status.setErrorMessage(e.getMessage());
+              return null;
+            }
+             */
           } else {
             int result = 0;
             boolean doBackup = Preferences.getBoolean("contribution.backup.on_install");
@@ -306,8 +314,7 @@ public abstract class LocalContribution extends Contribution {
         Util.removeDir(contribFolder);
       }
 
-    }
-    else {
+    } else {
       // This if should ideally never happen, since this function
       // is to be called only when restarting on update
       if (contribFolder.exists() && contribFolder.isDirectory()) {
