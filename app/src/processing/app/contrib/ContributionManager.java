@@ -619,16 +619,21 @@ public class ContributionManager {
       }
     });
 
-    for (File file : installList) {
-      for (AvailableContribution contrib : listing.advertisedContributions) {
-        if (file.getName().equals(contrib.getName())) {
-          file.delete();
-          installOnStartUp(base, contrib);
-          EventQueue.invokeAndWait(() -> {
-            listing.replaceContribution(contrib, contrib);
-          });
+    // https://github.com/processing/processing/issues/5823
+    if (installList != null) {
+      for (File file : installList) {
+        for (AvailableContribution contrib : listing.advertisedContributions) {
+          if (file.getName().equals(contrib.getName())) {
+            file.delete();
+            installOnStartUp(base, contrib);
+            EventQueue.invokeAndWait(() -> {
+              listing.replaceContribution(contrib, contrib);
+            });
+          }
         }
       }
+    } else {
+      System.err.println("Could not read " + root);
     }
   }
 
