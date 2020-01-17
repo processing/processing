@@ -1,5 +1,10 @@
 0271 (3.5.5 unlikely)
 
+contribs
+X rename-variable menu allows Java identifiers
+X   https://github.com/processing/processing/issues/5828
+X   https://github.com/processing/processing/pull/5906
+
 
 from Casey
 _ Issue with https and downloading the binaries, +Checksums?
