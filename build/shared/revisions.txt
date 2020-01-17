@@ -1,3 +1,54 @@
+PROCESSING 3.5.4 (REV 0270) - 17 January 2020
+
+This release has several bug fixes to improve the Contribution Manager,
+get Tweak Mode working again, and so on.
+
+
+[ changes ]
+
++ Don't remove entries from Recent menu on Save As
+  https://github.com/processing/processing/issues/5902
+
++ Use ctrl-page up/down for changing tabs on Windows
+  https://github.com/processing/processing/issues/5794
+
++ Show error when .properties file is missing from a Library/Mode/Tool.
+
+
+[ fixes ]
+
++ Tweak Mode working again (fix from Gal Sasson)
+  https://github.com/processing/processing/issues/5805
+  https://github.com/processing/processing/pull/5909
+
++ Fix potential highlighting issue that wasn't selecting portions of text
+
++ Names in the contribution listing are no longer case sensitive
+  (It was placing lowercase names at the bottom of the list.)
+
++ Clean up a lot of bad temp file handling in the contrib manager
+  https://github.com/processing/processing/issues/5845
+  https://github.com/processing/processing/issues/5960
+
++ Fix NullPointerException in installPreviouslyFailed() on startup
+  https://github.com/processing/processing/issues/5482
+  https://github.com/processing/processing/issues/5916
+
+
+[ internal ]
+
++ Ignore subfolders in the "libraries" directory. This was causing some
+  nasty startup issues for folks, and other hard-to-track bugs. Hopefully
+  there aren't any installs that relied on this behavior.
+
++ Update AppBundler to use newer SDK, recompile
+
++ Edit build.xml files and appbundler to preserve more attributes
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
 PROCESSING 3.5.3 (REV 0269) - 3 February 2019
 
 This fixes a typo that left the "Redo" command with the wrong
