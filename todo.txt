@@ -1,4 +1,4 @@
-0270 (3.5.4 or 3.6)
+0270 (3.5.4)
 X use ctrl-page up/down for tabs on Windows
 X   https://github.com/processing/processing/issues/5794
 X fix potential highlighting issue that wasn't selecting portions of text
@@ -19,6 +19,7 @@ X don't do library subfolders
 X show error when .properties file is missing from contribs
 X clean up a lot of bad temp file handling in the contrib manager
 X   https://github.com/processing/processing/issues/5845
+X   https://github.com/processing/processing/issues/5960
 X NPE in installPreviouslyFailed() on startup
 X   https://github.com/processing/processing/issues/5482
 X   https://github.com/processing/processing/issues/5916
@@ -27,9 +28,6 @@ contribs
 X tweak mode not working
 X   https://github.com/processing/processing/issues/5805
 X   https://github.com/processing/processing/pull/5909
-
-_ windows anti-malware leaves browser stuck at 100%
-_   https://github.com/processing/processing/issues/5893
 
 
 from Casey
@@ -70,6 +68,8 @@ _   https://github.com/processing/processing/pull/4040
 
 
 high
+_ windows anti-malware leaves browser stuck at 100%
+_   https://github.com/processing/processing/issues/5893
 _ run button not deactivating
 _   https://github.com/processing/processing/issues/5786
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
