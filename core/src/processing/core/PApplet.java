@@ -44,6 +44,7 @@ import java.awt.Image;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
 // allows us to remove our own MediaTracker code
 import javax.swing.ImageIcon;
 
@@ -60,7 +61,6 @@ import java.awt.Desktop;
 
 // used by desktopFile() method
 import javax.swing.filechooser.FileSystemView;
-
 // loadXML() error handling
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -5513,6 +5513,22 @@ public class PApplet implements PConstants {
       g.awaitAsyncSaveCompletion(filename);
     }
 
+    if(filename.startsWith("file://")){
+      filename = filename.substring(7);
+    }
+
+    boolean isBase64 = false;
+    String encoded = null;
+
+    if(filename.startsWith("data:image/")) {
+      String dataURL = filename.substring(0, filename.indexOf(","));
+      if (dataURL.endsWith("base64")) {
+        isBase64 = true;
+        extension = dataURL.substring(dataURL.indexOf("/")+1, dataURL.indexOf(";"));
+        encoded = filename.substring(dataURL.length()+1);
+      }
+    }
+
     if (extension == null) {
       String lower = filename.toLowerCase();
       int dot = filename.lastIndexOf('.');
@@ -5535,20 +5551,36 @@ public class PApplet implements PConstants {
     extension = extension.toLowerCase();
 
     if (extension.equals("tga")) {
-      try {
-        PImage image = loadImageTGA(filename);
-//        if (params != null) {
-//          image.setParams(g, params);
-//        }
-        return image;
-      } catch (IOException e) {
-        printStackTrace(e);
-        return null;
+      
+      if (isBase64) {
+        byte bytes[] = DatatypeConverter.parseBase64Binary(encoded);
+        ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+        try {
+          return loadImageTGA(stream, "base64 image");
+        } catch (IOException e) {
+          printStackTrace(e);
+          return null;
+        }
       }
+      else {
+        try {
+          PImage image = loadImageTGA(filename);
+  //        if (params != null) {
+  //          image.setParams(g, params);
+  //        }
+          return image;
+        } catch (IOException e) {
+          printStackTrace(e);
+          return null;
+        }
+      }
+
     }
+     
 
     if (extension.equals("tif") || extension.equals("tiff")) {
-      byte bytes[] = loadBytes(filename);
+
+      byte bytes[] = isBase64 ? DatatypeConverter.parseBase64Binary(encoded) : loadBytes(filename);
       PImage image =  (bytes == null) ? null : PImage.loadTIFF(bytes);
 //      if (params != null) {
 //        image.setParams(g, params);
@@ -5563,7 +5595,7 @@ public class PApplet implements PConstants {
       if (extension.equals("jpg") || extension.equals("jpeg") ||
           extension.equals("gif") || extension.equals("png") ||
           extension.equals("unknown")) {
-        byte bytes[] = loadBytes(filename);
+        byte bytes[] = isBase64 ? DatatypeConverter.parseBase64Binary(encoded) : loadBytes(filename);
         if (bytes == null) {
           return null;
         } else {
@@ -5574,8 +5606,16 @@ public class PApplet implements PConstants {
             BufferedImage buffImage = (BufferedImage) awtImage;
             int space = buffImage.getColorModel().getColorSpace().getType();
             if (space == ColorSpace.TYPE_CMYK) {
-              System.err.println(filename + " is a CMYK image, " +
+
+              if (isBase64) {
+                System.err.println("The base64 image is a CMYK image, " +
                                  "only RGB images are supported.");
+              }
+              else {
+                System.err.println(filename + " is a CMYK image, " +
+                                "only RGB images are supported.");
+              }
+              
               return null;
               /*
               // wishful thinking, appears to not be supported
@@ -5593,8 +5633,15 @@ public class PApplet implements PConstants {
 
           PImage image = new PImage(awtImage);
           if (image.width == -1) {
-            System.err.println("The file " + filename +
+            if (isBase64) {
+              System.err.println("The base64 image "+
+                " contains bad image data, or may not be an image.");
+            }
+            else {
+              System.err.println("The file " + filename +
                                " contains bad image data, or may not be an image.");
+            }
+            
           }
 
           // if it's a .gif image, test to see if it has transparency
@@ -5619,20 +5666,32 @@ public class PApplet implements PConstants {
       loadImageFormats = ImageIO.getReaderFormatNames();
     }
     if (loadImageFormats != null) {
-      for (int i = 0; i < loadImageFormats.length; i++) {
-        if (extension.equals(loadImageFormats[i])) {
-          return loadImageIO(filename);
-//          PImage image = loadImageIO(filename);
-//          if (params != null) {
-//            image.setParams(g, params);
-//          }
-//          return image;
+
+      if (isBase64) {
+          byte bytes[] = DatatypeConverter.parseBase64Binary(encoded);
+          return loadImageIO(bytes);
+      }
+      else {
+        for (int i = 0; i < loadImageFormats.length; i++) {
+          if (extension.equals(loadImageFormats[i])) {
+            return loadImageIO(filename);
+  //          PImage image = loadImageIO(filename);
+  //          if (params != null) {
+  //            image.setParams(g, params);
+  //          }
+  //          return image;
+          }
         }
       }
-    }
 
+    }
     // failed, could not load image after all those attempts
-    System.err.println("Could not find a method to load " + filename);
+    if (isBase64) {
+      System.err.println("Could not find a method to load the base64 image");
+    }
+    else {
+      System.err.println("Could not find a method to load " + filename);
+    }
     return null;
   }
 
@@ -5748,6 +5807,47 @@ public class PApplet implements PConstants {
 
 
   /**
+   * Use Java 1.4 ImageIO methods to load an image.
+   */
+  protected PImage loadImageIO(byte[] bytes) {
+
+    ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+
+    try {
+      BufferedImage bi = ImageIO.read(stream);
+      PImage outgoing = new PImage(bi.getWidth(), bi.getHeight());
+      outgoing.parent = this;
+
+      bi.getRGB(0, 0, outgoing.width, outgoing.height,
+                outgoing.pixels, 0, outgoing.width);
+
+      // check the alpha for this image
+      // was gonna call getType() on the image to see if RGB or ARGB,
+      // but it's not actually useful, since gif images will come through
+      // as TYPE_BYTE_INDEXED, which means it'll still have to check for
+      // the transparency. also, would have to iterate through all the other
+      // types and guess whether alpha was in there, so.. just gonna stick
+      // with the old method.
+      outgoing.checkAlpha();
+
+      stream.close();
+      // return the image
+      return outgoing;
+
+    } catch (Exception e) {
+      printStackTrace(e);
+      return null;
+    }
+  }
+
+
+  protected PImage loadImageTGA(String filename) throws IOException {
+    InputStream is = createInput(filename);
+    return loadImageTGA(is, filename);
+  }
+
+
+  /**
    * Targa image loader for RLE-compressed TGA files.
    * <p>
    * Rewritten for 0115 to read/write RLE-encoded targa images.
@@ -5761,8 +5861,7 @@ public class PApplet implements PConstants {
    * https://github.com/processing/processing/issues/2096
    * Please help!
    */
-  protected PImage loadImageTGA(String filename) throws IOException {
-    InputStream is = createInput(filename);
+  protected PImage loadImageTGA(InputStream is, String filename) throws IOException {
     if (is == null) return null;
 
     byte header[] = new byte[18];
@@ -5950,7 +6049,6 @@ public class PApplet implements PConstants {
     is.close();
     return outgoing;
   }
-
 
 
   //////////////////////////////////////////////////////////////
