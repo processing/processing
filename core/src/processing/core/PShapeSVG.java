@@ -1499,7 +1499,7 @@ public class PShapeSVG extends PShape {
     public Gradient(PShapeSVG parent, XML properties) {
       super(parent, properties, true);
 
-      XML elements[] = properties.getChildren();
+      XML[] elements = properties.getChildren();
       offset = new float[elements.length];
       color = new int[elements.length];
 
@@ -1555,7 +1555,7 @@ public class PShapeSVG extends PShape {
         properties.getString("gradientTransform");
 
       if (transformStr != null) {
-        float t[] = parseTransform(transformStr).get(null);
+        float[] t = parseTransform(transformStr).get(null);
         this.transform = new AffineTransform(t[0], t[3], t[1], t[4], t[2], t[5]);
 
         Point2D t1 = transform.transform(new Point2D.Float(x1, y1), null);
@@ -1587,7 +1587,7 @@ public class PShapeSVG extends PShape {
         properties.getString("gradientTransform");
 
       if (transformStr != null) {
-        float t[] = parseTransform(transformStr).get(null);
+        float[] t = parseTransform(transformStr).get(null);
         this.transform = new AffineTransform(t[0], t[3], t[1], t[4], t[2], t[5]);
 
         Point2D t1 = transform.transform(new Point2D.Float(cx, cy), null);

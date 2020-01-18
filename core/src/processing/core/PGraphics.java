@@ -570,7 +570,7 @@ public class PGraphics extends PImage implements PConstants {
 
   // vertices
   public static final int DEFAULT_VERTICES = 512;
-  protected float vertices[][] =
+  protected float[][] vertices =
     new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
   protected int vertexCount; // total number of vertices
 
@@ -605,7 +605,7 @@ public class PGraphics extends PImage implements PConstants {
 
   // spline vertices
 
-  protected float curveVertices[][];
+  protected float[][] curveVertices;
   protected int curveVertexCount;
 
   // ........................................................
@@ -618,8 +618,8 @@ public class PGraphics extends PImage implements PConstants {
   // [toxi 031031]
   // changed table's precision to 0.5 degree steps
   // introduced new vars for more flexible code
-  static final protected float sinLUT[];
-  static final protected float cosLUT[];
+  static final protected float[] sinLUT;
+  static final protected float[] cosLUT;
   static final protected float SINCOS_PRECISION = 0.5f;
   static final protected int SINCOS_LENGTH = (int) (360f / SINCOS_PRECISION);
   static {
@@ -702,7 +702,9 @@ public class PGraphics extends PImage implements PConstants {
 
   // [toxi031031] new & faster sphere code w/ support flexible resolutions
   // will be set by sphereDetail() or 1st call to sphere()
-  protected float sphereX[], sphereY[], sphereZ[];
+  protected float[] sphereX;
+  protected float[] sphereY;
+  protected float[] sphereZ;
 
   /// Number of U steps (aka "theta") around longitudinally spanning 2*pi
   public int sphereDetailU = 0;
@@ -1388,7 +1390,7 @@ public class PGraphics extends PImage implements PConstants {
 
   protected void vertexCheck() {
     if (vertexCount == vertices.length) {
-      float temp[][] = new float[vertexCount << 1][VERTEX_FIELD_COUNT];
+      float[][] temp = new float[vertexCount << 1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
       vertices = temp;
     }
@@ -1480,10 +1482,10 @@ public class PGraphics extends PImage implements PConstants {
     // http://dev.processing.org/bugs/show_bug.cgi?id=444
     if (shape == POLYGON) {
       if (vertexCount > 0) {
-        float pvertex[] = vertices[vertexCount-1];
         if ((Math.abs(pvertex[X] - x) < EPSILON) &&
             (Math.abs(pvertex[Y] - y) < EPSILON) &&
             (Math.abs(pvertex[Z] - z) < EPSILON)) {
+        float[] pvertex = vertices[vertexCount-1];
           // this vertex is identical, don't add it,
           // because it will anger the triangulator
           return;
@@ -4551,7 +4553,7 @@ public class PGraphics extends PImage implements PConstants {
    * Unlike the previous version that was inside PFont, this will
    * return the size not of a 1 pixel font, but the actual current size.
    */
-  protected float textWidthImpl(char buffer[], int start, int stop) {
+  protected float textWidthImpl(char[] buffer, int start, int stop) {
     float wide = 0;
     for (int i = start; i < stop; i++) {
       // could add kerning here, but it just ain't implemented
@@ -5019,7 +5021,7 @@ public class PGraphics extends PImage implements PConstants {
    * Handles placement of a text line, then calls textLineImpl
    * to actually render at the specific point.
    */
-  protected void textLineAlignImpl(char buffer[], int start, int stop,
+  protected void textLineAlignImpl(char[] buffer, int start, int stop,
                                    float x, float y) {
     if (textAlign == CENTER) {
       x -= textWidthImpl(buffer, start, stop) / 2f;
@@ -5035,7 +5037,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Implementation of actual drawing for a line of text.
    */
-  protected void textLineImpl(char buffer[], int start, int stop,
+  protected void textLineImpl(char[] buffer, int start, int stop,
                               float x, float y) {
     for (int index = start; index < stop; index++) {
       textCharImpl(buffer[index], x, y);

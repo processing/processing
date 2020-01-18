@@ -381,7 +381,7 @@ public class PMatrix2D implements PMatrix {
    * If out is null or not length four, a new float array will be returned.
    * The values for vec and out can be the same (though that's less efficient).
    */
-  public float[] mult(float vec[], float out[]) {
+  public float[] mult(float[] vec, float[] out) {
     if (out == null || out.length != 2) {
       out = new float[2];
     }

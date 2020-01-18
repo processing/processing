@@ -204,7 +204,7 @@ public class PFont implements PConstants {
    * @nowebref
    * @param charset array of all unicode chars that should be included
    */
-  public PFont(Font font, boolean smooth, char charset[]) {
+  public PFont(Font font, boolean smooth, char[] charset) {
     // save this so that we can use the native version
     this.font = font;
     this.smooth = smooth;
@@ -329,7 +329,7 @@ public class PFont implements PConstants {
    *
    * @nowebref
    */
-  public PFont(Font font, boolean smooth, char charset[],
+  public PFont(Font font, boolean smooth, char[] charset,
                boolean stream, int density) {
     this(font, smooth, charset);
     this.stream = stream;
@@ -865,7 +865,7 @@ public class PFont implements PConstants {
     for (int i = 0; i < EXTRA_CHARS.length; i++) {
       CHARSET[index++] = EXTRA_CHARS[i];
     }
-  };
+  }
 
 
   /**
@@ -885,7 +885,7 @@ public class PFont implements PConstants {
    */
   static public String[] list() {
     loadFonts();
-    String list[] = new String[fonts.length];
+    String[] list = new String[fonts.length];
     for (int i = 0; i < list.length; i++) {
       list[i] = fonts[i].getName();
     }
