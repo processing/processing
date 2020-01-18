@@ -4,6 +4,8 @@ contribs
 X rename-variable menu allows Java identifiers
 X   https://github.com/processing/processing/issues/5828
 X   https://github.com/processing/processing/pull/5906
+X Replace C/C++ style array declarations with Java style array declarations
+X   https://github.com/processing/processing/pull/5981
 
 
 from Casey
