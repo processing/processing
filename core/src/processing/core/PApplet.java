@@ -10830,8 +10830,8 @@ public class PApplet implements PConstants {
         Class<?> thinkDifferent =
           Thread.currentThread().getContextClassLoader().loadClass(td);
         Method method =
-          thinkDifferent.getMethod("init", PApplet.class);
-        method.invoke(null, sketch);
+          thinkDifferent.getMethod("init", new Class[] { PApplet.class });
+        method.invoke(null, new Object[] { sketch });
       } catch (Exception e) {
         e.printStackTrace();  // That's unfortunate
       }
