@@ -15368,6 +15368,226 @@ public class PApplet implements PConstants {
 
 
   /**
+   * Creates a color in HSB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(200, 100);
+   * colorMode(RGB);
+   *
+   * color blueGreen = hsb(127, 127, 127);
+   * fill(blueGreen);
+   * circle(50, 50, 60);
+   *
+   * color gray = color(127, 127, 127);
+   * fill(gray);
+   * circle(150, 50, 60);
+   * </pre>
+   *
+   * @param h hue
+   * @param s saturation
+   * @param b brightness
+   * @return an HSB color with the given hue, saturation, and brightness
+   */
+  public final int hsb(int h, int s, int b){
+    return g.hsb(h, s, b);
+  }
+
+
+  /**
+   * Creates a color in HSB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(200, 100);
+   * colorMode(RGB);
+   *
+   * color blueGreen = hsb(127, 127, 127);
+   * fill(blueGreen);
+   * circle(50, 50, 60);
+   *
+   * color gray = color(127, 127, 127);
+   * fill(gray);
+   * circle(150, 50, 60);
+   * </pre>
+   *
+   * @param h hue
+   * @param s saturation
+   * @param b brightness
+   * @return an HSB color with the given hue, saturation, and brightness
+   */
+  public final int hsb(float h, float s, float b){
+    return g.hsb(h, s, b);
+  }
+
+
+  /**
+   * Creates a color in HSB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(120, 100);
+   * colorMode(RGB);
+   *
+   * color blueGreen = hsb(127, 127, 127, 127);
+   * fill(blueGreen);
+   * circle(50, 50, 60);
+   *
+   * color gray = color(127, 127, 127, 127);
+   * fill(gray);
+   * circle(70, 50, 60);
+   * </pre>
+   *
+   * @param h hue
+   * @param s saturation
+   * @param b brightness
+   * @param a alpha
+   * @return an HSB color with the given hue, saturation, brightness, and alpha
+   */
+  public final int hsb(int h, int s, int b, int a){
+    return g.hsb(h, s, b, a);
+  }
+
+
+  /**
+   * Creates a color in HSB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(120, 100);
+   * colorMode(RGB);
+   *
+   * color blueGreen = hsb(127, 127, 127, 127);
+   * fill(blueGreen);
+   * circle(50, 50, 60);
+   *
+   * color gray = color(127, 127, 127, 127);
+   * fill(gray);
+   * circle(70, 50, 60);
+   * </pre>
+   *
+   * @param h hue
+   * @param s saturation
+   * @param b brightness
+   * @param a alpha
+   * @return an HSB color with the given hue, saturation, brightness, and alpha
+   */
+  public final int hsb(float h, float s, float b, float a){
+    return g.hsb(h, s, b, a);
+  }
+
+
+  /**
+   * Creates a color in RGB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(200, 100);
+   * colorMode(HSB);
+   *
+   * color gray = color(127, 0, 127);
+   * fill(gray);
+   * circle(50, 50, 60);
+   *
+   * color purple = rgb(127, 0, 127);
+   * fill(purple);
+   * circle(150, 50, 60);
+   * </pre>
+   *
+   * @param red the red value
+   * @param green the green value
+   * @param blue the blue value
+   * @return an RGB color with the given red, green, and blue values
+   */
+  public final int rgb(int red, int green, int blue){
+    return g.rgb(red, green, blue);
+  }
+
+
+  /**
+   * Creates a color in RGB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(200, 100);
+   * colorMode(HSB);
+   *
+   * color gray = color(127, 0, 127);
+   * fill(gray);
+   * circle(50, 50, 60);
+   *
+   * color purple = rgb(127, 0, 127);
+   * fill(purple);
+   * circle(150, 50, 60);
+   * </pre>
+   *
+   * @param red the red value
+   * @param green the green value
+   * @param blue the blue value
+   * @return an RGB color with the given red, green, and blue values
+   */
+  public final int rgb(float red, float green, float blue){
+    return g.rgb(red, green, blue);
+  }
+
+
+  /**
+   * Creates a color in RGB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(120, 100);
+   * colorMode(HSB);
+   *
+   * color gray = color(127, 0, 127, 127);
+   * fill(gray);
+   * circle(50, 50, 60);
+   *
+   * color purple = rgb(127, 0, 127, 127);
+   * fill(purple);
+   * circle(70, 50, 60);
+   * </pre>
+   *
+   * @param red the red value
+   * @param green the green value
+   * @param blue the blue value
+   * @param alpha the alpha value
+   * @return an RGB color with the given red, green, blue, and alpha values
+   */
+  public final int rgb(int red, int green, int blue, int alpha){
+    return g.rgb(red, green, blue, alpha);
+  }
+
+
+  /**
+   * Creates a color in RGB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(120, 100);
+   * colorMode(HSB);
+   *
+   * color gray = color(127, 0, 127, 127);
+   * fill(gray);
+   * circle(50, 50, 60);
+   *
+   * color purple = rgb(127, 0, 127, 127);
+   * fill(purple);
+   * circle(70, 50, 60);
+   * </pre>
+   *
+   * @param red the red value
+   * @param green the green value
+   * @param blue the blue value
+   * @param alpha the alpha value
+   * @return an RGB color with the given red, green, blue, and alpha values
+   */
+  public final int rgb(float red, float green, float blue, float alpha){
+    return g.rgb(red, green, blue, alpha);
+  }
+
+
+  /**
    * ( begin auto-generated from alpha.xml )
    *
    * Extracts the alpha value from a color.
