@@ -26,8 +26,6 @@ package processing.core;
 
 import java.io.Serializable;
 
-import processing.core.PApplet;
-import processing.core.PConstants;
 
 /**
  * ( begin auto-generated from PVector.xml )
