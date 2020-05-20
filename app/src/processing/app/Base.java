@@ -1149,48 +1149,56 @@ public class Base {
       // and then moved to a new location because Save will default to Save As.
 //      File sketchbookDir = getSketchbookFolder();
       File newbieParentDir = untitledFolder;
+	  if (Preferences.getBoolean("editor.untitled.old_naming_scheme")) {
 
-      String prefix = Preferences.get("editor.untitled.prefix");
+		  String prefix = Preferences.get("editor.untitled.prefix");
 
-      // Use a generic name like sketch_031008a, the date plus a char
-      int index = 0;
-      String format = Preferences.get("editor.untitled.suffix");
-      String suffix = null;
-      if (format == null) {
-        Calendar cal = Calendar.getInstance();
-        int day = cal.get(Calendar.DAY_OF_MONTH);  // 1..31
-        int month = cal.get(Calendar.MONTH);  // 0..11
-        suffix = months[month] + PApplet.nf(day, 2);
-      } else {
-        //SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
-        //SimpleDateFormat formatter = new SimpleDateFormat("MMMdd");
-        //String purty = formatter.format(new Date()).toLowerCase();
-        SimpleDateFormat formatter = new SimpleDateFormat(format);
-        suffix = formatter.format(new Date());
-      }
-      do {
-        if (index == 26) {
-          // In 0159, avoid running past z by sending people outdoors.
-          if (!breakTime) {
-            Messages.showWarning("Time for a Break",
-                                 "You've reached the limit for auto naming of new sketches\n" +
-                                 "for the day. How about going for a walk instead?", null);
-            breakTime = true;
-          } else {
-            Messages.showWarning("Sunshine",
-                                 "No really, time for some fresh air for you.", null);
-          }
-          return;
-        }
-        newbieName = prefix + suffix + ((char) ('a' + index));
-        // Also sanitize the name since it might do strange things on
-        // non-English systems that don't use this sort of date format.
-        // http://code.google.com/p/processing/issues/detail?id=283
-        newbieName = Sketch.sanitizeName(newbieName);
-        newbieDir = new File(newbieParentDir, newbieName);
-        index++;
-        // Make sure it's not in the temp folder *and* it's not in the sketchbook
-      } while (newbieDir.exists() || new File(sketchbookFolder, newbieName).exists());
+		  // Use a generic name like sketch_031008a, the date plus a char
+		  int index = 0;
+		  String format = Preferences.get("editor.untitled.suffix");
+		  String suffix = null;
+		  if (format == null) {
+			Calendar cal = Calendar.getInstance();
+			int day = cal.get(Calendar.DAY_OF_MONTH);  // 1..31
+			int month = cal.get(Calendar.MONTH);  // 0..11
+			suffix = months[month] + PApplet.nf(day, 2);
+		  } else {
+			//SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
+			//SimpleDateFormat formatter = new SimpleDateFormat("MMMdd");
+			//String purty = formatter.format(new Date()).toLowerCase();
+			SimpleDateFormat formatter = new SimpleDateFormat(format);
+			suffix = formatter.format(new Date());
+		  }
+		  do {
+			if (index == 26) {
+			  // In 0159, avoid running past z by sending people outdoors.
+			  if (!breakTime) {
+				Messages.showWarning("Time for a Break",
+									 "You've reached the limit for auto naming of new sketches\n" +
+									 "for the day. How about going for a walk instead?", null);
+				breakTime = true;
+			  } else {
+				Messages.showWarning("Sunshine",
+									 "No really, time for some fresh air for you.", null);
+			  }
+			  return;
+			}
+			newbieName = prefix + suffix + ((char) ('a' + index));
+			// Also sanitize the name since it might do strange things on
+			// non-English systems that don't use this sort of date format.
+			// http://code.google.com/p/processing/issues/detail?id=283
+			newbieName = Sketch.sanitizeName(newbieName);
+			newbieDir = new File(newbieParentDir, newbieName);
+			index++;
+			// Make sure it's not in the temp folder *and* it's not in the sketchbook
+		  } while (newbieDir.exists() || new File(sketchbookFolder, newbieName).exists());
+	  }
+	  else {
+		do {
+		  newbieName = FriendlyWords.generateProjectName();
+		  newbieDir = new File(newbieParentDir, newbieName);
+		} while (newbieDir.exists() || new File(sketchbookFolder, newbieName).exists());
+	  }
 
       // Make the directory for the new sketch
       newbieDir.mkdirs();
