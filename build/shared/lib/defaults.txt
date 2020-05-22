@@ -218,7 +218,7 @@ run.display = -1
 #sketchbook.closing_last_window_quits = true
 #sketchbook.closing_last_window_quits.macosx = false
 
-editor.untitled.old_naming_scheme=false
+editor.untitled.default_sketch_naming=friendly_names
 editor.untitled.prefix=sketch_
 # The old (pre-1.0, back for 2.0) style for default sketch name.
 # If you change this, be careful that this will work with your language 

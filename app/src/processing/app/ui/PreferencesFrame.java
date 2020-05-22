@@ -53,7 +53,6 @@ public class PreferencesFrame {
   JTextField presentColor;
   JTextField presentColorHex;
   JCheckBox editorAntialiasBox;
-  JCheckBox useOldNamingScheme;
   JCheckBox deletePreviousBox;
   JCheckBox memoryOverrideBox;
   JTextField memoryField;
@@ -75,6 +74,9 @@ public class PreferencesFrame {
 
   JComboBox<String> displaySelectionBox;
   JComboBox<String> languageSelectionBox;
+
+  JComboBox<String> defaultSketchNamingBox;
+  String[] defaultSketchNamingOptions = {"date", "friendly_name", "friendly_date"};
 
   int displayCount;
 
@@ -276,14 +278,29 @@ public class PreferencesFrame {
     JLabel hashLabel = new JLabel("#");
 
 
+    // Default sketch naming: [ Dates          ] Eg: <example name>
+    //                        [ Friendly Names ]
+    //                        [ Friendly Dates ]
+
+    JLabel defaultSketchNamingLabel = new JLabel("Default sketch naming" + ": ");
+    final JLabel defaultSketchNamingExampleLabel = new JLabel();
+    defaultSketchNamingBox = new JComboBox<>(new String[]{
+      "Dates",
+      "Friendly Names",
+      "Friendly Dates",
+    });
+    defaultSketchNamingBox.addActionListener(e -> {
+      Preferences.set(
+        "editor.untitled.default_sketch_naming",
+        defaultSketchNamingOptions[defaultSketchNamingBox.getSelectedIndex()]
+      );
+      defaultSketchNamingExampleLabel.setText(" Eg: " + base.generateNewSketchName());
+    });
+
+
     // [ ] Use smooth text in editor window
 
     editorAntialiasBox = new JCheckBox(Language.text("preferences.use_smooth_text"));
-    
-    
-    // [ ] Use Old naming scheme for new Sketches
-
-    useOldNamingScheme = new JCheckBox("Use Old naming scheme for new Sketches");
 
 
     // [ ] Enable complex text input (for Japanese et al, requires restart)
@@ -439,8 +456,11 @@ public class PreferencesFrame {
                       .addGap(0)
                       .addComponent(presentColorHex, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                       .addComponent(presentColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+          .addGroup(layout.createSequentialGroup()
+                      .addComponent(defaultSketchNamingLabel)
+                      .addComponent(defaultSketchNamingBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                      .addComponent(defaultSketchNamingExampleLabel))
           .addComponent(editorAntialiasBox)
-          .addComponent(useOldNamingScheme)
           .addComponent(inputMethodBox)
           .addGroup(layout.createSequentialGroup()
                       .addComponent(errorCheckerBox)
@@ -503,8 +523,11 @@ public class PreferencesFrame {
                   .addComponent(hashLabel)
                   .addComponent(presentColorHex)
                   .addComponent(presentColor))
+      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                  .addComponent(defaultSketchNamingLabel)
+                  .addComponent(defaultSketchNamingBox)
+                  .addComponent(defaultSketchNamingExampleLabel))
       .addComponent(editorAntialiasBox)
-      .addComponent(useOldNamingScheme)
       .addComponent(inputMethodBox)
       .addGroup(layout.createParallelGroup()
                   .addComponent(errorCheckerBox)
@@ -597,9 +620,6 @@ public class PreferencesFrame {
   protected void applyFrame() {
     Preferences.setBoolean("editor.smooth", //$NON-NLS-1$
                            editorAntialiasBox.isSelected());
-    
-    Preferences.setBoolean("editor.untitled.old_naming_scheme", //$NON-NLS-1$
-                           useOldNamingScheme.isSelected());
 
     Preferences.setBoolean("export.delete_target_folder", //$NON-NLS-1$
                            deletePreviousBox.isSelected());
@@ -728,6 +748,13 @@ public class PreferencesFrame {
 
     sketchbookLocationField.setText(Preferences.getSketchbookPath());
     checkUpdatesBox.setSelected(Preferences.getBoolean("update.check")); //$NON-NLS-1$
+
+    String defaultSketchNaming = Preferences.get("editor.untitled.default_sketch_naming");
+    int defaultSketchNamingIndex = 1;
+    for(int i = 0; i < defaultSketchNamingOptions.length; i++)
+      if(defaultSketchNamingOptions[i].equals(defaultSketchNaming))
+        defaultSketchNamingIndex = i;
+    defaultSketchNamingBox.setSelectedIndex(defaultSketchNamingIndex);
 
     int defaultDisplayNum = updateDisplayList();
     int displayNum = Preferences.getInteger("run.display"); //$NON-NLS-1$
