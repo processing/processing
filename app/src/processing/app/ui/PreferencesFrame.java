@@ -282,12 +282,12 @@ public class PreferencesFrame {
     //                        [ Friendly Names ]
     //                        [ Friendly Dates ]
 
-    JLabel defaultSketchNamingLabel = new JLabel("Default sketch naming" + ": ");
+    JLabel defaultSketchNamingLabel = new JLabel(Language.text("preferences.default_sketch_naming") + ": ");
     final JLabel defaultSketchNamingExampleLabel = new JLabel();
     defaultSketchNamingBox = new JComboBox<>(new String[]{
-      "Dates",
-      "Friendly Names",
-      "Friendly Dates",
+      Language.text("preferences.default_sketch_naming.options.dates"),
+      Language.text("preferences.default_sketch_naming.options.friendly_names"),
+      Language.text("preferences.default_sketch_naming.options.friendly_dates")
     });
     defaultSketchNamingBox.addActionListener(e -> {
       Preferences.set(

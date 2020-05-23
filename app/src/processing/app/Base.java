@@ -1203,9 +1203,8 @@ public class Base {
     // http://code.google.com/p/processing/issues/detail?id=283
     // Make sure it's not in the temp folder *and* it's not in the sketchbook
     String namingScheme = Preferences.get("editor.untitled.default_sketch_naming");
-    if(namingScheme == null) {
+    if(namingScheme == null)
       namingScheme = "friendly_name";
-    }
     int index = 0;
     String newbieName = null;
     do {
