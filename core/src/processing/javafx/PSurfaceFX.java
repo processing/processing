@@ -2,18 +2,14 @@
 
 /*
   Part of the Processing project - http://processing.org
-
   Copyright (c) 2015 The Processing Foundation
-
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation, version 2.1.
-
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-
   You should have received a copy of the GNU Lesser General
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
@@ -502,13 +498,11 @@ public class PSurfaceFX implements PSurface {
   @Override
   public void placeWindow(int[] location) {
     //setFrameSize();
-
     if (location != null) {
       // a specific location was received from the Runner
       // (applet has been run more than once, user placed window)
       stage.setX(location[0]);
       stage.setY(location[1]);
-
     } else {  // just center on screen
       // Can't use frame.setLocationRelativeTo(null) because it sends the
       // frame to the main display, which undermines the --display setting.
@@ -521,9 +515,7 @@ public class PSurfaceFX implements PSurface {
       //frame.setLocation(frameLoc.x, 30);
       stage.setY(30);
     }
-
     //setCanvasSize();
-
     // TODO add window closing behavior
 //    frame.addWindowListener(new WindowAdapter() {
 //      @Override
@@ -531,10 +523,8 @@ public class PSurfaceFX implements PSurface {
 //        System.exit(0);
 //      }
 //    });
-
     // TODO handle frame resizing events
 //    setupFrameResizeListener();
-
     if (sketch.getGraphics().displayable()) {
       setVisible(true);
     }
@@ -736,72 +726,52 @@ public class PSurfaceFX implements PSurface {
 
   /*
   protected void addListeners() {
-
     canvas.addMouseListener(new MouseListener() {
-
       public void mousePressed(java.awt.event.MouseEvent e) {
         nativeMouseEvent(e);
       }
-
       public void mouseReleased(java.awt.event.MouseEvent e) {
         nativeMouseEvent(e);
       }
-
       public void mouseClicked(java.awt.event.MouseEvent e) {
         nativeMouseEvent(e);
       }
-
       public void mouseEntered(java.awt.event.MouseEvent e) {
         nativeMouseEvent(e);
       }
-
       public void mouseExited(java.awt.event.MouseEvent e) {
         nativeMouseEvent(e);
       }
     });
-
     canvas.addMouseMotionListener(new MouseMotionListener() {
-
       public void mouseDragged(java.awt.event.MouseEvent e) {
         nativeMouseEvent(e);
       }
-
       public void mouseMoved(java.awt.event.MouseEvent e) {
         nativeMouseEvent(e);
       }
     });
-
     canvas.addMouseWheelListener(new MouseWheelListener() {
-
       public void mouseWheelMoved(MouseWheelEvent e) {
         nativeMouseEvent(e);
       }
     });
-
     canvas.addKeyListener(new KeyListener() {
-
       public void keyPressed(java.awt.event.KeyEvent e) {
         nativeKeyEvent(e);
       }
-
-
       public void keyReleased(java.awt.event.KeyEvent e) {
         nativeKeyEvent(e);
       }
-
-
       public void keyTyped(java.awt.event.KeyEvent e) {
         nativeKeyEvent(e);
       }
     });
-
     canvas.addFocusListener(new FocusListener() {
-
       public void focusGained(FocusEvent e) {
         sketch.focused = true;
         sketch.focusGained();
       }
-
       public void focusLost(FocusEvent e) {
         sketch.focused = false;
         sketch.focusLost();
