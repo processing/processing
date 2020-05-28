@@ -65,11 +65,11 @@ import processing.core.*;
 
 
 public class PSurfaceFX implements PSurface {
-  PApplet sketch;
+  public PApplet sketch;
 
-  PGraphicsFX2D fx;
-  Stage stage;
-  Canvas canvas;
+  public PGraphicsFX2D fx;
+  public Stage stage;
+  public Canvas canvas;
 
   final Animation animation;
   float frameRate = 60;
@@ -812,7 +812,7 @@ public class PSurfaceFX implements PSurface {
 
 
   static Map<EventType<? extends MouseEvent>, Integer> mouseMap =
-    new HashMap<EventType<? extends MouseEvent>, Integer>();
+    new HashMap<>();
   static {
     mouseMap.put(MouseEvent.MOUSE_PRESSED, processing.event.MouseEvent.PRESS);
     mouseMap.put(MouseEvent.MOUSE_RELEASED, processing.event.MouseEvent.RELEASE);

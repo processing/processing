@@ -18,7 +18,7 @@
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
-*/
+ */
 
 package processing.javafx;
 
@@ -26,6 +26,7 @@ import com.sun.javafx.geom.Path2D;
 import com.sun.javafx.geom.PathIterator;
 import com.sun.javafx.geom.Shape;
 
+import java.lang.ref.SoftReference;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,10 +54,10 @@ import processing.core.*;
 
 
 public class PGraphicsFX2D extends PGraphics {
-  GraphicsContext context;
+  public GraphicsContext context;
 
   static final WritablePixelFormat<IntBuffer> argbFormat =
-    PixelFormat.getIntArgbInstance();
+      PixelFormat.getIntArgbInstance();
 
   WritableImage snapshotImage;
 
@@ -78,20 +79,20 @@ public class PGraphicsFX2D extends PGraphics {
   int transformCount;
   Affine[] transformStack = new Affine[MATRIX_STACK_DEPTH];
 
-//  Line2D.Float line = new Line2D.Float();
-//  Ellipse2D.Float ellipse = new Ellipse2D.Float();
-//  Rectangle2D.Float rect = new Rectangle2D.Float();
-//  Arc2D.Float arc = new Arc2D.Float();
-//
-//  protected Color tintColorObject;
-//
-//  protected Color fillColorObject;
-//  public boolean fillGradient;
-//  public Paint fillGradientObject;
-//
-//  protected Color strokeColorObject;
-//  public boolean strokeGradient;
-//  public Paint strokeGradientObject;
+  //  Line2D.Float line = new Line2D.Float();
+  //  Ellipse2D.Float ellipse = new Ellipse2D.Float();
+  //  Rectangle2D.Float rect = new Rectangle2D.Float();
+  //  Arc2D.Float arc = new Arc2D.Float();
+  //
+  //  protected Color tintColorObject;
+  //
+  //  protected Color fillColorObject;
+  //  public boolean fillGradient;
+  //  public Paint fillGradientObject;
+  //
+  //  protected Color strokeColorObject;
+  //  public boolean strokeGradient;
+  //  public Paint strokeGradientObject;
 
 
 
@@ -136,10 +137,10 @@ public class PGraphicsFX2D extends PGraphics {
   // FRAME
 
 
-//  @Override
-//  public boolean canDraw() {
-//    return true;
-//  }
+  //  @Override
+  //  public boolean canDraw() {
+  //    return true;
+  //  }
 
 
   @Override
@@ -435,26 +436,26 @@ public class PGraphicsFX2D extends PGraphics {
     while (!pi.isDone()) {
       int pitype = pi.currentSegment(pathCoordsBuffer);
       switch (pitype) {
-        case PathIterator.SEG_MOVETO:
-          context.moveTo(pathCoordsBuffer[0], pathCoordsBuffer[1]);
-          break;
-        case PathIterator.SEG_LINETO:
-          context.lineTo(pathCoordsBuffer[0], pathCoordsBuffer[1]);
-          break;
-        case PathIterator.SEG_QUADTO:
-          context.quadraticCurveTo(pathCoordsBuffer[0], pathCoordsBuffer[1],
-                                   pathCoordsBuffer[2], pathCoordsBuffer[3]);
-          break;
-        case PathIterator.SEG_CUBICTO:
-          context.bezierCurveTo(pathCoordsBuffer[0], pathCoordsBuffer[1],
-                                pathCoordsBuffer[2], pathCoordsBuffer[3],
-                                pathCoordsBuffer[4], pathCoordsBuffer[5]);
-          break;
-        case PathIterator.SEG_CLOSE:
-          context.closePath();
-          break;
-        default:
-          showWarning("Unknown segment type " + pitype);
+      case PathIterator.SEG_MOVETO:
+        context.moveTo(pathCoordsBuffer[0], pathCoordsBuffer[1]);
+        break;
+      case PathIterator.SEG_LINETO:
+        context.lineTo(pathCoordsBuffer[0], pathCoordsBuffer[1]);
+        break;
+      case PathIterator.SEG_QUADTO:
+        context.quadraticCurveTo(pathCoordsBuffer[0], pathCoordsBuffer[1],
+                                 pathCoordsBuffer[2], pathCoordsBuffer[3]);
+        break;
+      case PathIterator.SEG_CUBICTO:
+        context.bezierCurveTo(pathCoordsBuffer[0], pathCoordsBuffer[1],
+                              pathCoordsBuffer[2], pathCoordsBuffer[3],
+                              pathCoordsBuffer[4], pathCoordsBuffer[5]);
+        break;
+      case PathIterator.SEG_CLOSE:
+        context.closePath();
+        break;
+      default:
+        showWarning("Unknown segment type " + pitype);
       }
       pi.next();
     }
@@ -493,21 +494,21 @@ public class PGraphicsFX2D extends PGraphics {
   protected void blendModeImpl() {
     BlendMode mode = BlendMode.SRC_OVER;
     switch (blendMode) {
-      case REPLACE: showWarning("blendMode(REPLACE) is not supported"); break;
-      case BLEND: break;  // this is SRC_OVER, the default
-      case ADD: mode = BlendMode.ADD; break; // everyone's favorite
-      case SUBTRACT: showWarning("blendMode(SUBTRACT) is not supported"); break;
-      case LIGHTEST: mode = BlendMode.LIGHTEN; break;
-      case DARKEST: mode = BlendMode.DARKEN; break;
-      case DIFFERENCE: mode = BlendMode.DIFFERENCE; break;
-      case EXCLUSION: mode = BlendMode.EXCLUSION; break;
-      case MULTIPLY: mode = BlendMode.MULTIPLY; break;
-      case SCREEN: mode = BlendMode.SCREEN; break;
-      case OVERLAY: mode = BlendMode.OVERLAY; break;
-      case HARD_LIGHT: mode = BlendMode.HARD_LIGHT; break;
-      case SOFT_LIGHT: mode = BlendMode.SOFT_LIGHT; break;
-      case DODGE: mode = BlendMode.COLOR_DODGE; break;
-      case BURN: mode = BlendMode.COLOR_BURN; break;
+    case REPLACE: showWarning("blendMode(REPLACE) is not supported"); break;
+    case BLEND: break;  // this is SRC_OVER, the default
+    case ADD: mode = BlendMode.ADD; break; // everyone's favorite
+    case SUBTRACT: showWarning("blendMode(SUBTRACT) is not supported"); break;
+    case LIGHTEST: mode = BlendMode.LIGHTEN; break;
+    case DARKEST: mode = BlendMode.DARKEN; break;
+    case DIFFERENCE: mode = BlendMode.DIFFERENCE; break;
+    case EXCLUSION: mode = BlendMode.EXCLUSION; break;
+    case MULTIPLY: mode = BlendMode.MULTIPLY; break;
+    case SCREEN: mode = BlendMode.SCREEN; break;
+    case OVERLAY: mode = BlendMode.OVERLAY; break;
+    case HARD_LIGHT: mode = BlendMode.HARD_LIGHT; break;
+    case SOFT_LIGHT: mode = BlendMode.SOFT_LIGHT; break;
+    case DODGE: mode = BlendMode.COLOR_DODGE; break;
+    case BURN: mode = BlendMode.COLOR_BURN; break;
     }
     context.setGlobalBlendMode(mode);
   }
@@ -523,11 +524,11 @@ public class PGraphicsFX2D extends PGraphics {
   protected void bezierVertexCheck() {
     if (shape == 0 || shape != POLYGON) {
       throw new RuntimeException("beginShape() or beginShape(POLYGON) " +
-                                 "must be used before bezierVertex() or quadraticVertex()");
+          "must be used before bezierVertex() or quadraticVertex()");
     }
     if (workPath.getNumCommands() == 0) {
       throw new RuntimeException("vertex() must be used at least once " +
-                                 "before bezierVertex() or quadraticVertex()");
+          "before bezierVertex() or quadraticVertex()");
     }
   }
 
@@ -564,7 +565,7 @@ public class PGraphicsFX2D extends PGraphics {
 
   @Override
   public void quadraticVertex(float x2, float y2, float z2,
-                         float x4, float y4, float z4) {
+                              float x4, float y4, float z4) {
     showDepthWarningXYZ("quadVertex");
   }
 
@@ -686,11 +687,11 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void point(float x, float y) {
     if (stroke) {
-//      if (strokeWeight > 1) {
+      //      if (strokeWeight > 1) {
       line(x, y, x + EPSILON, y + EPSILON);
-//      } else {
-//        set((int) screenX(x, y), (int) screenY(x, y), strokeColor);
-//      }
+      //      } else {
+      //        set((int) screenX(x, y), (int) screenY(x, y), strokeColor);
+      //      }
     }
   }
 
@@ -969,32 +970,32 @@ public class PGraphicsFX2D extends PGraphics {
   // SMOOTH
 
 
-//  @Override
-//  public void smooth() {
-//    smooth = true;
-//
-//    if (quality == 0) {
-//      quality = 4;  // change back to bicubic
-//    }
-//  }
+  //  @Override
+  //  public void smooth() {
+  //    smooth = true;
+  //
+  //    if (quality == 0) {
+  //      quality = 4;  // change back to bicubic
+  //    }
+  //  }
 
 
-//  @Override
-//  public void smooth(int quality) {
-////    this.quality = quality;
-////    if (quality == 0) {
-////      noSmooth();
-////    } else {
-////      smooth();
-////    }
-//    showMissingWarning("smooth");
-//  }
-//
-//
-//  @Override
-//  public void noSmooth() {
-//    showMissingWarning("noSmooth");
-//  }
+  //  @Override
+  //  public void smooth(int quality) {
+  ////    this.quality = quality;
+  ////    if (quality == 0) {
+  ////      noSmooth();
+  ////    } else {
+  ////      smooth();
+  ////    }
+  //    showMissingWarning("smooth");
+  //  }
+  //
+  //
+  //  @Override
+  //  public void noSmooth() {
+  //    showMissingWarning("noSmooth");
+  //  }
 
 
 
@@ -1027,12 +1028,22 @@ public class PGraphicsFX2D extends PGraphics {
     // Image not ready yet, or an error
     if (who.width <= 0 || who.height <= 0) return;
 
-    ImageCache cash = (ImageCache) getCache(who);
+    ImageTintCache tintCache = ((ImageTintCache) getCache(who));
+
+    if(tintCache == null) {
+      tintCache = new ImageTintCache();
+      setCache(who, tintCache);
+    }
+
+    int tintColor = tint? this.tintColor : 0x11111111;
+
+    ImageCache cash = tintCache.get(tintColor);
 
     // Nuke the cache if the image was resized
     if (cash != null) {
       if (who.pixelWidth != cash.image.getWidth() ||
           who.pixelHeight != cash.image.getHeight()) {
+        tintCache.remove(tintColor);
         cash = null;
       }
     }
@@ -1040,7 +1051,7 @@ public class PGraphicsFX2D extends PGraphics {
     if (cash == null) {
       //System.out.println("making new image cache");
       cash = new ImageCache(); //who);
-      setCache(who, cash);
+      tintCache.put(tintColor, cash);
       who.updatePixels();  // mark the whole thing for update
       who.setModified();
     }
@@ -1070,9 +1081,34 @@ public class PGraphicsFX2D extends PGraphics {
     u2 *= who.pixelDensity;
     v2 *= who.pixelDensity;
 
-    context.drawImage(((ImageCache) getCache(who)).image,
-                      u1, v1, u2-u1, v2-v1,
-                      x1, y1, x2-x1, y2-y1);
+    context.drawImage( cash.image, //((ImageCache) getCache(who)).image,
+                       u1, v1, u2-u1, v2-v1,
+                       x1, y1, x2-x1, y2-y1);
+  }
+
+
+  static class ImageTintCache{ // save all the colors for an image
+    HashMap<Integer, SoftReference<ImageCache>> colorMap = new HashMap<>();
+
+    ImageCache get(int tintColor) {
+      SoftReference<ImageCache> sr =  this.colorMap.get(tintColor);
+      if(sr != null)
+        return sr.get();
+      else
+        return null;
+    }
+
+    void put(int tintColor, ImageCache cash) {
+      this.colorMap.put(tintColor, new SoftReference<>(cash));
+    }
+
+    void remove(int tintColor) {
+      this.colorMap.remove(tintColor);
+    }
+
+    void clear() {
+      this.colorMap.clear();
+    }
   }
 
 
@@ -1098,17 +1134,17 @@ public class PGraphicsFX2D extends PGraphics {
           targetType = RGB;
         }
       }
-//      boolean wrongType = (image != null) && (image.getType() != bufferType);
-//      if ((image == null) || wrongType) {
-//        image = new BufferedImage(source.width, source.height, bufferType);
-//      }
+      //      boolean wrongType = (image != null) && (image.getType() != bufferType);
+      //      if ((image == null) || wrongType) {
+      //        image = new BufferedImage(source.width, source.height, bufferType);
+      //      }
       // Must always use an ARGB image, otherwise will write zeros
       // in the alpha channel when drawn to the screen.
       // https://github.com/processing/processing/issues/2030
-//      if (image == null) {
-//        image = new BufferedImage(source.width, source.height,
-//                                  BufferedImage.TYPE_INT_ARGB);
-//      }
+      //      if (image == null) {
+      //        image = new BufferedImage(source.width, source.height,
+      //                                  BufferedImage.TYPE_INT_ARGB);
+      //      }
       if (image == null) {
         image = new WritableImage(source.pixelWidth, source.pixelHeight);
       }
@@ -1120,8 +1156,8 @@ public class PGraphicsFX2D extends PGraphics {
           tintedTemp = new int[source.pixelWidth];
         }
         int a2 = (tintColor >> 24) & 0xff;
-//        System.out.println("tint color is " + a2);
-//        System.out.println("source.pixels[0] alpha is " + (source.pixels[0] >>> 24));
+        //        System.out.println("tint color is " + a2);
+        //        System.out.println("source.pixels[0] alpha is " + (source.pixels[0] >>> 24));
         int r2 = (tintColor >> 16) & 0xff;
         int g2 = (tintColor >> 8) & 0xff;
         int b2 = (tintColor) & 0xff;
@@ -1150,12 +1186,12 @@ public class PGraphicsFX2D extends PGraphics {
             pw.setPixels(0, y, source.pixelWidth, 1, argbFormat, tintedTemp, 0, source.pixelWidth);
           }
           // could this be any slower?
-//          float[] scales = { tintR, tintG, tintB };
-//          float[] offsets = new float[3];
-//          RescaleOp op = new RescaleOp(scales, offsets, null);
-//          op.filter(image, image);
+          //          float[] scales = { tintR, tintG, tintB };
+          //          float[] offsets = new float[3];
+          //          RescaleOp op = new RescaleOp(scales, offsets, null);
+          //          op.filter(image, image);
 
-        //} else if (bufferType == BufferedImage.TYPE_INT_ARGB) {
+          //} else if (bufferType == BufferedImage.TYPE_INT_ARGB) {
         } else if (targetType == ARGB) {
           if (source.format == RGB &&
               (tintColor & 0xffffff) == 0xffffff) {
@@ -1209,10 +1245,10 @@ public class PGraphicsFX2D extends PGraphics {
             }
           }
           // Not sure why ARGB images take the scales in this order...
-//          float[] scales = { tintR, tintG, tintB, tintA };
-//          float[] offsets = new float[4];
-//          RescaleOp op = new RescaleOp(scales, offsets, null);
-//          op.filter(image, image);
+          //          float[] scales = { tintR, tintG, tintB, tintA };
+          //          float[] offsets = new float[4];
+          //          RescaleOp op = new RescaleOp(scales, offsets, null);
+          //          op.filter(image, image);
         }
       } else {  // !tint
         if (targetType == RGB && (source.pixels[0] >> 24 == 0)) {
@@ -1233,14 +1269,14 @@ public class PGraphicsFX2D extends PGraphics {
       this.tinted = tint;
       this.tintedColor = tintColor;
 
-//      GraphicsConfiguration gc = parent.getGraphicsConfiguration();
-//      compat = gc.createCompatibleImage(image.getWidth(),
-//                                        image.getHeight(),
-//                                        Transparency.TRANSLUCENT);
-//
-//      Graphics2D g = compat.createGraphics();
-//      g.drawImage(image, 0, 0, null);
-//      g.dispose();
+      //      GraphicsConfiguration gc = parent.getGraphicsConfiguration();
+      //      compat = gc.createCompatibleImage(image.getWidth(),
+      //                                        image.getHeight(),
+      //                                        Transparency.TRANSLUCENT);
+      //
+      //      Graphics2D g = compat.createGraphics();
+      //      g.drawImage(image, 0, 0, null);
+      //      g.dispose();
     }
   }
 
@@ -1582,7 +1618,7 @@ public class PGraphicsFX2D extends PGraphics {
         float y2 = y1 + high * textSize;
 
         PImage glyphImage = (fillColor == 0xFFFFFFFF) ?
-          glyph.image : getTintedGlyphImage(glyph, fillColor);
+            glyph.image : getTintedGlyphImage(glyph, fillColor);
 
         textCharModelImpl(glyphImage,
                           x1, y1, x2, y2,
@@ -1621,7 +1657,7 @@ public class PGraphicsFX2D extends PGraphics {
   public void pushMatrix() {
     if (transformCount == transformStack.length) {
       throw new RuntimeException("pushMatrix() cannot use push more than " +
-                                 transformStack.length + " times");
+          transformStack.length + " times");
     }
     transformStack[transformCount] = context.getTransform(transformStack[transformCount]);
     transformCount++;
@@ -1632,7 +1668,7 @@ public class PGraphicsFX2D extends PGraphics {
   public void popMatrix() {
     if (transformCount == 0) {
       throw new RuntimeException("missing a pushMatrix() " +
-                                 "to go with that popMatrix()");
+          "to go with that popMatrix()");
     }
     transformCount--;
     context.setTransform(transformStack[transformCount]);
@@ -1772,8 +1808,8 @@ public class PGraphicsFX2D extends PGraphics {
     //double[] transform = new double[6];
     // TODO This is not tested; apparently Affine is a full 3x4
     Affine t = context.getTransform(); //.getMatrix(transform);
-//    target.set((float) transform[0], (float) transform[2], (float) transform[4],
-//               (float) transform[1], (float) transform[3], (float) transform[5]);
+    //    target.set((float) transform[0], (float) transform[2], (float) transform[4],
+    //               (float) transform[1], (float) transform[3], (float) transform[5]);
     target.set((float) t.getMxx(), (float) t.getMxy(), (float) t.getTx(),
                (float) t.getMyx(), (float) t.getMyy(), (float) t.getTy());
     return target;
@@ -1811,31 +1847,31 @@ public class PGraphicsFX2D extends PGraphics {
 
 
 
-//  //////////////////////////////////////////////////////////////
-//
-//  // CAMERA and PROJECTION
-//
-//  // Inherit the plaintive warnings from PGraphics
-//
-//
-//  //public void beginCamera()
-//  //public void endCamera()
-//  //public void camera()
-//  //public void camera(float eyeX, float eyeY, float eyeZ,
-//  //                   float centerX, float centerY, float centerZ,
-//  //                   float upX, float upY, float upZ)
-//  //public void printCamera()
-//
-//  //public void ortho()
-//  //public void ortho(float left, float right,
-//  //                  float bottom, float top,
-//  //                  float near, float far)
-//  //public void perspective()
-//  //public void perspective(float fov, float aspect, float near, float far)
-//  //public void frustum(float left, float right,
-//  //                    float bottom, float top,
-//  //                    float near, float far)
-//  //public void printProjection()
+  //  //////////////////////////////////////////////////////////////
+  //
+  //  // CAMERA and PROJECTION
+  //
+  //  // Inherit the plaintive warnings from PGraphics
+  //
+  //
+  //  //public void beginCamera()
+  //  //public void endCamera()
+  //  //public void camera()
+  //  //public void camera(float eyeX, float eyeY, float eyeZ,
+  //  //                   float centerX, float centerY, float centerZ,
+  //  //                   float upX, float upY, float upZ)
+  //  //public void printCamera()
+  //
+  //  //public void ortho()
+  //  //public void ortho(float left, float right,
+  //  //                  float bottom, float top,
+  //  //                  float near, float far)
+  //  //public void perspective()
+  //  //public void perspective(float fov, float aspect, float near, float far)
+  //  //public void frustum(float left, float right,
+  //  //                    float bottom, float top,
+  //  //                    float near, float far)
+  //  //public void printProjection()
 
 
 
@@ -1887,11 +1923,11 @@ public class PGraphicsFX2D extends PGraphics {
 
 
 
-//  //////////////////////////////////////////////////////////////
-//
-//  // STYLE
-//
-//  // pushStyle(), popStyle(), style() and getStyle() inherited.
+  //  //////////////////////////////////////////////////////////////
+  //
+  //  // STYLE
+  //
+  //  // pushStyle(), popStyle(), style() and getStyle() inherited.
 
 
 
@@ -1978,49 +2014,49 @@ public class PGraphicsFX2D extends PGraphics {
 
 
 
-//  //////////////////////////////////////////////////////////////
-//
-//  // MATERIAL PROPERTIES
-//
-//
-//  //public void ambient(int rgb)
-//  //public void ambient(float gray)
-//  //public void ambient(float x, float y, float z)
-//  //protected void ambientFromCalc()
-//  //public void specular(int rgb)
-//  //public void specular(float gray)
-//  //public void specular(float x, float y, float z)
-//  //protected void specularFromCalc()
-//  //public void shininess(float shine)
-//  //public void emissive(int rgb)
-//  //public void emissive(float gray)
-//  //public void emissive(float x, float y, float z )
-//  //protected void emissiveFromCalc()
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // LIGHTS
-//
-//
-//  //public void lights()
-//  //public void noLights()
-//  //public void ambientLight(float red, float green, float blue)
-//  //public void ambientLight(float red, float green, float blue,
-//  //                         float x, float y, float z)
-//  //public void directionalLight(float red, float green, float blue,
-//  //                             float nx, float ny, float nz)
-//  //public void pointLight(float red, float green, float blue,
-//  //                       float x, float y, float z)
-//  //public void spotLight(float red, float green, float blue,
-//  //                      float x, float y, float z,
-//  //                      float nx, float ny, float nz,
-//  //                      float angle, float concentration)
-//  //public void lightFalloff(float constant, float linear, float quadratic)
-//  //public void lightSpecular(float x, float y, float z)
-//  //protected void lightPosition(int num, float x, float y, float z)
-//  //protected void lightDirection(int num, float x, float y, float z)
+  //  //////////////////////////////////////////////////////////////
+  //
+  //  // MATERIAL PROPERTIES
+  //
+  //
+  //  //public void ambient(int rgb)
+  //  //public void ambient(float gray)
+  //  //public void ambient(float x, float y, float z)
+  //  //protected void ambientFromCalc()
+  //  //public void specular(int rgb)
+  //  //public void specular(float gray)
+  //  //public void specular(float x, float y, float z)
+  //  //protected void specularFromCalc()
+  //  //public void shininess(float shine)
+  //  //public void emissive(int rgb)
+  //  //public void emissive(float gray)
+  //  //public void emissive(float x, float y, float z )
+  //  //protected void emissiveFromCalc()
+  //
+  //
+  //
+  //  //////////////////////////////////////////////////////////////
+  //
+  //  // LIGHTS
+  //
+  //
+  //  //public void lights()
+  //  //public void noLights()
+  //  //public void ambientLight(float red, float green, float blue)
+  //  //public void ambientLight(float red, float green, float blue,
+  //  //                         float x, float y, float z)
+  //  //public void directionalLight(float red, float green, float blue,
+  //  //                             float nx, float ny, float nz)
+  //  //public void pointLight(float red, float green, float blue,
+  //  //                       float x, float y, float z)
+  //  //public void spotLight(float red, float green, float blue,
+  //  //                      float x, float y, float z,
+  //  //                      float nx, float ny, float nz,
+  //  //                      float angle, float concentration)
+  //  //public void lightFalloff(float constant, float linear, float quadratic)
+  //  //public void lightSpecular(float x, float y, float z)
+  //  //protected void lightPosition(int num, float x, float y, float z)
+  //  //protected void lightDirection(int num, float x, float y, float z)
 
 
 
@@ -2055,85 +2091,85 @@ public class PGraphicsFX2D extends PGraphics {
 
 
 
-//  //////////////////////////////////////////////////////////////
-//
-//  // COLOR MODE
-//
-//  // All colorMode() variations are inherited from PGraphics.
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // COLOR CALC
-//
-//  // colorCalc() and colorCalcARGB() inherited from PGraphics.
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // COLOR DATATYPE STUFFING
-//
-//  // final color() variations inherited.
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // COLOR DATATYPE EXTRACTION
-//
-//  // final methods alpha, red, green, blue,
-//  // hue, saturation, and brightness all inherited.
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // COLOR DATATYPE INTERPOLATION
-//
-//  // both lerpColor variants inherited.
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // BEGIN/END RAW
-//
-//
-//  @Override
-//  public void beginRaw(PGraphics recorderRaw) {
-//    showMethodWarning("beginRaw");
-//  }
-//
-//
-//  @Override
-//  public void endRaw() {
-//    showMethodWarning("endRaw");
-//  }
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // WARNINGS and EXCEPTIONS
-//
-//  // showWarning and showException inherited.
-//
-//
-//
-//  //////////////////////////////////////////////////////////////
-//
-//  // RENDERER SUPPORT QUERIES
-//
-//
-//  //public boolean displayable()  // true
-//
-//
-//  //public boolean is2D()  // true
-//
-//
-//  //public boolean is3D()  // false
+  //  //////////////////////////////////////////////////////////////
+  //
+  //  // COLOR MODE
+  //
+  //  // All colorMode() variations are inherited from PGraphics.
+  //
+  //
+  //
+  //  //////////////////////////////////////////////////////////////
+  //
+  //  // COLOR CALC
+  //
+  //  // colorCalc() and colorCalcARGB() inherited from PGraphics.
+  //
+  //
+  //
+  //  //////////////////////////////////////////////////////////////
+  //
+  //  // COLOR DATATYPE STUFFING
+  //
+  //  // final color() variations inherited.
+  //
+  //
+  //
+  //  //////////////////////////////////////////////////////////////
+  //
+  //  // COLOR DATATYPE EXTRACTION
+  //
+  //  // final methods alpha, red, green, blue,
+  //  // hue, saturation, and brightness all inherited.
+  //
+  //
+  //
+  //  //////////////////////////////////////////////////////////////
+  //
+  //  // COLOR DATATYPE INTERPOLATION
+  //
+  //  // both lerpColor variants inherited.
+  //
+  //
+  //
+  //  //////////////////////////////////////////////////////////////
+  //
+  //  // BEGIN/END RAW
+  //
+  //
+  //  @Override
+  //  public void beginRaw(PGraphics recorderRaw) {
+  //    showMethodWarning("beginRaw");
+  //  }
+  //
+  //
+  //  @Override
+  //  public void endRaw() {
+  //    showMethodWarning("endRaw");
+  //  }
+  //
+  //
+  //
+  //  //////////////////////////////////////////////////////////////
+  //
+  //  // WARNINGS and EXCEPTIONS
+  //
+  //  // showWarning and showException inherited.
+  //
+  //
+  //
+  //  //////////////////////////////////////////////////////////////
+  //
+  //  // RENDERER SUPPORT QUERIES
+  //
+  //
+  //  //public boolean displayable()  // true
+  //
+  //
+  //  //public boolean is2D()  // true
+  //
+  //
+  //  //public boolean is3D()  // false
 
 
 
@@ -2236,7 +2272,7 @@ public class PGraphicsFX2D extends PGraphics {
 
 
   static final String MASK_WARNING =
-    "mask() cannot be used on the main drawing surface";
+      "mask() cannot be used on the main drawing surface";
 
 
   @Override
@@ -2266,28 +2302,28 @@ public class PGraphicsFX2D extends PGraphics {
   // COPY
 
 
-//  @Override
-//  public void copy(int sx, int sy, int sw, int sh,
-//                   int dx, int dy, int dw, int dh) {
-//    if ((sw != dw) || (sh != dh)) {
-//      g2.drawImage(image, dx, dy, dx + dw, dy + dh, sx, sy, sx + sw, sy + sh, null);
-//
-//    } else {
-//      dx = dx - sx;  // java2d's "dx" is the delta, not dest
-//      dy = dy - sy;
-//      g2.copyArea(sx, sy, sw, sh, dx, dy);
-//    }
-//  }
+  //  @Override
+  //  public void copy(int sx, int sy, int sw, int sh,
+  //                   int dx, int dy, int dw, int dh) {
+  //    if ((sw != dw) || (sh != dh)) {
+  //      g2.drawImage(image, dx, dy, dx + dw, dy + dh, sx, sy, sx + sw, sy + sh, null);
+  //
+  //    } else {
+  //      dx = dx - sx;  // java2d's "dx" is the delta, not dest
+  //      dy = dy - sy;
+  //      g2.copyArea(sx, sy, sw, sh, dx, dy);
+  //    }
+  //  }
 
 
-//  @Override
-//  public void copy(PImage src,
-//                   int sx, int sy, int sw, int sh,
-//                   int dx, int dy, int dw, int dh) {
-//    g2.drawImage((Image) src.getNative(),
-//                 dx, dy, dx + dw, dy + dh,
-//                 sx, sy, sx + sw, sy + sh, null);
-//  }
+  //  @Override
+  //  public void copy(PImage src,
+  //                   int sx, int sy, int sw, int sh,
+  //                   int dx, int dy, int dw, int dh) {
+  //    g2.drawImage((Image) src.getNative(),
+  //                 dx, dy, dx + dw, dy + dh,
+  //                 sx, sy, sx + sw, sy + sh, null);
+  //  }
 
 
 
@@ -2325,6 +2361,6 @@ public class PGraphicsFX2D extends PGraphics {
    */
   static public void showTodoWarning(String method, int issue) {
     showWarning(method + "() is not yet available: " +
-                "https://github.com/processing/processing/issues/" + issue);
+        "https://github.com/processing/processing/issues/" + issue);
   }
 }
