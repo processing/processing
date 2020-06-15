@@ -3470,10 +3470,10 @@ public class PGraphics extends PImage implements PConstants {
    * Code thanks to Dave Bollinger (Bug #715)
    *
    * @webref shape:curves
-   * @param a coordinate of first point on the curve
-   * @param b coordinate of first control point
-   * @param c coordinate of second control point
-   * @param d coordinate of second point on the curve
+   * @param a coordinate of first control point on the curve
+   * @param b coordinate of first point
+   * @param c coordinate of first point
+   * @param d coordinate of second control point on the curve
    * @param t value between 0 and 1
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PGraphics#curveVertex(float, float)
