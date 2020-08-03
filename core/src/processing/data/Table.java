@@ -168,6 +168,8 @@ public class Table {
         // Do this after setting types, otherwise it'll attempt to parse the
         // allocated but empty rows, and drive CATEGORY columns nutso.
         setRowCount(alloc);
+        // sometimes more columns than titles (and types?)
+        setColumnCount(incoming.getColumnCount());
 
       } else if (row == alloc) {
         // Far more efficient than re-allocating all columns and doing a copy
@@ -176,7 +178,14 @@ public class Table {
       }
 
       //addRow(row);
+//      try {
       setRow(row++, incoming);
+//      } catch (ArrayIndexOutOfBoundsException aioobe) {
+//        for (int i = 0; i < incoming.getColumnCount(); i++) {
+//          System.out.format("[%d] %s%n", i, incoming.getString(i));
+//        }
+//        throw aioobe;
+//      }
     }
     // Shrink the table to only the rows that were used
     if (row != alloc) {
@@ -316,12 +325,11 @@ public class Table {
 
 
   protected void parse(InputStream input, String options) throws IOException {
-    //init();
-
-    boolean awfulCSV = false;
+//    boolean awfulCSV = false;
     boolean header = false;
     String extension = null;
     boolean binary = false;
+    String encoding = "UTF-8";
 
     String worksheet = null;
     final String sheetParam = "worksheet=";
@@ -337,8 +345,9 @@ public class Table {
         } else if (opt.equals("ods")) {
           extension = "ods";
         } else if (opt.equals("newlines")) {
-          awfulCSV = true;
-          extension = "csv";
+          //awfulCSV = true;
+          //extension = "csv";
+          throw new IllegalArgumentException("The 'newlines' option is no longer necessary.");
         } else if (opt.equals("bin")) {
           binary = true;
           extension = "bin";
@@ -348,6 +357,8 @@ public class Table {
           worksheet = opt.substring(sheetParam.length());
         } else if (opt.startsWith("dictionary=")) {
           // ignore option, this is only handled by PApplet
+        } else if (opt.startsWith("encoding=")) {
+          encoding = opt.substring(9);
         } else {
           throw new IllegalArgumentException("'" + opt + "' is not a valid option for loading a Table");
         }
@@ -365,14 +376,27 @@ public class Table {
       odsParse(input, worksheet, header);
 
     } else {
-      BufferedReader reader = PApplet.createReader(input);
-      if (awfulCSV) {
+      InputStreamReader isr = new InputStreamReader(input, encoding);
+      BufferedReader reader = new BufferedReader(isr);
+
+      // strip out the Unicode BOM, if present
+      reader.mark(1);
+      int c = reader.read();
+      // if not the BOM, back up to the beginning again
+      if (c != '\uFEFF') {
+        reader.reset();
+      }
+
+      /*
+       if (awfulCSV) {
         parseAwfulCSV(reader, header);
       } else if ("tsv".equals(extension)) {
         parseBasic(reader, header, true);
       } else if ("csv".equals(extension)) {
         parseBasic(reader, header, false);
       }
+      */
+      parseBasic(reader, header, "tsv".equals(extension));
     }
   }
 
@@ -391,16 +415,16 @@ public class Table {
           setRowCount(row << 1);
         }
         if (row == 0 && header) {
-          setColumnTitles(tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+          setColumnTitles(tsv ? PApplet.split(line, '\t') : splitLineCSV(line, reader));
           header = false;
         } else {
-          setRow(row, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+          setRow(row, tsv ? PApplet.split(line, '\t') : splitLineCSV(line, reader));
           row++;
         }
 
-        // this is problematic unless we're going to calculate rowCount first
         if (row % 10000 == 0) {
         /*
+        // this is problematic unless we're going to calculate rowCount first
         if (row < rowCount) {
           int pct = (100 * row) / rowCount;
           if (pct != prev) {  // also prevents "0%" from showing up
@@ -432,6 +456,7 @@ public class Table {
 //  }
 
 
+  /*
   protected void parseAwfulCSV(BufferedReader reader,
                                boolean header) throws IOException {
     char[] c = new char[100];
@@ -529,7 +554,192 @@ public class Table {
       setRowCount(row);  // shrink to the actual size
     }
   }
+  */
 
+
+  static class CommaSeparatedLine {
+    char[] c;
+    String[] pieces;
+    int pieceCount;
+
+//    int offset;
+    int start; //, stop;
+
+    String[] handle(String line, BufferedReader reader) throws IOException {
+//      PApplet.println("handle() called for: " + line);
+      start = 0;
+      pieceCount = 0;
+      c = line.toCharArray();
+
+      // get tally of number of columns and allocate the array
+      int cols = 1;  // the first comma indicates the second column
+      boolean quote = false;
+      for (int i = 0; i < c.length; i++) {
+        if (!quote && (c[i] == ',')) {
+          cols++;
+        } else if (c[i] == '\"') {
+          // double double quotes (escaped quotes like "") will simply toggle
+          // this back and forth, so it should remain accurate
+          quote = !quote;
+        }
+      }
+      pieces = new String[cols];
+
+//      while (offset < c.length) {
+//        start = offset;
+      while (start < c.length) {
+        boolean enough = ingest();
+        while (!enough) {
+          // found a newline inside the quote, grab another line
+          String nextLine = reader.readLine();
+//          System.out.println("extending to " + nextLine);
+          if (nextLine == null) {
+//            System.err.println(line);
+            throw new IOException("Found a quoted line that wasn't terminated properly.");
+          }
+          // for simplicity, not bothering to skip what's already been read
+          // from c (and reset the offset to 0), opting to make a bigger array
+          // with both lines.
+          char[] temp = new char[c.length + 1 + nextLine.length()];
+          PApplet.arrayCopy(c, temp, c.length);
+          // NOTE: we're converting to \n here, which isn't perfect
+          temp[c.length] = '\n';
+          nextLine.getChars(0, nextLine.length(), temp, c.length + 1);
+//          c = temp;
+          return handle(new String(temp), reader);
+          //System.out.println("  full line is now " + new String(c));
+          //stop = nextComma(c, offset);
+          //System.out.println("stop is now " + stop);
+          //enough = ingest();
+        }
+      }
+
+      // Make any remaining entries blanks instead of nulls. Empty columns from
+      // CSV are always "" not null, so this handles successive commas in a line
+      for (int i = pieceCount; i < pieces.length; i++) {
+        pieces[i] = "";
+      }
+//      PApplet.printArray(pieces);
+      return pieces;
+    }
+
+    protected void addPiece(int start, int stop, boolean quotes) {
+      if (quotes) {
+        int dest = start;
+        for (int i = start; i < stop; i++) {
+          if (c[i] == '\"') {
+            ++i;  // step over the quote
+          }
+          if (i != dest) {
+            c[dest] = c[i];
+          }
+          dest++;
+        }
+        pieces[pieceCount++] = new String(c, start, dest - start);
+
+      } else {
+        pieces[pieceCount++] = new String(c, start, stop - start);
+      }
+    }
+
+    /**
+     * Returns the next comma (not inside a quote) in the specified array.
+     * @param c array to search
+     * @param index offset at which to start looking
+     * @return index of the comma, or -1 if line ended inside an unclosed quote
+     */
+    protected boolean ingest() {
+      boolean hasEscapedQuotes = false;
+      // not possible
+//      if (index == c.length) {  // we're already at the end
+//        return c.length;
+//      }
+      boolean quoted = c[start] == '\"';
+      if (quoted) {
+        start++; // step over the quote
+      }
+      int i = start;
+      while (i < c.length) {
+//        PApplet.println(c[i] + " i=" + i);
+        if (c[i] == '\"') {
+          // if this fella started with a quote
+          if (quoted) {
+            if (i == c.length-1) {
+              // closing quote for field; last field on the line
+              addPiece(start, i, hasEscapedQuotes);
+              start = c.length;
+              return true;
+
+            } else if (c[i+1] == '\"') {
+              // an escaped quote inside a quoted field, step over it
+              hasEscapedQuotes = true;
+              i += 2;
+
+            } else if (c[i+1] == ',') {
+              // that was our closing quote, get outta here
+              addPiece(start, i, hasEscapedQuotes);
+              start = i+2;
+              return true;
+
+            } else {
+              // This is a lone-wolf quote, occasionally seen in exports.
+              // It's a single quote in the middle of some other text,
+              // and not escaped properly. Pray for the best!
+              i++;
+            }
+
+          } else {  // not a quoted line
+            if (i == c.length-1) {
+              // we're at the end of the line, can't have an unescaped quote
+              throw new RuntimeException("Unterminated quote at end of line");
+
+            } else if (c[i+1] == '\"') {
+              // step over this crummy quote escape
+              hasEscapedQuotes = true;
+              i += 2;
+
+            } else {
+              throw new RuntimeException("Unterminated quoted field mid-line");
+            }
+          }
+        } else if (!quoted && c[i] == ',') {
+          addPiece(start, i, hasEscapedQuotes);
+          start = i+1;
+          return true;
+
+        } else if (!quoted && i == c.length-1) {
+          addPiece(start, c.length, hasEscapedQuotes);
+          start = c.length;
+          return true;
+
+        } else {  // nothing all that interesting
+          i++;
+        }
+      }
+//      if (!quote && (c[i] == ',')) {
+//        // found a comma, return this location
+//        return i;
+//      } else if (c[i] == '\"') {
+//        // if it's a quote, then either the next char is another quote,
+//        // or if this is a quoted entry, it better be a comma
+//        quote = !quote;
+//      }
+//    }
+
+      // if still inside a quote, indicate that another line should be read
+      if (quoted) {
+        return false;
+      }
+
+//    // made it to the end of the array with no new comma
+//    return c.length;
+
+      throw new RuntimeException("not sure how...");
+    }
+  }
+
+
+  CommaSeparatedLine csl;
 
   /**
    * Parse a line of text as comma-separated values, returning each value as
@@ -538,63 +748,77 @@ public class Table {
    * @param line line of text to be parsed
    * @return an array of the individual values formerly separated by commas
    */
-  static protected String[] splitLineCSV(String line) {
-    char[] c = line.toCharArray();
-    int rough = 1;  // at least one
-    boolean quote = false;
-    for (int i = 0; i < c.length; i++) {
-      if (!quote && (c[i] == ',')) {
-        rough++;
-      } else if (c[i] == '\"') {
-        quote = !quote;
-      }
+  protected String[] splitLineCSV(String line, BufferedReader reader) throws IOException {
+    if (csl == null) {
+      csl = new CommaSeparatedLine();
     }
-    String[] pieces = new String[rough];
-    int pieceCount = 0;
-    int offset = 0;
-    while (offset < c.length) {
-      int start = offset;
-      int stop = nextComma(c, offset);
-      offset = stop + 1;  // next time around, need to step over the comment
-      if (c[start] == '\"' && c[stop-1] == '\"') {
-        start++;
-        stop--;
-      }
-      int i = start;
-      int ii = start;
-      while (i < stop) {
-        if (c[i] == '\"') {
-          i++;  // skip over pairs of double quotes become one
-        }
-        if (i != ii) {
-          c[ii] = c[i];
-        }
-        i++;
-        ii++;
-      }
-      String s = new String(c, start, ii - start);
-      pieces[pieceCount++] = s;
-    }
-    // make any remaining entries blanks instead of nulls
-    for (int i = pieceCount; i < pieces.length; i++) {
-      pieces[i] = "";
-
-    }
-    return pieces;
+    return csl.handle(line, reader);
   }
 
 
+  /**
+   * Returns the next comma (not inside a quote) in the specified array.
+   * @param c array to search
+   * @param index offset at which to start looking
+   * @return index of the comma, or -1 if line ended inside an unclosed quote
+   */
+  /*
   static protected int nextComma(char[] c, int index) {
-    boolean quote = false;
+    if (index == c.length) {  // we're already at the end
+      return c.length;
+    }
+    boolean quoted = c[index] == '\"';
+    if (quoted) {
+      index++; // step over the quote
+    }
     for (int i = index; i < c.length; i++) {
+      if (c[i] == '\"') {
+        // if this fella started with a quote
+        if (quoted) {
+          if (i == c.length-1) {
+            //return -1;  // ran out of chars
+            // closing quote for field; last field on the line
+            return c.length;
+          } else if (c[i+1] == '\"') {
+            // an escaped quote inside a quoted field, step over it
+            i++;
+          } else if (c[i+1] == ',') {
+            // that's our closing quote, get outta here
+            return i+1;
+          }
+
+        } else {  // not a quoted line
+          if (i == c.length-1) {
+            // we're at the end of the line, can't have an unescaped quote
+            //return -1;  // ran out of chars
+            throw new RuntimeException("Unterminated quoted field at end of line");
+          } else if (c[i+1] == '\"') {
+            // step over this crummy quote escape
+            ++i;
+          } else {
+            throw new RuntimeException("Unterminated quoted field mid-line");
+          }
+        }
+      } else if (!quoted && c[i] == ',') {
+        return i;
+      }
       if (!quote && (c[i] == ',')) {
+        // found a comma, return this location
         return i;
       } else if (c[i] == '\"') {
+        // if it's a quote, then either the next char is another quote,
+        // or if this is a quoted entry, it better be a comma
         quote = !quote;
       }
     }
+    // if still inside a quote, indicate that another line should be read
+    if (quote) {
+      return -1;
+    }
+    // made it to the end of the array with no new comma
     return c.length;
   }
+  */
 
 
   /**
@@ -852,7 +1076,7 @@ public class Table {
     }
 
     Field[] fields = target.getDeclaredFields();
-    ArrayList<Field> inuse = new ArrayList<Field>();
+    ArrayList<Field> inuse = new ArrayList<>();
     for (Field field : fields) {
       String name = field.getName();
       if (getColumnIndex(name, false) != -1) {
@@ -1034,12 +1258,18 @@ public class Table {
 
   protected void writeCSV(PrintWriter writer) {
     if (columnTitles != null) {
-      for (int col = 0; col < columns.length; col++) {
+      for (int col = 0; col < getColumnCount(); col++) {
         if (col != 0) {
           writer.print(',');
         }
-        if (columnTitles[col] != null) {
-          writeEntryCSV(writer, columnTitles[col]);
+        try {
+          if (columnTitles[col] != null) {  // col < columnTitles.length &&
+            writeEntryCSV(writer, columnTitles[col]);
+          }
+        } catch (ArrayIndexOutOfBoundsException e) {
+          PApplet.printArray(columnTitles);
+          PApplet.printArray(columns);
+          throw e;
         }
       }
       writer.println();
@@ -1102,21 +1332,44 @@ public class Table {
 
 
   protected void writeHTML(PrintWriter writer) {
-    writer.println("<html>");
+    writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 3.2//EN\">");
+//    writer.println("<!DOCTYPE html>");
+//    writer.println("<meta charset=\"utf-8\">");
 
+    writer.println("<html>");
     writer.println("<head>");
     writer.println("  <meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\" />");
     writer.println("</head>");
 
     writer.println("<body>");
     writer.println("  <table>");
+
+    if (hasColumnTitles()) {
+      writer.println("  <tr>");
+      for (String entry : getColumnTitles()) {
+        writer.print("      <th>");
+        if (entry != null) {
+          writeEntryHTML(writer, entry);
+        }
+        writer.println("</th>");
+      }
+      writer.println("  </tr>");
+    }
+
     for (int row = 0; row < getRowCount(); row++) {
       writer.println("    <tr>");
       for (int col = 0; col < getColumnCount(); col++) {
         String entry = getString(row, col);
         writer.print("      <td>");
-        writeEntryHTML(writer, entry);
-        writer.println("      </td>");
+        if (entry != null) {
+          // probably not a great idea to mess w/ the export
+//          if (entry.startsWith("<") && entry.endsWith(">")) {
+//            writer.print(entry);
+//          } else {
+          writeEntryHTML(writer, entry);
+//          }
+        }
+        writer.println("</td>");
       }
       writer.println("    </tr>");
     }
@@ -1137,16 +1390,15 @@ public class Table {
         writer.print("&gt;");
       } else if (c == '&') {
         writer.print("&amp;");
-      } else if (c == '\'') {
-        writer.print("&apos;");
+//      } else if (c == '\'') {  // only in XML
+//        writer.print("&apos;");
       } else if (c == '"') {
         writer.print("&quot;");
 
-      // not necessary with UTF-8?
-//      } else if (c < 32 || c > 127) {
-//        writer.print("&#");
-//        writer.print((int) c);
-//        writer.print(';');
+      } else if (c < 32 || c > 127) {  // keep in ASCII or Tidy complains
+        writer.print("&#");
+        writer.print((int) c);
+        writer.print(';');
 
       } else {
         writer.print(c);
@@ -1460,19 +1712,19 @@ public class Table {
         columns[column] = new int[rowCount];
         break;
       case LONG:
-        columns[column] = new long[rowCount];;
+        columns[column] = new long[rowCount];
         break;
       case FLOAT:
-        columns[column] = new float[rowCount];;
+        columns[column] = new float[rowCount];
         break;
       case DOUBLE:
-        columns[column] = new double[rowCount];;
+        columns[column] = new double[rowCount];
         break;
       case STRING:
-        columns[column] = new String[rowCount];;
+        columns[column] = new String[rowCount];
         break;
       case CATEGORY:
-        columns[column] = new int[rowCount];;
+        columns[column] = new int[rowCount];
         break;
       default:
         throw new IllegalArgumentException(newType + " is not a valid column type.");
@@ -1553,7 +1805,7 @@ public class Table {
 
 
   /**
-   * @param type the type to be used for the new column: INT, LONG, FLOAT, DOUBLE, STRING, or CATEGORY
+   * @param type the type to be used for the new column: INT, LONG, FLOAT, DOUBLE, or STRING
    */
   public void addColumn(String title, int type) {
     insertColumn(columns.length, title, type);
@@ -1652,6 +1904,7 @@ public class Table {
     }
   }
 
+
   /**
    * @webref table:method
    * @brief Gets the number of columns in a table
@@ -1692,12 +1945,7 @@ public class Table {
   }
 
 
-  /**
-   * Set the data type for a column so that using it is more efficient.
-   * @param column the column to change
-   * @param columnType One of int, long, float, double, string, or category.
-   */
-  public void setColumnType(int column, String columnType) {
+  static int parseColumnType(String columnType) {
     columnType = columnType.toLowerCase();
     int type = -1;
     if (columnType.equals("string")) {
@@ -1715,7 +1963,17 @@ public class Table {
     } else {
       throw new IllegalArgumentException("'" + columnType + "' is not a valid column type.");
     }
-    setColumnType(column, type);
+    return type;
+  }
+
+
+  /**
+   * Set the data type for a column so that using it is more efficient.
+   * @param column the column to change
+   * @param columnType One of int, long, float, double, string, or category.
+   */
+  public void setColumnType(int column, String columnType) {
+    setColumnType(column, parseColumnType(columnType));
   }
 
 
@@ -1957,7 +2215,7 @@ public class Table {
     // only create this on first get(). subsequent calls to set the title will
     // also update this array, but only if it exists.
     if (columnIndices == null) {
-      columnIndices = new HashMap<String, Integer>();
+      columnIndices = new HashMap<>();
       for (int col = 0; col < columns.length; col++) {
         columnIndices.put(columnTitles[col], col);
       }
@@ -2078,7 +2336,7 @@ public class Table {
     // Make sure there are enough columns to add this data
     ensureBounds(row, source.getColumnCount() - 1);
 
-    for (int col = 0; col < columns.length; col++) {
+    for (int col = 0; col < Math.min(source.getColumnCount(), columns.length); col++) {
       switch (columnTypes[col]) {
       case INT:
         setInt(row, col, source.getInt(col));
@@ -2170,9 +2428,12 @@ public class Table {
         }
       }
     }
+    // Need to increment before setRow(), because it calls ensureBounds()
+    // https://github.com/processing/processing/issues/5406
+    ++rowCount;
     setRow(insert, columnData);
-    rowCount++;
   }
+
 
   /**
    * @webref table:method
@@ -2551,6 +2812,19 @@ public class Table {
 
     public String[] getColumnTitles() {
       return table.getColumnTitles();
+    }
+
+    public void print() {
+      write(new PrintWriter(System.out));
+    }
+
+    public void write(PrintWriter writer) {
+      for (int i = 0 ; i < getColumnCount(); i++) {
+        if (i != 0) {
+          writer.print('\t');
+        }
+        writer.print(getString(i));
+      }
     }
   }
 
@@ -3526,7 +3800,7 @@ public class Table {
   /**
    * Return a list of rows that contain the String passed in. If there are no
    * matches, a zero length array will be returned (not a null array).
-   * @param what the String to match
+   * @param regexp the String to match
    * @param column ID number of the column to search
    */
   public int[] matchRowIndices(String regexp, int column) {
@@ -3711,7 +3985,7 @@ public class Table {
   /**
    * Run String.replaceAll() on all entries in a column.
    * Only works with columns that are already String values.
-   * @param what the String to match
+   * @param regex the String to match
    * @param columnName title of the column to search
    */
   public void replaceAll(String regex, String replacement, String columnName) {
@@ -3777,16 +4051,77 @@ public class Table {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+
   /**
    * @webref table:method
    * @brief Trims whitespace from values
    * @see Table#removeTokens(String)
    */
   public void trim() {
+    columnTitles = PApplet.trim(columnTitles);
     for (int col = 0; col < getColumnCount(); col++) {
       trim(col);
     }
+    // remove empty columns
+    int lastColumn = getColumnCount() - 1;
+    //while (isEmptyColumn(lastColumn) && lastColumn >= 0) {
+    while (isEmptyArray(getStringColumn(lastColumn)) && lastColumn >= 0) {
+      lastColumn--;
+    }
+    setColumnCount(lastColumn + 1);
+
+    // trim() works from both sides
+    while (getColumnCount() > 0 && isEmptyArray(getStringColumn(0))) {
+      removeColumn(0);
+    }
+
+    // remove empty rows (starting from the end)
+    int lastRow = lastRowIndex();
+    //while (isEmptyRow(lastRow) && lastRow >= 0) {
+    while (isEmptyArray(getStringRow(lastRow)) && lastRow >= 0) {
+      lastRow--;
+    }
+    setRowCount(lastRow + 1);
+
+    while (getRowCount() > 0 && isEmptyArray(getStringRow(0))) {
+      removeRow(0);
+    }
   }
+
+
+  protected boolean isEmptyArray(String[] contents) {
+    for (String entry : contents) {
+      if (entry != null && entry.length() > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  /*
+  protected boolean isEmptyColumn(int column) {
+    String[] contents = getStringColumn(column);
+    for (String entry : contents) {
+      if (entry != null && entry.length() > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  protected boolean isEmptyRow(int row) {
+    String[] contents = getStringRow(row);
+    for (String entry : contents) {
+      if (entry != null && entry.length() > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+  */
+
 
   /**
    * @param column ID number of the column to trim
@@ -3863,8 +4198,8 @@ public class Table {
 
 
   static class HashMapBlows {
-    HashMap<String,Integer> dataToIndex = new HashMap<String, Integer>();
-    ArrayList<String> indexToData = new ArrayList<String>();
+    HashMap<String,Integer> dataToIndex = new HashMap<>();
+    ArrayList<String> indexToData = new ArrayList<>();
 
     HashMapBlows() { }
 
@@ -3923,7 +4258,7 @@ public class Table {
     void read(DataInputStream input) throws IOException {
       int count = input.readInt();
       //System.out.println("found " + count + " entries in category map");
-      dataToIndex = new HashMap<String, Integer>(count);
+      dataToIndex = new HashMap<>(count);
       for (int i = 0; i < count; i++) {
         String str = input.readUTF();
         //System.out.println(i + " " + str);
@@ -3958,12 +4293,21 @@ public class Table {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-
+  /**
+   * Sorts (orders) a table based on the values in a column.
+   *
+   * @webref table:method
+   * @brief Orders a table based on the values in a column
+   * @param columnName the name of the column to sort
+   * @see Table#trim()
+   */
   public void sort(String columnName) {
     sort(getColumnIndex(columnName), false);
   }
 
-
+  /**
+   * @param column the column ID, e.g. 0, 1, 2
+   */
   public void sort(int column) {
     sort(column, false);
   }
@@ -3989,7 +4333,7 @@ public class Table {
       }
 
       @Override
-      public float compare(int index1, int index2) {
+      public int compare(int index1, int index2) {
         int a = reverse ? order[index2] : order[index1];
         int b = reverse ? order[index1] : order[index2];
 
@@ -3997,13 +4341,24 @@ public class Table {
         case INT:
           return getInt(a, column) - getInt(b, column);
         case LONG:
-          return getLong(a, column) - getLong(b, column);
+          long diffl = getLong(a, column) - getLong(b, column);
+          return diffl == 0 ? 0 : (diffl < 0 ? -1 : 1);
         case FLOAT:
-          return getFloat(a, column) - getFloat(b, column);
+          float difff = getFloat(a, column) - getFloat(b, column);
+          return difff == 0 ? 0 : (difff < 0 ? -1 : 1);
         case DOUBLE:
-          return (float) (getDouble(a, column) - getDouble(b, column));
+          double diffd = getDouble(a, column) - getDouble(b, column);
+          return diffd == 0 ? 0 : (diffd < 0 ? -1 : 1);
         case STRING:
-          return getString(a, column).compareToIgnoreCase(getString(b, column));
+          String string1 = getString(a, column);
+          if (string1 == null) {
+            string1 = "";  // avoid NPE when cells are left empty
+          }
+          String string2 = getString(b, column);
+          if (string2 == null) {
+            string2 = "";
+          }
+          return string1.compareToIgnoreCase(string2);
         case CATEGORY:
           return getInt(a, column) - getInt(b, column);
         default:
@@ -4162,19 +4517,52 @@ public class Table {
 
   public FloatDict getFloatDict(int keyColumn, int valueColumn) {
     return new FloatDict(getStringColumn(keyColumn),
-                       getFloatColumn(valueColumn));
+                         getFloatColumn(valueColumn));
   }
 
 
   public StringDict getStringDict(String keyColumnName, String valueColumnName) {
     return new StringDict(getStringColumn(keyColumnName),
-                         getStringColumn(valueColumnName));
+                          getStringColumn(valueColumnName));
   }
 
 
   public StringDict getStringDict(int keyColumn, int valueColumn) {
     return new StringDict(getStringColumn(keyColumn),
                           getStringColumn(valueColumn));
+  }
+
+
+  public Map<String, TableRow> getRowMap(String columnName) {
+    int col = getColumnIndex(columnName);
+    return (col == -1) ? null : getRowMap(col);
+  }
+
+
+  /**
+   * Return a mapping that connects the entry from a column back to the row
+   * from which it came. For instance:
+   * <pre>
+   * Table t = loadTable("country-data.tsv", "header");
+   * // use the contents of the 'country' column to index the table
+   * Map<String, TableRow> lookup = t.getRowMap("country");
+   * // get the row that has "us" in the "country" column:
+   * TableRow usRow = lookup.get("us");
+   * // get an entry from the 'population' column
+   * int population = usRow.getInt("population");
+   * </pre>
+   */
+  public Map<String, TableRow> getRowMap(int column) {
+    Map<String, TableRow> outgoing = new HashMap<>();
+    for (int row = 0; row < getRowCount(); row++) {
+      String id = getString(row, column);
+      outgoing.put(id, new RowPointer(this, row));
+    }
+//    for (TableRow row : rows()) {
+//      String id = row.getString(column);
+//      outgoing.put(id, row);
+//    }
+    return outgoing;
   }
 
 
@@ -4374,7 +4762,7 @@ public class Table {
     int prev = -1;
     int row = 0;
     while ((line = reader.readLine()) != null) {
-      convertRow(output, tsv ? PApplet.split(line, '\t') : splitLineCSV(line));
+      convertRow(output, tsv ? PApplet.split(line, '\t') : splitLineCSV(line, reader));
       row++;
 
       if (row % 10000 == 0) {
@@ -4532,5 +4920,15 @@ public class Table {
   /** Make a copy of the current table */
   public Table copy() {
     return new Table(rows());
+  }
+
+
+  public void write(PrintWriter writer) {
+    writeTSV(writer);
+  }
+
+
+  public void print() {
+    writeTSV(new PrintWriter(System.out));
   }
 }

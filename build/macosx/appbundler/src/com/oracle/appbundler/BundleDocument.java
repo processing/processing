@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License version
  * 2 along with this work; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- * 
+ *
  */
 
 package com.oracle.appbundler;
@@ -32,90 +32,94 @@ import org.apache.tools.ant.BuildException;
  * Represent a CFBundleDocument.
  */
 public class BundleDocument {
-    private String name = "editor";
-    private String role = "";
-    private File icon = null;
-    private String[] extensions;
-    private boolean isPackage = false;
+  private String name = "editor";
+  private String role = "";
+  private File icon = null;
+  private String[] extensions;
+  private boolean isPackage = false;
 
-    static private String capitalizeFirst(String string) {
-        char[] stringArray = string.toCharArray();
-        stringArray[0] = Character.toUpperCase(stringArray[0]);
-        return new String(stringArray);
-    }
-    
-    public void setExtensions(String extensionsList) {
-        if(extensionsList == null) {
-            throw new BuildException("Extensions can't be null");
-        }
-        
-        extensions = extensionsList.split(",");
-        for (String extension : extensions) {
-            extension.trim().toLowerCase();
-        }
-    }
-    
-    public void setIcon(File icon) {
-      this.icon = icon;
-    }
-    
-    public void setName(String name) {
-      this.name = name;
+
+  static private String capitalizeFirst(String string) {
+    char[] stringArray = string.toCharArray();
+    stringArray[0] = Character.toUpperCase(stringArray[0]);
+    return new String(stringArray);
+  }
+
+
+  public void setExtensions(String extensionsList) {
+    if (extensionsList == null) {
+      throw new BuildException("Extensions can't be null");
     }
 
-    public void setRole(String role) {
-      this.role = capitalizeFirst(role);
+    extensions = extensionsList.split(",");
+    for (int i = 0; i < extensions.length; i++) {
+      extensions[i] = extensions[i].trim().toLowerCase();
     }
-    
-    public void setIsPackage(String isPackageString) {
-        if(isPackageString.trim().equalsIgnoreCase("true")) {
-            this.isPackage = true;
-        } else {
-            this.isPackage = false;
-        }
-    }
-    
-//    public String getIcon() {
-//        return icon;
-//    }
-    
-    public String getIconName() {
-        return icon.getName();
-    }
-    
-    
-    public File getIconFile() {
-        return icon;
-    }
-    
-    public String getName() {
-        return name;
-    }
+  }
 
-    public String getRole() {
-        return role;
-    }
-    
-    public String[] getExtensions() {
-        return extensions;
-    }
-    
-    public boolean hasIcon() {
-        return icon != null;
-    }
-    
-    public boolean isPackage() {
-        return isPackage;
-    }
 
-    @Override
-    public String toString() {
-        StringBuilder s = new StringBuilder(getName());
-        s.append(" ").append(getRole()).append(" ").append(getIconName()). append(" ");
-        for(String extension : extensions) {
-            s.append(extension).append(" ");
-        }
-        
-        return s.toString();
+  public void setIcon(File icon) {
+    this.icon = icon;
+  }
+
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+
+  public void setRole(String role) {
+    this.role = capitalizeFirst(role);
+  }
+
+
+  public void setIsPackage(String isPackageString) {
+    this.isPackage = isPackageString.trim().equalsIgnoreCase("true");
+  }
+
+
+  public String getIconName() {
+    return icon.getName();
+  }
+
+
+  public File getIconFile() {
+    return icon;
+  }
+
+
+  public String getName() {
+    return name;
+  }
+
+
+  public String getRole() {
+    return role;
+  }
+
+
+  public String[] getExtensions() {
+    return extensions;
+  }
+
+
+  public boolean hasIcon() {
+    return icon != null;
+  }
+
+
+  public boolean isPackage() {
+    return isPackage;
+  }
+
+
+  @Override
+  public String toString() {
+    StringBuilder s = new StringBuilder(getName());
+    s.append(" ").append(getRole()).append(" ").append(getIconName()).append(" ");
+    for (String extension : extensions) {
+      s.append(extension).append(" ");
     }
+    return s.toString();
+  }
 }

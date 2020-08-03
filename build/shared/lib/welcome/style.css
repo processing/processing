@@ -1,0 +1,43 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: "Processing Sans Pro", sans-serif;
+}
+
+h1 {
+  margin-bottom: 0;
+  /* can't get the Semibold to work properly */
+  font-family: "Processing Sans Pro", sans-serif;
+  font-size: 18px;
+  font-weight: normal;
+}
+
+p, td {
+  margin-bottom: 0;
+  font-size: 11px;
+  line-height: 12px;
+}
+
+table {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+p.inset, table.inset {
+  padding: 10px;
+  background-color: rgb(224, 253, 251); 
+}
+
+a {
+  color: #2c7bb5;
+  text-decoration: none;
+}
+
+#startButton {
+  margin-left: 50px;
+}

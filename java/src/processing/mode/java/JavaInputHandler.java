@@ -24,10 +24,10 @@
 
 package processing.mode.java;
 
-import processing.app.Editor;
 import processing.app.Preferences;
 import processing.app.Sketch;
 import processing.app.syntax.*;
+import processing.app.ui.Editor;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -40,7 +40,6 @@ import java.util.Arrays;
  * continuing to hack this class.
  */
 public class JavaInputHandler extends PdeInputHandler {
-  private Editor editor;
 
   /** ctrl-alt on windows and linux, cmd-alt on mac os x */
   static final int CTRL_ALT = ActionEvent.ALT_MASK |
@@ -48,25 +47,8 @@ public class JavaInputHandler extends PdeInputHandler {
 
 
   public JavaInputHandler(Editor editor) {
-    this.editor = editor;    
+    super(editor);
   }
-  
-  
-  public void keyPressed(KeyEvent event) {
-    if (!pressed(event)) {
-      super.keyPressed(event);
-    }
-  }
-
-  
-  public void keyTyped(KeyEvent event) {
-    if (!typed(event)) {
-      super.keyTyped(event);
-    }
-  }
-  
-  
-  // we don't need keyReleased(), so that's passed through automatically
 
 
   /**
@@ -77,7 +59,7 @@ public class JavaInputHandler extends PdeInputHandler {
    * keyTyped().
    * @return true if the event has been handled (to remove it from the queue)
    */
-  protected boolean pressed(KeyEvent event) {
+  public boolean handlePressed(KeyEvent event) {
     char c = event.getKeyChar();
     int code = event.getKeyCode();
 
@@ -177,12 +159,12 @@ public class JavaInputHandler extends PdeInputHandler {
         textarea.setSelectedText(spaces(tabSize));
         event.consume();
 
-      } else if (!Preferences.getBoolean("editor.tabs.expand")) {
+      } else {  // !Preferences.getBoolean("editor.tabs.expand")
         textarea.setSelectedText("\t");
         event.consume();
       }
 
-    } else if (c == 10 || c == 13) {  // auto-indent
+    } else if (code == 10 || code == 13) {  // auto-indent
       if (Preferences.getBoolean("editor.indent")) {
         char contents[] = textarea.getText().toCharArray();
         int tabSize = Preferences.getInteger("editor.tabs.size");
@@ -332,12 +314,17 @@ public class JavaInputHandler extends PdeInputHandler {
   }
 
 
-  protected boolean typed(KeyEvent event) {
+  public boolean handleTyped(KeyEvent event) {
     char c = event.getKeyChar();
 
     if ((event.getModifiers() & InputEvent.CTRL_MASK) != 0) {
       // on linux, ctrl-comma (prefs) being passed through to the editor
       if (c == KeyEvent.VK_COMMA) {
+        event.consume();
+        return true;
+      }
+      // https://github.com/processing/processing/issues/3847
+      if (c == KeyEvent.VK_SPACE) {
         event.consume();
         return true;
       }

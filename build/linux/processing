@@ -1,17 +1,14 @@
 #!/bin/sh
 
-# This script runs Processing, using the JDK in the Processing 
-# installation directory if possible.
+# This script runs Processing, using the JRE in the Processing 
+# installation directory.
 
-# If no JDK was installed with Processing then the script tries to use 
-# the preferred Java version of the machine, i.e. what is executed 
-# by the "java" console command. This must be a Sun JDK (for details, see
-# http://processing.org/reference/environment/platforms.html#java).
-
-# In order to run Processing with an already installed JDK that is *not* 
-# the preferred Java version of the machine, create a symlink named "java" 
-# in the Processing installation directory that points to the JDK home
-# directory.
+# If your system needs a different version of Java than what's included
+# in the download, replace the 'java' folder with the contents of a new
+# Oracle JRE (Java 8 only), or create a symlink named "java" in the 
+# Processing installation directory that points to the JRE home directory.
+# This must be a Sun/Oracle JDK. For more details, see here:
+# https://github.com/processing/processing/wiki/Supported-Platforms
 
 # Thanks to Ferdinand Kasper for this build script. [fry]
 
@@ -75,13 +72,14 @@ JDKDIR=`readlink -f "$APPDIR/java"`
 make_jdkcp "$JDKDIR"
 log SUCCESS
 
+# Don't use the installed JDK, because it's not supported.
 # Local JDK found?
-if [ $SUCCESS -ne 1 ]; then
-  # No, try using the preferred system JRE/JDK (if any)
-  JDKDIR=`which java` && JDKDIR=`readlink -e "$JDKDIR"` && JDKDIR=`dirname "$JDKDIR"`/..
-  make_jdkcp "$JDKDIR"
-  log SUCCESS
-fi
+#if [ $SUCCESS -ne 1 ]; then
+#  # No, try using the preferred system JRE/JDK (if any)
+#  JDKDIR=`which java` && JDKDIR=`readlink -e "$JDKDIR"` && JDKDIR=`dirname "$JDKDIR"`/..
+#  make_jdkcp "$JDKDIR"
+#  log SUCCESS
+#fi
 
 # Add all required JARs to CLASSPATH
 CLASSPATH="$CLASSPATH"${CLASSPATH:+:}"$JDKCP"
@@ -89,6 +87,9 @@ for LIB in "$APPDIR"/lib/*.jar; do
   CLASSPATH="$CLASSPATH"${CLASSPATH:+:}"$LIB"
 done
 for LIB in "$APPDIR"/core/library/*.jar; do
+  CLASSPATH="$CLASSPATH"${CLASSPATH:+:}"$LIB"
+done
+for LIB in "$APPDIR"/modes/java/mode/*.jar; do
   CLASSPATH="$CLASSPATH"${CLASSPATH:+:}"$LIB"
 done
 export CLASSPATH
@@ -103,7 +104,7 @@ cmd_name='processing-java'
 
 if [ $current_name = $cmd_name ]
 then
-    java -Djna.nosys=true -Xmx256m processing.mode.java.Commander "$@"
+    java -Djna.nosys=true -Djava.ext.dirs="$APPDIR"/java/lib/ext -Xmx256m processing.mode.java.Commander "$@"
     exit $?
 else
   # Start Processing in the same directory as this script
@@ -114,5 +115,5 @@ else
   fi
   cd "$APPDIR"
 
-  java -splash:lib/about.jpg -Djna.nosys=true -Xmx256m processing.app.Base "$SKETCH" &
+  java -splash:lib/about-1x.png -Djna.nosys=true -Djava.ext.dirs="$APPDIR"/java/lib/ext -Xmx256m processing.app.Base "$SKETCH" &
 fi

@@ -41,6 +41,6 @@ public abstract class Sort implements Runnable {
 
 
   abstract public int size();
-  abstract public float compare(int a, int b);
+  abstract public int compare(int a, int b);
   abstract public void swap(int a, int b);
 }

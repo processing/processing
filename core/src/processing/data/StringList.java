@@ -1,5 +1,7 @@
 package processing.data;
 
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
@@ -41,6 +43,29 @@ public class StringList implements Iterable<String> {
     count = list.length;
     data = new String[count];
     System.arraycopy(list, 0, data, 0, count);
+  }
+
+
+  /**
+   * Construct a StringList from a random pile of objects. Null values will
+   * stay null, but all the others will be converted to String values.
+   *
+   * @nowebref
+   */
+  public StringList(Object... items) {
+    count = items.length;
+    data = new String[count];
+    int index = 0;
+    for (Object o : items) {
+//      // Not gonna go with null values staying that way because perhaps
+//      // the most common case here is to immediately call join() or similar.
+//      data[index++] = String.valueOf(o);
+      // Keep null values null (because join() will make non-null anyway)
+      if (o != null) {  // leave null values null
+        data[index] = o.toString();
+      }
+      index++;
+    }
   }
 
 
@@ -137,6 +162,22 @@ public class StringList implements Iterable<String> {
       count = index+1;
     }
     data[index] = what;
+  }
+
+
+  /** Just an alias for append(), but matches pop() */
+  public void push(String value) {
+    append(value);
+  }
+
+
+  public String pop() {
+    if (count == 0) {
+      throw new RuntimeException("Can't call pop() on an empty list");
+    }
+    String value = get(count-1);
+    data[--count] = null;  // avoid leak
+    return value;
   }
 
 
@@ -273,6 +314,14 @@ public class StringList implements Iterable<String> {
   public void append(StringList list) {
     for (String v : list.values()) {  // will concat the list...
       append(v);
+    }
+  }
+
+
+  /** Add this value, but only if it's not already in the list. */
+  public void appendUnique(String value) {
+    if (!hasValue(value)) {
+      append(value);
     }
   }
 
@@ -469,8 +518,8 @@ public class StringList implements Iterable<String> {
       }
 
       @Override
-      public float compare(int a, int b) {
-        float diff = data[a].compareToIgnoreCase(data[b]);
+      public int compare(int a, int b) {
+        int diff = data[a].compareToIgnoreCase(data[b]);
         return reverse ? -diff : diff;
       }
 
@@ -612,6 +661,7 @@ public class StringList implements Iterable<String> {
 
       public void remove() {
         StringList.this.remove(index);
+        index--;
       }
 
       public String next() {
@@ -704,23 +754,47 @@ public class StringList implements Iterable<String> {
 
 
   public void print() {
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < count; i++) {
       System.out.format("[%d] %s%n", i, data[i]);
     }
   }
 
 
+  /**
+   * Save tab-delimited entries to a file (TSV format, UTF-8 encoding)
+   */
+  public void save(File file) {
+    PrintWriter writer = PApplet.createWriter(file);
+    write(writer);
+    writer.close();
+  }
+
+
+  /**
+   * Write entries to a PrintWriter, one per line
+   */
+  public void write(PrintWriter writer) {
+    for (int i = 0; i < count; i++) {
+      writer.println(data[i]);
+    }
+    writer.flush();
+  }
+
+
+  /**
+   * Return this dictionary as a String in JSON format.
+   */
+  public String toJSON() {
+    StringList temp = new StringList();
+    for (String item : this) {
+      temp.append(JSONObject.quote(item));
+    }
+    return "[ " + temp.join(", ") + " ]";
+  }
+
+
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(getClass().getSimpleName() + " size=" + size() + " [ ");
-    for (int i = 0; i < size(); i++) {
-      if (i != 0) {
-        sb.append(", ");
-      }
-      sb.append(i + ": \"" + data[i] + "\"");
-    }
-    sb.append(" ]");
-    return sb.toString();
+    return getClass().getSimpleName() + " size=" + size() + " " + toJSON();
   }
 }

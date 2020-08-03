@@ -1,3 +1,4 @@
+
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -46,13 +47,16 @@
 # Note that this path must exist already otherwise it won't see
 # the sketchbook folder, and will instead assume the sketchbook
 # has gone missing, and that it should instead use the default.
-#sketchbook.path=
+# In 3.0, the location has changed.
+#sketchbook.path.three=
+
+welcome.show = true
+welcome.seen = false
 
 # By default, no sketches currently open
-last.sketch.count=0
-
+last.sketch.count = 0
 # true if you want sketches to re-open when you next run processing
-last.sketch.restore=true
+last.sketch.restore = true
 
 # by default, contributions are moved to backup folders when
 # they are removed or replaced. The locations of the backup
@@ -70,8 +74,6 @@ recent.count = 10
 
 # Default to the native (AWT) file selector where possible
 chooser.files.native = true
-# native Linux file chooser is atrocious, use Swing instead
-chooser.files.native.linux = false
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -98,6 +100,13 @@ editor.window.height.min = 500
 editor.window.height.min.macosx = 450
 # tested to be 515 on Windows XP, this leaves some room
 editor.window.height.min.windows = 530
+# tested with Raspberry Pi display
+editor.window.height.min.linux = 480
+
+# scaling for the interface (to handle Windows and Linux HiDPI displays)
+editor.zoom = 100%
+# automatically set based on system dpi (only helps on Windows)
+editor.zoom.auto = true
 
 # font size for editor
 #editor.font = Monospaced,plain,12
@@ -145,16 +154,21 @@ editor.input_method_support = false
 editor.tabs.expand = true
 editor.tabs.size = 2
 
+# Set to true to automatically close [ { ( " and '
+editor.completion.auto_close = false
+
 # automatically indent each line
 editor.indent = true
 
-# Whether to automatically reload modified tabs
+# Whether to check files to see if they've been modified externally
 editor.watcher = true
+# Set true to enable debugging, since this is quirky on others' machines
+editor.watcher.debug = false
+# The window of time (in milliseconds) in which a change won't be counted
+editor.watcher.window = 1500
 
-# Hide the background image. Gross because this is a pref that
-# really lives over in theme.txt but it's split here.
-buttons.hide.image = false
-toolbar.hide.image = false
+# Format and search engine to use for online queries
+search.format = https://google.com/search?q=%s
 
 # font choice and size for the console
 #console.font = Monospaced,plain,11
@@ -171,7 +185,8 @@ console.auto_clear = true
 
 # set the maximum number of lines remembered by the console
 # the default is 500, lengthen at your own peril
-console.length = 500
+console.scrollback.lines = 500
+console.scrollback.chars = 40000
 
 # Any additional Java options when running. 
 # If you change this and can't run things, it's your own durn fault.
@@ -190,7 +205,8 @@ run.options.bits.macosx = 32
 # Index of the display to use for running sketches (starts at 1). 
 # Kept this 1-indexed because older vesions of Processing were setting
 # the preference even before it was being used.
-run.display = 0
+# -1 means the default display, 0 means all displays
+run.display = -1
 
 # set internally
 #run.window.bgcolor=
@@ -215,13 +231,12 @@ editor.untitled.suffix=yyMMdd
 # GTK isn't for everyone (and KDE users will get Metal or some
 # such anyway, so this is now broken out as an option
 # Linux is by default even uglier than metal (Motif?).
-# Actually, i'm using native menus, so they're even uglier
-# and Motif-looking (Lesstif?). Ick. Need to fix this.
-# For 0120, trying out the gtk+ look and feel as the default.
-# This is available in Java 1.4.2 and later, and it can't possibly
-# be any worse than Metal. (Ocean might also work, but that's for
-# Java 1.5, and we aren't going there yet)
-editor.laf.linux = com.sun.java.swing.plaf.gtk.GTKLookAndFeel
+#editor.laf.linux = com.sun.java.swing.plaf.gtk.GTKLookAndFeel
+# Trying Nimbus in 3.0a6 because the GTK menus are really dreadful.
+# Unfortunately, the Nimbus scrollbars are really gross, but...
+# As always, people can override on their own, or the next step 
+# is to do a Synth LAF that gives us something not awful.
+editor.laf.linux = javax.swing.plaf.nimbus.NimbusLookAndFeel
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -292,9 +307,6 @@ preproc.substitute_floats = true
 #preproc.substitute_image = false
 #preproc.substitute_font = false
 
-# auto-convert non-ascii chars to unicode escape sequences
-preproc.substitute_unicode = true
-
 # PdePreproc.java
 # writes out the parse tree as parseTree.xml, which can be usefully
 # viewed in (at least) Mozilla or IE.  useful when debugging the preprocessor.
@@ -325,13 +337,22 @@ run.present.stop.color = #cccccc
 # use this by default to hide the menu bar and dock on osx
 #run.present.exclusive.macosx = true
 
-# HTTP PROXY
+# PROXIES
 # Set a proxy server for folks that require it. This will allow the update
 # checker and the contrib manager to run properly in those environments.
-#proxy.host=proxy.example.com
-#proxy.port=8080
-proxy.host=
-proxy.port=
+# This changed from proxy.host and proxy.port to proxy.http.host and
+# proxy.http.port in 3.0a8. In addition, https and socks were added.
+proxy.http.host=
+proxy.http.port=
+proxy.https.host=
+proxy.https.port=
+proxy.socks.host=
+proxy.socks.port=
+# Example of usage (replace 'http' with 'https' or 'socks' as needed)
+#proxy.http.host=proxy.example.com
+#proxy.http.port=8080
+# Whether to use the system proxy by default
+proxy.system=true
 
 # PDE X
 pdex.autoSave.autoSaveByDefault=true
@@ -343,7 +364,11 @@ pdex.errorCheckEnabled=true
 pdex.warningsEnabled=true
 pdex.writeErrorLogs=false
 
+# Set to false to disable ctrl/cmd-click jump to definition
+pdex.inspectMode.hotkey=true
 # Enable auto-completion when hitting ctrl-space
 pdex.completion = false
 # Trigger happy version of completion that fires more often
 pdex.completion.trigger = false
+# Suggest libraries to import when a class is undefined/unavailable
+pdex.suggest.imports = true

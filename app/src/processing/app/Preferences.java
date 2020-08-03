@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2014 The Processing Foundation
+  Copyright (c) 2014-19 The Processing Foundation
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -21,10 +21,13 @@
 
 package processing.app;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.SystemColor;
 import java.io.*;
 import java.util.*;
 
+import processing.app.ui.Toolkit;
 import processing.core.*;
 
 
@@ -49,35 +52,13 @@ public class Preferences {
   static final String DEFAULTS_FILE = "defaults.txt"; //$NON-NLS-1$
   static final String PREFS_FILE = "preferences.txt"; //$NON-NLS-1$
 
-  static HashMap<String, String> defaults;
-  static HashMap<String, String> table = new HashMap<String,String>();
+  static Map<String, String> defaults;
+  static Map<String, String> table = new HashMap<>();
   static File preferencesFile;
 
-  static final String PROMPT_YES     = Language.text("prompt.yes");
-  static final String PROMPT_NO      = Language.text("prompt.no");
-  static final String PROMPT_CANCEL  = Language.text("prompt.cancel");
-  static final String PROMPT_OK      = Language.text("prompt.ok");
-  static final String PROMPT_BROWSE  = Language.text("prompt.browse");
 
-  /**
-   * Standardized width for buttons. Mac OS X 10.3 wants 70 as its default,
-   * Windows XP needs 66, and my Ubuntu machine needs 80+, so 80 seems proper.
-   */
-  static public int BUTTON_WIDTH = 
-    Integer.parseInt(Language.text("preferences.button.width"));
-
-//  /** height of the EditorHeader, EditorToolbar, and EditorStatus */
-//  static final int GRID_SIZE = 32;
-
-  // Indents and spacing standards. These probably need to be modified
-  // per platform as well, because Mac OS X is so huge, Windows is smaller,
-  // and Linux is all over the map. Consider these deprecated.
-
-  static final int GUI_BIG     = 13;
-  static final int GUI_BETWEEN = 8;
-  static final int GUI_SMALL   = 6;
-
-
+//  /** @return true if the sketchbook file did not exist */
+//  static public boolean init() {
   static public void init() {
     // start by loading the defaults, in case something
     // important was deleted from the user prefs
@@ -86,53 +67,40 @@ public class Preferences {
       // replacing the file after doing a search for "preferences.txt".
       load(Base.getLibStream(DEFAULTS_FILE));
     } catch (Exception e) {
-      Base.showError(null, "Could not read default settings.\n" +
-                           "You'll need to reinstall Processing.", e);
+      Messages.showError(null, "Could not read default settings.\n" +
+                         "You'll need to reinstall Processing.", e);
     }
 
-    // check for platform-specific properties in the defaults
-    String platformExt = "." + PConstants.platformNames[PApplet.platform]; //$NON-NLS-1$
-    int platformExtLength = platformExt.length();
-
-    // Get a list of keys that are specific to this platform
-    ArrayList<String> platformKeys = new ArrayList<String>();
-    for (String key : table.keySet()) {
-      if (key.endsWith(platformExt)) {
-        platformKeys.add(key);
-      }
-    }
-
-    // Use those platform-specific keys to override
-    for (String key : platformKeys) {
-      // this is a key specific to a particular platform
-      String actualKey = key.substring(0, key.length() - platformExtLength);
-      String value = get(key);
-      set(actualKey, value);
-    }
-
-    // clone the hash table
-    //defaults = (HashMap<String, String>) table.clone();
-    defaults = new HashMap<String, String>(table);
+    // Clone the defaults, then override any them with the user's preferences.
+    // This ensures that any new/added preference will be present.
+    defaults = new HashMap<>(table);
 
     // other things that have to be set explicitly for the defaults
     setColor("run.window.bgcolor", SystemColor.control); //$NON-NLS-1$
 
+    // For CJK users, enable IM support by default
+    if (Language.useInputMethod()) {
+      setBoolean("editor.input_method_support", true);
+    }
+
     // next load user preferences file
     preferencesFile = Base.getSettingsFile(PREFS_FILE);
-    if (preferencesFile.exists()) {
+    boolean firstRun = !preferencesFile.exists();
+    if (!firstRun) {
       try {
         load(new FileInputStream(preferencesFile));
 
       } catch (Exception ex) {
-        Base.showError("Error reading preferences",
-                       "Error reading the preferences file. " +
-                       "Please delete (or move)\n" +
-                       preferencesFile.getAbsolutePath() +
-                       " and restart Processing.", ex);
+        Messages.showError("Error reading preferences",
+                           "Error reading the preferences file. " +
+                           "Please delete (or move)\n" +
+                           preferencesFile.getAbsolutePath() +
+                           " and restart Processing.", ex);
       }
     }
 
-    if (checkSketchbookPref() || !preferencesFile.exists()) {
+    if (checkSketchbookPref() || firstRun) {
+//    if (firstRun) {
       // create a new preferences file if none exists
       // saves the defaults out to the file
       save();
@@ -141,27 +109,54 @@ public class Preferences {
     PApplet.useNativeSelect =
       Preferences.getBoolean("chooser.files.native"); //$NON-NLS-1$
 
-    // Set http proxy for folks that require it.
-    // http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
-    String proxyHost = get("proxy.host");
-    String proxyPort = get("proxy.port");
-    if (proxyHost != null && proxyHost.trim().length() != 0 &&
-        proxyPort != null && proxyPort.trim().length() != 0) {
-      System.setProperty("http.proxyHost", proxyHost);
-      System.setProperty("http.proxyPort", proxyPort);
+    // Adding option to disable this in case it's getting in the way
+    if (get("proxy.system").equals("true")) {
+      // Use the system proxy settings by default
+      // https://github.com/processing/processing/issues/2643
+      System.setProperty("java.net.useSystemProxies", "true");
     }
+
+    // Set HTTP, HTTPS, and SOCKS proxies for individuals
+    // who want/need to override the system setting
+    // http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
+    // Less readable version with the Oracle style sheet:
+    // http://docs.oracle.com/javase/8/docs/technotes/guides/net/proxies.html
+    handleProxy("http", "http.proxyHost", "http.proxyPort");
+    handleProxy("https", "https.proxyHost", "https.proxyPort");
+    handleProxy("socks", "socksProxyHost", "socksProxyPort");
   }
 
 
-  static protected String getPreferencesPath() {
+  static void handleProxy(String protocol, String hostProp, String portProp) {
+    String proxyHost = get("proxy." + protocol + ".host");
+    String proxyPort = get("proxy." + protocol + ".port");
+    if (proxyHost != null && proxyHost.length() != 0 &&
+        proxyPort != null && proxyPort.length() != 0) {
+      System.setProperty(hostProp, proxyHost);
+      System.setProperty(portProp, proxyPort);
+    }
+
+  }
+
+
+  static public String getPreferencesPath() {
     return preferencesFile.getAbsolutePath();
   }
 
 
-  // .................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  /**
+   * Load a set of key/value pairs from a UTF-8 encoded file into 'table'.
+   * For 3.0a6, this removes any platform-specific extensions from keys, so
+   * that we don't have platform-specific entries in a user's preferences.txt
+   * file, which would require all prefs to be changed twice, or risk being
+   * overwritten by the unchanged platform-specific version on reload.
+   */
   static public void load(InputStream input) throws IOException {
+    HashMap<String, String> platformSpecific = new HashMap<>();
+
     String[] lines = PApplet.loadStrings(input);  // Reads as UTF-8
     for (String line : lines) {
       if ((line.length() == 0) ||
@@ -172,46 +167,94 @@ public class Preferences {
       if (equals != -1) {
         String key = line.substring(0, equals).trim();
         String value = line.substring(equals + 1).trim();
-        table.put(key, value);
+        if (!isPlatformSpecific(key, value, platformSpecific)) {
+          table.put(key, value);
+        }
+      }
+    }
+    // Now override the keys with any platform-specific defaults we've found.
+    for (String key : platformSpecific.keySet()) {
+      table.put(key, platformSpecific.get(key));
+    }
+  }
+
+
+  /**
+   * @param key original key (may include platform extension)
+   * @param value
+   * @param specific where to put the key/value pairs for *this* platform
+   * @return true if a platform-specific key
+   */
+  static protected boolean isPlatformSpecific(String key, String value,
+                                              Map<String, String> specific) {
+    for (String platform : PConstants.platformNames) {
+      String ext = "." + platform;
+      if (key.endsWith(ext)) {
+        String thisPlatform = PConstants.platformNames[PApplet.platform];
+        if (platform.equals(thisPlatform)) {
+          key = key.substring(0, key.lastIndexOf(ext));
+          // store this for later overrides
+          specific.put(key, value);
+        } else {
+          // ignore platform-specific defaults for other platforms,
+          // but return 'true' because it needn't be added to the big list
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  static public void save() {
+    // On startup it'll be null, don't worry about it. It's trying to update
+    // the prefs for the open sketch before Preferences.init() has been called.
+    if (preferencesFile != null) {
+      try {
+        File dir = preferencesFile.getParentFile();
+        File preferencesTemp = File.createTempFile("preferences", ".txt", dir);
+        preferencesTemp.setWritable(true, false);
+
+        // Fix for 0163 to properly use Unicode when writing preferences.txt
+        PrintWriter writer = PApplet.createWriter(preferencesTemp);
+
+        String[] keyList = table.keySet().toArray(new String[table.size()]);
+        // Sorting is really helpful for debugging, diffing, and finding keys
+        keyList = PApplet.sort(keyList);
+        for (String key : keyList) {
+          writer.println(key + "=" + table.get(key)); //$NON-NLS-1$
+        }
+        writer.flush();
+        writer.close();
+
+        // Rename preferences.txt to preferences.old
+        File oldPreferences = new File(dir, "preferences.old");
+        if (oldPreferences.exists()) {
+          if (!oldPreferences.delete()) {
+            throw new IOException("Could not delete preferences.old");
+          }
+        }
+        if (preferencesFile.exists() &&
+            !preferencesFile.renameTo(oldPreferences)) {
+          throw new IOException("Could not replace preferences.old");
+        }
+        // Make the temporary file into the real preferences
+        if (!preferencesTemp.renameTo(preferencesFile)) {
+          throw new IOException("Could not move preferences file into place");
+        }
+
+      } catch (IOException e) {
+        Messages.showWarning("Preferences",
+                             "Could not save the Preferences file.", e);
       }
     }
   }
 
 
-  // .................................................................
-
-
-  static protected void save() {
-//    try {
-    // on startup, don't worry about it
-    // this is trying to update the prefs for who is open
-    // before Preferences.init() has been called.
-    if (preferencesFile == null) return;
-
-    // Fix for 0163 to properly use Unicode when writing preferences.txt
-    PrintWriter writer = PApplet.createWriter(preferencesFile);
-
-//    Enumeration e = table.keys(); //properties.propertyNames();
-//    while (e.hasMoreElements()) {
-//      String key = (String) e.nextElement();
-//      writer.println(key + "=" + ((String) table.get(key)));
-//    }
-    String[] keyList = table.keySet().toArray(new String[table.size()]);
-    keyList = PApplet.sort(keyList);
-    for (String key : keyList) {
-      writer.println(key + "=" + table.get(key)); //$NON-NLS-1$
-    }
-
-    writer.flush();
-    writer.close();
-
-//    } catch (Exception ex) {
-//      Base.showWarning(null, "Error while saving the settings file", ex);
-//    }
-  }
-
-
-  // .................................................................
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   // all the information from preferences.txt
@@ -351,7 +394,7 @@ public class Preferences {
     } catch (Exception e) {
       // Adding try/catch block because this may be where
       // a lot of startup crashes are happening.
-      Base.log("Error with font " + get(attr) + " for attribute " + attr);
+      Messages.log("Error with font " + get(attr) + " for attribute " + attr);
     }
     return new Font("Dialog", Font.PLAIN, 12);
   }
@@ -380,7 +423,12 @@ public class Preferences {
   }
 
 
-  static protected String getSketchbookPath() {
+  static public String getOldSketchbookPath() {
+    return get("sketchbook.path");
+  }
+
+
+  static public String getSketchbookPath() {
     return get("sketchbook.path.three"); //$NON-NLS-1$
   }
 

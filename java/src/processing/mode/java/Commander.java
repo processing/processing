@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2012-15 The Processing Foundation
   Copyright (c) 2008-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -27,10 +28,16 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
-import processing.app.*;
+import processing.app.Base;
+import processing.app.Platform;
+import processing.app.Preferences;
+import processing.app.RunnerListener;
+import processing.app.Sketch;
+import processing.app.SketchException;
+import processing.app.Util;
 import processing.app.contrib.ModeContribution;
 import processing.core.PApplet;
-import processing.mode.java.runner.*;
+import processing.mode.java.runner.Runner;
 
 
 /**
@@ -71,7 +78,7 @@ public class Commander implements RunnerListener {
     // Do this early so that error messages go to the console
     Base.setCommandLine();
     // init the platform so that prefs and other native code is ready to go
-    Base.initPlatform();
+    Platform.init();
     // make sure a full JDK is installed
     //Base.initRequirements();
 
@@ -90,26 +97,32 @@ public class Commander implements RunnerListener {
     boolean force = false;  // replace that no good output folder
 //    String preferencesPath = null;
     int platform = PApplet.platform; // default to this platform
-//    int platformBits = 0;
-    int platformBits = Base.getNativeBits();
+//    int platformBits = Base.getNativeBits();
     int task = HELP;
     boolean embedJava = true;
 
-    // Turns out the output goes as MacRoman or something else useless.
-    // http://code.google.com/p/processing/issues/detail?id=1418
     try {
-      systemOut = new PrintStream(System.out, true, "UTF-8");
-      systemErr = new PrintStream(System.err, true, "UTF-8");
-
+      if (Platform.isWindows()) {
+        // On Windows, it needs to use the default system encoding.
+        // https://github.com/processing/processing/issues/1633
+        systemOut = new PrintStream(System.out, true);
+        systemErr = new PrintStream(System.err, true);
+      } else {
+        // On OS X, the output goes as MacRoman or something else useless.
+        // http://code.google.com/p/processing/issues/detail?id=1418
+        // (Not sure about Linux, but this has worked since 2.0)
+        systemOut = new PrintStream(System.out, true, "UTF-8");
+        systemErr = new PrintStream(System.err, true, "UTF-8");
+      }
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
       System.exit(1);
     }
 
-//    File preferencesFile = Base.getSettingsFile("preferences.txt");
-//    System.out.println("Preferences file at " + preferencesFile.getAbsolutePath());
-
+    int argOffset = 0;
     for (String arg : args) {
+      argOffset++;
+
       if (arg.length() == 0) {
         // ignore it, just the crappy shell script
 
@@ -121,33 +134,34 @@ public class Commander implements RunnerListener {
 
       } else if (arg.equals(buildArg)) {
         task = BUILD;
+        break;
 
       } else if (arg.equals(runArg)) {
         task = RUN;
+        break;
 
       } else if (arg.equals(presentArg)) {
         task = PRESENT;
-
-//      } else if (arg.equals(exportAppletArg)) {
-//        task = EXPORT_APPLET;
+        break;
 
       } else if (arg.equals(exportApplicationArg)) {
         task = EXPORT;
+        break;
 
       } else if (arg.equals(noJavaArg)) {
         embedJava = false;
 
       } else if (arg.startsWith(platformArg)) {
-        complainAndQuit("The --platform option has been removed from Processing 2.1.", false);
-//        String platformStr = arg.substring(platformArg.length());
-//        platform = Base.getPlatformIndex(platformStr);
-//        if (platform == -1) {
-//          complainAndQuit(platformStr + " should instead be " +
-//                          "'windows', 'macosx', or 'linux'.", true);
-//        }
+//        complainAndQuit("The --platform option has been removed from Processing 2.1.", false);
+        String platformStr = arg.substring(platformArg.length());
+        platform = Platform.getIndex(platformStr);
+        if (platform == -1) {
+          complainAndQuit(platformStr + " should instead be " +
+                          "'windows', 'macosx', or 'linux'.", true);
+        }
 
       } else if (arg.startsWith(bitsArg)) {
-        complainAndQuit("The --bits option has been removed from Processing 2.1.", false);
+        complainAndQuit("The --bits option has been removed.", false);
 //        String bitsStr = arg.substring(bitsArg.length());
 //        if (bitsStr.equals("32")) {
 //          platformBits = 32;
@@ -183,6 +197,7 @@ public class Commander implements RunnerListener {
         complainAndQuit("I don't know anything about " + arg + ".", true);
       }
     }
+    String[] sketchArgs = PApplet.subset(args, argOffset);
 
 //    if ((outputPath == null) &&
 //        (task == PREPROCESS || task == BUILD ||
@@ -204,7 +219,7 @@ public class Commander implements RunnerListener {
       outputFolder = new File(outputPath);
       if (outputFolder.exists()) {
         if (force) {
-          Base.removeDir(outputFolder);
+          Util.removeDir(outputFolder);
         } else {
           complainAndQuit("The output folder already exists. " +
                           "Use --force to remove it.", false);
@@ -244,7 +259,7 @@ public class Commander implements RunnerListener {
 //      JavaMode javaMode =
 //        new JavaMode(null, Base.getContentFile("modes/java"));
       JavaMode javaMode = (JavaMode)
-        ModeContribution.load(null, Base.getContentFile("modes/java"),
+        ModeContribution.load(null, Platform.getContentFile("modes/java"),
                               "processing.mode.java.JavaMode").getMode();
       try {
         sketch = new Sketch(pdePath, javaMode);
@@ -262,7 +277,12 @@ public class Commander implements RunnerListener {
             success = true;
             if (task == RUN || task == PRESENT) {
               Runner runner = new Runner(build, this);
-              runner.launch(task == PRESENT);
+              if (task == PRESENT) {
+                runner.present(sketchArgs);
+              } else {
+                runner.launch(sketchArgs);
+              }
+              success = !runner.vmReturnedError();
             }
           } else {
             success = false;
@@ -275,14 +295,8 @@ public class Commander implements RunnerListener {
             JavaBuild build = new JavaBuild(sketch);
             build.build(true);
             if (build != null) {
-//              if (platformBits == 0) {
-//                platformBits = Base.getNativeBits();
-//              }
-//              if (platformBits == 0 &&
-//                Library.hasMultipleArch(platform, build.getImportedLibraries())) {
-//                complainAndQuit("This sketch can be exported for 32- or 64-bit, please specify one.", true);
-//              }
-              success = build.exportApplication(outputFolder, platform, platformBits, embedJava);
+              String variant = Platform.getVariant();
+              success = build.exportApplication(outputFolder, platform, variant, embedJava);
             }
           }
         }
@@ -369,15 +383,24 @@ public class Commander implements RunnerListener {
     out.println();
     out.println("--build              Preprocess and compile a sketch into .class files.");
     out.println("--run                Preprocess, compile, and run a sketch.");
-    out.println("--present            Preprocess, compile, and run a sketch full screen.");
+    out.println("--present            Preprocess, compile, and run a sketch in presentation mode.");
     out.println();
     out.println("--export             Export an application.");
     out.println("--no-java            Do not embed Java. Use at your own risk!");
-//    out.println("--platform           Specify the platform (export to application only).");
-//    out.println("                     Should be one of 'windows', 'macosx', or 'linux'.");
+    out.println("--platform           Specify the platform (export to application only).");
+    out.println("                     Should be one of 'windows', 'macosx', or 'linux'.");
 //    out.println("--bits               Must be specified if libraries are used that are");
 //    out.println("                     32- or 64-bit specific such as the OpenGL library.");
 //    out.println("                     Otherwise specify 0 or leave it out.");
+
+    out.println();
+    out.println("The --build, --run, --present, or --export must be the final parameter");
+    out.println("passed to Processing. Arguments passed following one of those four will");
+    out.println("be passed through to the sketch itself, and therefore available to the");
+    out.println("sketch via the 'args' field. To pass options understood by PApplet.main(),");
+    out.println("write a custom main() method so that the preprocessor does not add one.");
+    out.println("https://github.com/processing/processing/wiki/Command-Line");
+
     out.println();
   }
 

@@ -16,7 +16,7 @@ public class Brackets {
   }
 
   public int findMatchingBracket(final String text, final int pos) {
-    if (pos < 0 || pos > text.length())
+    if (pos < 0 || pos >= text.length())
       return -1;
     
     final char alpha = text.charAt(pos);
@@ -126,9 +126,9 @@ public class Brackets {
     for (pos++; pos < len; pos++) {
       final char c = text.charAt(pos);
       if (c == '*' && (pos < len - 1)) {
-        pos++;
-        final char d = text.charAt(pos);
+        final char d = text.charAt(pos + 1);
         if (d == '/') {
+          pos++;
           return;
         }
       }

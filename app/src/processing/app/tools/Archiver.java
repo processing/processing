@@ -4,7 +4,8 @@
   Archiver - plugin tool for archiving sketches
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-06 Ben Fry and Casey Reas
+  Copyright (c) 2012-2015 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
 package processing.app.tools;
 
 import processing.app.*;
+import processing.app.ui.Editor;
 import processing.core.PApplet;
 
 import java.io.*;
@@ -33,6 +35,7 @@ import java.util.zip.*;
 
 
 public class Archiver implements Tool {
+  Base base;
   Editor editor;
 
   // someday these will be settable
@@ -48,8 +51,8 @@ public class Archiver implements Tool {
   }
 
 
-  public void init(Editor editor) {
-    this.editor = editor;
+  public void init(Base base) {
+    this.base = base;
 
     numberFormat = NumberFormat.getInstance();
     numberFormat.setGroupingUsed(false); // no commas
@@ -60,12 +63,11 @@ public class Archiver implements Tool {
 
 
   public void run() {
+    editor = base.getActiveEditor();
     Sketch sketch = editor.getSketch();
 
     if (sketch.isModified()) {
-      Base.showWarning("Save",
-                       "Please save the sketch before archiving.",
-                       null);
+      Messages.showWarning("Save", "Please save the sketch before archiving.");
       return;
     }
 
@@ -95,7 +97,8 @@ public class Archiver implements Tool {
     } while (newbie.exists());
 
     // open up a prompt for where to save this fella
-    PApplet.selectOutput(Language.text("archive_sketch"), "fileSelected", newbie, this, editor);
+    PApplet.selectOutput(Language.text("archive_sketch"),
+                         "fileSelected", newbie, this, editor);
   }
 
 
@@ -119,18 +122,21 @@ public class Archiver implements Tool {
         zos.flush();
         zos.close();
 
-        editor.statusNotice("Created archive " + newbie.getName() + ".");
+        final String msg =
+          Language.interpolate("editor.status.archiver.create",
+                               newbie.getName());
+        editor.statusNotice(msg);
 
       } catch (IOException e) {
         e.printStackTrace();
       }
     } else {
-      editor.statusNotice("Archive sketch canceled.");
+      editor.statusNotice(Language.text("editor.status.archiver.cancel"));
     }
   }
 
 
-  public void buildZip(File dir, String sofar,
+  private void buildZip(File dir, String sofar,
                        ZipOutputStream zos) throws IOException {
     String files[] = dir.list();
     for (int i = 0; i < files.length; i++) {
@@ -153,21 +159,9 @@ public class Archiver implements Tool {
         ZipEntry entry = new ZipEntry(nowfar);
         entry.setTime(sub.lastModified());
         zos.putNextEntry(entry);
-        zos.write(Base.loadBytesRaw(sub));
+        zos.write(Util.loadBytesRaw(sub));
         zos.closeEntry();
       }
     }
   }
 }
-
-
-    /*
-    int index = 0;
-    SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
-    String purty = formatter.format(new Date());
-    do {
-      newbieName = "sketch_" + purty + ((char) ('a' + index));
-      newbieDir = new File(newbieParentDir, newbieName);
-      index++;
-    } while (newbieDir.exists());
-    */

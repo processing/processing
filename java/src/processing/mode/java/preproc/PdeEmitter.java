@@ -48,7 +48,7 @@ public class PdeEmitter implements PdeTokenTypes {
    * @returns a child AST of the given type. If it can't find a child of the
    *          given type, return null.
    */
-  private AST getChild(final AST ast, final int childType) {
+  static private AST getChild(final AST ast, final int childType) {
     AST child = ast.getFirstChild();
     while (child != null) {
       if (child.getType() == childType) {
@@ -126,7 +126,7 @@ public class PdeEmitter implements PdeTokenTypes {
    * Tells whether an AST has any children or not.
    * @return true iff the AST has at least one child
    */
-  private boolean hasChildren(final AST ast) {
+  static private boolean hasChildren(final AST ast) {
     return (ast.getFirstChild() != null);
   }
 
@@ -374,12 +374,15 @@ public class PdeEmitter implements PdeTokenTypes {
       }
       break;
 
-    // DOT always has exactly two children.
+    // DOT
     case DOT:
       print(child1);
       out.print(".");
       dumpHiddenAfter(ast);
       print(child2);
+      if (child3 != null) {
+        print(child3);
+      }
       break;
 
     case MODIFIERS:

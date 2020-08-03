@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2013-20 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -15,7 +15,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License along 
+  You should have received a copy of the GNU General Public License along
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
@@ -27,94 +27,127 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import processing.app.Base;
-import processing.app.Editor;
 import processing.app.Library;
+import processing.app.Messages;
+import processing.app.Util;
+import processing.app.ui.Editor;
 
 public enum ContributionType {
-  LIBRARY, TOOL, MODE, EXAMPLES;
+  LIBRARY, MODE, TOOL, EXAMPLES;
 
-    
+
   public String toString() {
     switch (this) {
     case LIBRARY:
       return "library";
-    case TOOL:
-      return "tool";
     case MODE:
       return "mode";
+    case TOOL:
+      return "tool";
     case EXAMPLES:
       return "examples";
     }
     return null;  // should be unreachable
   };
-  
-  
-  /** 
-   * Get this type name as a purtied up, capitalized version. 
-   * @return Mode for mode, Tool for tool, etc. 
+
+
+  /**
+   * Get this type name as a purtied up, capitalized version.
+   * @return Mode for mode, Tool for tool, etc.
    */
   public String getTitle() {
-    String s = toString();
-    if (this == EXAMPLES)
-      return Character.toUpperCase(s.charAt(0))
-        + s.substring(1, s.indexOf('-') + 1)
-        + Character.toUpperCase(s.charAt(s.indexOf('-') + 1))
-        + s.substring(s.indexOf('-') + 2);
-    else
-      return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    String lower = toString();
+    return Character.toUpperCase(lower.charAt(0)) + lower.substring(1);
   }
-    
-    
-  public String getFolderName() {
+
+
+  public String getPluralTitle() {
     switch (this) {
     case LIBRARY:
-      return "libraries";
-    case TOOL:
-      return "tools";
+      return "Libraries";
     case MODE:
-      return "modes";
+      return "Modes";
+    case TOOL:
+      return "Tools";
     case EXAMPLES:
-      return "examples";
+      return "Examples";
     }
     return null;  // should be unreachable
   }
-  
-  
-  public File createTempFolder() throws IOException {
-    return Base.createTempFolder(toString(), "tmp", getSketchbookFolder());
+
+
+//  public String getFolderName() {
+//    return toString();
+//    /*
+//    switch (this) {
+//    case LIBRARY:
+//      return "libraries";
+//    case TOOL:
+//      return "tools";
+//    case MODE:
+//      return "modes";
+//    case EXAMPLES:
+//      return "examples";
+//    }
+//    return null;  // should be unreachable
+//    */
+//  }
+
+
+  /** Get the name of the properties file for this type of contribution. */
+  public String getPropertiesName() {
+    return toString() + ".properties";
   }
-  
-  
+
+
+  public File createTempFolder() throws IOException {
+    return Util.createTempFolder(toString(), "tmp", getSketchbookFolder());
+  }
+
+
+  public File[] listTempFolders() throws IOException {
+    File base = getSketchbookFolder();
+    return base.listFiles(new FileFilter() {
+      @Override
+      public boolean accept(File file) {
+        String name = file.getName();
+        return (file.isDirectory() &&
+                name.startsWith(toString()) && name.endsWith("tmp"));
+      }
+    });
+  }
+
+
   public boolean isTempFolderName(String name) {
     return name.startsWith(toString()) && name.endsWith("tmp");
   }
-  
-  
+
+
 //  public String getTempPrefix() {
 //    return toString();
 //  }
-//  
-//  
+//
+//
 //  public String getTempSuffix() {
 //    return "tmp";
 //  }
-    
-    
+
+
 //    public String getPropertiesName() {
 //      return toString() + ".properties";
 //    }
 
-    
+
   static public ContributionType fromName(String s) {
     if (s != null) {
       if ("library".equalsIgnoreCase(s)) {
         return LIBRARY;
       }
-      if ("tool".equalsIgnoreCase(s)) {
-        return TOOL;
-      }
       if ("mode".equalsIgnoreCase(s)) {
         return MODE;
+      }
+      if ("tool".equalsIgnoreCase(s)) {
+        return TOOL;
       }
       if ("examples".equalsIgnoreCase(s)) {
         return EXAMPLES;
@@ -139,9 +172,9 @@ public enum ContributionType {
   }
 
 
-  boolean isCandidate(File potential) {
-    return (potential.isDirectory() && 
-            new File(potential, toString()).exists() && 
+  public boolean isCandidate(File potential) {
+    return (potential.isDirectory() &&
+            new File(potential, toString()).exists() &&
             !isTempFolderName(potential.getName()));
   }
 
@@ -172,21 +205,21 @@ public enum ContributionType {
       return null;
 
     } else if (folders.length > 1) {
-      Base.log("More than one " + toString() + " found inside " + folder.getAbsolutePath());
+      Messages.log("More than one " + toString() + " found inside " + folder.getAbsolutePath());
     }
     return folders[0];
   }
-  
-  
-  /** 
+
+
+  /**
    * Returns true if the type of contribution requires the PDE to restart
-   * when being added or removed. 
+   * when being added or removed.
    */
   boolean requiresRestart() {
     return this == ContributionType.TOOL || this == ContributionType.MODE;
   }
-  
-  
+
+
   LocalContribution load(Base base, File folder) {
     switch (this) {
     case LIBRARY:
@@ -204,13 +237,13 @@ public enum ContributionType {
 
 
   ArrayList<LocalContribution> listContributions(Editor editor) {
-    ArrayList<LocalContribution> contribs = new ArrayList<LocalContribution>();
+    ArrayList<LocalContribution> contribs = new ArrayList<>();
     switch (this) {
     case LIBRARY:
       contribs.addAll(editor.getMode().contribLibraries);
       break;
     case TOOL:
-      contribs.addAll(editor.contribTools);
+      contribs.addAll(editor.getBase().getToolContribs());
       break;
     case MODE:
       contribs.addAll(editor.getBase().getModeContribs());
@@ -221,17 +254,17 @@ public enum ContributionType {
     }
     return contribs;
   }
-  
+
 
   File getBackupFolder() {
     return new File(getSketchbookFolder(), "old");
   }
-  
-  
+
+
   File createBackupFolder(StatusPanel status) {
-    File backupFolder = getBackupFolder(); 
+    File backupFolder = getBackupFolder();
 //    if (backupFolder.isDirectory()) {
-//      status.setErrorMessage("First remove the folder named \"old\" from the " + 
+//      status.setErrorMessage("First remove the folder named \"old\" from the " +
 //                             getFolderName() + " folder in the sketchbook.");
 //      return null;
 //    }
@@ -242,29 +275,29 @@ public enum ContributionType {
     }
     return backupFolder;
   }
-  
-  
-  /** 
-   * Create a filter for a specific contribution type.
-   * @param type The type, or null for a generic update checker.
-   */
-  ContributionFilter createFilter() {
-    return new ContributionFilter() {
-      public boolean matches(Contribution contrib) {
-        return contrib.getType() == ContributionType.this;
-      }
-    };
-  }
-  
-  
-  static ContributionFilter createUpdateFilter() {
-    return new ContributionFilter() {
-      public boolean matches(Contribution contrib) {
-        if (contrib instanceof LocalContribution) {
-          return ContributionListing.getInstance().hasUpdates(contrib);
-        }
-        return false;
-      }
-    };
-  }
+
+
+//  /**
+//   * Create a filter for a specific contribution type.
+//   * @param type The type, or null for a generic update checker.
+//   */
+//  Contribution.Filter createFilter2() {
+//    return new Contribution.Filter() {
+//      public boolean matches(Contribution contrib) {
+//        return contrib.getType() == ContributionType.this;
+//      }
+//    };
+//  }
+
+
+//  static Contribution.Filter createUpdateFilter() {
+//    return new Contribution.Filter() {
+//      public boolean matches(Contribution contrib) {
+//        if (contrib instanceof LocalContribution) {
+//          return ContributionListing.getInstance().hasUpdates(contrib);
+//        }
+//        return false;
+//      }
+//    };
+//  }
 }

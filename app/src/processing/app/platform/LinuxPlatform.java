@@ -23,30 +23,35 @@
 package processing.app.platform;
 
 import java.io.File;
+import java.awt.Desktop;
 import java.awt.Toolkit;
 
 import processing.app.Base;
-import processing.app.Platform;
+import processing.app.Messages;
 import processing.app.Preferences;
+import processing.app.platform.DefaultPlatform;
+import processing.core.PApplet;
 
 
-public class LinuxPlatform extends Platform {
+public class LinuxPlatform extends DefaultPlatform {
+  String homeDir;
 
-  public void init(Base base) {
-    super.init(base);
+
+  public void initBase(Base base) {
+    super.initBase(base);
 
     String javaVendor = System.getProperty("java.vendor");
     String javaVM = System.getProperty("java.vm.name");
     if (javaVendor == null ||
         (!javaVendor.contains("Sun") && !javaVendor.contains("Oracle")) ||
         javaVM == null || !javaVM.contains("Java")) {
-      Base.showWarning("Not fond of this Java VM",
-        "Processing requires Java 7 from Sun (i.e. the sun-java-jdk\n" +
-        "package on Ubuntu). Other versions such as OpenJDK, IcedTea,\n" +
-        "and GCJ are strongly discouraged. Among other things, you're\n" +
-        "likely to run into problems with sketch window size and\n" +
-        "placement. For more background, please read the wiki:\n" +
-        "https://github.com/processing/processing/wiki/Supported-Platforms#Linux", null);
+      Messages.showWarning("Not fond of this Java VM",
+                           "Processing requires Java 8 from Oracle.\n" +
+                           "Other versions such as OpenJDK, IcedTea,\n" +
+                           "and GCJ are strongly discouraged. Among other things, you're\n" +
+                           "likely to run into problems with sketch window size and\n" +
+                           "placement. For more background, please read the wiki:\n" +
+                           "https://github.com/processing/processing/wiki/Supported-Platforms#linux", null);
     }
 
     // Set x11 WM_CLASS property which is used as the application
@@ -66,16 +71,61 @@ public class LinuxPlatform extends Platform {
   }
 
 
-  public void openURL(String url) throws Exception {
-    if (openFolderAvailable()) {
-      String launcher = Preferences.get("launcher");
-      if (launcher != null) {
-        Runtime.getRuntime().exec(new String[] { launcher, url });
+  // The default Look & Feel is set in preferences.txt
+  // As of 3.0a6, defaults.txt is set to Nimbus for Linux.
+
+
+  // Java sets user.home to be /root for execution with sudo.
+  // This method attempts to use the user's real home directory instead.
+  public String getHomeDir() {
+    if (homeDir == null) {
+      // get home directory of SUDO_USER if set, else use user.home
+      homeDir = System.getProperty("user.home");
+      String sudoUser = System.getenv("SUDO_USER");
+      if (sudoUser != null && sudoUser.length() != 0) {
+        try {
+          homeDir = getHomeDir(sudoUser);
+        } catch (Exception e) { }
       }
+    }
+    return homeDir;
+  }
+
+
+  static public String getHomeDir(String user) throws Exception {
+    Process p = PApplet.exec("/bin/sh", "-c", "echo ~" + user);
+    return PApplet.createReader(p.getInputStream()).readLine();
+  }
+
+
+  @Override
+  public File getSettingsFolder() throws Exception {
+    return new File(getHomeDir(), ".processing");
+  }
+
+
+  @Override
+  public File getDefaultSketchbookFolder() throws Exception {
+    return new File(getHomeDir(), "sketchbook");
+  }
+
+
+  @Override
+  public void openURL(String url) throws Exception {
+    if (Desktop.isDesktopSupported()) {
+      super.openURL(url);
+
+    } else if (openFolderAvailable()) {
+      String launcher = Preferences.get("launcher");  // guaranteed non-null
+      Runtime.getRuntime().exec(new String[] { launcher, url });
+
+    } else {
+      System.err.println("No launcher set, cannot open " + url);
     }
   }
 
 
+  @Override
   public boolean openFolderAvailable() {
     if (Preferences.get("launcher") != null) {
       return true;
@@ -110,19 +160,18 @@ public class LinuxPlatform extends Platform {
   }
 
 
+  @Override
   public void openFolder(File file) throws Exception {
-    if (openFolderAvailable()) {
-      String lunch = Preferences.get("launcher");
-      try {
-        String[] params = new String[] { lunch, file.getAbsolutePath() };
-        //processing.core.PApplet.println(params);
-        /*Process p =*/ Runtime.getRuntime().exec(params);
-        /*int result =*/ //p.waitFor();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+    if (Desktop.isDesktopSupported()) {
+      super.openFolder(file);
+
+    } else if (openFolderAvailable()) {
+      String launcher = Preferences.get("launcher");
+      String[] params = new String[] { launcher, file.getAbsolutePath() };
+      Runtime.getRuntime().exec(params);
+
     } else {
-      System.out.println("No launcher set, cannot open " +
+      System.err.println("No launcher set, cannot open " +
                          file.getAbsolutePath());
     }
   }

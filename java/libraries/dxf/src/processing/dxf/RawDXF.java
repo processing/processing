@@ -31,13 +31,13 @@ import processing.core.*;
  * A simple library to write DXF files with Processing.
  * Because this is used with beginRaw() and endRaw(), only individual
  * triangles and (discontinuous) line segments will be written to the file.
- * <P/>
+ * <p>
  * Use something like a keyPressed() in PApplet to trigger it,
  * to avoid writing a bazillion .dxf files.
- * <P/>
+ * <p>
  * Usually, the file will be saved to the sketch's folder.
  * Use Sketch &rarr; Show Sketch Folder to see it from the PDE.
- * <p/>
+ * <p>
  * A simple example of how to use:
  * <PRE>
  * import processing.dxf.*;
@@ -104,7 +104,7 @@ import processing.core.*;
  * </PRE>
  * Note that even though this class is a subclass of PGraphics, it only
  * implements the parts of the API that are necessary for beginRaw/endRaw.
- * <P/>
+ * <p>
  * Based on the original DXF writer from Simon Greenwold, February 2004.
  * Updated for Processing 0070 by Ben Fry in September 2004,
  * and again for Processing beta in April 2005.
@@ -129,7 +129,7 @@ public class RawDXF extends PGraphics {
       if (!file.isAbsolute()) file = null;
     }
     if (file == null) {
-      throw new RuntimeException("PGraphicsPDF requires an absolute path " +
+      throw new RuntimeException("DXF export requires an absolute path " +
                                  "for the location of the output file.");
     }
   }
@@ -161,16 +161,16 @@ public class RawDXF extends PGraphics {
     return false;  // just in case someone wants to use this on its own
   }
 
-  
+
   public boolean is2D() {
     return false;
   }
 
-  
+
   public boolean is3D() {
     return true;
   }
-  
+
 
   // ..............................................................
 
@@ -232,7 +232,7 @@ public class RawDXF extends PGraphics {
    */
   public void write(String cmd, float val) {
     writer.println(cmd);
-    // don't format, will cause trouble on systems that aren't en-us
+    // Don't number format, will cause trouble on systems that aren't en-US
     // http://dev.processing.org/bugs/show_bug.cgi?id=495
     writer.println(val);
   }
@@ -302,8 +302,8 @@ public class RawDXF extends PGraphics {
     write("22", vertices[2][Y]);
     write("32", vertices[2][Z]);
 
-    // without adding EPSILON, rhino kinda freaks out
-    // a face is actually a quad, not a triangle,
+    // Without adding EPSILON, Rhino kinda freaks out.
+    // A face is actually a quad, not a triangle,
     // so instead kinda fudging the final point here.
     write("13", vertices[2][X] + EPSILON);
     write("23", vertices[2][Y] + EPSILON);
@@ -329,7 +329,7 @@ public class RawDXF extends PGraphics {
     }
 
     if ((shape == POLYGON) && fill) {
-      throw new RuntimeException("RawDXF only supports non-filled shapes.");
+      throw new RuntimeException("DXF Export only supports non-filled shapes.");
     }
 
     vertexCount = 0;

@@ -24,6 +24,8 @@
 package processing.app.tools;
 
 import processing.app.*;
+import processing.app.ui.Editor;
+import processing.app.ui.Toolkit;
 import processing.core.*;
 
 import java.awt.Component;
@@ -49,10 +51,7 @@ import javax.swing.event.*;
  * GUI tool for font creation heaven/hell.
  */
 public class CreateFont extends JFrame implements Tool {
-  Editor editor;
-  //Sketch sketch;
-
-//  Dimension windowSize;
+  Base base;
 
   JList<String> fontSelector;
   JTextField sizeSelector;
@@ -62,7 +61,7 @@ public class CreateFont extends JFrame implements Tool {
   JButton okButton;
   JTextField filenameField;
 
-  HashMap<String,Font> table;
+  Map<String,Font> table;
   boolean smooth = true;
 
   Font font;
@@ -83,8 +82,8 @@ public class CreateFont extends JFrame implements Tool {
   }
 
 
-  public void init(Editor editor) {
-    this.editor = editor;
+  public void init(Base base) {
+    this.base = base;
 
     Container paine = getContentPane();
     paine.setLayout(new BorderLayout()); //10, 10));
@@ -95,10 +94,7 @@ public class CreateFont extends JFrame implements Tool {
 
     pain.setLayout(new BoxLayout(pain, BoxLayout.Y_AXIS));
 
-    String labelText =
-      "Use this tool to create bitmap fonts for your program.\n" +
-      "Select a font and size, and click 'OK' to generate the font.\n" +
-      "It will be added to the data folder of the current sketch.";
+    String labelText = Language.text("create_font.label");
 
     JTextArea textarea = new JTextArea(labelText);
     textarea.setBorder(new EmptyBorder(10, 10, 20, 10));
@@ -112,12 +108,13 @@ public class CreateFont extends JFrame implements Tool {
     // also ignore dialog, dialoginput, monospaced, serif, sansserif
 
     // getFontList is deprecated in 1.4, so this has to be used
-    //long t = System.currentTimeMillis(); 
+    //long t = System.currentTimeMillis();
     GraphicsEnvironment ge =
       GraphicsEnvironment.getLocalGraphicsEnvironment();
     Font[] fonts = ge.getAllFonts();
     //System.out.println("font startup took " + (System.currentTimeMillis() - t) + " ms");
-    
+
+    /*
     if (false) {
       ArrayList<Font> fontList = new ArrayList<Font>();
       File folderList = new File("/Users/fry/coconut/sys/fonts/web");
@@ -137,7 +134,7 @@ public class CreateFont extends JFrame implements Tool {
               Font font = Font.createFont(Font.TRUETYPE_FONT, input);
               input.close();
               fontList.add(font);
-              
+
             } catch (Exception e) {
               System.out.println("Ignoring " + fontFile.getName());
             }
@@ -148,8 +145,9 @@ public class CreateFont extends JFrame implements Tool {
 //      fontList.toArray(fonts);
       fonts = fontList.toArray(new Font[fontList.size()]);
     }
+    */
 
-    String flist[] = new String[fonts.length];
+    String[] fontList = new String[fonts.length];
     table = new HashMap<String,Font>();
 
     int index = 0;
@@ -158,7 +156,7 @@ public class CreateFont extends JFrame implements Tool {
       //if (psname == null) System.err.println("ps name is null");
 
       try {
-        flist[index++] = fonts[i].getPSName();
+        fontList[index++] = fonts[i].getPSName();
         table.put(fonts[i].getPSName(), fonts[i]);
         // Checking into http://processing.org/bugs/bugzilla/407.html
         // and https://github.com/processing/processing/issues/1727
@@ -173,7 +171,7 @@ public class CreateFont extends JFrame implements Tool {
     }
 
     list = new String[index];
-    System.arraycopy(flist, 0, list, 0, index);
+    System.arraycopy(fontList, 0, list, 0, index);
 
     fontSelector = new JList<String>(list);
     fontSelector.addListSelectionListener(new ListSelectionListener() {
@@ -206,7 +204,7 @@ public class CreateFont extends JFrame implements Tool {
     pain.add(new Box.Filler(d2, d2, d2));
 
     JPanel panel = new JPanel();
-    panel.add(new JLabel("Size:"));
+    panel.add(new JLabel(Language.text("create_font.size") + ":" ));
     sizeSelector = new JTextField(" 48 ");
     sizeSelector.getDocument().addDocumentListener(new DocumentListener() {
         public void insertUpdate(DocumentEvent e) { update(); }
@@ -215,7 +213,7 @@ public class CreateFont extends JFrame implements Tool {
       });
     panel.add(sizeSelector);
 
-    smoothBox = new JCheckBox("Smooth");
+    smoothBox = new JCheckBox(Language.text("create_font.smooth"));
     smoothBox.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           smooth = smoothBox.isSelected();
@@ -233,7 +231,7 @@ public class CreateFont extends JFrame implements Tool {
 //      });
 //    allBox.setSelected(all);
 //    panel.add(allBox);
-    charsetButton = new JButton("Characters...");
+    charsetButton = new JButton(Language.text("create_font.characters"));
     charsetButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         //showCharacterList();
@@ -245,7 +243,7 @@ public class CreateFont extends JFrame implements Tool {
     pain.add(panel);
 
     JPanel filestuff = new JPanel();
-    filestuff.add(new JLabel("Filename:"));
+    filestuff.add(new JLabel(Language.text("create_font.filename") + ":"));
     filestuff.add(filenameField = new JTextField(20));
     filestuff.add(new JLabel(".vlw"));
     pain.add(filestuff);
@@ -349,30 +347,14 @@ public class CreateFont extends JFrame implements Tool {
       filename += ".vlw";
     }
 
-    // Please implement me properly. The schematic is below, but not debugged.
-    // http://dev.processing.org/bugs/show_bug.cgi?id=1464
-
-//    final String filename2 = filename;
-//    final int fontsize2 = fontsize;
-//    SwingUtilities.invokeLater(new Runnable() {
-//      public void run() {
     try {
       Font instance = table.get(list[selection]);
       font = instance.deriveFont(Font.PLAIN, fontsize);
       //PFont f = new PFont(font, smooth, all ? null : PFont.CHARSET);
       PFont f = new PFont(font, smooth, charSelector.getCharacters());
 
-//      PFont f = new PFont(font, smooth, null);
-//      char[] charset = charSelector.getCharacters();
-//      ProgressMonitor progressMonitor = new ProgressMonitor(CreateFont.this,
-//                                            "Creating font", "", 0, charset.length);
-//      progressMonitor.setProgress(0);
-//      for (int i = 0; i < charset.length; i++) {
-//        System.out.println(charset[i]);
-//        f.index(charset[i]);  // load this char
-//        progressMonitor.setProgress(i+1);
-//      }
-
+      // the editor may have changed while the window was open
+      Editor editor = base.getActiveEditor();
       // make sure the 'data' folder exists
       File folder = editor.getSketch().prepareDataFolder();
       f.save(new FileOutputStream(new File(folder, filename)));
@@ -384,8 +366,6 @@ public class CreateFont extends JFrame implements Tool {
                                     JOptionPane.WARNING_MESSAGE);
       e.printStackTrace();
     }
-//      }
-//    });
 
     setVisible(false);
   }
@@ -503,7 +483,7 @@ class CharacterSelector extends JFrame {
 
 
   public CharacterSelector() {
-    super("Character Selector");
+    super(Language.text("create_font.character_selector"));
 
     charsetList = new CheckBoxList();
     DefaultListModel<JCheckBox> model = new DefaultListModel<JCheckBox>();
@@ -526,11 +506,7 @@ class CharacterSelector extends JFrame {
 
     pain.setLayout(new BoxLayout(pain, BoxLayout.Y_AXIS));
 
-    String labelText =
-      "Default characters will include most bitmaps for Mac OS\n" +
-      "and Windows Latin scripts. Including all characters may\n" +
-      "require large amounts of memory for all of the bitmaps.\n" +
-      "For greater control, you can select specific Unicode blocks.";
+    String labelText = Language.text("create_font.character_selector.label");
     JTextArea textarea = new JTextArea(labelText);
     textarea.setBorder(new EmptyBorder(13, 8, 13, 8));
     textarea.setBackground(null);
@@ -546,9 +522,12 @@ class CharacterSelector extends JFrame {
         charsetList.setEnabled(unicodeCharsButton.isSelected());
       }
     };
-    defaultCharsButton = new JRadioButton("Default Characters");
-    allCharsButton = new JRadioButton("All Characters");
-    unicodeCharsButton = new JRadioButton("Specific Unicode Blocks");
+    defaultCharsButton =
+      new JRadioButton(Language.text("create_font.default_characters"));
+    allCharsButton =
+      new JRadioButton(Language.text("create_font.all_characters"));
+    unicodeCharsButton =
+      new JRadioButton(Language.text("create_font.specific_unicode"));
 
     defaultCharsButton.addActionListener(listener);
     allCharsButton.addActionListener(listener);

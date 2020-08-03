@@ -3,11 +3,13 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012 Ben Fry and Casey Reas
+  Copyright (c) 2012-15 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation, version 2.1.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,20 +20,15 @@
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
- */
+*/
 
 package processing.opengl;
 
-import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
-
-import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PShapeSVG;
-import processing.data.XML;
+
 
 public class PGraphics2D extends PGraphicsOpenGL {
 
@@ -156,7 +153,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
 
   @Override
   protected void defaultCamera() {
-    cameraEyeX = cameraEyeY = cameraEyeZ = 0;
+    eyeDist = 1;
     resetMatrix();
   }
 
@@ -233,6 +230,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
   // SHAPE I/O
@@ -243,30 +241,39 @@ public class PGraphics2D extends PGraphicsOpenGL {
   }
 
 
-  static protected PShape loadShapeImpl(PGraphics pg, String filename,
-                                                      String extension) {
-    PShapeSVG svg = null;
-
-    if (extension.equals("svg")) {
-      svg = new PShapeSVG(pg.parent.loadXML(filename));
-
-    } else if (extension.equals("svgz")) {
-      try {
-        InputStream input =
-          new GZIPInputStream(pg.parent.createInput(filename));
-        XML xml = new XML(PApplet.createReader(input));
-        svg = new PShapeSVG(xml);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+  static protected PShape loadShapeImpl(PGraphics pg,
+                                        String filename, String extension) {
+    if (extension.equals("svg") || extension.equals("svgz")) {
+      PShapeSVG svg = new PShapeSVG(pg.parent.loadXML(filename));
+      return PShapeOpenGL.createShape((PGraphicsOpenGL) pg, svg);
     }
+    return null;
+  }
 
-    if (svg != null) {
-      PShapeOpenGL p2d = PShapeOpenGL.createShape2D((PGraphicsOpenGL)pg, svg);
-      return p2d;
-    } else {
-      return null;
-    }
+
+  //////////////////////////////////////////////////////////////
+
+  // SCREEN TRANSFORMS
+
+
+  @Override
+  public float modelX(float x, float y, float z) {
+    showDepthWarning("modelX");
+    return 0;
+  }
+
+
+  @Override
+  public float modelY(float x, float y, float z) {
+    showDepthWarning("modelY");
+    return 0;
+  }
+
+
+  @Override
+  public float modelZ(float x, float y, float z) {
+    showDepthWarning("modelZ");
+    return 0;
   }
 
 
@@ -275,6 +282,19 @@ public class PGraphics2D extends PGraphicsOpenGL {
   // SHAPE CREATION
 
 
+//  @Override
+//  protected PShape createShapeFamily(int type) {
+//    return new PShapeOpenGL(this, type);
+//  }
+//
+//
+//  @Override
+//  protected PShape createShapePrimitive(int kind, float... p) {
+//    return new PShapeOpenGL(this, kind, p);
+//  }
+
+
+  /*
   @Override
   public PShape createShape(PShape source) {
     return PShapeOpenGL.createShape2D(this, source);
@@ -382,6 +402,7 @@ public class PGraphics2D extends PGraphicsOpenGL {
     shape.set3D(false);
     return shape;
   }
+  */
 
 
   //////////////////////////////////////////////////////////////

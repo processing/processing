@@ -4,6 +4,7 @@
   PdePreprocessor - wrapper for default ANTLR-generated parser
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2012-19 The Processing Foundation
   Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
@@ -27,20 +28,22 @@
 
 package processing.mode.java.preproc;
 
+import java.awt.EventQueue;
 import java.io.*;
 import java.util.*;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import processing.app.Base;
+import processing.app.Messages;
 import processing.app.Preferences;
 import processing.app.SketchException;
 import processing.core.PApplet;
-import processing.mode.java.preproc.PdeLexer;
-import processing.mode.java.preproc.PdeRecognizer;
-import processing.mode.java.preproc.PdeTokenTypes;
+import processing.data.StringList;
+
 import antlr.*;
 import antlr.collections.AST;
+
 
 /**
  * Class that orchestrates preprocessing p5 syntax into straight Java.
@@ -130,9 +133,6 @@ import antlr.collections.AST;
  * itself.  The ANTLR manual goes into a fair amount of detail about the
  * what each type of file is for.
  * <P/>
- *
- * Hacked to death in 2010 by
- * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  */
 public class PdePreprocessor {
   protected static final String UNICODE_ESCAPES = "0123456789abcdefABCDEF";
@@ -143,21 +143,19 @@ public class PdePreprocessor {
   protected final String indent;
   private final String name;
 
-  public static enum Mode {
+  public enum Mode {
     STATIC, ACTIVE, JAVA
   }
 
   private TokenStreamCopyingHiddenTokenFilter filter;
 
-//  private boolean foundMain;
   private String advClassName = "";
   protected Mode mode;
-  HashMap<String, Object> foundMethods;
+  Set<String> foundMethods;
 
-  protected String sizeStatement;
-  protected String sketchWidth;
-  protected String sketchHeight;
-  protected String sketchRenderer;
+  SurfaceInfo sizeInfo;
+  boolean settingsMethod;
+
 
   /**
    * Regular expression for parsing the size() method. This should match
@@ -166,23 +164,35 @@ public class PdePreprocessor {
    * in the sketch, which is the case especially for anyone who is cutting
    * and pasting from the reference.
    */
-  public static final String SIZE_REGEX =
-    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+)\\s*,?\\s*([^\\)]*)\\s*\\)\\s*\\;";
-    //"(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+//  public static final String SIZE_REGEX =
+//    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+)\\s*,?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+//  static private final String SIZE_CONTENTS_REGEX =
+//    "(?:^|\\s|;)size\\s*\\(([^\\)]+)\\)\\s*\\;";
+//  static private final String FULL_SCREEN_CONTENTS_REGEX =
+//    "(?:^|\\s|;)fullScreen\\s*\\(([^\\)]+)\\)\\s*\\;";
+//  /** Test whether there's a void somewhere (the program has functions). */
+//  static private final String VOID_REGEX =
+//    "(?:^|\\s|;)void\\s";
+  /** Used to grab the start of setup() so we can mine it for size() */
+  static private final Pattern VOID_SETUP_REGEX =
+    Pattern.compile("(?:^|\\s|;)void\\s+setup\\s*\\(", Pattern.MULTILINE);
 
-  
-  private static final Pattern PUBLIC_CLASS =
+  static private final Pattern VOID_SETTINGS_REGEX =
+    Pattern.compile("(?:^|\\s|;)void\\s+settings\\s*\\(", Pattern.MULTILINE);
+
+  // Can't only match any 'public class', needs to be a PApplet
+  // http://code.google.com/p/processing/issues/detail?id=551
+  static private final Pattern PUBLIC_CLASS =
     Pattern.compile("(^|;)\\s*public\\s+class\\s+\\S+\\s+extends\\s+PApplet", Pattern.MULTILINE);
-    // Can't only match any 'public class', needs to be a PApplet
-    // http://code.google.com/p/processing/issues/detail?id=551
-    //Pattern.compile("(^|;)\\s*public\\s+class", Pattern.MULTILINE);
 
-  
-  private static final Pattern FUNCTION_DECL =
+
+  static private final Pattern FUNCTION_DECL =
     Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
-        "(void|int|float|double|String|char|byte)" +
-        "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
-        Pattern.MULTILINE);
+                    "(void|int|float|double|String|char|byte|boolean)" +
+                    "(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
+                    Pattern.MULTILINE);
+
+  static private final Pattern CLOSING_BRACE = Pattern.compile("\\}");
 
 
   public PdePreprocessor(final String sketchName) {
@@ -198,82 +208,430 @@ public class PdePreprocessor {
   }
 
 
-  public String[] initSketchSize(String code, boolean sizeWarning) throws SketchException {
-    String[] info = parseSketchSize(code, sizeWarning);
-    if (info != null) {
-      sizeStatement = info[0];
-      sketchWidth = info[1];
-      sketchHeight = info[2];
-      sketchRenderer = info[3];
+  /** Parse the sketch size and set the internal sizeInfo variable */
+  public SurfaceInfo initSketchSize(String code,
+                                    boolean sizeWarning) throws SketchException {
+    sizeInfo = parseSketchSize(code, sizeWarning);
+    return sizeInfo;
+  }
+
+
+  /**
+   * Break on commas, except those inside quotes,
+   * e.g.: size(300, 200, PDF, "output,weirdname.pdf");
+   * No special handling implemented for escaped (\") quotes.
+   */
+  static private StringList breakCommas(String contents) {
+    StringList outgoing = new StringList();
+
+    boolean insideQuote = false;
+    // The current word being read
+    StringBuilder current = new StringBuilder();
+    char[] chars = contents.toCharArray();
+    for (int i = 0; i < chars.length; i++) {
+      char c = chars[i];
+      if (insideQuote) {
+        current.append(c);
+        if (c == '\"') {
+          insideQuote = false;
+        }
+      } else {
+        if (c == ',') {
+          if (current.length() != 0) {
+            outgoing.append(current.toString());
+            current.setLength(0);
+          }
+        } else {
+          current.append(c);
+          if (c == '\"') {
+            insideQuote = true;
+          }
+        }
+      }
     }
-    return info;
+    if (current.length() != 0) {
+      outgoing.append(current.toString());
+    }
+    return outgoing;
+  }
+
+
+  // if there's a settings() method, we do less moving things around
+  static public boolean hasSettingsMethod(String code) {
+    final String uncommented = scrubComments(code);
+    return findInCurrentScope(VOID_SETTINGS_REGEX, uncommented) != null;
   }
 
 
   /**
    * Parse a chunk of code and extract the size() command and its contents.
-   * @param code Usually the code from the main tab in the sketch
+   * Also goes after fullScreen(), smooth(), and noSmooth().
+   * @param code The code from the main tab in the sketch
    * @param fussy true if it should show an error message if bad size()
    * @return null if there was an error, otherwise an array (might contain some/all nulls)
    */
-  static public String[] parseSketchSize(String code, boolean fussy) {
+  static public SurfaceInfo parseSketchSize(String code,
+                                            boolean fussy) throws SketchException {
     // This matches against any uses of the size() function, whether numbers
     // or variables or whatever. This way, no warning is shown if size() isn't
     // actually used in the applet, which is the case especially for anyone
     // who is cutting/pasting from the reference.
 
-//    String scrubbed = scrubComments(sketch.getCode(0).getProgram());
-//    String[] matches = PApplet.match(scrubbed, SIZE_REGEX);
-    String[] matches = PApplet.match(scrubComments(code), SIZE_REGEX);
+    // 1. no size() or fullScreen() method at all
+    //    will use the non-overridden settings() method in PApplet
+    // 2. size() or fullScreen() found inside setup() (static mode sketch or otherwise)
+    //    make sure that it uses numbers (or displayWidth/Height), copy into settings
+    // 3. size() or fullScreen() already in settings()
+    //    don't mess with the sketch, don't insert any defaults
+    //
+    // really only need to deal with situation #2.. nothing to be done for 1 and 3
 
-    if (matches != null) {
-      boolean badSize = false;
+    // if static mode sketch, all we need is regex
+    // easy proxy for static in this case is whether [^\s]void\s is present
 
-      if (matches[1].equals("screenWidth") ||
-          matches[1].equals("screenHeight") ||
-          matches[2].equals("screenWidth") ||
-          matches[2].equals("screenHeight")) {
-        final String message =
-          "The screenWidth and screenHeight variables\n" +
-          "are named displayWidth and displayHeight\n" +
-          "in this release of Processing.";
-        Base.showWarning("Time for a quick update", message, null);
-        return null;
+    String uncommented = scrubComments(code);
+
+    Mode mode = parseMode(uncommented);
+
+    String searchArea = null;
+
+    if (mode == Mode.JAVA) {
+      // it's up to the user
+      searchArea = null;
+
+    } else if (mode == Mode.ACTIVE) {
+      // active mode, limit scope to setup
+
+      // Find setup() in global scope
+      MatchResult setupMatch = findInCurrentScope(VOID_SETUP_REGEX, uncommented);
+      if (setupMatch != null) {
+        int start = uncommented.indexOf("{", setupMatch.end());
+        if (start >= 0) {
+          // Find a closing brace
+          MatchResult match = findInCurrentScope(CLOSING_BRACE, uncommented, start);
+          if (match != null) {
+            searchArea = uncommented.substring(start + 1, match.end() - 1);
+          } else {
+            throw new SketchException("Found a { that's missing a matching }", false);
+          }
+        }
+      }
+    } else if (mode == Mode.STATIC) {
+      // static mode, look everywhere
+      searchArea = uncommented;
+    }
+
+    if (searchArea == null) {
+      return new SurfaceInfo();
+    }
+
+    StringList extraStatements = new StringList();
+
+    // First look for noSmooth() or smooth(N) so we can hoist it into settings.
+    String[] smoothContents = matchMethod("smooth", searchArea);
+    if (smoothContents != null) {
+      extraStatements.append(smoothContents[0]);
+    }
+    String[] noContents = matchMethod("noSmooth", searchArea);
+    if (noContents != null) {
+      if (extraStatements.size() != 0) {
+        throw new SketchException("smooth() and noSmooth() cannot be used in the same sketch");
+      } else {
+        extraStatements.append(noContents[0]);
+      }
+    }
+    String[] pixelDensityContents = matchMethod("pixelDensity", searchArea);
+    if (pixelDensityContents != null) {
+      extraStatements.append(pixelDensityContents[0]);
+    } else {
+      pixelDensityContents = matchDensityMess(searchArea);
+      if (pixelDensityContents != null) {
+        extraStatements.append(pixelDensityContents[0]);
+      }
+    }
+
+    String[] sizeContents = matchMethod("size", searchArea);
+    String[] fullContents = matchMethod("fullScreen", searchArea);
+    // First check and make sure they aren't both being used, otherwise it'll
+    // throw a confusing state exception error that one "can't be used here".
+    if (sizeContents != null && fullContents != null) {
+      throw new SketchException("size() and fullScreen() cannot be used in the same sketch", false);
+    }
+
+    // Get everything inside the parens for the size() method
+    //String[] contents = PApplet.match(searchArea, SIZE_CONTENTS_REGEX);
+    if (sizeContents != null) {
+      StringList args = breakCommas(sizeContents[1]);
+      SurfaceInfo info = new SurfaceInfo();
+//      info.statement = sizeContents[0];
+      info.addStatement(sizeContents[0]);
+      info.width = args.get(0).trim();
+      info.height = args.get(1).trim();
+      info.renderer = (args.size() >= 3) ? args.get(2).trim() : null;
+      info.path = (args.size() >= 4) ? args.get(3).trim() : null;
+
+      // Trying to remember why we wanted to allow people to use displayWidth
+      // as the height or displayHeight as the width, but maybe it's for
+      // making a square sketch window? Not going to
+
+      if (info.hasOldSyntax()) {
+//        return null;
+        throw new SketchException("Please update your code to continue.", false);
       }
 
-      if (!matches[1].equals("displayWidth") &&
-          !matches[1].equals("displayHeight") &&
-          PApplet.parseInt(matches[1], -1) == -1) {
-        badSize = true;
-      }
-      if (!matches[2].equals("displayWidth") &&
-          !matches[2].equals("displayHeight") &&
-          PApplet.parseInt(matches[2], -1) == -1) {
-        badSize = true;
-      }
-
-      if (badSize && fussy) {
+      if (info.hasBadSize() && fussy) {
         // found a reference to size, but it didn't seem to contain numbers
         final String message =
-          "The size of this applet could not automatically\n" +
-          "be determined from your code. Use only numeric\n" +
-          "values (not variables) for the size() command.\n" +
-          "See the size() reference for an explanation.";
-        Base.showWarning("Could not find sketch size", message, null);
+          "The size of this sketch could not be determined from your code.\n" +
+          "Use only numbers (not variables) for the size() command.\n" +
+          "Read the size() reference for more details.";
+        EventQueue.invokeLater(() -> {
+          Messages.showWarning("Could not find sketch size", message, null);
+        });
 //        new Exception().printStackTrace(System.out);
-        return null;
+//        return null;
+        throw new SketchException("Please fix the size() line to continue.", false);
       }
 
-      // Remove additional space 'round the renderer
-      matches[3] = matches[3].trim();
-
-      // if the renderer entry is empty, set it to null
-      if (matches[3].length() == 0) {
-        matches[3] = null;
-      }
-      return matches;
+      info.addStatements(extraStatements);
+      info.checkEmpty();
+      return info;
+      //return new String[] { contents[0], width, height, renderer, path };
     }
-    return new String[] { null, null, null, null };  // not an error, just empty
+    // if no size() found, check for fullScreen()
+    //contents = PApplet.match(searchArea, FULL_SCREEN_CONTENTS_REGEX);
+    if (fullContents != null) {
+      SurfaceInfo info = new SurfaceInfo();
+//      info.statement = fullContents[0];
+      info.addStatement(fullContents[0]);
+      StringList args = breakCommas(fullContents[1]);
+      if (args.size() > 0) {  // might have no args
+        String args0 = args.get(0).trim();
+        if (args.size() == 1) {
+          // could be either fullScreen(1) or fullScreen(P2D), figure out which
+          if (args0.equals("SPAN") || PApplet.parseInt(args0, -1) != -1) {
+            // it's the display parameter, not the renderer
+            info.display = args0;
+          } else {
+            info.renderer = args0;
+          }
+        } else if (args.size() == 2) {
+          info.renderer = args0;
+          info.display = args.get(1).trim();
+        } else {
+          throw new SketchException("That's too many parameters for fullScreen()");
+        }
+      }
+      info.width = "displayWidth";
+      info.height = "displayHeight";
+      info.addStatements(extraStatements);
+      info.checkEmpty();
+      return info;
+    }
+
+    // Made it this far, but no size() or fullScreen(), and still
+    // need to pull out the noSmooth() and smooth(N) methods.
+    if (extraStatements.size() != 0) {
+      SurfaceInfo info = new SurfaceInfo();
+      info.addStatements(extraStatements);
+      return info;
+    }
+
+    // not an error, just no size() specified
+    return new SurfaceInfo();
+  }
+
+
+  /**
+   * Parses the code and determines the mode of the sketch.
+   * @param code code without comments
+   * @return determined mode
+   */
+  static public Mode parseMode(CharSequence code) {
+    // See if we can find any function in the global scope
+    if (findInCurrentScope(FUNCTION_DECL, code) != null) {
+      return Mode.ACTIVE;
+    }
+
+    // See if we can find any public class extending PApplet
+    if (findInCurrentScope(PUBLIC_CLASS, code) != null) {
+      return Mode.JAVA;
+    }
+
+    return Mode.STATIC;
+  }
+
+
+  /**
+   * Calls {@link #findInScope(Pattern, String, int, int, int, int) findInScope}
+   * on the whole string with min and max target scopes set to zero.
+   */
+  static protected MatchResult findInCurrentScope(Pattern pattern, CharSequence code) {
+    return findInScope(pattern, code, 0, code.length(), 0, 0);
+  }
+
+
+  /**
+   * Calls {@link #findInScope(Pattern, String, int, int, int, int) findInScope}
+   * starting at start char with min and max target scopes set to zero.
+   */
+  static protected MatchResult findInCurrentScope(Pattern pattern, CharSequence code,
+                                                  int start) {
+    return findInScope(pattern, code, start, code.length(), 0, 0);
+  }
+
+
+  /**
+   * Looks for the pattern at a specified target scope depth relative
+   * to the scope depth of the starting position.
+   *
+   * Example: Calling this with starting position inside a method body
+   * and target depth 0 would search only in the method body, while
+   * using target depth -1 would look only in the body of the enclosing class
+   * (but not in any methods of the class or outside of the class).
+   *
+   * By using a scope range, you can e.g. search in the whole class including
+   * bodies of methods and inner classes.
+   *
+   * @param pattern matching is realized by find() method of this pattern
+   * @param code Java code without comments
+   * @param start starting position in the code String (inclusive)
+   * @param stop ending position in the code Sting (exclusive)
+   * @param minTargetScopeDepth desired min scope depth of the match relative to the
+   *                            scope of the starting position
+   * @param maxTargetScopeDepth desired max scope depth of the match relative to the
+   *                            scope of the starting position
+   * @return first match at a desired relative scope depth,
+   *         null if there isn't one
+   */
+  static protected MatchResult findInScope(Pattern pattern, CharSequence code,
+                                           int start, int stop,
+                                           int minTargetScopeDepth,
+                                           int maxTargetScopeDepth) {
+    if (minTargetScopeDepth > maxTargetScopeDepth) {
+      int temp = minTargetScopeDepth;
+      minTargetScopeDepth = maxTargetScopeDepth;
+      maxTargetScopeDepth = temp;
+    }
+
+    Matcher m = pattern.matcher(code);
+    m.region(start, stop);
+    int depth = 0;
+    int position = start;
+
+    // We should not escape the enclosing scope. It can be either the original
+    // scope, or the min target scope, whichever is more out there (lower depth)
+    int minScopeDepth = PApplet.min(depth, minTargetScopeDepth);
+
+    while (m.find()) {
+      int newPosition = m.end();
+      int depthDiff = scopeDepthDiff(code, position, newPosition);
+      // Process this match only if it is not in string or char literal
+      if (depthDiff != Integer.MAX_VALUE) {
+        depth += depthDiff;
+        if (depth < minScopeDepth) break; // out of scope!
+        if (depth >= minTargetScopeDepth &&
+            depth <= maxTargetScopeDepth) {
+          return m.toMatchResult(); // jackpot
+        }
+        position = newPosition;
+      }
+    }
+    return null;
+  }
+
+
+  /**
+   * Walks the specified region (not including stop) and determines difference
+   * in scope depth. Adds one to depth on opening curly brace, subtracts one
+   * from depth on closing curly brace. Ignores string and char literals.
+   *
+   * @param code code without comments
+   * @param start start of the region, must not be in string literal,
+   *              char literal or second char of escaped sequence
+   * @param stop end of the region (exclusive)
+   *
+   * @return scope depth difference between start and stop,
+   *         Integer.MAX_VALUE if end is in string literal,
+   *         char literal or second char of escaped sequence
+   */
+  static protected int scopeDepthDiff(CharSequence code, int start, int stop) {
+    boolean insideString = false;
+    boolean insideChar = false;
+    boolean escapedChar = false;
+    int depth = 0;
+    for (int i = start; i < stop; i++) {
+      if (!escapedChar) {
+        char ch = code.charAt(i);
+        switch (ch) {
+          case '\\':
+            escapedChar = true;
+            break;
+          case '{':
+            if (!insideChar && !insideString) depth++;
+            break;
+          case '}':
+            if (!insideChar && !insideString) depth--;
+            break;
+          case '\"':
+            if (!insideChar) insideString = !insideString;
+            break;
+          case '\'':
+            if (!insideString) insideChar = !insideChar;
+            break;
+        }
+      } else {
+        escapedChar = false;
+      }
+    }
+    if (insideChar || insideString || escapedChar) {
+      return Integer.MAX_VALUE; // signal invalid location
+    }
+    return depth;
+  }
+
+
+  /**
+   * Looks for the specified method in the base scope of the search area.
+   */
+  static protected String[] matchMethod(String methodName, String searchArea) {
+    final String left = "(?:^|\\s|;)";
+    // doesn't match empty pairs of parens
+    //final String right = "\\s*\\(([^\\)]+)\\)\\s*;";
+    final String right = "\\s*\\(([^\\)]*)\\)\\s*;";
+    String regexp = left + methodName + right;
+    Pattern p = matchPatterns.get(regexp);
+    if (p == null) {
+      p = Pattern.compile(regexp, Pattern.MULTILINE | Pattern.DOTALL);
+      matchPatterns.put(regexp, p);
+    }
+    MatchResult match = findInCurrentScope(p, searchArea);
+    if (match != null) {
+      int count = match.groupCount() + 1;
+      String[] groups = new String[count];
+      for (int i = 0; i < count; i++) {
+        groups[i] = match.group(i);
+      }
+      return groups;
+    }
+    return null;
+  }
+
+
+  static protected LinkedHashMap<String, Pattern> matchPatterns =
+      new LinkedHashMap<String, Pattern>(16, 0.75f, true) {
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<String, Pattern> eldest) {
+      // Limit the number of match patterns at 10 most recently used
+      return size() == 10;
+    }
+  };
+
+
+  static protected String[] matchDensityMess(String searchArea) {
+    final String regexp =
+      "(?:^|\\s|;)pixelDensity\\s*\\(\\s*displayDensity\\s*\\([^\\)]*\\)\\s*\\)\\s*\\;";
+    return PApplet.match(searchArea, regexp);
   }
 
 
@@ -290,7 +648,7 @@ public class PdePreprocessor {
     int index = 0;
     while (index < p.length) {
       // for any double slash comments, ignore until the end of the line
-      if (!insideQuote && 
+      if (!insideQuote &&
           (p[index] == '/') &&
           (index < p.length - 1) &&
           (p[index+1] == '/')) {
@@ -326,10 +684,16 @@ public class PdePreprocessor {
           throw new RuntimeException("Missing the */ from the end of a " +
                                      "/* comment */");
         }
-      } else if (p[index] == '"' && index > 0 && p[index-1] != '\\') {
+
+        // switch in/out of quoted region
+      } else if (p[index] == '"') {
         insideQuote = !insideQuote;
         index++;
-        
+
+        // skip the escaped char
+      } else if (insideQuote && p[index] == '\\') {
+        index += 2;
+
       } else {  // any old character, move along
         index++;
       }
@@ -339,23 +703,13 @@ public class PdePreprocessor {
 
 
   public void addMethod(String methodName) {
-    foundMethods.put(methodName, new Object());
+    foundMethods.add(methodName);
   }
 
 
   public boolean hasMethod(String methodName) {
-    return foundMethods.containsKey(methodName);
+    return foundMethods.contains(methodName);
   }
-
-
-//  public void setFoundMain(boolean foundMain) {
-//    this.foundMain = foundMain;
-//  }
-
-
-//  public boolean getFoundMain() {
-//    return foundMain;
-//  }
 
 
   public void setAdvClassName(final String advClassName) {
@@ -364,7 +718,6 @@ public class PdePreprocessor {
 
 
   public void setMode(final Mode mode) {
-    //System.err.println("Setting mode to " + mode);
     this.mode = mode;
   }
 
@@ -407,7 +760,7 @@ public class PdePreprocessor {
         boolean terminated = false;
         while (i < length - 1) {
           if ((program.charAt(i) == '*') && (program.charAt(i + 1) == '/')) {
-            i += 2;
+            i++; // advance to the ending '/'
             terminated = true;
             break;
           } else {
@@ -484,28 +837,28 @@ public class PdePreprocessor {
   }
 
 
-  public PreprocessorResult write(final Writer out, String program)
+  public PreprocessorResult write(final Writer out, final String program)
       throws SketchException, RecognitionException, TokenStreamException {
     return write(out, program, null);
   }
 
 
   public PreprocessorResult write(Writer out, String program,
-                                  String codeFolderPackages[])
+                                  StringList codeFolderPackages)
       throws SketchException, RecognitionException, TokenStreamException {
 
     // these ones have the .* at the end, since a class name might be at the end
     // instead of .* which would make trouble other classes using this can lop
     // off the . and anything after it to produce a package name consistently.
-    final ArrayList<String> programImports = new ArrayList<String>();
+    final ArrayList<String> programImports = new ArrayList<>();
 
     // imports just from the code folder, treated differently
     // than the others, since the imports are auto-generated.
-    final ArrayList<String> codeFolderImports = new ArrayList<String>();
+    final ArrayList<String> codeFolderImports = new ArrayList<>();
 
     // need to reset whether or not this has a main()
 //    foundMain = false;
-    foundMethods = new HashMap<String, Object>();
+    foundMethods = new HashSet<>();
 
     // http://processing.org/bugs/bugzilla/5.html
     if (!program.endsWith("\n")) {
@@ -514,14 +867,10 @@ public class PdePreprocessor {
 
     checkForUnterminatedMultilineComment(program);
 
-    if (Preferences.getBoolean("preproc.substitute_unicode")) {
-      program = substituteUnicode(program);
-    }
-
-    // For 0215, adding } as a legitimate prefix to the import (along with 
+    // For 0215, adding } as a legitimate prefix to the import (along with
     // newline and semicolon) for cases where a tab ends with } and an import
     // statement starts the next tab.
-    final String importRegexp = 
+    final String importRegexp =
       "((?:^|;|\\})\\s*)(import\\s+)((?:static\\s+)?\\S+)(\\s*;)";
     final Pattern importPattern = Pattern.compile(importRegexp);
     String scrubbed = scrubComments(program);
@@ -532,10 +881,8 @@ public class PdePreprocessor {
       m = importPattern.matcher(scrubbed);
       found = m.find(offset);
       if (found) {
-//        System.out.println("found " + m.groupCount() + " groups");
         String before = m.group(1);
         String piece = m.group(2) + m.group(3) + m.group(4);
-//        int len = piece.length(); // how much to trim out
 
         if (!ignoreImport(m.group(3))) {
           programImports.add(m.group(3)); // the package name
@@ -544,20 +891,15 @@ public class PdePreprocessor {
         // find index of this import in the program
         int start = m.start() + before.length();
         int stop = start + piece.length();
-//        System.out.println(start + " " + stop + " " + piece);
-        //System.out.println("found " + m.group(3));
-//        System.out.println("removing '" + program.substring(start, stop) + "'");
 
         // Remove the import from the main program
         program = program.substring(0, start) + program.substring(stop);
         scrubbed = scrubbed.substring(0, start) + scrubbed.substring(stop);
-        // Set the offset to start, because everything between 
+        // Set the offset to start, because everything between
         // start and stop has been deleted.
-        offset = m.start();        
+        offset = m.start();
       }
     } while (found);
-//    System.out.println("program now:");
-//    System.out.println(program);
 
     if (codeFolderPackages != null) {
       for (String item : codeFolderPackages) {
@@ -566,48 +908,10 @@ public class PdePreprocessor {
     }
 
     final PrintWriter stream = new PrintWriter(out);
-    final int headerOffset = 
+    final int headerOffset =
       writeImports(stream, programImports, codeFolderImports);
-    return new PreprocessorResult(mode, headerOffset + 2, 
+    return new PreprocessorResult(mode, headerOffset + 2,
                                   write(program, stream), programImports);
-  }
-
-  
-  static String substituteUnicode(String program) {
-    // check for non-ascii chars (these will be/must be in unicode format)
-    char p[] = program.toCharArray();
-    int unicodeCount = 0;
-    for (int i = 0; i < p.length; i++) {
-      if (p[i] > 127)
-        unicodeCount++;
-    }
-    if (unicodeCount == 0)
-      return program;
-    // if non-ascii chars are in there, convert to unicode escapes
-    // add unicodeCount * 5.. replacing each unicode char
-    // with six digit uXXXX sequence (xxxx is in hex)
-    // (except for nbsp chars which will be a replaced with a space)
-    int index = 0;
-    char p2[] = new char[p.length + unicodeCount * 5];
-    for (int i = 0; i < p.length; i++) {
-      if (p[i] < 128) {
-        p2[index++] = p[i];
-      } else if (p[i] == 160) { // unicode for non-breaking space
-        p2[index++] = ' ';
-      } else {
-        int c = p[i];
-        p2[index++] = '\\';
-        p2[index++] = 'u';
-        char str[] = Integer.toHexString(c).toCharArray();
-        // add leading zeros, so that the length is 4
-        //for (int i = 0; i < 4 - str.length; i++) p2[index++] = '0';
-        for (int m = 0; m < 4 - str.length; m++)
-          p2[index++] = '0';
-        System.arraycopy(str, 0, p2, index, str.length);
-        index += str.length;
-      }
-    }
-    return new String(p2, 0, index);
   }
 
 
@@ -622,7 +926,9 @@ public class PdePreprocessor {
     // http://code.google.com/p/processing/issues/detail?id=1404
     String uncomment = scrubComments(program);
     PdeRecognizer parser = createParser(program);
-    if (PUBLIC_CLASS.matcher(uncomment).find()) {
+    Mode mode = parseMode(uncomment);
+
+    if (mode == Mode.JAVA) {
       try {
         final PrintStream saved = System.err;
         try {
@@ -638,15 +944,15 @@ public class PdePreprocessor {
         parser = createParser(program);
         parser.pdeProgram();
       }
-    } else if (FUNCTION_DECL.matcher(uncomment).find()) {
+    } else if (mode == Mode.ACTIVE) {
       setMode(Mode.ACTIVE);
       parser.activeProgram();
-    } else {
+
+    } else if (mode == Mode.STATIC) {
       parser.pdeProgram();
     }
 
     // set up the AST for traversal by PdeEmitter
-    //
     ASTFactory factory = new ASTFactory();
     AST parserAST = parser.getAST();
     AST rootNode = factory.create(ROOT_ID, "AST ROOT");
@@ -655,7 +961,6 @@ public class PdePreprocessor {
     makeSimpleMethodsPublic(rootNode);
 
     // unclear if this actually works, but it's worth a shot
-    //
     //((CommonAST)parserAST).setVerboseStringConversion(
     //  true, parser.getTokenNames());
     // (made to use the static version because of jikes 1.22 warning)
@@ -663,7 +968,7 @@ public class PdePreprocessor {
 
     final String className;
     if (mode == Mode.JAVA) {
-      // if this is an advanced program, the classname is already defined.
+      // in this mode, the class name is already defined.
       className = getFirstClassName(parserAST);
     } else {
       className = this.name;
@@ -671,7 +976,6 @@ public class PdePreprocessor {
 
     // if 'null' was passed in for the name, but this isn't
     // a 'java' mode class, then there's a problem, so punt.
-    //
     if (className == null)
       return null;
 
@@ -698,7 +1002,7 @@ public class PdePreprocessor {
 
     return className;
   }
-  
+
 
   private PdeRecognizer createParser(final String program) {
     // create a lexer with the stream reader, and tell it to handle
@@ -873,43 +1177,21 @@ public class PdePreprocessor {
     }
 
     if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
-      if (sketchWidth != null && !hasMethod("sketchWidth")) {
-        // Only include if it's a number (a variable will be a problem)
-        if (PApplet.parseInt(sketchWidth, -1) != -1 || sketchWidth.equals("displayWidth")) {
-          out.println(indent + "public int sketchWidth() { return " + sketchWidth + "; }");
-        }
-      }
-      if (sketchHeight != null && !hasMethod("sketchHeight")) {
-        // Only include if it's a number
-        if (PApplet.parseInt(sketchHeight, -1) != -1 || sketchHeight.equals("displayHeight")) {
-          out.println(indent + "public int sketchHeight() { return " + sketchHeight + "; }");
-        }
-      }
-      if (sketchRenderer != null && !hasMethod("sketchRenderer")) {        
-        // Only include if it's a known renderer (otherwise it might be a variable)
-        if (sketchRenderer.equals("P2D") ||
-            sketchRenderer.equals("P2D_2X") ||
-            sketchRenderer.equals("P3D") ||
-            sketchRenderer.equals("P3D_3X") ||
-            sketchRenderer.equals("OPENGL") ||
-            sketchRenderer.equals("JAVA2D") ||
-            sketchRenderer.equals("JAVA2D_2X") || 
-            sketchRenderer.equals("LWJGL.P2D") ||
-            sketchRenderer.equals("LWJGL.P3D")) {
-          out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
-        }
+      // doesn't remove the original size() method,
+      // but calling size() again in setup() is harmless.
+      if (!hasMethod("settings") && sizeInfo.hasSettings()) {
+        out.println(indent + "public void settings() { " + sizeInfo.getSettings() + " }");
       }
 
       if (!hasMethod("main")) {
         out.println(indent + "static public void main(String[] passedArgs) {");
-        //out.print(indent + indent + "PApplet.main(new String[] { ");
         out.print(indent + indent + "String[] appletArgs = new String[] { ");
 
-        if (Preferences.getBoolean("export.application.fullscreen")) {
-          out.print("\"" + PApplet.ARGS_FULL_SCREEN + "\", ");
+        if (Preferences.getBoolean("export.application.present")) {
+          out.print("\"" + PApplet.ARGS_PRESENT + "\", ");
 
           String farbe = Preferences.get("run.present.bgcolor");
-          out.print("\"" + PApplet.ARGS_BGCOLOR + "=" + farbe + "\", ");
+          out.print("\"" + PApplet.ARGS_WINDOW_COLOR + "=" + farbe + "\", ");
 
           if (Preferences.getBoolean("export.application.stop")) {
             farbe = Preferences.get("run.present.stop.color");
@@ -917,11 +1199,6 @@ public class PdePreprocessor {
           } else {
             out.print("\"" + PApplet.ARGS_HIDE_STOP + "\", ");
           }
-//        } else {
-//          // This is set initially based on the system control color, just
-//          // sets the color for what goes behind the sketch before it's added.
-//          String farbe = Preferences.get("run.window.bgcolor");
-//          out.print("\"" + PApplet.ARGS_BGCOLOR + "=" + farbe + "\", ");
         }
         out.println("\"" + className + "\" };");
 
@@ -952,7 +1229,7 @@ public class PdePreprocessor {
     // These may change in-between (if the prefs panel adds this option)
     //String prefsLine = Preferences.get("preproc.imports");
     //return PApplet.splitTokens(prefsLine, ", ");
-    return new String[] { 
+    return new String[] {
       "java.util.HashMap",
       "java.util.ArrayList",
       "java.io.File",
@@ -975,6 +1252,10 @@ public class PdePreprocessor {
 //    return pkg.startsWith("processing.xml.");
   }
 
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   /**
    * Find the first CLASS_DEF node in the tree, and return the name of the
    * class in question.
@@ -988,10 +1269,12 @@ public class PdePreprocessor {
     return t;
   }
 
+
   public void debugAST(final AST ast, final boolean includeHidden) {
     System.err.println("------------------");
     debugAST(ast, includeHidden, 0);
   }
+
 
   private void debugAST(final AST ast, final boolean includeHidden,
                         final int indent) {
@@ -1012,23 +1295,24 @@ public class PdePreprocessor {
       debugAST(kid, includeHidden, indent + 1);
   }
 
+
   private String debugHiddenAfter(AST ast) {
-    if (!(ast instanceof antlr.CommonASTWithHiddenTokens))
-      return "";
-    return debugHiddenTokens(((antlr.CommonASTWithHiddenTokens) ast)
-        .getHiddenAfter());
+    return (ast instanceof antlr.CommonASTWithHiddenTokens) ?
+      debugHiddenTokens(((antlr.CommonASTWithHiddenTokens) ast).getHiddenAfter()) : "";
   }
 
   private String debugHiddenBefore(AST ast) {
-    if (!(ast instanceof antlr.CommonASTWithHiddenTokens))
+    if (!(ast instanceof antlr.CommonASTWithHiddenTokens)) {
       return "";
-    antlr.CommonHiddenStreamToken child = null, parent = ((antlr.CommonASTWithHiddenTokens) ast)
-        .getHiddenBefore();
+    }
+    antlr.CommonHiddenStreamToken parent =
+      ((antlr.CommonASTWithHiddenTokens) ast).getHiddenBefore();
 
     if (parent == null) {
       return "";
     }
 
+    antlr.CommonHiddenStreamToken child = null;
     do {
       child = parent;
       parent = child.getHiddenBefore();
@@ -1037,15 +1321,18 @@ public class PdePreprocessor {
     return debugHiddenTokens(child);
   }
 
+
   private String debugHiddenTokens(antlr.CommonHiddenStreamToken t) {
     final StringBuilder sb = new StringBuilder();
     for (; t != null; t = filter.getHiddenAfter(t)) {
-      if (sb.length() == 0)
+      if (sb.length() == 0) {
         sb.append("[");
+      }
       sb.append(t.getText().replace("\n", "\\n"));
     }
-    if (sb.length() > 0)
+    if (sb.length() > 0) {
       sb.append("]");
+    }
     return sb.toString();
   }
 }

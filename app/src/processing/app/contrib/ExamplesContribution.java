@@ -1,74 +1,81 @@
 package processing.app.contrib;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import processing.app.Base;
-import processing.core.PApplet;
+import processing.app.Mode;
+import processing.data.StringDict;
+import processing.data.StringList;
+import static processing.app.contrib.ContributionType.EXAMPLES;
+
 
 public class ExamplesContribution extends LocalContribution {
+  private StringList modeList;
 
-  private ArrayList<String> compatibleModesList;
 
   static public ExamplesContribution load(File folder) {
     return new ExamplesContribution(folder);
   }
 
+
   private ExamplesContribution(File folder) {
     super(folder);
+
     if (properties != null) {
-      compatibleModesList = parseCompatibleModesList(properties
-        .get("compatibleModesList"));
+      modeList = parseModeList(properties);
     }
   }
 
-  private static ArrayList<String> parseCompatibleModesList(String unparsedModes) {
-    ArrayList<String> modesList = new ArrayList<String>();
-    if (unparsedModes == null || unparsedModes.isEmpty())
-      return modesList;
-    String[] splitStr = PApplet.trim(PApplet.split(unparsedModes, ','));//unparsedModes.split(",");
-    for (String mode : splitStr)
-      modesList.add(mode.trim());
-    return modesList;
+
+  static public boolean isCompatible(Base base, StringDict props) {
+    return isCompatible(base.getActiveEditor().getMode(), props);
   }
+
 
   /**
    * Function to determine whether or not the example present in the
-   * exampleLocation directory is compatible with the present mode.
-   * 
-   * @param base
-   * @param exampleLocationFolder
-   * @return true if the example is compatible with the mode of the currently
-   *         active editor
+   * exampleLocation directory is compatible with the current mode.
+   * @return true if compatible with the Mode of the currently active editor
    */
-  public static boolean isExamplesCompatible(Base base,
-                                            File exampleLocationFolder) {
-    File propertiesFile = new File(exampleLocationFolder,
-                                   ContributionType.EXAMPLES.toString()
-                                     + ".properties");
-    if (propertiesFile.exists()) {
-      ArrayList<String> compModesList = parseCompatibleModesList(Base
-        .readSettings(propertiesFile).get("compatibleModesList"));
-      for (String c : compModesList) {
-        if (c.equalsIgnoreCase(base.getActiveEditor().getMode().getIdentifier())) {
-          return true;
-        }
+  static public boolean isCompatible(Mode mode, StringDict props) {
+    String currentIdentifier = mode.getIdentifier();
+    StringList compatibleList = parseModeList(props);
+    if (compatibleList.size() == 0) {
+      if (mode.requireExampleCompatibility()) {
+        // for p5js (and maybe Python), examples must specify that they work
+        return false;
       }
+      // if no Mode specified, assume compatible everywhere
+      return true;
     }
+    return compatibleList.hasValue(currentIdentifier);
+  }
+
+
+  static public boolean isCompatible(Base base, File exampleFolder) {
+    StringDict props = loadProperties(exampleFolder, EXAMPLES);
+    if (props != null) {
+      return isCompatible(base, props);
+    }
+    // Require a proper .properties file to show up
     return false;
   }
 
+
+
   static public void loadMissing(Base base) {
     File examplesFolder = Base.getSketchbookExamplesFolder();
-    ArrayList<ExamplesContribution> contribExamples = base.getExampleContribs();
+    List<ExamplesContribution> contribExamples = base.getExampleContribs();
 
-    HashMap<File, ExamplesContribution> existing = new HashMap<File, ExamplesContribution>();
+    Map<File, ExamplesContribution> existing = new HashMap<File, ExamplesContribution>();
     for (ExamplesContribution contrib : contribExamples) {
       existing.put(contrib.getFolder(), contrib);
     }
-    File[] potential = ContributionType.EXAMPLES.listCandidates(examplesFolder);
-    // If modesFolder does not exist or is inaccessible (folks might like to 
+    File[] potential = EXAMPLES.listCandidates(examplesFolder);
+    // If modesFolder does not exist or is inaccessible (folks might like to
     // mess with folders then report it as a bug) 'potential' will be null.
     if (potential != null) {
       for (File folder : potential) {
@@ -79,13 +86,14 @@ public class ExamplesContribution extends LocalContribution {
     }
   }
 
+
   @Override
   public ContributionType getType() {
-    return ContributionType.EXAMPLES;
+    return EXAMPLES;
   }
 
-  public ArrayList<String> getCompatibleModesList() {
-    return compatibleModesList;
-  }
 
+  public StringList getModeList() {
+    return modeList;
+  }
 }

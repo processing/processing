@@ -1,5 +1,7 @@
 package processing.data;
 
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
@@ -28,12 +30,14 @@ public class FloatList implements Iterable<Float> {
     data = new float[10];
   }
 
+
   /**
    * @nowebref
    */
   public FloatList(int length) {
     data = new float[length];
   }
+
 
   /**
    * @nowebref
@@ -44,13 +48,49 @@ public class FloatList implements Iterable<Float> {
     System.arraycopy(list, 0, data, 0, count);
   }
 
+
   /**
+   * Construct an FloatList from an iterable pile of objects.
+   * For instance, a float array, an array of strings, who knows).
+   * Un-parseable or null values will be set to NaN.
    * @nowebref
    */
-  public FloatList(Iterable<Float> iter) {
+  public FloatList(Iterable<Object> iter) {
     this(10);
-    for (float v : iter) {
-      append(v);
+    for (Object o : iter) {
+      if (o == null) {
+        append(Float.NaN);
+      } else if (o instanceof Number) {
+        append(((Number) o).floatValue());
+      } else {
+        append(PApplet.parseFloat(o.toString().trim()));
+      }
+    }
+    crop();
+  }
+
+
+  /**
+   * Construct an FloatList from a random pile of objects.
+   * Un-parseable or null values will be set to NaN.
+   */
+  public FloatList(Object... items) {
+    // nuts, no good way to pass missingValue to this fn (varargs must be last)
+    final float missingValue = Float.NaN;
+
+    count = items.length;
+    data = new float[count];
+    int index = 0;
+    for (Object o : items) {
+      float value = missingValue;
+      if (o != null) {
+        if (o instanceof Number) {
+          value = ((Number) o).floatValue();
+        } else {
+          value = PApplet.parseFloat(o.toString().trim(), missingValue);
+        }
+      }
+      data[index++] = value;
     }
   }
 
@@ -134,6 +174,22 @@ public class FloatList implements Iterable<Float> {
       count = index+1;
     }
     data[index] = what;
+  }
+
+
+  /** Just an alias for append(), but matches pop() */
+  public void push(float value) {
+    append(value);
+  }
+
+
+  public float pop() {
+    if (count == 0) {
+      throw new RuntimeException("Can't call pop() on an empty list");
+    }
+    float value = get(count-1);
+    count--;
+    return value;
   }
 
 
@@ -265,6 +321,14 @@ public class FloatList implements Iterable<Float> {
   public void append(FloatList list) {
     for (float v : list.values()) {  // will concat the list...
       append(v);
+    }
+  }
+
+
+  /** Add this value, but only if it's not already in the list. */
+  public void appendUnique(float value) {
+    if (!hasValue(value)) {
+      append(value);
     }
   }
 
@@ -565,11 +629,23 @@ public class FloatList implements Iterable<Float> {
 
 
   public float sum() {
-    double outgoing = 0;
-    for (int i = 0; i < count; i++) {
-      outgoing += data[i];
+    double amount = sumDouble();
+    if (amount > Float.MAX_VALUE) {
+      throw new RuntimeException("sum() exceeds " + Float.MAX_VALUE + ", use sumDouble()");
     }
-    return (float) outgoing;
+    if (amount < -Float.MAX_VALUE) {
+      throw new RuntimeException("sum() lower than " + -Float.MAX_VALUE + ", use sumDouble()");
+    }
+    return (float) amount;
+  }
+
+
+  public double sumDouble() {
+    double sum = 0;
+    for (int i = 0; i < count; i++) {
+      sum += data[i];
+    }
+    return sum;
   }
 
 
@@ -618,8 +694,9 @@ public class FloatList implements Iterable<Float> {
       }
 
       @Override
-      public float compare(int a, int b) {
-        return data[b] - data[a];
+      public int compare(int a, int b) {
+        float diff = data[b] - data[a];
+        return diff == 0 ? 0 : (diff < 0 ? -1 : 1);
       }
 
       @Override
@@ -731,6 +808,7 @@ public class FloatList implements Iterable<Float> {
 
       public void remove() {
         FloatList.this.remove(index);
+        index--;
       }
 
       public Float next() {
@@ -816,23 +894,43 @@ public class FloatList implements Iterable<Float> {
 
 
   public void print() {
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < count; i++) {
       System.out.format("[%d] %f%n", i, data[i]);
     }
   }
 
 
+  /**
+   * Save tab-delimited entries to a file (TSV format, UTF-8 encoding)
+   */
+  public void save(File file) {
+    PrintWriter writer = PApplet.createWriter(file);
+    write(writer);
+    writer.close();
+  }
+
+
+  /**
+   * Write entries to a PrintWriter, one per line
+   */
+  public void write(PrintWriter writer) {
+    for (int i = 0; i < count; i++) {
+      writer.println(data[i]);
+    }
+    writer.flush();
+  }
+
+
+  /**
+   * Return this dictionary as a String in JSON format.
+   */
+  public String toJSON() {
+    return "[ " + join(", ") + " ]";
+  }
+
+
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(getClass().getSimpleName() + " size=" + size() + " [ ");
-    for (int i = 0; i < size(); i++) {
-      if (i != 0) {
-        sb.append(", ");
-      }
-      sb.append(i + ": " + data[i]);
-    }
-    sb.append(" ]");
-    return sb.toString();
+    return getClass().getSimpleName() + " size=" + size() + " " + toJSON();
   }
 }

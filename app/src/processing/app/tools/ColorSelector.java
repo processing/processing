@@ -22,6 +22,8 @@
 package processing.app.tools;
 
 import processing.app.*;
+import processing.app.ui.ColorChooser;
+import processing.app.ui.Toolkit;
 
 import java.awt.Color;
 import java.awt.datatransfer.Clipboard;
@@ -45,30 +47,32 @@ public class ColorSelector implements Tool {
    */
   private static volatile ColorChooser selector;
 
-  private Editor editor;
+  private Base base;
 
-  
+
   public String getMenuTitle() {
     return Language.text("menu.tools.color_selector");
   }
 
 
-  public void init(Editor editor) {
-    this.editor = editor;
+  public void init(Base base) {
+    this.base = base;
   }
 
 
   public void run() {
     if (selector == null) {
-      synchronized(ColorSelector.class) {
+      synchronized (ColorSelector.class) {
         if (selector == null) {
-          selector = new ColorChooser(editor, false, Color.WHITE,
-              "Copy", new ActionListener() {
+          selector = new ColorChooser(base.getActiveEditor(),
+                                      false, Color.WHITE,
+                                      Language.text("menu.edit.copy"),
+                                      new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-              Clipboard clipboard = Toolkit.getSystemClipboard();
-              clipboard.setContents(new StringSelection(selector.getHexColor()), null);
+              Clipboard c = Toolkit.getSystemClipboard();
+              c.setContents(new StringSelection(selector.getHexColor()), null);
             }
           });
         }

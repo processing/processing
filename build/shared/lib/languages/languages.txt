@@ -2,16 +2,21 @@
 # http://en.wikipedia.org/wiki/ISO_639-1
 # http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 
-# Add new languages in alphabetical order to (slightly) 
+# Add new languages in alphabetical order to (slightly)
 # reduce the risk of merge conflicts
 
+ar  # Arabic
 de  # German, Deutsch
 en  # English, English
 el  # Greek
 es  # Spanish
 fr  # French, Français, Langue française
+it  # Italiano, Italian
 ja  # Japanese
 ko  # Korean
 nl  # Dutch, Nederlands
 pt  # Portuguese
+ru  # Russian
+tr  # Turkish
+uk  # Ukrainian
 zh  # Chinese

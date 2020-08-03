@@ -27,7 +27,7 @@ public class SyntaxDocument extends PlainDocument
          * of this document up into tokens. May return null if this
          * document is not to be colorized.
          */
-        public TokenMarker getTokenMarker()
+        public TokenMarkerState getTokenMarker()
         {
                 return tokenMarker;
         }
@@ -40,9 +40,11 @@ public class SyntaxDocument extends PlainDocument
          */
         public void setTokenMarker(TokenMarker tm)
         {
-                tokenMarker = tm;
-                if(tm == null)
+                if (tm == null) {
+                        tokenMarker = null;
                         return;
+                }
+                tokenMarker = tm.createStateInstance();
                 tokenMarker.insertLines(0,getDefaultRootElement()
                         .getElementCount());
                 tokenizeLines();
@@ -67,7 +69,7 @@ public class SyntaxDocument extends PlainDocument
          */
         public void tokenizeLines(int start, int len)
         {
-                if(tokenMarker == null || !tokenMarker.supportsMultilineTokens())
+                if(tokenMarker == null || !tokenMarker.marker.supportsMultilineTokens())
                         return;
 
                 Segment lineSegment = new Segment();
@@ -118,7 +120,7 @@ public class SyntaxDocument extends PlainDocument
         public void addUndoableEdit(UndoableEdit edit) {}
 
         // protected members
-        protected TokenMarker tokenMarker;
+        protected TokenMarkerState tokenMarker;
 
         /**
          * We overwrite this method to update the token marker

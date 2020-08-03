@@ -1,10 +1,10 @@
 [Desktop Entry]
 Version=@version@ 
 Name=Processing 
-Comment=graphics and animation language 
+Comment=Software sketchbook
 Exec=processing %F
 Icon=/opt/processing/lib/icons/pde-256.png
 Terminal=false
 Type=Application
-Categories=AudioVideo;Video;Graphics;Developer;
+Categories=Development;AudioVideo;Video;Graphics;Developer;
 StartupWMClass=Processing

@@ -84,7 +84,8 @@ public class FileTextFieldTransferHandler extends TransferHandler {
             }
 
             try {
-                java.util.List list = (List) t.getTransferData(DataFlavor.javaFileListFlavor);
+                List<?> list = (List<?>) 
+                    t.getTransferData(DataFlavor.javaFileListFlavor);
                 if (list.size() > 0) {
                     File file = (File) list.get(0);
 
@@ -108,9 +109,7 @@ public class FileTextFieldTransferHandler extends TransferHandler {
                     c.setText(file.getPath());
                 }
                 imported = true;
-            } catch (UnsupportedFlavorException ex) {
-                //   ex.printStackTrace();
-            } catch (IOException ex) {
+            } catch (UnsupportedFlavorException | IOException ex) {
                 //   ex.printStackTrace();
             }
         }
@@ -128,11 +127,7 @@ public class FileTextFieldTransferHandler extends TransferHandler {
                     boolean useRead = false;
                     handleReaderImport(r, c, useRead);
                     imported = true;
-                } catch (UnsupportedFlavorException ex) {
-                    //   ex.printStackTrace();
-                } catch (BadLocationException ex) {
-                    //   ex.printStackTrace();
-                } catch (IOException ex) {
+                } catch (UnsupportedFlavorException | BadLocationException | IOException ex) {
                     //   ex.printStackTrace();
                 }
             }

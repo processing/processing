@@ -1,14 +1,18 @@
-# For an explanation of these tags, see Token.java 
+# THIS TEXT IS FROM keywords_base.txt IN THE PROCESSING-DOCS REPO:
+# https://github.com/processing/processing-docs/blob/master/generate/keywords_base.txt
+# MAKE CHANGES THERE: DO NOT EDIT THE keywords.txt FILE DIRECTLY.
+
+# For an explanation of these tags, see Token.java
 # trunk/processing/app/src/processing/app/syntax/Token.java
 
 ADD	LITERAL2	blend_
-ALIGN_CENTER	LITERAL2	
-ALIGN_LEFT	LITERAL2	
-ALIGN_RIGHT	LITERAL2	
+ALIGN_CENTER	LITERAL2
+ALIGN_LEFT	LITERAL2
+ALIGN_RIGHT	LITERAL2
 ALPHA	LITERAL2
 ALPHA_MASK	LITERAL2
 ALT	LITERAL2
-AMBIENT	LITERAL2	
+AMBIENT	LITERAL2
 ARC	LITERAL2	createShape_
 ARROW	LITERAL2	cursor_
 ARGB	LITERAL2
@@ -21,7 +25,7 @@ BLUR	LITERAL2	filter_
 BOTTOM	LITERAL2	textAlign_
 BOX	LITERAL2	createShape_
 BURN	LITERAL2	blend_
-CENTER	LITERAL2	
+CENTER	LITERAL2
 CHATTER	LITERAL2
 CHORD	LITERAL2	arc_
 CLAMP LITERAL2
@@ -80,11 +84,12 @@ ERODE	LITERAL2	filter_
 ESC	LITERAL2	keyCode
 EXCLUSION	LITERAL2	blend_
 EXIT LITERAL2
+FX2D	LITERAL2	size_
 GIF	LITERAL2
 GRAY	LITERAL2	filter_
 GREEN_MASK	LITERAL2
 GROUP	LITERAL2
-HALF	LITERAL2	
+HALF	LITERAL2
 HALF_PI	LITERAL2	HALF_PI
 HAND	LITERAL2	cursor_
 HARD_LIGHT	LITERAL2	blend_
@@ -92,7 +97,8 @@ HINT_COUNT	LITERAL2
 HSB	LITERAL2	colorMode_
 IMAGE	LITERAL2	textureMode_
 INVERT	LITERAL2	filter_
-JPEG	LITERAL2	
+JAVA2D	LITERAL2	size_
+JPEG	LITERAL2
 LEFT	LITERAL2	keyCode
 LIGHTEST	LITERAL2	blend_
 LINE	LITERAL2	createShape_
@@ -100,18 +106,18 @@ LINES	LITERAL2	beginShape_
 LINUX	LITERAL2
 MACOSX	LITERAL2
 MAX_FLOAT	LITERAL2
-MAX_INT	LITERAL2	
+MAX_INT	LITERAL2
 MIN_FLOAT	LITERAL2
 MIN_INT	LITERAL2
 MITER	LITERAL2	stokeJoin_
 MODEL	LITERAL2	textMode_
 MOVE	LITERAL2	cursor_
 MULTIPLY	LITERAL2	blend_
-NORMAL	LITERAL2	
+NORMAL	LITERAL2
 NORMALIZED	LITERAL2	textureMode_
 NO_DEPTH_TEST	LITERAL2
 NTSC	LITERAL2
-ONE	LITERAL2	
+ONE	LITERAL2
 OPAQUE	LITERAL2	filter_
 OPEN	LITERAL2
 ORTHOGRAPHIC	LITERAL2
@@ -122,13 +128,13 @@ P2D	LITERAL2	size_
 P3D	LITERAL2	size_
 PERSPECTIVE	LITERAL2
 PI	LITERAL2	PI
-PIE	LITERAL2	
+PIE	LITERAL2
 PIXEL_CENTER	LITERAL2
 POINT	LITERAL2
-POINTS	LITERAL2	
+POINTS	LITERAL2
 POSTERIZE	LITERAL2	filter_
 PRESS	LITERAL2
-PROBLEM	LITERAL2	
+PROBLEM	LITERAL2
 PROJECT	LITERAL2	strokeCap_
 QUAD	LITERAL2	createShape_
 QUAD_STRIP	LITERAL2	beginShape_
@@ -141,21 +147,23 @@ RECT	LITERAL2
 RED_MASK	LITERAL2
 RELEASE LITERAL2
 REPEAT	LITERAL2
-REPLACE	LITERAL2	
+REPLACE	LITERAL2
 RETURN	LITERAL2
 RGB	LITERAL2	colorMode_
 RIGHT	LITERAL2	keyCode
 ROUND	LITERAL2	strokeCap_
 SCREEN	LITERAL2	blend_
-SECAM	LITERAL2	
+SECAM	LITERAL2
 SHAPE	LITERAL2	textMode_
-SHIFT	LITERAL2	
+SHIFT	LITERAL2
+SPAN	LITERAL2	fullScreen_
 SPECULAR	LITERAL2
 SPHERE	LITERAL2	createShape_
 SOFT_LIGHT	LITERAL2	blend_
 SQUARE	LITERAL2	strokeCap_
 SUBTRACT	LITERAL2	blend_
-SVIDEO	LITERAL2	
+SVG	LITERAL2
+SVIDEO	LITERAL2
 TAB	LITERAL2	keyCode
 TARGA	LITERAL2
 TAU	LITERAL2	TAU
@@ -174,17 +182,17 @@ TWO	LITERAL2
 TWO_PI	LITERAL2	TWO_PI
 UP	LITERAL2	keyCode
 WAIT	LITERAL2	cursor_
-WHITESPACE	LITERAL2		
+WHITESPACE	LITERAL2
 
 
 # Java keywords (void, import, , etc.)
-		
+
 abstract	KEYWORD1
 break	KEYWORD1	break
 class	KEYWORD1	class
 continue	KEYWORD1	continue
-default	KEYWORD1	default	
-enum	KEYWORD1	
+default	KEYWORD1	default
+enum	KEYWORD1
 extends	KEYWORD1	extends
 false	KEYWORD1	false
 final	KEYWORD1	final
@@ -192,17 +200,17 @@ finally	KEYWORD1
 implements	KEYWORD1	implements
 import	KEYWORD1	import
 instanceof	KEYWORD1
-interface	KEYWORD1	
+interface	KEYWORD1
 native	KEYWORD1
 new	KEYWORD1	new
 null	KEYWORD1	null
-package	KEYWORD1	
+package	KEYWORD1
 private	KEYWORD1	private
-protected	KEYWORD1	
+protected	KEYWORD1
 public	KEYWORD1	public
 static	KEYWORD1	static
-strictfp	KEYWORD1	
-throws	KEYWORD1	
+strictfp	KEYWORD1
+throws	KEYWORD1
 transient	KEYWORD1
 true	KEYWORD1	true
 void	KEYWORD1	void
@@ -213,7 +221,7 @@ volatile	KEYWORD1
 
 assert	KEYWORD6
 case	KEYWORD6	case
-return	KEYWORD6	return	
+return	KEYWORD6	return
 super	KEYWORD6	super
 this	KEYWORD6	this
 throw	KEYWORD6
@@ -223,18 +231,17 @@ throw	KEYWORD6
 
 Array	KEYWORD5	Array
 ArrayList	KEYWORD5	ArrayList
-Boolean	KEYWORD5	
-Byte	KEYWORD5	
+Boolean	KEYWORD5
+Byte	KEYWORD5
 BufferedReader	KEYWORD5	BufferedReader
-Character	KEYWORD5	
+Character	KEYWORD5
 Class	KEYWORD5	class
-Double	KEYWORD5	
-Float	KEYWORD5	
-Integer	KEYWORD5	
+Float	KEYWORD5
+Integer	KEYWORD5
 HashMap	KEYWORD5	HashMap
 PrintWriter	KEYWORD5	PrintWriter
 String	KEYWORD5	String
-StringBuffer	KEYWORD5	
+StringBuffer	KEYWORD5
 StringBuilder	KEYWORD5
 Thread	KEYWORD5
 boolean	KEYWORD5	boolean
@@ -245,7 +252,6 @@ double	KEYWORD5	double
 float 	KEYWORD5	float
 int	KEYWORD5	int
 long	KEYWORD5	long
-short	KEYWORD5
 
 
 # Flow structures
@@ -308,13 +314,20 @@ substring	FUNCTION2	String_substring_
 toLowerCase	FUNCTION2	String_toLowerCase_
 toUpperCase	FUNCTION2	String_toUpperCase_
 
+getDouble	FUNCTION2
+getLong	FUNCTION2
+getColumnTitles	FUNCTION2
+getColumnTypes	FUNCTION2
+getColumnType	FUNCTION2
+setDouble	FUNCTION2
+setLong	FUNCTION2
+
 length	KEYWORD2	String
 
 
 # Temporary additions 3 September 2012 as the reference is getting updated
-
-end	FUNCTION1
-addChild	FUNCTION1
+#end	FUNCTION1
+#addChild	FUNCTION1
 
 # Operators are without KEYWORDS
 
@@ -363,535 +376,563 @@ PVector	FUNCTION1	PVector
 ArrayList	FUNCTION1	ArrayList
 HashMap	FUNCTION1	HashMap
 
+# pixelHeight is not generating correctly: https://github.com/processing/processing-docs/issues/260
 
-# THE TEXT ABOVE IS HAND-WRITTEN AND FOUND IN THE FILE "keywords_base.txt"
+pixelHeight	KEYWORD4	pixelHeight
+
+
+# THE TEXT ABOVE IS HAND-WRITTEN AND FOUND IN THE FILE "keywords_base.txt" in processing/processing-docs/generate
+#
 # THE TEXT BELOW IS AUTO-GENERATED
 #
-# SO DON'T 
-# TOUCH IT
+# SO
+# DON'T
+# TOUCH
+# IT
 
 
-abs	FUNCTION1	abs_
-acos	FUNCTION1	acos_
-alpha	FUNCTION1	alpha_
-ambient	FUNCTION1	ambient_
-ambientLight	FUNCTION1	ambientLight_
-append	FUNCTION1	append_
-applyMatrix	FUNCTION1	applyMatrix_
-arc	FUNCTION1	arc_
-arrayCopy	FUNCTION1	arrayCopy_
-asin	FUNCTION1	asin_
-atan	FUNCTION1	atan_
-atan2	FUNCTION1	atan2_
-background	FUNCTION1	background_
-beginCamera	FUNCTION1	beginCamera_
-beginContour	FUNCTION1	beginContour_
-beginRaw	FUNCTION1	beginRaw_
-beginRecord	FUNCTION1	beginRecord_
-beginShape	FUNCTION1	beginShape_
-bezier	FUNCTION1	bezier_
-bezierDetail	FUNCTION1	bezierDetail_
-bezierPoint	FUNCTION1	bezierPoint_
-bezierTangent	FUNCTION1	bezierTangent_
-bezierVertex	FUNCTION1	bezierVertex_
-binary	FUNCTION1	binary_
-blend	FUNCTION1	blend_
-blendColor	FUNCTION1	blendColor_
-blendMode	FUNCTION1	blendMode_
-blue	FUNCTION1	blue_
-box	FUNCTION1	box_
-brightness	FUNCTION1	brightness_
-camera	FUNCTION1	camera_
-ceil	FUNCTION1	ceil_
-clear	FUNCTION1	clear_
-clip	FUNCTION1	clip_
-color	FUNCTION1	color_
-colorMode	FUNCTION1	colorMode_
-concat	FUNCTION1	concat_
-constrain	FUNCTION1	constrain_
-copy	FUNCTION1	copy_
-cos	FUNCTION1	cos_
-createFont	FUNCTION1	createFont_
-createGraphics	FUNCTION1	createGraphics_
-createImage	FUNCTION1	createImage_
-createInput	FUNCTION1	createInput_
-createOutput	FUNCTION1	createOutput_
-createReader	FUNCTION1	createReader_
-createShape	FUNCTION1	createShape_
-createWriter	FUNCTION1	createWriter_
-cursor	FUNCTION1	cursor_
-curve	FUNCTION1	curve_
-curveDetail	FUNCTION1	curveDetail_
-curvePoint	FUNCTION1	curvePoint_
-curveTangent	FUNCTION1	curveTangent_
-curveTightness	FUNCTION1	curveTightness_
-curveVertex	FUNCTION1	curveVertex_
-day	FUNCTION1	day_
-degrees	FUNCTION1	degrees_
-directionalLight	FUNCTION1	directionalLight_
-displayHeight	KEYWORD4	displayHeight
-displayWidth	KEYWORD4	displayWidth
-dist	FUNCTION1	dist_
-draw	FUNCTION4	draw
-ellipse	FUNCTION1	ellipse_
-ellipseMode	FUNCTION1	ellipseMode_
-emissive	FUNCTION1	emissive_
+JSONObject	KEYWORD5	JSONObject
+cross	FUNCTION2	PVector_cross_
+hasValue	FUNCTION2	StringList_hasValue_
+PVector	KEYWORD5	PVector
 endCamera	FUNCTION1	endCamera_
-endContour	FUNCTION1	endContour_
-endRaw	FUNCTION1	endRaw_
-endRecord	FUNCTION1	endRecord_
-endShape	FUNCTION1	endShape_
-exit	FUNCTION1	exit_
-exp	FUNCTION1	exp_
-expand	FUNCTION1	expand_
-fill	FUNCTION1	fill_
-filter	FUNCTION1	filter_
-FloatDict	KEYWORD5	FloatDict
-add	FUNCTION2	FloatDict_add_
-clear	FUNCTION2	FloatDict_clear_
-div	FUNCTION2	FloatDict_div_
-get	FUNCTION2	FloatDict_get_
+min	FUNCTION1	min_
+printCamera	FUNCTION1	printCamera_
+strokeWeight	FUNCTION1	strokeWeight_
+scale	FUNCTION1	scale_
+copy	FUNCTION2	PImage_copy_
+get	FUNCTION2	IntList_get_
+mouseDragged	FUNCTION4	mouseDragged
+setString	FUNCTION2	JSONArray_setString_
+setString	FUNCTION2	TableRow_setString_
+keyReleased	FUNCTION4	keyReleased
+frameRate	FUNCTION1	frameRate_
+PShape	KEYWORD5	PShape
 hasKey	FUNCTION2	FloatDict_hasKey_
-keyArray	FUNCTION2	FloatDict_keyArray_
-keys	FUNCTION2	FloatDict_keys_
-mult	FUNCTION2	FloatDict_mult_
-remove	FUNCTION2	FloatDict_remove_
+randomSeed	FUNCTION1	randomSeed_
+sortReverse	FUNCTION2	FloatList_sortReverse_
+getParent	FUNCTION2	XML_getParent_
+loadPixels	FUNCTION2	PImage_loadPixels_
+save	FUNCTION2	PImage_save_
+increment	FUNCTION2	IntList_increment_
+hue	FUNCTION1	hue_
+bezierPoint	FUNCTION1	bezierPoint_
+getFloat	FUNCTION2	JSONArray_getFloat_
+degrees	FUNCTION1	degrees_
+loadPixels	FUNCTION1	loadPixels_
+cursor	FUNCTION1	cursor_
+beginContour	FUNCTION1	beginContour_
+loadTable	FUNCTION1	loadTable_
+keyPressed	KEYWORD4	keyPressed
+resetMatrix	FUNCTION2	PShape_resetMatrix_
+dist	FUNCTION1	dist_
+sub	FUNCTION2	IntList_sub_
+removeColumn	FUNCTION2	Table_removeColumn_
+updatePixels	FUNCTION1	updatePixels_
 set	FUNCTION2	FloatDict_set_
-size	FUNCTION2	FloatDict_size_
-sortKeys	FUNCTION2	FloatDict_sortKeys_
-sortKeysReverse	FUNCTION2	FloatDict_sortKeysReverse_
-sortValues	FUNCTION2	FloatDict_sortValues_
-sortValuesReverse	FUNCTION2	FloatDict_sortValuesReverse_
-sub	FUNCTION2	FloatDict_sub_
-valueArray	FUNCTION2	FloatDict_valueArray_
-values	FUNCTION2	FloatDict_values_
-FloatList	KEYWORD5	FloatList
-add	FUNCTION2	FloatList_add_
-append	FUNCTION2	FloatList_append_
+disableStyle	FUNCTION2	PShape_disableStyle_
+saveStream	FUNCTION1	saveStream_
+mask	FUNCTION2	PImage_mask_
+set	FUNCTION2	StringList_set_
+createWriter	FUNCTION1	createWriter_
+join	FUNCTION1	join_
+findRow	FUNCTION2	Table_findRow_
+append	FUNCTION2	IntList_append_
+loadXML	FUNCTION1	loadXML_
+splice	FUNCTION1	splice_
+mult	FUNCTION2	IntList_mult_
+mult	FUNCTION2	PVector_mult_
+noiseDetail	FUNCTION1	noiseDetail_
+curveDetail	FUNCTION1	curveDetail_
+textLeading	FUNCTION1	textLeading_
+noCursor	FUNCTION1	noCursor_
+sphere	FUNCTION1	sphere_
+day	FUNCTION1	day_
+month	FUNCTION1	month_
+IntDict	KEYWORD5	IntDict
+popMatrix	FUNCTION1	popMatrix_
+size	FUNCTION2	StringList_size_
+loadImage	FUNCTION1	loadImage_
+shininess	FUNCTION1	shininess_
+setJSONArray	FUNCTION2	JSONObject_setJSONArray_
+values	FUNCTION2	IntDict_values_
+scale	FUNCTION2	PShape_scale_
+ceil	FUNCTION1	ceil_
+getFloat	FUNCTION2	TableRow_getFloat_
+randomGaussian	FUNCTION1	randomGaussian_
+setContent	FUNCTION2	XML_setContent_
+size	FUNCTION1	size_
+clear	FUNCTION2	StringList_clear_
+mouseX	KEYWORD4	mouseX
+expand	FUNCTION1	expand_
+sort	FUNCTION2	Table_sort_
+setBoolean	FUNCTION2	JSONArray_setBoolean_
+pushMatrix	FUNCTION1	pushMatrix_
+mouseY	KEYWORD4	mouseY
+lerpColor	FUNCTION1	lerpColor_
 array	FUNCTION2	FloatList_array_
-clear	FUNCTION2	FloatList_clear_
-div	FUNCTION2	FloatList_div_
-get	FUNCTION2	FloatList_get_
-hasValue	FUNCTION2	FloatList_hasValue_
-max	FUNCTION2	FloatList_max_
-min	FUNCTION2	FloatList_min_
+ellipse	FUNCTION1	ellipse_
+stroke	FUNCTION1	stroke_
+imageMode	FUNCTION1	imageMode_
+settings	FUNCTION4	settings
+pixelWidth	FUNCTION4	pixelWidth
+getName	FUNCTION2	XML_getName_
+setVertex	FUNCTION2	PShape_setVertex_
 mult	FUNCTION2	FloatList_mult_
 remove	FUNCTION2	FloatList_remove_
-reverse	FUNCTION2	FloatList_reverse_
-set	FUNCTION2	FloatList_set_
-shuffle	FUNCTION2	FloatList_shuffle_
-size	FUNCTION2	FloatList_size_
-sort	FUNCTION2	FloatList_sort_
-sortReverse	FUNCTION2	FloatList_sortReverse_
-sub	FUNCTION2	FloatList_sub_
-floor	FUNCTION1	floor_
-focused	KEYWORD4	focused
-frameCount	KEYWORD4	frameCount
-frameRate	KEYWORD4	frameRate
-frameRate	FUNCTION1	frameRate_
-frustum	FUNCTION1	frustum_
-get	FUNCTION1	get_
-green	FUNCTION1	green_
-HALF_PI	LITERAL2	HALF_PI
-hex	FUNCTION1	hex_
-hint	FUNCTION1	hint_
-hour	FUNCTION1	hour_
-hue	FUNCTION1	hue_
-image	FUNCTION1	image_
-imageMode	FUNCTION1	imageMode_
-IntDict	KEYWORD5	IntDict
-add	FUNCTION2	IntDict_add_
-clear	FUNCTION2	IntDict_clear_
-div	FUNCTION2	IntDict_div_
-get	FUNCTION2	IntDict_get_
-hasKey	FUNCTION2	IntDict_hasKey_
-increment	FUNCTION2	IntDict_increment_
-keyArray	FUNCTION2	IntDict_keyArray_
-keys	FUNCTION2	IntDict_keys_
-mult	FUNCTION2	IntDict_mult_
-remove	FUNCTION2	IntDict_remove_
-set	FUNCTION2	IntDict_set_
-size	FUNCTION2	IntDict_size_
-sortKeys	FUNCTION2	IntDict_sortKeys_
-sortKeysReverse	FUNCTION2	IntDict_sortKeysReverse_
-sortValues	FUNCTION2	IntDict_sortValues_
-sortValuesReverse	FUNCTION2	IntDict_sortValuesReverse_
-sub	FUNCTION2	IntDict_sub_
-valueArray	FUNCTION2	IntDict_valueArray_
-values	FUNCTION2	IntDict_values_
-IntList	KEYWORD5	IntList
-add	FUNCTION2	IntList_add_
-append	FUNCTION2	IntList_append_
-array	FUNCTION2	IntList_array_
-clear	FUNCTION2	IntList_clear_
-div	FUNCTION2	IntList_div_
-get	FUNCTION2	IntList_get_
-hasValue	FUNCTION2	IntList_hasValue_
-increment	FUNCTION2	IntList_increment_
-max	FUNCTION2	IntList_max_
+createGraphics	FUNCTION1	createGraphics_
 min	FUNCTION2	IntList_min_
-mult	FUNCTION2	IntList_mult_
-remove	FUNCTION2	IntList_remove_
-reverse	FUNCTION2	IntList_reverse_
-set	FUNCTION2	IntList_set_
-shuffle	FUNCTION2	IntList_shuffle_
-size	FUNCTION2	IntList_size_
-sort	FUNCTION2	IntList_sort_
-sortReverse	FUNCTION2	IntList_sortReverse_
-sub	FUNCTION2	IntList_sub_
-join	FUNCTION1	join_
-JSONArray	KEYWORD5	JSONArray
-append	FUNCTION2	JSONArray_append_
-getBoolean	FUNCTION2	JSONArray_getBoolean_
-getFloat	FUNCTION2	JSONArray_getFloat_
-getInt	FUNCTION2	JSONArray_getInt_
-getIntArray	FUNCTION2	JSONArray_getIntArray_
-getJSONArray	FUNCTION2	JSONArray_getJSONArray_
-getJSONObject	FUNCTION2	JSONArray_getJSONObject_
-getString	FUNCTION2	JSONArray_getString_
-getStringArray	FUNCTION2	JSONArray_getStringArray_
-remove	FUNCTION2	JSONArray_remove_
-setBoolean	FUNCTION2	JSONArray_setBoolean_
-setFloat	FUNCTION2	JSONArray_setFloat_
-setInt	FUNCTION2	JSONArray_setInt_
-getJSONArray	FUNCTION2	JSONArray_setJSONArray_
-getJSONObject	FUNCTION2	JSONArray_setJSONObject_
-setString	FUNCTION2	JSONArray_setString_
-size	FUNCTION2	JSONArray_size_
-JSONObject	KEYWORD5	JSONObject
-getBoolean	FUNCTION2	JSONObject_getBoolean_
-getFloat	FUNCTION2	JSONObject_getFloat_
-getInt	FUNCTION2	JSONObject_getInt_
-getJSONArray	FUNCTION2	JSONObject_getJSONArray_
-getJSONObject	FUNCTION2	JSONObject_getJSONObject_
-getString	FUNCTION2	JSONObject_getString_
-setBoolean	FUNCTION2	JSONObject_setBoolean_
-setFloat	FUNCTION2	JSONObject_setFloat_
-setInt	FUNCTION2	JSONObject_setInt_
-setJSONArray	FUNCTION2	JSONObject_setJSONArray_
-setJSONObject	FUNCTION2	JSONObject_setJSONObject_
-setString	FUNCTION2	JSONObject_setString_
+rows	FUNCTION2	Table_rows_
+focused	KEYWORD4	focused
+endContour	FUNCTION1	endContour_
+hasValue	FUNCTION2	IntList_hasValue_
+setString	FUNCTION2	Table_setString_
+sortKeysReverse	FUNCTION2	FloatDict_sortKeysReverse_
+saveStrings	FUNCTION1	saveStrings_
+resetMatrix	FUNCTION1	resetMatrix_
+set	FUNCTION2	PImage_set_
+add	FUNCTION2	IntList_add_
+removeChild	FUNCTION2	XML_removeChild_
 key	KEYWORD4	key
-keyCode	KEYWORD4	keyCode
-keyPressed	FUNCTION4	keyPressed
-keyPressed	KEYWORD4	keyPressed
-keyReleased	FUNCTION4	keyReleased
-keyTyped	FUNCTION4	keyTyped
-lerp	FUNCTION1	lerp_
-lerpColor	FUNCTION1	lerpColor_
-lightFalloff	FUNCTION1	lightFalloff_
-lights	FUNCTION1	lights_
-lightSpecular	FUNCTION1	lightSpecular_
-line	FUNCTION1	line_
-loadBytes	FUNCTION1	loadBytes_
-loadFont	FUNCTION1	loadFont_
-loadImage	FUNCTION1	loadImage_
-loadJSONArray	FUNCTION1	loadJSONArray_
-loadJSONObject	FUNCTION1	loadJSONObject_
-loadPixels	FUNCTION1	loadPixels_
-loadShader	FUNCTION1	loadShader_
-loadShape	FUNCTION1	loadShape_
-loadStrings	FUNCTION1	loadStrings_
-loadTable	FUNCTION1	loadTable_
-loadXML	FUNCTION1	loadXML_
-log	FUNCTION1	log_
-loop	FUNCTION1	loop_
-mag	FUNCTION1	mag_
-map	FUNCTION1	map_
-match	FUNCTION1	match_
-matchAll	FUNCTION1	matchAll_
-max	FUNCTION1	max_
-millis	FUNCTION1	millis_
-min	FUNCTION1	min_
-minute	FUNCTION1	minute_
-modelX	FUNCTION1	modelX_
-modelY	FUNCTION1	modelY_
-modelZ	FUNCTION1	modelZ_
-month	FUNCTION1	month_
-mouseButton	KEYWORD4	mouseButton
-mouseClicked	FUNCTION4	mouseClicked
-mouseDragged	FUNCTION4	mouseDragged
-mouseMoved	FUNCTION4	mouseMoved
+requestImage	FUNCTION1	requestImage_
+array	FUNCTION2	StringList_array_
+saveBytes	FUNCTION1	saveBytes_
+get	FUNCTION1	get_
+emissive	FUNCTION1	emissive_
+getColumnCount	FUNCTION2	Table_getColumnCount_
+noStroke	FUNCTION1	noStroke_
+textureWrap	FUNCTION1	textureWrap_
+addChild	FUNCTION2	XML_addChild_
+setMag	FUNCTION2	PVector_setMag_
+FloatDict	KEYWORD5	FloatDict
+matchRow	FUNCTION2	Table_matchRow_
+div	FUNCTION2	FloatList_div_
+getBoolean	FUNCTION2	JSONObject_getBoolean_
+vertex	FUNCTION1	vertex_
+setFloat	FUNCTION2	JSONObject_setFloat_
+copy	FUNCTION2	PVector_copy_
+remove	FUNCTION2	StringDict_remove_
+lower	FUNCTION2	StringList_lower_
+format	FUNCTION2	XML_format_
+setStroke	FUNCTION2	PShape_setStroke_
+clear	FUNCTION2	FloatList_clear_
+isNull	FUNCTION2	JSONObject_isNull_
 mousePressed	FUNCTION4	mousePressed
-mousePressed	KEYWORD4	mousePressed
-mouseReleased	FUNCTION1	mouseReleased_
-mouseWheel	FUNCTION4	mouseWheel
-mouseX	KEYWORD4	mouseX
-mouseY	KEYWORD4	mouseY
-nf	FUNCTION1	nf_
-nfc	FUNCTION1	nfc_
-nfp	FUNCTION1	nfp_
-nfs	FUNCTION1	nfs_
+sortValuesReverse	FUNCTION2	FloatDict_sortValuesReverse_
+sortValuesReverse	FUNCTION2	StringDict_sortValuesReverse_
+selectInput	FUNCTION1	selectInput_
+lerp	FUNCTION2	PVector_lerp_
+div	FUNCTION2	IntList_div_
+sort	FUNCTION2	FloatList_sort_
+setInt	FUNCTION2	JSONArray_setInt_
+createReader	FUNCTION1	createReader_
+strokeJoin	FUNCTION1	strokeJoin_
+hour	FUNCTION1	hour_
+getRowCount	FUNCTION2	Table_getRowCount_
+hasAttribute	FUNCTION2	XML_hasAttribute_
+setFloat	FUNCTION2	TableRow_setFloat_
+values	FUNCTION2	FloatDict_values_
+getInt	FUNCTION2	TableRow_getInt_
+getString	FUNCTION2	JSONObject_getString_
+round	FUNCTION1	round_
+strokeCap	FUNCTION1	strokeCap_
+sortKeysReverse	FUNCTION2	StringDict_sortKeysReverse_
+ortho	FUNCTION1	ortho_
+getVertexCount	FUNCTION2	PShape_getVertexCount_
+parseJSONObject	FUNCTION1	parseJSONObject_
+textFont	FUNCTION1	textFont_
+clear	FUNCTION1	clear_
+getChildren	FUNCTION2	XML_getChildren_
+loadBytes	FUNCTION1	loadBytes_
+ambient	FUNCTION1	ambient_
+sortValuesReverse	FUNCTION2	IntDict_sortValuesReverse_
+keyTyped	FUNCTION4	keyTyped
+HALF_PI	LITERAL2	HALF_PI
+loadFont	FUNCTION1	loadFont_
+frameRate	FUNCTION1	frameRate_
+map	FUNCTION1	map_
+min	FUNCTION2	FloatList_min_
+mag	FUNCTION1	mag_
+minute	FUNCTION1	minute_
+beginRecord	FUNCTION1	beginRecord_
+add	FUNCTION2	FloatList_add_
+alpha	FUNCTION1	alpha_
+clear	FUNCTION2	StringDict_clear_
 noClip	FUNCTION1	noClip_
-noCursor	FUNCTION1	noCursor_
+TWO_PI	LITERAL2	TWO_PI
+normalize	FUNCTION2	PVector_normalize_
+abs	FUNCTION1	abs_
+remove	FUNCTION2	IntList_remove_
+saveXML	FUNCTION1	saveXML_
+blend	FUNCTION2	PImage_blend_
+sortKeys	FUNCTION2	FloatDict_sortKeys_
+blue	FUNCTION1	blue_
+reverse	FUNCTION2	IntList_reverse_
+getContent	FUNCTION2	XML_getFloatContent_
+keys	FUNCTION2	StringDict_keys_
+clear	FUNCTION2	FloatDict_clear_
+year	FUNCTION1	year_
+nfc	FUNCTION1	nfc_
+rotate	FUNCTION1	rotate_
+getChild	FUNCTION2	XML_getChild_
+parseJSONArray	FUNCTION1	parseJSONArray_
+pixels	KEYWORD4	pixels
+getIntArray	FUNCTION2	JSONArray_getIntArray_
+saveFrame	FUNCTION1	saveFrame_
+getFloat	FUNCTION2	JSONObject_getFloat_
+size	FUNCTION2	StringDict_size_
+splitTokens	FUNCTION1	splitTokens_
+mult	FUNCTION2	IntDict_mult_
+atan	FUNCTION1	atan_
+setName	FUNCTION2	XML_setName_
+XML	KEYWORD5	XML
+circle	FUNCTION1	circle_
+bezierDetail	FUNCTION1	bezierDetail_
+draw	FUNCTION4	draw
+getContent	FUNCTION2	XML_getContent_
+cos	FUNCTION1	cos_
+sq	FUNCTION1	sq_
+TAU	LITERAL2	TAU
+delay	FUNCTION1	delay_
+fullScreen	FUNCTION1	fullScreen_
+endRaw	FUNCTION1	endRaw_
+setVisible	FUNCTION2	PShape_setVisible_
+increment	FUNCTION2	IntDict_increment_
+shuffle	FUNCTION2	IntList_shuffle_
+getJSONArray	FUNCTION2	JSONArray_getJSONArray_
+translate	FUNCTION1	translate_
+sort	FUNCTION2	IntList_sort_
+setFloat	FUNCTION2	JSONArray_setFloat_
+nfp	FUNCTION1	nfp_
+upper	FUNCTION2	StringList_upper_
+setInt	FUNCTION2	TableRow_setInt_
+hasKey	FUNCTION2	IntDict_hasKey_
+blendMode	FUNCTION1	blendMode_
+sin	FUNCTION1	sin_
+mouseButton	KEYWORD4	mouseButton
+QUARTER_PI	LITERAL2	QUARTER_PI
+clip	FUNCTION1	clip_
+sub	FUNCTION2	FloatList_sub_
+getInt	FUNCTION2	JSONArray_getInt_
+getBoolean	FUNCTION2	JSONArray_getBoolean_
+set	FUNCTION2	IntDict_set_
+displayHeight	KEYWORD4	displayHeight
+findRows	FUNCTION2	Table_findRows_
+hex	FUNCTION1	hex_
+TableRow	KEYWORD5	TableRow
+PI	LITERAL2	PI
+updatePixels	FUNCTION2	PImage_updatePixels_
+beginShape	FUNCTION1	beginShape_
+StringDict	KEYWORD5	StringDict
+mult	FUNCTION2	FloatDict_mult_
+append	FUNCTION2	FloatList_append_
+trim	FUNCTION1	trim_
+pmouseX	KEYWORD4	pmouseX
+textDescent	FUNCTION1	textDescent_
+createShape	FUNCTION1	createShape_
+keyArray	FUNCTION2	FloatDict_keyArray_
+get	FUNCTION2	FloatList_get_
+getStringColumn	FUNCTION2	Table_getStringColumn_
+pmouseY	KEYWORD4	pmouseY
+pixels	KEYWORD2	PImage_pixels
+nfs	FUNCTION1	nfs_
+setBoolean	FUNCTION2	JSONObject_setBoolean_
+JSONArray	KEYWORD5	JSONArray
+displayDensity	FUNCTION1	displayDensity_
+createFont	FUNCTION1	createFont_
+applyMatrix	FUNCTION1	applyMatrix_
+keyPressed	FUNCTION4	keyPressed
+getColumnTitle	FUNCTION2	TableRow_getColumnTitle_
+getString	FUNCTION2	XML_getString_
+point	FUNCTION1	point_
+background	FUNCTION1	background_
+pixelDensity	FUNCTION1	pixelDensity_
+set	FUNCTION2	PVector_set_
+triangle	FUNCTION1	triangle_
+rect	FUNCTION1	rect_
+shape	FUNCTION1	shape_
+saveTable	FUNCTION1	saveTable_
+matchAll	FUNCTION1	matchAll_
+get	FUNCTION2	StringDict_get_
+noLights	FUNCTION1	noLights_
+max	FUNCTION1	max_
+keys	FUNCTION2	FloatDict_keys_
+mouseWheel	FUNCTION4	mouseWheel
+set	FUNCTION1	set_
+PImage	KEYWORD5	PImage
+printProjection	FUNCTION1	printProjection_
+popStyle	FUNCTION1	popStyle_
+lerp	FUNCTION1	lerp_
+clearRows	FUNCTION2	Table_clearRows_
+perspective	FUNCTION1	perspective_
+print	FUNCTION1	print_
+get	FUNCTION2	PImage_get_
+addColumn	FUNCTION2	Table_addColumn_
+fill	FUNCTION1	fill_
+loadJSONObject	FUNCTION1	loadJSONObject_
+filter	FUNCTION2	PImage_filter_
+getFloat	FUNCTION2	Table_getFloat_
+redraw	FUNCTION1	redraw_
+sortKeys	FUNCTION2	StringDict_sortKeys_
+textAlign	FUNCTION1	textAlign_
+append	FUNCTION2	StringList_append_
+bezier	FUNCTION1	bezier_
+size	FUNCTION2	FloatDict_size_
+addChild	FUNCTION2	PShape_addChild_
+setFloat	FUNCTION2	XML_setFloat_
+smooth	FUNCTION1	smooth_
+blendColor	FUNCTION1	blendColor_
+displayWidth	KEYWORD4	displayWidth
+angleBetween	FUNCTION2	PVector_angleBetween_
+removeRow	FUNCTION2	Table_removeRow_
+div	FUNCTION2	PVector_div_
+println	FUNCTION1	println_
+add	FUNCTION2	FloatDict_add_
+brightness	FUNCTION1	brightness_
+loadJSONArray	FUNCTION1	loadJSONArray_
+tan	FUNCTION1	tan_
+printMatrix	FUNCTION1	printMatrix_
+lights	FUNCTION1	lights_
+loadShape	FUNCTION1	loadShape_
+random	FUNCTION1	random_
+shuffle	FUNCTION2	FloatList_shuffle_
+rotate	FUNCTION2	PVector_rotate_
+getJSONObject	FUNCTION2	JSONObject_getJSONObject_
+quadraticVertex	FUNCTION1	quadraticVertex_
+sort	FUNCTION2	StringList_sort_
+bezierVertex	FUNCTION1	bezierVertex_
+exp	FUNCTION1	exp_
+setJSONArray	FUNCTION2	JSONArray_setJSONArray_
+setString	FUNCTION2	JSONObject_setString_
+textureMode	FUNCTION1	textureMode_
+specular	FUNCTION1	specular_
+noSmooth	FUNCTION1	noSmooth_
+pow	FUNCTION1	pow_
+blend	FUNCTION1	blend_
+listChildren	FUNCTION2	XML_listChildren_
+keyArray	FUNCTION2	IntDict_keyArray_
+green	FUNCTION1	green_
+magSq	FUNCTION2	PVector_magSq_
+listAttributes	FUNCTION2	XML_listAttributes_
+createOutput	FUNCTION1	createOutput_
+div	FUNCTION2	IntDict_div_
+isNull	FUNCTION2	JSONArray_isNull_
+getContent	FUNCTION2	XML_getIntContent_
+setString	FUNCTION2	XML_setString_
+get	FUNCTION2	StringList_get_
+translate	FUNCTION2	PShape_translate_
+concat	FUNCTION1	concat_
+bezierTangent	FUNCTION1	bezierTangent_
+mouseReleased	FUNCTION4	mouseReleased
+arrayCopy	FUNCTION1	arrayCopy_
+beginCamera	FUNCTION1	beginCamera_
+asin	FUNCTION1	asin_
+remove	FUNCTION2	IntDict_remove_
+lightFalloff	FUNCTION1	lightFalloff_
+color	FUNCTION1	color_
+shader	FUNCTION1	shader_
+size	FUNCTION2	IntDict_size_
+beginShape	FUNCTION2	PShape_beginShape_
+getStringArray	FUNCTION2	JSONArray_getStringArray_
+reverse	FUNCTION2	FloatList_reverse_
+get	FUNCTION2	FloatDict_get_
+rotateZ	FUNCTION1	rotateZ_
+sortValues	FUNCTION2	FloatDict_sortValues_
+radians	FUNCTION1	radians_
+keyArray	FUNCTION2	StringDict_keyArray_
+curveTightness	FUNCTION1	curveTightness_
+filter	FUNCTION1	filter_
+getChildCount	FUNCTION2	PShape_getChildCount_
+setJSONObject	FUNCTION2	JSONArray_setJSONObject_
+heading	FUNCTION2	PVector_heading_
+keys	FUNCTION2	IntDict_keys_
+PFont	KEYWORD5	PFont
 noFill	FUNCTION1	noFill_
 noise	FUNCTION1	noise_
-noiseDetail	FUNCTION1	noiseDetail_
-noiseSeed	FUNCTION1	noiseSeed_
-noLights	FUNCTION1	noLights_
-noLoop	FUNCTION1	noLoop_
-norm	FUNCTION1	norm_
-normal	FUNCTION1	normal_
-noSmooth	FUNCTION1	noSmooth_
-noStroke	FUNCTION1	noStroke_
-noTint	FUNCTION1	noTint_
-open	FUNCTION1	open_
-ortho	FUNCTION1	ortho_
-parseXML	FUNCTION1	parseXML_
-perspective	FUNCTION1	perspective_
-PFont	KEYWORD5	PFont
-list	FUNCTION1	PFont_list_
-PGraphics	KEYWORD5	PGraphics
-beginDraw	FUNCTION2	PGraphics_beginDraw_
-endDraw	FUNCTION2	PGraphics_endDraw_
-PI	LITERAL2	PI
-PImage	KEYWORD5	PImage
-blend	FUNCTION2	PImage_blend_
-copy	FUNCTION2	PImage_copy_
-filter	FUNCTION2	PImage_filter_
-get	FUNCTION2	PImage_get_
-loadPixels	FUNCTION2	PImage_loadPixels_
-mask	FUNCTION2	PImage_mask_
-pixels	KEYWORD2	PImage_pixels
-resize	FUNCTION2	PImage_resize_
-save	FUNCTION2	PImage_save_
-set	FUNCTION2	PImage_set_
-updatePixels	FUNCTION2	PImage_updatePixels_
-pixels	KEYWORD4	pixels
-pmouseX	KEYWORD4	pmouseX
-pmouseY	KEYWORD4	pmouseY
-point	FUNCTION1	point_
-pointLight	FUNCTION1	pointLight_
-popMatrix	FUNCTION1	popMatrix_
-popStyle	FUNCTION1	popStyle_
-pow	FUNCTION1	pow_
-print	FUNCTION1	print_
-printArray	FUNCTION1	printArray_
-printCamera	FUNCTION1	printCamera_
-println	FUNCTION1	println_
-printMatrix	FUNCTION1	printMatrix_
-printProjection	FUNCTION1	printProjection_
-PShader	KEYWORD5	PShader
-PShader	FUNCTION2	PShader_set_
-PShape	KEYWORD5	PShape
-addChild	FUNCTION2	PShape_addChild_
-beginContour	FUNCTION2	PShape_beginContour_
-beginShape	FUNCTION2	PShape_beginShape_
-disableStyle	FUNCTION2	PShape_disableStyle_
-enableStyle	FUNCTION2	PShape_enableStyle_
-endContour	FUNCTION2	PShape_endContour_
-endShape	FUNCTION2	PShape_endShape_
-getChild	FUNCTION2	PShape_getChild_
-getChildCount	FUNCTION2	PShape_getChildCount_
-getVertex	FUNCTION2	PShape_getVertex_
-getVertexCount	FUNCTION2	PShape_getVertexCount_
-isVisible	FUNCTION2	PShape_isVisible_
-resetMatrix	FUNCTION2	PShape_resetMatrix_
-rotate	FUNCTION2	PShape_rotate_
-rotateX	FUNCTION2	PShape_rotateX_
-rotateY	FUNCTION2	PShape_rotateY_
-rotateZ	FUNCTION2	PShape_rotateZ_
-scale	FUNCTION2	PShape_scale_
-setVertex	FUNCTION2	PShape_setVertex_
-setVisible	FUNCTION2	PShape_setVisible_
-translate	FUNCTION2	PShape_translate_
-pushMatrix	FUNCTION1	pushMatrix_
-pushStyle	FUNCTION1	pushStyle_
-PVector	KEYWORD5	PVector
-add	FUNCTION2	PVector_add_
-angleBetween	FUNCTION2	PVector_angleBetween_
-array	FUNCTION2	PVector_array_
-copy	FUNCTION2	PVector_copy_
-cross	FUNCTION2	PVector_cross_
-dist	FUNCTION2	PVector_dist_
-div	FUNCTION2	PVector_div_
-dot	FUNCTION2	PVector_dot_
-fromAngle	FUNCTION2	PVector_fromAngle_
-get	FUNCTION2	PVector_get_
-heading	FUNCTION2	PVector_heading_
-lerp	FUNCTION2	PVector_lerp_
-limit	FUNCTION2	PVector_limit_
-mag	FUNCTION2	PVector_mag_
-magSq	FUNCTION2	PVector_magSq_
-mult	FUNCTION2	PVector_mult_
-normalize	FUNCTION2	PVector_normalize_
-random2D	FUNCTION2	PVector_random2D_
-random3D	FUNCTION2	PVector_random3D_
-rotate	FUNCTION2	PVector_rotate_
-set	FUNCTION2	PVector_set_
-setMag	FUNCTION2	PVector_setMag_
-sub	FUNCTION2	PVector_sub_
-quad	FUNCTION1	quad_
-quadraticVertex	FUNCTION1	quadraticVertex_
-QUARTER_PI	LITERAL2	QUARTER_PI
-radians	FUNCTION1	radians_
-random	FUNCTION1	random_
-randomGaussian	FUNCTION1	randomGaussian_
-randomSeed	FUNCTION1	randomSeed_
-rect	FUNCTION1	rect_
-rectMode	FUNCTION1	rectMode_
-red	FUNCTION1	red_
-redraw	FUNCTION1	redraw_
-requestImage	FUNCTION1	requestImage_
-resetMatrix	FUNCTION1	resetMatrix_
-resetShader	FUNCTION1	resetShader_
-reverse	FUNCTION1	reverse_
-rotate	FUNCTION1	rotate_
-rotateX	FUNCTION1	rotateX_
-rotateY	FUNCTION1	rotateY_
-rotateZ	FUNCTION1	rotateZ_
-round	FUNCTION1	round_
-saturation	FUNCTION1	saturation_
-save	FUNCTION1	save_
-saveBytes	FUNCTION1	saveBytes_
-saveFrame	FUNCTION1	saveFrame_
-saveJSONArray	FUNCTION1	saveJSONArray_
-saveJSONObject	FUNCTION1	saveJSONObject_
-saveStream	FUNCTION1	saveStream_
-saveStrings	FUNCTION1	saveStrings_
-loadTable	FUNCTION1	saveTable_
-saveXML	FUNCTION1	saveXML_
-scale	FUNCTION1	scale_
-screenX	FUNCTION1	screenX_
-screenY	FUNCTION1	screenY_
-screenZ	FUNCTION1	screenZ_
-second	FUNCTION1	second_
-selectFolder	FUNCTION1	selectFolder_
-selectInput	FUNCTION1	selectInput_
-selectOutput	FUNCTION1	selectOutput_
-set	FUNCTION1	set_
-setup	FUNCTION4	setup
-shader	FUNCTION1	shader_
-shape	FUNCTION1	shape_
-shapeMode	FUNCTION1	shapeMode_
-shearX	FUNCTION1	shearX_
-shearY	FUNCTION1	shearY_
-shininess	FUNCTION1	shininess_
-shorten	FUNCTION1	shorten_
-sin	FUNCTION1	sin_
-size	FUNCTION1	size_
-smooth	FUNCTION1	smooth_
+acos	FUNCTION1	acos_
+frameCount	KEYWORD4	frameCount
+curvePoint	FUNCTION1	curvePoint_
 sort	FUNCTION1	sort_
-specular	FUNCTION1	specular_
-sphere	FUNCTION1	sphere_
+reverse	FUNCTION1	reverse_
 sphereDetail	FUNCTION1	sphereDetail_
-splice	FUNCTION1	splice_
-split	FUNCTION1	split_
-splitTokens	FUNCTION1	splitTokens_
-spotLight	FUNCTION1	spotLight_
-sq	FUNCTION1	sq_
-sqrt	FUNCTION1	sqrt_
-StringDict	KEYWORD5	StringDict
-clear	FUNCTION2	StringDict_clear_
-get	FUNCTION2	StringDict_get_
-hasKey	FUNCTION2	StringDict_hasKey_
-keyArray	FUNCTION2	StringDict_keyArray_
-keys	FUNCTION2	StringDict_keys_
-remove	FUNCTION2	StringDict_remove_
-set	FUNCTION2	StringDict_set_
-size	FUNCTION2	StringDict_size_
-sortKeys	FUNCTION2	StringDict_sortKeys_
-sortKeysReverse	FUNCTION2	StringDict_sortKeysReverse_
-sortValues	FUNCTION2	StringDict_sortValues_
-sortValuesReverse	FUNCTION2	StringDict_sortValuesReverse_
-valueArray	FUNCTION2	StringDict_valueArray_
-values	FUNCTION2	StringDict_values_
+sortReverse	FUNCTION2	IntList_sortReverse_
+constrain	FUNCTION1	constrain_
+frustum	FUNCTION1	frustum_
+list	FUNCTION1	PFont_list_
+max	FUNCTION2	IntList_max_
+mag	FUNCTION2	PVector_mag_
+sub	FUNCTION2	FloatDict_sub_
+second	FUNCTION1	second_
+set	FUNCTION2	IntList_set_
+valueArray	FUNCTION2	IntDict_valueArray_
+binary	FUNCTION1	binary_
 StringList	KEYWORD5	StringList
-append	FUNCTION2	StringList_append_
-array	FUNCTION2	StringList_array_
-clear	FUNCTION2	StringList_clear_
-get	FUNCTION2	StringList_get_
-hasValue	FUNCTION2	StringList_hasValue_
-lower	FUNCTION2	StringList_lower_
-remove	FUNCTION2	StringList_remove_
-reverse	FUNCTION2	StringList_reverse_
-set	FUNCTION2	StringList_set_
-shuffle	FUNCTION2	StringList_shuffle_
-size	FUNCTION2	StringList_size_
-sort	FUNCTION2	StringList_sort_
-sortReverse	FUNCTION2	StringList_sortReverse_
-upper	FUNCTION2	StringList_upper_
-stroke	FUNCTION1	stroke_
-strokeCap	FUNCTION1	strokeCap_
-strokeJoin	FUNCTION1	strokeJoin_
-strokeWeight	FUNCTION1	strokeWeight_
-subset	FUNCTION1	subset_
-Table	KEYWORD5	Table
-addColumn	FUNCTION2	Table_addColumn_
-addRow	FUNCTION2	Table_addRow_
-clearRows	FUNCTION2	Table_clearRows_
-findRow	FUNCTION2	Table_findRow_
-findRows	FUNCTION2	Table_findRows_
-getColumnCount	FUNCTION2	Table_getColumnCount_
-getFloat	FUNCTION2	Table_getFloat_
-getInt	FUNCTION2	Table_getInt_
-getRow	FUNCTION2	Table_getRow_
-getRowCount	FUNCTION2	Table_getRowCount_
-getString	FUNCTION2	Table_getString_
-getStringColumn	FUNCTION2	Table_getStringColumn_
-matchRow	FUNCTION2	Table_matchRow_
-matchRows	FUNCTION2	Table_matchRows_
-removeColumn	FUNCTION2	Table_removeColumn_
-removeRow	FUNCTION2	Table_removeRow_
-removeTokens	FUNCTION2	Table_removeTokens_
-rows	FUNCTION2	Table_rows_
-setFloat	FUNCTION2	Table_setFloat_
-setInt	FUNCTION2	Table_setInt_
-setString	FUNCTION2	Table_setString_
-trim	FUNCTION2	Table_trim_
-TableRow	KEYWORD5	TableRow
-getFloat	FUNCTION2	TableRow_getFloat_
-getFloat	FUNCTION2	TableRow_getInt_
-getString	FUNCTION2	TableRow_getString_
-setFloat	FUNCTION2	TableRow_setFloat_
-setInt	FUNCTION2	TableRow_setInt_
-setString	FUNCTION2	TableRow_setString_
-tan	FUNCTION1	tan_
-TAU	LITERAL2	TAU
-text	FUNCTION1	text_
-textAlign	FUNCTION1	textAlign_
-textAscent	FUNCTION1	textAscent_
-textDescent	FUNCTION1	textDescent_
-textFont	FUNCTION1	textFont_
-textLeading	FUNCTION1	textLeading_
-textMode	FUNCTION1	textMode_
-textSize	FUNCTION1	textSize_
+isVisible	FUNCTION2	PShape_isVisible_
+push	FUNCTION1	push_
+normal	FUNCTION1	normal_
+PShader	FUNCTION2	PShader_set_
+append	FUNCTION2	JSONArray_append_
+pop	FUNCTION1	pop_
+shearX	FUNCTION1	shearX_
+saveJSONObject	FUNCTION1	saveJSONObject_
+enableStyle	FUNCTION2	PShape_enableStyle_
+rotateY	FUNCTION1	rotateY_
+rotateX	FUNCTION1	rotateX_
+endShape	FUNCTION1	endShape_
+sortKeys	FUNCTION2	IntDict_sortKeys_
+shearY	FUNCTION1	shearY_
+shapeMode	FUNCTION1	shapeMode_
+norm	FUNCTION1	norm_
+saveJSONArray	FUNCTION1	saveJSONArray_
+match	FUNCTION1	match_
+values	FUNCTION2	StringDict_values_
+sortValues	FUNCTION2	StringDict_sortValues_
+floor	FUNCTION1	floor_
+quad	FUNCTION1	quad_
+pixelHeight	FUNCTION1	pixelHeight_
+parseXML	FUNCTION1	parseXML_
+exit	FUNCTION1	exit_
 texture	FUNCTION1	texture_
-textureMode	FUNCTION1	textureMode_
-textureWrap	FUNCTION1	textureWrap_
-textWidth	FUNCTION1	textWidth_
-tint	FUNCTION1	tint_
-translate	FUNCTION1	translate_
-triangle	FUNCTION1	triangle_
-trim	FUNCTION1	trim_
-TWO_PI	LITERAL2	TWO_PI
-unbinary	FUNCTION1	unbinary_
+clear	FUNCTION2	IntDict_clear_
+size	FUNCTION2	JSONArray_size_
+setup	FUNCTION4	setup
+getJSONObject	FUNCTION2	JSONArray_getJSONObject_
+modelX	FUNCTION1	modelX_
+dot	FUNCTION2	PVector_dot_
+rotateX	FUNCTION2	PShape_rotateX_
+valueArray	FUNCTION2	FloatDict_valueArray_
+selectFolder	FUNCTION1	selectFolder_
+random3D	FUNCTION2	PVector_random3D_
+sqrt	FUNCTION1	sqrt_
+sortReverse	FUNCTION2	StringList_sortReverse_
+limit	FUNCTION2	PVector_limit_
+log	FUNCTION1	log_
+remove	FUNCTION2	FloatDict_remove_
+shuffle	FUNCTION2	StringList_shuffle_
+curveTangent	FUNCTION1	curveTangent_
 unhex	FUNCTION1	unhex_
-updatePixels	FUNCTION1	updatePixels_
-vertex	FUNCTION1	vertex_
-XML	KEYWORD5	XML
-addChild	FUNCTION2	XML_addChild_
-format	FUNCTION2	XML_format_
-getAttributeCount	FUNCTION2	XML_getAttributeCount_
-getChild	FUNCTION2	XML_getChild_
-getChildren	FUNCTION2	XML_getChildren_
-getContent	FUNCTION2	XML_getContent_
-getFloat	FUNCTION2	XML_getFloat_
-getContent	FUNCTION2	XML_getFloatContent_
-getInt	FUNCTION2	XML_getInt_
-getContent	FUNCTION2	XML_getIntContent_
-getName	FUNCTION2	XML_getName_
-getParent	FUNCTION2	XML_getParent_
-getString	FUNCTION2	XML_getString_
-hasAttribute	FUNCTION2	XML_hasAttribute_
-hasChildren	FUNCTION2	XML_hasChildren_
-listAttributes	FUNCTION2	XML_listAttributes_
-listChildren	FUNCTION2	XML_listChildren_
-removeChild	FUNCTION2	XML_removeChild_
-setContent	FUNCTION2	XML_setContent_
-setFloat	FUNCTION2	XML_setFloat_
+array	FUNCTION2	IntList_array_
+size	FUNCTION2	FloatList_size_
+remove	FUNCTION2	StringList_remove_
+get	FUNCTION2	PVector_get_
+createInput	FUNCTION1	createInput_
+set	FUNCTION2	StringDict_set_
+thread	FUNCTION1	thread_
+max	FUNCTION2	FloatList_max_
+sub	FUNCTION2	IntDict_sub_
+beginRaw	FUNCTION1	beginRaw_
+set	FUNCTION2	FloatList_set_
+getInt	FUNCTION2	JSONObject_getInt_
+fromAngle	FUNCTION2	PVector_fromAngle_
+rotateY	FUNCTION2	PShape_rotateY_
+modelY	FUNCTION1	modelY_
+ambientLight	FUNCTION1	ambientLight_
+getJSONArray	FUNCTION2	JSONObject_getJSONArray_
+valueArray	FUNCTION2	StringDict_valueArray_
+setInt	FUNCTION2	Table_setInt_
+rectMode	FUNCTION1	rectMode_
+arc	FUNCTION1	arc_
 setInt	FUNCTION2	XML_setInt_
-setName	FUNCTION2	XML_setName_
-setString	FUNCTION2	XML_setString_
+getRow	FUNCTION2	Table_getRow_
+getString	FUNCTION2	TableRow_getString_
+noTint	FUNCTION1	noTint_
+clear	FUNCTION2	IntList_clear_
+beginContour	FUNCTION2	PShape_beginContour_
+matchRows	FUNCTION2	Table_matchRows_
+setFill	FUNCTION2	PShape_setFill_
+shorten	FUNCTION1	shorten_
+dist	FUNCTION2	PVector_dist_
+unbinary	FUNCTION1	unbinary_
+IntList	KEYWORD5	IntList
 toString	FUNCTION2	XML_toString_
-year	FUNCTION1	year_
+get	FUNCTION2	IntDict_get_
+getString	FUNCTION2	JSONArray_getString_
+line	FUNCTION1	line_
+sortValues	FUNCTION2	IntDict_sortValues_
+mousePressed	KEYWORD4	mousePressed
+colorMode	FUNCTION1	colorMode_
+loop	FUNCTION1	loop_
+saturation	FUNCTION1	saturation_
+sub	FUNCTION2	PVector_sub_
+rotateZ	FUNCTION2	PShape_rotateZ_
+beginDraw	FUNCTION2	PGraphics_beginDraw_
+directionalLight	FUNCTION1	directionalLight_
+hasValue	FUNCTION2	FloatList_hasValue_
+modelZ	FUNCTION1	modelZ_
+endContour	FUNCTION2	PShape_endContour_
+setInt	FUNCTION2	JSONObject_setInt_
+nf	FUNCTION1	nf_
+size	FUNCTION2	IntList_size_
+loadStrings	FUNCTION1	loadStrings_
+textMode	FUNCTION1	textMode_
+camera	FUNCTION1	camera_
+removeTokens	FUNCTION2	Table_removeTokens_
+div	FUNCTION2	FloatDict_div_
+screenY	FUNCTION1	screenY_
+sortKeysReverse	FUNCTION2	IntDict_sortKeysReverse_
+textSize	FUNCTION1	textSize_
+rotate	FUNCTION2	PShape_rotate_
+split	FUNCTION1	split_
+Table	KEYWORD5	Table
+addRow	FUNCTION2	Table_addRow_
+mouseClicked	FUNCTION4	mouseClicked
+ellipseMode	FUNCTION1	ellipseMode_
+resetShader	FUNCTION1	resetShader_
+hasChildren	FUNCTION2	XML_hasChildren_
+append	FUNCTION1	append_
+square	FUNCTION1	square_
+getFloat	FUNCTION2	XML_getFloat_
+textAscent	FUNCTION1	textAscent_
+endShape	FUNCTION2	PShape_endShape_
+box	FUNCTION1	box_
+millis	FUNCTION1	millis_
+curve	FUNCTION1	curve_
+setFloat	FUNCTION2	Table_setFloat_
+spotLight	FUNCTION1	spotLight_
+resize	FUNCTION2	PImage_resize_
+add	FUNCTION2	IntDict_add_
+screenX	FUNCTION1	screenX_
+curveVertex	FUNCTION1	curveVertex_
+getChild	FUNCTION2	PShape_getChild_
+getString	FUNCTION2	Table_getString_
+printArray	FUNCTION1	printArray_
+selectOutput	FUNCTION1	selectOutput_
+endRecord	FUNCTION1	endRecord_
+noiseSeed	FUNCTION1	noiseSeed_
+hasKey	FUNCTION2	StringDict_hasKey_
+endDraw	FUNCTION2	PGraphics_endDraw_
+PGraphics	KEYWORD5	PGraphics
+pointLight	FUNCTION1	pointLight_
+screenZ	FUNCTION1	screenZ_
+array	FUNCTION2	PVector_array_
+getVertex	FUNCTION2	PShape_getVertex_
+save	FUNCTION1	save_
+remove	FUNCTION2	JSONArray_remove_
+loadShader	FUNCTION1	loadShader_
+reverse	FUNCTION2	StringList_reverse_
+keyCode	KEYWORD4	keyCode
+subset	FUNCTION1	subset_
+image	FUNCTION1	image_
+tint	FUNCTION1	tint_
+getAttributeCount	FUNCTION2	XML_getAttributeCount_
+text	FUNCTION1	text_
+mouseMoved	FUNCTION4	mouseMoved
+launch	FUNCTION1	launch_
+PShader	KEYWORD5	PShader
+pushStyle	FUNCTION1	pushStyle_
+textWidth	FUNCTION1	textWidth_
+red	FUNCTION1	red_
+lightSpecular	FUNCTION1	lightSpecular_
+copy	FUNCTION1	copy_
+atan2	FUNCTION1	atan2_
+add	FUNCTION2	PVector_add_
+random2D	FUNCTION2	PVector_random2D_
+getInt	FUNCTION2	XML_getInt_
+createImage	FUNCTION1	createImage_
+trim	FUNCTION2	Table_trim_
+getColumnCount	FUNCTION2	TableRow_getColumnCount_
+FloatList	KEYWORD5	FloatList
+attrib	FUNCTION1	attrib_
+noLoop	FUNCTION1	noLoop_
+setJSONObject	FUNCTION2	JSONObject_setJSONObject_
+getInt	FUNCTION2	Table_getInt_

@@ -21,7 +21,7 @@ void setup() {
   size(200, 200);
   background(50);
   fill(200);
-  c = new Client(this, "www.processing.org", 80); // Connect to server on port 80
+  c = new Client(this, "www.ucla.edu", 80); // Connect to server on port 80
   c.write("GET / HTTP/1.0\r\n"); // Use the HTTP "GET" command to ask for a Web page
   c.write("\r\n");
 }
@@ -32,4 +32,3 @@ void draw() {
     println(data);
   }
 }
-

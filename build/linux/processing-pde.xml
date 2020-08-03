@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+    <mime-type type="text/x-processing">
+        <comment>Processing source code</comment>
+	<comment xml:lang="ara">شفرة مصدر Processing</comment>
+	<comment xml:lang="be@latin">Kryničny kod Processing</comment>
+	<comment xml:lang="bg">Изходен код на Processing</comment>
+	<comment xml:lang="ca">codi font en Processing</comment>
+	<comment xml:lang="da">Processingkildekode</comment>
+	<comment xml:lang="de">Processing-Quelltext</comment>
+	<comment xml:lang="el">πηγαίος κώδικας Processing</comment>
+	<comment xml:lang="en_GB">Processing source code</comment>
+	<comment xml:lang="eo">Processing-fontkodo</comment>
+	<comment xml:lang="es">código fuente en Processing</comment>
+	<comment xml:lang="eu">Processing iturburu-kodea</comment>
+	<comment xml:lang="fi">Processing-lähdekoodi</comment>
+	<comment xml:lang="fr">code source Processing</comment>
+	<comment xml:lang="ga">cód foinseach Processing</comment>
+	<comment xml:lang="hu">Processing-forráskód</comment>
+	<comment xml:lang="id">Kode program Processing</comment>
+	<comment xml:lang="it">Codice sorgente Processing</comment>
+	<comment xml:lang="ja">Processing ソースコード</comment>
+	<comment xml:lang="lt">Processing pradinis kodas</comment>
+	<comment xml:lang="lv">Processing pirmkods</comment>
+	<comment xml:lang="ms">Kod sumber Processing</comment>
+	<comment xml:lang="nb">Processing-kildekode</comment>
+	<comment xml:lang="nl">Processing-broncode</comment>
+	<comment xml:lang="nn">Processing-kjeldekode</comment>
+	<comment xml:lang="pl">Kod źródłowy Processing</comment>
+	<comment xml:lang="pt">código fonte Processing</comment>
+	<comment xml:lang="pt_BR">Código fonte Processing</comment>
+	<comment xml:lang="ru">исходный код Processing</comment>
+	<comment xml:lang="sq">Kod burues Processing</comment>
+	<comment xml:lang="sv">Processing-källkod</comment>
+	<comment xml:lang="uk">Вихідний код на мові Processing</comment>
+	<comment xml:lang="vi">Mã nguồn Processing</comment>
+	<comment xml:lang="zh_CN">Processing 源代码</comment>
+	<comment xml:lang="zh_TW">Processing 源代碼</comment>
+        <sub-class-of type="text/x-csrc"/>
+        <glob pattern="*.pde"/>
+    </mime-type>
+</mime-info>

@@ -1,242 +1,307 @@
-0233 (3.0a6)
-X post a note about the "help" stuff
-X   https://github.com/processing/processing/labels/help
-X Deal with ctrl-alt-n regression 
-X   https://github.com/processing/processing/issues/2979
-X splash screen for Linux
-X   https://github.com/processing/processing/pull/3005
-X don't add a ^M to files when writing
-X   https://github.com/processing/processing/issues/3014
-X add more bulletproofing to the save process
-X   https://github.com/processing/processing/issues/2923
-X serious text improvements (at least on retina)
-_ finish adding 'examples' contribs
-_   https://github.com/processing/processing/issues/2953
-_   don't return here, allow contrib types to fail:
-_   https://github.com/processing/processing/blob/master/app/src/processing/app/contrib/ContributionListing.java#L509
-_ trying to add a second tab with the same name causes an error
+0271 (3.5.5 unlikely)
 
-update components
-X moving to Java 8 because Java 7 will be discontinued
-X   http://www.oracle.com/technetwork/java/javase/eol-135779.html
-X   requires Vista SP2 (ok, just say 7), and OS X 10.8.3, Ubuntu 12.04
-X   requires 10.10 to build appbundler (for the Xcode SDK)
-X requires ECJ update (using 4.4.1)
-X   http://download.eclipse.org/eclipse/downloads/drops4/R-4.4.1-201409250400/
-X update to launch4j 3.6
-X   http://sourceforge.net/projects/launch4j/files/launch4j-3/3.6/
-o   update ld and windres: https://github.com/processing/processing/tree/master/java/application/launch4j/bin
-o   also xstream.jar https://github.com/processing/processing/tree/master/java/application/launch4j/lib
+contribs
+X rename-variable menu allows Java identifiers
+X   https://github.com/processing/processing/issues/5828
+X   https://github.com/processing/processing/pull/5906
+X Replace C/C++ style array declarations with Java style array declarations
+X   https://github.com/processing/processing/pull/5981
 
-earlier
-X any problems with new code signing crap? 
-X   issues raised around the symlink (just replace with a copy of the binary?)
-X   fixed the short-term problem, filed an issue for the rest
-X   https://developer.apple.com/library/prerelease/mac/technotes/tn2206/_index.html#//apple_ref/doc/uid/DTS40007919-CH1-TNTAG205
-X Move import suggestion to errors console
-X   https://github.com/processing/processing/issues/2947
-X server.stop produces an error: java.net.SocketException: socket closed
-X   https://github.com/processing/processing/issues/74
-X   https://github.com/processing/processing/pull/2474
-X NPE when calling Client.ip() after the connection has been closed
-X   https://github.com/processing/processing/issues/2576
-X   https://github.com/processing/processing/pull/2922
 
-joel
-X Add reference for installed tools and libraries to the Help menu
-X   https://github.com/processing/processing/issues/943
-X   https://github.com/processing/processing/pull/2804
-X examples.properties file missing prevents startup
-X   https://github.com/processing/processing/issues/3037
-X   https://github.com/processing/processing/pull/3047
-X several new French translations
-X   https://github.com/processing/processing/pull/3061
+from Casey
+_ Issue with https and downloading the binaries, +Checksums?
+_   https://github.com/processing/processing-docs/issues/766
+_ Math for BLEND incorrect in the reference?
+_   https://github.com/processing/processing-docs/issues/762
+_ .setAngle() for PVector?
+_   https://github.com/processing/processing-docs/issues/744
+_ Installation on Linux
+_   https://github.com/processing/processing-docs/issues/645
+_ How much of the attrib*() functions should be documented?
+_   https://github.com/processing/processing-docs/issues/172
 
-manindra
-X Fix for "Probably a ++ should go here" messages
-X   https://github.com/processing/processing/issues/2956
+_ "Could not get the settings folder" isn't very helpful
+_   https://github.com/processing/processing/issues/5744
+_   need to check the locations it'd be writing to, and see if available
+_   then tell the user which folder to fix
 
-pulls
-X add mnemonics for menus (alt-f to open 'file')
-X   http://code.google.com/p/processing/issues/detail?id=12
-X   https://github.com/processing/processing/issues/51
-X   https://github.com/processing/processing/pull/2382
-X getCaretLocation() bug in syntax.im package
-X   https://github.com/processing/processing/issues/2934
-X finish up debian package support (see the processing.mess folder)
-X   http://code.google.com/p/processing/issues/detail?id=75
-X   these bits need to be checked to ensure that they work on other distros
-X   https://github.com/processing/processing/issues/114
-X   https://github.com/processing/processing/pull/2972
-X   https://github.com/processing/processing/issues/2973
-X   https://github.com/processing/processing/pull/2974
-X Replace ColorChooser PApplets with custom Swing components
-X   https://github.com/processing/processing/pull/2975
-X fix encodings, line endings, and mime types in the repo
-X   https://github.com/processing/processing/issues/2955
-X   https://github.com/processing/processing/pull/2978
-X   https://github.com/processing/processing/pull/2977
-X add control for dependencies (i.e. svg needs xml), needed for export
-X   http://code.google.com/p/processing/issues/detail?id=70
-X   https://github.com/processing/processing/issues/109
-X   https://github.com/processing/processing/pull/3010
-X lots of Auto Format fixes
-X   https://github.com/processing/processing/pull/3002
-X   https://github.com/processing/processing/issues/2540
-X   https://github.com/processing/processing/issues/1041
-X update name of sketch in the "Recent" menu
-X   https://github.com/processing/processing/issues/2984
-X   https://github.com/processing/processing/pull/3046
-X File change detection rewrite
-X   https://github.com/processing/processing/pull/3048
-X another file change detection rewrite
-X   https://github.com/processing/processing/pull/3070
-X broken Windows build due to launch4j .jar not updated
-X   https://github.com/processing/processing/issues/3062
-X   https://github.com/processing/processing/pull/3066
+_ i18n support for Modes
+_   https://github.com/processing/processing/commit/0ed2fc139c3c5dfe0a1702ed8348987b3c6a5c9d
 
-integration of pdex
-X changed JLS4 to JLS8 (but make sure it doesn't introduce anything too weird)
-X change build scripts, get things running
-X rename TextArea and TextAreaPainter to JavaTextArea
-X DebugEditor.createTextArea() is copy & pasted from JavaEditor
-X   this whole setup is really gross at the moment
-X finish Ant task to download JRE and JDK from Oracle
-X remove public 'ta' object in DebugEditor, also dmode
+_ show the recommended sw version on the download page
+_ just skip the welcome screen on Windows hidpi dipslays?
 
-_ fix hasJavaTabs() function
-_   almost always used as a negative, or tied to a 'return' from fxn
-_   name isn't tied to its function, but the symptom
-_   only checked once (when the editor is created)
-X   how does it relate to compilationCheckEnabled?
-X     removed, seems to be duplicate/used the same way
-_ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
-_   because it's in the other ClassLoader, can no longer rely on it
-_ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
+_ refresh option for sketchbook
+_ import option for sketchbook
+_ 'show sketch folder' weird when in temp folder
+_   ask to save first (sketch has not been saved yet)
+_ same with adding files to an unsaved sketch, do we block that?
 
-_ disable the debug toggle menu while running
-_   otherwise could run in one mode, then try to stop in another
-_ show debug window when running, hide when stopped
-_ can we animate the show/hide for the debug box?
 
-_ do the right thing on passing around List vs ArrayList and others
+contrib
+_ Saving sketch with the same name as a class
+_   https://github.com/processing/processing/pull/4033
+_ Pasting text into PDE results in "Clipboard does not contain a string"
+_   https://github.com/processing/processing/pull/4040
 
-breakage
-_ break out a gui package (get class count down in .app)
-_ remove deprecated methods
+
+high
+_ windows anti-malware leaves browser stuck at 100%
+_   https://github.com/processing/processing/issues/5893
+_ run button not deactivating
+_   https://github.com/processing/processing/issues/5786
+_ Find in Reference disabled for various keywords (draw, for, if, catch, while)
+_   https://github.com/processing/processing/issues/5562
+_   https://github.com/processing/processing/pull/5642
+_ sketch window placement not recorded
+_   https://github.com/processing/processing/issues/5781
+_ errors inside setup() aren't coming through at all?
+_   seen in Eclipse; have to turn on the debugger... same as #4703?
+_ Welcome screen doesn't size properly for HiDPI screens
+_   https://github.com/processing/processing/issues/4896
+_ sketch window resets position after each run (regression from 3.4?)
+_   https://github.com/processing/processing/issues/5781
+
+
+temp
+_ inside Sketch, makeTempFolder() would be the place to modify the location
+_   perhaps make a 'temp' inside the sketchbook folder?
+_   on startup, check to see if there are a lot of files, remove them?
+_   or maybe auto-delete once older than 24 hours?
+_   also don't search it when walking the sketchbook
+_ untitled folders are stored in temp folder
+_ add a note about temp dir to the bug on windows temp dirs
+_   move away from using a temp dir at all for sketches
+_   -Djava.io.tmpdir=Z:\temp
+_ clean up /tmp folders used during build
+_   https://github.com/processing/processing/issues/1896
+_ don't let people into the /tmp folder for sketches
+o   don't use tmp folder for sketches?
+_   restrict more things like "show sketch folder"
+_   don't allow adding files w/o saving
+_   others?
+_ clean Windows temp folders
+_   https://github.com/processing/processing/issues/1896
+_ could not write to temporary directory (virus checker problems)
+_   https://github.com/processing/processing/issues/4757
+
+
+modes
+_ sketch.properties not being written if initial mode is p5.js?
+_ when creating a sketch within non-Java mode, should write the settings file
+_   so that it re-loads in the proper environment
+_ remove sketch.properties when moving back to the default?
+_   or can we not do this, because it's used to set the 'next' mode
+_ allow modes to specify their own base file name
+_   need to move "is this a sketch?" handling into Mode
+_ fix extension check for other modes
+_   https://github.com/processing/processing/issues/3980
+_ mode list does not update after changing sketchbook folder
+_   already reported?
+
+
+sketch/launching
+_ what to double-click when opening p5 projects
+_   lack of a project file makes this a pain
+_   dropping a sketch folder onto the PDE should also be implemented
+_ some type of sketch archive format for posting examples (.psk?)
+_   would be nice to open a sketch directly from a zip file
+_   https://github.com/processing/processing/issues/73
+_   maybe just open from a zip file, since psk doesn't help anything
+_   also have a means of importing sketches
+_     https://github.com/processing/processing/issues/3987
+_   also see several notes below re: examples
+_ add means to import .zip files from file/url into sketchbook, library, etc.
+_   super easy given current code implementation, might help usability
+_ put the reference (and examples?) into .zip files
+_   unzipping the app takes forever
+_   see the 'examples' section below
+_ how are file associations handled in Linux? (for .pde, .psk)
+
+
+teaching
+_ teacher wants user input on the console
+_   https://github.com/processing/processing/issues/5779
+_ did we lose settings.path because it was too buggy?
+_   https://github.com/processing/processing/issues/3948
+_ proxy trouble with p5? since adding the system proxy?
+_   https://github.com/processing/processing/pull/3251/files
+_   larger problem thread https://github.com/processing/processing/issues/3891
+_   ideen2011.blogspot.de/2011/08/java-proxyselector-usesystemproxies-and.html
+_   malformed proxy issues http://stackoverflow.com/q/376101
+_   docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html
+_   https://github.com/processing/processing/issues/1476#issuecomment-23229990
+
+
+_ "Required files could not be found" when trying to run from the .zip file
+_   https://github.com/processing/processing/issues/5022
+_   use an installer instead?
+
+_ "error during export" message, but no error message contents come through
+_   e.g. https://github.com/processing/processing/issues/4792
+
+_ library compilations not ordered properly w/ sorting
+_   do we still support library compilations? that was from 2016
+_   https://github.com/processing/processing/issues/4630
+
+_ editor windows always open on display 1
+_   https://github.com/processing/processing/issues/1566
+
+
+needs review
+_ createPreprocessor() added to JavaEditor, creating a mess
+_   https://github.com/processing/processing/commit/2ecdc36ac7c680eb36e271d17ad80b657b3ae6a0
+_ patch to core classpath by Manindra?
+
+
+
+known issues
+_ launch4j doesn't work from folders with non-native charsets
+_   anything in CP1252 on an English Windows system is fine
+_   but anything else reports "font sadness" b/c it's using the system JRE
+_   https://github.com/processing/processing/issues/3543
+_   move to javapackager or another option?
+_   http://www.excelsiorjet.com/kb/35/howto-create-a-single-exe-from-your-java-application
+_ Export Application fails on machines w/ non-ASCII chars in user name
+_   at least give a warning about this?
+_   https://github.com/processing/processing/issues/4736
+_   related: https://github.com/processing/processing/issues/3543
+_ mouse events (i.e. toggle breakpoint) seem to be firing twice
+
 
 gui
-_ finish the gui
-_   https://github.com/processing/processing/issues/3072
+_ spacing of the updates number/circle in the lower right is off
+_   https://github.com/processing/processing/issues/4094
+_   https://github.com/processing/processing/pull/4097
+_   solution is to create a sprite sheet as a psd that'll have better type
+_     no way we're gonna fix the sizing and spacing for all platforms
+_     more than a certain amount should just be 10+, +, or whatever
+_ text gutter doesn't seem to be hidpi
+X   or is it b/c screen not quite 2x? (nope)
+_ Tooltip over variable decl has wrong style and content
+_   make all tooltips run through our style
+_   https://github.com/processing/processing/issues/3940
+_ import suggestions box needs design review
+_   https://github.com/processing/processing/issues/3407
+_ fix background color for selected lines in VariableInspector
+_   https://github.com/processing/processing/issues/3925
+_ implement 2x versions of the icons for the debugger window/variable inspector
+_   https://github.com/processing/processing/issues/3921
+_ different design of squiggly line
+_   easy to do inside JavaTextAreaPainter.paintSquiggle()
+_ build custom scroll bar since the OS versions are so ugly
+_ see notes in the 'dialogs' section below, implement our own option panes?
+_ tiny trail of dots when moving the selection bar up/down on retina
 _ need 'actively pressed' version of 'play' and 'stop'
 _   could do rollover as well, but do other apps use them?
 _   iTunes has no rollover state but has a 'down' state
 _     swaps to stop after release
-_ need unavailable/deactivate state for debug toolbar items
-_   or hide the tray when not debugging? Debug just a menu checkbox?
-_ using svg images for res-indep icons/gui
-_   http://stackoverflow.com/questions/2495501/swing-batik-create-an-imageicon-from-an-svg-file
+_ deactivate step, continue, stop when not running?
+_ disable the debug toggle menu while running
+_   otherwise could run in one mode, then try to stop in another
+_ recent menu gets huge with other p5 versions on osx
+_ show compiling/startup animation after clicking run
+_   or maybe show an animation for starting up
+_   rather than post-compile
+_   https://github.com/processing/processing/issues/136
 
-what do these do, and are we doing it already?
-System.setProperty("awt.useSystemAAFontSettings","on");
-System.setProperty("swing.aatext", "true");
 
-jre download/install
-X make sure the file downloads correctly before renaming
-X   https://github.com/processing/processing/issues/2960
-_ update build scripts for Windows and Linux to use JRE downloader Ant Task
-_   https://github.com/processing/processing/issues/3059
-_ add method to prompt OS X developers to download the JDK update
+fonts
+_ fonts are still really ugly (on non-retina)
+_   may need to drop use of Source Sans
+_   what do these do, and are we doing it already?
+_   System.setProperty("awt.useSystemAAFontSettings","on");
+_   System.setProperty("swing.aatext", "true");
+_ how are we going to handle fonts for other languages?
+_   two new fonts have been added, other languages will need more
+_   need a decent sans with with Unicode coverage
+_   i.e. https://github.com/processing/processing/pull/3025
+_ Implement fallback fonts so we can use Source et al with CJK/Greek/Arabic
+_   https://github.com/processing/processing/issues/5023
 
-_ fix file change detection on OS X
-_   https://github.com/processing/processing/issues/2852
 
-_ make the tabs have a default minimum size
-_   multiple sizes as they get smaller (web browser style)
-_ make examples pull/build automatic during dist
-_ merge experimental into the main Java mode 
-_   thereby removing Java 2.0 mode from the next release
-_   otherwise redoing the design for 2 modes
-_ add span screens pref (near the display pref)
-_   add checkbox for spans to export dialog
+pde/build
+_ update list of optional JRE files for Java 8
+_   Andres provided some updates
+_   https://github.com/processing/processing/issues/3288
+_   these will change again for Java 11, so wait until then
+_ fix appbundler problems due to rollback
+_   https://github.com/processing/processing/issues/3790
+_   the rollback re-introduces two bugs (serial export and scrolling)
+_   and any other changes later than 16 November 2014:
+_   https://github.com/processing/processing/commits/master/build/macosx/appbundler.jar
+_   https://github.com/processing/processing/commits/master/build/macosx/appbundler/native/main.m
+_   https://github.com/processing/processing/commit/fa27b983e76fdbc5c4c1451a1f0d854c652b1639
+_   https://bitbucket.org/infinitekind/appbundler
+_ unsupported java version when trying ant run with 7u65
+_   no helpful message about how to automatically download 8u51
+_ ignore-tools in build.xml not being called for some reason
+_ when variables used in size(), getting exceptions instead of any warning
+_   https://github.com/processing/processing/issues/3311
+_ crashed on startup w/ JavaScript mode as default b/c PdeKeyListener not found
+_   because it's in the other ClassLoader, can no longer rely on it
+_ remove JavaMode.errorLogsEnabled and JavaEditor.writeErrorsToFile()
+_ continue clearing out ProgressFrame
+_   also hook up the statusNotice() when done
+_ break out Mode-specific options to their own panels in prefs
+_   Mode should just provide a panel for their prefs
+_ make the build fail if git pull on processing-docs fails
 _ remove "save before running" message
-_ auto-insert after antlr @SuppressWarnings({ "unused", "unchecked", "cast" })
+_ pass through the source to update licenses
+_   add Processing Foundation as 2012-15
+_   update license info to state gplv2 not v3
+_   run through that online license checker
+_ save() and saveAs() need to be refactored
+_   https://github.com/processing/processing/issues/3843
+_ clean out the repo
+_   https://github.com/processing/processing/issues/1898
+_ search the source for 'applet' references (i.e. SVG docs)
+_ PreferencesFrame is a misnomer (not a frame itself)
+_   change to PreferencesDialog, and make it a dialog?
+_ move Library to LibraryContribution and into contrib?
 
 
 from the todo list
 _ reas: comments go nasty when auto-formatted
 _ reas: code coloring sometimes disappears
 _ me: undo not in the correct location
-_ implement the new gui
 _ drop XP support (but improve Windows 8 support? ouch)
+_ improve error message when creating a tab with the same name
+_   right now it's generic, based on "a file exists"
+_ don't allow users to create 'blah.java' when 'blah.pde' already in sketch
 
 
-high
-_ dist needs to do a git pull on processing-docs
-_ "Your sketch has been modified externally" appear without reason
-_   https://github.com/processing/processing/issues/2852
-_ export application ubuntu -> windows not working (2.2.1)
-_   https://github.com/processing/processing/issues/2698
-_   might be something with libraries (native or otherwise)
-_ move the language stuff to the settings folder
-_   that way people can modify and test w/o recompiling
-_   https://github.com/processing/processing/issues/2938
-_ sketchbook window doesn't update when sketches are added, renamed, etc
-_   https://github.com/processing/processing/issues/2944
 
-
-pending
-_ look at the sound library https://github.com/wirsing/ProcessingSound
-_   sound is not yet supported on Windows
-_ make reference build process part of dist
-_   https://github.com/processing/processing-docs/issues/85
-_   separate ant target, but only require them for dist
-_   as separate targets, folks can build explicitly if they'd like
-_   processing-docs/java_generate/ReferenceGenerator/processingrefBuild.sh
-_   remove reference.zip from main repo
-_ clean out the repo
-_   https://github.com/processing/processing/issues/1898
-_ Add support for localizing contributions
-_   https://github.com/processing/processing/pull/2833
+sketchbook
+_ Mode.rebuildLibraryList() called too many times on startup?
+_   and when sketches saved as well?
+_   makes saving *really* slow with a lot of libraries
+_ New/Rename/Save As is reloading the whole sketchbook, argh
+_ improve start time by populating sketchbook/libraries on threads
+_   https://github.com/processing/processing/issues/2945
 
 
 help me
-_ "String index out of range" error
-_   https://github.com/processing/processing/issues/1940
-_ closing the color selector makes things freeze (only Linux and Windows?)
-_   https://github.com/processing/processing/issues/2381
-_ SOCKS proxy not working: 
-_   https://github.com/processing/processing/issues/2643
-_   the current code that gets/sets the pref is in Preferences
-_   instead of current implementation, can we auto-detect proxy settings?
-_   old issue: https://github.com/processing/processing/issues/1476
-_   http://docs.oracle.com/javase/7/docs/technotes/guides/net/proxies.html
-_   http://docs.oracle.com/javase/1.5.0/docs/guide/net/proxies.html
-_   http://stackoverflow.com/questions/4933677/detecting-windows-ie-proxy-setting-using-java
-_   http://www.java2s.com/Code/Java/Network-Protocol/DetectProxySettingsforInternetConnection.htm
-_ problems with non-US keyboards and some shortcuts
-_   https://github.com/processing/processing/issues/2199
-_ improve start time by populating sketchbook/libraries on threads
-_   https://github.com/processing/processing/issues/2945
-_ clean up 'ant doc' target to remove warnings
-_   https://github.com/processing/processing/issues/1492
-_ fix encodings, line endings, and mime types in the repo
-_   https://github.com/processing/processing/issues/2955
+_ Add support for localizing contributions
+_   https://github.com/processing/processing/pull/2833
+_   https://github.com/processing/processing/issues/3154
+_   https://github.com/processing/processing/pull/3337
+_ export application ubuntu -> windows not working (2.2.1)
+_   https://github.com/processing/processing/issues/2698
+_   might be something with libraries (native or otherwise)
 
 
 medium
-_ Determine shortcut for Export vs Use Selection for Find
-_   https://github.com/processing/processing/issues/2985
+_ detect changes in case with libraries
+_   https://github.com/processing/processing/issues/4507
+_ Library path mismatch between processing-java and export
+_   https://github.com/processing/processing/issues/4493
 _ remove toolbar menu references and code to rebuild
 _ fix single instance server on OS X to load double-clicked files
 _   when run from Eclipse, the single instance thing punts
 _ 'recent' menu needs to recognize the p5 app folder
 _   also should recognize the user's home dir
 _ possibility of libraries folder inside a particular sketch?
-_ display "1" is not correct in 2.1.2
-_   https://github.com/processing/processing/issues/2502
-_ re/move things from Google Code downloads
-_   https://code.google.com/p/support/wiki/DownloadsFAQ
 _ add font fixes to the rest of the API
 _   https://github.com/processing/processing/commit/eaff673d173b2d27f276cf5c59e3abf6c0fab86b
 _   g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
@@ -245,6 +310,7 @@ _ should default to the local Java on Windows and Linux
 _   have export apps default to the local JRE
 _   Linux is probably using the system JRE if available
 _   launch4j may be all set, but double-check
+_   um, no--we should use the embedded version, b/c who knows what happens
 _ use platformDelete() to remove untitled sketches?
 _   would allow us to use the /tmp folder
 _ change to using platformDelete() instead of Base.removeDir() where possible
@@ -258,7 +324,7 @@ _   the Find window (also the save windows) also have the same problem
 _ move old Google Code SVN back to processing.org
 _   then cull out the old branches/tags from the Github repo
 _   and/or start bundling separate source downloads
-_ look through all isPopupTrigger() code 
+_ look through all isPopupTrigger() code
 _   make sure both press/release are implemented
 _ emacs style errors in commander aren't quite right
 _   https://github.com/processing/processing/issues/2158
@@ -268,7 +334,7 @@ _ modes are being loaded multiple times, which can cause trouble
 _ add minimum version required (or max version?) to libraries/modes/etc
 
 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
 DOC / Misc
@@ -296,7 +362,7 @@ _   and that java2d should complain if people try it
 _ method to go from function name to the included examples where used?
 _ encourage use of set() instead of point() in the drawing api
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114204116
-_ other projects on which p5 is built 
+_ other projects on which p5 is built
 _   no longer oro matcher and jikes
 _   add: quaqua, jna, registry stuff, .. ?
 _ noLoop() isn't the same as "finished", though it's sometimes used that way
@@ -317,7 +383,6 @@ _   problem with big floats: http://processing.org/discourse/yabb/YaBB.cgi?board
 _   problem with small floats: http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1115500448
 _ console stored in prefs location
 _   console may be useful for debugging
-_ untitled folders are stored in temp folder
 
 
 DOC / Text
@@ -332,12 +397,12 @@ _ textMode(SCREEN) for P2D and P3D for nice fast text in screen space
 _   currently slow in JAVA2D and OPENGL, but this will improve
 _ what is the vlw font file format?
 _ shapes from 3D type
-_   the way to do it (will improve later) is to use some undocumented features  
-_   1) you have to use the OPENGL renderer 
-_   2) use textMode(SHAPE); 
-_   3) use createFont() (which you already are) 
-_   this will convert all the shape data from the fonts for writing. 
-_   it will be *extremely* slow, which is part of why it's not documented yet. 
+_   the way to do it (will improve later) is to use some undocumented features
+_   1) you have to use the OPENGL renderer
+_   2) use textMode(SHAPE);
+_   3) use createFont() (which you already are)
+_   this will convert all the shape data from the fonts for writing.
+_   it will be *extremely* slow, which is part of why it's not documented yet.
 _   but it will work with beginRaw().
 _ improve documentation of the pdf stuff
 _   be clearer about the font setup stuff
@@ -346,16 +411,13 @@ _   fonts by default not working that well?
 
 DOC / Other
 
-_ why adding .0001 to a float doesn't work
-_   and how they're imprecise in general (use nf)
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1130877990
 _ why strong typing? (link also to language thing on main page)
 _ we cannot commit to any sort of timeframe on releases
 _ under the hood - basic
 _   it's all java
 _   don't use awt
 _   most things are imported by default
-_ under the hood - complex 
+_ under the hood - complex
 _   how to get started with coding
 _   everything subclasses PApplet
 _   if you need a particular name, add it with "extends PApplet"
@@ -365,16 +427,8 @@ _     in doing so, you'll lose access to 'g'
 _   add main() to your app to make it run on its own
 _   preproc stuff.. have to make setup() into public void setup()
 _     (same for key events and all that)
-_ performance 
-_   video stinks.. java2d stinks.. macs stink
-_   note in the 'drawing in 2d' section of faq
-_ fastest machine possible
-_   turn off hyperthreading in the bios
-_   nice gfx card only helps opengl
-_   dual processor not particularly useful, unless you make more threads
-_     but making more threads is often more work than is useful
 _ is there a way to do xxx?
-_   advanced users who are outgrowing the basic reference: 
+_   advanced users who are outgrowing the basic reference:
 _   be sure to check the "complete" reference
 _ change bugs.html to issues.html
 _   and add a redirect in httpd.conf
@@ -407,10 +461,10 @@ _ write an example that uses HashMap (or Hashtable)
 _ write an example that uses ArrayList properly
 _ get xml library example in there
 _ simple method for having a clickable region or sprite with rollover
-_ post to web example 
+_ post to web example
 _   particularly for uploading image data
 _   along with php script to handle receive
-_   this is in hacks, but 
+_   this is in hacks, but
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=VideoCamera;action=display;num=1117194066#7
 
 
@@ -445,14 +499,12 @@ PDE - Processing Development Environment
 
 PDE / Dialogs
 
-_ dialog box icon is fuzzy on OS X retina machines
-_   https://github.com/processing/processing/issues/2117
-_ solution might be our own dialog boxes
 _ two-tiered dialogs for everything - use big font/little font style throughout
 _   http://javagraphics.blogspot.com/2008/06/joptionpane-making-alternative.html
 _ option to suppress warning dialogs
 _   starting with the one about modifying the sketch name for spaces
-_   http://code.google.com/p/processing/issues/detail?id=7
+_   also the "some features will be disabled" with .java tabs
+_   https://github.com/processing/processing/issues/46
 _ add "don't warn me about this" for sketch renaming
 _   make sure renamed version doesn't exist already
 _ prompt user before nuking applet or application folders
@@ -460,31 +512,26 @@ _   along with a "don't ask me later"
 _ use macosx dialogs for all of the editor stuff
 _   see about doing the same on windows, linux?
 _   the others seem to respond ok to the lucida grande since they use defaults
-_   vista style dialogs
-_     http://msdn.microsoft.com/en-us/library/bb328626.aspx
-_   confirmation dialogs (save and don't save.. who'd a thunk it)
-_     http://msdn.microsoft.com/en-us/library/aa511273.aspx
-_     http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
-_   scrollable stack trace
-_     http://www.javalobby.org/java/forums/t19012.html
+_ vista style dialogs
+_   http://msdn.microsoft.com/en-us/library/bb328626.aspx
+_ confirmation dialogs (save and don't save.. who'd a thunk it)
+_   http://msdn.microsoft.com/en-us/library/aa511273.aspx
+_   http://i.msdn.microsoft.com/Aa511273.Confirmations03(en-us,MSDN.10).png
 
 
 PDE / Compiler & Preprocessor
 
 medium (bugs/features)
+_ preprocessor throws error when calling color() on a PGraphics
+_   https://github.com/processing/processing/issues/3762
 _ incorporate new preproc
 _   https://github.com/fjenett/processing-preprocessor-antlr4
 _   https://github.com/processing/processing/issues/3055
 _ update grammar for ANTLR
 _   https://github.com/processing/processing/issues/3054
-_ modify build to insert these after antlr run:
-_   @SuppressWarnings({"unused", "cast"})
-_   or get the updated ANTLR, which likely would support it
 _ omitting a semicolon shows the error on the line after it
 _ npe if library is removed before compile
 _   always check library folders to make sure they're still valid
-_ mismatched square brackets generate bizarre and/or misleading error messages
-_   http://code.google.com/p/processing/issues/detail?id=355
 _ with additional .pde files, don't allow static mode in front tab
 _   e.g. no setup()/draw() block
 _ don't allow "for (blah; blah; blah) ;"
@@ -499,47 +546,27 @@ _ link out to further documentation (e.g. AIOOBE, NPE)
 
 low (common errors around reserved names/class naming)
 _ Saving sketch with the same name as a class or primitive breaks sketch
-_   http://code.google.com/p/processing/issues/detail?id=157
-_ don't allow people to override methods like paint() 
+_   https://github.com/processing/processing/issues/196
+_ don't allow people to override methods like paint()
 _   make them final? just improve the error messages?
-_   http://code.google.com/p/processing/issues/detail?id=1020
 _   https://github.com/processing/processing/issues/1058
 _ Processing chokes if a sketch defines a class with same name as the sketch
 _   https://github.com/processing/processing/issues/196
 _ don't allow goofy case versions of reserved words
 _   keypressed should maybe throw an error
-_   http://code.google.com/p/processing/issues/detail?id=5
-_ using a keyword as a variable name gives unhelpful error message
-_   http://code.google.com/p/processing/issues/detail?id=54
+_   https://github.com/processing/processing/issues/44
 _ "unexpected token" on anonymous instance of parameterized Comparator
-_   http://code.google.com/p/processing/issues/detail?id=494
+_   https://github.com/processing/processing/issues/533
 
 
 PDE / Editor
 
-_ [help] IllegalArgumentException when clicking between editor windows
-_   https://github.com/processing/processing/issues/2530
-_ [help] Undo does not move to the correct location in the editor window
-_   https://github.com/processing/processing/issues/707
-_ clean up /tmp folders used during build
-_   https://github.com/processing/processing/issues/1896
 _ 'recent' menu doesn't respect examples folder of other p5 versions
 _   could write that into the file, that it's an example
 _   or write the path as shown in the PDE to the file as simpler
 _ 'recent' menu paths can get enormous
-_ don't let people into the /tmp folder for sketches
-o   don't use tmp folder for sketches? 
-_   restrict more things like "show sketch folder"
-_   don't allow adding files w/o saving
-_   others?
-_ when creating a sketch within non-Java mode, should write the settings file
-_   so that it re-loads in the proper environment
-_ remove sketch.properties when moving back to the default?
-_   or can we not do this, because it's used to set the 'next' mode
-_ add means to import .zip files from file/url into sketchbook, library, etc.
-_   super easy given current code implementation, might help usability
 _ active editor not being set null
-_   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
+_   in Base.nextEditorLocation(), changed to "editors.size() == 0"
 _   instead of (activeEditor == null), but that's papering over a problem
 _   where the active editor is not being set null
 _ renaming RGB (.pde) to Rgb.java says "a file named RGB.pde already exists"
@@ -560,21 +587,9 @@ _   or wait for mac handlers to register an open event
 _   can also cause problems with opening multiple copies of same sketch
 _ after fixing name of sketch, ensure sketch of that name does not exist
 _ add auto-save to the editor
-_   http://code.google.com/p/processing/issues/detail?id=92
-_ option to just print all code in project
-_   http://code.google.com/p/processing/issues/detail?id=11
-_   https://github.com/processing/processing/issues/50
-_   or option to export all the code as colored html?
-_ dim edit menus as appropriate during selection/no selection/etc
-_   http://code.google.com/p/processing/issues/detail?id=14
+_   https://github.com/processing/processing/issues/131
 _ implement better method of showing curly brace closure
-_   http://code.google.com/p/processing/issues/detail?id=55
-_ sketches should only write to the console of their editor window
-_   http://code.google.com/p/processing/issues/detail?id=114
-_ problems with file/print
-_   http://code.google.com/p/processing/issues/detail?id=174
-_ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
-_   move Java-specific InputHandler to its own subclass
+_   https://github.com/processing/processing/issues/94
 _ setModified() getting called on Windows (probably Linux) for key cmds
 
 
@@ -585,26 +600,7 @@ _   does it unhighlight after compile or runtime errors?
 _   also when using draw() instead of loop()
 _     applet needs to notify runner that it has terminated
 _   check 'finished' via objectreference?
-_ show compiling/startup animation after clicking run
-_   or maybe show an animation for starting up
-_   rather than post-compile
-_   http://code.google.com/p/processing/issues/detail?id=97
 _ EditorToolbar has two TODO items for open menu handling
-
-
-PDE / Editor Header
-
-_ key command for prev/next tab works, but not menu
-_   menu options are actually disabled because of inconsistency
-_   http://code.google.com/p/processing/issues/detail?id=140
-_ ctrl/ctrl-shift-n sometimes stops working
-_   http://code.google.com/p/processing/issues/detail?id=149
-
-
-PDE / Editor Status
-
-_ make standard editor input prompt available to other tools/modes
-_   http://code.google.com/p/processing/issues/detail?id=746
 
 
 PDE / Export
@@ -621,23 +617,18 @@ _   or don't allow it to be exported
 _   add bug reference to the faq once added to the db
 X   or at least add a note about this to the faq
 _ show error when no main() is included but class extends PApplet
-_   error can happen or be checked 
-_ exporting application copies .java files 
+_   error can happen or be checked
+_ exporting application copies .java files
 _   .java files are copied to the root folder as well as the source folder
-
-
-PDE / Find & Replace
 
 
 PDE / Examples
 
-_ "Standard Examples" dialog box off screen if Processing IDE maximised
-_   http://code.google.com/p/processing/issues/detail?id=928
-_ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
-_   mark examples as untitled (rather than read-only)
-_   maybe even pull these directly from the zip file?
+o keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
+o   mark examples as untitled (rather than read-only)
+o   maybe even pull these directly from the zip file?
 _ load examples from zip files
-_   http://code.google.com/p/processing/issues/detail?id=143
+_   https://github.com/processing/processing/issues/182
 _ don't make examples read-only
 _   just do them from psk filess
 _ disallow add file to sketch, export, export application
@@ -649,19 +640,19 @@ _   though will that require the sketch to be saved before export?
 _   https://github.com/processing/processing/issues/2459
 _ examples window sketches should load in proper environment
 _ write build.xml file to automatically update the examples
-_ sketch.isReadOnly returns false for examples coming from multiple modes
-_   http://code.google.com/p/processing/issues/detail?id=734
 _ see how library installation goes, then possibly do same w/ examples
 
 
 
 PDE / Libraries
 
+_ alternate handling of duplicate library conflicts
+_   https://github.com/processing/processing/pull/5126
 _ Add a means to specify packages to import in library.properties
 _   https://github.com/processing/processing/issues/2134
 _ need to deal with classpath conflicts
 _   avoid garbage that people have installed on their machines
-_   antlr.jar in the classpath will cause trouble.. 
+_   antlr.jar in the classpath will cause trouble..
 _     http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1138652326
 _   jogl jar files, or jogl install will cause trouble
 _     /System/Library/Java/Extensions or /Library/Java/Extensions
@@ -675,48 +666,65 @@ _   altho prolly only when it's actually different (md5hash it?)
 _   this seems to be causing a lot of trouble with recent releases
 _   (opengl changes and whatnot)
 _ jar files like the bad aiexport plugin will cause serious problems
+_   https://github.com/processing/processing/issues/95
 _   need to ignore processing.core classes showing up in other jar files
 _   tougher than it looks, because it all depends on what java wants to use
 _     i.e. even if not specified, the stuff will be in the classpath
 _   need to make classpath code be less promiscuous
 _   the order of adding libraries to classpath should be opposite
 _     the important local libraries should be first in cp, user contrib later
-_   http://code.google.com/p/processing/issues/detail?id=56
-_ changing the sketchbook folder will make libraries show up
-_   but it won't reload the library mapping table
-_ make sure there aren't library jar files named the same thing 
+_ make sure there aren't library jar files named the same thing
 _   i.e. if one library has db.jar, then that's gonna kill another db.jar
 _   when the files are copied over
-_ libraries in java tabs (separate .java files) are reported missing
-_   need to scan the .java files for imports that need to be included
-_   http://code.google.com/p/processing/issues/detail?id=459
-_ library.properties and tool.properties should reflect supported modes
-_   http://code.google.com/p/processing/issues/detail?id=1050
-_ versioning info 
-_   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/versioning.html
 _ java.ext.dirs for /System/Library/Java/Extensions
 _   http://java.sun.com/j2se/1.5.0/docs/guide/extensions/spec.html
-_   can set java.ext.dirs to something else 
+_   can set java.ext.dirs to something else
 _   on osx, just ignore anything in /Library/Java/Extensions (but not others)?
 _ native lib stuff, use native.txt in lib folder, then:
 _   String osName = System.getProperty("os.name");
 _   String osArch = System.getProperty("os.arch");
 _   http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
-_ need better platform designation setup for libs
-_ library installation should use the sketchbook folder, not the p5 folder
-_   actually enforce this, give users a warning about other libs
-_ set DYLD_LIBRARY_PATH to include .dylib and other framework stuff
-_   java.library.path will only handle .jnilib stuff
 _ need better error messages for broken api / library troubles
 _   e.g. ocd is broken in 0125 because of method signature changes
-_ could have library developers update compatability note
-_   so they would need to test library and say "compatible with 0110"
-_   before it would automatically update or show as an update
-_ need an "install library" option to deal with urls..
 
 
 PDE / Manager
 
+_ Manager fails to complete install of PythonMode when no windows open
+_   https://github.com/processing/processing/issues/5309
+_ Python Mode not downloading?
+_   https://github.com/processing/processing/issues/5918
+_ an incompatible Mode prevents the PDE from quitting after last window is closed
+_   https://github.com/processing/processing/issues/5112
+_ “could not move the contribution to the backup folder” message while updating
+_   problem is that any sketch that uses a library, the lib is stuck as "in use"
+_   https://github.com/processing/processing/issues/4973
+_ issues with updating modes
+_   https://github.com/processing/processing/issues/5424
+_ examples window not updating on install
+_   open examples window
+_   mode > add mode > libraries > install video
+_   did not update the examples window, had to restart pde
+_ was able to save over the video capture examples b/c they were a library
+_   lib examples not properly marked as read-only
+_ "Could not find a examples in the downloaded file" is a poorly worded message
+_ 'version' should be x.y or x.y.z, not some extra long string
+_   enforce this by disallowing spaces? on the import script?
+_ Progress bar height on macOS is too thin
+_   https://github.com/processing/processing/issues/4734
+_ proper error handling when downloading contribs listing
+_   https://github.com/processing/processing/issues/4732
+_ update CM entries when sketchbook location changes
+_   https://github.com/processing/processing/issues/3927
+_ ugly white gap at the top of scroll bar
+_   the table header doesn't extend far enough
+_ scrolling "past" top/bottom causes the screen to jiggle (OS X and Trackpad)
+_   looks like ContributionListing.getScrollableUnitIncrement() returns early
+_ Examples window closes and re-opens during library install/remove
+_   https://github.com/processing/processing/issues/3304
+_ CM - Icon instead of an "X" for the "could not connect" message
+_   https://github.com/processing/processing/issues/3706
+_ several TODO items listed in ContributionPanel
 _ something to set min/max versions that are supported by a library
 _ ability to cancel a download/install
 _ we shouldn't use .properties extension for modes, et al
@@ -727,10 +735,10 @@ _ why wasn't Library moved to LibraryContribution?
 _   or that LibraryContribution needs to be a wrapper around it?
 _ send info on 'check for updates' so we know about libs/modes/etc?
 _   how to disclose to users?
-_   only send for items that are part of the public list 
+_   only send for items that are part of the public list
 _     otherwise we're sending private libraries/installs
 _     although this won't pick up old libraries not on the new system
-_ classpath conflicts.. 
+_ classpath conflicts..
 _   getPackageList.. from Library... maybe others?
 _   really need to make sure that a weird core.jar isn't being imported
 _   coffeescript was doing this and breaking the pde
@@ -746,8 +754,6 @@ _   "Update 4 items" as a button name
 _ new libraries not picked up when changing sketchbook location
 _ make sure contrib manager can run w/o a network connection
 _   or if a bad document comes through, it can recover
-_ gracefully recover from proxy problems
-_   https://github.com/processing/processing/issues/1601
 _ alternating blue/white backgrounds aren't updated after changing filter
 _   just need to call a repaint() after a filter change?
 _ check with Casey about coloring for error messages
@@ -756,22 +762,15 @@ _ font size for "Downloading" on progress bar is too large
 _   but changing the size breaks the vertical centering
 _ highlight color seems to be incorrect?
 _ after installing, the item in the manager list doesn't change color
-_ scrolls to bottom of window after updating the list
-_ wheel mouse is super jumpy 
+_ wheel mouse is super jumpy
 _   something about unit increment in ContributionListPanel
 _ arrow keys up/down move scroll bar, not selection
-_ excessive CPU usage of PDE after using library manager
-_   confirmed to still be a problem with b5/6
-_   https://github.com/processing/processing/issues/1074
-X   http://code.google.com/p/processing/issues/detail?id=1036
 _ fonts/etc need to be set in one place where they can be edited
 _   move styling to separate constants that are more accessible
 
 
 PDE / Preferences
 
-_ the .macosx, .linux, etc prefs should be stripped
-_   only use them on first load, and merge into preferences.txt
 _ Editor.applyFrame() may not have a valid 'editor' object to work with
 _   if windows closed, and prefs altered, NPE thrown
 _   make sure editor isn't trying to apply prefs when no editor is open
@@ -781,20 +780,13 @@ _   when are prefs saved? could instead save whenever changes are made
 _   and then if the file gets modified, it'll put up an error message
 _   also, this may be part of why other sketches aren't reloading properly
 _ simple prefs implementation to set key/value pairs using a JTable
+_   https://github.com/processing/processing/issues/5425
 _ prefs window doesn't swap ok/cancel properly for mac vs. windows/linux
 _   don't bother having a "cancel" for the prefs window
-_ rewrite preferences window to use proper layout
-_   https://github.com/processing/processing/issues/67
-_   https://github.com/processing/processing/issues/2708
 _ make prefs dialog modal?
-_ preferences window has been hit with the ugly stick
-_   redo panel to use proper Box layout etc
-_   also needs to look good across all platforms
-_   http://code.google.com/p/processing/issues/detail?id=28
-_   https://github.com/processing/processing/issues/67
 
 
-PDE / Runner 
+PDE / Runner
 
 _ if RuntimeException thrown, needs to check if it's a wrapped exception
 _   for instance, if there's a crash inside makeGraphics()
@@ -804,14 +796,22 @@ _   need to talk to VM and read when 'finished' var is set
 _ does closing the window call stop()?
 _   need to make sure hitting stop button and closing window explicitly call
 _   set finished to true, then join() the animation thread
+_ dispose handlers not called when stop button pressed
+_   https://github.com/processing/processing/issues/4445
 _ need to set dock icon title on osx
+
+
+PDE / Tweak
+
+_ TweakMode listener mess in JavaTextArea
+_   https://github.com/processing/processing/issues/4605
 
 
 PDE / Sketch & Sketchbook
 
-_ Large number of files in sketchbook folder can cause slow startup 
+_ Large number of files in sketchbook folder can cause slow startup
 _   and/or errors with launch4j
-_   http://code.google.com/p/processing/issues/detail?id=1152
+_   https://github.com/processing/processing/issues/1190
 _ error that sketch is read-only can't be canceled
 _   hitting cancel (or ESC?) still brings up the save dialog
 _ ArticulatePrint-070103a.pde from ArticulatePrint-070103a loads ok
@@ -820,11 +820,6 @@ _   because there's a dash in the name
 _   and instead only loads StemCell.pde
 _ show progress dialog during export and save
 _ hitting ESC on "create this, move file, continue" opened anyway
-_ some type of sketch archive format for posting examples (.psk?)
-_   would be nice to open a sketch directly from a zip file
-_   http://code.google.com/p/processing/issues/detail?id=34
-_   maybe just open from a zip file, since psk doesn't help anything
-_   also have a means of importing sketches
 
 
 
@@ -839,13 +834,9 @@ TOOLS / General
 _ create default tools folder (just like libraries)
 _ for tools, maybe don't run on event thread? (makes the gui hang)
 _   but instead, things that affect gui need to be called w/ invokeLater?
-_ need a proper means to handle command keys for tools (?)
-_   http://code.google.com/p/processing/issues/detail?id=44
-_ handle native code for tools menu (?)
-_   http://code.google.com/p/processing/issues/detail?id=109
 
 
-TOOLS / Ideas 
+TOOLS / Ideas
 
 _ eclipse import/export
 _   simple mechanism to export to eclipse
@@ -866,7 +857,7 @@ TOOLS / Auto Format
 
 _ Switch block cases not indented
 _   https://github.com/processing/processing/issues/1042
-_ do a better job of maintaining cursor 
+_ do a better job of maintaining cursor
 _ only auto-format a particular section of code
 _   set the 'tabs' var based on how many spaces on previous line
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1087227217
@@ -902,14 +893,11 @@ DIST
 How the environment gets packed up, downloaded, and installed.
 
 
-DIST / General 
+DIST / General
 
-_ should be able to build p5 without a JDK install, just a JRE
-_   https://github.com/processing/processing/issues/1840
-_   need to have ecj.jar accessible to ant, then modify build.xml to use this:
-_   <property name="build.compiler" 
-_             value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-_   http://help.eclipse.org/juno/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Ftasks%2Ftask-ant_javac_adapter.htm
+_ move processing-java inside the Java Mode?
+_   make a Tool that installs it for all platforms, not just OS X
+_   not really part of the 'build' anymore
 _ line ending issues
 _   doesn't really help on Windows since we use Cygwin
 _     but it would be helpful for people not using it (ant/other LF issues)
@@ -924,42 +912,48 @@ _ add additional caveats about incompletion to javadoc
 _ drag and drop
 _   including the number of items added to sketch would be especially nice
 _ implement automatic update
-_   http://code.google.com/p/processing/issues/detail?id=61
+_   https://github.com/processing/processing/issues/100
 _ need .pde document icons
 _ need .psk file icon
 _ need exported application icons
 _ need more comprehensive list of 'known bugs'
 _ need more comprehensive list of 'known suggestions'
-_ write notes about running p5 on another platforms 
+_ write notes about running p5 on another platforms
 _   this was some feedback from running on bsd:
-_     /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase 
+_     /usr/local/jdk1.3.1/bin/java -cp lib:lib/build:lib/pde.jar:lib/kjc.jar:lib/oro.jar:java/lib/ext/comm.jar PdeBase
 _   need to use the 1.3 vm, and get a fake platform name
 _   otherwise, goes looking for lib/pde_.properties or something
-_ about box 
+_ about box
 _   bring up information about gpl, lgpl, and ibmpl
 _   jedit syntax is under mit license
 _     http://www.opensource.org/licenses/mit-license.php
-_ different name for 'lib' folder because of libraries folder?
-_   avoid some confusion for when describing the libraries folder to users
+_ add proper copyright and license information for all included projects
+_   https://github.com/processing/processing/issues/224
+_ write up guidelines for modes
+_   i.e. don't mess with Sketch menu, put it in the mode menu
+_ p5 assets need to be licensed differently from the source
 
 
 DIST / Windows
 
-_ PDE and sketches are 2x smaller on high-res Windows 8 machines
-_   https://github.com/processing/processing/issues/2411
-_ processing-java output as UTF-8 makes Windows unhappy
-_   https://github.com/processing/processing/issues/1633
 _ does launching p5 from inside the .zip folder cause it to quit immediately?
 _   how can we provide an error message here?
 _ how to handle double-clicked files on windows?
 _   big deal for psk and others
 _   this may already work with SingleInstance stuff
-_ Update Windows icons for multiple sizes, implement them in the PDE
-_   http://code.google.com/p/processing/issues/detail?id=632
 
 
 DIST / Mac OS X
 
+_ Help Menu disabled on OS X (looks like a JVM bug)
+_   https://github.com/processing/processing/issues/4353#issuecomment-237715947
+_ Java bug prevents us from setting the dock name of a sketch run from the PDE
+_   https://github.com/processing/processing/issues/5045
+_ client properties
+_   https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html
+_ built-in images: http://nadeausoftware.com/articles/2008/12/mac_java_tip_how_access_mac_specific_nsimage_icons
+_ Update QuickLook plugin for Processing 3
+_   https://github.com/processing/processing/issues/3261
 _ Find a long-term solution for OS X bundler to address signing/symlink issues
 _   https://github.com/processing/processing/issues/2967
 _ appbundler improvements
@@ -969,17 +963,13 @@ _ more OS X-specific hackery for improved appearance
 _   https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html
 _ possible better option for doing retina?
 _   g.getFontRenderContext().getTransform().equals(AffineTransform.getScaleInstance(2.0, 2.0))
-_ LWJGL forum discussion 
+_ LWJGL forum discussion
 _   http://lwjgl.org/forum/index.php/topic,4711.225.html
-_ change cmd line for OS X to use symlink? 
+_ change cmd line for OS X to use symlink?
 _   otherwise updates are going to require reinstall..
-_   or that it's gonna need to parse and say "update command line?" 
+_   or that it's gonna need to parse and say "update command line?"
 _ look into LCD rendering problems w/ Java (see if Lion still a problem)
 _   fonts were showing up with very different fatness
-_ cut/copy/paste while saving a sketch on goes to the editor, not save dialog
-_   http://code.google.com/p/processing/issues/detail?id=997
-_   problem with focus traversal and native windows on OS X
-_   using JFileChooser fixes the problem (but is ugly)
 _ we're breaking some mac human interface guidelines
 _   should be using a menu factory to create menubar for all sub-windows
 _   http://developer.apple.com/technotes/tn/tn2042.html
@@ -989,11 +979,8 @@ _ put stdout/stderr into ~/Library/Logs
 _   and have a .log extension so it can be browsed properly
 _   need to make sure that it's ok to write to logs dir..
 _      probably being removed from future OS X versions
-_ Horizontal two finger scroll doesn't work in OS X
-_   also applies to horizontal scrolling on the mouse
-_   http://code.google.com/p/processing/issues/detail?id=141
 _ Exiting a sketch with Command-Q or File > Quit doesn't call stop() on OS X
-_   http://code.google.com/p/processing/issues/detail?id=147
+_   https://github.com/processing/processing/issues/186
 _ investigate the sandboxing situation on OS X
 _   http://developer.apple.com/library/mac/#documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/EnablingAppSandbox.html#//apple_ref/doc/uid/TP40011195-CH4-SW1
 most sandbox violations are triggered by attempts to read/write to the
@@ -1034,11 +1021,6 @@ DIST / Linux
 
 _ Processing is named processing-app-Base in Gnome 3
 _   https://github.com/processing/processing/issues/2534
-_ how to run "headless" from user Batuff
-_   sudo apt-get install xvfb
-_   Xvfb :2 -screen 0 1024x768x24 &
-_   export DISPLAY=localhost:2.0
-_   ./<myExportedProcessingApplication>
 _ not being able to make a link to the processing app
 _   argh.. more path and shell issues..
 
@@ -1049,91 +1031,46 @@ _   argh.. more path and shell issues..
 ////////////////////////////////////////////////////////////////////
 
 
-DEVELOP
 
-Things to fix on the source code side of things.
+FUTURE
 
+Notes for some indefinite later release...
 
-_ update license info to state gplv2 not v3
-_   add Processing Foundation as 2012
-_   https://github.com/processing/processing/issues/1777
-_ add proper copyright and license information for all included projects
-_   http://code.google.com/p/processing/issues/detail?id=185
-_   list of license issues
-_   http://code.google.com/p/processing/issues/detail?id=575
-_ write up code guidelines for project
-_   make proper Eclipse style prefs to reinforce
-_ write up guidelines for modes
-_   i.e. don't mess with Sketch menu, put it in the mode menu
-_ p5 assets need to be licensed differently from the source
-
-
-
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
-
-FUTURE 
-
-Notes for 3.0 (and later).
-
-
+_ make reference build process part of dist
+_   https://github.com/processing/processing-docs/issues/85
+_   separate ant target, but only require them for dist
+_   as separate targets, folks can build explicitly if they'd like
+_   processing-docs/java_generate/ReferenceGenerator/processingrefBuild.sh
+_   remove reference.zip from main repo
+_ using svg images for res-indep icons/gui
+_   http://stackoverflow.com/questions/2495501/swing-batik-create-an-imageicon-from-an-svg-file
 _ nurbs or other architecture stuff
 _ force indentation - implement an option for beginners especially
 _ indents and loops
 _   or make the area light up gray as it's being worked on
-_ Replace current editor with more advanced version
-_   http://code.google.com/p/processing/issues/detail?id=1032
-_   code coloring is imperfect because it's not based on a parser
-_ better text editor / live debugging (integrate Eclipse JDT)
-_   line numbers
-_   it's too difficult for students to debug their code
-_     can the jdt be hooked in somewhat easily?
 _ get rid of static mode? only setup/draw mode? or create project that way?
 _   pro: simplify internal code, fixes some of the worst errors
 _   con: people love it, most of the books use it heavily
 _ add === for String.equals()
 _   might be problematic since it might be opposite the javascript meaning
 _   jer: it's a decent time to start talking abt references/vars
-_ window menu
-_   http://code.google.com/p/processing/issues/detail?id=545
-_ restoring sketches
-_   save window positions on quit, and restore them (w/ a preference?)
-_     new windows use same mode and dimensions as topmost window
-_   saved window position problematic with multiple monitors
-_     http://code.google.com/p/processing/issues/detail?id=27
-_   Closing the last window doesn't cause PDE to save it's position/contents/etc
-_     http://code.google.com/p/processing/issues/detail?id=103
-_   not remembering window size/placement preferences
-_     http://code.google.com/p/processing/issues/detail?id=103
-_   Blank sketch opened even if opening an existing sketch by double-clicking
-_     http://code.google.com/p/processing/issues/detail?id=179
-_   changing number of screens between run causes things to show up off-screen
-_     so when running, check to make sure that things are out of the area
-_   saved window positions.. if displays has changed, becomes a problem
-_     record the display that it was on?
-_       GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
-_     make sure the application is within the bounds of the current display?
-_     (from 0, 0 to width, height)
-_     messy since some displays have negative coords
-_     http://code.google.com/p/processing/issues/detail?id=27
-_ rename location is awkward, do it on the tab?
-_ Resurrect the Eclipse plug-in project
-_   http://code.google.com/p/processing/issues/detail?id=1031
+_ Blank sketch opened even if opening an existing sketch by double-clicking
+_   https://github.com/processing/processing/issues/218
+_ changing number of screens between run causes things to show up off-screen
+_   so when running, check to make sure that things are out of the area
 _ improve the speed of file copying
-_   use FileChannels, see FileInputStream.getChannel(), 
+_   use FileChannels, see FileInputStream.getChannel(),
 _   and use transferFrom() or transferTo().)
 _   could also use FileUtils in Apache's common io
 _   http://commons.apache.org/io/api-release/index.html
-_ go through libraries and clean things up 
+_ go through libraries and clean things up
 protected void finalize() throws Throwable {
   try {
-    close();        
+    close();
   } catch (Exception e) {
-    // do something               
-  } finally {        
+    // do something
+  } finally {
     super.finalize();
-    // more code can be written here as per need of application        
+    // more code can be written here as per need of application
   }
 }

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Processing IDE
+GenericName=Processing IDE
+Comment=Open-source software prototyping platform
+Exec=<BINARY_LOCATION>
+Icon=<ICON_NAME>
+Terminal=false
+Categories=Development;IDE;Programming;
+MimeType=text/x-processing;
+Keywords=sketching;software;animation;programming;coding;
+StartupWMClass=processing-app-Base

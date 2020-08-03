@@ -22,19 +22,23 @@
 package processing.app.tools;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.swing.JOptionPane;
 
 import processing.app.Base;
-import processing.app.Editor;
 import processing.app.Language;
+import processing.app.Messages;
+import processing.app.Platform;
+import processing.app.ui.Editor;
 import processing.core.PApplet;
+import processing.data.StringList;
 
 
 public class InstallCommander implements Tool {
-  Editor editor;
+  Base base;
 
 
   public String getMenuTitle() {
@@ -42,13 +46,15 @@ public class InstallCommander implements Tool {
   }
 
 
-  public void init(Editor editor) {
-    this.editor = editor;
+  public void init(Base base) {
+    this.base = base;
   }
 
 
   public void run() {
     try {
+      Editor editor = base.getActiveEditor();
+
       final String primary =
         "Install processing-java for all users?";
       final String secondary =
@@ -78,31 +84,30 @@ public class InstallCommander implements Tool {
 
       File file = File.createTempFile("processing", "commander");
       PrintWriter writer = PApplet.createWriter(file);
-      writer.println("#!/bin/sh");
+      writer.print("#!/bin/sh\n\n");
 
-      String[] jarList = new String[] {
-        "pde.jar",
-        "antlr.jar",
-        "jna.jar",
-        "ant.jar",
-        "ant-launcher.jar",
+      writer.print("# Prevents processing-java from stealing focus, see:\n" +
+                   "# https://github.com/processing/processing/issues/3996.\n" +
+                   "OPTION_FOR_HEADLESS_RUN=\"\"\n" +
+                   "for ARG in \"$@\"\n" +
+                   "do\n" +
+                   "    if [ \"$ARG\" = \"--build\" ]; then\n" +
+                   "        OPTION_FOR_HEADLESS_RUN=\"-Djava.awt.headless=true\"\n" +
+                   "    fi\n" +
+                   "done\n\n");
 
-        // extra libraries for new JDI setup
-        "org-netbeans-swing-outline.jar",
-        "com.ibm.icu_4.4.2.v20110823.jar",
-        "jdi.jar",
-        "jdimodel.jar",
-        "org.eclipse.osgi_3.8.1.v20120830-144521.jar",
+      String javaRoot = Platform.getContentFile(".").getCanonicalPath();
 
-        "core/library/core.jar"        
-      };
-      String classPath = PApplet.join(jarList, ":");
+      StringList jarList = new StringList();
+      addJarList(jarList, new File(javaRoot));
+      addJarList(jarList, new File(javaRoot, "core/library"));
+      addJarList(jarList, new File(javaRoot, "modes/java/mode"));
+      String classPath = jarList.join(":").replaceAll(javaRoot + "\\/?", "");
 
-      //String javaRoot = System.getProperty("javaroot");
-      String javaRoot = Base.getContentFile(".").getCanonicalPath();
       writer.println("cd \"" + javaRoot + "\" && " +
-                     Base.getJavaPath() + 
+                     Platform.getJavaPath().replaceAll(" ", "\\\\ ") +
                      " -Djna.nosys=true" +
+                     " $OPTION_FOR_HEADLESS_RUN" +
       		           " -cp \"" + classPath + "\"" +
       		           " processing.mode.java.Commander \"$@\"");
       writer.flush();
@@ -111,8 +116,16 @@ public class InstallCommander implements Tool {
       String sourcePath = file.getAbsolutePath();
 
       if (result == JOptionPane.YES_OPTION) {
-        String targetPath = "/usr/bin/processing-java";
-        String shellScript = "/bin/mv " + sourcePath + " " + targetPath;
+        // Moving to /usr/local/bin instead of /usr/bin for compatibility
+        // with OS X 10.11 and its "System Integrity Protection"
+        // https://github.com/processing/processing/issues/3497
+        String targetPath = "/usr/local/bin/processing-java";
+        // Remove the old version in case it exists
+        // https://github.com/processing/processing/issues/3786
+        String oldPath = "/usr/bin/processing-java";
+        String shellScript = "/bin/rm -f " + oldPath +
+          " && /bin/mkdir -p /usr/local/bin" +
+          " && /bin/mv " + sourcePath + " " + targetPath;
         String appleScript =
           "do shell script \"" + shellScript + "\" with administrator privileges";
         PApplet.exec(new String[] { "osascript", "-e", appleScript });
@@ -121,10 +134,10 @@ public class InstallCommander implements Tool {
         File targetFile = new File(System.getProperty("user.home"), "processing-java");
         String targetPath = targetFile.getAbsolutePath();
         if (targetFile.exists()) {
-          Base.showWarning("File Already Exists",
-                           "The processing-java program already exists at:\n" +
-                           targetPath + "\n" +
-                           "Please remove it and try again.", null);
+          Messages.showWarning("File Already Exists",
+                               "The processing-java program already exists at:\n" +
+                               targetPath + "\n" +
+                               "Please remove it and try again.");
         } else {
           PApplet.exec(new String[] { "mv", sourcePath, targetPath });
         }
@@ -132,8 +145,20 @@ public class InstallCommander implements Tool {
       editor.statusNotice("Finished.");
 
     } catch (IOException e) {
-      Base.showWarning("Error while installing",
-                       "An error occurred and the tools were not installed.", e);
+      Messages.showWarning("Error while installing",
+                           "An error occurred and the tool was not installed.", e);
+    }
+  }
+
+
+  static private void addJarList(StringList list, File dir) {
+    File[] jars = dir.listFiles(new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        return name.toLowerCase().endsWith(".jar") && !name.startsWith(".");
+      }
+    });
+    for (File jar : jars) {
+      list.append(jar.getAbsolutePath());
     }
   }
 }

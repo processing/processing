@@ -31,6 +31,8 @@ import com.apple.eawt.*;
 import com.apple.eawt.AppEvent.*;
 
 import processing.app.*;
+import processing.app.ui.About;
+import processing.app.ui.Toolkit;
 
 
 /**

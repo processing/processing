@@ -18,22 +18,34 @@
     <cp>lib/pde.jar</cp>
     <cp>core/library/core.jar</cp>
     <cp>lib/jna.jar</cp>
+    <cp>lib/jna-platform.jar</cp>
     <cp>lib/antlr.jar</cp>
     <cp>lib/ant.jar</cp>
     <cp>lib/ant-launcher.jar</cp>
-    <cp>lib/org-netbeans-swing-outline.jar</cp>
-    <cp>lib/com.ibm.icu_4.4.2.v20110823.jar</cp>
-    <cp>lib/jdi.jar</cp>
-    <cp>lib/jdimodel.jar</cp>
-    <cp>lib/org.eclipse.osgi_3.8.1.v20120830-144521.jar</cp>
     <!-- <cp>%EXEDIR%/java/lib/tools.jar</cp> -->
   </classPath>
   <jre>
     <path>java</path>
+    <!-- Deal with jokers who install JOGL, ANTLR, etc system-wide -->
+    <opt>-Djava.ext.dirs="%EXEDIR%\\java\\lib\\ext"</opt>
     <!-- https://github.com/processing/processing/issues/2239 -->
     <opt>-Djna.nosys=true</opt>
-    <!-- for 2.2, set a minimum version -->
-    <minVersion>1.7.0_40</minVersion>
+    <!-- Because nosys is set to true, the DLL in the current working 
+	 directory won't be considered. And we can't specify the user's 
+	 directory here because that'll get us into encoding trouble.
+	 (See https://github.com/processing/processing/issues/3624)
+	 Instead, set this so that Native.loadNativeLibrary() will use
+	 new File(path, "jnidispatch.dll") which will be relative to the
+	 directory of processing.exe (the current working directory). -->
+    <opt>-Djna.boot.library.path=lib</opt>
+    <opt>-Djna.nounpack=true</opt>
+    <!-- Attempt to fix UI rendering issues in Windows 10
+         https://github.com/processing/processing/issues/4700 -->
+    <opt>-Dsun.java2d.d3d=false</opt>
+    <opt>-Dsun.java2d.ddoffscreen=false</opt>
+    <opt>-Dsun.java2d.noddraw=true</opt>
+    <!-- starting in 3.0, require Java 8 -->
+    <minVersion>1.8.0_60</minVersion>
     <!-- increase available per PDE X request -->
     <maxHeapSize>256</maxHeapSize>
   </jre>
@@ -45,8 +57,8 @@
   </splash>
   <messages>
     <startupErr>An error occurred while starting the application.</startupErr>
-    <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted.</bundledJreErr>
-    <jreVersionErr>This application requires Java to be installed</jreVersionErr>
+    <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted. If running from a folder with non-ASCII characters, try moving this folder to another location.</bundledJreErr>
+    <jreVersionErr>Required files could not be found. Be sure to first extract the entire Processing folder from the .zip file download. Or if running from a folder with non-ASCII characters, try moving the Processing folder to another location.</jreVersionErr>
     <launcherErr>The registry refers to a nonexistent Java installation or the runtime is corrupted.</launcherErr>
     <instanceAlreadyExistsMsg>An application instance is already running.</instanceAlreadyExistsMsg>
   </messages>

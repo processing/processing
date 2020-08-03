@@ -3,11 +3,13 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012 Ben Fry and Casey Reas
+  Copyright (c) 2012-15 The Processing Foundation
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
+  Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation, version 2.1.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,18 +20,14 @@
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
- */
+*/
 
 package processing.opengl;
 
-import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
-
-import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PShape;
 import processing.core.PShapeOBJ;
+
 
 public class PGraphics3D extends PGraphicsOpenGL {
 
@@ -85,12 +83,12 @@ public class PGraphics3D extends PGraphicsOpenGL {
   @Override
   protected void begin2D() {
     pushProjection();
-    ortho(0, width, 0, height, -1, +1);
+    ortho(-width/2f, width/2f, -height/2f, height/2f);
     pushMatrix();
 
     // Set camera for 2D rendering, it simply centers at (width/2, height/2)
-    float centerX = width/2;
-    float centerY = height/2;
+    float centerX = width/2f;
+    float centerY = height/2f;
     modelview.reset();
     modelview.translate(-centerX, -centerY);
 
@@ -111,6 +109,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
   }
 
 
+
   //////////////////////////////////////////////////////////////
 
   // SHAPE I/O
@@ -127,30 +126,15 @@ public class PGraphics3D extends PGraphicsOpenGL {
 
     if (extension.equals("obj")) {
       obj = new PShapeOBJ(pg.parent, filename);
-
-    } else if (extension.equals("objz")) {
-      try {
-        // TODO: The obj file can be read from the gzip, but if it refers to
-        // a materials file and texture images, those must be contained in the
-        // data folder, cannot be inside the gzip.
-        InputStream input =
-          new GZIPInputStream(pg.parent.createInput(filename));
-        obj = new PShapeOBJ(pg.parent, PApplet.createReader(input));
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-
-    if (obj != null) {
       int prevTextureMode = pg.textureMode;
       pg.textureMode = NORMAL;
-      PShapeOpenGL p3d = PShapeOpenGL.createShape3D((PGraphicsOpenGL)pg, obj);
+      PShapeOpenGL p3d = PShapeOpenGL.createShape((PGraphicsOpenGL)pg, obj);
       pg.textureMode = prevTextureMode;
       return p3d;
-    } else {
-      return null;
     }
+    return null;
   }
+
 
 
   //////////////////////////////////////////////////////////////
@@ -158,6 +142,23 @@ public class PGraphics3D extends PGraphicsOpenGL {
   // SHAPE CREATION
 
 
+//  @Override
+//  protected PShape createShapeFamily(int type) {
+//    PShape shape = new PShapeOpenGL(this, type);
+//    shape.set3D(true);
+//    return shape;
+//  }
+//
+//
+//  @Override
+//  protected PShape createShapePrimitive(int kind, float... p) {
+//    PShape shape = new PShapeOpenGL(this, kind, p);
+//    shape.set3D(true);
+//    return shape;
+//  }
+
+
+  /*
   @Override
   public PShape createShape(PShape source) {
     return PShapeOpenGL.createShape3D(this, source);
@@ -250,6 +251,7 @@ public class PGraphics3D extends PGraphicsOpenGL {
       }
       shape = new PShapeOpenGL(pg, PShape.PRIMITIVE);
       shape.setKind(ARC);
+
     } else if (kind == BOX) {
       if (len != 1 && len != 3) {
         showWarning("Wrong number of parameters");
@@ -275,4 +277,5 @@ public class PGraphics3D extends PGraphicsOpenGL {
     shape.set3D(true);
     return shape;
   }
+  */
 }

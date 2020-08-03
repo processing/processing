@@ -36,7 +36,6 @@ SOFTWARE.
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
@@ -110,7 +109,7 @@ public class JSONArray {
    * Construct an empty JSONArray.
    */
   public JSONArray() {
-    this.myArrayList = new ArrayList<Object>();
+    this.myArrayList = new ArrayList<>();
   }
 
 
@@ -126,7 +125,7 @@ public class JSONArray {
    * Construct a JSONArray from a JSONTokener.
    *
    * @param x A JSONTokener
-   * @throws JSONException If there is a syntax error.
+   * @throws RuntimeException If there is a syntax error.
    * @nowebref
    */
   protected JSONArray(JSONTokener x) {
@@ -166,7 +165,7 @@ public class JSONArray {
    * @nowebref
    */
   public JSONArray(IntList list) {
-    myArrayList = new ArrayList<Object>();
+    myArrayList = new ArrayList<>();
     for (int item : list.values()) {
       myArrayList.add(Integer.valueOf(item));
     }
@@ -177,9 +176,9 @@ public class JSONArray {
    * @nowebref
    */
   public JSONArray(FloatList list) {
-    myArrayList = new ArrayList<Object>();
+    myArrayList = new ArrayList<>();
     for (float item : list.values()) {
-      myArrayList.add(new Float(item));
+      myArrayList.add(Float.valueOf(item));
     }
   }
 
@@ -188,7 +187,7 @@ public class JSONArray {
    * @nowebref
    */
   public JSONArray(StringList list) {
-    myArrayList = new ArrayList<Object>();
+    myArrayList = new ArrayList<>();
     for (String item : list.values()) {
       myArrayList.add(item);
     }
@@ -200,7 +199,7 @@ public class JSONArray {
    * @param source     A string that begins with
    * <code>[</code>&nbsp;<small>(left bracket)</small>
    *  and ends with <code>]</code>&nbsp;<small>(right bracket)</small>.
-   *  @throws JSONException If there is a syntax error.
+   *  @return {@code null} if there is a syntax error.
    */
   static public JSONArray parse(String source) {
     try {
@@ -229,7 +228,7 @@ public class JSONArray {
   // TODO not decided whether we keep this one, but used heavily by JSONObject
   /**
    * Construct a JSONArray from an array
-   * @throws JSONException If not an array.
+   * @throws RuntimeException If not an array.
    */
   protected JSONArray(Object array) {
     this();
@@ -262,9 +261,9 @@ public class JSONArray {
    * Get the object value associated with an index.
    * @param index must be between 0 and length() - 1
    * @return An object value.
-   * @throws JSONException If there is no value for the index.
+   * @throws RuntimeException If there is no value for the index.
    */
-  private Object get(int index) {
+  public Object get(int index) {
     Object object = opt(index);
     if (object == null) {
       throw new RuntimeException("JSONArray[" + index + "] not found.");
@@ -280,7 +279,7 @@ public class JSONArray {
    * @brief Gets the String value associated with an index
    * @param index must be between 0 and length() - 1
    * @return      A string value.
-   * @throws JSONException If there is no string value for the index.
+   * @throws RuntimeException If there is no string value for the index.
    * @see JSONArray#getInt(int)
    * @see JSONArray#getFloat(int)
    * @see JSONArray#getBoolean(int)
@@ -315,7 +314,7 @@ public class JSONArray {
    * @brief Gets the int value associated with an index
    * @param index must be between 0 and length() - 1
    * @return The value.
-   * @throws JSONException If the key is not found or if the value is not a number.
+   * @throws RuntimeException If the key is not found or if the value is not a number.
    * @see JSONArray#getFloat(int)
    * @see JSONArray#getString(int)
    * @see JSONArray#getBoolean(int)
@@ -354,7 +353,7 @@ public class JSONArray {
    *
    * @param index The index must be between 0 and length() - 1
    * @return      The value.
-   * @throws   JSONException If the key is not found or if the value cannot
+   * @throws   RuntimeException If the key is not found or if the value cannot
    *  be converted to a number.
    */
   public long getLong(int index) {
@@ -416,7 +415,7 @@ public class JSONArray {
    *
    * @param index must be between 0 and length() - 1
    * @return      The value.
-   * @throws   JSONException If the key is not found or if the value cannot
+   * @throws   RuntimeException If the key is not found or if the value cannot
    *  be converted to a number.
    */
   public double getDouble(int index) {
@@ -457,7 +456,7 @@ public class JSONArray {
    * @brief Gets the boolean value associated with an index
    * @param index must be between 0 and length() - 1
    * @return      The truth.
-   * @throws JSONException If there is no value for the index or if the
+   * @throws RuntimeException If there is no value for the index or if the
    *  value is not convertible to boolean.
    * @see JSONArray#getInt(int)
    * @see JSONArray#getFloat(int)
@@ -503,7 +502,7 @@ public class JSONArray {
    * @brief Gets the JSONArray associated with an index value
    * @param index must be between 0 and length() - 1
    * @return A JSONArray value.
-   * @throws JSONException If there is no value for the index. or if the
+   * @throws RuntimeException If there is no value for the index. or if the
    * value is not a JSONArray
    * @see JSONArray#getJSONObject(int)
    * @see JSONArray#setJSONObject(int, JSONObject)
@@ -534,7 +533,7 @@ public class JSONArray {
    * @brief Gets the JSONObject associated with an index value
    * @param index the index value of the object to get
    * @return A JSONObject value.
-   * @throws JSONException If there is no value for the index or if the
+   * @throws RuntimeException If there is no value for the index or if the
    * value is not a JSONObject
    * @see JSONArray#getJSONArray(int)
    * @see JSONArray#setJSONObject(int, JSONObject)
@@ -741,7 +740,7 @@ public class JSONArray {
    * This will store the value as a double, since there are no floats in JSON.
    *
    * @param value a float value
-   * @throws JSONException if the value is not finite.
+   * @throws RuntimeException if the value is not finite.
    * @return this.
    */
   public JSONArray append(float value) {
@@ -754,7 +753,7 @@ public class JSONArray {
    *
    * @nowebref
    * @param value A double value.
-   * @throws JSONException if the value is not finite.
+   * @throws RuntimeException if the value is not finite.
    * @return this.
    */
   public JSONArray append(double value) {
@@ -838,7 +837,7 @@ public class JSONArray {
 //   * @param index The subscript.
 //   * @param value A Collection value.
 //   * @return      this.
-//   * @throws JSONException If the index is negative or if the value is
+//   * @throws RuntimeException If the index is negative or if the value is
 //   * not finite.
 //   */
 //  public JSONArray set(int index, Collection value) {
@@ -857,7 +856,7 @@ public class JSONArray {
    * @param index an index value
    * @param value the value to assign
    * @return this.
-   * @throws JSONException If the index is negative.
+   * @throws RuntimeException If the index is negative.
    * @see JSONArray#setInt(int, int)
    * @see JSONArray#setFloat(int, float)
    * @see JSONArray#setBoolean(int, boolean)
@@ -878,7 +877,7 @@ public class JSONArray {
    * @param index an index value
    * @param value the value to assign
    * @return this.
-   * @throws JSONException If the index is negative.
+   * @throws RuntimeException If the index is negative.
    * @see JSONArray#setFloat(int, float)
    * @see JSONArray#setString(int, String)
    * @see JSONArray#setBoolean(int, boolean)
@@ -896,7 +895,7 @@ public class JSONArray {
    * @param index The subscript.
    * @param value A long value.
    * @return this.
-   * @throws JSONException If the index is negative.
+   * @throws RuntimeException If the index is negative.
    */
   public JSONArray setLong(int index, long value) {
     return set(index, Long.valueOf(value));
@@ -932,7 +931,7 @@ public class JSONArray {
    * @param index The subscript.
    * @param value A double value.
    * @return this.
-   * @throws JSONException If the index is negative or if the value is
+   * @throws RuntimeException If the index is negative or if the value is
    * not finite.
    */
   public JSONArray setDouble(int index, double value) {
@@ -950,7 +949,7 @@ public class JSONArray {
    * @param index an index value
    * @param value the value to assign
    * @return this.
-   * @throws JSONException If the index is negative.
+   * @throws RuntimeException If the index is negative.
    * @see JSONArray#setInt(int, int)
    * @see JSONArray#setFloat(int, float)
    * @see JSONArray#setString(int, String)
@@ -966,7 +965,7 @@ public class JSONArray {
 //   * @param index The subscript.
 //   * @param value The Map value.
 //   * @return      this.
-//   * @throws JSONException If the index is negative or if the the value is
+//   * @throws RuntimeException If the index is negative or if the the value is
 //   *  an invalid number.
 //   */
 //  public JSONArray set(int index, Map value) {
@@ -1012,7 +1011,7 @@ public class JSONArray {
    *  Boolean, Double, Integer, JSONArray, JSONObject, Long, or String, or the
    *  JSONObject.NULL object.
    * @return this.
-   * @throws JSONException If the index is negative or if the the value is
+   * @throws RuntimeException If the index is negative or if the the value is
    *  an invalid number.
    */
   private JSONArray set(int index, Object value) {
@@ -1048,6 +1047,7 @@ public class JSONArray {
 
   /**
    * Determine if the value is null.
+   * @webref
    * @param index must be between 0 and length() - 1
    * @return true if the value at the index is null, or if there is no value.
    */
@@ -1094,18 +1094,42 @@ public class JSONArray {
 //  }
 
 
-  protected boolean save(OutputStream output) {
-    return save(PApplet.createWriter(output));
-  }
+//  protected boolean save(OutputStream output) {
+//    return write(PApplet.createWriter(output), null);
+//  }
 
 
   public boolean save(File file, String options) {
-    return save(PApplet.createWriter(file));
+    PrintWriter writer = PApplet.createWriter(file);
+    boolean success = write(writer, options);
+    writer.close();
+    return success;
   }
 
 
-  public boolean save(PrintWriter output) {
-    output.print(format(2));
+  public boolean write(PrintWriter output) {
+    return write(output, null);
+  }
+
+
+  public boolean write(PrintWriter output, String options) {
+    int indentFactor = 2;
+    if (options != null) {
+      String[] opts = PApplet.split(options, ',');
+      for (String opt : opts) {
+        if (opt.equals("compact")) {
+          indentFactor = -1;
+        } else if (opt.startsWith("indent=")) {
+          indentFactor = PApplet.parseInt(opt.substring(7), -2);
+          if (indentFactor == -2) {
+            throw new IllegalArgumentException("Could not read a number from " + opt);
+          }
+        } else {
+          System.err.println("Ignoring " + opt);
+        }
+      }
+    }
+    output.print(format(indentFactor));
     output.flush();
     return true;
   }
@@ -1139,27 +1163,26 @@ public class JSONArray {
   public String format(int indentFactor) {
     StringWriter sw = new StringWriter();
     synchronized (sw.getBuffer()) {
-      return this.write(sw, indentFactor, 0).toString();
+      return this.writeInternal(sw, indentFactor, 0).toString();
     }
   }
 
 
-  /**
-   * Write the contents of the JSONArray as JSON text to a writer. For
-   * compactness, no whitespace is added.
-   * <p>
-   * Warning: This method assumes that the data structure is acyclic.
-   *
-   * @return The writer.
-   */
-  protected Writer write(Writer writer) {
-    return this.write(writer, -1, 0);
-  }
+//  /**
+//   * Write the contents of the JSONArray as JSON text to a writer. For
+//   * compactness, no whitespace is added.
+//   * <p>
+//   * Warning: This method assumes that the data structure is acyclic.
+//   *
+//   * @return The writer.
+//   */
+//  protected Writer write(Writer writer) {
+//    return this.write(writer, -1, 0);
+//  }
 
 
   /**
-   * Write the contents of the JSONArray as JSON text to a writer. For
-   * compactness, no whitespace is added.
+   * Write the contents of the JSONArray as JSON text to a writer.
    * <p>
    * Warning: This method assumes that the data structure is acyclic.
    *
@@ -1169,9 +1192,9 @@ public class JSONArray {
    * @param indent
    *            The indention of the top level.
    * @return The writer.
-   * @throws JSONException
+   * @throws RuntimeException
    */
-  protected Writer write(Writer writer, int indentFactor, int indent) {
+  protected Writer writeInternal(Writer writer, int indentFactor, int indent) {
     try {
       boolean commanate = false;
       int length = this.size();
@@ -1220,7 +1243,7 @@ public class JSONArray {
    * Warning: This method assumes that the data structure is acyclic.
    * @param separator A string that will be inserted between the elements.
    * @return a string.
-   * @throws JSONException If the array contains an invalid number.
+   * @throws RuntimeException If the array contains an invalid number.
    */
   public String join(String separator) {
     int len = this.size();

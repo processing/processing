@@ -23,7 +23,7 @@
 
 package processing.app.tools;
 
-import processing.app.Editor;
+import processing.app.Base;
 
 
 /**
@@ -31,8 +31,8 @@ import processing.app.Editor;
  */
 public interface Tool extends Runnable {
 
-  public void init(Editor editor);
-  
+  public void init(Base base);
+
   public void run();
 
   // Not doing shortcuts for now, no way to resolve between tools.

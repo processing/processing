@@ -7,13 +7,13 @@
  */
 /*
  * Copyright (c) 1997-2001 by Sun Microsystems, Inc. All Rights Reserved.
- * 
+ *
  * Sun grants you ("Licensee") a non-exclusive, royalty free, license to use,
  * modify and redistribute this software in source and binary code form,
  * provided that i) this copyright notice and license appear on all copies of
  * the software; and ii) Licensee does not utilize the software in a manner
  * which is disparaging to Sun.
- * 
+ *
  * This software is provided "AS IS," without a warranty of any kind. ALL
  * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES, INCLUDING ANY
  * IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR
@@ -25,7 +25,7 @@
  * CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF
  * OR INABILITY TO USE SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGES.
- * 
+ *
  * This software is not designed or intended for use in on-line control of
  * aircraft, air traffic, aircraft navigation or aircraft communications; or in
  * the design, construction, operation or maintenance of any nuclear
@@ -50,7 +50,7 @@ public class StreamRedirectThread extends Thread {
 
   private static final int BUFFER_SIZE = 2048;
 
-  
+
   /**
    * Set up for copy.
    * @param name  Name of the thread
@@ -63,15 +63,15 @@ public class StreamRedirectThread extends Thread {
     this.out = new OutputStreamWriter(out);
     setPriority(Thread.MAX_PRIORITY-1);
   }
-  
-  
+
+
   public StreamRedirectThread(String name, Reader in, Writer out) {
     super(name);
     this.in = in;
     this.out = out;
     setPriority(Thread.MAX_PRIORITY-1);
   }
-  
+
 
   /**
    * Copy.
@@ -80,16 +80,15 @@ public class StreamRedirectThread extends Thread {
     try {
       char[] cbuf = new char[BUFFER_SIZE];
       int count;
-      //System.out.println("opening streamredirectthread");
       while ((count = in.read(cbuf, 0, BUFFER_SIZE)) >= 0) {
         out.write(cbuf, 0, count);
         // had to add the flush() here.. maybe shouldn't be using writer? [fry]
         out.flush();
       }
-      //System.out.println("exiting streamredirectthread");
       out.flush();
-    } catch(IOException exc) {
-      System.err.println("Child I/O Transfer - " + exc);
+
+    } catch (IOException exc) {
+      processing.app.Console.systemErr("Child I/O Transfer - " + exc);
     }
   }
 }

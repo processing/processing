@@ -23,15 +23,28 @@
 
 package processing.app;
 
+import processing.app.ui.Editor;
+import processing.app.ui.Recent;
+import processing.app.ui.Toolkit;
 import processing.core.*;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.EventQueue;
+import java.awt.FileDialog;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 
 /**
@@ -64,6 +77,7 @@ public class Sketch {
 
   private SketchCode current;
   private int currentIndex;
+
   /**
    * Number of sketchCode objects (tabs) in the current sketch. Note that this
    * will be the same as code.length, because the getCode() method returns
@@ -77,28 +91,8 @@ public class Sketch {
   /** Moved out of Editor and into here for cleaner access. */
   private boolean untitled;
 
-//  /** Class path determined during build. */
-//  private String classPath;
-//
-//  /**
-//   * This is *not* the "Processing" libraries path, this is the Java libraries
-//   * path, as in java.library.path=BlahBlah, which identifies search paths for
-//   * DLLs or JNILIBs. (It's Java's LD_LIBRARY_PATH, for you UNIX fans.)
-//   */
-//  private String javaLibraryPath;
-//
-//  /**
-//   * List of library folders, set up in the preprocess() method.
-//   */
-//  private ArrayList<Library> importedLibraries;
-//  //private ArrayList<File> importedLibraries;
-
-  /**
-   * Most recent, default build path. This will contain the .java files that
-   * have been preprocessed, as well as any .class files that were compiled.
-   */
-//  private File buildFolder;
-
+  /** true if we've posted a "sketch disappeared" warning */
+  private boolean disappearedWarning;
 
   /**
    * Used by the command-line version to create a sketch object.
@@ -131,6 +125,7 @@ public class Sketch {
     int suffixLength = mode.getDefaultExtension().length() + 1;
     name = mainFilename.substring(0, mainFilename.length() - suffixLength);
     folder = new File(new File(path).getParent());
+    disappearedWarning = false;
     load();
   }
 
@@ -153,44 +148,19 @@ public class Sketch {
     codeFolder = new File(folder, "code");
     dataFolder = new File(folder, "data");
 
-    // get list of files in the sketch folder
-    String list[] = folder.list();
+    List<String> filenames = new ArrayList<>();
+    List<String> extensions = new ArrayList<>();
 
-    // reset these because load() may be called after an
-    // external editor event. (fix for 0099)
-    codeCount = 0;
+    getSketchCodeFiles(filenames, extensions);
 
-    code = new SketchCode[list.length];
+    codeCount = filenames.size();
+    code = new SketchCode[codeCount];
 
-    String[] extensions = mode.getExtensions();
-
-    for (String filename : list) {
-      // Ignoring the dot prefix files is especially important to avoid files
-      // with the ._ prefix on Mac OS X. (You'll see this with Mac files on
-      // non-HFS drives, i.e. a thumb drive formatted FAT32.)
-      if (filename.startsWith(".")) continue;
-
-      // Don't let some wacko name a directory blah.pde or bling.java.
-      if (new File(folder, filename).isDirectory()) continue;
-
-      // figure out the name without any extension
-      String base = filename;
-      // now strip off the .pde and .java extensions
-      for (String extension : extensions) {
-        if (base.toLowerCase().endsWith("." + extension)) {
-          base = base.substring(0, base.length() - (extension.length() + 1));
-
-          // Don't allow people to use files with invalid names, since on load,
-          // it would be otherwise possible to sneak in nasty filenames. [0116]
-          if (isSanitaryName(base)) {
-            code[codeCount++] =
-              new SketchCode(new File(folder, filename), extension);
-          }
-        }
-      }
+    for (int i = 0; i < codeCount; i++) {
+      String filename = filenames.get(i);
+      String extension = extensions.get(i);
+      code[i] = new SketchCode(new File(folder, filename), extension);
     }
-    // Remove any code that wasn't proper
-    code = (SketchCode[]) PApplet.subset(code, 0, codeCount);
 
     // move the main class to the first tab
     // start at 1, if it's at zero, don't bother
@@ -214,6 +184,39 @@ public class Sketch {
   }
 
 
+  public void getSketchCodeFiles(List<String> outFilenames,
+                                 List<String> outExtensions) {
+    // get list of files in the sketch folder
+    String list[] = folder.list();
+
+    for (String filename : list) {
+      // Ignoring the dot prefix files is especially important to avoid files
+      // with the ._ prefix on Mac OS X. (You'll see this with Mac files on
+      // non-HFS drives, i.e. a thumb drive formatted FAT32.)
+      if (filename.startsWith(".")) continue;
+
+      // Don't let some wacko name a directory blah.pde or bling.java.
+      if (new File(folder, filename).isDirectory()) continue;
+
+      // figure out the name without any extension
+      String base = filename;
+      // now strip off the .pde and .java extensions
+      for (String extension : mode.getExtensions()) {
+        if (base.toLowerCase().endsWith("." + extension)) {
+          base = base.substring(0, base.length() - (extension.length() + 1));
+
+          // Don't allow people to use files with invalid names, since on load,
+          // it would be otherwise possible to sneak in nasty filenames. [0116]
+          if (isSanitaryName(base)) {
+            if (outFilenames != null) outFilenames.add(filename);
+            if (outExtensions != null) outExtensions.add(extension);
+          }
+        }
+      }
+    }
+  }
+
+
   /**
    * Reload the current sketch. Used to update the text area when
    * an external editor is in use.
@@ -224,6 +227,20 @@ public class Sketch {
     current = null;
     // nuke previous files and settings
     load();
+  }
+
+
+  /**
+   * Load a tab that the user added to the sketch or modified with an external
+   * editor.
+   */
+  public void loadNewTab(String filename, String ext, boolean newAddition) {
+    if (newAddition) {
+      insertCode(new SketchCode(new File(folder, filename), ext));
+    } else {
+      replaceCode(new SketchCode(new File(folder, filename), ext));
+    }
+    sortCode();
   }
 
 
@@ -264,6 +281,13 @@ public class Sketch {
         SketchCode temp = code[who];
         code[who] = code[i];
         code[i] = temp;
+
+        // We also need to update the current tab
+        if (currentIndex == i) {
+          currentIndex = who;
+        } else if (currentIndex == who) {
+          currentIndex = i;
+        }
       }
     }
   }
@@ -281,8 +305,8 @@ public class Sketch {
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage(Language.text("new.messages.is_read_only"),
-                       Language.text("new.messages.is_read_only.description"));
+      Messages.showMessage(Language.text("new.messages.is_read_only"),
+                           Language.text("new.messages.is_read_only.description"));
       return;
     }
 
@@ -300,22 +324,22 @@ public class Sketch {
     ensureExistence();
 
     if (currentIndex == 0 && isUntitled()) {
-      Base.showMessage(Language.text("rename.messages.is_untitled"),
-                       Language.text("rename.messages.is_untitled.description"));
+      Messages.showMessage(Language.text("rename.messages.is_untitled"),
+                           Language.text("rename.messages.is_untitled.description"));
       return;
     }
 
     if (isModified()) {
-      Base.showMessage(Language.text("menu.file.save"),
-                       Language.text("rename.messages.is_modified"));
+      Messages.showMessage(Language.text("menu.file.save"),
+                           Language.text("rename.messages.is_modified"));
       return;
     }
 
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage(Language.text("rename.messages.is_read_only"),
-                       Language.text("rename.messages.is_read_only.description"));
+      Messages.showMessage(Language.text("rename.messages.is_read_only"),
+                           Language.text("rename.messages.is_read_only.description"));
       return;
     }
 
@@ -323,31 +347,30 @@ public class Sketch {
     // TODO maybe just popup a text area?
     renamingCode = true;
     String prompt = (currentIndex == 0) ?
-      Language.text("editor.sketch.rename.description") : Language.text("editor.tab.rename.description");
+      Language.text("editor.sketch.rename.description") :
+      Language.text("editor.tab.rename.description");
     String oldName = (current.isExtension(mode.getDefaultExtension())) ?
       current.getPrettyName() : current.getFileName();
-    // editor.status.edit(prompt, oldName);
-    promptForTabName(prompt+":", oldName);
+    promptForTabName(prompt + ":", oldName);
   }
-  
+
+
   /**
    * Displays a dialog for renaming or creating a new tab
-   * @param prompt - msg to display
-   * @param oldName
    */
   protected void promptForTabName(String prompt, String oldName) {
     final JTextField field = new JTextField(oldName);
-    
+
     field.addKeyListener(new KeyAdapter() {
       // Forget ESC, the JDialog should handle it.
-      // Use keyTyped to catch when the feller is actually added to the text 
-      // field. With keyTyped, as opposed to keyPressed, the keyCode will be 
-      // zero, even if it's enter or backspace or whatever, so the keychar 
+      // Use keyTyped to catch when the feller is actually added to the text
+      // field. With keyTyped, as opposed to keyPressed, the keyCode will be
+      // zero, even if it's enter or backspace or whatever, so the keychar
       // should be used instead. Grr.
       public void keyTyped(KeyEvent event) {
         //System.out.println("got event " + event);
         char ch = event.getKeyChar();
-        if ((ch == '_') || (ch == '.') || // allow.pde and .java 
+        if ((ch == '_') || (ch == '.') || // allow.pde and .java
             (('A' <= ch) && (ch <= 'Z')) || (('a' <= ch) && (ch <= 'z'))) {
           // These events are allowed straight through.
         } else if (ch == ' ') {
@@ -363,13 +386,13 @@ public class Sketch {
           // getSelectionStart means that it *will be* the first
           // char, because the selection is about to be replaced
           // with whatever is typed.
-          if (field.getCaretPosition() == 0 || 
+          if (field.getCaretPosition() == 0 ||
               field.getSelectionStart() == 0) {
             // number not allowed as first digit
             event.consume();
           }
         } else if (ch == KeyEvent.VK_ENTER) {
-          // Slightly ugly hack that ensures OK button of the dialog consumes 
+          // Slightly ugly hack that ensures OK button of the dialog consumes
           // the Enter key event. Since the text field is the default component
           // in the dialog, OK doesn't consume Enter key event, by default.
           Container parent = field.getParent();
@@ -377,14 +400,14 @@ public class Sketch {
             parent = parent.getParent();
           }
           JOptionPane pane = (JOptionPane) parent;
-          final JPanel pnlBottom = (JPanel) 
+          final JPanel pnlBottom = (JPanel)
             pane.getComponent(pane.getComponentCount() - 1);
           for (int i = 0; i < pnlBottom.getComponents().length; i++) {
             Component component = pnlBottom.getComponents()[i];
             if (component instanceof JButton) {
               final JButton okButton = (JButton) component;
               if (okButton.getText().equalsIgnoreCase("OK")) {
-                ActionListener[] actionListeners = 
+                ActionListener[] actionListeners =
                   okButton.getActionListeners();
                 if (actionListeners.length > 0) {
                   actionListeners[0].actionPerformed(null);
@@ -405,8 +428,8 @@ public class Sketch {
                                                  JOptionPane.OK_CANCEL_OPTION,
                                                  JOptionPane.PLAIN_MESSAGE,
                                                  null, new Object[] {
-                                                 Preferences.PROMPT_OK,
-                                                 Preferences.PROMPT_CANCEL },
+                                                 Language.getPrompt("ok"),
+                                                 Language.getPrompt("cancel") },
                                                  field);
 
     if (userReply == JOptionPane.OK_OPTION) {
@@ -448,17 +471,17 @@ public class Sketch {
     }
 
     if (newName.startsWith(".")) {
-      Base.showWarning("Problem with rename",
-                       "The name cannot start with a period.");
+      Messages.showWarning(Language.text("name.messages.problem_renaming"),
+                           Language.text("name.messages.starts_with_dot.description"));
       return;
     }
 
     int dot = newName.lastIndexOf('.');
     String newExtension = newName.substring(dot+1).toLowerCase();
     if (!mode.validExtension(newExtension)) {
-      Base.showWarning("Problem with rename",
-                       "\"." + newExtension + "\"" +
-                       "is not a valid extension.");
+      Messages.showWarning(Language.text("name.messages.problem_renaming"),
+                           Language.interpolate("name.messages.invalid_extension.description",
+                           newExtension));
       return;
     }
 
@@ -466,10 +489,9 @@ public class Sketch {
     if (!mode.isDefaultExtension(newExtension)) {
       if (renamingCode) {  // If creating a new tab, don't show this error
         if (current == code[0]) {  // If this is the main tab, disallow
-          Base.showWarning("Problem with rename",
-                           "The first tab cannot be a ." + newExtension + " file.\n" +
-                           "(It may be time for you to graduate to a\n" +
-                           "\"real\" programming environment, hotshot.)");
+          Messages.showWarning(Language.text("name.messages.problem_renaming"),
+                               Language.interpolate("name.messages.main_java_extension.description",
+                               newExtension));
           return;
         }
       }
@@ -493,9 +515,9 @@ public class Sketch {
       // http://processing.org/bugs/bugzilla/543.html
       for (SketchCode c : code) {
         if (c != current && sanitaryName.equalsIgnoreCase(c.getPrettyName())) {
-          Base.showMessage("Nope",
-                           "A file named \"" + c.getFileName() + "\" already exists at\n" +
-                             "\"" + folder.getAbsolutePath() + "\"");
+          Messages.showMessage(Language.text("name.messages.new_sketch_exists"),
+                               Language.interpolate("name.messages.new_sketch_exists.description",
+                               c.getFileName(), folder.getAbsolutePath()));
           return;
         }
       }
@@ -509,16 +531,17 @@ public class Sketch {
         String folderName = newName.substring(0, newName.indexOf('.'));
         File newFolder = new File(folder.getParentFile(), folderName);
         if (newFolder.exists()) {
-          Base.showWarning("Cannot Rename",
-                           "Sorry, a sketch (or folder) named " +
-                           "\"" + newName + "\" already exists.");
+          Messages.showWarning(Language.text("name.messages.new_folder_exists"),
+                               Language.interpolate("name.messages.new_folder_exists.description",
+                               newName));
           return;
         }
 
         // renaming the containing sketch folder
         boolean success = folder.renameTo(newFolder);
         if (!success) {
-          Base.showWarning("Error", "Could not rename the sketch folder.");
+          Messages.showWarning(Language.text("name.messages.error"),
+                               Language.text("name.messages.no_rename_folder.description"));
           return;
         }
         // let this guy know where he's living (at least for a split second)
@@ -538,9 +561,9 @@ public class Sketch {
         // This isn't changing folders, just changes the name
         newFile = new File(newFolder, newName);
         if (!current.renameTo(newFile, newExtension)) {
-          Base.showWarning("Error",
-                           "Could not rename \"" + current.getFileName() +
-                           "\" to \"" + newFile.getName() + "\"");
+          Messages.showWarning(Language.text("name.messages.error"),
+                               Language.interpolate("name.messages.no_rename_file.description",
+                               current.getFileName(), newFile.getName()));
           return;
         }
 
@@ -550,7 +573,7 @@ public class Sketch {
           code[i].setFolder(newFolder);
         }
        // Update internal state to reflect the new location
-        updateInternal(sanitaryName, newFolder);
+        updateInternal(sanitaryName, newFolder, renamingCode);
 
 //        File newMainFile = new File(newFolder, newName + ".pde");
 //        String newMainFilePath = newMainFile.getAbsolutePath();
@@ -570,9 +593,9 @@ public class Sketch {
 
       } else {  // else if something besides code[0]
         if (!current.renameTo(newFile, newExtension)) {
-          Base.showWarning("Error",
-                           "Could not rename \"" + current.getFileName() +
-                           "\" to \"" + newFile.getName() + "\"");
+          Messages.showWarning(Language.text("name.messages.error"),
+                               Language.interpolate("name.messages.no_rename_file.description",
+                               current.getFileName(), newFile.getName()));
           return;
         }
       }
@@ -584,9 +607,9 @@ public class Sketch {
           throw new IOException("createNewFile() returned false");
         }
       } catch (IOException e) {
-        Base.showWarning("Error",
-                         "Could not create the file \"" + newFile + "\"\n" +
-                         "in \"" + folder.getAbsolutePath() + "\"", e);
+        Messages.showWarning(Language.text("name.messages.error"),
+                             Language.interpolate("name.messages.no_create_file.description",
+                             newFile, folder.getAbsolutePath()), e);
         return;
       }
       SketchCode newCode = new SketchCode(newFile, newExtension);
@@ -601,7 +624,7 @@ public class Sketch {
     setCurrentCode(newName);
 
     // update the tabs
-    editor.header.rebuild();
+    editor.rebuildHeader();
   }
 
 
@@ -615,18 +638,18 @@ public class Sketch {
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage(Language.text("delete.messages.is_read_only"),
-                       Language.text("delete.messages.is_read_only.description"));
+      Messages.showMessage(Language.text("delete.messages.is_read_only"),
+                           Language.text("delete.messages.is_read_only.description"));
       return;
     }
 
     // don't allow if untitled
-    if (currentIndex == 0 && isUntitled()) {  
-      Base.showMessage(Language.text("delete.messages.cannot_delete"),
-                       Language.text("delete.messages.cannot_delete.description"));
+    if (currentIndex == 0 && isUntitled()) {
+      Messages.showMessage(Language.text("delete.messages.cannot_delete"),
+                           Language.text("delete.messages.cannot_delete.description"));
       return;
     }
-    
+
     // confirm deletion with user, yes/no
     Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
     String prompt = (currentIndex == 0) ?
@@ -646,39 +669,45 @@ public class Sketch {
         // to do a save on the handleNew()
 
         // delete the entire sketch
-        Base.removeDir(folder);
+        Util.removeDir(folder);
 
         // get the changes into the sketchbook menu
         //sketchbook.rebuildMenus();
 
-        // make a new sketch, and i think this will rebuild the sketch menu
+        // make a new sketch and rebuild the sketch menu
         //editor.handleNewUnchecked();
         //editor.handleClose2();
-        editor.base.handleClose(editor, false);
+        editor.getBase().rebuildSketchbookMenus();
+        editor.getBase().handleClose(editor, false);
 
       } else {
         // delete the file
         if (!current.deleteFile()) {
-          Base.showMessage(Language.text("delete.messages.cannot_delete.file"),
-                           Language.text("delete.messages.cannot_delete.file.description")+" \"" +
-                           current.getFileName() + "\".");
+          Messages.showMessage(Language.text("delete.messages.cannot_delete.file"),
+                               Language.text("delete.messages.cannot_delete.file.description")+" \"" +
+                               current.getFileName() + "\".");
           return;
         }
 
         // remove code from the list
         removeCode(current);
 
+        // update the tabs
+        editor.rebuildHeader();
+
         // just set current tab to the main tab
         setCurrentCode(0);
 
-        // update the tabs
-        editor.header.repaint();
       }
     }
   }
 
 
-  protected void removeCode(SketchCode which) {
+  /**
+   * Remove a SketchCode from the list of files without deleting its file.
+   * @see #handleDeleteCode()
+   */
+  public void removeCode(SketchCode which) {
     // remove it from the internal list of files
     // resort internal list of files
     for (int i = 0; i < codeCount; i++) {
@@ -734,9 +763,9 @@ public class Sketch {
         break;
       }
     }
-    editor.header.repaint();
+    editor.repaintHeader();
 
-    if (Base.isMacOS()) {
+    if (Platform.isMacOS()) {
       // http://developer.apple.com/qa/qa2001/qa1146.html
       Object modifiedParam = modified ? Boolean.TRUE : Boolean.FALSE;
       // https://developer.apple.com/library/mac/technotes/tn2007/tn2196.html#WINDOW_DOCUMENTMODIFIED
@@ -751,6 +780,16 @@ public class Sketch {
 
 
   /**
+   * Ensure that all SketchCodes are up-to-date, so that sc.save() works.
+   */
+  public void updateSketchCodes() {
+//    if (current.isModified()) {
+    current.setProgram(editor.getText());
+//    }
+  }
+
+
+  /**
    * Save all code in the current sketch. This just forces the files to save
    * in place, so if it's an untitled (un-saved) sketch, saveAs() should be
    * called instead. (This is handled inside Editor.handleSave()).
@@ -760,24 +799,23 @@ public class Sketch {
     ensureExistence();
 
     // first get the contents of the editor text area
-//    if (current.isModified()) {
-    current.setProgram(editor.getText());
-//    }
+    updateSketchCodes();
 
     // don't do anything if not actually modified
     //if (!modified) return false;
 
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage("Sketch is read-only",
-                       "Some files are marked \"read-only\", so you'll\n" +
-                       "need to re-save this sketch to another location.");
+      Messages.showMessage(Language.text("save_file.messages.is_read_only"),
+                           Language.text("save_file.messages.is_read_only.description"));
       // if the user cancels, give up on the save()
       if (!saveAs()) return false;
     }
 
-    for (int i = 0; i < codeCount; i++) {
-      if (code[i].isModified()) code[i].save();
+    for (SketchCode sc : code) {
+      if (sc.isModified()) {
+        sc.save();
+      }
     }
     calcModified();
     return true;
@@ -795,12 +833,13 @@ public class Sketch {
    * Also removes the previously-generated .class and .jar files,
    * because they can cause trouble.
    */
-  protected boolean saveAs() throws IOException {
+  public boolean saveAs() throws IOException {
     String newParentDir = null;
     String newName = null;
-	
-    final String oldName2 = folder.getName();
-    // TODO rewrite this to use shared version from PApplet
+    String oldName = folder.getName();
+
+    // TODO rewrite this to use shared version from PApplet (But because that
+    // specifies a callback function, this needs to wait until the refactoring)
     final String PROMPT = Language.text("save");
     if (Preferences.getBoolean("chooser.files.native")) {
       // get new name for folder
@@ -812,8 +851,8 @@ public class Sketch {
         // default to the parent folder of where this was
         fd.setDirectory(folder.getParent());
       }
-      String oldName = folder.getName();
-      fd.setFile(oldName);
+      String oldFolderName = folder.getName();
+      fd.setFile(oldFolderName);
       fd.setVisible(true);
       newParentDir = fd.getDirectory();
       newName = fd.getFile();
@@ -844,9 +883,9 @@ public class Sketch {
     String sanitaryName = Sketch.checkName(newName);
     File newFolder = new File(newParentDir, sanitaryName);
     if (!sanitaryName.equals(newName) && newFolder.exists()) {
-      Base.showMessage("Cannot Save",
-                       "A sketch with the cleaned name\n" +
-                       "“" + sanitaryName + "” already exists.");
+      Messages.showMessage(Language.text("save_file.messages.sketch_exists"),
+                           Language.interpolate("save_file.messages.sketch_exists.description",
+                           sanitaryName));
       return false;
     }
     newName = sanitaryName;
@@ -863,9 +902,9 @@ public class Sketch {
     // resaved (with the same name) to another location/folder.
     for (int i = 1; i < codeCount; i++) {
       if (newName.equalsIgnoreCase(code[i].getPrettyName())) {
-        Base.showMessage("Nope",
-                         "You can't save the sketch as \"" + newName + "\"\n" +
-                         "because the sketch already has a tab with that name.");
+        Messages.showMessage(Language.text("save_file.messages.tab_exists"),
+                             Language.interpolate("save_file.messages.tab_exists.description",
+                             newName));
         return false;
       }
     }
@@ -875,7 +914,7 @@ public class Sketch {
       // just use "save" here instead, because the user will have received a
       // message (from the operating system) about "do you want to replace?"
       return save();
-    }
+      }
 
     // check to see if the user is trying to save this sketch inside itself
     try {
@@ -883,9 +922,8 @@ public class Sketch {
       String oldPath = folder.getCanonicalPath() + File.separator;
 
       if (newPath.indexOf(oldPath) == 0) {
-        Base.showWarning("How very Borges of you",
-                         "You cannot save the sketch into a folder\n" +
-                         "inside itself. This would go on forever.", null);
+        Messages.showWarning(Language.text("save_file.messages.recursive_save"),
+                             Language.text("save_file.messages.recursive_save.description"));
         return false;
       }
     } catch (IOException e) { }
@@ -893,7 +931,7 @@ public class Sketch {
     // if the new folder already exists, then first remove its contents before
     // copying everything over (user will have already been warned).
     if (newFolder.exists()) {
-      Base.removeDir(newFolder);
+      Util.removeDir(newFolder);
     }
     // in fact, you can't do this on Windows because the file dialog
     // will instead put you inside the folder, but it happens on OS X a lot.
@@ -903,9 +941,7 @@ public class Sketch {
 
     // grab the contents of the current tab before saving
     // first get the contents of the editor text area
-    if (current.isModified()) {
-      current.setProgram(editor.getText());
-    }
+    updateSketchCodes();
 
     File[] copyItems = folder.listFiles(new FileFilter() {
       public boolean accept(File file) {
@@ -915,9 +951,12 @@ public class Sketch {
           return false;
         }
         // list of files/folders to be ignored during "save as"
-        for (String ignorable : mode.getIgnorable()) {
-          if (name.equals(ignorable)) {
-            return false;
+        String[] ignorable = mode.getIgnorable();
+        if (ignorable != null) {
+          for (String ignore : ignorable) {
+            if (name.equals(ignore)) {
+              return false;
+            }
           }
         }
         // ignore the extensions for code, since that'll be copied below
@@ -934,22 +973,10 @@ public class Sketch {
         return true;
       }
     });
-	
 
-    final File newFolder2 = newFolder;
-    final File[] copyItems2 = copyItems;
-    final String newName2 = newName; 
-    
-    // Create a new event dispatch thread- to display ProgressBar
-    // while Saving As
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        new ProgressFrame(copyItems2, newFolder2, oldName2, newName2, editor);
-      }
-    });
-    
-	
-    // save the other tabs to their new location
+    startSaveAsThread(oldName, newName, newFolder, copyItems);
+
+    // save the other tabs to their new location (main tab saved below)
     for (int i = 1; i < codeCount; i++) {
       File newFile = new File(newFolder, code[i].getFileName());
       code[i].saveAs(newFile);
@@ -958,40 +985,225 @@ public class Sketch {
     // While the old path to the main .pde is still set, remove the entry from
     // the Recent menu so that it's not sticking around after the rename.
     // If untitled, it won't be in the menu, so there's no point.
-    if (!isUntitled()) {
-      editor.removeRecent();
-    }
+//    if (!isUntitled()) {
+//      Recent.remove(editor);
+//    }
+    // Folks didn't like this behavior, so shutting it off
+    // https://github.com/processing/processing/issues/5902
 
     // save the main tab with its new name
     File newFile = new File(newFolder, newName + "." + mode.getDefaultExtension());
     code[0].saveAs(newFile);
 
-    updateInternal(newName, newFolder);
+    updateInternal(newName, newFolder, false);
 
     // Make sure that it's not an untitled sketch
     setUntitled(false);
 
     // Add this sketch back using the new name
-    editor.addRecent();
+    Recent.append(editor);
 
     // let Editor know that the save was successful
     return true;
   }
 
 
+  AtomicBoolean saving = new AtomicBoolean();
+
+  public boolean isSaving() {
+    return saving.get();
+  }
+
+
+  /**
+   * Kick off a background thread to copy everything *but* the .pde files.
+   * Due to the poor way (dating back to the late 90s with DBN) that our
+   * save() and saveAs() methods have been implemented to return booleans,
+   * there isn't a good way to return a value to the calling thread without
+   * a good bit of refactoring (that should be done at some point).
+   * As a result, this method will return 'true' before the full "Save As"
+   * has completed, which will cause problems in weird cases.
+   *
+   * For instance, the threading will cause problems while saving an untitled
+   * sketch that has an enormous data folder while quitting. The save thread to
+   * move those data folder files won't have finished before this returns true,
+   * and the PDE may quit before the SwingWorker completes its job.
+   *
+   * <a href="https://github.com/processing/processing/issues/3843">3843</a>
+   */
+  void startSaveAsThread(final String oldName, final String newName,
+                         final File newFolder, final File[] copyItems) {
+    saving.set(true);
+    EventQueue.invokeLater(new Runnable() {
+      public void run() {
+        final JFrame frame =
+          new JFrame("Saving \u201C" + newName + "\u201C...");
+        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+
+        Box box = Box.createVerticalBox();
+        box.setBorder(new EmptyBorder(16, 16, 16, 16));
+
+        if (Platform.isMacOS()) {
+          frame.setBackground(Color.WHITE);
+        }
+
+        JLabel label =
+          new JLabel("Saving additional files from the sketch folder...");
+        box.add(label);
+        box.add(Box.createVerticalStrut(8));
+
+        final JProgressBar progressBar = new JProgressBar(0, 100);
+        // no luck, stuck with ugly on OS X
+        //progressBar.putClientProperty("JComponent.sizeVariant", "regular");
+        progressBar.setValue(0);
+        progressBar.setStringPainted(true);
+        box.add(progressBar);
+
+        frame.getContentPane().add(box);
+        frame.pack();
+        frame.setLocationRelativeTo(editor);
+        Toolkit.setIcon(frame);
+        frame.setVisible(true);
+
+        new SwingWorker<Void, Void>() {
+
+          @Override
+          protected Void doInBackground() throws Exception {
+            addPropertyChangeListener(new PropertyChangeListener() {
+              public void propertyChange(PropertyChangeEvent evt) {
+                if ("progress".equals(evt.getPropertyName())) {
+                  progressBar.setValue((Integer) evt.getNewValue());
+                }
+              }
+            });
+
+            long totalSize = 0;
+            for (File copyable : copyItems) {
+              totalSize += Util.calcSize(copyable);
+            }
+
+            long progress = 0;
+            setProgress(0);
+            for (File copyable : copyItems) {
+              if (copyable.isDirectory()) {
+                copyDir(copyable,
+                        new File(newFolder, copyable.getName()),
+                        progress, totalSize);
+                progress += Util.calcSize(copyable);
+              } else {
+                copyFile(copyable,
+                         new File(newFolder, copyable.getName()),
+                         progress, totalSize);
+                if (Util.calcSize(copyable) < 512 * 1024) {
+                  // If the file length > 0.5MB, the copyFile() function has
+                  // been redesigned to change progress every 0.5MB so that
+                  // the progress bar doesn't stagnate during that time
+                  progress += Util.calcSize(copyable);
+                  setProgress((int) (progress * 100L / totalSize));
+                }
+              }
+            }
+            saving.set(false);
+            return null;
+          }
+
+
+          /**
+           * Overloaded copyFile that is called whenever a Save As is being done,
+           * so that the ProgressBar is updated for very large files as well.
+           */
+          void copyFile(File sourceFile, File targetFile,
+                        long progress, long totalSize) throws IOException {
+            BufferedInputStream from =
+              new BufferedInputStream(new FileInputStream(sourceFile));
+            BufferedOutputStream to =
+              new BufferedOutputStream(new FileOutputStream(targetFile));
+            byte[] buffer = new byte[16 * 1024];
+            int bytesRead;
+            int progRead = 0;
+            while ((bytesRead = from.read(buffer)) != -1) {
+              to.write(buffer, 0, bytesRead);
+              progRead += bytesRead;
+              if (progRead >= 512 * 1024) {  // to update progress bar every 0.5MB
+                progress += progRead;
+                //progressBar.setValue((int) Math.min(Math.ceil(progress * 100.0 / totalSize), 100));
+                setProgress((int) (100L * progress / totalSize));
+                progRead = 0;
+              }
+            }
+            // Final update to progress bar
+            setProgress((int) (100L * progress / totalSize));
+
+            from.close();
+            from = null;
+            to.flush();
+            to.close();
+            to = null;
+
+            targetFile.setLastModified(sourceFile.lastModified());
+            targetFile.setExecutable(sourceFile.canExecute());
+          }
+
+
+          long copyDir(File sourceDir, File targetDir,
+                       long progress, long totalSize) throws IOException {
+            // Overloaded copyDir so that the Save As progress bar gets updated when the
+            //    files are in folders as well (like in the data folder)
+            if (sourceDir.equals(targetDir)) {
+              final String urDum = "source and target directories are identical";
+              throw new IllegalArgumentException(urDum);
+            }
+            targetDir.mkdirs();
+            String files[] = sourceDir.list();
+            for (String filename : files) {
+              // Ignore dot files (.DS_Store), dot folders (.svn) while copying
+              if (filename.charAt(0) == '.') {
+                continue;
+              }
+
+              File source = new File(sourceDir, filename);
+              File target = new File(targetDir, filename);
+              if (source.isDirectory()) {
+                progress = copyDir(source, target, progress, totalSize);
+                //progressBar.setValue((int) Math.min(Math.ceil(progress * 100.0 / totalSize), 100));
+                setProgress((int) (100L * progress / totalSize));
+                target.setLastModified(source.lastModified());
+              } else {
+                copyFile(source, target, progress, totalSize);
+                progress += source.length();
+                //progressBar.setValue((int) Math.min(Math.ceil(progress * 100.0 / totalSize), 100));
+                setProgress((int) (100L * progress / totalSize));
+              }
+            }
+            return progress;
+          }
+
+
+          @Override
+          public void done() {
+            frame.dispose();
+            editor.statusNotice(Language.text("editor.status.saving.done"));
+          }
+        }.execute();
+      }
+    });
+  }
+
 
   /**
    * Update internal state for new sketch name or folder location.
    */
-  protected void updateInternal(String sketchName, File sketchFolder) {
+  protected void updateInternal(String sketchName, File sketchFolder,
+                                boolean renaming) {
     // reset all the state information for the sketch object
-    String oldPath = getMainFilePath();    
+    String oldPath = getMainFilePath();
     primaryFile = code[0].getFile();
 //    String newPath = getMainFilePath();
 //    editor.base.renameRecent(oldPath, newPath);
 
     name = sketchName;
     folder = sketchFolder;
+    disappearedWarning = false;
     codeFolder = new File(folder, "code");
     dataFolder = new File(folder, "data");
 
@@ -1003,8 +1215,12 @@ public class Sketch {
     calcModified();
 //    System.out.println("modified is now " + modified);
     editor.updateTitle();
-    editor.base.rebuildSketchbookMenus();
-    editor.base.handleRecentRename(editor,oldPath);
+    editor.getBase().rebuildSketchbookMenus();
+    if (renaming) {
+      // only update the Recent menu if it's a rename, not a Save As
+      // https://github.com/processing/processing/issues/5902
+      Recent.rename(editor, oldPath);
+    }
 //    editor.header.rebuild();
   }
 
@@ -1020,10 +1236,8 @@ public class Sketch {
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
-      Base.showMessage("Sketch is Read-Only",
-                       "Some files are marked \"read-only\", so you'll\n" +
-                       "need to re-save the sketch in another location,\n" +
-                       "and try again.");
+      Messages.showMessage(Language.text("add_file.messages.is_read_only"),
+                           Language.text("add_file.messages.is_read_only.description"));
       return;
     }
 
@@ -1070,18 +1284,21 @@ public class Sketch {
     String codeExtension = null;
     boolean replacement = false;
 
+    boolean isCode = false;
+
     // if the file appears to be code related, drop it
     // into the code folder, instead of the data folder
     if (filename.toLowerCase().endsWith(".class") ||
         filename.toLowerCase().endsWith(".jar") ||
         filename.toLowerCase().endsWith(".dll") ||
+        filename.toLowerCase().endsWith(".dylib") ||
         filename.toLowerCase().endsWith(".jnilib") ||
         filename.toLowerCase().endsWith(".so")) {
 
       //if (!codeFolder.exists()) codeFolder.mkdirs();
       prepareCodeFolder();
       destFile = new File(codeFolder, filename);
-
+      isCode = true;
     } else {
       for (String extension : mode.getExtensions()) {
         String lower = filename.toLowerCase();
@@ -1099,7 +1316,8 @@ public class Sketch {
     // check whether this file already exists
     if (destFile.exists()) {
       Object[] options = { Language.text("prompt.ok"), Language.text("prompt.cancel") };
-      String prompt = "Replace the existing version of " + filename + "?";
+      String prompt = Language.interpolate("add_file.messages.confirm_replace",
+                                           filename);
       int result = JOptionPane.showOptionDialog(editor,
                                                 prompt,
                                                 "Replace",
@@ -1121,35 +1339,38 @@ public class Sketch {
     if (replacement) {
       boolean muchSuccess = destFile.delete();
       if (!muchSuccess) {
-        Base.showWarning("Error adding file",
-                         "Could not delete the existing '" +
-                         filename + "' file.", null);
+        Messages.showWarning(Language.text("add_file.messages.error_adding"),
+                             Language.interpolate("add_file.messages.cannot_delete.description", filename));
         return false;
       }
     }
 
     // make sure they aren't the same file
     if ((codeExtension == null) && sourceFile.equals(destFile)) {
-      Base.showWarning("You can't fool me",
-                       "This file has already been copied to the\n" +
-                       "location from which where you're trying to add it.\n" +
-                       "I ain't not doin nuthin'.", null);
+      Messages.showWarning(Language.text("add_file.messages.same_file"),
+                           Language.text("add_file.messages.same_file.description"));
       return false;
     }
 
-    // in case the user is "adding" the code in an attempt
-    // to update the sketch's tabs
-	if (!sourceFile.equals(destFile)) {
-		final File sourceFile2 = sourceFile;
-		final File destFile2 = destFile;
-	    // Create a new event dispatch thread- to display ProgressBar
-	    // while Saving As
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        new ProgressFrame(sourceFile2, destFile2, editor);
+    // Handles "Add File" when a .pde is used. For beta 1, this no longer runs
+    // on a separate thread because it's totally unnecessary (a .pde file is
+    // not going to be so large that it's ever required) and otherwise we have
+    // to introduce a threading block here.
+    // https://github.com/processing/processing/issues/3383
+    if (!sourceFile.equals(destFile)) {
+      try {
+        Util.copyFile(sourceFile, destFile);
+
+      } catch (IOException e) {
+        Messages.showWarning(Language.text("add_file.messages.error_adding"),
+                             Language.interpolate("add_file.messages.cannot_add.description", filename), e);
+        return false;
       }
-    });
-	}
+    }
+
+    if (isCode) {
+      editor.codeFolderChanged();
+    }
 
     if (codeExtension != null) {
       SketchCode newCode = new SketchCode(destFile, codeExtension);
@@ -1162,7 +1383,7 @@ public class Sketch {
         sortCode();
       }
       setCurrentCode(filename);
-      editor.header.repaint();
+      editor.repaintHeader();
       if (isUntitled()) {  // TODO probably not necessary? problematic?
         // Mark the new code as modified so that the sketch is saved
         current.setModified(true);
@@ -1194,8 +1415,8 @@ public class Sketch {
 //      System.out.println(current.visited);
 //    }
     // if current is null, then this is the first setCurrent(0)
-    if (((currentIndex == which) && (current != null))
-      || which >= codeCount || which < 0) {
+    if (which < 0 || which >= codeCount ||
+        ((currentIndex == which) && (current == code[currentIndex]))) {
       return;
     }
 
@@ -1212,8 +1433,7 @@ public class Sketch {
     current.visited = System.currentTimeMillis();
 
     editor.setCode(current);
-//    editor.header.rebuild();
-    editor.header.repaint();
+    editor.repaintHeader();
   }
 
 
@@ -1221,7 +1441,7 @@ public class Sketch {
    * Internal helper function to set the current tab based on a name.
    * @param findName the file name (not pretty name) to be shown
    */
-  protected void setCurrentCode(String findName) {
+  public void setCurrentCode(String findName) {
     for (int i = 0; i < codeCount; i++) {
       if (findName.equals(code[i].getFileName()) ||
           findName.equals(code[i].getPrettyName())) {
@@ -1237,17 +1457,11 @@ public class Sketch {
    */
   public File makeTempFolder() {
     try {
-      File buildFolder = Base.createTempFolder(name, "temp", null);
-//      if (buildFolder.mkdirs()) {
-      return buildFolder;
+      return Util.createTempFolder(name, "temp", null);
 
-//      } else {
-//        Base.showWarning("Build folder bad",
-//                         "Could not create a place to build the sketch.", null);
-//      }
     } catch (IOException e) {
-      Base.showWarning("Build folder bad",
-                       "Could not find a place to build the sketch.", e);
+      Messages.showWarning(Language.text("temp_dir.messages.bad_build_folder"),
+                           Language.text("temp_dir.messages.bad_build_folder.description"), e);
     }
     return null;
   }
@@ -1295,33 +1509,34 @@ public class Sketch {
 
 
   /**
-   * Make sure the sketch hasn't been moved or deleted by some
-   * nefarious user. If they did, try to re-create it and save.
-   * Only checks to see if the main folder is still around,
-   * but not its contents.
+   * Make sure the sketch hasn't been moved or deleted by a nefarious user.
+   * If they did, try to re-create it and save. Only checks whether the
+   * main folder is still around, but not its contents.
    */
   public void ensureExistence() {
     if (!folder.exists()) {
-      // Disaster recovery, try to salvage what's there already.
-      Base.showWarning("Sketch Disappeared",
-                       "The sketch folder has disappeared.\n " +
-                       "Will attempt to re-save in the same location,\n" +
-                       "but anything besides the code will be lost.", null);
-      try {
-        folder.mkdirs();
-        modified = true;
+      // Avoid an infinite loop if we've already warned about this
+      // https://github.com/processing/processing/issues/4805
+      if (!disappearedWarning) {
+        disappearedWarning = true;
 
-        for (int i = 0; i < codeCount; i++) {
-          code[i].save();  // this will force a save
+        // Disaster recovery, try to salvage what's there already.
+        Messages.showWarning(Language.text("ensure_exist.messages.missing_sketch"),
+                             Language.text("ensure_exist.messages.missing_sketch.description"));
+        try {
+          folder.mkdirs();
+          modified = true;
+
+          for (int i = 0; i < codeCount; i++) {
+            code[i].save();  // this will force a save
+          }
+          calcModified();
+
+        } catch (Exception e) {
+          // disappearedWarning prevents infinite loop in this scenario
+          Messages.showWarning(Language.text("ensure_exist.messages.unrecoverable"),
+                               Language.text("ensure_exist.messages.unrecoverable.description"), e);
         }
-        calcModified();
-
-      } catch (Exception e) {
-        Base.showWarning("Could not re-save sketch",
-                         "Could not properly re-save the sketch. " +
-                         "You may be in trouble at this point,\n" +
-                         "and it might be time to copy and paste " +
-                         "your code to another text editor.", e);
       }
     }
   }
@@ -1334,25 +1549,27 @@ public class Sketch {
    */
   public boolean isReadOnly() {
     String apath = folder.getAbsolutePath();
-    Mode mode = editor.getMode();
-    if (apath.startsWith(mode.getExamplesFolder().getAbsolutePath()) ||
-        apath.startsWith(mode.getLibrariesFolder().getAbsolutePath())) {
-      return true;
-
-      // canWrite() doesn't work on directories
-      //} else if (!folder.canWrite()) {
-    } else {
-      // check to see if each modified code file can be written to
-      for (int i = 0; i < codeCount; i++) {
-        if (code[i].isModified() &&
-            code[i].fileReadOnly() &&
-            code[i].fileExists()) {
-          //System.err.println("found a read-only file " + code[i].file);
-          return true;
-        }
+    List<Mode> modes = editor.getBase().getModeList();
+    // Make sure it's not read-only for another Mode besides this one
+    // https://github.com/processing/processing/issues/773
+    for (Mode mode : modes) {
+      if (apath.startsWith(mode.getExamplesFolder().getAbsolutePath()) ||
+          apath.startsWith(mode.getLibrariesFolder().getAbsolutePath())) {
+        return true;
       }
-      //return true;
     }
+
+    // check to see if each modified code file can be written to
+    // canWrite() doesn't work on directories
+    for (int i = 0; i < codeCount; i++) {
+      if (code[i].isModified() &&
+        code[i].fileReadOnly() &&
+        code[i].fileExists()) {
+        //System.err.println("found a read-only file " + code[i].file);
+        return true;
+      }
+    }
+
     return false;
   }
 
@@ -1520,9 +1737,7 @@ public class Sketch {
 
     if (!newName.equals(origName)) {
       String msg =
-        "The sketch name had to be modified. Sketch names can only consist\n" +
-        "of ASCII characters and numbers (but cannot start with a number).\n" +
-        "They should also be less than 64 characters long.";
+        Language.text("check_name.messages.is_name_modified");
       System.out.println(msg);
     }
     return newName;

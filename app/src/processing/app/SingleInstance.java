@@ -21,14 +21,13 @@
 */
 package processing.app;
 
+import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import javax.swing.SwingUtilities;
 
 import processing.core.PApplet;
 
@@ -38,8 +37,6 @@ import processing.core.PApplet;
  * Processing from running simultaneously. If there's already an instance
  * running, it'll handle opening a new empty sketch, or any files that had
  * been passed in on the command line.
- *
- * @author Peter Kalauskas, Ben Fry
  */
 public class SingleInstance {
   static final String SERVER_PORT = "instance_server.port";
@@ -58,15 +55,17 @@ public class SingleInstance {
   }
 
 
-//  static void startServer(final Platform platform) {
   static void startServer(final Base base) {
     try {
-      final ServerSocket ss = new ServerSocket(0, 0, InetAddress.getByName(null));
+      Messages.log("Opening SingleInstance socket");
+      final ServerSocket ss =
+        new ServerSocket(0, 0, InetAddress.getLoopbackAddress());
       Preferences.set(SERVER_PORT, "" + ss.getLocalPort());
       final String key = "" + Math.random();
       Preferences.set(SERVER_KEY, key);
       Preferences.save();
 
+      Messages.log("Starting SingleInstance thread");
       new Thread(new Runnable() {
         public void run() {
           while (true) {
@@ -74,28 +73,26 @@ public class SingleInstance {
               Socket s = ss.accept();  // blocks (sleeps) until connection
               final BufferedReader reader = PApplet.createReader(s.getInputStream());
               String receivedKey = reader.readLine();
-              Base.log(this, "key is " + key + ", received is " + receivedKey);
-//              Base.log(this, "platform base is " + platform.base);
+              Messages.log(this, "key is " + key + ", received is " + receivedKey);
 
-//              if (platform.base != null) {
               if (key.equals(receivedKey)) {
-                SwingUtilities.invokeLater(new Runnable() {
+                EventQueue.invokeLater(new Runnable() {
                   public void run() {
                     try {
-                      Base.log(this, "about to read line");
+                      Messages.log(this, "about to read line");
                       String path = reader.readLine();
                       if (path == null) {
                         // Because an attempt was made to launch the PDE again,
                         // throw the user a bone by at least opening a new
                         // Untitled window for them.
-                        Base.log(this, "opening new empty sketch");
+                        Messages.log(this, "opening new empty sketch");
 //                        platform.base.handleNew();
                         base.handleNew();
 
                       } else {
                         // loop through the sketches that were passed in
                         do {
-                          Base.log(this, "calling open with " + path);
+                          Messages.log(this, "calling open with " + path);
 //                        platform.base.handleOpen(filename);
                           base.handleOpen(path);
                           path = reader.readLine();
@@ -107,33 +104,35 @@ public class SingleInstance {
                   }
                 });
               } else {
-                Base.log(this, "keys do not match");
+                Messages.log(this, "keys do not match");
               }
 //              }
             } catch (IOException e) {
-              Base.loge("SingleInstance error while listening", e);
+              Messages.loge("SingleInstance error while listening", e);
             }
           }
         }
       }, "SingleInstance Server").start();
 
     } catch (IOException e) {
-      Base.loge("Could not create single instance server.", e);
+      Messages.loge("Could not create single instance server.", e);
     }
   }
 
 
   static boolean sendArguments(String[] args) {  //, long timeout) {
     try {
+      Messages.log("Checking to see if Processing is already running");
       int port = Preferences.getInteger(SERVER_PORT);
       String key = Preferences.get(SERVER_KEY);
 
       Socket socket = null;
       try {
-        socket = new Socket(InetAddress.getByName(null), port);
+        socket = new Socket(InetAddress.getLoopbackAddress(), port);
       } catch (Exception ignored) { }
 
       if (socket != null) {
+        Messages.log("Processing is already running, sending command line");
         PrintWriter writer = PApplet.createWriter(socket.getOutputStream());
         writer.println(key);
         for (String arg : args) {
@@ -144,9 +143,9 @@ public class SingleInstance {
         return true;
       }
     } catch (IOException e) {
-      System.err.println("Error sending commands to other instance.");
-      e.printStackTrace();
+      Messages.loge("Error sending commands to other instance", e);
     }
+    Messages.log("Processing is not already running (or could not connect)");
     return false;
   }
 }

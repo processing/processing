@@ -2,7 +2,7 @@
 
 /*
 Part of the Processing project - http://processing.org
-Copyright (c) 2012-15 The Processing Foundation
+Copyright (c) 2012-18 The Processing Foundation
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 2
@@ -31,260 +31,350 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
-public class CompletionCandidate implements Comparable<CompletionCandidate>{
 
-  private String elementName; //
+// TODO when building the label in some variants in this file,
+// getReturnType2() is used instead of getReturnType().
+// need to check whether that's identical in how it performs,
+// and if so, use makeLabel() and makeCompletion() more [fry 180326]
+// https://help.eclipse.org/neon/index.jsp?topic=%2Forg.eclipse.jdt.doc.isv%2Freference%2Fapi%2Forg%2Feclipse%2Fjdt%2Fcore%2Fdom%2FMethodDeclaration.html
 
-  private String label; // the toString value
+public class CompletionCandidate implements Comparable<CompletionCandidate> {
+  private final String elementName;
+  private final String label; // the toString value
+  private final String completion;
+  private final Object wrappedObject;
+  private final int type;
 
-  private String completionString;
-  
-  private Object wrappedObject;
+  static final int PREDEF_CLASS = 0;
+  static final int PREDEF_FIELD = 1;
+  static final int PREDEF_METHOD = 2;
+  static final int LOCAL_CLASS = 3;
+  static final int LOCAL_METHOD = 4;
+  static final int LOCAL_FIELD = 5;
+  static final int LOCAL_VAR = 6;
 
-  private int type;
 
-  public static final int PREDEF_CLASS = 0, PREDEF_FIELD = 1,
-      PREDEF_METHOD = 2, LOCAL_CLASS = 3, LOCAL_METHOD = 4, LOCAL_FIELD = 5,
-      LOCAL_VAR = 6;
-
-  public CompletionCandidate(Method method) {
+  CompletionCandidate(Method method) {
+    // return value ignored? [fry 180326]
     method.getDeclaringClass().getName();
     elementName = method.getName();
-    StringBuilder label = new StringBuilder("<html>"+method.getName() + "(");
-    StringBuilder cstr = new StringBuilder(method.getName() + "(");
-    for (int i = 0; i < method.getParameterTypes().length; i++) {
-      label.append(method.getParameterTypes()[i].getSimpleName());
-      if (i < method.getParameterTypes().length - 1) {
-        label.append(",");
-        cstr.append(",");
-      }
-    }
-    if(method.getParameterTypes().length == 1) {
-      cstr.append(' ');
-    }
-    label.append(")");
-    if(method.getReturnType() != null)
-      label.append(" : " + method.getReturnType().getSimpleName());
-    label.append(" - <font color=#777777>" + method.getDeclaringClass().getSimpleName() + "</font></html>");
-    cstr.append(")");
-    this.label = label.toString();
-    this.completionString = cstr.toString();
+    label = makeLabel(method);
+    completion = makeCompletion(method);
     type = PREDEF_METHOD;
     wrappedObject = method;
   }
-  
-  public Object getWrappedObject() {
-    return wrappedObject;
-  }
 
-  public CompletionCandidate(SingleVariableDeclaration svd) {
-    completionString = svd.getName().toString();
+
+  CompletionCandidate(SingleVariableDeclaration svd) {
+    completion = svd.getName().toString();
     elementName = svd.getName().toString();
-    if(svd.getParent() instanceof FieldDeclaration)
-      type = LOCAL_FIELD;
-    else
-      type = LOCAL_VAR;
+    type = (svd.getParent() instanceof FieldDeclaration) ?
+      LOCAL_FIELD : LOCAL_VAR;
     label = svd.getName() + " : " + svd.getType();
     wrappedObject = svd;
   }
-  
-  public CompletionCandidate(VariableDeclarationFragment  vdf) {
-    completionString = vdf.getName().toString();
+
+
+  CompletionCandidate(VariableDeclarationFragment  vdf) {
+    completion = vdf.getName().toString();
     elementName = vdf.getName().toString();
-    if(vdf.getParent() instanceof FieldDeclaration)
-      type = LOCAL_FIELD;
-    else
-      type = LOCAL_VAR;
-    label = vdf.getName() + " : " + ASTGenerator.extracTypeInfo2(vdf);
+    type = (vdf.getParent() instanceof FieldDeclaration) ?
+      LOCAL_FIELD : LOCAL_VAR;
+    label = vdf.getName() + " : " + CompletionGenerator.extracTypeInfo2(vdf);
     wrappedObject = vdf;
   }
-  
-  public CompletionCandidate(MethodDeclaration method) {
-    // log("ComCan " + method.getName());
+
+
+  CompletionCandidate(MethodDeclaration method) {
     elementName = method.getName().toString();
     type = LOCAL_METHOD;
-    
+
     @SuppressWarnings("unchecked")
-    List<ASTNode> params = (List<ASTNode>) 
+    List<ASTNode> params = (List<ASTNode>)
       method.getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
-    
-    StringBuilder label = new StringBuilder(elementName + "(");
-    StringBuilder cstr = new StringBuilder(method.getName() + "(");
-    for (int i = 0; i < params.size(); i++) {
-      label.append(params.get(i).toString());
-      if (i < params.size() - 1) {
-        label.append(",");
-        cstr.append(",");
+
+    { // label
+      StringBuilder labelBuilder = new StringBuilder(elementName);
+      labelBuilder.append('(');
+      for (int i = 0; i < params.size(); i++) {
+        labelBuilder.append(params.get(i).toString());
+        if (i < params.size() - 1) {
+          labelBuilder.append(',');
+        }
       }
+      labelBuilder.append(')');
+      if (method.getReturnType2() != null) {
+        labelBuilder.append(" : ");
+        labelBuilder.append(method.getReturnType2());
+      }
+      label = labelBuilder.toString();
     }
-    if (params.size() == 1) {
-      cstr.append(' ');
+
+    { // completion
+      StringBuilder compBuilder = new StringBuilder(elementName);
+      compBuilder.append('(');
+
+      for (int i = 0; i < params.size(); i++) {
+        if (i < params.size() - 1) {
+          compBuilder.append(',');
+        }
+      }
+      if (params.size() == 1) {
+        compBuilder.append(' ');
+      }
+      compBuilder.append(')');
+      completion = compBuilder.toString();
     }
-    label.append(")");
-    if (method.getReturnType2() != null)
-      label.append(" : " + method.getReturnType2());
-    cstr.append(")");
-    this.label = label.toString();
-    this.completionString = cstr.toString();
+
     wrappedObject = method;
   }
 
-  public CompletionCandidate(TypeDeclaration td){
+
+  CompletionCandidate(TypeDeclaration td) {
     type = LOCAL_CLASS;
     elementName = td.getName().toString();
     label = elementName;
-    completionString = elementName;
+    completion = elementName;
     wrappedObject = td;
   }
 
-  public CompletionCandidate(Field f) {
+
+  CompletionCandidate(Field f) {
     f.getDeclaringClass().getName();
     elementName = f.getName();
     type = PREDEF_FIELD;
-//    "<html>"
-//    + matchedClass + " : " + "<font color=#777777>"
-//    + matchedClass2.substring(0, d) + "</font>", matchedClass
-//    + "</html>"
-    label = "<html>" + f.getName() + " : " + f.getType().getSimpleName() + 
-        " - <font color=#777777>" + f.getDeclaringClass().getSimpleName() + 
-        "</font></html>";
-    completionString = elementName;
+    label = "<html>" +
+      f.getName() + " : " +
+      f.getType().getSimpleName() + " - " +
+      "<font color=#777777>" +
+      f.getDeclaringClass().getSimpleName() +
+      "</font></html>";
+    completion = elementName;
     wrappedObject = f;
   }
 
-  public CompletionCandidate(String name, String labelStr, String completionStr, int type) {    
-    elementName = name;
-    label = labelStr;
-    completionString = completionStr;
-    this.type = type;    
+
+  CompletionCandidate(String elementName, String label,
+                      String completion, int type) {
+    this(elementName, label, completion, type, null);
   }
 
-  public CompletionCandidate(String name, int type) {
-    elementName = name;
-    label = name;
-    completionString = name;
+
+  private CompletionCandidate(String elementName, String label,
+                              String completion, int type,
+                              Object wrappedObject) {
+    this.elementName = elementName;
+    this.label = label;
+    this.completion = completion;
     this.type = type;
+    this.wrappedObject = wrappedObject;
   }
+
+
+  Object getWrappedObject() {
+    return wrappedObject;
+  }
+
 
   public String getElementName() {
     return elementName;
   }
 
+
   public String getCompletionString() {
-    return completionString;
+    return completion;
   }
 
-  public String toString() {
-    return label;
-  }
 
   public int getType() {
     return type;
   }
-  
+
+
   public String getLabel() {
     return label;
   }
-  
-  public String getNoHtmlLabel(){
-    if(!label.contains("<html>")) {
+
+
+  // TODO this is gross [fry 180326]
+  /*
+  private String getNoHtmlLabel(){
+    if (!label.contains("<html>")) {
       return label;
-    }
-    else {
+
+    } else {
       StringBuilder ans = new StringBuilder(label);
-      while(ans.indexOf("<") > -1) {
+      while (ans.indexOf("<") > -1) {
         int a = ans.indexOf("<"), b = ans.indexOf(">");
-        if(a > b) break;
+        if (a > b) break;
         ans.replace(a, b+1, "");
-//        System.out.println(ans.replace(a, b+1, ""));
-//        System.out.println(ans + "--");
       }
       return ans.toString();
     }
   }
+  */
 
-  public void setLabel(String label) {
-    this.label = label;
+
+  boolean startsWith(String newWord) {
+//    System.out.println("checking " + newWord);
+//    return getNoHtmlLabel().toLowerCase().startsWith(newWord);
+    // this seems to be elementName in all cases [fry 180326]
+    return elementName.startsWith(newWord);
   }
 
-  public void setCompletionString(String completionString) {
-    this.completionString = completionString;
+
+  CompletionCandidate withLabelAndCompString(String withLabel,
+                                             String withCompletion) {
+    return new CompletionCandidate(elementName,
+                                   withLabel, withCompletion,
+                                   type, wrappedObject);
   }
 
-  public int compareTo(CompletionCandidate cc) {
-    if(type != cc.getType()){
-      return cc.getType() - type;
-    }
-    return (elementName.compareTo(cc.getElementName()));
-  }
-  
-  public void regenerateCompletionString(){
+
+  CompletionCandidate withRegeneratedCompString() {
     if (wrappedObject instanceof MethodDeclaration) {
       MethodDeclaration method = (MethodDeclaration)wrappedObject;
-      
+
       @SuppressWarnings("unchecked")
-      List<ASTNode> params = (List<ASTNode>) 
-          method.getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
-      
-      StringBuilder label = new StringBuilder(elementName + "(");
-      StringBuilder cstr = new StringBuilder(method.getName() + "(");
+      List<ASTNode> params = (List<ASTNode>)
+        method.getStructuralProperty(MethodDeclaration.PARAMETERS_PROPERTY);
+
+      // build the html label
+      StringBuilder labelBuilder = new StringBuilder(elementName);
+      labelBuilder.append('(');
       for (int i = 0; i < params.size(); i++) {
-        label.append(params.get(i).toString());
+        labelBuilder.append(params.get(i));
         if (i < params.size() - 1) {
-          label.append(",");
-          cstr.append(",");
+          labelBuilder.append(',');
+        }
+      }
+      labelBuilder.append(')');
+      if (method.getReturnType2() != null) {
+        labelBuilder.append(" : ");
+        labelBuilder.append(method.getReturnType2());
+      }
+
+      // build the completion str
+      StringBuilder compBuilder = new StringBuilder();
+      compBuilder.append(method.getName());
+      compBuilder.append('(');
+      for (int i = 0; i < params.size(); i++) {
+        if (i < params.size() - 1) {
+          compBuilder.append(',');
         }
       }
       if (params.size() == 1) {
-        cstr.append(' ');
+        compBuilder.append(' ');
       }
-      label.append(")");
-      if (method.getReturnType2() != null)
-        label.append(" : " + method.getReturnType2());
-      cstr.append(")");
-      this.label = label.toString();
-      this.completionString = cstr.toString();
-    }
-   else if (wrappedObject instanceof Method) {
-     Method method = (Method)wrappedObject;
-     StringBuilder label = new StringBuilder("<html>" + method.getName() + "(");
-     StringBuilder cstr = new StringBuilder(method.getName() + "(");
-     for (int i = 0; i < method.getParameterTypes().length; i++) {
-       label.append(method.getParameterTypes()[i].getSimpleName());
-       if (i < method.getParameterTypes().length - 1) {
-         label.append(",");
-         cstr.append(",");
-       }
-     }
-     if(method.getParameterTypes().length == 1) {
-       cstr.append(' ');
-     }
-     label.append(")");
-     if(method.getReturnType() != null)
-       label.append(" : " + method.getReturnType().getSimpleName());
-     label.append(" - <font color=#777777>" + method.getDeclaringClass().getSimpleName() + "</font></html>");
-     cstr.append(")");
-     this.label = label.toString();
-     this.completionString = cstr.toString();
-     /*
-      * StringBuilder label = new StringBuilder("<html>"+method.getName() + "(");
-    StringBuilder cstr = new StringBuilder(method.getName() + "(");
-    for (int i = 0; i < method.getParameterTypes().length; i++) {
-      label.append(method.getParameterTypes()[i].getSimpleName());
-      if (i < method.getParameterTypes().length - 1) {
-        label.append(",");
-        cstr.append(",");
+      compBuilder.append(')');
+
+      return withLabelAndCompString(labelBuilder.toString(), compBuilder.toString());
+
+    } else if (wrappedObject instanceof Method) {
+      Method method = (Method) wrappedObject;
+      Class<?>[] types = method.getParameterTypes();
+
+      // build html label
+      StringBuilder labelBuilder = new StringBuilder();
+      labelBuilder.append("<html>");
+      labelBuilder.append(method.getName());
+      labelBuilder.append('(');
+
+      for (int i = 0; i < types.length; i++) {
+        labelBuilder.append(types[i].getSimpleName());
+        if (i < types.length - 1) {
+          labelBuilder.append(',');
+        }
       }
+      labelBuilder.append(')');
+      if (method.getReturnType() != null) {
+        labelBuilder.append(" : " + method.getReturnType().getSimpleName());
+      }
+
+      labelBuilder.append(" - <font color=#777777>");
+      labelBuilder.append(method.getDeclaringClass().getSimpleName());
+      labelBuilder.append("</font>");
+      labelBuilder.append("</html>");
+
+      // make completion string
+      StringBuilder compBuilder = new StringBuilder(method.getName());
+      compBuilder.append('(');
+      for (int i = 0; i < types.length; i++) {
+        if (i < types.length - 1) {
+          compBuilder.append(',');
+        }
+      }
+      if (types.length == 1) {
+        compBuilder.append(' ');
+      }
+      compBuilder.append(')');
+
+      return withLabelAndCompString(labelBuilder.toString(), compBuilder.toString());
     }
-    if(method.getParameterTypes().length == 1) {
-      cstr.append(' ');
-    }
-    label.append(")");
-    if(method.getReturnType() != null)
-      label.append(" : " + method.getReturnType().getSimpleName());
-    label.append(" - <font color=#777777>" + method.getDeclaringClass().getSimpleName() + "</font></html>");
-      * */
-   }
+
+    // fall-through silently does nothing? [fry 180326]
+    return this;
   }
 
+
+  static private String makeLabel(Method method) {
+    Class<?>[] types = method.getParameterTypes();
+
+    StringBuilder labelBuilder = new StringBuilder();
+    labelBuilder.append("<html>");
+    labelBuilder.append(method.getName());
+    labelBuilder.append('(');
+
+    for (int i = 0; i < types.length; i++) {
+      labelBuilder.append(types[i].getSimpleName());
+      if (i < types.length - 1) {
+        labelBuilder.append(',');
+      }
+    }
+    labelBuilder.append(")");
+    if (method.getReturnType() != null) {
+      labelBuilder.append(" : ");
+      labelBuilder.append(method.getReturnType().getSimpleName());
+    }
+    labelBuilder.append(" - <font color=#777777>");
+    labelBuilder.append(method.getDeclaringClass().getSimpleName());
+    labelBuilder.append("</font>");
+    labelBuilder.append("</html>");
+
+    return labelBuilder.toString();
+  }
+
+
+  static private String makeCompletion(Method method) {
+    Class<?>[] types = method.getParameterTypes();
+
+    StringBuilder compBuilder = new StringBuilder();
+    compBuilder.append(method.getName());
+    compBuilder.append('(');
+
+    for (int i = 0; i < types.length; i++) {
+      if (i < types.length - 1) {
+        compBuilder.append(',');  // wtf? [fry 180326]
+      }
+    }
+    if (types.length == 1) {
+      compBuilder.append(' ');
+    }
+    compBuilder.append(')');
+    return compBuilder.toString();
+  }
+
+
+  @Override
+  public int compareTo(CompletionCandidate cc) {
+    if (type != cc.getType()) {
+      return cc.getType() - type;
+    }
+    return elementName.compareTo(cc.getElementName());
+  }
+
+
+  public String toString() {
+    return label;
+  }
 }

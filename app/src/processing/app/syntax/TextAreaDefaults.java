@@ -18,10 +18,6 @@ import java.awt.*;
  * creating the text area is that this method is faster.
  */
 public class TextAreaDefaults {
-  // For 3.0a6, the InputHandler object was broken out because it has little
-  // to do with this code and created circuitous connections between classes. 
-  //public InputHandler inputHandler;
-  
   public SyntaxDocument document;
 
   public boolean caretVisible;
@@ -29,10 +25,10 @@ public class TextAreaDefaults {
   public boolean blockCaret;
   public int electricScroll;
 
-  // default/preferred number of rows/cols 
+  // default/preferred number of rows/cols
   public int cols;
   public int rows;
-  
+
   public SyntaxStyle[] styles;
   public Color caretColor;
   public Color selectionColor;

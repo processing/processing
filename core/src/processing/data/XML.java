@@ -45,7 +45,6 @@ import processing.core.PApplet;
  * representing a single node of an XML tree.
  *
  * @webref data:composite
- * @see PApplet#createXML(String)
  * @see PApplet#loadXML(String)
  * @see PApplet#parseXML(String)
  * @see PApplet#saveXML(XML, String)
@@ -232,7 +231,18 @@ public class XML implements Serializable {
   protected XML(XML parent, Node node) {
     this.node = node;
     this.parent = parent;
-//    this.name = node.getNodeName();
+
+    for (String attr : parent.listAttributes()) {
+      if (attr.startsWith("xmlns")) {
+        // Copy namespace attributes to the kids, otherwise this XML
+        // can no longer be printed (or manipulated in most ways).
+        // Only do this when it's an Element, otherwise it's trying to set
+        // attributes on text notes (interstitial content).
+        if (node instanceof Element) {
+          setString(attr, parent.getString(attr));
+        }
+      }
+    }
   }
 
 
@@ -430,8 +440,7 @@ public class XML implements Serializable {
   /**
    * Quick accessor for an element at a particular index.
    *
-   * @webref xml:method
-   * @brief Returns the child element with the specified index value or path
+   * @nowebref
    */
   public XML getChild(int index) {
     checkChildren();
@@ -442,8 +451,10 @@ public class XML implements Serializable {
   /**
    * Get a child by its name or path.
    *
+   * @webref xml:method
+   * @brief Returns the child element with the specified index value or path
    * @param name element name or path/to/element
-   * @return the first matching element
+   * @return the first matching element or null if no match
    */
   public XML getChild(String name) {
     if (name.length() > 0 && name.charAt(0) == '/') {
@@ -584,7 +595,14 @@ public class XML implements Serializable {
     children = null;  // TODO not efficient
   }
 
-
+  /**
+   * Removes whitespace nodes.
+   * Those whitespace nodes are required to reconstruct the original XML's spacing and indentation.
+   * If you call this and use saveXML() your original spacing will be gone.
+   * 
+   * @nowebref
+   * @brief Removes whitespace nodes
+   */
   public void trim() {
     try {
       XPathFactory xpathFactory = XPathFactory.newInstance();
@@ -1095,16 +1113,29 @@ public class XML implements Serializable {
       String outgoing = stringWriter.toString();
 
       // Add the XML declaration to the top if it's not there already
-      if (!outgoing.startsWith(decl)) {
-        return decl + sep + outgoing;
-      } else {
+      if (outgoing.startsWith(decl)) {
+        int declen = decl.length();
+        int seplen = sep.length();
+        if (outgoing.length() > declen + seplen &&
+            !outgoing.substring(declen, declen + seplen).equals(sep)) {
+          // make sure there's a line break between the XML decl and the code
+          return outgoing.substring(0, decl.length()) +
+            sep + outgoing.substring(decl.length());
+        }
         return outgoing;
+      } else {
+        return decl + sep + outgoing;
       }
 
     } catch (Exception e) {
       e.printStackTrace();
     }
     return null;
+  }
+
+
+  public void print() {
+    PApplet.println(format(2));
   }
 
 

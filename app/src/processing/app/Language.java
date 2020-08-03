@@ -31,25 +31,20 @@ import processing.core.PApplet;
  * Internationalization (i18n)
  */
 public class Language {
-//  static private final String FILE = "processing.app.languages.PDE";
-  //static private final String LISTING = "processing/app/languages/languages.txt";
-  
   // Store the language information in a file separate from the preferences,
   // because preferences need the language on load time.
   static protected final String PREF_FILE = "language.txt";
   static protected final File prefFile = Base.getSettingsFile(PREF_FILE);
-  
+
   /** Single instance of this Language class */
   static private volatile Language instance;
-  
+
   /** The system language */
   private String language;
-  
+
   /** Available languages */
   private HashMap<String, String> languages;
-  
-  //private ResourceBundle bundle;
-  //private Settings bundle;
+
   private LanguageBundle bundle;
 
 
@@ -57,18 +52,19 @@ public class Language {
     String systemLanguage = Locale.getDefault().getLanguage();
     language = loadLanguage();
     boolean writePrefs = false;
-    
+
     if (language == null) {
       language = systemLanguage;
       writePrefs = true;
     }
-    
+
     // Set available languages
     languages = new HashMap<String, String>();
     for (String code : listSupported()) {
-      languages.put(code, Locale.forLanguageTag(code).getDisplayLanguage(Locale.forLanguageTag(code)));
+      Locale locale = Locale.forLanguageTag(code);
+      languages.put(code, locale.getDisplayLanguage(locale));
     }
-    
+
     // Set default language
     if (!languages.containsKey(language)) {
       language = "en";
@@ -87,22 +83,26 @@ public class Language {
       e.printStackTrace();
     }
   }
-  
-  
+
+
   static private String[] listSupported() {
     // List of languages in alphabetical order. (Add yours here.)
-    // Also remember to add it to the corresponding build/build.xml rule.
+    // Also remember to add it to build/shared/lib/languages/languages.txt.
     final String[] SUPPORTED = {
+      "ar", // Arabic
       "de", // German, Deutsch
       "en", // English
       "el", // Greek
       "es", // Spanish
       "fr", // French, Français
+      "it", // Italiano, Italian
       "ja", // Japanese
-      "ko", // Korean      
+      "ko", // Korean
       "nl", // Dutch, Nederlands
       "pt", // Portuguese
+      "ru", // Russian
       "tr", // Turkish
+      "uk", // Ukrainian
       "zh"  // Chinese
     };
     return SUPPORTED;
@@ -126,12 +126,12 @@ public class Language {
 
 
   /** Read the saved language */
-  static private String loadLanguage() { 
+  static private String loadLanguage() {
     try {
       if (prefFile.exists()) {
         String language = PApplet.loadStrings(prefFile)[0];
         language = language.trim().toLowerCase();
-        if (!language.equals("")) {
+        if (language.trim().length() != 0) {
           return language;
         }
       }
@@ -140,26 +140,27 @@ public class Language {
     }
     return null;
   }
-  
-  
+
+
   /**
-   * Save the language directly to a settings file. This is 'save' and not 
-   * 'set' because a language change requires a restart of Processing. 
+   * Save the language directly to a settings file. This is 'save' and not
+   * 'set' because a language change requires a restart of Processing.
    */
   static public void saveLanguage(String language) {
     try {
-      Base.saveFile(language, prefFile);
+      Util.saveFile(language, prefFile);
+      prefFile.setWritable(true, false);
     } catch (Exception e) {
       e.printStackTrace();
     }
-    Base.getPlatform().saveLanguage(language);
+    Platform.saveLanguage(language);
   }
-  
-  
+
+
   /** Singleton constructor */
   static public Language init() {
     if (instance == null) {
-      synchronized(Language.class) {
+      synchronized (Language.class) {
         if (instance == null) {
           instance = new Language();
         }
@@ -169,37 +170,60 @@ public class Language {
   }
 
 
-  /** Get translation from bundles. */
-  static public String text(String text) {
-//    ResourceBundle bundle = init().bundle;
+  static private String get(String key) {
     LanguageBundle bundle = init().bundle;
 
     try {
-      return bundle.getString(text);
-    } catch (MissingResourceException e) {
-      return text;
+      String value = bundle.getString(key);
+      if (value != null) {
+        return value;
+      }
+    } catch (MissingResourceException e) { }
+
+    return null;
+  }
+
+
+  /** Get translation from bundles. */
+  static public String text(String key) {
+    String value = get(key);
+    if (value == null) {
+      // MissingResourceException and null values
+      return key;
     }
+    return value;
   }
 
-  
-  static public String interpolate(String text, Object... arguments) {
-//    return String.format(init().bundle.getString(text), arguments);
-    return String.format(init().bundle.getString(text), arguments);
-  }
 
-  
-  static public String pluralize(String text, int count) {
-//    ResourceBundle bundle = init().bundle;
-    LanguageBundle bundle = init().bundle;
-
-    String fmt = text + ".%s";
-    String key = String.format(fmt, count);
-    if (bundle.containsKey(key)) {
-      return interpolate(key, count);
+  static public String interpolate(String key, Object... arguments) {
+    String value = get(key);
+    if (value == null) {
+      return key;
     }
-    return interpolate(String.format(fmt, "n"), count);
+//    System.out.println("  interp for " + key + " is " + String.format(value, arguments));
+    return String.format(value, arguments);
   }
-  
+
+
+  static public String pluralize(String key, int count) {
+    // First check if the bundle contains an entry for this specific count
+    String customKey = key + "." + count;
+    String value = get(customKey);
+    if (value != null) {
+      return String.format(value, count);
+    }
+    // Use the general 'n' version for n items
+    return interpolate(key + ".n", count);
+  }
+
+
+  /**
+   * @param which either yes, no, cancel, ok, or browse
+   */
+  static public String getPrompt(String which) {
+    return Language.text("prompt." + which);
+  }
+
 
   /** Get all available languages */
   static public Map<String, String> getLanguages() {
@@ -207,16 +231,31 @@ public class Language {
   }
 
 
-  /** Get current language */
+  /**
+   * Get the current language.
+   * @return two digit ISO code (lowercase)
+   */
   static public String getLanguage() {
     return init().language;
+  }
+
+
+  /**
+   * Is this a CJK language where Input Method support is suggested/required?
+   * @return true if the user is running in Japanese, Korean, or Chinese
+   */
+  static public boolean useInputMethod() {
+    final String language = getLanguage();
+    return (language.equals("ja") ||
+            language.equals("ko") ||
+            language.equals("zh"));
   }
 
 
 //  /** Set new language (called by Preferences) */
 //  static public void setLanguage(String language) {
 //    this.language = language;
-//    
+//
 //    try {
 //      File file = Base.getContentFile("lib/language.txt");
 //      Base.saveFile(language, file);
@@ -262,14 +301,16 @@ public class Language {
     }
   }
   */
-  
-  
+
+
   static class LanguageBundle {
     Map<String, String> table;
-    
+
     LanguageBundle(String language) throws IOException {
       table = new HashMap<String, String>();
-      
+
+      // Check to see if the user is working on localization,
+      // and has their own .properties files in their sketchbook.
       String baseFilename = "languages/PDE.properties";
       String langFilename = "languages/PDE_" + language + ".properties";
 
@@ -284,23 +325,41 @@ public class Language {
       if (userLangFile.exists()) {
         langFile = userLangFile;
       }
-      
+
       read(baseFile);
       read(langFile);
     }
-    
+
     void read(File additions) {
       String[] lines = PApplet.loadStrings(additions);
-      for (String line : lines) {
+      if (lines == null) {
+        throw new NullPointerException("File not found:\n" + additions.getAbsolutePath());
+      }
+      //for (String line : lines) {
+      for (int i = 0; i < lines.length; i++) {
+        String line = lines[i];
         if ((line.length() == 0) ||
             (line.charAt(0) == '#')) continue;
 
-        // this won't properly handle = signs being in the text
+        // this won't properly handle = signs inside in the text
         int equals = line.indexOf('=');
         if (equals != -1) {
           String key = line.substring(0, equals).trim();
           String value = line.substring(equals + 1).trim();
-          
+
+          /*
+          // Support for backslashes to continue lines... Nah.
+          while (line.endsWith("\\")) {
+            // remove the backslash from the previous
+            value = value.substring(0, value.length() - 1);
+            // get the next line
+            line = lines[++i].trim();
+            // append the new line to the value (with a space)
+            // This is imperfect since the prev may end <br>
+            value += " " + line;
+          }
+          */
+
           // fix \n and \'
           value = value.replaceAll("\\\\n", "\n");
           value = value.replaceAll("\\\\'", "'");
@@ -309,11 +368,11 @@ public class Language {
         }
       }
     }
-    
+
     String getString(String key) {
       return table.get(key);
     }
-    
+
     boolean containsKey(String key) {
       return table.containsKey(key);
     }

@@ -28,34 +28,45 @@ import java.io.UnsupportedEncodingException;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.Kernel32Util;
-import com.sun.jna.platform.win32.Shell32;
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Shell32Util;
 import com.sun.jna.platform.win32.ShlObj;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.platform.win32.WinError;
-import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.W32APIOptions;
 
 import processing.app.Base;
-import processing.app.Platform;
+import processing.app.Messages;
 import processing.app.Preferences;
+import processing.app.Util;
 import processing.app.platform.WindowsRegistry.REGISTRY_ROOT_KEY;
+
 import processing.core.PApplet;
 
+
+// With the changes to include .pyde files for 3.4, this class is
+// a bit of a mess. Registering a single extension has moved to
+// registerExtension(), however that method, and the checkAssociations()
+// method now have too much duplicated effort, which isn't great,
+// but more importantly, makes it hard to follow what's going on.
+// At some point, checkAssociations() and setAssociations() can probably
+// be merged, or at least turned into cleaner methods that don't re-do
+// one another's work, but I haven't time today. [fry 180326]
 
 /**
  * Platform-specific glue for Windows.
  */
-public class WindowsPlatform extends Platform {
+public class WindowsPlatform extends DefaultPlatform {
 
   static final String APP_NAME = "Processing";
+  static final String[] APP_EXTENSIONS = { ".pde", ".pyde" };
   static final String REG_OPEN_COMMAND =
     System.getProperty("user.dir").replace('/', '\\') +
     "\\" + APP_NAME.toLowerCase() + ".exe \"%1\"";
   static final String REG_DOC = APP_NAME + ".Document";
 
 
-  public void init(Base base) {
-    super.init(base);
+  public void initBase(Base base) {
+    super.initBase(base);
     checkAssociations();
     //checkQuickTime();
     checkPath();
@@ -138,10 +149,18 @@ public class WindowsPlatform extends Platform {
         // Check the key that should be set by a previous run of Processing
         String knownCommand =
           WindowsRegistry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER,
-                                  "Software\\Classes\\" + REG_DOC + "\\shell\\open\\command", "");
+                                         "Software\\Classes\\" + REG_DOC + "\\shell\\open\\command", "");
         // If the association hasn't been set, or it's not correct, set it.
         if (knownCommand == null || !knownCommand.equals(REG_OPEN_COMMAND)) {
           setAssociations();
+
+        } else {  // check each extension
+          for (String extension : APP_EXTENSIONS) {
+            if (!WindowsRegistry.valueExists(REGISTRY_ROOT_KEY.CURRENT_USER,
+                                             "Software\\Classes", extension)) {
+              setAssociations();
+            }
+          }
         }
       }
     } catch (Exception e) {
@@ -191,33 +210,36 @@ public class WindowsPlatform extends Platform {
                                 openCommand)) {
 */
 
+    // First create the .pde association
+    for (String extension : APP_EXTENSIONS) {
+      if (!registerExtension(extension)) {
+        Messages.log("Could not associate " + extension + "files, " +
+                     "turning off auto-associate pref.");
+        Preferences.setBoolean("platform.auto_file_type_associations", false);
+      }
+    }
+  }
+
+
+  private boolean registerExtension(String extension) throws UnsupportedEncodingException {
     // "To change the settings for the interactive user, store the changes
     // under HKEY_CURRENT_USER\Software\Classes rather than HKEY_CLASSES_ROOT."
     // msdn.microsoft.com/en-us/library/windows/desktop/ms724475(v=vs.85).aspx
     final REGISTRY_ROOT_KEY rootKey = REGISTRY_ROOT_KEY.CURRENT_USER;
     final String docPrefix = "Software\\Classes\\" + REG_DOC;
 
-    // First create the .pde association
-    if (WindowsRegistry.createKey(rootKey, "Software\\Classes", ".pde") &&
-        WindowsRegistry.setStringValue(rootKey, "Software\\Classes\\.pde", "", REG_DOC) &&
+    return (WindowsRegistry.createKey(rootKey, "Software\\Classes", extension) &&
+            WindowsRegistry.setStringValue(rootKey, "Software\\Classes\\" + extension, "", REG_DOC) &&
 
-        // Now give files with a .pde extension a name for the explorer
-        WindowsRegistry.createKey(rootKey, "Software\\Classes", REG_DOC) &&
-        WindowsRegistry.setStringValue(rootKey, docPrefix, "", APP_NAME + " Source Code") &&
+            // Now give files with a .pde extension a name for the explorer
+            WindowsRegistry.createKey(rootKey, "Software\\Classes", REG_DOC) &&
+            WindowsRegistry.setStringValue(rootKey, docPrefix, "", APP_NAME + " Source Code") &&
 
-        // Now associate the 'open' command with the current processing.exe
-        WindowsRegistry.createKey(rootKey, docPrefix, "shell") &&
-        WindowsRegistry.createKey(rootKey, docPrefix + "\\shell", "open") &&
-        WindowsRegistry.createKey(rootKey, docPrefix + "\\shell\\open", "command") &&
-        WindowsRegistry.setStringValue(rootKey, docPrefix + "\\shell\\open\\command", "", REG_OPEN_COMMAND)) {
-
-      // everything ok
-      // hooray!
-
-    } else {
-      Base.log("Could not associate files, turning off auto-associate pref.");
-      Preferences.setBoolean("platform.auto_file_type_associations", false);
-    }
+            // Now associate the 'open' command with the current processing.exe
+            WindowsRegistry.createKey(rootKey, docPrefix, "shell") &&
+            WindowsRegistry.createKey(rootKey, docPrefix + "\\shell", "open") &&
+            WindowsRegistry.createKey(rootKey, docPrefix + "\\shell\\open", "command") &&
+            WindowsRegistry.setStringValue(rootKey, docPrefix + "\\shell\\open\\command", "", REG_OPEN_COMMAND));
   }
 
 
@@ -258,52 +280,72 @@ public class WindowsPlatform extends Platform {
 
   // looking for Documents and Settings/blah/Application Data/Processing
   public File getSettingsFolder() throws Exception {
-    String appData = getAppDataPath();
-    if (appData != null) {
-      return new File(appData, APP_NAME);
+    try {
+      String appDataRoaming = getAppDataPath();
+      if (appDataRoaming != null) {
+        File settingsFolder = new File(appDataRoaming, APP_NAME);
+        if (settingsFolder.exists() || settingsFolder.mkdirs()) {
+          return settingsFolder;
+        }
+      }
+
+      String appDataLocal = getLocalAppDataPath();
+      if (appDataLocal != null) {
+        File settingsFolder = new File(appDataLocal, APP_NAME);
+        if (settingsFolder.exists() || settingsFolder.mkdirs()) {
+          return settingsFolder;
+        }
+      }
+
+      if (appDataRoaming == null && appDataLocal == null) {
+        throw new IOException("Could not get the AppData folder");
+      }
+
+      // https://github.com/processing/processing/issues/3838
+      throw new IOException("Permissions error: make sure that " +
+                            appDataRoaming + " or " + appDataLocal +
+                            " is writable.");
+
+    } catch (UnsatisfiedLinkError ule) {
+      String path = new File("lib").getCanonicalPath();
+
+      String msg = Util.containsNonASCII(path) ?
+        "Please move Processing to a location with only\n" +
+        "ASCII characters in the path and try again.\n" +
+        "https://github.com/processing/processing/issues/3543" :
+        "Could not find JNA support files, please reinstall Processing.";
+      Messages.showError("Windows JNA Problem", msg, ule);
+      return null;  // unreachable
     }
-    throw new IOException("Could not get the Application Data folder");
   }
 
 
+  /*
+    What's happening internally with JNA https://github.com/java-native-access/jna/blob/master/contrib/platform/src/com/sun/jna/platform/win32/Shell32.java
+
+    Some goodies here: https://github.com/java-native-access/jna/blob/master/contrib/platform/src/com/sun/jna/platform/win32/Shell32Util.java
+    http://twall.github.io/jna/4.1.0/com/sun/jna/platform/win32/Shell32Util.html#getSpecialFolderPath(int, boolean)
+
+    SHGetKnownFolderPath function https://msdn.microsoft.com/en-us/library/windows/desktop/bb762188(v=vs.85).aspx
+    SHGetSpecialFolderPath https://msdn.microsoft.com/en-us/library/windows/desktop/bb762204(v=vs.85).aspx
+
+    http://blogs.msdn.com/b/patricka/archive/2010/03/18/where-should-i-store-my-data-and-configuration-files-if-i-target-multiple-os-versions.aspx
+   */
+
+
+  /** Get the Users\name\AppData\Roaming path to write settings files. */
   static private String getAppDataPath() throws Exception {
-    // HKEY_CURRENT_USER\Software\Microsoft
-    //   \Windows\CurrentVersion\Explorer\Shell Folders
-    // Value Name: AppData
-    // Value Type: REG_SZ
-    // Value Data: path
-
-    //String keyPath =
-    //  "Software\\Microsoft\\Windows\\CurrentVersion" +
-    // "\\Explorer\\Shell Folders";
-    //String appDataPath =
-    //  Registry.getStringValue(REGISTRY_ROOT_KEY.CURRENT_USER, keyPath, "AppData");
-
-    // Fix for Issue 410
-    // Java 1.6 doesn't provide a good workaround (http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6519127)
-    // Using JNA and SHGetFolderPath instead.
-
-    // this will be contain the path if SHGetFolderPath is successful
-    char[] pszPath = new char[WinDef.MAX_PATH];
-    HRESULT hResult =
-      Shell32.INSTANCE.SHGetFolderPath(null, ShlObj.CSIDL_APPDATA,
-                                       null, ShlObj.SHGFP_TYPE_CURRENT,
-                                       pszPath);
-
-    if (!hResult.equals(WinError.S_OK)) {
-      System.err.println(Kernel32Util.formatMessageFromHR(hResult));
-      throw new Exception("Problem city, population: your computer.");
-    }
-
-    String appDataPath = new String(pszPath);
-    int len = appDataPath.indexOf("\0");
-//    appDataPath = appDataPath.substring(0, len);
-//    return new File(appDataPath, "Processing");
-    return appDataPath.substring(0, len);
+    return Shell32Util.getSpecialFolderPath(ShlObj.CSIDL_APPDATA, true);
   }
 
 
-  // looking for Documents and Settings/blah/My Documents/Processing
+  /** Get the Users\name\AppData\Local path as a settings fallback. */
+  static private String getLocalAppDataPath() throws Exception {
+    return Shell32Util.getSpecialFolderPath(ShlObj.CSIDL_LOCAL_APPDATA, true);
+  }
+
+
+  /** Get the Documents and Settings\name\My Documents\Processing folder. */
   public File getDefaultSketchbookFolder() throws Exception {
     String documentsPath = getDocumentsPath();
     if (documentsPath != null) {
@@ -314,6 +356,15 @@ public class WindowsPlatform extends Platform {
 
 
   static private String getDocumentsPath() throws Exception {
+    return Shell32Util.getSpecialFolderPath(ShlObj.CSIDL_MYDOCUMENTS, true);
+  }
+
+
+  /*
+  static private String getDocumentsPath() throws Exception {
+    // heh, this is a little too cheeky
+    //new JFileChooser().getFileSystemView().getDefaultDirectory().toString();
+
     // http://support.microsoft.com/?kbid=221837&sd=RMVP
     // http://support.microsoft.com/kb/242557/en-us
 
@@ -341,16 +392,14 @@ public class WindowsPlatform extends Platform {
     HRESULT hResult = Shell32.INSTANCE.SHGetFolderPath(null, ShlObj.CSIDL_PERSONAL, null, ShlObj.SHGFP_TYPE_CURRENT, pszPath);
 
     if (!hResult.equals(WinError.S_OK)) {
-      System.err.println(Kernel32Util.formatMessageFromHR(hResult));
-      throw new Exception("Problem city, population: your computer.");
+      throw new Exception(Kernel32Util.formatMessageFromHR(hResult));
     }
 
     String personalPath = new String(pszPath);
     int len = personalPath.indexOf("\0");
-//    personalPath = personalPath.substring(0, len);
-//    return new File(personalPath, "Processing");
     return personalPath.substring(0, len);
   }
+  */
 
 
 //  @Override
@@ -497,10 +546,57 @@ public class WindowsPlatform extends Platform {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  // Code partially thanks to Richard Quirk from:
+  // getenv/setenv code partially thanks to Richard Quirk from:
   // http://quirkygba.blogspot.com/2009/11/setting-environment-variables-in-java.html
 
-  static WinLibC clib = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
+  static WinLibC clib;
+
+
+  // moved to a getter so that we could handle errors in a single location
+  // and at a time when it was useful/possible (rather than a static block)
+  static WinLibC getLibC() {
+    if (clib == null) {
+      try {
+        clib = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
+      } catch (UnsatisfiedLinkError ule) {
+        Messages.showTrace("JNA Error",
+                           "JNA could not be loaded. Please report here:\n" +
+                           "http://github.com/processing/processing/issues/new", ule, true);
+
+        /*
+        // Might be a problem with file encoding, use a default directory
+        // https://github.com/processing/processing/issues/3624
+        File ctmp = new File("C:\\TEMP");  // kick it old school
+        if (ctmp.exists() || ctmp.mkdirs()) {
+          try {
+            File jnaTmp = File.createTempFile("processing", "jna", ctmp);
+            if (jnaTmp.mkdirs()) {
+              jnaTmp.deleteOnExit();  // clean up when we're done
+              System.setProperty("jna.tmpdir", jnaTmp.getAbsolutePath());
+              try {
+                clib = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
+              } catch (UnsatisfiedLinkError ulf) {
+                Messages.showTrace("No luck with JNA",
+                                   "After several attempts, JNA could not be loaded. Please report:\n" +
+                                   "http://github.com/processing/processing/issues/new", ulf, true);
+              }
+            }
+          } catch (IOException e) {
+            Messages.showTrace("Could not create temp directory",
+                               "JNA could not be loaded properly. Please report:\n" +
+                               "http://github.com/processing/processing/issues/new", e, true);
+          }
+        } else {
+          Messages.showError("Could not create temp directory",
+                             "JNA could not be loaded into C:\\TEMP. Please report:\n" +
+                             "http://github.com/processing/processing/issues/new", null);
+        }
+        */
+      }
+    }
+    return clib;
+  }
+
 
   public interface WinLibC extends Library {
     //WinLibC INSTANCE = (WinLibC) Native.loadLibrary("msvcrt", WinLibC.class);
@@ -511,7 +607,7 @@ public class WindowsPlatform extends Platform {
 
   public void setenv(String variable, String value) {
     //WinLibC clib = WinLibC.INSTANCE;
-    clib._putenv(variable + "=" + value);
+    getLibC()._putenv(variable + "=" + value);
   }
 
 
@@ -524,62 +620,63 @@ public class WindowsPlatform extends Platform {
     //WinLibC clib = WinLibC.INSTANCE;
     //clib._putenv(variable + "=");
     //return 0;
-    return clib._putenv(variable + "=");
+    return getLibC()._putenv(variable + "=");
   }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  // JNA code for using SHGetFolderPath to fix Issue 410
-  // https://code.google.com/p/processing/issues/detail?id=410
-  // Based on answer provided by McDowell at
-  // http://stackoverflow.com/questions/585534/what-is-the-best-way-to-find-the-users-home-directory-in-java/586917#586917
 
-//  private static Map<String, Object> OPTIONS = new HashMap<String, Object>();
-//
-//  static {
-//    OPTIONS.put(Library.OPTION_TYPE_MAPPER, W32APITypeMapper.UNICODE);
-//    OPTIONS.put(Library.OPTION_FUNCTION_MAPPER, W32APIFunctionMapper.UNICODE);
-//  }
-//
-//
-//  static class HANDLE extends PointerType implements NativeMapped {
-//    public HANDLE() { }
-//  }
-//
-//  static class HWND extends HANDLE { }
-//
-//
-//  public interface Shell32 extends Library {
-//
-//    public static final int MAX_PATH = 260;
-//    public static final int SHGFP_TYPE_CURRENT = 0;
-//    public static final int SHGFP_TYPE_DEFAULT = 1;
-//    public static final int S_OK = 0;
-//
-//    // KNOWNFOLDERIDs are preferred to CSDIL values
-//    // but Windows XP only supports CSDIL so thats what we have to use
-//    public static final int CSIDL_APPDATA = 0x001a; // "Application Data"
-//    public static final int CSIDL_PERSONAL = 0x0005;      // "My Documents"
-//
-//    static Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32", Shell32.class, OPTIONS);
-//
-//    /**
-//     * see http://msdn.microsoft.com/en-us/library/bb762181(VS.85).aspx
-//     *
-//     * HRESULT SHGetFolderPath( HWND hwndOwner, int nFolder, HANDLE hToken,
-//     * DWORD dwFlags, LPTSTR pszPath);
-//     */
-//    public int SHGetFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken,
-//                               int dwFlags, char[] pszPath);
-//
-//    /**
-//     * This function can be used to copy, move, rename,
-//     * or delete a file system object.
-//     * @param fileop Address of an SHFILEOPSTRUCT structure that contains
-//     * information this function needs to carry out the specified operation.
-//     * @return Returns zero if successful, or nonzero otherwise.
-//     */
-//    public int SHFileOperation(SHFILEOPSTRUCT fileop);
-//  }
+  // Need to extend com.sun.jna.platform.win32.User32 to access
+  // Win32 function GetDpiForSystem()
+  interface ExtUser32 extends StdCallLibrary, com.sun.jna.platform.win32.User32 {
+    ExtUser32 INSTANCE = (ExtUser32) Native.loadLibrary("user32", ExtUser32.class, W32APIOptions.DEFAULT_OPTIONS);
+
+    public int GetDpiForSystem();
+
+    public int SetProcessDpiAwareness(int value);
+
+    public final int DPI_AWARENESS_INVALID = -1;
+    public final int DPI_AWARENESS_UNAWARE = 0;
+    public final int DPI_AWARENESS_SYSTEM_AWARE = 1;
+    public final int DPI_AWARENESS_PER_MONITOR_AWARE = 2;
+
+    public Pointer SetThreadDpiAwarenessContext(Pointer dpiContext);
+
+    public final Pointer DPI_AWARENESS_CONTEXT_UNAWARE = new Pointer(-1);
+    public final Pointer DPI_AWARENESS_CONTEXT_SYSTEM_AWARE = new Pointer(-2);
+    public final Pointer DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE = new Pointer(-3);
+  }
+
+
+  static private int detected = detectSystemDPI();
+
+
+  public int getSystemDPI() {
+    if (detected == -1) {
+      return super.getSystemDPI();
+    }
+    return detected;
+  }
+
+
+  public static int detectSystemDPI() {
+    try {
+      ExtUser32.INSTANCE.SetProcessDpiAwareness(ExtUser32.DPI_AWARENESS_SYSTEM_AWARE);
+    } catch (Throwable e) {
+      // Ignore error
+    }
+    try {
+      ExtUser32.INSTANCE.SetThreadDpiAwarenessContext(ExtUser32.DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
+    } catch (Throwable e) {
+      // Ignore error (call valid only on Windows 10)
+    }
+    try {
+      return ExtUser32.INSTANCE.GetDpiForSystem();
+    } catch (Throwable e) {
+      // DPI detection failed, fall back with default
+      System.out.println("DPI detection failed, fallback to 96 dpi");
+      return -1;
+    }
+  }
 }

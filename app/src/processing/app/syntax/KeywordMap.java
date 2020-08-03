@@ -32,7 +32,7 @@ public class KeywordMap {
 
   // A value of 52 will give good performance for most maps.
   static private int MAP_LENGTH = 52;
-  
+
   /**
    * Creates a new <code>KeywordMap</code>.
    * @param ignoreCase True if keys are case insensitive
@@ -84,8 +84,8 @@ public class KeywordMap {
     }
     return Token.NULL;
   }
-  
-  
+
+
   /**
    * Checks if a subregion of a <code>Segment</code> is equal to a
    * character array.
@@ -98,20 +98,20 @@ public class KeywordMap {
                                       int offset, char[] match) {
     int length = offset + match.length;
     char[] textArray = text.array;
-    if(length > text.offset + text.count)
+    if (length > text.offset + text.count) {
       return false;
-    for(int i = offset, j = 0; i < length; i++, j++)
-      {
-        char c1 = textArray[i];
-        char c2 = match[j];
-        if(ignoreCase)
-          {
-            c1 = Character.toUpperCase(c1);
-            c2 = Character.toUpperCase(c2);
-          }
-        if(c1 != c2)
-          return false;
+    }
+    for (int i = offset, j = 0; i < length; i++, j++) {
+      char c1 = textArray[i];
+      char c2 = match[j];
+      if (ignoreCase) {
+        c1 = Character.toUpperCase(c1);
+        c2 = Character.toUpperCase(c2);
       }
+      if (c1 != c2) {
+        return false;
+      }
+    }
     return true;
   }
 
@@ -127,7 +127,7 @@ public class KeywordMap {
     map[key] = new Keyword(keyword.toCharArray(), id, map[key]);
   }
 
-  
+
   /**
    * Returns true if the keyword map is set to be case insensitive,
    * false otherwise.
@@ -136,7 +136,7 @@ public class KeywordMap {
     return ignoreCase;
   }
 
-  
+
   /**
    * Sets if the keyword map should be case insensitive.
    * @param ignoreCase True if the keyword map should be case
@@ -146,21 +146,21 @@ public class KeywordMap {
     this.ignoreCase = ignoreCase;
   }
 
-  
+
   protected int getStringMapKey(String s) {
     return (Character.toUpperCase(s.charAt(0)) +
       Character.toUpperCase(s.charAt(s.length()-1)))
       % MAP_LENGTH;
   }
 
-  
+
   protected int getSegmentMapKey(Segment s, int off, int len) {
     return (Character.toUpperCase(s.array[off]) +
       Character.toUpperCase(s.array[off + len - 1]))
       % MAP_LENGTH;
   }
 
-  
+
   // private members
   private static class Keyword {
     public final char[] keyword;

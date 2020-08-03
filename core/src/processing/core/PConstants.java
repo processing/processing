@@ -46,16 +46,34 @@ public interface PConstants {
 
   // renderers known to processing.core
 
-  static final String JAVA2D    = "processing.core.PGraphicsJava2D";
-  static final String JAVA2D_2X = "processing.core.PGraphicsJava2D2X";
+  /*
+  // List of renderers used inside PdePreprocessor
+  static final StringList rendererList = new StringList(new String[] {
+    "JAVA2D", "JAVA2D_2X",
+    "P2D", "P2D_2X", "P3D", "P3D_2X", "OPENGL",
+    "E2D", "FX2D", "FX2D_2X",  // experimental
+    "LWJGL.P2D", "LWJGL.P3D",  // hmm
+    "PDF"  // no DXF because that's only for beginRaw()
+  });
+  */
 
-  static final String P2D    = "processing.opengl.PGraphics2D";
-  static final String P2D_2X = "processing.opengl.PGraphics2D2X";
-  static final String P3D    = "processing.opengl.PGraphics3D";
-  static final String P3D_2X = "processing.opengl.PGraphics3D2X";
+  static final String JAVA2D = "processing.awt.PGraphicsJava2D";
+
+  static final String P2D = "processing.opengl.PGraphics2D";
+  static final String P3D = "processing.opengl.PGraphics3D";
+
+  // When will it be time to remove this?
+  @Deprecated
   static final String OPENGL = P3D;
 
+  // Experimental, higher-performance Java 2D renderer (but no pixel ops)
+//  static final String E2D = PGraphicsDanger2D.class.getName();
+
+  // Experimental JavaFX renderer; even better 2D performance
+  static final String FX2D = "processing.javafx.PGraphicsFX2D";
+
   static final String PDF = "processing.pdf.PGraphicsPDF";
+  static final String SVG = "processing.svg.PGraphicsSVG";
   static final String DXF = "processing.dxf.RawDXF";
 
   // platform IDs for PApplet.platform
@@ -451,6 +469,8 @@ public interface PConstants {
   /** Screen orientation constant for landscape (the hot dog way). */
   static final int LANDSCAPE = 2;
 
+  /** Use with fullScreen() to indicate all available displays. */
+  static final int SPAN = 0;
 
   // cursor types
 
@@ -494,23 +514,14 @@ public interface PConstants {
   static final int ENABLE_STROKE_PURE         =  9;
   static final int DISABLE_STROKE_PURE        = -9;
 
-  static final int ENABLE_RETINA_PIXELS       =  10;
-  static final int DISABLE_RETINA_PIXELS      = -10;
+  static final int ENABLE_BUFFER_READING      =  10;
+  static final int DISABLE_BUFFER_READING     = -10;
 
-  static final int HINT_COUNT                 = 11;
+  static final int DISABLE_KEY_REPEAT         =  11;
+  static final int ENABLE_KEY_REPEAT          = -11;
 
-  // error messages
+  static final int DISABLE_ASYNC_SAVEFRAME    =  12;
+  static final int ENABLE_ASYNC_SAVEFRAME     = -12;
 
-  static final String ERROR_BACKGROUND_IMAGE_SIZE =
-    "background image must be the same size as your application";
-  static final String ERROR_BACKGROUND_IMAGE_FORMAT =
-    "background images should be RGB or ARGB";
-
-  static final String ERROR_TEXTFONT_NULL_PFONT =
-    "A null PFont was passed to textFont()";
-
-  static final String ERROR_PUSHMATRIX_OVERFLOW =
-    "Too many calls to pushMatrix().";
-  static final String ERROR_PUSHMATRIX_UNDERFLOW =
-    "Too many calls to popMatrix(), and not enough to pushMatrix().";
+  static final int HINT_COUNT                 =  13;
 }

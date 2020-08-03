@@ -77,10 +77,10 @@ public class PShapeOBJ extends PShape {
     vertexCount = face.vertIdx.size();
     vertices = new float[vertexCount][12];
     for (int j = 0; j < face.vertIdx.size(); j++){
-      int vertIdx, normIdx;
-      PVector vert, norms;
+      int vertIdx, normIdx, texIdx;
+      PVector vert, norms, tex;
 
-      vert = norms = null;
+      vert = norms = tex = null;
 
       vertIdx = face.vertIdx.get(j).intValue() - 1;
       vert = coords.get(vertIdx);
@@ -89,6 +89,13 @@ public class PShapeOBJ extends PShape {
         normIdx = face.normIdx.get(j).intValue() - 1;
         if (-1 < normIdx) {
           norms = normals.get(normIdx);
+        }
+      }
+
+      if (j < face.texIdx.size()) {
+        texIdx = face.texIdx.get(j).intValue() - 1;
+        if (-1 < texIdx) {
+          tex = texcoords.get(texIdx);
         }
       }
 
@@ -107,23 +114,13 @@ public class PShapeOBJ extends PShape {
         vertices[j][PGraphics.NZ] = norms.z;
       }
 
+      if (tex != null) {
+        vertices[j][PGraphics.U] = tex.x;
+        vertices[j][PGraphics.V] = tex.y;
+      }
+
       if (mtl != null && mtl.kdMap != null) {
-        // This face is textured.
-        int texIdx;
-        PVector tex = null;
-
-        if (j < face.texIdx.size()) {
-          texIdx = face.texIdx.get(j).intValue() - 1;
-          if (-1 < texIdx) {
-            tex = texcoords.get(texIdx);
-          }
-        }
-
         image = mtl.kdMap;
-        if (tex != null) {
-          vertices[j][PGraphics.U] = tex.x;
-          vertices[j][PGraphics.V] = tex.y;
-        }
       }
     }
   }
@@ -231,7 +228,8 @@ public class PShapeOBJ extends PShape {
               }
               BufferedReader mreader = parent.createReader(fn);
               if (mreader != null) {
-                parseMTL(parent, path, mreader, materials, mtlTable);
+                parseMTL(parent, fn, path, mreader, materials, mtlTable);
+                mreader.close();
               }
             }
           } else if (parts[0].equals("g")) {
@@ -319,7 +317,7 @@ public class PShapeOBJ extends PShape {
   }
 
 
-  static protected void parseMTL(PApplet parent, String path,
+  static protected void parseMTL(PApplet parent, String mtlfn, String path,
                                  BufferedReader reader,
                                  ArrayList<OBJMaterial> materials,
                                  Map<String, Integer> materialsHash) {
@@ -329,45 +327,59 @@ public class PShapeOBJ extends PShape {
       while ((line = reader.readLine()) != null) {
         // Parse the line
         line = line.trim();
-        String parts[] = line.split("\\s+");
+        String[] parts = line.split("\\s+");
         if (parts.length > 0) {
           // Extract the material data.
           if (parts[0].equals("newmtl")) {
             // Starting new material.
             String mtlname = parts[1];
-            currentMtl = new OBJMaterial(mtlname);
-            materialsHash.put(mtlname, Integer.valueOf(materials.size()));
-            materials.add(currentMtl);
-          } else if (parts[0].equals("map_Kd") && parts.length > 1) {
-            // Loading texture map.
-            String texname = parts[1];
-            if (texname.indexOf(File.separator) == -1 && !path.equals("")) {
-              // Relative file name, adding the base path.
-              texname = path + File.separator + texname;
+            currentMtl = addMaterial(mtlname, materials, materialsHash);
+          } else {
+            if (currentMtl == null) {
+              currentMtl = addMaterial("material" + materials.size(),
+                                       materials, materialsHash);
             }
-            currentMtl.kdMap = parent.loadImage(texname);
-          } else if (parts[0].equals("Ka") && parts.length > 3) {
-            // The ambient color of the material
-            currentMtl.ka.x = Float.valueOf(parts[1]).floatValue();
-            currentMtl.ka.y = Float.valueOf(parts[2]).floatValue();
-            currentMtl.ka.z = Float.valueOf(parts[3]).floatValue();
-          } else if (parts[0].equals("Kd") && parts.length > 3) {
-            // The diffuse color of the material
-            currentMtl.kd.x = Float.valueOf(parts[1]).floatValue();
-            currentMtl.kd.y = Float.valueOf(parts[2]).floatValue();
-            currentMtl.kd.z = Float.valueOf(parts[3]).floatValue();
-          } else if (parts[0].equals("Ks") && parts.length > 3) {
-            // The specular color weighted by the specular coefficient
-            currentMtl.ks.x = Float.valueOf(parts[1]).floatValue();
-            currentMtl.ks.y = Float.valueOf(parts[2]).floatValue();
-            currentMtl.ks.z = Float.valueOf(parts[3]).floatValue();
-          } else if ((parts[0].equals("d") ||
-                      parts[0].equals("Tr")) && parts.length > 1) {
-            // Reading the alpha transparency.
-            currentMtl.d = Float.valueOf(parts[1]).floatValue();
-          } else if (parts[0].equals("Ns") && parts.length > 1) {
-            // The specular component of the Phong shading model
-            currentMtl.ns = Float.valueOf(parts[1]).floatValue();
+            if (parts[0].equals("map_Kd") && parts.length > 1) {
+              // Loading texture map.
+              String texname = parts[1];
+              if (texname.indexOf(File.separator) == -1 && !path.equals("")) {
+                // Relative file name, adding the base path.
+                texname = path + File.separator + texname;
+              }
+
+              File file = new File(parent.dataPath(texname));
+              if (file.exists()) {
+                currentMtl.kdMap = parent.loadImage(texname);
+              } else {
+                System.err.println("The texture map \"" + texname + "\" " +
+                  "in the materials definition file \"" + mtlfn + "\" " +
+                  "is missing or inaccessible, make sure " +
+                  "the URL is valid or that the file has been " +
+                  "added to your sketch and is readable.");
+              }
+            } else if (parts[0].equals("Ka") && parts.length > 3) {
+              // The ambient color of the material
+              currentMtl.ka.x = Float.valueOf(parts[1]).floatValue();
+              currentMtl.ka.y = Float.valueOf(parts[2]).floatValue();
+              currentMtl.ka.z = Float.valueOf(parts[3]).floatValue();
+            } else if (parts[0].equals("Kd") && parts.length > 3) {
+              // The diffuse color of the material
+              currentMtl.kd.x = Float.valueOf(parts[1]).floatValue();
+              currentMtl.kd.y = Float.valueOf(parts[2]).floatValue();
+              currentMtl.kd.z = Float.valueOf(parts[3]).floatValue();
+            } else if (parts[0].equals("Ks") && parts.length > 3) {
+              // The specular color weighted by the specular coefficient
+              currentMtl.ks.x = Float.valueOf(parts[1]).floatValue();
+              currentMtl.ks.y = Float.valueOf(parts[2]).floatValue();
+              currentMtl.ks.z = Float.valueOf(parts[3]).floatValue();
+            } else if ((parts[0].equals("d") ||
+                        parts[0].equals("Tr")) && parts.length > 1) {
+              // Reading the alpha transparency.
+              currentMtl.d = Float.valueOf(parts[1]).floatValue();
+            } else if (parts[0].equals("Ns") && parts.length > 1) {
+              // The specular component of the Phong shading model
+              currentMtl.ns = Float.valueOf(parts[1]).floatValue();
+            }
           }
         }
       }
@@ -376,6 +388,14 @@ public class PShapeOBJ extends PShape {
     }
   }
 
+  protected static OBJMaterial addMaterial(String mtlname,
+                                           ArrayList<OBJMaterial> materials,
+                                           Map<String, Integer> materialsHash) {
+    OBJMaterial currentMtl = new OBJMaterial(mtlname);
+    materialsHash.put(mtlname, Integer.valueOf(materials.size()));
+    materials.add(currentMtl);
+    return currentMtl;
+  }
 
   protected static int rgbaValue(PVector color) {
     return 0xFF000000 | ((int)(color.x * 255) << 16) |

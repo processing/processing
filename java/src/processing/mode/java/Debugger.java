@@ -2,7 +2,8 @@
 
 /*
   Part of the Processing project - http://processing.org
-  Copyright (c) 2012-15 The Processing Foundation
+
+  Copyright (c) 2012-19 The Processing Foundation
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -29,25 +30,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JTree; // needed for javadocs
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import processing.app.Messages;
+import processing.app.RunnerListenerEdtAdapter;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.mode.java.debug.*;
-import processing.mode.java.pdex.VMEventListener;
-import processing.mode.java.pdex.VMEventReader;
 import processing.mode.java.runner.Runner;
 
 
-public class Debugger implements VMEventListener {
+public class Debugger {
 
   /// editor window, acting as main view
   protected JavaEditor editor;
@@ -71,28 +71,28 @@ public class Debugger implements VMEventListener {
   protected ReferenceType mainClass;
 
   /// holds all loaded classes in the debuggee VM
-  protected Set<ReferenceType> classes = new HashSet<ReferenceType>();
+  protected Set<ReferenceType> classes = new LinkedHashSet<>();
 
   /// listeners for class load events
-  protected List<ClassLoadListener> classLoadListeners =
-    new ArrayList<ClassLoadListener>();
+  protected List<ClassLoadListener> classLoadListeners = new ArrayList<>();
 
   /// path to the src folder of the current build
   protected String srcPath;
 
   /// list of current breakpoints
-  protected List<LineBreakpoint> breakpoints =
-    new ArrayList<LineBreakpoint>();
+  protected List<LineBreakpoint> breakpoints = new ArrayList<>();
 
   /// the step request we are currently in, or null if not in a step
   protected StepRequest requestedStep;
 
   /// maps line number changes at runtime (orig -> changed)
-  protected Map<LineID, LineID> runtimeLineChanges =
-    new HashMap<LineID, LineID>();
+  protected Map<LineID, LineID> runtimeLineChanges = new HashMap<>();
 
   /// tab filenames which already have been tracked for runtime changes
-  protected Set<String> runtimeTabsTracked = new HashSet<String>();
+  protected Set<String> runtimeTabsTracked = new HashSet<>();
+
+  /// VM event listener
+  protected VMEventListener vmEventListener = this::vmEvent;
 
 
   public Debugger(JavaEditor editor) {
@@ -103,7 +103,7 @@ public class Debugger implements VMEventListener {
   public VirtualMachine vm() {
     if (runtime != null) {
       return runtime.vm();
-    } 
+    }
     return null;
   }
 
@@ -121,30 +121,18 @@ public class Debugger implements VMEventListener {
   public ReferenceType getMainClass() {
     if (isStarted()) {
       return mainClass;
-    } 
+    }
     return null;
   }
 
 
   /**
-   * Get the {@link ReferenceType} for a class name.
-   * @param name the class name
-   * @return the {@link ReferenceType} or null if not found
-   * (e.g. not yet loaded)
+   * Get the main and nested {@link ReferenceType}s for the sketch.
+   * @return a list of main and nested {@link ReferenceType}s,
+   * empty list if nothing found (e.g. not yet loaded)
    */
-  public ReferenceType getClass(String name) {
-    if (name == null) {
-      return null;
-    }
-    if (name.equals(mainClassName)) {
-      return mainClass;
-    }
-    for (ReferenceType rt : classes) {
-      if (rt.name().equals(name)) {
-        return rt;
-      }
-    }
-    return null;
+  public Set<ReferenceType> getClasses() {
+    return classes;
   }
 
 
@@ -191,37 +179,38 @@ public class Debugger implements VMEventListener {
     editor.prepareRun();
 
     // after prepareRun, since this removes highlights
-    editor.activateDebug(); 
+    editor.activateDebug();
 
     try {
       Sketch sketch = editor.getSketch();
       JavaBuild build = new JavaBuild(sketch);
 
-      log(Level.INFO, "building sketch: {0}", sketch.getName());
+      log("building sketch: " + sketch.getName());
       //LineMapping.addLineNumbers(sketch); // annotate
-      mainClassName = build.build(false);
+//      mainClassName = build.build(false);
+      mainClassName = build.build(true);
       //LineMapping.removeLineNumbers(sketch); // annotate
-      log(Level.INFO, "class: {0}", mainClassName);
+      log("class: " + mainClassName);
 
       // folder with assembled/preprocessed src
       srcPath = build.getSrcFolder().getPath();
-      log(Level.INFO, "build src: {0}", srcPath);
+      log("build src: " + srcPath);
       // folder with compiled code (.class files)
-      log(Level.INFO, "build bin: {0}", build.getBinFolder().getPath());
+      log("build bin: " + build.getBinFolder().getPath());
 
       if (mainClassName != null) {
         // generate the source line mapping
         //lineMap = LineMapping.generateMapping(srcPath + File.separator + mainClassName + ".java");
 
-        log(Level.INFO, "launching debuggee runtime");
-        runtime = new Runner(build, editor);
-        VirtualMachine vm = runtime.launchDebug(); // non-blocking
+        log("launching debuggee runtime");
+        runtime = new Runner(build, new RunnerListenerEdtAdapter(editor));
+        VirtualMachine vm = runtime.debug(null); // non-blocking
         if (vm == null) {
-          log(Level.SEVERE, "error 37: launch failed");
+          loge("error 37: launch failed", null);
         }
 
         // start receiving vm events
-        VMEventReader eventThread = new VMEventReader(vm.eventQueue(), this);
+        VMEventReader eventThread = new VMEventReader(vm.eventQueue(), vmEventListener);
         eventThread.start();
 
         startTrackingLineChanges();
@@ -240,7 +229,12 @@ public class Debugger implements VMEventListener {
   public synchronized void stopDebug() {
     editor.variableInspector().lock();
     if (runtime != null) {
-      log(Level.INFO, "closing runtime");
+      Messages.log("closing runtime");
+
+      for (LineBreakpoint bp : breakpoints) {
+        bp.detach();
+      }
+
       runtime.close();
       runtime = null;
       //build = null;
@@ -250,11 +244,11 @@ public class Debugger implements VMEventListener {
     }
     stopTrackingLineChanges();
     started = false;
-    
+
     editor.deactivateDebug();
     editor.deactivateContinue();
     editor.deactivateStep();
-    
+
     editor.statusEmpty();
   }
 
@@ -317,49 +311,49 @@ public class Debugger implements VMEventListener {
   }
 
 
-  /** Print the current stack trace. */
-  public synchronized void printStackTrace() {
-    if (isStarted()) {
-      printStackTrace(currentThread);
-    }
-  }
-
-
-  /**
-   * Print local variables. Outputs type, name and value of each variable.
-   */
-  public synchronized void printLocals() {
-    if (isStarted()) {
-      printLocalVariables(currentThread);
-    }
-  }
-
-
-  /**
-   * Print fields of current {@code this}-object. 
-   * Outputs type, name and value of each field.
-   */
-  public synchronized void printThis() {
-    if (isStarted()) {
-      printThis(currentThread);
-    }
-  }
-
-
-  /**
-   * Print a source code snippet of the current location.
-   */
-  public synchronized void printSource() {
-    if (isStarted()) {
-      printSourceLocation(currentThread);
-    }
-  }
+//  /** Print the current stack trace. */
+//  public synchronized void printStackTrace() {
+//    if (isStarted()) {
+//      printStackTrace(currentThread);
+//    }
+//  }
+//
+//
+//  /**
+//   * Print local variables. Outputs type, name and value of each variable.
+//   */
+//  public synchronized void printLocals() {
+//    if (isStarted()) {
+//      printLocalVariables(currentThread);
+//    }
+//  }
+//
+//
+//  /**
+//   * Print fields of current {@code this}-object.
+//   * Outputs type, name and value of each field.
+//   */
+//  public synchronized void printThis() {
+//    if (isStarted()) {
+//      printThis(currentThread);
+//    }
+//  }
+//
+//
+//  /**
+//   * Print a source code snippet of the current location.
+//   */
+//  public synchronized void printSource() {
+//    if (isStarted()) {
+//      printSourceLocation(currentThread);
+//    }
+//  }
 
 
   /**
    * Set a breakpoint on the current line.
    */
-  public synchronized void setBreakpoint() {
+  synchronized void setBreakpoint() {
     setBreakpoint(editor.getCurrentLineID());
   }
 
@@ -369,12 +363,12 @@ public class Debugger implements VMEventListener {
    * @param lineIdx the line index (0-based) of the current tab to set the
    * breakpoint on
    */
-  public synchronized void setBreakpoint(int lineIdx) {
+  synchronized void setBreakpoint(int lineIdx) {
     setBreakpoint(editor.getLineIDInCurrentTab(lineIdx));
   }
 
 
-  public synchronized void setBreakpoint(LineID line) {
+  synchronized void setBreakpoint(LineID line) {
     // do nothing if we are kinda busy
     if (isStarted() && !isPaused()) {
       return;
@@ -384,14 +378,14 @@ public class Debugger implements VMEventListener {
       return;
     }
     breakpoints.add(new LineBreakpoint(line, this));
-    log(Level.INFO, "set breakpoint on line {0}", line);
+    log("set breakpoint on line " + line);
   }
 
-  
+
   /**
    * Remove a breakpoint from the current line (if set).
    */
-  public synchronized void removeBreakpoint() {
+  synchronized void removeBreakpoint() {
     removeBreakpoint(editor.getCurrentLineID().lineIdx());
   }
 
@@ -402,7 +396,7 @@ public class Debugger implements VMEventListener {
    * @param lineIdx the line index (0-based) in the current tab to remove the
    * breakpoint from
    */
-  protected void removeBreakpoint(int lineIdx) {
+  void removeBreakpoint(int lineIdx) {
     // do nothing if we are kinda busy
     if (isBusy()) {
       return;
@@ -412,16 +406,16 @@ public class Debugger implements VMEventListener {
     if (bp != null) {
       bp.remove();
       breakpoints.remove(bp);
-      log(Level.INFO, "removed breakpoint {0}", bp);
+      log("removed breakpoint " + bp);
     }
   }
 
 
   /** Remove all breakpoints. */
-  public synchronized void clearBreakpoints() {
-    //TODO: handle busy-ness correctly
+  synchronized void clearBreakpoints() {
+    // TODO: handle busy-ness correctly
     if (isBusy()) {
-      log(Level.WARNING, "busy");
+      log("busy");
       return;
     }
 
@@ -436,10 +430,10 @@ public class Debugger implements VMEventListener {
    * Clear breakpoints in a specific tab.
    * @param tabFilename the tab's file name
    */
-  public synchronized void clearBreakpoints(String tabFilename) {
-    //TODO: handle busy-ness correctly
+  synchronized void clearBreakpoints(String tabFilename) {
+    // TODO: handle busy-ness correctly
     if (isBusy()) {
-      log(Level.WARNING, "busy");
+      log("busy");
       return;
     }
 
@@ -460,7 +454,7 @@ public class Debugger implements VMEventListener {
    * @return the breakpoint, or null if no breakpoint is set on the specified
    * line.
    */
-  protected LineBreakpoint breakpointOnLine(LineID line) {
+  LineBreakpoint breakpointOnLine(LineID line) {
     for (LineBreakpoint bp : breakpoints) {
       if (bp.isOnLine(line)) {
         return bp;
@@ -470,22 +464,21 @@ public class Debugger implements VMEventListener {
   }
 
 
-  /** Toggle a breakpoint on the current line. */
-  public synchronized void toggleBreakpoint() {
-    toggleBreakpoint(editor.getCurrentLineID().lineIdx());
-  }
-
-
   /**
    * Toggle a breakpoint on a line in the current tab.
    * @param lineIdx the line index (0-based) in the current tab
    */
-  public synchronized void toggleBreakpoint(int lineIdx) {
+  synchronized void toggleBreakpoint(int lineIdx) {
     LineID line = editor.getLineIDInCurrentTab(lineIdx);
-    if (!hasBreakpoint(line)) {
-      setBreakpoint(line.lineIdx());
+    int index = line.lineIdx();
+    if (hasBreakpoint(line)) {
+      removeBreakpoint(index);
     } else {
-      removeBreakpoint(line.lineIdx());
+      // Make sure the line contains actual code before setting the break
+      // https://github.com/processing/processing/issues/3765
+      if (editor.getLineText(index).trim().length() != 0) {
+        setBreakpoint(index);
+      }
     }
   }
 
@@ -501,17 +494,17 @@ public class Debugger implements VMEventListener {
   }
 
 
-  /** Print a list of currently set breakpoints. */
-  public synchronized void listBreakpoints() {
-    if (breakpoints.isEmpty()) {
-      System.out.println("no breakpoints");
-    } else {
-      System.out.println("line breakpoints:");
-      for (LineBreakpoint bp : breakpoints) {
-        System.out.println(bp);
-      }
-    }
-  }
+//  /** Print a list of currently set breakpoints. */
+//  public synchronized void listBreakpoints() {
+//    if (breakpoints.isEmpty()) {
+//      System.out.println("no breakpoints");
+//    } else {
+//      System.out.println("line breakpoints:");
+//      for (LineBreakpoint bp : breakpoints) {
+//        System.out.println(bp);
+//      }
+//    }
+//  }
 
 
   /**
@@ -519,8 +512,8 @@ public class Debugger implements VMEventListener {
    * @param tabFilename the tab's file name
    * @return the list of breakpoints in the given tab
    */
-  public synchronized List<LineBreakpoint> getBreakpoints(String tabFilename) {
-    List<LineBreakpoint> list = new ArrayList<LineBreakpoint>();
+  synchronized List<LineBreakpoint> getBreakpoints(String tabFilename) {
+    List<LineBreakpoint> list = new ArrayList<>();
     for (LineBreakpoint bp : breakpoints) {
       if (bp.lineID().fileName().equals(tabFilename)) {
         list.add(bp);
@@ -535,10 +528,15 @@ public class Debugger implements VMEventListener {
    * ({@link VMEventReader})
    * @param es Incoming set of events from VM
    */
-  @Override
   public synchronized void vmEvent(EventSet es) {
+    VirtualMachine vm = vm();
+    if (vm != null && vm != es.virtualMachine()) {
+      // This is no longer VM we are interested in,
+      // we already cleaned up and run different VM now.
+      return;
+    }
     for (Event e : es) {
-      log(Level.INFO, "*** VM Event: {0}", e.toString());
+      log("*** VM Event: " + e);
       if (e instanceof VMStartEvent) {
         vmStartEvent();
 
@@ -561,21 +559,25 @@ public class Debugger implements VMEventListener {
     }
   }
 
+  private void createClassPrepareRequest(String name) {
+    ClassPrepareRequest classPrepareRequest = runtime.vm().eventRequestManager().createClassPrepareRequest();
+    classPrepareRequest.addClassFilter(name);
+    classPrepareRequest.enable();
+  }
+
 
   private void vmStartEvent() {
     // break on main class load
-    log(Level.INFO, "requesting event on main class load: {0}", mainClassName);
-    ClassPrepareRequest mainClassPrepare = runtime.vm().eventRequestManager().createClassPrepareRequest();
-    mainClassPrepare.addClassFilter(mainClassName);
-    mainClassPrepare.enable();
-
+    log("requesting event on main class load: " + mainClassName);
+    createClassPrepareRequest(mainClassName);
+    createClassPrepareRequest(mainClassName + "$*");
     // break on loading custom classes
     for (SketchCode tab : editor.getSketch().getCode()) {
       if (tab.isExtension("java")) {
-        log(Level.INFO, "requesting event on class load: {0}", tab.getPrettyName());
-        ClassPrepareRequest customClassPrepare = runtime.vm().eventRequestManager().createClassPrepareRequest();
-        customClassPrepare.addClassFilter(tab.getPrettyName());
-        customClassPrepare.enable();
+        log("requesting event on class load: " + tab.getPrettyName());
+        String name = tab.getPrettyName();
+        createClassPrepareRequest(name);
+        createClassPrepareRequest(name + "$*");
       }
     }
     runtime.vm().resume();
@@ -590,11 +592,12 @@ public class Debugger implements VMEventListener {
     if (rt.name().equals(mainClassName)) {
       //printType(rt);
       mainClass = rt;
-      log(Level.INFO, "main class load: {0}", rt.name());
+      classes.add(rt);
+      log("main class load: " + rt.name());
       started = true; // now that main class is loaded, we're started
     } else {
       classes.add(rt); // save loaded classes
-      log(Level.INFO, "class load: {0}", rt.name());
+      log("class load: {0}" + rt.name());
     }
 
     // notify listeners
@@ -661,7 +664,12 @@ public class Debugger implements VMEventListener {
     // disallow stepping into invisible lines
     if (!locationIsVisible(se.location())) {
       // TODO: this leads to stepping, should it run on the EDT?
-      stepOutIntoViewOrContinue();
+      javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          stepOutIntoViewOrContinue();
+        }
+      });
     }
   }
 
@@ -692,7 +700,7 @@ public class Debugger implements VMEventListener {
       continueDebug();
 
     } catch (IncompatibleThreadStateException ex) {
-      log(Level.SEVERE, null, ex);
+      logitse(ex);
     }
   }
 
@@ -746,7 +754,7 @@ public class Debugger implements VMEventListener {
         System.out.println(i++ + ": " + f.toString());
       }
     } catch (IncompatibleThreadStateException ex) {
-      log(Level.SEVERE, null, ex);
+      logitse(ex);
     }
   }
 
@@ -855,9 +863,9 @@ public class Debugger implements VMEventListener {
         }
       }
     } catch (IncompatibleThreadStateException ex) {
-      log(Level.SEVERE, null, ex);
+      logitse(ex);
     } catch (AbsentInformationException ex) {
-      System.out.println("local variable information not available");
+      log("local variable information not available");
     }
   }
 
@@ -874,9 +882,9 @@ public class Debugger implements VMEventListener {
     try {
       if (t.frameCount() == 0) {
         // TODO: needs to be handled in a better way:
-        log(Level.WARNING, "call stack empty");
+        log("call stack empty");
       } else {
-        final DebugTray vi = editor.variableInspector();
+        final VariableInspector vi = editor.variableInspector();
         // first get data
         final List<DefaultMutableTreeNode> stackTrace = getStackTrace(t);
         final List<VariableNode> locals = getLocals(t, 0);
@@ -899,7 +907,7 @@ public class Debugger implements VMEventListener {
         });
       }
     } catch (IncompatibleThreadStateException ex) {
-      log(Level.SEVERE, null, ex);
+      logitse(ex);
     }
   }
 
@@ -914,10 +922,11 @@ public class Debugger implements VMEventListener {
       if (!t.isSuspended() || t.frameCount() == 0) {
         return "";
       }
-      return t.frame(0).thisObject().referenceType().name();
-      
+      ObjectReference ref = t.frame(0).thisObject();
+      return ref == null ? "" : ref.referenceType().name();
+
     } catch (IncompatibleThreadStateException ex) {
-      log(Level.SEVERE, null, ex);
+      logitse(ex);
       return "";
     }
   }
@@ -937,7 +946,7 @@ public class Debugger implements VMEventListener {
       return locationToString(t.frame(0).location());
 
     } catch (IncompatibleThreadStateException ex) {
-      log(Level.SEVERE, null, ex);
+      logitse(ex);
       return "";
     }
   }
@@ -966,7 +975,7 @@ public class Debugger implements VMEventListener {
    */
   protected List<VariableNode> getLocals(ThreadReference t, int depth) {
     //System.out.println("getting locals");
-    List<VariableNode> vars = new ArrayList<VariableNode>();
+    List<VariableNode> vars = new ArrayList<>();
     try {
       if (t.frameCount() > 0) {
         StackFrame sf = t.frame(0);
@@ -981,9 +990,9 @@ public class Debugger implements VMEventListener {
         }
       }
     } catch (IncompatibleThreadStateException ex) {
-      log(Level.SEVERE, null, ex);
+      logitse(ex);
     } catch (AbsentInformationException ex) {
-      log(Level.WARNING, "local variable information not available", ex);
+      loge("local variable information not available", ex);
     }
     return vars;
   }
@@ -1006,9 +1015,9 @@ public class Debugger implements VMEventListener {
         return getFields(thisObj, depth, includeInherited);
       }
     } catch (IncompatibleThreadStateException ex) {
-      log(Level.SEVERE, null, ex);
+      logitse(ex);
     }
-    return new ArrayList<VariableNode>();
+    return new ArrayList<>();
   }
 
 
@@ -1023,7 +1032,7 @@ public class Debugger implements VMEventListener {
   protected List<VariableNode> getFields(Value value, int depth, int maxDepth,
                                          boolean includeInherited) {
     // remember: Value <- ObjectReference, ArrayReference
-    List<VariableNode> vars = new ArrayList<VariableNode>();
+    List<VariableNode> vars = new ArrayList<>();
     if (depth <= maxDepth) {
       if (value instanceof ArrayReference) {
         return getArrayFields((ArrayReference) value);
@@ -1065,7 +1074,7 @@ public class Debugger implements VMEventListener {
    * @return list of array fields
    */
   protected List<VariableNode> getArrayFields(ArrayReference array) {
-    List<VariableNode> fields = new ArrayList<VariableNode>();
+    List<VariableNode> fields = new ArrayList<>();
     if (array != null) {
       String arrayType = array.type().name();
       if (arrayType.endsWith("[]")) {
@@ -1089,13 +1098,13 @@ public class Debugger implements VMEventListener {
    * @return call stack as list of {@link DefaultMutableTreeNode}s
    */
   protected List<DefaultMutableTreeNode> getStackTrace(ThreadReference t) {
-    List<DefaultMutableTreeNode> stack = new ArrayList<DefaultMutableTreeNode>();
+    List<DefaultMutableTreeNode> stack = new ArrayList<>();
     try {
       for (StackFrame f : t.frames()) {
         stack.add(new DefaultMutableTreeNode(locationToString(f.location())));
       }
     } catch (IncompatibleThreadStateException ex) {
-      log(Level.SEVERE, null, ex);
+      logitse(ex);
     }
     return stack;
   }
@@ -1117,18 +1126,18 @@ public class Debugger implements VMEventListener {
       } else {
         StackFrame sf = t.frame(0);
         ObjectReference thisObject = sf.thisObject();
-        if (this != null) {
+        if (thisObject != null) {
           ReferenceType type = thisObject.referenceType();
           System.out.println("fields in this (" + type.name() + "):");
           for (Field f : type.visibleFields()) {
             System.out.println(f.typeName() + " " + f.name() + " = " + thisObject.getValue(f));
           }
-        } else {  // TODO [this is not reachable - fry]
+        } else {
           System.out.println("can't get this (in native or static method)");
         }
       }
     } catch (IncompatibleThreadStateException ex) {
-      log(Level.SEVERE, null, ex);
+      logitse(ex);
     }
   }
 
@@ -1147,7 +1156,7 @@ public class Debugger implements VMEventListener {
         printSourceLocation(l);
       }
     } catch (IncompatibleThreadStateException ex) {
-      log(Level.SEVERE, null, ex);
+      logitse(ex);
     }
   }
 
@@ -1163,7 +1172,7 @@ public class Debugger implements VMEventListener {
       System.out.println(getSourceLine(l.sourcePath(), l.lineNumber(), 2));
 
     } catch (AbsentInformationException ex) {
-      log(Level.SEVERE, null, ex);
+      log("absent information", ex);
     }
   }
 
@@ -1177,7 +1186,7 @@ public class Debugger implements VMEventListener {
    */
   protected String getSourceLine(String filePath, int lineNo, int radius) {
     if (lineNo == -1) {
-      log(Level.SEVERE, "invalid line number: {0}", lineNo);
+      loge("invalid line number: " + lineNo, null);
       return "";
     }
     //System.out.println("getting line: " + lineNo);
@@ -1208,7 +1217,7 @@ public class Debugger implements VMEventListener {
       return f.getName() + ":" + lineNo;
 
     } catch (IOException ex) {
-      log(Level.SEVERE, null, ex);
+      loge("other io exception", ex);
       return "";
     }
   }
@@ -1245,7 +1254,7 @@ public class Debugger implements VMEventListener {
       return javaToSketchLine(new LineID(l.sourceName(), l.lineNumber() - 1));
 
     } catch (AbsentInformationException ex) {
-      log(Level.SEVERE, null, ex);
+      loge("absent information", ex);
       return null;
     }
   }
@@ -1379,14 +1388,81 @@ public class Debugger implements VMEventListener {
     runtimeLineChanges.clear();
     runtimeTabsTracked.clear();
   }
-  
 
-  private void log(Level level, String msg) {
-    Logger.getLogger(Debugger.class.getName()).log(level, msg);
+
+  private void log(String msg, Object... args) {
+    if (args != null && args.length != 0) {
+      Messages.logf(getClass().getName() + " " + msg, args);
+    } else {
+      Messages.log(getClass().getName() + " " + msg);
+    }
   }
 
-  
-  private void log(Level level, String msg, Object obj) {
-    Logger.getLogger(Debugger.class.getName()).log(level, msg, obj);
+
+  private void loge(String msg, Throwable t) {
+    if (t != null) {
+      Messages.loge(getClass().getName() + " " + msg, t);
+    } else {
+      Messages.loge(getClass().getName() + " " + msg);
+    }
+  }
+
+
+  static private void logitse(Throwable t) {
+    Messages.loge("incompatible thread state?", t);
+  }
+
+
+  /**
+   * Interface for VM callbacks.
+   */
+  protected interface VMEventListener {
+    /**
+     * Receive an event from the VM. Events are sent in batches. See
+     * documentation of EventSet for more information.
+     * @param es Set of events
+     */
+    void vmEvent(EventSet es);
+  }
+
+
+  /**
+   * Reader Thread for VM Events. Constantly monitors a VMs EventQueue for new
+   * events and forwards them to an VMEventListener.
+   *
+   * @author Martin Leopold <m@martinleopold.com>
+   */
+  protected static class VMEventReader extends Thread {
+    EventQueue eventQueue;
+    VMEventListener listener;
+
+    /**
+     * Construct a VMEventReader. Needs to be kicked off with start() once
+     * constructed.
+     *
+     * @param eventQueue The queue to read events from. Can be obtained from a
+     * VirtualMachine via eventQueue().
+     * @param listener the listener to forward events to.
+     */
+    public VMEventReader(EventQueue eventQueue, VMEventListener listener) {
+      super("VM Event Thread");
+      this.eventQueue = eventQueue;
+      this.listener = listener;
+    }
+
+    @Override
+    public void run() {
+      try {
+        while (true) {
+          EventSet eventSet = eventQueue.remove();
+          listener.vmEvent(eventSet);
+          // for (Event e : eventSet) { System.out.println("VM Event: " + e.toString()); }
+        }
+      } catch (VMDisconnectedException e) {
+        Messages.log("VMEventReader quit on VM disconnect");
+      } catch (Exception e) {
+        Messages.loge("VMEventReader quit", e);
+      }
+    }
   }
 }

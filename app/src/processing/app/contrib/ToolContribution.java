@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2013-15 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -19,20 +19,19 @@
   with this program; if not, write to the Free Software Foundation, Inc.
   59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 package processing.app.contrib;
 
 import java.io.*;
 import java.net.URLClassLoader;
-//import java.net.*;
 import java.util.*;
 
 import processing.app.Base;
-//import processing.app.Base;
-import processing.app.Editor;
+import processing.app.Messages;
 import processing.app.tools.Tool;
 
 
-public class ToolContribution extends LocalContribution implements Tool {
+public class ToolContribution extends LocalContribution implements Tool, Comparable<ToolContribution> {
   private Tool tool;
 
   private File referenceFile; // shortname/reference/index.html
@@ -41,10 +40,15 @@ public class ToolContribution extends LocalContribution implements Tool {
     try {
       return new ToolContribution(folder);
     } catch (IgnorableException ig) {
-      Base.log(ig.getMessage());
+      Messages.log(ig.getMessage());
 
     } catch (VerifyError ve) {  // incompatible
       // avoid the excessive error spew that happens here
+
+    } catch (NoClassDefFoundError ncdfe) {
+      if (ncdfe.getMessage().contains("processing/app/Editor")) {
+        System.err.println("The Editor class has moved to the processing.app.ui package in Processing 3");
+      }
 
     } catch (Throwable e) {  // unknown error
       e.printStackTrace();
@@ -59,7 +63,7 @@ public class ToolContribution extends LocalContribution implements Tool {
     String className = initLoader(null);
     if (className != null) {
       Class<?> toolClass = loader.loadClass(className);
-      tool = (Tool) toolClass.newInstance();
+      tool = (Tool) toolClass.getDeclaredConstructor().newInstance();
     }
 
     referenceFile = new File(folder, "reference/index.html");
@@ -67,30 +71,14 @@ public class ToolContribution extends LocalContribution implements Tool {
 
 
   /**
-   * Method to close the ClassLoader so that the archives are no longer "locked" and
-   * a tool can be removed without restart.
+   * Method to close the ClassLoader so that the archives are no longer
+   * "locked" and a tool can be removed without restart.
    */
-  public void clearClassLoader(Base base) {
+  public void clearClassLoader() {
     try {
       ((URLClassLoader) this.loader).close();
     } catch (IOException e1) {
       e1.printStackTrace();
-    }
-    Iterator<Editor> editorIter = base.getEditors().iterator();
-    while (editorIter.hasNext()) {
-      Editor editor = editorIter.next();
-      ArrayList<ToolContribution> contribTools = editor.contribTools;
-      for (ToolContribution toolContrib : contribTools)
-        if (toolContrib.getName().equals(this.name)) {
-          try {
-            ((URLClassLoader) toolContrib.loader).close();
-            editor.contribTools.remove(toolContrib);
-            break;
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-//        base.getActiveEditor().rebuildToolMenu();
-        }
     }
   }
 
@@ -105,9 +93,9 @@ public class ToolContribution extends LocalContribution implements Tool {
 //  }
 
 
-  static public ArrayList<ToolContribution> loadAll(File toolsFolder) {
+  static public List<ToolContribution> loadAll(File toolsFolder) {
     File[] list = ContributionType.TOOL.listCandidates(toolsFolder);
-    ArrayList<ToolContribution> outgoing = new ArrayList<ToolContribution>();
+    ArrayList<ToolContribution> outgoing = new ArrayList<>();
     // If toolsFolder does not exist or is inaccessible (stranger things have
     // happened, and are reported as bugs) list will come back null.
     if (list != null) {
@@ -122,30 +110,18 @@ public class ToolContribution extends LocalContribution implements Tool {
         }
       }
     }
+    Collections.sort(outgoing);
     return outgoing;
   }
 
 
-//  Editor editor;  // used to send error messages
-  
-  public void init(Editor editor) {
-//    try {
-//      this.editor = editor;
-    tool.init(editor);
-//    } catch (NoSuchMethodError nsme) {
-//      editor.statusError(tool.getMenuTitle() + " is not compatible with this version of Processing");
-//      nsme.printStackTrace();
-//    }
+  public void init(Base base) {
+    tool.init(base);
   }
 
 
   public void run() {
-//    try {
     tool.run();
-//    } catch (NoSuchMethodError nsme) {
-//      editor.statusError(tool.getMenuTitle() + " is not compatible with this version of Processing");
-//      nsme.printStackTrace();
-//    }
   }
 
 
@@ -162,7 +138,7 @@ public class ToolContribution extends LocalContribution implements Tool {
   /**
    * Returns the object stored in the referenceFile field, which contains an
    * instance of the file object representing the index file of the reference
-   * 
+   *
    * @return referenceFile
    */
   public File getReferenceIndexFile() {
@@ -172,11 +148,17 @@ public class ToolContribution extends LocalContribution implements Tool {
 
   /**
    * Tests whether the reference's index file indicated by referenceFile exists.
-   * 
+   *
    * @return true if and only if the file denoted by referenceFile exists; false
    *         otherwise.
    */
   public boolean hasReference() {
     return referenceFile.exists();
+  }
+
+
+  @Override
+  public int compareTo(ToolContribution o) {
+    return getMenuTitle().compareTo(o.getMenuTitle());
   }
 }

@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-12 Ben Fry and Casey Reas
+  Copyright (c) 2005-15 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ import java.util.Random;
 
 import javax.swing.JOptionPane;
 
+import processing.app.contrib.ContributionManager;
 import processing.core.PApplet;
 
 
@@ -43,9 +44,12 @@ import processing.core.PApplet;
  * to check for updates. Also included is the operating system and
  * its version and the version of Java being used to run Processing.
  * <P>
- * The ID number also helps provide us a general idea of how many
- * people are using Processing, which helps us when writing grant
- * proposals and that kind of thing so that we can keep Processing free.
+ * Aside from the privacy invasion of knowing that an anonymous Processing
+ * user opened the software at one time during a 24-hour period somewhere
+ * in the world, we use the ID number to give us a general idea of how many
+ * people are using Processing, which helps us when writing grant proposals
+ * and that kind of thing so that we can keep Processing free. The numbers
+ * are also sometimes used in ugly charts when Ben and Casey present.
  */
 public class UpdateCheck {
   private final Base base;
@@ -55,26 +59,36 @@ public class UpdateCheck {
 
   static private final long ONE_DAY = 24 * 60 * 60 * 1000;
 
+  static boolean allowed;
+
 
   public UpdateCheck(Base base) {
     this.base = base;
-    new Thread(new Runnable() {
-      public void run() {
-        try {
-          Thread.sleep(20 * 1000);  // give the PDE time to get rolling
-          updateCheck();
 
-        } catch (Exception e) {
-          // This can safely be ignored, too many situations where no net
-          // connection is available that behave in strange ways.
-          // Covers likely IOException, InterruptedException, and any others. 
-        } 
-      }
-    }, "Update Checker").start();
+    if (isAllowed()) {
+      new Thread(new Runnable() {
+        public void run() {
+          try {
+            Thread.sleep(5 * 1000);  // give the PDE time to get rolling
+            updateCheck();
+
+          } catch (Exception e) {
+            // This can safely be ignored, too many situations where no net
+            // connection is available that behave in strange ways.
+            // Covers likely IOException, InterruptedException, and any others.
+          }
+        }
+      }, "Update Checker").start();
+    }
   }
 
 
-  public void updateCheck() throws IOException, InterruptedException {
+  /**
+   * Turned into a separate method so that anyone needed update.id will get
+   * a legit answer. Had a problem with the contribs script where the id
+   * wouldn't be set so a null id would be sent to the contribs server.
+   */
+  static public long getUpdateID() {
     // generate a random id in case none exists yet
     Random r = new Random();
     long id = r.nextLong();
@@ -85,8 +99,12 @@ public class UpdateCheck {
     } else {
       Preferences.set("update.id", String.valueOf(id));
     }
+    return id;
+  }
 
-    String info = PApplet.urlEncode(id + "\t" +
+
+  public void updateCheck() throws IOException, InterruptedException {
+    String info = PApplet.urlEncode(getUpdateID() + "\t" +
                                     PApplet.nf(Base.getRevision(), 4) + "\t" +
                                     System.getProperty("java.version") + "\t" +
                                     System.getProperty("java.vendor") + "\t" +
@@ -108,31 +126,28 @@ public class UpdateCheck {
     Preferences.set("update.last", String.valueOf(now));
 
     if (base.activeEditor != null) {
-      boolean offerToUpdateContributions = true;
+//      boolean offerToUpdateContributions = true;
 
       if (latest > Base.getRevision()) {
         System.out.println("You are running Processing revision 0" +
                            Base.getRevision() + ", the latest build is 0" +
                            latest + ".");
         // Assume the person is busy downloading the latest version
-        offerToUpdateContributions = !promptToVisitDownloadPage();
+//        offerToUpdateContributions = !promptToVisitDownloadPage();
+        promptToVisitDownloadPage();
       }
 
+      /*
       if (offerToUpdateContributions) {
         // Wait for xml file to be downloaded and updates to come in.
         // (this should really be handled better).
         Thread.sleep(5 * 1000);
-        if ((!base.libraryManagerFrame.hasAlreadyBeenOpened()
-              && !base.toolManagerFrame.hasAlreadyBeenOpened()
-              && !base.modeManagerFrame.hasAlreadyBeenOpened()
-              && !base.exampleManagerFrame.hasAlreadyBeenOpened())
-          && (base.libraryManagerFrame.hasUpdates(base)
-              || base.toolManagerFrame.hasUpdates(base)
-              || base.modeManagerFrame.hasUpdates(base)
-              || base.exampleManagerFrame.hasUpdates(base))) {
+        if ((!base.contributionManagerFrame.hasAlreadyBeenOpened()
+          && (base.contributionManagerFrame.hasUpdates(base)))){
           promptToOpenContributionManager();
         }
       }
+      */
     }
   }
 
@@ -150,7 +165,7 @@ public class UpdateCheck {
                                               options,
                                               options[0]);
     if (result == JOptionPane.YES_OPTION) {
-      Base.openURL(DOWNLOAD_URL);
+      Platform.openURL(DOWNLOAD_URL);
       return true;
     }
 
@@ -159,9 +174,12 @@ public class UpdateCheck {
 
 
   protected boolean promptToOpenContributionManager() {
-    String contributionPrompt = Language.text("update_check.updates_available.contributions");
+    String contributionPrompt =
+      Language.text("update_check.updates_available.contributions");
 
-    Object[] options = { Language.text("prompt.yes"), Language.text("prompt.no") };
+    Object[] options = {
+      Language.text("prompt.yes"), Language.text("prompt.no")
+    };
     int result = JOptionPane.showOptionDialog(base.activeEditor,
                                               contributionPrompt,
                                               Language.text("update_check"),
@@ -171,7 +189,7 @@ public class UpdateCheck {
                                               options,
                                               options[0]);
     if (result == JOptionPane.YES_OPTION) {
-      base.handleShowUpdates();
+      ContributionManager.openUpdates();
       return true;
     }
 
@@ -185,5 +203,11 @@ public class UpdateCheck {
     InputStreamReader isr = new InputStreamReader(stream);
     BufferedReader reader = new BufferedReader(isr);
     return Integer.parseInt(reader.readLine());
+  }
+
+
+  static public boolean isAllowed() {
+    // Disable update checks for the paranoid
+    return Preferences.getBoolean("update.check");
   }
 }

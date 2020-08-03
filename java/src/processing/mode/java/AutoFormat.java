@@ -426,19 +426,20 @@ public class AutoFormat implements Formatter {
   /**
    * Takes all whitespace off the end of its argument.
    */
-  private void trimRight(final StringBuilder sb) {
-    while (sb.length() >= 1 && Character.isWhitespace(sb.charAt(sb.length() - 1)))
+  static private void trimRight(final StringBuilder sb) {
+    while (sb.length() >= 1 && Character.isWhitespace(sb.charAt(sb.length() - 1))) {
       sb.setLength(sb.length() - 1);
+    }
   }
 
 
-  /**
-   * Entry point
-   */
+  /** Entry point */
   public String format(final String source) {
     final String normalizedText = source.replaceAll("\r", "");
-    final String cleanText =
-      normalizedText + (normalizedText.endsWith("\n") ? "" : "\n");
+    String cleanText = normalizedText;
+    if (!normalizedText.endsWith("\n")) {
+      cleanText += "\n";
+    }
 
     // Globals' description at top of file.
     result.setLength(0);
@@ -460,8 +461,8 @@ public class AutoFormat implements Formatter {
     ind = new boolean[10];
     p_flg = new int[10];
     s_tabs = new int[20][10];
-    doWhileFlags = new Stack<Boolean>();
-    ifWhileForFlags = new Stack<Boolean>();
+    doWhileFlags = new Stack<>();
+    ifWhileForFlags = new Stack<>();
 
     chars = cleanText.toCharArray();
 
@@ -588,6 +589,7 @@ public class AutoFormat implements Formatter {
           break;
         }
 
+        // In a simple enum, there's not necessarily a `;` to end the statement.
         inStatementFlag = false;
 
         curlyLvl--;
@@ -607,6 +609,7 @@ public class AutoFormat implements Formatter {
 
           trimRight(result);
           result.append('\n');
+          overflowFlag = false; // Would normally be done in writeIndentedLine.
           printIndentation();
           result.append(c);
           if (peek() == ';') result.append(nextChar());
@@ -638,25 +641,48 @@ public class AutoFormat implements Formatter {
         break;
 
       case '"':
+      case '“':
+      case '”':
       case '\'':
+      case '‘':
+      case '’':
         inStatementFlag = true;
-        buf.append(c);
+        char realQuote = c;
+        if (c == '“' || c == '”') realQuote = '"';
+        if (c == '‘' || c == '’') realQuote = '\'';
+        buf.append(realQuote);
+
+        char otherQuote = c;
+        if (c == '“') otherQuote = '”';
+        if (c == '”') otherQuote = '“';
+        if (c == '‘') otherQuote = '’';
+        if (c == '’') otherQuote = '‘';
+
         char cc = nextChar();
-        while (!EOF && cc != c) {
+        // In a proper string, all the quotes tested are c. In a curly-quoted
+        // string, there are three possible end quotes: c, its reverse, and
+        // the correct straight quote.
+        while (!EOF && cc != otherQuote && cc != realQuote && cc != c) {
           buf.append(cc);
           if (cc == '\\') {
             buf.append(cc = nextChar());
           }
-          if (cc == '\n') {
-            writeIndentedLine();
-            startFlag = true;
-          }
+
+          // Syntax error: unterminated string. Leave \n in nextChar, so it
+          // feeds back into the loop.
+          if (peek() == '\n') break;
           cc = nextChar();
         }
-        buf.append(cc);
-        if (readForNewLine()) {
-          // push a newline into the stream
-          chars[pos--] = '\n';
+        if (cc == otherQuote || cc == realQuote || cc == c) {
+          buf.append(realQuote);
+          if (readForNewLine()) {
+            // push a newline into the stream
+            chars[pos--] = '\n';
+          }
+        } else {
+          // We've had a syntax error if the string wasn't terminated by EOL/
+          // EOF, just abandon this statement.
+          inStatementFlag = false;
         }
         break;
 
@@ -729,10 +755,14 @@ public class AutoFormat implements Formatter {
         inStatementFlag = false;
         arrayLevel = -1; // Unlikely to be needed; just in case.
 
-        //Same format for case, default, and other labels.
-        tabs--;
-        writeIndentedLine();
-        tabs++;
+        // Same format for case, default, and other labels.
+        if (tabs > 0) {
+          tabs--;
+          writeIndentedLine();
+          tabs++;
+        } else {
+          writeIndentedLine();
+        }
 
         readForNewLine();
         writeIndentedLine();

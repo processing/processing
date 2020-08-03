@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<project name="Processing Hardware I/O Library" default="build">
+  
+  <target name="clean" description="Clean the build directories">
+    <delete dir="bin" />
+    <delete file="library/io.jar" />
+  </target>
+  
+  <target name="compile" description="Compile sources">
+    <condition property="core-built">
+      <available file="../../../core/library/core.jar" />
+    </condition>
+    <fail unless="core-built" message="Please build the core library first and make sure it sits in ../../../core/library/core.jar" />
+    
+    <mkdir dir="bin" />
+    <javac source="1.8"
+	   target="1.8"
+	   srcdir="src" destdir="bin" 
+	   encoding="UTF-8"
+	   includeAntRuntime="false"
+	   classpath="../../../core/library/core.jar"
+	   nowarn="true"
+	   compiler="org.eclipse.jdt.core.JDTCompilerAdapter">
+      <compilerclasspath path="../../mode/org.eclipse.jdt.core.jar; 
+                               ../../mode/jdtCompilerAdapter.jar" />
+    </javac>
+  </target>
+  
+  <target name="build" depends="compile" description="Build I/O library">
+    <jar basedir="bin" destfile="library/io.jar" />
+  </target>
+
+  <target name="dist" depends="build" description="Package standalone library">
+    <!-- set revision number as library version -->
+    <loadfile srcfile="../../../todo.txt" property="revision">
+      <filterchain>
+        <headfilter lines="1"/>
+        <tokenfilter>
+          <stringtokenizer suppressdelims="true"/>
+          <!-- grab the thing from the first line that's 4 digits -->
+          <containsregex pattern="(\d\d\d\d)" />
+        </tokenfilter>
+      </filterchain>
+    </loadfile>
+    <replaceregexp file="library.properties" match="version = .*" replace="version = ${revision}" flags="g" />
+    <replaceregexp file="library.properties" match="prettyVersion = .*" replace="prettyVersion = ${revision}" flags="g" />
+
+    <get src="http://download.processing.org/reference.zip"
+         dest="reference.zip"
+         usetimestamp="true" />
+    <mkdir dir="reference" />
+    <unzip dest="."
+           src="reference.zip"
+           overwrite="true">
+      <patternset>
+        <include name="reference/css/**" />
+        <include name="reference/img/**" />
+        <include name="reference/javascript/**" />
+        <include name="reference/libraries/io/**" />
+      </patternset>
+    </unzip>
+    <delete file="reference.zip" />
+    <echo file="reference/index.html" message="&lt;html&gt;&lt;head&gt;&lt;meta http-equiv='refresh' content='0; url=libraries/io/index.html'&gt;&lt;/head&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;" />
+
+    <zip destfile="../io.zip">
+      <zipfileset dir="." prefix="io">
+        <exclude name="bin/**"/>
+      </zipfileset>
+    </zip>
+
+    <copy file="library.properties"
+          toFile="../io.txt"/>
+  </target>
+</project>
