@@ -6085,6 +6085,7 @@ public class PApplet implements PConstants {
   public JSONObject loadJSONObject(String filename) {
     // can't pass of createReader() to the constructor b/c of resource leak
     BufferedReader reader = createReader(filename);
+    if(reader == null) return null;
     JSONObject outgoing = new JSONObject(reader);
     try {
       reader.close();
@@ -6101,6 +6102,7 @@ public class PApplet implements PConstants {
   static public JSONObject loadJSONObject(File file) {
     // can't pass of createReader() to the constructor b/c of resource leak
     BufferedReader reader = createReader(file);
+    if(reader == null) return null;
     JSONObject outgoing = new JSONObject(reader);
     try {
       reader.close();
@@ -6156,6 +6158,7 @@ public class PApplet implements PConstants {
   public JSONArray loadJSONArray(String filename) {
     // can't pass of createReader() to the constructor b/c of resource leak
     BufferedReader reader = createReader(filename);
+    if(reader == null) return null;
     JSONArray outgoing = new JSONArray(reader);
     try {
       reader.close();
@@ -6169,6 +6172,7 @@ public class PApplet implements PConstants {
   static public JSONArray loadJSONArray(File file) {
     // can't pass of createReader() to the constructor b/c of resource leak
     BufferedReader reader = createReader(file);
+    if(reader == null) return null;
     JSONArray outgoing = new JSONArray(reader);
     try {
       reader.close();
