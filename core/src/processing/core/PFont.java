@@ -782,7 +782,7 @@ public class PFont implements PConstants {
       case PathIterator.SEG_CUBICTO:  // 3 points
 //        System.out.println("cubicto");
 //        PApplet.println(iterPoints);
-        s.quadraticVertex(iterPoints[0], iterPoints[1],
+        s.bezierVertex(iterPoints[0], iterPoints[1],
                           iterPoints[2], iterPoints[3],
                           iterPoints[4], iterPoints[5]);
         break;
