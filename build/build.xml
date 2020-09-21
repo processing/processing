@@ -694,9 +694,20 @@
 
   <target name="macosx-run" depends="macosx-build"
           description="Run Mac OS X version">
+
+    <!-- Terminal.app has a new location in Catalina -->
+    <!-- https://github.com/processing/processing/issues/6091 -->
+    <available file="/System/Applications/Utilities/Terminal.app" type="dir"
+               property="terminal.path"
+               value="/System/Applications/Utilities/Terminal.app" />
+
+    <available file="/Applications/Utilities/Terminal.app" type="dir"
+               property="terminal.path"
+               value="/Applications/Utilities/Terminal.app" />
+
     <exec executable="open" dir="macosx/work" spawn="true">
       <arg value="-a" />
-      <arg value="/Applications/Utilities/Terminal.app" />
+      <arg value="${terminal.path}" />
       <arg value="Processing.app/Contents/MacOS/Processing" />
     </exec>
   </target>
