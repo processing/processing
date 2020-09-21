@@ -1,4 +1,4 @@
-<!--- ** For coding questions, please use https://forum.processing.org ** -->
+<!--- ** For coding questions, please use https://discourse.processing.org ** -->
 <!--- ** This form is only for bugs in the software & feature requests ** -->
 
 <!--- ** Also be sure to read the troubleshooting page first: ** -->
