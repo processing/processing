@@ -32,7 +32,6 @@ import com.apple.eio.FileManager;
 
 import processing.app.Base;
 import processing.app.Messages;
-import processing.app.platform.DefaultPlatform;
 
 
 /**
