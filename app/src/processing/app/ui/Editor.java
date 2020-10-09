@@ -353,13 +353,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // Use ctrl+scroll to change text size
     textarea.addMouseWheelListener(mouseWheelEvent -> {
       // Check if control is pressed
-      if(toolbar.getIsCtrlPressed()) {
+      if (toolbar.getIsCtrlPressed()) {
         // Calculate new size of font
         final int notches = mouseWheelEvent.getWheelRotation();
         final int prevFontSize = Preferences.getInteger("editor.font.size");
         final int newSize = prevFontSize + notches;
         // Update size, make sure it's not below 1
-        if(newSize >= 1) {
+        if (newSize >= 1) {
           Preferences.setInteger("editor.font.size", newSize);
         }
         // Update size on all editors

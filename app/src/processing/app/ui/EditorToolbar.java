@@ -252,7 +252,7 @@ abstract public class EditorToolbar extends JPanel implements KeyListener {
 
   @Override
   public void keyReleased(KeyEvent e) {
-    if(e.getKeyCode() == KeyEvent.VK_CONTROL) {
+    if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
       isCtrlPressed = false;
     }
     updateRollover(e);
@@ -261,7 +261,7 @@ abstract public class EditorToolbar extends JPanel implements KeyListener {
 
   @Override
   public void keyPressed(KeyEvent e) {
-    if(e.getKeyCode() == KeyEvent.VK_CONTROL) {
+    if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
       isCtrlPressed = true;
     }
     updateRollover(e);
