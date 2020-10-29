@@ -84,7 +84,7 @@ public class TokenStreamCopyingHiddenTokenFilter
 
     // Handle situation where hidden or discarded tokens
     // appear first in input stream
-    CommonHiddenStreamToken p=null;
+    CommonHiddenStreamToken p = null;
 
     // while hidden, copied, or discarded scarf tokens
     while ( hideMask.member(LA(1).getType()) ||
@@ -117,7 +117,8 @@ public class TokenStreamCopyingHiddenTokenFilter
         // entirely
         //
         break;
-      } else if (hideMask.member(LA(1).getType())) {
+      } 
+        else if (hideMask.member(LA(1).getType())) {
         if (p != null) {
           p.setHiddenAfter(LA(1));
           LA(1).setHiddenBefore(p); // double-link
@@ -175,7 +176,8 @@ public class TokenStreamCopyingHiddenTokenFilter
         // copy the token and link it backwards
         if (hiddenCopy != null) {
           linkAndCopyToken(hiddenCopy, monitored);
-        } else {
+        } 
+        else {
           linkAndCopyToken(prev, monitored);
         }
 
@@ -185,7 +187,8 @@ public class TokenStreamCopyingHiddenTokenFilter
         //System.err.println("returned: " + monitored.toString());
         return monitored;
 
-      } else if (hideMask.member(LA(1).getType())) {
+      } 
+      else if (hideMask.member(LA(1).getType())) {
 
         // attach the hidden token to the monitored in a chain
         // link forwards
@@ -194,7 +197,8 @@ public class TokenStreamCopyingHiddenTokenFilter
         // link backwards
         if (prev != monitored) { //hidden cannot point to monitored tokens
           LA(1).setHiddenBefore(prev);
-        } else if (hiddenCopy != null) {
+        } 
+        else if (hiddenCopy != null) {
           hiddenCopy.setHiddenAfter(LA(1));
           LA(1).setHiddenBefore(hiddenCopy);
           hiddenCopy = null;
