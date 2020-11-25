@@ -37,7 +37,6 @@ import processing.app.Language;
 import processing.app.Messages;
 import processing.app.Platform;
 import processing.app.Preferences;
-import processing.app.ui.ColorChooser;
 import processing.core.*;
 
 

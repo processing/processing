@@ -67,7 +67,7 @@ public class PGraphicsFX2D extends PGraphics {
   /// break the shape at the next vertex (next vertex() call is a moveto())
   boolean breakShape;
 
-  private float pathCoordsBuffer[] = new float[6];
+  private float[] pathCoordsBuffer = new float[6];
 
   /// coordinates for internal curve calculation
   float[] curveCoordX;
@@ -76,7 +76,7 @@ public class PGraphicsFX2D extends PGraphics {
   float[] curveDrawY;
 
   int transformCount;
-  Affine transformStack[] = new Affine[MATRIX_STACK_DEPTH];
+  Affine[] transformStack = new Affine[MATRIX_STACK_DEPTH];
 
 //  Line2D.Float line = new Line2D.Float();
 //  Ellipse2D.Float ellipse = new Ellipse2D.Float();
@@ -239,7 +239,7 @@ public class PGraphicsFX2D extends PGraphics {
   @Override
   public void vertex(float x, float y) {
     if (vertexCount == vertices.length) {
-      float temp[][] = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
+      float[][] temp = new float[vertexCount<<1][VERTEX_FIELD_COUNT];
       System.arraycopy(vertices, 0, temp, 0, vertexCount);
       vertices = temp;
       //message(CHATTER, "allocating more vertices " + vertices.length);

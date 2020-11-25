@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013-16 The Processing Foundation
+  Copyright (c) 2013-20 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -99,7 +99,6 @@ public class AvailableContribution extends Contribution {
     // Unzip the file into the modes, tools, or libraries folder inside the
     // sketchbook. Unzipping to /tmp is problematic because it may be on
     // another file system, so move/rename operations will break.
-//    File sketchbookContribFolder = type.getSketchbookFolder();
     File tempFolder = null;
 
     try {
@@ -110,84 +109,61 @@ public class AvailableContribution extends Contribution {
       return null;
     }
     Util.unzip(contribArchive, tempFolder);
-//    System.out.println("temp folder is " + tempFolder);
-//    Base.openFolder(tempFolder);
 
     // Now go looking for a legit contrib inside what's been unpacked.
     File contribFolder = null;
 
-    // Sometimes contrib authors place all their folders in the base directory
-    // of the .zip file instead of in single folder as the guidelines suggest.
-    if (type.isCandidate(tempFolder)) {
-      /*
-      // Can't just rename the temp folder, because a contrib with this name
-      // may already exist. Instead, create a new temp folder, and rename the
-      // old one to be the correct folder.
-      File enclosingFolder = null;
-      try {
-        enclosingFolder = Base.createTempFolder(type.toString(), "tmp", sketchbookContribFolder);
-      } catch (IOException e) {
-        status.setErrorMessage("Could not create a secondary folder to install.");
-        return null;
-      }
-      contribFolder = new File(enclosingFolder, getName());
-      tempFolder.renameTo(contribFolder);
-      tempFolder = enclosingFolder;
-      */
+    /*
+    if (!type.isCandidate(tempFolder)) {
       if (status != null) {
         status.setErrorMessage(Language.interpolate("contrib.errors.needs_repackage", getName(), type.getTitle()));
       }
       return null;
     }
+    */
 
-//    if (contribFolder == null) {
-    // Find the first legitimate looking folder in what we just unzipped
-    contribFolder = type.findCandidate(tempFolder);
-//    }
     LocalContribution installedContrib = null;
-
+    // Find the first legitimate folder in what we just unzipped
+    contribFolder = type.findCandidate(tempFolder);
     if (contribFolder == null) {
       if (status != null) {
         status.setErrorMessage(Language.interpolate("contrib.errors.no_contribution_found", type));
       }
-
     } else {
       File propFile = new File(contribFolder, type + ".properties");
-      if (writePropertiesFile(propFile)) {
-        // 1. contribFolder now has a legit contribution, load it to get info.
+      if (!propFile.exists()) {
+        status.setErrorMessage("This contribution is missing " +
+                               propFile.getName() +
+                               ", please contact the author for a fix.");
+
+      } else if (writePropertiesFile(propFile)) {
+        // contribFolder now has a legit contribution, load it to get info.
         LocalContribution newContrib = type.load(base, contribFolder);
 
-        // 1.1. get info we need to delete the newContrib folder later
+        // get info we need to delete the newContrib folder later
         File newContribFolder = newContrib.getFolder();
 
-        // 2. Check to make sure nothing has the same name already,
+        // Check to make sure nothing has the same name already,
         // backup old if needed, then move things into place and reload.
         installedContrib =
           newContrib.copyAndLoad(base, confirmReplace, status);
 
-        // Restart no longer needed. Yay!
-//        if (newContrib != null && type.requiresRestart()) {
-//          installedContrib.setRestartFlag();
-//          //status.setMessage("Restart Processing to finish the installation.");
-//        }
-
-        // 3.1 Unlock all the jars if it is a mode or tool
+        // Unlock all the jars if it is a mode or tool
         if (newContrib.getType() == ContributionType.MODE) {
           ((ModeContribution) newContrib).clearClassLoader(base);
-        }
-        else if (newContrib.getType() == ContributionType.TOOL) {
+
+        } else if (newContrib.getType() == ContributionType.TOOL) {
           ((ToolContribution) newContrib).clearClassLoader();
         }
 
-        // 3.2 Delete the newContrib, do a garbage collection, hope and pray
+        // Delete the newContrib, do a garbage collection, hope and pray
         // that Java will unlock the temp folder on Windows now
         newContrib = null;
         System.gc();
 
-
         if (Platform.isWindows()) {
-          // we'll even give it a second to finish up ... because file ops are
-          // just that flaky on Windows.
+          // we'll even give it a second to finish up,
+          // because file ops are just that flaky on Windows.
           try {
             Thread.sleep(1000);
           } catch (InterruptedException e) {
@@ -195,7 +171,7 @@ public class AvailableContribution extends Contribution {
           }
         }
 
-        // 4. Okay, now actually delete that temp folder
+        // delete the contrib folder inside the libraryXXXXXXtmp folder
         Util.removeDir(newContribFolder, false);
 
       } else {

@@ -8,7 +8,6 @@ import java.util.BitSet;
 import java.util.Stack;
 import processing.app.Preferences;
 import processing.app.SketchException;
-import processing.mode.java.preproc.PdeTokenTypes;
 import antlr.CommonASTWithHiddenTokens;
 import antlr.CommonHiddenStreamToken;
 import antlr.collections.AST;
@@ -35,7 +34,7 @@ public class PdeEmitter implements PdeTokenTypes {
   private final PrintWriter out;
   private final PrintStream debug = System.err;
 
-  private final Stack<AST> stack = new Stack<AST>();
+  private final Stack<AST> stack = new Stack<>();
   private final static int ROOT_ID = 0;
 
   public PdeEmitter(final PdePreprocessor pdePreprocessor, final PrintWriter out) {

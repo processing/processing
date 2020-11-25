@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2013-20 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -199,8 +199,8 @@ public class ContributionManager {
                 }
               }
               installProgress.finished();
-            }
-            else {
+
+            } else {
               if (downloadProgress.exception instanceof SocketTimeoutException) {
                 status.setErrorMessage(Language
                   .interpolate("contrib.errors.contrib_download.timeout",
@@ -213,7 +213,6 @@ public class ContributionManager {
             }
             contribZip.delete();
 
-          //} catch (NoClassDefFoundError ncdfe) {
           } catch (Exception e) {
             String msg = null;
             if (e instanceof RuntimeException) {
@@ -229,6 +228,8 @@ public class ContributionManager {
 
             if (msg == null) {
               msg = Language.interpolate("contrib.errors.download_and_install", ad.getName());
+              // Something unexpected, so print the trace
+              e.printStackTrace();
             }
             status.setErrorMessage(msg);
             downloadProgress.cancel();
@@ -618,16 +619,21 @@ public class ContributionManager {
       }
     });
 
-    for (File file : installList) {
-      for (AvailableContribution contrib : listing.advertisedContributions) {
-        if (file.getName().equals(contrib.getName())) {
-          file.delete();
-          installOnStartUp(base, contrib);
-          EventQueue.invokeAndWait(() -> {
-            listing.replaceContribution(contrib, contrib);
-          });
+    // https://github.com/processing/processing/issues/5823
+    if (installList != null) {
+      for (File file : installList) {
+        for (AvailableContribution contrib : listing.advertisedContributions) {
+          if (file.getName().equals(contrib.getName())) {
+            file.delete();
+            installOnStartUp(base, contrib);
+            EventQueue.invokeAndWait(() -> {
+              listing.replaceContribution(contrib, contrib);
+            });
+          }
         }
       }
+    } else {
+      System.err.println("Could not read " + root);
     }
   }
 

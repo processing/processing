@@ -1098,7 +1098,7 @@ public class JavaEditor extends Editor {
             if (!tweak) {
               runtime = jmode.handleLaunch(sketch, listener, present);
             } else {
-              runtime = jmode.handleTweak(sketch, listener);
+              runtime = jmode.handleTweak(sketch, listener, JavaEditor.this);
             }
           }
         }

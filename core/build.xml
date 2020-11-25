@@ -15,20 +15,20 @@
   </target>
 
   <target name="compile" description="Compile" depends="methods-build">
-    <taskdef name="methods" 
-	     classname="PAppletMethods" 
+    <taskdef name="methods"
+	     classname="PAppletMethods"
 	     classpath="methods/methods.jar" />
     <methods dir="${basedir}/src/processing/core" recorder="true" />
 
     <!-- Where can I expect to find Java Mode JARs? -->
     <property name="java.mode" value="../java/mode/" />
-        
+
     <!-- Check for JDT compiler, since this is likely a PDE build. Using
 	 it allows us to build the PDE with only a JRE on Windows and Linux.
-	 So that the core can be built independently of the PDE, 
+	 So that the core can be built independently of the PDE,
 	 use javac (the "modern" compiler) if ecj is not present. -->
     <property name="jdt.jar" value="${java.mode}/org.eclipse.jdt.core.jar" />
-    <condition property="build.compiler" 
+    <condition property="build.compiler"
 	       value="org.eclipse.jdt.core.JDTCompilerAdapter"
 	       else="modern">
       <available file="${jdt.jar}" />
@@ -51,8 +51,8 @@
 	   includeAntRuntime="false"
 	   debug="true"
 	   destdir="bin"
-	   classpath="apple.jar; 
-                      library/jogl-all.jar; 
+	   classpath="apple.jar;
+                      library/jogl-all.jar;
                       library/gluegen-rt.jar"
 	   nowarn="true">
       <!-- kinda gross, but if not using the JDT, this just ignored anyway -->
@@ -61,23 +61,24 @@
       <include name="processing/**" />
       <exclude name="processing/javafx/**" if="fx.unavailable" />
     </javac>
-    
+
     <!-- Copy the jnilib to the bin folder so it's included. -->
-    <copy todir="bin/japplemenubar" 
-	  file="src/japplemenubar/libjAppleMenuBar.jnilib" />
+    <copy todir="bin/japplemenubar"
+	        file="src/japplemenubar/libjAppleMenuBar.jnilib"
+          preservelastmodified="true" />
 
     <!-- Copy shaders to bin. (Eclipse does this automatically.) -->
-    <copy todir="bin">
+    <copy todir="bin" preservelastmodified="true">
       <fileset dir="src">
         <include name="processing/opengl/shaders/*.glsl" />
         <include name="processing/opengl/cursors/*.png" />
         <include name="icon/*.png" />
       </fileset>
     </copy>
-  </target>		
+  </target>
 
   <target name="build" depends="compile" description="Build core library">
     <jar basedir="bin" destfile="library/core.jar" />
   </target>
-  
+
 </project>

@@ -573,7 +573,7 @@ public class Sketch {
           code[i].setFolder(newFolder);
         }
        // Update internal state to reflect the new location
-        updateInternal(sanitaryName, newFolder);
+        updateInternal(sanitaryName, newFolder, renamingCode);
 
 //        File newMainFile = new File(newFolder, newName + ".pde");
 //        String newMainFilePath = newMainFile.getAbsolutePath();
@@ -985,15 +985,17 @@ public class Sketch {
     // While the old path to the main .pde is still set, remove the entry from
     // the Recent menu so that it's not sticking around after the rename.
     // If untitled, it won't be in the menu, so there's no point.
-    if (!isUntitled()) {
-      Recent.remove(editor);
-    }
+//    if (!isUntitled()) {
+//      Recent.remove(editor);
+//    }
+    // Folks didn't like this behavior, so shutting it off
+    // https://github.com/processing/processing/issues/5902
 
     // save the main tab with its new name
     File newFile = new File(newFolder, newName + "." + mode.getDefaultExtension());
     code[0].saveAs(newFile);
 
-    updateInternal(newName, newFolder);
+    updateInternal(newName, newFolder, false);
 
     // Make sure that it's not an untitled sketch
     setUntitled(false);
@@ -1191,7 +1193,8 @@ public class Sketch {
   /**
    * Update internal state for new sketch name or folder location.
    */
-  protected void updateInternal(String sketchName, File sketchFolder) {
+  protected void updateInternal(String sketchName, File sketchFolder,
+                                boolean renaming) {
     // reset all the state information for the sketch object
     String oldPath = getMainFilePath();
     primaryFile = code[0].getFile();
@@ -1213,7 +1216,11 @@ public class Sketch {
 //    System.out.println("modified is now " + modified);
     editor.updateTitle();
     editor.getBase().rebuildSketchbookMenus();
-    Recent.rename(editor, oldPath);
+    if (renaming) {
+      // only update the Recent menu if it's a rename, not a Save As
+      // https://github.com/processing/processing/issues/5902
+      Recent.rename(editor, oldPath);
+    }
 //    editor.header.rebuild();
   }
 

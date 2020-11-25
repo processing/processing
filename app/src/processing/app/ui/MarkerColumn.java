@@ -39,7 +39,6 @@ import processing.app.Problem;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.syntax.PdeTextArea;
-import processing.app.ui.Editor;
 import processing.core.PApplet;
 
 

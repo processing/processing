@@ -281,6 +281,9 @@ public class PApplet implements PConstants {
    * @see PApplet#get(int, int, int, int)
    * @see PApplet#set(int, int, int)
    * @see PImage
+   * @see PApplet#pixelDensity()
+   * @see PApplet#pixelWidth
+   * @see PApplet#pixelHeight
    */
   public int[] pixels;
 
@@ -1210,7 +1213,8 @@ public class PApplet implements PConstants {
  /**
   * @webref environment
   * @param density 1 or 2
-  *
+  * @see PApplet#pixelWidth
+  * @see PApplet#pixelHeight
   */
   public void pixelDensity(int density) {
     //println(density + " " + this.pixelDensity);
@@ -2000,6 +2004,9 @@ public class PApplet implements PConstants {
    * @param height height of the display window in units of pixels
    * @see PApplet#width
    * @see PApplet#height
+   * @see PApplet#setup()
+   * @see PApplet#settings()
+   * @see PApplet#fullScreen()
    */
   public void size(int width, int height) {
     // Check to make sure the width/height have actually changed. It's ok to
@@ -5541,7 +5548,7 @@ public class PApplet implements PConstants {
     }
 
     if (extension.equals("tif") || extension.equals("tiff")) {
-      byte bytes[] = loadBytes(filename);
+      byte[] bytes = loadBytes(filename);
       PImage image =  (bytes == null) ? null : PImage.loadTIFF(bytes);
 //      if (params != null) {
 //        image.setParams(g, params);
@@ -5556,7 +5563,7 @@ public class PApplet implements PConstants {
       if (extension.equals("jpg") || extension.equals("jpeg") ||
           extension.equals("gif") || extension.equals("png") ||
           extension.equals("unknown")) {
-        byte bytes[] = loadBytes(filename);
+        byte[] bytes = loadBytes(filename);
         if (bytes == null) {
           return null;
         } else {
@@ -5758,7 +5765,7 @@ public class PApplet implements PConstants {
     InputStream is = createInput(filename);
     if (is == null) return null;
 
-    byte header[] = new byte[18];
+    byte[] header = new byte[18];
     int offset = 0;
     do {
       int count = is.read(header, offset, header.length - offset);
@@ -5878,7 +5885,7 @@ public class PApplet implements PConstants {
 
     } else {  // header[2] is 10 or 11
       int index = 0;
-      int px[] = outgoing.pixels;
+      int[] px = outgoing.pixels;
 
       while (index < px.length) {
         int num = is.read();
@@ -7593,12 +7600,12 @@ public class PApplet implements PConstants {
 
   static public String[] loadStrings(BufferedReader reader) {
     try {
-      String lines[] = new String[100];
+      String[] lines = new String[100];
       int lineCount = 0;
       String line = null;
       while ((line = reader.readLine()) != null) {
         if (lineCount == lines.length) {
-          String temp[] = new String[lineCount << 1];
+          String[] temp = new String[lineCount << 1];
           System.arraycopy(lines, 0, temp, 0, lineCount);
           lines = temp;
         }
@@ -7611,7 +7618,7 @@ public class PApplet implements PConstants {
       }
 
       // resize array to appropriate amount for these lines
-      String output[] = new String[lineCount];
+      String[] output = new String[lineCount];
       System.arraycopy(lines, 0, output, 0, lineCount);
       return output;
 
@@ -7912,7 +7919,7 @@ public class PApplet implements PConstants {
    * @see PApplet#loadBytes(String)
    * @see PApplet#saveBytes(String, byte[])
    */
-  public void saveStrings(String filename, String data[]) {
+  public void saveStrings(String filename, String[] data) {
     saveStrings(saveFile(filename), data);
   }
 
@@ -7920,7 +7927,7 @@ public class PApplet implements PConstants {
   /**
    * @nowebref
    */
-  static public void saveStrings(File file, String data[]) {
+  static public void saveStrings(File file, String[] data) {
     saveStrings(createOutput(file), data);
   }
 
@@ -8234,7 +8241,7 @@ public class PApplet implements PConstants {
    * @param list array to sort
    * @see PApplet#reverse(boolean[])
    */
-  static public byte[] sort(byte list[]) {
+  static public byte[] sort(byte[] list) {
     return sort(list, list.length);
   }
 
@@ -8248,7 +8255,7 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static public char[] sort(char list[]) {
+  static public char[] sort(char[] list) {
     return sort(list, list.length);
   }
 
@@ -8259,7 +8266,7 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static public int[] sort(int list[]) {
+  static public int[] sort(int[] list) {
     return sort(list, list.length);
   }
 
@@ -8270,7 +8277,7 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static public float[] sort(float list[]) {
+  static public float[] sort(float[] list) {
     return sort(list, list.length);
   }
 
@@ -8281,7 +8288,7 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static public String[] sort(String list[]) {
+  static public String[] sort(String[] list) {
     return sort(list, list.length);
   }
 
@@ -8388,85 +8395,85 @@ public class PApplet implements PConstants {
    * @param list the array to expand
    * @see PApplet#shorten(boolean[])
    */
-  static public boolean[] expand(boolean list[]) {
+  static public boolean[] expand(boolean[] list) {
     return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
   /**
    * @param newSize new size for the array
    */
-  static public boolean[] expand(boolean list[], int newSize) {
-    boolean temp[] = new boolean[newSize];
+  static public boolean[] expand(boolean[] list, int newSize) {
+    boolean[] temp = new boolean[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
 
-  static public byte[] expand(byte list[]) {
+  static public byte[] expand(byte[] list) {
     return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
-  static public byte[] expand(byte list[], int newSize) {
-    byte temp[] = new byte[newSize];
+  static public byte[] expand(byte[] list, int newSize) {
+    byte[] temp = new byte[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
 
-  static public char[] expand(char list[]) {
+  static public char[] expand(char[] list) {
     return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
-  static public char[] expand(char list[], int newSize) {
-    char temp[] = new char[newSize];
+  static public char[] expand(char[] list, int newSize) {
+    char[] temp = new char[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
 
-  static public int[] expand(int list[]) {
+  static public int[] expand(int[] list) {
     return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
-  static public int[] expand(int list[], int newSize) {
-    int temp[] = new int[newSize];
+  static public int[] expand(int[] list, int newSize) {
+    int[] temp = new int[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
 
-  static public long[] expand(long list[]) {
+  static public long[] expand(long[] list) {
     return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
-  static public long[] expand(long list[], int newSize) {
-    long temp[] = new long[newSize];
+  static public long[] expand(long[] list, int newSize) {
+    long[] temp = new long[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
 
-  static public float[] expand(float list[]) {
+  static public float[] expand(float[] list) {
     return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
-  static public float[] expand(float list[], int newSize) {
-    float temp[] = new float[newSize];
+  static public float[] expand(float[] list, int newSize) {
+    float[] temp = new float[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
 
-  static public double[] expand(double list[]) {
+  static public double[] expand(double[] list) {
     return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
-  static public double[] expand(double list[], int newSize) {
-    double temp[] = new double[newSize];
+  static public double[] expand(double[] list, int newSize) {
+    double[] temp = new double[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
 
-  static public String[] expand(String list[]) {
+  static public String[] expand(String[] list) {
     return expand(list, list.length > 0 ? list.length << 1 : 1);
   }
 
-  static public String[] expand(String list[], int newSize) {
-    String temp[] = new String[newSize];
+  static public String[] expand(String[] list, int newSize) {
+    String[] temp = new String[newSize];
     // in case the new size is smaller than list.length
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
@@ -8510,31 +8517,31 @@ public class PApplet implements PConstants {
    * @see PApplet#shorten(boolean[])
    * @see PApplet#expand(boolean[])
    */
-  static public byte[] append(byte array[], byte value) {
+  static public byte[] append(byte[] array, byte value) {
     array = expand(array, array.length + 1);
     array[array.length-1] = value;
     return array;
   }
 
-  static public char[] append(char array[], char value) {
+  static public char[] append(char[] array, char value) {
     array = expand(array, array.length + 1);
     array[array.length-1] = value;
     return array;
   }
 
-  static public int[] append(int array[], int value) {
+  static public int[] append(int[] array, int value) {
     array = expand(array, array.length + 1);
     array[array.length-1] = value;
     return array;
   }
 
-  static public float[] append(float array[], float value) {
+  static public float[] append(float[] array, float value) {
     array = expand(array, array.length + 1);
     array[array.length-1] = value;
     return array;
   }
 
-  static public String[] append(String array[], String value) {
+  static public String[] append(String[] array, String value) {
     array = expand(array, array.length + 1);
     array[array.length-1] = value;
     return array;
@@ -8564,27 +8571,27 @@ public class PApplet implements PConstants {
    * @see PApplet#append(byte[], byte)
    * @see PApplet#expand(boolean[])
    */
-  static public boolean[] shorten(boolean list[]) {
+  static public boolean[] shorten(boolean[] list) {
     return subset(list, 0, list.length-1);
   }
 
-  static public byte[] shorten(byte list[]) {
+  static public byte[] shorten(byte[] list) {
     return subset(list, 0, list.length-1);
   }
 
-  static public char[] shorten(char list[]) {
+  static public char[] shorten(char[] list) {
     return subset(list, 0, list.length-1);
   }
 
-  static public int[] shorten(int list[]) {
+  static public int[] shorten(int[] list) {
     return subset(list, 0, list.length-1);
   }
 
-  static public float[] shorten(float list[]) {
+  static public float[] shorten(float[] list) {
     return subset(list, 0, list.length-1);
   }
 
-  static public String[] shorten(String list[]) {
+  static public String[] shorten(String[] list) {
     return subset(list, 0, list.length-1);
   }
 
@@ -8614,9 +8621,9 @@ public class PApplet implements PConstants {
    * @see PApplet#concat(boolean[], boolean[])
    * @see PApplet#subset(boolean[], int, int)
    */
-  static final public boolean[] splice(boolean list[],
+  static final public boolean[] splice(boolean[] list,
                                        boolean value, int index) {
-    boolean outgoing[] = new boolean[list.length + 1];
+    boolean[] outgoing = new boolean[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = value;
     System.arraycopy(list, index, outgoing, index + 1,
@@ -8624,9 +8631,9 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static final public boolean[] splice(boolean list[],
-                                       boolean value[], int index) {
-    boolean outgoing[] = new boolean[list.length + value.length];
+  static final public boolean[] splice(boolean[] list,
+                                       boolean[] value, int index) {
+    boolean[] outgoing = new boolean[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(value, 0, outgoing, index, value.length);
     System.arraycopy(list, index, outgoing, index + value.length,
@@ -8634,9 +8641,9 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static final public byte[] splice(byte list[],
+  static final public byte[] splice(byte[] list,
                                     byte value, int index) {
-    byte outgoing[] = new byte[list.length + 1];
+    byte[] outgoing = new byte[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = value;
     System.arraycopy(list, index, outgoing, index + 1,
@@ -8644,9 +8651,9 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static final public byte[] splice(byte list[],
-                                    byte value[], int index) {
-    byte outgoing[] = new byte[list.length + value.length];
+  static final public byte[] splice(byte[] list,
+                                    byte[] value, int index) {
+    byte[] outgoing = new byte[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(value, 0, outgoing, index, value.length);
     System.arraycopy(list, index, outgoing, index + value.length,
@@ -8655,9 +8662,9 @@ public class PApplet implements PConstants {
   }
 
 
-  static final public char[] splice(char list[],
+  static final public char[] splice(char[] list,
                                     char value, int index) {
-    char outgoing[] = new char[list.length + 1];
+    char[] outgoing = new char[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = value;
     System.arraycopy(list, index, outgoing, index + 1,
@@ -8665,9 +8672,9 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static final public char[] splice(char list[],
-                                    char value[], int index) {
-    char outgoing[] = new char[list.length + value.length];
+  static final public char[] splice(char[] list,
+                                    char[] value, int index) {
+    char[] outgoing = new char[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(value, 0, outgoing, index, value.length);
     System.arraycopy(list, index, outgoing, index + value.length,
@@ -8675,9 +8682,9 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static final public int[] splice(int list[],
+  static final public int[] splice(int[] list,
                                    int value, int index) {
-    int outgoing[] = new int[list.length + 1];
+    int[] outgoing = new int[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = value;
     System.arraycopy(list, index, outgoing, index + 1,
@@ -8685,9 +8692,9 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static final public int[] splice(int list[],
-                                   int value[], int index) {
-    int outgoing[] = new int[list.length + value.length];
+  static final public int[] splice(int[] list,
+                                   int[] value, int index) {
+    int[] outgoing = new int[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(value, 0, outgoing, index, value.length);
     System.arraycopy(list, index, outgoing, index + value.length,
@@ -8695,9 +8702,9 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static final public float[] splice(float list[],
+  static final public float[] splice(float[] list,
                                      float value, int index) {
-    float outgoing[] = new float[list.length + 1];
+    float[] outgoing = new float[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = value;
     System.arraycopy(list, index, outgoing, index + 1,
@@ -8705,9 +8712,9 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static final public float[] splice(float list[],
-                                     float value[], int index) {
-    float outgoing[] = new float[list.length + value.length];
+  static final public float[] splice(float[] list,
+                                     float[] value, int index) {
+    float[] outgoing = new float[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(value, 0, outgoing, index, value.length);
     System.arraycopy(list, index, outgoing, index + value.length,
@@ -8715,9 +8722,9 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static final public String[] splice(String list[],
+  static final public String[] splice(String[] list,
                                       String value, int index) {
-    String outgoing[] = new String[list.length + 1];
+    String[] outgoing = new String[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
     outgoing[index] = value;
     System.arraycopy(list, index, outgoing, index + 1,
@@ -8725,9 +8732,9 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static final public String[] splice(String list[],
-                                      String value[], int index) {
-    String outgoing[] = new String[list.length + value.length];
+  static final public String[] splice(String[] list,
+                                      String[] value, int index) {
+    String[] outgoing = new String[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
     System.arraycopy(value, 0, outgoing, index, value.length);
     System.arraycopy(list, index, outgoing, index + value.length,
@@ -8908,43 +8915,43 @@ public class PApplet implements PConstants {
   * @see PApplet#splice(boolean[], boolean, int)
   * @see PApplet#arrayCopy(Object, int, Object, int, int)
   */
-  static public boolean[] concat(boolean a[], boolean b[]) {
-    boolean c[] = new boolean[a.length + b.length];
+  static public boolean[] concat(boolean[] a, boolean[] b) {
+    boolean[] c = new boolean[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
 
-  static public byte[] concat(byte a[], byte b[]) {
-    byte c[] = new byte[a.length + b.length];
+  static public byte[] concat(byte[] a, byte[] b) {
+    byte[] c = new byte[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
 
-  static public char[] concat(char a[], char b[]) {
-    char c[] = new char[a.length + b.length];
+  static public char[] concat(char[] a, char[] b) {
+    char[] c = new char[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
 
-  static public int[] concat(int a[], int b[]) {
-    int c[] = new int[a.length + b.length];
+  static public int[] concat(int[] a, int[] b) {
+    int[] c = new int[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
 
-  static public float[] concat(float a[], float b[]) {
-    float c[] = new float[a.length + b.length];
+  static public float[] concat(float[] a, float[] b) {
+    float[] c = new float[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
 
-  static public String[] concat(String a[], String b[]) {
-    String c[] = new String[a.length + b.length];
+  static public String[] concat(String[] a, String[] b) {
+    String[] c = new String[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
@@ -8973,8 +8980,8 @@ public class PApplet implements PConstants {
   * @param list booleans[], bytes[], chars[], ints[], floats[], or Strings[]
   * @see PApplet#sort(String[], int)
   */
-  static public boolean[] reverse(boolean list[]) {
-    boolean outgoing[] = new boolean[list.length];
+  static public boolean[] reverse(boolean[] list) {
+    boolean[] outgoing = new boolean[list.length];
     int length1 = list.length - 1;
     for (int i = 0; i < list.length; i++) {
       outgoing[i] = list[length1 - i];
@@ -8982,8 +8989,8 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static public byte[] reverse(byte list[]) {
-    byte outgoing[] = new byte[list.length];
+  static public byte[] reverse(byte[] list) {
+    byte[] outgoing = new byte[list.length];
     int length1 = list.length - 1;
     for (int i = 0; i < list.length; i++) {
       outgoing[i] = list[length1 - i];
@@ -8991,8 +8998,8 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static public char[] reverse(char list[]) {
-    char outgoing[] = new char[list.length];
+  static public char[] reverse(char[] list) {
+    char[] outgoing = new char[list.length];
     int length1 = list.length - 1;
     for (int i = 0; i < list.length; i++) {
       outgoing[i] = list[length1 - i];
@@ -9000,8 +9007,8 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static public int[] reverse(int list[]) {
-    int outgoing[] = new int[list.length];
+  static public int[] reverse(int[] list) {
+    int[] outgoing = new int[list.length];
     int length1 = list.length - 1;
     for (int i = 0; i < list.length; i++) {
       outgoing[i] = list[length1 - i];
@@ -9009,8 +9016,8 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static public float[] reverse(float list[]) {
-    float outgoing[] = new float[list.length];
+  static public float[] reverse(float[] list) {
+    float[] outgoing = new float[list.length];
     int length1 = list.length - 1;
     for (int i = 0; i < list.length; i++) {
       outgoing[i] = list[length1 - i];
@@ -9018,8 +9025,8 @@ public class PApplet implements PConstants {
     return outgoing;
   }
 
-  static public String[] reverse(String list[]) {
-    String outgoing[] = new String[list.length];
+  static public String[] reverse(String[] list) {
+    String[] outgoing = new String[list.length];
     int length1 = list.length - 1;
     for (int i = 0; i < list.length; i++) {
       outgoing[i] = list[length1 - i];
@@ -9142,7 +9149,7 @@ public class PApplet implements PConstants {
    */
   static public String[] splitTokens(String value, String delim) {
     StringTokenizer toker = new StringTokenizer(value, delim);
-    String pieces[] = new String[toker.countTokens()];
+    String[] pieces = new String[toker.countTokens()];
 
     int index = 0;
     while (toker.hasMoreTokens()) {
@@ -9192,7 +9199,7 @@ public class PApplet implements PConstants {
     if (value == null) return null;
     //return split(what, String.valueOf(delim));  // huh
 
-    char chars[] = value.toCharArray();
+    char[] chars = value.toCharArray();
     int splitCount = 0; //1;
     for (int i = 0; i < chars.length; i++) {
       if (chars[i] == delim) splitCount++;
@@ -9204,12 +9211,12 @@ public class PApplet implements PConstants {
       // on second thought, i don't agree with this, will disable
     //}
     if (splitCount == 0) {
-      String splits[] = new String[1];
+      String[] splits = new String[1];
       splits[0] = value;
       return splits;
     }
     //int pieceCount = splitCount + 1;
-    String splits[] = new String[splitCount + 1];
+    String[] splits = new String[splitCount + 1];
     int splitIndex = 0;
     int startIndex = 0;
     for (int i = 0; i < chars.length; i++) {
@@ -9450,8 +9457,8 @@ public class PApplet implements PConstants {
    * to zero will return false, and any other value will return true.
    * @return array of boolean elements
    */
-  static final public boolean[] parseBoolean(int what[]) {
-    boolean outgoing[] = new boolean[what.length];
+  static final public boolean[] parseBoolean(int[] what) {
+    boolean[] outgoing = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (what[i] != 0);
     }
@@ -9469,8 +9476,8 @@ public class PApplet implements PConstants {
   }
   */
 
-  static final public boolean[] parseBoolean(String what[]) {
-    boolean outgoing[] = new boolean[what.length];
+  static final public boolean[] parseBoolean(String[] what) {
+    boolean[] outgoing = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = Boolean.parseBoolean(what[i]);
     }
@@ -9504,32 +9511,32 @@ public class PApplet implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  static final public byte[] parseByte(boolean what[]) {
-    byte outgoing[] = new byte[what.length];
+  static final public byte[] parseByte(boolean[] what) {
+    byte[] outgoing = new byte[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = what[i] ? (byte)1 : 0;
     }
     return outgoing;
   }
 
-  static final public byte[] parseByte(char what[]) {
-    byte outgoing[] = new byte[what.length];
+  static final public byte[] parseByte(char[] what) {
+    byte[] outgoing = new byte[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (byte) what[i];
     }
     return outgoing;
   }
 
-  static final public byte[] parseByte(int what[]) {
-    byte outgoing[] = new byte[what.length];
+  static final public byte[] parseByte(int[] what) {
+    byte[] outgoing = new byte[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (byte) what[i];
     }
     return outgoing;
   }
 
-  static final public byte[] parseByte(float what[]) {
-    byte outgoing[] = new byte[what.length];
+  static final public byte[] parseByte(float[] what) {
+    byte[] outgoing = new byte[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (byte) what[i];
     }
@@ -9584,8 +9591,8 @@ public class PApplet implements PConstants {
   }
   */
 
-  static final public char[] parseChar(byte what[]) {
-    char outgoing[] = new char[what.length];
+  static final public char[] parseChar(byte[] what) {
+    char[] outgoing = new char[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (char) (what[i] & 0xff);
     }
@@ -9601,8 +9608,8 @@ public class PApplet implements PConstants {
   }
 
   /*
-  static final public char[] parseChar(float what[]) {  // nonsensical
-    char outgoing[] = new char[what.length];
+  static final public char[] parseChar(int[] what) {
+    char[] outgoing = new char[what.length];
     for (int i = 0; i < what.length; i++) {
       outgoing[i] = (char) what[i];
     }
@@ -9672,32 +9679,32 @@ public class PApplet implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  static final public int[] parseInt(boolean what[]) {
-    int list[] = new int[what.length];
+  static final public int[] parseInt(boolean[] what) {
+    int[] list = new int[what.length];
     for (int i = 0; i < what.length; i++) {
       list[i] = what[i] ? 1 : 0;
     }
     return list;
   }
 
-  static final public int[] parseInt(byte what[]) {  // note this unsigns
-    int list[] = new int[what.length];
+  static final public int[] parseInt(byte[] what) {  // note this unsigns
+    int[] list = new int[what.length];
     for (int i = 0; i < what.length; i++) {
       list[i] = (what[i] & 0xff);
     }
     return list;
   }
 
-  static final public int[] parseInt(char what[]) {
-    int list[] = new int[what.length];
+  static final public int[] parseInt(char[] what) {
+    int[] list = new int[what.length];
     for (int i = 0; i < what.length; i++) {
       list[i] = what[i];
     }
     return list;
   }
 
-  static public int[] parseInt(float what[]) {
-    int inties[] = new int[what.length];
+  static public int[] parseInt(float[] what) {
+    int[] inties = new int[what.length];
     for (int i = 0; i < what.length; i++) {
       inties[i] = (int)what[i];
     }
@@ -9713,7 +9720,7 @@ public class PApplet implements PConstants {
    *
    * numbers will contain { 1, 300, 44 }
    */
-  static public int[] parseInt(String what[]) {
+  static public int[] parseInt(String[] what) {
     return parseInt(what, 0);
   }
 
@@ -9727,8 +9734,8 @@ public class PApplet implements PConstants {
    *
    * numbers will contain { 1, 300, 9999, 44 }
    */
-  static public int[] parseInt(String what[], int missing) {
-    int output[] = new int[what.length];
+  static public int[] parseInt(String[] what, int missing) {
+    int[] output = new int[what.length];
     for (int i = 0; i < what.length; i++) {
       try {
         output[i] = Integer.parseInt(what[i]);
@@ -9769,46 +9776,28 @@ public class PApplet implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  /*
-  static final public float[] parseFloat(boolean what[]) {
-    float floaties[] = new float[what.length];
-    for (int i = 0; i < what.length; i++) {
-      floaties[i] = what[i] ? 1 : 0;
-    }
-    return floaties;
-  }
-
-  static final public float[] parseFloat(char what[]) {
-    float floaties[] = new float[what.length];
-    for (int i = 0; i < what.length; i++) {
-      floaties[i] = (char) what[i];
-    }
-    return floaties;
-  }
-  */
-
-  static final public float[] parseFloat(byte what[]) {
-    float floaties[] = new float[what.length];
+  static final public float[] parseFloat(byte[] what) {
+    float[] floaties = new float[what.length];
     for (int i = 0; i < what.length; i++) {
       floaties[i] = what[i];
     }
     return floaties;
   }
 
-  static final public float[] parseFloat(int what[]) {
-    float floaties[] = new float[what.length];
+  static final public float[] parseFloat(int[] what) {
+    float[] floaties = new float[what.length];
     for (int i = 0; i < what.length; i++) {
       floaties[i] = what[i];
     }
     return floaties;
   }
 
-  static final public float[] parseFloat(String what[]) {
+  static final public float[] parseFloat(String[] what) {
     return parseFloat(what, Float.NaN);
   }
 
-  static final public float[] parseFloat(String what[], float missing) {
-    float output[] = new float[what.length];
+  static final public float[] parseFloat(String[] what, float missing) {
+    float[] output = new float[what.length];
     for (int i = 0; i < what.length; i++) {
       try {
         output[i] = Float.parseFloat(what[i]);
@@ -9843,32 +9832,32 @@ public class PApplet implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  static final public String[] str(boolean x[]) {
-    String s[] = new String[x.length];
+  static final public String[] str(boolean[] x) {
+    String[] s = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x[i]);
     return s;
   }
 
-  static final public String[] str(byte x[]) {
-    String s[] = new String[x.length];
+  static final public String[] str(byte[] x) {
+    String[] s = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x[i]);
     return s;
   }
 
-  static final public String[] str(char x[]) {
-    String s[] = new String[x.length];
+  static final public String[] str(char[] x) {
+    String[] s = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x[i]);
     return s;
   }
 
-  static final public String[] str(int x[]) {
-    String s[] = new String[x.length];
+  static final public String[] str(int[] x) {
+    String[] s = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x[i]);
     return s;
   }
 
-  static final public String[] str(float x[]) {
-    String s[] = new String[x.length];
+  static final public String[] str(float[] x) {
+    String[] s = new String[x.length];
     for (int i = 0; i < x.length; i++) s[i] = String.valueOf(x[i]);
     return s;
   }
@@ -9925,8 +9914,8 @@ public class PApplet implements PConstants {
    * @see <a href="https://processing.org/reference/intconvert_.html">int(float)</a>
    */
 
-  static public String[] nf(int nums[], int digits) {
-    String formatted[] = new String[nums.length];
+  static public String[] nf(int[] nums, int digits) {
+    String[] formatted = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
       formatted[i] = nf(nums[i], digits);
     }
@@ -9969,8 +9958,8 @@ public class PApplet implements PConstants {
    * @see PApplet#nfp(float, int, int)
    * @see PApplet#nfs(float, int, int)
    */
-  static public String[] nfc(int nums[]) {
-    String formatted[] = new String[nums.length];
+  static public String[] nfc(int[] nums) {
+    String[] formatted = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
       formatted[i] = nfc(nums[i]);
     }
@@ -10029,8 +10018,8 @@ public class PApplet implements PConstants {
   /**
    * @param nums the numbers to format
    */
-  static public String[] nfs(int nums[], int digits) {
-    String formatted[] = new String[nums.length];
+  static public String[] nfs(int[] nums, int digits) {
+    String[] formatted = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
       formatted[i] = nfs(nums[i], digits);
     }
@@ -10067,8 +10056,8 @@ public class PApplet implements PConstants {
   /**
    * @param nums the numbers to format
    */
-  static public String[] nfp(int nums[], int digits) {
-    String formatted[] = new String[nums.length];
+  static public String[] nfp(int[] nums, int digits) {
+    String[] formatted = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
       formatted[i] = nfp(nums[i], digits);
     }
@@ -10089,8 +10078,8 @@ public class PApplet implements PConstants {
    * @param left number of digits to the left of the decimal point
    * @param right number of digits to the right of the decimal point
    */
-  static public String[] nf(float nums[], int left, int right) {
-    String formatted[] = new String[nums.length];
+  static public String[] nf(float[] nums, int left, int right) {
+    String[] formatted = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
       formatted[i] = nf(nums[i], left, right);
     }
@@ -10122,8 +10111,8 @@ public class PApplet implements PConstants {
   /**
    * @param right number of digits to the right of the decimal point
   */
-  static public String[] nfc(float nums[], int right) {
-    String formatted[] = new String[nums.length];
+  static public String[] nfc(float[] nums, int right) {
+    String[] formatted = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
       formatted[i] = nfc(nums[i], right);
     }
@@ -10156,8 +10145,8 @@ public class PApplet implements PConstants {
   * @param left the number of digits to the left of the decimal point
   * @param right the number of digits to the right of the decimal point
   */
-  static public String[] nfs(float nums[], int left, int right) {
-    String formatted[] = new String[nums.length];
+  static public String[] nfs(float[] nums, int left, int right) {
+    String[] formatted = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
       formatted[i] = nfs(nums[i], left, right);
     }
@@ -10172,8 +10161,8 @@ public class PApplet implements PConstants {
   * @param left the number of digits to the left of the decimal point
   * @param right the number of digits to the right of the decimal point
   */
-  static public String[] nfp(float nums[], int left, int right) {
-    String formatted[] = new String[nums.length];
+  static public String[] nfp(float[] nums, int left, int right) {
+    String[] formatted = new String[nums.length];
     for (int i = 0; i < formatted.length; i++) {
       formatted[i] = nfp(nums[i], left, right);
     }
@@ -12162,11 +12151,11 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from square.xml )
    *
-   * Draws a square to the screen. A square is a four-sided shape with 
-   * every angle at ninety degrees and each side is the same length. 
-   * By default, the first two parameters set the location of the 
-   * upper-left corner, the third sets the width and height. The way 
-   * these parameters are interpreted, however, may be changed with the 
+   * Draws a square to the screen. A square is a four-sided shape with
+   * every angle at ninety degrees and each side is the same length.
+   * By default, the first two parameters set the location of the
+   * upper-left corner, the third sets the width and height. The way
+   * these parameters are interpreted, however, may be changed with the
    * <b>rectMode()</b> function.
    *
    * ( end auto-generated )
@@ -12275,9 +12264,9 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from circle.xml )
    *
-   * Draws a circle to the screen. By default, the first two parameters 
-   * set the location of the center, and the third sets the shape's width 
-   * and height. The origin may be changed with the <b>ellipseMode()</b> 
+   * Draws a circle to the screen. By default, the first two parameters
+   * set the location of the center, and the third sets the shape's width
+   * and height. The origin may be changed with the <b>ellipseMode()</b>
    * function.
    *
    * ( end auto-generated )
@@ -12573,17 +12562,17 @@ public class PApplet implements PConstants {
    * ( begin auto-generated from curvePoint.xml )
    *
    * Evalutes the curve at point t for points a, b, c, d. The parameter t
-   * varies between 0 and 1, a and d are points on the curve, and b and c are
-   * the control points. This can be done once with the x coordinates and a
+   * varies between 0 and 1, a and d are the control points, and b and c are
+   * the points on the curve. This can be done once with the x coordinates and a
    * second time with the y coordinates to get the location of a curve at t.
    *
    * ( end auto-generated )
    *
    * @webref shape:curves
-   * @param a coordinate of first point on the curve
-   * @param b coordinate of second point on the curve
-   * @param c coordinate of third point on the curve
-   * @param d coordinate of fourth point on the curve
+   * @param a coordinate of first control point
+   * @param b coordinate of first point on the curve
+   * @param c coordinate of second point on the curve
+   * @param d coordinate of second control point
    * @param t value between 0 and 1
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PGraphics#curveVertex(float, float)
@@ -12607,10 +12596,10 @@ public class PApplet implements PConstants {
    * Code thanks to Dave Bollinger (Bug #715)
    *
    * @webref shape:curves
-   * @param a coordinate of first point on the curve
-   * @param b coordinate of first control point
-   * @param c coordinate of second control point
-   * @param d coordinate of second point on the curve
+   * @param a coordinate of first control point on the curve
+   * @param b coordinate of first point
+   * @param c coordinate of first point
+   * @param d coordinate of second control point on the curve
    * @param t value between 0 and 1
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PGraphics#curveVertex(float, float)
@@ -13319,28 +13308,28 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from push.xml )
    *
-   * The <b>push()</b> function saves the current drawing style 
-   * settings and transformations, while <b>pop()</b> restores these 
-   * settings. Note that these functions are always used together. 
-   * They allow you to change the style and transformation settings 
-   * and later return to what you had. When a new state is started 
-   * with push(), it builds on the current style and transform 
+   * The <b>push()</b> function saves the current drawing style
+   * settings and transformations, while <b>pop()</b> restores these
+   * settings. Note that these functions are always used together.
+   * They allow you to change the style and transformation settings
+   * and later return to what you had. When a new state is started
+   * with push(), it builds on the current style and transform
    * information.<br />
    * <br />
-   * <b>push()</b> stores information related to the current 
-   * transformation state and style settings controlled by the 
-   * following functions: <b>rotate()</b>, <b>translate()</b>, 
-   * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>, 
-   * <b>strokeWeight()</b>, <b>strokeCap()</b>, <b>strokeJoin()</b>, 
-   * <b>imageMode()</b>, <b>rectMode()</b>, <b>ellipseMode()</b>, 
-   * <b>colorMode()</b>, <b>textAlign()</b>, <b>textFont()</b>, 
+   * <b>push()</b> stores information related to the current
+   * transformation state and style settings controlled by the
+   * following functions: <b>rotate()</b>, <b>translate()</b>,
+   * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>,
+   * <b>strokeWeight()</b>, <b>strokeCap()</b>, <b>strokeJoin()</b>,
+   * <b>imageMode()</b>, <b>rectMode()</b>, <b>ellipseMode()</b>,
+   * <b>colorMode()</b>, <b>textAlign()</b>, <b>textFont()</b>,
    * <b>textMode()</b>, <b>textSize()</b>, <b>textLeading()</b>.<br />
    * <br />
-   * The <b>push()</b> and <b>pop()</b> functions were added with 
-   * Processing 3.5. They can be used in place of <b>pushMatrix()</b>, 
-   * <b>popMatrix()</b>, <b>pushStyles()</b>, and <b>popStyles()</b>. 
-   * The difference is that push() and pop() control both the 
-   * transformations (rotate, scale, translate) and the drawing styles 
+   * The <b>push()</b> and <b>pop()</b> functions were added with
+   * Processing 3.5. They can be used in place of <b>pushMatrix()</b>,
+   * <b>popMatrix()</b>, <b>pushStyles()</b>, and <b>popStyles()</b>.
+   * The difference is that push() and pop() control both the
+   * transformations (rotate, scale, translate) and the drawing styles
    * at the same time.
    *
    * ( end auto-generated )
@@ -13357,28 +13346,28 @@ public class PApplet implements PConstants {
   /**
    * ( begin auto-generated from pop.xml )
    *
-   * The <b>pop()</b> function restores the previous drawing style 
-   * settings and transformations after <b>push()</b> has changed them. 
-   * Note that these functions are always used together. They allow 
-   * you to change the style and transformation settings and later 
-   * return to what you had. When a new state is started with push(), 
+   * The <b>pop()</b> function restores the previous drawing style
+   * settings and transformations after <b>push()</b> has changed them.
+   * Note that these functions are always used together. They allow
+   * you to change the style and transformation settings and later
+   * return to what you had. When a new state is started with push(),
    * it builds on the current style and transform information.<br />
    * <br />
    * <br />
-   * <b>push()</b> stores information related to the current 
-   * transformation state and style settings controlled by the 
-   * following functions: <b>rotate()</b>, <b>translate()</b>, 
-   * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>, 
-   * <b>strokeWeight()</b>, <b>strokeCap()</b>, <b>strokeJoin()</b>, 
-   * <b>imageMode()</b>, <b>rectMode()</b>, <b>ellipseMode()</b>, 
-   * <b>colorMode()</b>, <b>textAlign()</b>, <b>textFont()</b>, 
+   * <b>push()</b> stores information related to the current
+   * transformation state and style settings controlled by the
+   * following functions: <b>rotate()</b>, <b>translate()</b>,
+   * <b>scale()</b>, <b>fill()</b>, <b>stroke()</b>, <b>tint()</b>,
+   * <b>strokeWeight()</b>, <b>strokeCap()</b>, <b>strokeJoin()</b>,
+   * <b>imageMode()</b>, <b>rectMode()</b>, <b>ellipseMode()</b>,
+   * <b>colorMode()</b>, <b>textAlign()</b>, <b>textFont()</b>,
    * <b>textMode()</b>, <b>textSize()</b>, <b>textLeading()</b>.<br />
    * <br />
-   * The <b>push()</b> and <b>pop()</b> functions were added with 
-   * Processing 3.5. They can be used in place of <b>pushMatrix()</b>, 
-   * <b>popMatrix()</b>, <b>pushStyles()</b>, and <b>popStyles()</b>. 
-   * The difference is that push() and pop() control both the 
-   * transformations (rotate, scale, translate) and the drawing styles 
+   * The <b>push()</b> and <b>pop()</b> functions were added with
+   * Processing 3.5. They can be used in place of <b>pushMatrix()</b>,
+   * <b>popMatrix()</b>, <b>pushStyles()</b>, and <b>popStyles()</b>.
+   * The difference is that push() and pop() control both the
+   * transformations (rotate, scale, translate) and the drawing styles
    * at the same time.
    *
    * ( end auto-generated )
@@ -14855,6 +14844,8 @@ public class PApplet implements PConstants {
 
 /**
  * gray number specifying value between white and black
+ *
+ * @param gray value between black and white, by default 0 to 255
  */
   public void specular(float gray) {
     if (recorder != null) recorder.specular(gray);
@@ -14920,6 +14911,8 @@ public class PApplet implements PConstants {
 
   /**
    * gray number specifying value between white and black
+   *
+   * @param gray value between black and white, by default 0 to 255
    */
   public void emissive(float gray) {
     if (recorder != null) recorder.emissive(gray);

@@ -41,7 +41,6 @@ import javax.swing.table.TableColumn;
 import processing.app.Language;
 import processing.app.Mode;
 import processing.app.Problem;
-import processing.app.ui.Editor;
 
 
 public class ErrorTable extends JTable {

@@ -129,8 +129,8 @@ class Rename {
         final String newName = textField.getText().trim();
         if (!newName.isEmpty()) {
           if (newName.length() >= 1 &&
-              newName.chars().limit(1).allMatch(Character::isUnicodeIdentifierStart) &&
-              newName.chars().skip(1).allMatch(Character::isUnicodeIdentifierPart)) {
+              newName.chars().limit(1).allMatch(Character::isJavaIdentifierStart) &&
+              newName.chars().skip(1).allMatch(Character::isJavaIdentifierPart)) {
             rename(ps, binding, newName);
             window.setVisible(false);
           } else {

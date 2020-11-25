@@ -614,24 +614,31 @@ public class Util {
   }
 
 
+  /**
+   * Extract the contents of a .zip archive into a folder.
+   * Ignores (does not extract) any __MACOSX files from macOS archives.
+   */
   static public void unzip(File zipFile, File dest) {
     try {
       FileInputStream fis = new FileInputStream(zipFile);
       CheckedInputStream checksum = new CheckedInputStream(fis, new Adler32());
       ZipInputStream zis = new ZipInputStream(new BufferedInputStream(checksum));
-      ZipEntry next = null;
-      while ((next = zis.getNextEntry()) != null) {
-        File currentFile = new File(dest, next.getName());
-        if (next.isDirectory()) {
-          currentFile.mkdirs();
-        } else {
-          File parentDir = currentFile.getParentFile();
-          // Sometimes the directory entries aren't already created
-          if (!parentDir.exists()) {
-            parentDir.mkdirs();
+      ZipEntry entry = null;
+      while ((entry = zis.getNextEntry()) != null) {
+        final String name = entry.getName();
+        if (!name.startsWith(("__MACOSX"))) {
+          File currentFile = new File(dest, name);
+          if (entry.isDirectory()) {
+            currentFile.mkdirs();
+          } else {
+            File parentDir = currentFile.getParentFile();
+            // Sometimes the directory entries aren't already created
+            if (!parentDir.exists()) {
+              parentDir.mkdirs();
+            }
+            currentFile.createNewFile();
+            unzipEntry(zis, currentFile);
           }
-          currentFile.createNewFile();
-          unzipEntry(zis, currentFile);
         }
       }
     } catch (Exception e) {

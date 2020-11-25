@@ -458,6 +458,7 @@ public class AppBundlerTask extends Task {
           } finally {
             outputStream.close();
           }
+          file.setLastModified(zipEntry.getTime());
         }
         zipEntry = zipInputStream.getNextEntry();
       }
@@ -729,7 +730,9 @@ public class AppBundlerTask extends Task {
 
   private static void copy(URL location, File file) throws IOException {
     try (InputStream in = location.openStream()) {
-      Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+      Files.copy(in, file.toPath(),
+                 // can't do attributes when coming from URL
+                 StandardCopyOption.REPLACE_EXISTING);
     }
   }
 
@@ -740,13 +743,15 @@ public class AppBundlerTask extends Task {
 
     destination.getParentFile().mkdirs();
 
-    Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, LinkOption.NOFOLLOW_LINKS);
+    Files.copy(sourcePath, destinationPath,
+               StandardCopyOption.REPLACE_EXISTING,
+               StandardCopyOption.COPY_ATTRIBUTES,
+               LinkOption.NOFOLLOW_LINKS);
 
     if (Files.isDirectory(sourcePath, LinkOption.NOFOLLOW_LINKS)) {
       String[] files = source.list();
 
-      for (int i = 0; i < files.length; i++) {
-        String file = files[i];
+      for (String file : files) {
         copy(new File(source, file), new File(destination, file));
       }
     }

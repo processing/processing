@@ -1,3 +1,35 @@
+0270 (3.5.4)
+X use ctrl-page up/down for tabs on Windows
+X   https://github.com/processing/processing/issues/5794
+X fix potential highlighting issue that wasn't selecting portions of text
+X update AppBundler to use newer SDK, recompile
+X edit build.xml files and appbundler to preserve more attributes
+X don't remove entries from Recent menu on Save As
+X   https://github.com/processing/processing/issues/5902
+o NPE in buildCoreModes() on startup
+o   https://github.com/processing/processing/issues/5823
+X   not clear what was wrong here
+
+contrib manager
+X contrib listing names should not be case sensitive
+X   libs in all caps appeared above those in lowercase
+X ignore library subfolders
+X don't unzip __MACOSX files with contribs
+X don't do library subfolders
+X show error when .properties file is missing from contribs
+X clean up a lot of bad temp file handling in the contrib manager
+X   https://github.com/processing/processing/issues/5845
+X   https://github.com/processing/processing/issues/5960
+X NPE in installPreviouslyFailed() on startup
+X   https://github.com/processing/processing/issues/5482
+X   https://github.com/processing/processing/issues/5916
+
+contribs
+X tweak mode not working
+X   https://github.com/processing/processing/issues/5805
+X   https://github.com/processing/processing/pull/5909
+
+
 0269 (3.5.3)
 X added reference for circle(), square(), push(), pop()
 X   has the reference.zip file been fixed? (yep)
