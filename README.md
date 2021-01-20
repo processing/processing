@@ -17,7 +17,7 @@ __That [processing-bugs](https://github.com/processing-bugs) fella is suspicious
 The issues list has been imported from Google Code, so there are many spurious references
 amongst them since the numbering changed. Basically, any time you see references to
 changes made by [processing-bugs](https://github.com/processing-bugs), it may be somewhat suspect.
-Over time this will clean itself up as bugs are fixed and new issues are added from within Github.
+Over time this will clean itself up as bugs are fixed and new issues are added from within GitHub.
 Help speed this process along by helping us!
 
 __Please help.__
