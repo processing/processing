@@ -246,13 +246,14 @@ public class PSurfaceFX implements PSurface {
 
       PApplet sketch = surface.sketch;
 
-      float renderScale = Screen.getMainScreen().getRenderScale();
+      // See JEP 263
+      float renderScale = Screen.getMainScreen().getRecommendedOutputScaleX();
       if (PApplet.platform == PConstants.MACOSX) {
         for (Screen s : Screen.getScreens()) {
-          renderScale = Math.max(renderScale, s.getRenderScale());
+          renderScale = Math.max(renderScale, s.getRecommendedOutputScaleX());
         }
       }
-      float uiScale = Screen.getMainScreen().getUIScale();
+      float uiScale = Screen.getMainScreen().getRecommendedOutputScaleX();
       if (sketch.pixelDensity == 2 && renderScale < 2) {
         sketch.pixelDensity = 1;
         sketch.g.pixelDensity = 1;
@@ -314,14 +315,14 @@ public class PSurfaceFX implements PSurface {
       int sketchHeight = sketch.sketchHeight();
 
       if (fullScreen || spanDisplays) {
-        sketchWidth = (int) (screenRect.getWidth() / uiScale);
-        sketchHeight = (int) (screenRect.getHeight() / uiScale);
+        sketchWidth = (int) screenRect.getWidth();
+        sketchHeight = (int) screenRect.getHeight();
 
         stage.initStyle(StageStyle.UNDECORATED);
-        stage.setX(screenRect.getMinX() / uiScale);
-        stage.setY(screenRect.getMinY() / uiScale);
-        stage.setWidth(screenRect.getWidth() / uiScale);
-        stage.setHeight(screenRect.getHeight() / uiScale);
+        stage.setX(screenRect.getMinX());
+        stage.setY(screenRect.getMinY());
+        stage.setWidth(screenRect.getWidth());
+        stage.setHeight(screenRect.getHeight());
       }
 
       Canvas canvas = surface.canvas;
