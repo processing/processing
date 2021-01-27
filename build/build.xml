@@ -71,11 +71,11 @@
             value="../../processing-docs/content/examples" />
 
   <property name="jdk.version" value="8" />
-  <property name="jdk.update" value="202" />
-  <property name="jdk.build" value="08" />
+  <property name="jdk.update" value="281" />
+  <property name="jdk.build" value="09" />
   <!-- See https://gist.github.com/P7h/9741922
        or http://stackoverflow.com/q/10268583 -->
-  <property name="jdk.hash" value="1961070e4c9b4e26a04e7f5a083f551e" />
+  <property name="jdk.hash" value="89d678f2be164786b292527658ca1605" />
 
   <!-- these a*holes at Oracle... no longer works without a login
   <property name="jdk.update" value="212" />
