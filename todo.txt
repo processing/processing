@@ -11,6 +11,9 @@ X   https://github.com/processing/processing/issues/5828
 X   https://github.com/processing/processing/pull/5906
 X Replace C/C++ style array declarations with Java style array declarations
 X   https://github.com/processing/processing/pull/5981
+X Updates and fixes for PDE_pt.properties (Portugese translation)
+X   https://github.com/processing/processing/pull/6097
+X   https://github.com/processing/processing/pull/6098
 
 
 from Casey
