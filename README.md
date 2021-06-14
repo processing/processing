@@ -11,7 +11,7 @@ There are also separate locations for [Android Mode](https://github.com/processi
 The [processing.js](http://processingjs.org) project is not affiliated with us, but you can find their issue tracker [here](https://github.com/processing-js/processing-js/issues).
 
 __Locked Issues__
-Where possible, I've started locking issues once resolved. This helps reduce the amount of noise from folks adding to an issue that's been closed for years. Because this project has existed for a long time and we have thousands of closed issues, lots of them may sound similar to an issue you're having. But if there's a new problem, it'll be missed if it's lost in a comment added to an already closed issue. I don't like to lock issues because it cuts off conversation, but it's better than legitimate problems being missed.
+Where possible, I've started locking issues once resolved. This helps reduce the amount of noise from folks adding to an issue that's been closed for years. Because this project has existed for a long time and we have thousands of closed issues, lots of them may sound similar to an issue you're having. But if there's a new problem, it'll be missed if it's lost in a comment added to an already closed issue. I don't like to lock issues because it cuts off conversation, but it's better than legitimate problems being missed. Once an issue has been resolved for 30 days, it will automatically lock.
 
 __That [processing-bugs](https://github.com/processing-bugs) fella is suspicious.__
 The issues list has been imported from Google Code, so there are many spurious references
