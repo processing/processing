@@ -2,7 +2,7 @@ name: 'Lock Threads'
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '* 6 * * *'
 
 jobs:
   lock:
@@ -13,10 +13,11 @@ jobs:
           github-token: ${{ github.token }}
           issue-lock-inactive-days: '30'
           issue-lock-comment: >
-            This issue has been automatically locked since there
-            has not been any recent activity after it was closed.
+            This issue has been automatically locked. To avoid confusion
+            with reports that have already been resolved, closed issues
+            are automatically locked 30 days after the last comment.
             Please open a new issue for related bugs.
           pr-lock-comment: >
-            This pull request has been automatically locked since there
-            has not been any recent activity after it was closed.
-            Please open a new issue for related bugs.
+            This pull request has been automatically locked.
+            Pull requests that have been closed are automatically
+            locked 30 days after the last comment.
