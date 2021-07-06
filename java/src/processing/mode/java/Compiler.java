@@ -73,11 +73,9 @@ public class Compiler {
       "-nowarn", // we're not currently interested in warnings (works in ecj)
       "-d", build.getBinFolder().getAbsolutePath() // output the classes in the buildPath
     };
-    //PApplet.println(baseCommand);
 
     String[] sourceFiles = Util.listFiles(build.getSrcFolder(), false, ".java");
     String[] command = PApplet.concat(baseCommand, sourceFiles);
-    //PApplet.println(command);
 
     try {
       // Load errors into a local StringBuilder
@@ -107,6 +105,7 @@ public class Compiler {
       // Version that *is* dynamically loaded. First gets the mode class loader
       // so that it can grab the compiler JAR files from it.
       ClassLoader loader = build.mode.getClassLoader();
+
       try {
         Class<?> batchClass =
           Class.forName("org.eclipse.jdt.core.compiler.batch.BatchCompiler", false, loader);
@@ -117,6 +116,7 @@ public class Compiler {
         Method compileMethod = batchClass.getMethod("compile", compileArgs);
         success = (Boolean)
           compileMethod.invoke(null, new Object[] { command, outWriter, writer, null });
+
       } catch (Exception e) {
         e.printStackTrace();
         throw new SketchException("Unknown error inside the compiler.");
@@ -128,17 +128,14 @@ public class Compiler {
 
       BufferedReader reader =
         new BufferedReader(new StringReader(errorBuffer.toString()));
-      //System.err.println(errorBuffer.toString());
 
       String line = null;
       while ((line = reader.readLine()) != null) {
-        //System.out.println("got line " + line);  // debug
 
         // get first line, which contains file name, line number,
         // and at least the first line of the error message
         String errorFormat = "([\\w\\d_]+.java):(\\d+):\\s*(.*):\\s*(.*)\\s*";
         String[] pieces = PApplet.match(line, errorFormat);
-        //PApplet.println(pieces);
 
         // if it's something unexpected, die and print the mess to the console
         if (pieces == null) {
@@ -159,9 +156,24 @@ public class Compiler {
         int dotJavaLineIndex = PApplet.parseInt(pieces[2]) - 1;
         String errorMessage = pieces[4];
 
+        // extended error message or certain error message
+        
+        if (!errorMessage.matches("([\\w\\d_]+.java):(\\d+):\\s*(.*):\\s*(.*)\\s*")) {
+          switch (errorMessage) {
+            case "23)": // cast error: int -> boolean
+              errorMessage = "int constant cannot be casted into boolean";
+              break;
+            default:
+              errorMessage = pieces[3] + " " + errorMessage;
+              break;
+          }
+        }
+
+
         exception = build.placeException(errorMessage,
                                          dotJavaFilename,
                                          dotJavaLineIndex);
+        
 
         if (exception == null) {
           exception = new SketchException(errorMessage);
@@ -177,7 +189,6 @@ public class Compiler {
           String[] m = PApplet.match(errorMessage, "The import (.*) cannot be resolved");
           //what = what.substring(0, what.indexOf(' '));
           if (m != null) {
-//            System.out.println("'" + m[1] + "'");
             if (m[1].equals("processing.xml")) {
               exception.setMessage("processing.xml no longer exists, this code needs to be updated for 2.0.");
               System.err.println("The processing.xml library has been replaced " +
@@ -221,9 +232,7 @@ public class Compiler {
           }
 
         } else if (errorMessage.endsWith("cannot be resolved")) {
-          // xxx cannot be resolved
-          //println(xxx);
-
+        
           String what = errorMessage.substring(0, errorMessage.indexOf(' '));
 
           if (what.equals("LINE_LOOP") ||
@@ -304,6 +313,8 @@ public class Compiler {
           break;
         }
       }
+
+      // System.out.printf("DEBUG: class Compiler -- end of first try -- compile(...) exception=%s\n",exception); // DEBUG 
     } catch (IOException e) {
       String bigSigh = "Error while compiling. (" + e.getMessage() + ")";
       exception = new SketchException(bigSigh);
@@ -312,6 +323,8 @@ public class Compiler {
     }
     // In case there was something else.
     if (exception != null) throw exception;
+
+    // System.out.printf("DEBUG: class Compiler -- END of compile(...)\n"); // DEBUG 
 
     return success;
   }
