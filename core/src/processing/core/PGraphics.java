@@ -7691,60 +7691,82 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void colorCalc(float x, float y, float z, float a) {
-    if (x > colorModeX) x = colorModeX;
-    if (y > colorModeY) y = colorModeY;
-    if (z > colorModeZ) z = colorModeZ;
-    if (a > colorModeA) a = colorModeA;
+    colorCalc(x, y, z, a, colorMode);
+  }
 
-    if (x < 0) x = 0;
-    if (y < 0) y = 0;
-    if (z < 0) z = 0;
-    if (a < 0) a = 0;
 
-    switch (colorMode) {
-    case RGB:
-      if (colorModeScale) {
-        calcR = x / colorModeX;
-        calcG = y / colorModeY;
-        calcB = z / colorModeZ;
-        calcA = a / colorModeA;
-      } else {
-        calcR = x; calcG = y; calcB = z; calcA = a;
+  /**
+   * Calculates the {@link #calcColor color} with the given coordinates,
+   * explicitly accepting the color mode to use as a parameter.
+   * This is useful in order to calculate a color using a different
+   * coordinate system than what is configured right now.
+   * (For example, to compute an HSB color while in RGB mode,
+   * without switching to HSB and back).
+   *
+   * @param x the x coordinate (red, or hue)
+   * @param y the y coordinate (green, or saturation)
+   * @param z the z coordinate (blue, or brightness
+   * @param a the alpha coordinate
+   * @param colorMode the color mode to use for this calculation
+   * @see #colorCalc(float, float, float, float)
+   * @see #hsb(float, float, float)
+   * @see #hsba(float, float, float, float)
+   */
+  private void colorCalc(float x, float y, float z, float a, int colorMode) {
+      if (x > colorModeX) x = colorModeX;
+      if (y > colorModeY) y = colorModeY;
+      if (z > colorModeZ) z = colorModeZ;
+      if (a > colorModeA) a = colorModeA;
+
+      if (x < 0) x = 0;
+      if (y < 0) y = 0;
+      if (z < 0) z = 0;
+      if (a < 0) a = 0;
+
+      switch (colorMode) {
+          case RGB:
+              if (colorModeScale) {
+                  calcR = x / colorModeX;
+                  calcG = y / colorModeY;
+                  calcB = z / colorModeZ;
+                  calcA = a / colorModeA;
+              } else {
+                  calcR = x; calcG = y; calcB = z; calcA = a;
+              }
+              break;
+
+          case HSB:
+              x /= colorModeX; // h
+              y /= colorModeY; // s
+              z /= colorModeZ; // b
+
+              calcA = colorModeScale ? (a/colorModeA) : a;
+
+              if (y == 0) {  // saturation == 0
+                  calcR = calcG = calcB = z;
+
+              } else {
+                  float which = (x - (int)x) * 6.0f;
+                  float f = which - (int)which;
+                  float p = z * (1.0f - y);
+                  float q = z * (1.0f - y * f);
+                  float t = z * (1.0f - (y * (1.0f - f)));
+
+                  switch ((int)which) {
+                      case 0: calcR = z; calcG = t; calcB = p; break;
+                      case 1: calcR = q; calcG = z; calcB = p; break;
+                      case 2: calcR = p; calcG = z; calcB = t; break;
+                      case 3: calcR = p; calcG = q; calcB = z; break;
+                      case 4: calcR = t; calcG = p; calcB = z; break;
+                      case 5: calcR = z; calcG = p; calcB = q; break;
+                  }
+              }
+              break;
       }
-      break;
-
-    case HSB:
-      x /= colorModeX; // h
-      y /= colorModeY; // s
-      z /= colorModeZ; // b
-
-      calcA = colorModeScale ? (a/colorModeA) : a;
-
-      if (y == 0) {  // saturation == 0
-        calcR = calcG = calcB = z;
-
-      } else {
-        float which = (x - (int)x) * 6.0f;
-        float f = which - (int)which;
-        float p = z * (1.0f - y);
-        float q = z * (1.0f - y * f);
-        float t = z * (1.0f - (y * (1.0f - f)));
-
-        switch ((int)which) {
-        case 0: calcR = z; calcG = t; calcB = p; break;
-        case 1: calcR = q; calcG = z; calcB = p; break;
-        case 2: calcR = p; calcG = z; calcB = t; break;
-        case 3: calcR = p; calcG = q; calcB = z; break;
-        case 4: calcR = t; calcG = p; calcB = z; break;
-        case 5: calcR = z; calcG = p; calcB = q; break;
-        }
-      }
-      break;
-    }
-    calcRi = (int)(255*calcR); calcGi = (int)(255*calcG);
-    calcBi = (int)(255*calcB); calcAi = (int)(255*calcA);
-    calcColor = (calcAi << 24) | (calcRi << 16) | (calcGi << 8) | calcBi;
-    calcAlpha = (calcAi != 255);
+      calcRi = (int)(255*calcR); calcGi = (int)(255*calcG);
+      calcBi = (int)(255*calcB); calcAi = (int)(255*calcA);
+      calcColor = (calcAi << 24) | (calcRi << 16) | (calcGi << 8) | calcBi;
+      calcAlpha = (calcAi != 255);
   }
 
 
@@ -7871,6 +7893,233 @@ public class PGraphics extends PImage implements PConstants {
 
   public final int color(float v1, float v2, float v3, float a) {  // ignore
     colorCalc(v1, v2, v3, a);
+    return calcColor;
+  }
+
+
+  /**
+   * Creates a color in HSB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(200, 100);
+   * colorMode(RGB);
+   *
+   * color blueGreen = hsb(127, 127, 127);
+   * fill(blueGreen);
+   * circle(50, 50, 60);
+   *
+   * color gray = color(127, 127, 127);
+   * fill(gray);
+   * circle(150, 50, 60);
+   * </pre>
+   *
+   * @param h hue
+   * @param s saturation
+   * @param b brightness
+   * @return an HSB color with the given hue, saturation, and brightness
+   */
+  public final int hsb(int h, int s, int b){
+    colorCalc(h, s, b, colorModeA, HSB);
+    return calcColor;
+  }
+
+
+  /**
+   * Creates a color in HSB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(200, 100);
+   * colorMode(RGB);
+   *
+   * color blueGreen = hsb(127, 127, 127);
+   * fill(blueGreen);
+   * circle(50, 50, 60);
+   *
+   * color gray = color(127, 127, 127);
+   * fill(gray);
+   * circle(150, 50, 60);
+   * </pre>
+   *
+   * @param h hue
+   * @param s saturation
+   * @param b brightness
+   * @return an HSB color with the given hue, saturation, and brightness
+   */
+  public final int hsb(float h, float s, float b){
+    colorCalc(h, s, b, colorModeA, HSB);
+    return calcColor;
+  }
+
+  /**
+   * Creates a color in HSB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(120, 100);
+   * colorMode(RGB);
+   *
+   * color blueGreen = hsb(127, 127, 127, 127);
+   * fill(blueGreen);
+   * circle(50, 50, 60);
+   *
+   * color gray = color(127, 127, 127, 127);
+   * fill(gray);
+   * circle(70, 50, 60);
+   * </pre>
+   *
+   * @param h hue
+   * @param s saturation
+   * @param b brightness
+   * @param a alpha
+   * @return an HSB color with the given hue, saturation, brightness, and alpha
+   */
+  public final int hsb(int h, int s, int b, int a){
+    colorCalc(h, s, b, a, HSB);
+    return calcColor;
+  }
+
+
+  /**
+   * Creates a color in HSB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(120, 100);
+   * colorMode(RGB);
+   *
+   * color blueGreen = hsb(127, 127, 127, 127);
+   * fill(blueGreen);
+   * circle(50, 50, 60);
+   *
+   * color gray = color(127, 127, 127, 127);
+   * fill(gray);
+   * circle(70, 50, 60);
+   * </pre>
+   *
+   * @param h hue
+   * @param s saturation
+   * @param b brightness
+   * @param a alpha
+   * @return an HSB color with the given hue, saturation, brightness, and alpha
+   */
+  public final int hsb(float h, float s, float b, float a){
+    colorCalc(h, s, b, a, HSB);
+    return calcColor;
+  }
+
+
+  /**
+   * Creates a color in RGB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(200, 100);
+   * colorMode(HSB);
+   *
+   * color gray = color(127, 0, 127);
+   * fill(gray);
+   * circle(50, 50, 60);
+   *
+   * color purple = rgb(127, 0, 127);
+   * fill(purple);
+   * circle(150, 50, 60);
+   * </pre>
+   *
+   * @param red the red value
+   * @param green the green value
+   * @param blue the blue value
+   * @return an RGB color with the given red, green, and blue values
+   */
+  public final int rgb(int red, int green, int blue){
+    colorCalc(red, green, blue, colorModeA, RGB);
+    return calcColor;
+  }
+
+
+  /**
+   * Creates a color in RGB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(200, 100);
+   * colorMode(HSB);
+   *
+   * color gray = color(127, 0, 127);
+   * fill(gray);
+   * circle(50, 50, 60);
+   *
+   * color purple = rgb(127, 0, 127);
+   * fill(purple);
+   * circle(150, 50, 60);
+   * </pre>
+   *
+   * @param red the red value
+   * @param green the green value
+   * @param blue the blue value
+   * @return an RGB color with the given red, green, and blue values
+   */
+  public final int rgb(float red, float green, float blue){
+    colorCalc(red, green, blue, colorModeA, RGB);
+    return calcColor;
+  }
+
+
+  /**
+   * Creates a color in RGB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(120, 100);
+   * colorMode(HSB);
+   *
+   * color gray = color(127, 0, 127, 127);
+   * fill(gray);
+   * circle(50, 50, 60);
+   *
+   * color purple = rgb(127, 0, 127, 127);
+   * fill(purple);
+   * circle(70, 50, 60);
+   * </pre>
+   *
+   * @param red the red value
+   * @param green the green value
+   * @param blue the blue value
+   * @param alpha the alpha value
+   * @return an RGB color with the given red, green, blue, and alpha values
+   */
+  public final int rgb(int red, int green, int blue, int alpha){
+    colorCalc(red, green, blue, alpha, RGB);
+    return calcColor;
+  }
+
+
+  /**
+   * Creates a color in RGB space, regardless of the current color mode.
+   * This allows code like the following:
+   *
+   * <pre>
+   * size(120, 100);
+   * colorMode(HSB);
+   *
+   * color gray = color(127, 0, 127, 127);
+   * fill(gray);
+   * circle(50, 50, 60);
+   *
+   * color purple = rgb(127, 0, 127, 127);
+   * fill(purple);
+   * circle(70, 50, 60);
+   * </pre>
+   *
+   * @param red the red value
+   * @param green the green value
+   * @param blue the blue value
+   * @param alpha the alpha value
+   * @return an RGB color with the given red, green, blue, and alpha values
+   */
+  public final int rgb(float red, float green, float blue, float alpha){
+    colorCalc(red, green, blue, alpha, RGB);
     return calcColor;
   }
 
