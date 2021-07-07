@@ -1260,7 +1260,7 @@ public class Sketch {
 
     if (result) {
 //      editor.statusNotice("One file added to the sketch.");
-    	//Done from within TaskAddFile inner class when copying is completed
+      //Done from within TaskAddFile inner class when copying is completed
     }
   }
 
@@ -1782,6 +1782,43 @@ public class Sketch {
   static public String sanitizeName(String origName) {
     char orig[] = origName.toCharArray();
     StringBuilder sb = new StringBuilder();
+    boolean keywordFlag = false;
+
+    // Opening the reservedKeywords.txt file to be check if the 'origName'
+    // is a 'Reserved Keyword' in Processing or class Name or primitive.
+    String keywordFileName = "lib/reservedKeywords.txt";
+    File keywordFile = new File(keywordFileName);
+
+    try {
+        FileReader fileReader = new FileReader(keywordFile);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+        String keyword;
+
+        while ((keyword = bufferedReader.readLine()) != null) {
+
+            if (origName.equalsIgnoreCase(keyword) == true) {
+                keywordFlag = true;
+                break;
+            }
+        }
+    }
+    catch (FileNotFoundException ex) {
+        System.out.println("File not found!");
+    }
+    catch(IOException ex) {
+        System.out.println("IOException");
+    }
+
+    // If 'origName' is found in the 'reservedKeywords.txt' file 
+    // Pop up a Warning message
+    if (keywordFlag == true) {
+        Messages.showWarning(Language.text("check_name.messages.is_reserved_keyword"),
+                             Language.interpolate("check_name.messages.is_reserved_keyword.description", origName));
+        return "bad_sketch_name_please_fix";
+    }
+
+
 
     // Can't lead with a digit (or anything besides a letter), so prefix with
     // "sketch_". In 1.x this prefixed with an underscore, but those get shaved
