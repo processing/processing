@@ -75,6 +75,9 @@ public class PreferencesFrame {
   JComboBox<String> displaySelectionBox;
   JComboBox<String> languageSelectionBox;
 
+  JComboBox<String> defaultSketchNamingBox;
+  String[] defaultSketchNamingOptions = {"date", "friendly_name", "friendly_date"};
+
   int displayCount;
 
   String[] monoFontFamilies;
@@ -275,6 +278,26 @@ public class PreferencesFrame {
     JLabel hashLabel = new JLabel("#");
 
 
+    // Default sketch naming: [ Dates          ] Eg: <example name>
+    //                        [ Friendly Names ]
+    //                        [ Friendly Dates ]
+
+    JLabel defaultSketchNamingLabel = new JLabel(Language.text("preferences.default_sketch_naming") + ": ");
+    final JLabel defaultSketchNamingExampleLabel = new JLabel();
+    defaultSketchNamingBox = new JComboBox<>(new String[]{
+      Language.text("preferences.default_sketch_naming.options.dates"),
+      Language.text("preferences.default_sketch_naming.options.friendly_names"),
+      Language.text("preferences.default_sketch_naming.options.friendly_dates")
+    });
+    defaultSketchNamingBox.addActionListener(e -> {
+      Preferences.set(
+        "editor.untitled.default_sketch_naming",
+        defaultSketchNamingOptions[defaultSketchNamingBox.getSelectedIndex()]
+      );
+      defaultSketchNamingExampleLabel.setText(" Eg: " + base.generateNewSketchName());
+    });
+
+
     // [ ] Use smooth text in editor window
 
     editorAntialiasBox = new JCheckBox(Language.text("preferences.use_smooth_text"));
@@ -433,6 +456,10 @@ public class PreferencesFrame {
                       .addGap(0)
                       .addComponent(presentColorHex, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                       .addComponent(presentColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+          .addGroup(layout.createSequentialGroup()
+                      .addComponent(defaultSketchNamingLabel)
+                      .addComponent(defaultSketchNamingBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                      .addComponent(defaultSketchNamingExampleLabel))
           .addComponent(editorAntialiasBox)
           .addComponent(inputMethodBox)
           .addGroup(layout.createSequentialGroup()
@@ -496,6 +523,10 @@ public class PreferencesFrame {
                   .addComponent(hashLabel)
                   .addComponent(presentColorHex)
                   .addComponent(presentColor))
+      .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                  .addComponent(defaultSketchNamingLabel)
+                  .addComponent(defaultSketchNamingBox)
+                  .addComponent(defaultSketchNamingExampleLabel))
       .addComponent(editorAntialiasBox)
       .addComponent(inputMethodBox)
       .addGroup(layout.createParallelGroup()
@@ -717,6 +748,13 @@ public class PreferencesFrame {
 
     sketchbookLocationField.setText(Preferences.getSketchbookPath());
     checkUpdatesBox.setSelected(Preferences.getBoolean("update.check")); //$NON-NLS-1$
+
+    String defaultSketchNaming = Preferences.get("editor.untitled.default_sketch_naming");
+    int defaultSketchNamingIndex = 1;
+    for(int i = 0; i < defaultSketchNamingOptions.length; i++)
+      if(defaultSketchNamingOptions[i].equals(defaultSketchNaming))
+        defaultSketchNamingIndex = i;
+    defaultSketchNamingBox.setSelectedIndex(defaultSketchNamingIndex);
 
     int defaultDisplayNum = updateDisplayList();
     int displayNum = Preferences.getInteger("run.display"); //$NON-NLS-1$
