@@ -597,8 +597,8 @@ public class PSurfaceAWT extends PSurfaceNone {
         Class<?> thinkDifferent =
           Thread.currentThread().getContextClassLoader().loadClass(td);
         Method method =
-          thinkDifferent.getMethod("setIconImage", new Class[] { java.awt.Image.class });
-        method.invoke(null, new Object[] { awtImage });
+          thinkDifferent.getMethod("setIconImage", Image.class);
+        method.invoke(null, awtImage);
       } catch (Exception e) {
         e.printStackTrace();  // That's unfortunate
       }
@@ -655,8 +655,8 @@ public class PSurfaceAWT extends PSurfaceNone {
           Class<?> thinkDifferent =
             Thread.currentThread().getContextClassLoader().loadClass(td);
           Method method =
-            thinkDifferent.getMethod("setIconImage", new Class[] { java.awt.Image.class });
-          method.invoke(null, new Object[] { Toolkit.getDefaultToolkit().getImage(url) });
+            thinkDifferent.getMethod("setIconImage", Image.class);
+          method.invoke(null, Toolkit.getDefaultToolkit().getImage(url));
         } catch (Exception e) {
           e.printStackTrace();  // That's unfortunate
         }
