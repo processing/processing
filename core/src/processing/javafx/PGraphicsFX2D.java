@@ -2,18 +2,14 @@
 
 /*
   Part of the Processing project - http://processing.org
-
   Copyright (c) 2015 The Processing Foundation
-
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation, version 2.1.
-
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-
   You should have received a copy of the GNU Lesser General
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
@@ -26,6 +22,7 @@ import com.sun.javafx.geom.Path2D;
 import com.sun.javafx.geom.PathIterator;
 import com.sun.javafx.geom.Shape;
 
+import java.lang.ref.SoftReference;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,7 +50,7 @@ import processing.core.*;
 
 
 public class PGraphicsFX2D extends PGraphics {
-  GraphicsContext context;
+  public GraphicsContext context;
 
   static final WritablePixelFormat<IntBuffer> argbFormat =
     PixelFormat.getIntArgbInstance();
@@ -1027,12 +1024,22 @@ public class PGraphicsFX2D extends PGraphics {
     // Image not ready yet, or an error
     if (who.width <= 0 || who.height <= 0) return;
 
-    ImageCache cash = (ImageCache) getCache(who);
+    ImageTintCache tintCache = ((ImageTintCache) getCache(who));
+
+    if(tintCache == null) {
+      tintCache = new ImageTintCache();
+      setCache(who, tintCache);
+    }
+
+    int tintColor = tint? this.tintColor : 0x11111111;
+
+    ImageCache cash = tintCache.get(tintColor);
 
     // Nuke the cache if the image was resized
     if (cash != null) {
       if (who.pixelWidth != cash.image.getWidth() ||
           who.pixelHeight != cash.image.getHeight()) {
+        tintCache.remove(tintColor);
         cash = null;
       }
     }
@@ -1040,7 +1047,7 @@ public class PGraphicsFX2D extends PGraphics {
     if (cash == null) {
       //System.out.println("making new image cache");
       cash = new ImageCache(); //who);
-      setCache(who, cash);
+      tintCache.put(tintColor, cash);
       who.updatePixels();  // mark the whole thing for update
       who.setModified();
     }
@@ -1070,9 +1077,34 @@ public class PGraphicsFX2D extends PGraphics {
     u2 *= who.pixelDensity;
     v2 *= who.pixelDensity;
 
-    context.drawImage(((ImageCache) getCache(who)).image,
-                      u1, v1, u2-u1, v2-v1,
-                      x1, y1, x2-x1, y2-y1);
+    context.drawImage( cash.image, //((ImageCache) getCache(who)).image,
+                       u1, v1, u2-u1, v2-v1,
+                       x1, y1, x2-x1, y2-y1);
+  }
+
+
+  static class ImageTintCache{ // save all the colors for an image
+    HashMap<Integer, SoftReference<ImageCache>> colorMap = new HashMap<>();
+
+    ImageCache get(int tintColor) {
+      SoftReference<ImageCache> sr =  this.colorMap.get(tintColor);
+      if(sr != null)
+        return sr.get();
+      else
+        return null;
+    }
+
+    void put(int tintColor, ImageCache cash) {
+      this.colorMap.put(tintColor, new SoftReference<>(cash));
+    }
+
+    void remove(int tintColor) {
+      this.colorMap.remove(tintColor);
+    }
+
+    void clear() {
+      this.colorMap.clear();
+    }
   }
 
 
