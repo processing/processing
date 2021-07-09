@@ -2389,6 +2389,11 @@ public class PApplet implements PConstants {
   /** Last time in nanoseconds that frameRate was checked */
   protected long frameRateLastNanos = 0;
 
+  /** Last time in milliseconds that the last frame was drawn */
+  protected long lastFrameMillis;
+
+  /** Last time in milliseconds that the current frame is being drawn */
+  protected long currentFrameMillis = System.currentTimeMillis();
 
   public void handleDraw() {
     //debug("handleDraw() " + g + " " + looping + " " + redraw + " valid:" + this.isValid() + " visible:" + this.isVisible());
@@ -2416,6 +2421,8 @@ public class PApplet implements PConstants {
     }
 
     insideDraw = true;
+    lastFrameMillis = currentFrameMillis;
+    currentFrameMillis = System.currentTimeMillis();
     g.beginDraw();
     if (recorder != null) {
       recorder.beginDraw();
@@ -3197,6 +3204,33 @@ public class PApplet implements PConstants {
 
   // getting the time
 
+  /**
+   * ( begin auto-generated from deltaMillis.xml )
+   *
+   * Returns the number of milliseconds (thousandths of a second) since
+   * the last frame was drawn. This information is often used for timing
+   * animation sequences when the computer may slow down due to heavy
+   * processing.
+   *
+   * ( end auto-generated )
+   *
+   * <h3>Advanced</h3>
+   * <p>
+   * The result of this function in the first frame may be smaller than
+   * expected.
+   *
+   * @webref input:time_date
+   * @see PApplet#second()
+   * @see PApplet#millis()
+   * @see PApplet#minute()
+   * @see PApplet#hour()
+   * @see PApplet#day()
+   * @see PApplet#month()
+   *
+   */
+  public int deltaMillis() {
+    return (int) (this.currentFrameMillis - this.lastFrameMillis);
+  }
 
   /**
    * ( begin auto-generated from millis.xml )
