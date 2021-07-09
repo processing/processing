@@ -98,6 +98,8 @@ public class Table {
   // each expansion.
   protected int expandIncrement;
 
+  // free delimiter - standard is the comma-seperator
+  protected char delimiter = ',';
 
   /**
    * Creates a new, empty table. Use addRow() to add additional rows.
@@ -127,11 +129,25 @@ public class Table {
           extensionOptions(true, file.getName(), options));
   }
 
+  public Table(File file, String options, char delimiter) throws IOException {
+    // uses createInput() to handle .gz (and eventually .bz2) files
+    this.delimiter = delimiter;
+    init();
+    parse(PApplet.createInput(file),
+          extensionOptions(true, file.getName(), options));
+  }
+
   /**
    * @nowebref
    */
   public Table(InputStream input) throws IOException {
     this(input, null);
+  }
+
+
+  public Table(InputStream input, char delimiter) throws IOException {
+    this(input, null);
+    this.delimiter = delimiter;
   }
 
 
@@ -150,6 +166,13 @@ public class Table {
    * @throws IOException
    */
   public Table(InputStream input, String options) throws IOException {
+    init();
+    parse(input, options);
+  }
+
+
+  public Table(InputStream input, String options, char delimiter) throws IOException {
+    this.delimiter = delimiter;
     init();
     parse(input, options);
   }
@@ -565,17 +588,22 @@ public class Table {
 //    int offset;
     int start; //, stop;
 
-    String[] handle(String line, BufferedReader reader) throws IOException {
+    // free delimiter. standard is comma-seperator
+    char delimiter = ',';
+
+    String[] handle(String line, BufferedReader reader, char delimiter) throws IOException {
 //      PApplet.println("handle() called for: " + line);
       start = 0;
       pieceCount = 0;
       c = line.toCharArray();
 
+      this.delimiter = delimiter;
+
       // get tally of number of columns and allocate the array
       int cols = 1;  // the first comma indicates the second column
       boolean quote = false;
       for (int i = 0; i < c.length; i++) {
-        if (!quote && (c[i] == ',')) {
+        if (!quote && (c[i] == delimiter)) {
           cols++;
         } else if (c[i] == '\"') {
           // double double quotes (escaped quotes like "") will simply toggle
@@ -606,7 +634,7 @@ public class Table {
           temp[c.length] = '\n';
           nextLine.getChars(0, nextLine.length(), temp, c.length + 1);
 //          c = temp;
-          return handle(new String(temp), reader);
+          return handle(new String(temp), reader, delimiter);
           //System.out.println("  full line is now " + new String(c));
           //stop = nextComma(c, offset);
           //System.out.println("stop is now " + stop);
@@ -675,7 +703,7 @@ public class Table {
               hasEscapedQuotes = true;
               i += 2;
 
-            } else if (c[i+1] == ',') {
+            } else if (c[i+1] == delimiter) {
               // that was our closing quote, get outta here
               addPiece(start, i, hasEscapedQuotes);
               start = i+2;
@@ -702,7 +730,7 @@ public class Table {
               throw new RuntimeException("Unterminated quoted field mid-line");
             }
           }
-        } else if (!quoted && c[i] == ',') {
+        } else if (!quoted && c[i] == delimiter) {
           addPiece(start, i, hasEscapedQuotes);
           start = i+1;
           return true;
@@ -752,7 +780,7 @@ public class Table {
     if (csl == null) {
       csl = new CommaSeparatedLine();
     }
-    return csl.handle(line, reader);
+    return csl.handle(line, reader, delimiter);
   }
 
 
@@ -1260,7 +1288,7 @@ public class Table {
     if (columnTitles != null) {
       for (int col = 0; col < getColumnCount(); col++) {
         if (col != 0) {
-          writer.print(',');
+          writer.print(delimiter);
         }
         try {
           if (columnTitles[col] != null) {  // col < columnTitles.length &&
@@ -1277,7 +1305,7 @@ public class Table {
     for (int row = 0; row < rowCount; row++) {
       for (int col = 0; col < getColumnCount(); col++) {
         if (col != 0) {
-          writer.print(',');
+          writer.print(delimiter);
         }
         String entry = getString(row, col);
         // just write null entries as blanks, rather than spewing 'null'
