@@ -6256,7 +6256,7 @@ public class PGraphicsOpenGL extends PGraphics {
                                   PGL.FUNC_ADD);
       }
       pgl.blendFuncSeparate(PGL.SRC_ALPHA, PGL.ONE_MINUS_SRC_ALPHA,
-                            PGL.ONE,       PGL.ONE);
+                            PGL.ONE,       PGL.ONE_MINUS_SRC_ALPHA);
 
     } else if (blendMode == ADD) {
       if (blendEqSupported) {
