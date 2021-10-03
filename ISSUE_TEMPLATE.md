@@ -1,3 +1,5 @@
+<!--- STOP! PROCESSING 4 ISSUES GO TO https://github.com/processing/processing4/issues  -->
+
 <!--- ** For coding questions, please use https://discourse.processing.org ** -->
 <!--- ** This form is only for bugs in the software & feature requests ** -->
 
@@ -5,6 +7,8 @@
 <!--- ** https://github.com/processing/processing/wiki/Troubleshooting ** -->
 
 <!--- ** Before posting, please search Issues for duplicates  ** --> 
+
+<!--- PROCESSING 3 ISSUES:  -->
 
 ## Description
 <!--- Use a title that describes what is happening. -->
