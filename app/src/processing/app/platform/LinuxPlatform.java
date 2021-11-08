@@ -29,7 +29,6 @@ import java.awt.Toolkit;
 import processing.app.Base;
 import processing.app.Messages;
 import processing.app.Preferences;
-import processing.app.platform.DefaultPlatform;
 import processing.core.PApplet;
 
 

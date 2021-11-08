@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2013 The Processing Foundation
+  Copyright (c) 2013-20 The Processing Foundation
   Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
@@ -172,7 +172,7 @@ public enum ContributionType {
   }
 
 
-  boolean isCandidate(File potential) {
+  public boolean isCandidate(File potential) {
     return (potential.isDirectory() &&
             new File(potential, toString()).exists() &&
             !isTempFolderName(potential.getName()));
@@ -237,7 +237,7 @@ public enum ContributionType {
 
 
   ArrayList<LocalContribution> listContributions(Editor editor) {
-    ArrayList<LocalContribution> contribs = new ArrayList<LocalContribution>();
+    ArrayList<LocalContribution> contribs = new ArrayList<>();
     switch (this) {
     case LIBRARY:
       contribs.addAll(editor.getMode().contribLibraries);

@@ -8,8 +8,13 @@ import org.apache.tools.ant.Task;
 
 /**
  * Ant Task for downloading the latest JRE or JDK from Oracle.
+ * This was used to set a cookie properly to retrieve a JRE.
+ * Nowadays the older versions have been removed from Oracle's site,
+ * so this is hard wired it to use download.processing.org instead.
  */
 public class Downloader extends Task {
+  static final boolean ORACLE_SUCKS = true;  // that's final
+
   static final String COOKIE =
     "oraclelicense=accept-securebackup-cookie";
 
@@ -82,7 +87,6 @@ public class Downloader extends Task {
       throw new BuildException("Starting with 8u121, a hash is required, see https://gist.github.com/P7h/9741922");
     }
 
-    //download(path, jdk, platform, bits, version, update, build);
     try {
       download();
     } catch (IOException e) {
@@ -109,6 +113,10 @@ public class Downloader extends Task {
     // URL format changed starting with 8u121
     if (update >= 121) {
       url += hash + "/";
+    }
+
+    if (ORACLE_SUCKS) {
+      url = "https://download.processing.org/java/";
     }
 
     // Finally, add the filename to the end

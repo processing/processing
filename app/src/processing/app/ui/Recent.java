@@ -242,6 +242,8 @@ public class Recent {
   synchronized static public void remove(Editor editor) {
     int index = findRecord(editor.getSketch().getMainFilePath());
     if (index != -1) {
+      System.out.println("removing " + editor.getSketch().getMainFilePath());
+      new Exception().printStackTrace(System.out);
       records.remove(index);
     }
   }
@@ -291,6 +293,7 @@ public class Recent {
       // If this sketch is already in the menu, remove it
       remove(editor);
 
+      // If the list is full, remove the first entry
       if (records.size() == Preferences.getInteger("recent.count")) {
         records.remove(0);  // remove the first entry
       }

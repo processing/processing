@@ -1,7 +1,32 @@
-0270 (3.5.4 or 3.6)
-X use ctrl-page up/down for tabs on Windows
-X   https://github.com/processing/processing/issues/5794
-X fix potential highlighting issue that wasn't selecting portions of text
+0271 (3.5.5 unlikely)
+X get the jre download to work by using a cached copy
+X   https://github.com/processing/processing/issues/5827
+X   https://github.com/processing/processing/issues/5860
+X   https://github.com/processing/processing/issues/5942
+X   https://github.com/processing/processing/issues/6089
+
+contribs
+X rename-variable menu allows Java identifiers
+X   https://github.com/processing/processing/issues/5828
+X   https://github.com/processing/processing/pull/5906
+X Replace C/C++ style array declarations with Java style array declarations
+X   https://github.com/processing/processing/pull/5981
+X Updates and fixes for PDE_pt.properties (Portugese translation)
+X   https://github.com/processing/processing/pull/6097
+X   https://github.com/processing/processing/pull/6098
+
+
+from Casey
+_ Issue with https and downloading the binaries, +Checksums?
+_   https://github.com/processing/processing-docs/issues/766
+_ Math for BLEND incorrect in the reference?
+_   https://github.com/processing/processing-docs/issues/762
+_ .setAngle() for PVector?
+_   https://github.com/processing/processing-docs/issues/744
+_ Installation on Linux
+_   https://github.com/processing/processing-docs/issues/645
+_ How much of the attrib*() functions should be documented?
+_   https://github.com/processing/processing-docs/issues/172
 
 _ "Could not get the settings folder" isn't very helpful
 _   https://github.com/processing/processing/issues/5744
@@ -29,6 +54,8 @@ _   https://github.com/processing/processing/pull/4040
 
 
 high
+_ windows anti-malware leaves browser stuck at 100%
+_   https://github.com/processing/processing/issues/5893
 _ run button not deactivating
 _   https://github.com/processing/processing/issues/5786
 _ Find in Reference disabled for various keywords (draw, for, if, catch, while)
@@ -673,6 +700,8 @@ PDE / Manager
 
 _ Manager fails to complete install of PythonMode when no windows open
 _   https://github.com/processing/processing/issues/5309
+_ Python Mode not downloading?
+_   https://github.com/processing/processing/issues/5918
 _ an incompatible Mode prevents the PDE from quitting after last window is closed
 _   https://github.com/processing/processing/issues/5112
 _ “could not move the contribution to the backup folder” message while updating

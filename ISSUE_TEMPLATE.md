@@ -1,10 +1,15 @@
-<!--- ** For coding questions, please use https://forum.processing.org ** -->
+<!--- STOP! If you're using Processing 4, report issues here: https://github.com/processing/processing4/issues -->
+
+<!--- ** For coding questions, please use https://discourse.processing.org ** -->
 <!--- ** This form is only for bugs in the software & feature requests ** -->
 
 <!--- ** Also be sure to read the troubleshooting page first: ** -->
 <!--- ** https://github.com/processing/processing/wiki/Troubleshooting ** -->
 
 <!--- ** Before posting, please search Issues for duplicates  ** --> 
+
+<!--- PROCESSING 3 ISSUES:  -->
+<!--- Note that there are no plans to update Processing 3. Please use version 4! -->
 
 ## Description
 <!--- Use a title that describes what is happening. -->

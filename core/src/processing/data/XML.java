@@ -440,8 +440,7 @@ public class XML implements Serializable {
   /**
    * Quick accessor for an element at a particular index.
    *
-   * @webref xml:method
-   * @brief Returns the child element with the specified index value or path
+   * @nowebref
    */
   public XML getChild(int index) {
     checkChildren();
@@ -452,6 +451,8 @@ public class XML implements Serializable {
   /**
    * Get a child by its name or path.
    *
+   * @webref xml:method
+   * @brief Returns the child element with the specified index value or path
    * @param name element name or path/to/element
    * @return the first matching element or null if no match
    */
