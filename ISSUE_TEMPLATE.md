@@ -1,4 +1,8 @@
-<!--- STOP! If you're using Processing 4, report issues here: https://github.com/processing/processing4/issues -->
+<!--- STOP! If you're using Processing 4, report issues here: -->
+<!--- https://github.com/processing/processing4/issues -->
+
+<!--- The last and final release of Processing 3 was in January 2020. -->
+<!--- Please use Processing 4 instead! Issues here will not be fixed. -->
 
 <!--- ** For coding questions, please use https://discourse.processing.org ** -->
 <!--- ** This form is only for bugs in the software & feature requests ** -->
