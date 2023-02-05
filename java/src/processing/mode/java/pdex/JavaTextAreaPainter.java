@@ -109,12 +109,22 @@ public class JavaTextAreaPainter extends PdeTextAreaPainter {
 			}
 
 			// draw color boxes
+			int lastLine = -1;
+			int extra = 0;
 			for (ColorControlBox cBox: colorBoxes.get(currentTab)) {
-				int lineStartChar = textArea.getLineStartOffset(cBox.getLine());
-				int x = textArea.offsetToX(cBox.getLine(), cBox.getCharIndex() - lineStartChar);
+				int line = cBox.getLine();
+				int lineEndChar = textArea.getLineStopOffset(cBox.getLine());
+				if (line == lastLine) {
+					extra = extra + 30;
+				} 
+				else {
+					extra = 0;
+				}
+				int x = textArea.offsetToX(cBox.getLine(), lineEndChar);
 				int y = textArea.lineToY(cBox.getLine()) + fm.getDescent();
-				cBox.setPos(x, y+1);
+				cBox.setPos(x + extra, y+1);
 				cBox.draw(g2d);
+				lastLine = line;
 			}
 		}
 	}
