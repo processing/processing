@@ -1469,7 +1469,7 @@ public class PJOGL extends PGL {
 
   @Override
   public void shaderSource(int shader, String source) {
-    gl2.glShaderSource(shader, 1, new String[] { source }, (int[]) null, 0);
+    gl2.glShaderSource(shader, 1, new String[] { source }, null, 0);
   }
 
   @Override
