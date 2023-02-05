@@ -58,6 +58,8 @@ abstract public class EditorToolbar extends JPanel implements KeyListener {
   // corner radius on the mode selector
   static final int RADIUS = Toolkit.zoom(3);
 
+  protected boolean isCtrlPressed;
+
   protected Editor editor;
   protected Base base;
   protected Mode mode;
@@ -250,13 +252,24 @@ abstract public class EditorToolbar extends JPanel implements KeyListener {
 
   @Override
   public void keyReleased(KeyEvent e) {
+    if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
+      isCtrlPressed = false;
+    }
     updateRollover(e);
   }
 
 
   @Override
   public void keyPressed(KeyEvent e) {
+    if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
+      isCtrlPressed = true;
+    }
     updateRollover(e);
+  }
+
+
+  public boolean getIsCtrlPressed() {
+    return isCtrlPressed;
   }
 
 
