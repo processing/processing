@@ -4046,7 +4046,23 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  // public PMatrix2D getMatrix(PMatrix2D target)
+  // Implements GitHub issue #5063: https://github.com/processing/processing/issues/5063
+  @Override
+  public PMatrix2D getMatrix(PMatrix2D target) {
+    if (target == null) {
+      target = new PMatrix2D();
+    }
+    // remap the 4x4 modelview matrix to a 3x2 matrix
+    target.set(modelview.m00, modelview.m01, modelview.m03,
+               modelview.m10, modelview.m11, modelview.m13);
+//    target.m00 = modelview.m00;
+//    target.m01 = modelview.m01;
+//    target.m02 = modelview.m03;
+//    target.m10 = modelview.m10;
+//    target.m11 = modelview.m11;
+//    target.m12 = modelview.m13;
+    return target;
+  }
 
 
   @Override
