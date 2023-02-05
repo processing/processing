@@ -122,6 +122,9 @@ public class PShader implements PConstants {
   // Uniforms common to all shader types
   protected int transformMatLoc;
   protected int modelviewMatLoc;
+  protected int viewMatLoc;
+  protected int viewInvMatLoc;
+  protected int cameraPosLoc;
   protected int projectionMatLoc;
   protected int ppixelsLoc;
   protected int ppixelsUnit;
@@ -1153,6 +1156,18 @@ public class PShader implements PConstants {
     if (modelviewMatLoc == -1)
       modelviewMatLoc = getUniformLoc("modelviewMatrix");
 
+    viewMatLoc = getUniformLoc("view");
+    if (viewMatLoc == -1)
+      viewMatLoc = getUniformLoc("viewMatrix");
+
+    viewInvMatLoc = getUniformLoc("viewInv");
+    if (viewInvMatLoc == -1)
+      viewInvMatLoc = getUniformLoc("viewInvMatrix");
+
+    cameraPosLoc = getUniformLoc("cameraPos");
+    if (cameraPosLoc == -1)
+      cameraPosLoc = getUniformLoc("camera");
+
     projectionMatLoc = getUniformLoc("projection");
     if (projectionMatLoc == -1)
       projectionMatLoc = getUniformLoc("projectionMatrix");
@@ -1195,6 +1210,25 @@ public class PShader implements PConstants {
     if (-1 < modelviewMatLoc) {
       currentPG.updateGLModelview();
       setUniformMatrix(modelviewMatLoc, currentPG.glModelview);
+    }
+
+    if (-1 < viewMatLoc) {
+      currentPG.updateGLView();
+      setUniformMatrix(viewMatLoc, currentPG.glView);
+    }
+
+    if (-1 < viewInvMatLoc) {
+      currentPG.updateGLViewInv();
+      setUniformMatrix(viewInvMatLoc, currentPG.glViewInv);
+    }
+
+    if (-1 < cameraPosLoc) {
+      currentPG.updateGLCameraPos();
+
+      float x = currentPG.glCamPos[0];
+      float y = currentPG.glCamPos[1];
+      float z = currentPG.glCamPos[2];
+      setUniformValue(cameraPosLoc, x, y, z);
     }
 
     if (-1 < projectionMatLoc) {
