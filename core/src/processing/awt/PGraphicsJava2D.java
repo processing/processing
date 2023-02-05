@@ -3001,9 +3001,24 @@ public class PGraphicsJava2D extends PGraphics {
   public void copy(PImage src,
                    int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
-    g2.drawImage((Image) src.getNative(),
-                 dx, dy, dx + dw, dy + dh,
-                 sx, sy, sx + sw, sy + sh, null);
+
+    if (src instanceof PGraphicsJava2D) {
+      // getNative() returns g2 for this class, need to use getImage() instead
+      g2.drawImage(src.getImage(),
+                   dx, dy, dx + dw, dy + dh,
+                   sx, sy, sx + sw, sy + sh, null);
+    } else {
+      // normally we can use getNative()
+      Object srcImage = src.getNative();
+      if (srcImage instanceof Image) {
+        g2.drawImage((Image) srcImage,
+                     dx, dy, dx + dw, dy + dh,
+                     sx, sy, sx + sw, sy + sh, null);
+      } else {
+        // fall back to using PImage.blend() with REPLACE mode
+        super.copy(src, sx, sy, sw, sh, dx, dy, dw, dh);
+      }
+    }
   }
 
 
