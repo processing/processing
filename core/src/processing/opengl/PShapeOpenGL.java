@@ -1269,7 +1269,7 @@ public class PShapeOpenGL extends PShape {
 
   @Override
   public void rotateZ(float angle) {
-    transform(ROTATE, angle);
+    rotate(angle, 0, 0, 1);
   }
 
 
