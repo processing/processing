@@ -823,11 +823,10 @@ public class Texture implements PConstants {
     } else {
       // The buffer cache reached the maximum size, so we just dispose
       // the new buffer by adding it to the list of used buffers.
-      try {
-        usedBuffers.add(new BufferData(natRef, byteBuf.asIntBuffer(), w, h));
-      } catch (Exception e) {
-        e.printStackTrace();
+      if (usedBuffers == null) {
+        usedBuffers = new LinkedList<BufferData>();
       }
+      usedBuffers.add(new BufferData(natRef, byteBuf.asIntBuffer(), w, h));
     }
   }
 
