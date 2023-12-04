@@ -1,5 +1,5 @@
 # Since the release of Processing 3.5.4 in January 2020, development has moved to [a new repository](https://github.com/processing/processing4/). 
-Using a [4.0 release](https://github.com/processing/processing4/releases) (even an alpha or beta version) is recommended if you find an issue. To avoid confusion, this repo will remain open at least until a 4.0 release is the default download at https://processing.org/download. We chose to move to a new repository so that we could clean out old files accumulated over the last 20 years.
+It is advisable to utilize a 4.0 release, including alpha or beta versions, if you encounter any issues. For clarity, this repository will stay accessible until a 4.0 release becomes the default download at https://processing.org/download. The decision to transition to a new repository was made to facilitate the removal of outdated files accumulated over the past two decades.
 <!-- Is there not a better way to do a callout box? -->
 
 Processing
