@@ -1252,7 +1252,7 @@ public class PSurfaceJOGL implements PSurface {
         } else if (kind == PConstants.HAND) {
           x = 12; y = 8;
         } else if (kind == PConstants.TEXT) {
-          x = 16; y = 22;
+          x = 16; y = 16;
         }
         cursor = new CursorInfo(img, x, y);
         cursors.put(kind, cursor);
