@@ -472,7 +472,8 @@ mouseY	KEYWORD4	mouseY
 lerpColor	FUNCTION1	lerpColor_
 array	FUNCTION2	FloatList_array_
 ellipse	FUNCTION1	ellipse_
-stroke	FUNCTION1	stroke_
+stroke  FUNCTION1	stroke_
+hint    FUNCTION1   hint_
 imageMode	FUNCTION1	imageMode_
 settings	FUNCTION4	settings
 pixelWidth	FUNCTION4	pixelWidth
