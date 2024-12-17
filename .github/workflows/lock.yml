@@ -2,7 +2,7 @@ name: 'Lock Threads'
 
 on:
   schedule:
-    - cron: '* 6 * * *'
+    - cron: '* 6 * * 0'
 
 permissions:
   contents: read
