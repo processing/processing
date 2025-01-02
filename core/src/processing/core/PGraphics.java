@@ -3843,7 +3843,10 @@ public class PGraphics extends PImage implements PConstants {
    * In this method, the  u, v coordinates are always based on image space
    * location, regardless of the current textureMode().
    *
-   * @nowebref
+   * @param u1 x-coordinate for the crop begin point
+   * @param v1 y-coordinate for the crop begin point
+   * @param u2 x-coordinate for the crop end point
+   * @param v2 y-coordinate for the crop end point
    */
   public void image(PImage img,
                     float a, float b, float c, float d,
