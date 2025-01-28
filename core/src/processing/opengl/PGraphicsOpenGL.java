@@ -4853,15 +4853,18 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   @Override
-  protected void fillFromCalc() {
-    super.fillFromCalc();
+  protected void fillFromCalc(int argb) {
+    super.fillFromCalc(argb);
 
     if (!setAmbient) {
       // Setting the ambient color from the current fill
       // is what the old P3D did and allows to have an
       // default ambient color when the user doesn't specify
       // it explicitly.
-      ambientFromCalc();
+      ambientArray[0] = fillArray[0];
+      ambientArray[1] = fillArray[1];
+      ambientArray[2] = fillArray[2];
+      ambientFromCalc(argb);
       // ambientFromCalc sets setAmbient to true, but it hasn't been
       // set by the user so put back to false.
       setAmbient = false;
@@ -5139,15 +5142,16 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  private final float[] specColorArray = new float[4];
   /**
    * Set the specular color of the last light created.
    */
   @Override
   public void lightSpecular(float x, float y, float z) {
-    colorCalc(x, y, z);
-    currentLightSpecular[0] = calcR;
-    currentLightSpecular[1] = calcG;
-    currentLightSpecular[2] = calcB;
+    colorCalc(specColorArray, x, y, z);
+    currentLightSpecular[0] = specColorArray[0];
+    currentLightSpecular[1] = specColorArray[1];
+    currentLightSpecular[2] = specColorArray[2];
   }
 
 
@@ -5201,11 +5205,12 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  private final float[] ambiColorArray = new float[4];
   protected void lightAmbient(int num, float r, float g, float b) {
-    colorCalc(r, g, b);
-    lightAmbient[3 * num + 0] = calcR;
-    lightAmbient[3 * num + 1] = calcG;
-    lightAmbient[3 * num + 2] = calcB;
+    colorCalc(ambiColorArray, r, g, b);
+    lightAmbient[3 * num + 0] = ambiColorArray[0];
+    lightAmbient[3 * num + 1] = ambiColorArray[1];
+    lightAmbient[3 * num + 2] = ambiColorArray[2];
   }
 
 
@@ -5216,11 +5221,12 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  private final float[] diffColorArray = new float[4];
   protected void lightDiffuse(int num, float r, float g, float b) {
-    colorCalc(r, g, b);
-    lightDiffuse[3 * num + 0] = calcR;
-    lightDiffuse[3 * num + 1] = calcG;
-    lightDiffuse[3 * num + 2] = calcB;
+    colorCalc(diffColorArray, r, g, b);
+    lightDiffuse[3 * num + 0] = diffColorArray[0];
+    lightDiffuse[3 * num + 1] = diffColorArray[1];
+    lightDiffuse[3 * num + 2] = diffColorArray[2];
   }
 
 
