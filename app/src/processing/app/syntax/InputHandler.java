@@ -1090,9 +1090,16 @@ public abstract class InputHandler extends KeyAdapter
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < repeatCount; i++)
           sb.append(str);
-        if (Preferences.getBoolean("editor.completion.auto_close") &&
-          hasBracketsAndQuotes(str)) {
-          matchBracketsAndQuotes(str, evt, textArea, sb);
+        if (Preferences.getBoolean("editor.completion.auto_close")) {
+          if(hasClosingBracketsAndQuotes(str) &&
+                  isNextCharEqual(str, textArea) &&
+                  isPrevCharEquivalentOpeningBracketOrQuote(str, textArea)) {
+            textArea.setCaretPosition(textArea.getCaretPosition() + 1);
+          } else if(hasBracketsAndQuotes(str)){
+            matchBracketsAndQuotes(str, evt, textArea, sb);
+          } else{
+            textArea.overwriteSetSelectedText(sb.toString());
+          }
         } else {
           textArea.overwriteSetSelectedText(sb.toString());
         }
@@ -1110,6 +1117,36 @@ public abstract class InputHandler extends KeyAdapter
 
     private boolean hasBracketsAndQuotes(String str) {
       for (String item : bracketsAndQuotesMap.keys()) {
+        if (str.equals(item)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    private boolean isNextCharEqual(String str, JEditTextArea textArea){
+      int caretPosition = textArea.getCaretPosition();
+      return textArea.getText().length() > caretPosition &&
+              str.length() == 1 &&
+              textArea.getText().charAt(caretPosition) == str.charAt(0);
+
+    }
+
+    private boolean isPrevCharEquivalentOpeningBracketOrQuote(String str, JEditTextArea textArea){
+      int caretPosition = textArea.getCaretPosition();
+      if(textArea.getText().length() < caretPosition) return false;
+      String prevChar = String.valueOf(textArea.getText().charAt(caretPosition - 1));
+      for (String item : bracketsAndQuotesMap.keys()) {
+        if (prevChar.equals(item) && bracketsAndQuotesMap.get(prevChar).equals(str)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+
+    private boolean hasClosingBracketsAndQuotes(String str) {
+      for (String item : bracketsAndQuotesMap.values()) {
         if (str.equals(item)) {
           return true;
         }
