@@ -961,7 +961,172 @@ public class PFont implements PConstants {
     return font;
   }
 
+  /**
+   * Returns an array of PVector with each representing a point on the path for
+   * the specified text
+   *
+   * @webref typography:loading_displaying
+   * @param text
+   *          a line of text
+   * @param x
+   *          the x-coordinate
+   * @param y
+   *          the y-coordinate
+   * @param textSize
+   *          the text size to use
+   * @param the
+   *          maximum distance that line segments used to approximate the curved
+   *          segments are allowed to deviate from points on the original curve
+   * @see_external java.awt.Shape
+   */
+  public PVector[] textToPoints(String str, float x, float y, float textSize) {
+    return this.textToPoints(str, x, y, textSize, 0);
+  }
 
+  /**
+   * Returns an array of PVector with each representing a point on the path for
+   * the specified text
+   *
+   * @webref typography:loading_displaying
+   * @param text
+   *          a line of text
+   * @param x
+   *          the x-coordinate
+   * @param y
+   *          the y-coordinate
+   * @param textSize
+   *          the text size to use
+   * @param flatness
+   *          the maximum distance that line segments used to approximate the
+   *          curved segments are allowed to deviate from points on the original
+   *          curve
+   * @see_external java.awt.Shape
+   */
+  public PVector[] textToPoints(String str, float x, float y, float textSize,
+                                float flatness) {
+    float xOff = x;
+    float scale = this.getSize() / textSize;
+    java.util.ArrayList<PVector> pts = new java.util.ArrayList<>();
+    for (int j = 0; j < str.length(); j++) {
+      char c = str.charAt(j);
+      if (c != 32) {
+        PShape ps = this.getShape(c, flatness); // warning in p5 for space
+        int len = ps.getVertexCount();
+        for (int i = 0; i < len; i++) {
+          PVector pv = ps.getVertex(i);
+          pv.x += xOff;
+          pv.y += y;
+          pts.add(pv);
+        }
+      }
+      xOff += this.getGlyph(c).setWidth / scale;
+    }
+    return pts.toArray(new PVector[0]);
+  }
+
+  /**
+   * Returns a rectangle representing the bounds for the specific text drawn
+   *
+   * @webref typography:loading_displaying
+   * @param text
+   *          a line of text
+   * @param x
+   *          the x-coordinate
+   * @param y
+   *          the y-coordinate
+   * @param textSize
+   *          the text size to use
+   */
+  public java.awt.geom.Rectangle2D.Float textBounds(String s, float x, float y,
+                                                    float textSize) {
+    float minX = Float.MAX_VALUE;
+    float minY = Float.MAX_VALUE;
+    float maxX = -Float.MAX_VALUE;
+    float maxY = -Float.MAX_VALUE;
+    java.awt.geom.Rectangle2D.Float[] rects = glyphBounds(s, x, y, textSize);
+    for (int i = 0; i < rects.length; i++) {
+      java.awt.geom.Rectangle2D.Float r = rects[i];
+      float x2 = r.x + r.width;
+      float y2 = r.y + r.height;
+      if (r.x < minX) {
+        minX = r.x;
+      }
+      if (r.y < minY) {
+        minY = r.y;
+      }
+      if (x2 > maxX) {
+        maxX = x2;
+      }
+      if (y2 > maxY) {
+        maxY = y2;
+      }
+    }
+    // perhaps a different return type?
+    return new java.awt.geom.Rectangle2D.Float(minX, minY, maxX - minX,
+                                               (maxY - minY));
+  }
+
+  /**
+   * Returns an array of rectangles containing the bounds for each character in
+   * the String
+   *
+   * @webref typography:loading_displaying
+   * @param text
+   *          a line of text
+   * @param x
+   *          the x-coordinate
+   * @param y
+   *          the y-coordinate
+   * @param textSize
+   *          the text size to use
+   */
+  public java.awt.geom.Rectangle2D.Float[] glyphBounds(String text, float x,
+                                                       float y,
+                                                       float textSize) {
+    float scale = this.getSize() / textSize;
+    java.awt.geom.Rectangle2D.Float[] r = new java.awt.geom.Rectangle2D.Float[text
+        .length()];
+    for (int i = 0; i < text.length(); i++) {
+      char c = text.charAt(i);
+      r[i] = glyphBounds(c, x, y, textSize);
+      x += this.getGlyph(c).setWidth / scale;
+    }
+    return r;
+  }
+
+  /**
+   * Returns a rectangles containing the bounds for the character at the
+   * specified font-size and position
+   *
+   * @webref typography:loading_displaying
+   * @param text
+   *          a line of text
+   * @param x
+   *          the x-coordinate
+   * @param y
+   *          the y-coordinate
+   * @param textSize
+   *          the text size to use
+   */
+  public java.awt.geom.Rectangle2D.Float glyphBounds(char c, float x, float y,
+                                                     float textSize) {
+    PFont.Glyph g;
+    java.awt.geom.Rectangle2D.Float r;
+    float scale = this.getSize() / textSize;
+    if (c == 32) { // special case for space
+      g = this.getGlyph('i');
+      r = new java.awt.geom.Rectangle2D.Float(x + g.leftExtent / scale, y,
+                                              g.width / scale, 0);
+    } else {
+      g = this.getGlyph(c);
+      r = new java.awt.geom.Rectangle2D.Float(x + g.leftExtent / scale,
+                                              y - g.topExtent / scale,
+                                              g.width / scale,
+                                              g.height / scale);
+    }
+    return r;
+  }
+  
   //////////////////////////////////////////////////////////////
 
 
