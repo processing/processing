@@ -1190,7 +1190,7 @@ public class PApplet implements PConstants {
             field.setAccessible(true);
             Object scale = field.get(device);
 
-            if (scale instanceof Integer && ((Integer)scale).intValue() == 2) {
+            if (scale instanceof Integer && (Integer) scale == 2) {
               return 2;
             }
           }
@@ -1620,18 +1620,7 @@ public class PApplet implements PConstants {
     }
   }
 
-
-  protected void handleMethods(String methodName) {
-    synchronized (registerLock) {
-      RegisteredMethods meth = registerMap.get(methodName);
-      if (meth != null) {
-        meth.handle();
-      }
-    }
-  }
-
-
-  protected void handleMethods(String methodName, Object[] args) {
+  protected void handleMethods(String methodName, Object...args) {
     synchronized (registerLock) {
       RegisteredMethods meth = registerMap.get(methodName);
       if (meth != null) {
@@ -2262,7 +2251,7 @@ public class PApplet implements PConstants {
       Class<?> rendererClass =
         Thread.currentThread().getContextClassLoader().loadClass(renderer);
 
-      Constructor<?> constructor = rendererClass.getConstructor(new Class[] { });
+      Constructor<?> constructor = rendererClass.getConstructor();
       PGraphics pg = (PGraphics) constructor.newInstance();
 
       pg.setParent(this);
@@ -2746,7 +2735,7 @@ public class PApplet implements PConstants {
       break;
     }
 
-    handleMethods("mouseEvent", new Object[] { event });
+    handleMethods("mouseEvent", event);
 
     switch (action) {
     case MouseEvent.PRESS:
@@ -3018,7 +3007,7 @@ public class PApplet implements PConstants {
     }
     */
 
-    handleMethods("keyEvent", new Object[] { event });
+    handleMethods("keyEvent", event);
 
     // if someone else wants to intercept the key, they should
     // set key to zero (or something besides the ESC).
@@ -3863,8 +3852,8 @@ public class PApplet implements PConstants {
    */
   public void method(String name) {
     try {
-      Method method = getClass().getMethod(name, new Class[] {});
-      method.invoke(this, new Object[] { });
+      Method method = getClass().getMethod(name);
+      method.invoke(this);
 
     } catch (IllegalArgumentException e) {
       e.printStackTrace();
@@ -6715,8 +6704,8 @@ public class PApplet implements PConstants {
     try {
       Class<?> callbackClass = callbackObject.getClass();
       Method selectMethod =
-        callbackClass.getMethod(callbackMethod, new Class[] { File.class });
-      selectMethod.invoke(callbackObject, new Object[] { selectedFile });
+        callbackClass.getMethod(callbackMethod, File.class);
+      selectMethod.invoke(callbackObject, selectedFile);
 
     } catch (IllegalAccessException iae) {
       System.err.println(callbackMethod + "() must be public");
@@ -10841,8 +10830,8 @@ public class PApplet implements PConstants {
         Class<?> thinkDifferent =
           Thread.currentThread().getContextClassLoader().loadClass(td);
         Method method =
-          thinkDifferent.getMethod("init", new Class[] { PApplet.class });
-        method.invoke(null, new Object[] { sketch });
+          thinkDifferent.getMethod("init", PApplet.class);
+        method.invoke(null, sketch);
       } catch (Exception e) {
         e.printStackTrace();  // That's unfortunate
       }

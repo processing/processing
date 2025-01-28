@@ -925,7 +925,7 @@ public class Texture implements PConstants {
   protected void getSourceMethods() {
     try {
       disposeBufferMethod = bufferSource.getClass().
-        getMethod("disposeBuffer", new Class[] { Object.class });
+        getMethod("disposeBuffer", Object.class);
     } catch (Exception e) {
       throw new RuntimeException("Provided source object doesn't have a " +
                                  "disposeBuffer method.");
@@ -1659,7 +1659,7 @@ public class Texture implements PConstants {
     void dispose() {
       try {
         // Disposing the native buffer.
-        disposeBufferMethod.invoke(bufferSource, new Object[] { natBuf });
+        disposeBufferMethod.invoke(bufferSource, natBuf);
         natBuf = null;
         rgbBuf = null;
       } catch (Exception e) {
