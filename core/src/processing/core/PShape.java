@@ -2224,6 +2224,15 @@ public class PShape implements PConstants {
     return getVertex(index, null);
   }
 
+  public float[] getVertexData(int index)
+  {
+    return vertices[index];
+  }
+
+  public PMatrix getMatrix()
+  {
+    return matrix;
+  }
 
   /**
    * @param vec PVector to assign the data to
