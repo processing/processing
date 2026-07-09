@@ -51,41 +51,52 @@ jobs:
             });
 
             for (const thread of threads) {
-              const updatedAt = new Date(thread.updated_at);
+              try {
+                if (thread.locked) {
+                  console.log(`Skipping #${thread.number}: already locked.`);
+                  continue;
+                }
 
-              if (updatedAt > cutoff) {
-                continue;
+                const updatedAt = new Date(thread.updated_at);
+
+                if (updatedAt > cutoff) {
+                  continue;
+                }
+
+                const labels = thread.labels.map(label => label.name);
+                const isExempt = labels.some(label => exemptLabels.includes(label));
+
+                if (isExempt) {
+                  continue;
+                }
+
+                const isPr = Boolean(thread.pull_request);
+                const body = isPr ? closePrMessage : closeIssueMessage;
+
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: thread.number,
+                  body
+                });
+
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: thread.number,
+                  state: 'closed',
+                  state_reason: 'not_planned'
+                });
+
+                await github.rest.issues.lock({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: thread.number,
+                  lock_reason: 'resolved'
+                });
+
+                console.log(`Closed and locked #${thread.number}.`);
+              } catch (error) {
+                console.log(`Skipping #${thread.number}: ${error.message}`);
               }
-
-              const labels = thread.labels.map(label => label.name);
-              const isExempt = labels.some(label => exemptLabels.includes(label));
-
-              if (isExempt) {
-                continue;
-              }
-
-              const isPr = Boolean(thread.pull_request);
-              const body = isPr ? closePrMessage : closeIssueMessage;
-
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: thread.number,
-                body
-              });
-
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: thread.number,
-                state: 'closed',
-                state_reason: 'not_planned'
-              });
-
-              await github.rest.issues.lock({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: thread.number,
-                lock_reason: 'resolved'
-              });
             }
